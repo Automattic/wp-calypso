@@ -245,7 +245,7 @@ const mapStateToProps = state => {
 	const queryArgs = getCurrentQueryArguments( state );
 
 	const installQuery: string[] =
-		'install' in queryArgs
+		typeof queryArgs === 'object' && 'install' in queryArgs
 			? Array.isArray( queryArgs.install )
 				? queryArgs.install
 				: [ queryArgs.install ]
