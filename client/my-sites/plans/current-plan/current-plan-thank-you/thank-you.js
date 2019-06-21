@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 
@@ -33,7 +32,6 @@ export class ThankYouCard extends Component {
 			showCalypsoIntro,
 			showContinueButton,
 			showHideMessage,
-			siteSlug,
 			title,
 			translate,
 		} = this.props;
@@ -87,7 +85,6 @@ export default connect(
 	state => ( {
 		currentRoute: getCurrentRoute( state ),
 		queryArgs: getCurrentQueryArguments( state ),
-		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ requestGuidedTour }
 )( localize( ThankYouCard ) );
