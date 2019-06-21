@@ -617,8 +617,9 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) &&
-					'blog' !== this.props.siteType && <SiteMockups stepName={ this.props.stepName } /> }
+				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 			</div>
 		);
 	}
