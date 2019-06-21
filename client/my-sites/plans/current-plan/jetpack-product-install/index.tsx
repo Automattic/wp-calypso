@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes, some } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -134,9 +134,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return false;
 		}
 
-		return some( PLUGINS, pluginSlug =>
-			includes( pluginStates, status[ pluginSlug + '_status' ] )
-		);
+		return PLUGINS.some( pluginSlug => pluginStates.includes( status[ pluginSlug + '_status' ] ) );
 	}
 
 	/**
