@@ -59,6 +59,18 @@
 		@include breakpoint( '<480px' ) {
 			width: auto;
 		}
+		
+		.search {
+			&.is-expanded-to-container {
+				height: 100%;
+			}
+
+			&.has-focus {
+				@include breakpoint( '<660px' ) {
+					margin-right: 4px;
+				}
+			}
+		}
 	}
 
 	.plan-storage {
