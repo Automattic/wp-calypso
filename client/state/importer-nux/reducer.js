@@ -36,11 +36,15 @@ export const isUrlInputDisabled = createReducer( false, {
 } );
 
 export const siteDetails = createReducer( null, {
-	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: ( state, { engine, favicon, siteTitle, siteUrl } ) => ( {
+	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: (
+		state,
+		{ engine, favicon, title, importSiteUrl, importerTypes }
+	) => ( {
 		engine,
 		favicon,
-		siteTitle,
-		siteUrl,
+		title,
+		importSiteUrl,
+		importerTypes,
 	} ),
 	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => null,
 	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => null,
