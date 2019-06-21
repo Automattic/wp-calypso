@@ -25,10 +25,13 @@ import {
 } from 'state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 
+type PluginStateDescriptor = string;
+type PluginSlug = 'akismet' | 'vaultpress';
+
 /**
  * These are plugin states in the installation lifecycle we consider "non-error" states.
  */
-const NON_ERROR_STATES = [
+const NON_ERROR_STATES: PluginStateDescriptor[] = [
 	'not_active', // Plugin is not installed
 	'option_name_not_in_whitelist', // Plugin is installed but not activated
 	'key_not_set', // Plugin is installed and activated, but not configured
@@ -42,12 +45,12 @@ const NON_ERROR_STATES = [
  * - Permanent, occurring if there is a failure we can't fix by waiting.
  * We attempt to recover from these errors by retrying status requests.
  */
-const RECOVERABLE_ERROR_STATES = [ 'vaultpress_error' ];
+const RECOVERABLE_ERROR_STATES: PluginStateDescriptor[] = [ 'vaultpress_error' ];
 
 /**
  * The plugins this product installer installs, activates and configures.
  */
-const PLUGINS = [ 'akismet', 'vaultpress' ];
+const PLUGINS: PluginSlug[] = [ 'akismet', 'vaultpress' ];
 
 /**
  * Maximum number of attempts to refetch installation status in the event of a recoverable error.
@@ -85,7 +88,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * - Installation has not finished.
 	 * - We already have the plugin keys.
 	 */
-	maybeStartInstall() {
+	maybeStartInstall(): void {
 		const { pluginKeys, progressComplete, siteId } = this.props;
 
 		// We're already installing
@@ -121,10 +124,10 @@ export class JetpackProductInstall extends Component< Props, State > {
 	/**
 	 * Used to determine if at least one plugin is in at least one of the provided plugin states.
 	 *
-	 * @param {Array} pluginStates States to check against.
-	 * @return {Boolean} True if at least one plugin is in at least one of the given states, false otherwise.
+	 * @param  pluginStates States to check against.
+	 * @return              True if at least one plugin is in at least one of the given states, false otherwise.
 	 */
-	arePluginsInState( pluginStates ) {
+	arePluginsInState( pluginStates: PluginStateDescriptor[] ): boolean {
 		const { status } = this.props;
 
 		if ( ! status ) {
@@ -141,9 +144,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * Potential errors we consider here could be recoverable or not.
 	 * What we don't consider errors are the `NON_ERROR_STATES` above.
 	 *
-	 * @return {Boolean} Whether there are currently any installation errors.
+	 * @return Whether there are currently any installation errors.
 	 */
-	installationHasErrors() {
+	installationHasErrors(): boolean {
 		if ( this.installationHasRecoverableErrors() ) {
 			return true;
 		}
@@ -155,9 +158,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * Used to determine if at least one plugin is in an error state
 	 * that we could potentially recover from by just waiting.
 	 *
-	 * @return {Boolean} Whether there are currently any recoverable errors.
+	 * @return Whether there are currently any recoverable errors.
 	 */
-	installationHasRecoverableErrors() {
+	installationHasRecoverableErrors(): boolean {
 		return this.arePluginsInState( RECOVERABLE_ERROR_STATES );
 	}
 
@@ -168,25 +171,23 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * - We haven't retried too many times (limit is `MAX_RETRIES`).
 	 * - We currently have recoverable errors.
 	 *
-	 * @return {Boolean} Whether to trigger a request to refetch installation status.
+	 * @return Whether to trigger a request to refetch installation status.
 	 */
-	shouldRefetchInstallationStatus() {
+	shouldRefetchInstallationStatus(): boolean {
 		return this.retries < MAX_RETRIES && this.installationHasRecoverableErrors();
 	}
 
 	/**
 	 * A helper to refresh the page, which essentially will restart the installation process.
-	 *
-	 * @return {void}
 	 */
-	refreshPage = () => void window.location.reload();
+	refreshPage = (): void => void window.location.reload();
 
 	/**
 	 * Request the current installation status.
 	 * Could be triggered by a timeout as we're waiting for installation to finish,
 	 * or by a retry if we discover we have a recoverable error.
 	 */
-	requestInstallationStatus = () => {
+	requestInstallationStatus = (): void => {
 		this.props.requestJetpackProductInstallStatus( this.props.siteId );
 
 		if ( this.shouldRefetchInstallationStatus() ) {
@@ -251,9 +252,9 @@ const mapStateToProps = state => {
 				: [ queryArgs.install ]
 			: [];
 
-	const requestedInstalls = installQuery.includes( 'all' )
+	const requestedInstalls: PluginSlug[] = installQuery.includes( 'all' )
 		? /* If we want 'all', clone our known plugins */ [ ...PLUGINS ]
-		: installQuery;
+		: PLUGINS.filter( slug => installQuery.includes( slug ) );
 
 	return {
 		siteId,
