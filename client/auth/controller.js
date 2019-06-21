@@ -21,17 +21,19 @@ import userFactory from 'lib/user';
 import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default {
 	oauthLogin: function( context, next ) {
-		if ( config.isEnabled( 'oauth' ) ) {
-			if ( getToken() ) {
-				page( '/' );
-			} else {
-				context.primary = <OAuthLogin />;
-			}
-		} else {
+		if ( ! config.isEnabled( 'oauth' ) || getToken() ) {
 			page( '/' );
+			return;
 		}
+
+		context.primary = <OAuthLogin />;
 		next();
 	},
 
@@ -57,9 +59,7 @@ export default {
 			authUrl = wpoauth.urlToConnect( { scope: 'global', blog_id: 0 } );
 		}
 
-		context.primary = React.createElement( ConnectComponent, {
-			authUrl: authUrl,
-		} );
+		context.primary = <ConnectComponent authUrl={ authUrl } />;
 		next();
 	},
 
@@ -82,7 +82,7 @@ export default {
 			</Main>
 		);
 
-		// Fetch user and redirect to /sites on success.
+		// Fetch user and redirect to / on success.
 		const user = userFactory();
 		user.fetching = false;
 		user.fetch();

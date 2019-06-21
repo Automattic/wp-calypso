@@ -174,9 +174,9 @@ export class Auth extends Component {
 						<Gridicon icon="help" />
 					</a>
 					<div className="auth__links">
-						<a href="#" onClick={ this.toggleSelfHostedInstructions }>
+						<button onClick={ this.toggleSelfHostedInstructions }>
 							{ translate( 'Add self-hosted site' ) }
-						</a>
+						</button>
 						<a href={ config( 'signup_url' ) }>{ translate( 'Create account' ) }</a>
 					</div>
 					{ showInstructions && (
