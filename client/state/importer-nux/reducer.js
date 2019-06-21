@@ -38,11 +38,11 @@ export const isUrlInputDisabled = createReducer( false, {
 export const siteDetails = createReducer( null, {
 	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: (
 		state,
-		{ engine, favicon, title, importSiteUrl, importerTypes }
+		{ siteEngine, siteFavicon, siteTitle, importSiteUrl, importerTypes }
 	) => ( {
-		engine,
-		favicon,
-		title,
+		siteEngine,
+		siteFavicon,
+		siteTitle,
 		importSiteUrl,
 		importerTypes,
 	} ),
