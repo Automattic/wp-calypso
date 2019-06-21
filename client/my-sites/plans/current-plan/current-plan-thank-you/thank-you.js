@@ -38,6 +38,11 @@ export class ThankYouCard extends Component {
 			translate,
 		} = this.props;
 
+		const dismissUrl =
+			this.props.queryArgs && 'install' in this.props.queryArgs
+				? addQueryArgs( { install: this.props.queryArgs.install }, this.props.currentRoute )
+				: this.props.getCurrentRoute;
+
 		return (
 			<div className="current-plan-thank-you">
 				{ illustration && (
@@ -62,27 +67,13 @@ export class ThankYouCard extends Component {
 					</p>
 				) }
 				{ showContinueButton && (
-					<Button
-						href={ `/plans/my-plan/${ siteSlug }` }
-						onClick={ this.startChecklistTour }
-						primary
-					>
+					<Button href={ dismissUrl } onClick={ this.startChecklistTour } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 				) }
 				{ showHideMessage && (
 					<p>
-						<a
-							href={
-								this.props.queryArgs && 'install' in this.props.queryArgs
-									? addQueryArgs(
-											{ install: this.props.queryArgs.install },
-											this.props.currentRoute
-									  )
-									: this.props.getCurrentRoute
-							}
-							onClick={ this.startChecklistTour }
-						>
+						<a href={ dismissUrl } onClick={ this.startChecklistTour }>
 							{ translate( 'Hide message' ) }
 						</a>
 					</p>
