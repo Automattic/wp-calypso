@@ -24,6 +24,7 @@ import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+import GdprBanner from 'blocks/gdpr-banner';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
@@ -98,6 +99,7 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
+			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
 		</div>
 	);
 };
