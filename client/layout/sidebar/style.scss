@@ -624,7 +624,7 @@ form.sidebar__button input {
 	.sidebar__menu-wrapper {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
+		flex: 1;
 
 		> li:last-child {
 			margin-bottom: 20px;
