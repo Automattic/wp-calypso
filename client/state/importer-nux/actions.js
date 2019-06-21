@@ -57,13 +57,13 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 	return wpcom
 		.undocumented()
 		.isSiteImportable( site_url )
-		.then( ( { engine, favicon, site_title: siteTitle, site_url: siteUrl } ) =>
+		.then( ( { engine, favicon, title, importer_types: importerTypes } ) =>
 			dispatch(
 				setImportOriginSiteDetails( {
 					engine,
 					favicon,
-					siteTitle,
-					siteUrl,
+					title,
+					importerTypes,
 				} )
 			)
 		)
@@ -73,13 +73,13 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) => dispatch =>
 	dispatch( fetchIsSiteImportable( siteUrlFromInput ) )
 		.then( async siteDetails => {
-			const { engine, error, favicon, siteTitle, siteUrl: importSiteUrl } = siteDetails;
+			const { engine, error, favicon, title } = siteDetails;
 
 			if ( error ) {
 				throw new Error( error );
 			}
 
-			dispatch( setSiteTitle( siteTitle ) );
+			dispatch( setSiteTitle( title ) );
 
 			const imageBlob = await loadmShotsPreview( {
 				url: normalizeUrl( siteUrlFromInput ),
@@ -94,8 +94,8 @@ export const submitImportUrlStep = ( { stepName, siteUrl: siteUrlFromInput } ) =
 						sitePreviewImageBlob: imageBlob,
 						importEngine: engine,
 						importFavicon: favicon,
-						importSiteUrl,
-						siteTitle,
+						importSiteUrl: siteUrlFromInput,
+						siteTitle: title,
 						themeSlugWithRepo: 'pub/modern-business',
 					}
 				)
