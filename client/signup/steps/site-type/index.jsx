@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
+import { getWpcomSiteTypes } from 'lib/signup/site-type';
 
 const siteTypeToFlowname = {
 	'online-store': 'ecommerce-onboarding',
@@ -47,7 +47,6 @@ class SiteType extends Component {
 			flowName,
 			positionInFlow,
 			signupProgress,
-			siteType,
 			stepName,
 			translate,
 			hasInitializedSitesBackUrl,
@@ -68,7 +67,9 @@ class SiteType extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
-				stepContent={ <SiteTypeForm submitForm={ this.submitStep } siteType={ siteType } /> }
+				stepContent={
+					<SiteTypeForm submitForm={ this.submitStep } siteTypes={ getWpcomSiteTypes() } />
+				}
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
 				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
@@ -79,7 +80,6 @@ class SiteType extends Component {
 
 export default connect(
 	state => ( {
-		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{ saveSignupStep, submitSiteType }

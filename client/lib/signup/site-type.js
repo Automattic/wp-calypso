@@ -9,6 +9,9 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
+const CONTEXT_WPCOM = 'CONTEXT_WPCOM';
+const CONTEXT_JETPACK = 'CONTEXT_JETPACK';
+
 const getSiteTypePropertyDefaults = propertyKey =>
 	get(
 		{
@@ -46,25 +49,6 @@ const getSiteTypePropertyDefaults = propertyKey =>
 	);
 
 /**
- * Looks up site types array for item match and returns a property value
- *
- * @example
- * // Find the site type where `id === 2`, and return the value of `slug`
- * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
- *
- * @param {string} key A property name of a site types item
- * @param {string|number} value The value of `key` with which to filter items
- * @param {string} property The name of the property whose value you wish to return
- * @param {array} siteTypes (optional) A site type collection
- * @return {(string|int)?} value of `property` or `null` if none is found
- */
-export function getSiteTypePropertyValue( key, value, property, siteTypes = getAllSiteTypes() ) {
-	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
-
-	return get( siteTypeProperties, property ) || getSiteTypePropertyDefaults( property );
-}
-
-/**
  * Returns a current list of site types that are displayed in the signup site-type step
  * Some (or all) of these site types will also have landing pages.
  * A user who comes in via a landing page will not see the Site Topic dropdown.
@@ -72,9 +56,10 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
+ * @param {string} context of `CONTEXT_WPCOM` or `CONTEXT_JETPACK`
  * @return {array} current list of site types
  */
-export function getAllSiteTypes() {
+function getAllSiteTypes( context ) {
 	return [
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
@@ -150,8 +135,40 @@ export function getAllSiteTypes() {
 			siteTopicHeader: i18n.translate( 'What type of products do you sell?' ),
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
-			// TODO: Re-enable "Purchase required" badge, but hide for Jetpack onboarding.
-			// purchaseRequired: true,
+			purchaseRequired: context === CONTEXT_WPCOM ? true : null,
 		},
 	];
+}
+
+/**
+ * Returns site types configuration used for WordPress.com signup
+ *
+ * @return {array} List of WordPress.com site types
+ */
+export const getWpcomSiteTypes = () => getAllSiteTypes( CONTEXT_WPCOM );
+
+/**
+ * Returns site types configuration used for Jetpack onboarding
+ *
+ * @return {array} List of Jetpack site types
+ */
+export const getJetpackSiteTypes = () => getAllSiteTypes( CONTEXT_JETPACK );
+
+/**
+ * Looks up site types array for item match and returns a property value
+ *
+ * @example
+ * // Find the site type where `id === 2`, and return the value of `slug`
+ * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
+ *
+ * @param {string} key A property name of a site types item
+ * @param {string|number} value The value of `key` with which to filter items
+ * @param {string} property The name of the property whose value you wish to return
+ * @param {array} siteTypes (optional) A site type collection
+ * @return {(string|int)?} value of `property` or `null` if none is found
+ */
+export function getSiteTypePropertyValue( key, value, property, siteTypes = getWpcomSiteTypes() ) {
+	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
+
+	return get( siteTypeProperties, property ) || getSiteTypePropertyDefaults( property );
 }

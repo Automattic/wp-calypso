@@ -20,6 +20,7 @@ import WpcomColophon from 'components/wpcom-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { saveSiteType } from 'state/jetpack-connect/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
+import { getJetpackSiteTypes } from 'lib/signup/site-type';
 
 class JetpackSiteType extends Component {
 	goToNextStep = () => {
@@ -50,7 +51,7 @@ class JetpackSiteType extends Component {
 						) }
 					/>
 
-					<SiteTypeForm submitForm={ this.handleSubmit } />
+					<SiteTypeForm submitForm={ this.handleSubmit } siteTypes={ getJetpackSiteTypes() } />
 
 					<SkipButton
 						onClick={ this.goToNextStep }

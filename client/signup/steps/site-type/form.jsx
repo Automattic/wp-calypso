@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import Badge from 'components/badge';
 import Card from 'components/card';
-import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -21,7 +20,7 @@ import './style.scss';
 
 class SiteTypeForm extends Component {
 	static propTypes = {
-		siteType: PropTypes.string,
+		siteTypes: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		submitForm: PropTypes.func.isRequired,
 
 		// from localize() HoC
@@ -39,7 +38,7 @@ class SiteTypeForm extends Component {
 		return (
 			<Fragment>
 				<Card className="site-type__wrapper">
-					{ getAllSiteTypes().map( siteTypeProperties => (
+					{ this.props.siteTypes.map( siteTypeProperties => (
 						<Card
 							className="site-type__option"
 							key={ siteTypeProperties.id }
