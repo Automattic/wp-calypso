@@ -30,7 +30,8 @@ import './style.scss';
 const GSuiteDialog = ( {
 	currencyCode,
 	domain,
-	gsuiteBasicCost,
+	gSuiteCost,
+	gSuiteProductSlug,
 	onAddEmailClick,
 	onSkipClick,
 	recordTracksEvent,
@@ -38,8 +39,6 @@ const GSuiteDialog = ( {
 	const [ users, setUsers ] = useState( newUsers( domain ) );
 
 	const canContinue = areAllUsersValid( users );
-	// leave this as a variable for future g suite business support
-	const productSlug = 'gapps';
 	const translate = useTranslate();
 
 	const recordClickEvent = eventName => {
@@ -63,7 +62,7 @@ const GSuiteDialog = ( {
 		recordClickEvent( `calypso_checkout_gsuite_upgrade_add_email_button_click` );
 
 		if ( canContinue ) {
-			onAddEmailClick( getItemsForCart( [ domain ], productSlug, users ) );
+			onAddEmailClick( getItemsForCart( [ domain ], gSuiteProductSlug, users ) );
 		}
 	};
 
@@ -102,9 +101,9 @@ const GSuiteDialog = ( {
 			<CompactCard>
 				<GoogleAppsProductDetails
 					domain={ domain }
-					cost={ gsuiteBasicCost }
+					cost={ gSuiteCost }
 					currencyCode={ currencyCode }
-					plan={ productSlug }
+					plan={ gSuiteProductSlug }
 				/>
 				<GSuiteNewUserList
 					extraValidation={ user => user }
@@ -128,15 +127,16 @@ const GSuiteDialog = ( {
 GSuiteDialog.propTypes = {
 	currencyCode: PropTypes.string,
 	domain: PropTypes.string.isRequired,
-	gsuiteBasicCost: PropTypes.number,
+	gSuiteCost: PropTypes.number,
+	gSuiteProductSlug: PropTypes.oneOf( [ 'gapps', 'gapps_unlimited' ] ),
 	onAddEmailClick: PropTypes.func.isRequired,
 	onSkipClick: PropTypes.func.isRequired,
 };
 
 export default connect(
-	state => ( {
+	( state, { gSuiteProductSlug } ) => ( {
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		gsuiteBasicCost: getProductCost( state, 'gapps' ),
+		gSuiteCost: getProductCost( state, gSuiteProductSlug ),
 	} ),
 	{ recordTracksEvent: recordTracksEventAction }
 )( GSuiteDialog );

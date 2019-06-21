@@ -94,6 +94,7 @@ export class GSuiteNudge extends React.Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<GSuiteDialog
 					domain={ this.props.domain }
+					gSuiteProductSlug={ 'gapps' }
 					onSkipClick={ this.handleSkipClick }
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>

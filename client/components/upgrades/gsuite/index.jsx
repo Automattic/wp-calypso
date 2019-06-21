@@ -48,6 +48,7 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 
 			<GSuiteDialog
 				domain={ domain }
+				gSuiteProductSlug={ 'gapps' }
 				onSkipClick={ handleSkipClick }
 				onAddEmailClick={ handleAddEmailClick }
 			/>
