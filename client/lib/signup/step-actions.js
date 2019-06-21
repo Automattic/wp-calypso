@@ -167,7 +167,7 @@ export function createSiteWithCart(
 				title: siteTitle,
 			},
 		},
-		public: 1,
+		public: -1,
 		validate: false,
 	};
 
