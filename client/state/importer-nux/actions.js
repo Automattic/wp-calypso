@@ -65,7 +65,7 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 				site_title: siteTitle,
 				importer_types: importerTypes,
 			} ) => {
-				if ( importerTypes.length ) {
+				if ( siteEngine && importerTypes.length ) {
 					return dispatch(
 						setImportOriginSiteDetails( {
 							siteEngine,
