@@ -27,21 +27,7 @@ class Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
-
-		add_action(
-			'wp_head',
-			function() {
-				ob_start( 'a8c_fse_replace_template_parts' );
-			}
-		);
-
-		add_action(
-			'wp_footer',
-			function() {
-				ob_end_flush();
-			}
-		);
-
+		add_filter( 'template_include', array( $this, 'load_page_template' ) );
 		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
 		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
 	}
@@ -496,6 +482,17 @@ class Full_Site_Editing {
 
 		$data['post_content'] = wp_slash( serialize_blocks( $post_content_blocks[ $post_content_key ]['innerBlocks'] ) );
 		return $data;
+	}
+
+	/**
+	 * This will extract the inner blocks of the post content and
+	 * serialize them back to HTML for saving.
+	 *
+     * @param array $data    An array of slashed post data.
+	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+	 */
+	public function load_page_template() {
+		return plugin_dir_path( __FILE__ ) . 'page-fse.php';
 	}
 }
 
