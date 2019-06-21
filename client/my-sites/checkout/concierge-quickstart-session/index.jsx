@@ -372,7 +372,7 @@ export class ConciergeQuickstartSession extends React.Component {
 	};
 
 	handleClickAccept = () => {
-		page( `/checkout/${ this.props.siteSlug }/quickstart-session` );
+		page( `/checkout/${ this.props.siteSlug }/concierge-session` );
 	};
 }
 

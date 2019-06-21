@@ -288,7 +288,7 @@ export class Checkout extends React.Component {
 			cartItem = domainMapping( { domain: cartMeta } );
 		}
 
-		if ( startsWith( this.props.product, 'quickstart-session' ) ) {
+		if ( startsWith( this.props.product, 'concierge-session' ) ) {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 			analytics.tracks.recordEvent( 'calypso_concierge_session_upsell_accept_button_click', {
 				section: 'checkout',
