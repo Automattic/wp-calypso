@@ -20,6 +20,7 @@ import { loadmShotsPreview } from 'lib/mshots';
 import wpcom from 'lib/wp';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';
+import { SITE_IMPORTER_ERR_BAD_REMOTE } from 'lib/importers/constants';
 
 const normalizeUrl = targetUrl => {
 	const siteURL = trim( targetUrl );
@@ -63,15 +64,24 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 				site_favicon: siteFavicon,
 				site_title: siteTitle,
 				importer_types: importerTypes,
-			} ) =>
-				dispatch(
-					setImportOriginSiteDetails( {
-						siteEngine,
-						siteFavicon,
-						siteTitle,
-						importerTypes,
-					} )
-				)
+			} ) => {
+				if ( importerTypes.length ) {
+					return dispatch(
+						setImportOriginSiteDetails( {
+							siteEngine,
+							siteFavicon,
+							siteTitle,
+							importerTypes,
+						} )
+					);
+				}
+				// If importerTypes is empty, the remote site isn't supported
+				// @todo: improve handling
+				return dispatch( {
+					type: IMPORT_IS_SITE_IMPORTABLE_ERROR,
+					error: { code: SITE_IMPORTER_ERR_BAD_REMOTE },
+				} );
+			}
 		)
 		.catch( error => dispatch( { type: IMPORT_IS_SITE_IMPORTABLE_ERROR, error } ) );
 };
