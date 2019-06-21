@@ -14,8 +14,8 @@ import 'state/data-layer/wpcom/jetpack-blogs/product-install-status';
  * Start the Jetpack product install process for that site.
  *
  * @param {Number}  siteId        The ID of the site.
- * @param {String}  akismetKey    Akismet key.
- * @param {Number}  vaultpressKey VaultPress key.
+ * @param {?String}  akismetKey    Akismet key.
+ * @param {?String}  vaultpressKey VaultPress key.
  * @return {Object}               Action object.
  */
 export const startJetpackProductInstall = ( siteId, akismetKey, vaultpressKey ) => ( {
