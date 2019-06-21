@@ -13,6 +13,9 @@ import { isDesktop } from 'lib/viewport';
 import { preventWidows } from 'lib/formatting';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import Button from 'components/button';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { addQueryArgs } from 'lib/url';
 
 import './style.scss';
 
@@ -69,7 +72,17 @@ export class ThankYouCard extends Component {
 				) }
 				{ showHideMessage && (
 					<p>
-						<a href={ `/plans/my-plan/${ siteSlug }` } onClick={ this.startChecklistTour }>
+						<a
+							href={
+								this.props.queryArgs && 'install' in this.props.queryArgs
+									? addQueryArgs(
+											{ install: this.props.queryArgs.install },
+											this.props.currentRoute
+									  )
+									: this.props.getCurrentRoute
+							}
+							onClick={ this.startChecklistTour }
+						>
 							{ translate( 'Hide message' ) }
 						</a>
 					</p>
@@ -81,6 +94,8 @@ export class ThankYouCard extends Component {
 
 export default connect(
 	state => ( {
+		currentRoute: getCurrentRoute( state ),
+		queryArgs: getCurrentQueryArguments( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ requestGuidedTour }
