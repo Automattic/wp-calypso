@@ -290,9 +290,6 @@ export class Checkout extends React.Component {
 
 		if ( startsWith( this.props.product, 'concierge-session' ) ) {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
-			analytics.tracks.recordEvent( 'calypso_concierge_session_upsell_accept_button_click', {
-				section: 'checkout',
-			} );
 		}
 
 		if ( cartItem ) {

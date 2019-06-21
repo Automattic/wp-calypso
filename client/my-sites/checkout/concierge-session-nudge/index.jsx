@@ -290,7 +290,7 @@ export class ConciergeSessionNudge extends React.Component {
 				<Button
 					primary
 					className="concierge-session-nudge__accept-offer-button"
-					onClick={ this.handleClickAccept }
+					onClick={ () => this.handleClickAccept( 'accept' ) }
 				>
 					{ translate( 'Reserve a call for %(amount)s', {
 						args: {
@@ -311,7 +311,7 @@ export class ConciergeSessionNudge extends React.Component {
 			redirectToPageBuilder,
 		} = this.props;
 
-		trackUpsellButtonClick( 'decline' );
+		trackUpsellButtonClick( `calypso_concierge_session_upsell_decline_button_click` );
 
 		if ( ! receiptId ) {
 			// Send the user to a generic page (not post-purchase related).
@@ -330,16 +330,17 @@ export class ConciergeSessionNudge extends React.Component {
 		}
 	};
 
-	handleClickAccept = () => {
-		page( `/checkout/${ this.props.siteSlug }/concierge-session` );
+	handleClickAccept = buttonAction => {
+		const { trackUpsellButtonClick, siteSlug } = this.props;
+
+		trackUpsellButtonClick( `calypso_concierge_session_upsell_${ buttonAction }_button_click` );
+		page( `/checkout/${ siteSlug }/concierge-session` );
 	};
 }
 
-const trackUpsellButtonClick = buttonAction => {
-	// Track calypso_concierge_session_upsell_decline_button_click  event
-	return recordTracksEvent( `calypso_concierge_session_upsell_${ buttonAction }_button_click`, {
-		section: 'checkout',
-	} );
+const trackUpsellButtonClick = eventName => {
+	// Track concierge session get started / accept / decline events
+	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
 export default connect(
