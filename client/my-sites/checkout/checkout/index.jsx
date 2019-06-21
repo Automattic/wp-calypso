@@ -444,9 +444,9 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				const destination = abtest( 'improvedOnboarding' ) === 'onboarding' ? 'view' : 'checklist';
+				const destination = retrieveSignupDestination();
 
-				return `/${ destination }/${ selectedSiteSlug }?d=gsuite`;
+				return `/${ destination }?d=gsuite`;
 			}
 
 			// Maybe show either the G Suite or Concierge Session upsell pages
