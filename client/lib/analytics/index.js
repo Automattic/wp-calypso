@@ -385,7 +385,7 @@ const analytics = {
 			// Delay using the analytics localStorage queue.
 			return analytics.queue.add(
 				'recordSignupComplete',
-				{ isNewUser, isNewSite, hasCartItems, flow },
+				{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
 				true
 			);
 		}
