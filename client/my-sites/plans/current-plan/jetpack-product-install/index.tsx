@@ -4,7 +4,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -89,7 +88,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * - We already have the plugin keys.
 	 */
 	maybeStartInstall(): void {
-		const { pluginKeys, progressComplete, siteId } = this.props;
+		const { pluginKeys, progressComplete, requestedInstalls, siteId } = this.props;
 
 		// We're already installing
 		if ( this.state.startedInstallation ) {
@@ -111,13 +110,28 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return;
 		}
 
-		// Installation can be started only if we have the Akismet and VaultPress keys
-		if ( pluginKeys && pluginKeys.akismet && pluginKeys.vaultpress ) {
-			this.setState( {
-				startedInstallation: true,
-			} );
+		// We need plugin keys to attempt install.
+		if ( ! pluginKeys ) {
+			return;
+		}
 
-			this.props.startJetpackProductInstall( siteId, pluginKeys.akismet, pluginKeys.vaultpress );
+		// If we don't request any installs, don't do anything.
+		if ( ! requestedInstalls.length ) {
+			return;
+		}
+
+		// Start installation if we requested a plugin and have its key
+		if (
+			( requestedInstalls.includes( 'akismet' ) && pluginKeys.akismet ) ||
+			( requestedInstalls.includes( 'vaultpress' ) && pluginKeys.vaultpress )
+		) {
+			this.setState( { startedInstallation: true } );
+
+			this.props.startJetpackProductInstall(
+				siteId,
+				requestedInstalls.includes( 'akismet' ) ? pluginKeys.akismet : null,
+				requestedInstalls.includes( 'vaultpress' ) ? pluginKeys.vaultpress : null
+			);
 		}
 	}
 
