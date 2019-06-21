@@ -8,6 +8,12 @@
  */
 const socketio = require( 'socket.io' );
 const debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
+const { memoize } = require( 'lodash' );
+memoize.Cache = WeakMap; // play better with the GC over time
+
+/**
+ * Internal dependencies
+ */
 const cssHotReloader = require( './css-hot-reload' );
 
 let io = null,
@@ -18,6 +24,8 @@ function invalidPlugin() {
 		io.emit( 'invalid' );
 	}
 }
+
+const getStats = memoize( stats => stats.toJson() );
 
 function sendStats( socket, stats, force ) {
 	function emitted( asset ) {
@@ -47,7 +55,7 @@ const hotReloader = {
 			if ( ! _stats ) {
 				return;
 			}
-			sendStats( socket, _stats.toJson(), true );
+			sendStats( socket, getStats( _stats ), true );
 		} );
 
 		webpackCompiler.plugin( 'compile', invalidPlugin );
@@ -56,7 +64,7 @@ const hotReloader = {
 			if ( ! io ) {
 				return;
 			}
-			sendStats( io.sockets, stats.toJson() );
+			sendStats( io.sockets, getStats( stats ) );
 			_stats = stats;
 		} );
 
