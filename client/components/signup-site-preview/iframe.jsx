@@ -62,7 +62,8 @@ export default class SignupSitePreviewIframe extends Component {
 		if (
 			this.props.cssUrl !== nextProps.cssUrl ||
 			this.props.fontUrl !== nextProps.fontUrl ||
-			this.props.langSlug !== nextProps.langSlug
+			this.props.langSlug !== nextProps.langSlug ||
+			this.props.isRtl !== nextProps.isRtl
 		) {
 			this.setIframeSource( nextProps );
 			return false;
@@ -70,12 +71,10 @@ export default class SignupSitePreviewIframe extends Component {
 
 		if ( this.props.content.title !== nextProps.content.title ) {
 			this.setIframeElementContent( '.signup-site-preview__title', nextProps.content.title );
-			return false;
 		}
 
 		if ( this.props.content.body !== nextProps.content.body ) {
 			this.setIframeBodyContent( nextProps.content );
-			return false;
 		}
 
 		return false;
