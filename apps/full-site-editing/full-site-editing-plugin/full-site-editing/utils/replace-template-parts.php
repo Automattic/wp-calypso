@@ -80,11 +80,7 @@ function a8c_fse_replace_template_parts( $html ) {
 			$node_to_replace->removeChild( $node_to_replace->firstChild );
 		}
 
-		// Rather than appending the FSE content node, we add its child nodes so the extra wrapping div added above is not rendered.
-		for ( $i = 0; $i < $fse_node->childNodes->length; $i++ ) {
-			$fse_child_node = $fse_node->childNodes->item( $i );
-			$node_to_replace->appendChild( $fse_child_node );
-		}
+		$node_to_replace->parentNode->replaceChild( $fse_node, $node_to_replace );
 	}
 
 	return do_blocks( $doc->saveHTML() );
