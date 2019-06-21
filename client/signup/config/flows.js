@@ -56,10 +56,15 @@ function getSignupDestination( dependencies ) {
 		: `/view/${ dependencies.siteSlug }`;
 }
 
+function getThankYouNoSiteDestination() {
+	return `/checkout/thank-you/no-site`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
+	getThankYouNoSiteDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

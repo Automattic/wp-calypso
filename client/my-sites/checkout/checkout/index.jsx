@@ -419,7 +419,8 @@ export class Checkout extends React.Component {
 		}
 
 		if ( cart.create_new_blog ) {
-			return `/checkout/thank-you/no-site/${ pendingOrReceiptId }`;
+			const destination = retrieveSignupDestination();
+			return `${ destination }/${ pendingOrReceiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {

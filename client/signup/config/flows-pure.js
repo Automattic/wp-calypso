@@ -16,6 +16,7 @@ export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
+	getThankYouNoSiteDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -256,10 +257,10 @@ export function generateFlows( {
 			'plans-site-selected',
 			'user',
 		],
-		destination: getSiteDestination,
+		destination: getThankYouNoSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		disallowResume: true,
-		lastModified: '2017-05-09',
+		lastModified: '2019-06-21',
 	};
 
 	flows[ 'site-selected' ] = {
