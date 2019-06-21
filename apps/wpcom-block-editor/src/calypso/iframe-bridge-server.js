@@ -560,6 +560,26 @@ function openLinksInParentFrame() {
 	}
 }
 
+/**
+ * Ensures the Calypso Customizer is opened when clicking on the the FSE blocks' edit buttons.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function openCustomizer( calypsoPort ) {
+	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
+	$( '#editor' ).on( 'click', customizerLinkSelector, e => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'openCustomizer',
+			payload: {
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				autofocus: getQueryArg( e.currentTarget.href, 'autofocus' ),
+			},
+		} );
+	} );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -636,6 +656,8 @@ function initPort( message ) {
 		handleGoToAllPosts( calypsoPort );
 
 		openLinksInParentFrame();
+
+		openCustomizer( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
