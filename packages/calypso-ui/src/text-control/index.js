@@ -32,14 +32,24 @@ class TextControl extends PureComponent {
 		}
 	}
 
+	handleOnFocus( onFocus ) {
+		this.setState( { isFocused: true } );
+		if ( typeof onFocus === 'function' ) {
+			onFocus();
+		}
+	}
+
+	// @todo refactor
 	getClassName( disabled, isEmpty, isActive ) {
 		let className = 'with-value';
-		if ( disabled ) {
-			className = 'disabled';
-		} else if ( isEmpty ) {
+		if ( isEmpty ) {
 			className = 'empty';
-		} else if ( isActive ) {
-			className = 'active';
+		} else if ( disabled ) {
+			className = 'disabled';
+		}
+
+		if ( isActive ) {
+			className += ' active';
 		}
 
 		return className;
@@ -47,7 +57,7 @@ class TextControl extends PureComponent {
 
 	render() {
 		const { isFocused } = this.state;
-		const { className, onClick, ...otherProps } = this.props;
+		const { className, onClick, onFocus, ...otherProps } = this.props;
 		const { label, value, disabled } = otherProps;
 		const isEmpty = ! value;
 		const isActive = isFocused && ! disabled;
@@ -64,6 +74,7 @@ class TextControl extends PureComponent {
 				className={ classes }
 				placeholder={ label }
 				onClick={ () => this.handleOnClick( onClick ) }
+				onFocus={ () => this.handleOnFocus( onFocus ) }
 				{ ...otherProps }
 			/>
 		);

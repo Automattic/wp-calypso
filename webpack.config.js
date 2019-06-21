@@ -2,6 +2,7 @@
  **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 /* eslint-disable import/no-nodejs-modules */
+/* eslint-disable import/no-extraneous-dependencies */
 
 /**
  * External dependencies
@@ -254,6 +255,7 @@ const webpackConfig = {
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.FORCE_REDUCED_MOTION': JSON.stringify( process.env.FORCE_REDUCED_MOTION ),
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
