@@ -3,7 +3,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes, some } from 'lodash';
 
 /**
@@ -54,7 +54,7 @@ const PLUGINS = [ 'akismet', 'vaultpress' ];
  */
 const MAX_RETRIES = 3;
 
-type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps;
+type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps & LocalizeProps;
 
 interface State {
 	startedInstallation: boolean;
