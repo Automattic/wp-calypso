@@ -75,7 +75,7 @@ export class SubscriptionLengthPicker extends React.Component {
 							priceFinal,
 							priceMonthly,
 						} ) => {
-							const price = ! priceFinal ? priceFull : priceFinal;
+							const price = priceFinal || priceFull;
 							return (
 								<div className="subscription-length-picker__option-container" key={ planSlug }>
 									<SubscriptionLengthOption
