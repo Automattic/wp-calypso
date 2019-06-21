@@ -491,8 +491,14 @@ class Full_Site_Editing {
      * @param array $data    An array of slashed post data.
 	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
 	 */
-	public function load_page_template() {
-		return plugin_dir_path( __FILE__ ) . 'page-fse.php';
+	public function load_page_template( $template ) {
+		$fse_template = new A8C_WP_Template();
+
+		if ( is_page() && $fse_template->get_template_id() ) {
+			return plugin_dir_path( __FILE__ ) . 'page-fse.php';
+		}
+
+		return $template;
 	}
 }
 
