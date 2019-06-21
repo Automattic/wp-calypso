@@ -13,15 +13,15 @@ import { useTranslate } from 'i18n-calypso';
 import GSuitePrice from 'components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
 
-function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
+function GSuiteUpsellProductDetails( { currencyCode, cost, domain, plan } ) {
 	const translate = useTranslate();
 
 	return (
-		<div className="gsuite-dialog__product-details">
-			<div className="gsuite-dialog__product-intro">
-				<div className="gsuite-dialog__product-name">
+		<div className="gsuite-upsell-card__product-details">
+			<div className="gsuite-upsell-card__product-intro">
+				<div className="gsuite-upsell-card__product-name">
 					{ /* Intentionally not translated as it is a brand name and Google keeps it in English */ }
-					<span className="gsuite-dialog__product-logo">G Suite</span>
+					<span className="gsuite-upsell-card__product-logo">G Suite</span>
 				</div>
 
 				<p>
@@ -39,11 +39,11 @@ function GoogleAppsProductDetails( { currencyCode, cost, domain, plan } ) {
 	);
 }
 
-GoogleAppsProductDetails.propTypes = {
+GSuiteUpsellProductDetails.propTypes = {
 	currencyCode: PropTypes.string,
 	cost: PropTypes.number,
 	domain: PropTypes.string.isRequired,
 	plan: PropTypes.string.isRequired,
 };
 
-export default GoogleAppsProductDetails;
+export default GSuiteUpsellProductDetails;

@@ -15,7 +15,7 @@ import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
-import GoogleAppsProductDetails from './product-details';
+import GSuiteUpsellProductDetails from './product-details';
 import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
@@ -27,7 +27,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  */
 import './style.scss';
 
-const GSuiteDialog = ( {
+const GSuiteUpsellCard = ( {
 	currencyCode,
 	domain,
 	gSuiteCost,
@@ -82,24 +82,24 @@ const GSuiteDialog = ( {
 			: translate( 'Yes, Add Email \u00BB' );
 
 	return (
-		<div className="gsuite-dialog__form">
+		<div className="gsuite-upsell-card__form">
 			<QueryProducts />
 			<CompactCard>
-				<header className="gsuite-dialog__header">
-					<h2 className="gsuite-dialog__title">
+				<header className="gsuite-upsell-card__header">
+					<h2 className="gsuite-upsell-card__title">
 						{ translate( 'Add Professional email from G Suite by Google Cloud to %(domain)s', {
 							args: {
 								domain,
 							},
 						} ) }
 					</h2>
-					<h5 className="gsuite-dialog__no-setup-required">
+					<h5 className="gsuite-upsell-card__no-setup-required">
 						{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
 					</h5>
 				</header>
 			</CompactCard>
 			<CompactCard>
-				<GoogleAppsProductDetails
+				<GSuiteUpsellProductDetails
 					domain={ domain }
 					cost={ gSuiteCost }
 					currencyCode={ currencyCode }
@@ -111,7 +111,7 @@ const GSuiteDialog = ( {
 					onUsersChange={ handleUsersChange }
 					users={ users }
 				>
-					<div className="gsuite-dialog__buttons">
+					<div className="gsuite-upsell-card__buttons">
 						<Button onClick={ handleSkipClick }>{ translate( 'Skip' ) }</Button>
 
 						<Button primary disabled={ ! canContinue } onClick={ handleAddEmailClick }>
@@ -124,7 +124,7 @@ const GSuiteDialog = ( {
 	);
 };
 
-GSuiteDialog.propTypes = {
+GSuiteUpsellCard.propTypes = {
 	currencyCode: PropTypes.string,
 	domain: PropTypes.string.isRequired,
 	gSuiteCost: PropTypes.number,
@@ -139,4 +139,4 @@ export default connect(
 		gSuiteCost: getProductCost( state, gSuiteProductSlug ),
 	} ),
 	{ recordTracksEvent: recordTracksEventAction }
-)( GSuiteDialog );
+)( GSuiteUpsellCard );

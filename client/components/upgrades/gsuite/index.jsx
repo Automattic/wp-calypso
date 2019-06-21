@@ -13,7 +13,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { addItems } from 'lib/upgrades/actions';
 import { hasDomainInCart } from 'lib/cart-values/cart-items';
-import GSuiteDialog from './gsuite-dialog';
+import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
@@ -46,7 +46,7 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 				{ translate( 'Register %(domain)s', { args: { domain } } ) }
 			</HeaderCake>
 
-			<GSuiteDialog
+			<GSuiteUpsellCard
 				domain={ domain }
 				gSuiteProductSlug={ 'gapps' }
 				onSkipClick={ handleSkipClick }

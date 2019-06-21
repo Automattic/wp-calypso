@@ -15,7 +15,7 @@ import * as driverHelper from '../driver-helper.js';
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.register-domain-step' ) );
-		this.declineGoogleAppsLinkSelector = By.className( 'gsuite-dialog__checkout-button' );
+		this.declineGoogleAppsLinkSelector = By.className( 'gsuite-upsell-card__checkout-button' );
 	}
 
 	async waitForResults() {
@@ -113,11 +113,11 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	}
 
 	selectAddEmailForGoogleApps() {
-		const googleAppsFieldsSelector = By.css( 'fieldset.gsuite-dialog__user-fields' );
+		const googleAppsFieldsSelector = By.css( 'fieldset.gsuite-upsell-card__user-fields' );
 		this.waitForGoogleApps();
 		driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.gsuite-dialog__continue-button' ),
+			By.css( '.gsuite-upsell-card__continue-button' ),
 			this.explicitWaitMS
 		);
 		this.driver.wait(

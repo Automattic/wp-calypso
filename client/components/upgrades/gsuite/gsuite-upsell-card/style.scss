@@ -1,24 +1,24 @@
-.gsuite-dialog__product-details {
+.gsuite-upsell-card__product-details {
 	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 }
 
-.gsuite-dialog__product-intro {
+.gsuite-upsell-card__product-intro {
 	@include breakpoint( '>960px' ) {
 		max-width: 350px;
 		margin-right: 50px;
 	}
 }
 
-.gsuite-dialog__product-name {
+.gsuite-upsell-card__product-name {
 	color: #888;
 	font-size: 25px;
 	font-weight: 100;
 	margin: 0;
 }
 
-.gsuite-dialog__product-logo {
+.gsuite-upsell-card__product-logo {
 	background: url( '/calypso/images/upgrades/g-suite-logo.png' ) no-repeat left;
 	background-size: 73px;
 	display: inline-block;
@@ -28,27 +28,27 @@
 	width: 73px;
 }
 
-.gsuite-dialog__header {
+.gsuite-upsell-card__header {
 	text-align: center;
 
-	.gsuite-dialog__title {
+	.gsuite-upsell-card__title {
 		color: var( --color-neutral-700 );
 		font-weight: 600;
 		margin: 0;
 	}
 }
 
-.gsuite-dialog__no-setup-required {
+.gsuite-upsell-card__no-setup-required {
 	color: var( --color-neutral );
 }
 
-.gsuite-dialog__form {
+.gsuite-upsell-card__form {
 	.notice li {
 		list-style: disc;
 	}
 }
 
-.gsuite-dialog__buttons {
+.gsuite-upsell-card__buttons {
 	display: flex;
 	flex-direction: column;
 

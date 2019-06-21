@@ -14,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import GSuiteDialog from 'components/upgrades/gsuite/gsuite-dialog';
+import GSuiteUpsellCard from 'components/upgrades/gsuite/gsuite-upsell-card';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -92,7 +92,7 @@ export class GSuiteNudge extends React.Component {
 					} ) }
 				/>
 				<QuerySites siteId={ selectedSiteId } />
-				<GSuiteDialog
+				<GSuiteUpsellCard
 					domain={ this.props.domain }
 					gSuiteProductSlug={ 'gapps' }
 					onSkipClick={ this.handleSkipClick }
