@@ -40,6 +40,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
+= 0.2.1 =
+* Bug fix with sub-locales.
+
 = 0.2 =
 * Bug fixes and performance improvements.
 

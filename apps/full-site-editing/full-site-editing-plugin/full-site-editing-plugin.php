@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.2
+ * Version: 0.2.1
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -99,7 +99,7 @@ function a8c_fse_on_plugin_activation() {
 	/**
 	 * Can be used to disable Full Site Editing functionality.
 	 *
-	 * @since 0.1
+	 * @since 0.2
 	 *
 	 * @param bool true if Full Site Editing should be disabled, false otherwise.
 	 */
