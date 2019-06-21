@@ -199,11 +199,17 @@ class A8C_WP_Template {
 	}
 }
 
+/**
+ * Template tag to output the FSE template header markup.
+ */
 function fse_get_header() {
 	$template = new A8C_WP_Template();
 	echo do_blocks( $template->get_header_content() );
 }
 
+/**
+ * Template tag to output the FSE template footer markup.
+ */
 function fse_get_footer() {
 	$template = new A8C_WP_Template();
 	echo do_blocks( $template->get_footer_content() );

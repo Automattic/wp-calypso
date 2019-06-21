@@ -485,11 +485,11 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * This will extract the inner blocks of the post content and
-	 * serialize them back to HTML for saving.
+	 * Determine the page template to use.
+	 * If it's a page being loaded that has a `wp_template`, use our FSE template.
 	 *
-     * @param array $data    An array of slashed post data.
-	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+     * @param string $template template URL passed to filter.
+	 * @return string Filtered template path.
 	 */
 	public function load_page_template( $template ) {
 		$fse_template = new A8C_WP_Template();
