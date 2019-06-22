@@ -69,9 +69,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .page-template-modal__list {
-	padding: 1.5em 0;
-
-
 	.components-base-control__label {
 		@include screen-reader-text();
 	}
