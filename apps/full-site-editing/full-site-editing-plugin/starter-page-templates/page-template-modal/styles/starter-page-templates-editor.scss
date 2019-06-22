@@ -51,6 +51,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	justify-content: center;
 }
 
+.page-template-modal .components-modal__content {
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+}
+
 .page-template-modal__inner {
 	max-width: 700px;
 	margin: 0 auto;
