@@ -18,7 +18,7 @@
  *
  * @var string
  */
-define( 'FSE_VERSION', '0.2.1' );
+define( 'A8C_FSE_VERSION', '0.2.1' );
 
 /**
  * Load Full Site Editing.
