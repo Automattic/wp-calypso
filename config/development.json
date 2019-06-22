@@ -125,7 +125,6 @@
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
-		"nps-survey/notice": true,
 		"network-connection": true,
 		"oauth": false,
 		"onboarding-checklist": true,

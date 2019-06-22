@@ -101,7 +101,6 @@
 		"network-connection": true,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
-		"nps-survey/notice": true,
 		"onboarding-checklist": true,
 		"onboarding-checklist/email-setup": true,
 		"onboarding-checklist/phase2": true,

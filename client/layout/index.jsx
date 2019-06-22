@@ -138,9 +138,7 @@ class Layout extends Component {
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
-				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && (
-					<AsyncLoad require="layout/nps-survey-notice" placeholder={ null } />
-				) }
+				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn
 					section={ this.props.sectionGroup }
