@@ -169,7 +169,7 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
-		$transient_key      = implode( '_', [ 'starter_page_templates', 'v2', $vertical_id, get_locale() ] );
+		$transient_key      = implode( '_', [ 'starter_page_templates', FSE_VERSION, $vertical_id, get_locale() ] );
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
