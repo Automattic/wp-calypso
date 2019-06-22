@@ -12,6 +12,15 @@
  */
 
 /**
+ * Plugin version.
+ *
+ * Can be used in cache keys to invalidate caches on plugin update.
+ *
+ * @var string
+ */
+define( 'A8C_FSE_VERSION', '0.2.1' );
+
+/**
  * Load Full Site Editing.
  */
 function a8c_load_full_site_editing() {
