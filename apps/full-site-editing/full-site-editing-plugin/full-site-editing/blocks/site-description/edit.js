@@ -20,11 +20,11 @@ function SiteDescriptionEdit( {
 	shouldUpdateSiteOption,
 	isSelected,
 } ) {
-	const defaultDescription = __( 'Site description loading…' );
+	const inititalDescription = __( 'Site description loading…' );
 
 	const { onSave, siteOptions, setSiteOptions } = useSiteOptions(
 		'description',
-		defaultDescription,
+		inititalDescription,
 		noticeOperations,
 		isSelected,
 		shouldUpdateSiteOption

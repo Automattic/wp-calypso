@@ -11,24 +11,25 @@ import usePrevious from './usePrevious';
 
 export default function useSiteOptions(
 	siteOption,
-	defaultOption,
+	inititalOption,
 	noticeOperations,
 	isSelected,
 	shouldUpdateSiteOption
 ) {
 	const [ siteOptions, setSiteOptions ] = useState( {
-		option: defaultOption,
-		initialOption: '',
+		option: inititalOption,
+		previousOption: '',
 		loaded: false,
 		isDirty: false,
 		isSaving: false,
+		error: false,
 	} );
 
-	const prevIsSelected = usePrevious( isSelected );
-	const prevShouldUpdateSiteOption = usePrevious( shouldUpdateSiteOption );
+	const previousIsSelected = usePrevious( isSelected );
+	const previousShouldUpdateSiteOption = usePrevious( shouldUpdateSiteOption );
 
 	useEffect( () => {
-		if ( ! siteOptions.loaded ) {
+		if ( ! siteOptions.loaded && ! siteOptions.error ) {
 			loadSiteOption();
 		} else {
 			updateSiteOption();
@@ -41,22 +42,27 @@ export default function useSiteOptions(
 				setSiteOptions( {
 					...siteOptions,
 					option: result[ siteOption ],
-					intialOption: result[ siteOption ],
+					previousOption: result[ siteOption ],
 					loaded: true,
+					error: false,
 				} )
 			)
 			.catch( ( { message } ) => {
 				noticeOperations.createErrorNotice( message );
+				setSiteOptions( {
+					...siteOptions,
+					error: true,
+				} );
 			} );
 	}
 
 	function updateSiteOption() {
-		const { option, initialOption } = siteOptions;
-		const optionUnchanged = option && option.trim() === initialOption.trim();
+		const { option, previousOption } = siteOptions;
+		const optionUnchanged = option && option.trim() === previousOption.trim();
 		const optionIsEmpty = ! option || option.trim().length === 0;
 
 		// Reset to initial value if user de-selects the block with an empty value.
-		if ( ! isSelected && prevIsSelected && optionIsEmpty ) {
+		if ( ! isSelected && previousIsSelected && optionIsEmpty ) {
 			revertOption();
 		}
 
@@ -65,14 +71,14 @@ export default function useSiteOptions(
 			return;
 		}
 
-		if ( ! prevShouldUpdateSiteOption && shouldUpdateSiteOption ) {
+		if ( ! previousShouldUpdateSiteOption && shouldUpdateSiteOption ) {
 			saveSiteOption( option );
 		}
 	}
 
 	function onSave() {
-		const { option, initialOption } = siteOptions;
-		const optionUnchanged = option && option.trim() === initialOption.trim();
+		const { option, previousOption } = siteOptions;
+		const optionUnchanged = option && option.trim() === previousOption.trim();
 
 		if ( optionUnchanged ) {
 			setSiteOptions( { ...siteOptions, isDirty: false } );
@@ -84,7 +90,7 @@ export default function useSiteOptions(
 	function saveSiteOption( option ) {
 		setSiteOptions( { ...siteOptions, isSaving: true } );
 		apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { [ siteOption ]: option } } )
-			.then( () => updateInitialOption( option ) )
+			.then( () => updatePreviousOption( option ) )
 			.catch( ( { message } ) => {
 				noticeOperations.createErrorNotice( message );
 				revertOption();
@@ -94,15 +100,15 @@ export default function useSiteOptions(
 	function revertOption() {
 		setSiteOptions( {
 			...siteOptions,
-			option: siteOptions.initialOption,
+			option: siteOptions.previousOption,
 			isSaving: false,
 		} );
 	}
 
-	function updateInitialOption( option ) {
+	function updatePreviousOption( option ) {
 		setSiteOptions( {
 			...siteOptions,
-			initialOption: option,
+			previousOption: option,
 			isDirty: false,
 			isSaving: false,
 		} );

@@ -25,10 +25,10 @@ function SiteTitleEdit( {
 	shouldUpdateSiteOption,
 	isSelected,
 } ) {
-	const defaultTitle = __( 'Site title loading…' );
+	const inititalTitle = __( 'Site title loading…' );
 	const { onSave, siteOptions, setSiteOptions } = useSiteOptions(
 		'title',
-		defaultTitle,
+		inititalTitle,
 		noticeOperations,
 		isSelected,
 		shouldUpdateSiteOption
