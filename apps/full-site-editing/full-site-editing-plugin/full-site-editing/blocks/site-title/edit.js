@@ -7,75 +7,58 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { withNotices } from '@wordpress/components';
+import { withNotices, Button } from '@wordpress/components';
 import { PlainText } from '@wordpress/editor';
-import apiFetch from '@wordpress/api-fetch';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { Component, Fragment } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
-class SiteTitleEdit extends Component {
-	state = {
-		title: __( 'Site title loading…' ),
-		initialTitle: '',
-	};
+/**
+ * Internal dependencies
+ */
+import useSiteOptions from '../useSiteOptions';
 
-	componentDidMount() {
-		const { noticeOperations } = this.props;
+function SiteTitleEdit( {
+	className,
+	noticeUI,
+	noticeOperations,
+	shouldUpdateSiteOption,
+	isSelected,
+} ) {
+	const defaultTitle = __( 'Site title loading…' );
+	const { onSave, siteOptions, setSiteOptions } = useSiteOptions(
+		'title',
+		defaultTitle,
+		noticeOperations,
+		isSelected,
+		shouldUpdateSiteOption
+	);
 
-		return apiFetch( { path: '/wp/v2/settings' } )
-			.then( ( { title } ) => this.setState( { initialTitle: title, title } ) )
-			.catch( ( { message } ) => noticeOperations.createErrorNotice( message ) );
-	}
+	const { option, isDirty, isSaving } = siteOptions;
 
-	componentDidUpdate( prevProps ) {
-		const { title, initialTitle } = this.state;
-		const { shouldUpdateSiteOption, noticeOperations, isSelected } = this.props;
-
-		const titleUnchanged = title && title.trim() === initialTitle.trim();
-		const titleIsEmpty = ! title || title.trim().length === 0;
-
-		// Reset to initial value if user de-selects the block with an empty value.
-		if ( ! isSelected && prevProps.isSelected && titleIsEmpty ) {
-			this.revertTitle();
-		}
-
-		// Don't do anything further if we shouldn't update the site option or the value is unchanged.
-		if ( ! shouldUpdateSiteOption || titleUnchanged ) {
-			return;
-		}
-
-		if ( ! prevProps.shouldUpdateSiteOption && shouldUpdateSiteOption ) {
-			apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { title } } )
-				.then( () => this.updateInitialTitle() )
-				.catch( ( { message } ) => {
-					noticeOperations.createErrorNotice( message );
-					this.revertTitle();
-				} );
-		}
-	}
-
-	revertTitle = () => this.setState( { title: this.state.initialTitle } );
-
-	updateInitialTitle = () => this.setState( { initialTitle: this.state.title } );
-
-	render() {
-		const { title } = this.state;
-		const { className, noticeUI } = this.props;
-
-		return (
-			<Fragment>
-				{ noticeUI }
-				<PlainText
-					className={ classNames( 'site-title', className ) }
-					value={ title }
-					onChange={ value => this.setState( { title: value } ) }
-					placeholder={ __( 'Site Title' ) }
-					aria-label={ __( 'Site Title' ) }
-				/>
-			</Fragment>
-		);
-	}
+	return (
+		<Fragment>
+			{ noticeUI }
+			<PlainText
+				className={ classNames( 'site-title', className ) }
+				value={ option }
+				onChange={ value => setSiteOptions( { ...siteOptions, option: value, isDirty: true } ) }
+				placeholder={ __( 'Site Title' ) }
+				aria-label={ __( 'Site Title' ) }
+			/>
+			{ isDirty && (
+				<Button
+					isLarge
+					className="site-title__save-button"
+					disabled={ isSaving }
+					isBusy={ isSaving }
+					onClick={ onSave }
+				>
+					{ __( 'Save' ) }
+				</Button>
+			) }
+		</Fragment>
+	);
 }
 
 export default compose( [
