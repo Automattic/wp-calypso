@@ -138,8 +138,8 @@ export default {
 	popularPlanBy: {
 		datestamp: '20190529',
 		variations: {
-			siteType: 50,
-			customerType: 50,
+			siteType: 0,
+			customerType: 100,
 		},
 		defaultVariation: 'siteType',
 	},
