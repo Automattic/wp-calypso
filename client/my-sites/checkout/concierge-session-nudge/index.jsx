@@ -135,7 +135,7 @@ export class ConciergeSessionNudge extends React.Component {
 		return (
 			<header className="concierge-session-nudge__header">
 				<h2 className="concierge-session-nudge__title">
-					{ translate( 'Congratulations, your site is being upgraded.' ) }
+					{ translate( 'A special one time offer, just for you.' ) }
 				</h2>
 			</header>
 		);
