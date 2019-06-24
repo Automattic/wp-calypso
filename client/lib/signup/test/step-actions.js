@@ -3,7 +3,13 @@
 /**
  * Internal dependencies
  */
-import { createSiteWithCart, isSiteTopicFulfilled, isSiteTypeFulfilled } from '../step-actions';
+import {
+	createSiteWithCart,
+	isDomainFulfilled,
+	isPlanFulfilled,
+	isSiteTopicFulfilled,
+	isSiteTypeFulfilled,
+} from '../step-actions';
 import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
 
@@ -86,6 +92,103 @@ describe( 'createSiteWithCart()', () => {
 			[],
 			fakeStore
 		);
+	} );
+} );
+
+describe( 'isDomainFulfilled', () => {
+	const submitSignupStep = jest.fn();
+
+	beforeEach( () => {
+		flows.excludeStep.mockClear();
+		submitSignupStep.mockClear();
+	} );
+
+	test( 'should remove a step when there is greater than one domain', () => {
+		const stepName = 'domains-launch';
+		const nextProps = {
+			siteDomains: [ { domain: 'example.wordpress.com' }, { domain: 'example.com' } ],
+			submitSignupStep,
+		};
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isDomainFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName, domainItem: undefined },
+			{ domainItem: undefined }
+		);
+		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
+	} );
+
+	test( 'should not remove unfulfilled step', () => {
+		const stepName = 'domains-launch';
+		const nextProps = {
+			siteDomains: [ { domain: 'example.wordpress.com' } ],
+			submitSignupStep,
+		};
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isDomainFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'isPlanFulfilled()', () => {
+	const submitSignupStep = jest.fn();
+
+	beforeEach( () => {
+		flows.excludeStep.mockClear();
+		submitSignupStep.mockClear();
+	} );
+
+	test( 'should remove a step for existing paid plan', () => {
+		const stepName = 'plans';
+		const nextProps = { isPaidPlan: true, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isPlanFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName, undefined },
+			{ cartItem: undefined }
+		);
+		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
+	} );
+
+	test( 'should remove a step when provided a cartItem default dependency', () => {
+		const stepName = 'plans';
+		const nextProps = { isPaidPlan: false, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+		const defaultDependencies = { cartItem: 'testPlan' };
+		const cartItem = { free_trial: false, product_slug: defaultDependencies.cartItem };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isPlanFulfilled( stepName, defaultDependencies, nextProps );
+
+		expect( submitSignupStep ).toHaveBeenCalledWith( { stepName, cartItem }, { cartItem } );
+		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
+	} );
+
+	test( 'should not remove unfulfilled step', () => {
+		const stepName = 'plans';
+		const nextProps = { isPaidPlan: false, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isPlanFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
 	} );
 } );
 

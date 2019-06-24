@@ -583,7 +583,10 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	if ( siteDomains && siteDomains.length > 1 ) {
 		const domainItem = undefined;
 		submitSignupStep( { stepName, domainItem }, { domainItem } );
-		recordExcludeStepEvent( stepName, siteDomains );
+		recordExcludeStepEvent(
+			stepName,
+			siteDomains.map( siteDomain => siteDomain.domain ).join( ', ' )
+		);
 
 		fulfilledDependencies = [ 'domainItem' ];
 	}
