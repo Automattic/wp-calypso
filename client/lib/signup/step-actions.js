@@ -50,6 +50,7 @@ import { promisify } from '../../utils';
 import flows from 'signup/config/flows';
 import steps, { isDomainStepSkippable } from 'signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
+import { isDomainRegistration, isDomainTransfer } from '../products-values';
 
 /**
  * Constants
@@ -307,24 +308,23 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		let privacyItem = null;
 		const state = reduxStore.getState();
-		const { domainItem } = newCartItems;
 
-		if ( domainItem ) {
-			const { product_slug: productSlug } = domainItem;
-			const productsList = getProductsList( state );
-			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				privacyItem = updatePrivacyForDomain( domainItem, true );
-
-				if ( privacyItem ) {
-					newCartItems.push( privacyItem );
+		const newCartItemsToAdd = newCartItems.map( item => {
+			// Add privacy protection to domain products, if supported
+			if ( isDomainRegistration( item ) || isDomainTransfer( item ) ) {
+				const { product_slug: productSlug } = item;
+				const productsList = getProductsList( state );
+				if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+					return updatePrivacyForDomain( item, true );
 				}
 			}
-		}
 
-		if ( newCartItems.length ) {
-			SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
+			return item;
+		} );
+
+		if ( newCartItemsToAdd.length ) {
+			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function( cartError ) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
