@@ -45,7 +45,11 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Posts List Block - fixes Edit link to only display for users with appropriate permissions.
 
 = 0.2.1 =
-* Bug fix with sub-locales.
+
+* Starter Page Templates - bug fix with sub-locales.
+* Starter Page Templates - fix momentum scrolling on Modal on iOS.
+* Starter Page Templates - improve comprehension of Templates listing by forcing 2col layout on small viewports.
+* Starter Page Templates - introduced version constant for cache busting purposes.
 
 = 0.2 =
 * Bug fixes and performance improvements.
