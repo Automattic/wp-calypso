@@ -293,7 +293,8 @@ class Full_Site_Editing {
 			array(
 				'editorPostType' => get_current_screen()->post_type,
 				'featureFlags'   => $feature_flags->get_flags(),
-				'closeButtonUrl' => $this->get_close_button_url(),
+				'closeButtonUrl' => esc_url( $this->get_close_button_url() ),
+				'editTemplatePartBaseUrl' => esc_url( $this->get_edit_template_part_base_url() ),
 			)
 		);
 
@@ -420,9 +421,28 @@ class Full_Site_Editing {
 		 *
 		 * @param string Current close button URL.
 		 */
-		$close_button_url = apply_filters( 'a8c_fse_close_button_link', $close_button_url );
+		return apply_filters( 'a8c_fse_close_button_link', $close_button_url );
+	}
 
-		return $close_button_url;
+	/**
+	 * Returns the base URL for the Edit Template Part button. The URL does not contain neither
+	 * the post ID nor the template part ID. Those query arguments should be provided by
+	 * the Template Part on the Block.
+	 *
+	 * @return string edit link without post ID
+	 */
+	public function get_edit_template_part_base_url() {
+		$edit_post_link = remove_query_arg( 'post', get_edit_post_link( 0, 'edit' ) );
+
+		/**
+		 * Filter the Gutenberg's edit template part button base URL
+		 * when editing pages or posts.
+		 *
+		 * @since 0.2
+		 *
+		 * @param string Current edit button URL.
+		 */
+		return apply_filters( 'a8c_fse_edit_template_part_base_url', $edit_post_link );
 	}
 
 	/** This will merge the post content with the post template, modifiying the

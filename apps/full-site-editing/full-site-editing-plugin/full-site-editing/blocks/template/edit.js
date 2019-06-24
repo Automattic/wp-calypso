@@ -15,7 +15,7 @@ import { withSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-
+import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
@@ -48,6 +48,11 @@ const TemplateEdit = compose(
 	const showPlaceholder = isEditing || ! templateId;
 	const showContent = ! isEditing && !! templateId;
 	const isTemplate = 'wp_template' === fullSiteEditing.editorPostType;
+
+	const editTemplatePartUrl = addQueryArgs( fullSiteEditing.editTemplatePartBaseUrl, {
+		post: templateId,
+		fse_parent_post: currentPostId,
+	} );
 
 	return (
 		<Fragment>
@@ -83,7 +88,7 @@ const TemplateEdit = compose(
 								postType="wp_template_part"
 							/>
 							{ !! template && (
-								<a href={ `?post=${ templateId }&action=edit&fse_parent_post=${ currentPostId }` }>
+								<a href={ editTemplatePartUrl }>
 									{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
 								</a>
 							) }
@@ -102,10 +107,7 @@ const TemplateEdit = compose(
 									'This block is part of your site template and may appear on multiple pages.'
 								) }
 							>
-								<Button
-									href={ `?post=${ templateId }&action=edit&fse_parent_post=${ currentPostId }` }
-									isDefault
-								>
+								<Button href={ editTemplatePartUrl } isDefault>
 									{ sprintf( __( 'Edit %s' ), get( template, [ 'title', 'rendered' ], '' ) ) }
 								</Button>
 							</Placeholder>
