@@ -208,15 +208,6 @@
 	}
 }
 
-.wp-login__site-return-link {
-	overflow: hidden;
-	position: relative;
-	white-space: nowrap;
-	&::after {
-		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
-	}
-}
-
 .two-factor-authentication__auth-code-preview {
 	width: 100%;
 	display: block;

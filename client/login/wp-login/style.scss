@@ -42,7 +42,8 @@ $image-height: 47px;
 
 .wp-login__links,
 .wp-login__footer {
-	a, button {
+	a,
+	button {
 		color: var( --color-neutral-500 );
 		text-decoration: none;
 
@@ -53,7 +54,8 @@ $image-height: 47px;
 }
 
 .wp-login__links {
-	a, button {
+	a,
+	button {
 		border-bottom: 1px solid var( --color-neutral-100 );
 		box-sizing: border-box;
 		cursor: pointer;
@@ -122,6 +124,16 @@ $image-height: 47px;
 	width: 100%;
 }
 
+.wp-login__site-return-link {
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+
+	&::after {
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
+	}
+}
+
 .layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ) {
 	@include jetpack-connect-colors();
 }
@@ -179,7 +191,11 @@ $image-height: 47px;
 	}
 
 	.wp-login__site-return-link::after {
-		background: linear-gradient( to right, rgba( var( --color-jetpack-onboarding-background ), 0 ), rgba( var( --color-jetpack-onboarding-background ), 1 ) 90% );
+		background: linear-gradient(
+			to right,
+			rgba( var( --color-jetpack-onboarding-background ), 0 ),
+			rgba( var( --color-jetpack-onboarding-background ), 1 ) 90%
+		);
 	}
 }
 
