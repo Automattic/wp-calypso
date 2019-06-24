@@ -27,6 +27,7 @@ import {
 	isJetpackSite,
 	isSingleUserSite,
 } from 'state/sites/selectors';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
@@ -44,6 +45,7 @@ class SiteMenu extends PureComponent {
 		allSingleSites: PropTypes.bool,
 		canCurrentUser: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		isSiteAtomic: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
 		siteAdminUrl: PropTypes.string,
@@ -211,7 +213,7 @@ class SiteMenu extends PureComponent {
 	}
 
 	getCustomMenuItems() {
-		const { isVip } = this.props;
+		const { isVip, isJetpack, isSiteAtomic } = this.props;
 		//reusable blocks are not shown in the sidebar on wp-admin either
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page', 'wp_block' ] );
 		return reduce(
@@ -240,10 +242,11 @@ class SiteMenu extends PureComponent {
 						// Required to build the menu item class name. Must be discernible from other
 						// items' paths in the same section for item highlighting to work properly.
 						link: '/types/' + postType.name,
-						// don't calypsoify for VIP
-						wpAdminLink: isVip
-							? 'edit.php?post_type=feedback'
-							: 'edit.php?post_type=feedback&calypsoify=1',
+						// don't calypsoify for VIP or Jetpack
+						wpAdminLink:
+							isVip || ( isJetpack && ! isSiteAtomic )
+								? 'edit.php?post_type=feedback&calypsoify=0'
+								: 'edit.php?post_type=feedback&calypsoify=1',
 						showOnAllMySites: false,
 					} );
 				}
@@ -287,6 +290,7 @@ export default connect(
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		isSiteAtomic: isSiteWpcomAtomic( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes: getPostTypes( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
