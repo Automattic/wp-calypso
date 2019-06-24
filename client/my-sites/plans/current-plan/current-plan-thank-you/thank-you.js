@@ -28,6 +28,7 @@ export class ThankYouCard extends Component {
 	render() {
 		const {
 			children,
+			currentRoute,
 			illustration,
 			showCalypsoIntro,
 			showContinueButton,
@@ -38,8 +39,8 @@ export class ThankYouCard extends Component {
 
 		const dismissUrl =
 			this.props.queryArgs && 'install' in this.props.queryArgs
-				? addQueryArgs( { install: this.props.queryArgs.install }, this.props.currentRoute )
-				: this.props.getCurrentRoute;
+				? addQueryArgs( { install: this.props.queryArgs.install }, currentRoute )
+				: currentRoute;
 
 		return (
 			<div className="current-plan-thank-you">
