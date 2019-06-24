@@ -140,6 +140,10 @@ class MediaLibraryExternalHeader extends React.Component {
 				label: translate( 'Animals' ),
 			},
 			{
+				value: 'arts',
+				label: translate( 'Arts' ),
+			},
+			{
 				value: 'birthdays',
 				label: translate( 'Birthdays' ),
 			},
@@ -148,8 +152,36 @@ class MediaLibraryExternalHeader extends React.Component {
 				label: translate( 'Cityscapes' ),
 			},
 			{
+				value: 'crafts',
+				label: translate( 'Crafts' ),
+			},
+			{
 				value: 'food',
 				label: translate( 'Food' ),
+			},
+			{
+				value: 'fashion',
+				label: translate( 'Fashion' ),
+			},
+			{
+				value: 'food',
+				label: translate( 'Food' ),
+			},
+			{
+				value: 'flowers',
+				label: translate( 'Flowers' ),
+			},
+			{
+				value: 'gardens',
+				label: translate( 'Gardens' ),
+			},
+			{
+				value: 'holidays',
+				label: translate( 'Holidays' ),
+			},
+			{
+				value: 'houses',
+				label: translate( 'Houses' ),
 			},
 			{
 				value: 'landmarks',
