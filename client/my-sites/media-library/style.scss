@@ -20,6 +20,7 @@
 }
 
 .media-library__header select {
+	margin: 0;
 	font-size: 12px;
 	padding-top: 2px;
 	font-weight: 500;
@@ -33,6 +34,10 @@
 .media-library__header .button,
 .media-library__header select {
 	margin-right: 8px;
+
+	@include breakpoint( '<660px' ) {
+		margin-bottom: 8px;
+	}
 }
 
 .media-library__header .button.media-library__upload-button {
