@@ -11,15 +11,8 @@
 	}
 }
 
-.sidebar__menu li.stats.selected .sidebar__sparkline {
-	display: none;
-
-	@include breakpoint( '<660px' ) {
-		display: block;
-	}
-}
-
-/* Because the sparkline is an image, there's an exception here
+/* 
+ * Because the sparkline is an image, there's an exception here
  * where specific color schemes are targeted instead of using 
  * CSS variables. This ensures that the sparkline can still be 
  * seen (as white) on some of the darker color schemes.
@@ -27,7 +20,7 @@
 .is-classic-blue .sidebar__menu li.stats.selected .sidebar__sparkline, 
 .is-powder-snow .sidebar__menu li.stats.selected .sidebar__sparkline,
 .is-nightfall .sidebar__menu li.stats.selected .sidebar__sparkline {
-	filter: brightness( 100 );
-	-webkit-filter: brightness( 100 );
+	filter: brightness( 2 );
+	-webkit-filter: brightness( 2 );
 }
 
