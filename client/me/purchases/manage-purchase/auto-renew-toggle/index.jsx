@@ -98,8 +98,8 @@ class AutoRenewToggle extends Component {
 				{ this.state.showAutoRenewDisablingDialog && (
 					<AutoRenewDisablingDialog
 						planName={ planName }
+						purchase={ purchase }
 						siteDomain={ siteDomain }
-						expiryDate={ purchase.expiryMoment.format( 'LL' ) }
 						onClose={ this.onCloseAutoRenewDisablingDialog }
 					/>
 				) }
