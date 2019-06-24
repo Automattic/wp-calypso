@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, find, map } from 'lodash';
+import { difference, get, find, map, sortBy } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -50,20 +50,26 @@ function processStep( state, { step } ) {
 	return updateStep( state, { ...step, status: 'processing' } );
 }
 
-function removeUnneededSteps( state, { flowName } ) {
-	let flowSteps = [];
+function removeUnneededSteps( state, { flowName, currentFlow } ) {
 	const user = userFactory();
+	const currentFlowSteps = get( flows, [ currentFlow, 'steps' ], [] );
+	const newFlowSteps = get( flows, [ flowName, 'steps' ], [] );
+	const stepsToRemove = [
+		// remove any steps from the previous flow that don't appear in the new flow
+		...difference( currentFlowSteps, newFlowSteps ),
+		// remove the user step if the user is logged in
+		...( user && user.get() ? [ 'user' ] : [] ),
+	];
 
-	flowSteps = get( flows, [ flowName, 'steps' ], [] );
+	const filteredSteps = state.filter( ( { stepName } ) => ! stepsToRemove.includes( stepName ) );
+	// Sort the steps currently held in state to match the order of the new flow
+	// Any in-progress steps that were not part of the original flow should be kept
+	// and moved to the start of the progress list.
+	const sortedSteps = sortBy( filteredSteps, ( { stepName } ) => newFlowSteps.indexOf( stepName ) );
 
-	if ( user && user.get() ) {
-		flowSteps = flowSteps.filter( item => item !== 'user' );
-	}
+	debug( `sorting and removing steps:`, { state, filteredSteps, sortedSteps } );
 
-	return state.filter(
-		( step, index ) =>
-			flowSteps.includes( step.stepName ) && index === flowSteps.indexOf( step.stepName )
-	);
+	return sortedSteps;
 }
 
 function saveStep( state, { step } ) {

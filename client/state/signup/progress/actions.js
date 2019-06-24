@@ -120,9 +120,9 @@ export function invalidateStep( step, errors ) {
 	};
 }
 
-export function removeUnneededSteps( flowName ) {
-	return {
+export const removeUnneededSteps = flowName => ( dispatch, getState ) =>
+	dispatch( {
 		type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
+		currentFlow: getCurrentFlowName( getState() ),
 		flowName,
-	};
-}
+	} );
