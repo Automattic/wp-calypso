@@ -24,6 +24,11 @@ import { connectSocialUser } from 'state/login/actions';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import SocialLogo from 'components/social-logo';
 
+/**
+ * Style dependencies
+ */
+import './social-connect-prompt.scss';
+
 class SocialConnectPrompt extends Component {
 	static propTypes = {
 		linkingSocialAuthInfo: PropTypes.object,
