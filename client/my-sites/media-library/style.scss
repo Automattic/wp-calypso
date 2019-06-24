@@ -19,8 +19,19 @@
 	}
 }
 
+.media-library__header select {
+	font-size: 12px;
+	padding-top: 2px;
+	font-weight: 500;
+	color: var( --color-text-subtle );
+
+	&:disabled {
+		color: var( --color-neutral-50 );
+	}
+}
+
 .media-library__header .button,
-.media-library__header .select-dropdown {
+.media-library__header select {
 	margin-right: 8px;
 }
 
@@ -214,10 +225,6 @@
 
 .media-library__content .notice {
 	margin-bottom: 0;
-}
-
-.media-library__content {
-	min-height: 600px;
 }
 
 .media-library__list {

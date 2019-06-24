@@ -19,7 +19,6 @@ import Button from 'components/button';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
-import SelectDropdown from 'components/select-dropdown';
 
 const DEBOUNCE_TIME = 250;
 
@@ -104,8 +103,8 @@ class MediaLibraryExternalHeader extends React.Component {
 		} );
 	};
 
-	onSelectCategory = option => {
-		this.props.onCategoryFilterChange( option.value );
+	onSelectCategory = ev => {
+		this.props.onCategoryFilterChange( ev.target.value );
 	};
 
 	renderCopyButton() {
@@ -221,15 +220,25 @@ class MediaLibraryExternalHeader extends React.Component {
 			},
 		];
 
+		// We use a standard 'select' element here as it solves height/overlap issues with the SelectDropdown that occur when there are no items in the media library.
+		// These would be complicated to fix without further changes to the media library. The standard select element is already used elsewhere in Calypso and requires the
+		// 'is-compact' class to get the correct styling.
+		/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/no-onchange */
 		return (
-			<SelectDropdown
-				compact
-				options={ categories }
-				onSelect={ this.onSelectCategory }
+			<select
+				onChange={ this.onSelectCategory }
 				disabled={ this.state.fetching }
-				initialSelected={ this.props.categoryFilter }
-			/>
+				value={ this.props.categoryFilter || '' }
+				className="is-compact"
+			>
+				{ categories.map( ( item, pos ) => (
+					<option key={ pos } value={ item.value }>
+						{ item.label }
+					</option>
+				) ) }
+			</select>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderCard() {
