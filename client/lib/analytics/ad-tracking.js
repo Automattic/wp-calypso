@@ -101,7 +101,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 		wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-		pinterestInit: '2612678247224',
+		pinterestInit: '2613194105266',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
@@ -428,7 +428,7 @@ async function loadTrackingScripts( callback ) {
 	if ( isPinterestEnabled ) {
 		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
 		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
-		window.pintrk( 'load', '2612678247224', params );
+		window.pintrk( 'load', '2613194105266', params );
 	}
 
 	debug( 'loadTrackingScripts: init done' );
