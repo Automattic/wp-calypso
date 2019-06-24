@@ -39,7 +39,7 @@ const RelatedPosts = ( {
 				<FormFieldset>
 					<SupportInfo
 						text={ translate(
-							'Automatically displays similar content (related posts) at the end of each post.'
+							'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
 						) }
 						link="https://jetpack.com/support/related-posts/"
 					/>
