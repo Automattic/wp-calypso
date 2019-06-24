@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, ge
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.2
-Stable tag: 0.2
+Stable tag: 0.2.2
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -40,8 +40,16 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
+= 0.2.2 =
+
+* Posts List Block - fixes Edit link to only display for users with appropriate permissions.
+
 = 0.2.1 =
-* Bug fix with sub-locales.
+
+* Starter Page Templates - bug fix with sub-locales.
+* Starter Page Templates - fix momentum scrolling on Modal on iOS.
+* Starter Page Templates - improve comprehension of Templates listing by forcing 2col layout on small viewports.
+* Starter Page Templates - introduced version constant for cache busting purposes.
 
 = 0.2 =
 * Bug fixes and performance improvements.
