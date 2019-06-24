@@ -204,6 +204,7 @@ class A8C_WP_Template {
  */
 function fse_get_header() {
 	$template = new A8C_WP_Template();
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo do_blocks( $template->get_header_content() );
 }
 
@@ -212,5 +213,6 @@ function fse_get_header() {
  */
 function fse_get_footer() {
 	$template = new A8C_WP_Template();
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo do_blocks( $template->get_footer_content() );
 }

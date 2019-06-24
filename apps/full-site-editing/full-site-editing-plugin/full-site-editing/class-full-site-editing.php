@@ -16,6 +16,11 @@ class Full_Site_Editing {
 	 */
 	private static $instance = null;
 
+	/**
+	 * Custom post types.
+	 *
+	 * @var Full_Site_Editing
+	 */
 	private $template_post_types = array( 'wp_template', 'wp_template_part' );
 
 	/**
@@ -425,25 +430,24 @@ class Full_Site_Editing {
 		return $close_button_url;
 	}
 
-	/** This will merge the post content with the post template, modifiying the
-	 * $post parameter.
+	/** This will merge the post content with the post template, modifiying the $post parameter.
 	 *
-	 * @param WP_Post $post
+	 * @param WP_Post $post Post instance.
 	 */
 	public function merge_template_and_post( $post ) {
-		// bail if not a REST API Request
+		// Bail if not a REST API Request.
 		if ( defined( 'REST_REQUEST' ) && ! REST_REQUEST ) {
 			return;
 		}
 
-		// bail if the post type is one of the template post types
-		if ( in_array( get_post_type( $post->ID ), $this->template_post_types ) ) {
+		// Bail if the post type is one of the template post types.
+		if ( in_array( get_post_type( $post->ID ), $this->template_post_types, true ) ) {
 			return;
 		}
 
 		$template = new A8C_WP_Template( $post->ID );
 
-		// bail if the post has no tempalte id assigned
+		// Bail if the post has no tempalte id assigned.
 		if ( ! $template->get_template_id() ) {
 			return;
 		}
@@ -460,22 +464,22 @@ class Full_Site_Editing {
 	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
 	 */
 	public function remove_template_components( $data, $postarr ) {
-		// bail if the post type is one of the template post types
-		if ( in_array( $postarr['post_type'], $this->template_post_types ) ) {
+		// Bail if the post type is one of the template post types.
+		if ( in_array( $postarr['post_type'], $this->template_post_types, true ) ) {
 			return $data;
 		}
 
 		$post_content = wp_unslash( $data['post_content'] );
 
-		// bail if post content has no blocks
+		// Bail if post content has no blocks.
 		if ( ! has_blocks( $post_content ) ) {
 			return $data;
 		}
 
 		$post_content_blocks = parse_blocks( $post_content );
-		$post_content_key    = array_search( 'a8c/post-content', array_column( $post_content_blocks, 'blockName' ) );
+		$post_content_key    = array_search( 'a8c/post-content', array_column( $post_content_blocks, 'blockName' ), true );
 
-		// bail if no post content block found
+		// Bail if no post content block found.
 		if ( ! $post_content_key ) {
 			return $data;
 		}
@@ -507,7 +511,7 @@ if ( ! function_exists( 'serialize_block' ) ) {
 	 * Renders an HTML-serialized form of a block object
 	 * from https://core.trac.wordpress.org/ticket/47375
 	 *
-	 * should be available since WordPress 5.3.0
+	 * Should be available since WordPress 5.3.0.
 	 *
 	 * @param array $block The block being rendered.
 	 * @return string The HTML-serialized form of the block
@@ -556,10 +560,10 @@ if ( ! function_exists( 'serialize_blocks' ) ) {
 	 * Renders an HTML-serialized form of a list of block objects
 	 * from https://core.trac.wordpress.org/ticket/47375
 	 *
-	 * should be available since WordPress 5.3.0
+	 * Should be available since WordPress 5.3.0.
 	 *
-	 * @param  array $blocks The list of parsed block objects
-	 * @return string         The HTML-serialized form of the list of blocks
+	 * @param  array $blocks The list of parsed block objects.
+	 * @return string        The HTML-serialized form of the list of blocks.
 	 */
 	function serialize_blocks( $blocks ) {
 		return implode( "\n\n", array_map( 'serialize_block', $blocks ) );

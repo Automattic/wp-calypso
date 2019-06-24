@@ -1,7 +1,10 @@
 <?php
 /**
  * The Full Site Editing page template.
+ *
+ * @package full-site-editing
  */
+
 ?>
 
 <!doctype html>
@@ -15,7 +18,7 @@
 
 <body <?php body_class(); ?>>
 <div id="page" class="site">
-	<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'twentynineteen' ); ?></a>
+	<a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'twentynineteen' ); ?></a>
 
 	<?php fse_get_header(); ?>
 
