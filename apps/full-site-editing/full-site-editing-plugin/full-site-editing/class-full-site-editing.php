@@ -27,21 +27,7 @@ class Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
-
-		add_action(
-			'wp_head',
-			function() {
-				ob_start( 'a8c_fse_replace_template_parts' );
-			}
-		);
-
-		add_action(
-			'wp_footer',
-			function() {
-				ob_end_flush();
-			}
-		);
-
+		add_filter( 'template_include', array( $this, 'load_page_template' ) );
 		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
 		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
 	}
@@ -496,6 +482,23 @@ class Full_Site_Editing {
 
 		$data['post_content'] = wp_slash( serialize_blocks( $post_content_blocks[ $post_content_key ]['innerBlocks'] ) );
 		return $data;
+	}
+
+	/**
+	 * Determine the page template to use.
+	 * If it's a page being loaded that has a `wp_template`, use our FSE template.
+	 *
+     * @param string $template template URL passed to filter.
+	 * @return string Filtered template path.
+	 */
+	public function load_page_template( $template ) {
+		$fse_template = new A8C_WP_Template();
+
+		if ( is_page() && $fse_template->get_template_id() ) {
+			return plugin_dir_path( __FILE__ ) . 'page-fse.php';
+		}
+
+		return $template;
 	}
 }
 
