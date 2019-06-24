@@ -21,13 +21,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-<<<<<<< HEAD
-import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
-=======
-import { addItem } from 'lib/upgrades/actions';
-import { conciergeSessionItem } from 'lib/cart-values/cart-items';
 import { siteQualifiesForPageBuilder } from 'lib/signup/page-builder';
->>>>>>> Remove Skip button redirect duplicate code
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
