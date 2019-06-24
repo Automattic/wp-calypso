@@ -75,8 +75,8 @@ class AutoRenewToggle extends Component {
 			if ( ! success ) {
 				this.props.errorNotice(
 					isTogglingToward
-						? translate( "We've failed to enable auto-renewal for you. Please try again later." )
-						: translate( "We've failed to disable auto-renewal for you. Please try again later." )
+						? translate( "We've failed to enable auto-renewal for you. Please try again." )
+						: translate( "We've failed to disable auto-renewal for you. Please try again." )
 				);
 			}
 
