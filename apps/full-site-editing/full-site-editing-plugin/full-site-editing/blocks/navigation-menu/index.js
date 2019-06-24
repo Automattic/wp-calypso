@@ -29,7 +29,7 @@ registerBlockType( 'a8c/navigation-menu', {
 	attributes: {
 		themeLocation: {
 			type: 'string',
-			default: 'main-1',
+			default: 'menu-1',
 		},
 	},
 	edit,
