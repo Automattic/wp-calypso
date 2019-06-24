@@ -307,8 +307,8 @@ class Full_Site_Editing {
 			array(
 				'editorPostType' => get_current_screen()->post_type,
 				'featureFlags'   => $feature_flags->get_flags(),
-				'closeButtonUrl' => $this->get_close_button_url(),
-				'editTemplatePartBaseUrl' => $this->get_edit_template_part_base_url(),
+				'closeButtonUrl' => esc_url( $this->get_close_button_url() ),
+				'editTemplatePartBaseUrl' => esc_url( $this->get_edit_template_part_base_url() ),
 			)
 		);
 
@@ -446,7 +446,7 @@ class Full_Site_Editing {
 	 * @return string edit link without post ID
 	 */
 	public function get_edit_template_part_base_url() {
-		$edit_post_link = esc_url( remove_query_arg( 'post', get_edit_post_link( 0, 'edit' ) ) );
+		$edit_post_link = remove_query_arg( 'post', get_edit_post_link( 0, 'edit' ) );
 
 		/**
 		 * Filter the Gutenberg's edit template part button base URL
