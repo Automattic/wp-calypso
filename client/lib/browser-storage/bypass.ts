@@ -32,3 +32,7 @@ export async function clearStorage() {
 	debug( 'browser-storage bypass', 'clearStorage' );
 	memoryStore.clear();
 }
+
+export function activate() {
+	memoryStore.clear();
+}

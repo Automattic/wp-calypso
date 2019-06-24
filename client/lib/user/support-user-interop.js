@@ -125,7 +125,7 @@ export async function supportUserBoot() {
 	onBeforeUnload = storeUserAndToken( user, token );
 	window.addEventListener( 'beforeunload', onBeforeUnload );
 
-	await bypassPersistentStorage( true );
+	bypassPersistentStorage( true );
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
@@ -144,7 +144,7 @@ export async function supportNextBoot() {
 		return;
 	}
 
-	await bypassPersistentStorage( true );
+	bypassPersistentStorage( true );
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.

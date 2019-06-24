@@ -31,11 +31,11 @@ async function demo() {
   await setStoredItem( 'my-stored-key', 'some value' );
 
   // Use memory storage.
-  await bypassPersistentStorage( true );
+  bypassPersistentStorage( true );
   await setStoredItem( 'my-stored-key', 'another value' );
 
   // Use persistent storage again.
-  await bypassPersistentStorage( false );
+  bypassPersistentStorage( false );
   console.log( await getStoredItem( 'my-stored-key' ) ); // 'some value'
 }
 ```
