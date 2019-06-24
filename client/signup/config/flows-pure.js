@@ -41,6 +41,14 @@ export function generateFlows( {
 			lastModified: '2019-06-17',
 		},
 
+		'business-blog': {
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans-business' ],
+			destination: getChecklistDestination,
+			description:
+				"Create an account and a blog and then add the business plan to the users cart. Doesn't show preview.",
+			lastModified: '2019-06-24',
+		},
+
 		premium: {
 			steps: [
 				'user',
@@ -54,6 +62,14 @@ export function generateFlows( {
 			destination: getChecklistDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2019-06-17',
+		},
+
+		'premium-blog': {
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans-premium' ],
+			destination: getChecklistDestination,
+			description:
+				"Create an account and a blog and then add the premium plan to the users cart. Doesn't show preview.",
+			lastModified: '2019-06-24',
 		},
 
 		personal: {
@@ -71,6 +87,14 @@ export function generateFlows( {
 			lastModified: '2019-06-17',
 		},
 
+		'personal-blog': {
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans-personal' ],
+			destination: getChecklistDestination,
+			description:
+				"Create an account and a blog and then add the personal plan to the users cart. Doesn't show preview.",
+			lastModified: '2019-06-24',
+		},
+
 		free: {
 			steps: [
 				'user',
@@ -83,6 +107,14 @@ export function generateFlows( {
 			destination: getChecklistDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2019-06-17',
+		},
+
+		'free-blog': {
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains' ],
+			destination: getChecklistDestination,
+			description:
+				"Create an account and a blog and default to the free plan. Doesn't show preview.",
+			lastModified: '2019-06-24',
 		},
 
 		blog: {
