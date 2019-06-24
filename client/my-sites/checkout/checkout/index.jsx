@@ -15,6 +15,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import { shouldShowTax, hasPendingPayment, getEnabledPaymentMethods } from 'lib/cart-values';
 import {
+	conciergeSessionItem,
 	domainMapping,
 	planItem as getCartItemForPlan,
 	themeItem,
@@ -269,7 +270,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug } = this.props;
+		const { planSlug, cart } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -285,6 +286,10 @@ export class Checkout extends React.Component {
 		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
 			cartMeta = this.props.product.split( ':' )[ 1 ];
 			cartItem = domainMapping( { domain: cartMeta } );
+		}
+
+		if ( startsWith( this.props.product, 'concierge-session' ) ) {
+			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
 		if ( cartItem ) {
@@ -433,7 +438,7 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-				return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
+				return `/checkout/${ selectedSiteSlug }/offer-quickstart-session/${ receiptId }`;
 			}
 		}
 

@@ -16,13 +16,31 @@ import {
 	conciergeQuickstartSession,
 } from './controller';
 import SiftScience from 'lib/siftscience';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
 import config from 'config';
+import userFactory from 'lib/user';
 
 export default function() {
 	SiftScience.recordUser();
 
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
+
+	if ( isLoggedOut ) {
+		page(
+			'/checkout/:site/offer-quickstart-session',
+			conciergeQuickstartSession,
+			makeLayout,
+			clientRender
+		);
+
+		page( '/checkout*', redirectLoggedOut );
+
+		return;
+	}
+
+	// Show these paths only for logged in users
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
 		siteSelection,
@@ -99,7 +117,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/add-quickstart-session/pending/:orderId',
+			'/checkout/:site/offer-quickstart-session/pending/:orderId',
 			siteSelection,
 			checkoutPending,
 			makeLayout,
@@ -107,7 +125,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/add-quickstart-session/:receiptId?',
+			'/checkout/:site/offer-quickstart-session/:receiptId?',
 			siteSelection,
 			conciergeQuickstartSession,
 			makeLayout,

@@ -121,21 +121,14 @@ export function gsuiteNudge( context, next ) {
 }
 
 export function conciergeSessionNudge( context, next ) {
-	const { receiptId } = context.params;
+	const { receiptId, site } = context.params;
 	context.store.dispatch(
 		setSection( { name: 'concierge-session-nudge' }, { hasSidebar: false } )
 	);
 
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
-
 	context.primary = (
 		<CartData>
-			<ConciergeSessionNudge receiptId={ Number( receiptId ) } selectedSiteId={ selectedSite.ID } />
+			<ConciergeSessionNudge receiptId={ Number( receiptId ) } siteSlugParam={ site } />
 		</CartData>
 	);
 
@@ -143,23 +136,18 @@ export function conciergeSessionNudge( context, next ) {
 }
 
 export function conciergeQuickstartSession( context, next ) {
-	const { receiptId } = context.params;
+	const { receiptId, site } = context.params;
+
 	context.store.dispatch(
 		setSection( { name: 'concierge-quickstart-session' }, { hasSidebar: false } )
 	);
-
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
 
 	context.primary = (
 		<CartData>
 			<ConciergeQuickstartSession
 				receiptId={ Number( receiptId ) }
-				selectedSiteId={ selectedSite.ID }
+				siteSlugParam={ site }
+				path={ context.path }
 			/>
 		</CartData>
 	);
