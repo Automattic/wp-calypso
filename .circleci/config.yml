@@ -129,7 +129,9 @@ references:
       - ~/.npm
   npm-e2e-install: &npm-e2e-install
     name: Install e2e npm dependencies
-    command: cd test/e2e && npm ci
+    command: |
+      cd test/e2e &&
+      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
