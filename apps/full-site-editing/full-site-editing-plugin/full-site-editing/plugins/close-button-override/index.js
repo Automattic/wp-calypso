@@ -16,9 +16,16 @@ domReady( () => {
 		return;
 	}
 
-	const closeButton = document.querySelector( '.edit-post-fullscreen-mode-close__toolbar a' );
+	const editPostHeaderInception = setInterval( () => {
+		const closeButton = document.querySelector( '.edit-post-fullscreen-mode-close__toolbar a' );
 
-	if ( closeButton ) {
-		closeButton.href = fullSiteEditing.closeButtonUrl;
-	}
+		if ( ! closeButton ) {
+			return;
+		}
+		clearInterval( editPostHeaderInception );
+
+		if ( fullSiteEditing.closeButtonUrl ) {
+			closeButton.href = fullSiteEditing.closeButtonUrl;
+		}
+	} );
 } );
