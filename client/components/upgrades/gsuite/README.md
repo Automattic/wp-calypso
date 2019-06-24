@@ -1,6 +1,6 @@
-# G Suite
+# GSuiteUpgrade
 
-G Suite is a React component used to add G Suite email addresses to domains. It expects to be wrapped in a `CartData` Component.
+GSuiteUpgrade is a React component used to add G Suite email addresses to domains. It expects to be wrapped in a `CartData` Component.
 
 ## Usage
 
