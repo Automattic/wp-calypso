@@ -132,7 +132,7 @@ class Starter_Page_Templates {
 				'slug'  => 'blank',
 			],
 		];
-		$site_info = get_option( 'site_contact_info', [] );
+		$site_info         = get_option( 'site_contact_info', [] );
 		/**
 		 * Filters the config before it's passed to the frontend.
 		 *

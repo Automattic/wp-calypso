@@ -13,7 +13,7 @@
  * @return string
  */
 function render_site_logo( $attributes, $content ) {
-	if ( $attributes[ 'editorPreview' ] === true ) {
+	if ( $attributes['editorPreview'] === true ) {
 		return render_site_logo_editor_preview( $attributes, $content );
 	}
 	return render_site_logo_publish( $attributes, $content );
