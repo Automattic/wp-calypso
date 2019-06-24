@@ -1,4 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+/* global fullSiteEditing */
+
 /**
  * External dependencies
  */
@@ -11,7 +13,7 @@ import { get } from 'lodash';
 import { IconButton, Placeholder, Toolbar } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import { BlockControls } from '@wordpress/editor';
+import { BlockControls, InnerBlocks, PostTitle } from '@wordpress/editor';
 import { Fragment, RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -28,8 +30,16 @@ const PostContentEdit = compose(
 	} ),
 	withSelect( ( select, { selectedPostId, selectedPostType } ) => {
 		const { getEntityRecord } = select( 'core' );
+		/*const templateId = get(
+			select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
+			'_wp_template_id'
+		);
+		console.log( templateId )
+		const taxonomy = select( 'core' ).getTaxonomy( 'wp_template_type' );
+		console.log( taxonomy );*/
 		return {
 			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
+			//hasTemplate: !! templateId,
 		};
 	} )
 )( ( { attributes, isEditing, selectedPost, setState } ) => {
@@ -45,9 +55,11 @@ const PostContentEdit = compose(
 		} );
 	};
 
-	const showToggleButton = ! isEditing || !! selectedPost;
-	const showPlaceholder = isEditing || ! selectedPost;
-	const showPreview = ! isEditing && !! selectedPost;
+	const isTemplatePostType = 'wp_template' === fullSiteEditing.editorPostType;
+	const showToggleButton = isTemplatePostType && ( ! isEditing || !! selectedPost );
+	const showPlaceholder = isTemplatePostType && ( isEditing || ! selectedPost );
+	const showPreview = isTemplatePostType && ! isEditing && !! selectedPost;
+	const showInnerBlocks = ! isTemplatePostType;
 
 	return (
 		<Fragment>
@@ -70,6 +82,8 @@ const PostContentEdit = compose(
 					[ `align${ align }` ]: align,
 				} ) }
 			>
+				<PostTitle />
+				{ showInnerBlocks && <InnerBlocks /> }
 				{ showPlaceholder && (
 					<Placeholder
 						icon="layout"
