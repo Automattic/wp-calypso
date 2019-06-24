@@ -24,7 +24,6 @@ registerBlockType( 'a8c/navigation-menu', {
 	category: 'layout',
 	supports: {
 		html: false,
-		multiple: false,
 		reusable: false,
 	},
 	attributes: {
