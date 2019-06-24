@@ -21,8 +21,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -35,7 +33,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
-import analytics from 'lib/analytics';
 
 /**
  * Style dependencies
@@ -45,6 +42,7 @@ import './style.scss';
 export class ConciergeQuickstartSession extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
+		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 	};
 
 	render() {
@@ -344,31 +342,10 @@ export class ConciergeQuickstartSession extends React.Component {
 	}
 
 	handleClickDecline = () => {
-		const {
-			siteSlug,
-			receiptId,
-			isEligibleForChecklist,
-			trackUpsellButtonClick,
-			redirectToPageBuilder,
-		} = this.props;
+		const { trackUpsellButtonClick, handleCheckoutCompleteRedirect } = this.props;
 
-		trackUpsellButtonClick( `calypso_offer_quickstart_upsell_decline_button_click` );
-
-		if ( ! receiptId ) {
-			// Send the user to a generic page (not post-purchase related).
-			page( `/stats/day/${ siteSlug }` );
-		} else if ( isEligibleForChecklist ) {
-			if ( redirectToPageBuilder ) {
-				return page( getEditHomeUrl( siteSlug ) );
-			}
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: siteSlug,
-				plan: 'paid',
-			} );
-			page( `/checklist/${ siteSlug }` );
-		} else {
-			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
-		}
+		trackUpsellButtonClick( 'decline' );
+		handleCheckoutCompleteRedirect();
 	};
 
 	handleClickAccept = buttonAction => {
@@ -396,8 +373,6 @@ export default connect(
 			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
-			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 			isLoggedIn: isUserLoggedIn( state ),

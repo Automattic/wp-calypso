@@ -135,7 +135,7 @@ export function conciergeSessionNudge( context, next ) {
 			clearTransaction={ true }
 			purchaseId={ Number( receiptId ) }
 		>
-			<ConciergeSessionNudge siteSlugParam={ site } />
+			<ConciergeSessionNudge siteSlugParam={ site } receiptId={ Number( receiptId ) } />
 		</CheckoutContainer>
 	);
 
@@ -150,13 +150,13 @@ export function conciergeQuickstartSession( context, next ) {
 	);
 
 	context.primary = (
-		<CartData>
-			<ConciergeQuickstartSession
-				receiptId={ Number( receiptId ) }
-				siteSlugParam={ site }
-				path={ context.path }
-			/>
-		</CartData>
+		<CheckoutContainer
+			shouldShowCart={ false }
+			clearTransaction={ true }
+			purchaseId={ Number( receiptId ) }
+		>
+			<ConciergeQuickstartSession receiptId={ Number( receiptId ) } siteSlugParam={ site } />
+		</CheckoutContainer>
 	);
 
 	next();
