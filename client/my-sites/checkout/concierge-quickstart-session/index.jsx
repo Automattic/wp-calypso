@@ -344,7 +344,7 @@ export class ConciergeQuickstartSession extends React.Component {
 	handleClickDecline = () => {
 		const { trackUpsellButtonClick, handleCheckoutCompleteRedirect } = this.props;
 
-		trackUpsellButtonClick( 'decline' );
+		trackUpsellButtonClick( 'calypso_offer_quickstart_upsell_decline_button_click' );
 		handleCheckoutCompleteRedirect();
 	};
 

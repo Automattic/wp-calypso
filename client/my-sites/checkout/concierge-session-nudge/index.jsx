@@ -305,7 +305,7 @@ export class ConciergeSessionNudge extends React.Component {
 	handleClickDecline = () => {
 		const { trackUpsellButtonClick, handleCheckoutCompleteRedirect } = this.props;
 
-		trackUpsellButtonClick( 'decline' );
+		trackUpsellButtonClick( 'calypso_concierge_session_upsell_decline_button_click' );
 		handleCheckoutCompleteRedirect();
 	};
 
