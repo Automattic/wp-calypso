@@ -306,7 +306,7 @@ class SiteVerification extends Component {
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="verification-tools"
-								label={ translate( 'Enable Site Verification Services.' ) }
+								label={ translate( 'Verify site ownership with third party services' ) }
 								disabled={ isDisabled }
 							/>
 						</FormFieldset>
