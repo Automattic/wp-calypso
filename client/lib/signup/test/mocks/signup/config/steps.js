@@ -70,6 +70,11 @@ export default {
 		},
 	},
 
+	'site-type': {
+		stepName: 'site-type',
+		providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+	},
+
 	'site-topic': {
 		stepName: 'site-topic',
 		providesDependencies: [ 'siteTopic' ],
