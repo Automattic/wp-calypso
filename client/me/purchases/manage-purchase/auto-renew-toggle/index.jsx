@@ -43,18 +43,12 @@ class AutoRenewToggle extends Component {
 		} );
 	};
 
-	onToggleAutoRenew = () => {
+	toggleAutoRenew = () => {
 		const {
 			purchase: { id: purchaseId },
 			currentUserId,
 			isEnabled,
 		} = this.props;
-
-		if ( isEnabled ) {
-			this.setState( {
-				showAutoRenewDisablingDialog: true,
-			} );
-		}
 
 		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
 
@@ -71,6 +65,19 @@ class AutoRenewToggle extends Component {
 				this.props.fetchUserPurchases( currentUserId );
 			}
 		} );
+	};
+
+	onToggleAutoRenew = () => {
+		const { isEnabled } = this.props;
+
+		if ( isEnabled ) {
+			this.setState( {
+				showAutoRenewDisablingDialog: true,
+			} );
+			return;
+		}
+
+		this.toggleAutoRenew();
 	};
 
 	isUpdatingAutoRenew = () => {
@@ -101,6 +108,7 @@ class AutoRenewToggle extends Component {
 						purchase={ purchase }
 						siteDomain={ siteDomain }
 						onClose={ this.onCloseAutoRenewDisablingDialog }
+						onConfirm={ this.toggleAutoRenew }
 					/>
 				) }
 			</>
