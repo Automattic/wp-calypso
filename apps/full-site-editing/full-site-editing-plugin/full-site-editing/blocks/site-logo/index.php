@@ -6,20 +6,25 @@
  */
 
 /**
- * Renders a site-logo.
+ * Renders a site logo.
  *
  * @param array  $attributes Block attributes.
  * @param string $content    Block content.
  * @return string
  */
 function render_site_logo( $attributes, $content ) {
-	if ( $attributes['editorPreview'] === true ) {
+	if ( true === $attributes['editorPreview'] ) {
 		return render_site_logo_editor_preview( $attributes, $content );
 	}
 	return render_site_logo_publish( $attributes, $content );
 }
 
-function render_site_logo_publish( $attributes, $content ) {
+/**
+ * Renders the site logo on the front-end.
+ *
+ * @return string
+ */
+function render_site_logo_publish() {
 	if ( ! function_exists( 'get_custom_logo' ) || ! function_exists( 'has_custom_logo' ) ) {
 		return '';
 	}
@@ -31,7 +36,12 @@ function render_site_logo_publish( $attributes, $content ) {
 	return get_custom_logo();
 }
 
-function render_site_logo_editor_preview( $attributes, $content ) {
+/**
+ * Renders the site logo in the block editor.
+ *
+ * @return string
+ */
+function render_site_logo_editor_preview() {
 	if ( ! function_exists( 'get_custom_logo' ) || ! function_exists( 'has_custom_logo' ) ) {
 		return sprintf( '<div class="components-placeholder"><div class="components-placeholder__label">%1$s</div></components-placeholder__label><div class="components-placeholder__instructions">%2$s</div></div>', __( 'Site Logo', 'full-site-editing' ), __( 'No Logo Support!', 'full-site-editing' ) );
 	}
