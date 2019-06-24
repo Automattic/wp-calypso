@@ -200,8 +200,7 @@
 			display: none;
 		}
 
-		.login__form-social-divider,
-		.two-factor-authentication__actions-divider {
+		.login__divider {
 			margin: 30px auto;
 			text-transform: lowercase;
 
@@ -603,8 +602,7 @@
 		}
 	}
 
-	.login__form-social-divider,
-	.two-factor-authentication__actions-divider {
+	.login__divider {
 		margin-bottom: 0;
 		margin-top: -41px;
 	}

@@ -14,6 +14,7 @@ import React, { Component } from 'react';
 import Card from 'components/card';
 import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
+import Divider from '../divider';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
@@ -41,10 +42,7 @@ class WaitingTwoFactorNotificationApproval extends Component {
 				</Card>
 
 				<div className="two-factor-authentication__actions">
-					<div className="two-factor-authentication__actions-divider">
-						<span>{ this.props.translate( 'or' ) }</span>
-					</div>
-
+					<Divider>{ this.props.translate( 'or' ) }</Divider>
 					<TwoFactorActions twoFactorAuthType="push" />
 				</div>
 			</form>

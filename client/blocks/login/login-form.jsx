@@ -21,6 +21,7 @@ import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
+import Divider from './divider';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
@@ -413,10 +414,7 @@ export class LoginForm extends Component {
 
 				{ config.isEnabled( 'signup/social' ) && (
 					<div className="login__form-social">
-						<div className="login__form-social-divider">
-							<span>{ this.props.translate( 'or' ) }</span>
-						</div>
-
+						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<Card>
 							<SocialLoginForm
 								onSuccess={ this.props.onSuccess }
