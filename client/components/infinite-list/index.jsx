@@ -160,10 +160,12 @@ export default class InfiniteList extends React.Component {
 		if ( ! this.isScrolling ) {
 			this.cancelAnimationFrame();
 			// updateScroll misbehaves when it's called syncronously from componentDidUpdate.
+			// Promise.resolve() is not used here intentionally to avoid the orignal problem which
+			// I suspect is a race condition introduced by changes in React fiber implementation.
 			setTimeout( () => {
-				this.updateScroll( {
-					triggeredByScroll: false,
-				} );
+				if ( this._isMounted ) {
+					this.updateScroll( { triggeredByScroll: false } );
+				}
 			}, 0 );
 		}
 	}
