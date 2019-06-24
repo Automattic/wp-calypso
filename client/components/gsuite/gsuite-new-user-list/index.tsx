@@ -10,7 +10,13 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import GSuiteNewUser from './new-user';
-import { newUser, GSuiteNewUser as NewUser, validateUser } from 'lib/gsuite/new-users';
+import {
+	clearPreviousErrors,
+	newUser,
+	GSuiteNewUser as NewUser,
+	validateNewUsersAreUnique,
+	validateUser,
+} from 'lib/gsuite/new-users';
 
 /**
  * Style dependencies
@@ -37,8 +43,10 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	const onUserValueChange = ( index: number ) => ( field: string, value: string ) => {
+		const uniqueCheckedUsers = validateNewUsersAreUnique( clearPreviousErrors( users ) );
+
 		const modifiedUser = extraValidation(
-			validateUser( { ...users[ index ], [ field ]: { value, error: null } } )
+			validateUser( { ...uniqueCheckedUsers[ index ], [ field ]: { value, error: null } } )
 		);
 
 		onUsersChange(

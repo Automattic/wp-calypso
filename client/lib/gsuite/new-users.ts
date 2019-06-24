@@ -2,15 +2,14 @@
  * External dependencies
  */
 import emailValidator from 'email-validator';
-import i18n, { TranslateResult }  from 'i18n-calypso';
-import { find, includes, groupBy, map, mapValues } from 'lodash';
+import i18n, { TranslateResult } from 'i18n-calypso';
+import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
 import { hasGSuite } from '.';
-
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -86,10 +85,14 @@ const validateOverallEmailAgainstExistingEmails = (
 			: mailBoxError,
 } );
 
+const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
+	return users.map( user => mapValues( user, field => removePreviousErrors( field ) ) );
+};
+
 const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	// every field is required. Also scrubs previous errors.
 	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
-		requiredField( removePreviousErrors( field ) )
+		requiredField( field )
 	);
 
 	return {
@@ -134,6 +137,30 @@ const isUserComplete = ( user: GSuiteNewUser ): boolean => {
 
 const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 	return Object.values( user ).some( ( { error } ) => null !== error );
+};
+
+const validateNewUserMailboxIsUnique = (
+	{ value: mailBox, error: previousError }: GSuiteNewUserField,
+	mailboxesByCount: { [mailbox: string]: number }
+) => ( {
+	value: mailBox,
+	error:
+		mailboxesByCount[ mailBox ] > 1
+			? i18n.translate( 'Please use a unique mailbox for each user.' )
+			: previousError,
+} );
+
+const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
+	const mailboxesByCount: { [mailbox: string]: number } = countBy(
+		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
+	);
+
+	return users.map( ( { domain, mailBox, firstName, lastName } ) => ( {
+		firstName,
+		lastName,
+		domain,
+		mailBox: validateNewUserMailboxIsUnique( mailBox, mailboxesByCount ),
+	} ) );
 };
 
 /**
@@ -181,6 +208,7 @@ const getItemsForCart = (
 
 export {
 	areAllUsersValid,
+	clearPreviousErrors,
 	doesUserHaveError,
 	getItemsForCart,
 	isUserComplete,
@@ -188,5 +216,6 @@ export {
 	newUser,
 	newUsers,
 	validateAgainstExistingUsers,
+	validateNewUsersAreUnique,
 	validateUser,
 };
