@@ -371,9 +371,7 @@ export class Checkout extends React.Component {
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
-			transaction: {
-				step: { data: receipt },
-			},
+			transaction: { step: { data: receipt = null } = {} } = {},
 		} = this.props;
 		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
 
@@ -498,9 +496,7 @@ export class Checkout extends React.Component {
 			isDomainOnly,
 			reduxStore,
 			selectedSiteId,
-			transaction: {
-				step: { data: receipt },
-			},
+			transaction: { step: { data: receipt = null } = {} } = {},
 			translate,
 		} = this.props;
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
