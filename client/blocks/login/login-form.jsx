@@ -310,13 +310,16 @@ export class LoginForm extends Component {
 
 						<label htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<a href="#" className="login__form-change-username" onClick={ this.resetView }>
+								<button
+									type="button"
+									className="login__form-change-username"
+									onClick={ this.resetView }
+								>
 									<Gridicon icon="arrow-left" size={ 18 } />
-
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</a>
+								</button>
 							) : (
 								this.props.translate( 'Email Address or Username' )
 							) }

@@ -95,9 +95,21 @@
 	}
 }
 
-.login__form-change-username .gridicon {
-	margin-right: 3px;
-	vertical-align: sub;
+.login__form-change-username {
+	color: var( --color-link );
+	font-weight: inherit;
+	cursor: pointer;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: var( --color-link-dark );
+	}
+
+	.gridicon {
+		margin-right: 3px;
+		vertical-align: text-bottom;
+	}
 }
 
 .login__form .form-input-validation {
