@@ -458,7 +458,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isJetpackNotAtomic ) {
-			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
