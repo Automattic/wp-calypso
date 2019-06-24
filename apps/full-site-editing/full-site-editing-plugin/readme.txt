@@ -40,6 +40,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
+= 0.2.2 =
+
+* Posts List Block - fixes Edit link to only display for users with appropriate permissions.
+
 = 0.2.1 =
 * Bug fix with sub-locales.
 
