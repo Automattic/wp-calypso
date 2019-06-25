@@ -70,6 +70,23 @@ export default {
 		},
 	},
 
+	'domains-launch': {
+		stepName: 'domains-launch',
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'domainItem' ],
+	},
+
+	plans: {
+		stepName: 'plans',
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'cartItem' ],
+	},
+
+	'site-type': {
+		stepName: 'site-type',
+		providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+	},
+
 	'site-topic': {
 		stepName: 'site-topic',
 		providesDependencies: [ 'siteTopic' ],
