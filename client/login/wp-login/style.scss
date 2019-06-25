@@ -60,19 +60,30 @@ $image-height: 47px;
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
+		font-size: 14px;
 		font-weight: 500;
 		line-height: 4em;
 		padding: 0 24px;
 		text-align: center;
 		width: 100%;
 
+		&:hover,
+		&:active {
+			color: var( --color-accent );
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+
 		body.is-section-signup & {
 			color: var( --color-white );
 		}
 	}
 
-	a:last-of-type {
-		border-bottom: none;
+	.gridicon {
+		margin-right: 3px;
+		vertical-align: text-bottom;
 	}
 }
 

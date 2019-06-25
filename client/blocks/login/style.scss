@@ -193,20 +193,6 @@
 	margin: 0 10px 10px;
 }
 
-.wp-login__links {
-	a,
-	button {
-		font-size: 14px;
-
-		&:hover {
-			color: var( --color-accent );
-		}
-	}
-	.gridicon {
-		vertical-align: text-bottom;
-	}
-}
-
 .login__form-password.is-hidden {
 	display: none;
 }
