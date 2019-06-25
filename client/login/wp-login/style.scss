@@ -1,4 +1,5 @@
 @import 'jetpack-connect/colors.scss';
+@import 'woocommerce/components/text-control/style.scss';
 
 $image-height: 47px;
 
@@ -226,9 +227,90 @@ $image-height: 47px;
 	.wp-login__links a {
 		border-bottom: none;
 		line-height: 3.4em;
+		color: var( --color-gray-600 );
+		font-size: 14px;
+		text-decoration: underline;
+		font-weight: normal;
 	}
 
 	.login__form-header {
 		color: var( --color-gray-800 );
+	}
+
+	.wp-login__main.main {
+		max-width: 476px;
+	}
+
+	.login__form {
+		@include elevation ( 2dp );
+	}
+
+	.login__form input:focus,
+	.logged-out-form input:focus {
+		border: 0;
+		box-shadow: none;
+	}
+
+	.login__form-change-username {
+		color: var( --color-gray-600 );
+	}
+
+	.login__form-terms,
+	.login__form-terms a,
+	.login__form-terms a:hover {
+		text-align: left;
+		color: var( --color-gray-600 );
+		font-size: 12px;
+	}
+
+	.login__form-social-divider {
+		text-align: center;
+		margin-top: 12px;
+		margin-bottom: 12px;
+		font-size: 12px;
+		position: initial;
+		text-transform: initial;
+	}
+
+	.login__social {
+		box-shadow: none;
+		padding-top: 0;
+	}
+
+	.login__social-buttons {
+		.social-buttons__button {
+			border: 1px solid $muriel-woo-purple-500;
+			color: $muriel-woo-purple-500;
+			box-shadow: none;
+		}
+	}
+
+	.woocommerce-muriel-text-control,
+	.muriel-input-text {
+		border-color: var( --color-gray-200 );
+
+		.text-control__label,
+		.components-base-control__label {
+			color: var( --color-gray-500 );
+			font-size: 12px;
+			font-weight: normal;
+		}
+
+		&.active {
+			box-shadow: 0 0 0 2px var( --color-hot-purple-600 );
+			border-color: transparent;
+		}
+	}
+
+	.login__form-footer {
+		text-align: center;
+		.button {
+			max-width: 310px;
+			height: 48px;
+
+			&.is-primary {
+				border: 0;
+			}
+		}
 	}
 }

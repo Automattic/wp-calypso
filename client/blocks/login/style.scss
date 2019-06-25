@@ -28,8 +28,14 @@
 		margin-right: auto;
 		margin-left: auto;
 		padding-left: 0;
-		margin-top: 15px;
 		display: block;
+		height: 56px;
+		border-bottom: 1px solid #e1e2e2;
+		background: #fff;
+
+		svg {
+			margin-top: 15px;
+		}
 	}
 
 	.login__form-header {

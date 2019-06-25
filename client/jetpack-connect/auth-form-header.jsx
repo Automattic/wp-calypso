@@ -107,7 +107,7 @@ export class AuthFormHeader extends Component {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(
-						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
+						'Your Jetpack account will enable you to start using the benefits offered by Jetpack & WooCommerce Services.'
 					);
 				default:
 					return translate( "Once connected we'll continue setting up your store" );

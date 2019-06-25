@@ -11,6 +11,7 @@ import {
 	find,
 	filter,
 	forEach,
+	get,
 	head,
 	includes,
 	keys,
@@ -41,6 +42,7 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import notices from 'notices';
 import Notice from 'components/notice';
 import LoggedOutForm from 'components/logged-out-form';
@@ -56,6 +58,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { createSocialUserFailed } from 'state/login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSectionName } from 'state/ui/selectors';
+import TextControl from 'extensions/woocommerce/components/text-control';
 
 /**
  * Style dependencies
@@ -399,6 +402,8 @@ class SignupForm extends Component {
 	getLoginLink() {
 		return login( {
 			isJetpack: this.isJetpack(),
+			isWoo:
+				config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
@@ -593,6 +598,86 @@ class SignupForm extends Component {
 		);
 	}
 
+	handleWooCommerceSubmit = event => {
+		event.preventDefault();
+		document.activeElement.blur();
+		this.handleSubmit( event );
+	};
+
+	renderWooCommerce() {
+		return (
+			<div>
+				<TextControl
+					label={ this.props.translate( 'Your email address' ) }
+					disabled={
+						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
+					}
+					id="email"
+					name="email"
+					type="email"
+					value={ formState.getFieldValue( this.state.form, 'email' ) }
+					onBlur={ this.handleBlur }
+					onChange={ value => {
+						this.setState( { notice: null } );
+						this.formStateController.handleFieldChange( {
+							name: 'email',
+							value,
+						} );
+					} }
+				/>
+				{ this.emailDisableExplanation() }
+
+				{ formState.isFieldInvalid( this.state.form, 'email' ) && (
+					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
+				) }
+
+				{ this.props.displayUsernameInput && (
+					<>
+						<TextControl
+							label={ this.props.translate( 'Choose a username' ) }
+							disabled={ this.state.submitting || this.props.disabled }
+							id="username"
+							name="username"
+							value={ formState.getFieldValue( this.state.form, 'username' ) }
+							onBlur={ this.handleBlur }
+							onChange={ value => {
+								this.setState( { notice: null } );
+								this.formStateController.handleFieldChange( {
+									name: 'username',
+									value,
+								} );
+							} }
+						/>
+
+						{ formState.isFieldInvalid( this.state.form, 'username' ) && (
+							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
+						) }
+					</>
+				) }
+
+				<TextControl
+					label={ this.props.translate( 'Choose a password' ) }
+					disabled={ this.state.submitting || this.props.disabled }
+					id="password"
+					name="password"
+					type="password"
+					value={ formState.getFieldValue( this.state.form, 'password' ) }
+					onBlur={ this.handleBlur }
+					onChange={ value => {
+						this.formStateController.handleFieldChange( {
+							name: 'password',
+							value,
+						} );
+					} }
+				/>
+
+				{ this.passwordValidationExplanation() }
+
+				{ this.props.formFooter || this.formFooter() }
+			</div>
+		);
+	}
+
 	handleOnClickTos = () => {
 		analytics.tracks.recordEvent.bind( analytics, 'calypso_signup_tos_link_click' );
 	};
@@ -769,6 +854,39 @@ class SignupForm extends Component {
 			);
 		}
 
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			this.props.isJetpackWooCommerceFlow
+		) {
+			const logInUrl = config.isEnabled( 'login/native-login-links' )
+				? this.getLoginLink()
+				: localizeUrl( config( 'login_url' ), this.props.locale );
+
+			return (
+				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
+					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>
+						{ this.props.formHeader && (
+							<header className="signup-form__header">{ this.props.formHeader }</header>
+						) }
+
+						{ this.renderWooCommerce() }
+
+						{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+							<SocialSignupForm
+								handleResponse={ this.props.handleSocialResponse }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+							/>
+						) }
+					</LoggedOutForm>
+
+					<LoggedOutFormLinkItem href={ logInUrl }>
+						{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
+					</LoggedOutFormLinkItem>
+				</div>
+			);
+		}
+
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
 				{ this.getNotice() }
@@ -801,6 +919,8 @@ export default connect(
 	state => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
+		isJetpackWooCommerceFlow:
+			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),

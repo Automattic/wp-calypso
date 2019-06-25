@@ -18,7 +18,7 @@
 
 @mixin woocommerce-colors() {
 	// Override accent variables with Jetpack colors
-	--color-accent:       #96588a;
+	--color-accent:       var( --color-hot-pink-500 );
 	--color-accent-light: #beabce;
 	--color-accent-dark:  #6d3e64;
 
@@ -30,7 +30,7 @@
 	--color-neutral-200:				  	 var( --color-gray-600 );
 	--color-primary-200:					 var( --color-gray-600 );
 	--color-primary-light:                   var( --color-accent-light );
-	--color-button-primary-background-hover: #7c4471;
+	--color-button-primary-background-hover: #ca2a7c;
 	--color-accent-600:                      var( --color-accent-dark );
 
 	::selection {
