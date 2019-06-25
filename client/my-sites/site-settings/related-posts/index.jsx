@@ -60,9 +60,7 @@ const RelatedPosts = ( {
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_headline' ) }
 						>
-							{ translate(
-								'Show a "Related" header to more clearly separate the related section from posts'
-							) }
+							{ translate( 'Highlight related content with a heading' ) }
 						</CompactFormToggle>
 
 						<CompactFormToggle
