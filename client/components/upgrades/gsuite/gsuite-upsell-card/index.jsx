@@ -112,9 +112,16 @@ const GSuiteUpsellCard = ( {
 					users={ users }
 				>
 					<div className="gsuite-upsell-card__buttons">
-						<Button onClick={ handleSkipClick }>{ translate( 'Skip' ) }</Button>
+						<Button className="gsuite-upsell-card__skip-button" onClick={ handleSkipClick }>
+							{ translate( 'Skip' ) }
+						</Button>
 
-						<Button primary disabled={ ! canContinue } onClick={ handleAddEmailClick }>
+						<Button
+							className="gsuite-upsell-card__add-email-button"
+							primary
+							disabled={ ! canContinue }
+							onClick={ handleAddEmailClick }
+						>
 							{ renderAddEmailButtonText() }
 						</Button>
 					</div>
