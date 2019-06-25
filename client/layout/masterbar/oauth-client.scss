@@ -478,11 +478,13 @@
 	}
 
 	.login__form,
-	.login__form-social,
+	.login__social,
 	.logged-out-form,
 	.two-factor-authentication__actions {
 		.button {
 			max-width: 300px;
+			margin-left: auto;
+			margin-right: auto;
 		}
 	}
 
@@ -584,27 +586,22 @@
 		font-size: 15px;
 	}
 
-	.login__form-social,
+	.login__social,
 	.two-factor-authentication__actions {
 		border-top: 1px solid #e6e6e6;
-		margin: 10px -16px 0;
-		padding-top: 30px;
+		margin: 0 -16px;
+		padding-top: 44px;
 		width: calc( 100% + ( #{$woo-form-whitespace} * 2 ) );
 
 		@include breakpoint( '>480px' ) {
-			margin: 10px -24px 0;
+			margin: 0 -24px;
 			width: calc( 100% + ( #{$woo-form-whitespace-480} * 2 ) );
 		}
 
 		@include breakpoint( '>660px' ) {
-			margin: 20px -100px 0;
+			margin: 0 -100px;
 			width: calc( 100% + ( #{$woo-form-whitespace-660} * 2 ) );
 		}
-	}
-
-	.login__divider {
-		margin-bottom: 0;
-		margin-top: -41px;
 	}
 
 	.wp-login__links {

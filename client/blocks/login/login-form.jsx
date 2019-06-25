@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { capitalize, defer, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -416,20 +416,18 @@ export class LoginForm extends Component {
 				</Card>
 
 				{ config.isEnabled( 'signup/social' ) && (
-					<div className="login__form-social">
+					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
-						<Card>
-							<SocialLoginForm
-								onSuccess={ this.props.onSuccess }
-								socialService={ this.props.socialService }
-								socialServiceResponse={ this.props.socialServiceResponse }
-								linkingSocialService={
-									this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-								}
-								uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							/>
-						</Card>
-					</div>
+						<SocialLoginForm
+							onSuccess={ this.props.onSuccess }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+							linkingSocialService={
+								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+							}
+							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+						/>
+					</Fragment>
 				) }
 
 				{ config.isEnabled( 'signup/social' ) && isCrowdsignalOAuth2Client( oauth2Client ) && (

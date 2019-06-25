@@ -31,11 +31,8 @@ export default function WaitingTwoFactorNotificationApproval() {
 				</p>
 				<PushNotificationIllustration />
 			</Card>
-
-			<div className="two-factor-authentication__actions">
-				<Divider>{ translate( 'or' ) }</Divider>
-				<TwoFactorActions twoFactorAuthType="push" />
-			</div>
+			<Divider>{ translate( 'or' ) }</Divider>
+			<TwoFactorActions twoFactorAuthType="push" />
 		</Fragment>
 	);
 }

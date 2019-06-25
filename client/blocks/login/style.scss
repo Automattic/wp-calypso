@@ -66,8 +66,7 @@
 	}
 }
 
-.card.login__form,
-.login__form-social .card {
+.card.login__form {
 	margin-bottom: 0;
 }
 
@@ -161,6 +160,10 @@
 			color: var( --color-text-subtle );
 		}
 	}
+}
+
+.card.login__social {
+	margin-bottom: 0;
 }
 
 .login__social-buttons {

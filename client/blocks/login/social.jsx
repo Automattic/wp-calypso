@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import Card from 'components/card';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
@@ -121,7 +122,7 @@ class SocialLoginForm extends Component {
 			: null;
 
 		return (
-			<div className="login__social">
+			<Card className="login__social">
 				<div className="login__social-buttons">
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
@@ -143,7 +144,7 @@ class SocialLoginForm extends Component {
 						redirectTo={ redirectTo || '/start' }
 					/>
 				) }
-			</div>
+			</Card>
 		);
 	}
 }
