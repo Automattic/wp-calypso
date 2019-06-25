@@ -31,13 +31,14 @@ export default class extends React.PureComponent {
 
 	// See https://stackoverflow.com/a/18473154/1432801
 	// Renders 2d-canvas like circle segment arcs as svg path
-	partialCircle = ( color, percent ) => {
+	getPathDefinition = percent => {
+		const { lineWidth, size } = this.props;
 		const start = 0.8 * Math.PI;
 		const end = ( 0.8 + 1.4 * ( percent / 100 ) ) * Math.PI;
 		const length = end - start;
 
-		const center = this.props.size / 2;
-		const radius = center - this.props.lineWidth / 2;
+		const center = size / 2;
+		const radius = center - lineWidth / 2;
 
 		const fromX = radius * Math.cos( start ) + center;
 		const fromY = radius * Math.sin( start ) + center;
@@ -46,42 +47,38 @@ export default class extends React.PureComponent {
 		const large = Math.abs( length ) <= Math.PI ? '0' : '1';
 		const sweep = length < 0 ? '0' : '1';
 
-		return (
-			<path
-				d={ `M ${ fromX } ${ fromY } A ${ radius } ${ radius } 0 ${ large } ${ sweep } ${ toX } ${ toY }` }
-				fill="none"
-				stroke={ color }
-				stroke-width={ this.props.lineWidth }
-				stroke-linecap="round"
-			/>
-		);
+		return `M ${ fromX } ${ fromY } A ${ radius } ${ radius } 0 ${ large } ${ sweep } ${ toX } ${ toY }`;
 	};
 
 	render() {
-		const { size } = this.props;
-		const wrapperStyles = {
-			width: this.props.size,
-			height: this.props.size,
-		};
+		const { colorBg, colorFg, labelSize, lineWidth, metric, percentage, size } = this.props;
 		const labelStyles = {
-			color: this.props.colorFg,
-			fontSize: this.props.labelSize + 'px',
+			fontSize: labelSize + 'px',
+			top: `-${ size / 2 + labelSize }px`,
 		};
-		const label = this.props.percentage + '%';
-
-		const labelTop = this.props.size / 2 + this.props.labelSize;
-		labelStyles.top = '-' + labelTop + 'px';
 
 		return (
 			<>
-				<div className="gauge" style={ wrapperStyles }>
+				<div className="gauge" style={ { height: size, width: size } }>
 					<svg width={ size } height={ size } viewBox={ `0 0 ${ size } ${ size }` }>
-						{ this.partialCircle( this.props.colorBg, 100 ) }
-						{ this.partialCircle( this.props.colorFg, this.props.percentage ) }
+						<path
+							d={ this.getPathDefinition( 100 ) }
+							fill="none"
+							stroke={ colorBg }
+							stroke-width={ lineWidth }
+							stroke-linecap="round"
+						/>
+						<path
+							d={ this.getPathDefinition( percentage ) }
+							fill="none"
+							stroke={ colorFg }
+							stroke-width={ lineWidth }
+							stroke-linecap="round"
+						/>
 					</svg>
 					<span className="gauge__label" style={ labelStyles }>
-						<span className="gauge__number">{ label }</span>
-						<span className="gauge__metric">{ this.props.metric }</span>
+						<span className="gauge__number">{ percentage }%</span>
+						<span className="gauge__metric">{ metric }</span>
 					</span>
 				</div>
 			</>
