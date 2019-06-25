@@ -191,6 +191,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 	/**
 	 * A helper to refresh the page, which essentially will restart the installation process.
+	 *
+	 * @return {undefined} Eslint requires this silly return tag. @TODO get rid of this.
 	 */
 	refreshPage = (): void => void window.location.reload();
 
