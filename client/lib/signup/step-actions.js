@@ -22,6 +22,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
+import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 
 // State actions and selectors
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -50,7 +51,6 @@ import { promisify } from '../../utils';
 import flows from 'signup/config/flows';
 import steps, { isDomainStepSkippable } from 'signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
-import { isDomainRegistration, isDomainTransfer } from '../products-values';
 
 /**
  * Constants
