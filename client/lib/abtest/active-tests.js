@@ -125,8 +125,8 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	hideDotBlogSubdomains: {
-		datestamp: '20190613',
+	hideDotBlogSubdomainsV2: {
+		datestamp: '20190626',
 		variations: {
 			show: 50,
 			hide: 50,
