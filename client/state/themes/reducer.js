@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import { mapValues, omit } from 'lodash';
+import { mapValues, omit, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +43,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Returns the updated active theme state after an action has been
@@ -223,11 +223,13 @@ export const themeRequestErrors = createReducer(
  * @return {Object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
+	let serializedQuery;
+
 	switch ( action.type ) {
 		case THEMES_REQUEST:
 		case THEMES_REQUEST_SUCCESS:
 		case THEMES_REQUEST_FAILURE:
-			const serializedQuery = getSerializedThemesQuery( action.query, action.siteId );
+			serializedQuery = getSerializedThemesQuery( action.query, action.siteId );
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: THEMES_REQUEST === action.type,
 			} );
@@ -301,6 +303,14 @@ export const queries = ( () => {
 		};
 	}
 
+	function fromApi( theme ) {
+		if ( ! theme || ! theme.description ) {
+			return theme;
+		}
+
+		return Object.assign( {}, theme, { description: decodeEntities( theme.description ) } );
+	}
+
 	// Time after which queries storred in IndexedDb will be invalidated.
 	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
 	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
@@ -316,7 +326,7 @@ export const queries = ( () => {
 					siteId,
 					'receive',
 					true,
-					themes,
+					map( themes, fromApi ),
 					{ query, found, patch: true }
 				);
 			},
