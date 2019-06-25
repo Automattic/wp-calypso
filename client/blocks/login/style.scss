@@ -162,22 +162,6 @@
 	}
 }
 
-.login-buttons__button:disabled {
-	svg.enabled {
-		display: none;
-	}
-
-	svg.disabled {
-		display: inline;
-	}
-}
-
-.login-buttons__service-error {
-	color: var( --color-error );
-	font-size: 11px;
-	margin: 0 10px 10px;
-}
-
 .login__form-password.is-hidden {
 	display: none;
 }
