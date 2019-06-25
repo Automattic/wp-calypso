@@ -16,7 +16,7 @@ console.log(
 require( '../server/config/validate-config-keys' );
 
 /**
- * Parses the output of a git diff command into javascript file paths.
+ * Parses the output of a git diff command into file paths.
  *
  * @param   {String} command Command to run. Expects output like `git diff --name-only […]`
  * @returns {Array}          Paths output from git command
@@ -25,7 +25,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => /(?:\.json|\.[jt]sx?|\.scss)$/.test( name ) );
+		.filter( name => /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( name ) );
 }
 
 function linterFailure() {
@@ -59,7 +59,16 @@ const toFormat = files.filter( file => ! dirtyFiles.has( file ) );
 // Split the set to format into things to format with stylelint and things to format with prettier.
 // We avoid prettier on sass files because of outstanding bugs in how prettier handles
 // single line comments.
-const [ toStylelintfix, toPrettify ] = _.partition( toFormat, file => file.endsWith( '.scss' ) );
+const { toPrettify, toStylelintfix, toPHPCBF } = _.groupBy( toFormat, file => {
+	switch ( true ) {
+		case file.endsWith( '.scss' ):
+			return 'toStylelintfix';
+		case file.endsWith( '.php' ):
+			return 'toPHPCBF';
+		default:
+			return 'toPrettify';
+	}
+} );
 
 // Format JavaScript and TypeScript files with prettier, then re-stage them. Swallow the output.
 toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
@@ -76,6 +85,15 @@ if ( toStylelintfix.length ) {
 	spawnSync( `./node_modules/.bin/stylelint --fix ${ toStylelintfix.join( ' ' ) }` );
 	execSync( `git add ${ toStylelintfix.join( ' ' ) }` );
 }
+
+// Format the PHP files with PHPCBF and then re-stage them. Swallow the output.
+toPHPCBF.forEach( file => console.log( `PHPCBF formatting staged file: ${ file }` ) );
+if ( toPHPCBF.length ) {
+	execSync( `phpcbf ${ toPHPCBF.join( ' ' ) }`, { cwd: '../apps/' } );
+	execSync( `git add ${ toStylelintfix.join( ' ' ) }` );
+}
+
+process.exit();
 
 // Now run the linters over everything staged to commit, even if they are partially staged
 const [ toStylelint, toEslint ] = _.partition(
