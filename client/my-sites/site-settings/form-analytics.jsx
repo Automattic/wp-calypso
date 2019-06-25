@@ -126,8 +126,12 @@ export class GoogleAnalyticsForm extends Component {
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable Google Analytics by upgrading to Jetpack Premium' )
-			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
+			? translate(
+					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
+			  )
+			: translate(
+					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
+			  );
 
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
