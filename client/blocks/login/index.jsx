@@ -39,6 +39,11 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import userFactory from 'lib/user';
 import AsyncLoad from 'components/async-load';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const user = userFactory();
 
 class Login extends Component {
