@@ -361,7 +361,7 @@ class DomainsStep extends React.Component {
 				// Users choose `Blog` as their site type
 				'blog' === get( signupDependencies, 'siteType' ) ) &&
 			// Assign THE A/B test variation at the last moment, so we have a proper dataset split
-			'show' === abtest( 'hideDotBlogSubdomains' )
+			'show' === abtest( 'hideDotBlogSubdomainsV2' )
 		);
 	}
 
