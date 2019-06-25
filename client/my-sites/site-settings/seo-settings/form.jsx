@@ -307,8 +307,8 @@ export class SeoForm extends React.Component {
 		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable SEO Tools by upgrading to Jetpack Premium' )
-			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
+			? translate( 'Boost your search engine ranking with the power SEO tools in Jetpack Premium' )
+			: translate( 'oost your search engine ranking with the power SEO tools in Jetpack Premium' );
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
