@@ -15,7 +15,7 @@ import * as driverHelper from '../driver-helper.js';
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.register-domain-step' ) );
-		this.declineGoogleAppsLinkSelector = By.className( 'gsuite-upsell-card__checkout-button' );
+		this.declineGoogleAppsLinkSelector = By.className( 'gsuite-upsell-card__skip-button' );
 	}
 
 	async waitForResults() {
@@ -110,27 +110,6 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 			//Sometimes the first click doesn't work. Clicking again
 			await driverHelper.clickWhenClickable( this.driver, this.declineGoogleAppsLinkSelector );
 		}
-	}
-
-	selectAddEmailForGoogleApps() {
-		const googleAppsFieldsSelector = By.css( 'fieldset.gsuite-upsell-card__user-fields' );
-		this.waitForGoogleApps();
-		driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.gsuite-upsell-card__continue-button' ),
-			this.explicitWaitMS
-		);
-		this.driver.wait(
-			until.elementLocated( googleAppsFieldsSelector ),
-			this.explicitWaitMS,
-			'Could not locate the google apps information fieldset'
-		);
-		const googleAppsFieldsElement = this.driver.findElement( googleAppsFieldsSelector );
-		return this.driver.wait(
-			until.elementIsVisible( googleAppsFieldsElement ),
-			this.explicitWaitMS,
-			'Could not see the google apps information fieldset displayed, check it is visible'
-		);
 	}
 
 	selectPreviousStep() {
