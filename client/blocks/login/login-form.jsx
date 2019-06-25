@@ -267,6 +267,7 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
+		const isPasswordHidden = this.isUsernameOrEmailView();
 
 		let signupUrl = config( 'signup_url' );
 
@@ -344,7 +345,7 @@ export class LoginForm extends Component {
 
 						<div
 							className={ classNames( 'login__form-password', {
-								'is-hidden': this.isUsernameOrEmailView(),
+								'is-hidden': isPasswordHidden,
 							} ) }
 						>
 							<label htmlFor="password">{ this.props.translate( 'Password' ) }</label>
@@ -361,6 +362,7 @@ export class LoginForm extends Component {
 								ref={ this.savePasswordRef }
 								value={ this.state.password }
 								disabled={ isFormDisabled }
+								tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
 							/>
 
 							{ requestError && requestError.field === 'password' && (
