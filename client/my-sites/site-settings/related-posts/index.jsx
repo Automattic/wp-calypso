@@ -78,7 +78,18 @@ const RelatedPosts = ( {
 
 					<FormSettingExplanation>
 						{ translate(
-							"These settings won't apply to related posts added using the block editor."
+							"These settings won't apply to {{a}}related posts added using the block editor{{/a}}.",
+							{
+								components: {
+									a: (
+										<a
+											href="https://en.support.wordpress.com/wordpress-editor/blocks/latest-posts-block/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
 						) }
 					</FormSettingExplanation>
 
