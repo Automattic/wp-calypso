@@ -74,7 +74,6 @@
 		color: rgba( 255, 255, 255, 0.8 );
 	}
 
-
 	.gridicon {
 		margin-bottom: 5px;
 		margin-right: 5px;
@@ -231,9 +230,9 @@
 			color: var( --color-text );
 			margin: 0;
 			position: absolute;
-				left: 0;
-				right: 0;
-				top: 84px;
+			left: 0;
+			right: 0;
+			top: 84px;
 			text-align: center;
 
 			@include breakpoint( '>480px' ) {
@@ -334,9 +333,9 @@
 			height: 58px;
 			padding: 20px 40px;
 			position: absolute;
-				bottom: 0;
-				left: 0;
-				right: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
 		}
 
 		.wp-login__crowdsignal-footer-text {
@@ -511,7 +510,8 @@
 		transition: all ease-in-out 0.2s;
 		width: 100%;
 
-		&:focus, &.is-error:hover {
+		&:focus,
+		&.is-error:hover {
 			border: 1px solid #e6e6e6;
 			box-shadow: 0 0 5px 0 rgba( 113, 176, 47, 0.8 );
 			outline: 0;
@@ -590,16 +590,16 @@
 		border-top: 1px solid #e6e6e6;
 		margin: 10px -16px 0;
 		padding-top: 30px;
-		width: calc( 100% + ( #{ $woo-form-whitespace } * 2 ) );
+		width: calc( 100% + ( #{$woo-form-whitespace} * 2 ) );
 
 		@include breakpoint( '>480px' ) {
 			margin: 10px -24px 0;
-			width: calc( 100% + ( #{ $woo-form-whitespace-480 } * 2 ) );
+			width: calc( 100% + ( #{$woo-form-whitespace-480} * 2 ) );
 		}
 
 		@include breakpoint( '>660px' ) {
 			margin: 20px -100px 0;
-			width: calc( 100% + ( #{ $woo-form-whitespace-660 } * 2 ) );
+			width: calc( 100% + ( #{$woo-form-whitespace-660} * 2 ) );
 		}
 	}
 
