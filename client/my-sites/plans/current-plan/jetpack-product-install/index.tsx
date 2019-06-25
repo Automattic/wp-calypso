@@ -255,7 +255,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	}
 }
 
-const mapStateToProps = state => {
+function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const queryArgs = getCurrentQueryArguments( state );
 
@@ -277,7 +277,7 @@ const mapStateToProps = state => {
 		requestedInstalls,
 		status: getJetpackProductInstallStatus( state, siteId ),
 	};
-};
+}
 
 interface ConnectedDispatchProps {
 	recordTracksEvent: typeof recordTracksEvent;
