@@ -1,12 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Fragment } from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,38 +12,30 @@ import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
 import Divider from '../divider';
 
-class WaitingTwoFactorNotificationApproval extends Component {
-	static propTypes = {
-		translate: PropTypes.func.isRequired,
-	};
+/**
+ * Style dependencies
+ */
+import './waiting-notification-approval.scss';
 
-	render() {
-		const { translate } = this.props;
+export default function WaitingTwoFactorNotificationApproval() {
+	const translate = useTranslate();
 
-		return (
-			<form>
-				<Card compact>
-					<p className="two-factor-authentication__info">
-						{ translate(
-							'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
+	return (
+		<Fragment>
+			<Card compact>
+				<p className="two-factor-authentication__info">
+					{ translate(
+						'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
+				<PushNotificationIllustration />
+			</Card>
 
-					<PushNotificationIllustration />
-				</Card>
-
-				<div className="two-factor-authentication__actions">
-					<Divider>{ this.props.translate( 'or' ) }</Divider>
-					<TwoFactorActions twoFactorAuthType="push" />
-				</div>
-			</form>
-		);
-	}
+			<div className="two-factor-authentication__actions">
+				<Divider>{ translate( 'or' ) }</Divider>
+				<TwoFactorActions twoFactorAuthType="push" />
+			</div>
+		</Fragment>
+	);
 }
-
-export default localize( WaitingTwoFactorNotificationApproval );

@@ -67,8 +67,7 @@
 }
 
 .card.login__form,
-.login__form-social .card,
-.two-factor-authentication__actions .card {
+.login__form-social .card {
 	margin-bottom: 0;
 }
 
@@ -206,10 +205,6 @@
 	.gridicon {
 		vertical-align: text-bottom;
 	}
-}
-
-.two-factor-authentication__info {
-	text-align: center;
 }
 
 .two-factor-authentication__small-print {
