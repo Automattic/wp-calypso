@@ -3,6 +3,11 @@
 /**
  * Internal dependencies
  */
+import { includes } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import reducer from '../reducer';
 import {
 	SIGNUP_COMPLETE_RESET,
@@ -13,11 +18,15 @@ import {
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
+import { getUserStub } from 'lib/user';
 
 // Mock necessary for testing removeUnneededSteps
 jest.mock( 'signup/config/flows-pure', () => ( {
-	'new-flow': {
-		steps: [ 'something', 'everything' ],
+	'test-flow-a': {
+		steps: [ 'something', 'everything', 'flow-a-only' ],
+	},
+	'test-flow-b': {
+		steps: [ 'something', 'everything', 'flow-b-only' ],
 	},
 } ) );
 
@@ -26,6 +35,22 @@ jest.mock( 'signup/config/steps-pure', () => ( {
 	stepWithAPI: { apiRequestFunction: () => {} },
 	stepWithoutAPI: {},
 } ) );
+
+// Mock necessary for testing logged in/logged out behavior
+// jest.mock( 'lib/user', () => ( {
+// 	get: false,
+// } ) );
+
+jest.mock( 'lib/user', () => {
+	const getStub = jest.fn();
+
+	const user = () => ( {
+		get: getStub,
+	} );
+	user.getUserStub = getStub;
+
+	return user;
+} );
 
 describe( 'reducer', () => {
 	test( 'should return an empty at first', () => {
@@ -218,23 +243,99 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'removing unneded steps', () => {
-		test( 'should remove steps that are not in the new flow', () => {
+	describe( 'removing redundant steps', () => {
+		// 		test( 'should remove steps that are not in the new flow', () => {
+		// 			const initialState = [
+		// 				{ stepName: 'something', value: 'great something' },
+		// 				{ stepName: 'everything', value: 'great everything' },
+		// 				{ stepName: 'nothing', value: 'great nothing' },
+		// 				{ stepName: 'one', value: 'great one' },
+		// 			];
+		//
+		// 			const action = { type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS, flowName: 'test-flow-a' };
+		//
+		// 			const finalState = [
+		// 				{ stepName: 'something', value: 'great something' },
+		// 				{ stepName: 'everything', value: 'great everything' },
+		// 			];
+		//
+		// 			expect( reducer( initialState, action ) ).toEqual( finalState );
+		// 		} );
+
+		describe( "when progress contains extra steps that aren't part of flow A or flow B", () => {
+			const extraStep = { stepName: 'extra-step', value: 'an extra step' };
+			const anotherExtraStep = { stepName: 'another-extra-step', value: 'another extra step' };
 			const initialState = [
-				{ stepName: 'something', value: 'great something' },
-				{ stepName: 'everything', value: 'great everything' },
-				{ stepName: 'nothing', value: 'great nothing' },
-				{ stepName: 'one', value: 'great one' },
+				{ stepName: 'something', value: 'great everything' },
+				{ stepName: 'everything', value: 'great nothing' },
+				extraStep,
+				anotherExtraStep,
 			];
 
-			const action = { type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS, flowName: 'new-flow' };
+			const action = {
+				type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
+				currentFlow: 'test-flow-a',
+				flowName: 'test-flow-b',
+			};
 
-			const finalState = [
-				{ stepName: 'something', value: 'great something' },
-				{ stepName: 'everything', value: 'great everything' },
-			];
+			const result = reducer( initialState, action );
 
-			expect( reducer( initialState, action ) ).toEqual( finalState );
+			test( 'it maintains those extra steps', () => {
+				expect( includes( result, extraStep ) ).toBe( true );
+				expect( includes( result, anotherExtraStep ) ).toBe( true );
+			} );
+
+			test( 'it moves the extra steps to the start of the progress collection', () => {
+				expect( result.indexOf( extraStep ) ).toEqual( 0 );
+				expect( result.indexOf( anotherExtraStep ) ).toEqual( 1 );
+			} );
+		} );
+
+		describe( `when progress state contains steps that are part of flow A but not part of flow B`, () => {
+			const commonStep1 = { stepName: 'something', value: 'great everything' };
+			const commonStep2 = { stepName: 'everything', value: 'great nothing' };
+			const extraneousStep = { stepName: 'flow-a-only', value: 'everything else' };
+
+			const initialState = [ commonStep1, commonStep2, extraneousStep ];
+
+			const action = {
+				type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
+				currentFlow: 'test-flow-a',
+				flowName: 'test-flow-b',
+			};
+
+			const result = reducer( initialState, action );
+
+			test( 'it omits those steps from state', () => {
+				expect( includes( result, extraneousStep ) ).toBe( false );
+			} );
+
+			test( 'it keeps the matching steps', () => {
+				expect( includes( result, commonStep1 ) ).toBe( true );
+				expect( includes( result, commonStep2 ) ).toBe( true );
+			} );
+		} );
+
+		describe( 'when a user is logged in', () => {
+			getUserStub.mockReturnValueOnce( {
+				localeSlug: 'en',
+			} );
+
+			const userStep = { stepName: 'user', value: 'user step value' };
+
+			const initialState = [ { stepName: 'something', value: 'great everything' }, userStep ];
+
+			const action = {
+				type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
+				currentFlow: 'test-flow-a',
+				flowName: 'test-flow-b',
+			};
+
+			const result = reducer( initialState, action );
+
+			test( 'it removes the user step', () => {
+				expect( includes( result, userStep ) ).toBe( false );
+			} );
 		} );
 	} );
 
