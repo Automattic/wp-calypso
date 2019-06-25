@@ -37,11 +37,11 @@ const getDB = memoizeLast( () => {
 			reject( error );
 		}
 	} );
-} ) as () => Promise< IDBDatabase >;
+} );
 
 const supportsIDB = memoizeLast( async () => {
 	if ( typeof window === 'undefined' || ! window.indexedDB ) {
-		return Promise.resolve( false );
+		return false;
 	}
 
 	try {
@@ -53,7 +53,7 @@ const supportsIDB = memoizeLast( async () => {
 		// IDB sanity test failed. Fall back to alternative method.
 		return false;
 	}
-} ) as () => Promise< boolean >;
+} );
 
 function idbGet< T >( key: string ): Promise< T | undefined > {
 	return new Promise( ( resolve, reject ) => {
