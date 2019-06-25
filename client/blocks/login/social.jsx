@@ -27,6 +27,11 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
 import { login } from 'lib/paths';
 
+/**
+ * Style dependencies
+ */
+import './social.scss';
+
 class SocialLoginForm extends Component {
 	static propTypes = {
 		createSocialUser: PropTypes.func.isRequired,
