@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -17,79 +14,77 @@ export default class extends React.PureComponent {
 
 	static propTypes = {
 		percentage: PropTypes.number.isRequired,
-		width: PropTypes.number,
-		height: PropTypes.number,
-		colors: PropTypes.array,
+		size: PropTypes.number,
+		colorBg: PropTypes.string,
+		colorFg: PropTypes.string,
 		lineWidth: PropTypes.number,
 		metric: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
-		width: 118,
-		height: 118,
+		size: 118,
 		lineWidth: 9,
 		labelSize: 32,
-		colors: [ '#e9eff3', '#00aadc' ],
+		colorBg: '#e9eff3',
+		colorFg: '#00aadc',
 	};
 
-	componentDidUpdate() {
-		let canvas = this.refs.canvas,
-			ctx = canvas.getContext( '2d' );
+	// See https://stackoverflow.com/a/18473154/1432801
+	// Renders 2d-canvas like circle segment arcs as svg path
+	partialCircle = ( color, percent ) => {
+		const start = 0.8 * Math.PI;
+		const end = ( 0.8 + 1.4 * ( percent / 100 ) ) * Math.PI;
+		const length = end - start;
 
-		ctx.clearRect( 0, 0, this.props.width, this.props.height );
-		this.drawArcs();
-	}
+		const center = this.props.size / 2;
+		const radius = center - this.props.lineWidth / 2;
 
-	componentDidMount() {
-		this.drawArcs();
-	}
+		const fromX = radius * Math.cos( start ) + center;
+		const fromY = radius * Math.sin( start ) + center;
+		const toX = radius * Math.cos( end ) + center;
+		const toY = radius * Math.sin( end ) + center;
+		const large = Math.abs( length ) <= Math.PI ? '0' : '1';
+		const sweep = length < 0 ? '0' : '1';
 
-	drawArcs = () => {
-		let canvas = this.refs.canvas,
-			x = this.props.width / 2,
-			y = this.props.height / 2,
-			ctx = canvas.getContext( '2d' ),
-			startAngle = 0.8 * Math.PI,
-			endAngle = 2.2 * Math.PI,
-			valueEndAngle = ( 0.8 + 1.4 * ( this.props.percentage / 100 ) ) * Math.PI,
-			radius = x - this.props.lineWidth / 2,
-			angleData = [ endAngle, valueEndAngle ];
-
-		angleData.forEach( function( angle, idx ) {
-			ctx.beginPath();
-			ctx.arc( x, y, radius, startAngle, angle, false );
-			ctx.lineWidth = this.props.lineWidth;
-			ctx.strokeStyle = this.props.colors[ idx ];
-			ctx.lineCap = 'round';
-			ctx.stroke();
-		}, this );
+		return (
+			<path
+				d={ `M ${ fromX } ${ fromY } A ${ radius } ${ radius } 0 ${ large } ${ sweep } ${ toX } ${ toY }` }
+				fill="none"
+				stroke={ color }
+				stroke-width={ this.props.lineWidth }
+				stroke-linecap="round"
+			/>
+		);
 	};
 
 	render() {
-		let wrapperStyles = {
-				width: this.props.width,
-				height: this.props.height,
-			},
-			labelStyles = {
-				color: this.props.colors[ 1 ],
-				fontSize: this.props.labelSize + 'px',
-			},
-			labelTop,
-			label = this.props.percentage + '%';
+		const { size } = this.props;
+		const wrapperStyles = {
+			width: this.props.size,
+			height: this.props.size,
+		};
+		const labelStyles = {
+			color: this.props.colorFg,
+			fontSize: this.props.labelSize + 'px',
+		};
+		const label = this.props.percentage + '%';
 
-		// style the label
-		labelStyles.color = this.props.colors[ 1 ];
-		labelTop = this.props.height / 2 + this.props.labelSize;
+		const labelTop = this.props.size / 2 + this.props.labelSize;
 		labelStyles.top = '-' + labelTop + 'px';
 
 		return (
-			<div className="gauge" style={ wrapperStyles }>
-				<canvas ref="canvas" width={ this.props.width } height={ this.props.height } />
-				<span className="gauge__label" style={ labelStyles }>
-					<span className="gauge__number">{ label }</span>
-					<span className="gauge__metric">{ this.props.metric }</span>
-				</span>
-			</div>
+			<>
+				<div className="gauge" style={ wrapperStyles }>
+					<svg width={ size } height={ size } viewBox={ `0 0 ${ size } ${ size }` }>
+						{ this.partialCircle( this.props.colorBg, 100 ) }
+						{ this.partialCircle( this.props.colorFg, this.props.percentage ) }
+					</svg>
+					<span className="gauge__label" style={ labelStyles }>
+						<span className="gauge__number">{ label }</span>
+						<span className="gauge__metric">{ this.props.metric }</span>
+					</span>
+				</div>
+			</>
 		);
 	}
 }
