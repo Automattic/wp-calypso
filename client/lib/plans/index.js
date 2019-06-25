@@ -465,3 +465,78 @@ export function getPlanTermLabel( planName, translate ) {
 			return translate( 'Two year subscription' );
 	}
 }
+
+export const getPopularPlanType = siteType => {
+	switch ( siteType ) {
+		case 'blog':
+			return TYPE_PERSONAL;
+		case 'professional':
+			return TYPE_PREMIUM;
+		default:
+			return TYPE_BUSINESS;
+	}
+};
+
+export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest } ) => {
+	const spec = {
+		type: TYPE_BUSINESS,
+		group: isJetpack ? GROUP_JETPACK : GROUP_WPCOM,
+	};
+
+	// Not sure why, but things break if the abtest lib is imported in this file
+	if ( ! siteType || abtest( 'popularPlanBy' ) === 'customerType' ) {
+		if ( customerType === 'personal' ) {
+			spec.type = TYPE_PREMIUM;
+		}
+		return spec;
+	}
+
+	spec.type = getPopularPlanType( siteType );
+
+	return spec;
+};
+
+export const chooseDefaultCustomerType = ( {
+	currentCustomerType,
+	selectedPlan,
+	currentPlan,
+	siteType,
+	abtest,
+} ) => {
+	if ( currentCustomerType ) {
+		return currentCustomerType;
+	}
+
+	if ( abtest( 'popularPlanBy' ) === 'siteType' ) {
+		// Choose the tab that will make the "POPULAR" label visible when the
+		// page is first loaded.
+		switch ( siteType ) {
+			case 'blog':
+			case 'professional':
+				return 'personal';
+			default:
+				return 'business';
+		}
+	}
+
+	const group = GROUP_WPCOM;
+	const businessPlanSlugs = [
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+	]
+		.map( planKey => getPlan( planKey ) )
+		.map( plan => plan.getStoreSlug() );
+
+	if ( selectedPlan ) {
+		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
+	} else if ( currentPlan ) {
+		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
+		return isPlanInBusinessGroup ? 'business' : 'personal';
+	}
+
+	return 'personal';
+};
