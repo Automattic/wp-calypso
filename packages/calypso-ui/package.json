@@ -27,10 +27,11 @@
 		"src"
 	],
 	"dependencies": {
+		"@automattic/calypso-ui": "file:./",
 		"classnames": "2.2.6",
 		"react": "^16.8.3",
 		"prop-types": "^15.7.2",
-		"@wordpress/components": "^8.0.0"
+		"@wordpress/components": "7.0.8"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",

@@ -18,38 +18,30 @@ class TextControl extends PureComponent {
 		};
 	}
 
-	/**
-	 * A `withFocusOutside`'s default function, handler for the focus outside the component event.
-	 */
 	handleFocusOutside() {
 		this.setState( { isFocused: false } );
 	}
 
 	handleOnClick( onClick ) {
 		this.setState( { isFocused: true } );
-		if ( typeof onClick === 'function' ) {
+		if ( 'function' === typeof onClick ) {
 			onClick();
 		}
 	}
 
 	handleOnFocus( onFocus ) {
 		this.setState( { isFocused: true } );
-		if ( typeof onFocus === 'function' ) {
+		if ( 'function' === typeof onFocus ) {
 			onFocus();
 		}
 	}
 
-	// @todo refactor
-	getClassName( disabled, isEmpty, isActive ) {
+	getStatusClassName( disabled, isEmpty ) {
 		let className = 'with-value';
 		if ( isEmpty ) {
 			className = 'empty';
 		} else if ( disabled ) {
 			className = 'disabled';
-		}
-
-		if ( isActive ) {
-			className += ' active';
 		}
 
 		return className;
@@ -62,12 +54,11 @@ class TextControl extends PureComponent {
 		const isEmpty = ! value;
 		const isActive = isFocused && ! disabled;
 
-		const classes = classNames(
-			'muriel-component',
-			'muriel-input-text',
-			className,
-			this.getClassName( disabled, isEmpty, isActive )
-		);
+		const classes = classNames( className, this.getStatusClassName( disabled, isEmpty ), {
+			active: isActive,
+			'muriel-component': true,
+			'muriel-input-text': true,
+		} );
 
 		return (
 			<BaseComponent

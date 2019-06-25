@@ -1,22 +1,15 @@
-.muriel-component {
-	margin-top: 14px;
-	margin-bottom: 14px;
-	&.is-centered {
-		margin-left: auto;
-		margin-right: auto;
-	}
-}
-
 .muriel-input-text {
 	position: relative;
 	width: 100%;
 	height: 56px;
+	margin-top: 14px;
+	margin-bottom: 14px;
 
-	border: 1px solid $muriel-gray-200;
+	border: 1px solid var( --color-primary-200 );
 	box-shadow: none;
 	box-sizing: border-box;
 	border-radius: 3px;
-	background: $muriel-white;
+	background: var( --color-white );
 
 	label {
 		position: absolute;
@@ -29,10 +22,10 @@
 
 		font-size: 12px;
 		line-height: 16px;
-		color: $muriel-gray-500;
+		color: var( --color-text );
 	}
  
-	input[type='text'], input[type='number'] {
+	input[type='text'] {
 		position: absolute;
 		width: calc( 100% - 18px - 20px );
 		height: 24px;
@@ -53,14 +46,18 @@
 	}
 
 	&.active {
-		box-shadow: 0 0 0 2px $muriel-hot-purple-600;
+		box-shadow: 0 0 0 2px var( --color-accent );
 		border-color: transparent;
+
+		label {
+			color: var( --color-accent );
+		}
 	}
  
 	&.with-value {
-		input[type='text'], input[type='number'] {
+		input[type='text'] {
 			top: 25px;
-			color: $muriel-gray-800;
+			color: var( --color-text );
 		}
 	 }
  
@@ -70,7 +67,7 @@
 		}
 		input[type='text'] {
 			top: 15px;
-			color: $muriel-gray-500;
+			color: var( --color-primary-500 );
 		}
 	}
 
@@ -80,9 +77,9 @@
 		}
 		input[type='text'] {
 			top: 17px;
-			color: $muriel-gray-200;
+			color: var( --color-primary-200 );
 			&::placeholder {
-				color: $muriel-gray-200;
+				color: var( --color-primary-200 );
 				opacity: 1;
 			}
 		}

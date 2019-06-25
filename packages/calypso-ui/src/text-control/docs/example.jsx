@@ -16,11 +16,10 @@ export default class extends PureComponent {
 	state = {
 		inputTextValue1: 'Input value',
 		inputTextValue2: '',
-		inputNumValue: 0,
 	};
 
 	render() {
-		const { inputTextValue1, inputTextValue2, inputNumValue } = this.state;
+		const { inputTextValue1, inputTextValue2 } = this.state;
 		return (
 			<div>
 				<TextControl
@@ -32,12 +31,6 @@ export default class extends PureComponent {
 					label={ 'Text Input empty' }
 					value={ inputTextValue2 }
 					onChange={ value => this.setState( { inputTextValue2: value } ) }
-				/>
-				<TextControl
-					type="number"
-					label={ 'Number Input' }
-					value={ inputNumValue }
-					onChange={ value => this.setState( { inputNumValue: value } ) }
 				/>
 				<TextControl label={ 'Text Input disabled' } disabled />
 			</div>
