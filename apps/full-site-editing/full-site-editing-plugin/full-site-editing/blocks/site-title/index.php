@@ -4,14 +4,14 @@
  *
  * @package full-site-editing
  */
+
 /**
  * Renders the site title and allows for editing in the full site editor.
  *
- * @param array  $attributes Block attributes.
- * @param string $content    Block content.
+ * @param array $attributes Block attributes.
  * @return string
  */
-function render_site_title_block( $attributes, $content ) {
+function render_site_title_block( $attributes ) {
 	ob_start();
 
 	$class = 'site-title wp-block-a8c-site-title';
@@ -21,7 +21,7 @@ function render_site_title_block( $attributes, $content ) {
 
 	?>
 	<h1 class="<?php echo esc_attr( $class ); ?>">
-		<a href=<?php echo get_home_url(); ?>><?php echo get_bloginfo( 'name' ); ?></a>
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>
 	</h1>
 	<!-- a8c:site-title -->
 	<?php

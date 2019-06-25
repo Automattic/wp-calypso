@@ -8,6 +8,7 @@
 /**
  * Renders the site description (tagline) block.
  *
+ * @param array $attributes Block attributes.
  * @return string
  */
 function render_site_description_block( $attributes ) {
