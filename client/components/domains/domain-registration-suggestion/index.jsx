@@ -136,8 +136,8 @@ class DomainRegistrationSuggestion extends React.Component {
 		let buttonStyles = this.props.buttonStyles;
 		const buttonCopyTest =
 			abtest( 'domainSelectButtonCopy' ) === 'purchase'
-				? translate( 'Purchase', { context: 'Domain mapping suggestion button' } )
-				: translate( 'Select', { context: 'Domain mapping suggestion button' } );
+				? translate( 'Purchase', { context: 'verb' } )
+				: translate( 'Select', { context: 'Domain suggestion button' } );
 
 		if ( isAdded ) {
 			buttonContent = translate( '{{checkmark/}} In Cart', {
