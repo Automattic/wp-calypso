@@ -1,4 +1,3 @@
-
 .editor-media-modal.dialog.card {
 	position: absolute;
 	top: 0;
@@ -34,18 +33,6 @@
 	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .section-nav' );
 	@include breakpoint( '>480px' ) {
 		margin-bottom: 16px;
-	}
-	
-	.search {
-		&.is-expanded-to-container {
-			height: 100%;
-		}
-		
-		&.has-focus {
-			@include breakpoint( '<660px' ) {
-				margin-right: 4px;
-			}
-		}
 	}
 }
 
