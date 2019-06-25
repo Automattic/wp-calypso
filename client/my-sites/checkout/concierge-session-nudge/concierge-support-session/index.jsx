@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import Gridicon from 'gridicons';
 import formatCurrency from '@automattic/format-currency';
 
@@ -20,7 +20,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
  */
 import './style.scss';
 
-export class ConciergeSupportSession extends React.Component {
+export class ConciergeSupportSession extends PureComponent {
 	render() {
 		const { receiptId, translate } = this.props;
 
