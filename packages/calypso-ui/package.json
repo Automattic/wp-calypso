@@ -27,7 +27,6 @@
 		"src"
 	],
 	"dependencies": {
-		"@automattic/calypso-ui": "file:./",
 		"classnames": "2.2.6",
 		"react": "^16.8.3",
 		"prop-types": "^15.7.2",

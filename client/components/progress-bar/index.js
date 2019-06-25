@@ -1,1 +1,5 @@
-export { ProgressBar as default } from '@automattic/calypso-ui';
+/**
+ * Internal dependencies
+ */
+import { default as ProgressBar } from '@automattic/calypso-ui/dist/esm/progress-bar';
+export default ProgressBar;

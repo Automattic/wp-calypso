@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import { TextControl } from '@automattic/calypso-ui';
+import TextControl from '../';
 
 export default class extends PureComponent {
 	static displayName = 'TextControl';

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { TextControl as BaseComponent, withFocusOutside } from '@wordpress/components';
 import classNames from 'classnames';
 
@@ -10,13 +10,10 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-class TextControl extends PureComponent {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			isFocused: false,
-		};
-	}
+class TextControl extends Component {
+	state = {
+		isFocused: false,
+	};
 
 	handleFocusOutside() {
 		this.setState( { isFocused: false } );
