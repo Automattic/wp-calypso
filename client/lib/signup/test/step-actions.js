@@ -97,20 +97,18 @@ describe( 'createSiteWithCart()', () => {
 
 describe( 'isDomainFulfilled', () => {
 	const submitSignupStep = jest.fn();
+	const oneDomain = [ { domain: 'example.wordpress.com' } ];
+	const twoDomains = [ { domain: 'example.wordpress.com' }, { domain: 'example.com' } ];
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
 		submitSignupStep.mockClear();
 	} );
 
-	test( 'should remove a step when there is greater than one domain', () => {
+	test( 'should call `submitSignupStep` with empty domainItem', () => {
 		const stepName = 'domains-launch';
-		const nextProps = {
-			siteDomains: [ { domain: 'example.wordpress.com' }, { domain: 'example.com' } ],
-			submitSignupStep,
-		};
+		const nextProps = { siteDomains: twoDomains, submitSignupStep };
 
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
 
 		isDomainFulfilled( stepName, undefined, nextProps );
@@ -119,15 +117,22 @@ describe( 'isDomainFulfilled', () => {
 			{ stepName, domainItem: undefined },
 			{ domainItem: undefined }
 		);
+	} );
+
+	test( 'should call `flows.excludeStep` with the stepName', () => {
+		const stepName = 'domains-launch';
+		const nextProps = { siteDomains: twoDomains, submitSignupStep };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isDomainFulfilled( stepName, undefined, nextProps );
+
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
 	test( 'should not remove unfulfilled step', () => {
 		const stepName = 'domains-launch';
-		const nextProps = {
-			siteDomains: [ { domain: 'example.wordpress.com' } ],
-			submitSignupStep,
-		};
+		const nextProps = { siteDomains: oneDomain, submitSignupStep };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
