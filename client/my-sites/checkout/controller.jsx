@@ -19,7 +19,6 @@ import CartData from 'components/data/cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import ConciergeSessionNudge from './concierge-session-nudge';
-import ConciergeQuickstartSession from './concierge-quickstart-session';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
 
@@ -125,9 +124,15 @@ export function gsuiteNudge( context, next ) {
 
 export function conciergeSessionNudge( context, next ) {
 	const { receiptId, site } = context.params;
-	context.store.dispatch(
-		setSection( { name: 'concierge-session-nudge' }, { hasSidebar: false } )
-	);
+
+	let conciergeSessionType;
+
+	if ( context.path.includes( 'offer-quickstart-session' ) ) {
+		conciergeSessionType = 'concierge-quickstart-session';
+	} else if ( context.path.includes( 'offer-support-session' ) ) {
+		conciergeSessionType = 'concierge-support-session';
+	}
+	context.store.dispatch( setSection( { name: conciergeSessionType }, { hasSidebar: false } ) );
 
 	context.primary = (
 		<CheckoutContainer
@@ -135,27 +140,11 @@ export function conciergeSessionNudge( context, next ) {
 			clearTransaction={ true }
 			purchaseId={ Number( receiptId ) }
 		>
-			<ConciergeSessionNudge siteSlugParam={ site } receiptId={ Number( receiptId ) } />
-		</CheckoutContainer>
-	);
-
-	next();
-}
-
-export function conciergeQuickstartSession( context, next ) {
-	const { receiptId, site } = context.params;
-
-	context.store.dispatch(
-		setSection( { name: 'concierge-quickstart-session' }, { hasSidebar: false } )
-	);
-
-	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
-			<ConciergeQuickstartSession receiptId={ Number( receiptId ) } siteSlugParam={ site } />
+			<ConciergeSessionNudge
+				siteSlugParam={ site }
+				receiptId={ Number( receiptId ) }
+				conciergeSessionType={ conciergeSessionType }
+			/>
 		</CheckoutContainer>
 	);
 
