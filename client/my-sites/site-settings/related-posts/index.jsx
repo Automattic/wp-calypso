@@ -81,7 +81,7 @@ const RelatedPosts = ( {
 								components: {
 									a: (
 										<a
-											href="https://en.support.wordpress.com/wordpress-editor/blocks/latest-posts-block/"
+											href="https://jetpack.com/support/jetpack-blocks/related-posts-block/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
