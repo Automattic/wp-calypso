@@ -1,17 +1,16 @@
-/** @format */
 /**
  * Wraps a function in a utility method that remembers the last invocation's
  * arguments and results, and returns the latter if the former match.
  *
- * @param {Function} fn The function to be wrapped.
+ * @param fn The function to be wrapped.
  *
- * @returns {Function} The wrapped function.
+ * @returns The wrapped function.
  */
-export default function memoizeLast( fn ) {
-	let lastArgs;
-	let lastResult;
+export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: T ): T {
+	let lastArgs: Parameters< T >;
+	let lastResult: ReturnType< T >;
 
-	return ( ...args ) => {
+	return ( ( ...args: Parameters< T > ) => {
 		const isSame =
 			lastArgs &&
 			args.length === lastArgs.length &&
@@ -23,5 +22,5 @@ export default function memoizeLast( fn ) {
 		}
 
 		return lastResult;
-	};
+	} ) as T;
 }
