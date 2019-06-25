@@ -11,4 +11,3 @@ import './plugins/template-selector-sidebar';
 import './plugins/close-button-override';
 import './plugins/template-update-confirmation';
 import './store';
-import './editor/replace-site-title';
