@@ -64,23 +64,23 @@ class Login extends Component {
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
 
-	componentDidMount = () => {
+	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true } ) );
 		}
 
 		window.scrollTo( 0, 0 );
-	};
+	}
 
-	componentWillReceiveProps = nextProps => {
-		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
-		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
+	componentDidUpdate( prevProps ) {
+		const hasNotice = this.props.requestNotice !== prevProps.requestNotice;
+		const isNewPage = this.props.twoFactorAuthType !== prevProps.twoFactorAuthType;
 
 		if ( isNewPage || hasNotice ) {
 			window.scrollTo( 0, 0 );
 		}
-	};
+	}
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
