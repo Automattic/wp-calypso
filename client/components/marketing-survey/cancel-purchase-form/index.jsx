@@ -322,6 +322,7 @@ class CancelPurchaseForm extends React.Component {
 
 	render() {
 		const { translate, showSurvey, surveyStep } = this.props;
+
 		if ( showSurvey ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
 				return (

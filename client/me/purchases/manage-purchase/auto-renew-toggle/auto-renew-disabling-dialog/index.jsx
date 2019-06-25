@@ -16,6 +16,15 @@ import { isDomainRegistration, isPlan } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import './style.scss';
 
+// import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
+import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
+import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
+import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
+import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
+
 class AutoRenewDisablingDialog extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
@@ -26,6 +35,9 @@ class AutoRenewDisablingDialog extends Component {
 
 	state = {
 		showAtomicFollowUpDialog: false,
+		dialogNo: 2,
+		surveyStep: INITIAL_STEP,
+		survey: initialSurveyState(),
 	};
 
 	getVariation() {
@@ -107,7 +119,10 @@ class AutoRenewDisablingDialog extends Component {
 	}
 
 	onClickAtomicFollowUpConfirm = () => {
-		this.props.onConfirm() || this.props.onClose();
+		// this.props.onConfirm() || this.props.onClose();
+		this.setState( {
+			dialogNo: 1,
+		} );
 	};
 
 	renderAtomicFollowUpDialog = () => {
@@ -148,12 +163,122 @@ class AutoRenewDisablingDialog extends Component {
 	onClickGeneralConfirm = () => {
 		if ( 'atomic' === this.getVariation() ) {
 			this.setState( {
-				showAtomicFollowUpDialog: true,
+				// showAtomicFollowUpDialog: true,
+				dialogNo: 0,
 			} );
 			return;
 		}
 
-		this.props.onConfirm() || this.props.onClose();
+		this.setState( {
+			dialogNo: 1,
+		} );
+
+		// this.props.onConfirm() || this.props.onClose();
+	};
+
+	closeDialog = () => {
+		// this.recordEvent( 'calypso_purchases_cancel_form_close' );
+
+		this.setState( {
+			showDialog: false,
+			surveyStep: INITIAL_STEP,
+			survey: initialSurveyState(),
+		} );
+
+		this.props.onClose();
+		// this.props.onConfirm() || this.props.onClose();
+	};
+
+	changeSurveyStep = stepFunction => {
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
+		const { surveyStep, survey } = this.state;
+		const steps = stepsForProductAndSurvey(
+			survey,
+			purchase,
+			isChatAvailable || isChatActive,
+			precancellationChatAvailable
+		);
+		const newStep = stepFunction( surveyStep, steps );
+		// this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
+		this.setState( { surveyStep: newStep } );
+	};
+
+	clickNext = () => {
+		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ) ) {
+			return;
+		}
+		this.changeSurveyStep( nextStep );
+	};
+
+	clickPrevious = () => {
+		if ( this.state.isRemoving ) {
+			return;
+		}
+		this.changeSurveyStep( previousStep );
+	};
+
+	onSurveyChange = update => {
+		this.setState( {
+			survey: update,
+		} );
+	};
+
+	renderCancelConfirmationDialog = () => {
+		const { purchase, selectedSite, translate } = this.props;
+		const buttons = {
+			close: {
+				action: 'close',
+				label: translate( "I'll Keep It" ),
+			},
+			next: {
+				action: 'next',
+				disabled: this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ),
+				label: translate( 'Next Step' ),
+				onClick: this.clickNext,
+			},
+			prev: {
+				action: 'prev',
+				disabled: this.state.isRemoving,
+				label: translate( 'Previous Step' ),
+				onClick: this.clickPrevious,
+			},
+			cancel: {
+				action: 'cancel',
+				label: translate( 'Cancel Now' ),
+				isPrimary: true,
+				disabled: this.state.submitting,
+				onClick: () => this.props.onConfirm() || this.props.onClose(),
+			},
+		};
+
+		let buttonsArr;
+		if ( this.state.surveyStep === FINAL_STEP ) {
+			buttonsArr = [ buttons.close, buttons.prev, buttons.cancel ];
+		} else {
+			buttonsArr =
+				this.state.surveyStep === INITIAL_STEP
+					? [ buttons.close, buttons.next ]
+					: [ buttons.close, buttons.prev, buttons.next ];
+		}
+
+		return (
+			<Dialog
+				isVisible={ true }
+				buttons={ buttonsArr }
+				onClose={ this.closeDialog }
+				className="cancel-purchase__button-warning-dialog"
+			>
+				<CancelPurchaseForm
+					chatInitiated={ false }
+					defaultContent={ '' }
+					onInputChange={ this.onSurveyChange }
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					showSurvey={ true }
+					surveyStep={ this.state.surveyStep }
+				/>
+			</Dialog>
+		);
 	};
 
 	renderGeneralDialog = () => {
@@ -176,9 +301,21 @@ class AutoRenewDisablingDialog extends Component {
 	};
 
 	render() {
-		return this.state.showAtomicFollowUpDialog
-			? this.renderAtomicFollowUpDialog()
-			: this.renderGeneralDialog();
+		// return this.state.showAtomicFollowUpDialog
+		// 	? this.renderAtomicFollowUpDialog()
+		// 	: this.renderGeneralDialog();
+		// return this.state.showAtomicFollowUpDialog
+		// 	? this.renderAtomicFollowUpDialog()
+		// 	: this.renderCancelConfirmationDialog();
+
+		switch ( this.state.dialogNo ) {
+			case 0:
+				return this.renderAtomicFollowUpDialog();
+			case 1:
+				return this.renderCancelConfirmationDialog();
+			case 2:
+				return this.renderGeneralDialog();
+		}
 	}
 }
 

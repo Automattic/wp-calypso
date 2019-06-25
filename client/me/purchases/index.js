@@ -94,6 +94,7 @@ export default function( router ) {
 	router(
 		paths.managePurchase( ':site', ':purchaseId' ),
 		sidebar,
+		siteSelection,
 		controller.managePurchase,
 		makeLayout,
 		clientRender
