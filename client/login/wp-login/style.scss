@@ -84,6 +84,12 @@ $image-height: 47px;
 	.gridicon {
 		margin-right: 3px;
 		vertical-align: text-bottom;
+
+		&.gridicons-external {
+			top: 0;
+			margin-right: 0;
+			margin-left: 3px;
+		}
 	}
 }
 

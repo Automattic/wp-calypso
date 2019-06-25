@@ -386,17 +386,19 @@
 
 		.wp-login__links {
 			padding: 20px 0 15px;
-		}
 
-		.wp-login__links a {
-			border: 0;
-			color: var( --color-text );
-			line-height: 21px;
-			padding: 10px 16px;
-			text-align: center;
-
-			&:hover {
+			a,
+			button {
+				border: 0;
 				color: var( --color-text );
+				line-height: 21px;
+				padding: 10px 16px;
+				text-align: center;
+
+				&:hover,
+				&:active {
+					color: var( --color-text );
+				}
 			}
 		}
 
@@ -606,14 +608,15 @@
 
 	.wp-login__links {
 		margin-top: 20px;
-	}
 
-	.wp-login__links a {
-		border: none;
-		font-size: 16px;
-		font-weight: normal;
-		line-height: 3em;
-		text-align: center;
+		a,
+		button {
+			border: none;
+			font-size: 16px;
+			font-weight: normal;
+			line-height: 3em;
+			text-align: center;
+		}
 	}
 
 	.logged-out-form__footer {
