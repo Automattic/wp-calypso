@@ -324,20 +324,32 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = event => {
-		const data = this.getUserData();
 		const fieldId = event.target.id;
 		// Ensure that username and password field validation does not trigger prematurely
 		if ( fieldId === 'password' ) {
-			this.setState( { focusPassword: true } );
+			this.setState( { focusPassword: true }, () => {
+				this.validateAndSaveForm();
+			} );
+			return;
 		}
 		if ( fieldId === 'username' ) {
-			this.setState( { focusUsername: true } );
+			this.setState( { focusUsername: true }, () => {
+				this.validateAndSaveForm();
+			} );
+			return;
 		}
+
+		this.validateAndSaveForm();
+	};
+
+	validateAndSaveForm = () => {
+		const data = this.getUserData();
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
 		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
 			return;
 		}
+
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
