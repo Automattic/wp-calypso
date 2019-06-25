@@ -138,7 +138,7 @@ class VerificationCodeForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm }>
-				<Card className="two-factor-authentication__push-notification-screen is-compact">
+				<Card compact>
 					<p>{ helpText }</p>
 
 					<FormFieldset>
