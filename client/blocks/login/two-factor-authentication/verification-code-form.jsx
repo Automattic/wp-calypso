@@ -28,6 +28,11 @@ import {
 } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
+/**
+ * Style dependencies
+ */
+import './verification-code-form.scss';
+
 class VerificationCodeForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
