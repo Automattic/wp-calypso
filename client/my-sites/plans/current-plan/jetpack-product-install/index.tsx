@@ -260,6 +260,7 @@ function mapStateToProps( state ) {
 	const queryArgs = getCurrentQueryArguments( state );
 
 	const installQuery: string[] =
+		// eslint-disable-next-line no-nested-ternary
 		typeof queryArgs === 'object' && 'install' in queryArgs
 			? Array.isArray( queryArgs.install )
 				? queryArgs.install
