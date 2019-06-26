@@ -9,7 +9,6 @@
 const socketio = require( 'socket.io' );
 const debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
 const { memoize } = require( 'lodash' );
-memoize.Cache = WeakMap; // play better with the GC over time
 
 /**
  * Internal dependencies
@@ -26,6 +25,7 @@ function invalidPlugin() {
 }
 
 const getStats = memoize( stats => stats.toJson() );
+getStats.cache = new WeakMap(); // play a bit nicer with the GC than the default lodash cache
 
 function sendStats( socket, stats, force ) {
 	function emitted( asset ) {
