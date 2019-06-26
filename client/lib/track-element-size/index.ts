@@ -11,18 +11,7 @@ import afterLayoutFlush from 'lib/after-layout-flush';
 
 const THROTTLE_RATE = 200;
 
-// Indexable version of DOMRect / ClientRect.
-interface UseWindowResizeRect {
-	[index: string]: number | undefined;
-	top: number;
-	right: number;
-	bottom: number;
-	left: number;
-	width: number;
-	height: number;
-	x?: number;
-	y?: number;
-}
+type UseWindowResizeRect = ReturnType< typeof Element.prototype.getBoundingClientRect >;
 
 // Function type for the expected callback for `useWindowResizeCallback`.
 interface UseWindowResizeCallback {
@@ -53,18 +42,20 @@ export function useWindowResizeCallback(
 
 	useEffect( () => {
 		// Notify consumer of bounding client rect change.
-		const handleRectChange = ( rect: DOMRect | ClientRect ) => {
+		const handleRectChange = ( rect: UseWindowResizeRect ) => {
 			if ( rect ) {
-				const jsonRect = 'toJSON' in rect ? rect.toJSON() : rect;
 				// Avoid notifying consumer if nothing's changed.
-				for ( const property of Object.keys( jsonRect ) ) {
-					if (
-						lastRect.current === null ||
-						lastRect.current[ property ] !== jsonRect[ property ]
-					) {
-						lastRect.current = jsonRect;
-						return callback( jsonRect );
-					}
+				if (
+					lastRect.current === null ||
+					lastRect.current.bottom !== rect.bottom ||
+					lastRect.current.left !== rect.left ||
+					lastRect.current.right !== rect.right ||
+					lastRect.current.top !== rect.top ||
+					lastRect.current.width !== rect.width ||
+					lastRect.current.height !== rect.height
+				) {
+					lastRect.current = rect;
+					return callback( rect );
 				}
 			}
 		};
@@ -103,7 +94,7 @@ export function useWindowResizeCallback(
  * Does not notify when an element resizes due to reasons other than the window resizing.
  * Uses throttling on the events, to avoid making changes too often.
  *
- * @returns {Function} The ref to be set on the consumer component.
+ * @returns A tuple with the ref to be set on the consumer component, and the current rect.
  */
 export function useWindowResizeRect(): [UseWindowResizeCallback, UseWindowResizeRect | null] {
 	const [ rect, setRect ] = useState< UseWindowResizeRect | null >( null );
