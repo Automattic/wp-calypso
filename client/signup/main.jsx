@@ -157,6 +157,7 @@ class Signup extends React.Component {
 		} );
 
 		this.removeFulfilledSteps( this.props );
+		this.addUnfulfilledSteps( this.props );
 
 		this.updateShouldShowLoadingScreen();
 
@@ -183,6 +184,7 @@ class Signup extends React.Component {
 		const { stepName, flowName, progress } = nextProps;
 
 		this.removeFulfilledSteps( nextProps );
+		this.addUnfulfilledSteps( nextProps );
 
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName, flowName );
@@ -302,6 +304,23 @@ class Signup extends React.Component {
 			this.goToNextStep( flowName );
 		}
 	};
+
+	addUnfulfilledSteps( nextProps ) {
+		const flow = flows.getFlows()[ nextProps.flowName ];
+		if ( ! flow ) {
+			return;
+		}
+
+		for ( const stepName of flows.excludedSteps ) {
+			if ( ! flow.steps.includes( stepName ) ) {
+				continue;
+			}
+
+			const isUnfulfilledCallback = steps[ stepName ].unfulfilledStepCallback;
+			const defaultDependencies = steps[ stepName ].defaultDependencies;
+			isUnfulfilledCallback && isUnfulfilledCallback( stepName, defaultDependencies, nextProps );
+		}
+	}
 
 	preloadNextStep() {
 		const currentStepName = this.props.stepName;
