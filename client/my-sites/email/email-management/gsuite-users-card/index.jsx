@@ -63,7 +63,7 @@ class GSuiteUsersCard extends React.Component {
 	};
 
 	renderDomain( domain, users ) {
-		const license = users[ 0 ].plan === 'gapps_unlimited' ? 'G Suite Business' : 'G Suite Basic';
+		const license = users[ 0 ].product_name;
 		return (
 			<div key={ `google-apps-user-${ domain }` } className="gsuite-users-card__container">
 				<SectionHeader label={ `${ license }: ${ domain }` }>
