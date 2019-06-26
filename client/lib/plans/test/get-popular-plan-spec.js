@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { noop } from 'lodash';
 
 /**
@@ -14,7 +13,7 @@ const abtest = noop;
 
 describe( 'getPopularPlanSpec()', () => {
 	test( 'Should return biz for empty customer type', () => {
-		expect( getPopularPlanSpec( {} ) ).to.deep.equal( {
+		expect( getPopularPlanSpec( {} ) ).toEqual( {
 			type: TYPE_BUSINESS,
 			group: GROUP_WPCOM,
 		} );
@@ -25,7 +24,7 @@ describe( 'getPopularPlanSpec()', () => {
 			getPopularPlanSpec( {
 				customerType: 'personal',
 			} )
-		).to.deep.equal( {
+		).toEqual( {
 			type: TYPE_PREMIUM,
 			group: GROUP_WPCOM,
 		} );
@@ -37,7 +36,7 @@ describe( 'getPopularPlanSpec()', () => {
 				siteType: 'blog',
 				abtest,
 			} )
-		).to.deep.equal( {
+		).toEqual( {
 			type: TYPE_PERSONAL,
 			group: GROUP_WPCOM,
 		} );
@@ -49,7 +48,7 @@ describe( 'getPopularPlanSpec()', () => {
 				siteType: 'professional',
 				abtest,
 			} )
-		).to.deep.equal( {
+		).toEqual( {
 			type: TYPE_PREMIUM,
 			group: GROUP_WPCOM,
 		} );
@@ -60,7 +59,7 @@ describe( 'getPopularPlanSpec()', () => {
 			getPopularPlanSpec( {
 				customerType: 'business',
 			} )
-		).to.deep.equal( { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+		).toEqual( { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
 	} );
 
 	test( 'Should return false when isJetpack is true', () => {
@@ -69,6 +68,6 @@ describe( 'getPopularPlanSpec()', () => {
 				customerType: 'business',
 				isJetpack: true,
 			} )
-		).to.be.false;
+		).toBe( false );
 	} );
 } );
