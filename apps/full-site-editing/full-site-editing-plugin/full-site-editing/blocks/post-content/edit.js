@@ -50,19 +50,6 @@ class PostContentEdit extends Component {
 		} );
 	}
 
-	/**
-	 * Hides the default post title of the editor when editing a full site page and shows new post title rendered by the
-	 * post content block in order to have it just before the content of the post.
-	 *
-	 * @param {boolean} forceDefaultPostTitle Whether the default post title should be always displayed.
-	 */
-	toggleEditorPostTitleVisibility( forceDefaultPostTitle = false ) {
-		const showPostTitleBeforeContent = this.props.isFullSitePage && ! forceDefaultPostTitle;
-		document
-			.querySelector( '#editor' )
-			.classList.toggle( 'show-post-title-before-content', showPostTitleBeforeContent );
-	}
-
 	render() {
 		const { attributes, isEditing, isFullSitePage, selectedPost } = this.props;
 		const { align } = attributes;
