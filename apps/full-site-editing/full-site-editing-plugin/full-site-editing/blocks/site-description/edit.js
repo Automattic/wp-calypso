@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { PlainText } from '@wordpress/editor';
-import { withNotices, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
@@ -15,8 +15,7 @@ import useSiteOptions from '../useSiteOptions';
 
 function SiteDescriptionEdit( {
 	className,
-	noticeUI,
-	noticeOperations,
+	createErrorNotice,
 	shouldUpdateSiteOption,
 	isSelected,
 } ) {
@@ -25,7 +24,7 @@ function SiteDescriptionEdit( {
 	const { onSave, siteOptions, setSiteOptions } = useSiteOptions(
 		'description',
 		inititalDescription,
-		noticeOperations,
+		createErrorNotice,
 		isSelected,
 		shouldUpdateSiteOption
 	);
@@ -34,7 +33,6 @@ function SiteDescriptionEdit( {
 
 	return (
 		<Fragment>
-			{ noticeUI }
 			<PlainText
 				className={ className }
 				value={ option }
@@ -58,6 +56,9 @@ function SiteDescriptionEdit( {
 }
 
 export default compose( [
+	withDispatch( dispatch => ( {
+		createErrorNotice: dispatch( 'core/notices' ).createErrorNotice,
+	} ) ),
 	withSelect( select => {
 		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
 			'core/editor'
@@ -68,5 +69,4 @@ export default compose( [
 				! isAutosavingPost(),
 		};
 	} ),
-	withNotices,
 ] )( SiteDescriptionEdit );

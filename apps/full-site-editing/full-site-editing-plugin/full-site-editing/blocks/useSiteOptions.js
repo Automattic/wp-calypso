@@ -12,7 +12,7 @@ import usePrevious from './usePrevious';
 export default function useSiteOptions(
 	siteOption,
 	inititalOption,
-	noticeOperations,
+	createErrorNotice,
 	isSelected,
 	shouldUpdateSiteOption
 ) {
@@ -47,10 +47,11 @@ export default function useSiteOptions(
 					error: false,
 				} )
 			)
-			.catch( ( { message } ) => {
-				noticeOperations.createErrorNotice( message );
+			.catch( () => {
+				createErrorNotice( `Unable to load site ${ siteOption }.` );
 				setSiteOptions( {
 					...siteOptions,
+					option: `Error loading site ${ siteOption }`,
 					error: true,
 				} );
 			} );
@@ -91,8 +92,8 @@ export default function useSiteOptions(
 		setSiteOptions( { ...siteOptions, isSaving: true } );
 		apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { [ siteOption ]: option } } )
 			.then( () => updatePreviousOption( option ) )
-			.catch( ( { message } ) => {
-				noticeOperations.createErrorNotice( message );
+			.catch( () => {
+				createErrorNotice( `Unable to save site ${ siteOption }.` );
 				revertOption();
 			} );
 	}

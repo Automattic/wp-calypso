@@ -7,9 +7,9 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { withNotices, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { PlainText } from '@wordpress/editor';
-import { withSelect } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { Fragment } from '@wordpress/element';
 
@@ -18,18 +18,12 @@ import { Fragment } from '@wordpress/element';
  */
 import useSiteOptions from '../useSiteOptions';
 
-function SiteTitleEdit( {
-	className,
-	noticeUI,
-	noticeOperations,
-	shouldUpdateSiteOption,
-	isSelected,
-} ) {
+function SiteTitleEdit( { className, createErrorNotice, shouldUpdateSiteOption, isSelected } ) {
 	const inititalTitle = __( 'Site title loading…' );
 	const { onSave, siteOptions, setSiteOptions } = useSiteOptions(
 		'title',
 		inititalTitle,
-		noticeOperations,
+		createErrorNotice,
 		isSelected,
 		shouldUpdateSiteOption
 	);
@@ -38,7 +32,6 @@ function SiteTitleEdit( {
 
 	return (
 		<Fragment>
-			{ noticeUI }
 			<PlainText
 				className={ classNames( 'site-title', className ) }
 				value={ option }
@@ -62,6 +55,9 @@ function SiteTitleEdit( {
 }
 
 export default compose( [
+	withDispatch( dispatch => ( {
+		createErrorNotice: dispatch( 'core/notices' ).createErrorNotice,
+	} ) ),
 	withSelect( select => {
 		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
 			'core/editor'
@@ -72,5 +68,4 @@ export default compose( [
 				! isAutosavingPost(),
 		};
 	} ),
-	withNotices,
 ] )( SiteTitleEdit );
