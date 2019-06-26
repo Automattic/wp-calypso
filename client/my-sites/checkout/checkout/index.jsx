@@ -69,7 +69,7 @@ import {
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
+import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-checkout-to-checklist';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { getPlan, findPlansKeys } from 'lib/plans';
@@ -405,6 +405,10 @@ export class Checkout extends React.Component {
 		} else {
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
+		const destinationFromStore = retrieveSignupDestination();
+		const signUpdestination = destinationFromStore
+			? destinationFromStore.replace( ':receiptId', receiptId )
+			: `/view/${ selectedSiteSlug }`;
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -419,8 +423,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( cart.create_new_blog ) {
-			const destination = retrieveSignupDestination();
-			return `${ destination }/${ pendingOrReceiptId }`;
+			return `${ signUpdestination }/${ pendingOrReceiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {
@@ -445,9 +448,7 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				const destination = retrieveSignupDestination();
-
-				return `/${ destination }?d=gsuite`;
+				return `/${ signUpdestination }?d=gsuite`;
 			}
 
 			// Maybe show either the G Suite or Concierge Session upsell pages
@@ -497,10 +498,8 @@ export class Checkout extends React.Component {
 
 		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
-		if ( this.props.isEligibleForCheckoutToChecklist & ( ':receiptId' !== pendingOrReceiptId ) ) {
-			const destination = retrieveSignupDestination();
-
-			return `${ destination }${ queryParam }`;
+		if ( this.props.isEligibleForSignupDestination & ( ':receiptId' !== pendingOrReceiptId ) ) {
+			return `${ signUpdestination }${ queryParam }`;
 		}
 
 		if ( this.props.isJetpackNotAtomic ) {
@@ -829,7 +828,7 @@ export default connect(
 			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
-			isEligibleForCheckoutToChecklist: isEligibleForCheckoutToChecklist(
+			isEligibleForSignupDestination: isEligibleForSignupDestination(
 				state,
 				selectedSiteId,
 				props.cart
