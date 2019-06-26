@@ -8,7 +8,7 @@ import spritePath from 'social-logos/svg-sprite/social-logos.svg';
 interface Props {
 	icon: string;
 	size?: number;
-	onClick?: ( event?: React.MouseEvent< SVGSVGElement, MouseEvent > ) => any;
+	onClick?: React.MouseEventHandler< SVGSVGElement >;
 	className?: string;
 	[propName: string]: any;
 }

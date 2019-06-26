@@ -9,7 +9,7 @@ interface Props {
 	icon: string;
 	style?: string;
 	size?: number;
-	onClick?: ( event?: React.MouseEvent< SVGSVGElement, MouseEvent > ) => any;
+	onClick?: React.MouseEventHandler< SVGSVGElement >;
 	className?: string;
 	[propName: string]: any;
 }
