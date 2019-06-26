@@ -698,13 +698,17 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 }
 
 export function isSiteStyleFulfilled( stepName, defaultDependencies, nextProps ) {
-	if ( nextProps.siteType === 'blog' ) {
+	// Switching to a site type where the mockups are hidden means we
+	// don't want to ask what site style they want.
+	if ( getSiteTypePropertyValue( 'slug', nextProps.siteType, 'hideSiteMockups' ) ) {
 		flows.excludeStep( stepName );
 	}
 }
 
 export function isSiteStyleUnfulfilled( stepName, defaultDependencies, nextProps ) {
-	if ( nextProps.siteType !== 'blog' ) {
+	// Switching to a site type where the mockups aren't hidden means we
+	// _will_ want to ask what site style they want.
+	if ( ! getSiteTypePropertyValue( 'slug', nextProps.siteType, 'hideSiteMockups' ) ) {
 		flows.includeStep( stepName );
 	}
 }

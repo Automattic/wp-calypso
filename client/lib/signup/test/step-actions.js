@@ -329,48 +329,48 @@ describe( 'isSiteTopicFulfilled()', () => {
 		expect( setSurvey ).not.toHaveBeenCalled();
 		expect( submitSiteVertical ).not.toHaveBeenCalled();
 	} );
+} );
 
-	describe( 'isSiteStyleFulfilled()', () => {
-		beforeEach( () => {
-			flows.excludeStep.mockClear();
-		} );
-
-		test( 'excludes site style step if site type is a blog', () => {
-			const nextProps = { siteType: 'blog' };
-
-			isSiteStyleFulfilled( 'step-name', undefined, nextProps );
-
-			expect( flows.excludeStep ).toHaveBeenCalledWith( 'step-name' );
-		} );
-
-		test( "don't exclude site style step if site type isn't a blog", () => {
-			const nextProps = { siteType: 'business' };
-
-			isSiteStyleFulfilled( 'step-name', undefined, nextProps );
-
-			expect( flows.excludeStep ).not.toHaveBeenCalled();
-		} );
+describe( 'isSiteStyleFulfilled()', () => {
+	beforeEach( () => {
+		flows.excludeStep.mockClear();
 	} );
 
-	describe( 'isSiteStyleUnfulfilled()', () => {
-		beforeEach( () => {
-			flows.includeStep.mockClear();
-		} );
+	test( 'excludes site style step if site type is a blog', () => {
+		const nextProps = { siteType: 'blog' };
 
-		test( "includes site style step if site type isn't a blog", () => {
-			const nextProps = { siteType: 'business' };
+		isSiteStyleFulfilled( 'step-name', undefined, nextProps );
 
-			isSiteStyleUnfulfilled( 'step-name', undefined, nextProps );
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'step-name' );
+	} );
 
-			expect( flows.includeStep ).toHaveBeenCalledWith( 'step-name' );
-		} );
+	test( "don't exclude site style step if site type isn't a blog", () => {
+		const nextProps = { siteType: 'business' };
 
-		test( "don't include site style step if site type is a blog", () => {
-			const nextProps = { siteType: 'blog' };
+		isSiteStyleFulfilled( 'step-name', undefined, nextProps );
 
-			isSiteStyleUnfulfilled( 'step-name', undefined, nextProps );
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+} );
 
-			expect( flows.includeStep ).not.toHaveBeenCalled();
-		} );
+describe( 'isSiteStyleUnfulfilled()', () => {
+	beforeEach( () => {
+		flows.includeStep.mockClear();
+	} );
+
+	test( "includes site style step if site type isn't a blog", () => {
+		const nextProps = { siteType: 'business' };
+
+		isSiteStyleUnfulfilled( 'step-name', undefined, nextProps );
+
+		expect( flows.includeStep ).toHaveBeenCalledWith( 'step-name' );
+	} );
+
+	test( "don't include site style step if site type is a blog", () => {
+		const nextProps = { siteType: 'blog' };
+
+		isSiteStyleUnfulfilled( 'step-name', undefined, nextProps );
+
+		expect( flows.includeStep ).not.toHaveBeenCalled();
 	} );
 } );
