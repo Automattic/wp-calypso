@@ -22,7 +22,7 @@ class CheckoutContainer extends React.Component {
 	}
 
 	renderCheckoutHeader() {
-		return <FormattedHeader headerText={ this.state.headerText } />;
+		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
 	setHeaderText = newHeaderText => {
