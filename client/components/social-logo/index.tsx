@@ -9,8 +9,6 @@ import { Assign } from 'utility-types';
 interface Props {
 	icon: string;
 	size?: number;
-	onClick?: React.MouseEventHandler< SVGSVGElement >;
-	className?: string;
 }
 
 function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {

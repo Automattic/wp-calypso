@@ -10,8 +10,6 @@ interface Props {
 	icon: string;
 	style?: string;
 	size?: number;
-	onClick?: React.MouseEventHandler< SVGSVGElement >;
-	className?: string;
 }
 
 function MaterialIcon( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {

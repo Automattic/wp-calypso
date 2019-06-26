@@ -18,8 +18,6 @@ function needsOffset( name: string, icons: [string] ) {
 interface Props {
 	icon: string;
 	size?: number;
-	onClick?: React.MouseEventHandler< SVGSVGElement >;
-	className?: string;
 }
 type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 
