@@ -478,9 +478,14 @@ export const getPopularPlanType = siteType => {
 };
 
 export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest } ) => {
+	// Jetpack doesn't currently highlight "Popular" plans
+	if ( isJetpack ) {
+		return false;
+	}
+
 	const spec = {
 		type: TYPE_BUSINESS,
-		group: isJetpack ? GROUP_JETPACK : GROUP_WPCOM,
+		group: GROUP_WPCOM,
 	};
 
 	// Not sure why, but things break if the abtest lib is imported in this file
