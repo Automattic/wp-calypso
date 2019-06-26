@@ -37,7 +37,7 @@ export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: 
  */
 export function once< T extends () => any >( fn: T ) {
 	// Runtime validation. Useful when static validation is unavailable.
-	if ( fn.length !== 0 ) {
+	if ( process.env.NODE_ENV !== 'production' && fn.length !== 0 ) {
 		throw new Error( 'memoize-last: The `once` method expects a function with no arguments.' );
 	}
 	return memoizeLast( fn );
