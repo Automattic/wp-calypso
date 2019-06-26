@@ -1,9 +1,3 @@
-/** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
@@ -12,14 +6,14 @@ import { TYPE_BUSINESS, TYPE_PERSONAL, TYPE_PREMIUM } from '../constants';
 
 describe( 'getPopularPlanType()', () => {
 	test( 'Should return TYPE_PERSONAL for personal site type', () => {
-		expect( getPopularPlanType( 'blog' ) ).to.equal( TYPE_PERSONAL );
+		expect( getPopularPlanType( 'blog' ) ).toEqual( TYPE_PERSONAL );
 	} );
 
 	test( 'Should return TYPE_PREMIUM for business site type', () => {
-		expect( getPopularPlanType( 'professional' ) ).to.equal( TYPE_PREMIUM );
+		expect( getPopularPlanType( 'professional' ) ).toEqual( TYPE_PREMIUM );
 	} );
 
 	test( 'Should return TYPE_BUSINESS for business site type', () => {
-		expect( getPopularPlanType( 'business' ) ).to.equal( TYPE_BUSINESS );
+		expect( getPopularPlanType( 'business' ) ).toEqual( TYPE_BUSINESS );
 	} );
 } );
