@@ -13,4 +13,6 @@ export default {
 	},
 
 	excludeStep: jest.fn(),
+
+	includeStep: jest.fn(),
 };

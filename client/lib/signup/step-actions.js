@@ -697,6 +697,18 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 }
 
+export function isSiteStyleFulfilled( stepName, defaultDependencies, nextProps ) {
+	if ( nextProps.siteType === 'blog' ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isSiteStyleUnfulfilled( stepName, defaultDependencies, nextProps ) {
+	if ( nextProps.siteType !== 'blog' ) {
+		flows.includeStep( stepName );
+	}
+}
+
 export function createPasswordlessUser( callback, dependencies, data ) {
 	const { email } = data;
 

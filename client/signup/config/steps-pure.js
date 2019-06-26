@@ -32,6 +32,8 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	isSiteStyleFulfilled = noop,
+	isSiteStyleUnfulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -459,6 +461,8 @@ export function generateSteps( {
 		'site-style': {
 			stepName: 'site-style',
 			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteStyleFulfilled,
+			unfulfilledStepCallback: isSiteStyleUnfulfilled,
 		},
 
 		// Steps with preview
@@ -475,6 +479,8 @@ export function generateSteps( {
 		'site-style-with-preview': {
 			stepName: 'site-style-with-preview',
 			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteStyleFulfilled,
+			unfulfilledStepCallback: isSiteStyleUnfulfilled,
 			props: {
 				showSiteMockups: true,
 			},
