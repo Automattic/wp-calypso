@@ -26,7 +26,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @param  {object}  env                           environment options
  * @param  {object}  argv                          options map
- * @param  {string}  argv.source                   plugin slug or "theme"
+ * @param  {string}  argv.source                   plugin slug
  * @param  {string}  argv.entry                    entry path
  * @return {object}                                webpack config
  */
