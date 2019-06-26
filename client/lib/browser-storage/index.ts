@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import memoizeLast from 'lib/memoize-last';
+import { once } from 'lib/memoize-last';
 import {
 	getStoredItem as bypassGet,
 	setStoredItem as bypassSet,
@@ -17,7 +17,7 @@ const STORE_NAME = 'calypso_store';
 
 const SANITY_TEST_KEY = 'browser-storage-sanity-test';
 
-const getDB = memoizeLast( () => {
+const getDB = once( () => {
 	const request = indexedDB.open( DB_NAME, DB_VERSION );
 	return new Promise< IDBDatabase >( ( resolve, reject ) => {
 		try {
@@ -39,7 +39,7 @@ const getDB = memoizeLast( () => {
 	} );
 } );
 
-const supportsIDB = memoizeLast( async () => {
+const supportsIDB = once( async () => {
 	if ( typeof window === 'undefined' || ! window.indexedDB ) {
 		return false;
 	}
