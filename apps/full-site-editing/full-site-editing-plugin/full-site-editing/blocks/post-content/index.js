@@ -1,18 +1,15 @@
-/* global fullSiteEditing */
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { InnerBlocks } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import edit from './edit';
+import save from './save';
 import './style.scss';
-
-const isTemplatePostType = 'wp_template' === fullSiteEditing.editorPostType;
 
 registerBlockType( 'a8c/post-content', {
 	title: __( 'Content Slot' ),
@@ -26,6 +23,6 @@ registerBlockType( 'a8c/post-content', {
 		multiple: false,
 		reusable: false,
 	},
-	edit: isTemplatePostType ? edit : () => <InnerBlocks />,
-	save: isTemplatePostType ? () => null : () => <InnerBlocks.Content />,
+	edit,
+	save,
 } );
