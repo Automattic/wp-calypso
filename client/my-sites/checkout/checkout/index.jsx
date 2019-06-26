@@ -92,7 +92,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
 import { abtest } from 'lib/abtest';
-import { retrieveSignupDestination } from 'signup/utils';
+import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
 
 /**
  * Style dependencies
@@ -406,9 +406,11 @@ export class Checkout extends React.Component {
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 		const destinationFromStore = retrieveSignupDestination();
-		const signUpdestination = destinationFromStore
+		const signupDestination = destinationFromStore
 			? destinationFromStore.replace( ':receiptId', receiptId )
 			: `/view/${ selectedSiteSlug }`;
+
+		persistSignupDestination( signupDestination );
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -437,7 +439,7 @@ export class Checkout extends React.Component {
 		}
 		
 		if ( this.props.isJetpackNotAtomic ) {
-			return signUpdestination;
+			return signupDestination;
 		}
 
 		if ( this.props.isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
@@ -452,7 +454,7 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				return `/${ signUpdestination }?d=gsuite`;
+				return `/${ signupDestination }?d=gsuite`;
 			}
 
 			// Maybe show either the G Suite or Concierge Session upsell pages
