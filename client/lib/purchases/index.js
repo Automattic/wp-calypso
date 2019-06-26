@@ -135,10 +135,7 @@ function isExpired( purchase ) {
 }
 
 function isExpiring( purchase ) {
-	return includes(
-		[ 'cardExpired', 'cardExpiring', 'manualRenew', 'expiring' ],
-		purchase.expiryStatus
-	);
+	return includes( [ 'manualRenew', 'expiring' ], purchase.expiryStatus );
 }
 
 function isIncludedWithPlan( purchase ) {
