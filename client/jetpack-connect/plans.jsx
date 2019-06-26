@@ -38,6 +38,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { persistSignupDestination } from 'signup/utils';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -121,6 +122,13 @@ class Plans extends Component {
 		}
 	}
 
+	getMyPlansDestination() {
+		const redirectTo = CALYPSO_MY_PLAN_PAGE + this.props.selectedSiteSlug;
+		const args = { 'thank-you': '' };
+
+		return addQueryArgs( args, redirectTo );
+	}
+
 	redirect( path, args ) {
 		let redirectTo = path + this.props.selectedSiteSlug;
 
@@ -162,6 +170,7 @@ class Plans extends Component {
 
 		addItem( cartItem );
 		this.props.completeFlow();
+		persistSignupDestination( this.getMyPlansDestination() );
 		this.redirect( '/checkout/' );
 	};
 

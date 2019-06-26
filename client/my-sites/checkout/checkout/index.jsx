@@ -435,6 +435,10 @@ export class Checkout extends React.Component {
 		if ( ':receiptId' === pendingOrReceiptId && isEmpty( getAllCartItems( cart ) ) ) {
 			return `/stats/day/${ selectedSiteSlug }`;
 		}
+		
+		if ( this.props.isJetpackNotAtomic ) {
+			return signUpdestination;
+		}
 
 		if ( this.props.isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
@@ -500,10 +504,6 @@ export class Checkout extends React.Component {
 
 		if ( this.props.isEligibleForSignupDestination & ( ':receiptId' !== pendingOrReceiptId ) ) {
 			return `${ signUpdestination }${ queryParam }`;
-		}
-
-		if ( this.props.isJetpackNotAtomic ) {
-			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
@@ -850,4 +850,3 @@ export default connect(
 		requestSite,
 	}
 )( localize( Checkout ) );
-
