@@ -46,10 +46,10 @@ This app contains:
 Note: these scripts must be run from the Calypso _root_ directory.
 
 - `npx lerna run dev --scope='@automattic/full-site-editing'`<br>
-Compiles both the theme and the plugins, and watches for changes.
+Compiles the plugins and watches for changes.
 
 - `npx lerna run build --scope='@automattic/full-site-editing'`<br>
-Compiles and minifies for production both the theme and the plugins.
+Compiles and minifies the plugins for production.
 
 Both these scripts will also move all source and PHP files into `/dist` in their respective folders.
 
@@ -72,7 +72,7 @@ npx lerna run build:posts-list-block --scope='@automattic/full-site-editing'`
 
 ## Local Development
 
-Build (or `run dev`) and symlink both the theme and the plugin into a local WordPress install.
+Build (or `run dev`) and symlink the plugin into a local WordPress install.
 
 E.g.
 
