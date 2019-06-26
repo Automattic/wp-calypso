@@ -60,11 +60,16 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
+function getThankYouDestination( dependencies ) {
+	return `/checkout/thank-you/${ dependencies.siteSlug }/:receiptId`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getThankYouNoSiteDestination,
+	getThankYouDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
