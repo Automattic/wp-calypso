@@ -175,7 +175,8 @@ class Layout extends Component {
 				) }
 				{ ( 'jetpack-connect' !== this.props.sectionName ||
 					this.props.currentRoute === '/jetpack/new' ) &&
-					this.props.currentRoute !== '/log-in/jetpack' && (
+					this.props.currentRoute !== '/log-in/jetpack' &&
+					'happychat' !== this.props.sectionName && (
 						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 					) }
 				<SupportArticleDialog />

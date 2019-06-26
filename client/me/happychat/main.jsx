@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -33,7 +31,6 @@ import { Timeline } from 'components/happychat/timeline';
 /**
  * Style dependencies
  */
-import 'components/happychat/style.scss';
 import './style.scss';
 
 /**
