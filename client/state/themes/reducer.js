@@ -308,7 +308,7 @@ export const queries = ( () => {
 			return theme;
 		}
 
-		return Object.assign( {}, theme, { description: decodeEntities( theme.description ) } );
+		return { ...theme, description: decodeEntities( theme.description ) };
 	}
 
 	// Time after which queries stored in IndexedDb will be invalidated.
