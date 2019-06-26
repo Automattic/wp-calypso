@@ -205,6 +205,20 @@ describe( 'isSiteTypeFulfilled()', () => {
 		submitSiteType.mockClear();
 	} );
 
+	test( 'should exclude step if `flowName` is blog', () => {
+		const stepName = 'site-type';
+		const initialContext = { query: {} };
+		const nextProps = { initialContext, submitSiteType, flowName: 'blog' };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSiteType ).not.toHaveBeenCalled();
+
+		isSiteTypeFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSiteType ).toHaveBeenCalledWith( 'blog' );
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-type' );
+	} );
+
 	test( 'should remove a fulfilled step', () => {
 		const stepName = 'site-type';
 		const initialContext = { query: { site_type: 'blog' } };
@@ -235,6 +249,19 @@ describe( 'isSiteTypeFulfilled()', () => {
 		const stepName = 'site-type';
 		const initialContext = { query: { site_type: 'an-invalid-site-type-slug' } };
 		const nextProps = { initialContext, submitSiteType };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTypeFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSiteType ).not.toHaveBeenCalled();
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not remove step if `flowName` is main', () => {
+		const stepName = 'site-type';
+		const initialContext = {};
+		const nextProps = { initialContext, submitSiteType, flowName: 'main' };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 

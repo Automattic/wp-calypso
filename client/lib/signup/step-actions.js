@@ -618,7 +618,10 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) {
-	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
+	if (
+		isEmpty( nextProps.initialContext && nextProps.initialContext.query ) &&
+		nextProps.flowName !== 'blog'
+	) {
 		return;
 	}
 
@@ -626,6 +629,7 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 		initialContext: {
 			query: { site_type: siteType },
 		},
+		flowName,
 	} = nextProps;
 
 	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
@@ -637,6 +641,12 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 
 		nextProps.submitSiteType( siteType );
 		recordExcludeStepEvent( stepName, siteType );
+
+		// nextProps.submitSiteType( siteType ) above provides dependencies
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'siteType', 'themeSlugWithRepo' ] );
+	} else if ( flowName === 'blog' ) {
+		nextProps.submitSiteType( 'blog' );
+		recordExcludeStepEvent( stepName, 'blog' );
 
 		// nextProps.submitSiteType( siteType ) above provides dependencies
 		fulfilledDependencies = fulfilledDependencies.concat( [ 'siteType', 'themeSlugWithRepo' ] );

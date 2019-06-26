@@ -86,10 +86,19 @@ export function generateFlows( {
 		},
 
 		blog: {
-			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with blog themes',
-			lastModified: '2017-09-01',
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getChecklistDestination,
+			disallowResume: true,
+			description: 'Signup flow starting with blog site type.',
+			lastModified: '2019-06-26',
 		},
 
 		website: {
