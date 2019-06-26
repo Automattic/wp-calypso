@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import {
 	iconsThatNeedOffset,
@@ -11,11 +10,19 @@ import {
 } from 'gridicons/dist/util/icons-offset';
 import spritePath from 'gridicons/svg-sprite/gridicons.svg';
 
-function needsOffset( name, icons ) {
+function needsOffset( name: string, icons: [string] ) {
 	return icons.indexOf( name ) >= 0;
 }
 
-const Gridicon = React.forwardRef( ( props, ref ) => {
+interface Props {
+	icon: string;
+	size?: number;
+	onClick?: ( event?: React.MouseEvent< SVGSVGElement, MouseEvent > ) => any;
+	className?: string;
+	[propName: string]: any;
+}
+
+const Gridicon = React.forwardRef< SVGSVGElement, Props >( ( props: Props, ref ) => {
 	const { size = 24, icon, onClick, className, ...otherProps } = props;
 	const isModulo18 = size % 18 === 0;
 
@@ -45,12 +52,5 @@ const Gridicon = React.forwardRef( ( props, ref ) => {
 		</svg>
 	);
 } );
-
-Gridicon.propTypes = {
-	icon: PropTypes.string.isRequired,
-	size: PropTypes.number,
-	onClick: PropTypes.func,
-	className: PropTypes.string,
-};
 
 export default React.memo( Gridicon );

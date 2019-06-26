@@ -3,10 +3,17 @@
  */
 import classnames from 'classnames';
 import React from 'react';
-import PropTypes from 'prop-types';
 import spritePath from 'social-logos/svg-sprite/social-logos.svg';
 
-function SocialLogo( props ) {
+interface Props {
+	icon: string;
+	size?: number;
+	onClick?: ( event?: React.MouseEvent< SVGSVGElement, MouseEvent > ) => any;
+	className?: string;
+	[propName: string]: any;
+}
+
+function SocialLogo( props: Props ) {
 	const { size = 24, icon, onClick, className, ...otherProps } = props;
 
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
@@ -31,12 +38,5 @@ function SocialLogo( props ) {
 		</svg>
 	);
 }
-
-SocialLogo.propTypes = {
-	icon: PropTypes.string.isRequired,
-	size: PropTypes.number,
-	onClick: PropTypes.func,
-	className: PropTypes.string,
-};
 
 export default React.memo( SocialLogo );
