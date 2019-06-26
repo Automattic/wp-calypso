@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, indexOf, reject } from 'lodash';
+import { assign, get, indexOf, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -108,7 +108,7 @@ const Flows = {
 	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
 		? abtest( 'improvedOnboarding' )
 		: 'main',
-	excludedSteps: [],
+	excludedSteps: new Set(),
 
 	/**
 	 * Get certain flow from the flows configuration.
@@ -160,7 +160,15 @@ const Flows = {
 	 * @param {String} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+		step && Flows.excludedSteps.add( step );
+	},
+
+	/**
+	 * Make `getFlow()` re-include the given step after it's been excluded by `excludeStep()`.
+	 * @param {String} step Name of the step to include
+	 */
+	includeStep( step ) {
+		Flows.excludedSteps.delete( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -169,7 +177,7 @@ const Flows = {
 		}
 
 		return assign( {}, flow, {
-			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
+			steps: reject( flow.steps, stepName => Flows.excludedSteps.has( stepName ) ),
 		} );
 	},
 

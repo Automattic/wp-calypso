@@ -58,4 +58,31 @@ describe( 'Signup Flows Configuration', () => {
 			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user' ] );
 		} );
 	} );
+
+	describe( 'includeSteps', () => {
+		beforeAll( () => {
+			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
+		} );
+
+		afterAll( () => {
+			flows.getFlows.restore();
+		} );
+
+		test( 'including step that was never excluded has no effect', () => {
+			flows.includeStep( 'site' );
+			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user', 'site' ] );
+		} );
+
+		test( "including step that doesn't exist has no effect", () => {
+			flows.includeStep( 'fake' );
+			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user', 'site' ] );
+		} );
+
+		test( 'including step after it was excluded restores the step', () => {
+			flows.excludeStep( 'site' );
+			flows.excludeStep( 'user' );
+			flows.includeStep( 'site' );
+			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'site' ] );
+		} );
+	} );
 } );

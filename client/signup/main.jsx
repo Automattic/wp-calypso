@@ -284,7 +284,7 @@ class Signup extends React.Component {
 	};
 
 	processFulfilledSteps = ( stepName, nextProps ) => {
-		if ( includes( flows.excludedSteps, stepName ) ) {
+		if ( flows.excludedSteps.has( stepName ) ) {
 			return;
 		}
 
@@ -298,7 +298,7 @@ class Signup extends React.Component {
 		const flowSteps = flows.getFlow( flowName ).steps;
 		map( flowSteps, flowStepName => this.processFulfilledSteps( flowStepName, nextProps ) );
 
-		if ( includes( flows.excludedSteps, stepName ) ) {
+		if ( flows.excludedSteps.has( stepName ) ) {
 			this.goToNextStep( flowName );
 		}
 	};
