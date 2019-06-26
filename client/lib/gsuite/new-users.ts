@@ -89,6 +89,30 @@ const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
 	return users.map( user => mapValues( user, field => removePreviousErrors( field ) ) );
 };
 
+const validateNewUserMailboxIsUnique = (
+	{ value: mailBox, error: previousError }: GSuiteNewUserField,
+	mailboxesByCount: { [mailbox: string]: number }
+) => ( {
+	value: mailBox,
+	error:
+		mailboxesByCount[ mailBox ] > 1
+			? i18n.translate( 'Please use a unique mailbox for each user.' )
+			: previousError,
+} );
+
+const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
+	const mailboxesByCount: { [mailbox: string]: number } = countBy(
+		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
+	);
+
+	return users.map( ( { domain, mailBox, firstName, lastName } ) => ( {
+		firstName,
+		lastName,
+		domain,
+		mailBox: validateNewUserMailboxIsUnique( mailBox, mailboxesByCount ),
+	} ) );
+};
+
 const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	// every field is required. Also scrubs previous errors.
 	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
@@ -101,6 +125,19 @@ const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 		firstName: sixtyCharacterField( firstName ),
 		lastName: sixtyCharacterField( lastName ),
 	};
+};
+
+const validateUsers = (
+	users: GSuiteNewUser[],
+	extraValidation: ( user: GSuiteNewUser ) => GSuiteNewUser = user => user
+) => {
+	// 1. scrub all previous errors with clearPreviousErrors
+	// 2. first check for uniqueness with validateNewUsersAreUnique
+	// 3. then run the standard validateUser on each user
+	// 4. finally run extraValidation on each user
+	return validateNewUsersAreUnique( clearPreviousErrors( users ) )
+		.map( validateUser )
+		.map( extraValidation );
 };
 
 const validateAgainstExistingUsers = (
@@ -137,30 +174,6 @@ const isUserComplete = ( user: GSuiteNewUser ): boolean => {
 
 const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
 	return Object.values( user ).some( ( { error } ) => null !== error );
-};
-
-const validateNewUserMailboxIsUnique = (
-	{ value: mailBox, error: previousError }: GSuiteNewUserField,
-	mailboxesByCount: { [mailbox: string]: number }
-) => ( {
-	value: mailBox,
-	error:
-		mailboxesByCount[ mailBox ] > 1
-			? i18n.translate( 'Please use a unique mailbox for each user.' )
-			: previousError,
-} );
-
-const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
-	const mailboxesByCount: { [mailbox: string]: number } = countBy(
-		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
-	);
-
-	return users.map( ( { domain, mailBox, firstName, lastName } ) => ( {
-		firstName,
-		lastName,
-		domain,
-		mailBox: validateNewUserMailboxIsUnique( mailBox, mailboxesByCount ),
-	} ) );
 };
 
 /**
@@ -218,4 +231,5 @@ export {
 	validateAgainstExistingUsers,
 	validateNewUsersAreUnique,
 	validateUser,
+	validateUsers,
 };
