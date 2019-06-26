@@ -5,6 +5,8 @@ import classnames from 'classnames';
 import React from 'react';
 import spritePath from '@automattic/material-design-icons/svg-sprite/material-icons.svg';
 
+type Omit< T, K extends keyof any > = Pick< T, Exclude< keyof T, K > >;
+
 interface Props extends Omit< React.SVGProps< SVGSVGElement >, 'style' > {
 	icon: string;
 	style?: string;
