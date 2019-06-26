@@ -26,7 +26,7 @@ const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour
 		{ ...meta }
-		when={ ( state: any ) => {
+		when={ state => {
 			const site = getSelectedSite( state );
 			const res =
 				! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
