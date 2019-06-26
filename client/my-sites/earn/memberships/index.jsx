@@ -35,6 +35,8 @@ import QueryMembershipProducts from 'components/data/query-memberships';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
 /**
  * Style dependencies
@@ -250,10 +252,26 @@ class MembershipsSection extends Component {
 			} );
 		}
 	}
-
+	renderSubscriberActions( subscriber ) {
+		return (
+			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
+				<PopoverMenuItem
+					target="_blank"
+					rel="noopener norefferer"
+					href={ `https://dashboard.stripe.com/test/search?query=metadata%3A${
+						subscriber.user.ID
+					}` }
+				>
+					<Gridicon size={ 18 } icon={ 'external' } />
+					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
+				</PopoverMenuItem>
+			</EllipsisMenu>
+		);
+	}
 	renderSubscriber( subscriber ) {
 		return (
 			<Card className="memberships__subscriber-profile is-compact" key={ subscriber.id }>
+				{ this.renderSubscriberActions( subscriber ) }
 				<div className="memberships__subscriber-gravatar">
 					<Gravatar user={ subscriber.user } size={ 72 } />
 				</div>
