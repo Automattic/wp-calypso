@@ -23,20 +23,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import PostAutocomplete from '../../components/post-autocomplete';
 
 class PostContentEdit extends Component {
-	componentDidMount() {
-		this.toggleEditorPostTitleVisibility();
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isFullSitePage !== prevProps.isFullSitePage ) {
-			this.toggleEditorPostTitleVisibility();
-		}
-	}
-
-	componentWillUnmount() {
-		this.toggleEditorPostTitleVisibility( true );
-	}
-
 	toggleEditing() {
 		const { isEditing, setState } = this.props;
 		setState( { isEditing: ! isEditing } );
@@ -51,7 +37,7 @@ class PostContentEdit extends Component {
 	}
 
 	render() {
-		const { attributes, isEditing, isFullSitePage, selectedPost } = this.props;
+		const { attributes, isEditing, selectedPost } = this.props;
 		const { align } = attributes;
 
 		const isTemplatePostType = 'wp_template' === fullSiteEditing.editorPostType;
@@ -59,7 +45,6 @@ class PostContentEdit extends Component {
 		const showPlaceholder = isTemplatePostType && ( isEditing || ! selectedPost );
 		const showPreview = isTemplatePostType && ! isEditing && !! selectedPost;
 		const showInnerBlocks = ! isTemplatePostType;
-		const showPostTitle = ! isTemplatePostType && isFullSitePage;
 
 		return (
 			<Fragment>
@@ -82,7 +67,7 @@ class PostContentEdit extends Component {
 						[ `align${ align }` ]: align,
 					} ) }
 				>
-					{ showPostTitle && <PostTitle /> }
+					<PostTitle />
 					{ showInnerBlocks && <InnerBlocks /> }
 					{ showPlaceholder && (
 						<Placeholder
@@ -127,10 +112,8 @@ export default compose( [
 	} ),
 	withSelect( ( select, { selectedPostId, selectedPostType } ) => {
 		const { getEntityRecord } = select( 'core' );
-		const isFullSitePage = select( 'a8c/full-site-editing' ).isFullSitePage();
 		return {
 			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
-			isFullSitePage,
 		};
 	} ),
 ] )( PostContentEdit );
