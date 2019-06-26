@@ -102,6 +102,7 @@ export function getAllSiteTypes() {
 			domainsStepSubheader: i18n.translate(
 				"Enter your blog's name or some keywords that describe it to get started."
 			),
+			hideSiteMockups: true,
 		},
 		{
 			id: 1, // This value must correspond with its sibling in the /segments API results

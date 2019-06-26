@@ -46,6 +46,7 @@ import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart, saveCouponQueryArgument } from 'lib/upgrades/actions';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -648,6 +649,8 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const siteType = getSiteType( state );
+
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
@@ -662,8 +665,10 @@ export default connect(
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
-			siteType: getSiteType( state ),
-			shouldShowMockups: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
+			siteType,
+			shouldShowMockups:
+				! getSiteTypePropertyValue( 'slug', siteType, 'hideSiteMockups' ) &&
+				get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
 		};
 	},
 	{
