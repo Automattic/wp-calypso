@@ -474,7 +474,7 @@ class Full_Site_Editing {
 		$template_blocks  = $parser->parse( $template_content );
 		$content_attrs    = $this->get_post_content_block_attrs( $template_blocks );
 
-		// Bail if the post has no post content block.
+		// Bail if the template has no post content block.
 		if ( is_null( $content_attrs ) ) {
 			return;
 		}
