@@ -5,13 +5,12 @@ import classnames from 'classnames';
 import React from 'react';
 import spritePath from '@automattic/material-design-icons/svg-sprite/material-icons.svg';
 
-interface Props {
+interface Props extends Omit< React.SVGProps< SVGSVGElement >, 'style' > {
 	icon: string;
 	style?: string;
 	size?: number;
 	onClick?: React.MouseEventHandler< SVGSVGElement >;
 	className?: string;
-	[propName: string]: any;
 }
 
 function MaterialIcon( props: Props ) {
