@@ -48,6 +48,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
  * Style dependencies
  */
 import './style.scss';
+import GSuiteNewUser from '../../../components/gsuite/gsuite-new-user-list/new-user';
 
 class GSuiteAddUsers extends React.Component {
 	state = {
@@ -145,6 +146,62 @@ class GSuiteAddUsers extends React.Component {
 		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 
+	renderProratedNotice() {
+		const { translate } = this.props;
+
+		// 1. Retrieve list of unique domains for the mailboxes about to be added
+		// 2. Retrieve extra license product (from productList)
+		// 3. Retrieve extra license product for each domain (with the prorated price)
+		// 4. Display notices only for domains where regular price <> prorated price
+
+		const accounts = [
+			{
+				domain: 'example.com',
+				fullPrice: '$72',
+				proratedPrice: '$22'
+			}
+		];
+
+		if (accounts.length === 0) {
+			return;
+		}
+
+
+		if (accounts.length === 1) {
+			return (
+				<Notice showDismiss={ false } icon="info-outline" status="is-success">
+					{ translate(
+						'You can purchase additional G Suite users at the pro-rated price of {{b}}%(proratedPrice)s{{/b}} per user. All your G Suite users will renew at the regular price of {{b}}%(fullPrice)s{{/b}} per user when your G Suite subscription renews.',
+						{
+							args: accounts[0],
+							components: {
+								b: <strong />
+							}
+						}
+					) }
+				</Notice>
+			);
+		}
+
+		return (
+			<Fragment>
+				{ accounts.map( ( account, index ) => (
+					<Notice key={ index } showDismiss={ false } icon="info-outline" status="is-success">
+						{ translate(
+							'You can purchase additional G Suite users for {{b}}%(domain)s{{/b}} at the pro-rated price of {{b}}%(proratedPrice)s{{/b}} per user. All your G Suite users from this account will renew at the regular price of {{b}}%(fullPrice)s{{/b}} per user when your G Suite subscription renews.',
+							{
+								args: accounts[index],
+								components: {
+									b: <strong />
+								}
+							}
+						) }
+					</Notice>
+				) ) }
+			</Fragment>
+		);
+	}
+
 	renderAddGSuite() {
 		const {
 			domains,
@@ -164,6 +221,8 @@ class GSuiteAddUsers extends React.Component {
 
 		return (
 			<Fragment>
+				{ this.renderProratedNotice() }
+
 				{ domainsWithForwards.length ? (
 					<Notice showDismiss={ false } status="is-warning">
 						{ translate(
@@ -181,8 +240,10 @@ class GSuiteAddUsers extends React.Component {
 				{ selectedDomainInfo.map( domain => {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
+
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
+
 					<Card>
 						<GSuiteNewUserList
 							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
