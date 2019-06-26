@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Any new action type should be added to the set of exports below, with the
  * value mirroring its exported name.
@@ -1200,3 +1199,8 @@ export const WORDADS_EARNINGS_REQUEST = 'WORDADS_EARNINGS_REQUEST';
 export const WORDADS_EARNINGS_RECEIVE = 'WORDADS_EARNINGS_RECEIVE';
 export const WPCOM_HTTP_REQUEST = 'WPCOM_HTTP_REQUEST';
 export const WPORG_PLUGIN_DATA_RECEIVE = 'WPORG_PLUGIN_DATA_RECEIVE';
+
+/**
+ * A special Calypso init action type. This should not be used for regular Redux work.
+ */
+export const __CALYPSO_INIT__ = '@@calypso/INIT';

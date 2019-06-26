@@ -20,7 +20,7 @@ import LRU from 'lru';
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE, __CALYPSO_INIT__ } from 'state/action-types';
 import { SerializationResult } from 'state/serialization-result';
 import warn from 'lib/warn';
 
@@ -61,7 +61,7 @@ export function isValidStateWithSchema( state, schema, debugInfo ) {
 	return valid;
 }
 
-type CalypsoInitAction = Action< '@@calypso/INIT' >;
+type CalypsoInitAction = Action< typeof __CALYPSO_INIT__ >;
 
 interface KeyedState< S > {
 	[key: string]: S;
@@ -143,7 +143,7 @@ export const keyedReducer = < S = any, A extends Action = AnyAction >(
 		);
 	}
 
-	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
+	const initialState = reducer( undefined, { type: __CALYPSO_INIT__ } );
 
 	const wrappedReducer = (
 		state: KeyedState< S > = {},
@@ -262,7 +262,7 @@ export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
 };
 
 function getInitialState( reducer ) {
-	return reducer( undefined, { type: '@@calypso/INIT' } );
+	return reducer( undefined, { type: __CALYPSO_INIT__ } );
 }
 
 function isValidSerializedState( schema, reducer, state ) {
