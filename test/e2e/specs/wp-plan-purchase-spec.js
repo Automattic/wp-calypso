@@ -56,6 +56,22 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 			return await plansPage.waitForComparison();
 		} );
 
+		step( 'Can See Exactly One Primary CTA Button', async function() {
+			const plansPage = await PlansPage.Expect( driver );
+			return assert(
+				await plansPage.onePrimaryButtonShown(),
+				'Incorrect number of primary buttons'
+			);
+		} );
+
+		step( 'Can See Exactly One Primary CTA Button for Mobile', async function() {
+			const plansPage = await PlansPage.Expect( driver );
+			return assert(
+				await plansPage.onePrimaryButtonShownForMobile(),
+				'Incorrect number of primary buttons'
+			);
+		} );
+
 		if ( host === 'WPCOM' ) {
 			step( 'Can Verify Current Plan', async function() {
 				const planName = 'premium';
