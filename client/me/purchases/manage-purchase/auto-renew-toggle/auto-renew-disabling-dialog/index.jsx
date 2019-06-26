@@ -171,6 +171,7 @@ class AutoRenewDisablingDialog extends Component {
 				<Button onClick={ this.onClickGeneralConfirm } primary>
 					{ translate( 'Confirm cancellation' ) }
 				</Button>
+				<Button onClick={ onClose }>{ translate( "I'll keep it" ) }</Button>
 			</Dialog>
 		);
 	};
