@@ -46,7 +46,7 @@ const LabelsSetupNotice = ( {
 		return (
 			<Card className="labels-setup-notice is-warning">
 				{ translate(
-					'To begin fulfilling orders by printing your own label, add a payment method in {{a}}Shipping Settings{{/a}}',
+					'To begin fulfilling orders by printing your own label, add a payment method in {{a}}shipping settings{{/a}}',
 					{ components: { a: <a href={ getLink( '/store/settings/shipping/:site/', site ) } /> } }
 				) }
 			</Card>

@@ -129,7 +129,7 @@ class AddressView extends Component {
 				onClick={ this.onClickShowAddressLine2 }
 			>
 				<Gridicon icon="plus-small" />
-				{ translate( 'Add Address Line 2' ) }
+				{ translate( 'Add address line 2' ) }
 			</Button>
 		);
 	};

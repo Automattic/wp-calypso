@@ -139,7 +139,7 @@ class InventoryWidget extends Component {
 		const props = {
 			width: this.props.width,
 			className: this.getClasses(),
-			title: translate( 'Inventory Alerts' ),
+			title: translate( 'Inventory alerts' ),
 			settingsPanel: InventoryControls,
 		};
 		if ( this.shouldShowImage() ) {

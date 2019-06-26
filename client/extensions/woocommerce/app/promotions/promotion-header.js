@@ -45,13 +45,13 @@ function renderSaveButton( onSave, isBusy, label ) {
 const PromotionHeader = ( { promotion, onSave, onTrash, isBusy, translate, site } ) => {
 	const existing = promotion && ! isObject( promotion.id );
 	const trashButton = renderTrashButton( onTrash, isBusy, translate( 'Delete' ) );
-	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & Publish' );
+	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & publish' );
 	const saveButton = renderSaveButton( onSave, isBusy, saveLabel );
 
 	const currentCrumb = existing ? (
-		<span>{ translate( 'Edit Promotion' ) }</span>
+		<span>{ translate( 'Edit promotion' ) }</span>
 	) : (
-		<span>{ translate( 'Add Promotion' ) }</span>
+		<span>{ translate( 'Add promotion' ) }</span>
 	);
 
 	const breadcrumbs = [
