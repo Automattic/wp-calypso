@@ -9,19 +9,21 @@ import {
 	iconsThatNeedOffsetY,
 } from 'gridicons/dist/util/icons-offset';
 import spritePath from 'gridicons/svg-sprite/gridicons.svg';
+import { Assign } from 'utility-types';
 
 function needsOffset( name: string, icons: [string] ) {
 	return icons.indexOf( name ) >= 0;
 }
 
-interface Props extends React.SVGProps< SVGSVGElement > {
+interface Props {
 	icon: string;
 	size?: number;
 	onClick?: React.MouseEventHandler< SVGSVGElement >;
 	className?: string;
 }
+type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 
-const Gridicon = React.forwardRef< SVGSVGElement, Props >( ( props: Props, ref ) => {
+const Gridicon = React.forwardRef< SVGSVGElement, AllProps >( ( props: AllProps, ref ) => {
 	const { size = 24, icon, onClick, className, ...otherProps } = props;
 	const isModulo18 = size % 18 === 0;
 

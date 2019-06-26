@@ -4,9 +4,9 @@
 import classnames from 'classnames';
 import React from 'react';
 import spritePath from '@automattic/material-design-icons/svg-sprite/material-icons.svg';
-import { Omit } from 'utility-types';
+import { Assign } from 'utility-types';
 
-interface Props extends Omit< React.SVGProps< SVGSVGElement >, 'style' > {
+interface Props {
 	icon: string;
 	style?: string;
 	size?: number;
@@ -14,7 +14,7 @@ interface Props extends Omit< React.SVGProps< SVGSVGElement >, 'style' > {
 	className?: string;
 }
 
-function MaterialIcon( props: Props ) {
+function MaterialIcon( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
 	const { size = 24, style = 'outline', icon, onClick, className, ...otherProps } = props;
 
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.

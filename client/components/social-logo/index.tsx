@@ -4,15 +4,16 @@
 import classnames from 'classnames';
 import React from 'react';
 import spritePath from 'social-logos/svg-sprite/social-logos.svg';
+import { Assign } from 'utility-types';
 
-interface Props extends React.SVGProps< SVGSVGElement > {
+interface Props {
 	icon: string;
 	size?: number;
 	onClick?: React.MouseEventHandler< SVGSVGElement >;
 	className?: string;
 }
 
-function SocialLogo( props: Props ) {
+function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
 	const { size = 24, icon, onClick, className, ...otherProps } = props;
 
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
