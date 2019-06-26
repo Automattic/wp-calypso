@@ -36,7 +36,7 @@ class Full_Site_Editing {
 		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
 		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
 		add_filter( 'admin_body_class', array( $this, 'toggle_editor_post_title_visibility' ) );
-		add_filter( 'block_editor_settings', array( $this, 'set_block_template' ), 10, 2  );
+		add_filter( 'block_editor_settings', array( $this, 'set_block_template' ) );
 	}
 
 	/**
@@ -479,7 +479,6 @@ class Full_Site_Editing {
 	 *
 	 * @param array $data    An array of slashed post data.
 	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
-	 *
 	 * @return array
 	 */
 	public function remove_template_components( $data, $postarr ) {
@@ -553,12 +552,12 @@ class Full_Site_Editing {
 	/**
 	 * Sets the block template to be loaded by the editor when creating a new full site page.
 	 *
-	 * @param array   $editor_settings Default editor settings.
-	 * @return array  Editor settings with the updated template setting.
+	 * @param array $editor_settings Default editor settings.
+	 * @return array Editor settings with the updated template setting.
 	 */
 	public function set_block_template( $editor_settings ) {
 		if ( $this->is_full_site_page() ) {
-			$fse_template = new A8C_WP_Template();
+			$fse_template    = new A8C_WP_Template();
 			$template_blocks = $fse_template->get_template_blocks();
 
 			$template = array();
@@ -576,13 +575,14 @@ class Full_Site_Editing {
  *
  * @see https://github.com/WordPress/gutenberg/blob/1414cf0ad1ec3d0f3e86a40815513c15938bb522/docs/designers-developers/developers/block-api/block-templates.md
  *
- * @param array $block Block to convert
+ * @param array $block Block to convert.
  * @return array
  */
 function fse_map_block_to_editor_template_setting( $block ) {
-	$block_name = $block[ 'blockName' ];
-	$attrs = $block[ 'attrs' ];
-	$inner_blocks = $block[ 'innerBlocks' ];
+	$block_name   = $block['blockName'];
+	$attrs        = $block['attrs'];
+	$inner_blocks = $block['innerBlocks'];
+
 	$inner_blocks_template = array();
 	foreach ( $inner_blocks as $inner_block ) {
 		$inner_blocks[] = fse_map_block_to_editor_template_setting( $inner_block );
