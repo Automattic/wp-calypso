@@ -11,7 +11,7 @@ import {
 import spritePath from 'gridicons/svg-sprite/gridicons.svg';
 import { Assign } from 'utility-types';
 
-function needsOffset( name: string, icons: [string] ) {
+function needsOffset( name: string, icons: string[] ) {
 	return icons.indexOf( name ) >= 0;
 }
 

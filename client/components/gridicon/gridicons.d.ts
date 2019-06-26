@@ -1,7 +1,7 @@
 declare module 'gridicons/dist/util/icons-offset' {
-	const iconsThatNeedOffset: [string];
-	const iconsThatNeedOffsetX: [string];
-	const iconsThatNeedOffsetY: [string];
+	const iconsThatNeedOffset: string[];
+	const iconsThatNeedOffsetX: string[];
+	const iconsThatNeedOffsetY: string[];
 }
 
 declare module 'gridicons/svg-sprite/gridicons.svg' {
