@@ -14,12 +14,11 @@ function needsOffset( name: string, icons: [string] ) {
 	return icons.indexOf( name ) >= 0;
 }
 
-interface Props {
+interface Props extends React.SVGProps< SVGSVGElement > {
 	icon: string;
 	size?: number;
 	onClick?: React.MouseEventHandler< SVGSVGElement >;
 	className?: string;
-	[propName: string]: any;
 }
 
 const Gridicon = React.forwardRef< SVGSVGElement, Props >( ( props: Props, ref ) => {

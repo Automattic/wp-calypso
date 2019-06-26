@@ -5,12 +5,11 @@ import classnames from 'classnames';
 import React from 'react';
 import spritePath from 'social-logos/svg-sprite/social-logos.svg';
 
-interface Props {
+interface Props extends React.SVGProps< SVGSVGElement > {
 	icon: string;
 	size?: number;
 	onClick?: React.MouseEventHandler< SVGSVGElement >;
 	className?: string;
-	[propName: string]: any;
 }
 
 function SocialLogo( props: Props ) {
