@@ -473,7 +473,7 @@ class Full_Site_Editing {
 		}
 
 		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content -->%s<!-- /wp:a8c/post-content -->', $post->post_content );
-		$post->post_content   = str_replace( '<!-- wp:a8c/post-content /-->', $wrapped_post_content, $template->get_template_content() );
+		$post->post_content   = str_replace( '<!-- wp:a8c/post-content {"align":"full"} /-->', $wrapped_post_content, $template->get_template_content() );
 	}
 
 	/**
