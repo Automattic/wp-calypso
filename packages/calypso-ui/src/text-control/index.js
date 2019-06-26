@@ -51,11 +51,15 @@ class TextControl extends Component {
 		const isEmpty = ! value;
 		const isActive = isFocused && ! disabled;
 
-		const classes = classNames( className, this.getStatusClassName( disabled, isEmpty ), {
-			active: isActive,
-			'muriel-component': true,
-			'muriel-input-text': true,
-		} );
+		const classes = classNames(
+			'muriel-component',
+			'muriel-input-text',
+			className,
+			this.getStatusClassName( disabled, isEmpty ),
+			{
+				active: isActive,
+			}
+		);
 
 		return (
 			<BaseComponent
