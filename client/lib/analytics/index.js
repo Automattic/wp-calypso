@@ -49,6 +49,7 @@ import {
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 import { isE2ETest } from 'lib/e2e';
+import { getGoogleAnalyticsDefaultConfig } from './ad-tracking';
 
 /**
  * Module variables
@@ -255,9 +256,6 @@ const analytics = {
 			// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 			setTimeout( () => {
-				// Process queue.
-				analytics.queue.process();
-
 				// Add paths to parameters.
 				params.last_pageview_path_with_count =
 					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
@@ -277,6 +275,9 @@ const analytics = {
 				// Record this path.
 				mostRecentUrlPath = urlPath;
 				pathCounter++;
+
+				// Process queue.
+				analytics.queue.process();
 			}, 0 );
 		},
 	},
@@ -643,12 +644,8 @@ const analytics = {
 		initialize: function() {
 			if ( ! analytics.ga.initialized ) {
 				const parameters = {
-					anonymize_ip: true,
-					transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
-					use_amp_client_id: true,
-					custom_map: {
-						dimension3: 'clientId',
-					},
+					send_page_view: false,
+					...getGoogleAnalyticsDefaultConfig(),
 					...( _user && _user.get() && { user_id: hashPii( _user.get().ID ) } ),
 				};
 

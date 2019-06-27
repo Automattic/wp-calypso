@@ -428,7 +428,7 @@ async function loadTrackingScripts( callback ) {
 	if ( isPinterestEnabled ) {
 		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
 		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
-		window.pintrk( 'load', '2613194105266', params );
+		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
 	}
 
 	debug( 'loadTrackingScripts: init done' );
@@ -1725,6 +1725,22 @@ export function isGoogleAnalyticsAllowed() {
 }
 
 /**
+ * Returns the default configuration for Google Analytics
+ *
+ * @return {Object} GA's default config
+ */
+export function getGoogleAnalyticsDefaultConfig() {
+	return {
+		anonymize_ip: true,
+		transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
+		use_amp_client_id: true,
+		custom_map: {
+			dimension3: 'client_id',
+		},
+	};
+}
+
+/**
  * Fires Google Analytics page view event
  *
  * @param {String} urlPath The path of the current page
@@ -1732,6 +1748,7 @@ export function isGoogleAnalyticsAllowed() {
  */
 export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
+		...getGoogleAnalyticsDefaultConfig(),
 		page_path: urlPath,
 		page_title: pageTitle,
 	} );
