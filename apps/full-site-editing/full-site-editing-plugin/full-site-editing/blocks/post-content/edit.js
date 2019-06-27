@@ -23,20 +23,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import PostAutocomplete from '../../components/post-autocomplete';
 
 class PostContentEdit extends Component {
-	componentDidMount() {
-		this.toggleEditorPostTitleVisibility();
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.isFullSitePage !== prevProps.isFullSitePage ) {
-			this.toggleEditorPostTitleVisibility();
-		}
-	}
-
-	componentWillUnmount() {
-		this.toggleEditorPostTitleVisibility( true );
-	}
-
 	toggleEditing() {
 		const { isEditing, setState } = this.props;
 		setState( { isEditing: ! isEditing } );
@@ -50,21 +36,8 @@ class PostContentEdit extends Component {
 		} );
 	}
 
-	/**
-	 * Hides the default post title of the editor when editing a full site page and shows new post title rendered by the
-	 * post content block in order to have it just before the content of the post.
-	 *
-	 * @param {boolean} forceDefaultPostTitle Whether the default post title should be always displayed.
-	 */
-	toggleEditorPostTitleVisibility( forceDefaultPostTitle = false ) {
-		const showPostTitleBeforeContent = this.props.isFullSitePage && ! forceDefaultPostTitle;
-		document
-			.querySelector( '#editor' )
-			.classList.toggle( 'show-post-title-before-content', showPostTitleBeforeContent );
-	}
-
 	render() {
-		const { attributes, isEditing, isFullSitePage, selectedPost } = this.props;
+		const { attributes, isEditing, selectedPost } = this.props;
 		const { align } = attributes;
 
 		const isTemplatePostType = 'wp_template' === fullSiteEditing.editorPostType;
@@ -72,7 +45,6 @@ class PostContentEdit extends Component {
 		const showPlaceholder = isTemplatePostType && ( isEditing || ! selectedPost );
 		const showPreview = isTemplatePostType && ! isEditing && !! selectedPost;
 		const showInnerBlocks = ! isTemplatePostType;
-		const showPostTitle = ! isTemplatePostType && isFullSitePage;
 
 		return (
 			<Fragment>
@@ -95,7 +67,7 @@ class PostContentEdit extends Component {
 						[ `align${ align }` ]: align,
 					} ) }
 				>
-					{ showPostTitle && <PostTitle /> }
+					<PostTitle />
 					{ showInnerBlocks && <InnerBlocks /> }
 					{ showPlaceholder && (
 						<Placeholder
@@ -140,10 +112,8 @@ export default compose( [
 	} ),
 	withSelect( ( select, { selectedPostId, selectedPostType } ) => {
 		const { getEntityRecord } = select( 'core' );
-		const isFullSitePage = select( 'a8c/full-site-editing' ).isFullSitePage();
 		return {
 			selectedPost: getEntityRecord( 'postType', selectedPostType, selectedPostId ),
-			isFullSitePage,
 		};
 	} ),
 ] )( PostContentEdit );
