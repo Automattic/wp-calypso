@@ -25,11 +25,7 @@ import {
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import {
-	getEligibleGSuiteDomain,
-	getGSuiteSupportedDomains,
-	hasGSuiteSupportedDomain,
-} from 'lib/gsuite';
+import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'lib/gsuite';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -125,21 +121,21 @@ class GSuiteAddUsers extends React.Component {
 	};
 
 	componentDidMount() {
-		const { domains, isRequestingDomains } = this.props;
-		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
+		const { domains, isRequestingDomains, selectedDomainName } = this.props;
+		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		const { domains, isRequestingDomains } = nextProps;
-		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
+		const { domains, isRequestingDomains, selectedDomainName } = nextProps;
+		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
 		if ( isRequestingDomains || ! domains.length ) {
 			return false;
 		}
 		return true;
 	}
 
-	redirectIfCannotAddEmail( domains, isRequestingDomains ) {
-		if ( isRequestingDomains || hasGSuiteSupportedDomain( domains ) ) {
+	redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName ) {
+		if ( isRequestingDomains || '' !== getEligibleGSuiteDomain( selectedDomainName, domains ) ) {
 			return;
 		}
 		this.goToEmail();
@@ -161,7 +157,9 @@ class GSuiteAddUsers extends React.Component {
 
 		const { users } = this.state;
 
-		const gSuiteSupportedDomains = getGSuiteSupportedDomains( domains );
+		const selectedDomainInfo = getGSuiteSupportedDomains( domains ).filter(
+			( { domainName } ) => selectedDomainName === domainName
+		);
 		const canContinue = areAllUsersValid( users );
 
 		return (
@@ -180,15 +178,15 @@ class GSuiteAddUsers extends React.Component {
 				) : (
 					''
 				) }
-				{ gSuiteSupportedDomains.map( domain => {
+				{ selectedDomainInfo.map( domain => {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
-				{ gsuiteUsers && gSuiteSupportedDomains && ! isRequestingDomains ? (
+				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
 							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
-							domains={ gSuiteSupportedDomains }
+							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
