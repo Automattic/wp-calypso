@@ -6,6 +6,7 @@ import { forEach, get, isEmpty, isEqual, mapValues, merge, reduce, reduceRight }
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import { cachingActionCreatorFactory } from './caching-action-creator-factory';
 import { keyedReducer } from './keyed-reducer';
+import { withEnhancers } from './with-enhancers';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { SerializationResult } from 'state/serialization-result';
 import warn from 'lib/warn';
 
-export { cachingActionCreatorFactory, keyedReducer };
+export { cachingActionCreatorFactory, keyedReducer, withEnhancers };
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema, {
@@ -72,40 +73,6 @@ export function extendAction( action, data ) {
 		return action( newDispatch, getState );
 	};
 }
-
-/**
- * Dispatches the specified Redux action creator once enhancers have been applied to the result of its call. Enhancers
- * have access to the state tree and can be used to modify an action, e.g. to add an additional property to an analytics
- * event.
- *
- * @param {Function} actionCreator - Redux action creator function
- * @param {Function|Array} enhancers - either a single function or a list of functions that can be used to modify a Redux action
- * @returns {Function} enhanced action creator
- * @see client/state/analytics/actions/enhanceWithSiteType for an example
- * @see client/state/extendAction for a simpler alternative
- */
-export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
-	dispatch,
-	getState
-) => {
-	const action = actionCreator( ...args );
-
-	if ( ! Array.isArray( enhancers ) ) {
-		enhancers = [ enhancers ];
-	}
-
-	if ( typeof action === 'function' ) {
-		const newDispatch = actionValue =>
-			dispatch(
-				enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue )
-			);
-		return action( newDispatch, getState );
-	}
-
-	return dispatch(
-		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), action )
-	);
-};
 
 function getInitialState( reducer ) {
 	return reducer( undefined, { type: '@@calypso/INIT' } );
