@@ -61,7 +61,9 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
-	let { domainItem } = dependencies;
+	const domainItem = dependencies.domainItem
+		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore )
+		: null;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -71,14 +73,6 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			themeSlugWithRepo: null,
 			domainItem,
 		};
-
-		if ( domainItem ) {
-			const { product_slug: productSlug } = domainItem;
-			const productsList = getProductsList( reduxStore.getState() );
-			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				domainItem = updatePrivacyForDomain( domainItem, true );
-			}
-		}
 
 		const domainChoiceCart = [ domainItem ];
 		SignupCart.createCart( cartKey, domainChoiceCart, error =>
@@ -308,20 +302,9 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		const state = reduxStore.getState();
-
-		const newCartItemsToAdd = newCartItems.map( item => {
-			// Add privacy protection to domain products, if supported
-			if ( isDomainRegistration( item ) || isDomainTransfer( item ) ) {
-				const { product_slug: productSlug } = item;
-				const productsList = getProductsList( state );
-				if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-					return updatePrivacyForDomain( item, true );
-				}
-			}
-
-			return item;
-		} );
+		const newCartItemsToAdd = newCartItems.map( item =>
+			addPrivacyProtectionIfSupported( item, reduxStore )
+		);
 
 		if ( newCartItemsToAdd.length ) {
 			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function( cartError ) {
@@ -345,6 +328,16 @@ function processItemCart(
 	} else {
 		addToCartAndProceed();
 	}
+}
+
+function addPrivacyProtectionIfSupported( item, reduxStore ) {
+	const { product_slug: productSlug } = item;
+	const productsList = getProductsList( reduxStore.getState() );
+	if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+		return updatePrivacyForDomain( item, true );
+	}
+
+	return item;
 }
 
 export function launchSiteApi( callback, dependencies ) {
