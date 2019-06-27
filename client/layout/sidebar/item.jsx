@@ -64,6 +64,7 @@ export default class SidebarItem extends React.Component {
 				data-post-type={ this.props.postType }
 			>
 				<a
+					className="sidebar__menu-link"
 					onClick={ this.props.onNavigate }
 					href={ this.props.link }
 					target={ showAsExternal ? '_blank' : null }
