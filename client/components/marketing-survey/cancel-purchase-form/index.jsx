@@ -48,6 +48,10 @@ class CancelPurchaseForm extends React.Component {
 		translate: PropTypes.func,
 	};
 
+	static defaultProps = {
+		showSurvey: true,
+	};
+
 	constructor( props ) {
 		super( props );
 
