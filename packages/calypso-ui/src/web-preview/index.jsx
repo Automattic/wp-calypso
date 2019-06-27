@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from '../async-load';
 
 const WebPreview = props => {
 	if ( ! props.showPreview ) {
