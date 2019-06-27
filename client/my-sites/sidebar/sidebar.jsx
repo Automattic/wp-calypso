@@ -450,11 +450,7 @@ export class MySitesSidebar extends Component {
 				icon="cart"
 				materialIcon="shopping_cart"
 				forceInternalLink
-			>
-				<div className="sidebar__chevron-right">
-					<Gridicon icon="chevron-right" />
-				</div>
-			</SidebarItem>
+			/>
 		);
 	}
 
