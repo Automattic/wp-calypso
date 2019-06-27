@@ -7,6 +7,7 @@ import { cachingActionCreatorFactory } from './caching-action-creator-factory';
 import { getInitialState } from './get-initial-state';
 import { keyedReducer } from './keyed-reducer';
 import { withEnhancers } from './with-enhancers';
+import { withStorageKey } from './with-storage-key';
 import { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
 
 /**
@@ -23,11 +24,7 @@ export {
 	keyedReducer,
 	withEnhancers,
 	withSchemaValidation,
-};
-
-export const withStorageKey = ( storageKey, reducer ) => {
-	reducer.storageKey = storageKey;
-	return reducer;
+	withStorageKey,
 };
 
 /**
