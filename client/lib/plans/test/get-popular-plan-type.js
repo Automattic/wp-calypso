@@ -6,14 +6,14 @@ import { TYPE_BUSINESS, TYPE_PERSONAL, TYPE_PREMIUM } from '../constants';
 
 describe( 'getPopularPlanType()', () => {
 	test( 'Should return TYPE_PERSONAL for personal site type', () => {
-		expect( getPopularPlanType( 'blog' ) ).toEqual( TYPE_PERSONAL );
+		expect( getPopularPlanType( 'blog' ) ).toBe( TYPE_PERSONAL );
 	} );
 
 	test( 'Should return TYPE_PREMIUM for business site type', () => {
-		expect( getPopularPlanType( 'professional' ) ).toEqual( TYPE_PREMIUM );
+		expect( getPopularPlanType( 'professional' ) ).toBe( TYPE_PREMIUM );
 	} );
 
 	test( 'Should return TYPE_BUSINESS for business site type', () => {
-		expect( getPopularPlanType( 'business' ) ).toEqual( TYPE_BUSINESS );
+		expect( getPopularPlanType( 'business' ) ).toBe( TYPE_BUSINESS );
 	} );
 } );
