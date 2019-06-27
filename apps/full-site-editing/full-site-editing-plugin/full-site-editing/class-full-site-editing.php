@@ -467,10 +467,33 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template = new A8C_WP_Template( $post->ID );
+		$template         = new A8C_WP_Template( $post->ID );
+		$template_content = $template->get_template_content();
 
-		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content -->%s<!-- /wp:a8c/post-content -->', $post->post_content );
-		$post->post_content   = str_replace( '<!-- wp:a8c/post-content {"align":"full"} /-->', $wrapped_post_content, $template->get_template_content() );
+		// Bail if the template has no post content block.
+		if ( ! has_block( 'a8c/post-content', $template_content ) ) {
+			return;
+		}
+
+		$template_blocks = parse_blocks( $template_content );
+		$content_attrs   = $this->get_post_content_block_attrs( $template_blocks );
+
+		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content %s -->%s<!-- /wp:a8c/post-content -->', $content_attrs, $post->post_content );
+		$post->post_content   = str_replace( "<!-- wp:a8c/post-content $content_attrs /-->", $wrapped_post_content, $template_content );
+	}
+
+	/**
+	 * This will extract the attributes from the post content block
+	 * json encode them.
+	 *
+	 * @param array $blocks    An array of template blocks.
+	 */
+	private function get_post_content_block_attrs( $blocks ) {
+		foreach ( $blocks as $key => $value ) {
+			if ( 'a8c/post-content' === $value['blockName'] ) {
+				return count( $value['attrs'] ) > 0 ? wp_json_encode( $value['attrs'] ) : '';
+			}
+		}
 	}
 
 	/**
