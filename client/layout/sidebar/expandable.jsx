@@ -91,10 +91,15 @@ export const ExpandableSidebarMenu = props => {
 				expanded={ expanded }
 				menuId={ menuId }
 			/>
-			{ addForm }
-			<ul role="region" id={ menuId } className="sidebar__menu-list" hidden={ ! expanded }>
+			<div
+				role="region"
+				id={ menuId }
+				className="sidebar__expandable-content"
+				hidden={ ! expanded }
+			>
 				{ props.children }
-			</ul>
+			</div>
+			{ addForm }
 		</SidebarMenu>
 	);
 };
