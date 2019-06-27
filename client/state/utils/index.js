@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mapValues, merge, reduce, reduceRight } from 'lodash';
+import { mapValues, reduce, reduceRight } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import { cachingActionCreatorFactory } from './caching-action-creator-factory';
 import { getInitialState } from './get-initial-state';
@@ -13,35 +13,17 @@ import { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
  * Internal dependencies
  */
 import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { extendAction } from './extend-action';
 import { SerializationResult } from 'state/serialization-result';
 
 export {
 	cachingActionCreatorFactory,
+	extendAction,
 	isValidStateWithSchema,
 	keyedReducer,
 	withEnhancers,
 	withSchemaValidation,
 };
-
-/**
- * Given an action object or thunk, returns an updated object or thunk which
- * will include additional data in the action (as provided) when dispatched.
- *
- * @param  {(Function|Object)} action Action object or thunk
- * @param  {Object}            data   Additional data to include in action
- * @return {(Function|Object)}        Augmented action object or thunk
- * @see client/state/utils/withEnhancers for a more advanced alternative
- */
-export function extendAction( action, data ) {
-	if ( 'function' !== typeof action ) {
-		return merge( {}, action, data );
-	}
-
-	return ( dispatch, getState ) => {
-		const newDispatch = a => dispatch( extendAction( a, data ) );
-		return action( newDispatch, getState );
-	};
-}
 
 export const withStorageKey = ( storageKey, reducer ) => {
 	reducer.storageKey = storageKey;
