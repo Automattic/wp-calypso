@@ -405,7 +405,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<JetpackLogo size={ 24 } />
+					<JetpackLogo className={ 'sidebar__menu-icon' } size={ 24 } />
 					<span className="menu-link-text" data-e2e-sidebar={ 'Plan' }>
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
@@ -582,7 +582,7 @@ export class MySitesSidebar extends Component {
 					icon
 					onClick={ this.trackWpadminClick }
 				>
-					<Gridicon icon="my-sites" size={ 24 } />
+					<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
 				</ExternalLink>
 			</li>
