@@ -9,28 +9,17 @@
 import React, { useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
-import _ from 'lodash';
+import { useFakeTimers } from 'sinon';
 
-jest.useFakeTimers();
-
-jest.mock( 'lodash' );
-
-// Mock Lodash's throttle implementation to avoid issues with Jest's fake timers.
-_.throttle.mockImplementation( func => {
-	const ret = ( ...args ) => setTimeout( () => func( ...args ), 0 );
-	ret.cancel = () => null;
-	return ret;
-} );
-
-import { useWindowResizeCallback, useWindowResizeRect } from '..';
+import { useWindowResizeCallback, useWindowResizeRect, THROTTLE_RATE } from '..';
 
 const initialRect = { width: 10, height: 10 };
 
 describe( 'useWindowResizeCallback', () => {
-	let getBoundingClientRectMock;
 	let container;
 	let lastRect;
 	let callback;
+	let clock;
 
 	// Auxiliary function to create a test component.
 	function createTestComponent( cb, mock ) {
@@ -49,11 +38,9 @@ describe( 'useWindowResizeCallback', () => {
 	}
 
 	beforeEach( () => {
+		clock = useFakeTimers();
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
-
-		getBoundingClientRectMock = jest.fn();
-		getBoundingClientRectMock.mockReturnValueOnce( initialRect );
 
 		callback = jest.fn( boundingClientRect => {
 			lastRect = boundingClientRect;
@@ -61,6 +48,7 @@ describe( 'useWindowResizeCallback', () => {
 	} );
 
 	afterEach( () => {
+		clock.restore();
 		document.body.removeChild( container );
 		ReactDOM.unmountComponentAtNode( container );
 		container = null;
@@ -75,23 +63,14 @@ describe( 'useWindowResizeCallback', () => {
 		act( () => {
 			ReactDOM.render( <TestComponent />, container );
 		} );
-
-		// Flush timer queue to trigger callbacks.
-		act( () => {
-			jest.runAllTimers();
-		} );
 	} );
 
 	it( 'triggers an initial callback', () => {
+		const getBoundingClientRectMock = jest.fn().mockReturnValueOnce( initialRect );
 		const TestComponent = createTestComponent( callback, getBoundingClientRectMock );
 
 		act( () => {
 			ReactDOM.render( <TestComponent />, container );
-		} );
-
-		// Flush timer queue to trigger callbacks.
-		act( () => {
-			jest.runAllTimers();
 		} );
 
 		expect( lastRect ).toBe( initialRect );
@@ -100,18 +79,15 @@ describe( 'useWindowResizeCallback', () => {
 
 	it( 'triggers a callback when a resize takes place', () => {
 		const secondRect = { height: 100, width: 100 };
-		getBoundingClientRectMock = jest.fn();
-		getBoundingClientRectMock.mockReturnValueOnce( initialRect ).mockReturnValueOnce( secondRect );
+		const getBoundingClientRectMock = jest
+			.fn()
+			.mockReturnValueOnce( initialRect )
+			.mockReturnValueOnce( secondRect );
 
 		const TestComponent = createTestComponent( callback, getBoundingClientRectMock );
 
 		act( () => {
 			ReactDOM.render( <TestComponent />, container );
-		} );
-
-		// Flush timer queue to trigger callbacks.
-		act( () => {
-			jest.runAllTimers();
 		} );
 
 		expect( lastRect ).toBe( initialRect );
@@ -123,7 +99,7 @@ describe( 'useWindowResizeCallback', () => {
 
 		// Flush timer queue to trigger callbacks.
 		act( () => {
-			jest.runAllTimers();
+			clock.tick( THROTTLE_RATE );
 		} );
 
 		expect( lastRect ).toBe( secondRect );
@@ -132,18 +108,15 @@ describe( 'useWindowResizeCallback', () => {
 
 	it( 'does not trigger a callback when a resize returns the same dimensions as before', () => {
 		const secondRect = { height: 10, width: 10 };
-		getBoundingClientRectMock = jest.fn();
-		getBoundingClientRectMock.mockReturnValueOnce( initialRect ).mockReturnValueOnce( secondRect );
+		const getBoundingClientRectMock = jest
+			.fn()
+			.mockReturnValueOnce( initialRect )
+			.mockReturnValueOnce( secondRect );
 
 		const TestComponent = createTestComponent( callback, getBoundingClientRectMock );
 
 		act( () => {
 			ReactDOM.render( <TestComponent />, container );
-		} );
-
-		// Flush timer queue to trigger callbacks.
-		act( () => {
-			jest.runAllTimers();
 		} );
 
 		expect( lastRect ).toBe( initialRect );
@@ -155,7 +128,7 @@ describe( 'useWindowResizeCallback', () => {
 
 		// Flush timer queue to trigger callbacks.
 		act( () => {
-			jest.runAllTimers();
+			clock.tick( THROTTLE_RATE );
 		} );
 
 		expect( lastRect ).toBe( initialRect );
@@ -164,7 +137,7 @@ describe( 'useWindowResizeCallback', () => {
 } );
 
 describe( 'useWindowResizeRect', () => {
-	let getBoundingClientRectMock;
+	let clock;
 	let container;
 	let lastRect;
 	let renderTracker;
@@ -190,31 +163,30 @@ describe( 'useWindowResizeRect', () => {
 	}
 
 	beforeEach( () => {
+		clock = useFakeTimers();
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
 		renderTracker = jest.fn();
-
-		getBoundingClientRectMock = jest.fn();
-		getBoundingClientRectMock.mockReturnValueOnce( initialRect );
 	} );
 
 	afterEach( () => {
+		clock.restore();
 		document.body.removeChild( container );
 		ReactDOM.unmountComponentAtNode( container );
 		container = null;
 	} );
 
 	it( 'returns the initial rect', () => {
+		const getBoundingClientRectMock = jest
+			.fn()
+			.mockReturnValueOnce( initialRect )
+			.mockReturnValueOnce( initialRect );
+
 		const TestComponent = createTestComponent( getBoundingClientRectMock );
 
 		act( () => {
 			ReactDOM.render( <TestComponent />, container );
-		} );
-
-		// Flush timer queue to trigger callbacks.
-		act( () => {
-			jest.runAllTimers();
 		} );
 
 		expect( container.textContent ).toBe( initialRect.width.toString() );
@@ -228,8 +200,9 @@ describe( 'useWindowResizeRect', () => {
 
 	it( 'returns the new rect when a resize takes place', () => {
 		const secondRect = { height: 100, width: 100 };
-		getBoundingClientRectMock = jest
+		const getBoundingClientRectMock = jest
 			.fn()
+			.mockReturnValueOnce( initialRect )
 			.mockReturnValueOnce( initialRect )
 			.mockReturnValueOnce( secondRect )
 			.mockReturnValueOnce( secondRect );
@@ -238,11 +211,6 @@ describe( 'useWindowResizeRect', () => {
 
 		act( () => {
 			ReactDOM.render( <TestComponent />, container );
-		} );
-
-		// Flush timer queue to trigger callbacks.
-		act( () => {
-			jest.runAllTimers();
 		} );
 
 		expect( container.textContent ).toBe( initialRect.width.toString() );
@@ -255,7 +223,7 @@ describe( 'useWindowResizeRect', () => {
 
 		// Flush timer queue to trigger callbacks.
 		act( () => {
-			jest.runAllTimers();
+			clock.tick( THROTTLE_RATE );
 		} );
 
 		expect( container.textContent ).toBe( secondRect.width.toString() );
@@ -270,7 +238,7 @@ describe( 'useWindowResizeRect', () => {
 
 	it( 'does not rerender when a resize returns the same dimensions as before', () => {
 		const secondRect = { height: 10, width: 10 };
-		getBoundingClientRectMock = jest
+		const getBoundingClientRectMock = jest
 			.fn()
 			.mockReturnValueOnce( initialRect )
 			.mockReturnValueOnce( secondRect )
@@ -280,11 +248,6 @@ describe( 'useWindowResizeRect', () => {
 
 		act( () => {
 			ReactDOM.render( <TestComponent />, container );
-		} );
-
-		// Flush timer queue to trigger callbacks.
-		act( () => {
-			jest.runAllTimers();
 		} );
 
 		expect( container.textContent ).toBe( initialRect.width.toString() );
@@ -297,7 +260,7 @@ describe( 'useWindowResizeRect', () => {
 
 		// Flush timer queue to trigger callbacks.
 		act( () => {
-			jest.runAllTimers();
+			clock.tick( THROTTLE_RATE );
 		} );
 
 		expect( container.textContent ).toBe( initialRect.width.toString() );

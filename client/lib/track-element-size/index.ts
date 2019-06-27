@@ -4,10 +4,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { throttle } from 'lodash';
 
-const THROTTLE_RATE = 200;
-
 type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;
+
+export const THROTTLE_RATE = 200;
 
 function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	if ( prevRect === null ) {
@@ -50,7 +50,7 @@ export function useWindowResizeCallback(
 		}
 
 		// Measure the element in the DOM.
-		const measureElement = throttle( () => {
+		const measureElement = () => {
 			const rect = elementRef.current ? elementRef.current.getBoundingClientRect() : null;
 
 			// Avoid notifying consumer if nothing's changed.
@@ -60,19 +60,21 @@ export function useWindowResizeCallback(
 				// Notify consumer of bounding client rect change.
 				callback( rect );
 			}
-		}, THROTTLE_RATE );
+		};
 
 		// Measure element so that the callback is invoked at least once, even if
 		// there are no window resize events.
 		measureElement();
 
+		const throttledMeasureElement = throttle( measureElement, THROTTLE_RATE );
+
 		// Set up subscription.
-		window.addEventListener( 'resize', measureElement );
+		window.addEventListener( 'resize', throttledMeasureElement );
 
 		// Unsubscribe.
 		return () => {
-			window.removeEventListener( 'resize', measureElement );
-			measureElement.cancel();
+			window.removeEventListener( 'resize', throttledMeasureElement );
+			throttledMeasureElement.cancel();
 		};
 	}, [ elementRef.current, callback ] );
 
