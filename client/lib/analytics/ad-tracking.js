@@ -1731,6 +1731,7 @@ export function isGoogleAnalyticsAllowed() {
  */
 export function getGoogleAnalyticsDefaultConfig() {
 	return {
+		...( user.get() && { user_id: hashPii( user.get().ID ) } ),
 		anonymize_ip: true,
 		transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
 		use_amp_client_id: true,

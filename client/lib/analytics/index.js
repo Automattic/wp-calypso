@@ -28,7 +28,6 @@ import {
 	doNotTrack,
 	isPiiUrl,
 	shouldReportOmitBlogId,
-	hashPii,
 	costToUSD,
 } from 'lib/analytics/utils';
 import {
@@ -646,7 +645,6 @@ const analytics = {
 				const parameters = {
 					send_page_view: false,
 					...getGoogleAnalyticsDefaultConfig(),
-					...( _user && _user.get() && { user_id: hashPii( _user.get().ID ) } ),
 				};
 
 				gaDebug( 'parameters:', parameters );
