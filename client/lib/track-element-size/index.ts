@@ -1,21 +1,31 @@
 /**
  * External dependencies
  */
-import { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import afterLayoutFlush from 'lib/after-layout-flush';
 
 const THROTTLE_RATE = 200;
 
-type UseWindowResizeRect = ReturnType< typeof Element.prototype.getBoundingClientRect >;
+type NullableDOMRect = ClientRect | DOMRect | null;
+type NullableElement = Element | null;
 
-// Function type for the expected callback for `useWindowResizeCallback`.
-interface UseWindowResizeCallback {
-	( node: Element | null | undefined ): void;
+function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
+	if ( prevRect === null ) {
+		return nextRect === null;
+	}
+
+	if ( nextRect === null ) {
+		return prevRect === null;
+	}
+
+	return (
+		prevRect.bottom === nextRect.bottom &&
+		prevRect.left === nextRect.left &&
+		prevRect.right === nextRect.right &&
+		prevRect.top === nextRect.top &&
+		prevRect.width === nextRect.width &&
+		prevRect.height === nextRect.height
+	);
 }
 
 /**
@@ -29,63 +39,44 @@ interface UseWindowResizeCallback {
  * @returns The ref to be set on the consumer component.
  */
 export function useWindowResizeCallback(
-	callback: ( boundingClientRect: UseWindowResizeRect ) => any
+	callback: ( boundingClientRect: NullableDOMRect ) => void
 ) {
-	const lastRect = useRef< UseWindowResizeRect | null >( null );
-	const [ element, setElement ] = useState< Element | null >( null );
-
-	const callbackRef: UseWindowResizeCallback = useCallback( node => {
-		if ( node ) {
-			setElement( node );
-		}
-	}, [] );
+	const lastRect = useRef< NullableDOMRect >( null );
+	const elementRef = useRef< NullableElement >( null );
 
 	useEffect( () => {
-		// Notify consumer of bounding client rect change.
-		const handleRectChange = ( rect: UseWindowResizeRect ) => {
-			if ( rect ) {
-				// Avoid notifying consumer if nothing's changed.
-				if (
-					lastRect.current === null ||
-					lastRect.current.bottom !== rect.bottom ||
-					lastRect.current.left !== rect.left ||
-					lastRect.current.right !== rect.right ||
-					lastRect.current.top !== rect.top ||
-					lastRect.current.width !== rect.width ||
-					lastRect.current.height !== rect.height
-				) {
-					lastRect.current = rect;
-					return callback( rect );
-				}
-			}
-		};
+		if ( ! callback ) {
+			return;
+		}
 
 		// Measure the element in the DOM.
-		// Uses `afterLayoutFlush` to avoid causing layout thrashing.
-		const measureElement = afterLayoutFlush( () => {
-			if ( element && element.getBoundingClientRect ) {
-				handleRectChange( element.getBoundingClientRect() );
+		const measureElement = throttle( () => {
+			const rect = elementRef.current ? elementRef.current.getBoundingClientRect() : null;
+
+			// Avoid notifying consumer if nothing's changed.
+			if ( ! rectIsEqual( lastRect.current, rect ) ) {
+				lastRect.current = rect;
+
+				// Notify consumer of bounding client rect change.
+				callback( rect );
 			}
-		} );
-		const throttledMeasureElement = throttle( measureElement, THROTTLE_RATE );
+		}, THROTTLE_RATE );
+
+		// Measure element so that the callback is invoked at least once, even if
+		// there are no window resize events.
+		measureElement();
 
 		// Set up subscription.
-		if ( element && callback ) {
-			// Measure element so that the callback is invoked at least once, even if
-			// there are no window resize events.
-			throttledMeasureElement();
-			window.addEventListener( 'resize', throttledMeasureElement );
+		window.addEventListener( 'resize', measureElement );
 
-			// Unsubscribe.
-			return () => {
-				window.removeEventListener( 'resize', throttledMeasureElement );
-				measureElement.cancel();
-				throttledMeasureElement.cancel();
-			};
-		}
-	}, [ element, callback ] );
+		// Unsubscribe.
+		return () => {
+			window.removeEventListener( 'resize', measureElement );
+			measureElement.cancel();
+		};
+	}, [ elementRef.current, callback ] );
 
-	return callbackRef;
+	return elementRef;
 }
 
 /**
@@ -96,14 +87,11 @@ export function useWindowResizeCallback(
  *
  * @returns A tuple with the ref to be set on the consumer component, and the current rect.
  */
-export function useWindowResizeRect(): [UseWindowResizeCallback, UseWindowResizeRect | null] {
-	const [ rect, setRect ] = useState< UseWindowResizeRect | null >( null );
-
-	const callback = useCallback(
-		( boundingClientRect: UseWindowResizeRect ) => setRect( boundingClientRect ),
-		[]
-	);
-	const callbackRef = useWindowResizeCallback( callback );
-
+export function useWindowResizeRect(): [
+	React.MutableRefObject< NullableElement >,
+	NullableDOMRect
+] {
+	const [ rect, setRect ] = useState< NullableDOMRect >( null );
+	const callbackRef = useWindowResizeCallback( setRect );
 	return [ callbackRef, rect ];
 }

@@ -13,15 +13,6 @@ import _ from 'lodash';
 
 jest.useFakeTimers();
 
-// Mock afterLayoutFlush implementation to avoid asynchronous timers.
-jest.mock( 'lib/after-layout-flush', () =>
-	jest.fn( func => {
-		const ret = ( ...args ) => setTimeout( () => func( ...args ), 0 );
-		ret.cancel = () => null;
-		return ret;
-	} )
-);
-
 jest.mock( 'lodash' );
 
 // Mock Lodash's throttle implementation to avoid issues with Jest's fake timers.
@@ -46,15 +37,12 @@ describe( 'useWindowResizeCallback', () => {
 		return function() {
 			const resizeCallback = useCallback( cb, [] );
 			const resizeRef = useWindowResizeCallback( resizeCallback );
-			const ref = useCallback(
-				node => {
-					if ( node ) {
-						node.getBoundingClientRect = mock;
-						resizeRef( node );
-					}
-				},
-				[ resizeRef ]
-			);
+			const ref = node => {
+				if ( node ) {
+					node.getBoundingClientRect = mock;
+				}
+				resizeRef.current = node;
+			};
 
 			return <div ref={ ref } />;
 		};
@@ -188,15 +176,12 @@ describe( 'useWindowResizeRect', () => {
 
 			const [ resizeRef, rect ] = useWindowResizeRect();
 
-			const ref = useCallback(
-				node => {
-					if ( node ) {
-						node.getBoundingClientRect = mock;
-						resizeRef( node );
-					}
-				},
-				[ resizeRef ]
-			);
+			const ref = node => {
+				if ( node ) {
+					node.getBoundingClientRect = mock;
+				}
+				resizeRef.current = node;
+			};
 
 			lastRect = rect;
 
@@ -235,17 +220,19 @@ describe( 'useWindowResizeRect', () => {
 		expect( container.textContent ).toBe( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
-		// We expect 3 renders:
+		// We expect 2 renders:
 		// - Initial render, where the ref gets applied
-		// - Second render, where the ref callback happens
-		// - Third render, where the rect values get updated after measuring the DOM
-		expect( renderTracker ).toHaveBeenCalledTimes( 3 );
+		// - Second render, where the rect values get updated after measuring the DOM
+		expect( renderTracker ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'returns the new rect when a resize takes place', () => {
 		const secondRect = { height: 100, width: 100 };
-		getBoundingClientRectMock = jest.fn();
-		getBoundingClientRectMock.mockReturnValueOnce( initialRect ).mockReturnValueOnce( secondRect );
+		getBoundingClientRectMock = jest
+			.fn()
+			.mockReturnValueOnce( initialRect )
+			.mockReturnValueOnce( secondRect )
+			.mockReturnValueOnce( secondRect );
 
 		const TestComponent = createTestComponent( getBoundingClientRectMock );
 
@@ -274,18 +261,20 @@ describe( 'useWindowResizeRect', () => {
 		expect( container.textContent ).toBe( secondRect.width.toString() );
 		expect( lastRect ).toBe( secondRect );
 
-		// We expect 4 renders:
+		// We expect 3 renders:
 		// - Initial render, where the ref gets applied
-		// - Second render, where the ref callback happens
-		// - Third render, where the rect values get updated after measuring the DOM
-		// - Fourth render, where the new rect values are returned after the resize
-		expect( renderTracker ).toHaveBeenCalledTimes( 4 );
+		// - Second render, where the rect values get updated after measuring the DOM
+		// - Third render, where the new rect values are returned after the resize
+		expect( renderTracker ).toHaveBeenCalledTimes( 3 );
 	} );
 
 	it( 'does not rerender when a resize returns the same dimensions as before', () => {
 		const secondRect = { height: 10, width: 10 };
-		getBoundingClientRectMock = jest.fn();
-		getBoundingClientRectMock.mockReturnValueOnce( initialRect ).mockReturnValueOnce( secondRect );
+		getBoundingClientRectMock = jest
+			.fn()
+			.mockReturnValueOnce( initialRect )
+			.mockReturnValueOnce( secondRect )
+			.mockReturnValueOnce( secondRect );
 
 		const TestComponent = createTestComponent( getBoundingClientRectMock );
 
@@ -314,12 +303,11 @@ describe( 'useWindowResizeRect', () => {
 		expect( container.textContent ).toBe( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
-		// We expect 3 renders:
+		// We expect 2 renders:
 		// - Initial render, where the ref gets applied
-		// - Second render, where the ref callback happens
-		// - Third render, where the rect values get updated after measuring the DOM
-		// We do not expect a 4th render, where the rect would get updated, since
+		// - Second render, where the rect values get updated after measuring the DOM
+		// We do not expect a 3th render, where the rect would get updated, since
 		// the dimensions haven't changed.
-		expect( renderTracker ).toHaveBeenCalledTimes( 3 );
+		expect( renderTracker ).toHaveBeenCalledTimes( 2 );
 	} );
 } );
