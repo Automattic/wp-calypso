@@ -71,8 +71,12 @@ export default class SidebarItem extends React.Component {
 					rel={ isExternalLink ? 'noopener noreferrer' : null }
 					onMouseEnter={ this.preload }
 				>
-					{ icon && ! materialIcon ? <Gridicon icon={ icon } size={ 24 } /> : null }
-					{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
+					{ icon && ! materialIcon ? (
+						<Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } />
+					) : null }
+					{ materialIcon ? (
+						<MaterialIcon className={ 'sidebar__menu-icon' } icon={ materialIcon } />
+					) : null }
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 					<span
 						className="sidebar__menu-link-text menu-link-text"
