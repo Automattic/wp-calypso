@@ -86,7 +86,6 @@
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
-		"nps-survey/notice": true,
 		"onboarding-checklist": true,
 		"onboarding-checklist/email-setup": true,
 		"onboarding-checklist/phase2": true,

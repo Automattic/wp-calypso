@@ -31,6 +31,11 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import analytics from 'lib/analytics';
 import RecommendationSelect from './recommendation-select';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class NpsSurvey extends PureComponent {
 	static propTypes = {
 		onChangeForm: PropTypes.func,

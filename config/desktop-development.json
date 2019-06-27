@@ -99,7 +99,6 @@
 		"me/trophies": false,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
-		"nps-survey/notice": true,
 		"paladin": true,
 		"network-connection": true,
 		"oauth": true,
