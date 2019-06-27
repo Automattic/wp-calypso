@@ -56,20 +56,20 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 			return await plansPage.waitForComparison();
 		} );
 
-		step( 'Can See Exactly One Primary CTA Button', async function() {
-			const plansPage = await PlansPage.Expect( driver );
-			return assert(
-				await plansPage.onePrimaryButtonShown(),
-				'Incorrect number of primary buttons'
-			);
-		} );
-
 		if ( host === 'WPCOM' ) {
 			step( 'Can Verify Current Plan', async function() {
 				const planName = 'premium';
 				const plansPage = await PlansPage.Expect( driver );
 				const present = await plansPage.confirmCurrentPlan( planName );
 				return assert( present, `Failed to detect correct plan (${ planName })` );
+			} );
+
+			step( 'Can See Exactly One Primary CTA Button', async function() {
+				const plansPage = await PlansPage.Expect( driver );
+				return assert(
+					await plansPage.onePrimaryButtonShown(),
+					'Incorrect number of primary buttons'
+				);
 			} );
 		} else {
 			step( 'Can Verify Current Plan', async function() {
