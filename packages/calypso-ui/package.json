@@ -27,9 +27,15 @@
 		"src"
 	],
 	"dependencies": {
+		"@wordpress/i18n": "3.1.1",
 		"classnames": "2.2.6",
+		"debug": "^3.2.6",
+		"gridicons": "3.3.1",
+		"lodash": "^4.17.11",
+		"page": "1.11.4",
+		"prop-types": "^15.7.2",
 		"react": "^16.8.3",
-		"prop-types": "^15.7.2"
+		"uuid": "^3.3.2"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
