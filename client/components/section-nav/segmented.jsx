@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,13 +13,15 @@ import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 
 /**
+ * Style dependencies
+ */
+import './segmented.scss';
+
+/**
  * Internal variables
  */
 let _instance = 1;
 
-/**
- * Main
- */
 class NavSegmented extends Component {
 	static propTypes = {
 		label: PropTypes.string,

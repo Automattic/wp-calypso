@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,13 +18,15 @@ import afterLayoutFlush from 'lib/after-layout-flush';
 import TranslatableString from 'components/translatable/proptype';
 
 /**
+ * Style dependencies
+ */
+import './tabs.scss';
+
+/**
  * Internal Variables
  */
 const MOBILE_PANEL_THRESHOLD = 480;
 
-/**
- * Main
- */
 class NavTabs extends Component {
 	static propTypes = {
 		selectedText: TranslatableString,
@@ -65,8 +65,7 @@ class NavTabs extends Component {
 			return child && React.cloneElement( child, { ref: 'tab-' + index } );
 		} );
 
-		const tabsClassName = classNames( {
-			'section-nav-tabs': true,
+		const tabsClassName = classNames( 'section-nav-tabs', {
 			'is-dropdown': this.state.isDropdown,
 			'is-open': this.state.isDropdownOpen,
 			'has-siblings': this.props.hasSiblingControls,

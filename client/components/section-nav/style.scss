@@ -1,9 +1,3 @@
-/**
- * Section Nav
- *
- */
-
-// -------- Main Component --------
 .section-nav {
 	position: relative;
 	width: 100%;
@@ -40,7 +34,6 @@
 	}
 }
 
-// -------- Mobile Specific Header / Panel --------
 .section-nav__mobile-header {
 	display: flex;
 	padding: 15px;
@@ -191,38 +184,6 @@
 // -------- Nav Items --------
 .section-nav-tab .count {
 	margin-left: 8px;
-}
-
-// -------- Nav Tabs --------
-// which contain items
-.section-nav-tabs {
-	@include breakpoint( '>480px' ) {
-		width: 0;
-		flex: 1 0 auto;
-
-		&.is-dropdown {
-			position: relative;
-			width: auto;
-			flex: 0 1 auto;
-			margin: 8px;
-		}
-	}
-}
-
-// -------- Nav Tabs - inline list --------
-.section-nav-tabs__list {
-	margin: 0;
-	list-style: none;
-
-	@include breakpoint( '>480px' ) {
-		display: flex;
-		width: 100%;
-		overflow: hidden;
-
-		.is-dropdown & {
-			display: none;
-		}
-	}
 }
 
 // -------- Nav Tabs - individual tab --------
@@ -378,17 +339,6 @@
 	.select-dropdown__container {
 		max-width: 200px;
 		position: static;
-	}
-}
-
-// -------- Nav Segmented Control --------
-.section-nav__segmented {
-	.segmented-control {
-		margin: 0 15px;
-	}
-
-	.segmented-control__link {
-		padding: 3px 16px 5px;
 	}
 }
 
