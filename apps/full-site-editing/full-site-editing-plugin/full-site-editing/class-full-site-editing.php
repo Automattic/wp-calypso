@@ -472,7 +472,7 @@ class Full_Site_Editing {
 		$parser = new WP_Block_Parser();
 		$template_content = $template->get_template_content();
 		$template_blocks = $parser->parse( $template_content );
-		$content_attrs = json_encode( $this->get_post_content_block_attrs( $template_blocks ) );
+		$content_attrs = $this->get_post_content_block_attrs( $template_blocks );
 
 		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content %s -->%s<!-- /wp:a8c/post-content -->', $content_attrs, $post->post_content );
 		$post->post_content   = str_replace( "<!-- wp:a8c/post-content $content_attrs /-->", $wrapped_post_content, $template_content );
@@ -481,7 +481,7 @@ class Full_Site_Editing {
 	private function get_post_content_block_attrs( $blocks ) {
 		foreach ( $blocks as $key => $value ) { 
             if ( 'a8c/post-content' == $value['blockName'] ) {
-                return $value['attrs'];
+                return sizeof( $value['attrs'] ) > 0 ? json_encode( $value['attrs'] ) : '';
 			}
 		}
 	}
