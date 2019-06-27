@@ -540,11 +540,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await siteTitlePage.submitForm();
 		} );
 
-		step( 'Can see the "Site style" page, and continue with the default style', async function() {
-			const siteTitlePage = await SiteStylePage.Expect( driver );
-			return await siteTitlePage.submitForm();
-		} );
-
 		step(
 			'Can then see the domains page and can search for a blog name, can see and select a free WordPress.com blog address in results',
 			async function() {
@@ -664,11 +659,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step( 'Can see the "Site title" page, and enter the site title', async function() {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( blogName );
-			return await siteTitlePage.submitForm();
-		} );
-
-		step( 'Can see the "Site style" page, and continue with the default style', async function() {
-			const siteTitlePage = await SiteStylePage.Expect( driver );
 			return await siteTitlePage.submitForm();
 		} );
 

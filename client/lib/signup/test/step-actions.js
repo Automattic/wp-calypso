@@ -14,6 +14,7 @@ import {
 } from '../step-actions';
 import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
+import { getSiteStyleOptions } from 'lib/signup/site-styles';
 
 // This is necessary since localforage will throw "no local storage method found" promise rejection without this.
 // See how lib/user-settings/test apply the same trick.
@@ -24,6 +25,7 @@ jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' )
 jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
 jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
+jest.mock( 'lib/signup/site-styles' );
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
@@ -332,23 +334,32 @@ describe( 'isSiteTopicFulfilled()', () => {
 } );
 
 describe( 'isSiteStyleFulfilled()', () => {
+	const siteStyle = 'styleId';
+	const themeSlugWithRepo = 'themeSlug';
+
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
+		getSiteStyleOptions.mockReturnValue( [ { id: siteStyle, theme: themeSlugWithRepo } ] );
 	} );
 
-	test( 'excludes site style step if site type is a blog', () => {
-		const nextProps = { siteType: 'blog' };
+	test( 'complete site style step if site type is a blog', () => {
+		const nextProps = { siteType: 'blog', submitSignupStep: jest.fn() };
 
 		isSiteStyleFulfilled( 'step-name', undefined, nextProps );
 
+		expect( nextProps.submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName: 'step-name' },
+			{ siteStyle, themeSlugWithRepo }
+		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( 'step-name' );
 	} );
 
-	test( "don't exclude site style step if site type isn't a blog", () => {
-		const nextProps = { siteType: 'business' };
+	test( "don't complete site style step if site type isn't a blog", () => {
+		const nextProps = { siteType: 'business', submitSignupStep: jest.fn() };
 
 		isSiteStyleFulfilled( 'step-name', undefined, nextProps );
 
+		expect( nextProps.submitSignupStep ).not.toHaveBeenCalled();
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 	} );
 } );

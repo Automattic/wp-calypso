@@ -37,6 +37,7 @@ import { getUserExperience } from 'state/signup/steps/user-experience/selectors'
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { getSiteStyleOptions } from 'lib/signup/site-styles';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -699,8 +700,12 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 
 export function isSiteStyleFulfilled( stepName, defaultDependencies, nextProps ) {
 	// Switching to a site type where the mockups are hidden means we
-	// don't want to ask what site style they want.
+	// don't want to ask what site style they want, we'll pick one for them.
 	if ( getSiteTypePropertyValue( 'slug', nextProps.siteType, 'hideSiteMockups' ) ) {
+		const { siteType } = nextProps;
+		const { id: siteStyle, theme: themeSlugWithRepo } = getSiteStyleOptions( siteType )[ 0 ];
+
+		nextProps.submitSignupStep( { stepName }, { siteStyle, themeSlugWithRepo } );
 		flows.excludeStep( stepName );
 	}
 }
