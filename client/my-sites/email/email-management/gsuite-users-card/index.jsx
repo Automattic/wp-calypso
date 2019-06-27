@@ -74,7 +74,7 @@ class GSuiteUsersCard extends React.Component {
 							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
-							{ this.props.translate( 'Add G Suite User' ) }
+							{ this.props.translate( 'Add New User' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -159,7 +159,7 @@ const addGoogleAppsUserClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Add G Suite User" Button in G Suite',
+			'Clicked "Add New User" Button in G Suite',
 			'Domain Name',
 			domainName
 		),
