@@ -30,11 +30,13 @@ const ExpandableSidebarHeading = ( {
 			aria-expanded={ expanded ? 'true' : 'false' }
 			onClick={ onClick }
 		>
-			{ icon ? <Gridicon icon={ icon } /> : null }
-			{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
-			<span>{ title }</span>
+			{ icon ? <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } /> : null }
+			{ materialIcon ? (
+				<MaterialIcon className={ 'sidebar__menu-icon' } icon={ materialIcon } />
+			) : null }
+			<span className={ 'sidebar__expandable-title' }>{ title }</span>
 			{ undefined !== count ? <Count count={ count } /> : null }
-			<MaterialIcon icon={ 'keyboard_arrow_down' } className="expandable-heading__chevron" />
+			<MaterialIcon icon={ 'keyboard_arrow_down' } className={ 'sidebar__expandable-arrow' } />
 		</SidebarHeading>
 	);
 };
