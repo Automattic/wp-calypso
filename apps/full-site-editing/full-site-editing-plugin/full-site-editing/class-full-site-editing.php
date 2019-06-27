@@ -468,16 +468,15 @@ class Full_Site_Editing {
 		}
 
 		$template = new A8C_WP_Template( $post->ID );
-
-		$parser = new WP_Block_Parser();
 		$template_content = $template->get_template_content();
-		$template_blocks  = $parser->parse( $template_content );
-		$content_attrs    = $this->get_post_content_block_attrs( $template_blocks );
-
+		
 		// Bail if the template has no post content block.
-		if ( is_null( $content_attrs ) ) {
-			return;
+		if ( ! has_block( 'a8c/post-content', $template_content ) ) {
+    		return;
 		}
+
+		$template_blocks  = parse_blocks( $template_content );
+		$content_attrs    = $this->get_post_content_block_attrs( $template_blocks );
 
 		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content %s -->%s<!-- /wp:a8c/post-content -->', $content_attrs, $post->post_content );
 		$post->post_content   = str_replace( "<!-- wp:a8c/post-content $content_attrs /-->", $wrapped_post_content, $template_content );
