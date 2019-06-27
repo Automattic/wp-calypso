@@ -41,12 +41,18 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async onePrimaryButtonShown() {
-		const selector =
-			currentScreenSize() === 'mobile'
-				? '.plan-features__mobile .plan-features__actions-button.is-primary'
-				: '.plan-features__table-item.is-top-buttons button.plan-features__actions-button.is-primary';
-		const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
+		if ( host === 'WPCOM' ) {
+			const selector =
+				currentScreenSize() === 'mobile'
+					? '.plan-features__mobile .plan-features__actions-button.is-primary'
+					: '.plan-features__table-item.is-top-buttons button.plan-features__actions-button.is-primary';
+			const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
+			return count === 1;
+		}
 
+		// Jetpack non-atomic (inside wp-admin)
+		const selector = '.plan-features__table-item.is-top-buttons a.dops-button.is-primary';
+		const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
 		return count === 1;
 	}
 
