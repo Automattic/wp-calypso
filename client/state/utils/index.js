@@ -5,6 +5,7 @@ import validator from 'is-my-json-valid';
 import { forEach, get, isEmpty, isEqual, mapValues, merge, reduce, reduceRight } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import { cachingActionCreatorFactory } from './caching-action-creator-factory';
+import { getInitialState } from './get-initial-state';
 import { keyedReducer } from './keyed-reducer';
 import { withEnhancers } from './with-enhancers';
 
@@ -72,10 +73,6 @@ export function extendAction( action, data ) {
 		const newDispatch = a => dispatch( extendAction( a, data ) );
 		return action( newDispatch, getState );
 	};
-}
-
-function getInitialState( reducer ) {
-	return reducer( undefined, { type: '@@calypso/INIT' } );
 }
 
 function isValidSerializedState( schema, reducer, state ) {
