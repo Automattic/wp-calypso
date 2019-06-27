@@ -3,20 +3,20 @@
  */
 import { mapValues, reduce, reduceRight } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
-import { cachingActionCreatorFactory } from './caching-action-creator-factory';
-import { keyedReducer } from './keyed-reducer';
-import { withEnhancers } from './with-enhancers';
-import { withStorageKey } from './with-storage-key';
-import { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
 
 /**
  * Internal dependencies
  */
 import { APPLY_STORED_STATE, SERIALIZE } from 'state/action-types';
+import { cachingActionCreatorFactory } from './caching-action-creator-factory';
 import { createReducer } from './create-reducer';
 import { extendAction } from './extend-action';
-import { withoutPersistence } from './without-persistence';
+import { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
+import { keyedReducer } from './keyed-reducer';
 import { SerializationResult } from 'state/serialization-result';
+import { withEnhancers } from './with-enhancers';
+import { withoutPersistence } from './without-persistence';
+import { withStorageKey } from './with-storage-key';
 
 export {
 	cachingActionCreatorFactory,
