@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,8 +14,10 @@ import Count from 'components/count';
 import { preload } from 'sections-helper';
 
 /**
- * Main
+ * Style dependencies
  */
+import './item.scss';
+
 class NavItem extends PureComponent {
 	static propTypes = {
 		itemType: PropTypes.string,
