@@ -64,14 +64,6 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 			);
 		} );
 
-		step( 'Can See Exactly One Primary CTA Button for Mobile', async function() {
-			const plansPage = await PlansPage.Expect( driver );
-			return assert(
-				await plansPage.onePrimaryButtonShownForMobile(),
-				'Incorrect number of primary buttons'
-			);
-		} );
-
 		if ( host === 'WPCOM' ) {
 			step( 'Can Verify Current Plan', async function() {
 				const planName = 'premium';
