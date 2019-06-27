@@ -52,31 +52,16 @@
 	}
 }
 
-// The heading for togglable sidebar accordions.
+// Sidebar Headings, used for both static headings
+// like in Reader, and for the expandable menus.
 .sidebar .sidebar__heading {
 	color: var( --sidebar-text-color );
-	padding: 10px 16px 10px 20px;
-	font-weight: 600;
-	font-size: 16px;
-	margin: 0;
-
-	// Some sidebar menu's act like an accordion, where
-	// you can hide and show the contained links.
-	.is-togglable & {
-		cursor: pointer;
-	}
-
-	.is-toggle-open & {
-		.expandable-heading__chevron {
-			transform: rotate( 180deg );
-		}
-	}
 }
 
 // The anchor tag for sidebar menu items.
 .sidebar .sidebar__menu-link {
-	font-weight: 600;
-	font-size: 16px;
+	//font-weight: 600;
+	font-size: 15px;
 	line-height: 1;
 	position: relative;
 	padding: 11px 16px 11px 20px;
@@ -90,21 +75,11 @@
 	// I think this is some voodoo to change the color
 	// of a link when tapped on iOS.
 	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
-
-	// Menu links withing accordions display slightly different.
-	.is-togglable & {
-		font-weight: normal;
-		padding-left: 40px;
-	}
 }
 
+/*
+This is such a generic solution. We can do better.
 .sidebar svg {
-	fill: var( --sidebar-gridicon-fill );
-	height: 24px;
-	width: 24px;
-	margin-right: 11px;
-	flex-shrink: 0;
-
 	// External indicator for sections that aren't available in Calypso
 	&.gridicons-external {
 		height: 18px;
@@ -116,35 +91,76 @@
 		z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
 	}
 }
+*/
 
-/*
-// This is the wrapper around all sidebar menu items.
-.sidebar__menu {
+// Sidebar menu icons for main sections
+.sidebar__menu-icon {
+	fill: var( --sidebar-gridicon-fill );
+	margin-right: 11px;
 
+	.selected & {
+		fill: var( --sidebar-menu-selected-a-color );
+	}
+}
 
-	li {
-		display: flex;
+// Menu links
+.sidebar__menu-link {
+	font-size: 15px;
+	line-height: 1;
+	position: relative;
+	padding: 10px 16px 10px 20px;
+	color: var( --sidebar-text-color );
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+
+	// I think this is some voodoo to change the color
+	// of a link when tapped on iOS.
+	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
+
+	&:hover {
+		background-color: var( --sidebar-menu-hover-background );
 	}
 
+	.selected &,
+	.selected &:hover {
+		color: var( --sidebar-menu-selected-a-color );
+		background-color: var( --sidebar-menu-selected-background-color );
+	}
+}
 
-	&.is-togglable {
-		.sidebar__heading {
-			
-			
-			// This is the label for the togglable
-			// sidebar menu.
-			span {
-				flex: 0 1 100%;
-			}
+// Expandables: Some sidebar menus act like accordions where
+// you can hide and show the contained list.
+.sidebar__menu.is-togglable {
+	.sidebar__heading {
+		display: flex;
+		padding: 10px 16px 10px 20px;
+		font-weight: 600;
+		cursor: pointer;
+
+		&:hover {
+			background-color: var( --sidebar-menu-hover-background );
+		}
+	}
+
+	.sidebar__expandable-title {
+		flex: 1 1 0;
+	}
+
+	.sidebar__expandable-arrow {
+		transition: transform 0.1s linear;
+	}
+
+	.sidebar__menu-link {
+		padding-left: 55px;
+	}
+
+	&.is-toggle-open {
+		.sidebar__expandable-arrow {
+			transform: rotate( 180deg );
 		}
 	}
 }
-*/
-
-
-
-
-
 
 // This seems to add a border to the bottom of every
 // .sidebar__menu (whatever that is). I guess to make
