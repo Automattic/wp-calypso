@@ -73,7 +73,9 @@ class SiteTitleStep extends Component {
 			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
 		return (
 			<div className="site-title__wrapper">
-				{ shouldFetchVerticalData && <QueryVerticals searchTerm={ siteVerticalName } /> }
+				{ shouldFetchVerticalData && (
+					<QueryVerticals searchTerm={ siteVerticalName } siteType={ siteType } />
+				) }
 				<form>
 					<div className="site-title__field-control site-title__title">
 						<FormFieldset>
@@ -132,7 +134,9 @@ export default connect(
 	( state, ownProps ) => {
 		const siteType = getSiteType( state );
 		const shouldFetchVerticalData =
-			ownProps.showSiteMockups && siteType === 'business' && getSiteVerticalPreview( state ) === '';
+			ownProps.showSiteMockups &&
+			ownProps.flowName === 'onboarding' &&
+			getSiteVerticalPreview( state ) === '';
 		return {
 			siteTitle: getSiteTitle( state ),
 			siteVerticalName: getSiteVerticalName( state ),
