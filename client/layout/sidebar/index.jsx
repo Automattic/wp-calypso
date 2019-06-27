@@ -28,9 +28,9 @@ export default class extends React.Component {
 		const className = classNames( 'sidebar', this.props.className, { 'has-regions': hasRegions } );
 
 		return (
-			<ul className={ className } { ...clickHandler } data-tip-target="sidebar">
+			<div className={ className } { ...clickHandler } data-tip-target="sidebar">
 				{ this.props.children }
-			</ul>
+			</div>
 		);
 	}
 }
