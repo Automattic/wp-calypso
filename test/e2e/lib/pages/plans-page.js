@@ -41,16 +41,33 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async onePrimaryButtonShown() {
+		const isMobile = currentScreenSize() === 'mobile';
+
 		if ( host === 'WPCOM' ) {
-			const selector =
-				currentScreenSize() === 'mobile'
-					? '.plan-features__mobile .plan-features__actions-button.is-primary'
-					: '.plan-features__table-item.is-top-buttons button.plan-features__actions-button.is-primary';
+			const selector = isMobile
+				? '.plan-features__mobile .plan-features__actions-button.is-primary'
+				: '.plan-features__table-item.is-top-buttons button.plan-features__actions-button.is-primary';
 			const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
 			return count === 1;
 		}
 
 		// Jetpack non-atomic (inside wp-admin)
+		if ( isMobile ) {
+			const isShowingMobileNotice = await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				by.css( '.plans-mobile-notice.dops-card' ),
+				500
+			);
+
+			const isShowingPlanFeaturesContent = await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				by.css( 'plan-features__content' ),
+				500
+			);
+
+			return isShowingMobileNotice && ! isShowingPlanFeaturesContent;
+		}
+
 		const selector = '.plan-features__table-item.is-top-buttons a.dops-button.is-primary';
 		const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
 		return count === 1;
