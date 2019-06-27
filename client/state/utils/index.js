@@ -14,7 +14,7 @@ import { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
  */
 import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { extendAction } from './extend-action';
-import { withoutPersistence } from 'without-persistence';
+import { withoutPersistence } from './without-persistence';
 import { SerializationResult } from 'state/serialization-result';
 
 export {
