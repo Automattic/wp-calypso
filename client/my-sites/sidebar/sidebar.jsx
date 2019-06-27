@@ -230,7 +230,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
-				icon="history"
 				expandSection={ this.expandToolsSection }
 			/>
 		);
@@ -256,7 +255,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/earn', path ) }
 				link={ '/earn' + this.props.siteSuffix }
 				onNavigate={ this.trackEarnClick }
-				icon="money"
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
 			/>
@@ -282,7 +280,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/customize', path ) }
 				link={ this.props.customizeUrl }
 				onNavigate={ this.trackCustomizeClick }
-				icon="customize"
 				preloadSectionName="customize"
 				forceInternalLink
 				expandSection={ this.expandDesignSection }
@@ -315,7 +312,6 @@ export class MySitesSidebar extends Component {
 						selected={ itemLinkMatches( '/customize', path ) }
 						link={ this.props.customizeUrl }
 						onNavigate={ this.trackCustomizeClick }
-						icon="customize"
 						preloadSectionName="customize"
 						forceInternalLink
 						expandSection={ this.expandDesignSection }
@@ -326,7 +322,6 @@ export class MySitesSidebar extends Component {
 					selected={ itemLinkMatches( themesLink, path ) }
 					link={ themesLink }
 					onNavigate={ this.trackCustomizeClick }
-					icon="customize"
 					preloadSectionName="themes"
 					forceInternalLink
 					expandSection={ this.expandDesignSection }
@@ -362,7 +357,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( [ '/domains', '/email' ], path ) }
 				link={ domainsLink }
 				onNavigate={ this.trackDomainsClick }
-				icon="domains"
 				preloadSectionName="domains"
 				tipTarget="domains"
 				expandSection={ this.expandManageSection }
@@ -410,7 +404,7 @@ export class MySitesSidebar extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
-				<a onClick={ this.trackPlanClick } href={ planLink }>
+				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
 					<span className="menu-link-text" data-e2e-sidebar={ 'Plan' }>
 						{ translate( 'Plan', { context: 'noun' } ) }
@@ -501,7 +495,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/marketing', path ) }
 				link={ marketingLink }
 				onNavigate={ this.trackMarketingClick }
-				icon="speaker"
 				preloadSectionName="marketing"
 				tipTarget="marketing"
 				expandSection={ this.expandToolsSection }
@@ -527,7 +520,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/people', path ) }
 				link={ '/people/team' + this.props.siteSuffix }
 				onNavigate={ this.trackPeopleClick }
-				icon="user"
 				preloadSectionName="people"
 				tipTarget="people"
 				expandSection={ this.expandManageSection }
@@ -558,7 +550,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/settings', path ) }
 				link={ siteSettingsLink }
 				onNavigate={ this.trackSettingsClick }
-				icon="cog"
 				preloadSectionName="settings"
 				tipTarget="settings"
 				expandSection={ this.expandManageSection }
@@ -589,7 +580,12 @@ export class MySitesSidebar extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className="wp-admin">
-				<ExternalLink href={ adminUrl } icon onClick={ this.trackWpadminClick }>
+				<ExternalLink
+					className="sidebar__menu-link"
+					href={ adminUrl }
+					icon
+					onClick={ this.trackWpadminClick }
+				>
 					<Gridicon icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
 				</ExternalLink>
@@ -667,7 +663,6 @@ export class MySitesSidebar extends Component {
 					<ul>
 						<SidebarItem
 							selected={ itemLinkMatches( '/domains', this.props.path ) }
-							icon="cog"
 							label={ this.props.translate( 'Settings' ) }
 							link={ '/domains/manage' + this.props.siteSuffix }
 							onNavigate={ this.trackDomainSettingsClick }
