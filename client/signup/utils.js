@@ -226,3 +226,8 @@ export const retrieveSignupDestination = () => {
 	const cookies = cookie.parse( document.cookie );
 	return cookies.wpcom_signup_complete_destination;
 };
+
+export const clearSignupDestinationCookie = () => {
+	const options = { path: '/' };
+	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
+};
