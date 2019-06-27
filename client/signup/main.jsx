@@ -118,7 +118,7 @@ class Signup extends React.Component {
 		pageTitle: PropTypes.string,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
-		shouldShowMockup: PropTypes.bool,
+		shouldShowMockups: PropTypes.bool,
 	};
 
 	constructor( props, context ) {
@@ -618,7 +618,7 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ this.props.shouldShowMockup && <SiteMockups stepName={ this.props.stepName } /> }
+				{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
 			</div>
 		);
 	}
@@ -644,7 +644,7 @@ export default connect(
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
-			shouldShowMockup: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
+			shouldShowMockups: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
 		};
 	},
 	{
