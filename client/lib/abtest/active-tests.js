@@ -143,6 +143,15 @@ export default {
 		},
 		defaultVariation: 'siteType',
 	},
+	hideBloggerPlan2: {
+		datestamp: '20190627',
+		variations: {
+			hide: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		localeTargets: 'any',
+	},
 	proratedCreditsBanner: {
 		//this test is used to dial down the upsell offer
 		datestamp: '20190626',
