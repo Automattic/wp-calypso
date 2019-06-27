@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,8 +17,10 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 
 /**
- * Main
+ * Style dependencies
  */
+import './style.scss';
+
 class SectionNav extends Component {
 	static propTypes = {
 		selectedText: PropTypes.node,
@@ -70,13 +70,7 @@ class SectionNav extends Component {
 		let className;
 
 		if ( ! children ) {
-			className = classNames(
-				{
-					'section-nav': true,
-					'is-empty': true,
-				},
-				this.props.className
-			);
+			className = classNames( [ 'section-nav', 'is-empty' ], this.props.className );
 
 			return (
 				<div className={ className }>
@@ -88,8 +82,8 @@ class SectionNav extends Component {
 		}
 
 		className = classNames(
+			'section-nav',
 			{
-				'section-nav': true,
 				'is-open': this.state.mobileOpen,
 				'has-pinned-items': this.hasPinnedSearch || this.props.hasPinnedItems,
 			},
