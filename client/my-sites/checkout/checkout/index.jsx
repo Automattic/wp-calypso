@@ -87,6 +87,7 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
+import { isApplePayAvailable } from 'lib/web-payment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import config from 'config';
@@ -192,6 +193,7 @@ export class Checkout extends React.Component {
 		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
 			saved_cards: props.cards.length,
 			is_renewal: hasRenewalItem( props.cart ),
+			apple_pay_available: isApplePayAvailable(),
 		} );
 
 		recordViewCheckout( props.cart );
