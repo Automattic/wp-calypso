@@ -145,21 +145,6 @@ export function generateFlows( {
 			lastModified: '2019-04-30',
 		},
 
-		'onboarding-dev': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'A temporary flow for holding under-development steps',
-			lastModified: '2019-04-30',
-		},
-
 		'delta-discover': {
 			steps: [ 'user' ],
 			destination: '/',
