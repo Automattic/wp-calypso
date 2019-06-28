@@ -20,7 +20,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Toolbar from './toolbar';
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from './touch-detect';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 

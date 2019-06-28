@@ -12,10 +12,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from './touch-detect';
 import RootChild from 'components/root-child';
-import WebPreviewContent from './content';
 import { withViewportMatch } from '@wordpress/viewport';
+import WebPreviewContent from './content';
 
 /**
  * Style dependencies
