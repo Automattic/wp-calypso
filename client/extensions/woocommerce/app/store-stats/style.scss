@@ -24,25 +24,3 @@
 		}
 	}
 }
-
-@include breakpoint( '<660px' ) {
-	&.store-stats {
-		.store-stats__sidebar-nav {
-			.site-icon,
-			.current-section__site-title,
-			.current-section__section-title {
-				display: block;
-			}
-			.current-section {
-				margin: 0 0 8px;
-				a {
-					position: relative;
-					z-index: inherit;
-					top: inherit;
-					background: white;
-					border: 1px solid #c8d7e1;
-				}
-			}
-		}
-	}
-}
