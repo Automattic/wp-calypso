@@ -6811,8 +6811,8 @@
 			}
 		},
 		"color-studio": {
-			"version": "github:automattic/color-studio#279f6ae4eacb15bc4f8f75856101aa4d0f4fd4a7",
-			"from": "github:automattic/color-studio#1.0.1",
+			"version": "github:automattic/color-studio#9af9a5d8078018a5cff46aff50759d4037accd48",
+			"from": "github:automattic/color-studio#1.0.5",
 			"dev": true
 		},
 		"colors": {
