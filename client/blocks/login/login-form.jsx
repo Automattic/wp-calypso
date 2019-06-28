@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { capitalize, defer, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -21,6 +21,7 @@ import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
+import Divider from './divider';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
@@ -266,6 +267,7 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
+		const isPasswordHidden = this.isUsernameOrEmailView();
 
 		let signupUrl = config( 'signup_url' );
 
@@ -309,13 +311,16 @@ export class LoginForm extends Component {
 
 						<label htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<a href="#" className="login__form-change-username" onClick={ this.resetView }>
+								<button
+									type="button"
+									className="login__form-change-username"
+									onClick={ this.resetView }
+								>
 									<Gridicon icon="arrow-left" size={ 18 } />
-
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</a>
+								</button>
 							) : (
 								this.props.translate( 'Email Address or Username' )
 							) }
@@ -340,7 +345,7 @@ export class LoginForm extends Component {
 
 						<div
 							className={ classNames( 'login__form-password', {
-								'is-hidden': this.isUsernameOrEmailView(),
+								'is-hidden': isPasswordHidden,
 							} ) }
 						>
 							<label htmlFor="password">{ this.props.translate( 'Password' ) }</label>
@@ -357,6 +362,7 @@ export class LoginForm extends Component {
 								ref={ this.savePasswordRef }
 								value={ this.state.password }
 								disabled={ isFormDisabled }
+								tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
 							/>
 
 							{ requestError && requestError.field === 'password' && (
@@ -412,23 +418,18 @@ export class LoginForm extends Component {
 				</Card>
 
 				{ config.isEnabled( 'signup/social' ) && (
-					<div className="login__form-social">
-						<div className="login__form-social-divider">
-							<span>{ this.props.translate( 'or' ) }</span>
-						</div>
-
-						<Card>
-							<SocialLoginForm
-								onSuccess={ this.props.onSuccess }
-								socialService={ this.props.socialService }
-								socialServiceResponse={ this.props.socialServiceResponse }
-								linkingSocialService={
-									this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-								}
-								uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							/>
-						</Card>
-					</div>
+					<Fragment>
+						<Divider>{ this.props.translate( 'or' ) }</Divider>
+						<SocialLoginForm
+							onSuccess={ this.props.onSuccess }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+							linkingSocialService={
+								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+							}
+							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+						/>
+					</Fragment>
 				) }
 
 				{ config.isEnabled( 'signup/social' ) && isCrowdsignalOAuth2Client( oauth2Client ) && (
