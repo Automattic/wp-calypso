@@ -22,7 +22,7 @@ const CustomDomainPurchaseDetail = ( {
 } ) => {
 	const customDomainIcon =
 		'/calypso/images/illustrations/custom-domain' + ( onlyBlogDomain ? '-blogger' : '' ) + '.svg';
-	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
+	if ( hasDomainCredit ) {
 		return (
 			<PurchaseDetail
 				icon={ <img alt="" src={ customDomainIcon } /> }
