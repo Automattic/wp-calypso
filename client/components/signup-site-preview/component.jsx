@@ -55,6 +55,7 @@ export class SignupSitePreview extends Component {
 		// The viewport device to show initially
 		defaultViewportDevice: PropTypes.oneOf( [ 'desktop', 'phone' ] ),
 		fontUrl: PropTypes.string,
+		gutenbergStylesUrl: PropTypes.string,
 		isRtl: PropTypes.bool,
 		langSlug: PropTypes.string,
 		// Iframe body content
