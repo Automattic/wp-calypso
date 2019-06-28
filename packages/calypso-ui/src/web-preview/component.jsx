@@ -13,9 +13,9 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { hasTouch } from 'lib/touch-detect';
-import { isMobile } from 'lib/viewport';
 import RootChild from 'components/root-child';
 import WebPreviewContent from './content';
+import { withViewportMatch } from '@wordpress/viewport';
 
 /**
  * Style dependencies
@@ -92,7 +92,6 @@ export class WebPreviewModal extends Component {
 		super( props );
 
 		this._hasTouch = false;
-		this._isMobile = false;
 
 		this.state = {
 			device: props.defaultViewportDevice || 'computer',
@@ -105,13 +104,12 @@ export class WebPreviewModal extends Component {
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = hasTouch();
-		this._isMobile = isMobile();
 	}
 
 	componentDidMount() {
 		const { onPreviewShowChange, showPreview } = this.props;
 
-		if ( this.props.showPreview ) {
+		if ( showPreview ) {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
 
@@ -154,10 +152,11 @@ export class WebPreviewModal extends Component {
 	}
 
 	render() {
-		const className = classNames( this.props.className, 'web-preview', {
+		const { className, frontPageMetaDescription, hasSidebar, onClose, showPreview } = this.props;
+		const classes = classNames( className, 'web-preview', {
 			'is-touch': this._hasTouch,
-			'is-with-sidebar': this.props.hasSidebar,
-			'is-visible': this.props.showPreview,
+			'is-with-sidebar': hasSidebar,
+			'is-visible': showPreview,
 			'is-computer': this.state.device === 'computer',
 			'is-tablet': this.state.device === 'tablet',
 			'is-phone': this.state.device === 'phone',
@@ -166,16 +165,16 @@ export class WebPreviewModal extends Component {
 
 		return (
 			<RootChild>
-				<div className={ className }>
+				<div className={ classes }>
 					{ /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
-					<div className="web-preview__backdrop" onClick={ this.props.onClose } />
+					<div className="web-preview__backdrop" onClick={ onClose } />
 					{ /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="web-preview__content">
 						<WebPreviewContent
 							{ ...this.props }
 							onDeviceUpdate={ this.setDeviceViewport }
 							isModalWindow={ true }
-							frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
+							frontPageMetaDescription={ frontPageMetaDescription || null }
 						/>
 					</div>
 				</div>
@@ -190,4 +189,4 @@ const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
 	return <WebPreviewComponent { ...restProps } />;
 };
 
-export default WebPreviewInner;
+export default withViewportMatch( { isMobile: '< small' } )( WebPreviewInner );

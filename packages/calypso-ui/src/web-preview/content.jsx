@@ -21,7 +21,6 @@ import { __ } from '@wordpress/i18n';
  */
 import Toolbar from './toolbar';
 import { hasTouch } from 'lib/touch-detect';
-import { isWithinBreakpoint } from 'lib/viewport';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 
@@ -233,10 +232,25 @@ export class WebPreviewContent extends Component {
 	};
 
 	render() {
-		const className = classNames( this.props.className, 'web-preview__inner', {
+		const {
+			belowToolbar,
+			className,
+			frontPageMetaDescription,
+			hasSidebar,
+			iframeTitle,
+			isMobile,
+			isModalWindow,
+			loadingMessage,
+			overridePost,
+			previewUrl,
+			showDeviceSwitcher,
+			showExternal,
+			showPreview,
+		} = this.props;
+		const wrapperClassNames = classNames( className, 'web-preview__inner', {
 			'is-touch': this._hasTouch,
-			'is-with-sidebar': this.props.hasSidebar,
-			'is-visible': this.props.showPreview,
+			'is-with-sidebar': hasSidebar,
+			'is-visible': showPreview,
 			'is-computer': this.state.device === 'computer',
 			'is-tablet': this.state.device === 'tablet',
 			'is-phone': this.state.device === 'phone',
@@ -246,32 +260,32 @@ export class WebPreviewContent extends Component {
 
 		const showLoadingMessage =
 			! this.state.loaded &&
-			this.props.loadingMessage &&
-			( this.props.showPreview || ! this.props.isModalWindow ) &&
+			loadingMessage &&
+			( showPreview || ! isModalWindow ) &&
 			this.state.device !== 'seo';
 
 		return (
-			<div className={ className } ref={ this.setWrapperElement }>
+			<div className={ wrapperClassNames } ref={ this.setWrapperElement }>
 				<Toolbar
 					setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
-					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
-					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
+					showExternal={ previewUrl ? showExternal : false }
+					showDeviceSwitcher={ showDeviceSwitcher && ! isMobile }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>
-				{ this.props.belowToolbar }
+				{ belowToolbar }
 				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div className="web-preview__placeholder">
 					{ showLoadingMessage && (
 						<div className="web-preview__loading-message-wrapper">
-							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
+							<span className="web-preview__loading-message">{ loadingMessage }</span>
 						</div>
 					) }
 					<div
 						className={ classNames( 'web-preview__frame-wrapper', {
-							'is-resizable': ! this.props.isModalWindow,
+							'is-resizable': ! isModalWindow,
 						} ) }
 						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
 					>
@@ -280,13 +294,13 @@ export class WebPreviewContent extends Component {
 							className="web-preview__frame"
 							src="about:blank"
 							onLoad={ this.setLoaded }
-							title={ this.props.iframeTitle || __( 'Preview' ) }
+							title={ iframeTitle || __( 'Preview' ) }
 						/>
 					</div>
 					{ 'seo' === this.state.device && (
 						<SeoPreviewPane
-							overridePost={ this.props.overridePost }
-							frontPageMetaDescription={ this.props.frontPageMetaDescription }
+							overridePost={ overridePost }
+							frontPageMetaDescription={ frontPageMetaDescription }
 						/>
 					) }
 				</div>
