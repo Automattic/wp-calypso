@@ -17,6 +17,7 @@ import SignupSitePreview from 'components/signup-site-preview';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
@@ -61,6 +62,7 @@ class SiteMockups extends Component {
 		title: PropTypes.string,
 		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
+		verticalPreviewStyles: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -70,6 +72,7 @@ class SiteMockups extends Component {
 		title: '',
 		vertical: '',
 		verticalPreviewContent: '',
+		verticalPreviewStyles: '',
 	};
 
 	shouldComponentUpdate( nextProps ) {
@@ -132,6 +135,7 @@ class SiteMockups extends Component {
 			title,
 			themeSlug,
 			verticalPreviewContent,
+			verticalPreviewStyles,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
@@ -148,6 +152,7 @@ class SiteMockups extends Component {
 				tagline: translate( 'You’ll be able to customize this to your needs.' ),
 				body: this.getContent( verticalPreviewContent ),
 			},
+			gutenbergStylesUrl: verticalPreviewStyles,
 			langSlug,
 			isRtl,
 			onPreviewClick: this.handlePreviewClick,
@@ -184,6 +189,7 @@ export default connect(
 			siteStyle,
 			siteType,
 			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||

@@ -19,6 +19,7 @@ export default class SignupSitePreviewIframe extends Component {
 		// Iframe body content
 		content: PropTypes.object,
 		fontUrl: PropTypes.string,
+		gutenbergStylesUrl: PropTypes.string,
 		isRtl: PropTypes.bool,
 		langSlug: PropTypes.string,
 		onPreviewClick: PropTypes.func,
@@ -62,6 +63,7 @@ export default class SignupSitePreviewIframe extends Component {
 		if (
 			this.props.cssUrl !== nextProps.cssUrl ||
 			this.props.fontUrl !== nextProps.fontUrl ||
+			this.props.gutenbergStylesUrl !== nextProps.gutenbergStylesUrl ||
 			this.props.langSlug !== nextProps.langSlug ||
 			this.props.isRtl !== nextProps.isRtl
 		) {
@@ -143,7 +145,7 @@ export default class SignupSitePreviewIframe extends Component {
 		this.props.resize && this.setContainerHeight();
 	};
 
-	setIframeSource = ( { content, cssUrl, fontUrl, isRtl, langSlug } ) => {
+	setIframeSource = ( { content, cssUrl, fontUrl, gutenbergStylesUrl, isRtl, langSlug } ) => {
 		if ( ! this.iframe.current ) {
 			return;
 		}
@@ -152,6 +154,7 @@ export default class SignupSitePreviewIframe extends Component {
 			content,
 			cssUrl,
 			fontUrl,
+			gutenbergStylesUrl,
 			isRtl,
 			langSlug,
 			this.props.scrolling
