@@ -13,7 +13,7 @@ import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
-import { getWpcomSiteTypes } from 'lib/signup/site-type';
+import { getWpcomSiteTypes, getWpcomSiteTypeProp } from 'lib/signup/site-type';
 
 const siteTypeToFlowname = {
 	'online-store': 'ecommerce-onboarding',
@@ -26,7 +26,8 @@ class SiteType extends Component {
 	}
 
 	submitStep = siteTypeValue => {
-		this.props.submitSiteType( siteTypeValue );
+		const themeSlugWithRepo = getWpcomSiteTypeProp( siteTypeValue, 'theme' );
+		this.props.submitSiteType( siteTypeValue, themeSlugWithRepo );
 
 		// TODO Hack to fix the `/start/premium|business|personal` routes
 		if (

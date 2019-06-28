@@ -18,7 +18,6 @@ import PopularTopics from 'components/site-verticals-suggestion-search/popular-t
 import QueryVerticals from 'components/data/query-verticals';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -214,13 +213,14 @@ export default localize(
 	connect(
 		( state, ownProps ) => {
 			const siteType = getSiteType( state );
-			const defaultVerticalSearchTerm =
-				getSiteTypePropertyValue( 'slug', siteType, 'defaultVertical' ) || '';
 			return {
 				siteType,
-				defaultVerticalSearchTerm,
 				verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
-				defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
+				defaultVertical: get(
+					getVerticals( state, ownProps.defaultVerticalSearchTerm, siteType ),
+					'0',
+					{}
+				),
 			};
 		},
 		null

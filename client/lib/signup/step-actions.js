@@ -40,7 +40,7 @@ import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
-import { getSiteTypePropertyValue } from './site-type';
+import { getSiteTypeId, getWpcomSiteTypeProp } from './site-type';
 import SignupCart from './cart';
 import { promisify } from '../../utils';
 
@@ -148,7 +148,7 @@ export function createSiteWithCart(
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
-	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
+	const siteSegment = getSiteTypeId( siteType );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -625,14 +625,15 @@ export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) 
 		},
 	} = nextProps;
 
-	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+	const siteTypeValue = getWpcomSiteTypeProp( siteType, 'slug' );
 	let fulfilledDependencies = [];
 
 	if ( siteTypeValue ) {
 		debug( 'From query string: site_type = %s', siteType );
 		debug( 'Site type value = %s', siteTypeValue );
 
-		nextProps.submitSiteType( siteType );
+		const themeSlugWithRepo = getWpcomSiteTypeProp( siteTypeValue, 'theme' );
+		nextProps.submitSiteType( siteType, themeSlugWithRepo );
 		recordExcludeStepEvent( stepName, siteType );
 
 		// nextProps.submitSiteType( siteType ) above provides dependencies

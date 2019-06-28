@@ -47,7 +47,7 @@ import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { getSite } from 'state/sites/selectors';
 import { getVerticalForDomainSuggestions } from 'state/signup/steps/site-vertical/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getWpcomSiteTypeProp } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -538,7 +538,7 @@ class DomainsStep extends React.Component {
 		const onboardingSubHeaderCopy =
 			siteType &&
 			includes( [ 'onboarding-for-business', 'onboarding' ], flowName ) &&
-			getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
+			getWpcomSiteTypeProp( siteType, 'domainsStepSubheader' );
 
 		if ( onboardingSubHeaderCopy ) {
 			return onboardingSubHeaderCopy;
@@ -551,7 +551,7 @@ class DomainsStep extends React.Component {
 
 	getHeaderText() {
 		const { headerText, siteType } = this.props;
-		return getSiteTypePropertyValue( 'slug', siteType, 'domainsStepHeader' ) || headerText;
+		return getWpcomSiteTypeProp( siteType, 'domainsStepHeader' ) || headerText;
 	}
 
 	getAnalyticsSection() {

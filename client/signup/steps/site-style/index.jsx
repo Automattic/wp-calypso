@@ -24,7 +24,6 @@ import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -130,9 +129,9 @@ export class SiteStyleStep extends Component {
 			translate,
 		} = this.props;
 		const headerText = translate( 'Choose a style' );
-		// for the time being we just want to fall back to the default value.
-		// If we come to add segment specific copy for this item, update the first 2 args.
-		const subHeaderText = getSiteTypePropertyValue( null, null, 'siteStyleSubheader' );
+		const subHeaderText = translate(
+			'This will help you get started with a theme you might like. You can change it later.'
+		);
 
 		return (
 			<div>

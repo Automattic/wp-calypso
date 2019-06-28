@@ -27,7 +27,7 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getWpcomSiteTypeProp } from 'lib/signup/site-type';
 import {
 	getSiteVerticalId,
 	getSiteVerticalParentId,
@@ -230,13 +230,12 @@ class AboutStep extends Component {
 
 		//Site Goals
 		if ( shouldHideSiteGoals ) {
-			themeRepo =
-				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
+			themeRepo = getWpcomSiteTypeProp( siteType, 'theme' ) || 'pub/independent-publisher-2';
 
 			if ( 'ecommerce' === flowName ) {
 				designType = 'page';
 			} else {
-				designType = getSiteTypePropertyValue( 'slug', siteType, 'designType' ) || 'blog';
+				designType = getWpcomSiteTypeProp( siteType, 'designType' ) || 'blog';
 			}
 
 			eventAttributes.site_type = siteType;

@@ -3,7 +3,7 @@
  * Exernal dependencies
  */
 import i18n from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find, invert } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,42 +11,62 @@ import { find, get } from 'lodash';
 
 const CONTEXT_WPCOM = 'CONTEXT_WPCOM';
 const CONTEXT_JETPACK = 'CONTEXT_JETPACK';
+const SITE_TYPE_BUSINESS = 'business';
+const SITE_TYPE_BLOG = 'blog';
+const SITE_TYPE_STORE = 'online-store';
+const SITE_TYPE_PROFESSIONAL = 'professional';
 
-const getSiteTypePropertyDefaults = propertyKey =>
-	get(
-		{
-			// General copy
-			siteMockupHelpTipCopy: i18n.translate(
-				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
-			),
-			siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll back up to continue.' ),
-			siteMockupTitleFallback: i18n.translate( 'Your New Website' ),
-			// Site title step
-			siteTitleLabel: i18n.translate( 'Give your site a name' ),
-			siteTitleSubheader: i18n.translate(
-				'This will appear at the top of your site and can be changed at anytime.'
-			),
-			siteTitlePlaceholder: i18n.translate( 'default siteTitlePlaceholder' ),
-			// Site topic step
-			siteTopicHeader: i18n.translate( 'What is your site about?' ),
-			siteTopicLabel: i18n.translate( 'What is your site about?' ),
-			siteTopicSubheader: i18n.translate(
-				"We'll add relevant content to your site to help you get started."
-			),
-			siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
-			// Domains step
-			domainsStepHeader: i18n.translate( 'Give your site an address' ),
-			domainsStepSubheader: i18n.translate(
-				'Enter a keyword that describes your site to get started.'
-			),
-			// Site styles step
-			siteStyleSubheader: i18n.translate(
-				'This will help you get started with a theme you might like. You can change it later.'
-			),
-		},
-		propertyKey,
-		null
-	);
+// These ids _must_ correspond with their siblings in the /segments API results.
+const siteTypeIds = {
+	[ SITE_TYPE_BUSINESS ]: 1,
+	[ SITE_TYPE_BLOG ]: 2,
+	[ SITE_TYPE_STORE ]: 3,
+	[ SITE_TYPE_PROFESSIONAL ]: 4,
+};
+
+export const getSiteTypeSlug = id => invert( siteTypeIds )[ id ] || null;
+
+export const getSiteTypeId = slug => siteTypeIds[ slug ] || null;
+
+const siteTypePropDefaults = {
+	// Attributes.
+	defaultVertical: 'business',
+	label: '',
+	description: '',
+	theme: 'pub/modern-business',
+	designType: '',
+	customerType: null,
+	purchaseRequired: false,
+	// General copy.
+	siteMockupHelpTipCopy: i18n.translate(
+		"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
+	),
+	siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll back up to continue.' ),
+	siteMockupTitleFallback: i18n.translate( 'Your New Website' ),
+	// Site title step.
+	siteTitleLabel: i18n.translate( 'Give your site a name' ),
+	siteTitleSubheader: i18n.translate(
+		'This will appear at the top of your site and can be changed at anytime.'
+	),
+	siteTitlePlaceholder: i18n.translate( 'default siteTitlePlaceholder' ),
+	// Site topic step.
+	siteTopicHeader: i18n.translate( 'What is your site about?' ),
+	siteTopicLabel: i18n.translate( 'What is your site about?' ),
+	siteTopicSubheader: i18n.translate(
+		"We'll add relevant content to your site to help you get started."
+	),
+	siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
+	// Domains step.
+	domainsStepHeader: i18n.translate( 'Give your site an address' ),
+	domainsStepSubheader: i18n.translate(
+		'Enter a keyword that describes your site to get started.'
+	),
+};
+
+const createSiteType = ( slug, properties ) => {
+	const id = getSiteTypeId( slug );
+	return Object.assign( {}, siteTypePropDefaults, properties, { slug, id } );
+};
 
 /**
  * Returns a current list of site types that are displayed in the signup site-type step
@@ -61,13 +81,10 @@ const getSiteTypePropertyDefaults = propertyKey =>
  */
 function getAllSiteTypes( context ) {
 	return [
-		{
-			id: 2, // This value must correspond with its sibling in the /segments API results
-			slug: 'blog',
+		createSiteType( SITE_TYPE_BLOG, {
 			defaultVertical: 'blogging', // used to conduct a vertical search and grab a default vertical for the segment
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
-			theme: 'pub/modern-business',
 			designType: 'blog',
 			siteTitleLabel: i18n.translate( "Tell us your blog's name" ),
 			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),
@@ -87,14 +104,10 @@ function getAllSiteTypes( context ) {
 			domainsStepSubheader: i18n.translate(
 				"Enter your blog's name or some keywords that describe it to get started."
 			),
-		},
-		{
-			id: 1, // This value must correspond with its sibling in the /segments API results
-			slug: 'business',
-			defaultVertical: 'business',
+		} ),
+		createSiteType( SITE_TYPE_BUSINESS, {
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
-			theme: 'pub/modern-business',
 			designType: 'page',
 			siteTitleLabel: i18n.translate( 'Tell us your business’s name' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
@@ -104,14 +117,11 @@ function getAllSiteTypes( context ) {
 				"Enter your business's name or some keywords that describe it to get started."
 			),
 			customerType: 'business',
-		},
-		{
-			id: 4, // This value must correspond with its sibling in the /segments API results
-			slug: 'professional',
+		} ),
+		createSiteType( SITE_TYPE_PROFESSIONAL, {
 			defaultVertical: 'designer',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
-			theme: 'pub/modern-business',
 			designType: 'portfolio',
 			siteTitleLabel: i18n.translate( 'What is your name?' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
@@ -121,11 +131,8 @@ function getAllSiteTypes( context ) {
 			domainsStepSubheader: i18n.translate(
 				'Enter your name or some keywords that describe yourself to get started.'
 			),
-		},
-		{
-			id: 3, // This value must correspond with its sibling in the /segments API results
-			slug: 'online-store',
-			defaultVertical: 'business',
+		} ),
+		createSiteType( SITE_TYPE_STORE, {
 			label: i18n.translate( 'Online store' ),
 			description: i18n.translate( 'Sell your collection of products online.' ),
 			theme: 'pub/dara',
@@ -136,7 +143,7 @@ function getAllSiteTypes( context ) {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: context === CONTEXT_WPCOM,
-		},
+		} ),
 	];
 }
 
@@ -154,21 +161,13 @@ export const getWpcomSiteTypes = () => getAllSiteTypes( CONTEXT_WPCOM );
  */
 export const getJetpackSiteTypes = () => getAllSiteTypes( CONTEXT_JETPACK );
 
-/**
- * Looks up site types array for item match and returns a property value
- *
- * @example
- * // Find the site type where `id === 2`, and return the value of `slug`
- * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
- *
- * @param {string} key A property name of a site types item
- * @param {string|number} value The value of `key` with which to filter items
- * @param {string} property The name of the property whose value you wish to return
- * @param {array} siteTypes (optional) A site type collection
- * @return {(string|int)?} value of `property` or `null` if none is found
- */
-export function getSiteTypePropertyValue( key, value, property, siteTypes = getWpcomSiteTypes() ) {
-	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
+const getSiteTypeProp = ( siteTypes, slug, prop ) => {
+	const siteType = find( siteTypes, { slug } ) || {};
+	return siteType[ prop ];
+};
 
-	return get( siteTypeProperties, property ) || getSiteTypePropertyDefaults( property );
-}
+export const getWpcomSiteTypeProp = ( slug, prop ) =>
+	getSiteTypeProp( getWpcomSiteTypes(), slug, prop );
+
+export const getJetpackSiteTypeProp = ( slug, prop ) =>
+	getSiteTypeProp( getJetpackSiteTypes(), slug, prop );

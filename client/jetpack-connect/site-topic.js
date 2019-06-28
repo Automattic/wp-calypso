@@ -21,6 +21,8 @@ import versionCompare from 'lib/version-compare';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { saveSiteVertical } from 'state/jetpack-connect/actions';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getJetpackSiteTypeProp } from 'lib/signup/site-type';
 
 class JetpackSiteTopic extends Component {
 	goToNextStep = () => {
@@ -46,7 +48,10 @@ class JetpackSiteTopic extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { siteType, translate } = this.props;
+		const defaultVerticalSearchTerm = getJetpackSiteTypeProp( siteType, 'defaultVertical' );
+		const searchInputPlaceholder = getJetpackSiteTypeProp( siteType, 'siteTopicInputPlaceholder' );
+		const searchInputLabel = getJetpackSiteTypeProp( siteType, 'siteTopicLabel' );
 
 		return (
 			<MainWrapper isWide>
@@ -58,7 +63,12 @@ class JetpackSiteTopic extends Component {
 						) }
 					/>
 
-					<SiteTopicForm submitForm={ this.handleSubmit } />
+					<SiteTopicForm
+						defaultVerticalSearchTerm={ defaultVerticalSearchTerm }
+						headerText={ searchInputLabel }
+						placeholder={ searchInputPlaceholder }
+						submitForm={ this.handleSubmit }
+					/>
 
 					<SkipButton
 						onClick={ this.goToNextStep }
@@ -79,6 +89,7 @@ const connectComponent = connect(
 			siteId,
 			siteJetpackVersion: getSiteOption( state, siteId, 'jetpack_version' ),
 			siteSlug: getSelectedSiteSlug( state ),
+			siteType: getSiteType( state ),
 		};
 	},
 	{

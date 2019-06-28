@@ -9,7 +9,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getSiteTypeSlug } from 'lib/signup/site-type';
 import { getVerticalTaskList } from './vertical-task-list';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
@@ -29,7 +29,7 @@ function getTasks( {
 	}
 
 	const tasks = [];
-	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
+	const segmentSlug = getSiteTypeSlug( siteSegment );
 
 	const getTask = taskId =>
 		taskStatuses ? taskStatuses.filter( task => task.id === taskId )[ 0 ] : undefined;

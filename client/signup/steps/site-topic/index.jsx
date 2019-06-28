@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import SiteTopicForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getWpcomSiteTypeProp } from 'lib/signup/site-type';
 import { getSiteVerticalIsUserInput } from 'state/signup/steps/site-vertical/selectors';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
@@ -47,26 +47,41 @@ class SiteTopicStep extends Component {
 	};
 
 	render() {
-		const headerText =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
-		const subHeaderText =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicSubheader' ) || '';
+		const {
+			flowName,
+			positionInFlow,
+			showSiteMockups,
+			signupProgress,
+			siteType,
+			stepName,
+		} = this.props;
+		const headerText = getWpcomSiteTypeProp( siteType, 'siteTopicHeader' ) || '';
+		const subHeaderText = getWpcomSiteTypeProp( siteType, 'siteTopicSubheader' ) || '';
+		const searchInputPlaceholder = getWpcomSiteTypeProp( siteType, 'siteTopicInputPlaceholder' );
+		const searchInputLabel = getWpcomSiteTypeProp( siteType, 'siteTopicLabel' );
+		const defaultVerticalSearchTerm = getWpcomSiteTypeProp( siteType, 'defaultVertical' );
 
 		return (
 			<div>
 				<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					positionInFlow={ this.props.positionInFlow }
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
 					headerText={ headerText }
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ this.props.signupProgress }
+					signupProgress={ signupProgress }
 					stepContent={
-						<SiteTopicForm submitForm={ this.submitSiteTopic } siteType={ this.props.siteType } />
+						<SiteTopicForm
+							defaultVerticalSearchTerm={ defaultVerticalSearchTerm }
+							labelText={ searchInputLabel }
+							placeholder={ searchInputPlaceholder }
+							submitForm={ this.submitSiteTopic }
+							siteType={ siteType }
+						/>
 					}
-					showSiteMockups={ this.props.showSiteMockups }
+					showSiteMockups={ showSiteMockups }
 				/>
 			</div>
 		);

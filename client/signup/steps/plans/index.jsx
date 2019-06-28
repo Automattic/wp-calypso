@@ -24,7 +24,7 @@ import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getWpcomSiteTypeProp } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -120,7 +120,7 @@ export class PlansStep extends Component {
 
 		const siteGoals = this.props.siteGoals.split( ',' );
 		let customerType =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
+			getWpcomSiteTypeProp( this.props.siteType, 'customerType' ) ||
 			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
 
 		// Default to 'business' when the blogger plan is not available.

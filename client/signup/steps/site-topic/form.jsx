@@ -26,7 +26,6 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getVerticals } from 'state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -35,6 +34,8 @@ import './style.scss';
 
 class SiteTopicForm extends Component {
 	static propTypes = {
+		labelText: PropTypes.string,
+		placeholder: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
 
 		// from localize() HoC
@@ -73,18 +74,23 @@ class SiteTopicForm extends Component {
 	};
 
 	render() {
-		const { isButtonDisabled, siteTopic, siteType } = this.props;
-		const suggestionSearchInputPlaceholder =
-			getSiteTypePropertyValue( 'slug', siteType, 'siteTopicInputPlaceholder' ) || '';
-		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
+		const {
+			defaultVerticalSearchTerm,
+			isButtonDisabled,
+			labelText,
+			placeholder,
+			siteTopic,
+			siteType,
+		} = this.props;
 
 		return (
 			<div className={ classNames( 'site-topic__content', { 'is-empty': ! siteTopic } ) }>
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
 						<SiteVerticalsSuggestionSearch
-							placeholder={ suggestionSearchInputPlaceholder }
-							labelText={ headerText }
+							defaultVerticalSearchTerm={ defaultVerticalSearchTerm }
+							placeholder={ placeholder }
+							labelText={ labelText }
 							onChange={ this.onSiteTopicChange }
 							showPopular={ true }
 							searchValue={ siteTopic }

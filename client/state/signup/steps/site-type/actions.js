@@ -5,7 +5,6 @@
  */
 
 import { SIGNUP_STEPS_SITE_TYPE_SET } from 'state/action-types';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
 export function setSiteType( siteType ) {
@@ -15,13 +14,11 @@ export function setSiteType( siteType ) {
 	};
 }
 
-export function submitSiteType( siteType ) {
+export function submitSiteType( siteType, theme ) {
 	return dispatch => {
+		const themeSlugWithRepo = theme || 'pub/independent-publisher-2';
+
 		dispatch( setSiteType( siteType ) );
-
-		const themeSlugWithRepo =
-			getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
-
 		dispatch( submitSignupStep( { stepName: 'site-type' }, { siteType, themeSlugWithRepo } ) );
 	};
 }

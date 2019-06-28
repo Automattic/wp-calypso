@@ -16,7 +16,7 @@ import { convertToCamelCase } from 'state/data-layer/utils';
 import { errorNotice } from 'state/notices/actions';
 import { setVerticals } from 'state/signup/verticals/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'state/action-types';
-import { getSiteTypeId } from 'state/signup/steps/site-type/selectors';
+import { getSiteTypeId } from 'lib/signup/site-type';
 
 // Some flows do not choose a site type before requesting verticals. In this
 // case don't send a site_type param to the API.
@@ -58,7 +58,7 @@ registerHandlers( 'state/data-layer/wpcom/signup/verticals', {
 		( store, action ) =>
 			verticalsHandlers( store, {
 				...action,
-				siteTypeId: getSiteTypeId( store.getState(), action.siteType ),
+				siteTypeId: getSiteTypeId( action.siteType ),
 			} ),
 	],
 } );

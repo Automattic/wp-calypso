@@ -24,7 +24,7 @@ import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getWpcomSiteTypeProp } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -32,7 +32,7 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import './style.scss';
 
 function SiteMockupHelpTip( { siteType } ) {
-	const helpTipCopy = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopy' ) || '';
+	const helpTipCopy = getWpcomSiteTypeProp( siteType, 'siteMockupHelpTipCopy' ) || '';
 
 	return (
 		<div className="site-mockup__help-tip">
@@ -43,8 +43,7 @@ function SiteMockupHelpTip( { siteType } ) {
 }
 
 function SiteMockupHelpTipBottom( { siteType } ) {
-	const helpTipCopy =
-		getSiteTypePropertyValue( 'slug', siteType, 'siteMockupHelpTipCopyBottom' ) || '';
+	const helpTipCopy = getWpcomSiteTypeProp( siteType, 'siteMockupHelpTipCopyBottom' ) || '';
 	return (
 		<div className="site-mockup__help-tip">
 			<Gridicon icon="chevron-up" />
@@ -178,7 +177,7 @@ export default connect(
 		const siteType = getSiteType( state );
 		const styleOptions = getSiteStyleOptions( siteType );
 		const style = find( styleOptions, { id: siteStyle || 'modern' } );
-		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
+		const titleFallback = getWpcomSiteTypeProp( siteType, 'siteMockupTitleFallback' );
 		return {
 			title: getSiteTitle( state ) || titleFallback,
 			siteStyle,
