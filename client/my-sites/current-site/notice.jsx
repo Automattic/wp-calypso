@@ -105,7 +105,7 @@ export class SiteNotice extends React.Component {
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
-				ctaText={ translate( 'Upgrade' ) }
+				ctaText={ translate( 'Upgrade', { context: 'Upgrade from one plan to another' } ) }
 				href={ '/plans/' + site.slug }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
