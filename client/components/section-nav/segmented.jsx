@@ -45,11 +45,13 @@ class NavSegmented extends Component {
 		} );
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className={ segmentedClassName }>
 				{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 
 				<SegmentedControl>{ this.getControlItems() }</SegmentedControl>
 			</div>
+			/* eslint-enable wpcalyspo/jsx-classname-namespace */
 		);
 	}
 

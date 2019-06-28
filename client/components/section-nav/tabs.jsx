@@ -74,6 +74,7 @@ class NavTabs extends Component {
 		const innerWidth = getWindowInnerWidth();
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="section-nav-group" ref="navGroup">
 				<div className={ tabsClassName }>
 					{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
@@ -84,6 +85,7 @@ class NavTabs extends Component {
 					{ this.state.isDropdown && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
 				</div>
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 
@@ -116,6 +118,7 @@ class NavTabs extends Component {
 			);
 		} );
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<SelectDropdown
 				className="section-nav-tabs__dropdown"
 				selectedText={ this.props.selectedText }
@@ -123,6 +126,7 @@ class NavTabs extends Component {
 			>
 				{ dropdownOptions }
 			</SelectDropdown>
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 		);
 	};
 
