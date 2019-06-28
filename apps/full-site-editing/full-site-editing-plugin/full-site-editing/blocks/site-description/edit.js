@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { PlainText } from '@wordpress/editor';
-import { withNotices, Button } from '@wordpress/components';
+import { withNotices } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
@@ -19,18 +19,20 @@ function SiteDescriptionEdit( {
 	noticeOperations,
 	shouldUpdateSiteOption,
 	isSelected,
+	setAttributes,
 } ) {
 	const inititalDescription = __( 'Site description loading…' );
 
-	const { onSave, siteOptions, setSiteOptions } = useSiteOptions(
+	const { siteOptions, handleChange } = useSiteOptions(
 		'description',
 		inititalDescription,
 		noticeOperations,
 		isSelected,
-		shouldUpdateSiteOption
+		shouldUpdateSiteOption,
+		setAttributes
 	);
 
-	const { option, isDirty, isSaving } = siteOptions;
+	const { option } = siteOptions;
 
 	return (
 		<Fragment>
@@ -38,21 +40,10 @@ function SiteDescriptionEdit( {
 			<PlainText
 				className={ className }
 				value={ option }
-				onChange={ value => setSiteOptions( { ...siteOptions, option: value, isDirty: true } ) }
+				onChange={ value => handleChange( value ) }
 				placeholder={ __( 'Site Description' ) }
 				aria-label={ __( 'Site Description' ) }
 			/>
-			{ isDirty && (
-				<Button
-					isLarge
-					className="site-description__save-button"
-					disabled={ isSaving }
-					isBusy={ isSaving }
-					onClick={ onSave }
-				>
-					{ __( 'Save' ) }
-				</Button>
-			) }
 		</Fragment>
 	);
 }
