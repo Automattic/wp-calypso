@@ -35,7 +35,6 @@ export function getSiteVerticalData( state ) {
 		isUserInputVertical: true,
 		parent: '',
 		preview: '',
-		previewStylesUrl: '',
 		siteType,
 		verticalId: '',
 		verticalName,
@@ -45,10 +44,6 @@ export function getSiteVerticalData( state ) {
 
 export function getSiteVerticalPreview( state ) {
 	return get( getSiteVerticalData( state ), 'preview', '' );
-}
-
-export function getSiteVerticalPreviewStyles( state ) {
-	return get( getSiteVerticalData( state ), 'previewStylesUrl', '' );
 }
 
 // TODO: All the following selectors will be updated to use getSiteVerticalData like getSiteVerticalPreview() does.
