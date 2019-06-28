@@ -1762,7 +1762,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheSitePreview();
 
 		after( 'Can delete our newly created account', async function() {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
