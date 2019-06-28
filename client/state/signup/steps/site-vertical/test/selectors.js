@@ -118,7 +118,6 @@ describe( 'selectors', () => {
 			isUserInputVertical: true,
 			parent: '',
 			preview: '',
-			previewStylesUrl: '',
 			siteType: '',
 			verticalId: '',
 			verticalName: '',
