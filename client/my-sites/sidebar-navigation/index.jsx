@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -15,26 +13,22 @@ import SidebarNavigation from 'components/sidebar-navigation';
 import SiteIcon from 'blocks/site-icon';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const MySitesSidebarNavigation = ( { site, translate } ) => {
-	let currentSiteTitle = translate( 'All Sites' ),
-		allSitesClass = 'all-sites';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-	if ( site ) {
-		currentSiteTitle = site.title;
-		allSitesClass = null;
-	}
+function MySitesSidebarNavigation( { site } ) {
+	const translate = useTranslate();
+	const currentSiteTitle = site ? site.title : translate( 'All Sites' );
 
 	return (
-		<SidebarNavigation
-			linkClassName={ allSitesClass }
-			sectionName="site"
-			sectionTitle={ currentSiteTitle }
-		>
+		<SidebarNavigation sectionTitle={ currentSiteTitle }>
 			{ site && <SiteIcon site={ site } /> }
 		</SidebarNavigation>
 	);
-};
+}
 
 export default connect( state => ( {
 	site: getSelectedSite( state ),
-} ) )( localize( MySitesSidebarNavigation ) );
+} ) )( MySitesSidebarNavigation );
