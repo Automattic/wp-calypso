@@ -141,7 +141,7 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( positionInFlow === 0 && [ 'onboarding' ].includes( flowName ) ) {
+		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
 		}
 
