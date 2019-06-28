@@ -177,12 +177,7 @@ export class PlansStep extends Component {
 			siteSlug,
 		} = this.props;
 
-		let headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
-
-		//Temporary header for onboarding-dev flow
-		if ( 'onboarding-dev' === flowName ) {
-			headerText = translate( 'Pick your plan' );
-		}
+		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText = this.props.subHeaderText;

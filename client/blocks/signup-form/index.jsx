@@ -720,7 +720,7 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ [ 'onboarding', 'onboarding-dev' ].includes( flowName )
+					{ flowName === 'onboarding'
 						? translate( 'Log in to create a site for your existing account.' )
 						: translate( 'Already have a WordPress.com account?' ) }
 				</LoggedOutFormLinkItem>
