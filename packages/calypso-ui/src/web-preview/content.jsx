@@ -51,7 +51,7 @@ export class WebPreviewContent extends Component {
 
 		window.addEventListener( 'message', this.handleMessage );
 		if ( previewUrl ) {
-			this.setIframeUrl( 'https://themes.woocommerce.com/?name=galleria' );
+			this.setIframeUrl( previewUrl );
 		}
 		if ( previewMarkup ) {
 			this.setIframeMarkup( previewMarkup );

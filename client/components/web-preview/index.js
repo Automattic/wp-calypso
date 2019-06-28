@@ -10,6 +10,7 @@ import { WebPreview as WebPreviewComponent } from '@automattic/calypso-ui';
  */
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
 
 export class WebPreview extends Component {
@@ -28,6 +29,7 @@ export class WebPreview extends Component {
 				{ ...this.props }
 				onPreviewShowChange={ this.onPreviewShowChange }
 				onSetDeviceViewport={ this.onSetDeviceViewport }
+				Wrapper={ RootChild }
 			/>
 		);
 	}

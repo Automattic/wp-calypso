@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { noop } from 'lodash';
@@ -13,7 +13,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { hasTouch } from './touch-detect';
-import RootChild from 'components/root-child';
 import { withViewportMatch } from '@wordpress/viewport';
 import WebPreviewContent from './content';
 
@@ -69,6 +68,8 @@ export class WebPreviewModal extends Component {
 		overridePost: PropTypes.object,
 		// Called on mount and when previewShow changes
 		onPreviewShowChange: PropTypes.func,
+		// Element to wrap the preview component
+		Wrapper: PropTypes.oneOfType( [ PropTypes.func, PropTypes.symbol ] ),
 	};
 
 	static defaultProps = {
@@ -86,6 +87,7 @@ export class WebPreviewModal extends Component {
 		hasSidebar: false,
 		overridePost: null,
 		onPreviewShowChange: noop,
+		Wrapper: Fragment,
 	};
 
 	constructor( props ) {
@@ -152,7 +154,14 @@ export class WebPreviewModal extends Component {
 	}
 
 	render() {
-		const { className, frontPageMetaDescription, hasSidebar, onClose, showPreview } = this.props;
+		const {
+			className,
+			frontPageMetaDescription,
+			hasSidebar,
+			onClose,
+			showPreview,
+			Wrapper,
+		} = this.props;
 		const classes = classNames( className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': hasSidebar,
@@ -164,7 +173,7 @@ export class WebPreviewModal extends Component {
 		} );
 
 		return (
-			<RootChild>
+			<Wrapper>
 				<div className={ classes }>
 					{ /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="web-preview__backdrop" onClick={ onClose } />
@@ -178,7 +187,7 @@ export class WebPreviewModal extends Component {
 						/>
 					</div>
 				</div>
-			</RootChild>
+			</Wrapper>
 		);
 	}
 }
