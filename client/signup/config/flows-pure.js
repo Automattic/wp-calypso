@@ -312,13 +312,6 @@ export function generateFlows( {
 		lastModified: '2017-01-19',
 	};
 
-	flows.private = {
-		steps: [ 'user', 'site' ],
-		destination: getChecklistDestination,
-		description: 'Test private site signup',
-		lastModified: '2018-10-22',
-	};
-
 	flows[ 'launch-site' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
 		destination: getSiteDestination,
@@ -358,13 +351,6 @@ export function generateFlows( {
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
-	};
-
-	flows.name = {
-		steps: [ 'displayname', 'about', 'domains', 'plans' ],
-		destination: getSiteDestination,
-		description: 'Ask for a display name not a user name',
-		lastModified: '2018-12-12',
 	};
 
 	flows[ 'plan-no-domain' ] = {
