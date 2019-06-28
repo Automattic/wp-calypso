@@ -15,6 +15,7 @@ import {
 	hasTransferProduct,
 	hasPlan,
 	hasConciergeSession,
+	hasEcommercePlan,
 } from 'lib/cart-values/cart-items';
 import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
 import { retrieveSignupDestination } from 'signup/utils';

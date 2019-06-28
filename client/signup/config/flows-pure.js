@@ -17,7 +17,6 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getThankYouNoSiteDestination = noop,
-	getThankYouDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -226,14 +225,14 @@ export function generateFlows( {
 		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getThankYouDestination,
+			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
 			steps: [ 'user', 'site-type', 'domains', 'plans-ecommerce' ],
-			destination: getThankYouDestination,
+			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-11-21',
 		};
