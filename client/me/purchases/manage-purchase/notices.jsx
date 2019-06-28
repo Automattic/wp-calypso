@@ -118,8 +118,9 @@ class PurchaseNotice extends Component {
 		}
 
 		if (
-			! canExplicitRenew( purchase ) ||
-			shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment )
+			! hasPaymentMethod( purchase ) &&
+			( ! canExplicitRenew( purchase ) ||
+				shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment ) )
 		) {
 			return (
 				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
