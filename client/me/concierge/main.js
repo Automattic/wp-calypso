@@ -44,8 +44,25 @@ export class ConciergeMain extends Component {
 
 		this.state = {
 			currentStep: 0,
+			reauthRequired: false,
 		};
 	}
+
+	componentDidMount() {
+		twoStepAuthorization.on( 'change', this.checkReauthRequired );
+		this.checkReauthRequired();
+	}
+
+	componentWillUnmount() {
+		twoStepAuthorization.off( 'change', this.checkReauthRequired );
+	}
+
+	checkReauthRequired = () => {
+		const reauthRequired = twoStepAuthorization.isReauthRequired();
+		if ( this.state.reauthRequired !== reauthRequired ) {
+			this.setState( { reauthRequired } );
+		}
+	};
 
 	goToPreviousStep = () => {
 		this.setState( { currentStep: this.state.currentStep - 1 } );
@@ -101,16 +118,18 @@ export class ConciergeMain extends Component {
 	render() {
 		const { analyticsPath, analyticsTitle, site } = this.props;
 		const siteId = site && site.ID;
-
+		const { reauthRequired } = this.state;
 		return (
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<QueryUserSettings />
-				<QuerySites />
-				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ this.getDisplayComponent() }
+				{ reauthRequired && <ReauthRequired twoStepAuthorization={ twoStepAuthorization } /> }
+				{ ! reauthRequired && [
+					<QueryUserSettings />,
+					<QuerySites />,
+					siteId && <QueryConciergeInitial siteId={ siteId } />,
+					siteId && <QuerySitePlans siteId={ siteId } />,
+					this.getDisplayComponent(),
+				] }
 			</Main>
 		);
 	}
