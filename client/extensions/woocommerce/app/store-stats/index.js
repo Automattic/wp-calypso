@@ -63,9 +63,7 @@ class StoreStats extends Component {
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
-				<div className="store-stats__sidebar-nav">
-					<SidebarNavigation />
-				</div>
+				<SidebarNavigation />
 				<StatsNavigation
 					selectedItem={ 'store' }
 					siteId={ siteId }
