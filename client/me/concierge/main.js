@@ -35,6 +35,8 @@ import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
 import AppointmentInfo from './shared/appointment-info';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import ReauthRequired from 'me/reauth-required';
+import twoStepAuthorization from 'lib/two-step-authorization';
 
 export class ConciergeMain extends Component {
 	constructor( props ) {
@@ -103,6 +105,7 @@ export class ConciergeMain extends Component {
 		return (
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<QueryUserSettings />
 				<QuerySites />
 				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
