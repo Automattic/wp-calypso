@@ -122,14 +122,16 @@ export class ConciergeMain extends Component {
 		return (
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
-				{ reauthRequired && <ReauthRequired twoStepAuthorization={ twoStepAuthorization } /> }
-				{ ! reauthRequired && [
-					<QueryUserSettings />,
-					<QuerySites />,
-					siteId && <QueryConciergeInitial siteId={ siteId } />,
-					siteId && <QuerySitePlans siteId={ siteId } />,
-					this.getDisplayComponent(),
-				] }
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				{ ! reauthRequired && (
+					<>
+						<QueryUserSettings />
+						<QuerySites />
+						{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
+						{ siteId && <QuerySitePlans siteId={ siteId } /> }
+						{ this.getDisplayComponent() }
+					</>
+				) }
 			</Main>
 		);
 	}
