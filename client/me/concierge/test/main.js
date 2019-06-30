@@ -46,6 +46,7 @@ const props = {
 	},
 	userSettings: {},
 	skeleton: 'Skeleton',
+	ignoreReauth: true,
 };
 
 describe( 'ConciergeMain basic tests', () => {
