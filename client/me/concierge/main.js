@@ -116,22 +116,17 @@ export class ConciergeMain extends Component {
 	};
 
 	render() {
-		const { analyticsPath, analyticsTitle, site, ignoreReauth } = this.props;
+		const { analyticsPath, analyticsTitle, site } = this.props;
 		const siteId = site && site.ID;
-		const { reauthRequired } = this.state;
 		return (
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
-				{ ! ignoreReauth && <ReauthRequired twoStepAuthorization={ twoStepAuthorization } /> }
-				{ ( ignoreReauth || ! reauthRequired ) && (
-					<>
-						<QueryUserSettings />
-						<QuerySites />
-						{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-						{ siteId && <QuerySitePlans siteId={ siteId } /> }
-						{ this.getDisplayComponent() }
-					</>
-				) }
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<QueryUserSettings />
+				<QuerySites />
+				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
+				{ siteId && <QuerySitePlans siteId={ siteId } /> }
+				{ this.getDisplayComponent() }
 			</Main>
 		);
 	}
