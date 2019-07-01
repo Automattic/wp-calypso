@@ -571,6 +571,8 @@ export class Checkout extends React.Component {
 			this.props.requestSite( selectedSiteId );
 		}
 
+		this.props.setHeaderText( '' );
+
 		if (
 			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
 			( isDomainOnly && hasPlan( cart ) && ! selectedSiteId )
@@ -596,7 +598,15 @@ export class Checkout extends React.Component {
 	};
 
 	content() {
-		const { selectedSite } = this.props;
+		const {
+			selectedSite,
+			transaction,
+			cart,
+			cards,
+			productsList,
+			setHeaderText,
+			userCountryCode,
+		} = this.props;
 
 		if ( this.isLoading() ) {
 			return <SecurePaymentFormPlaceholder />;
@@ -609,22 +619,22 @@ export class Checkout extends React.Component {
 		if ( this.needsDomainDetails() ) {
 			return (
 				<DomainDetailsForm
-					cart={ this.props.cart }
-					productsList={ this.props.productsList }
-					userCountryCode={ this.props.userCountryCode }
+					cart={ cart }
+					productsList={ productsList }
+					userCountryCode={ userCountryCode }
 				/>
 			);
 		}
 
 		return (
 			<SecurePaymentForm
-				cart={ this.props.cart }
-				transaction={ this.props.transaction }
-				cards={ this.props.cards }
+				cart={ cart }
+				transaction={ transaction }
+				cards={ cards }
 				paymentMethods={ this.paymentMethodsAbTestFilter() }
-				products={ this.props.productsList }
+				products={ productsList }
 				selectedSite={ selectedSite }
-				setHeaderText={ this.props.setHeaderText }
+				setHeaderText={ setHeaderText }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
