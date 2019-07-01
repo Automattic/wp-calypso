@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { ChangeEvent, Fragment, FunctionComponent, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
