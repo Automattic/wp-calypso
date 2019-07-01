@@ -147,7 +147,7 @@ class Task extends PureComponent {
 		const isExpandable = ! inProgress && ( ! completed || completedButtonText );
 		const taskActionButtonText = completed
 			? completedButtonText
-			: buttonText || translate( 'Do it!' );
+			: buttonText || translate( 'Try it' );
 
 		return (
 			<CompactCard
