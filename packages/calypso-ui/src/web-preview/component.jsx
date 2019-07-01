@@ -28,8 +28,8 @@ export class WebPreviewModal extends Component {
 		previewUrl: PropTypes.string,
 		// The markup to display in the iframe
 		previewMarkup: PropTypes.string,
-		// The viewport device to show initially
-		defaultViewportDevice: PropTypes.string,
+		// The viewport device to show
+		device: PropTypes.string,
 		// Elements to render on the right side of the toolbar
 		children: PropTypes.node,
 		// The function to call when the iframe is loaded. Will be passed the iframe document object.
@@ -47,8 +47,6 @@ export class WebPreviewModal extends Component {
 		hasSidebar: PropTypes.bool,
 		// The site/post description passed to the SeoPreviewPane
 		frontPageMetaDescription: PropTypes.string,
-		// A post object used to override the selected post in the SEO preview
-		overridePost: PropTypes.object,
 		// Called on mount and when previewShow changes
 		onPreviewShowChange: PropTypes.func,
 		// Element to wrap the preview component
@@ -56,13 +54,13 @@ export class WebPreviewModal extends Component {
 	};
 
 	static defaultProps = {
+		device: 'computer',
 		previewUrl: null,
 		previewMarkup: null,
 		onLoad: noop,
 		onClose: noop,
 		onEdit: noop,
 		hasSidebar: false,
-		overridePost: null,
 		onPreviewShowChange: noop,
 		Wrapper: Fragment,
 	};
@@ -72,12 +70,7 @@ export class WebPreviewModal extends Component {
 
 		this._hasTouch = false;
 
-		this.state = {
-			device: props.defaultViewportDevice || 'computer',
-		};
-
 		this.keyDown = this.keyDown.bind( this );
-		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 	}
 
 	componentWillMount() {
@@ -126,27 +119,20 @@ export class WebPreviewModal extends Component {
 		}
 	}
 
-	setDeviceViewport( device = 'computer' ) {
-		this.setState( { device } );
-	}
-
 	render() {
 		const {
 			className,
+			device,
 			frontPageMetaDescription,
 			hasSidebar,
 			onClose,
 			showPreview,
 			Wrapper,
 		} = this.props;
-		const classes = classNames( className, 'web-preview', {
+		const classes = classNames( className, 'web-preview', `is-${ device }`, {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': hasSidebar,
 			'is-visible': showPreview,
-			'is-computer': this.state.device === 'computer',
-			'is-tablet': this.state.device === 'tablet',
-			'is-phone': this.state.device === 'phone',
-			'is-seo': this.state.device === 'seo',
 		} );
 
 		return (
@@ -158,7 +144,6 @@ export class WebPreviewModal extends Component {
 					<div className="web-preview__content">
 						<WebPreviewContent
 							{ ...this.props }
-							onDeviceUpdate={ this.setDeviceViewport }
 							isModalWindow={ true }
 							frontPageMetaDescription={ frontPageMetaDescription || null }
 						/>

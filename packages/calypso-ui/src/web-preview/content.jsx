@@ -29,7 +29,6 @@ export class WebPreviewContent extends Component {
 
 	state = {
 		iframeUrl: null,
-		device: this.props.defaultViewportDevice || 'computer',
 		loaded: false,
 		isLoadingSubpage: false,
 	};
@@ -44,7 +43,7 @@ export class WebPreviewContent extends Component {
 	}
 
 	componentDidMount() {
-		const { onDeviceUpdate, previewMarkup, previewUrl } = this.props;
+		const { previewMarkup, previewUrl } = this.props;
 
 		window.addEventListener( 'message', this.handleMessage );
 		if ( previewUrl ) {
@@ -53,8 +52,6 @@ export class WebPreviewContent extends Component {
 		if ( previewMarkup ) {
 			this.setIframeMarkup( previewMarkup );
 		}
-
-		onDeviceUpdate( this.state.device );
 	}
 
 	componentWillUnmount() {
@@ -189,16 +186,6 @@ export class WebPreviewContent extends Component {
 		} catch ( e ) {}
 	};
 
-	setDeviceViewport = ( device = 'computer' ) => {
-		this.setState( { device } );
-
-		this.props.onSetDeviceViewport( device );
-
-		if ( typeof this.props.onDeviceUpdate === 'function' ) {
-			this.props.onDeviceUpdate( device );
-		}
-	};
-
 	setLoaded = () => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
@@ -225,6 +212,7 @@ export class WebPreviewContent extends Component {
 		const {
 			belowToolbar,
 			className,
+			device,
 			hasSidebar,
 			iframeTitle,
 			isModalWindow,
@@ -233,38 +221,24 @@ export class WebPreviewContent extends Component {
 			showPreview,
 			Toolbar,
 		} = this.props;
-		const wrapperClassNames = classNames( className, 'web-preview__inner', {
+		const wrapperClassNames = classNames( className, 'web-preview__inner', `is-${ device }`, {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': hasSidebar,
 			'is-visible': showPreview,
-			'is-computer': this.state.device === 'computer',
-			'is-tablet': this.state.device === 'tablet',
-			'is-phone': this.state.device === 'phone',
-			'is-seo': this.state.device === 'seo',
 			'is-loaded': this.state.loaded,
 			'has-toolbar': Toolbar,
 		} );
 
 		const showLoadingMessage =
-			! this.state.loaded &&
-			loadingMessage &&
-			( showPreview || ! isModalWindow ) &&
-			this.state.device !== 'seo';
+			! this.state.loaded && loadingMessage && ( showPreview || ! isModalWindow );
 
 		return (
 			<div className={ wrapperClassNames } ref={ this.setWrapperElement }>
-				{ Toolbar ? (
-					<Toolbar
-						setDeviceViewport={ this.setDeviceViewport }
-						device={ this.state.device }
-						isLoading={ this.state.isLoadingSubpage }
-						{ ...this.props }
-					/>
-				) : null }
+				{ Toolbar ? <Toolbar isLoading={ this.state.isLoadingSubpage } { ...this.props } /> : null }
 				{ belowToolbar }
 				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div className="web-preview__placeholder">
-					{ showLoadingMessage && (
+					{ ! previewContent && showLoadingMessage && (
 						<div className="web-preview__loading-message-wrapper">
 							<span className="web-preview__loading-message">{ loadingMessage }</span>
 						</div>
@@ -295,8 +269,6 @@ export class WebPreviewContent extends Component {
 WebPreviewContent.propTypes = {
 	// The markup to display in the iframe
 	previewMarkup: PropTypes.string,
-	// The viewport device to show initially
-	defaultViewportDevice: PropTypes.string,
 	// The function to call when the iframe is loaded. Will be passed the iframe document object.
 	// Only called if using previewMarkup.
 	onLoad: PropTypes.func,
@@ -312,14 +284,10 @@ WebPreviewContent.propTypes = {
 	iframeTitle: PropTypes.string,
 	// Makes room for a sidebar if desired
 	hasSidebar: PropTypes.bool,
-	// Called after user switches device
-	onDeviceUpdate: PropTypes.func,
 	// Flag that differentiates modal window from inline embeds
 	isModalWindow: PropTypes.bool,
 	// Flag to prevent focusing of the preview when set to true
 	disableFocus: PropTypes.bool,
-	// Called when the user changes the preview viewport
-	onSetDeviceViewport: PropTypes.func,
 	// Toolbar element to be rendered on top of the preview
 	Toolbar: PropTypes.func,
 	// Filter the iframe URL to allow passing in query args
@@ -336,12 +304,10 @@ WebPreviewContent.defaultProps = {
 	onLocationUpdate: noop,
 	onClose: noop,
 	onEdit: noop,
-	onDeviceUpdate: noop,
 	hasSidebar: false,
 	isModalWindow: false,
 	overridePost: null,
 	disableFocus: false,
-	onSetDeviceViewport: noop,
 	filterIframeUrl: identity,
 	previewContent: null,
 };

@@ -23,7 +23,6 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import { isWithinBreakpoint } from 'lib/viewport';
 import SelectDropdown from 'components/select-dropdown';
 
-
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
 export default class PreviewToolbar extends Component {
@@ -46,7 +45,7 @@ export default class PreviewToolbar extends Component {
 		device: PropTypes.string,
 		// Elements to render on the right side of the toolbar
 		children: PropTypes.node,
-		// Called when a device button is clicked
+		// Function to update the device viewport in parent
 		setDeviceViewport: PropTypes.func,
 		// Called when the close button is pressed
 		onClose: PropTypes.func.isRequired,

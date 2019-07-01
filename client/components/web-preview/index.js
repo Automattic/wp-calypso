@@ -18,17 +18,17 @@ import Toolbar from './toolbar';
 import SeoPreviewPane from 'components/seo-preview-pane';
 
 export class WebPreview extends Component {
-	constructor() {
+	constructor( props ) {
 		super( ...arguments );
 
 		this.state = {
-			device: null,
+			device: props.defaultViewportDevice,
 		};
 
-		this.onSetDeviceViewport = this.onSetDeviceViewport.bind( this );
+		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 	}
 
-	onSetDeviceViewport( device ) {
+	setDeviceViewport( device ) {
 		this.setState( { device } );
 		this.props.recordTracksEvent( 'calypso_web_preview_select_viewport_device', { device } );
 	}
@@ -52,9 +52,10 @@ export class WebPreview extends Component {
 		return (
 			<WebPreviewComponent
 				{ ...this.props }
+				device={ this.state.device }
 				filterIframeUrl={ this.filterIframeUrl }
 				onPreviewShowChange={ this.onPreviewShowChange }
-				onSetDeviceViewport={ this.onSetDeviceViewport }
+				setDeviceViewport={ this.setDeviceViewport }
 				previewContent={ this.iframeContent() }
 				Toolbar={ Toolbar }
 				Wrapper={ RootChild }
@@ -64,6 +65,8 @@ export class WebPreview extends Component {
 }
 
 WebPreview.propTypes = {
+	// The viewport device to show initially
+	defaultViewportDevice: PropTypes.string,
 	// Show external link button
 	showExternal: PropTypes.bool,
 	// Show external link with clipboard input
@@ -87,6 +90,7 @@ WebPreview.propTypes = {
 };
 
 WebPreview.defaultProps = {
+	defaultViewportDevice: 'computer',
 	showExternal: true,
 	showClose: true,
 	showSEO: true,
