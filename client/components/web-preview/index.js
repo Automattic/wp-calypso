@@ -26,6 +26,7 @@ export class WebPreview extends Component {
 		};
 
 		this.onDeviceUpdate = this.onDeviceUpdate.bind( this );
+		this.onPreviewShowChange = this.onPreviewShowChange.bind( this );
 	}
 
 	onDeviceUpdate( device ) {
@@ -38,6 +39,10 @@ export class WebPreview extends Component {
 
 	getPreviewContent( props ) {
 		return 'seo' === props.device ? <SeoPreviewPane { ...props } /> : null;
+	}
+
+	onPreviewShowChange( previewShow ) {
+		return this.props.setPreviewShowing( previewShow );
 	}
 
 	render() {
