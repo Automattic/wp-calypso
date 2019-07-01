@@ -11,11 +11,6 @@ import page from 'page';
 import { v4 as uuid } from 'uuid';
 
 /**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
  * Internal dependencies
  */
 import { hasTouch } from './touch-detect';
@@ -220,6 +215,7 @@ export class WebPreviewContent extends Component {
 			getPreviewContent,
 			showPreview,
 			Toolbar,
+			translate,
 		} = this.props;
 		const wrapperClassNames = classNames( className, 'web-preview__inner', `is-${ device }`, {
 			'is-touch': this._hasTouch,
@@ -259,7 +255,7 @@ export class WebPreviewContent extends Component {
 							className="web-preview__frame"
 							src="about:blank"
 							onLoad={ this.setLoaded }
-							title={ iframeTitle || __( 'Preview' ) }
+							title={ iframeTitle || translate( 'Preview' ) }
 						/>
 					</div>
 					{ previewContent }
@@ -295,6 +291,8 @@ WebPreviewContent.propTypes = {
 	filterIframeUrl: PropTypes.func,
 	// Content used to override the displayed iframe content preview area
 	getPreviewContent: PropTypes.func,
+	// Translation method for string localization
+	translate: PropTypes.func.isRequired,
 };
 
 WebPreviewContent.defaultProps = {
@@ -310,6 +308,7 @@ WebPreviewContent.defaultProps = {
 	disableFocus: false,
 	filterIframeUrl: identity,
 	getPreviewContent: noop,
+	translate: identity,
 };
 
 export default WebPreviewContent;

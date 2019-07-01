@@ -10,11 +10,6 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 
 /**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
  * Internal dependencies
  */
 import Button from 'components/button';
@@ -53,6 +48,8 @@ export default class PreviewToolbar extends Component {
 		onEdit: PropTypes.func,
 		// Called when an external link is clicked
 		onExternalClick: PropTypes.func,
+		// Translation method for string localization
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -74,14 +71,14 @@ export default class PreviewToolbar extends Component {
 		this.props.onEdit();
 	};
 
-	constructor() {
+	constructor( props ) {
 		super();
 
 		this.devices = {
-			computer: { title: __( 'Desktop' ), icon: 'computer' },
-			tablet: { title: __( 'Tablet' ), icon: 'tablet' },
-			phone: { title: __( 'Phone' ), icon: 'phone' },
-			seo: { title: __( 'Search & Social' ), icon: 'globe' },
+			computer: { title: props.translate( 'Desktop' ), icon: 'computer' },
+			tablet: { title: props.translate( 'Tablet' ), icon: 'tablet' },
+			phone: { title: props.translate( 'Phone' ), icon: 'phone' },
+			seo: { title: props.translate( 'Search & Social' ), icon: 'globe' },
 		};
 	}
 
@@ -99,6 +96,7 @@ export default class PreviewToolbar extends Component {
 			showEdit,
 			showExternal,
 			showSEO,
+			translate,
 		} = this.props;
 
 		const selectedDevice = this.devices[ currentDevice ];
@@ -109,12 +107,12 @@ export default class PreviewToolbar extends Component {
 				{ showClose && (
 					<Button
 						borderless
-						aria-label={ __( 'Close preview' ) }
+						aria-label={ translate( 'Close preview' ) }
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
 						onClick={ this.handleEditorWebPreviewClose }
 					>
-						{ __( 'Close' ) }
+						{ translate( 'Close' ) }
 					</Button>
 				) }
 				{ isWithinBreakpoint( '>660px' ) && showDeviceSwitcher && (
@@ -152,7 +150,7 @@ export default class PreviewToolbar extends Component {
 							href={ editUrl }
 							onClick={ this.handleEditorWebPreviewEdit }
 						>
-							{ __( 'Edit' ) }
+							{ translate( 'Edit' ) }
 						</Button>
 					) }
 					{ previewUrl && showExternal && (
@@ -164,7 +162,7 @@ export default class PreviewToolbar extends Component {
 							rel="noopener noreferrer"
 							onClick={ this.handleEditorWebPreviewExternalClick }
 						>
-							{ __( 'Visit site' ) }
+							{ translate( 'Visit site' ) }
 						</Button>
 					) }
 					<div className="web-preview__toolbar-tray">{ this.props.children }</div>
