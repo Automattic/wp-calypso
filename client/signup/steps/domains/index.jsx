@@ -49,6 +49,7 @@ import { getSite } from 'state/sites/selectors';
 import { getVerticalForDomainSuggestions } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import { isDomainStepSkippable } from 'signup/config/steps';
 
 /**
  * Style dependencies
@@ -604,7 +605,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { translate, selectedSite } = this.props;
+		const { flowName, translate, selectedSite } = this.props;
 		let backUrl, backLabelText;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
@@ -644,6 +645,8 @@ class DomainsStep extends React.Component {
 				showSiteMockups={ this.props.showSiteMockups }
 				allowBackFirstStep={ !! selectedSite }
 				backLabelText={ backLabelText }
+				hideSkip={ ! isDomainStepSkippable( flowName ) }
+				goToNextStep={ this.handleSkip }
 			/>
 		);
 	}
