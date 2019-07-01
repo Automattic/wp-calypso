@@ -217,7 +217,7 @@ export class WebPreviewContent extends Component {
 			iframeTitle,
 			isModalWindow,
 			loadingMessage,
-			previewContent,
+			getPreviewContent,
 			showPreview,
 			Toolbar,
 		} = this.props;
@@ -229,39 +229,40 @@ export class WebPreviewContent extends Component {
 			'has-toolbar': Toolbar,
 		} );
 
+		const previewContent = getPreviewContent( this.props );
+
 		const showLoadingMessage =
-			! this.state.loaded && loadingMessage && ( showPreview || ! isModalWindow );
+			! this.state.loaded &&
+			loadingMessage &&
+			! previewContent &&
+			( showPreview || ! isModalWindow );
 
 		return (
 			<div className={ wrapperClassNames } ref={ this.setWrapperElement }>
 				{ Toolbar ? <Toolbar isLoading={ this.state.isLoadingSubpage } { ...this.props } /> : null }
 				{ belowToolbar }
-				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && ! previewContent && (
-					<SpinnerLine />
-				) }
+				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div className="web-preview__placeholder">
-					{ ! previewContent && showLoadingMessage && (
+					{ showLoadingMessage && (
 						<div className="web-preview__loading-message-wrapper">
 							<span className="web-preview__loading-message">{ loadingMessage }</span>
 						</div>
 					) }
-					{ previewContent ? (
-						previewContent
-					) : (
-						<div
-							className={ classNames( 'web-preview__frame-wrapper', {
-								'is-resizable': ! isModalWindow,
-							} ) }
-						>
-							<iframe
-								ref={ this.setIframeInstance }
-								className="web-preview__frame"
-								src="about:blank"
-								onLoad={ this.setLoaded }
-								title={ iframeTitle || __( 'Preview' ) }
-							/>
-						</div>
-					) }
+					<div
+						className={ classNames( 'web-preview__frame-wrapper', {
+							'is-resizable': ! isModalWindow,
+						} ) }
+						style={ { display: previewContent ? 'none' : 'inherit' } }
+					>
+						<iframe
+							ref={ this.setIframeInstance }
+							className="web-preview__frame"
+							src="about:blank"
+							onLoad={ this.setLoaded }
+							title={ iframeTitle || __( 'Preview' ) }
+						/>
+					</div>
+					{ previewContent }
 				</div>
 			</div>
 		);
@@ -295,7 +296,7 @@ WebPreviewContent.propTypes = {
 	// Filter the iframe URL to allow passing in query args
 	filterIframeUrl: PropTypes.func,
 	// Content used to override the displayed iframe content preview area
-	previewContent: PropTypes.object,
+	getPreviewContent: PropTypes.func,
 };
 
 WebPreviewContent.defaultProps = {
@@ -311,7 +312,7 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 	disableFocus: false,
 	filterIframeUrl: identity,
-	previewContent: null,
+	getPreviewContent: noop,
 };
 
 export default WebPreviewContent;

@@ -46,7 +46,7 @@ export default class PreviewToolbar extends Component {
 		// Elements to render on the right side of the toolbar
 		children: PropTypes.node,
 		// Function to update the device viewport in parent
-		setDeviceViewport: PropTypes.func,
+		setDevice: PropTypes.func,
 		// Called when the close button is pressed
 		onClose: PropTypes.func.isRequired,
 		// Called when the edit button is clicked
@@ -92,7 +92,7 @@ export default class PreviewToolbar extends Component {
 			externalUrl,
 			isModalWindow,
 			previewUrl,
-			setDeviceViewport,
+			setDevice,
 			showClose,
 			showDeviceSwitcher,
 			showUrl,
@@ -129,7 +129,7 @@ export default class PreviewToolbar extends Component {
 							<DropdownItem
 								key={ device }
 								selected={ device === currentDevice }
-								onClick={ partial( setDeviceViewport, device ) }
+								onClick={ partial( setDevice, device ) }
 								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
 								e2eTitle={ device }
 							>

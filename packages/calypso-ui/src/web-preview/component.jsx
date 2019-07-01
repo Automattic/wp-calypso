@@ -49,6 +49,8 @@ export class WebPreviewModal extends Component {
 		frontPageMetaDescription: PropTypes.string,
 		// Called on mount and when previewShow changes
 		onPreviewShowChange: PropTypes.func,
+		// Called after user switches device
+		onDeviceUpdate: PropTypes.func,
 		// Element to wrap the preview component
 		Wrapper: PropTypes.oneOfType( [ PropTypes.func, PropTypes.symbol ] ),
 	};
@@ -62,14 +64,20 @@ export class WebPreviewModal extends Component {
 		onEdit: noop,
 		hasSidebar: false,
 		onPreviewShowChange: noop,
+		onDeviceUpdate: noop,
 		Wrapper: Fragment,
 	};
 
 	constructor( props ) {
 		super( props );
 
+		this.state = {
+			device: props.defaultViewportDevice,
+		};
+
 		this._hasTouch = false;
 
+		this.setDevice = this.setDevice.bind( this );
 		this.keyDown = this.keyDown.bind( this );
 	}
 
@@ -79,13 +87,14 @@ export class WebPreviewModal extends Component {
 	}
 
 	componentDidMount() {
-		const { onPreviewShowChange, showPreview } = this.props;
+		const { onDeviceUpdate, onPreviewShowChange, showPreview } = this.props;
 
 		if ( showPreview ) {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
 
 		onPreviewShowChange( showPreview );
+		onDeviceUpdate( this.state.device );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -119,16 +128,21 @@ export class WebPreviewModal extends Component {
 		}
 	}
 
+	setDevice( device = 'computer' ) {
+		this.props.onDeviceUpdate( device );
+		this.setState( { device } );
+	}
+
 	render() {
 		const {
 			className,
-			device,
 			frontPageMetaDescription,
 			hasSidebar,
 			onClose,
 			showPreview,
 			Wrapper,
 		} = this.props;
+		const { device } = this.state;
 		const classes = classNames( className, 'web-preview', `is-${ device }`, {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': hasSidebar,
@@ -144,8 +158,10 @@ export class WebPreviewModal extends Component {
 					<div className="web-preview__content">
 						<WebPreviewContent
 							{ ...this.props }
+							device={ device }
 							isModalWindow={ true }
 							frontPageMetaDescription={ frontPageMetaDescription || null }
+							setDevice={ this.setDevice }
 						/>
 					</div>
 				</div>

@@ -25,11 +25,10 @@ export class WebPreview extends Component {
 			device: props.defaultViewportDevice,
 		};
 
-		this.setDeviceViewport = this.setDeviceViewport.bind( this );
+		this.onDeviceUpdate = this.onDeviceUpdate.bind( this );
 	}
 
-	setDeviceViewport( device ) {
-		this.setState( { device } );
+	onDeviceUpdate( device ) {
 		this.props.recordTracksEvent( 'calypso_web_preview_select_viewport_device', { device } );
 	}
 
@@ -37,26 +36,18 @@ export class WebPreview extends Component {
 		return url === 'about:blank' ? url : addQueryArgs( { calypso_token: this.previewId }, url );
 	}
 
-	iframeContent() {
-		const { frontPageMetaDescription, overridePost } = this.props;
-
-		return 'seo' === this.state.device ? (
-			<SeoPreviewPane
-				overridePost={ overridePost }
-				frontPageMetaDescription={ frontPageMetaDescription }
-			/>
-		) : null;
+	getPreviewContent( props ) {
+		return 'seo' === props.device ? <SeoPreviewPane { ...props } /> : null;
 	}
 
 	render() {
 		return (
 			<WebPreviewComponent
 				{ ...this.props }
-				device={ this.state.device }
 				filterIframeUrl={ this.filterIframeUrl }
 				onPreviewShowChange={ this.onPreviewShowChange }
-				setDeviceViewport={ this.setDeviceViewport }
-				previewContent={ this.iframeContent() }
+				onDeviceUpdate={ this.onDeviceUpdate }
+				getPreviewContent={ this.getPreviewContent }
 				Toolbar={ Toolbar }
 				Wrapper={ RootChild }
 			/>
