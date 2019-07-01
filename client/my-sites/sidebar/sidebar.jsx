@@ -50,7 +50,6 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
-import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import {
 	SIDEBAR_SECTION_SITE,
@@ -369,9 +368,13 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { translate, site, siteSuffix } = this.props;
+		const { translate, site, siteSuffix, canUserManageOptions } = this.props;
 
 		if ( ! site ) {
+			return null;
+		}
+
+		if ( ! canUserManageOptions ) {
 			return null;
 		}
 
@@ -720,7 +723,6 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
-		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
