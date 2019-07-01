@@ -19,7 +19,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { hasTouch } from './touch-detect';
-import SpinnerLine from 'components/spinner-line';
+import SpinnerLine from '../spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 
 const debug = debugModule( 'calypso:web-preview' );

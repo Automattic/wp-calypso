@@ -105,7 +105,7 @@ import SiteTitleControl from 'components/site-title/docs/example';
 import SocialLogos from 'components/social-logo/docs/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
-import SpinnerLine from 'components/spinner-line/docs/example';
+import SpinnerLine from '@automattic/calypso-ui/src/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';

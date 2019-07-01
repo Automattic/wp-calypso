@@ -77,7 +77,7 @@ export { default as SiteTitleControl } from 'components/site-title/docs/example'
 export { default as SocialLogos } from 'components/social-logo/docs/example';
 export { default as Spinner } from 'components/spinner/docs/example';
 export { default as SpinnerButton } from 'components/spinner-button/docs/example';
-export { default as SpinnerLine } from 'components/spinner-line/docs/example';
+export { default as SpinnerLine } from '@automattic/calypso-ui/src/spinner-line/docs/example';
 export { default as SplitButton } from 'components/split-button/docs/example';
 export { default as Suggestions } from 'components/suggestions/docs/example';
 export { default as TextareaAutosize } from 'components/textarea-autosize/docs/example';
