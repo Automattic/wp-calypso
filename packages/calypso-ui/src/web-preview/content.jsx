@@ -236,7 +236,9 @@ export class WebPreviewContent extends Component {
 			<div className={ wrapperClassNames } ref={ this.setWrapperElement }>
 				{ Toolbar ? <Toolbar isLoading={ this.state.isLoadingSubpage } { ...this.props } /> : null }
 				{ belowToolbar }
-				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
+				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && ! previewContent && (
+					<SpinnerLine />
+				) }
 				<div className="web-preview__placeholder">
 					{ ! previewContent && showLoadingMessage && (
 						<div className="web-preview__loading-message-wrapper">
