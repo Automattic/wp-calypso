@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
 import formatCurrency from '@automattic/format-currency';
 
@@ -54,10 +54,11 @@ export class ConciergeQuickstartSession extends PureComponent {
 
 	header() {
 		const { translate } = this.props;
+
 		return (
 			<header className="concierge-quickstart-session__header">
 				<h2 className="concierge-quickstart-session__title">
-					{ translate( 'A special one time offer, just for you.' ) }
+					{ translate( 'Hold tight, your site is being upgraded.' ) }
 				</h2>
 			</header>
 		);
@@ -67,7 +68,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 		const { translate, productCost, productDisplayCost, currencyCode } = this.props;
 		const fullCost = Math.round( productCost * 2.021 );
 		return (
-			<Fragment>
+			<>
 				<h4 className="concierge-quickstart-session__sub-header">
 					{ translate( 'Presenting… a personal WordPress Expert, by your side' ) }
 				</h4>
@@ -220,7 +221,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 						/>
 					</div>
 				</div>
-			</Fragment>
+			</>
 		);
 	}
 

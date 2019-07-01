@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
 import formatCurrency from '@automattic/format-currency';
 
@@ -49,10 +49,11 @@ export class ConciergeSupportSession extends PureComponent {
 
 	header() {
 		const { translate } = this.props;
+
 		return (
 			<header className="concierge-support-session__header">
 				<h2 className="concierge-support-session__title">
-					{ translate( 'A special one time offer, just for you.' ) }
+					{ translate( 'Hold tight, your site is being upgraded.' ) }
 				</h2>
 			</header>
 		);
@@ -64,7 +65,7 @@ export class ConciergeSupportSession extends PureComponent {
 		const fullCost = Math.round( productCost * 1.5 );
 		const savings = fullCost - productCost;
 		return (
-			<Fragment>
+			<>
 				<div className="concierge-support-session__column-pane">
 					<div className="concierge-support-session__column-content">
 						<h4 className="concierge-support-session__sub-header">
@@ -190,7 +191,7 @@ export class ConciergeSupportSession extends PureComponent {
 						/>
 					</div>
 				</div>
-			</Fragment>
+			</>
 		);
 	}
 
