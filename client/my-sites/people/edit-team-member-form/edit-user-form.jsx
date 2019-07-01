@@ -128,23 +128,6 @@ class EditUserForm extends Component {
 
 	handleChange = event => {
 		const stateChange = { [ event.target.name ]: event.target.value };
-
-		// we may need to change the external contributor status if the user role changes
-		if ( 'roles' === event.target.name ) {
-			if (
-				this.isExternalRole( event.target.value ) &&
-				true === this.state.isExternalContributor
-			) {
-				stateChange.isExternalContributor = false;
-			} else if (
-				this.isExternalRole( event.target.value ) &&
-				true === this.props.isExternalContributor
-			) {
-				// restore external contributor if other role is clicked then changed back
-				stateChange.isExternalContributor = true;
-			}
-		}
-
 		this.setState( stateChange );
 	};
 
