@@ -216,7 +216,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 					<div className="concierge-quickstart-session__column-doodle">
 						<img
 							className="concierge-quickstart-session__doodle"
-							alt=""
+							alt="Website expert offering a support session"
 							src="/calypso/images/illustrations/support.svg"
 						/>
 					</div>

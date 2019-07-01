@@ -186,7 +186,7 @@ export class ConciergeSupportSession extends PureComponent {
 					<div className="concierge-support-session__column-doodle">
 						<img
 							className="concierge-support-session__doodle"
-							alt=""
+							alt="Website expert offering a support session"
 							src="/calypso/images/illustrations/support.svg"
 						/>
 					</div>
