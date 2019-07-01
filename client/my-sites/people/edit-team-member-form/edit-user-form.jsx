@@ -115,9 +115,15 @@ class EditUserForm extends Component {
 		);
 
 		if ( true === changedSettings.isExternalContributor ) {
-			requestExternalContributorsAddition( this.props.siteId, this.state.ID );
+			requestExternalContributorsAddition(
+				this.props.siteId,
+				undefined !== this.state.linked_user_ID ? this.state.linked_user_ID : this.state.ID
+			);
 		} else if ( false === changedSettings.isExternalContributor ) {
-			requestExternalContributorsRemoval( this.props.siteId, this.state.ID );
+			requestExternalContributorsRemoval(
+				this.props.siteId,
+				undefined !== this.state.linked_user_ID ? this.state.linked_user_ID : this.state.ID
+			);
 		}
 
 		this.props.recordGoogleEvent( 'People', 'Clicked Save Changes Button on User Edit' );
@@ -258,11 +264,13 @@ class EditUserForm extends Component {
 
 export default localize(
 	connect(
-		( state, { siteId, ID: userId } ) => {
+		( state, { siteId, ID: userId, linked_user_ID: linkedUserId } ) => {
 			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
 			return {
 				currentUser: getCurrentUser( state ),
-				isExternalContributor: externalContributors.includes( userId ),
+				isExternalContributor: externalContributors.includes(
+					undefined !== linkedUserId ? linkedUserId : userId
+				),
 				isVip: isVipSite( state, siteId ),
 			};
 		},
