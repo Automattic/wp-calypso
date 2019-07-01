@@ -15,16 +15,11 @@ import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
-import QueryVerticals from 'components/data/query-verticals';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import {
-	getSiteVerticalName,
-	getSiteVerticalPreview,
-} from 'state/signup/steps/site-vertical/selectors';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -67,15 +62,12 @@ class SiteTitleStep extends Component {
 	};
 
 	renderSiteTitleStep = () => {
-		const { shouldFetchVerticalData, siteTitle, siteType, siteVerticalName } = this.props;
+		const { siteTitle, siteType } = this.props;
 		const fieldLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
 		const fieldPlaceholder =
 			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
 		return (
 			<div className="site-title__wrapper">
-				{ shouldFetchVerticalData && (
-					<QueryVerticals searchTerm={ siteVerticalName } siteType={ siteType } />
-				) }
 				<form>
 					<div className="site-title__field-control site-title__title">
 						<FormFieldset>
@@ -131,19 +123,10 @@ class SiteTitleStep extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteType = getSiteType( state );
-		const shouldFetchVerticalData =
-			ownProps.showSiteMockups &&
-			ownProps.flowName === 'onboarding' &&
-			getSiteVerticalPreview( state ) === '';
-		return {
-			siteTitle: getSiteTitle( state ),
-			siteVerticalName: getSiteVerticalName( state ),
-			shouldFetchVerticalData,
-			siteType,
-		};
-	},
+	state => ( {
+		siteTitle: getSiteTitle( state ),
+		siteType: getSiteType( state ),
+	} ),
 	{
 		recordTracksEvent,
 		setSiteTitle,
