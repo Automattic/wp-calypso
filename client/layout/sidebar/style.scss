@@ -98,12 +98,18 @@ This is such a generic solution. We can do better.
 	fill: var( --sidebar-gridicon-fill );
 	margin-right: 11px;
 
+	.sidebar__menu-link:hover &,
+	.sidebar__heading:hover & {
+		fill: var( --sidebar-menu-hover-color );
+	}
+
 	.selected & {
 		fill: var( --sidebar-menu-selected-a-color );
 	}
 }
 
-// Menu links
+// Menu links: The actual anchor tags that contain links to
+// various sections of Calypso.
 .sidebar__menu-link {
 	font-size: 15px;
 	line-height: 1;
@@ -127,6 +133,18 @@ This is such a generic solution. We can do better.
 		color: var( --sidebar-menu-selected-a-color );
 		background-color: var( --sidebar-menu-selected-background-color );
 	}
+}
+
+.sidebar__menu-link-secondary-text {
+    margin-right: 8px;
+    align-self: center;
+    font-weight: 600;
+    font-size: 12px;
+    position: absolute;
+    right: 0;
+    z-index: 1;
+    color: var( --sidebar-menu-link-secondary-text-color );
+    padding: 4px 8px;
 }
 
 // Expandables: Some sidebar menus act like accordions where
