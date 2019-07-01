@@ -8,6 +8,7 @@ import { WebPreview as WebPreviewComponent } from '@automattic/calypso-ui';
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from 'lib/route';
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import RootChild from 'components/root-child';
@@ -24,10 +25,15 @@ export class WebPreview extends Component {
 		this.props.recordTracksEvent( 'calypso_web_preview_select_viewport_device', { device } );
 	}
 
+	filterIframeUrl( url ) {
+		return url === 'about:blank' ? url : addQueryArgs( { calypso_token: this.previewId }, url );
+	}
+
 	render() {
 		return (
 			<WebPreviewComponent
 				{ ...this.props }
+				filterIframeUrl={ this.filterIframeUrl }
 				onPreviewShowChange={ this.onPreviewShowChange }
 				onSetDeviceViewport={ this.onSetDeviceViewport }
 				Toolbar={ Toolbar }

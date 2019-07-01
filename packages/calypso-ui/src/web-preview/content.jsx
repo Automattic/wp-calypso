@@ -6,10 +6,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop, isFunction } from 'lodash';
+import { identity, noop, isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
-import { addQueryArgs } from 'lib/route';
 
 /**
  * WordPress dependencies
@@ -178,10 +177,7 @@ export class WebPreviewContent extends Component {
 
 		debug( 'setIframeUrl', iframeUrl );
 		try {
-			const newUrl =
-				iframeUrl === 'about:blank'
-					? iframeUrl
-					: addQueryArgs( { calypso_token: this.previewId }, iframeUrl );
+			const newUrl = this.props.filterIframeUrl( iframeUrl );
 			this.iframe.contentWindow.location.replace( newUrl );
 
 			this.setState( { iframeUrl } );
@@ -359,6 +355,8 @@ WebPreviewContent.propTypes = {
 	onSetDeviceViewport: PropTypes.func,
 	// Toolbar element to be rendered on top of the preview
 	Toolbar: PropTypes.func,
+	// Filter the iframe URL to allow passing in query args
+	filterIframeUrl: PropTypes.func,
 };
 
 WebPreviewContent.defaultProps = {
@@ -381,6 +379,7 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 	disableFocus: false,
 	onSetDeviceViewport: noop,
+	filterIframeUrl: identity,
 };
 
 export default WebPreviewContent;
