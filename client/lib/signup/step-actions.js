@@ -22,6 +22,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
+import log from 'lib/catch-js-errors/log';
 
 // State actions and selectors
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
@@ -527,6 +528,13 @@ export function createAccount(
 						/**
 						 * The user fetching is a bit fragile and sometimes it requires to do a double-fetch.
 						 */
+						log(
+							'Signup new user account creation: performing a new fetch of user if previous fetch fails',
+							{
+								newLoggedUser: newLoggedUser && newLoggedUser.ID ? newLoggedUser.ID : undefined,
+								userFetching: user.fetching,
+							}
+						);
 						user.clear();
 						user.fetching = false;
 						user.fetch();
