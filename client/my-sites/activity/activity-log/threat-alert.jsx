@@ -5,7 +5,6 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-
 /**
  * Internal dependencies
  */
@@ -16,6 +15,11 @@ import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
+
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestHttpData } from 'state/data-layer/http-data';
+
+import Spinner from 'components/spinner';
 
 /**
  * Style dependencies
@@ -28,6 +32,10 @@ import './threat-alert.scss';
 const debug = debugFactory( 'calypso:activity-log' );
 
 const detailType = threat => {
+	if ( threat.hasOwnProperty( 'table' ) ) {
+		return 'table';
+	}
+
 	if ( threat.hasOwnProperty( 'diff' ) ) {
 		return 'core';
 	}
@@ -49,6 +57,18 @@ const headerTitle = ( translate, threat ) => {
 	const basename = s => s.replace( /.*\//, '' );
 
 	switch ( detailType( threat ) ) {
+		case 'table':
+			return translate(
+				'The table {{table/}} contains a suspicious link.',
+				'The table {{table/}} contains suspicious links.',
+				{
+					components: {
+						table: <code className="activity-log__threat-alert-table">{ threat.table }</code>,
+					},
+					count: threat.rows.length,
+				}
+			);
+
 		case 'core':
 			return translate( 'The file {{filename/}} has been modified from its original.', {
 				components: {
@@ -105,6 +125,7 @@ const headerSubtitle = ( translate, threat ) => {
 			return translate( 'Vulnerability found in WordPress' );
 
 		case 'file':
+		case 'table':
 			return translate( 'Threat found ({{signature/}})', {
 				components: {
 					signature: (
@@ -126,6 +147,176 @@ const headerSubtitle = ( translate, threat ) => {
 };
 
 export class ThreatAlert extends Component {
+	ignoreThreat = () => {
+		this.doFix( false );
+	};
+
+	fixThreat = () => {
+		this.doFix( true );
+	};
+
+	getSpinner = threatId => {
+		if ( ! this.state ) {
+			return;
+		}
+
+		if ( ! this.state.enabledButtons.get( threatId ) ) {
+			return <Spinner />;
+		}
+		return '';
+	};
+
+	buttonIsDisabled = threatId => {
+		if ( ! this.state ) {
+			return false;
+		}
+
+		return ! this.state.enabledButtons.get( threatId );
+	};
+
+	enableButton = ( threatId, enable ) => {
+		let enabledButtons;
+		if ( ! ( this.state && this.state.enabledButtons ) ) {
+			enabledButtons = new Map();
+		} else {
+			enabledButtons = this.state.enabledButtons;
+		}
+
+		enabledButtons.set( threatId, enable );
+		this.setState( {
+			enabledButtons,
+		} );
+	};
+
+	doFix = fix => {
+		const { threat, siteId } = this.props;
+
+		this.enableButton( threat.id, false );
+
+		requestHttpData(
+			`fix-threat-${ siteId }-${ threat.id }`,
+			http( {
+				method: 'POST',
+				path: `/sites/${ siteId }/alerts/${ threat.id }?${ fix ? 'fix=true' : 'ignore=true' }`,
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				body: {}, // have to have an empty body to make wpcom-http happy
+			} ),
+			{
+				fromApi: () => data => {
+					if ( ! data.ok ) {
+						//TODO: error handling?
+						return;
+					}
+					this.checkFixStatus( siteId, threat.id );
+				},
+				freshness: -Infinity,
+			}
+		);
+	};
+
+	checkFixStatus = ( siteId, threatId ) => {
+		const self = this;
+
+		if ( ! self.timerId ) {
+			self.timerId = setInterval( () => self.checkFixStatus( siteId, threatId ), 1000 );
+			return;
+		}
+
+		requestHttpData(
+			`threat-status-${ threatId }`,
+			http( {
+				method: 'GET',
+				path: `/sites/${ siteId }/alerts/${ threatId }`,
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				body: {}, // have to have an empty body to make wpcom-http happy
+			} ),
+			{
+				fromApi: () => data => {
+					if ( ! data.ok ) {
+						//TODO: error handling?
+						return;
+					}
+
+					if ( 'fixed' === data.status || 'not_started' === data.status ) {
+						this.enableButton( threatId, true );
+						clearInterval( self.timerId );
+					} else {
+						//status in_progress
+					}
+				},
+				freshness: -Infinity,
+			}
+		);
+	};
+
+	mainDescription() {
+		const { threat, translate, siteId } = this.props;
+
+		if ( threat.filename ) {
+			return (
+				<Fragment>
+					<p>
+						{ translate( 'Threat {{threatSignature/}} found in file:', {
+							comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
+							components: {
+								threatSignature: (
+									<span className="activity-log__threat-alert-signature">{ threat.signature }</span>
+								),
+							},
+						} ) }
+					</p>
+					<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>
+				</Fragment>
+			);
+		}
+
+		if ( threat.table ) {
+			//TODO: needs signature-specific versions
+			return (
+				<Fragment>
+					{ Object.values( threat.rows ).map( row => {
+						//TODO: only do this for posts
+						const editorLink = `/post/${ siteId }/${ row.id }`;
+
+						return (
+							<p className="activity-log__threat-alert-suspicious-link-info" key={ row.id }>
+								{ translate(
+									'Suspicious link: {{suspiciousUrl/}} found in {{objectType/}} {{description/}} (id: {{rowId/}})',
+									{
+										components: {
+											suspiciousUrl: (
+												<em className="activity-log__threat-alert-suspicious-url">{ row.url }</em>
+											),
+											objectType: (
+												<span className="activity-log__threat-alert-suspicious-object-type">
+													{ threat.objectType }
+												</span>
+											),
+											description: (
+												<a href={ editorLink }>
+													<span className="activity-log__threat-alert-suspicious-description">
+														{ row.description }
+													</span>
+												</a>
+											),
+											rowId: (
+												<span className="activity-log__threat-alert-suspicious-id">{ row.id }</span>
+											),
+										},
+									}
+								) }
+							</p>
+						);
+					} ) }
+				</Fragment>
+			);
+		}
+
+		return <p className="activity-log__threat-alert-signature">{ threat.signature }</p>;
+	}
+
 	render() {
 		const { threat, translate } = this.props;
 
@@ -150,12 +341,13 @@ export class ThreatAlert extends Component {
 											dateFormat="ll"
 										/>
 									</span>
+									{ this.getSpinner() }
 									<SplitButton
 										compact
 										primary
 										label={ translate( 'Fix threat' ) }
-										onClick={ () => debug( 'main button clicked' ) }
-										disabled={ false }
+										onClick={ this.fixThreat }
+										disabled={ this.buttonIsDisabled( threat.id ) }
 									>
 										<PopoverMenuItem
 											onClick={ () => debug( 'documentation clicked' ) }
@@ -172,7 +364,7 @@ export class ThreatAlert extends Component {
 											<span>{ translate( 'Get help' ) }</span>
 										</PopoverMenuItem>
 										<PopoverMenuItem
-											onClick={ () => debug( 'ignore threat clicked' ) }
+											onClick={ this.ignoreThreat }
 											className="activity-log__threat-menu-item"
 											icon="trash"
 										>
@@ -189,26 +381,7 @@ export class ThreatAlert extends Component {
 				>
 					<Fragment>
 						<p className="activity-log__threat-alert-description">{ threat.description }</p>
-						{ threat.filename ? (
-							<Fragment>
-								<p>
-									{ translate( 'Threat {{threatSignature/}} found in file:', {
-										comment:
-											'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
-										components: {
-											threatSignature: (
-												<span className="activity-log__threat-alert-signature">
-													{ threat.signature }
-												</span>
-											),
-										},
-									} ) }
-								</p>
-								<pre className="activity-log__threat-alert-filename">{ threat.filename }</pre>
-							</Fragment>
-						) : (
-							<p className="activity-log__threat-alert-signature">{ threat.signature }</p>
-						) }
+						{ this.mainDescription() }
 						{ threat.context && <MarkedLines context={ threat.context } /> }
 						{ threat.diff && <DiffViewer diff={ threat.diff } /> }
 					</Fragment>

@@ -126,6 +126,7 @@ export const requestSiteAlerts = siteId => {
 							signature: threat.signature,
 							description: threat.description,
 							firstDetected: Date.parse( threat.first_detected ),
+							...( threat.actions ? { actions: threat.actions } : {} ),
 							...( threat.context ? { filename: threat.filename, context: threat.context } : {} ),
 							...( threat.diff ? { filename: threat.filename, diff: threat.diff } : {} ),
 							...( threat.extension
