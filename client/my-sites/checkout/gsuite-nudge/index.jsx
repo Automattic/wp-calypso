@@ -14,13 +14,13 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import GoogleAppsDialog from 'components/upgrades/gsuite/gsuite-dialog';
+import GSuiteUpsellCard from 'components/upgrades/gsuite/gsuite-upsell-card';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import { addItem, removeItem } from 'lib/upgrades/actions';
+import { addItems, removeItem } from 'lib/upgrades/actions';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -38,7 +38,7 @@ export class GSuiteNudge extends React.Component {
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
-	handleClickSkip = () => {
+	handleSkipClick = () => {
 		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
 
 		const destination = abtest( 'improvedOnboarding' ) === 'onboarding' ? 'view' : 'checklist';
@@ -50,17 +50,17 @@ export class GSuiteNudge extends React.Component {
 		);
 	};
 
-	handleAddGoogleApps = googleAppsCartItem => {
+	handleAddEmailClick = cartItems => {
 		const { siteSlug, receiptId } = this.props;
-
-		googleAppsCartItem.extra = {
-			...googleAppsCartItem.extra,
-			receipt_for_domain: receiptId,
-		};
-
 		this.removePlanFromCart();
 
-		addItem( googleAppsCartItem );
+		addItems(
+			// add `receipt_for_domain` to cartItem extras
+			cartItems.map( item => ( {
+				...item,
+				extra: { ...item.extra, receipt_for_domain: receiptId },
+			} ) )
+		);
 
 		page( `/checkout/${ siteSlug }` );
 	};
@@ -92,10 +92,11 @@ export class GSuiteNudge extends React.Component {
 					} ) }
 				/>
 				<QuerySites siteId={ selectedSiteId } />
-				<GoogleAppsDialog
+				<GSuiteUpsellCard
 					domain={ this.props.domain }
-					onClickSkip={ this.handleClickSkip }
-					onAddGoogleApps={ this.handleAddGoogleApps }
+					gSuiteProductSlug={ 'gapps' }
+					onSkipClick={ this.handleSkipClick }
+					onAddEmailClick={ this.handleAddEmailClick }
 				/>
 			</Main>
 		);

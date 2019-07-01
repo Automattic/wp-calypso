@@ -21,11 +21,9 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import { addItem } from 'lib/upgrades/actions';
-import { conciergeSessionItem } from 'lib/cart-values/cart-items';
 import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getProductsList,
@@ -34,6 +32,7 @@ import {
 	isProductsListFetching,
 } from 'state/products-list/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
 import analytics from 'lib/analytics';
@@ -46,7 +45,6 @@ import './style.scss';
 export class ConciergeQuickstartSession extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
-		selectedSiteId: PropTypes.number.isRequired,
 	};
 
 	render() {
@@ -58,14 +56,14 @@ export class ConciergeQuickstartSession extends React.Component {
 			translate,
 			receiptId,
 		} = this.props;
-		const title = translate( 'Checkout ‹ Support Session', {
+		const title = translate( 'Checkout ‹ Quick Start Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
 		return (
 			<Main className="concierge-quickstart-session">
 				<PageViewTracker
-					path="/checkout/:site/add-quickstart-session/:receipt_id"
+					path="/checkout/:site/offer-quickstart-session/:receipt_id"
 					title={ title }
 				/>
 				<DocumentHead title={ title } />
@@ -308,26 +306,39 @@ export class ConciergeQuickstartSession extends React.Component {
 	}
 
 	footer() {
-		const { translate, productDisplayCost } = this.props;
+		const { translate, productDisplayCost, isLoggedIn } = this.props;
 		return (
 			<footer className="concierge-quickstart-session__footer">
-				<Button
-					className="concierge-quickstart-session__decline-offer-button"
-					onClick={ this.handleClickDecline }
-				>
-					{ translate( "No thanks, I'll do it on my own" ) }
-				</Button>
-				<Button
-					primary
-					className="concierge-quickstart-session__accept-offer-button"
-					onClick={ this.handleClickAccept }
-				>
-					{ translate( 'Yes, I want a WordPress Expert by my side!', {
-						args: {
-							amount: productDisplayCost,
-						},
-					} ) }
-				</Button>
+				{ ! isLoggedIn && (
+					<Button
+						primary
+						className="concierge-quickstart-session__get-started-button"
+						onClick={ () => this.handleClickAccept( 'get_started' ) }
+					>
+						{ translate( 'Get Started!' ) }
+					</Button>
+				) }
+				{ isLoggedIn && (
+					<>
+						<Button
+							className="concierge-quickstart-session__decline-offer-button"
+							onClick={ this.handleClickDecline }
+						>
+							{ translate( "No thanks, I'll do it on my own" ) }
+						</Button>
+						<Button
+							primary
+							className="concierge-quickstart-session__accept-offer-button"
+							onClick={ () => this.handleClickAccept( 'accept' ) }
+						>
+							{ translate( 'Yes, I want a WordPress Expert by my side!', {
+								args: {
+									amount: productDisplayCost,
+								},
+							} ) }
+						</Button>
+					</>
+				) }
 			</footer>
 		);
 	}
@@ -341,7 +352,7 @@ export class ConciergeQuickstartSession extends React.Component {
 			redirectToPageBuilder,
 		} = this.props;
 
-		trackUpsellButtonClick( 'decline' );
+		trackUpsellButtonClick( `calypso_offer_quickstart_upsell_decline_button_click` );
 
 		if ( ! receiptId ) {
 			// Send the user to a generic page (not post-purchase related).
@@ -360,39 +371,38 @@ export class ConciergeQuickstartSession extends React.Component {
 		}
 	};
 
-	handleClickAccept = () => {
-		const { siteSlug, trackUpsellButtonClick } = this.props;
+	handleClickAccept = buttonAction => {
+		const { trackUpsellButtonClick, siteSlug } = this.props;
 
-		trackUpsellButtonClick( 'accept' );
-
-		addItem( conciergeSessionItem() );
-
-		page( `/checkout/${ siteSlug }` );
+		trackUpsellButtonClick( `calypso_offer_quickstart_upsell_${ buttonAction }_button_click` );
+		page( `/checkout/${ siteSlug }/concierge-session` );
 	};
 }
 
-const trackUpsellButtonClick = buttonAction => {
-	// Track calypso_concierge_session_upsell_decline_button_click and calypso_concierge_session_upsell_accept_button_click events
-	return recordTracksEvent( `calypso_concierge_session_upsell_${ buttonAction }_button_click`, {
-		section: 'checkout',
-	} );
+const trackUpsellButtonClick = eventName => {
+	// Track concierge session get started / accept / decline events
+	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
 export default connect(
 	( state, props ) => {
-		const { selectedSiteId } = props;
+		const { siteSlugParam } = props;
+		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
+		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
 			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
 			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			isLoggedIn: isUserLoggedIn( state ),
+			siteSlug,
+			selectedSiteId,
 		};
 	},
 	{

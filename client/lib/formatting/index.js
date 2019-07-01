@@ -55,6 +55,16 @@ export function stripHTML( string ) {
  */
 export function preventWidows( text, wordsToKeep = 2 ) {
 	if ( typeof text !== 'string' ) {
+		if ( Array.isArray( text ) ) {
+			// Handle strings with interpolated components by only acting on the last element.
+			if ( typeof text[ text.length - 1 ] === 'string' ) {
+				const endingText = text.pop();
+				const startingWhitespace = endingText.match( /^\s+/ );
+				// The whitespace between component and text would be stripped by preventWidows.
+				startingWhitespace && text.push( startingWhitespace[ 0 ] );
+				text.push( preventWidows( endingText, wordsToKeep ) );
+			}
+		}
 		return text;
 	}
 
@@ -168,7 +178,7 @@ export function wpautop( pee ) {
 	pee = pee.replace( new RegExp( '(</?(?:' + blocklist + ')[^>]*>)\\s*<br />', 'gi' ), '$1' );
 	pee = pee.replace( /<br \/>(\s*<\/?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)>)/gi, '$1' );
 	pee = pee.replace(
-		/(?:<p>|<br ?\/?>)*\s*\[caption([^\[]+)\[\/caption\]\s*(?:<\/p>|<br ?\/?>)*/gi,
+		/(?:<p>|<br ?\/?>)*\s*\[caption([^[]+)\[\/caption\]\s*(?:<\/p>|<br ?\/?>)*/gi,
 		'[caption$1[/caption]'
 	);
 
@@ -245,7 +255,7 @@ export function removep( html ) {
 	// Fix some block element newline issues
 	html = html.replace( /\s*<div/g, '\n<div' );
 	html = html.replace( /<\/div>\s*/g, '</div>\n' );
-	html = html.replace( /\s*\[caption([^\[]+)\[\/caption\]\s*/gi, '\n\n[caption$1[/caption]\n\n' );
+	html = html.replace( /\s*\[caption([^[]+)\[\/caption\]\s*/gi, '\n\n[caption$1[/caption]\n\n' );
 	html = html.replace( /caption\]\n\n+\[caption/g, 'caption]\n\n[caption' );
 
 	html = html.replace(

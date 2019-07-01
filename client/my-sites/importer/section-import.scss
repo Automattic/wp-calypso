@@ -10,5 +10,10 @@
 
 	.formatted-header__subtitle {
 		color: var( --color-neutral-dark );
+
+		a {
+			display: block;
+			width: 100%;
+		}
 	}
 }

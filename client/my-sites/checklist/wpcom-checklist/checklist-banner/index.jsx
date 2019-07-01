@@ -64,12 +64,12 @@ export class ChecklistBanner extends Component {
 				<div className="checklist-banner__gauge animate__fade-in">
 					<span className="checklist-banner__gauge-additional-text">{ translate( 'setup' ) }</span>
 					<Gauge
-						width={ 152 }
-						height={ 152 }
+						size={ 152 }
 						lineWidth={ 18 }
 						percentage={ percentage }
 						metric={ translate( 'completed' ) }
-						colors={ [ '#ffffff', '#008a00' ] }
+						colorBg="#ffffff"
+						colorFg="#008a00"
 					/>
 				</div>
 				<div className="checklist-banner__progress">

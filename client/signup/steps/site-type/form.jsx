@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Badge from 'components/badge';
 import Card from 'components/card';
 import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -51,6 +52,11 @@ class SiteTypeForm extends Component {
 							<span className="site-type__option-description">
 								{ siteTypeProperties.description }
 							</span>
+							{ siteTypeProperties.purchaseRequired && (
+								<Badge className="site-type__option-badge" type="info">
+									{ this.props.translate( 'Purchase required' ) }
+								</Badge>
+							) }
 						</Card>
 					) ) }
 				</Card>

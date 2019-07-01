@@ -38,10 +38,10 @@ class OrderAddItems extends Component {
 					primary={ isNewOrder }
 					onClick={ this.toggleDialog( 'product' ) }
 				>
-					{ translate( 'Add Product' ) }
+					{ translate( 'Add product' ) }
 				</Button>
 				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
-					{ translate( 'Add Fee' ) }
+					{ translate( 'Add fee' ) }
 				</Button>
 				<OrderFeeDialog
 					isVisible={ 'fee' === this.state.showDialog }

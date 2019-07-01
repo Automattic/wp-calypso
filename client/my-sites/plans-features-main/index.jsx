@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -36,12 +35,14 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import {
-	plansLink,
-	planMatches,
+	chooseDefaultCustomerType,
 	findPlansKeys,
 	getPlan,
+	getPopularPlanSpec,
 	isFreePlan,
 	isBloggerPlan,
+	planMatches,
+	plansLink,
 } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
@@ -51,10 +52,13 @@ import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
+import { getSiteOption, getSitePlan, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+import { abtest } from 'lib/abtest';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -85,18 +89,22 @@ export class PlansFeaturesMain extends Component {
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
+			isJetpack,
 			isLandingPage,
 			isLaunchPage,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
 			withDiscount,
+			discountEndDate,
 			siteId,
+			siteType,
 			plansWithScroll,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
 		return (
 			<div
 				className={ classNames(
@@ -124,11 +132,14 @@ export class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
+					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
-					popularPlanSpec={ {
-						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
-						group: GROUP_WPCOM,
-					} }
+					popularPlanSpec={ getPopularPlanSpec( {
+						abtest,
+						customerType,
+						isJetpack,
+						siteType,
+					} ) }
 					siteId={ siteId }
 				/>
 			</div>
@@ -149,7 +160,7 @@ export class PlansFeaturesMain extends Component {
 		const hideBloggerPlan =
 			! isBloggerPlan( selectedPlan ) &&
 			! isBloggerPlan( sitePlanSlug ) &&
-			abtest( 'hideBloggerPlanNonEn' ) === 'hide';
+			abtest( 'hideBloggerPlan2' ) === 'hide';
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -431,41 +442,22 @@ PlansFeaturesMain.defaultProps = {
 	plansWithScroll: false,
 };
 
-const guessCustomerType = ( state, props ) => {
-	if ( props.customerType ) {
-		return props.customerType;
-	}
-
-	const site = props.site;
-	const currentPlan = getSitePlan( state, get( site, [ 'ID' ] ) );
-	const selectedPlan = props.selectedPlan;
-
-	const group = GROUP_WPCOM;
-	const businessPlanSlugs = [
-		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
-		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
-		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
-		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
-		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
-		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
-	]
-		.map( planKey => getPlan( planKey ) )
-		.map( plan => plan.getStoreSlug() );
-
-	if ( selectedPlan ) {
-		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
-	} else if ( currentPlan ) {
-		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
-		return isPlanInBusinessGroup ? 'business' : 'personal';
-	}
-
-	return 'personal';
-};
-
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
-		const sitePlan = getSitePlan( state, siteId );
+		const currentPlan = getSitePlan( state, siteId );
+
+		const siteType = props.isInSignup
+			? getSignupSiteType( state )
+			: getSiteTypePropertyValue( 'id', getSiteOption( state, siteId, 'site_segment' ), 'slug' );
+
+		const customerType = chooseDefaultCustomerType( {
+			currentCustomerType: props.customerType,
+			selectedPlan: props.selectedPlan,
+			currentPlan,
+			siteType,
+			abtest,
+		} );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
@@ -474,12 +466,14 @@ export default connect(
 			// universal.
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
-			customerType: guessCustomerType( state, props ),
+			customerType,
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
-			siteId: siteId,
+			isJetpack: isJetpackSite( state, siteId ),
+			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
-			sitePlanSlug: sitePlan && sitePlan.product_slug,
+			sitePlanSlug: currentPlan && currentPlan.product_slug,
+			siteType,
 		};
 	},
 	{

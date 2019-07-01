@@ -25,7 +25,11 @@ const ExpandableSidebarHeading = ( {
 	menuId,
 } ) => {
 	return (
-		<SidebarHeading aria-controls={ menuId } aria-expanded={ expanded } onClick={ onClick }>
+		<SidebarHeading
+			aria-controls={ menuId }
+			aria-expanded={ expanded ? 'true' : 'false' }
+			onClick={ onClick }
+		>
 			{ icon ? <Gridicon icon={ icon } /> : null }
 			{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
 			<Gridicon icon="chevron-down" />

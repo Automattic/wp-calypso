@@ -79,7 +79,7 @@ class AccountSettingsRootView extends Component {
 			<div>
 				<QueryLabelSettings siteId={ siteId } />
 				<ExtendedHeader
-					label={ translate( 'Shipping Labels' ) }
+					label={ translate( 'Shipping labels' ) }
 					description={ translate(
 						'Print shipping labels yourself and save a trip to the post office.'
 					) }

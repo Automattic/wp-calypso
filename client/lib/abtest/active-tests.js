@@ -115,18 +115,8 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	showApplePay: {
-		datestamp: '20190529',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
-	hideDotBlogSubdomains: {
-		datestamp: '20190613',
+	hideDotBlogSubdomainsV2: {
+		datestamp: '20190626',
 		variations: {
 			show: 50,
 			hide: 50,
@@ -135,14 +125,31 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	hideBloggerPlanNonEn: {
-		datestamp: '20190613',
+	popularPlanBy: {
+		datestamp: '20190529',
+		variations: {
+			siteType: 0,
+			customerType: 100,
+		},
+		defaultVariation: 'siteType',
+	},
+	hideBloggerPlan2: {
+		datestamp: '20190627',
 		variations: {
 			hide: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		localeTargets: 'any',
-		localeExceptions: [ 'en' ],
+	},
+	proratedCreditsBanner: {
+		//this test is used to dial down the upsell offer
+		datestamp: '20190626',
+		variations: {
+			control: 50,
+			variant: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

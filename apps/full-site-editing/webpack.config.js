@@ -26,7 +26,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @param  {object}  env                           environment options
  * @param  {object}  argv                          options map
- * @param  {string}  argv.source                   plugin slug or "theme"
+ * @param  {string}  argv.source                   plugin slug
  * @param  {string}  argv.entry                    entry path
  * @return {object}                                webpack config
  */
@@ -35,21 +35,13 @@ function getWebpackConfig( env = {}, argv = {} ) {
 
 	const source = argv.source;
 
-	let entry;
-	let outputPath;
+	// object provides ability to name the entry point
+	// which enables dynamic file names
+	const entry = {
+		[ source ]: path.join( __dirname, 'full-site-editing-plugin', source ),
+	};
 
-	if ( 'theme' === source ) {
-		entry = path.join( __dirname, 'blank-theme' );
-		outputPath = path.join( __dirname, 'blank-theme', 'dist' );
-	} else {
-		// object provides ability to name the entry point
-		// which enables dynamic file names
-		entry = {
-			[ source ]: path.join( __dirname, 'full-site-editing-plugin', source ),
-		};
-
-		outputPath = path.join( __dirname, 'full-site-editing-plugin', source, 'dist' );
-	}
+	const outputPath = path.join( __dirname, 'full-site-editing-plugin', source, 'dist' );
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 

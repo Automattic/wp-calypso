@@ -165,11 +165,7 @@ class RemovePurchase extends Component {
 
 		const { isDomainOnlySite, purchase, site, translate } = this.props;
 
-		if (
-			! isDomainRegistration( purchase ) &&
-			! isGoogleApps( purchase ) &&
-			config.isEnabled( 'upgrades/removal-survey' )
-		) {
+		if ( ! isDomainRegistration( purchase ) && ! isGoogleApps( purchase ) ) {
 			const survey = wpcom
 				.marketing()
 				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
@@ -308,9 +304,7 @@ class RemovePurchase extends Component {
 		};
 
 		let buttonsArr;
-		if ( ! config.isEnabled( 'upgrades/removal-survey' ) ) {
-			buttonsArr = [ buttons.cancel, buttons.remove ];
-		} else if ( this.state.surveyStep === FINAL_STEP ) {
+		if ( this.state.surveyStep === FINAL_STEP ) {
 			buttonsArr = [ buttons.cancel, buttons.prev, buttons.remove ];
 		} else {
 			buttonsArr =
@@ -339,7 +333,6 @@ class RemovePurchase extends Component {
 					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
 					selectedSite={ site }
-					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>

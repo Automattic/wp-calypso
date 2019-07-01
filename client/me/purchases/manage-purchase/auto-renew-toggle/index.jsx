@@ -6,14 +6,19 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { isExpiring } from 'lib/purchases';
 import { disableAutoRenew, enableAutoRenew } from 'lib/upgrades/actions';
-import { isFetchingSitePurchases } from 'state/purchases/selectors';
-import { fetchSitePurchases } from 'state/purchases/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { isFetchingUserPurchases } from 'state/purchases/selectors';
+import { fetchUserPurchases } from 'state/purchases/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
+import { errorNotice } from 'state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 
@@ -23,11 +28,14 @@ class AutoRenewToggle extends Component {
 		siteDomain: PropTypes.string.isRequired,
 		planName: PropTypes.string.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
-		fetchingSitePurchases: PropTypes.bool,
+		isAtomicSite: PropTypes.bool.isRequired,
+		fetchingUserPurchases: PropTypes.bool,
+		recordTracksEvent: PropTypes.func.isRequired,
+		errorNotice: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
-		fetchingSitePurchases: false,
+		fetchingUserPurchases: false,
 	};
 
 	state = {
@@ -42,22 +50,20 @@ class AutoRenewToggle extends Component {
 		} );
 	};
 
-	onToggleAutoRenew = () => {
+	toggleAutoRenew = () => {
 		const {
-			purchase: { id: purchaseId, siteId },
+			purchase: { id: purchaseId, productSlug },
+			currentUserId,
 			isEnabled,
+			isAtomicSite,
+			translate,
 		} = this.props;
 
-		if ( isEnabled ) {
-			this.setState( {
-				showAutoRenewDisablingDialog: true,
-			} );
-		}
-
 		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
+		const isTogglingToward = ! isEnabled;
 
 		this.setState( {
-			isTogglingToward: ! isEnabled,
+			isTogglingToward,
 			isRequesting: true,
 		} );
 
@@ -65,14 +71,40 @@ class AutoRenewToggle extends Component {
 			this.setState( {
 				isRequesting: false,
 			} );
-			if ( success ) {
-				this.props.fetchSitePurchases( siteId );
+
+			if ( ! success ) {
+				this.props.errorNotice(
+					isTogglingToward
+						? translate( "We've failed to enable auto-renewal for you. Please try again." )
+						: translate( "We've failed to disable auto-renewal for you. Please try again." )
+				);
 			}
+
+			this.props.fetchUserPurchases( currentUserId );
+		} );
+
+		this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
+			product_slug: productSlug,
+			is_atomic: isAtomicSite,
+			is_toggling_toward: isTogglingToward,
 		} );
 	};
 
+	onToggleAutoRenew = () => {
+		const { isEnabled } = this.props;
+
+		if ( isEnabled ) {
+			this.setState( {
+				showAutoRenewDisablingDialog: true,
+			} );
+			return;
+		}
+
+		this.toggleAutoRenew();
+	};
+
 	isUpdatingAutoRenew = () => {
-		return this.state.isRequesting || this.props.fetchingSitePurchases;
+		return this.state.isRequesting || this.props.fetchingUserPurchases;
 	};
 
 	getToggleUiStatus() {
@@ -96,9 +128,10 @@ class AutoRenewToggle extends Component {
 				{ this.state.showAutoRenewDisablingDialog && (
 					<AutoRenewDisablingDialog
 						planName={ planName }
+						purchase={ purchase }
 						siteDomain={ siteDomain }
-						expiryDate={ purchase.expiryMoment.format( 'LL' ) }
 						onClose={ this.onCloseAutoRenewDisablingDialog }
+						onConfirm={ this.toggleAutoRenew }
 					/>
 				) }
 			</>
@@ -108,10 +141,14 @@ class AutoRenewToggle extends Component {
 
 export default connect(
 	( state, { purchase } ) => ( {
-		fetchingSitePurchases: isFetchingSitePurchases( state ),
+		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: ! isExpiring( purchase ),
+		currentUserId: getCurrentUserId( state ),
+		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 	} ),
 	{
-		fetchSitePurchases,
+		fetchUserPurchases,
+		recordTracksEvent,
+		errorNotice,
 	}
-)( AutoRenewToggle );
+)( localize( AutoRenewToggle ) );

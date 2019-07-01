@@ -17,6 +17,7 @@ import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
+	getCustomizerUrl,
 	getSiteOption,
 	getSiteAdminUrl,
 	isRequestingSites,
@@ -40,6 +41,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
+import config from 'config';
 
 /**
  * Types
@@ -86,6 +88,7 @@ enum EditorActions {
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
+	OpenCustomizer = 'openCustomizer',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -238,6 +241,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			const { postUrl } = payload;
 			this.openPreviewModal( postUrl, ports[ 0 ] );
 		}
+
+		if ( EditorActions.OpenCustomizer === action ) {
+			const { autofocus = null, unsavedChanges = false } = payload;
+			this.openCustomizer( autofocus, unsavedChanges );
+		}
 	};
 
 	loadRevision = ( {
@@ -365,6 +373,25 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
+	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
+		let { customizerUrl } = this.props;
+		if ( autofocus ) {
+			const [ key, value ] = Object.entries( autofocus )[ 0 ];
+			customizerUrl = addQueryArgs(
+				{
+					[ `autofocus[${ key }]` ]: value,
+				},
+				customizerUrl
+			);
+		}
+		if ( unsavedChanges ) {
+			this.props.markChanged();
+		} else {
+			this.props.markSaved();
+		}
+		this.props.navigate( customizerUrl );
+	};
+
 	handleConversionResponse = ( confirmed: boolean ) => {
 		this.setState( { isConversionPromptVisible: false } );
 
@@ -436,6 +463,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					showDialog={ isConversionPromptVisible }
 					handleResponse={ this.handleConversionResponse }
 				/>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ shouldLoadIframe && (
@@ -490,6 +518,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
 		origin: window.location.origin,
+		'environment-id': config( 'env_id' ),
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -514,6 +543,7 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
+		customizerUrl: getCustomizerUrl( state, siteId ),
 	};
 };
 

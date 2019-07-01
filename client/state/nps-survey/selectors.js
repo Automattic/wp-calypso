@@ -84,3 +84,7 @@ export function hasAnsweredNpsSurvey( state ) {
 export function hasAnsweredNpsSurveyWithNoScore( state ) {
 	return ! isNpsSurveyNotSubmitted( state ) && ! Number.isInteger( getNpsSurveyScore( state ) );
 }
+
+export function isAvailableForConciergeSession( state ) {
+	return get( state.npsSurvey, 'isAvailableForConciergeSession', false );
+}

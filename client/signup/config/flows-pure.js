@@ -27,37 +27,62 @@ export function generateFlows( {
 		},
 
 		business: {
-			steps: [ 'user', 'about', 'plans-business', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans-business',
+			],
+			destination: getChecklistDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2019-03-04',
-			meta: {
-				skipBundlingPlan: true,
-			},
+			lastModified: '2019-06-17',
 		},
 
 		premium: {
-			steps: [ 'user', 'about', 'plans-premium', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans-premium',
+			],
+			destination: getChecklistDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2019-03-04',
-			meta: {
-				skipBundlingPlan: true,
-			},
+			lastModified: '2019-06-17',
 		},
 
 		personal: {
-			steps: [ 'user', 'about', 'plans-personal', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans-personal',
+			],
+			destination: getChecklistDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2019-03-04',
+			lastModified: '2019-06-17',
 		},
 
 		free: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+			],
+			destination: getChecklistDestination,
 			description: 'Create an account and a blog and default to the free plan.',
-			lastModified: '2018-01-24',
+			lastModified: '2019-06-17',
 		},
 
 		blog: {
@@ -80,10 +105,7 @@ export function generateFlows( {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
 			description: 'Create an account for REBRAND cities partnership',
-			lastModified: '2017-07-01',
-			meta: {
-				skipBundlingPlan: true,
-			},
+			lastModified: '2019-06-17',
 		},
 
 		'with-theme': {
@@ -115,18 +137,11 @@ export function generateFlows( {
 			lastModified: '2019-06-05',
 		},
 
-		'onboarding-dev': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
+		// We don't yet show the previews for the 'blog' segment
+		'onboarding-blog': {
+			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
 			destination: getChecklistDestination,
-			description: 'A temporary flow for holding under-development steps',
+			description: 'The improved onboarding flow.',
 			lastModified: '2019-04-30',
 		},
 
@@ -297,13 +312,6 @@ export function generateFlows( {
 		lastModified: '2017-01-19',
 	};
 
-	flows.private = {
-		steps: [ 'user', 'site' ],
-		destination: getChecklistDestination,
-		description: 'Test private site signup',
-		lastModified: '2018-10-22',
-	};
-
 	flows[ 'launch-site' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
 		destination: getSiteDestination,
@@ -343,13 +351,6 @@ export function generateFlows( {
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
-	};
-
-	flows.name = {
-		steps: [ 'displayname', 'about', 'domains', 'plans' ],
-		destination: getSiteDestination,
-		description: 'Ask for a display name not a user name',
-		lastModified: '2018-12-12',
 	};
 
 	flows[ 'plan-no-domain' ] = {

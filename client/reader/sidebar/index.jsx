@@ -33,6 +33,7 @@ import getReaderTeams from 'state/selectors/get-reader-teams';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
+import MaterialIcon from 'components/material-icon';
 
 /**
  * Style dependencies
@@ -141,7 +142,7 @@ export class ReaderSidebar extends React.Component {
 								} ) }
 							>
 								<a href="/" onClick={ this.handleReaderSidebarFollowedSitesClicked }>
-									<Gridicon icon="checkmark-circle" size={ 24 } />
+									<MaterialIcon icon="check_circle" />
 									<span className="menu-link-text">
 										{ this.props.translate( 'Followed Sites' ) }
 									</span>
@@ -160,7 +161,7 @@ export class ReaderSidebar extends React.Component {
 									href="/read/conversations"
 									onClick={ this.handleReaderSidebarConversationsClicked }
 								>
-									<Gridicon icon="chat" size={ 24 } />
+									<MaterialIcon icon="chat" />
 									<span className="menu-link-text">
 										{ this.props.translate( 'Conversations' ) }
 									</span>
@@ -215,7 +216,7 @@ export class ReaderSidebar extends React.Component {
 								} ) }
 							>
 								<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
-									<Gridicon icon="search" size={ 24 } />
+									<MaterialIcon icon="search" />
 									<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
 								</a>
 							</li>
@@ -228,7 +229,7 @@ export class ReaderSidebar extends React.Component {
 								) }
 							>
 								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
-									<Gridicon icon="star" size={ 24 } />
+									<MaterialIcon icon="star_border" />
 									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
 								</a>
 							</li>

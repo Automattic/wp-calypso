@@ -135,6 +135,7 @@
 		width: 70%;
 		background: var( --color-neutral-0 );
 		border-radius: 3px;
+		cursor: default;
 
 		// At small screen sizes "hide" the label
 		// text as its mostly redundant.
@@ -160,5 +161,6 @@
 		width: 50%;
 		background: var( --color-neutral-0 );
 		border-radius: 16px;
+		cursor: default;
 	}
 }

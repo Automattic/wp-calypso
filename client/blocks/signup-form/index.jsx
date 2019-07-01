@@ -324,20 +324,32 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = event => {
-		const data = this.getUserData();
 		const fieldId = event.target.id;
 		// Ensure that username and password field validation does not trigger prematurely
 		if ( fieldId === 'password' ) {
-			this.setState( { focusPassword: true } );
+			this.setState( { focusPassword: true }, () => {
+				this.validateAndSaveForm();
+			} );
+			return;
 		}
 		if ( fieldId === 'username' ) {
-			this.setState( { focusUsername: true } );
+			this.setState( { focusUsername: true }, () => {
+				this.validateAndSaveForm();
+			} );
+			return;
 		}
+
+		this.validateAndSaveForm();
+	};
+
+	validateAndSaveForm = () => {
+		const data = this.getUserData();
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
 		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
 			return;
 		}
+
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
@@ -520,7 +532,6 @@ class SignupForm extends Component {
 					autoCapitalize="off"
 					autoCorrect="off"
 					className="signup-form__input"
-					autofocus="true"
 					disabled={
 						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
 					}
@@ -709,7 +720,7 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ [ 'onboarding', 'onboarding-dev' ].includes( flowName )
+					{ flowName === 'onboarding'
 						? translate( 'Log in to create a site for your existing account.' )
 						: translate( 'Already have a WordPress.com account?' ) }
 				</LoggedOutFormLinkItem>

@@ -42,7 +42,7 @@ class Plans extends React.Component {
 	};
 
 	componentDidMount() {
-		this.redirectIfNonJetpackMonthly();
+		this.redirectIfInvalidPlanInterval();
 
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
@@ -51,18 +51,21 @@ class Plans extends React.Component {
 	}
 
 	componentDidUpdate() {
-		this.redirectIfNonJetpackMonthly();
+		this.redirectIfInvalidPlanInterval();
 	}
 
-	isNonJetpackMonthly() {
+	isInvalidPlanInterval() {
 		const { displayJetpackPlans, intervalType, selectedSite } = this.props;
-		return selectedSite && ! displayJetpackPlans && intervalType === 'monthly';
+		const isJetpack2Yearly = displayJetpackPlans && intervalType === '2yearly';
+		const isWpcomMonthly = ! displayJetpackPlans && intervalType === 'monthly';
+
+		return selectedSite && ( isJetpack2Yearly || isWpcomMonthly );
 	}
 
-	redirectIfNonJetpackMonthly() {
+	redirectIfInvalidPlanInterval() {
 		const { selectedSite } = this.props;
 
-		if ( this.isNonJetpackMonthly() ) {
+		if ( this.isInvalidPlanInterval() ) {
 			page.redirect( '/plans/yearly/' + selectedSite.slug );
 		}
 	}
@@ -83,7 +86,7 @@ class Plans extends React.Component {
 	render() {
 		const { selectedSite, translate, displayJetpackPlans } = this.props;
 
-		if ( ! selectedSite || this.isNonJetpackMonthly() ) {
+		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
 			return this.renderPlaceholder();
 		}
 
@@ -106,6 +109,7 @@ class Plans extends React.Component {
 							selectedFeature={ this.props.selectedFeature }
 							selectedPlan={ this.props.selectedPlan }
 							withDiscount={ this.props.withDiscount }
+							discountEndDate={ this.props.discountEndDate }
 							site={ selectedSite }
 							plansWithScroll={ false }
 						/>

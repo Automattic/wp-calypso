@@ -1,0 +1,26 @@
+.login__social-connect-prompt-logos {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+}
+
+.login__social-connect-prompt-logo {
+	height: 72px;
+	width: 72px;
+}
+
+.login__social-connect-prompt-dots {
+	margin: 0 5px;
+}
+
+.login__social-connect-prompt-logo.wordpress {
+	color: var( --color-primary );
+}
+
+.login__social-connect-prompt-message {
+	margin: 20px 0;
+}
+
+.login__social-connect-prompt-action .button {
+	width: 100%;
+}

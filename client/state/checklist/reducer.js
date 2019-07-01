@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,10 +16,9 @@ import { items as itemSchemas } from './schema';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,
-	tasks: {
-		...state.tasks,
-		[ taskId ]: { ...get( state.tasks, [ taskId ] ), completed },
-	},
+	tasks: state.tasks.map( task =>
+		task.id === taskId ? { ...task, isCompleted: completed } : task
+	),
 } );
 
 const moduleTaskMap = {

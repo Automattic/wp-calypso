@@ -231,11 +231,13 @@
 		margin-bottom: 1em;
 	}
 
-	ul.wp-block-gallery {
-		list-style-type: none;
+	.wp-block-gallery {
 		margin-left: 0;
 		margin-bottom: 1em;
 	}
+
+	// Import Gutenberg gallery styles
+	@import 'gutenberg-gallery.scss';
 
 	.wp-block-embed .embed-vimeo {
 		padding-top: 0;

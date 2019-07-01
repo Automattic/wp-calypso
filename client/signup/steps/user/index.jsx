@@ -139,12 +139,9 @@ export class UserStep extends Component {
 		} else if ( 1 === getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
-		} else if ( 'onboarding-dev' === flowName ) {
-			// Displays no sub header for onboarding-dev flow
-			subHeaderText = '';
 		}
 
-		if ( positionInFlow === 0 && [ 'onboarding', 'onboarding-dev' ].includes( flowName ) ) {
+		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
 		}
 
@@ -239,10 +236,6 @@ export class UserStep extends Component {
 				comment:
 					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
 			} );
-		}
-
-		if ( 'onboarding-dev' === flowName ) {
-			return translate( 'Make something great' );
 		}
 
 		return headerText;

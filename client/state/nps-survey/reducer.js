@@ -6,6 +6,7 @@
 
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
+	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
@@ -22,6 +23,11 @@ import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constant
 
 export const isSessionEligible = createReducer( false, {
 	[ NPS_SURVEY_SET_ELIGIBILITY ]: ( state, action ) => action.isSessionPicked,
+} );
+
+export const isAvailableForConciergeSession = createReducer( false, {
+	[ NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY ]: ( _, action ) =>
+		action.isAvailableForConciergeSession,
 } );
 
 export const wasShownThisSession = createReducer( false, {
@@ -66,6 +72,7 @@ export const feedback = createReducer( null, {
 
 export default combineReducers( {
 	isSessionEligible,
+	isAvailableForConciergeSession,
 	wasShownThisSession,
 	surveyState,
 	surveyName,

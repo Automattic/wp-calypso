@@ -129,7 +129,9 @@ references:
       - ~/.npm
   npm-e2e-install: &npm-e2e-install
     name: Install e2e npm dependencies
-    command: cd test/e2e && npm ci
+    command: |
+      cd test/e2e &&
+      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -319,7 +321,6 @@ jobs:
           name: Build the Full Site Editing plugin and theme
           command: |
             npx lerna run build --scope='@automattic/full-site-editing'
-            cp -R apps/full-site-editing/blank-theme $CIRCLE_ARTIFACTS/full-site-editing/
             cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
       - store-artifacts-and-test-results
 

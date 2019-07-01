@@ -218,6 +218,11 @@ export function clickIfPresent( driver, selector, attempts ) {
 	}
 }
 
+export async function getElementCount( driver, selector ) {
+	const elements = await driver.findElements( selector );
+	return elements.length || 0;
+}
+
 export async function isElementPresent( driver, selector ) {
 	const elements = await driver.findElements( selector );
 	return !! elements.length;

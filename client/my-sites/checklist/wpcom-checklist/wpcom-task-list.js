@@ -31,11 +31,12 @@ function getTasks( {
 	const tasks = [];
 	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
 
-	const getTask = taskId => get( taskStatuses, taskId );
+	const getTask = taskId =>
+		taskStatuses ? taskStatuses.filter( task => task.id === taskId )[ 0 ] : undefined;
 	const hasTask = taskId => getTask( taskId ) !== undefined;
-	const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
+	const isCompleted = taskId => get( getTask( taskId ), 'isCompleted', false );
 	const addTask = ( taskId, completed ) => {
-		const task = Object.assign( omit( getTask( taskId ), [ 'completed' ] ), {
+		const task = Object.assign( omit( getTask( taskId ), [ 'isCompleted' ] ), {
 			id: taskId,
 			isCompleted: isBoolean( completed ) ? completed : isCompleted( taskId ),
 		} );
@@ -107,6 +108,15 @@ class WpcomTaskList {
 
 	get( taskId ) {
 		return this.tasks.find( task => task.id === taskId );
+	}
+
+	getIds() {
+		return this.getAll().map( ( { id } ) => id );
+	}
+
+	isCompleted( taskId ) {
+		const task = this.get( taskId );
+		return task ? task.isCompleted : false;
 	}
 
 	has( taskId ) {

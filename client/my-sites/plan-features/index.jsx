@@ -144,7 +144,7 @@ export class PlanFeatures extends Component {
 		if ( ! bannerContainer ) {
 			return false;
 		}
-		const activeDiscount = getDiscountByName( this.props.withDiscount );
+		const activeDiscount = getDiscountByName( this.props.withDiscount, this.props.discountEndDate );
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
@@ -165,13 +165,13 @@ export class PlanFeatures extends Component {
 	}
 
 	hasDiscountNotice() {
-		const { canPurchase, hasPlaceholders, withDiscount } = this.props;
+		const { canPurchase, hasPlaceholders, withDiscount, discountEndDate } = this.props;
 		const bannerContainer = this.getBannerContainer();
 		if ( ! bannerContainer ) {
 			return false;
 		}
 
-		const activeDiscount = getDiscountByName( withDiscount );
+		const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
 		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
 			return false;
 		}
@@ -213,18 +213,31 @@ export class PlanFeatures extends Component {
 				icon="info-outline"
 				status="is-success"
 			>
-				{ translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
-						'Apply those credits towards an upgrade before they expire!',
-					{
-						args: {
-							amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
-						},
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
+				{ 'variant' === abtest( 'proratedCreditsBanner' )
+					? translate(
+							'Need to upgrade? You have {{b}}%(amountInCurrency)s{{/b}} pro-rated credits available from your current plan. ' +
+								'We have applied them to the plan upgrades below.',
+							{
+								args: {
+									amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+								},
+								components: {
+									b: <strong />,
+								},
+							}
+					  )
+					: translate(
+							'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
+								'Apply those credits towards an upgrade before they expire!',
+							{
+								args: {
+									amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+								},
+								components: {
+									b: <strong />,
+								},
+							}
+					  ) }
 			</Notice>,
 			bannerContainer
 		);

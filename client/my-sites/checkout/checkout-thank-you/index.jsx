@@ -49,6 +49,7 @@ import {
 	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
+	isBlogger,
 	isPersonal,
 	isPremium,
 	isBusiness,
@@ -57,6 +58,7 @@ import {
 } from 'lib/products-values';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';
+import BloggerPlanDetails from './blogger-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
@@ -77,6 +79,7 @@ import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
 import { transferStates } from 'state/atomic-transfer/constants';
 import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
 import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
+import getSiteSlug from 'state/sites/selectors/get-site-slug.js';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -170,6 +173,17 @@ export class CheckoutThankYou extends React.Component {
 			this.props.selectedSite
 		) {
 			this.props.refreshSitePlans( this.props.selectedSite );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { receiptId, selectedSiteSlug } = this.props;
+
+		// Update route when an ecommerce site goes Atomic and site slug changes
+		// from 'wordpress.com` to `wpcomstaging.com`.
+		if ( selectedSiteSlug && selectedSiteSlug !== prevProps.selectedSiteSlug ) {
+			const receiptPath = receiptId ? `/${ receiptId }` : '';
+			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
 	}
 
@@ -402,8 +416,6 @@ export class CheckoutThankYou extends React.Component {
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					{ this.renderConfirmationNotice() }
-					{ this.renderVerifiedEmailRequired() }
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
@@ -484,6 +496,8 @@ export class CheckoutThankYou extends React.Component {
 				return [ FailedPurchaseDetails ];
 			} else if ( purchases.some( isJetpackPlan ) ) {
 				return [ JetpackPlanDetails, find( purchases, isJetpackPlan ) ];
+			} else if ( purchases.some( isBlogger ) ) {
+				return [ BloggerPlanDetails, find( purchases, isBlogger ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
 			} else if ( purchases.some( isPremium ) ) {
@@ -607,6 +621,7 @@ export default connect(
 				transferStates.COMPLETED ===
 				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
+			selectedSiteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	dispatch => {

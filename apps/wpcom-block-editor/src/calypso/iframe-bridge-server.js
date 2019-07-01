@@ -522,6 +522,10 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleGoToAllPosts( calypsoPort ) {
+	if ( ! calypsoifyGutenberg.closeUrl ) {
+		return;
+	}
+
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
 		calypsoPort.postMessage( {
@@ -538,7 +542,8 @@ function handleGoToAllPosts( calypsoPort ) {
  */
 function openLinksInParentFrame() {
 	const viewPostLinkSelectors = [
-		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice
+		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
+		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
@@ -557,6 +562,26 @@ function openLinksInParentFrame() {
 			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
 		} );
 	}
+}
+
+/**
+ * Ensures the Calypso Customizer is opened when clicking on the the FSE blocks' edit buttons.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function openCustomizer( calypsoPort ) {
+	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
+	$( '#editor' ).on( 'click', customizerLinkSelector, e => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'openCustomizer',
+			payload: {
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				autofocus: getQueryArg( e.currentTarget.href, 'autofocus' ),
+			},
+		} );
+	} );
 }
 
 function initPort( message ) {
@@ -635,6 +660,8 @@ function initPort( message ) {
 		handleGoToAllPosts( calypsoPort );
 
 		openLinksInParentFrame();
+
+		openCustomizer( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

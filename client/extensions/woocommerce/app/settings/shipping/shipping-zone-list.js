@@ -102,7 +102,7 @@ class ShippingZoneList extends Component {
 				<QueryShippingZones siteId={ siteId } />
 				<QuerySettingsGeneral siteId={ siteId } />
 				<ExtendedHeader
-					label={ translate( 'Shipping Zones' ) }
+					label={ translate( 'Shipping zones' ) }
 					description={ translate(
 						'These are the regions you’ll ship to. ' +
 							'You can define different shipping methods for each region. '

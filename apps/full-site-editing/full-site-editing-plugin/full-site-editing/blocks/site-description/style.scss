@@ -1,0 +1,17 @@
+.block-editor {
+	.wp-block-a8c-site-description {
+		&,&:focus {
+			display: inline;
+			color: #767676;
+			font-size: 1.125em;
+			font-weight: normal;
+			letter-spacing: -0.01em;
+			margin: 0;
+			box-shadow: none;
+		}
+	}
+	.site-description__save-button {
+		margin-left: auto;
+		display: block;
+	}
+}

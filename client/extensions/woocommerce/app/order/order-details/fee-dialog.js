@@ -107,7 +107,7 @@ class OrderFeeDialog extends Component {
 		const dialogButtons = [
 			<Button onClick={ closeDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary onClick={ this.handleFeeSave } disabled={ ! canSave }>
-				{ translate( 'Add Fee' ) }
+				{ translate( 'Add fee' ) }
 			</Button>,
 		];
 

@@ -24,13 +24,12 @@ registerBlockType( 'a8c/navigation-menu', {
 	category: 'layout',
 	supports: {
 		html: false,
-		multiple: false,
 		reusable: false,
 	},
 	attributes: {
 		themeLocation: {
 			type: 'string',
-			default: 'main-1',
+			default: 'menu-1',
 		},
 	},
 	edit,

@@ -139,11 +139,21 @@ describe( 'selectors', () => {
 			getPlanRawPrice.mockImplementation( () => 150 );
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0 ) ).toEqual( {
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
-				priceMinusCredits: 120,
+				priceFinal: 120,
 				priceMonthly: 10,
+			} );
+		} );
+
+		test( 'Should return proper priceFinal if couponDiscounts are provided', () => {
+			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, { def: 60 } ) ).toEqual( {
+				priceFullBeforeDiscount: 150,
+				priceFull: 120,
+				priceFinal: 60,
+				priceMonthly: 10, // The monthly price is without discounts applied
 			} );
 		} );
 	} );
@@ -188,14 +198,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceMonthly: 10,
 				},
 				{
@@ -204,7 +214,41 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan2,
 					priceFullBeforeDiscount: 150,
 					priceFull: 240,
-					priceMinusCredits: 240,
+					priceFinal: 240,
+					priceMonthly: 20,
+				},
+			] );
+		} );
+
+		test( 'couponDiscount should discount priceFinal', () => {
+			const state = {
+				productsList: {
+					items: {
+						plan1: { available: true },
+						plan2: { available: true },
+					},
+				},
+			};
+
+			expect(
+				computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, { def: 60, mno: 120 } )
+			).toEqual( [
+				{
+					planSlug: 'plan1',
+					plan: testPlans.plan1,
+					product: state.productsList.items.plan1,
+					priceFullBeforeDiscount: 150,
+					priceFull: 120,
+					priceFinal: 60,
+					priceMonthly: 10,
+				},
+				{
+					planSlug: 'plan2',
+					plan: testPlans.plan2,
+					product: state.productsList.items.plan2,
+					priceFullBeforeDiscount: 150,
+					priceFull: 240,
+					priceFinal: 120,
 					priceMonthly: 20,
 				},
 			] );
@@ -220,13 +264,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceFull: 120,
 					priceMonthly: 10,
 				},
@@ -242,14 +286,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceMonthly: 10,
 				},
 			] );
@@ -276,14 +320,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, {} ) ).toEqual( [
 				{
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
-					priceMinusCredits: 120,
+					priceFinal: 120,
 					priceMonthly: 10,
 				},
 			] );

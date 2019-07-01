@@ -23,6 +23,12 @@ export default class PostsPage extends AsyncBaseContainer {
 		return await driverHelper.waitTillNotPresent( this.driver, resultsLoadingSelector );
 	}
 
+	async addNewPost() {
+		const addNewPostSelector = By.css( '.post-type-list__add-post' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, addNewPostSelector );
+		return await driverHelper.clickWhenClickable( this.driver, addNewPostSelector );
+	}
+
 	async waitForPostTitled( title ) {
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,

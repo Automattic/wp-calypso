@@ -2,9 +2,9 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React, { Children, PureComponent } from 'react';
+import React, { Children, PureComponent, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import { times } from 'lodash';
+import { isFunction, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,8 +17,14 @@ export default class Checklist extends PureComponent {
 		className: PropTypes.string,
 		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
+		onExpandTask: PropTypes.func,
 		progressText: PropTypes.string,
 		updateCompletion: PropTypes.func,
+	};
+
+	state = {
+		hideCompleted: false,
+		expandedTaskIndex: undefined,
 	};
 
 	componentDidMount() {
@@ -47,7 +53,32 @@ export default class Checklist extends PureComponent {
 		return [ completedCount, total ];
 	}
 
-	state = { hideCompleted: false };
+	getExpandedTaskIndex() {
+		if ( this.state.expandedTaskIndex !== undefined ) {
+			return this.state.expandedTaskIndex;
+		}
+
+		// If the user hasn't expanded any task, return the
+		// first task that hasn't been completed yet.
+		return Children.toArray( this.props.children ).findIndex(
+			task => task && ! task.props.completed && ! task.props.inProgress
+		);
+	}
+
+	setExpandedTask = newExpandedTaskIndex =>
+		void this.setState( ( { expandedTaskIndex } ) => {
+			if ( newExpandedTaskIndex === expandedTaskIndex ) {
+				return { expandedTaskIndex: null }; // Collapse
+			}
+
+			if ( isFunction( this.props.onExpandTask ) ) {
+				this.props.onExpandTask(
+					Children.toArray( this.props.children )[ newExpandedTaskIndex ].props
+				);
+			}
+
+			return { expandedTaskIndex: newExpandedTaskIndex }; // Expand
+		} );
 
 	toggleCompleted = () =>
 		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
@@ -67,6 +98,8 @@ export default class Checklist extends PureComponent {
 			);
 		}
 
+		let skippedChildren = 0;
+
 		return (
 			<div
 				className={ classNames( 'checklist', this.props.className, {
@@ -82,7 +115,21 @@ export default class Checklist extends PureComponent {
 					total={ total }
 					progressText={ this.props.progressText }
 				/>
-				<div className="checklist__tasks">{ this.props.children }</div>
+				<div className="checklist__tasks">
+					{ Children.map( this.props.children, ( child, index ) => {
+						if ( ! child ) {
+							skippedChildren += 1;
+							return child;
+						}
+
+						const realIndex = index - skippedChildren;
+
+						return cloneElement( child, {
+							collapsed: realIndex !== this.getExpandedTaskIndex(),
+							onTaskClick: () => this.setExpandedTask( realIndex ),
+						} );
+					} ) }
+				</div>
 			</div>
 		);
 	}

@@ -16,7 +16,9 @@ import { translate } from 'i18n-calypso';
 import SignupSitePreview from 'components/signup-site-preview';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
+	getSiteVerticalName,
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
@@ -25,6 +27,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import QueryVerticals from 'components/data/query-verticals';
 
 /**
  * Style dependencies
@@ -61,6 +64,7 @@ class SiteMockups extends Component {
 		title: PropTypes.string,
 		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
+		verticalPreviewStyles: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -70,6 +74,7 @@ class SiteMockups extends Component {
 		title: '',
 		vertical: '',
 		verticalPreviewContent: '',
+		verticalPreviewStyles: '',
 	};
 
 	shouldComponentUpdate( nextProps ) {
@@ -126,12 +131,15 @@ class SiteMockups extends Component {
 	render() {
 		const {
 			fontUrl,
+			shouldFetchVerticalData,
 			shouldShowHelpTip,
 			siteStyle,
 			siteType,
+			siteVerticalName,
 			title,
 			themeSlug,
 			verticalPreviewContent,
+			verticalPreviewStyles,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
@@ -148,6 +156,7 @@ class SiteMockups extends Component {
 				tagline: translate( 'You’ll be able to customize this to your needs.' ),
 				body: this.getContent( verticalPreviewContent ),
 			},
+			gutenbergStylesUrl: verticalPreviewStyles,
 			langSlug,
 			isRtl,
 			onPreviewClick: this.handlePreviewClick,
@@ -167,6 +176,9 @@ class SiteMockups extends Component {
 					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps } />
 				</div>
 				{ shouldShowHelpTip && <SiteMockupHelpTipBottom siteType={ siteType } /> }
+				{ shouldFetchVerticalData && (
+					<QueryVerticals searchTerm={ siteVerticalName } siteType={ siteType } />
+				) }
 			</div>
 		);
 	}
@@ -178,17 +190,23 @@ export default connect(
 		const siteType = getSiteType( state );
 		const styleOptions = getSiteStyleOptions( siteType );
 		const style = find( styleOptions, { id: siteStyle || 'modern' } );
+		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
+		const verticalPreviewContent = getSiteVerticalPreview( state );
+		const shouldFetchVerticalData = ! verticalPreviewContent;
 		return {
-			title: getSiteTitle( state ) || translate( 'Your New Website' ),
+			title: getSiteTitle( state ) || titleFallback,
 			siteStyle,
 			siteType,
-			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalPreviewContent,
+			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
+			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||
 				'site-title-with-preview' === ownProps.stepName,
 			themeSlug: style.theme,
 			fontUrl: style.fontUrl,
+			shouldFetchVerticalData,
 		};
 	},
 	{

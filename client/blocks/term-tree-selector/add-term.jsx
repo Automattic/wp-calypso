@@ -21,6 +21,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
 
+/**
+ * Style dependencies
+ */
+import './add-term.scss';
+
 class TermSelectorAddTerm extends Component {
 	static propTypes = {
 		labels: PropTypes.object,
@@ -34,15 +39,11 @@ class TermSelectorAddTerm extends Component {
 		onSuccess: noop,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			showDialog: false,
-		};
-	}
+	state = {
+		showDialog: false,
+	};
 
-	openDialog = event => {
-		event.preventDefault();
+	openDialog = () => {
 		this.setState( { showDialog: true } );
 	};
 

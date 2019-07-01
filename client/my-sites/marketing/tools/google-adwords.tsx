@@ -30,7 +30,7 @@ interface ConnectedProps {
 	isAtomic: boolean;
 	isJetpack: boolean;
 	isPremiumOrHigher: boolean;
-	recordTracksEvent: () => void;
+	recordTracksEvent: typeof recordTracksEventAction;
 	showCard: boolean;
 	siteId: number | null;
 	siteSlug: string | null;

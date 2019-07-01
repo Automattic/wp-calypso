@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
 import PropTypes from 'prop-types';
@@ -78,10 +77,7 @@ export class ReaderSidebarTagsListItem extends Component {
 								currentTagName: tagName,
 							},
 						} ) }
-					>
-						<Gridicon icon="cross-small" />
-						<span className="sidebar__menu-action-label">{ translate( 'Unfollow' ) }</span>
-					</button>
+					/>
 				) }
 			</li>
 		);

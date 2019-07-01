@@ -41,6 +41,11 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 /**
+ * Style dependencies
+ */
+import './terms.scss';
+
+/**
  * Constants
  */
 const SEARCH_DEBOUNCE_TIME_MS = 500;

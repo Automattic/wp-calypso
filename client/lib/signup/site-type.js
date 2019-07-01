@@ -17,6 +17,7 @@ const getSiteTypePropertyDefaults = propertyKey =>
 				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
 			),
 			siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll back up to continue.' ),
+			siteMockupTitleFallback: i18n.translate( 'Your New Website' ),
 			// Site title step
 			siteTitleLabel: i18n.translate( 'Give your site a name' ),
 			siteTitleSubheader: i18n.translate(
@@ -96,6 +97,7 @@ export function getAllSiteTypes() {
 			siteMockupHelpTipCopy: i18n.translate(
 				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
 			),
+			siteMockupTitleFallback: i18n.translate( 'Your New Blog' ),
 			domainsStepHeader: i18n.translate( 'Give your blog an address' ),
 			domainsStepSubheader: i18n.translate(
 				"Enter your blog's name or some keywords that describe it to get started."
@@ -148,6 +150,8 @@ export function getAllSiteTypes() {
 			siteTopicHeader: i18n.translate( 'What type of products do you sell?' ),
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
+			// TODO: Re-enable "Purchase required" badge, but hide for Jetpack onboarding.
+			// purchaseRequired: true,
 		},
 	];
 }

@@ -1,0 +1,17 @@
+.card.login__social {
+	margin-bottom: 0;
+}
+
+.login__social-buttons {
+	button {
+		width: 100%;
+	}
+
+	svg {
+		margin-top: -2px;
+
+		&.disabled {
+			display: none;
+		}
+	}
+}

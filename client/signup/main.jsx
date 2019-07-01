@@ -67,6 +67,8 @@ import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import getSiteId from 'state/selectors/get-site-id';
 import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -114,7 +116,9 @@ class Signup extends React.Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
+		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
+		shouldShowMockups: PropTypes.bool,
 	};
 
 	constructor( props, context ) {
@@ -318,11 +322,12 @@ class Signup extends React.Component {
 
 		const { isNewishUser, existingSiteCount } = this.props;
 
-		const isNewUser = !! (
-			( dependencies && dependencies.username ) ||
+		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewSite = !! ( dependencies && dependencies.siteSlug );
+		const isNew7DUserSite = !! (
+			isNewUser ||
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
-		const isNewSite = !! ( dependencies && dependencies.siteSlug );
 		const hasCartItems = dependenciesContainCartItem( dependencies );
 
 		const debugProps = {
@@ -331,6 +336,7 @@ class Signup extends React.Component {
 			isNewUser,
 			isNewSite,
 			hasCartItems,
+			isNew7DUserSite,
 			flow: this.props.flowName,
 		};
 		debug( 'Tracking signup completion.', debugProps );
@@ -340,6 +346,7 @@ class Signup extends React.Component {
 			isNewSite,
 			hasCartItems,
 			flow: this.props.flowName,
+			isNew7DUserSite,
 		} );
 
 		this.handleLogin( dependencies, destination );
@@ -416,12 +423,9 @@ class Signup extends React.Component {
 		return firstInProgressStepName || nextStepName || last( currentSteps );
 	};
 
-	resumeProgress = () => {
-		// Update the Flows object to know that the signup flow is being resumed.
-		flows.resumingFlow = true;
-
-		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
-			stepSectionName = firstUnsubmittedStep.stepSectionName;
+	resumeProgress() {
+		const firstUnsubmittedStep = this.firstUnsubmittedStepName();
+		const stepSectionName = firstUnsubmittedStep.stepSectionName;
 
 		// set `resumingStep` so we don't render/animate anything until we have mounted this step
 		this.setState( { firstUnsubmittedStep } );
@@ -429,7 +433,7 @@ class Signup extends React.Component {
 		return page.redirect(
 			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
 		);
-	};
+	}
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
@@ -465,7 +469,7 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
+		const flowSteps = flows.getFlow( nextFlowName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
@@ -521,12 +525,12 @@ class Signup extends React.Component {
 		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
-		const hideFreePlan = !! (
+		const planWithDomain =
+			this.props.domainsWithPlansOnly &&
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
-				isDomainMapping( domainItem ) ) &&
-			this.props.domainsWithPlansOnly
-		);
+				isDomainMapping( domainItem ) );
+		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
@@ -617,16 +621,14 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && (
-					<SiteMockups stepName={ this.props.stepName } />
-				) }
+				{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
@@ -634,6 +636,7 @@ export default connect(
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 				: true,
+			isDomainOnlySite: isDomainOnlySite( state, siteId ),
 			progress: getSignupProgress( state ),
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
@@ -643,6 +646,8 @@ export default connect(
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
+			siteType: getSiteType( state ),
+			shouldShowMockups: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
 		};
 	},
 	{

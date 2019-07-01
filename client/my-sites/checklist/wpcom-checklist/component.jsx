@@ -163,12 +163,11 @@ class WpcomChecklistComponent extends PureComponent {
 		} );
 	};
 
-	onCollapsedClick = selectedTaskId => {
-		this.setState( { selectedTaskId } );
-		this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
-			step_name: selectedTaskId,
+	trackExpandTask = ( { id } ) =>
+		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
+			step_name: id,
+			product: 'WordPress.com',
 		} );
-	};
 
 	handleTaskStartThenDismiss = args => () => {
 		const { task } = args;
@@ -309,6 +308,7 @@ class WpcomChecklistComponent extends PureComponent {
 					storedTask={ storedTask }
 					taskList={ taskList }
 					phase2={ phase2 }
+					onExpandTask={ this.trackExpandTask }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
 				</ChecklistComponent>
@@ -330,23 +330,15 @@ class WpcomChecklistComponent extends PureComponent {
 				break;
 		}
 
-		const taskList = getTaskList( this.props );
-		const firstIncomplete = taskList.getFirstIncompleteTask();
-		const buttonPrimary = this.state.selectedTaskId ? this.state.selectedTaskId === task.id : true;
-
 		const baseProps = {
 			id: task.id,
 			key: task.id,
 			completed: task.isCompleted,
 			siteSlug,
-			firstIncomplete,
-			buttonPrimary,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
-			onCollapsedClick: this.onCollapsedClick,
 			// only render an unclickable grey circle
 			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
-			selectedTaskId: this.state.selectedTaskId,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
@@ -660,7 +652,7 @@ class WpcomChecklistComponent extends PureComponent {
 				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
 				title={ translate( 'Get email for your site' ) }
 				completedTitle={ translate( 'You set up email forwarding for your site' ) }
-				completedDescription={ translate(
+				description={ translate(
 					'Want a dedicated inbox, docs, and cloud storage? {{link}}Upgrade to G Suite!{{/link}}',
 					{
 						components: {
@@ -837,6 +829,9 @@ class WpcomChecklistComponent extends PureComponent {
 				{ ...baseProps }
 				preset="update-homepage"
 				title={ translate( 'Update your homepage' ) }
+				completedTitle={ translate( 'You updated your homepage' ) }
+				bannerImageSrc="/calypso/images/stats/tasks/personalize-your-site.svg"
+				completedButtonText={ translate( 'Change' ) }
 				description={ translate(
 					`We've created the basics, now it's time for you to update the images and text.`
 				) }

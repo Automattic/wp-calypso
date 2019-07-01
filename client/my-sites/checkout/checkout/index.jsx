@@ -15,6 +15,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import { shouldShowTax, hasPendingPayment, getEnabledPaymentMethods } from 'lib/cart-values';
 import {
+	conciergeSessionItem,
 	domainMapping,
 	planItem as getCartItemForPlan,
 	themeItem,
@@ -86,6 +87,7 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
+import { isApplePayAvailable } from 'lib/web-payment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import config from 'config';
@@ -191,6 +193,7 @@ export class Checkout extends React.Component {
 		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
 			saved_cards: props.cards.length,
 			is_renewal: hasRenewalItem( props.cart ),
+			apple_pay_available: isApplePayAvailable(),
 		} );
 
 		recordViewCheckout( props.cart );
@@ -269,7 +272,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug } = this.props;
+		const { planSlug, cart } = this.props;
 
 		let cartItem, cartMeta;
 
@@ -285,6 +288,10 @@ export class Checkout extends React.Component {
 		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
 			cartMeta = this.props.product.split( ':' )[ 1 ];
 			cartItem = domainMapping( { domain: cartMeta } );
+		}
+
+		if ( startsWith( this.props.product, 'concierge-session' ) ) {
+			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
 		if ( cartItem ) {
@@ -433,7 +440,7 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-				return `/checkout/${ selectedSiteSlug }/add-quickstart-session/${ receiptId }`;
+				return `/checkout/${ selectedSiteSlug }/offer-quickstart-session/${ receiptId }`;
 			}
 		}
 
@@ -453,7 +460,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isJetpackNotAtomic ) {
-			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )

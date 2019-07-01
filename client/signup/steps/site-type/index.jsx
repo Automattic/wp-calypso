@@ -17,6 +17,7 @@ import { saveSignupStep } from 'state/signup/progress/actions';
 
 const siteTypeToFlowname = {
 	'online-store': 'ecommerce-onboarding',
+	blog: 'onboarding-blog',
 };
 
 class SiteType extends Component {
@@ -27,8 +28,18 @@ class SiteType extends Component {
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
 
-		// Modify the flowname if the site type matches an override.
-		this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
+		// TODO Hack to fix the `/start/premium|business|personal` routes
+		if (
+			( this.props.flowName === 'premium' ||
+				this.props.flowName === 'business' ||
+				this.props.flowName === 'personal' ) &&
+			siteTypeValue === 'blog'
+		) {
+			this.props.goToNextStep( this.props.flowName );
+		} else {
+			// Modify the flowname if the site type matches an override.
+			this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
+		}
 	};
 
 	render() {

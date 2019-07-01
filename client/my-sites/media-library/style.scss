@@ -42,11 +42,6 @@
 	}
 }
 
-// Make sure focus ring on search bar is not hidden
-.editor-media-modal .dialog__content {
-	overflow: inherit;
-}
-
 .media-library__filter-bar {
 	display: flex;
 	flex-flow: row nowrap;
@@ -63,6 +58,18 @@
 
 		@include breakpoint( '<480px' ) {
 			width: auto;
+		}
+		
+		.search {
+			&.is-expanded-to-container {
+				height: 100%;
+			}
+
+			&.has-focus {
+				@include breakpoint( '<660px' ) {
+					margin-right: 4px;
+				}
+			}
 		}
 	}
 

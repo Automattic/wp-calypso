@@ -37,7 +37,42 @@ class A8C_WP_Template {
 		}
 
 		$this->current_post_id = $post_id;
-		$this->template_id     = get_post_meta( $this->current_post_id, self::TEMPLATE_META_KEY, true );
+		$this->template_id     = $this->get_template_id();
+	}
+
+	/**
+	 * Returns template ID for current page if it exists.
+	 *
+	 * If template id is set in current post's meta (_wp_template_id) it will be returned.
+	 * Otherwise it falls back to global page template that is marked with page_template term
+	 * in wp_template_type taxonomy. Note that having only one term of this kind is not
+	 * currently enforced, so we'll just pick the latest page template that was created
+	 * (based on its post ID).
+	 *
+	 * @return null|int template ID for current page, or null if it doesn't exist.
+	 */
+	public function get_template_id() {
+		// If the specific template is referenced in post meta, use it.
+		$template_id = get_post_meta( $this->current_post_id, self::TEMPLATE_META_KEY, true );
+
+		if ( ! empty( $template_id ) ) {
+			return $template_id;
+		}
+
+		// Otherwise, fall back to latest global page template.
+		$term = get_term_by( 'name', 'page_template', 'wp_template_type', ARRAY_A );
+
+		if ( ! isset( $term['term_id'] ) ) {
+			return null;
+		}
+
+		$template_ids = get_objects_in_term( $term['term_id'], $term['taxonomy'], [ 'order' => 'DESC' ] );
+
+		if ( empty( $template_ids ) ) {
+			return null;
+		}
+
+		return $template_ids[0];
 	}
 
 	/**
@@ -88,7 +123,13 @@ class A8C_WP_Template {
 			return null;
 		}
 
-		return $template_blocks[0]['attrs']['templateId'];
+		$header_id = $template_blocks[0]['attrs']['templateId'];
+
+		if ( ! has_term( 'header', 'wp_template_part_type', $header_id ) ) {
+			return null;
+		}
+
+		return $header_id;
 	}
 
 	/**
@@ -102,12 +143,17 @@ class A8C_WP_Template {
 	public function get_footer_id() {
 		$template_blocks = $this->get_template_blocks();
 
-		// TODO: Incorporate wp_template_part taxonomy checks.
 		if ( ! isset( end( $template_blocks )['attrs']['templateId'] ) ) {
 			return null;
 		}
 
-		return end( $template_blocks )['attrs']['templateId'];
+		$footer_id = end( $template_blocks )['attrs']['templateId'];
+
+		if ( ! has_term( 'footer', 'wp_template_part_type', $footer_id ) ) {
+			return null;
+		}
+
+		return $footer_id;
 	}
 
 	/**
@@ -151,4 +197,22 @@ class A8C_WP_Template {
 
 		return $footer->post_content;
 	}
+}
+
+/**
+ * Template tag to output the FSE template header markup.
+ */
+function fse_get_header() {
+	$template = new A8C_WP_Template();
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo do_blocks( $template->get_header_content() );
+}
+
+/**
+ * Template tag to output the FSE template footer markup.
+ */
+function fse_get_footer() {
+	$template = new A8C_WP_Template();
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo do_blocks( $template->get_footer_content() );
 }

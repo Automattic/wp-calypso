@@ -187,7 +187,7 @@ class ChecklistMain extends PureComponent {
 				<DocumentHead title={ translatedTitle } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ this.renderHeader() }
-				<WpcomChecklist updateCompletion={ this.handleCompletionUpdate } />
+				<WpcomChecklist updateCompletion={ this.handleCompletionUpdate } viewMode="checklist" />
 			</Main>
 		);
 	}

@@ -28,6 +28,11 @@ import {
 } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
+/**
+ * Style dependencies
+ */
+import './verification-code-form.scss';
+
 class VerificationCodeForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
@@ -138,7 +143,7 @@ class VerificationCodeForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm }>
-				<Card className="two-factor-authentication__push-notification-screen is-compact">
+				<Card compact>
 					<p>{ helpText }</p>
 
 					<FormFieldset>

@@ -77,7 +77,6 @@ import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'blocks/reader-share/docs/example';
 import Login from 'blocks/login/docs/example';
 import LocationSearch from 'blocks/location-search/docs/example';
-import UploadImage from 'blocks/upload-image/docs/example';
 import ConversationCommentList from 'blocks/conversations/docs/example';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog/docs/example';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
@@ -190,7 +189,6 @@ export default class AppComponents extends React.Component {
 					<SimplePaymentsDialog />
 					<SubscriptionLengthPicker />
 					<ReaderShare readmeFilePath="reader-share" />
-					<UploadImage readmeFilePath="upload-image" />
 					<ConversationCommentList />
 					<PostComment />
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />

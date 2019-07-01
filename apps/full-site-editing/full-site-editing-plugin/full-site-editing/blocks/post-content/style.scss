@@ -19,3 +19,17 @@
 		display: table;
 	}
 }
+
+.post-content-block .editor-post-title {
+	display: none;
+}
+
+.show-post-title-before-content {
+	.editor-post-title {
+		display: none;
+	}
+
+	.post-content-block .editor-post-title {
+		display: block;
+	}
+}

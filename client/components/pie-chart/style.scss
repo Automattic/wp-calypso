@@ -69,19 +69,3 @@
 	@include placeholder();
 	fill: var( --color-neutral-0 );
 }
-
-.pie-chart__placeholder-legend-item {
-	display: flex;
-	margin-top: 22px;
-}
-
-.pie-chart__placeholder-legend-item-detail {
-	flex: 0 0 100%;
-}
-
-.pie-chart__placeholder-legend-item-detail-element {
-	@include placeholder();
-	width: 90%;
-	height: 20px;
-	margin-bottom: 14px;
-}

@@ -79,7 +79,7 @@ class SiteSettingsFormSecurity extends Component {
 							isSaving={ isSavingSettings }
 							onButtonClick={ handleSubmitForm }
 							showButton
-							title={ translate( 'Spam filtering' ) }
+							title={ translate( 'Jetpack Anti-spam' ) }
 						/>
 						<SpamFilteringSettings
 							dirtyFields={ dirtyFields }

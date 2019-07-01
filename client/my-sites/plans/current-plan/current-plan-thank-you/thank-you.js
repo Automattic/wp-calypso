@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 
@@ -13,6 +12,9 @@ import { isDesktop } from 'lib/viewport';
 import { preventWidows } from 'lib/formatting';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import Button from 'components/button';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { addQueryArgs } from 'lib/url';
 
 import './style.scss';
 
@@ -26,14 +28,19 @@ export class ThankYouCard extends Component {
 	render() {
 		const {
 			children,
+			currentRoute,
 			illustration,
 			showCalypsoIntro,
 			showContinueButton,
 			showHideMessage,
-			siteSlug,
 			title,
 			translate,
 		} = this.props;
+
+		const dismissUrl =
+			this.props.queryArgs && 'install' in this.props.queryArgs
+				? addQueryArgs( { install: this.props.queryArgs.install }, currentRoute )
+				: currentRoute;
 
 		return (
 			<div className="current-plan-thank-you">
@@ -59,17 +66,13 @@ export class ThankYouCard extends Component {
 					</p>
 				) }
 				{ showContinueButton && (
-					<Button
-						href={ `/plans/my-plan/${ siteSlug }` }
-						onClick={ this.startChecklistTour }
-						primary
-					>
+					<Button href={ dismissUrl } onClick={ this.startChecklistTour } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 				) }
 				{ showHideMessage && (
 					<p>
-						<a href={ `/plans/my-plan/${ siteSlug }` } onClick={ this.startChecklistTour }>
+						<a href={ dismissUrl } onClick={ this.startChecklistTour }>
 							{ translate( 'Hide message' ) }
 						</a>
 					</p>
@@ -81,7 +84,8 @@ export class ThankYouCard extends Component {
 
 export default connect(
 	state => ( {
-		siteSlug: getSelectedSiteSlug( state ),
+		currentRoute: getCurrentRoute( state ),
+		queryArgs: getCurrentQueryArguments( state ),
 	} ),
 	{ requestGuidedTour }
 )( localize( ThankYouCard ) );

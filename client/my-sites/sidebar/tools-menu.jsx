@@ -22,6 +22,8 @@ import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/c
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 
 class ToolsMenu extends PureComponent {
 	static propTypes = {
@@ -94,6 +96,8 @@ class ToolsMenu extends PureComponent {
 		this.props.onNavigate();
 	};
 
+	expandToolsSection = () => this.props.expandSection( SIDEBAR_SECTION_TOOLS );
+
 	renderMenuItem( menuItem ) {
 		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
 
@@ -125,6 +129,7 @@ class ToolsMenu extends PureComponent {
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
 				forceInternalLink={ menuItem.forceInternalLink }
+				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
@@ -154,7 +159,7 @@ export default connect(
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	} ),
-	{ recordTracksEvent },
+	{ expandSection, recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
 )( localize( ToolsMenu ) );
