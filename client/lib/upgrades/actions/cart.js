@@ -194,6 +194,7 @@ export function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
+		'FBSAVE15',
 	];
 	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
