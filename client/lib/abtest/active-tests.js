@@ -136,4 +136,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	skippableDomainStep: {
+		datestamp: '20190702',
+		variations: {
+			skippable: 50,
+			notSkippable: 50,
+		},
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
+	},
 };
