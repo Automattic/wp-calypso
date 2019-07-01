@@ -46,7 +46,7 @@ import { promisify } from '../../utils';
 
 // Others
 import flows from 'signup/config/flows';
-import steps from 'signup/config/steps';
+import steps, { isDomainStepSkippable } from 'signup/config/steps';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
 
@@ -175,6 +175,10 @@ export function createSiteWithCart(
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
 		newSiteParams.options.nux_import_engine = importEngine;
+	} else if ( ! siteUrl && isDomainStepSkippable( flowName ) ) {
+		newSiteParams.blog_name =
+			get( user.get(), 'username', siteTitle ) || siteType || getSiteVertical( state );
+		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
