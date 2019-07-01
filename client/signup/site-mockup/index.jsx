@@ -7,13 +7,14 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, each, find, isEmpty } from 'lodash';
+import { debounce, find, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import SignupSitePreview from 'components/signup-site-preview';
+import { getPreviewParamClass } from 'components/signup-site-preview/utils';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalPreview,
@@ -98,25 +99,34 @@ class SiteMockups extends Component {
 	}, 777 );
 
 	/**
-	 * Returns an interpolated site preview content block with template markers
+	 * Returns site preview content block interpolated with markup that allows
+	 * preview params to be injected with JavaScript.
 	 *
 	 * @param {string} content Content to format
 	 * @return {string} Formatted content
 	 */
 	getContent( content = '' ) {
-		const { title: CompanyName } = this.props;
-		if ( 'string' === typeof content ) {
-			each(
-				{
-					CompanyName,
-					Address: translate( 'Your Address' ),
-					Phone: translate( 'Your Phone Number' ),
-				},
-				( value, key ) =>
-					( content = content.replace( new RegExp( '{{' + key + '}}', 'gi' ), value ) )
-			);
+		if ( 'string' !== typeof content ) {
+			return content;
 		}
-		return content;
+
+		return Object.keys( this.getPreviewParams() ).reduce(
+			( currContent, paramName ) =>
+				currContent.replace(
+					new RegExp( '{{' + paramName + '}}', 'gi' ),
+					`<span class="${ getPreviewParamClass( paramName ) }"></span>`
+				),
+			content
+		);
+	}
+
+	getPreviewParams() {
+		const { title: CompanyName } = this.props;
+		return {
+			CompanyName,
+			Address: translate( 'Your Address' ),
+			Phone: translate( 'Your Phone Number' ),
+		};
 	}
 
 	handlePreviewClick = size =>
@@ -151,6 +161,7 @@ class SiteMockups extends Component {
 				title,
 				tagline: translate( 'You’ll be able to customize this to your needs.' ),
 				body: this.getContent( verticalPreviewContent ),
+				params: this.getPreviewParams(),
 			},
 			gutenbergStylesUrl: verticalPreviewStyles,
 			langSlug,

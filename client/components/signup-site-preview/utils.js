@@ -58,7 +58,7 @@ export function getIframeSource(
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
-			<title>${ content.title } – ${ content.tagline }</title>
+			<title></title>
 			${ getCSSLinkHtml( gutenbergStylesUrl ) }
 			${ getCSSLinkHtml( cssUrl ) }
 			${ getCSSLinkHtml( fontUrl ) }
@@ -132,7 +132,7 @@ export function getIframeSource(
 				<header id="masthead" class="site-header">
 					<div class="site-branding-container">
 						<div class="site-branding">
-							<p class="site-title signup-site-preview__title">${ content.title }</p>
+							<p class="site-title signup-site-preview__title"></p>
 						</div>
 					</div>
 				</header>
@@ -156,4 +156,21 @@ export function getIframeSource(
 	}
 
 	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) );
+}
+
+/**
+ * @param {String} paramName e.g. "Vertical", "CompanyName"
+ * @returns {String} CSS class that will wrap the parameter in the preview DOM
+ */
+export function getPreviewParamClass( paramName ) {
+	return `signup-site-preview__${ paramName }`;
+}
+
+/**
+ * @param {String} title site title
+ * @param {String} tagline site tagline
+ * @returns {String} String to be used as <title> in preview
+ */
+export function createPreviewDocumentTitle( title, tagline ) {
+	return `${ title } – ${ tagline }`;
 }
