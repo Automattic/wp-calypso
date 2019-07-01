@@ -129,9 +129,7 @@ export class GoogleAnalyticsForm extends Component {
 			? translate(
 					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
 			  )
-			: translate(
-					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
-			  );
+			: translate( 'Connect your site to Google Analytics in seconds with the Business plan' );
 
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
