@@ -60,9 +60,7 @@ const RelatedPosts = ( {
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_headline' ) }
 						>
-							{ translate(
-								'Show a "Related" header to more clearly separate the related section from posts'
-							) }
+							{ translate( 'Highlight related content with a heading' ) }
 						</CompactFormToggle>
 
 						<CompactFormToggle
@@ -78,7 +76,18 @@ const RelatedPosts = ( {
 
 					<FormSettingExplanation>
 						{ translate(
-							"These settings won't apply to related posts added using the block editor."
+							"These settings won't apply to {{a}}related posts added using the block editor{{/a}}.",
+							{
+								components: {
+									a: (
+										<a
+											href="https://jetpack.com/support/jetpack-blocks/related-posts-block/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
 						) }
 					</FormSettingExplanation>
 
