@@ -138,14 +138,18 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 				<Card className="jetpack-monitor-settings">
 					<SupportInfo
-						text={ translate( "Notifies you when there's an issue with your site." ) }
+						text={ translate(
+							'Jetpack will continuously monitor your site, and alert you the moment downtime is detected.'
+						) }
 						link="https://jetpack.com/support/monitor/"
 					/>
 
 					<JetpackModuleToggle
 						siteId={ siteId }
 						moduleSlug="monitor"
-						label={ translate( "Monitor your site's downtime" ) }
+						label={ translate(
+							'Get alerts if your site goes offline. We’ll let you know when it’s back up, too.'
+						) }
 						disabled={ this.disableForm() }
 					/>
 
