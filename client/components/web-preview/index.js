@@ -34,8 +34,8 @@ export class WebPreview extends Component {
 		this.props.recordTracksEvent( 'calypso_web_preview_select_viewport_device', { device } );
 	}
 
-	filterIframeUrl( url ) {
-		return url === 'about:blank' ? url : addQueryArgs( { calypso_token: this.previewId }, url );
+	filterIframeUrl( url, previewId ) {
+		return url === 'about:blank' ? url : addQueryArgs( { calypso_token: previewId }, url );
 	}
 
 	getPreviewContent( props ) {

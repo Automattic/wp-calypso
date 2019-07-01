@@ -168,7 +168,7 @@ export class WebPreviewContent extends Component {
 
 		debug( 'setIframeUrl', iframeUrl );
 		try {
-			const newUrl = this.props.filterIframeUrl( iframeUrl );
+			const newUrl = this.props.filterIframeUrl( iframeUrl, this.previewId );
 			this.iframe.contentWindow.location.replace( newUrl );
 
 			this.setState( { iframeUrl } );
