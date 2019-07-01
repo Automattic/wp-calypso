@@ -24,24 +24,8 @@ export class WebPreviewModal extends Component {
 	static propTypes = {
 		// Display the preview
 		showPreview: PropTypes.bool,
-		// Show external link button
-		showExternal: PropTypes.bool,
-		// Show external link with clipboard input
-		showUrl: PropTypes.bool,
-		// Show close button
-		showClose: PropTypes.bool,
-		// Show SEO button
-		showSEO: PropTypes.bool,
-		// Show device viewport switcher
-		showDeviceSwitcher: PropTypes.bool,
-		// Show edit button
-		showEdit: PropTypes.bool,
-		// The URL for the edit button
-		editUrl: PropTypes.string,
 		// The URL that should be displayed in the iframe
 		previewUrl: PropTypes.string,
-		// The URL for the external link button
-		externalUrl: PropTypes.string,
 		// The markup to display in the iframe
 		previewMarkup: PropTypes.string,
 		// The viewport device to show initially
@@ -72,12 +56,6 @@ export class WebPreviewModal extends Component {
 	};
 
 	static defaultProps = {
-		showExternal: true,
-		showClose: true,
-		showSEO: true,
-		showDeviceSwitcher: true,
-		showEdit: false,
-		editUrl: null,
 		previewUrl: null,
 		previewMarkup: null,
 		onLoad: noop,

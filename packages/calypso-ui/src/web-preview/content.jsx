@@ -20,7 +20,6 @@ import { __ } from '@wordpress/i18n';
  */
 import { hasTouch } from './touch-detect';
 import SpinnerLine from '../spinner-line';
-import SeoPreviewPane from 'components/seo-preview-pane';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -226,12 +225,11 @@ export class WebPreviewContent extends Component {
 		const {
 			belowToolbar,
 			className,
-			frontPageMetaDescription,
 			hasSidebar,
 			iframeTitle,
 			isModalWindow,
 			loadingMessage,
-			overridePost,
+			previewContent,
 			showPreview,
 			Toolbar,
 		} = this.props;
@@ -271,25 +269,22 @@ export class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ loadingMessage }</span>
 						</div>
 					) }
-					<div
-						className={ classNames( 'web-preview__frame-wrapper', {
-							'is-resizable': ! isModalWindow,
-						} ) }
-						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
-					>
-						<iframe
-							ref={ this.setIframeInstance }
-							className="web-preview__frame"
-							src="about:blank"
-							onLoad={ this.setLoaded }
-							title={ iframeTitle || __( 'Preview' ) }
-						/>
-					</div>
-					{ 'seo' === this.state.device && (
-						<SeoPreviewPane
-							overridePost={ overridePost }
-							frontPageMetaDescription={ frontPageMetaDescription }
-						/>
+					{ previewContent ? (
+						previewContent
+					) : (
+						<div
+							className={ classNames( 'web-preview__frame-wrapper', {
+								'is-resizable': ! isModalWindow,
+							} ) }
+						>
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								src="about:blank"
+								onLoad={ this.setLoaded }
+								title={ iframeTitle || __( 'Preview' ) }
+							/>
+						</div>
 					) }
 				</div>
 			</div>
@@ -298,34 +293,10 @@ export class WebPreviewContent extends Component {
 }
 
 WebPreviewContent.propTypes = {
-	// Additional elements to display below the toolbar
-	belowToolbar: PropTypes.element,
-	// Display the preview
-	showPreview: PropTypes.bool,
-	// Show external link button
-	showExternal: PropTypes.bool,
-	// Show external link with clipboard input
-	showUrl: PropTypes.bool,
-	// Show close button
-	showClose: PropTypes.bool,
-	// Show SEO button
-	showSEO: PropTypes.bool,
-	// Show device viewport switcher
-	showDeviceSwitcher: PropTypes.bool,
-	// Show edit button
-	showEdit: PropTypes.bool,
-	// The URL for the edit button
-	editUrl: PropTypes.string,
-	// The URL that should be displayed in the iframe
-	previewUrl: PropTypes.string,
-	// The URL for the external link button
-	externalUrl: PropTypes.string,
 	// The markup to display in the iframe
 	previewMarkup: PropTypes.string,
 	// The viewport device to show initially
 	defaultViewportDevice: PropTypes.string,
-	// Elements to render on the right side of the toolbar
-	children: PropTypes.node,
 	// The function to call when the iframe is loaded. Will be passed the iframe document object.
 	// Only called if using previewMarkup.
 	onLoad: PropTypes.func,
@@ -345,10 +316,6 @@ WebPreviewContent.propTypes = {
 	onDeviceUpdate: PropTypes.func,
 	// Flag that differentiates modal window from inline embeds
 	isModalWindow: PropTypes.bool,
-	// The site/post description passed to the SeoPreviewPane
-	frontPageMetaDescription: PropTypes.string,
-	// A post object used to override the selected post in the SEO preview
-	overridePost: PropTypes.object,
 	// Flag to prevent focusing of the preview when set to true
 	disableFocus: PropTypes.bool,
 	// Called when the user changes the preview viewport
@@ -357,16 +324,12 @@ WebPreviewContent.propTypes = {
 	Toolbar: PropTypes.func,
 	// Filter the iframe URL to allow passing in query args
 	filterIframeUrl: PropTypes.func,
+	// Content used to override the displayed iframe content preview area
+	previewContent: PropTypes.object,
 };
 
 WebPreviewContent.defaultProps = {
 	belowToolbar: null,
-	showExternal: true,
-	showClose: true,
-	showSEO: true,
-	showDeviceSwitcher: true,
-	showEdit: false,
-	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,
 	onLoad: noop,
@@ -380,6 +343,7 @@ WebPreviewContent.defaultProps = {
 	disableFocus: false,
 	onSetDeviceViewport: noop,
 	filterIframeUrl: identity,
+	previewContent: null,
 };
 
 export default WebPreviewContent;
