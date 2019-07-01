@@ -97,3 +97,7 @@ export default {
 		providesDependencies: [ 'siteTopic', 'siteTitle' ],
 	},
 };
+
+export function isDomainStepSkippable() {
+	return false;
+}
