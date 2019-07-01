@@ -133,6 +133,18 @@ This is such a generic solution. We can do better.
 		color: var( --sidebar-menu-selected-a-color );
 		background-color: var( --sidebar-menu-selected-background-color );
 	}
+
+	// Some links are marked as "external" and show
+	// and icon to visually indicate they will open
+	// a new window/tab.
+	.gridicons-external,
+	&.external-link .gridicons-external {
+		height: 16px;
+		width: 16px;
+		position: absolute;
+		right: 21px;
+		top: auto;
+	}
 }
 
 .sidebar__menu-link-secondary-text {
