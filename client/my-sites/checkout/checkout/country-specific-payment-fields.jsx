@@ -85,16 +85,12 @@ export class CountrySpecificPaymentFields extends Component {
 
 	getPanNumberPopover = () => {
 		const { translate } = this.props;
-		const popoverText = translate(
-			'To pay with %(indiaPaymentMethods)s, we are required to ask for your PAN number. ' +
-				'Entry of the PAN number is not required for payment with credit cards enabled for international payments.',
-			{
-				comment: 'indiaPaymentMethods are local payment methods in India.',
-				args: {
-					indiaPaymentMethods: paymentMethodName( 'netbanking' ),
-				},
-			}
-		);
+		const popoverText = translate( 'Paying with %(indiaPaymentMethods)s requires a PAN number.', {
+			comment: 'indiaPaymentMethods are local payment methods in India.',
+			args: {
+				indiaPaymentMethods: paymentMethodName( 'netbanking' ),
+			},
+		} );
 		return (
 			<InfoPopover position="right" className="checkout__pan-number-popover">
 				{ popoverText }
