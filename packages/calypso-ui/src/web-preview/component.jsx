@@ -28,40 +28,35 @@ export class WebPreviewModal extends Component {
 		previewUrl: PropTypes.string,
 		// The markup to display in the iframe
 		previewMarkup: PropTypes.string,
-		// The viewport device to show
-		device: PropTypes.string,
-		// Elements to render on the right side of the toolbar
-		children: PropTypes.node,
+		// The default viewport device to show
+		defaultViewportDevice: PropTypes.string,
 		// The function to call when the iframe is loaded. Will be passed the iframe document object.
 		// Only called if using previewMarkup.
 		onLoad: PropTypes.func,
 		// Called when the preview is closed, either via the 'X' button or the escape key
 		onClose: PropTypes.func,
-		// Called when the edit button is clicked
-		onEdit: PropTypes.func,
 		// Optional loading message to display during loading
 		loadingMessage: PropTypes.string,
 		// The iframe's title element, used for accessibility purposes
 		iframeTitle: PropTypes.string,
 		// Makes room for a sidebar if desired
 		hasSidebar: PropTypes.bool,
-		// The site/post description passed to the SeoPreviewPane
-		frontPageMetaDescription: PropTypes.string,
 		// Called on mount and when previewShow changes
 		onPreviewShowChange: PropTypes.func,
 		// Called after user switches device
 		onDeviceUpdate: PropTypes.func,
 		// Element to wrap the preview component
 		Wrapper: PropTypes.oneOfType( [ PropTypes.func, PropTypes.symbol ] ),
+		// Toolbar element to be rendered on top of the preview
+		Toolbar: PropTypes.func,
 	};
 
 	static defaultProps = {
-		device: 'computer',
+		defaultViewportDevice: 'computer',
 		previewUrl: null,
 		previewMarkup: null,
 		onLoad: noop,
 		onClose: noop,
-		onEdit: noop,
 		hasSidebar: false,
 		onPreviewShowChange: noop,
 		onDeviceUpdate: noop,

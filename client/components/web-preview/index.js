@@ -63,37 +63,10 @@ export class WebPreview extends Component {
 WebPreview.propTypes = {
 	// The viewport device to show initially
 	defaultViewportDevice: PropTypes.string,
-	// Show external link button
-	showExternal: PropTypes.bool,
-	// Show external link with clipboard input
-	showUrl: PropTypes.bool,
-	// Show close button
-	showClose: PropTypes.bool,
-	// Show SEO button
-	showSEO: PropTypes.bool,
-	// Show device viewport switcher
-	showDeviceSwitcher: PropTypes.bool,
-	// Show edit button
-	showEdit: PropTypes.bool,
-	// The URL for the edit button
-	editUrl: PropTypes.string,
-	// Elements to render on the right side of the toolbar
-	children: PropTypes.node,
-	// The site/post description passed to the SeoPreviewPane
-	frontPageMetaDescription: PropTypes.string,
-	// A post object used to override the selected post in the SEO preview
-	overridePost: PropTypes.object,
 };
 
 WebPreview.defaultProps = {
 	defaultViewportDevice: 'computer',
-	showExternal: true,
-	showClose: true,
-	showSEO: true,
-	showDeviceSwitcher: true,
-	showEdit: false,
-	editUrl: null,
-	overridePost: null,
 };
 
 const mapState = state => ( {
