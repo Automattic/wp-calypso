@@ -49,6 +49,7 @@ import {
 	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
+	isBlogger,
 	isPersonal,
 	isPremium,
 	isBusiness,
@@ -57,6 +58,7 @@ import {
 } from 'lib/products-values';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';
+import BloggerPlanDetails from './blogger-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
@@ -494,6 +496,8 @@ export class CheckoutThankYou extends React.Component {
 				return [ FailedPurchaseDetails ];
 			} else if ( purchases.some( isJetpackPlan ) ) {
 				return [ JetpackPlanDetails, find( purchases, isJetpackPlan ) ];
+			} else if ( purchases.some( isBlogger ) ) {
+				return [ BloggerPlanDetails, find( purchases, isBlogger ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
 			} else if ( purchases.some( isPremium ) ) {
