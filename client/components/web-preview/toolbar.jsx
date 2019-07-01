@@ -18,9 +18,11 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Button from 'components/button';
-import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
+import { isWithinBreakpoint } from 'lib/viewport';
+import SelectDropdown from 'components/select-dropdown';
+
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -116,7 +118,7 @@ export default class PreviewToolbar extends Component {
 						{ __( 'Close' ) }
 					</Button>
 				) }
-				{ showDeviceSwitcher && (
+				{ isWithinBreakpoint( '>660px' ) && showDeviceSwitcher && (
 					<SelectDropdown
 						compact
 						className="web-preview__device-switcher"
@@ -154,7 +156,7 @@ export default class PreviewToolbar extends Component {
 							{ __( 'Edit' ) }
 						</Button>
 					) }
-					{ showExternal && (
+					{ previewUrl && showExternal && (
 						<Button
 							primary
 							className="web-preview__external"

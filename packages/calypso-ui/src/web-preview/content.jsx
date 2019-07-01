@@ -19,7 +19,6 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import Toolbar from './toolbar';
 import { hasTouch } from './touch-detect';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
@@ -205,10 +204,6 @@ export class WebPreviewContent extends Component {
 		}
 	};
 
-	selectSEO = () => {
-		this.setDeviceViewport( 'seo' );
-	};
-
 	setLoaded = () => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
@@ -238,14 +233,11 @@ export class WebPreviewContent extends Component {
 			frontPageMetaDescription,
 			hasSidebar,
 			iframeTitle,
-			isMobile,
 			isModalWindow,
 			loadingMessage,
 			overridePost,
-			previewUrl,
-			showDeviceSwitcher,
-			showExternal,
 			showPreview,
+			Toolbar,
 		} = this.props;
 		const wrapperClassNames = classNames( className, 'web-preview__inner', {
 			'is-touch': this._hasTouch,
@@ -256,6 +248,7 @@ export class WebPreviewContent extends Component {
 			'is-phone': this.state.device === 'phone',
 			'is-seo': this.state.device === 'seo',
 			'is-loaded': this.state.loaded,
+			'has-toolbar': Toolbar,
 		} );
 
 		const showLoadingMessage =
@@ -266,15 +259,14 @@ export class WebPreviewContent extends Component {
 
 		return (
 			<div className={ wrapperClassNames } ref={ this.setWrapperElement }>
-				<Toolbar
-					setDeviceViewport={ this.setDeviceViewport }
-					device={ this.state.device }
-					{ ...this.props }
-					showExternal={ previewUrl ? showExternal : false }
-					showDeviceSwitcher={ showDeviceSwitcher && ! isMobile }
-					selectSeoPreview={ this.selectSEO }
-					isLoading={ this.state.isLoadingSubpage }
-				/>
+				{ Toolbar ? (
+					<Toolbar
+						setDeviceViewport={ this.setDeviceViewport }
+						device={ this.state.device }
+						isLoading={ this.state.isLoadingSubpage }
+						{ ...this.props }
+					/>
+				) : null }
 				{ belowToolbar }
 				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div className="web-preview__placeholder">
@@ -365,6 +357,8 @@ WebPreviewContent.propTypes = {
 	disableFocus: PropTypes.bool,
 	// Called when the user changes the preview viewport
 	onSetDeviceViewport: PropTypes.func,
+	// Toolbar element to be rendered on top of the preview
+	Toolbar: PropTypes.func,
 };
 
 WebPreviewContent.defaultProps = {

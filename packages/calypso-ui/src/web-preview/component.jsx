@@ -13,7 +13,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { hasTouch } from './touch-detect';
-import { withViewportMatch } from '@wordpress/viewport';
 import WebPreviewContent from './content';
 
 /**
@@ -198,4 +197,4 @@ const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
 	return <WebPreviewComponent { ...restProps } />;
 };
 
-export default withViewportMatch( { isMobile: '< small' } )( WebPreviewInner );
+export default WebPreviewInner;

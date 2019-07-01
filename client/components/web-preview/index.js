@@ -12,6 +12,7 @@ import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
+import Toolbar from './toolbar';
 
 export class WebPreview extends Component {
 	constructor() {
@@ -29,6 +30,7 @@ export class WebPreview extends Component {
 				{ ...this.props }
 				onPreviewShowChange={ this.onPreviewShowChange }
 				onSetDeviceViewport={ this.onSetDeviceViewport }
+				Toolbar={ Toolbar }
 				Wrapper={ RootChild }
 			/>
 		);
