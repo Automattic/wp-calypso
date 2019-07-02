@@ -917,8 +917,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			padding-left: 0;
 			display: block;
 			height: 56px;
-			border-bottom: 1px solid #e1e2e2;
-			background: #fff;
+			border-bottom: 1px solid var( --color-woocommerce-header-border );
+			background: var( --color-white );
 
 			svg {
 				margin-top: 15px;

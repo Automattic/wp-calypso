@@ -23,6 +23,7 @@ import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import Divider from './divider';
+import ExternalLink from 'components/external-link';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
@@ -366,7 +367,7 @@ export class LoginForm extends Component {
 									{
 										components: {
 											tosLink: (
-												<a
+												<ExternalLink
 													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 													target="_blank"
 													rel="noopener noreferrer"

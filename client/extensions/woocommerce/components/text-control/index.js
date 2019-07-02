@@ -5,6 +5,11 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import wrapWithClickOutside from 'react-click-outside';
 
+/*
+ * This component is temporary until we can pull in `@wordpress/components` and merge https://github.com/Automattic/wp-calypso/pull/34277.
+ * See https://github.com/Automattic/wp-calypso/pull/34380.
+ */
+
 class MurielTextControl extends Component {
 	state = {
 		isFocused: false,

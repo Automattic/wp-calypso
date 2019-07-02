@@ -217,7 +217,7 @@ class Login extends Component {
 				} );
 			}
 		} else if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
-			headerText = translate( 'Log in to your account to set up Jetpack.' );
+			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
