@@ -13,11 +13,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Dialog from 'components/dialog';
 import wpcom from 'lib/wp';
 import config from 'config';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
-import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
@@ -321,21 +321,17 @@ class RemovePurchase extends Component {
 		}
 
 		return (
-			<Dialog
-				buttons={ buttonsArr }
-				className="remove-purchase__dialog"
+			<CancelPurchaseForm
+				chatInitiated={ this.chatInitiated }
+				defaultContent={ this.renderPlanDialogText() }
+				onInputChange={ this.onSurveyChange }
+				purchase={ purchase }
+				selectedSite={ site }
+				surveyStep={ this.state.surveyStep }
 				isVisible={ this.state.isDialogVisible }
+				buttons={ buttonsArr }
 				onClose={ this.closeDialog }
-			>
-				<CancelPurchaseForm
-					chatInitiated={ this.chatInitiated }
-					defaultContent={ this.renderPlanDialogText() }
-					onInputChange={ this.onSurveyChange }
-					purchase={ purchase }
-					selectedSite={ site }
-					surveyStep={ this.state.surveyStep }
-				/>
-			</Dialog>
+			/>
 		);
 	}
 
