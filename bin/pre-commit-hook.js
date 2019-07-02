@@ -58,8 +58,8 @@ const toFormat = files.filter( file => ! dirtyFiles.has( file ) );
 
 // Split the set to format into things to format with stylelint and things to format with prettier.
 // We avoid prettier on sass files because of outstanding bugs in how prettier handles
-// single line comments.
-const { toPrettify, toStylelintfix, toPHPCBF } = _.groupBy( toFormat, file => {
+// single line comments. We also split on PHP files for PHPCS handling.
+const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFormat, file => {
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
 			return 'toStylelintfix';
