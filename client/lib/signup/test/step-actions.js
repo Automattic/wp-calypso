@@ -12,6 +12,7 @@ import {
 } from '../step-actions';
 import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
+import { isDomainStepSkippable } from 'signup/config/steps';
 
 // This is necessary since localforage will throw "no local storage method found" promise rejection without this.
 // See how lib/user-settings/test apply the same trick.
@@ -38,6 +39,10 @@ describe( 'createSiteWithCart()', () => {
 					requestBody,
 				};
 			} );
+	} );
+
+	beforeEach( () => {
+		isDomainStepSkippable.mockReset();
 	} );
 
 	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
@@ -90,6 +95,40 @@ describe( 'createSiteWithCart()', () => {
 			},
 			[],
 			[],
+			fakeStore
+		);
+	} );
+
+	test( 'should find available url if siteUrl is empty (and in test group)', () => {
+		isDomainStepSkippable.mockReturnValue( true );
+
+		const fakeStore = {
+			getState: () => ( {} ),
+		};
+
+		createSiteWithCart(
+			response => {
+				expect( response.requestBody.find_available_url ).toBe( true );
+			},
+			[],
+			{ siteUrl: undefined },
+			fakeStore
+		);
+	} );
+
+	test( "don't automatically find available url if siteUrl is defined (and in test group)", () => {
+		isDomainStepSkippable.mockReturnValue( true );
+
+		const fakeStore = {
+			getState: () => ( {} ),
+		};
+
+		createSiteWithCart(
+			response => {
+				expect( response.requestBody.find_available_url ).toBeFalsy();
+			},
+			[],
+			{ siteUrl: 'mysite' },
 			fakeStore
 		);
 	} );
