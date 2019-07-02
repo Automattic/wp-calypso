@@ -188,7 +188,10 @@ export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 
 export function getFilteredSteps( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	return filter( progress, step => includes( flow.steps, step.stepName ) );
+	return filter(
+		progress,
+		step => includes( flow.steps, step.stepName ) && step.lastKnownFlow === flowName
+	);
 }
 
 export function getFirstInvalidStep( flowName, progress ) {
