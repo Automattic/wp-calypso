@@ -17,6 +17,7 @@ import Gridicon from 'components/gridicon';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessages from './cart-messages';
+import HeaderButton from 'components/header-button';
 import CartButtons from './cart-buttons';
 import Count from 'components/count';
 import Popover from 'components/popover';
@@ -94,6 +95,8 @@ class PopoverCart extends React.Component {
 			<div>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
+					<HeaderButton icon="cart" label="Cart" onClick={ this.onToggle } />
+
 					<button
 						className="cart-toggle-button"
 						ref={ this.toggleButtonRef }
