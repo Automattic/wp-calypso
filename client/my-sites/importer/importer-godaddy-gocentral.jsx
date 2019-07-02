@@ -12,12 +12,13 @@ import React from 'react';
  * Internal dependencies
  */
 import SiteImporter from './site-importer';
+import { getImporterTitleByEngineKey } from 'lib/importers/utils';
 
 class ImporterGoDaddyGoCentral extends React.PureComponent {
 	static displayName = 'ImporterGoDaddyGoCentral';
 
 	importerData = {
-		title: 'GoDaddy',
+		title: getImporterTitleByEngineKey( 'godaddy-gocentral' ),
 		icon: 'godaddy-gocentral',
 		description: this.props.translate(
 			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.'

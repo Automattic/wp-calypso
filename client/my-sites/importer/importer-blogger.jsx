@@ -13,8 +13,9 @@ import { localize } from 'i18n-calypso';
  */
 import FileImporter from './file-importer';
 import InlineSupportLink from 'components/inline-support-link';
+import { getImporterTitleByEngineKey } from 'lib/importers/utils';
 
-const importerName = 'Blogger';
+const importerName = getImporterTitleByEngineKey( 'blogger' );
 
 class ImporterBlogger extends React.PureComponent {
 	static displayName = 'ImporterBlogger';

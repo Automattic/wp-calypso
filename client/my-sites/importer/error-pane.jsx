@@ -15,16 +15,19 @@ import { noop } from 'lodash';
  */
 import Notice from 'components/notice';
 import Button from 'components/button';
+import { getImporterTitleByEngineKey } from 'lib/importers/utils';
 
 class ImporterError extends React.PureComponent {
 	static displayName = 'ImporterError';
 	static defaultProps = {
 		retryImport: noop,
+		errorData: {},
 	};
 
 	static propTypes = {
 		description: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired,
+		errorData: PropTypes.object,
 		retryImport: PropTypes.func,
 	};
 
@@ -32,6 +35,40 @@ class ImporterError extends React.PureComponent {
 		event.preventDefault();
 		event.stopPropagation();
 		Page( '/help' );
+	};
+
+	getEngineMismatchError = () => {
+		const { actualEngine, attemptedEngine } = this.props.errorData;
+		if ( actualEngine ) {
+			return this.props.translate(
+				'The URL you entered appears to be a %(actualEngine)s site, not a %(attemptedEngine)s site.{{br/}}{{a}}Switch to %(actualEngine)s{{/a}} or {{cs}}get help{{/cs}}.',
+				{
+					args: {
+						actualEngine: getImporterTitleByEngineKey( actualEngine ),
+						attemptedEngine: getImporterTitleByEngineKey( attemptedEngine ),
+					},
+					components: {
+						a: <Button className="importer__error-pane is-link" onClick={ this.retryImport } />,
+						br: <br />,
+						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					},
+				}
+			);
+		}
+
+		return this.props.translate(
+			'The URL you entered does not appear to be a %(attemptedEngine)s site.{{br/}}{{a}}Try again{{/a}} or {{cs}}get help{{/cs}}.',
+			{
+				args: {
+					actualEngine: getImporterTitleByEngineKey( actualEngine ),
+				},
+				components: {
+					a: <Button className="importer__error-pane is-link" onClick={ this.retryImport } />,
+					br: <br />,
+					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+				},
+			}
+		);
 	};
 
 	getImportError = () => {
@@ -74,6 +111,10 @@ class ImporterError extends React.PureComponent {
 		let actionMessage;
 
 		switch ( this.props.type ) {
+			case 'engineMismatchError':
+				actionMessage = this.getEngineMismatchError();
+				break;
+
 			case 'uploadError':
 				actionMessage = this.getUploadError();
 				break;

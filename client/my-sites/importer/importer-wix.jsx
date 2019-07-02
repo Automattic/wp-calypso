@@ -12,12 +12,13 @@ import React from 'react';
  * Internal dependencies
  */
 import SiteImporter from './site-importer';
+import { getImporterTitleByEngineKey } from 'lib/importers/utils';
 
 class ImporterWix extends React.PureComponent {
 	static displayName = 'ImporterWix';
 
 	importerData = {
-		title: 'Wix',
+		title: getImporterTitleByEngineKey( 'wix' ),
 		icon: 'wix',
 		description: this.props.translate( 'Import posts, pages, and media from your Wix.com site.' ),
 		// TODO: we could move this to the component itself. Here were trying to stick to a generalisation

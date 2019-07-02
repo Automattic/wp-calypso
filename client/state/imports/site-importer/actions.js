@@ -25,6 +25,7 @@ import {
 	SITE_IMPORTER_IMPORT_RESET,
 	SITE_IMPORTER_IMPORT_START,
 	SITE_IMPORTER_IMPORT_SUCCESS,
+	SITE_IMPORTER_IS_SITE_IMPORTABLE_ENGINE_MISMATCHED,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
@@ -32,12 +33,6 @@ import {
 } from 'state/action-types';
 import { getState as getImporterState } from 'lib/importer/store';
 import { prefetchmShotsPreview } from 'lib/mshots';
-
-const sortAndStringify = items =>
-	items
-		.slice( 0 )
-		.sort()
-		.join( ', ' );
 
 export const startSiteImporterImport = () => ( {
 	type: SITE_IMPORTER_IMPORT_START,
@@ -57,14 +52,21 @@ export const startSiteImporterIsSiteImportable = () => ( {
 	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 } );
 
-export const siteImporterIsSiteImportableSuccessful = response => ( {
+export const siteImporterIsSiteImportableSuccessful = ( response, siteUrl ) => ( {
 	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	response,
+	siteUrl,
 } );
 
 export const siteImporterIsSiteImportableFailed = error => ( {
 	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE,
 	message: error.message,
+} );
+
+export const siteImporterIsSiteImportableEngineMismatched = ( attemptedEngine, actualEngine ) => ( {
+	type: SITE_IMPORTER_IS_SITE_IMPORTABLE_ENGINE_MISMATCHED,
+	attemptedEngine,
+	actualEngine,
 } );
 
 export const setValidationError = message => ( {
@@ -130,16 +132,12 @@ export const importSite = ( {
 	importerStatus,
 	params,
 	site,
-	supportedContent,
 	targetSiteUrl,
-	unsupportedContent,
 } ) => dispatch => {
 	const siteId = site.ID;
 	const trackingParams = {
 		blog_id: siteId,
 		site_url: targetSiteUrl,
-		supported_content: sortAndStringify( supportedContent ),
-		unsupported_content: sortAndStringify( unsupportedContent ),
 		site_engine: engine,
 	};
 
@@ -200,22 +198,24 @@ export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => d
 	);
 	dispatch( startSiteImporterIsSiteImportable() );
 
-	return wpcom.req
-		.get( {
-			path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
-			apiNamespace: 'wpcom/v2',
-		} )
+	return wpcom
+		.undocumented()
+		.isSiteImportable( targetSiteUrl )
 		.then( response => {
-			dispatch(
-				recordTracksEvent( 'calypso_site_importer_validate_site_success', {
-					blog_id: siteId,
-					site_url: response.site_url,
-					supported_content: sortAndStringify( response.supported_content ),
-					unsupported_content: sortAndStringify( response.unsupported_content ),
-					site_engine: response.engine,
-				} )
-			);
-			dispatch( siteImporterIsSiteImportableSuccessful( response ) );
+			if ( response.site_engine === params.engine ) {
+				dispatch(
+					recordTracksEvent( 'calypso_site_importer_validate_site_success', {
+						blog_id: siteId,
+						site_url: targetSiteUrl,
+						site_engine: response.site_engine,
+					} )
+				);
+				dispatch( siteImporterIsSiteImportableSuccessful( response, targetSiteUrl ) );
+			} else {
+				dispatch(
+					siteImporterIsSiteImportableEngineMismatched( params.engine, response.site_engine )
+				);
+			}
 		} )
 		.catch( error => {
 			dispatch(

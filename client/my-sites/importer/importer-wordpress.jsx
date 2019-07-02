@@ -13,12 +13,13 @@ import React from 'react';
  */
 import FileImporter from './file-importer';
 import InlineSupportLink from 'components/inline-support-link';
+import { getImporterTitleByEngineKey } from 'lib/importers/utils';
 
 /**
  * Module variables
  */
 const importerData = {
-	title: 'WordPress',
+	title: getImporterTitleByEngineKey( 'wordpress' ),
 	icon: 'wordpress',
 };
 

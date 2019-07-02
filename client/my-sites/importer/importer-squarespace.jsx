@@ -11,8 +11,9 @@ import { localize } from 'i18n-calypso';
  */
 import FileImporter from './file-importer';
 import InlineSupportLink from 'components/inline-support-link';
+import { getImporterTitleByEngineKey } from 'lib/importers/utils';
 
-const importerName = 'Squarespace';
+const importerName = getImporterTitleByEngineKey( 'squarespace' );
 
 class ImporterSquarespace extends React.PureComponent {
 	static displayName = 'ImporterSquarespace';

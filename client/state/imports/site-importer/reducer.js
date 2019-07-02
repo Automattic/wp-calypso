@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +9,7 @@ import {
 	SITE_IMPORTER_IMPORT_RESET,
 	SITE_IMPORTER_IMPORT_START,
 	SITE_IMPORTER_IMPORT_SUCCESS,
+	SITE_IMPORTER_IS_SITE_IMPORTABLE_ENGINE_MISMATCHED,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
@@ -23,6 +20,8 @@ const DEFAULT_ERROR_STATE = {
 	error: false,
 	errorMessage: '',
 	errorType: null,
+	attemptedEngine: null,
+	actualEngine: null,
 };
 const DEFAULT_IMPORT_STAGE = 'idle';
 const DEFAULT_IMPORT_DATA = {};
@@ -32,6 +31,7 @@ const isLoading = createReducer( false, {
 	[ SITE_IMPORTER_IMPORT_START ]: () => true,
 	[ SITE_IMPORTER_IMPORT_SUCCESS ]: () => false,
 	[ SITE_IMPORTER_IMPORT_RESET ]: () => false,
+	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_ENGINE_MISMATCHED ]: () => false,
 	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE ]: () => false,
 	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_START ]: () => true,
 	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS ]: () => false,
@@ -46,6 +46,16 @@ const error = createReducer( DEFAULT_ERROR_STATE, {
 	} ),
 	[ SITE_IMPORTER_IMPORT_START ]: () => DEFAULT_ERROR_STATE,
 
+	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_ENGINE_MISMATCHED ]: (
+		state,
+		{ attemptedEngine, actualEngine }
+	) => ( {
+		error: true,
+		errorType: 'engineMismatchError',
+		errorMessage: 'Engine mismatch',
+		attemptedEngine,
+		actualEngine,
+	} ),
 	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS ]: () => DEFAULT_ERROR_STATE,
 	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_FAILURE ]: ( state, { message } ) => ( {
 		error: true,
@@ -69,19 +79,12 @@ const importStage = createReducer( DEFAULT_IMPORT_STAGE, {
 const importData = createReducer( DEFAULT_IMPORT_DATA, {
 	// TODO: How should we clean this data up / reset it?
 	// Looking at the original code, there's no other setState call that does so.
-	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS ]: ( state, { response } ) => ( {
+	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS ]: ( state, { response, siteUrl } ) => ( {
 		title: response.site_title,
-		supported: response.supported_content,
-		unsupported: response.unsupported_content,
-		favicon: response.favicon,
-		engine: response.engine,
-		url: response.url,
+		favicon: response.site_favicon,
+		engine: response.site_engine,
+		url: siteUrl,
 	} ),
-} );
-
-const validatedSiteUrl = createReducer( '', {
-	[ SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS ]: ( state, { response } ) =>
-		get( response, 'site_url', '' ),
 } );
 
 export default combineReducers( {
@@ -89,5 +92,4 @@ export default combineReducers( {
 	error,
 	importStage,
 	importData,
-	validatedSiteUrl,
 } );

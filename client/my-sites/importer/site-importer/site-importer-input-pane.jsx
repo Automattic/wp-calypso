@@ -181,16 +181,14 @@ class SiteImporterInputPane extends React.Component {
 			importerStatus: this.props.importerStatus,
 			params: this.getApiParams(),
 			site: this.props.site,
-			supportedContent: this.props.importData.supported,
-			targetSiteUrl: this.props.validatedSiteUrl,
-			unsupportedContent: this.props.importData.unsupported,
+			targetSiteUrl: this.state.siteURLInput,
 		} );
 	};
 
 	resetImport = () => {
 		this.props.resetSiteImporterImport( {
 			site: this.props.site,
-			targetSiteUrl: this.props.validatedSiteUrl || this.state.siteURLInput,
+			targetSiteUrl: this.state.siteURLInput,
 			importStage: this.props.importStage,
 		} );
 	};
@@ -277,7 +275,7 @@ class SiteImporterInputPane extends React.Component {
 					<div className="site-importer__site-importer-confirm-site-pane">
 						<SiteImporterSitePreview
 							site={ site }
-							siteURL={ this.props.validatedSiteUrl }
+							siteURL={ this.state.siteURLInput }
 							importData={ this.props.importData }
 							isLoading={ isLoading }
 							resetImport={ this.resetImport }
@@ -290,6 +288,7 @@ class SiteImporterInputPane extends React.Component {
 						type={ error.errorType || 'importError' }
 						description={ error.errorMessage }
 						retryImport={ this.validateSite }
+						errorData={ error }
 					/>
 				) }
 				{ importStage === 'idle' && this.renderUrlHint() }
@@ -318,7 +317,7 @@ class SiteImporterInputPane extends React.Component {
 export default flowRight(
 	connect(
 		state => {
-			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
+			const { isLoading, error, importData, importStage } = get(
 				state,
 				'imports.siteImporter',
 				{}
@@ -329,7 +328,6 @@ export default flowRight(
 				error,
 				importData,
 				importStage,
-				validatedSiteUrl,
 			};
 		},
 		{
