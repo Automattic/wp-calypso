@@ -30,7 +30,7 @@ class CheckoutContainer extends React.Component {
 	};
 
 	render() {
-		const { product, purchaseId, feature, code, plan, selectedSite, reduxStore } = this.props;
+		const { product, purchaseId, feature, couponCode, plan, selectedSite, reduxStore } = this.props;
 
 		return (
 			<>
@@ -41,7 +41,7 @@ class CheckoutContainer extends React.Component {
 							product={ product }
 							purchaseId={ purchaseId }
 							selectedFeature={ feature }
-							couponCode={ code }
+							couponCode={ couponCode }
 							plan={ plan }
 							setHeaderText={ this.setHeaderText }
 							reduxStore={ reduxStore }
