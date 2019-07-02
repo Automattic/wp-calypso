@@ -34,6 +34,7 @@ function get_menu_params_by_theme_location( $location ) {
 			$params = [
 				'theme_location' => 'menu-1',
 				'menu_class'     => 'main-menu',
+				'container'       => 'ul',
 				'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
 				'depth'          => 1,
 			];
@@ -85,11 +86,14 @@ function render_navigation_menu_block( $attributes ) {
 	ob_start();
 	// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
 	?>
-	<nav class="<?php echo esc_attr( $wrapper_attr['class'] ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
-		<?php
-		wp_nav_menu( get_menu_params_by_theme_location( $location ) );
-		?>
-	</nav><!-- #site-navigation -->
+	<div class="wp-block-a8c-navigation-menu">
+	    <nav class="<?php echo esc_attr( $wrapper_attr['class'] ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
+		    <?php
+		        wp_nav_menu( get_menu_params_by_theme_location( $location ) );
+		    ?>
+	    </nav>
+    </div>
+	<!-- #site-navigation -->
 	<?php
 	return ob_get_clean();
 }
