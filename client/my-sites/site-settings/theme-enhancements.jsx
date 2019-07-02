@@ -183,7 +183,7 @@ class ThemeEnhancements extends Component {
 					) }
 					link="https://jetpack.com/support/mobile-theme/"
 				/>
-				<FormLegend>{ translate( ' Mobile Theme' ) }</FormLegend>
+				<FormLegend>{ translate( 'Mobile Theme' ) }</FormLegend>
 				<p>
 					{ translate(
 						'Give your site a fast-loading, streamlined look for mobile devices. Visitors will ' +
