@@ -213,6 +213,8 @@ export class RewindCredentialsForm extends Component {
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.user }
+							// Hint to LastPass not to attempt autofill
+							data-lpignore="true"
 						/>
 						{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
 					</FormFieldset>
@@ -229,6 +231,8 @@ export class RewindCredentialsForm extends Component {
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.pass }
+							// Hint to LastPass not to attempt autofill
+							data-lpignore="true"
 						/>
 						{ formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> }
 					</FormFieldset>
