@@ -61,7 +61,7 @@ export default class SignupSitePreviewIframe extends Component {
 			);
 		}
 		// TODO: we'll do this right later if it works
-		window.addEventListener( 'message', ( event ) => {
+		window.addEventListener( 'message', event => {
 			let data;
 			if ( 'string' === typeof event.data ) {
 				try {
@@ -75,8 +75,9 @@ export default class SignupSitePreviewIframe extends Component {
 				data = event.data;
 			}
 			console.log( 'From parent:', data );
-
-			this.props.setWrapperHeight( data.height + 25 );
+			if ( typeof data.height === 'number' ) {
+				this.props.setWrapperHeight( data.height + 25 );
+			}
 		} );
 	}
 
@@ -96,7 +97,7 @@ export default class SignupSitePreviewIframe extends Component {
 			return false;
 		}
 
-		if (
+		/*if (
 			this.props.content.title !== nextProps.content.title ||
 			this.props.content.tagline !== nextProps.content.tagline
 		) {
@@ -112,7 +113,7 @@ export default class SignupSitePreviewIframe extends Component {
 			! shallowEqual( this.props.content.params, nextProps.content.params )
 		) {
 			this.setContentParams( nextProps.content.params );
-		}
+		}*/
 
 		return false;
 	}
@@ -186,7 +187,7 @@ export default class SignupSitePreviewIframe extends Component {
 	};
 
 	setLoaded = () => {
-/*		this.setOnPreviewClick();
+		/*		this.setOnPreviewClick();
 		this.setIframeIsLoading();
 		this.props.resize && this.setContainerHeight();
 
@@ -201,7 +202,7 @@ export default class SignupSitePreviewIframe extends Component {
 		if ( ! this.iframe.current ) {
 			return;
 		}
-/*
+		/*
 		const iframeSrc = getIframeSource(
 			content,
 			cssUrl,
@@ -226,9 +227,10 @@ export default class SignupSitePreviewIframe extends Component {
 		this.setContentTitle( title, tagline );
 		this.setContentParams( params );*/
 
-
 		this.props.setIsLoaded( false );
-		this.iframe.current.src = `https://a8cvm${ siteTypeId }${ verticalId && siteTypeId === 1 ? verticalId : '' }.wordpress.com?onboarding_preview=true#${ window.location.origin }`;
+		this.iframe.current.src = `https://a8cvm${ siteTypeId }${
+			verticalId && siteTypeId === 1 ? verticalId : ''
+		}.wordpress.com?onboarding_preview=true#${ window.location.origin }`;
 	};
 
 	render() {
