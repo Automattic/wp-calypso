@@ -984,7 +984,11 @@ export const normalizers = {
 				label: item.filename,
 				page: null,
 				value: item.downloads,
-				link: site.URL + item.filename, // need the site files location, not necessarily the main URL
+				link:
+					site.wpcom_url &&
+					'https://' +
+						site.wpcom_url.replace( '.wordpress.com', '.files.wordpress.com' ) +
+						item.filename,
 				labelIcon: 'external',
 			};
 		} );
