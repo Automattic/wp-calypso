@@ -77,22 +77,6 @@
 	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
 }
 
-/*
-This is such a generic solution. We can do better.
-.sidebar svg {
-	// External indicator for sections that aren't available in Calypso
-	&.gridicons-external {
-		height: 18px;
-		left: auto;
-		margin: 0;
-		position: absolute;
-		right: 15px;
-		top: auto;
-		z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
-	}
-}
-*/
-
 // Sidebar menu icons for main sections
 .sidebar__menu-icon {
 	fill: var( --sidebar-gridicon-fill );
