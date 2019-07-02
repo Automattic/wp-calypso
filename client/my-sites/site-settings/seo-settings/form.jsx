@@ -307,9 +307,11 @@ export class SeoForm extends React.Component {
 		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Boost your search engine ranking with the power SEO tools in Jetpack Premium' )
+			? translate(
+					'Boost your search engine ranking with the powerful SEO tools in Jetpack Premium'
+			  )
 			: translate(
-					'Boost your search engine ranking with the power SEO tools in the Business plan'
+					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 			  );
 		return (
 			<div>
