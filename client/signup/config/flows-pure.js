@@ -270,13 +270,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-11-21',
 		};
-
-		flows[ 'store-woo' ] = {
-			steps: [ 'domains-store', 'plans-store-nux', 'user' ],
-			destination: getSiteDestination,
-			description: 'Short signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-03-15',
-		};
 	}
 
 	if ( config.isEnabled( 'signup/wpcc' ) ) {
