@@ -425,6 +425,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Give your site a name' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -449,6 +450,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload a site icon' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -473,6 +475,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Create a tagline' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -497,6 +500,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Upload your profile picture' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -521,6 +525,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Personalize your Contact page' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -543,6 +548,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Publish your first blog post' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -567,6 +573,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Register a custom domain' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -591,6 +598,7 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Get the WordPress app' ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -637,6 +645,7 @@ class WpcomChecklistComponent extends PureComponent {
 					'Subscribe to G Suite to get a dedicated inbox with a personalized email address using your domain and collaborate in real-time on documents, spreadsheets, and slides.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
+				showSkip={ true }
 				{ ...clickProps }
 			/>
 		);
@@ -671,6 +680,7 @@ class WpcomChecklistComponent extends PureComponent {
 					page( emailManagement( siteSlug ) );
 				} }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -778,6 +788,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -817,6 +828,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -844,6 +856,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -880,6 +893,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -914,6 +928,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -957,6 +972,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
@@ -991,6 +1007,7 @@ class WpcomChecklistComponent extends PureComponent {
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
 				nextInlineHelp={ this.nextInlineHelp }
+				showSkip={ true }
 			/>
 		);
 	};
