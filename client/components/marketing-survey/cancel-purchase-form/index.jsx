@@ -392,7 +392,7 @@ class CancelPurchaseForm extends React.Component {
 				isVisible={ this.props.isVisible }
 				onClose={ this.props.onClose }
 				buttons={ this.props.buttons }
-				className="cancel-purchase__button-warning-dialog remove-purchase__dialog"
+				className="cancel-purchase-form__dialog"
 			>
 				{ this.surveyContent() }
 			</Dialog>
