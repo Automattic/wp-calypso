@@ -92,9 +92,7 @@ class SiteSettingsFormSecurity extends Component {
 					</div>
 				) }
 
-				<SettingsSectionHeader
-					title={ translate( 'WordPress.com log in / single sign-on (SSO)' ) }
-				/>
+				<SettingsSectionHeader title={ translate( 'WordPress.com log in' ) } />
 				<Sso
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
