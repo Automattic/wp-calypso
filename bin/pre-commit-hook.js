@@ -89,8 +89,12 @@ if ( toStylelintfix.length ) {
 // Format the PHP files with PHPCBF and then re-stage them. Swallow the output.
 toPHPCBF.forEach( file => console.log( `PHPCBF formatting staged file: ${ file }` ) );
 if ( toPHPCBF.length ) {
-	execSync( `phpcbf ${ toPHPCBF.join( ' ' ) }`, { cwd: '../apps/' } );
-	execSync( `git add ${ toStylelintfix.join( ' ' ) }` );
+	try {
+		execSync( `phpcbf ${ toPHPCBF.join( ' ' ) }` );
+		execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
+	} catch ( error ) {
+		console.log( error );
+	}
 }
 
 process.exit();
