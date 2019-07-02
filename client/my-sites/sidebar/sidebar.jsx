@@ -91,6 +91,27 @@ export class MySitesSidebar extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
+	trackClickAndNavigate = menuItemName => {
+		this.trackMenuItemClick( menuItemName );
+		this.onNavigate();
+	};
+
+	home() {
+		const { siteSuffix, path, translate } = this.props;
+
+		return (
+			<SidebarItem
+				tipTarget="menus"
+				label={ translate( 'Home' ) }
+				selected={ itemLinkMatches( [ '/home' ], path ) }
+				link={ '/home' + siteSuffix }
+				onNavigate={ this.trackClickAndNavigate( 'home' ) }
+				icon="house"
+				materialIcon="home"
+			/>
+		);
+	}
+
 	site() {
 		return (
 			<SiteMenu
@@ -155,11 +176,6 @@ export class MySitesSidebar extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
-	trackActivityClick = () => {
-		this.trackMenuItemClick( 'activity' );
-		this.onNavigate();
-	};
-
 	activity() {
 		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
 
@@ -178,17 +194,12 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Activity' ) }
 				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
-				onNavigate={ this.trackActivityClick }
+				onNavigate={ this.trackClickAndNavigate( 'activity' ) }
 				icon="history"
 				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
-
-	trackEarnClick = () => {
-		this.trackMenuItemClick( 'earn' );
-		this.onNavigate();
-	};
 
 	earn() {
 		const { path, translate } = this.props;
@@ -198,18 +209,13 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Earn' ) }
 				selected={ itemLinkMatches( '/earn', path ) }
 				link={ '/earn' + this.props.siteSuffix }
-				onNavigate={ this.trackEarnClick }
+				onNavigate={ this.trackClickAndNavigate( 'earn' ) }
 				icon="money"
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
-
-	trackCustomizeClick = () => {
-		this.trackMenuItemClick( 'customize' );
-		this.onNavigate();
-	};
 
 	themes() {
 		const { path, site, translate, canUserEditThemeOptions } = this.props;
@@ -224,7 +230,7 @@ export class MySitesSidebar extends Component {
 				tipTarget="themes"
 				selected={ itemLinkMatches( '/customize', path ) }
 				link={ this.props.customizeUrl }
-				onNavigate={ this.trackCustomizeClick }
+				onNavigate={ this.trackClickAndNavigate( 'customize' ) }
 				icon="customize"
 				preloadSectionName="customize"
 				forceInternalLink
@@ -256,7 +262,7 @@ export class MySitesSidebar extends Component {
 					label={ translate( 'Customize' ) }
 					selected={ itemLinkMatches( '/customize', path ) }
 					link={ this.props.customizeUrl }
-					onNavigate={ this.trackCustomizeClick }
+					onNavigate={ this.trackClickAndNavigate( 'customize' ) }
 					icon="customize"
 					preloadSectionName="customize"
 					forceInternalLink
@@ -266,7 +272,7 @@ export class MySitesSidebar extends Component {
 					label={ translate( 'Themes' ) }
 					selected={ itemLinkMatches( themesLink, path ) }
 					link={ themesLink }
-					onNavigate={ this.trackCustomizeClick }
+					onNavigate={ this.trackClickAndNavigate( 'customize' ) }
 					icon="customize"
 					preloadSectionName="themes"
 					forceInternalLink
@@ -275,11 +281,6 @@ export class MySitesSidebar extends Component {
 			</ul>
 		);
 	}
-
-	trackDomainsClick = () => {
-		this.trackMenuItemClick( 'domains' );
-		this.onNavigate();
-	};
 
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
@@ -302,7 +303,7 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Domains' ) }
 				selected={ itemLinkMatches( [ '/domains' ], path ) }
 				link={ domainsLink }
-				onNavigate={ this.trackDomainsClick }
+				onNavigate={ this.trackClickAndNavigate( 'domains' ) }
 				icon="domains"
 				preloadSectionName="domains"
 				tipTarget="domains"
@@ -412,16 +413,10 @@ export class MySitesSidebar extends Component {
 	};
 
 	trackPlanClick = () => {
-		this.trackMenuItemClick( 'plan' );
 		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
 			cta_name: 'sidebar_upgrade_default',
 		} );
-		this.onNavigate();
-	};
-
-	trackMarketingClick = () => {
-		this.trackMenuItemClick( 'marketing' );
-		this.onNavigate();
+		this.trackClickAndNavigate( 'plan' );
 	};
 
 	marketing() {
@@ -441,7 +436,7 @@ export class MySitesSidebar extends Component {
 				label={ this.props.translate( 'Marketing' ) }
 				selected={ itemLinkMatches( '/marketing', path ) }
 				link={ marketingLink }
-				onNavigate={ this.trackMarketingClick }
+				onNavigate={ this.trackClickAndNavigate( 'marketing' ) }
 				icon="speaker"
 				preloadSectionName="marketing"
 				tipTarget="marketing"
@@ -449,11 +444,6 @@ export class MySitesSidebar extends Component {
 			/>
 		);
 	}
-
-	trackPeopleClick = () => {
-		this.trackMenuItemClick( 'people' );
-		this.onNavigate();
-	};
 
 	users() {
 		const { translate, path, site, canUserListUsers } = this.props;
@@ -467,7 +457,7 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'People' ) }
 				selected={ itemLinkMatches( '/people', path ) }
 				link={ '/people/team' + this.props.siteSuffix }
-				onNavigate={ this.trackPeopleClick }
+				onNavigate={ this.trackClickAndNavigate( 'people' ) }
 				icon="user"
 				preloadSectionName="people"
 				tipTarget="people"
@@ -475,11 +465,6 @@ export class MySitesSidebar extends Component {
 			/>
 		);
 	}
-
-	trackSettingsClick = () => {
-		this.trackMenuItemClick( 'settings' );
-		this.onNavigate();
-	};
 
 	siteSettings() {
 		const { path, site, canUserManageOptions } = this.props;
@@ -498,7 +483,7 @@ export class MySitesSidebar extends Component {
 				label={ this.props.translate( 'Settings' ) }
 				selected={ itemLinkMatches( '/settings', path ) }
 				link={ siteSettingsLink }
-				onNavigate={ this.trackSettingsClick }
+				onNavigate={ this.trackClickAndNavigate( 'settings' ) }
 				icon="cog"
 				preloadSectionName="settings"
 				tipTarget="settings"
@@ -527,16 +512,16 @@ export class MySitesSidebar extends Component {
 				  } )
 				: site.options.admin_url;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className="wp-admin">
+			<li className="sidebar__wp-admin-item wp-admin">
 				<ExternalLink href={ adminUrl } icon onClick={ this.trackWpadminClick }>
 					<Gridicon icon="my-sites" size={ 24 } />
-					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+					<span className="sidebar__wp-admin-menu-link-text menu-link-text">
+						{ this.props.translate( 'WP Admin' ) }
+					</span>
 				</ExternalLink>
 			</li>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
@@ -569,7 +554,8 @@ export class MySitesSidebar extends Component {
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked WP Admin' );
 	};
 
-	focusContent = () => {
+	trackNewSiteClickAndFocus = () => {
+		this.trackMenuItemClick( 'add-new-site' );
 		this.props.setLayoutFocus( 'content' );
 	};
 
@@ -587,19 +573,14 @@ export class MySitesSidebar extends Component {
 			<Button
 				borderless
 				className="my-sites-sidebar__add-new-site"
-				href={ this.getAddNewSiteUrl() }
-				onClick={ this.focusContent }
+				href={ MySitesSidebar.getAddNewSiteUrl() }
+				onClick={ this.trackNewSiteClickAndFocus }
 			>
 				<Gridicon icon="add-outline" /> { this.props.translate( 'Add New Site' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
-
-	trackDomainSettingsClick = () => {
-		this.trackMenuItemClick( 'domain_settings' );
-		this.onNavigate();
-	};
 
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
@@ -611,7 +592,7 @@ export class MySitesSidebar extends Component {
 							icon="cog"
 							label={ this.props.translate( 'Settings' ) }
 							link={ '/domains/manage' + this.props.siteSuffix }
-							onNavigate={ this.trackDomainSettingsClick }
+							onNavigate={ this.trackClickAndNavigate( 'domain_settings' ) }
 							tipTarget="settings"
 						/>
 					</ul>
@@ -626,6 +607,7 @@ export class MySitesSidebar extends Component {
 			<div className="sidebar__menu-wrapper">
 				<SidebarMenu>
 					<ul>
+						{ this.home() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
