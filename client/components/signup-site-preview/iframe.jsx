@@ -166,7 +166,7 @@ export default class SignupSitePreviewIframe extends Component {
 			this.iframe.current.contentWindow.document.close();
 		} else {
 			revokeObjectURL( this.iframe.current.src );
-			this.iframe.current.src = iframeSrc;
+			this.iframe.current.contentWindow.location.replace( iframeSrc );
 		}
 	};
 
