@@ -1,26 +1,12 @@
 /**
  * Internal dependencies
  */
-import { cachingActionCreatorFactory } from './caching-action-creator-factory';
-import { createReducer } from './create-reducer';
-import { extendAction } from './extend-action';
-import { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
-import { keyedReducer } from './keyed-reducer';
-import { withEnhancers } from './with-enhancers';
-import { withoutPersistence } from './without-persistence';
-import { withStorageKey } from './with-storage-key';
-import { addReducer, combineReducers } from './reducer-utils';
-
-export {
-	addReducer,
-	cachingActionCreatorFactory,
-	combineReducers,
-	createReducer,
-	extendAction,
-	isValidStateWithSchema,
-	keyedReducer,
-	withEnhancers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-};
+export { cachingActionCreatorFactory } from './caching-action-creator-factory';
+export { createReducer } from './create-reducer';
+export { extendAction } from './extend-action';
+export { isValidStateWithSchema, withSchemaValidation } from './schema-utils';
+export { keyedReducer } from './keyed-reducer';
+export { withEnhancers } from './with-enhancers';
+export { withoutPersistence } from './without-persistence';
+export { withStorageKey } from './with-storage-key';
+export { addReducer, combineReducers } from './reducer-utils';
