@@ -41,7 +41,7 @@
 				"enzyme": "3.9.0",
 				"enzyme-adapter-react-16": "1.12.1",
 				"file-loader": "3.0.1",
-				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
+				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
 				"node-sass": "4.11.0",
 				"postcss-custom-properties": "8.0.9",
 				"postcss-loader": "3.0.0",
@@ -58,8 +58,7 @@
 			"dependencies": {
 				"browserslist": {
 					"version": "4.5.4",
-					"resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.5.4.tgz",
-					"integrity": "sha512-rAjx494LMjqKnMPhFkuLmLp8JWEX0o8ADTGeAbOqaF+XCvYLreZrG5uVjnPBlAQ8REZK4pzXGvp0bWgrFtKaag==",
+					"bundled": true,
 					"dev": true,
 					"requires": {
 						"caniuse-lite": "^1.0.30000955",
@@ -6112,8 +6111,7 @@
 						},
 						"ansi-regex": {
 							"version": "2.1.1",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"aproba": {
 							"version": "1.2.0",
@@ -6131,13 +6129,11 @@
 						},
 						"balanced-match": {
 							"version": "1.0.0",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"brace-expansion": {
 							"version": "1.1.11",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"balanced-match": "^1.0.0",
 								"concat-map": "0.0.1"
@@ -6150,18 +6146,15 @@
 						},
 						"code-point-at": {
 							"version": "1.1.0",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"concat-map": {
 							"version": "0.0.1",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"console-control-strings": {
 							"version": "1.1.0",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"core-util-is": {
 							"version": "1.0.2",
@@ -6264,8 +6257,7 @@
 						},
 						"inherits": {
 							"version": "2.0.3",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"ini": {
 							"version": "1.3.5",
@@ -6275,7 +6267,6 @@
 						"is-fullwidth-code-point": {
 							"version": "1.0.0",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"number-is-nan": "^1.0.0"
 							}
@@ -6288,20 +6279,17 @@
 						"minimatch": {
 							"version": "3.0.4",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"brace-expansion": "^1.1.7"
 							}
 						},
 						"minimist": {
 							"version": "0.0.8",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"minipass": {
 							"version": "2.3.5",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"safe-buffer": "^5.1.2",
 								"yallist": "^3.0.0"
@@ -6318,7 +6306,6 @@
 						"mkdirp": {
 							"version": "0.5.1",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"minimist": "0.0.8"
 							}
@@ -6391,8 +6378,7 @@
 						},
 						"number-is-nan": {
 							"version": "1.0.1",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"object-assign": {
 							"version": "4.1.1",
@@ -6402,7 +6388,6 @@
 						"once": {
 							"version": "1.4.0",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"wrappy": "1"
 							}
@@ -6478,8 +6463,7 @@
 						},
 						"safe-buffer": {
 							"version": "5.1.2",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"safer-buffer": {
 							"version": "2.1.2",
@@ -6509,7 +6493,6 @@
 						"string-width": {
 							"version": "1.0.2",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"code-point-at": "^1.0.0",
 								"is-fullwidth-code-point": "^1.0.0",
@@ -6527,7 +6510,6 @@
 						"strip-ansi": {
 							"version": "3.0.1",
 							"bundled": true,
-							"optional": true,
 							"requires": {
 								"ansi-regex": "^2.0.0"
 							}
@@ -6566,13 +6548,11 @@
 						},
 						"wrappy": {
 							"version": "1.0.2",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						},
 						"yallist": {
 							"version": "3.0.3",
-							"bundled": true,
-							"optional": true
+							"bundled": true
 						}
 					}
 				}
@@ -6811,8 +6791,9 @@
 			}
 		},
 		"color-studio": {
-			"version": "github:automattic/color-studio#2569acb85214ac2413ab5e8ac7b87b04227ba4c4",
-			"from": "github:automattic/color-studio#1.0.4",
+			"version": "1.0.5",
+			"resolved": "https://registry.npmjs.org/color-studio/-/color-studio-1.0.5.tgz",
+			"integrity": "sha512-XW2pF7K4v0wd4G9oab7wxiaf07wW1chv5ZSEsKZ0aY8clS05/hnb1x5gNwytH949S0Tu9v9J6ttKaNebCt3gpg==",
 			"dev": true
 		},
 		"colors": {
@@ -12673,8 +12654,7 @@
 						"ansi-regex": {
 							"version": "2.1.1",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"aproba": {
 							"version": "1.2.0",
@@ -12695,14 +12675,12 @@
 						"balanced-match": {
 							"version": "1.0.0",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"brace-expansion": {
 							"version": "1.1.11",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"balanced-match": "^1.0.0",
 								"concat-map": "0.0.1"
@@ -12717,20 +12695,17 @@
 						"code-point-at": {
 							"version": "1.1.0",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"concat-map": {
 							"version": "0.0.1",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"console-control-strings": {
 							"version": "1.1.0",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"core-util-is": {
 							"version": "1.0.2",
@@ -12847,8 +12822,7 @@
 						"inherits": {
 							"version": "2.0.3",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"ini": {
 							"version": "1.3.5",
@@ -12860,7 +12834,6 @@
 							"version": "1.0.0",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"number-is-nan": "^1.0.0"
 							}
@@ -12875,7 +12848,6 @@
 							"version": "3.0.4",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"brace-expansion": "^1.1.7"
 							}
@@ -12883,14 +12855,12 @@
 						"minimist": {
 							"version": "0.0.8",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"minipass": {
 							"version": "2.3.5",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"safe-buffer": "^5.1.2",
 								"yallist": "^3.0.0"
@@ -12909,7 +12879,6 @@
 							"version": "0.5.1",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"minimist": "0.0.8"
 							}
@@ -12990,8 +12959,7 @@
 						"number-is-nan": {
 							"version": "1.0.1",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"object-assign": {
 							"version": "4.1.1",
@@ -13003,7 +12971,6 @@
 							"version": "1.4.0",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"wrappy": "1"
 							}
@@ -13089,8 +13056,7 @@
 						"safe-buffer": {
 							"version": "5.1.2",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"safer-buffer": {
 							"version": "2.1.2",
@@ -13126,7 +13092,6 @@
 							"version": "1.0.2",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"code-point-at": "^1.0.0",
 								"is-fullwidth-code-point": "^1.0.0",
@@ -13146,7 +13111,6 @@
 							"version": "3.0.1",
 							"bundled": true,
 							"dev": true,
-							"optional": true,
 							"requires": {
 								"ansi-regex": "^2.0.0"
 							}
@@ -13190,14 +13154,12 @@
 						"wrappy": {
 							"version": "1.0.2",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						},
 						"yallist": {
 							"version": "3.0.3",
 							"bundled": true,
-							"dev": true,
-							"optional": true
+							"dev": true
 						}
 					}
 				}
