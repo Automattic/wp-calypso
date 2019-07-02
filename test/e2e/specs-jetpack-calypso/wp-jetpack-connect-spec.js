@@ -191,6 +191,10 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
+
+		step( 'Can then see the Jetpack plan page in Calypso', async function() {
+			return await PlansPage.Expect( driver );
+		} );
 	} );
 
 	describe( 'Pre-connect from Jetpack.com using free plan: @parallel @jetpack', function() {
