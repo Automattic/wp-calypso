@@ -88,7 +88,6 @@ export function generateFlows( {
 		blog: {
 			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
 			destination: getChecklistDestination,
-			disallowResume: true,
 			description: 'Signup flow starting with blog site type.',
 			lastModified: '2019-07-02',
 		},
