@@ -37,8 +37,6 @@ import AppointmentInfo from './shared/appointment-info';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import { localize } from 'i18n-calypso';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ConciergeMain extends Component {
 	constructor( props ) {
@@ -140,6 +138,4 @@ export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteSlug ),
 	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
-	localize,
-	withLocalizedMoment,
 } ) )( ConciergeMain );
