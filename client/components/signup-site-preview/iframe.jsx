@@ -60,6 +60,24 @@ export default class SignupSitePreviewIframe extends Component {
 				debounce( this.setContainerHeight, 50 )
 			);
 		}
+		// TODO: we'll do this right later if it works
+		window.addEventListener( 'message', ( event ) => {
+			let data;
+			if ( 'string' === typeof event.data ) {
+				try {
+					data = JSON.parse( event.data );
+				} catch ( err ) {
+					// The string needs to be a valid serialized JSON: we don't accept arbitrary strings
+					// We'll ignore this message.
+					return;
+				}
+			} else {
+				data = event.data;
+			}
+			console.log( 'From parent:', data );
+
+			this.props.setWrapperHeight( data.height + 25 );
+		} );
 	}
 
 	componentWillUnmount() {
@@ -210,7 +228,7 @@ export default class SignupSitePreviewIframe extends Component {
 
 
 		this.props.setIsLoaded( false );
-		this.iframe.current.src = `https://a8cvm${ siteTypeId }${ verticalId && siteTypeId === 1 ? verticalId : '' }.wordpress.com?hide_masterbar=true`;
+		this.iframe.current.src = `https://a8cvm${ siteTypeId }${ verticalId && siteTypeId === 1 ? verticalId : '' }.wordpress.com?onboarding_preview=true#${ window.location.origin }`;
 	};
 
 	render() {
