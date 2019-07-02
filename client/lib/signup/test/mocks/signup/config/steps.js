@@ -98,6 +98,4 @@ export default {
 	},
 };
 
-export function isDomainStepSkippable() {
-	return false;
-}
+export const isDomainStepSkippable = jest.fn( () => false );
