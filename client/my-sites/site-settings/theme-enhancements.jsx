@@ -116,27 +116,32 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
 				<SupportInfo
 					text={ translate(
 						'Loads the next posts automatically when the reader approaches the bottom of the page.'
 					) }
 					link="https://jetpack.com/support/infinite-scroll/"
 				/>
+				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+				<p>
+					{ translate(
+						'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
+					) }
+				</p>
 				{ this.renderRadio(
 					'infinite_scroll',
 					'default',
-					translate( 'Load more posts using the default theme behavior' )
+					translate( 'Don’t load more content automatically' )
 				) }
 				{ this.renderRadio(
 					'infinite_scroll',
 					'button',
-					translate( 'Load more posts in page with a button' )
+					translate( 'Add a button to let users load content manually' )
 				) }
 				{ this.renderRadio(
 					'infinite_scroll',
 					'scroll',
-					translate( 'Load more posts as the reader scrolls down' )
+					translate( 'Enable infinite scrolling' )
 				) }
 			</FormFieldset>
 		);
@@ -178,7 +183,13 @@ class ThemeEnhancements extends Component {
 					) }
 					link="https://jetpack.com/support/mobile-theme/"
 				/>
-
+				<FormLegend>{ translate( ' Mobile Theme' ) }</FormLegend>
+				<p>
+					{ translate(
+						'Give your site a fast-loading, streamlined look for mobile devices. Visitors will ' +
+							'still see your regular theme on other screen sizes.'
+					) }
+				</p>
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
@@ -195,7 +206,7 @@ class ThemeEnhancements extends Component {
 					{ this.renderToggle(
 						'wp_mobile_featured_images',
 						! minilevenModuleActive,
-						translate( 'Hide all featured images' )
+						translate( 'Show featured images' )
 					) }
 					{ this.renderToggle(
 						'wp_mobile_app_promos',
@@ -227,9 +238,9 @@ class ThemeEnhancements extends Component {
 						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
-							{ this.renderCustomCSSSettings() }
-							<hr />
 							{ this.renderMinilevenSettings() }
+							<hr />
+							{ this.renderCustomCSSSettings() }
 						</Fragment>
 					) : (
 						this.renderSimpleSiteInfiniteScrollSettings()
