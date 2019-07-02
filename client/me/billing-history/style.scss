@@ -123,6 +123,12 @@
 		display: block;
 		font-size: 12px;
 		font-style: italic;
+
+		@include breakpoint( '660px-800px' ) {
+			max-width: 220px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 }
 
