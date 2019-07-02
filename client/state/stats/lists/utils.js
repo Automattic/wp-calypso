@@ -977,22 +977,15 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const statsData = get( data, [ 'days', startOf, 'downloads' ], [] );
+		const statsData = get( data, [ 'days', startOf, 'files' ], [] );
 
 		return statsData.map( item => {
-			const detailPage = site
-				? '/stats/' + query.period + '/filedownloads/' + site.slug + '?post=' + item.post_id
-				: null;
 			return {
-				label: item.title,
-				page: detailPage,
+				label: item.filename,
+				page: null,
 				value: item.downloads,
-				actions: [
-					{
-						type: 'link',
-						data: item.url,
-					},
-				],
+				link: site.URL + item.filename, // need the site files location, not necessarily the main URL
+				labelIcon: 'external',
 			};
 		} );
 	},
