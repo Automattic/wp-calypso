@@ -192,6 +192,16 @@ This is such a generic solution. We can do better.
 	}
 }
 
+// Sometimes we show info at the bottom of the sidebar. For
+// example on My Site(s), for users with a single site, we
+// show a button to add a new site.
+.sidebar__wp-admin,
+.sidebar__footer {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid var( --sidebar-border-color );
+}
+
 // This seems to add a border to the bottom of every
 // .sidebar__menu (whatever that is). I guess to make
 // the menu look better on phones?
