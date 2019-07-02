@@ -72,14 +72,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	builderReferralHelpPopover: {
-		datestamp: '20190227',
-		variations: {
-			builderReferralLink: 10,
-			original: 90,
-		},
-		defaultVariation: 'original',
-	},
 	gSuiteContinueButtonCopy: {
 		datestamp: '20190307',
 		variations: {
