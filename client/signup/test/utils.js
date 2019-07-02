@@ -13,6 +13,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import {
+	canResumeFlow,
 	getValueFromProgressStore,
 	getValidPath,
 	getStepName,
@@ -214,6 +215,36 @@ describe( 'utils', () => {
 		test( 'should return null if the field is not present', () => {
 			delete signupProgress[ 1 ].site;
 			assert.equal( getValueFromProgressStore( config ), null );
+		} );
+	} );
+
+	describe( 'canResumeFlow', () => {
+		test( 'should return true when given flow matches progress state', () => {
+			const signupProgress = [ { stepName: 'site-type', lastKnownFlow: 'onboarding' } ];
+			const canResume = canResumeFlow( 'onboarding', signupProgress );
+
+			expect( canResume ).toBe( true );
+		} );
+
+		test( 'should return false when given flow does not match progress state', () => {
+			const signupProgress = [ { stepName: 'site-type', lastKnownFlow: 'onboarding' } ];
+			const canResume = canResumeFlow( 'other', signupProgress );
+
+			expect( canResume ).toBe( false );
+		} );
+
+		test( 'should return false when flow sets disallowResume', () => {
+			const signupProgress = [ { stepName: 'site-type', lastKnownFlow: 'disallow-resume' } ];
+			const canResume = canResumeFlow( 'disallow-resume', signupProgress );
+
+			expect( canResume ).toBe( false );
+		} );
+
+		test( 'should return false when progress state is empty', () => {
+			const signupProgress = [];
+			const canResume = canResumeFlow( 'onboarding', signupProgress );
+
+			expect( canResume ).toBe( false );
 		} );
 	} );
 } );

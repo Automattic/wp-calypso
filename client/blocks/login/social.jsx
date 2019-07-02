@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import Card from 'components/card';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
@@ -25,6 +26,11 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
 import { login } from 'lib/paths';
+
+/**
+ * Style dependencies
+ */
+import './social.scss';
 
 class SocialLoginForm extends Component {
 	static propTypes = {
@@ -121,7 +127,7 @@ class SocialLoginForm extends Component {
 			: null;
 
 		return (
-			<div className="login__social">
+			<Card className="login__social">
 				<div className="login__social-buttons">
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
@@ -143,7 +149,7 @@ class SocialLoginForm extends Component {
 						redirectTo={ redirectTo || '/start' }
 					/>
 				) }
-			</div>
+			</Card>
 		);
 	}
 }

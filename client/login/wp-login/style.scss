@@ -42,7 +42,8 @@ $image-height: 47px;
 
 .wp-login__links,
 .wp-login__footer {
-	a, button {
+	a,
+	button {
 		color: var( --color-neutral-500 );
 		text-decoration: none;
 
@@ -53,24 +54,42 @@ $image-height: 47px;
 }
 
 .wp-login__links {
-	a, button {
+	a,
+	button {
 		border-bottom: 1px solid var( --color-neutral-100 );
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
+		font-size: 14px;
 		font-weight: 500;
 		line-height: 4em;
 		padding: 0 24px;
 		text-align: center;
 		width: 100%;
 
+		&:hover,
+		&:active {
+			color: var( --color-accent );
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+
 		body.is-section-signup & {
 			color: var( --color-white );
 		}
 	}
 
-	a:last-of-type {
-		border-bottom: none;
+	.gridicon {
+		margin-right: 3px;
+		vertical-align: text-bottom;
+
+		&.gridicons-external {
+			top: 0;
+			margin-right: 0;
+			margin-left: 3px;
+		}
 	}
 }
 
@@ -120,6 +139,16 @@ $image-height: 47px;
 
 .wp-login__private-site-button {
 	width: 100%;
+}
+
+.wp-login__site-return-link {
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+
+	&::after {
+		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
+	}
 }
 
 .layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ) {
@@ -179,7 +208,11 @@ $image-height: 47px;
 	}
 
 	.wp-login__site-return-link::after {
-		background: linear-gradient( to right, rgba( var( --color-jetpack-onboarding-background ), 0 ), rgba( var( --color-jetpack-onboarding-background ), 1 ) 90% );
+		background: linear-gradient(
+			to right,
+			rgba( var( --color-jetpack-onboarding-background ), 0 ),
+			rgba( var( --color-jetpack-onboarding-background ), 1 ) 90%
+		);
 	}
 }
 

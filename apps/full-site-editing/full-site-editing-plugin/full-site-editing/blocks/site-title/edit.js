@@ -7,7 +7,6 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
 import { PlainText } from '@wordpress/editor';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
@@ -18,38 +17,34 @@ import { Fragment } from '@wordpress/element';
  */
 import useSiteOptions from '../useSiteOptions';
 
-function SiteTitleEdit( { className, createErrorNotice, shouldUpdateSiteOption, isSelected } ) {
+function SiteTitleEdit( {
+	className,
+	createErrorNotice,
+	shouldUpdateSiteOption,
+	isSelected,
+	setAttributes,
+} ) {
 	const inititalTitle = __( 'Site title loading…' );
-	const { onSave, siteOptions, setSiteOptions } = useSiteOptions(
+	const { siteOptions, handleChange } = useSiteOptions(
 		'title',
 		inititalTitle,
 		createErrorNotice,
 		isSelected,
-		shouldUpdateSiteOption
+		shouldUpdateSiteOption,
+		setAttributes
 	);
 
-	const { option, isDirty, isSaving } = siteOptions;
+	const { option } = siteOptions;
 
 	return (
 		<Fragment>
 			<PlainText
 				className={ classNames( 'site-title', className ) }
 				value={ option }
-				onChange={ value => setSiteOptions( { ...siteOptions, option: value, isDirty: true } ) }
+				onChange={ value => handleChange( value ) }
 				placeholder={ __( 'Site Title' ) }
 				aria-label={ __( 'Site Title' ) }
 			/>
-			{ isDirty && (
-				<Button
-					isLarge
-					className="site-title__save-button"
-					disabled={ isSaving }
-					isBusy={ isSaving }
-					onClick={ onSave }
-				>
-					{ __( 'Save' ) }
-				</Button>
-			) }
 		</Fragment>
 	);
 }

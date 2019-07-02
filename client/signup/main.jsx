@@ -118,6 +118,7 @@ class Signup extends React.Component {
 		pageTitle: PropTypes.string,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
+		shouldShowMockups: PropTypes.bool,
 	};
 
 	constructor( props, context ) {
@@ -321,11 +322,12 @@ class Signup extends React.Component {
 
 		const { isNewishUser, existingSiteCount } = this.props;
 
-		const isNewUser = !! (
-			( dependencies && dependencies.username ) ||
+		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewSite = !! ( dependencies && dependencies.siteSlug );
+		const isNew7DUserSite = !! (
+			isNewUser ||
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
-		const isNewSite = !! ( dependencies && dependencies.siteSlug );
 		const hasCartItems = dependenciesContainCartItem( dependencies );
 
 		const debugProps = {
@@ -334,6 +336,7 @@ class Signup extends React.Component {
 			isNewUser,
 			isNewSite,
 			hasCartItems,
+			isNew7DUserSite,
 			flow: this.props.flowName,
 		};
 		debug( 'Tracking signup completion.', debugProps );
@@ -343,6 +346,7 @@ class Signup extends React.Component {
 			isNewSite,
 			hasCartItems,
 			flow: this.props.flowName,
+			isNew7DUserSite,
 		} );
 
 		this.handleLogin( dependencies, destination );
@@ -617,16 +621,14 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) && (
-					<SiteMockups stepName={ this.props.stepName } />
-				) }
+				{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
@@ -645,6 +647,7 @@ export default connect(
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
+			shouldShowMockups: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
 		};
 	},
 	{

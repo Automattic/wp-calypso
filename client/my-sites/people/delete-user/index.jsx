@@ -30,6 +30,11 @@ import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	requestExternalContributors,
+	requestExternalContributorsRemoval,
+} from 'state/data-getters';
+import { httpData } from 'state/data-layer/http-data';
 
 /**
  * Style dependencies
@@ -133,17 +138,17 @@ class DeleteUser extends React.Component {
 	onSelectAuthor = author => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
-		const { translate } = this.props;
+		const { contributorType, siteId, translate, user } = this.props;
 		accept(
 			<div>
 				<p>
-					{ this.props.user && this.props.user.name
+					{ user && user.name
 						? translate(
 								'If you remove %(username)s, that user will no longer be able to access this site, ' +
 									'but any content that was created by %(username)s will remain on the site.',
 								{
 									args: {
-										username: this.props.user.name,
+										username: user.name,
 									},
 								}
 						  )
@@ -160,7 +165,13 @@ class DeleteUser extends React.Component {
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
-					deleteUser( this.props.siteId, this.props.user.ID );
+					if ( 'external' === contributorType ) {
+						requestExternalContributorsRemoval(
+							siteId,
+							user.linked_user_ID ? user.linked_user_ID : user.ID
+						);
+					}
+					deleteUser( siteId, user.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -175,7 +186,8 @@ class DeleteUser extends React.Component {
 
 	deleteUser = event => {
 		event.preventDefault();
-		if ( ! this.props.user.ID ) {
+		const { contributorType, siteId, user } = this.props;
+		if ( ! user.ID ) {
 			return;
 		}
 
@@ -183,8 +195,14 @@ class DeleteUser extends React.Component {
 		if ( this.state.reassignUser && 'reassign' === this.state.radioOption ) {
 			reassignUserId = this.state.reassignUser.ID;
 		}
+		if ( 'external' === contributorType ) {
+			requestExternalContributorsRemoval(
+				siteId,
+				user.linked_user_ID ? user.linked_user_ID : user.ID
+			);
+		}
+		deleteUser( siteId, user.ID, reassignUserId );
 
-		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
@@ -194,11 +212,22 @@ class DeleteUser extends React.Component {
 	};
 
 	isDeleteButtonDisabled = () => {
-		if ( 'reassign' === this.state.radioOption ) {
-			return false === this.state.reassignUser || this.state.reassignUser.ID === this.props.user.ID;
+		const {
+			contributorType,
+			user: { ID: userId },
+		} = this.props;
+
+		const { radioOption, reassignUser } = this.state;
+
+		if ( 'pending' === contributorType ) {
+			return true;
 		}
 
-		return false === this.state.radioOption;
+		if ( 'reassign' === radioOption ) {
+			return false === reassignUser || reassignUser.ID === userId;
+		}
+
+		return false === radioOption;
 	};
 
 	renderSingleSite = () => {
@@ -295,11 +324,27 @@ class DeleteUser extends React.Component {
 	}
 }
 
+const getContributorType = ( externalContributors, userId ) => {
+	if ( externalContributors.data ) {
+		return externalContributors.data.includes( userId ) ? 'external' : 'standard';
+	}
+	return 'pending';
+};
+
 export default localize(
 	connect(
-		state => ( {
-			currentUser: getCurrentUser( state ),
-		} ),
+		( state, { siteId, user } ) => {
+			const userId = user && user.ID;
+			const linkedUserId = user && user.linked_user_ID;
+			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
+			return {
+				currentUser: getCurrentUser( state ),
+				contributorType: getContributorType(
+					externalContributors,
+					undefined !== linkedUserId ? linkedUserId : userId
+				),
+			};
+		},
 		{ recordGoogleEvent }
 	)( DeleteUser )
 );

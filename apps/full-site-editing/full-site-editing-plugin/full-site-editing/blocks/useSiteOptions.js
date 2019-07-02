@@ -15,14 +15,13 @@ export default function useSiteOptions(
 	inititalOption,
 	createErrorNotice,
 	isSelected,
-	shouldUpdateSiteOption
+	shouldUpdateSiteOption,
+	setAttributes
 ) {
 	const [ siteOptions, setSiteOptions ] = useState( {
 		option: inititalOption,
 		previousOption: '',
 		loaded: false,
-		isDirty: false,
-		isSaving: false,
 		error: false,
 	} );
 
@@ -78,17 +77,6 @@ export default function useSiteOptions(
 		}
 	}
 
-	function onSave() {
-		const { option, previousOption } = siteOptions;
-		const optionUnchanged = option && option.trim() === previousOption.trim();
-
-		if ( optionUnchanged ) {
-			setSiteOptions( { ...siteOptions, isDirty: false } );
-			return;
-		}
-		saveSiteOption( option );
-	}
-
 	function saveSiteOption( option ) {
 		setSiteOptions( { ...siteOptions, isSaving: true } );
 		apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { [ siteOption ]: option } } )
@@ -116,5 +104,13 @@ export default function useSiteOptions(
 		} );
 	}
 
-	return { siteOptions, setSiteOptions, onSave };
+	function handleChange( value ) {
+		// The following is a temporary fix. Setting this fake attribute is used to flag
+		// the content as dirty to editor and enable Update/Publish button. This should be
+		// removed once updating of site options handled in core editor
+		setAttributes( { updated: Date.now() } );
+		setSiteOptions( { ...siteOptions, option: value } );
+	}
+
+	return { siteOptions, handleChange };
 }

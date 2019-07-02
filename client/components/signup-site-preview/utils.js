@@ -33,18 +33,20 @@ export function revokeObjectURL( objectUrl ) {
 /**
  * Returns a WordPress page shell HTML
  *
- * @param  {Object}  content   Object containing `title`, `tagline` and `body` strings
- * @param  {String}  cssUrl    A URL to the theme CSS file
- * @param  {String}  fontUrl   A URL to the font CSS file
- * @param  {Boolean} isRtl     If the current locale is a right-to-left language
- * @param  {String}  langSlug  The slug of the current locale
- * @param  {Boolean} scrolling Whether to allow scrolling on the body
- * @return {String}            The HTML source.
+ * @param  {Object}  content            Object containing `title`, `tagline` and `body` strings
+ * @param  {String}  cssUrl             A URL to the theme CSS file
+ * @param  {String}  fontUrl            A URL to the font CSS file
+ * @param  {String}  gutenbergStylesUrl A URL to the active Gutenberg plugin's main CSS file.
+ * @param  {Boolean} isRtl              If the current locale is a right-to-left language
+ * @param  {String}  langSlug           The slug of the current locale
+ * @param  {Boolean} scrolling          Whether to allow scrolling on the body
+ * @return {String}                     The HTML source.
  */
 export function getIframeSource(
 	content,
 	cssUrl,
 	fontUrl,
+	gutenbergStylesUrl,
 	isRtl = false,
 	langSlug = 'en',
 	scrolling = true
@@ -56,8 +58,8 @@ export function getIframeSource(
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
-			<title>${ content.title } – ${ content.tagline }</title>
-			<link type="text/css" media="all" rel="stylesheet" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/v5.8.0/build/block-library/style.css" />
+			<title></title>
+			${ getCSSLinkHtml( gutenbergStylesUrl ) }
 			${ getCSSLinkHtml( cssUrl ) }
 			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
@@ -130,7 +132,7 @@ export function getIframeSource(
 				<header id="masthead" class="site-header">
 					<div class="site-branding-container">
 						<div class="site-branding">
-							<p class="site-title signup-site-preview__title">${ content.title }</p>
+							<p class="site-title signup-site-preview__title"></p>
 						</div>
 					</div>
 				</header>
@@ -154,4 +156,21 @@ export function getIframeSource(
 	}
 
 	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) );
+}
+
+/**
+ * @param {String} paramName e.g. "Vertical", "CompanyName"
+ * @returns {String} CSS class that will wrap the parameter in the preview DOM
+ */
+export function getPreviewParamClass( paramName ) {
+	return `signup-site-preview__${ paramName }`;
+}
+
+/**
+ * @param {String} title site title
+ * @param {String} tagline site tagline
+ * @returns {String} String to be used as <title> in preview
+ */
+export function createPreviewDocumentTitle( title, tagline ) {
+	return `${ title } – ${ tagline }`;
 }

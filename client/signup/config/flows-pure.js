@@ -145,21 +145,6 @@ export function generateFlows( {
 			lastModified: '2019-04-30',
 		},
 
-		'onboarding-dev': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'A temporary flow for holding under-development steps',
-			lastModified: '2019-04-30',
-		},
-
 		'delta-discover': {
 			steps: [ 'user' ],
 			destination: '/',
@@ -285,13 +270,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-11-21',
 		};
-
-		flows[ 'store-woo' ] = {
-			steps: [ 'domains-store', 'plans-store-nux', 'user' ],
-			destination: getSiteDestination,
-			description: 'Short signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-03-15',
-		};
 	}
 
 	if ( config.isEnabled( 'signup/wpcc' ) ) {
@@ -325,13 +303,6 @@ export function generateFlows( {
 		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 		description: 'A flow to test updating an existing site with `Signup`',
 		lastModified: '2017-01-19',
-	};
-
-	flows.private = {
-		steps: [ 'user', 'site' ],
-		destination: getChecklistDestination,
-		description: 'Test private site signup',
-		lastModified: '2018-10-22',
 	};
 
 	flows[ 'launch-site' ] = {
@@ -373,13 +344,6 @@ export function generateFlows( {
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
-	};
-
-	flows.name = {
-		steps: [ 'displayname', 'about', 'domains', 'plans' ],
-		destination: getSiteDestination,
-		description: 'Ask for a display name not a user name',
-		lastModified: '2018-12-12',
 	};
 
 	flows[ 'plan-no-domain' ] = {

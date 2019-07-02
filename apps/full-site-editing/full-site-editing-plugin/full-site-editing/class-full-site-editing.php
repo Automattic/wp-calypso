@@ -35,6 +35,8 @@ class Full_Site_Editing {
 		add_filter( 'template_include', array( $this, 'load_page_template' ) );
 		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
 		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
+		add_filter( 'admin_body_class', array( $this, 'toggle_editor_post_title_visibility' ) );
+		add_filter( 'block_editor_settings', array( $this, 'set_block_template' ) );
 	}
 
 	/**
@@ -296,9 +298,9 @@ class Full_Site_Editing {
 			'a8c-full-site-editing-script',
 			'fullSiteEditing',
 			array(
-				'editorPostType' => get_current_screen()->post_type,
-				'featureFlags'   => $feature_flags->get_flags(),
-				'closeButtonUrl' => esc_url( $this->get_close_button_url() ),
+				'editorPostType'          => get_current_screen()->post_type,
+				'featureFlags'            => $feature_flags->get_flags(),
+				'closeButtonUrl'          => esc_url( $this->get_close_button_url() ),
 				'editTemplatePartBaseUrl' => esc_url( $this->get_edit_template_part_base_url() ),
 			)
 		);
@@ -460,20 +462,38 @@ class Full_Site_Editing {
 			return;
 		}
 
-		// Bail if the post type is one of the template post types.
-		if ( in_array( get_post_type( $post->ID ), $this->template_post_types, true ) ) {
+		// Bail if the post is not a full site page.
+		if ( ! $this->is_full_site_page() ) {
 			return;
 		}
 
-		$template = new A8C_WP_Template( $post->ID );
+		$template         = new A8C_WP_Template( $post->ID );
+		$template_content = $template->get_template_content();
 
-		// Bail if the post has no tempalte id assigned.
-		if ( ! $template->get_template_id() ) {
+		// Bail if the template has no post content block.
+		if ( ! has_block( 'a8c/post-content', $template_content ) ) {
 			return;
 		}
 
-		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content -->%s<!-- /wp:a8c/post-content -->', $post->post_content );
-		$post->post_content   = str_replace( '<!-- wp:a8c/post-content {"align":"full"} /-->', $wrapped_post_content, $template->get_template_content() );
+		$template_blocks = parse_blocks( $template_content );
+		$content_attrs   = $this->get_post_content_block_attrs( $template_blocks );
+
+		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content %s -->%s<!-- /wp:a8c/post-content -->', $content_attrs, $post->post_content );
+		$post->post_content   = str_replace( "<!-- wp:a8c/post-content $content_attrs /-->", $wrapped_post_content, $template_content );
+	}
+
+	/**
+	 * This will extract the attributes from the post content block
+	 * json encode them.
+	 *
+	 * @param array $blocks    An array of template blocks.
+	 */
+	private function get_post_content_block_attrs( $blocks ) {
+		foreach ( $blocks as $key => $value ) {
+			if ( 'a8c/post-content' === $value['blockName'] ) {
+				return count( $value['attrs'] ) > 0 ? wp_json_encode( $value['attrs'] ) : '';
+			}
+		}
 	}
 
 	/**
@@ -482,6 +502,7 @@ class Full_Site_Editing {
 	 *
 	 * @param array $data    An array of slashed post data.
 	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+	 * @return array
 	 */
 	public function remove_template_components( $data, $postarr ) {
 		// Bail if the post type is one of the template post types.
@@ -509,21 +530,87 @@ class Full_Site_Editing {
 	}
 
 	/**
+	 * Determine if the current edited post is a full site page.
+	 * If it's a page being loaded that has a `wp_template`, it's a page that our FSE plugin should handle.
+	 *
+	 * @return boolean
+	 */
+	public function is_full_site_page() {
+		$fse_template = new A8C_WP_Template();
+
+		return 'page' === get_post_type() && $fse_template->get_template_id();
+	}
+
+	/**
 	 * Determine the page template to use.
-	 * If it's a page being loaded that has a `wp_template`, use our FSE template.
+	 * If it's a full site page being loaded, use our FSE template.
 	 *
 	 * @param string $template template URL passed to filter.
 	 * @return string Filtered template path.
 	 */
 	public function load_page_template( $template ) {
-		$fse_template = new A8C_WP_Template();
-
-		if ( is_page() && $fse_template->get_template_id() ) {
+		if ( $this->is_full_site_page() ) {
 			return plugin_dir_path( __FILE__ ) . 'page-fse.php';
 		}
 
 		return $template;
 	}
+
+	/**
+	 * Return an extra class that will be assigned to the body element if a full site page is being edited.
+	 *
+	 * That class hides the default post title of the editor and displays a new post title rendered by the post content
+	 * block in order to have it just before the content of the post.
+	 *
+	 * @param string $classes Space-separated list of CSS classes.
+	 * @return string
+	 */
+	public function toggle_editor_post_title_visibility( $classes ) {
+		if ( get_current_screen()->is_block_editor() && $this->is_full_site_page() ) {
+			$classes .= ' show-post-title-before-content ';
+		}
+		return $classes;
+	}
+
+	/**
+	 * Sets the block template to be loaded by the editor when creating a new full site page.
+	 *
+	 * @param array $editor_settings Default editor settings.
+	 * @return array Editor settings with the updated template setting.
+	 */
+	public function set_block_template( $editor_settings ) {
+		if ( $this->is_full_site_page() ) {
+			$fse_template    = new A8C_WP_Template();
+			$template_blocks = $fse_template->get_template_blocks();
+
+			$template = array();
+			foreach ( $template_blocks as $block ) {
+				$template[] = fse_map_block_to_editor_template_setting( $block );
+			}
+			$editor_settings['template'] = $template;
+		}
+		return $editor_settings;
+	}
+}
+
+/**
+ * Returns an array with the expected format of the block template setting syntax.
+ *
+ * @see https://github.com/WordPress/gutenberg/blob/1414cf0ad1ec3d0f3e86a40815513c15938bb522/docs/designers-developers/developers/block-api/block-templates.md
+ *
+ * @param array $block Block to convert.
+ * @return array
+ */
+function fse_map_block_to_editor_template_setting( $block ) {
+	$block_name   = $block['blockName'];
+	$attrs        = $block['attrs'];
+	$inner_blocks = $block['innerBlocks'];
+
+	$inner_blocks_template = array();
+	foreach ( $inner_blocks as $inner_block ) {
+		$inner_blocks[] = fse_map_block_to_editor_template_setting( $inner_block );
+	}
+	return array( $block_name, $attrs, $inner_blocks_template );
 }
 
 if ( ! function_exists( 'serialize_block' ) ) {

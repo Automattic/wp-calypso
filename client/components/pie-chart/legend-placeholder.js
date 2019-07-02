@@ -10,7 +10,7 @@ import { get, maxBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import LegendItemPlaceholder from 'components/legend-item/placeholder';
+import { LegendItemPlaceholder } from 'components/legend-item';
 
 function getLongestName( dataSeriesInfo ) {
 	return get( maxBy( dataSeriesInfo, 'name.length' ), 'name', '' );

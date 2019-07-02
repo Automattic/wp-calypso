@@ -44,12 +44,12 @@ export class QueryVerticals extends Component {
 	};
 
 	componentDidMount() {
-		const { searchTerm = '', siteType, limit } = this.props;
+		const { searchTerm = '', siteType, limit, isFetched } = this.props;
 		const trimmedSearchTerm = searchTerm.trim();
 
 		this.debouncedRequest = this.bindDebouncedRequest();
 
-		if ( trimmedSearchTerm ) {
+		if ( ! isFetched && trimmedSearchTerm ) {
 			this.debouncedRequest( trimmedSearchTerm, siteType, limit );
 		}
 	}

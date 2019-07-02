@@ -29,10 +29,8 @@ class ErrorNotice extends Component {
 		twoFactorAuthRequestError: PropTypes.object,
 	};
 
-	componentWillReceiveProps = nextProps => {
-		const receiveNewError = key => {
-			return this.props[ key ] !== nextProps[ key ];
-		};
+	componentDidUpdate( prevProps ) {
+		const receiveNewError = key => this.props[ key ] !== prevProps[ key ];
 
 		if (
 			receiveNewError( 'createAccountError' ) ||
@@ -42,7 +40,7 @@ class ErrorNotice extends Component {
 		) {
 			window.scrollTo( 0, 0 );
 		}
-	};
+	}
 
 	getCreateAccountError() {
 		const { createAccountError } = this.props;
@@ -102,7 +100,7 @@ class ErrorNotice extends Component {
 		}
 
 		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>
+			<Notice status="is-error" showDismiss={ false }>
 				{ message }
 			</Notice>
 		);

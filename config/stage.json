@@ -37,7 +37,6 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
-		"google-analytics": false,
 		"gutenberg/opt-in": true,
 		"happychat": true,
 		"help": true,
@@ -86,7 +85,6 @@
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
-		"nps-survey/notice": true,
 		"onboarding-checklist": true,
 		"onboarding-checklist/email-setup": true,
 		"onboarding-checklist/phase2": true,
@@ -130,7 +128,6 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/premium-themes": true,
-		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
 		"upgrades/wpcom-monthly-plans": true,
@@ -166,8 +163,5 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "stage",
-	"google_adwords_conversion_id": 1067250390,
-	"google_adwords_conversion_id_jetpack": 937115306,
-	"google_adwords_signup_conversion_id": 1067250390,
 	"hotjar_enabled": true
 }

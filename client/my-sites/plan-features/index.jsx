@@ -213,18 +213,31 @@ export class PlanFeatures extends Component {
 				icon="info-outline"
 				status="is-success"
 			>
-				{ translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
-						'Apply those credits towards an upgrade before they expire!',
-					{
-						args: {
-							amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
-						},
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
+				{ 'variant' === abtest( 'proratedCreditsBanner' )
+					? translate(
+							'Need to upgrade? You have {{b}}%(amountInCurrency)s{{/b}} pro-rated credits available from your current plan. ' +
+								'We have applied them to the plan upgrades below.',
+							{
+								args: {
+									amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+								},
+								components: {
+									b: <strong />,
+								},
+							}
+					  )
+					: translate(
+							'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
+								'Apply those credits towards an upgrade before they expire!',
+							{
+								args: {
+									amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+								},
+								components: {
+									b: <strong />,
+								},
+							}
+					  ) }
 			</Notice>,
 			bannerContainer
 		);

@@ -7,16 +7,19 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, each, find, isEmpty } from 'lodash';
+import { debounce, find, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import SignupSitePreview from 'components/signup-site-preview';
+import { getPreviewParamClass } from 'components/signup-site-preview/utils';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
+	getSiteVerticalName,
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
@@ -25,6 +28,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import QueryVerticals from 'components/data/query-verticals';
 
 /**
  * Style dependencies
@@ -61,6 +65,7 @@ class SiteMockups extends Component {
 		title: PropTypes.string,
 		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
+		verticalPreviewStyles: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -70,6 +75,7 @@ class SiteMockups extends Component {
 		title: '',
 		vertical: '',
 		verticalPreviewContent: '',
+		verticalPreviewStyles: '',
 	};
 
 	shouldComponentUpdate( nextProps ) {
@@ -95,25 +101,34 @@ class SiteMockups extends Component {
 	}, 777 );
 
 	/**
-	 * Returns an interpolated site preview content block with template markers
+	 * Returns site preview content block interpolated with markup that allows
+	 * preview params to be injected with JavaScript.
 	 *
 	 * @param {string} content Content to format
 	 * @return {string} Formatted content
 	 */
 	getContent( content = '' ) {
-		const { title: CompanyName } = this.props;
-		if ( 'string' === typeof content ) {
-			each(
-				{
-					CompanyName,
-					Address: translate( 'Your Address' ),
-					Phone: translate( 'Your Phone Number' ),
-				},
-				( value, key ) =>
-					( content = content.replace( new RegExp( '{{' + key + '}}', 'gi' ), value ) )
-			);
+		if ( 'string' !== typeof content ) {
+			return content;
 		}
-		return content;
+
+		return Object.keys( this.getPreviewParams() ).reduce(
+			( currContent, paramName ) =>
+				currContent.replace(
+					new RegExp( '{{' + paramName + '}}', 'gi' ),
+					`<span class="${ getPreviewParamClass( paramName ) }"></span>`
+				),
+			content
+		);
+	}
+
+	getPreviewParams() {
+		const { title: CompanyName } = this.props;
+		return {
+			CompanyName,
+			Address: translate( 'Your Address' ),
+			Phone: translate( 'Your Phone Number' ),
+		};
 	}
 
 	handlePreviewClick = size =>
@@ -126,12 +141,15 @@ class SiteMockups extends Component {
 	render() {
 		const {
 			fontUrl,
+			shouldFetchVerticalData,
 			shouldShowHelpTip,
 			siteStyle,
 			siteType,
+			siteVerticalName,
 			title,
 			themeSlug,
 			verticalPreviewContent,
+			verticalPreviewStyles,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
@@ -147,7 +165,9 @@ class SiteMockups extends Component {
 				title,
 				tagline: translate( 'You’ll be able to customize this to your needs.' ),
 				body: this.getContent( verticalPreviewContent ),
+				params: this.getPreviewParams(),
 			},
+			gutenbergStylesUrl: verticalPreviewStyles,
 			langSlug,
 			isRtl,
 			onPreviewClick: this.handlePreviewClick,
@@ -167,6 +187,9 @@ class SiteMockups extends Component {
 					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps } />
 				</div>
 				{ shouldShowHelpTip && <SiteMockupHelpTipBottom siteType={ siteType } /> }
+				{ shouldFetchVerticalData && (
+					<QueryVerticals searchTerm={ siteVerticalName } siteType={ siteType } />
+				) }
 			</div>
 		);
 	}
@@ -179,17 +202,22 @@ export default connect(
 		const styleOptions = getSiteStyleOptions( siteType );
 		const style = find( styleOptions, { id: siteStyle || 'modern' } );
 		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
+		const verticalPreviewContent = getSiteVerticalPreview( state );
+		const shouldFetchVerticalData = ! verticalPreviewContent;
 		return {
 			title: getSiteTitle( state ) || titleFallback,
 			siteStyle,
 			siteType,
-			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalPreviewContent,
+			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
+			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||
 				'site-title-with-preview' === ownProps.stepName,
 			themeSlug: style.theme,
 			fontUrl: style.fontUrl,
+			shouldFetchVerticalData,
 		};
 	},
 	{

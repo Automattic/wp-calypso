@@ -41,6 +41,11 @@ import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function preloadEditor() {
 	preload( 'post-editor' );
 }

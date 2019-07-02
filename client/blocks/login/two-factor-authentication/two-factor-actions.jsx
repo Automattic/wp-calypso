@@ -21,6 +21,11 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
 
+/**
+ * Style dependencies
+ */
+import './two-factor-actions.scss';
+
 class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
@@ -61,7 +66,7 @@ class TwoFactorActions extends Component {
 		}
 
 		return (
-			<Card>
+			<Card className="two-factor-authentication__actions">
 				{ isSmsAvailable && (
 					<Button block data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
 						{ translate( 'Send code via\u00A0text\u00A0message' ) }
