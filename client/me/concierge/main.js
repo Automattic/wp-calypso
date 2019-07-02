@@ -37,6 +37,7 @@ import AppointmentInfo from './shared/appointment-info';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
+import { localize } from 'i18n-calypso';
 
 export class ConciergeMain extends Component {
 	constructor( props ) {
@@ -117,15 +118,20 @@ export class ConciergeMain extends Component {
 
 	render() {
 		const { analyticsPath, analyticsTitle, site } = this.props;
+		const { reauthRequired } = this.state;
 		const siteId = site && site.ID;
 		return (
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<QueryUserSettings />
-				<QuerySites />
-				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
+				{ reauthRequired && (
+					<>
+						<QueryUserSettings />
+						<QuerySites />
+						{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
+						{ siteId && <QuerySitePlans siteId={ siteId } /> }
+					</>
+				) }
 				{ this.getDisplayComponent() }
 			</Main>
 		);
@@ -138,4 +144,5 @@ export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteSlug ),
 	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
+	localize,
 } ) )( ConciergeMain );
