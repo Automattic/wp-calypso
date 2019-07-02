@@ -203,6 +203,13 @@ const sections = [
 		group: 'checklist',
 	},
 	{
+		name: 'customer-home',
+		paths: [ '/home' ],
+		module: 'my-sites/home',
+		secondary: true,
+		group: 'home',
+	},
+	{
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',

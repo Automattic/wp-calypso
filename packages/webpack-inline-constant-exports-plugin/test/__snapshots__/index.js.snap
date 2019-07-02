@@ -9,7 +9,7 @@ exports[`webpack-inline-constant-exports-plugin should produce expected output: 
 \\"use strict\\";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: ./plans.js
+// CONCATENATED MODULE: ./customer-home.js
 /*
  * Export two plan constants and a a constant array of all plans. The array should not be inlined
  * and the module should stay in the dependency graph.
