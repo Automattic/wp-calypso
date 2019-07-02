@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -192,10 +190,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		step( 'Can click the free plan button', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
-		} );
-
-		step( 'Is redirected back to the Jetpack dashboard with Jumpstart displayed', async function() {
-			return await this.wpAdminJetpack.jumpstartDisplayed();
 		} );
 	} );
 
