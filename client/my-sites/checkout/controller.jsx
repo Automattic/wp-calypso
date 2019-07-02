@@ -43,7 +43,8 @@ export function checkout( context, next ) {
 			product={ product }
 			purchaseId={ purchaseId }
 			selectedFeature={ feature }
-			couponCode={ context.query.code || getRememberedCoupon() }
+			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
