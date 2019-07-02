@@ -31,7 +31,7 @@ const getRandomPromo = () => {
 		},
 		{
 			promoCode: 'a0002',
-			message: 'Get WordPress.com app for your desktop.',
+			message: 'Get the WordPress.com app for your desktop.',
 			type: 'desktop',
 		},
 		{
@@ -41,7 +41,7 @@ const getRandomPromo = () => {
 		},
 		{
 			promoCode: 'a0005',
-			message: 'WordPress.com at your fingertips — download app for desktop.',
+			message: 'Fast, distraction-free WordPress.com — download the desktop app.',
 			type: 'desktop',
 		},
 		{
