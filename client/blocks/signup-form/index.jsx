@@ -598,9 +598,25 @@ class SignupForm extends Component {
 		);
 	}
 
+	handleWooCommerceSocialConnect = ( ...args ) => {
+		analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
+			signup_method: 'google',
+		} );
+		this.props.handleSocialResponse( args );
+	};
+
 	handleWooCommerceSubmit = event => {
 		event.preventDefault();
 		document.activeElement.blur();
+		this.formStateController.handleSubmit( hasErrors => {
+			if ( hasErrors ) {
+				this.setState( { submitting: false } );
+				return;
+			}
+			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
+				signup_method: 'email',
+			} );
+		} );
 		this.handleSubmit( event );
 	};
 

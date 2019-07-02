@@ -967,7 +967,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.jetpack-connect__main,
 		.jetpack-connect__site.card,
-		.logged-out-form {
+		.logged-out-form,
+		.jetpack-connect__logged-in-card.card {
 			max-width: 476px;
 		}
 
@@ -1016,6 +1017,26 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				margin-right: auto;
 				margin-left: auto;
 				height: 48px;
+			}
+		}
+
+		.jetpack-connect__logged-in-card button {
+			border: 0;
+			box-shadow: none;
+		}
+
+		.jetpack-connect__notices-container {
+			margin-top: 20px;
+		}
+
+		.jetpack-connect__action-disclaimer {
+			padding-top: 0;
+
+			.jetpack-connect__tos-link,
+			.jetpack-connect__tos-link a {
+				text-align: left;
+				color: var( --color-gray-600 );
+				font-size: 12px;
 			}
 		}
 
