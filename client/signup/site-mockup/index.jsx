@@ -21,6 +21,8 @@ import {
 	getSiteVerticalPreview,
 	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
+	getSiteVerticalId,
+	getSiteVerticalParentId,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
@@ -145,10 +147,12 @@ class SiteMockups extends Component {
 			shouldShowHelpTip,
 			siteStyle,
 			siteType,
+			siteTypeId,
 			siteVerticalName,
 			title,
 			themeSlug,
 			verticalPreviewContent,
+			verticalId,
 			verticalPreviewStyles,
 		} = this.props;
 
@@ -172,6 +176,8 @@ class SiteMockups extends Component {
 			isRtl,
 			onPreviewClick: this.handlePreviewClick,
 			className: siteStyle,
+			verticalId,
+			siteTypeId,
 		};
 
 		return (
@@ -202,6 +208,7 @@ export default connect(
 		const styleOptions = getSiteStyleOptions( siteType );
 		const style = find( styleOptions, { id: siteStyle || 'modern' } );
 		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
+		const siteTypeId = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 		const verticalPreviewContent = getSiteVerticalPreview( state );
 		const shouldFetchVerticalData = ! verticalPreviewContent;
 		return {
@@ -218,6 +225,8 @@ export default connect(
 			themeSlug: style.theme,
 			fontUrl: style.fontUrl,
 			shouldFetchVerticalData,
+			siteTypeId,
+			verticalId: getSiteVerticalParentId( state ) || getSiteVerticalId( state ),
 		};
 	},
 	{

@@ -368,6 +368,9 @@ function setUpLoggedOutRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
+	// res.set('X-Frame-Options', 'ALLOW-FROM htps://google.com/');
+
+
 	next();
 }
 

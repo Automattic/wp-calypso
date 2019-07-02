@@ -168,21 +168,22 @@ export default class SignupSitePreviewIframe extends Component {
 	};
 
 	setLoaded = () => {
-		this.setOnPreviewClick();
+/*		this.setOnPreviewClick();
 		this.setIframeIsLoading();
 		this.props.resize && this.setContainerHeight();
 
 		const { params, tagline, title } = this.props.content;
 
 		this.setContentTitle( title, tagline );
-		this.setContentParams( params );
+		this.setContentParams( params );*/
+		this.props.setIsLoaded( true );
 	};
 
-	setIframeSource = ( { content, cssUrl, fontUrl, gutenbergStylesUrl, isRtl, langSlug } ) => {
+	setIframeSource = ( { siteTypeId, verticalId } ) => {
 		if ( ! this.iframe.current ) {
 			return;
 		}
-
+/*
 		const iframeSrc = getIframeSource(
 			content,
 			cssUrl,
@@ -205,7 +206,11 @@ export default class SignupSitePreviewIframe extends Component {
 		const { params, tagline, title } = content;
 
 		this.setContentTitle( title, tagline );
-		this.setContentParams( params );
+		this.setContentParams( params );*/
+
+
+		this.props.setIsLoaded( false );
+		this.iframe.current.src = `https://a8cvm${ siteTypeId }${ verticalId && siteTypeId === 1 ? verticalId : '' }.wordpress.com?hide_masterbar=true`;
 	};
 
 	render() {
