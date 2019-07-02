@@ -889,7 +889,7 @@ class SignupForm extends Component {
 
 						{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 							<SocialSignupForm
-								handleResponse={ this.props.handleSocialResponse }
+								handleResponse={ this.handleWooCommerceSocialConnect }
 								socialService={ this.props.socialService }
 								socialServiceResponse={ this.props.socialServiceResponse }
 							/>
