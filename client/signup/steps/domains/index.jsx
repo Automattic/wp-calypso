@@ -647,6 +647,7 @@ class DomainsStep extends React.Component {
 				backLabelText={ backLabelText }
 				hideSkip={ ! isDomainStepSkippable( flowName ) }
 				goToNextStep={ this.handleSkip }
+				skipLabelText={ translate( 'Not sure yet? Start with a temporary domain' ) }
 			/>
 		);
 	}
