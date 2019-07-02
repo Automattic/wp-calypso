@@ -217,7 +217,9 @@ export function getRememberedCoupon() {
 	localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 	if (
 		COUPON_CODE_WHITELIST.includes(
-			mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
+			-1 !== mostRecentCouponCode.indexOf( '_' )
+				? mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
+				: mostRecentCouponCode
 		)
 	) {
 		debug( 'returning coupon code:', mostRecentCouponCode );
