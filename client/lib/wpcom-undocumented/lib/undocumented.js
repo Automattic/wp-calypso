@@ -1096,6 +1096,7 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
  * @param {string} [method] The request method
  * @param {object} [data] The REQUEST data
  * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
  * @api public
  *
  * The post data format is: {
