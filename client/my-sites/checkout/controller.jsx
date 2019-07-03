@@ -48,6 +48,7 @@ export function checkout( context, next ) {
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
+			redirectTo={ context.query.redirect_to }
 		/>
 	);
 

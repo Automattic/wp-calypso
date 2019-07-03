@@ -364,6 +364,7 @@ export class Checkout extends React.Component {
 		let renewalItem, displayModeParam;
 		const {
 			cart,
+			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
 			transaction: {
@@ -371,6 +372,10 @@ export class Checkout extends React.Component {
 			},
 		} = this.props;
 		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
+
+		if ( redirectTo ) {
+			return redirectTo;
+		}
 
 		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
