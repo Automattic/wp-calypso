@@ -39,7 +39,7 @@ const removePreviousErrors = ( { value }: GSuiteNewUserField ): GSuiteNewUserFie
 const requiredField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
-		! error && ( ! value || '' === value ) ? i18n.translate( 'This field is required.' ) : error,
+		! error && ( ! value || '' === value.trim() ) ? i18n.translate( 'This field is required.' ) : error,
 } );
 
 const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
