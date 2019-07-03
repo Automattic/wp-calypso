@@ -85,9 +85,9 @@ function render_navigation_menu_block( $attributes ) {
 	ob_start();
 	// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
 	?>
-	<nav class="wp-block-a8c-navigation-menu <?php echo esc_attr( $wrapper_attr['class'] ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
+	<nav class="<?php echo esc_attr( $wrapper_attr['class'] . ' wp-block-a8c-navigation-menu' ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
 		<?php
-		    wp_nav_menu( get_menu_params_by_theme_location( $location ) );
+			wp_nav_menu( get_menu_params_by_theme_location( $location ) );
 		?>
 	</nav>
 	<!-- #site-navigation -->
