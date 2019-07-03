@@ -34,7 +34,6 @@ function get_menu_params_by_theme_location( $location ) {
 			$params = [
 				'theme_location' => 'menu-1',
 				'menu_class'     => 'main-menu',
-				'container'       => 'ul',
 				'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
 				'depth'          => 1,
 			];

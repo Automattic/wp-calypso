@@ -53,6 +53,10 @@
     color: #005177;
 }
 
+.wp-block-a8c-navigation-menu.main-navigation .main-menu-more {
+    display: none;
+}
+
 .wp-block-a8c-navigation-menu.main-navigation svg {
     transition: fill 120ms ease-in-out;
     fill: currentColor;
