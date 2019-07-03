@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +20,6 @@ import {
 	getNormalizedHashedUserEmail,
 } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
-import request from 'superagent';
 import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
 
 /**
@@ -179,8 +176,8 @@ if ( typeof window !== 'undefined' ) {
 /**
  * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
  *
- * @param {Function} callback - Callback functon to call once the `country_code` cooke has been succesfully refreshed.
- * @returns {Boolean} Returns `true` if the `country_code` cooke needs to be refreshed.
+ * @param {Function} callback - Callback function to call once the `country_code` cookie has been successfully refreshed.
+ * @returns {Boolean} Returns `true` if the `country_code` cookie needs to be refreshed.
  */
 function maybeRefreshCountryCodeCookieGdpr( callback ) {
 	const cookieMaxAgeSeconds = 6 * 60 * 60;
@@ -189,23 +186,34 @@ function maybeRefreshCountryCodeCookieGdpr( callback ) {
 	if ( ! cookies.country_code ) {
 		// cache buster
 		const v = new Date().getTime();
-		request
-			.get( 'https://public-api.wordpress.com/geo/?v=' + v )
-			.then( res => {
-				document.cookie = cookie.serialize( 'country_code', res.body.country_short, {
-					path: '/',
-					maxAge: cookieMaxAgeSeconds,
-				} );
-				callback();
-			} )
-			.catch( err => {
-				document.cookie = cookie.serialize( 'country_code', 'unknown', {
-					path: '/',
-					maxAge: cookieMaxAgeSeconds,
-				} );
-				debug( 'refreshGeoIpCountryCookieGdpr Error: ', err );
-			} );
 
+		const handleError = err => {
+			document.cookie = cookie.serialize( 'country_code', 'unknown', {
+				path: '/',
+				maxAge: cookieMaxAgeSeconds,
+			} );
+			debug( 'refreshGeoIpCountryCookieGdpr Error: ', err );
+		};
+
+		const makeRequest = async () => {
+			try {
+				const res = await fetch( 'https://public-api.wordpress.com/geo/?v=' + v );
+				if ( res.ok ) {
+					const json = await res.json();
+					document.cookie = cookie.serialize( 'country_code', json.country_short, {
+						path: '/',
+						maxAge: cookieMaxAgeSeconds,
+					} );
+					callback();
+				} else {
+					handleError( new Error( await res.body() ) );
+				}
+			} catch ( err ) {
+				handleError( err );
+			}
+		};
+
+		makeRequest();
 		return true;
 	}
 
