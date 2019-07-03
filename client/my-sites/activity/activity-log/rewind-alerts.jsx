@@ -2,9 +2,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,27 +18,37 @@ import { requestSiteAlerts } from 'state/data-getters';
  */
 import './rewind-alerts.scss';
 
-function RewindAlerts( { alerts } ) {
-	const translate = useTranslate();
+const refreshList = () => {
+	//TODO: REFRESH LIST HERE!
+};
 
-	if ( ! alerts || ! alerts.threats || alerts.threats.length === 0 ) {
-		return null;
+export class RewindAlerts extends Component {
+	render() {
+		const { siteId, alerts, translate } = this.props;
+		if ( ! alerts || ! alerts.threats || alerts.threats.length === 0 ) {
+			return null;
+		}
+
+		return (
+			<Card className="activity-log__threats" highlight="error">
+				<div className="activity-log__threats-heading">
+					{ translate( 'These items require your immediate attention' ) }
+				</div>
+				{ alerts.threats.map( threat => (
+					<ThreatAlert
+						siteId={ siteId }
+						key={ threat.id }
+						threat={ threat }
+						refreshList={ refreshList }
+					/>
+				) ) }
+			</Card>
+		);
 	}
-
-	return (
-		<Card className="activity-log__threats" highlight="error">
-			<div className="activity-log__threats-heading">
-				{ translate( 'These items require your immediate attention' ) }
-			</div>
-			{ alerts.threats.map( threat => (
-				<ThreatAlert key={ threat.id } threat={ threat } />
-			) ) }
-		</Card>
-	);
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
 	alerts: requestSiteAlerts( siteId ).data,
 } );
 
-export default connect( mapStateToProps )( RewindAlerts );
+export default connect( mapStateToProps )( localize( RewindAlerts ) );

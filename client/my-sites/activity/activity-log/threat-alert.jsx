@@ -32,10 +32,6 @@ import './threat-alert.scss';
 const debug = debugFactory( 'calypso:activity-log' );
 
 const detailType = threat => {
-	if ( threat.hasOwnProperty( 'table' ) ) {
-		return 'table';
-	}
-
 	if ( threat.hasOwnProperty( 'diff' ) ) {
 		return 'core';
 	}
@@ -57,18 +53,6 @@ const headerTitle = ( translate, threat ) => {
 	const basename = s => s.replace( /.*\//, '' );
 
 	switch ( detailType( threat ) ) {
-		case 'table':
-			return translate(
-				'The table {{table/}} contains a suspicious link.',
-				'The table {{table/}} contains suspicious links.',
-				{
-					components: {
-						table: <code className="activity-log__threat-alert-table">{ threat.table }</code>,
-					},
-					count: threat.rows.length,
-				}
-			);
-
 		case 'core':
 			return translate( 'The file {{filename/}} has been modified from its original.', {
 				components: {
@@ -125,14 +109,6 @@ const headerSubtitle = ( translate, threat ) => {
 			return translate( 'Vulnerability found in WordPress' );
 
 		case 'file':
-		case 'table':
-			return translate( 'Threat found ({{signature/}})', {
-				components: {
-					signature: (
-						<span className="activity-log__threat-alert-signature">{ threat.signature }</span>
-					),
-				},
-			} );
 
 		case 'plugin':
 			return translate( 'Vulnerability found in plugin' );
@@ -208,26 +184,27 @@ export class ThreatAlert extends Component {
 						//TODO: error handling?
 						return;
 					}
-					this.checkFixStatus( siteId, threat.id );
+					this.checkFixStatus();
 				},
 				freshness: -Infinity,
 			}
 		);
 	};
 
-	checkFixStatus = ( siteId, threatId ) => {
+	checkFixStatus = () => {
+		const { threat, siteId, refreshList } = this.props;
 		const self = this;
 
 		if ( ! self.timerId ) {
-			self.timerId = setInterval( () => self.checkFixStatus( siteId, threatId ), 1000 );
+			self.timerId = setInterval( () => self.checkFixStatus(), 1000 );
 			return;
 		}
 
 		requestHttpData(
-			`threat-status-${ threatId }`,
+			`threat-status-${ threat.id }`,
 			http( {
 				method: 'GET',
-				path: `/sites/${ siteId }/alerts/${ threatId }`,
+				path: `/sites/${ siteId }/alerts/${ threat.id }`,
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 				body: {}, // have to have an empty body to make wpcom-http happy
@@ -238,10 +215,10 @@ export class ThreatAlert extends Component {
 						//TODO: error handling?
 						return;
 					}
-
 					if ( 'fixed' === data.status || 'not_started' === data.status ) {
-						this.enableButton( threatId, true );
+						this.enableButton( threat.id, true );
 						clearInterval( self.timerId );
+						refreshList();
 					} else {
 						//status in_progress
 					}
@@ -252,7 +229,7 @@ export class ThreatAlert extends Component {
 	};
 
 	mainDescription() {
-		const { threat, translate, siteId } = this.props;
+		const { threat, translate } = this.props;
 
 		if ( threat.filename ) {
 			return (
@@ -272,54 +249,11 @@ export class ThreatAlert extends Component {
 			);
 		}
 
-		if ( threat.table ) {
-			//TODO: needs signature-specific versions
-			return (
-				<Fragment>
-					{ Object.values( threat.rows ).map( row => {
-						//TODO: only do this for posts
-						const editorLink = `/post/${ siteId }/${ row.id }`;
-
-						return (
-							<p className="activity-log__threat-alert-suspicious-link-info" key={ row.id }>
-								{ translate(
-									'Suspicious link: {{suspiciousUrl/}} found in {{objectType/}} {{description/}} (id: {{rowId/}})',
-									{
-										components: {
-											suspiciousUrl: (
-												<em className="activity-log__threat-alert-suspicious-url">{ row.url }</em>
-											),
-											objectType: (
-												<span className="activity-log__threat-alert-suspicious-object-type">
-													{ threat.objectType }
-												</span>
-											),
-											description: (
-												<a href={ editorLink }>
-													<span className="activity-log__threat-alert-suspicious-description">
-														{ row.description }
-													</span>
-												</a>
-											),
-											rowId: (
-												<span className="activity-log__threat-alert-suspicious-id">{ row.id }</span>
-											),
-										},
-									}
-								) }
-							</p>
-						);
-					} ) }
-				</Fragment>
-			);
-		}
-
 		return <p className="activity-log__threat-alert-signature">{ threat.signature }</p>;
 	}
 
 	render() {
 		const { threat, translate } = this.props;
-
 		return (
 			<Fragment>
 				<FoldableCard
