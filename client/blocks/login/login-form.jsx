@@ -276,8 +276,6 @@ export class LoginForm extends Component {
 
 		return (
 			<form method="post">
-				{ this.renderPrivateSiteNotice() }
-
 				<Card className="login__form">
 					{ this.renderPrivateSiteNotice() }
 					<div className="login__form-userdata">
