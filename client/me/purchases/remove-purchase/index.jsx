@@ -5,7 +5,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -21,12 +21,6 @@ import CompactCard from 'components/card/compact';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
-import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
-import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
-import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
-import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
@@ -73,8 +67,7 @@ class RemovePurchase extends Component {
 	state = {
 		isDialogVisible: false,
 		isRemoving: false,
-		surveyStep: INITIAL_STEP,
-		survey: initialSurveyState(),
+		survey: {},
 	};
 
 	recordChatEvent( eventAction ) {
@@ -102,8 +95,6 @@ class RemovePurchase extends Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 		this.setState( {
 			isDialogVisible: false,
-			surveyStep: INITIAL_STEP,
-			survey: initialSurveyState(),
 		} );
 	};
 
@@ -126,32 +117,8 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	changeSurveyStep = stepFunction => {
-		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
-		const { surveyStep, survey } = this.state;
-		const steps = stepsForProductAndSurvey(
-			survey,
-			purchase,
-			isChatAvailable || isChatActive,
-			precancellationChatAvailable
-		);
-		const newStep = stepFunction( surveyStep, steps );
+	onStepChange = newStep => {
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
-		this.setState( { surveyStep: newStep } );
-	};
-
-	clickNext = () => {
-		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ) ) {
-			return;
-		}
-		this.changeSurveyStep( nextStep );
-	};
-
-	clickPrevious = () => {
-		if ( this.state.isRemoving ) {
-			return;
-		}
-		this.changeSurveyStep( previousStep );
 	};
 
 	onSurveyChange = update => {
@@ -236,6 +203,9 @@ class RemovePurchase extends Component {
 		} );
 	};
 
+	// TODO:
+	// Extract this button out as a reusable component, sharing it with <CancelPurchaseForm/>,
+	// and add the chat button back to non-happychat steps.
 	getChatButton = () => {
 		return (
 			<HappychatButton className="remove-purchase__chat-button" onClick={ this.chatButtonClicked }>
@@ -270,67 +240,6 @@ class RemovePurchase extends Component {
 				closeDialog={ this.closeDialog }
 				chatButton={ chatButton }
 				purchase={ this.props.purchase }
-			/>
-		);
-	}
-
-	renderPlanDialog() {
-		const { purchase, site, translate } = this.props;
-		const buttons = {
-			cancel: {
-				action: 'cancel',
-				disabled: this.state.isRemoving,
-				label: translate( "I'll Keep It" ),
-			},
-			next: {
-				action: 'next',
-				disabled: this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ),
-				label: translate( 'Next Step' ),
-				onClick: this.clickNext,
-			},
-			prev: {
-				action: 'prev',
-				disabled: this.state.isRemoving,
-				label: translate( 'Previous Step' ),
-				onClick: this.clickPrevious,
-			},
-			remove: {
-				action: 'remove',
-				disabled: this.state.isRemoving,
-				isPrimary: true,
-				label: translate( 'Remove Now' ),
-				onClick: this.removePurchase,
-			},
-		};
-
-		let buttonsArr;
-		if ( this.state.surveyStep === FINAL_STEP ) {
-			buttonsArr = [ buttons.cancel, buttons.prev, buttons.remove ];
-		} else {
-			buttonsArr =
-				this.state.surveyStep === INITIAL_STEP
-					? [ buttons.cancel, buttons.next ]
-					: [ buttons.cancel, buttons.prev, buttons.next ];
-		}
-
-		if (
-			config.isEnabled( 'upgrades/precancellation-chat' ) &&
-			this.state.surveyStep !== 'happychat_step'
-		) {
-			buttonsArr.unshift( this.getChatButton() );
-		}
-
-		return (
-			<CancelPurchaseForm
-				chatInitiated={ this.chatInitiated }
-				defaultContent={ this.renderPlanDialogText() }
-				onInputChange={ this.onSurveyChange }
-				purchase={ purchase }
-				selectedSite={ site }
-				surveyStep={ this.state.surveyStep }
-				isVisible={ this.state.isDialogVisible }
-				buttons={ buttonsArr }
-				onClose={ this.closeDialog }
 			/>
 		);
 	}
@@ -453,14 +362,24 @@ class RemovePurchase extends Component {
 		}
 
 		return (
-			<Fragment>
+			<>
 				<CompactCard tagName="button" className="remove-purchase__card" onClick={ this.openDialog }>
 					<Gridicon icon="trash" />
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</CompactCard>
-
-				{ this.renderDialog( purchase ) }
-			</Fragment>
+				<CancelPurchaseForm
+					chatInitiated={ this.chatInitiated }
+					defaultContent={ this.renderPlanDialogText() }
+					onInputChange={ this.onSurveyChange }
+					purchase={ purchase }
+					selectedSite={ this.props.site }
+					isVisible={ this.state.isDialogVisible }
+					onClose={ this.closeDialog }
+					onStepChange={ this.onStepChange }
+					onClickFinalConfirm={ this.removePurchase }
+					flowType="remove"
+				/>
+			</>
 		);
 	}
 }

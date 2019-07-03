@@ -20,12 +20,6 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
-import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
-import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
-import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
-import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import {
 	getName,
 	getSubscriptionEndDate,
@@ -54,17 +48,23 @@ class CancelPurchaseButton extends Component {
 		disabled: false,
 		showDialog: false,
 		isRemoving: false,
-		surveyStep: INITIAL_STEP,
-		survey: initialSurveyState(),
+		survey: {},
+	};
+
+	getCancellationFlowType = () => {
+		return isRefundable( this.props.purchase ) ? 'cancel_with_refund' : 'cancel_autorenew';
 	};
 
 	recordEvent = ( name, properties = {} ) => {
 		const { purchase } = this.props;
 		const product_slug = get( purchase, 'productSlug' );
-		const cancellation_flow = isRefundable( purchase ) ? 'cancel_with_refund' : 'cancel_autorenew';
+
 		this.props.recordTracksEvent(
 			name,
-			Object.assign( { cancellation_flow, product_slug }, properties )
+			Object.assign(
+				{ cancellation_flow: this.getCancellationFlowType(), product_slug },
+				properties
+			)
 		);
 	};
 
@@ -85,8 +85,6 @@ class CancelPurchaseButton extends Component {
 
 		this.setState( {
 			showDialog: false,
-			surveyStep: INITIAL_STEP,
-			survey: initialSurveyState(),
 		} );
 	};
 
@@ -95,91 +93,14 @@ class CancelPurchaseButton extends Component {
 		this.closeDialog();
 	};
 
-	changeSurveyStep = stepFunction => {
-		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
-		const { surveyStep, survey } = this.state;
-		const steps = stepsForProductAndSurvey(
-			survey,
-			purchase,
-			isChatAvailable || isChatActive,
-			precancellationChatAvailable
-		);
-		const newStep = stepFunction( surveyStep, steps );
+	onStepChange = newStep => {
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
-		this.setState( { surveyStep: newStep } );
-	};
-
-	clickNext = () => {
-		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ) ) {
-			return;
-		}
-		this.changeSurveyStep( nextStep );
-	};
-
-	clickPrevious = () => {
-		if ( this.state.isRemoving ) {
-			return;
-		}
-		this.changeSurveyStep( previousStep );
 	};
 
 	onSurveyChange = update => {
 		this.setState( {
 			survey: update,
 		} );
-	};
-
-	renderCancelConfirmationDialog = () => {
-		const { purchase, selectedSite, translate } = this.props;
-		const buttons = {
-			close: {
-				action: 'close',
-				label: translate( "I'll Keep It" ),
-			},
-			next: {
-				action: 'next',
-				disabled: this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ),
-				label: translate( 'Next Step' ),
-				onClick: this.clickNext,
-			},
-			prev: {
-				action: 'prev',
-				disabled: this.state.isRemoving,
-				label: translate( 'Previous Step' ),
-				onClick: this.clickPrevious,
-			},
-			cancel: {
-				action: 'cancel',
-				label: translate( 'Cancel Now' ),
-				isPrimary: true,
-				disabled: this.state.submitting,
-				onClick: this.submitCancelAndRefundPurchase,
-			},
-		};
-
-		let buttonsArr;
-		if ( this.state.surveyStep === FINAL_STEP ) {
-			buttonsArr = [ buttons.close, buttons.prev, buttons.cancel ];
-		} else {
-			buttonsArr =
-				this.state.surveyStep === INITIAL_STEP
-					? [ buttons.close, buttons.next ]
-					: [ buttons.close, buttons.prev, buttons.next ];
-		}
-
-		return (
-			<CancelPurchaseForm
-				chatInitiated={ this.chatInitiated }
-				defaultContent={ this.renderCancellationEffect() }
-				onInputChange={ this.onSurveyChange }
-				purchase={ purchase }
-				selectedSite={ selectedSite }
-				surveyStep={ this.state.surveyStep }
-				isVisible={ this.state.showDialog }
-				buttons={ buttonsArr }
-				onClose={ this.closeDialog }
-			/>
-		);
 	};
 
 	goToCancelConfirmation = () => {
@@ -327,7 +248,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, translate } = this.props;
+		const { purchase, selectedSite, translate } = this.props;
 
 		let text, onClick;
 
@@ -368,7 +289,18 @@ class CancelPurchaseButton extends Component {
 				>
 					{ text }
 				</Button>
-				{ this.renderCancelConfirmationDialog() }
+				<CancelPurchaseForm
+					chatInitiated={ this.chatInitiated }
+					defaultContent={ this.renderCancellationEffect() }
+					onInputChange={ this.onSurveyChange }
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					isVisible={ this.state.showDialog }
+					onClose={ this.closeDialog }
+					onStepChange={ this.onStepChange }
+					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
+					flowType={ this.getCancellationFlowType() }
+				/>
 			</div>
 		);
 	}

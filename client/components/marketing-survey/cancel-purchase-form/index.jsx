@@ -20,9 +20,13 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
+import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import { getName } from 'lib/purchases';
@@ -31,6 +35,10 @@ import {
 	cancellationOptionsForPurchase,
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
+import nextStep from './next-step';
+import previousStep from './previous-step';
+import isSurveyFilledIn from './is-survey-filled-in';
+import stepsForProductAndSurvey from './steps-for-product-and-survey';
 
 /**
  * Style dependencies
@@ -45,7 +53,6 @@ class CancelPurchaseForm extends React.Component {
 		purchase: PropTypes.object.isRequired,
 		selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
 		showSurvey: PropTypes.bool.isRequired,
-		surveyStep: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 	};
 
@@ -74,6 +81,9 @@ class CancelPurchaseForm extends React.Component {
 			questionTwoText: '',
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: '',
+
+			surveyStep: steps.INITIAL_STEP,
+			isSubmitting: false,
 		};
 	}
 
@@ -326,7 +336,9 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	surveyContent() {
-		const { translate, showSurvey, surveyStep } = this.props;
+		const { translate, showSurvey } = this.props;
+		const { surveyStep } = this.state;
+
 		if ( showSurvey ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
 				return (
@@ -386,12 +398,99 @@ class CancelPurchaseForm extends React.Component {
 		return <div>{ this.props.defaultContent }</div>;
 	}
 
+	closeDialog = () => {
+		this.props.onClose();
+
+		this.setState( {
+			surveyStep: steps.INITIAL_STEP,
+			...initialSurveyState(),
+		} );
+	};
+
+	changeSurveyStep = stepFunction => {
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
+		const { surveyStep, survey } = this.state;
+		const allSteps = stepsForProductAndSurvey(
+			survey,
+			purchase,
+			isChatAvailable || isChatActive,
+			precancellationChatAvailable
+		);
+		const newStep = stepFunction( surveyStep, allSteps );
+
+		this.props.onStepChange( newStep );
+		this.setState( { surveyStep: newStep } );
+	};
+
+	clickNext = () => {
+		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state ) ) {
+			return;
+		}
+		this.changeSurveyStep( nextStep );
+	};
+
+	clickPrevious = () => {
+		if ( this.state.isRemoving ) {
+			return;
+		}
+		this.changeSurveyStep( previousStep );
+	};
+
+	getStepButtons = () => {
+		const { translate } = this.props;
+		const buttons = {
+			close: {
+				action: 'close',
+				label: translate( "I'll Keep It" ),
+			},
+			next: {
+				action: 'next',
+				disabled: ! isSurveyFilledIn( this.state ),
+				label: translate( 'Next Step' ),
+				onClick: this.clickNext,
+			},
+			prev: {
+				action: 'prev',
+				label: translate( 'Previous Step' ),
+				onClick: this.clickPrevious,
+			},
+			cancel: {
+				action: 'cancel',
+				label: translate( 'Cancel Now' ),
+				isPrimary: true,
+				// disabled: this.state.submitting,
+				// onClick: this.submitCancelAndRefundPurchase,
+				onClick: this.props.onClickFinalConfirm,
+			},
+			remove: {
+				action: 'remove',
+				disabled: this.state.isRemoving,
+				isPrimary: true,
+				label: translate( 'Remove Now' ),
+				onClick: this.props.onClickFinalConfirm,
+			},
+		};
+
+		// TODO:
+		// Add the chat button back
+
+		if ( this.state.surveyStep === steps.FINAL_STEP ) {
+			return this.props.flowType === 'remove'
+				? [ buttons.close, buttons.prev, buttons.remove ]
+				: [ buttons.close, buttons.prev, buttons.cancel ];
+		}
+
+		return this.state.surveyStep === steps.INITIAL_STEP
+			? [ buttons.close, buttons.next ]
+			: [ buttons.close, buttons.prev, buttons.next ];
+	};
+
 	render() {
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
-				onClose={ this.props.onClose }
-				buttons={ this.props.buttons }
+				onClose={ this.closeDialog }
+				buttons={ this.getStepButtons() }
 				className="cancel-purchase-form__dialog"
 			>
 				{ this.surveyContent() }
@@ -401,7 +500,11 @@ class CancelPurchaseForm extends React.Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		isChatAvailable: isHappychatAvailable( state ),
+		isChatActive: hasActiveHappychatSession( state ),
+		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+	} ),
 	dispatch => ( {
 		clickRadio: ( option, value ) =>
 			dispatch(
