@@ -199,11 +199,11 @@ class Task extends PureComponent {
 									>
 										{ taskActionButtonText }
 									</Button>
-									{ ! completed && showSkip ? (
+									{ ! completed && showSkip && (
 										<Button className="checklist__task-skip" onClick={ onDismiss }>
-											Skip
+											{ translate( 'Skip' ) }
 										</Button>
-									) : null }
+									) }
 								</div>
 							</div>
 						</div>
