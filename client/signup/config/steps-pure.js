@@ -38,9 +38,7 @@ export function generateSteps( {
 			stepName: 'survey',
 			props: {
 				surveySiteType:
-					currentPage && currentPage.toString().match( /\/start\/(blog|delta-blog)/ )
-						? 'blog'
-						: 'site',
+					currentPage && currentPage.toString().match( /\/start\/blog/ ) ? 'blog' : 'site',
 			},
 			providesDependencies: [ 'surveySiteType', 'surveyQuestion' ],
 		},
