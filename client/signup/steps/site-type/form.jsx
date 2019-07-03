@@ -72,6 +72,8 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			// TODO: Better handling for Jetpack flows in the site-type lib,
+			// so we don't depend on injecting conditionals into components like this.
 			notJetpack: ! isJetpackSite( state, siteId ),
 		};
 	},
