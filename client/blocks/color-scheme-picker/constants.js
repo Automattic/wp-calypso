@@ -48,7 +48,7 @@ export default function( translate ) {
 			thumbnail: {
 				cssClass: 'is-ocean',
 		},
-		{
+		config.isEnabled( 'me/account/color-schemes/sunset' ) && {
 			label: translate( 'Sunset' ),
 			value: 'sunset',
 			thumbnail: {
