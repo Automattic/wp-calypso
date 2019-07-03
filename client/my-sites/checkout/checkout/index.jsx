@@ -412,7 +412,7 @@ export class Checkout extends React.Component {
 		
 		const destinationFromCookie = retrieveSignupDestination();
 		const signupDestination = destinationFromCookie
-			? destinationFromCookie.replace( ':receiptId', receiptId )
+			? destinationFromCookie
 			: `/view/${ selectedSiteSlug }`;
 
 		persistSignupDestination( signupDestination );
