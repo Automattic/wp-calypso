@@ -66,6 +66,7 @@ import {
 } from 'lib/plans/constants';
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
+import { addQueryArgs } from 'lib/url';
 
 /**
  * Style dependencies
@@ -763,6 +764,7 @@ export default connect(
 			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
+			redirectTo,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -862,7 +864,7 @@ export default connect(
 									getPlanPath( plan ),
 								] ).join( '/' );
 
-								page( checkoutPath );
+								page( addQueryArgs( { redirect_to: redirectTo }, checkoutPath ) );
 						  },
 					planConstantObj,
 					planName: plan,

@@ -32,6 +32,7 @@ class Plans extends React.Component {
 		displayJetpackPlans: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
+		redirectTo: PropTypes.string,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.object,
 	};
@@ -84,7 +85,7 @@ class Plans extends React.Component {
 	};
 
 	render() {
-		const { selectedSite, translate, displayJetpackPlans } = this.props;
+		const { selectedSite, translate, displayJetpackPlans, redirectTo } = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
 			return this.renderPlaceholder();
@@ -112,6 +113,7 @@ class Plans extends React.Component {
 							discountEndDate={ this.props.discountEndDate }
 							site={ selectedSite }
 							plansWithScroll={ false }
+							redirectTo={ redirectTo }
 						/>
 					</div>
 				</Main>

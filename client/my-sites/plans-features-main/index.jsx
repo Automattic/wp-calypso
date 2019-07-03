@@ -93,6 +93,7 @@ export class PlansFeaturesMain extends Component {
 			isLandingPage,
 			isLaunchPage,
 			onUpgradeClick,
+			redirectTo,
 			selectedFeature,
 			selectedPlan,
 			withDiscount,
@@ -128,6 +129,7 @@ export class PlansFeaturesMain extends Component {
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
+					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }

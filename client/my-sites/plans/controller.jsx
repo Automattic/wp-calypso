@@ -23,6 +23,7 @@ export function plans( context, next ) {
 				selectedPlan={ context.query.plan }
 				withDiscount={ context.query.discount }
 				discountEndDate={ context.query.ts }
+				redirectTo={ context.query.redirect_to }
 			/>
 		</CheckoutData>
 	);
