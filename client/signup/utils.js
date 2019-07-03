@@ -195,12 +195,20 @@ export function getFirstInvalidStep( flowName, progress ) {
 	return find( getFilteredSteps( flowName, progress ), { status: 'invalid' } );
 }
 
-export function getCompletedSteps( flowName, progress ) {
+export function getCompletedSteps( flowName, progress, options = {} ) {
+	if ( options.shouldMatchFlowName ) {
+		return filter(
+			getFilteredSteps( flowName, progress ),
+			step => 'in-progress' !== step.status && step.lastKnownFlow === flowName
+		);
+	}
 	return filter( getFilteredSteps( flowName, progress ), step => 'in-progress' !== step.status );
 }
 
 export function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	const flowStepsInProgressStore = getCompletedSteps( flowName, progress );
+	const flowStepsInProgressStore = getCompletedSteps( flowName, progress, {
+		shouldMatchFlowName: true,
+	} );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
