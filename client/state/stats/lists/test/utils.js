@@ -1820,11 +1820,9 @@ describe( 'utils', () => {
 							date: '2017-01-12',
 							days: {
 								'2017-01-12': {
-									downloads: [
+									files: [
 										{
-											url: 'http://en.blog.wordpress.com/awesome',
-											post_id: 10,
-											title: 'My awesome podcast',
+											filename: '/2019/01/awesome.mov',
 											downloads: 3939,
 										},
 									],
@@ -1840,17 +1838,11 @@ describe( 'utils', () => {
 							slug: 'en.blog.wordpress.com',
 						}
 					)
-				).toEqual( [
+				).toMatchObject( [
 					{
-						actions: [
-							{
-								data: 'http://en.blog.wordpress.com/awesome',
-								type: 'link',
-							},
-						],
-						label: 'My awesome podcast',
-						page: '/stats/day/filedownloads/en.blog.wordpress.com?post=10',
 						value: 3939,
+						label: '/2019/01/awesome.mov',
+						labelIcon: 'external',
 					},
 				] );
 			} );
