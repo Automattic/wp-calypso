@@ -77,7 +77,7 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"network-connection": true,
-		"onboarding-checklist": false,
+		"onboarding-checklist": true,
 		"onboarding-checklist/email-setup": true,
 		"onboarding-checklist/phase2": true,
 		"perfmon": true,
