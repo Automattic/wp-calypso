@@ -186,12 +186,14 @@ export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 	return 'blog';
 }
 
-export function getFilteredSteps( flowName, progress ) {
+export function getFilteredSteps( flowName, progress, options = {} ) {
 	const flow = flows.getFlow( flowName );
-	return filter(
-		progress,
-		step => includes( flow.steps, step.stepName ) && step.lastKnownFlow === flowName
-	);
+	return filter( progress, step => {
+		if ( options.isResumingProgress ) {
+			return includes( flow.steps, step.stepName ) && step.lastKnownFlow === flowName;
+		}
+		return includes( flow.steps, step.stepName );
+	} );
 }
 
 export function getFirstInvalidStep( flowName, progress ) {

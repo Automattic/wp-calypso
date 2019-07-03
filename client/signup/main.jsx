@@ -415,7 +415,9 @@ class Signup extends React.Component {
 
 	firstUnsubmittedStepName = () => {
 		const currentSteps = flows.getFlow( this.props.flowName ).steps,
-			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
+			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress, {
+				isResumingProgress: true,
+			} ),
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
 			firstInProgressStepName = firstInProgressStep.stepName;
