@@ -34,6 +34,7 @@ export default class SignupSitePreviewIframe extends Component {
 		setIsLoaded: PropTypes.func,
 		setWrapperHeight: PropTypes.func,
 		scrolling: PropTypes.bool,
+		defaultViewportDevice: PropTypes.oneOf( [ 'desktop', 'phone' ] ),
 	};
 
 	static defaultProps = {
@@ -54,12 +55,7 @@ export default class SignupSitePreviewIframe extends Component {
 
 	componentDidMount() {
 		this.setIframeSource( this.props );
-		if ( this.props.resize ) {
-			this.resizeListener = window.addEventListener(
-				'resize',
-				debounce( this.setContainerHeight, 50 )
-			);
-		}
+
 		// TODO: we'll do this right later if it works
 		window.addEventListener( 'message', event => {
 			let data;
@@ -74,24 +70,24 @@ export default class SignupSitePreviewIframe extends Component {
 			} else {
 				data = event.data;
 			}
-			console.log( 'From parent:', data );
-			if ( typeof data.height === 'number' ) {
+			console.log( 'From parent:', event.origin, data );
+			if ( typeof data.height === 'number' && this.props.resize ) {
 				this.props.setWrapperHeight( data.height + 25 );
 			}
+
+			if ( typeof data.loaded === true  ) {
+
+			}
+
 		} );
 	}
 
-	componentWillUnmount() {
-		this.resizeListener && window.removeEventListener( 'resize', this.resizeListener );
-	}
+
 
 	shouldComponentUpdate( nextProps ) {
 		if (
-			this.props.cssUrl !== nextProps.cssUrl ||
-			this.props.fontUrl !== nextProps.fontUrl ||
-			this.props.gutenbergStylesUrl !== nextProps.gutenbergStylesUrl ||
-			this.props.langSlug !== nextProps.langSlug ||
-			this.props.isRtl !== nextProps.isRtl
+			this.props.verticalId !== nextProps.verticalId ||
+			this.props.siteTypeId !== nextProps.siteTypeId
 		) {
 			this.setIframeSource( nextProps );
 			return false;
@@ -228,9 +224,11 @@ export default class SignupSitePreviewIframe extends Component {
 		this.setContentParams( params );*/
 
 		this.props.setIsLoaded( false );
+		// the base site URL could come from the verticals API
+		// added to the annotation during generation?
 		this.iframe.current.src = `https://a8cvm${ siteTypeId }${
 			verticalId && siteTypeId === 1 ? verticalId : ''
-		}.wordpress.com?onboarding_preview=true#${ window.location.origin }`;
+		}.wordpress.com?onboarding_preview=true&size=${ this.props.defaultViewportDevice }#${ window.location.origin }`;
 	};
 
 	render() {
