@@ -99,8 +99,6 @@
 		"paladin": true,
 		"network-connection": true,
 		"oauth": true,
-		"onboarding-checklist": false,
-		"onboarding-checklist/email-setup": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { isEnabled } from 'config';
 import { noop } from 'lodash';
 
 /**
@@ -21,7 +20,7 @@ export const fetchChecklist = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'GET',
-			apiNamespace: isEnabled( 'onboarding-checklist/phase2' ) ? 'rest/v1.1' : 'rest/v1',
+			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
 			},
@@ -61,7 +60,7 @@ export const updateChecklistTask = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
-			apiNamespace: isEnabled( 'onboarding-checklist/phase2' ) ? 'rest/v1.1' : 'rest/v1',
+			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
 			},

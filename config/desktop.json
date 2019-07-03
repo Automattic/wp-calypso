@@ -68,8 +68,6 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"oauth": true,
-		"onboarding-checklist": false,
-		"onboarding-checklist/email-setup": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
