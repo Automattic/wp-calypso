@@ -62,6 +62,7 @@ export class ConciergeMain extends Component {
 			scheduleId,
 			userSettings,
 			nextAppointment,
+			rescheduling,
 		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
@@ -76,7 +77,7 @@ export class ConciergeMain extends Component {
 			return <Upsell site={ site } />;
 		}
 
-		if ( nextAppointment ) {
+		if ( nextAppointment && ! rescheduling ) {
 			return <AppointmentInfo appointment={ nextAppointment } />;
 		}
 
