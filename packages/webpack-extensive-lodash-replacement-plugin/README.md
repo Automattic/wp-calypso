@@ -17,10 +17,8 @@ import camelCase from 'lodash-es/camelCase';
 ```
 
 This applies transitively to the whole codebase. However, requested versions are
-compared against the root's `lodash-es` version to ensure that they can be replaced.
-
-**Note:**: The `lodash-es` version in the root `package.json` must be defined as a single version
-string (e.g. "4.17.11"), not a range.
+compared against the root's `lodash-es` version to ensure that they can be
+replaced.
 
 ## Usage
 
@@ -32,10 +30,10 @@ const ExtensiveLodashReplacementPlugin =
 module.exports = {
   ...,
   plugins: [
-    new ExtensiveLodashReplacementPlugin( './package.json' ),
+    new ExtensiveLodashReplacementPlugin( '.' ),
     ...
   ]
 };
 ```
 
-The optional constructor argument is the location of the `package.json` file for the project.
+The optional constructor argument is the base directory for the root project.

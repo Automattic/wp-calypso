@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/webpack-extensive-lodash-replacement-plugin",
 	"private": true,
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Webpack plugin to replace lodash, lodash/foo and lodash.foo imports with lodash-es",
 	"keywords": [
 		"Webpack",
@@ -25,7 +25,7 @@
 		"webpack": "^4.29.6"
 	},
 	"dependencies": {
-		"find-package-json": "^1.2.0",
+		"enhanced-resolve": "^4.1.0",
 		"semver": "^6.1.1"
 	}
 }

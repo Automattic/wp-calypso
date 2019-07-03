@@ -1,9 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/no-nodejs-modules */
 const path = require( 'path' );
-const findPackageJson = require( 'find-package-json' );
-const fs = require( 'fs' );
 const semver = require( 'semver' );
+const {
+	NodeJsInputFileSystem,
+	CachedInputFileSystem,
+	ResolverFactory,
+} = require( 'enhanced-resolve' );
 
 // List of all known lodash module names.
 // Used for normalizing names to avoid code duplication.
@@ -332,74 +335,90 @@ const LODASH_MODULE_NAMES = [
 	'zipWith',
 ];
 
-function throwError( message, error = null ) {
-	throw new Error(
-		`[ExtensiveLodashReplacementPlugin] ${ message }${ error ? ' Error: ' : '' }${ error }`
+function createError( message, error = null ) {
+	return new Error(
+		`[ExtensiveLodashReplacementPlugin] ${ message }${ error ? ` Error: ${ error }` : '' }`
 	);
 }
 
+const resolverOptions = {
+	fileSystem: new CachedInputFileSystem( new NodeJsInputFileSystem(), 4000 ),
+	extensions: [ '.js' ],
+	resolveToContext: true,
+};
+
+function getModuleForPath( rootPath, packageName ) {
+	const moduleResolver = ResolverFactory.createResolver( resolverOptions );
+
+	return new Promise( ( resolve, reject ) => {
+		moduleResolver.resolve( {}, rootPath, packageName, {}, ( error, filepath, context ) => {
+			if ( error ) {
+				reject(
+					createError(
+						`Could not find module ${ packageName } for import on ${ rootPath }.`,
+						error
+					)
+				);
+			}
+
+			resolve( context );
+		} );
+	} );
+}
+
 class ExtensiveLodashReplacementPlugin {
-	constructor( baseFile = './package.json' ) {
-		this.baseFile = path.resolve( baseFile );
-		let data;
-
-		try {
-			data = fs.readFileSync( this.baseFile );
-		} catch ( error ) {
-			throwError( 'Could not read root package.json.', error );
-		}
-
-		try {
-			const packageJson = JSON.parse( data );
-			this.lodashVersion =
-				packageJson && packageJson.dependencies && packageJson.dependencies[ 'lodash-es' ];
-		} catch ( error ) {
-			throwError( 'Could not parse root package.json.', error );
-		}
-
-		if ( ! this.lodashVersion ) {
-			throwError( 'No lodash-es dependency in root package.json.' );
-		}
-
-		if ( ! semver.valid( this.lodashVersion ) ) {
-			throwError( `Invalid root package.json lodash-es version: ${ this.lodashVersion }.` );
-		}
+	constructor( baseDir = '.' ) {
+		this.baseDir = path.resolve( baseDir );
+		this.baseLodashContext = getModuleForPath( this.baseDir, 'lodash' );
+		this.baseLodashESVersion = ( async () => {
+			const baseLodashES = await getModuleForPath( this.baseDir, 'lodash-es' );
+			return (
+				baseLodashES && baseLodashES.descriptionFileData && baseLodashES.descriptionFileData.version
+			);
+		} )();
 	}
 
-	// Figure out the requested Lodash version range for a given import.
-	// It looks at the file with the import and traverses upwards, until it finds a package.json file
-	// with the requested dependency. It returns this range.
-	findRequestedLodashRange( file, packageName ) {
-		const finder = findPackageJson( path.dirname( file ) );
-		let version;
+	// Figure out the version for a given import.
+	// It follows the node resolution algorithm until it finds the package, returning its version.
+	async findRequestedVersion( file, packageName ) {
+		const foundContext = await getModuleForPath( path.dirname( file ), packageName );
+		const baseLodashContext = await this.baseLodashContext;
 
-		try {
-			while ( ! version ) {
-				const found = finder.next();
-
-				if ( found.filename === this.baseFile ) {
-					return this.lodashVersion;
-				}
-
-				const contents = found && found.value;
-				version = contents && contents.dependencies && contents.dependencies[ packageName ];
-			}
-		} catch ( error ) {
-			throwError( `Could not find requested range for import on ${ file }.`, error );
+		if ( foundContext.path === baseLodashContext.path ) {
+			return await this.baseLodashESVersion;
 		}
 
-		return version;
+		return (
+			foundContext && foundContext.descriptionFileData && foundContext.descriptionFileData.version
+		);
 	}
 
 	// Figure out if the requested Lodash import can be replaced with global lodash-es.
-	// It takes the importer's lodash version range and the global lodash-es version into account.
-	canBeReplaced( file, packageName ) {
-		const requestedVersion = this.findRequestedLodashRange( file, packageName );
-		return requestedVersion && semver.satisfies( this.lodashVersion, requestedVersion );
+	// It takes the importer's version and the global lodash-es version into account.
+	async canBeReplaced( file, packageName ) {
+		const importVersion = await this.findRequestedVersion( file, packageName );
+		const baseLodashESVersion = await this.baseLodashESVersion;
+		const isVersionMatch =
+			importVersion &&
+			baseLodashESVersion &&
+			semver.major( baseLodashESVersion ) === semver.major( importVersion ) &&
+			semver.gte( baseLodashESVersion, importVersion );
+
+		if ( ! isVersionMatch ) {
+			const relativePath = path.relative( this.baseDir, file );
+			// Output compilation warning.
+			this.compilation.warnings.push(
+				new Error(
+					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash-es version ${ baseLodashESVersion }`
+				)
+			);
+		}
+
+		return isVersionMatch;
 	}
 
 	// Get the modified request
-	getModifiedRequest( result ) {
+	async getModifiedRequest( result ) {
 		const { request } = result;
 
 		if ( ! result.contextInfo || ! result.contextInfo.issuer ) {
@@ -408,21 +427,21 @@ class ExtensiveLodashReplacementPlugin {
 
 		// Replace plain 'lodash' with 'lodash-es'.
 		if ( /^lodash$/.test( request ) ) {
-			if ( this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
 				return 'lodash-es';
 			}
 		}
 
 		// Replace 'lodash/foo' with 'lodash-es/foo'.
 		if ( /^lodash\/(.*)$/.test( request ) ) {
-			if ( this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
 				return request.replace( 'lodash/', 'lodash-es/' );
 			}
 		}
 
 		// Replace 'lodash.foo' with 'lodash-es/foo'.
 		if ( /^lodash\.(.*)$/.test( request ) ) {
-			if ( this.canBeReplaced( result.contextInfo.issuer, request ) ) {
+			if ( await this.canBeReplaced( result.contextInfo.issuer, request ) ) {
 				const match = /^lodash\.(.*)$/.exec( request );
 				let subModule = match[ 1 ];
 
@@ -443,15 +462,19 @@ class ExtensiveLodashReplacementPlugin {
 	}
 
 	apply( compiler ) {
+		compiler.hooks.thisCompilation.tap( 'LodashReplacementPlugin', compilation => {
+			this.compilation = compilation;
+		} );
+
 		compiler.hooks.normalModuleFactory.tap( 'LodashReplacementPlugin', nmf => {
-			nmf.hooks.beforeResolve.tap( 'LodashReplacementPlugin', result => {
+			nmf.hooks.beforeResolve.tapPromise( 'LodashReplacementPlugin', async result => {
 				if ( ! result ) return;
-				result.request = this.getModifiedRequest( result );
+				result.request = await this.getModifiedRequest( result );
 				return result;
 			} );
-			nmf.hooks.afterResolve.tap( 'LodashReplacementPlugin', result => {
+			nmf.hooks.afterResolve.tapPromise( 'LodashReplacementPlugin', async result => {
 				if ( ! result ) return;
-				result.request = this.getModifiedRequest( result );
+				result.request = await this.getModifiedRequest( result );
 				return result;
 			} );
 		} );
