@@ -9,8 +9,9 @@
 .email-management {
 	.gsuite-user-item__email {
 		float: left;
-		line-height: 1.7;
+		font-family: $serif;
 		font-weight: 600;
+		line-height: 1.7;
 	}
 	
 	a.gsuite-user-item,

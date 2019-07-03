@@ -63,10 +63,14 @@ class GSuiteUsersCard extends React.Component {
 	};
 
 	renderDomain( domain, users ) {
+		// The product name is same for all users as product license is associated to domain
+		// Hence a snapshot of the product name from the first user is sufficient
 		const license = users[ 0 ].product_name;
+		// This ensures display consistency if the API is not ready yet
+		const label = license ? `${ license }: ${ domain }` : domain;
 		return (
 			<div key={ `google-apps-user-${ domain }` } className="gsuite-users-card__container">
-				<SectionHeader label={ `${ license }: ${ domain }` }>
+				<SectionHeader label={ label }>
 					{ this.canAddUsers( domain ) && (
 						<Button
 							primary
