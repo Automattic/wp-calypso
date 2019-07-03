@@ -197,6 +197,13 @@ const EXCHANGE_RATES = {
 };
 
 /**
+ * `localStorage` key for marketing coupons.
+ *
+ * @type {String} `localStorage` key.
+ */
+export const MARKETING_COUPONS_KEY = 'marketing-coupons';
+
+/**
  * Returns whether a currency is supported
  *
  * @param {String} currency - `USD`, `JPY`, etc
@@ -455,6 +462,38 @@ function parseAmpEncodedParams( value ) {
 	}
 
 	return keyValMap;
+}
+
+/**
+ * Remembers `?coupon` query argument via `localStorage`.
+ */
+export function saveCouponQueryArgument() {
+	// Read coupon query argument, return early if there is none.
+	const parsedUrl = urlParseAmpCompatible( location.href );
+	const couponCode = parsedUrl.query.coupon;
+	if ( ! couponCode ) {
+		return;
+	}
+
+	// Read coupon list from localStorage, create new if it's not there yet, refresh existing.
+	const couponsJson = localStorage.getItem( MARKETING_COUPONS_KEY );
+	const coupons = JSON.parse( couponsJson ) || {};
+	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+	const now = Date.now();
+	debug( 'Found coupons in localStorage: ', coupons );
+
+	coupons[ couponCode ] = now;
+
+	// Delete coupons if they're older than a week.
+	Object.keys( coupons ).forEach( key => {
+		if ( now > coupons[ key ] + ONE_WEEK_MILLISECONDS ) {
+			delete coupons[ key ];
+		}
+	} );
+
+	// Write remembered coupons back to localStorage.
+	debug( 'Storing coupons in localStorage: ', coupons );
+	localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 }
 
 /**

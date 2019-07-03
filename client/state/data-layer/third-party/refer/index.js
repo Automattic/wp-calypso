@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { pick } from 'lodash';
+import debug from 'debug';
 
 /**
  * Internal dependencies
@@ -13,6 +14,8 @@ import { AFFILIATE_REFERRAL } from 'state/action-types';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+
+const referDebug = debug( 'calypso:analytics:refer' );
 
 const whitelistedEventProps = [
 	'status',
@@ -28,35 +31,40 @@ const whitelistedEventProps = [
 ];
 
 const fetch = action => {
-	const { affiliateId, campaignId, subId, urlPath } = action;
+	const { affiliateId, campaignId, subId, referrer } = action;
 
 	if ( ! affiliateId || isNaN( affiliateId ) ) {
 		return null;
 	}
 
+	const requestBody = {
+		affiliate_id: affiliateId,
+		campaign_id: campaignId || '',
+		sub_id: subId || '',
+		referrer: referrer || '',
+	};
+
+	referDebug( 'Fetching Refer platform response.', action, requestBody );
 	return http(
 		{
 			method: 'POST',
 			url: 'https://refer.wordpress.com/clicks/67402',
-			headers: [ [ 'content-type', 'application/x-www-form-urlencoded; charset=UTF-8' ] ],
-			body: {
-				affiliate_id: affiliateId,
-				campaign_id: campaignId || '',
-				sub_id: subId || '',
-				referrer: urlPath,
-			},
-			// Needed to check and set the 'wp-affiliate-tracker' cookie
-			withCredentials: true,
+			headers: [ [ 'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8' ] ],
+			body: requestBody,
+			withCredentials: true, // Needed to check and set the 'wp-affiliate-tracker' cookie.
 		},
 		action
 	);
 };
 
 const onSuccess = ( action, eventProps ) => {
+	referDebug( 'Recording Refer platform success response.', eventProps );
 	return recordTracksEvent( 'calypso_refer_visit_response', eventProps );
 };
 
 const onError = ( action, error ) => {
+	referDebug( 'Recording Refer platform error response.', error );
+
 	if ( ! ( error && error.response && 'string' === typeof error.response.text ) ) {
 		return;
 	}

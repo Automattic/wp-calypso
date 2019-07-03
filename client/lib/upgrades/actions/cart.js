@@ -25,7 +25,7 @@ import {
 } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import { domainRegistration } from 'lib/cart-values/cart-items';
-import { urlParseAmpCompatible } from 'lib/analytics/utils';
+import { MARKETING_COUPONS_KEY } from 'lib/analytics/utils';
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
@@ -35,7 +35,6 @@ import 'lib/cart/store';
  * Constants
  */
 const debug = debugModule( 'calypso:signup:cart' );
-const MARKETING_COUPONS_KEY = 'marketing-coupons';
 
 export function disableCart() {
 	Dispatcher.handleViewAction( { type: CART_DISABLE } );
@@ -144,35 +143,6 @@ export function removeCoupon() {
 	Dispatcher.handleViewAction( {
 		type: CART_COUPON_REMOVE,
 	} );
-}
-
-export function saveCouponQueryArgument() {
-	// read coupon query argument, return early if there is none
-	const parsedUrl = urlParseAmpCompatible( location.href );
-	const couponCode = parsedUrl.query.coupon;
-	if ( ! couponCode ) {
-		return;
-	}
-
-	// read coupon list from localStorage, create new if it's not there yet, refresh existing
-	const couponsJson = localStorage.getItem( MARKETING_COUPONS_KEY );
-	const coupons = JSON.parse( couponsJson ) || {};
-	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
-	const now = Date.now();
-	debug( 'Found coupons in localStorage: ', coupons );
-
-	coupons[ couponCode ] = now;
-
-	// delete coupons if they're older than a week
-	Object.keys( coupons ).forEach( key => {
-		if ( now > coupons[ key ] + ONE_WEEK_MILLISECONDS ) {
-			delete coupons[ key ];
-		}
-	} );
-
-	// write remembered coupons back to localStorage
-	debug( 'Storing coupons in localStorage: ', coupons );
-	localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 }
 
 export function getRememberedCoupon() {
