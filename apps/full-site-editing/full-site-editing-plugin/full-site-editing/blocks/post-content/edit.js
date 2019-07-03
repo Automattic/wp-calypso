@@ -68,7 +68,7 @@ class PostContentEdit extends Component {
 					} ) }
 				>
 					<PostTitle />
-					{ showInnerBlocks && <InnerBlocks /> }
+					{ showInnerBlocks && <InnerBlocks templateLock={ false } /> }
 					{ showPlaceholder && (
 						<Placeholder
 							icon="layout"
