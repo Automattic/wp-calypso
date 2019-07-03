@@ -4,7 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { capitalize, defer, includes } from 'lodash';
+import { capitalize, defer, includes, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
@@ -17,11 +17,13 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import Divider from './divider';
+import ExternalLink from 'components/external-link';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
@@ -52,6 +54,7 @@ import { isPasswordlessAccount, isRegularAccount } from 'state/login/utils';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
+import TextControl from 'extensions/woocommerce/components/text-control';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -257,6 +260,161 @@ export class LoginForm extends Component {
 		}
 	}
 
+	handleWooCommerceSubmit = event => {
+		event.preventDefault();
+		document.activeElement.blur();
+		if ( ! this.props.hasAccountTypeLoaded ) {
+			this.props.getAuthAccountType( this.state.usernameOrEmail );
+			return;
+		}
+		this.loginUser();
+	};
+
+	renderWooCommerce() {
+		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
+		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
+
+		return (
+			<form method="post">
+				<Card className="login__form">
+					{ this.renderPrivateSiteNotice() }
+					<div className="login__form-userdata">
+						{ linkingSocialUser && (
+							<p>
+								{ this.props.translate(
+									'We found a WordPress.com account with the email address "%(email)s". ' +
+										'Log in to this account to connect it to your %(service)s profile, ' +
+										'or choose a different %(service)s profile.',
+									{
+										args: {
+											email: this.props.socialAccountLinkEmail,
+											service: capitalize( this.props.socialAccountLinkService ),
+										},
+									}
+								) }
+							</p>
+						) }
+
+						<label htmlFor="usernameOrEmail">
+							{ this.isPasswordView() ? (
+								<Button
+									borderless
+									className="login__form-change-username"
+									onClick={ this.resetView }
+								>
+									<Gridicon icon="arrow-left" size={ 18 } />
+
+									{ includes( this.state.usernameOrEmail, '@' )
+										? this.props.translate( 'Change Email Address' )
+										: this.props.translate( 'Change Username' ) }
+								</Button>
+							) : null }
+						</label>
+
+						<TextControl
+							label={ this.props.translate( 'Email Address or Username' ) }
+							disabled={ isFormDisabled || this.isPasswordView() }
+							id="usernameOrEmail"
+							name="usernameOrEmail"
+							value={ this.state.usernameOrEmail }
+							onChange={ value => {
+								this.props.formUpdate();
+								this.setState( {
+									usernameOrEmail: value,
+								} );
+							} }
+						/>
+
+						{ requestError && requestError.field === 'usernameOrEmail' && (
+							<FormInputValidation isError text={ requestError.message } />
+						) }
+
+						<div
+							className={ classNames( 'login__form-password', {
+								'is-hidden': this.isUsernameOrEmailView(),
+							} ) }
+						>
+							<TextControl
+								label={ this.props.translate( 'Password' ) }
+								disabled={ isFormDisabled }
+								id="password"
+								name="password"
+								type="password"
+								value={ this.state.password }
+								onChange={ value => {
+									this.props.formUpdate();
+									this.setState( {
+										password: value,
+									} );
+								} }
+							/>
+
+							{ requestError && requestError.field === 'password' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
+						</div>
+					</div>
+
+					{ config.isEnabled( 'signup/social' ) && (
+						<p className="login__form-terms">
+							{ preventWidows(
+								this.props.translate(
+									// To make any changes to this copy please speak to the legal team
+									'By continuing with any of the options below, ' +
+										'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+									{
+										components: {
+											tosLink: (
+												<ExternalLink
+													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								),
+								5
+							) }
+						</p>
+					) }
+
+					<div className="login__form-footer">
+						<div className="login__form-action">
+							<Button
+								primary
+								disabled={ isFormDisabled }
+								onClick={ this.handleWooCommerceSubmit }
+								type="submit"
+							>
+								{ this.isPasswordView() || this.isFullView()
+									? this.props.translate( 'Log In' )
+									: this.props.translate( 'Continue' ) }
+							</Button>
+						</div>
+
+						{ config.isEnabled( 'signup/social' ) && (
+							<div className="login__form-social">
+								<div className="login__form-social-divider">
+									<span>{ this.props.translate( 'or' ) }</span>
+								</div>
+								<SocialLoginForm
+									onSuccess={ this.props.onSuccess }
+									socialService={ this.props.socialService }
+									socialServiceResponse={ this.props.socialServiceResponse }
+									linkingSocialService={
+										this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+									}
+									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+								/>
+							</div>
+						) }
+					</div>
+				</Card>
+			</form>
+		);
+	}
+
 	render() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
@@ -265,6 +423,7 @@ export class LoginForm extends Component {
 			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
+			isJetpackWooCommerceFlow,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
@@ -279,6 +438,10 @@ export class LoginForm extends Component {
 			};
 
 			signupUrl = `/start/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+		}
+
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			return this.renderWooCommerce();
 		}
 
 		return (
@@ -469,6 +632,8 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
+			isJetpackWooCommerceFlow:
+				'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
