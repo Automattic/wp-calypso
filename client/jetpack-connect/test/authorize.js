@@ -123,12 +123,12 @@ describe( 'JetpackAuthorize', () => {
 	describe( 'isWoo', () => {
 		const isWoo = new JetpackAuthorize().isWoo;
 
-		test( 'should return true for woo wizard', () => {
+		test( 'should return true for woo services', () => {
 			const props = { authQuery: { from: 'woocommerce-services-auto-authorize' } };
 			expect( isWoo( props ) ).toBe( true );
 		} );
 
-		test( 'should return true for woo services', () => {
+		test( 'should return true for woo wizard', () => {
 			const props = { authQuery: { from: 'woocommerce-setup-wizard' } };
 			expect( isWoo( props ) ).toBe( true );
 		} );
@@ -140,9 +140,8 @@ describe( 'JetpackAuthorize', () => {
 	} );
 
 	describe( 'shouldAutoAuthorize', () => {
-		const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-
 		test( 'should return true for sso', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
 			const component = shallow( renderableComponent );
 			component.instance().isSso = () => true;
 			const result = component.instance().shouldAutoAuthorize();
@@ -150,9 +149,15 @@ describe( 'JetpackAuthorize', () => {
 			expect( result ).toBe( true );
 		} );
 
-		test( 'should return true for woo', () => {
+		test( 'should return true for woo services', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
 			const component = shallow( renderableComponent );
-			component.instance().isWoo = () => true;
+			component.setProps( {
+				authQuery: {
+					...DEFAULT_PROPS.authQuery,
+					from: 'woocommerce-services-auto-authorize',
+				},
+			} );
 			const result = component.instance().shouldAutoAuthorize();
 
 			expect( result ).toBe( true );

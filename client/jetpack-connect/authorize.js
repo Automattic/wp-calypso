@@ -256,11 +256,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldAutoAuthorize() {
-		const { alreadyAuthorized, authApproved } = this.props.authQuery;
-
+		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			this.isWoo() ||
+			( 'woocommerce-services-auto-authorize' === from ||
+				( ! config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+					'woocommerce-setup-wizard' === ' from' ) ) ||
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -302,9 +303,29 @@ export class JetpackAuthorize extends Component {
 		return partnerRedirectFlag ? partnerSlug && 'pressable' !== partnerSlug : partnerSlug;
 	}
 
+	handleSignIn = () => {
+		const { recordTracksEvent } = this.props;
+		const { from } = this.props.authQuery;
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
+		}
+	};
+
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
+		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
+
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
+		}
+
 		userUtilities.logout( window.location.href );
 	};
 
@@ -328,7 +349,7 @@ export class JetpackAuthorize extends Component {
 	handleSubmit = () => {
 		const { recordTracksEvent } = this.props;
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
-		const { alreadyAuthorized, redirectAfterAuth } = this.props.authQuery;
+		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
@@ -354,6 +375,14 @@ export class JetpackAuthorize extends Component {
 		}
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
+
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+		}
+
 		return this.authorize();
 	};
 
@@ -624,7 +653,9 @@ export class JetpackAuthorize extends Component {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
+						isWoo: this.isWoo(),
 					} ) }
+					onClick={ this.handleSignIn }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>

@@ -189,9 +189,15 @@ export class LoginForm extends Component {
 
 	loginUser() {
 		const { password, usernameOrEmail } = this.state;
-		const { onSuccess, redirectTo, domain } = this.props;
+		const { onSuccess, redirectTo, domain, isJetpackWooCommerceFlow } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
+
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
+				login_method: 'email',
+			} );
+		}
 
 		this.props
 			.loginUser( usernameOrEmail, password, redirectTo, domain )
@@ -259,6 +265,13 @@ export class LoginForm extends Component {
 			);
 		}
 	}
+
+	onWooCommerceSocialSuccess = ( ...args ) => {
+		this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
+			login_method: 'google',
+		} );
+		this.props.onSuccess( args );
+	};
 
 	handleWooCommerceSubmit = event => {
 		event.preventDefault();
@@ -399,7 +412,7 @@ export class LoginForm extends Component {
 									<span>{ this.props.translate( 'or' ) }</span>
 								</div>
 								<SocialLoginForm
-									onSuccess={ this.props.onSuccess }
+									onSuccess={ this.onWooCommerceSocialSuccess }
 									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
 									linkingSocialService={

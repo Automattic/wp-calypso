@@ -197,7 +197,7 @@ export default connect( state => {
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
-		'jetpack-connect' === sectionName &&
+		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
 		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
 	return {
 		masterbarIsHidden:

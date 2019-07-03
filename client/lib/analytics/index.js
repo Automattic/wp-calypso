@@ -67,7 +67,13 @@ let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
  * See internal Nosara repo?
  */
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
-const EVENT_NAME_EXCEPTIONS = [ 'a8c_cookie_banner_ok' ];
+const EVENT_NAME_EXCEPTIONS = [
+	'a8c_cookie_banner_ok',
+	// WooCommerce Onboarding / Connection Flow.
+	'wcadmin_storeprofiler_create_jetpack_account',
+	'wcadmin_storeprofiler_connect_store',
+	'wcadmin_storeprofiler_login_jetpack_account',
+];
 
 // Load tracking scripts
 if ( typeof window !== 'undefined' ) {
