@@ -588,7 +588,7 @@ class Full_Site_Editing {
 				$template[] = fse_map_block_to_editor_template_setting( $block );
 			}
 			$editor_settings['template'] = $template;
-			$editor_settings['templateLock'] = 'insert';
+			$editor_settings['templateLock'] = 'all';
 		}
 		return $editor_settings;
 	}
