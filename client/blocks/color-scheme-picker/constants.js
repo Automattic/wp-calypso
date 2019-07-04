@@ -56,5 +56,12 @@ export default function( translate ) {
 				cssClass: 'is-sunset',
 			},
 		},
+		config.isEnabled( 'me/account/color-schemes/midnight' ) && {
+			label: translate( 'Midnight' ),
+			value: 'midnight',
+			thumbnail: {
+				cssClass: 'is-midnight',
+			},
+		},
 	] );
 }
