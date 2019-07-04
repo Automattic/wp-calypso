@@ -6,9 +6,10 @@
 	background: var( --color-primary-light );
 	max-width: 270px;
 	margin-bottom: 50px;
+	margin-top: -20px;
 
 	@include breakpoint( '<660px' ) {
-		margin-bottom: 30px;
+		margin: 30px auto;
 	}
 }
 
