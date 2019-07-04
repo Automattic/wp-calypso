@@ -7,18 +7,19 @@
 .reader-recommended-sites__header {
 	color: var( --color-text-subtle );
 	font-size: 14px;
-	font-weight: 600;
 	letter-spacing: 0.01em;
-	margin: 13px 0 10px;
+	font-weight: 600;
+	margin: 8px 0;
 	position: relative;
 
 	@include breakpoint( '>660px' ) {
-		margin: 13px 0 17px;
+		margin: 16px 0;
 	}
 
 	.gridicon {
-		fill: var( --color-neutral-200 );
+		fill: var( --color-text-subtle );
 		margin-right: 5px;
+		vertical-align: top;
 	}
 }
 
@@ -51,13 +52,18 @@
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
+		display: flex;
+		justify-content: flex-end;
+		position: absolute;
+		top: 16px;
+		right: 16px;
 
 		@include breakpoint( '>960px' ) {
 			display: flex;
 			justify-content: flex-end;
 			position: absolute;
-    		top: 10px;
-    		right: 10px;
+    		top: 8px;
+    		right: 8px;
 		}
 
 		.button {
@@ -83,8 +89,8 @@
 		}
 
 		.follow-button .follow-button__label {
-			@include breakpoint( '<960px' ) {
-				display: none;
+			@include breakpoint( '<660px' ) {
+				display: inline;
 			}
 		}
 	}
