@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -100,9 +98,7 @@ export default class JetpackConnectFlow {
 		await userTypePage.selectUserType( 'creator' );
 
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
-		await pickAPlanPage.selectFreePlanJetpack();
-		await wpAdminJetpack.jumpstartDisplayed();
-		return await wpAdminJetpack.activateRecommendedFeatures();
+		return await pickAPlanPage.selectFreePlanJetpack();
 	}
 
 	async removeSites( timeout = config.get( 'mochaTimeoutMS' ) ) {
