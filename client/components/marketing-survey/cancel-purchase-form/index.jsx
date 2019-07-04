@@ -463,14 +463,13 @@ class CancelPurchaseForm extends React.Component {
 
 	changeSurveyStep = stepFunction => {
 		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
-		const { surveyStep, survey } = this.state;
 		const allSteps = stepsForProductAndSurvey(
-			survey,
+			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
 			precancellationChatAvailable
 		);
-		const newStep = stepFunction( surveyStep, allSteps );
+		const newStep = stepFunction( this.state.surveyStep, allSteps );
 
 		this.props.onStepChange( newStep );
 		this.setState( { surveyStep: newStep } );
