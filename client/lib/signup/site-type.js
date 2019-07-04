@@ -150,8 +150,7 @@ export function getAllSiteTypes() {
 			siteTopicHeader: i18n.translate( 'What type of products do you sell?' ),
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
-			// TODO: Re-enable "Purchase required" badge, but hide for Jetpack onboarding.
-			// purchaseRequired: true,
+			purchaseRequired: true,
 		},
 	];
 }
