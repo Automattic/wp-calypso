@@ -63,5 +63,12 @@ export default function( translate ) {
 				cssClass: 'is-midnight',
 			},
 		},
+		config.isEnabled( 'me/account/color-schemes/contrast' ) && {
+			label: translate( 'Contrast' ),
+			value: 'contrast',
+			thumbnail: {
+				cssClass: 'is-contrast',
+			},
+		},
 	] );
 }
