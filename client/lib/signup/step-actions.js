@@ -172,11 +172,14 @@ export function createSiteWithCart(
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
 	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
 
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
+
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
 		newSiteParams.options.nux_import_engine = importEngine;
-	} else if ( ! siteUrl && isDomainStepSkippable( flowName ) ) {
+	} else if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username', siteTitle ) || siteType || getSiteVertical( state );
 		newSiteParams.find_available_url = true;
@@ -184,8 +187,7 @@ export function createSiteWithCart(
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
 	}
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
+
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
 		newSiteParams.options.in_page_builder = true;
 	}
