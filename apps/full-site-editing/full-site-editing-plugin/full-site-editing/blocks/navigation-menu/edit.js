@@ -34,11 +34,7 @@ const NavigationMenuEdit = ( { attributes } ) => {
 					/>
 				</Toolbar>
 			</BlockControls>
-			<ServerSideRender
-				attributes={ attributes }
-				block="a8c/navigation-menu"
-				className="wp-block-a8c-navigation-menu"
-			/>
+			<ServerSideRender attributes={ attributes } block="a8c/navigation-menu" />
 		</Fragment>
 	);
 };

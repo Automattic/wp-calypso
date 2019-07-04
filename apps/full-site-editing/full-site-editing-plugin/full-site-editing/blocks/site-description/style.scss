@@ -14,4 +14,8 @@
 		margin-left: auto;
 		display: block;
 	}
+	.site-title:not( :empty ) + .site-description:not( :empty )::before {
+		content: '\2014';
+		margin: 0 0.2em;
+	}
 }
