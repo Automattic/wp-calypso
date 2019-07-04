@@ -27,6 +27,8 @@ import './style.scss';
 
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 
+const hasDocument = typeof document !== 'undefined';
+
 class GdprBanner extends Component {
 	static propTypes = {
 		recordCookieBannerOk: PropTypes.func,
@@ -54,6 +56,10 @@ class GdprBanner extends Component {
 	};
 
 	shouldShowBanner() {
+		// Don't render banner in SSR.
+		if ( ! hasDocument ) {
+			return false;
+		}
 		const cookies = cookie.parse( document.cookie );
 		if ( cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no' ) {
 			return false;
