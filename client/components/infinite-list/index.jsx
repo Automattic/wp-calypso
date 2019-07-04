@@ -52,11 +52,6 @@ export default class InfiniteList extends React.Component {
 	_isMounted = false;
 	smartSetState = smartSetState;
 
-	namedRefs = {
-		topPlaceholder: React.createRef(),
-		bottomPlaceholder: React.createRef(),
-	};
-
 	componentWillMount() {
 		const url = page.current;
 		let newState, scrollTop;
@@ -159,14 +154,9 @@ export default class InfiniteList extends React.Component {
 		// we may have guessed item heights wrong - now we have real heights
 		if ( ! this.isScrolling ) {
 			this.cancelAnimationFrame();
-			// updateScroll misbehaves when it's called syncronously from componentDidUpdate.
-			// Promise.resolve() is not used here intentionally to avoid the orignal problem which
-			// I suspect is a race condition introduced by changes in React fiber implementation.
-			setTimeout( () => {
-				if ( this._isMounted ) {
-					this.updateScroll( { triggeredByScroll: false } );
-				}
-			}, 0 );
+			this.updateScroll( {
+				triggeredByScroll: false,
+			} );
 		}
 	}
 
@@ -303,9 +293,8 @@ export default class InfiniteList extends React.Component {
 	}
 
 	boundsForRef = ref => {
-		if ( ref in this.namedRefs ) {
-			const node = this.namedRefs[ ref ].current;
-			return node ? node.getBoundingClientRect() : null;
+		if ( ref in this.refs ) {
+			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
 		return null;
 	};
@@ -387,14 +376,14 @@ export default class InfiniteList extends React.Component {
 		return (
 			<div { ...propsToTransfer }>
 				<div
-					ref={ this.namedRefs.topPlaceholder }
+					ref="topPlaceholder"
 					className={ spacerClassName }
 					style={ { height: this.state.topPlaceholderHeight } }
 				/>
 				{ itemsToRender }
 				{ this.props.renderTrailingItems() }
 				<div
-					ref={ this.namedRefs.bottomPlaceholder }
+					ref="bottomPlaceholder"
 					className={ spacerClassName }
 					style={ { height: this.state.bottomPlaceholderHeight } }
 				/>
