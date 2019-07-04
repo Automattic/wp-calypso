@@ -110,7 +110,7 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: true } );
 	};
 
-	chatButtonClicked = event => {
+	onClickChatButton = event => {
 		this.recordChatEvent( 'calypso_precancellation_chat_click' );
 		event.preventDefault();
 
@@ -203,12 +203,9 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	// TODO:
-	// Extract this button out as a reusable component, sharing it with <CancelPurchaseForm/>,
-	// and add the chat button back to non-happychat steps.
 	getChatButton = () => {
 		return (
-			<HappychatButton className="remove-purchase__chat-button" onClick={ this.chatButtonClicked }>
+			<HappychatButton className="remove-purchase__chat-button" onClick={ this.onClickChatButton }>
 				{ this.props.translate( 'Need help? Chat with us' ) }
 			</HappychatButton>
 		);
@@ -240,6 +237,31 @@ class RemovePurchase extends Component {
 				closeDialog={ this.closeDialog }
 				chatButton={ chatButton }
 				purchase={ this.props.purchase }
+			/>
+		);
+	}
+
+	renderPlanDialog() {
+		const { purchase, site } = this.props;
+		const prependedChatButton =
+			config.isEnabled( 'upgrades/precancellation-chat' ) &&
+			this.state.surveyStep !== 'happychat_step'
+				? [ this.getChatButton() ]
+				: [];
+
+		return (
+			<CancelPurchaseForm
+				chatInitiated={ this.chatInitiated }
+				defaultContent={ this.renderPlanDialogText() }
+				onInputChange={ this.onSurveyChange }
+				purchase={ purchase }
+				selectedSite={ site }
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+				onStepChange={ this.onStepChange }
+				onClickFinalConfirm={ this.removePurchase }
+				extraPrependedButtons={ prependedChatButton }
+				flowType="remove"
 			/>
 		);
 	}
@@ -321,7 +343,9 @@ class RemovePurchase extends Component {
 		);
 	}
 
-	renderDialog( purchase ) {
+	renderDialog() {
+		const { purchase } = this.props;
+
 		if ( this.props.isAtomicSite ) {
 			return this.renderAtomicDialog( purchase );
 		}
@@ -367,18 +391,7 @@ class RemovePurchase extends Component {
 					<Gridicon icon="trash" />
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</CompactCard>
-				<CancelPurchaseForm
-					chatInitiated={ this.chatInitiated }
-					defaultContent={ this.renderPlanDialogText() }
-					onInputChange={ this.onSurveyChange }
-					purchase={ purchase }
-					selectedSite={ this.props.site }
-					isVisible={ this.state.isDialogVisible }
-					onClose={ this.closeDialog }
-					onStepChange={ this.onStepChange }
-					onClickFinalConfirm={ this.removePurchase }
-					flowType="remove"
-				/>
+				{ this.renderDialog() }
 			</>
 		);
 	}

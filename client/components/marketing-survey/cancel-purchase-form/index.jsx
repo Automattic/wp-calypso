@@ -438,51 +438,46 @@ class CancelPurchaseForm extends React.Component {
 
 	getStepButtons = () => {
 		const { translate } = this.props;
-		const buttons = {
-			close: {
+		const close = {
 				action: 'close',
 				label: translate( "I'll Keep It" ),
 			},
-			next: {
+			next = {
 				action: 'next',
 				disabled: ! isSurveyFilledIn( this.state ),
 				label: translate( 'Next Step' ),
 				onClick: this.clickNext,
 			},
-			prev: {
+			prev = {
 				action: 'prev',
 				label: translate( 'Previous Step' ),
 				onClick: this.clickPrevious,
 			},
-			cancel: {
+			cancel = {
 				action: 'cancel',
 				label: translate( 'Cancel Now' ),
 				isPrimary: true,
-				// disabled: this.state.submitting,
-				// onClick: this.submitCancelAndRefundPurchase,
 				onClick: this.props.onClickFinalConfirm,
 			},
-			remove: {
+			remove = {
 				action: 'remove',
 				disabled: this.state.isRemoving,
 				isPrimary: true,
 				label: translate( 'Remove Now' ),
 				onClick: this.props.onClickFinalConfirm,
-			},
-		};
+			};
 
-		// TODO:
-		// Add the chat button back
+		const firstButtons = [ ...this.props.extraPrependedButtons, close ];
 
 		if ( this.state.surveyStep === steps.FINAL_STEP ) {
-			return this.props.flowType === 'remove'
-				? [ buttons.close, buttons.prev, buttons.remove ]
-				: [ buttons.close, buttons.prev, buttons.cancel ];
+			return firstButtons.concat(
+				this.props.flowType === 'remove' ? [ prev, remove ] : [ prev, cancel ]
+			);
 		}
 
-		return this.state.surveyStep === steps.INITIAL_STEP
-			? [ buttons.close, buttons.next ]
-			: [ buttons.close, buttons.prev, buttons.next ];
+		return firstButtons.concat(
+			this.state.surveyStep === steps.INITIAL_STEP ? [ next ] : [ prev, next ]
+		);
 	};
 
 	render() {
