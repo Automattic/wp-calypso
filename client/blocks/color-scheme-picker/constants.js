@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { compact } from 'lodash';
+import config from 'config';
 
 export default function( translate ) {
 	return compact( [
@@ -39,6 +40,13 @@ export default function( translate ) {
 			value: 'sakura',
 			thumbnail: {
 				cssClass: 'is-sakura',
+			},
+		},
+		config.isEnabled( 'me/account/color-schemes/ocean' ) && {
+			label: translate( 'Ocean' ),
+			value: 'ocean',
+			thumbnail: {
+				cssClass: 'is-ocean',
 			},
 		},
 	] );
