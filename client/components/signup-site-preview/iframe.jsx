@@ -160,10 +160,18 @@ export default class SignupSitePreviewIframe extends Component {
 			return;
 		}
 
-		const element = this.iframe.current.contentWindow.document.querySelector( '#page' );
+		const body = this.iframe.current.contentWindow.document.body;
+		const html = this.iframe.current.contentWindow.document.documentElement;
 
-		if ( element ) {
-			this.props.setWrapperHeight( element.scrollHeight + 25 );
+		if ( body && html ) {
+			const height = Math.max(
+				body.scrollHeight,
+				body.offsetHeight,
+				html.clientHeight,
+				html.scrollHeight,
+				html.offsetHeight
+			);
+			this.props.setWrapperHeight( height + 25 );
 		}
 	};
 
