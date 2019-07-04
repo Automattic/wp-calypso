@@ -9,7 +9,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
-import clickOutside from 'click-outside';
 import { uniqueId } from 'lodash';
 
 /**
@@ -24,6 +23,7 @@ import {
 	offset,
 } from './util';
 import isRtlSelector from 'state/selectors/is-rtl';
+import PopoverClickOutside from './click-outside';
 
 /**
  * Module variables
@@ -174,7 +174,6 @@ class Popover extends Component {
 	componentWillUnmount() {
 		this.debug( 'unmounting .... ' );
 
-		this.unbindClickoutHandler();
 		this.unbindDebouncedReposition();
 		this.unbindEscKeyListener();
 		unbindWindowListeners();
@@ -211,43 +210,8 @@ class Popover extends Component {
 	}
 
 	// --- click outside ---
-	bindClickoutHandler( el = this.domContainer ) {
-		if ( ! el ) {
-			this.debug( 'no element to bind clickout ' );
-			return null;
-		}
-
-		if ( this._clickoutHandlerReference ) {
-			this.debug( 'clickout event already bound' );
-			return null;
-		}
-
-		this.debug( 'binding `clickout` event' );
-		this._clickoutHandlerReference = clickOutside( el, this.onClickout );
-	}
-
-	unbindClickoutHandler() {
-		if ( this._clickoutHandlerReference ) {
-			this.debug( 'unbinding `clickout` listener ...' );
-			this._clickoutHandlerReference();
-			this._clickoutHandlerReference = null;
-		}
-	}
-
-	onClickout( event ) {
-		let shouldClose =
-			this.domContext && this.domContext.contains && ! this.domContext.contains( event.target );
-
-		if ( this.props.ignoreContext && shouldClose ) {
-			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
-			shouldClose =
-				shouldClose &&
-				( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
-		}
-
-		if ( shouldClose ) {
-			this.close();
-		}
+	onClickout() {
+		this.close();
 	}
 
 	// --- window `scroll` and `resize` ---
@@ -273,13 +237,10 @@ class Popover extends Component {
 
 	setDOMBehavior( domContainer ) {
 		if ( ! domContainer ) {
-			this.unbindClickoutHandler();
 			return null;
 		}
 
 		this.debug( 'setting DOM behavior' );
-
-		this.bindClickoutHandler( domContainer );
 
 		// store DOM element referencies
 		this.domContainer = domContainer;
@@ -435,7 +396,6 @@ class Popover extends Component {
 
 	hide() {
 		// unbind click outside event every time the component is hidden.
-		this.unbindClickoutHandler();
 		this.unbindDebouncedReposition();
 		this.unbindEscKeyListener();
 		unbindWindowListeners();
@@ -479,13 +439,15 @@ class Popover extends Component {
 
 		return (
 			<RootChild className={ this.props.rootClassName }>
-				<div style={ this.getStylePosition() } className={ classes }>
-					<div className="popover__arrow" />
+				<PopoverClickOutside onClickOutside={ this.onClickout }>
+					<div style={ this.getStylePosition() } className={ classes }>
+						<div className="popover__arrow" />
 
-					<div ref={ this.setDOMBehavior } className="popover__inner">
-						{ this.props.children }
+						<div ref={ this.setDOMBehavior } className="popover__inner">
+							{ this.props.children }
+						</div>
 					</div>
-				</div>
+				</PopoverClickOutside>
 			</RootChild>
 		);
 	}

@@ -14,6 +14,9 @@ const debug = debugFactory( 'calypso:popover:util' );
 
 // inspired by https://github.com/jkroso/viewport
 function updateViewport() {
+	if ( 'undefined' === typeof window ) {
+		return false;
+	}
 	const viewport = {};
 	viewport.top = window.scrollY;
 	viewport.left = window.scrollX;
