@@ -190,12 +190,12 @@ class ThemeEnhancements extends Component {
 					{ this.renderToggle(
 						'wp_mobile_excerpt',
 						! minilevenModuleActive,
-						translate( 'Show excerpts on front page and on archive pages instead of full posts' )
+						translate( 'Use excerpts instead of full posts on front page and archive pages' )
 					) }
 					{ this.renderToggle(
 						'wp_mobile_featured_images',
 						! minilevenModuleActive,
-						translate( 'Hide all featured images' )
+						translate( 'Show featured images' )
 					) }
 					{ this.renderToggle(
 						'wp_mobile_app_promos',
