@@ -129,7 +129,7 @@ export function conciergeSessionNudge( context, next ) {
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
 		conciergeSessionType = 'concierge-quickstart-session';
-	} else if ( context.path.includes( 'offer-support-session' ) ) {
+	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
 		conciergeSessionType = 'concierge-support-session';
 	}
 	context.store.dispatch( setSection( { name: conciergeSessionType }, { hasSidebar: false } ) );
