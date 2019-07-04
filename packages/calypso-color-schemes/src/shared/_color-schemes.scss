@@ -1479,7 +1479,7 @@
 		--color-primary-900: #{$muriel-gray-900};
 		--color-primary-900-rgb: #{hex-to-rgb( $muriel-gray-900 )};
 
- 		--color-accent: #{$muriel-blue-400};
+		--color-accent: #{$muriel-blue-400};
 		--color-accent-rgb: #{hex-to-rgb( $muriel-blue-400 )};
 		--color-accent-dark: #{$muriel-blue-700};
 		--color-accent-dark-rgb: #{hex-to-rgb( $muriel-blue-700 )};
@@ -1508,12 +1508,12 @@
 		--color-accent-900: #{$muriel-blue-900};
 		--color-accent-900-rgb: #{hex-to-rgb( $muriel-blue-900 )};
 
- 		--color-text: #{$muriel-gray-900};
+		--color-text: #{$muriel-gray-900};
 		--color-text-subtle: #{$muriel-gray-600};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
 
- 		--color-link: #{$muriel-red-600};
+		--color-link: #{$muriel-red-600};
 		--color-link-rgb: #{hex-to-rgb( $muriel-red-600 )};
 		--color-link-dark: #{$muriel-red-700};
 		--color-link-dark-rgb: #{hex-to-rgb( $muriel-red-700 )};
@@ -1542,10 +1542,10 @@
 		--color-link-900: #{$muriel-red-900};
 		--color-link-900-rgb: #{hex-to-rgb( $muriel-red-900 )};
 
- 		--color-button-primary-background-hover: #{$muriel-blue-500};
+		--color-button-primary-background-hover: #{$muriel-blue-500};
 		--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
- 		--masterbar-color: #{$muriel-white};
+		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$muriel-gray-700};
 		--masterbar-item-new-editor-background: #{$muriel-gray-500};
 		--masterbar-item-new-editor-hover-background: #{$muriel-gray-600};
@@ -1553,7 +1553,7 @@
 		--masterbar-toggle-drafts-editor-border-color: #{$muriel-gray-100};
 		--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
 
- 		--sidebar-background: #{$muriel-gray-800};
+		--sidebar-background: #{$muriel-gray-800};
 		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-800 )};
 		--sidebar-secondary-background: #{$muriel-white};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -1571,7 +1571,7 @@
 		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-700 )};
 		--sidebar-menu-hover-color: #{$muriel-white};
 
- 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
 		--button-is-borderless-color: #{$muriel-gray-600};
 		--count-border-color: #{$muriel-gray-600};
 		--count-color: #{$muriel-gray-600};
@@ -1608,7 +1608,7 @@
 		--color-primary-900: #{$muriel-gray-900};
 		--color-primary-900-rgb: #{hex-to-rgb( $muriel-gray-900 )};
 
- 		--color-accent: #{$muriel-hot-blue-600};
+		--color-accent: #{$muriel-hot-blue-600};
 		--color-accent-rgb: #{hex-to-rgb( $muriel-hot-blue-600 )};
 		--color-accent-dark: #{$muriel-hot-blue-900};
 		--color-accent-dark-rgb: #{hex-to-rgb( $muriel-hot-blue-900 )};
@@ -1637,12 +1637,12 @@
 		--color-accent-900: #{$muriel-hot-blue-900};
 		--color-accent-900-rgb: #{hex-to-rgb( $muriel-hot-blue-900 )};
 
- 		--color-text: #{$muriel-gray-900};
+		--color-text: #{$muriel-gray-900};
 		--color-text-subtle: #{$muriel-gray-700};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-white};
 
- 		--color-link: #{$muriel-hot-blue-600};
+		--color-link: #{$muriel-hot-blue-600};
 		--color-link-rgb: #{hex-to-rgb( $muriel-hot-blue-600 )};
 		--color-link-dark: #{$muriel-hot-blue-900};
 		--color-link-dark-rgb: #{hex-to-rgb( $muriel-hot-blue-900 )};
@@ -1671,9 +1671,9 @@
 		--color-link-900: #{$muriel-hot-blue-900};
 		--color-link-900-rgb: #{hex-to-rgb( $muriel-hot-blue-900 )};
 
- 		--color-button-primary-background-hover: #{$muriel-hot-blue-700};
+		--color-button-primary-background-hover: #{$muriel-hot-blue-700};
 
- 		--masterbar-color: #{$muriel-white};
+		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$muriel-gray-700};
 		--masterbar-item-new-editor-background: #{$muriel-gray-700};
 		--masterbar-item-new-editor-hover-background: #{$muriel-gray-900};
@@ -1681,7 +1681,7 @@
 		--masterbar-toggle-drafts-editor-border-color: #{$muriel-gray-100};
 		--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-700};
 
- 		--sidebar-background: #{$muriel-white};
+		--sidebar-background: #{$muriel-white};
 		--sidebar-background-gradient: #{hex-to-rgb( $muriel-white )};
 		--sidebar-secondary-background: #{$muriel-white};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -1699,7 +1699,7 @@
 		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-700 )};
 		--sidebar-menu-hover-color: #{$muriel-white};
 
- 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
 		--button-is-borderless-color: #{$muriel-gray-700};
 		--count-border-color: #{$muriel-gray-500};
 		--count-color: #{$muriel-gray-500};
