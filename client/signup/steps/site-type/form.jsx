@@ -54,7 +54,7 @@ class SiteTypeForm extends Component {
 							<span className="site-type__option-description">
 								{ siteTypeProperties.description }
 							</span>
-							{ this.props.notJetpack && siteTypeProperties.purchaseRequired && (
+							{ ! this.props.isJetpack && siteTypeProperties.purchaseRequired && (
 								<Badge className="site-type__option-badge" type="info">
 									{ this.props.translate( 'Purchase required' ) }
 								</Badge>
@@ -68,15 +68,11 @@ class SiteTypeForm extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-
-		return {
-			// TODO: Better handling for Jetpack flows in the site-type lib,
-			// so we don't depend on injecting conditionals into components like this.
-			notJetpack: ! isJetpackSite( state, siteId ),
-		};
-	},
+	state => ( {
+		// TODO: Better handling for Jetpack flows in the site-type lib,
+		// so we don't depend on injecting conditionals into components like this.
+		isJetpack: !! isJetpackSite( state, getSelectedSiteId( state ) ),
+	} ),
 	{
 		recordTracksEvent,
 	}
