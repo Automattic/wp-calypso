@@ -26,7 +26,6 @@ import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
 import { removePurchase } from 'state/purchases/actions';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import isDomainOnly from 'state/selectors/is-domain-only-site';
@@ -35,7 +34,6 @@ import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
-import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
 
@@ -268,7 +266,7 @@ class RemovePurchase extends Component {
 
 	renderAtomicDialog( purchase ) {
 		const { translate } = this.props;
-		const supportButton = this.state.isChatAvailable
+		const supportButton = this.props.isChatAvailable
 			? this.getChatButton()
 			: this.getContactUsButton();
 
@@ -365,10 +363,8 @@ export default connect(
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
-			isChatActive: hasActiveHappychatSession( state ),
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
-			precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 			userId: getCurrentUserId( state ),
 		};
 	},
