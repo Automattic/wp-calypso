@@ -35,7 +35,6 @@
 	width: 300px;
 
 	@include breakpoint( '<660px' ) {
-		padding-top: 24px;
 		position: relative;
 		margin: 0 auto;
 	}

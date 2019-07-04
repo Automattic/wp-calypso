@@ -8,3 +8,9 @@
 		fill: var( --color-white );
 	}
 }
+
+.navigation-link--has-skip-heading {
+	transform: translateY( -3px );
+	//override unessecary super specificity added by another class
+	padding-top: 0 !important;
+}
