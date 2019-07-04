@@ -95,12 +95,6 @@
 		}
 	}
 
-	&:first-child {
-		@include breakpoint( '>960px' ) {
-			margin-right: 20px;
-		}
-	}
-
 	&:last-child {
 		@include breakpoint( '>960px' ) {
 			margin-left: 20px;
@@ -139,18 +133,3 @@
 	}
 }
 
-// .reader-recommended-sites__site-list-item .reader-list-item {
-// 	display: flex;
-// 	flex-direction: column;
-// 	font-size: 14px;
-
-// 	@include breakpoint( '<660px' ) {
-// 		margin: 0 15px;
-// 	}
-// }
-
-// .reader-recommended-sites__site-list-item .reader-list-item
-// 	.reader-list-item__site-content {
-// 		display: flex;
-// 		flex-direction: row;
-// 	}
