@@ -26,7 +26,7 @@ export const AddContentButton = button( translate( 'Add' ), <Gridicon icon="add-
 export const AddMediaButton = button( translate( 'Add Media' ) );
 export const AddNewButton = button( translate( 'Add New' ), <Gridicon icon="add-image" /> );
 export const AllThemesButton = button( translate( 'All Themes' ) );
-export const ChangeButton = button( translate( 'Change' ) );
+export const ChangeButton = button( translate( 'Change', { context: 'verb' } ) );
 export const ContinueButton = button( translate( 'Continue' ) );
 export const DoneButton = button( translate( 'Done' ) );
 export const EditButton = button( translate( 'Edit' ) );
