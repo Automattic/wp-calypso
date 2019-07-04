@@ -61,6 +61,9 @@ export class NpsSurvey extends PureComponent {
 	componentDidUpdate( _, prevState ) {
 		if ( prevState.currentForm !== this.state.currentForm ) {
 			this.props.onChangeForm && this.props.onChangeForm( this.state.currentForm );
+			this.props.recordTracksEvent( 'calypso_nps_survey_page_displayed', {
+				name: this.state.currentForm,
+			} );
 		}
 	}
 
