@@ -128,7 +128,8 @@ export default {
 
 		analytics.pageView.record(
 			basePath,
-			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName
+			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName,
+			{ flow: flowName }
 		);
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );

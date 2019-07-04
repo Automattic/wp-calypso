@@ -29,9 +29,11 @@ import {
 	isPiiUrl,
 	shouldReportOmitBlogId,
 	costToUSD,
+	urlParseAmpCompatible,
+	saveCouponQueryArgument,
 } from 'lib/analytics/utils';
 import {
-	retarget,
+	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
 	recordSignupCompletionInFloodlight,
 	recordSignupStartInFloodlight,
@@ -49,12 +51,16 @@ import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 import { isE2ETest } from 'lib/e2e';
 import { getGoogleAnalyticsDefaultConfig } from './ad-tracking';
+import { affiliateReferral as trackAffiliateReferral } from 'state/refer/actions';
+import { reduxDispatch } from 'lib/redux-bridge';
 
 /**
  * Module variables
  */
+const pvDebug = debug( 'calypso:analytics:pv' );
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
+const referDebug = debug( 'calypso:analytics:refer' );
 const queueDebug = debug( 'calypso:analytics:queue' );
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
@@ -266,13 +272,17 @@ const analytics = {
 					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
 				params.this_pageview_path_with_count = urlPath + '(' + ( pathCounter + 1 ).toString() + ')';
 
-				// Tracks & Google Analytics.
+				pvDebug( 'Recording pageview.', urlPath, pageTitle, params );
+
+				// Tracks, Google Analytics, Refer platform.
 				analytics.tracks.recordPageView( urlPath, params );
 				analytics.ga.recordPageView( urlPath, pageTitle );
+				analytics.refer.recordPageView();
 
-				// SEM & Ad Tracking.
+				// Retargeting.
+				saveCouponQueryArgument();
 				updateQueryParamsTracking();
-				retarget( urlPath ); // Retargeting pixels.
+				retargetAdTrackers( urlPath );
 
 				// Event emitter.
 				analytics.emit( 'page-view', urlPath, pageTitle );
@@ -714,6 +724,30 @@ const analytics = {
 
 			fireGoogleAnalyticsTiming( eventType, duration, urlPath, triggerName );
 		} ),
+	},
+
+	// Refer platform tracking.
+	refer: {
+		recordPageView: function() {
+			if ( ! window || ! window.location ) {
+				return; // Not possible.
+			}
+
+			const referrer = window.location.href;
+			const parsedUrl = urlParseAmpCompatible( referrer );
+			const affiliateId = parsedUrl.query.aff || parsedUrl.query.affiliate;
+			const campaignId = parsedUrl.query.cid;
+			const subId = parsedUrl.query.sid;
+
+			if ( affiliateId && ! isNaN( affiliateId ) ) {
+				analytics.tracks.recordEvent( 'calypso_refer_visit', {
+					page: parsedUrl.host + parsedUrl.pathname,
+				} );
+
+				referDebug( 'Recording affiliate referral.', { affiliateId, campaignId, subId, referrer } );
+				reduxDispatch( trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } ) );
+			}
+		},
 	},
 
 	// HotJar tracking

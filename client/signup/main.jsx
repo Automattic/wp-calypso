@@ -26,7 +26,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import { urlParseAmpCompatible } from 'lib/analytics/utils';
 
 /**
  * Style dependencies
@@ -45,7 +44,7 @@ import analytics from 'lib/analytics';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupFlowController from 'lib/signup/flow-controller';
-import { disableCart, saveCouponQueryArgument } from 'lib/upgrades/actions';
+import { disableCart } from 'lib/upgrades/actions';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -57,7 +56,6 @@ import {
 	getCurrentUserSiteCount,
 } from 'state/current-user/selectors';
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
-import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { removeUnneededSteps, submitSignupStep } from 'state/signup/progress/actions';
@@ -112,7 +110,6 @@ class Signup extends React.Component {
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
-		trackAffiliateReferral: PropTypes.func.isRequired,
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
@@ -207,7 +204,6 @@ class Signup extends React.Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		saveCouponQueryArgument();
 		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
 		this.preloadNextStep();
@@ -244,25 +240,6 @@ class Signup extends React.Component {
 			flow: this.props.flowName,
 			ref: this.props.refParameter,
 		} );
-		this.recordReferralVisit();
-	}
-
-	recordReferralVisit() {
-		const urlPath = location.href;
-		const parsedUrl = urlParseAmpCompatible( urlPath );
-		const affiliateId = parsedUrl.query.aff;
-		const campaignId = parsedUrl.query.cid;
-		const subId = parsedUrl.query.sid;
-
-		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			// Record the referral in Tracks
-			analytics.tracks.recordEvent( 'calypso_refer_visit', {
-				flow: this.props.flowName,
-				// The current page without any query params
-				page: `${ parsedUrl.host }${ parsedUrl.pathname }`,
-			} );
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
-		}
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -656,7 +633,6 @@ export default connect(
 		submitSiteVertical,
 		submitSignupStep,
 		loadTrackingTool,
-		trackAffiliateReferral: affiliateReferral,
 		removeUnneededSteps,
 	}
 )( Signup );
