@@ -624,6 +624,7 @@ class DomainsStep extends React.Component {
 
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
+		const showSkip = isDomainStepSkippable( flowName );
 
 		return (
 			<StepWrapper
@@ -645,9 +646,11 @@ class DomainsStep extends React.Component {
 				showSiteMockups={ this.props.showSiteMockups }
 				allowBackFirstStep={ !! selectedSite }
 				backLabelText={ backLabelText }
-				hideSkip={ ! isDomainStepSkippable( flowName ) }
+				hideSkip={ ! showSkip }
+				isLargeSkipLayout={ showSkip }
 				goToNextStep={ this.handleSkip }
-				skipLabelText={ translate( 'Not sure yet? Start with a temporary domain' ) }
+				skipHeadingText={ translate( 'Not sure yet?' ) }
+				skipLabelText={ translate( 'Choose a domain later' ) }
 			/>
 		);
 	}
