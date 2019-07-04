@@ -856,13 +856,7 @@ export default connect(
 									return;
 								}
 
-								const checkoutPath = compact( [
-									'/checkout',
-									selectedSiteSlug,
-									getPlanPath( plan ),
-								] ).join( '/' );
-
-								page( checkoutPath );
+								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
 						  },
 					planConstantObj,
 					planName: plan,
