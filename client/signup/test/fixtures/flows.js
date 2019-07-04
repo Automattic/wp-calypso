@@ -33,6 +33,11 @@ export default {
 		destination: '/',
 	},
 
+	'onboarding-blog': {
+		steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
+		destination: '/',
+	},
+
 	'disallow-resume': {
 		steps: [
 			'user',
