@@ -7,19 +7,17 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import wpcom from 'lib/wp';
 import config from 'config';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
@@ -45,12 +43,6 @@ import RemoveDomainDialog from './remove-domain-dialog';
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Module dependencies
- */
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:purchases:survey' );
 
 class RemovePurchase extends Component {
 	static propTypes = {
@@ -130,38 +122,7 @@ class RemovePurchase extends Component {
 	removePurchase = closeDialog => {
 		this.setState( { isRemoving: true } );
 
-		const { isDomainOnlySite, purchase, site, translate } = this.props;
-
-		if ( ! isDomainRegistration( purchase ) && ! isGoogleApps( purchase ) ) {
-			const survey = wpcom
-				.marketing()
-				.survey( 'calypso-remove-purchase', this.props.purchase.siteId );
-			const surveyData = {
-				'why-cancel': {
-					response: this.state.survey.questionOneRadio,
-					text: this.state.survey.questionOneText,
-				},
-				'next-adventure': {
-					response: this.state.survey.questionTwoRadio,
-					text: this.state.survey.questionTwoText,
-				},
-				'what-better': { text: this.state.survey.questionThreeText },
-				type: 'remove',
-			};
-
-			survey.addResponses( enrichedSurveyData( surveyData, moment(), site, purchase ) );
-
-			debug( 'Survey responses', survey );
-			survey
-				.submit()
-				.then( res => {
-					debug( 'Survey submit response', res );
-					if ( ! res.success ) {
-						notices.error( res.err );
-					}
-				} )
-				.catch( err => debug( err ) ); // shouldn't get here
-		}
+		const { isDomainOnlySite, purchase, translate } = this.props;
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 
@@ -14,12 +14,11 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * Internal Dependencies
  */
 import Button from 'components/button';
-import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
+import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import {
 	getName,
 	getSubscriptionEndDate,
@@ -47,7 +46,6 @@ class CancelPurchaseButton extends Component {
 	state = {
 		disabled: false,
 		showDialog: false,
-		isRemoving: false,
 		survey: {},
 	};
 
@@ -185,31 +183,9 @@ class CancelPurchaseButton extends Component {
 	};
 
 	submitCancelAndRefundPurchase = () => {
-		const { purchase, selectedSite } = this.props;
+		const { purchase } = this.props;
 		const refundable = isRefundable( purchase );
 		const cancelBundledDomain = this.props.cancelBundledDomain;
-		this.setState( {
-			submitting: true,
-		} );
-
-		const surveyData = {
-			'why-cancel': {
-				response: this.state.survey.questionOneRadio,
-				text: this.state.survey.questionOneText,
-			},
-			'next-adventure': {
-				response: this.state.survey.questionTwoRadio,
-				text: this.state.survey.questionTwoText,
-			},
-			'what-better': { text: this.state.survey.questionThreeText },
-			type: refundable ? 'refund' : 'cancel-autorenew',
-		};
-
-		submitSurvey(
-			'calypso-remove-purchase',
-			this.props.selectedSite.ID,
-			enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
-		);
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 

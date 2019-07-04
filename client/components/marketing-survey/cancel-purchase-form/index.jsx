@@ -8,11 +8,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
+import { submitSurvey } from 'lib/upgrades/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -29,7 +30,8 @@ import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
-import { getName } from 'lib/purchases';
+import { getName, isRefundable } from 'lib/purchases';
+import { isDomainRegistration, isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
@@ -39,6 +41,7 @@ import nextStep from './next-step';
 import previousStep from './previous-step';
 import isSurveyFilledIn from './is-survey-filled-in';
 import stepsForProductAndSurvey from './steps-for-product-and-survey';
+import enrichedSurveyData from './enriched-survey-data';
 
 /**
  * Style dependencies
@@ -49,15 +52,23 @@ class CancelPurchaseForm extends React.Component {
 	static propTypes = {
 		chatInitiated: PropTypes.func.isRequired,
 		defaultContent: PropTypes.node.isRequired,
-		onInputChange: PropTypes.func.isRequired,
 		purchase: PropTypes.object.isRequired,
 		selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
+		isVisible: PropTypes.bool,
+		onInputChange: PropTypes.func.isRequired,
+		onClose: PropTypes.func.isRequired,
+		onStepChange: PropTypes.func.isRequired,
+		onClickFinalConfirm: PropTypes.func.isRequired,
+		flowType: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
+		extraPrependedButtons: PropTypes.array,
 		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showSurvey: true,
+		isVisible: false,
+		extraPrependedButtons: [],
 	};
 
 	constructor( props ) {
@@ -134,6 +145,49 @@ class CancelPurchaseForm extends React.Component {
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
+	};
+
+	getSurveyDataType = () => {
+		if ( this.props.flowType === 'remove' ) {
+			return 'remove';
+		}
+
+		return isRefundable( this.props.purchase ) ? 'refund' : 'cancel-autorenew';
+	};
+
+	onSubmit = () => {
+		const { purchase, selectedSite } = this.props;
+
+		if ( ! isDomainRegistration( purchase ) && ! isGoogleApps( purchase ) ) {
+			this.setState( {
+				submitting: true,
+			} );
+
+			const surveyData = {
+				'why-cancel': {
+					response: this.state.questionOneRadio,
+					text: this.state.questionOneText,
+				},
+				'next-adventure': {
+					response: this.state.questionTwoRadio,
+					text: this.state.questionTwoText,
+				},
+				'what-better': { text: this.state.questionThreeText },
+				type: this.getSurveyDataType(),
+			};
+
+			submitSurvey(
+				'calypso-remove-purchase',
+				selectedSite.ID,
+				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
+			).then( () => {
+				this.setState( {
+					submitting: false,
+				} );
+			} );
+		}
+
+		this.props.onClickFinalConfirm();
 	};
 
 	renderQuestionOne = () => {
@@ -455,16 +509,17 @@ class CancelPurchaseForm extends React.Component {
 			},
 			cancel = {
 				action: 'cancel',
+				disabled: this.state.isSubmitting,
 				label: translate( 'Cancel Now' ),
+				onClick: this.onSubmit,
 				isPrimary: true,
-				onClick: this.props.onClickFinalConfirm,
 			},
 			remove = {
 				action: 'remove',
-				disabled: this.state.isRemoving,
-				isPrimary: true,
+				disabled: this.state.isSubmitting,
 				label: translate( 'Remove Now' ),
-				onClick: this.props.onClickFinalConfirm,
+				onClick: this.onSubmit,
+				isPrimary: true,
 			};
 
 		const firstButtons = [ ...this.props.extraPrependedButtons, close ];
