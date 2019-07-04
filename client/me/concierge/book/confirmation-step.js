@@ -24,9 +24,7 @@ class ConfirmationStep extends Component {
 
 		return (
 			<Confirmation
-				description={ translate(
-					'We will send you a calendar invitation and an email with information on how to prepare.'
-				) }
+				description={ translate( 'We will send you an email with information on how to prepare.' ) }
 				title={ translate( 'Your session is booked!' ) }
 			>
 				<Button

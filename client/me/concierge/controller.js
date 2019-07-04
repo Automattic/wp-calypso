@@ -33,6 +33,7 @@ const book = ( context, next ) => {
 			skeleton={ BookSkeleton }
 			siteSlug={ context.params.siteSlug }
 			steps={ [ BookInfoStep, BookCalendarStep, BookConfirmationStep ] }
+			rescheduling={ false }
 		/>
 	);
 	next();
@@ -59,6 +60,7 @@ const reschedule = ( context, next ) => {
 			skeleton={ RescheduleSkeleton }
 			siteSlug={ context.params.siteSlug }
 			steps={ [ RescheduleCalendarStep, RescheduleConfirmationStep ] }
+			rescheduling={ true }
 		/>
 	);
 	next();
