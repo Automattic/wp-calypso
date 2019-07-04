@@ -7,18 +7,6 @@ jest.mock( 'lib/abtest', () => ( {
 jest.mock( '../shared/upsell', () => 'Upsell' );
 jest.mock( '../shared/no-available-times', () => 'NoAvailableTimes' );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
-
 /**
  * External dependencies
  */
