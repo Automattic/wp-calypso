@@ -196,6 +196,9 @@ export function getFirstInvalidStep( flowName, progress ) {
 }
 
 export function getCompletedSteps( flowName, progress, options = {} ) {
+	// Option to check that the current `flowName` matches the `lastKnownFlow`.
+	// This is to ensure that when resuming progress, we only do so if
+	// the last known flow matches the one that the user is returning to.
 	if ( options.shouldMatchFlowName ) {
 		return filter(
 			getFilteredSteps( flowName, progress ),
