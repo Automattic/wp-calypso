@@ -42,10 +42,8 @@ function phpcsInstalled() {
 	try {
 		execSync( 'which -s phpcs phpcbf' );
 		return true;
-	} catch (error) {
-		console.log(
-			chalk.red( 'PHP files will not be processed because PHPCS was not found.' )
-		);
+	} catch ( error ) {
+		console.log( chalk.red( 'PHP files will not be processed because PHPCS was not found.' ) );
 		return false;
 	}
 }
@@ -116,12 +114,19 @@ if ( toPHPCBF.length ) {
 	execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
 }
 
-process.exit();
-
-// Now run the linters over everything staged to commit, even if they are partially staged
-const [ toStylelint, toEslint ] = _.partition(
+// Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
+const { toEslint = [], toStylelint = [], toPHPCS = [] } = _.groupBy(
 	files.filter( file => ! file.endsWith( '.json' ) ),
-	file => file.endsWith( '.scss' )
+	file => {
+		switch ( true ) {
+			case file.endsWith( '.scss' ):
+				return 'toStylelint';
+			case file.endsWith( '.php' ) && phpcs:
+				return 'toPHPCS';
+			default:
+				return 'toEslint';
+		}
+	}
 );
 
 // first stylelint
@@ -144,6 +149,15 @@ if ( toEslint.length ) {
 	} );
 
 	if ( lintResult.status ) {
+		linterFailure();
+	}
+}
+
+// and finally PHPCS
+if ( toPHPCS.length ) {
+	try {
+		execSync( `phpcs ${ toPHPCS.join( ' ' ) }` );
+	} catch ( error ) {
 		linterFailure();
 	}
 }
