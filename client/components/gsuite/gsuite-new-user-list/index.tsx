@@ -23,6 +23,7 @@ interface Props {
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
 	onUsersChange: ( users: NewUser[] ) => void;
+	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
 }
 
@@ -33,6 +34,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	selectedDomainName,
 	onUsersChange,
 	users,
+	onReturnKeyPress,
 } ) => {
 	const translate = useTranslate();
 
@@ -64,6 +66,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						user={ user }
 						onUserValueChange={ onUserValueChange( index ) }
 						onUserRemove={ onUserRemove( index ) }
+						onReturnKeyPress={ onReturnKeyPress }
 					/>
 					<hr className="gsuite-new-user-list__user-divider" />
 				</Fragment>
