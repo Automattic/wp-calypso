@@ -139,10 +139,10 @@ class Full_Site_Editing {
 				),
 				'menu_icon'             => 'dashicons-layout',
 				'public'                => false,
-				'show_ui'               => false,
+				'show_ui'               => true, // Otherwise we'd get permission error while trying to edit it.
 				'show_in_menu'          => false,
 				'rewrite'               => false,
-				'show_in_rest'          => false,
+				'show_in_rest'          => true, // Needed for Template Part previews to be visible.
 				'rest_base'             => 'template_parts',
 				'rest_controller_class' => 'A8C_REST_Templates_Controller',
 				'capability_type'       => 'template_part',
@@ -232,7 +232,7 @@ class Full_Site_Editing {
 				'show_ui'            => false,
 				'show_in_menu'       => false,
 				'show_in_nav_menu'   => false,
-				'show_in_rest'       => false,
+				'show_in_rest'       => true,
 				'rest_base'          => 'template_part_types',
 				'show_tagcloud'      => false,
 				'show_admin_column'  => false,
