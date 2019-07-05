@@ -18,16 +18,29 @@ import { requestSiteAlerts } from 'state/data-getters';
  */
 import './rewind-alerts.scss';
 
-const refreshList = () => {
-	//TODO: REFRESH LIST HERE!
-};
-
 export class RewindAlerts extends Component {
+	refreshList() {
+		//console.log("refreshing!");
+		//console.log("this.state BEFORE:", this.state);
+
+		this.setState( {} );
+	}
+
 	render() {
-		const { siteId, alerts, translate } = this.props;
+		//console.log("RENDERING LIST!!!");
+		//console.log("this.state", this.state);
+
+		const { siteId, translate, alerts } = this.props;
+
+		//console.log("siteId", siteId);
+		//console.log("alerts:", alerts);
+
 		if ( ! alerts || ! alerts.threats || alerts.threats.length === 0 ) {
+			//console.log("A1");
 			return null;
 		}
+
+		//console.log("B1");
 
 		return (
 			<Card className="activity-log__threats" highlight="error">
@@ -35,12 +48,7 @@ export class RewindAlerts extends Component {
 					{ translate( 'These items require your immediate attention' ) }
 				</div>
 				{ alerts.threats.map( threat => (
-					<ThreatAlert
-						siteId={ siteId }
-						key={ threat.id }
-						threat={ threat }
-						refreshList={ refreshList }
-					/>
+					<ThreatAlert siteId={ siteId } key={ threat.id } threat={ threat } parentList={ this } />
 				) ) }
 			</Card>
 		);

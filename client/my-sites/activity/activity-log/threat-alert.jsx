@@ -192,7 +192,7 @@ export class ThreatAlert extends Component {
 	};
 
 	checkFixStatus = () => {
-		const { threat, siteId, refreshList } = this.props;
+		const { threat, siteId, parentList } = this.props;
 		const self = this;
 
 		if ( ! self.timerId ) {
@@ -216,9 +216,8 @@ export class ThreatAlert extends Component {
 						return;
 					}
 					if ( 'fixed' === data.status || 'not_started' === data.status ) {
-						this.enableButton( threat.id, true );
 						clearInterval( self.timerId );
-						refreshList();
+						parentList.refreshList();
 					} else {
 						//status in_progress
 					}
