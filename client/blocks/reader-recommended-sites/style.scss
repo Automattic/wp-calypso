@@ -52,27 +52,25 @@
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
-		display: flex;
 		justify-content: flex-end;
 		position: absolute;
 		top: 16px;
 		right: 16px;
 
 		@include breakpoint( '>960px' ) {
-			display: flex;
-			justify-content: flex-end;
-			position: absolute;
-    		top: 8px;
-    		right: 8px;
+    		top: 0;
+    		right: 0;
 		}
 
 		.button {
 			padding: 0;
+			width: 35px;
+    		height: 35px;
 
 			&.is-borderless .gridicon {
-				fill: var( --color-neutral-200 );
-				width: 14px;
-				height: 14px;
+				fill: var( --color-text-subtle );
+				width: 16px;
+				height: 16px;
 				top: 0;
 			}
 		}
