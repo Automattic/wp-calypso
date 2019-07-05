@@ -103,7 +103,7 @@ if ( toStylelintfix.length ) {
 toPHPCBF.forEach( file => console.log( `PHPCBF formatting staged file: ${ file }` ) );
 if ( toPHPCBF.length ) {
 	try {
-		execSync( `phpcbf ${ toPHPCBF.join( ' ' ) }` );
+		execSync( `phpcbf --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }` );
 	} catch ( error ) {
 		// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 		// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
@@ -155,7 +155,7 @@ if ( toEslint.length ) {
 
 // and finally PHPCS
 if ( toPHPCS.length ) {
-	const lintResult = spawnSync( 'phpcs', [ ...toPHPCS ], {
+	const lintResult = spawnSync( 'phpcs', [ '--standard=apps/phpcs.xml', ...toPHPCS ], {
 		shell: true,
 		stdio: 'inherit',
 	} );
