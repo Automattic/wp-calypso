@@ -408,6 +408,12 @@ export class Checkout extends React.Component {
 			return '/checkout/thank-you/features';
 		}
 
+		// If cart is empty, then send the user to a generic page (not post-purchase related).
+		// For example, this case arises when a Skip button is clicked on a concierge upsell nudge
+		if ( ':receiptId' === receiptId && isEmpty( getAllCartItems( cart ) ) ) {
+			return `/stats/day/${ selectedSiteSlug }`;
+		}
+
 		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
 			const hasGoogleAppsInCart = hasGoogleApps( cart );
@@ -462,7 +468,7 @@ export class Checkout extends React.Component {
 
 		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
-		if ( this.props.isEligibleForCheckoutToChecklist && ( receipt || receiptId ) ) {
+		if ( this.props.isEligibleForCheckoutToChecklist & ( ':receiptId' !== receiptId ) ) {
 			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
 
 			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
@@ -470,11 +476,6 @@ export class Checkout extends React.Component {
 
 		if ( this.props.isJetpackNotAtomic ) {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
-		}
-
-		if ( ':receiptId' === receiptId ) {
-			// Send the user to a generic page (not post-purchase related).
-			return `/stats/day/${ selectedSiteSlug }`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
