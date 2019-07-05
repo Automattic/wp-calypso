@@ -67,9 +67,9 @@ export class ConciergeSessionNudge extends React.Component {
 			<>
 				{ receiptId ? (
 					<CompactCard>
-						<div className={ `concierge-session-nudge__header` }>
-							<div className={ `concierge-session-nudge__placeholders` }>
-								<div className={ `concierge-session-nudge__placeholder-row is-placeholder` } />
+						<div className="concierge-session-nudge__header">
+							<div className="concierge-session-nudge__placeholders">
+								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
 							</div>
 						</div>
 					</CompactCard>
@@ -79,19 +79,19 @@ export class ConciergeSessionNudge extends React.Component {
 				<CompactCard>
 					<div className={ `concierge-session-nudge__placeholders` }>
 						<>
-							<div className={ `concierge-session-nudge__placeholder-row is-placeholder` } />
-							<div className={ `concierge-session-nudge__placeholder-row is-placeholder` } />
-							<div className={ `concierge-session-nudge__placeholder-row is-placeholder` } />
-							<div className={ `concierge-session-nudge__placeholder-row is-placeholder` } />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
 						</>
 					</div>
 				</CompactCard>
 				<CompactCard>
-					<div className={ `concierge-session-nudge__footer` }>
-						<div className={ `concierge-session-nudge__placeholders` }>
-							<div className={ `concierge-session-nudge__placeholders-button-container` }>
-								<div className={ `concierge-session-nudge__placeholder-row is-placeholder` } />
-								<div className={ `concierge-session-nudge__placeholder-row is-placeholder` } />
+					<div className="concierge-session-nudge__footer">
+						<div className="concierge-session-nudge__placeholders">
+							<div className="concierge-session-nudge__placeholders-button-container">
+								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
 							</div>
 						</div>
 					</div>
