@@ -38,6 +38,21 @@ function linterFailure() {
 	process.exit( 1 );
 }
 
+function phpcsInstalled() {
+	try {
+		execSync( 'which -s phpcs phpcbf' );
+		return true;
+	} catch (error) {
+		console.log(
+			chalk.red( 'PHP files will not be processed because PHPCS was not found.' )
+		);
+		return false;
+	}
+}
+
+// determine if PHPCS is available
+const phpcs = phpcsInstalled();
+
 // grab a list of all the files staged to commit
 const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
@@ -63,7 +78,7 @@ const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFor
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
 			return 'toStylelintfix';
-		case file.endsWith( '.php' ):
+		case file.endsWith( '.php' ) && phpcs:
 			return 'toPHPCBF';
 		default:
 			return 'toPrettify';
