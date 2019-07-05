@@ -7,7 +7,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
@@ -53,25 +52,10 @@ class CancelPurchaseButton extends Component {
 		return isRefundable( this.props.purchase ) ? 'cancel_with_refund' : 'cancel_autorenew';
 	};
 
-	recordEvent = ( name, properties = {} ) => {
-		const { purchase } = this.props;
-		const product_slug = get( purchase, 'productSlug' );
-
-		this.props.recordTracksEvent(
-			name,
-			Object.assign(
-				{ cancellation_flow: this.getCancellationFlowType(), product_slug },
-				properties
-			)
-		);
-	};
-
 	handleCancelPurchaseClick = () => {
 		if ( isDomainRegistration( this.props.purchase ) ) {
 			return this.goToCancelConfirmation();
 		}
-
-		this.recordEvent( 'calypso_purchases_cancel_form_start' );
 
 		this.setState( {
 			showDialog: true,
@@ -79,8 +63,6 @@ class CancelPurchaseButton extends Component {
 	};
 
 	closeDialog = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_close' );
-
 		this.setState( {
 			showDialog: false,
 		} );
@@ -89,10 +71,6 @@ class CancelPurchaseButton extends Component {
 	chatInitiated = () => {
 		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
 		this.closeDialog();
-	};
-
-	onStepChange = newStep => {
-		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 	};
 
 	onSurveyChange = update => {
@@ -212,8 +190,6 @@ class CancelPurchaseButton extends Component {
 	submitCancelAndRefundPurchase = () => {
 		const refundable = isRefundable( this.props.purchase );
 
-		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
-
 		if ( refundable ) {
 			this.cancelAndRefund();
 		} else {
@@ -297,7 +273,6 @@ class CancelPurchaseButton extends Component {
 					selectedSite={ selectedSite }
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog }
-					onStepChange={ this.onStepChange }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 					flowType={ this.getCancellationFlowType() }
 				/>

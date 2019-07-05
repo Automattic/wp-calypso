@@ -24,6 +24,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
@@ -98,6 +99,18 @@ class CancelPurchaseForm extends React.Component {
 			isSubmitting: false,
 		};
 	}
+
+	recordEvent = ( name, properties = {} ) => {
+		const { purchase, flowType, isAtomicSite } = this.props;
+
+		this.props.recordTracksEvent( name, {
+			cancellation_flow: flowType,
+			product_slug: purchase.productSlug,
+			is_atomic: isAtomicSite,
+
+			...properties,
+		} );
+	};
 
 	recordClickRadioEvent = ( option, value ) =>
 		this.props.recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
@@ -197,6 +210,8 @@ class CancelPurchaseForm extends React.Component {
 		}
 
 		this.props.onClickFinalConfirm();
+
+		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
 	renderQuestionOne = () => {
@@ -472,6 +487,8 @@ class CancelPurchaseForm extends React.Component {
 			surveyStep: steps.INITIAL_STEP,
 			...initialSurveyState(),
 		} );
+
+		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 	};
 
 	changeSurveyStep = stepFunction => {
@@ -486,6 +503,8 @@ class CancelPurchaseForm extends React.Component {
 
 		this.props.onStepChange( newStep );
 		this.setState( { surveyStep: newStep } );
+
+		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 	};
 
 	clickNext = () => {
@@ -551,6 +570,16 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
+	componentDidUpdate( prevProps ) {
+		if (
+			! prevProps.isVisible &&
+			this.props.isVisible &&
+			this.state.surveyStep === steps.INITIAL_STEP
+		) {
+			this.recordEvent( 'calypso_purchases_cancel_form_start' );
+		}
+	}
+
 	render() {
 		return (
 			<Dialog
@@ -566,9 +595,10 @@ class CancelPurchaseForm extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state, { purchase } ) => ( {
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
+		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 	} ),
 	{

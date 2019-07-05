@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -71,18 +70,7 @@ class RemovePurchase extends Component {
 		} );
 	}
 
-	recordEvent = ( name, properties = {} ) => {
-		const product_slug = get( this.props, [ 'purchase', 'productSlug' ] );
-		const cancellation_flow = 'remove';
-		const is_atomic = this.props.isAtomicSite;
-		this.props.recordTracksEvent(
-			name,
-			Object.assign( { cancellation_flow, product_slug, is_atomic }, properties )
-		);
-	};
-
 	closeDialog = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 		this.setState( {
 			isDialogVisible: false,
 		} );
@@ -94,7 +82,6 @@ class RemovePurchase extends Component {
 	};
 
 	openDialog = event => {
-		this.recordEvent( 'calypso_purchases_cancel_form_start' );
 		event.preventDefault();
 
 		this.setState( { isDialogVisible: true } );
@@ -107,10 +94,6 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	onStepChange = newStep => {
-		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
-	};
-
 	onSurveyChange = update => {
 		this.setState( {
 			survey: update,
@@ -121,8 +104,6 @@ class RemovePurchase extends Component {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
-
-		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
 			const productName = getName( purchase );
@@ -218,7 +199,6 @@ class RemovePurchase extends Component {
 				selectedSite={ site }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
-				onStepChange={ this.onStepChange }
 				onClickFinalConfirm={ this.removePurchase }
 				extraPrependedButtons={ prependedChatButton }
 				flowType="remove"
