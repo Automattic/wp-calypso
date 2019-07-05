@@ -35,6 +35,7 @@ import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
@@ -181,7 +182,11 @@ export function createSiteWithCart(
 		newSiteParams.options.nux_import_engine = importEngine;
 	} else if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =
-			get( user.get(), 'username', siteTitle ) || siteType || getSiteVertical( state );
+			get( user.get(), 'username' ) ||
+			get( getSignupDependencyStore( state ), 'username' ) ||
+			siteTitle ||
+			siteType ||
+			getSiteVertical( state );
 		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
