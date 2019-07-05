@@ -77,21 +77,28 @@ export class ConciergeSessionNudge extends React.Component {
 					''
 				) }
 				<CompactCard>
-					<div className={ `concierge-session-nudge__placeholders` }>
-						<>
+					<div className="concierge-session-nudge__placeholders">
+						<div>
 							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<br />
 							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<br />
 							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<br />
 							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
-						</>
+							<br />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<br />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+						</div>
 					</div>
 				</CompactCard>
 				<CompactCard>
 					<div className="concierge-session-nudge__footer">
 						<div className="concierge-session-nudge__placeholders">
-							<div className="concierge-session-nudge__placeholders-button-container">
-								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
-								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="concierge-session-nudge__placeholder-button-container">
+								<div className="concierge-session-nudge__placeholder-button is-placeholder" />
+								<div className="concierge-session-nudge__placeholder-button is-placeholder" />
 							</div>
 						</div>
 					</div>
