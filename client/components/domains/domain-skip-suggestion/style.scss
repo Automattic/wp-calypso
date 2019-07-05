@@ -14,12 +14,10 @@
 		width: 75%;
 	}
 
-	> p {
+	p {
 		color: var( --color-neutral-700 );
 		font-size: 12px;
-		font-weight: 600;
 		margin-bottom: 0;
-		opacity: 0.7;
 
 		@include breakpoint( '>960px' ) {
 			margin-bottom: 8px;
