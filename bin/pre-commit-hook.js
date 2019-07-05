@@ -93,7 +93,11 @@ if ( toPHPCBF.length ) {
 		execSync( `phpcbf ${ toPHPCBF.join( ' ' ) }` );
 		execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
 	} catch ( error ) {
-		console.log( error );
+		// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
+		// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L210
+		if ( 2 === error.status ) {
+			linterFailure();
+		}
 	}
 }
 
