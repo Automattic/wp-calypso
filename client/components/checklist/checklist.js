@@ -5,25 +5,28 @@ import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { isFunction, times } from 'lodash';
-
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ChecklistHeader from './header';
 import TaskPlaceholder from './task-placeholder';
+import Card from 'components/card';
+import JetpackChecklistFooter from './jetpack-checklist-footer';
 
-export default class Checklist extends PureComponent {
+class Checklist extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		onExpandTask: PropTypes.func,
-		progressText: PropTypes.string,
+		showChecklistHeader: PropTypes.bool,
+		showAdminFooter: PropTypes.bool,
 		updateCompletion: PropTypes.func,
+		translate: PropTypes.func,
+		wpAdminUrl: PropTypes.string,
 	};
 
 	state = {
-		hideCompleted: false,
 		expandedTaskIndex: undefined,
 	};
 
@@ -80,15 +83,25 @@ export default class Checklist extends PureComponent {
 			return { expandedTaskIndex: newExpandedTaskIndex }; // Expand
 		} );
 
-	toggleCompleted = () =>
-		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
+	renderChecklistHeader = () => {
+		return (
+			<Card compact className="checklist__header">
+				<h2 className="checklist__header-progress-text">
+					{ this.props.translate( 'Your setup list' ) }
+				</h2>
+			</Card>
+		);
+	};
 
 	render() {
+		const { showChecklistHeader, wpAdminUrl, showAdminFooter } = this.props;
 		const [ completed, total ] = this.calculateCompletion();
+
 		if ( this.props.isPlaceholder ) {
 			return (
 				<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
-					<ChecklistHeader completed={ completed } total={ total } />
+					{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
+
 					<div className="checklist__tasks">
 						{ times( total, index => (
 							<TaskPlaceholder key={ index } />
@@ -103,18 +116,11 @@ export default class Checklist extends PureComponent {
 		return (
 			<div
 				className={ classNames( 'checklist', this.props.className, {
-					'is-expanded': ! this.state.hideCompleted,
-					'hide-completed': this.state.hideCompleted,
 					'checklist-phase2': this.props.phase2,
 				} ) }
 			>
-				<ChecklistHeader
-					completed={ completed }
-					hideCompleted={ this.state.hideCompleted }
-					onClick={ this.toggleCompleted }
-					total={ total }
-					progressText={ this.props.progressText }
-				/>
+				{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
+
 				<div className="checklist__tasks">
 					{ Children.map( this.props.children, ( child, index ) => {
 						if ( ! child ) {
@@ -129,8 +135,23 @@ export default class Checklist extends PureComponent {
 							onTaskClick: () => this.setExpandedTask( realIndex ),
 						} );
 					} ) }
+
+					{ wpAdminUrl && showAdminFooter && (
+						<JetpackChecklistFooter
+							wpAdminUrl={ wpAdminUrl }
+							handleWpAdminLink={ this.handleWpAdminLink }
+						/>
+					) }
+
+					{ completed > 0 && (
+						<div className="checklist__tasks-completed-title">
+							{ this.props.translate( 'Completed' ) }
+						</div>
+					) }
 				</div>
 			</div>
 		);
 	}
 }
+
+export default localize( Checklist );

@@ -11,7 +11,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 
 const JetpackChecklistFooter = ( { translate, handleWpAdminLink, wpAdminUrl } ) => (
-	<Card compact className="jetpack-checklist__footer">
+	<Card compact className="jetpack-checklist-footer">
 		<p>{ translate( 'Return to your self-hosted WordPress dashboard.' ) }</p>
 		<Button
 			compact

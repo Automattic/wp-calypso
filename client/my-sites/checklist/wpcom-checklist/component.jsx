@@ -309,6 +309,7 @@ class WpcomChecklistComponent extends PureComponent {
 					taskList={ taskList }
 					phase2={ phase2 }
 					onExpandTask={ this.trackExpandTask }
+					showChecklistHeader={ true }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
 				</ChecklistComponent>

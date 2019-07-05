@@ -14,7 +14,6 @@ import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getRewindState from 'state/selectors/get-rewind-state';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import JetpackChecklistFooter from './footer';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -131,6 +130,8 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					isPlaceholder={ ! taskStatuses }
 					onExpandTask={ this.trackExpandTask }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
+					showAdminFooter={ true }
+					wpAdminUrl={ wpAdminUrl }
 				>
 					<Task
 						id="jetpack_task_protect"
@@ -340,13 +341,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						/>
 					) }
 				</Checklist>
-
-				{ wpAdminUrl && (
-					<JetpackChecklistFooter
-						wpAdminUrl={ wpAdminUrl }
-						handleWpAdminLink={ this.handleWpAdminLink }
-					/>
-				) }
 			</Fragment>
 		);
 	}

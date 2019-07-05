@@ -28,19 +28,3 @@
 		}
 	}
 }
-
-.jetpack-checklist__footer {
-	align-items: center;
-	display: flex;
-	flex-direction: column;
-	text-align: center;
-	@include breakpoint( '>660px' ) {
-		flex-direction: row;
-		justify-content: flex-end;
-		text-align: left;
-		p {
-			flex: 1;
-			margin: 0 20px 0 0;
-		}
-	}
-}
