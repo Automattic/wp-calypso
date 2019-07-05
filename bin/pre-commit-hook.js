@@ -155,12 +155,12 @@ if ( toEslint.length ) {
 
 // and finally PHPCS
 if ( toPHPCS.length ) {
-	// PHPCS can return exit code `2` if it finds errors that can be fixed by PHPCBF.
-	// Since we've already run PHPCBF, we'll assume only `0` or `1` exit codes.
-	// https://github.com/squizlabs/PHP_CodeSniffer/blob/master/src/Runner.php#L135
-	try {
-		execSync( `phpcs ${ toPHPCS.join( ' ' ) }` );
-	} catch ( error ) {
+	const lintResult = spawnSync( 'phpcs', [ ...toPHPCS ], {
+		shell: true,
+		stdio: 'inherit',
+	} );
+
+	if ( lintResult.status ) {
 		linterFailure();
 	}
 }
