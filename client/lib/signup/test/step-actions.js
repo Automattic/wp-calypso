@@ -13,11 +13,23 @@ import {
 import { useNock } from 'test/helpers/use-nock';
 import flows from 'signup/config/flows';
 import { isDomainStepSkippable } from 'signup/config/steps';
+import { getUserStub } from 'lib/user';
 
 // This is necessary since localforage will throw "no local storage method found" promise rejection without this.
 // See how lib/user-settings/test apply the same trick.
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
+
+jest.mock( 'lib/user', () => {
+	const getStub = jest.fn();
+
+	const user = () => ( {
+		get: getStub,
+	} );
+	user.getUserStub = getStub;
+
+	return user;
+} );
 
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
@@ -43,6 +55,7 @@ describe( 'createSiteWithCart()', () => {
 
 	beforeEach( () => {
 		isDomainStepSkippable.mockReset();
+		getUserStub.mockReset();
 	} );
 
 	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
@@ -129,6 +142,100 @@ describe( 'createSiteWithCart()', () => {
 			},
 			[],
 			{ siteUrl: 'mysite' },
+			fakeStore
+		);
+	} );
+
+	test( 'use username for blog_name if user data available', () => {
+		isDomainStepSkippable.mockReturnValue( true );
+		getUserStub.mockReturnValue( { username: 'alex' } );
+
+		const fakeStore = {
+			getState: () => ( {} ),
+		};
+
+		createSiteWithCart(
+			response => {
+				expect( response.requestBody.blog_name ).toBe( 'alex' );
+			},
+			[],
+			{ siteUrl: undefined },
+			fakeStore
+		);
+	} );
+
+	test( "use username from dependency store for blog_name if user data isn't available", () => {
+		isDomainStepSkippable.mockReturnValue( true );
+
+		const fakeStore = {
+			getState: () => ( {
+				signup: { dependencyStore: { username: 'alex' } },
+			} ),
+		};
+
+		createSiteWithCart(
+			response => {
+				expect( response.requestBody.blog_name ).toBe( 'alex' );
+			},
+			[],
+			{ siteUrl: undefined },
+			fakeStore
+		);
+	} );
+
+	test( "use site title for blog_name if username isn't available", () => {
+		isDomainStepSkippable.mockReturnValue( true );
+
+		const fakeStore = {
+			getState: () => ( {
+				signup: { steps: { siteTitle: 'mytitle' } },
+			} ),
+		};
+
+		createSiteWithCart(
+			response => {
+				expect( response.requestBody.blog_name ).toBe( 'mytitle' );
+			},
+			[],
+			{ siteUrl: undefined },
+			fakeStore
+		);
+	} );
+
+	test( "use site type for blog_name if username and title aren't available", () => {
+		isDomainStepSkippable.mockReturnValue( true );
+
+		const fakeStore = {
+			getState: () => ( {
+				signup: { steps: { siteType: 'blog' } },
+			} ),
+		};
+
+		createSiteWithCart(
+			response => {
+				expect( response.requestBody.blog_name ).toBe( 'blog' );
+			},
+			[],
+			{ siteUrl: undefined },
+			fakeStore
+		);
+	} );
+
+	test( "use site vertical for blog_name if username, title, and site type isn't available", () => {
+		isDomainStepSkippable.mockReturnValue( true );
+
+		const fakeStore = {
+			getState: () => ( {
+				signup: { steps: { siteVertical: { name: 'art' } } },
+			} ),
+		};
+
+		createSiteWithCart(
+			response => {
+				expect( response.requestBody.blog_name ).toBe( 'art' );
+			},
+			[],
+			{ siteUrl: undefined },
 			fakeStore
 		);
 	} );
