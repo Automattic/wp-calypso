@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,11 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class MobileBackToSidebar extends React.Component {
 	toggleSidebar = event => {
