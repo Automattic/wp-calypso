@@ -198,8 +198,6 @@ class AutoRenewDisablingDialog extends Component {
 
 		return (
 			<CancelPurchaseForm
-				defaultContent={ '' }
-				onInputChange={ () => {} }
 				purchase={ purchase }
 				selectedSite={ selectedSite }
 				isVisible={ true }
