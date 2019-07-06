@@ -12,6 +12,7 @@ import EmptyContent from 'components/empty-content';
 import ExporterContainer from 'my-sites/exporter/container';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import FormattedHeader from 'components/formatted-header';
@@ -24,6 +25,7 @@ import './style.scss';
 const SectionExport = ( { isJetpack, site, translate } ) => (
 	<Main>
 		<DocumentHead title={ translate( 'Export' ) } />
+		<SidebarNavigation />
 		<FormattedHeader
 			className="exporter__section-header"
 			headerText={ translate( 'Export your content' ) }
