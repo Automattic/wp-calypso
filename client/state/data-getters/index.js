@@ -101,8 +101,9 @@ export const requestGeoLocation = () =>
 		{ fromApi: () => ( { body: { country_short } } ) => [ [ 'geo', country_short ] ] }
 	);
 
-export const requestSiteAlerts = siteId => {
+export const requestSiteAlerts = ( siteId, force ) => {
 	const id = `site-alerts-${ siteId }`;
+	const freshness = force ? -Infinity : 5 * 60 * 1000;
 
 	return requestHttpData(
 		id,
@@ -111,11 +112,13 @@ export const requestSiteAlerts = siteId => {
 				method: 'GET',
 				path: `/sites/${ siteId }/alerts`,
 				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				body: {}, // have to have an empty body to make wpcom-http happy
 			},
 			{}
 		),
 		{
-			freshness: 5 * 60 * 1000,
+			freshness: freshness,
 			fromApi: () => ( { suggestions, threats, warnings, updates } ) => [
 				[
 					id,

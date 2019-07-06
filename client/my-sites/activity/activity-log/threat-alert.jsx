@@ -184,6 +184,11 @@ export class ThreatAlert extends Component {
 						//TODO: error handling?
 						return;
 					}
+
+					if ( ! fix ) {
+						//TODO: replace this with a Calypso notice
+						//console.log( 'The issue was ignored!' );
+					}
 					this.checkFixStatus();
 				},
 				freshness: -Infinity,
@@ -218,6 +223,10 @@ export class ThreatAlert extends Component {
 					if ( 'fixed' === data.status || 'not_started' === data.status ) {
 						clearInterval( self.timerId );
 						parentList.refreshList();
+						if ( 'fixed' === data.status ) {
+							//TODO: replace this with a Calypso notice
+							//console.log( 'The issue was fixed!' );
+						}
 					} else {
 						//status in_progress
 					}

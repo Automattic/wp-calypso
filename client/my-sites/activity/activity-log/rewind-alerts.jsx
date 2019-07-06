@@ -18,29 +18,20 @@ import { requestSiteAlerts } from 'state/data-getters';
  */
 import './rewind-alerts.scss';
 
+let refreshFlag = false;
+
 export class RewindAlerts extends Component {
 	refreshList() {
-		//console.log("refreshing!");
-		//console.log("this.state BEFORE:", this.state);
-
+		refreshFlag = true;
 		this.setState( {} );
 	}
 
 	render() {
-		//console.log("RENDERING LIST!!!");
-		//console.log("this.state", this.state);
-
 		const { siteId, translate, alerts } = this.props;
 
-		//console.log("siteId", siteId);
-		//console.log("alerts:", alerts);
-
 		if ( ! alerts || ! alerts.threats || alerts.threats.length === 0 ) {
-			//console.log("A1");
 			return null;
 		}
-
-		//console.log("B1");
 
 		return (
 			<Card className="activity-log__threats" highlight="error">
@@ -55,8 +46,14 @@ export class RewindAlerts extends Component {
 	}
 }
 
+const requestStuff = siteId => {
+	const output = requestSiteAlerts( siteId, refreshFlag ).data;
+	refreshFlag = false;
+	return output;
+};
+
 const mapStateToProps = ( state, { siteId } ) => ( {
-	alerts: requestSiteAlerts( siteId ).data,
+	alerts: requestStuff( siteId ),
 } );
 
 export default connect( mapStateToProps )( localize( RewindAlerts ) );
