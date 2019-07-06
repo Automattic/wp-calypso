@@ -16,6 +16,7 @@ import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
 import {
 	getName,
 	getSubscriptionEndDate,
@@ -45,7 +46,9 @@ class CancelPurchaseButton extends Component {
 	};
 
 	getCancellationFlowType = () => {
-		return isRefundable( this.props.purchase ) ? 'cancel_with_refund' : 'cancel_autorenew';
+		return isRefundable( this.props.purchase )
+			? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	};
 
 	handleCancelPurchaseClick = () => {
