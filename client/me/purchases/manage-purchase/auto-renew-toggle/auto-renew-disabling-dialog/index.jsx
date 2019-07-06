@@ -116,7 +116,6 @@ class AutoRenewDisablingDialog extends Component {
 	}
 
 	onClickAtomicFollowUpConfirm = () => {
-		// this.props.onConfirm() || this.props.onClose();
 		this.props.onConfirm();
 		this.setState( {
 			dialogType: DIALOG.SURVEY,
@@ -166,7 +165,6 @@ class AutoRenewDisablingDialog extends Component {
 			return;
 		}
 
-		// this.props.onConfirm() || this.props.onClose();
 		this.props.onConfirm();
 		this.setState( {
 			dialogType: DIALOG.SURVEY,
