@@ -50,7 +50,7 @@ class SitesPopover extends React.Component {
 				onSiteSelect={ this.props.onSiteSelect }
 				showAddNewSite={ false }
 				indicator={ false }
-				autoFocus={ ! hasTouch() }
+				autoFocus={ ! hasTouch() } // eslint-disable-line jsx-a11y/no-autofocus
 				groups={ true }
 				onClose={ this.props.onClose }
 			/>
