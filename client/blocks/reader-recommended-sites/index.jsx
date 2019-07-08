@@ -60,10 +60,10 @@ export class RecommendedSites extends React.PureComponent {
 
 		return (
 			<div className="reader-recommended-sites">
-				<h1 className="reader-recommended-sites__header text-subtitle">
+				<h2 className="reader-recommended-sites__header text-subtitle">
 					<Gridicon icon="thumbs-up" size={ 18 } />
 					{ this.props.translate( 'Recommended Sites' ) }
-				</h1>
+				</h2>
 				<ul className="reader-recommended-sites__list">
 					{ map( sites, ( site, index ) => {
 						const siteId = site.siteId || site.blogId;
