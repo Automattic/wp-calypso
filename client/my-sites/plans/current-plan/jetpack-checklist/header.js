@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 
-const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (
+const JetpackChecklistHeader = ( { isCompleted, translate } ) => (
 	<Card compact className="jetpack-checklist__header">
 		<img
 			className="jetpack-checklist__header-illustration"
@@ -20,13 +20,21 @@ const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (
 		/>
 		<div className="jetpack-checklist__header-content">
 			<CardHeading>
-				{ translate( "Let's start by securing your site with a few essential security features" ) }
+				{ isCompleted ? (
+					<>
+						{ translate( 'Congratulations' ) }
+						<p>
+							{ translate(
+								"You've completed setting up all of the essential security and performance features. Going forward, you can access these features in the Settings sidebar menu."
+							) }
+						</p>
+					</>
+				) : (
+					translate(
+						"Let's start by securing your site with a few essential security and performance features"
+					)
+				) }
 			</CardHeading>
-			{ isPaidPlan && (
-				<p>
-					{ translate( 'These security features ensure that your site is secured and backed up.' ) }
-				</p>
-			) }
 		</div>
 	</Card>
 );
