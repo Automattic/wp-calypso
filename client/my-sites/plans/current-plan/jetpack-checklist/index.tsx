@@ -24,7 +24,6 @@ import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { isEnabled } from 'config';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
@@ -264,51 +263,47 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						title={ translate( 'WordPress.com sign in' ) }
 					/>
 
-					{ isEnabled( 'jetpack/checklist/performance' ) && (
-						<Task
-							id="jetpack_site_accelerator"
-							completed={ this.isComplete( 'jetpack_site_accelerator' ) }
-							completedButtonText={ translate( 'Configure' ) }
-							completedTitle={ translate(
-								'Site accelerator is serving your images and static files through our global CDN.'
-							) }
-							description={ translate(
-								'Serve your images and static files through our global CDN and watch your page load time drop.'
-							) }
-							duration={ this.getDuration( 1 ) }
-							href={ `/settings/performance/${ siteSlug }` }
-							onClick={ this.handleTaskStart( {
-								taskId: 'jetpack_site_accelerator',
-								tourId: 'jetpackSiteAccelerator',
-							} ) }
-							title={ translate( 'Site Accelerator' ) }
-						/>
-					) }
+					<Task
+						id="jetpack_site_accelerator"
+						completed={ this.isComplete( 'jetpack_site_accelerator' ) }
+						completedButtonText={ translate( 'Configure' ) }
+						completedTitle={ translate(
+							'Site accelerator is serving your images and static files through our global CDN.'
+						) }
+						description={ translate(
+							'Serve your images and static files through our global CDN and watch your page load time drop.'
+						) }
+						duration={ this.getDuration( 1 ) }
+						href={ `/settings/performance/${ siteSlug }` }
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_site_accelerator',
+							tourId: 'jetpackSiteAccelerator',
+						} ) }
+						title={ translate( 'Site Accelerator' ) }
+					/>
 
-					{ isEnabled( 'jetpack/checklist/performance' ) && (
-						<Task
-							id="jetpack_lazy_images"
-							completed={ this.isComplete( 'jetpack_lazy_images' ) }
-							completedButtonText={ translate( 'Upload images' ) }
-							completedTitle={ translate( 'Lazy load images is improving your site speed.' ) }
-							description={ translate(
-								"Improve your site's speed by only loading images when visible on the screen."
-							) }
-							duration={ this.getDuration( 1 ) }
-							href={
-								this.isComplete( 'jetpack_lazy_images' )
-									? `/media/${ siteSlug }`
-									: `/settings/performance/${ siteSlug }`
-							}
-							onClick={ this.handleTaskStart( {
-								taskId: 'jetpack_lazy_images',
-								tourId: 'jetpackLazyImages',
-							} ) }
-							title={ translate( 'Lazy Load Images' ) }
-						/>
-					) }
+					<Task
+						id="jetpack_lazy_images"
+						completed={ this.isComplete( 'jetpack_lazy_images' ) }
+						completedButtonText={ translate( 'Upload images' ) }
+						completedTitle={ translate( 'Lazy load images is improving your site speed.' ) }
+						description={ translate(
+							"Improve your site's speed by only loading images when visible on the screen."
+						) }
+						duration={ this.getDuration( 1 ) }
+						href={
+							this.isComplete( 'jetpack_lazy_images' )
+								? `/media/${ siteSlug }`
+								: `/settings/performance/${ siteSlug }`
+						}
+						onClick={ this.handleTaskStart( {
+							taskId: 'jetpack_lazy_images',
+							tourId: 'jetpackLazyImages',
+						} ) }
+						title={ translate( 'Lazy Load Images' ) }
+					/>
 
-					{ isEnabled( 'jetpack/checklist/performance' ) && ( isPremium || isProfessional ) && (
+					{ ( isPremium || isProfessional ) && (
 						<Task
 							id="jetpack_video_hosting"
 							title={ translate( 'Video Hosting' ) }
@@ -333,7 +328,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						/>
 					) }
 
-					{ isEnabled( 'jetpack/checklist/performance' ) && isProfessional && (
+					{ isProfessional && (
 						<Task
 							id="jetpack_search"
 							title={ translate( 'Enhanced Search' ) }
