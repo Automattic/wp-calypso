@@ -131,6 +131,8 @@ export function upsellNudge( context, next ) {
 		upsellType = 'concierge-quickstart-session';
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
 		upsellType = 'concierge-support-session';
+	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
+		upsellType = 'plan-upgrade-upsell';
 	}
 	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
@@ -148,30 +150,5 @@ export function upsellNudge( context, next ) {
 		</CheckoutContainer>
 	);
 
-	next();
-}
-
-export function planUpgradeNudge( context, next ) {
-	const { product, receiptId } = context.params;
-	context.store.dispatch( setSection( { name: 'plan-upgrade-nudge' }, { hasSidebar: false } ) );
-
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
-
-	context.primary = (
-		<CartData>
-			<Checkout>
-				<PlanUpgradenNudge
-					selectedSiteId={ selectedSite.ID }
-					product={ product }
-					receiptId={ Number( receiptId ) }
-				/>
-			</Checkout>
-		</CartData>
-	);
 	next();
 }

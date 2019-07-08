@@ -1,4 +1,8 @@
-.plan-upgrade-nudge {
+main.plan-upgrade-upsell.main {
+	margin:auto;
+}
+
+.plan-upgrade-upsell {
 	max-height: calc(
 		100vh - 120px
 	); // 120 px is for masterbar and all the paddings around this nudge
