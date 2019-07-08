@@ -592,7 +592,10 @@ export class JetpackAuthorize extends Component {
 
 		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
 		const nextRoute =
-			isJetpackVersionSupported && canManageOptions && ! isAtomic
+			config.isEnabled( 'jetpack/connect/site-questions' ) &&
+			isJetpackVersionSupported &&
+			canManageOptions &&
+			! isAtomic
 				? JPC_PATH_SITE_TYPE
 				: JPC_PATH_PLANS;
 
