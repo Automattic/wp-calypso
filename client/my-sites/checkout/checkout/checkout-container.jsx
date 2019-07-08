@@ -22,7 +22,7 @@ class CheckoutContainer extends React.Component {
 	}
 
 	renderCheckoutHeader() {
-		return <FormattedHeader headerText={ this.state.headerText } />;
+		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
 	setHeaderText = newHeaderText => {
@@ -39,13 +39,16 @@ class CheckoutContainer extends React.Component {
 			selectedSite,
 			reduxStore,
 			redirectTo,
+			shouldShowCart = true,
+			clearTransaction,
 		} = this.props;
 
+		const TransactionData = clearTransaction ? CartData : CheckoutData;
 		return (
 			<>
 				{ this.renderCheckoutHeader() }
 				<div className="checkout__container">
-					<CheckoutData>
+					<TransactionData>
 						<Checkout
 							product={ product }
 							purchaseId={ purchaseId }
@@ -55,11 +58,16 @@ class CheckoutContainer extends React.Component {
 							setHeaderText={ this.setHeaderText }
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
-						/>
+						>
+							{ this.props.children }
+						</Checkout>
+					</TransactionData>
+
+					{ shouldShowCart && (
 						<CartData>
 							<SecondaryCart selectedSite={ selectedSite } />
 						</CartData>
-					</CheckoutData>
+					) }
 				</div>
 			</>
 		);

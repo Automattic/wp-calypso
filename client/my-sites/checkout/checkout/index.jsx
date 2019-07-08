@@ -82,7 +82,6 @@ import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
-import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -301,7 +300,10 @@ export class Checkout extends React.Component {
 
 	redirectIfEmptyCart() {
 		const { selectedSiteSlug, transaction } = this.props;
-		let redirectTo = '/plans/';
+
+		if ( ! transaction ) {
+			return true;
+		}
 
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
@@ -325,6 +327,8 @@ export class Checkout extends React.Component {
 			// some post-transaction requests to complete.
 			return false;
 		}
+
+		let redirectTo = '/plans/';
 
 		if ( this.state.previousCart ) {
 			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
@@ -367,9 +371,7 @@ export class Checkout extends React.Component {
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
-			transaction: {
-				step: { data: receipt },
-			},
+			transaction: { step: { data: receipt = null } = {} } = {},
 		} = this.props;
 		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
 
@@ -379,7 +381,12 @@ export class Checkout extends React.Component {
 
 		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
+		let receiptId;
+		if ( receipt ) {
+			receiptId = receipt.receipt_id;
+		} else {
+			receiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
+		}
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -399,6 +406,12 @@ export class Checkout extends React.Component {
 
 		if ( ! selectedSiteSlug ) {
 			return '/checkout/thank-you/features';
+		}
+
+		// If cart is empty, then send the user to a generic page (not post-purchase related).
+		// For example, this case arises when a Skip button is clicked on a concierge upsell nudge
+		if ( ':receiptId' === receiptId && isEmpty( getAllCartItems( cart ) ) ) {
+			return `/stats/day/${ selectedSiteSlug }`;
 		}
 
 		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
@@ -455,10 +468,7 @@ export class Checkout extends React.Component {
 
 		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
-		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
-			if ( this.props.redirectToPageBuilder ) {
-				return getEditHomeUrl( selectedSiteSlug );
-			}
+		if ( this.props.isEligibleForCheckoutToChecklist & ( ':receiptId' !== receiptId ) ) {
 			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
 
 			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
@@ -487,9 +497,7 @@ export class Checkout extends React.Component {
 			isDomainOnly,
 			reduxStore,
 			selectedSiteId,
-			transaction: {
-				step: { data: receipt },
-			},
+			transaction: { step: { data: receipt = null } = {} } = {},
 			translate,
 		} = this.props;
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
@@ -564,6 +572,8 @@ export class Checkout extends React.Component {
 			this.props.requestSite( selectedSiteId );
 		}
 
+		this.props.setHeaderText( '' );
+
 		if (
 			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
 			( isDomainOnly && hasPlan( cart ) && ! selectedSiteId )
@@ -589,7 +599,15 @@ export class Checkout extends React.Component {
 	};
 
 	content() {
-		const { selectedSite } = this.props;
+		const {
+			selectedSite,
+			transaction,
+			cart,
+			cards,
+			productsList,
+			setHeaderText,
+			userCountryCode,
+		} = this.props;
 
 		if ( this.isLoading() ) {
 			return <SecurePaymentFormPlaceholder />;
@@ -602,22 +620,22 @@ export class Checkout extends React.Component {
 		if ( this.needsDomainDetails() ) {
 			return (
 				<DomainDetailsForm
-					cart={ this.props.cart }
-					productsList={ this.props.productsList }
-					userCountryCode={ this.props.userCountryCode }
+					cart={ cart }
+					productsList={ productsList }
+					userCountryCode={ userCountryCode }
 				/>
 			);
 		}
 
 		return (
 			<SecurePaymentForm
-				cart={ this.props.cart }
-				transaction={ this.props.transaction }
-				cards={ this.props.cards }
+				cart={ cart }
+				transaction={ transaction }
+				cards={ cards }
 				paymentMethods={ this.paymentMethodsAbTestFilter() }
-				products={ this.props.productsList }
+				products={ productsList }
 				selectedSite={ selectedSite }
-				setHeaderText={ this.props.setHeaderText }
+				setHeaderText={ setHeaderText }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
@@ -711,6 +729,7 @@ export class Checkout extends React.Component {
 
 		return (
 			cart &&
+			transaction &&
 			! hasDomainDetails( transaction ) &&
 			( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
 		);
@@ -737,6 +756,14 @@ export class Checkout extends React.Component {
 			analyticsProps = { site: selectedSiteSlug };
 		} else {
 			analyticsPath = '/checkout/no-site';
+		}
+
+		if ( this.props.children ) {
+			return React.Children.map( this.props.children, child => {
+				return React.cloneElement( child, {
+					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
+				} );
+			} );
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -777,7 +804,6 @@ export default connect(
 				selectedSiteId,
 				props.cart
 			),
-			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
