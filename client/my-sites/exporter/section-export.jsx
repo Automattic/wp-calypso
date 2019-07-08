@@ -53,7 +53,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isJetpack: isJetpackSite( state, siteId, ),
+		isJetpack: isJetpackSite( state, siteId ),
 		site,
 		siteSlug: getSelectedSiteSlug( state ),
 		canUserExport: canCurrentUser( state, siteId, 'manage_options' ),
