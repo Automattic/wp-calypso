@@ -22,7 +22,7 @@ const JetpackChecklistHeader = ( { isCompleted, translate } ) => (
 			<CardHeading>
 				{ isCompleted ? (
 					<>
-						{ translate( 'Congratulations' ) }
+						{ translate( 'Congratulations!' ) }
 						<p>
 							{ translate(
 								"You've completed setting up all of the essential security and performance features. Going forward, you can access these features in the Settings sidebar menu."
@@ -31,7 +31,7 @@ const JetpackChecklistHeader = ( { isCompleted, translate } ) => (
 					</>
 				) : (
 					translate(
-						"Let's start by securing your site with a few essential security and performance features"
+						"Let's start by securing your site with a few essential security and performance features."
 					)
 				) }
 			</CardHeading>
