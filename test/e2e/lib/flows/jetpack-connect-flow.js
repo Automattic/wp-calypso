@@ -19,9 +19,10 @@ import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
 import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
-import JetpackConnectSiteTypePage from '../pages/jetpack/jetpack-connect-site-type-page';
-import JetpackConnectSiteTopicPage from '../pages/jetpack/jetpack-connect-site-topic-page';
-import JetpackConnectUserTypePage from '../pages/jetpack/jetpack-connect-user-type-page';
+// These flows are disabled via `jetpack/connect/site-questions` feature flag in Calypso:
+// import JetpackConnectSiteTypePage from '../pages/jetpack/jetpack-connect-site-type-page';
+// import JetpackConnectSiteTopicPage from '../pages/jetpack/jetpack-connect-site-topic-page';
+// import JetpackConnectUserTypePage from '../pages/jetpack/jetpack-connect-user-type-page';
 import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
@@ -60,16 +61,17 @@ export default class JetpackConnectFlow {
 		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
 		await jetpackAuthorizePage.waitToDisappear();
 
-		if ( config.isEnabled( 'jetpack/connect/site-questions' ) ) {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
-			await siteTypePage.selectSiteType( 'blog' );
+		/* These flows are disabled via `jetpack/connect/site-questions` feature flag in Calypso */
+		/*
+		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
+		await siteTypePage.selectSiteType( 'blog' );
 
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
-			await siteTopicPage.selectSiteTopic( 'test site' );
+		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
+		await siteTopicPage.selectSiteTopic( 'test site' );
 
-			const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
-			await userTypePage.selectUserType( 'creator' );
-		}
+		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
+		await userTypePage.selectUserType( 'creator' );
+		*/
 
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		return await pickAPlanPage.selectFreePlanJetpack();
@@ -90,16 +92,17 @@ export default class JetpackConnectFlow {
 		await jetpackAuthorizePage.approveConnection();
 		await jetpackAuthorizePage.waitToDisappear();
 
-		if ( config.isEnabled( 'jetpack/connect/site-questions' ) ) {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
-			await siteTypePage.selectSiteType( 'blog' );
+		/* These flows are disabled via `jetpack/connect/site-questions` feature flag in Calypso */
+		/*
+		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
+		await siteTypePage.selectSiteType( 'blog' );
 
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
-			await siteTopicPage.selectSiteTopic( 'test site' );
+		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
+		await siteTopicPage.selectSiteTopic( 'test site' );
 
-			const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
-			await userTypePage.selectUserType( 'creator' );
-		}
+		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
+		await userTypePage.selectUserType( 'creator' );
+		*/
 
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		return await pickAPlanPage.selectFreePlanJetpack();
