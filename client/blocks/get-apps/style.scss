@@ -17,8 +17,6 @@
 }
 
 .get-apps__desktop {
-	margin-bottom: 0;
-
 	@include breakpoint('>480px') {
 		display: flex;
 		flex-direction: row;
