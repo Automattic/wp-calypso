@@ -1,9 +1,9 @@
-.get-apps {
+.get-apps__wrapper {
 	display: flex;
 	flex-direction: column;
 }
 
-.get-apps > div {
+.get-apps__wrapper > div {
 	width: 100%;
 }
 
