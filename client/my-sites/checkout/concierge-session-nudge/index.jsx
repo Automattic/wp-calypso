@@ -150,16 +150,24 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	handleClickDecline = () => {
-		const { trackUpsellButtonClick, handleCheckoutCompleteRedirect } = this.props;
+		const {
+			trackUpsellButtonClick,
+			conciergeSessionType,
+			handleCheckoutCompleteRedirect,
+		} = this.props;
 
-		trackUpsellButtonClick( 'calypso_offer_quickstart_upsell_decline_button_click' );
+		trackUpsellButtonClick(
+			`calypso_${ conciergeSessionType.replace( /-/g, '_' ) }_decline_button_click`
+		);
 		handleCheckoutCompleteRedirect();
 	};
 
 	handleClickAccept = buttonAction => {
-		const { trackUpsellButtonClick, siteSlug } = this.props;
+		const { trackUpsellButtonClick, conciergeSessionType, siteSlug } = this.props;
 
-		trackUpsellButtonClick( `calypso_offer_quickstart_upsell_${ buttonAction }_button_click` );
+		trackUpsellButtonClick(
+			`calypso_${ conciergeSessionType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
+		);
 		page( `/checkout/${ siteSlug }/concierge-session` );
 	};
 }
