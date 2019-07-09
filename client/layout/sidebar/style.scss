@@ -54,8 +54,11 @@
 
 // Sidebar Headings, used for both static headings
 // like in Reader, and for the expandable menus.
-.sidebar .sidebar__heading {
-	color: var( --sidebar-text-color );
+.sidebar__heading {
+	color: var( --sidebar-heading-color );
+	font-size: 14px;
+	font-weight: 600;
+	padding: 16px 8px 6px 16px;
 }
 
 // The anchor tag for sidebar menu items.
