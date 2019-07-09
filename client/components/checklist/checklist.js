@@ -86,9 +86,7 @@ class Checklist extends PureComponent {
 	renderChecklistHeader = () => {
 		return (
 			<Card compact className="checklist__header">
-				<h2 className="checklist__header-progress-text">
-					{ this.props.translate( 'Your setup list' ) }
-				</h2>
+				<h2>{ this.props.translate( 'Your setup list' ) }</h2>
 			</Card>
 		);
 	};
