@@ -1,9 +1,9 @@
-.get-apps {
+.get-apps__wrapper {
 	display: flex;
 	flex-direction: column;
 }
 
-.get-apps > div {
+.get-apps__wrapper > div {
 	width: 100%;
 }
 
@@ -17,8 +17,6 @@
 }
 
 .get-apps__desktop {
-	margin-bottom: 0;
-
 	@include breakpoint('>480px') {
 		display: flex;
 		flex-direction: row;
@@ -70,7 +68,7 @@
 	}
 
 	.get-apps__sms-subpanel {
-		
+
 		// This is a hack to allow us to use a feature flag to hide this subpanel
 		// without the parent card having a big ugly blank space at the bottom.
 		margin-top: 64px;
@@ -105,7 +103,7 @@
 				margin: 0;
 				padding-right: 16px;
 			}
-			
+
 			@include breakpoint('<480px') {
 
 				p {
