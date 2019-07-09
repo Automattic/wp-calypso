@@ -152,7 +152,7 @@ export default function() {
 	page( '/checkout', '/plans' );
 
 	page(
-		'/checkout/:site/offer-plan-upgrade/:product/:receiptId?',
+		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
 		siteSelection,
 		upsellNudge,
 		makeLayout,

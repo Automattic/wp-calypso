@@ -125,14 +125,17 @@ export function gsuiteNudge( context, next ) {
 export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let upsellType;
+	let upsellType, upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
 		upsellType = 'concierge-quickstart-session';
+		upgradeItem = 'concierge-session';
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
 		upsellType = 'concierge-support-session';
+		upgradeItem = 'concierge-session';
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
 		upsellType = 'plan-upgrade-upsell';
+		upgradeItem = context.params.upgradeItem;
 	}
 	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
@@ -146,6 +149,7 @@ export function upsellNudge( context, next ) {
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }
 				upsellType={ upsellType }
+				upgradeItem={ upgradeItem }
 			/>
 		</CheckoutContainer>
 	);
