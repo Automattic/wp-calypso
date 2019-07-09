@@ -111,6 +111,9 @@ class PageTemplateModal extends Component {
 const PageTemplatesPlugin = compose(
 	withSelect( select => ( {
 		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
+		postContentBlock: select( 'core/editor' )
+			.getBlocks()
+			.find( block => block.name === 'a8c/post-content' ),
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => {
 		// Disable tips right away as the collide with the modal window.
@@ -135,8 +138,13 @@ const PageTemplatesPlugin = compose(
 				} );
 
 				// Insert blocks.
+				const postContentBlock = ownProps.postContentBlock;
 				const blocks = parseBlocks( template.content );
-				editorDispatcher.insertBlocks( blocks );
+				editorDispatcher.insertBlocks(
+					blocks,
+					0,
+					postContentBlock ? postContentBlock.clientId : ''
+				);
 			},
 		};
 	} )
