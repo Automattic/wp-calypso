@@ -137,7 +137,7 @@ const darkColorSchemeLogo = (
 	</g>
 );
 
-function JetpackDreamhostLogo( { darkColorScheme } ) {
+function JetpackEuroDNSLogo( { darkColorScheme } ) {
 	if ( darkColorScheme ) {
 		return darkColorSchemeLogo;
 	}
@@ -145,4 +145,4 @@ function JetpackDreamhostLogo( { darkColorScheme } ) {
 	return lightColorSchemeLogo;
 }
 
-export default JetpackDreamhostLogo;
+export default JetpackEuroDNSLogo;
