@@ -73,9 +73,17 @@ class ExternalLink extends Component {
 				{ this.props.icon && this.props.showIconFirst && iconComponent }
 				{ this.props.children }
 				{ this.props.icon && ! this.props.showIconFirst && iconComponent }
+				{ this.props.icon && (
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+					<span className="screen-reader-text">
+						{
+							/* translators: accessibility text */
+							'(opens in a new tab)'
+						}
+					</span>
+				) }
 			</a>
 		);
 	}
 }
-
 export default ExternalLink;
