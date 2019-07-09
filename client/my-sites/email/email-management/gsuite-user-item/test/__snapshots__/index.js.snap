@@ -45,12 +45,6 @@ exports[`GSuiteUserItem renders user item with manage correctly 1`] = `
         />
       </g>
     </svg>
-	<span className="screen-reader-text">
-		{
-			/* translators: accessibility text */
-			'(opens in a new tab)'
-		}
-	</span>
   </a>
 </li>
 `;
