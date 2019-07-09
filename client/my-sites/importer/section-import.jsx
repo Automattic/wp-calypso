@@ -32,12 +32,15 @@ import {
 	SQUARESPACE,
 } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import JetpackImporter from 'my-sites/importer/jetpack-importer';
 import ExternalLink from 'components/external-link';
+import canCurrentUser from 'state/selectors/can-current-user';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Style dependencies
@@ -267,7 +270,20 @@ class SectionImport extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { site, translate, canImport } = this.props;
+
+		if ( ! canImport ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
+
 		const { jetpack: isJetpack } = site;
 		const headerText = translate( 'Import your content' );
 		const subHeaderText = translate(
@@ -302,6 +318,7 @@ export default flow(
 		fromSite: getImporterSiteUrl( state ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
+		canImport: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	} ) ),
 	localize
 )( SectionImport );
