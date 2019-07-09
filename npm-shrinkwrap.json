@@ -11449,11 +11449,6 @@
 				"minimatch": "^3.0.4"
 			}
 		},
-		"immediate": {
-			"version": "3.0.6",
-			"resolved": "https://registry.npmjs.org/immediate/-/immediate-3.0.6.tgz",
-			"integrity": "sha1-nbHb0Pr43m++D13V5Wu2BigN5ps="
-		},
 		"immutability-helper": {
 			"version": "3.0.1",
 			"resolved": "https://registry.npmjs.org/immutability-helper/-/immutability-helper-3.0.1.tgz",
@@ -13974,14 +13969,6 @@
 				"type-check": "~0.3.2"
 			}
 		},
-		"lie": {
-			"version": "3.1.1",
-			"resolved": "https://registry.npmjs.org/lie/-/lie-3.1.1.tgz",
-			"integrity": "sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=",
-			"requires": {
-				"immediate": "~3.0.5"
-			}
-		},
 		"line-height": {
 			"version": "0.3.1",
 			"resolved": "https://registry.npmjs.org/line-height/-/line-height-0.3.1.tgz",
@@ -14022,14 +14009,6 @@
 				"big.js": "^5.2.2",
 				"emojis-list": "^2.0.0",
 				"json5": "^1.0.1"
-			}
-		},
-		"localforage": {
-			"version": "1.7.3",
-			"resolved": "https://registry.npmjs.org/localforage/-/localforage-1.7.3.tgz",
-			"integrity": "sha512-1TulyYfc4udS7ECSBT2vwJksWbkwwTX8BzeUIiq8Y07Riy7bDAAnxDaPU/tWyOVmQAcWJIEIFP9lPfBGqVoPgQ==",
-			"requires": {
-				"lie": "3.1.1"
 			}
 		},
 		"locate-path": {
