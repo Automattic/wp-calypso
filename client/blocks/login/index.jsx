@@ -38,6 +38,7 @@ import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import AsyncLoad from 'components/async-load';
+import VisitSite from 'blocks/visit-site';
 
 /**
  * Style dependencies
@@ -152,6 +153,7 @@ class Login extends Component {
 			socialConnect,
 			translate,
 			twoStepNonce,
+			fromSite,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account.' );
@@ -249,6 +251,9 @@ class Login extends Component {
 					/>
 				</div>
 			);
+		} else if ( fromSite ) {
+			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
+			postHeader = <VisitSite siteSlug={ fromSite } />;
 		}
 
 		return (

@@ -19,6 +19,7 @@ import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
+import { getSiteFragment } from 'lib/route';
 
 /**
  * Re-export
@@ -78,9 +79,12 @@ export function redirectLoggedOut( context, next ) {
 	const userLoggedOut = ! isUserLoggedIn( state );
 
 	if ( userLoggedOut ) {
+		const siteFragment = context.params.site || getSiteFragment( context.path );
+
 		const loginParameters = {
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: context.path,
+			site: siteFragment,
 		};
 
 		// Pass along "login_email" and "login_locale" parameters from the

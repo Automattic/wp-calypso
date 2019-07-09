@@ -19,6 +19,7 @@ export function login( {
 	emailAddress,
 	socialService,
 	oauth2ClientId,
+	site,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -42,6 +43,10 @@ export function login( {
 		} else {
 			url = localizeUrl( url, locale );
 		}
+	}
+
+	if ( site ) {
+		url = addQueryArgs( { site }, url );
 	}
 
 	if ( redirectTo ) {
