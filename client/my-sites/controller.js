@@ -328,11 +328,6 @@ export function siteSelection( context, next ) {
 		);
 	}
 
-	// Ignore the user account settings page
-	if ( /^\/settings\/account/.test( context.path ) ) {
-		return next();
-	}
-
 	/*
 	 * If the user has only one site, redirect to the single site context instead of
 	 * rendering the all-site views.
