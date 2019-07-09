@@ -86,5 +86,4 @@ class ExternalLink extends Component {
 		);
 	}
 }
-
 export default ExternalLink;
