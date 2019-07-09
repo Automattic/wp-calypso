@@ -9,10 +9,16 @@
  * Class A8C_WP_Template_Data_Inserter
  */
 class A8C_WP_Template_Data_Inserter {
+
+	const OPTION_NAME = 'fse_template_data_version';
 	/**
 	 * This function will be called on plugin activation hook.
 	 */
 	public function insert_default_template_data() {
+		if ( false !== get_option( self::OPTION_NAME ) ) {
+			return;
+		}
+
 		$header_id = wp_insert_post(
 			[
 				'post_title'     => 'Header',
@@ -63,6 +69,9 @@ class A8C_WP_Template_Data_Inserter {
 		}
 
 		wp_set_object_terms( $page_template_id, 'page_template', 'wp_template_type' );
+
+		// store plugin version as value in case of future data migration needs
+		update_option( self::OPTION_NAME, A8C_FSE_VERSION );
 	}
 
 	/**
