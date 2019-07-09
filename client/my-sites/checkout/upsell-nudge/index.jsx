@@ -36,7 +36,7 @@ import { ConciergeSupportSession } from './concierge-support-session';
  */
 import './style.scss';
 
-export class ConciergeSessionNudge extends React.Component {
+export class UpsellNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
@@ -48,11 +48,11 @@ export class ConciergeSessionNudge extends React.Component {
 			isLoading,
 			hasProductsList,
 			hasSitePlans,
-			conciergeSessionType,
+			upsellType,
 		} = this.props;
 
 		return (
-			<Main className={ conciergeSessionType }>
+			<Main className={ upsellType }>
 				<QuerySites siteId={ selectedSiteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
@@ -67,9 +67,9 @@ export class ConciergeSessionNudge extends React.Component {
 			<>
 				{ receiptId ? (
 					<CompactCard>
-						<div className="concierge-session-nudge__header">
-							<div className="concierge-session-nudge__placeholders">
-								<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+						<div className="upsell-nudge__header">
+							<div className="upsell-nudge__placeholders">
+								<div className="upsell-nudge__placeholder-row is-placeholder" />
 							</div>
 						</div>
 					</CompactCard>
@@ -77,28 +77,28 @@ export class ConciergeSessionNudge extends React.Component {
 					''
 				) }
 				<CompactCard>
-					<div className="concierge-session-nudge__placeholders">
+					<div className="upsell-nudge__placeholders">
 						<div>
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
 							<br />
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
 							<br />
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
 							<br />
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
 							<br />
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
 							<br />
-							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
 						</div>
 					</div>
 				</CompactCard>
 				<CompactCard>
-					<div className="concierge-session-nudge__footer">
-						<div className="concierge-session-nudge__placeholders">
-							<div className="concierge-session-nudge__placeholder-button-container">
-								<div className="concierge-session-nudge__placeholder-button is-placeholder" />
-								<div className="concierge-session-nudge__placeholder-button is-placeholder" />
+					<div className="upsell-nudge__footer">
+						<div className="upsell-nudge__placeholders">
+							<div className="upsell-nudge__placeholder-button-container">
+								<div className="upsell-nudge__placeholder-button is-placeholder" />
+								<div className="upsell-nudge__placeholder-button is-placeholder" />
 							</div>
 						</div>
 					</div>
@@ -114,11 +114,11 @@ export class ConciergeSessionNudge extends React.Component {
 			productCost,
 			productDisplayCost,
 			isLoggedIn,
-			conciergeSessionType,
+			upsellType,
 			translate,
 		} = this.props;
 
-		switch ( conciergeSessionType ) {
+		switch ( upsellType ) {
 			case 'concierge-quickstart-session':
 				return (
 					<ConciergeQuickstartSession
@@ -152,21 +152,21 @@ export class ConciergeSessionNudge extends React.Component {
 	handleClickDecline = () => {
 		const {
 			trackUpsellButtonClick,
-			conciergeSessionType,
+			upsellType,
 			handleCheckoutCompleteRedirect,
 		} = this.props;
 
 		trackUpsellButtonClick(
-			`calypso_${ conciergeSessionType.replace( /-/g, '_' ) }_decline_button_click`
+			`calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click`
 		);
 		handleCheckoutCompleteRedirect();
 	};
 
 	handleClickAccept = buttonAction => {
-		const { trackUpsellButtonClick, conciergeSessionType, siteSlug } = this.props;
+		const { trackUpsellButtonClick, upsellType, siteSlug } = this.props;
 
 		trackUpsellButtonClick(
-			`calypso_${ conciergeSessionType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
+			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 		page( `/checkout/${ siteSlug }/concierge-session` );
 	};
@@ -199,4 +199,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( localize( ConciergeSessionNudge ) );
+)( localize( UpsellNudge ) );
