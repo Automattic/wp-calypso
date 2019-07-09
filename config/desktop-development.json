@@ -116,7 +116,6 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,

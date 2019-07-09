@@ -151,7 +151,6 @@
 		"reader/full-errors": true,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,
-		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"safari-idb-mitigation": true,
