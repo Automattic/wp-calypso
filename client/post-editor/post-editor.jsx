@@ -91,6 +91,27 @@ import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warnin
  */
 import './style.scss';
 
+/*
+ * Throttle and debounce and callback. Used for autosave.
+ * - run the callback at most every `throttleMs` milliseconds (don't autosave too often)
+ * - wait for at least `debounceMs` before first call (don't autosave while still typing)
+ */
+function throttleAndDebounce( fn, throttleMs, debounceMs ) {
+	const throttled = throttle( fn, throttleMs );
+	const debounced = debounce( throttled, debounceMs );
+
+	const throttledAndDebounced = function() {
+		return debounced.apply( this, arguments );
+	};
+
+	throttledAndDebounced.cancel = () => {
+		throttled.cancel();
+		debounced.cancel();
+	};
+
+	return throttledAndDebounced;
+}
+
 export class PostEditor extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -133,8 +154,7 @@ export class PostEditor extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
-		this.throttledAutosave = throttle( this.autosave, 20000 );
-		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
+		this.debouncedAutosave = throttleAndDebounce( this.doAutosave, 20000, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
@@ -146,15 +166,8 @@ export class PostEditor extends React.Component {
 		} );
 	}
 
-	UNSAFE_componentWillUpdate( nextProps, nextState ) {
-		// Cancel pending changes or autosave when user initiates a save. These
-		// will have been reflected in the save payload.
-		if ( nextState.isSaving && ! this.state.isSaving ) {
-			this.debouncedAutosave.cancel();
-			this.throttledAutosave.cancel();
-		}
-
-		if ( nextProps.isDirty ) {
+	componentDidUpdate() {
+		if ( this.props.isDirty ) {
 			this.props.markChanged();
 		} else {
 			this.props.markSaved();
@@ -175,7 +188,6 @@ export class PostEditor extends React.Component {
 
 	componentWillUnmount() {
 		this.debouncedAutosave.cancel();
-		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
@@ -525,11 +537,7 @@ export class PostEditor extends React.Component {
 		}
 	}
 
-	autosave = async () => {
-		// If debounced / throttled autosave was pending, consider it flushed
-		this.throttledAutosave.cancel();
-		this.debouncedAutosave.cancel();
-
+	async doAutosave() {
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
 		}
@@ -554,7 +562,13 @@ export class PostEditor extends React.Component {
 				this.onSaveDraftFailure( error );
 			}
 		}
-	};
+	}
+
+	autosave() {
+		// If debounced autosave was pending, consider it done
+		this.debouncedAutosave.cancel();
+		return this.doAutosave();
+	}
 
 	onClose = () => {
 		// go back if we can, if not, hit all posts
@@ -620,6 +634,10 @@ export class PostEditor extends React.Component {
 			return;
 		}
 
+		// Cancel pending autosave when user initiates a save.
+		// The changes will be reflected in the save payload.
+		this.debouncedAutosave.cancel();
+
 		this.setState( { isSaving: true } );
 
 		if ( status ) {
@@ -683,7 +701,7 @@ export class PostEditor extends React.Component {
 
 	iframePreview = async () => {
 		if ( this.props.isDirty ) {
-			this.autosave();
+			await this.autosave();
 		}
 
 		this.setState( { showPreview: true } );
@@ -752,6 +770,10 @@ export class PostEditor extends React.Component {
 				this.setConfirmationSidebar( { status: 'publishing' } );
 			}
 		}
+
+		// Cancel pending autosave when user initiates a save.
+		// The changes will be reflected in the save payload.
+		this.debouncedAutosave.cancel();
 
 		this.setState( {
 			isSaving: true,
