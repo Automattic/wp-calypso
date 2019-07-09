@@ -68,7 +68,7 @@ const ActivityLogConfirmDialog = ( {
 					{ translate( 'WordPress Plugins' ) }
 				</FormLabel>
 				<FormLabel>
-					<FormCheckbox name="uploads" onChange={ onSettingsChange } />
+					<FormCheckbox name="uploads" onChange={ onSettingsChange } defaultChecked />
 					{ translate( 'Media Uploads' ) }
 				</FormLabel>
 				<FormLabel>
