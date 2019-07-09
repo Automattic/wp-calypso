@@ -423,6 +423,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				recordTracksEvent( 'calypso_activitylog_restore_confirm', {
 					action_id: rewindId,
 					activity_name: activityName,
+					restore_types: restoreArgs.join( ',' ),
 				} ),
 				rewindRestore( siteId, rewindId, restoreArgs )
 			)
