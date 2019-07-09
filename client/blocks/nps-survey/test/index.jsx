@@ -60,7 +60,7 @@ describe( 'NpsSurvey', () => {
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'feedback',
-				hasAvailableConciergeSession: true,
+				has_available_concierge_sessions: true,
 			}
 		);
 		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
@@ -70,7 +70,7 @@ describe( 'NpsSurvey', () => {
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'promotion',
-				hasAvailableConciergeSession: true,
+				has_available_concierge_sessions: true,
 			}
 		);
 	} );
@@ -94,7 +94,7 @@ describe( 'NpsSurvey', () => {
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'feedback',
-				hasAvailableConciergeSession: false,
+				has_available_concierge_sessions: false,
 			}
 		);
 		wrapper.find( '.nps-survey__finish-button' ).simulate( 'click' );
@@ -104,7 +104,7 @@ describe( 'NpsSurvey', () => {
 			'calypso_nps_survey_page_displayed',
 			{
 				name: 'promotion',
-				hasAvailableConciergeSession: false,
+				has_available_concierge_sessions: false,
 			}
 		);
 	} );

@@ -65,7 +65,7 @@ export class NpsSurvey extends PureComponent {
 			onChangeForm && onChangeForm( this.state.currentForm );
 			this.props.recordTracksEvent( 'calypso_nps_survey_page_displayed', {
 				name: this.state.currentForm,
-				hasAvailableConciergeSession,
+				has_available_concierge_sessions: hasAvailableConciergeSession,
 			} );
 		}
 	}
