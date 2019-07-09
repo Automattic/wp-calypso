@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import TaskPlaceholder from './task-placeholder';
 import Card from 'components/card';
-import JetpackChecklistFooter from './jetpack-checklist-footer';
 
 class Checklist extends PureComponent {
 	static propTypes = {
@@ -20,10 +19,9 @@ class Checklist extends PureComponent {
 		isPlaceholder: PropTypes.bool,
 		onExpandTask: PropTypes.func,
 		showChecklistHeader: PropTypes.bool,
-		showAdminFooter: PropTypes.bool,
+		checklistFooter: PropTypes.func,
 		updateCompletion: PropTypes.func,
 		translate: PropTypes.func,
-		wpAdminUrl: PropTypes.string,
 	};
 
 	state = {
@@ -92,7 +90,7 @@ class Checklist extends PureComponent {
 	};
 
 	render() {
-		const { showChecklistHeader, wpAdminUrl, showAdminFooter } = this.props;
+		const { showChecklistHeader, checklistFooter } = this.props;
 		const [ completed, total ] = this.calculateCompletion();
 
 		if ( this.props.isPlaceholder ) {
@@ -134,14 +132,9 @@ class Checklist extends PureComponent {
 						} );
 					} ) }
 
-					{ wpAdminUrl && showAdminFooter && (
-						<JetpackChecklistFooter
-							wpAdminUrl={ wpAdminUrl }
-							handleWpAdminLink={ this.handleWpAdminLink }
-						/>
-					) }
+					{ checklistFooter }
 
-					{ completed > 0 && (
+					{ completed > 0 && completed < total && (
 						<div className="checklist__tasks-completed-title">
 							{ this.props.translate( 'Completed' ) }
 						</div>

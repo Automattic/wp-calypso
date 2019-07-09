@@ -293,21 +293,3 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		}
 	}
 }
-
-.jetpack-checklist-footer {
-	order: 2;
-	margin: 0;
-	align-items: center;
-	display: flex;
-	flex-direction: column;
-	text-align: center;
-	@include breakpoint( '>660px' ) {
-		flex-direction: row;
-		justify-content: flex-end;
-		text-align: left;
-		p {
-			flex: 1;
-			margin: 0 20px 0 0;
-		}
-	}
-}
