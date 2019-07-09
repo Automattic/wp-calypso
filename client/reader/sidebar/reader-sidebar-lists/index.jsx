@@ -35,7 +35,6 @@ export class ReaderSidebarLists extends Component {
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Lists' ) }
-				count={ listCount }
 				onClick={ onClick }
 				hideAddButton={ true }
 			>

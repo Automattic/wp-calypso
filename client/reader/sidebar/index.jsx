@@ -22,6 +22,7 @@ import QueryReaderTeams from 'components/data/query-reader-teams';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
+import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import { isDiscoverEnabled } from 'reader/discover/helper';
@@ -141,12 +142,12 @@ export class ReaderSidebar extends React.Component {
 									'sidebar-streams__following': true,
 								} ) }
 							>
-								<a href="/" onClick={ this.handleReaderSidebarFollowedSitesClicked }>
-									<MaterialIcon icon="check_circle" />
-									<span className="menu-link-text">
-										{ this.props.translate( 'Followed Sites' ) }
-									</span>
-								</a>
+								<SidebarItem
+									label={ this.props.translate( 'Followed Sites' ) }
+									onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+									materialIcon="check_circle"
+									link={ '/' }
+								/>
 							</li>
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass(
@@ -157,15 +158,12 @@ export class ReaderSidebar extends React.Component {
 									}
 								) }
 							>
-								<a
-									href="/read/conversations"
-									onClick={ this.handleReaderSidebarConversationsClicked }
-								>
-									<MaterialIcon icon="question_answer" />
-									<span className="menu-link-text">
-										{ this.props.translate( 'Conversations' ) }
-									</span>
-								</a>
+								<SidebarItem
+									label={ this.props.translate( 'Conversations' ) }
+									onNavigate={ this.handleReaderSidebarConversationsClicked }
+									materialIcon="question_answer"
+									link={ '/read/conversations' }
+								/>
 							</li>
 							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
 							{ isAutomatticTeamMember( this.props.teams ) && (
@@ -178,22 +176,11 @@ export class ReaderSidebar extends React.Component {
 										}
 									) }
 								>
-									<a
-										href="/read/conversations/a8c"
-										onClick={ this.handleReaderSidebarA8cConversationsClicked }
-									>
-										<svg
-											className={ 'gridicon gridicon-automattic-conversations' }
-											width="24"
-											height="24"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-										>
-											<path d="M12.2 7.1c.5.3.6 1 .3 1.4L10 12.4c-.3.5-1 .7-1.4.3-.6-.3-.8-1-.4-1.5l2.5-3.9c.3-.4 1-.5 1.5-.2zM17.3 21.2h2.8c1 0 1.9-.8 1.9-1.9v-4.7c0-1-.8-1.9-1.9-1.9h-7.6c-1 .1-1.7.9-1.7 1.9v4.7c0 1 .8 1.8 1.7 1.9h2V24l2.8-2.8z" />
-											<path d="M8.8 15.2c-2.7-.7-4.1-2.9-4.1-5.2 0-5.8 5.8-5.7 5.8-5.7 5.8 0 5.8 5.7 5.8 5.7 0 .3 0 .6-.1.8H19v-.7C19 1.6 10.4 2 10.4 2c-8.6 0-8.5 8.1-8.5 8.1 0 3.5 2.7 6.8 6.9 7.5v-2.4z" />
-										</svg>
-										<span className="menu-link-text">A8C Conversations</span>
-									</a>
+									<SidebarItem
+										label="A8C Conversations"
+										onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+										link={ '/read/conversations/a8c' }
+									/>
 								</li>
 							) }
 
@@ -203,10 +190,12 @@ export class ReaderSidebar extends React.Component {
 										'sidebar-streams__discover': true,
 									} ) }
 								>
-									<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
-										<Gridicon icon="my-sites" />
-										<span className="menu-link-text">{ this.props.translate( 'Discover' ) }</span>
-									</a>
+									<SidebarItem
+										label={ this.props.translate( 'Discover' ) }
+										onNavigate={ this.handleReaderSidebarDiscoverClicked }
+										icon="my-sites"
+										link={ '/discover' }
+									/>
 								</li>
 							) : null }
 
@@ -215,10 +204,12 @@ export class ReaderSidebar extends React.Component {
 									'sidebar-streams__search': true,
 								} ) }
 							>
-								<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
-									<MaterialIcon icon="search" />
-									<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
-								</a>
+								<SidebarItem
+									label={ this.props.translate( 'Search' ) }
+									onNavigate={ this.handleReaderSidebarSearchClicked }
+									materialIcon="search"
+									link={ '/read/search' }
+								/>
 							</li>
 
 							<li
@@ -228,10 +219,12 @@ export class ReaderSidebar extends React.Component {
 									{ 'sidebar-activity__likes': true }
 								) }
 							>
-								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
-									<MaterialIcon icon="star_border" />
-									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
-								</a>
+								<SidebarItem
+									label={ this.props.translate( 'My likes' ) }
+									onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+									materialIcon="star_border"
+									link={ '/activities/likes' }
+								/>
 							</li>
 						</ul>
 					</SidebarMenu>
