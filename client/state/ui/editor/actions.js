@@ -10,7 +10,6 @@ import { defaults, filter, get } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import versionCompare from 'lib/version-compare';
 import {
 	EDITOR_AUTOSAVE,
 	EDITOR_AUTOSAVE_RESET,
@@ -31,7 +30,6 @@ import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import { editPost } from 'state/posts/actions';
 
 /**
@@ -172,14 +170,8 @@ export const editorAutosaveFailure = error => ( {
 	error,
 } );
 
-export const editorAutosave = post => ( dispatch, getState ) => {
-	const site = getSelectedSite( getState() );
-
-	if (
-		! post.ID ||
-		! site ||
-		( site.jetpack && versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) )
-	) {
+export const editorAutosave = post => dispatch => {
+	if ( ! post.ID ) {
 		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
 	}
 
