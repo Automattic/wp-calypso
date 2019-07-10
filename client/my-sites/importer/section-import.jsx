@@ -40,7 +40,6 @@ import FormattedHeader from 'components/formatted-header';
 import JetpackImporter from 'my-sites/importer/jetpack-importer';
 import ExternalLink from 'components/external-link';
 import canCurrentUser from 'state/selectors/can-current-user';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import EmptyContent from 'components/empty-content';
 
 /**
