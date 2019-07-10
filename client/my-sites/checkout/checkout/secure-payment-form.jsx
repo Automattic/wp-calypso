@@ -159,7 +159,7 @@ export class SecurePaymentForm extends Component {
 	};
 
 	submitTransaction( event ) {
-		event.preventDefault();
+		event && event.preventDefault();
 
 		const params = pick( this.props, [ 'cart', 'transaction' ] );
 		const origin = getLocationOrigin( window.location );
