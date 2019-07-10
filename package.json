@@ -312,6 +312,7 @@
 		"mixedindentlint": "1.2.0",
 		"mockdate": "2.0.2",
 		"moment-timezone-data-webpack-plugin": "1.1.0",
+		"mv": "2.1.1",
 		"ncp": "2.0.0",
 		"nock": "10.0.6",
 		"npm-merge-driver": "2.3.5",

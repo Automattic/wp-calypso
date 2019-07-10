@@ -1,0 +1,26 @@
+{
+	"name": "@automattic/coblocks-builder",
+	"version": "1.0.0",
+	"description": "Build script to provide a select list of blocks from CoBlocks to WP.com users.",
+	"main": "build.js",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/coblocks-builder"
+	},
+	"private": true,
+	"author": "Automattic, Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso#readme",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"clone": "rimraf coblocks && git clone --branch 1.11.1 https://github.com/godaddy/coblocks.git",
+		"copy": "cp blocks.js ./coblocks/src",
+		"remove-src": "rimraf ./coblocks/build/coblocks/src",
+		"build": "node build.js"
+	}
+}
