@@ -23,6 +23,7 @@ const handleReaderSidebarTeamsListItemClicked = team => () => {
 
 export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 	const teamUri = '/read/' + encodeURIComponent( team.slug );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<SidebarItem
@@ -30,14 +31,9 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 			key={ team.slug }
 			onNavigate={ handleReaderSidebarTeamsListItemClicked( team ) }
 			label={ team.title }
-			icon={ 'a8c' }
-			className={ ReaderSidebarHelper.itemLinkClass( teamUri, path, {
-				'sidebar-streams__team': true,
-			} ) }
-		>
-			<a href={ teamUri }>
+			customIcon={
 				<svg
-					className={ 'gridicon gridicon-' + team.slug }
+					className={ 'sidebar__menu-icon' }
 					width="24"
 					height="24"
 					xmlns="http://www.w3.org/2000/svg"
@@ -49,8 +45,11 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 					/>
 					<path d="M14.1 8.5c.6.4.7 1.2.4 1.7l-2.9 4.6c-.4.6-1.2.8-1.7.4-.7-.4-.9-1.2-.5-1.8l2.9-4.6c.4-.5 1.2-.7 1.8-.3z" />
 				</svg>
-			</a>
-		</SidebarItem>
+			}
+			className={ ReaderSidebarHelper.itemLinkClass( teamUri, path, {
+				'sidebar-streams__team': true,
+			} ) }
+		/>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };

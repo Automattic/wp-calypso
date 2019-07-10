@@ -15,7 +15,7 @@ import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ReaderSidebarTagsList from './list';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
+import { requestFollowTag } from 'state/reader/tags/items/actions';
 import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
 
 export class ReaderSidebarTags extends Component {
@@ -67,7 +67,7 @@ export class ReaderSidebarTags extends Component {
 					onAddClick={ this.handleAddClick }
 					onClick={ onClick }
 				>
-					<ReaderSidebarTagsList { ...this.props } onUnfollow={ this.unfollowTag } />
+					<ReaderSidebarTagsList { ...this.props } />
 				</ExpandableSidebarMenu>
 			</ul>
 		);
@@ -80,6 +80,5 @@ export default connect(
 	} ),
 	{
 		followTag: requestFollowTag,
-		unfollowTag: requestUnfollowTag,
 	}
 )( localize( ReaderSidebarTags ) );

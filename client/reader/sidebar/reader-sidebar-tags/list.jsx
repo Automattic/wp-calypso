@@ -15,7 +15,6 @@ import ReaderSidebarTagsListItem from './list-item';
 export class ReaderSidebarTagsList extends Component {
 	static propTypes = {
 		tags: PropTypes.array,
-		onUnfollow: PropTypes.func.isRequired,
 		path: PropTypes.string.isRequired,
 		currentTag: PropTypes.string,
 		translate: PropTypes.func,
@@ -26,14 +25,13 @@ export class ReaderSidebarTagsList extends Component {
 	};
 
 	renderItems = () => {
-		const { path, onUnfollow, currentTag, tags } = this.props;
+		const { path, currentTag, tags } = this.props;
 		return map( tags, function( tag ) {
 			return (
 				<ReaderSidebarTagsListItem
 					key={ tag.id }
 					tag={ tag }
 					path={ path }
-					onUnfollow={ onUnfollow }
 					currentTag={ currentTag }
 				/>
 			);
