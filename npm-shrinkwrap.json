@@ -19443,9 +19443,9 @@
 			}
 		},
 		"redux": {
-			"version": "4.0.1",
-			"resolved": "https://registry.npmjs.org/redux/-/redux-4.0.1.tgz",
-			"integrity": "sha512-R7bAtSkk7nY6O/OYMVR9RiBI+XghjF9rlbl5806HJbQph0LJVHZrU5oaO4q70eUKiqMRqm4y07KLTlMZ2BlVmg==",
+			"version": "4.0.4",
+			"resolved": "https://registry.npmjs.org/redux/-/redux-4.0.4.tgz",
+			"integrity": "sha512-vKv4WdiJxOWKxK0yRoaK3Y4pxxB0ilzVx6dszU2W8wLxlb2yikRph4iV/ymtdJ6ZxpBLFbyrxklnT5yBbQSl3Q==",
 			"requires": {
 				"loose-envify": "^1.4.0",
 				"symbol-observable": "^1.2.0"
