@@ -225,6 +225,15 @@ export class ReaderSidebar extends React.Component {
 						</ul>
 					</SidebarMenu>
 
+					<ReaderSidebarTags
+						tags={ this.props.followedTags }
+						path={ this.props.path }
+						isOpen={ this.props.isTagsOpen }
+						onClick={ this.props.toggleTagsVisibility }
+						onFollowTag={ this.highlightNewTag }
+						currentTag={ this.state.currentTag }
+					/>
+
 					<QueryReaderLists />
 					<QueryReaderTeams />
 					{ this.props.subscribedLists && this.props.subscribedLists.length ? (
@@ -237,14 +246,6 @@ export class ReaderSidebar extends React.Component {
 							currentListSlug={ this.state.currentListSlug }
 						/>
 					) : null }
-					<ReaderSidebarTags
-						tags={ this.props.followedTags }
-						path={ this.props.path }
-						isOpen={ this.props.isTagsOpen }
-						onClick={ this.props.toggleTagsVisibility }
-						onFollowTag={ this.highlightNewTag }
-						currentTag={ this.state.currentTag }
-					/>
 				</SidebarRegion>
 
 				<ReaderSidebarPromo />

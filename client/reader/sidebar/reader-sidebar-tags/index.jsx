@@ -66,6 +66,7 @@ export class ReaderSidebarTags extends Component {
 					onAddSubmit={ this.followTag }
 					onAddClick={ this.handleAddClick }
 					onClick={ onClick }
+					materialIcon="local_offer"
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 				</ExpandableSidebarMenu>
