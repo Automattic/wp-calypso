@@ -52,6 +52,7 @@ class CancelPurchaseForm extends React.Component {
 	static propTypes = {
 		chatInitiated: PropTypes.func.isRequired,
 		defaultContent: PropTypes.node.isRequired,
+		disableButtons: PropTypes.bool,
 		purchase: PropTypes.object.isRequired,
 		selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
 		isVisible: PropTypes.bool,
@@ -160,7 +161,7 @@ class CancelPurchaseForm extends React.Component {
 
 		if ( ! isDomainRegistration( purchase ) && ! isGoogleApps( purchase ) ) {
 			this.setState( {
-				submitting: true,
+				isSubmitting: true,
 			} );
 
 			const surveyData = {
@@ -182,7 +183,7 @@ class CancelPurchaseForm extends React.Component {
 				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
 			).then( () => {
 				this.setState( {
-					submitting: false,
+					isSubmitting: false,
 				} );
 			} );
 		}
@@ -490,32 +491,36 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getStepButtons = () => {
-		const { translate } = this.props;
+		const { translate, disableButtons } = this.props;
+		const disabled = disableButtons || this.state.isSubmitting;
+
 		const close = {
 				action: 'close',
+				disabled,
 				label: translate( "I'll Keep It" ),
 			},
 			next = {
 				action: 'next',
-				disabled: ! isSurveyFilledIn( this.state ),
+				disabled: disabled || ! isSurveyFilledIn( this.state ),
 				label: translate( 'Next Step' ),
 				onClick: this.clickNext,
 			},
 			prev = {
 				action: 'prev',
+				disabled,
 				label: translate( 'Previous Step' ),
 				onClick: this.clickPrevious,
 			},
 			cancel = {
 				action: 'cancel',
-				disabled: this.state.isSubmitting,
+				disabled,
 				label: translate( 'Cancel Now' ),
 				onClick: this.onSubmit,
 				isPrimary: true,
 			},
 			remove = {
 				action: 'remove',
-				disabled: this.state.isSubmitting,
+				disabled,
 				label: translate( 'Remove Now' ),
 				onClick: this.onSubmit,
 				isPrimary: true,

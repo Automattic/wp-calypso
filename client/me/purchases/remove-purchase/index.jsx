@@ -211,6 +211,7 @@ class RemovePurchase extends Component {
 		return (
 			<CancelPurchaseForm
 				chatInitiated={ this.chatInitiated }
+				disableButtons={ this.state.isRemoving }
 				defaultContent={ this.renderPlanDialogText() }
 				onInputChange={ this.onSurveyChange }
 				purchase={ purchase }

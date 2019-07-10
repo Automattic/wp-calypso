@@ -154,10 +154,7 @@ class CancelPurchaseButton extends Component {
 
 	cancellationFailed = () => {
 		this.closeDialog();
-
-		this.setState( {
-			submitting: false,
-		} );
+		this.setDisabled( false );
 	};
 
 	setDisabled = disabled => {
@@ -182,19 +179,43 @@ class CancelPurchaseButton extends Component {
 		page.redirect( purchasesRoot );
 	};
 
+	cancelAndRefund = () => {
+		const { purchase, cancelBundledDomain } = this.props;
+
+		this.setDisabled( true );
+
+		cancelAndRefundPurchase(
+			purchase.id,
+			{ product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 },
+			( error, response ) => {
+				this.setDisabled( false );
+
+				if ( error ) {
+					notices.error( error.message );
+
+					this.cancellationFailed();
+
+					return;
+				}
+
+				notices.success( response.message, { persistent: true } );
+
+				this.props.refreshSitePlans( purchase.siteId );
+
+				this.props.clearPurchases();
+
+				page.redirect( purchasesRoot );
+			}
+		);
+	};
+
 	submitCancelAndRefundPurchase = () => {
-		const { purchase } = this.props;
-		const refundable = isRefundable( purchase );
-		const cancelBundledDomain = this.props.cancelBundledDomain;
+		const refundable = isRefundable( this.props.purchase );
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		if ( refundable ) {
-			cancelAndRefundPurchase(
-				purchase.id,
-				{ product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 },
-				this.handleSubmit
-			);
+			this.cancelAndRefund();
 		} else {
 			this.cancelPurchase();
 		}
@@ -255,11 +276,13 @@ class CancelPurchaseButton extends Component {
 			}
 		}
 
+		const disableButtons = this.state.disabled || this.props.disabled;
+
 		return (
 			<div>
 				<Button
 					className="cancel-purchase__button"
-					disabled={ this.state.disabled || this.props.disabled }
+					disabled={ disableButtons }
 					onClick={ onClick }
 					primary
 				>
@@ -267,6 +290,7 @@ class CancelPurchaseButton extends Component {
 				</Button>
 				<CancelPurchaseForm
 					chatInitiated={ this.chatInitiated }
+					disableButtons={ disableButtons }
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
