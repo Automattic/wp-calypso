@@ -69,6 +69,10 @@ function GdprBanner( props ) {
 		setRenderBanner( true );
 	}, [] );
 
+	useEffect( () => {
+		! hideBanner && renderBanner && recordCookieBannerView();
+	}, [ hideBanner, renderBanner, recordCookieBannerView ] );
+
 	if ( ! renderBanner || ! shouldShowBanner() ) {
 		return null;
 	}
@@ -82,14 +86,8 @@ function GdprBanner( props ) {
 			},
 		}
 	);
-	const classes = {
-		'is-compact': true,
-		'gdpr-banner': true,
-		'gdpr-banner__hiding': hideBanner,
-	};
-	recordCookieBannerView();
 	return (
-		<Card className={ classNames( classes ) }>
+		<Card compact className={ classNames( 'gdpr-banner', { 'gdpr-banner__hiding': hideBanner } ) }>
 			<div className="gdpr-banner__text-content">{ preventWidows( decodeEntities( copy ) ) }</div>
 			<div className="gdpr-banner__buttons">
 				<Button className="gdpr-banner__acknowledge-button" onClick={ acknowledgeClicked }>
