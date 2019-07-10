@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { identity, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -48,20 +47,6 @@ export class ReaderSidebarTags extends Component {
 		this.props.onFollowTag( tag );
 	};
 
-	unfollowTag = event => {
-		const node = closest( event.target, '[data-tag-slug]' );
-		event.preventDefault();
-		const slug = node && node.dataset && node.dataset.tagSlug;
-		if ( slug ) {
-			recordAction( 'unfollowed_topic' );
-			recordGaEvent( 'Clicked Unfollow Topic', slug );
-			recordTrack( 'calypso_reader_reader_tag_unfollowed', {
-				tag: slug,
-			} );
-			this.props.unfollowTag( decodeURIComponent( slug ) );
-		}
-	};
-
 	handleAddClick = () => {
 		recordAction( 'follow_topic_open_input' );
 		recordGaEvent( 'Clicked Add Topic to Open Input' );
@@ -70,10 +55,9 @@ export class ReaderSidebarTags extends Component {
 
 	render() {
 		const { tags, isOpen, translate, onClick } = this.props;
-		const tagCount = tags ? tags.length : 0;
 		return (
-			<div>
-				{ ! this.props.tags && <QueryReaderFollowedTags /> }
+			<ul>
+				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
@@ -85,7 +69,7 @@ export class ReaderSidebarTags extends Component {
 				>
 					<ReaderSidebarTagsList { ...this.props } onUnfollow={ this.unfollowTag } />
 				</ExpandableSidebarMenu>
-			</div>
+			</ul>
 		);
 	}
 }

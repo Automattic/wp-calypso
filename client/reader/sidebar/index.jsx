@@ -3,7 +3,6 @@
  * External dependencies
  */
 import closest from 'component-closest';
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith, identity } from 'lodash';
 import page from 'page';
@@ -34,7 +33,6 @@ import getReaderTeams from 'state/selectors/get-reader-teams';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
-import MaterialIcon from 'components/material-icon';
 
 /**
  * Style dependencies
@@ -132,24 +130,22 @@ export class ReaderSidebar extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Sidebar onClick={ this.handleClick }>
+			<Sidebar className="sidebar__streamlined-nav-drawer" onClick={ this.handleClick }>
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
 						<ul>
-							<li
+							<SidebarItem
 								className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, {
 									'sidebar-streams__following': true,
 								} ) }
-							>
-								<SidebarItem
-									label={ this.props.translate( 'Followed Sites' ) }
-									onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-									materialIcon="check_circle"
-									link={ '/' }
-								/>
-							</li>
-							<li
+								label={ this.props.translate( 'Followed Sites' ) }
+								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+								materialIcon="check_circle"
+								link={ '/' }
+							/>
+
+							<SidebarItem
 								className={ ReaderSidebarHelper.itemLinkClass(
 									'/read/conversations',
 									this.props.path,
@@ -157,17 +153,16 @@ export class ReaderSidebar extends React.Component {
 										'sidebar-streams__conversations': true,
 									}
 								) }
-							>
-								<SidebarItem
-									label={ this.props.translate( 'Conversations' ) }
-									onNavigate={ this.handleReaderSidebarConversationsClicked }
-									materialIcon="question_answer"
-									link={ '/read/conversations' }
-								/>
-							</li>
+								label={ this.props.translate( 'Conversations' ) }
+								onNavigate={ this.handleReaderSidebarConversationsClicked }
+								materialIcon="question_answer"
+								link={ '/read/conversations' }
+							/>
+
 							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
+
 							{ isAutomatticTeamMember( this.props.teams ) && (
-								<li
+								<SidebarItem
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations/a8c',
 										this.props.path,
@@ -175,57 +170,46 @@ export class ReaderSidebar extends React.Component {
 											'sidebar-streams__conversations': true,
 										}
 									) }
-								>
-									<SidebarItem
-										label="A8C Conversations"
-										onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
-										link={ '/read/conversations/a8c' }
-									/>
-								</li>
+									label="A8C Conversations"
+									onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+									link={ '/read/conversations/a8c' }
+									icon="automattic-conversations"
+								/>
 							) }
 
 							{ isDiscoverEnabled() ? (
-								<li
+								<SidebarItem
 									className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
 										'sidebar-streams__discover': true,
 									} ) }
-								>
-									<SidebarItem
-										label={ this.props.translate( 'Discover' ) }
-										onNavigate={ this.handleReaderSidebarDiscoverClicked }
-										icon="my-sites"
-										link={ '/discover' }
-									/>
-								</li>
+									label={ this.props.translate( 'Discover' ) }
+									onNavigate={ this.handleReaderSidebarDiscoverClicked }
+									icon="my-sites"
+									link={ '/discover' }
+								/>
 							) : null }
 
-							<li
+							<SidebarItem
+								label={ this.props.translate( 'Search' ) }
+								onNavigate={ this.handleReaderSidebarSearchClicked }
+								materialIcon="search"
+								link={ '/read/search' }
 								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
 									'sidebar-streams__search': true,
 								} ) }
-							>
-								<SidebarItem
-									label={ this.props.translate( 'Search' ) }
-									onNavigate={ this.handleReaderSidebarSearchClicked }
-									materialIcon="search"
-									link={ '/read/search' }
-								/>
-							</li>
+							/>
 
-							<li
+							<SidebarItem
+								label={ this.props.translate( 'My likes' ) }
+								onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+								materialIcon="star_border"
+								link={ '/activities/likes' }
 								className={ ReaderSidebarHelper.itemLinkClass(
 									'/activities/likes',
 									this.props.path,
 									{ 'sidebar-activity__likes': true }
 								) }
-							>
-								<SidebarItem
-									label={ this.props.translate( 'My likes' ) }
-									onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-									materialIcon="star_border"
-									link={ '/activities/likes' }
-								/>
-							</li>
+							/>
 						</ul>
 					</SidebarMenu>
 
