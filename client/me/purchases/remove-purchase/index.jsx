@@ -17,6 +17,7 @@ import config from 'config';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
@@ -195,7 +196,7 @@ class RemovePurchase extends Component {
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
 				extraPrependedButtons={ prependedChatButton }
-				flowType="remove"
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
 			/>
 		);
 	}

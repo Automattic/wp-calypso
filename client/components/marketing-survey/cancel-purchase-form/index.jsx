@@ -31,7 +31,7 @@ import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
-import { getName, isRefundable } from 'lib/purchases';
+import { getName } from 'lib/purchases';
 import { isDomainRegistration, isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
 import {
@@ -43,6 +43,7 @@ import previousStep from './previous-step';
 import isSurveyFilledIn from './is-survey-filled-in';
 import stepsForProductAndSurvey from './steps-for-product-and-survey';
 import enrichedSurveyData from './enriched-survey-data';
+import { CANCEL_FLOW_TYPE } from './constants';
 
 /**
  * Style dependencies
@@ -66,6 +67,8 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	static defaultProps = {
+		defaultContent: '',
+		onInputChange: () => {},
 		showSurvey: true,
 		isVisible: false,
 		extraPrependedButtons: [],
@@ -167,12 +170,22 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
+	// Because of the legacy reason, we can't just use `flowType` here.
+	// Instead we have to map it to the data keys defined way before `flowType` is introduced.
 	getSurveyDataType = () => {
-		if ( this.props.flowType === 'remove' ) {
-			return 'remove';
+		switch ( this.props.flowType ) {
+			case CANCEL_FLOW_TYPE.REMOVE:
+				return 'remove';
+			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
+				return 'refund';
+			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+				return 'cancel-autorenew';
+			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY:
+				return 'cancel-autorenew-survey-only';
+			default:
+				// Although we shouldn't allow it to reach here, we still include this default in case we forgot to add proper mappings.
+				return 'general';
 		}
-
-		return isRefundable( this.props.purchase ) ? 'refund' : 'cancel-autorenew';
 	};
 
 	onSubmit = () => {
@@ -524,13 +537,16 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getStepButtons = () => {
-		const { translate, disableButtons } = this.props;
+		const { flowType, translate, disableButtons } = this.props;
 		const disabled = disableButtons || this.state.isSubmitting;
 
 		const close = {
 				action: 'close',
 				disabled,
-				label: translate( "I'll Keep It" ),
+				label:
+					flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY
+						? translate( 'Skip' )
+						: translate( "I'll Keep It" ),
 			},
 			next = {
 				action: 'next',
@@ -557,14 +573,26 @@ class CancelPurchaseForm extends React.Component {
 				label: translate( 'Remove Now' ),
 				onClick: this.onSubmit,
 				isPrimary: true,
+			},
+			submit = {
+				action: 'submit',
+				disabled: this.state.isSubmitting,
+				label: translate( 'Submit' ),
+				onClick: this.onSubmit,
+				isPrimary: true,
 			};
 
 		const firstButtons = [ ...this.props.extraPrependedButtons, close ];
 
 		if ( this.state.surveyStep === steps.FINAL_STEP ) {
-			return firstButtons.concat(
-				this.props.flowType === 'remove' ? [ prev, remove ] : [ prev, cancel ]
-			);
+			switch ( flowType ) {
+				case CANCEL_FLOW_TYPE.REMOVE:
+					return firstButtons.concat( [ prev, remove ] );
+				case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY:
+					return firstButtons.concat( [ prev, submit ] );
+				default:
+					return firstButtons.concat( [ prev, cancel ] );
+			}
 		}
 
 		return firstButtons.concat(
