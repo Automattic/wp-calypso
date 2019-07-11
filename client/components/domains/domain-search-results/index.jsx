@@ -80,6 +80,7 @@ class DomainSearchResults extends React.Component {
 			MAPPABLE,
 			MAPPED,
 			TLD_NOT_SUPPORTED,
+			TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 			TLD_NOT_SUPPORTED_TEMPORARILY,
 			TRANSFERRABLE,
 			UNKNOWN,
@@ -98,6 +99,7 @@ class DomainSearchResults extends React.Component {
 					MAPPABLE,
 					MAPPED,
 					TLD_NOT_SUPPORTED,
+					TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 					TLD_NOT_SUPPORTED_TEMPORARILY,
 					UNKNOWN,
 				],
@@ -108,21 +110,24 @@ class DomainSearchResults extends React.Component {
 			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
-					{ args: { domain }, components }
-				);
-			} else if ( ! domainsWithPlansOnly ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
-				);
-			} else {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
-					{ args: { domain }, components }
-				);
+			// If the domain is available we shouldn't offer to let people purchase mappings for it.
+			if ( TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE === lastDomainStatus ) {
+				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+						{ args: { domain }, components }
+					);
+				} else if ( ! domainsWithPlansOnly ) {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
+						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
+					);
+				} else {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+						{ args: { domain }, components }
+					);
+				}
 			}
 
 			// Domain Mapping not supported for Store NUX yet.
