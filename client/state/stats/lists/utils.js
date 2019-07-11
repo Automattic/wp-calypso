@@ -14,8 +14,10 @@ import {
 	map,
 	concat,
 	flatten,
+	endsWith,
 } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
+import { withoutHttp } from 'lib/url';
 
 /**
  * Internal dependencies
@@ -43,6 +45,25 @@ export function getPeriodFormat( period, date ) {
 		default:
 			return 'YYYY-MM-DD';
 	}
+}
+
+/**
+ * Returns the base URL for downloadable files on *.wordpress.com sites.
+ *
+ * @param  {Object} site Site object
+ * @return {String} URL
+ */
+export function getWpcomFilesBaseUrl( site ) {
+	if ( ! site ) {
+		return false;
+	}
+
+	// For mapped domains, wpcom_url will contain the *.wordpress.com domain
+	// Otherwise, use the site.URL without protocol
+	const wpcomUrl =
+		site.wpcom_url || ( endsWith( site.URL, '.wordpress.com' ) && withoutHttp( site.URL ) );
+
+	return wpcomUrl && 'https://' + wpcomUrl.replace( '.wordpress.com', '.files.wordpress.com' );
 }
 
 /**
@@ -977,22 +998,16 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const statsData = get( data, [ 'days', startOf, 'downloads' ], [] );
+		const statsData = get( data, [ 'days', startOf, 'files' ], [] );
 
 		return statsData.map( item => {
-			const detailPage = site
-				? '/stats/' + query.period + '/filedownloads/' + site.slug + '?post=' + item.post_id
-				: null;
+			const wpcomFilesBaseUrl = getWpcomFilesBaseUrl( site );
 			return {
-				label: item.title,
-				page: detailPage,
+				label: item.filename,
+				page: null,
 				value: item.downloads,
-				actions: [
-					{
-						type: 'link',
-						data: item.url,
-					},
-				],
+				link: wpcomFilesBaseUrl + item.filename,
+				labelIcon: 'external',
 			};
 		} );
 	},

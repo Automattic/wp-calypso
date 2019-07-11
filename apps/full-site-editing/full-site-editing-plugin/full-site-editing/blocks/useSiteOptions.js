@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
@@ -12,7 +13,7 @@ import usePrevious from './usePrevious';
 export default function useSiteOptions(
 	siteOption,
 	inititalOption,
-	noticeOperations,
+	createErrorNotice,
 	isSelected,
 	shouldUpdateSiteOption,
 	setAttributes
@@ -46,10 +47,11 @@ export default function useSiteOptions(
 					error: false,
 				} )
 			)
-			.catch( ( { message } ) => {
-				noticeOperations.createErrorNotice( message );
+			.catch( () => {
+				createErrorNotice( sprintf( __( 'Unable to load site %s' ), siteOption ) );
 				setSiteOptions( {
 					...siteOptions,
+					option: sprintf( __( 'Error loading site %s' ), siteOption ),
 					error: true,
 				} );
 			} );
@@ -79,8 +81,8 @@ export default function useSiteOptions(
 		setSiteOptions( { ...siteOptions, isSaving: true } );
 		apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { [ siteOption ]: option } } )
 			.then( () => updatePreviousOption( option ) )
-			.catch( ( { message } ) => {
-				noticeOperations.createErrorNotice( message );
+			.catch( () => {
+				createErrorNotice( sprintf( __( 'Unable to save site %s' ), siteOption ) );
 				revertOption();
 			} );
 	}

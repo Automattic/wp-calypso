@@ -8,10 +8,12 @@
  */
 const _ = require( 'lodash' );
 const path = require( 'path' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
@@ -20,6 +22,7 @@ const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
+const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 
 /**
  * Internal dependencies
@@ -107,7 +110,6 @@ const nodeModulesToTranspile = [
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
-	'@wordpress/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
@@ -192,7 +194,6 @@ const webpackConfig = {
 		} ),
 	},
 	module: {
-		noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
 		rules: [
 			TranspileConfig.loader( {
 				workerCount,
@@ -319,6 +320,11 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' )
 	);
+}
+
+// Replace `lodash` with `lodash-es`.
+if ( isCalypsoClient ) {
+	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
 }
 
 // List of polyfills that we skip including in the evergreen bundle.

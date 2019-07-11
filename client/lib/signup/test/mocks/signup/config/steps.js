@@ -97,3 +97,5 @@ export default {
 		providesDependencies: [ 'siteTopic', 'siteTitle' ],
 	},
 };
+
+export const isDomainStepSkippable = jest.fn( () => false );

@@ -127,7 +127,16 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
+		const {
+			className,
+			invite,
+			onRemove,
+			siteId,
+			translate,
+			type,
+			user,
+			inviteWasDeleted,
+		} = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
@@ -158,7 +167,7 @@ class PeopleListItem extends React.PureComponent {
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile invite={ invite } type={ type } user={ user } />
+					<PeopleProfile invite={ invite } siteId={ siteId } type={ type } user={ user } />
 				</div>
 
 				{ isInvite && this.renderInviteStatus() }

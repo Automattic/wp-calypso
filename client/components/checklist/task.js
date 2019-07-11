@@ -37,6 +37,7 @@ class Task extends PureComponent {
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
 		trackTaskDisplay: PropTypes.func,
+		showSkip: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -137,6 +138,8 @@ class Task extends PureComponent {
 			target,
 			title,
 			translate,
+			onDismiss,
+			showSkip,
 		} = this.props;
 
 		// A task that's being automatically completed ("in progress") cannot be expanded.
@@ -196,6 +199,11 @@ class Task extends PureComponent {
 									>
 										{ taskActionButtonText }
 									</Button>
+									{ ! completed && showSkip && (
+										<Button className="checklist__task-skip" onClick={ onDismiss }>
+											{ translate( 'Skip' ) }
+										</Button>
+									) }
 								</div>
 							</div>
 						</div>

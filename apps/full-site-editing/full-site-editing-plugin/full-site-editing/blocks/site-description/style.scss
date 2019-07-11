@@ -8,10 +8,15 @@
 			letter-spacing: -0.01em;
 			margin: 0;
 			box-shadow: none;
+			background-color: transparent;
 		}
 	}
 	.site-description__save-button {
 		margin-left: auto;
 		display: block;
+	}
+	.site-title:not( :empty ) + .site-description:not( :empty )::before {
+		content: '\2014';
+		margin: 0 0.2em;
 	}
 }

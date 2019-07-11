@@ -145,33 +145,6 @@ export function generateFlows( {
 			lastModified: '2019-04-30',
 		},
 
-		'delta-discover': {
-			steps: [ 'user' ],
-			destination: '/',
-			description:
-				'A copy of the `account` flow for the Delta email campaigns. Half of users who ' +
-				'go through this flow receive a reader-specific drip email series.',
-			lastModified: '2016-05-03',
-		},
-
-		'delta-blog': {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description:
-				'A copy of the `blog` flow for the Delta email campaigns. Half of users who go ' +
-				'through this flow receive a blogging-specific drip email series.',
-			lastModified: '2018-01-24',
-		},
-
-		'delta-site': {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description:
-				'A copy of the `website` flow for the Delta email campaigns. Half of users who go ' +
-				'through this flow receive a website-specific drip email series.',
-			lastModified: '2018-01-24',
-		},
-
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getChecklistDestination,
@@ -269,13 +242,6 @@ export function generateFlows( {
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-11-21',
-		};
-
-		flows[ 'store-woo' ] = {
-			steps: [ 'domains-store', 'plans-store-nux', 'user' ],
-			destination: getSiteDestination,
-			description: 'Short signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-03-15',
 		};
 	}
 

@@ -75,8 +75,13 @@ class SharingButtonsPreview extends React.Component {
 			buttonsTrayVisibility: visibility,
 		} );
 
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_buttons_click', { path } );
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Links', visibility );
+		if ( 'hidden' === visibility ) {
+			analytics.tracks.recordEvent( 'calypso_sharing_buttons_more_button_click', { path } );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked More Button Link', visibility );
+		} else {
+			analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_button_click', { path } );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Button Link', visibility );
+		}
 	};
 
 	hideButtonsTray = () => {

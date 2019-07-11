@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -49,6 +48,7 @@ import { getSite } from 'state/sites/selectors';
 import { getVerticalForDomainSuggestions } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import { isDomainStepSkippable } from 'signup/config/steps';
 
 /**
  * Style dependencies
@@ -357,11 +357,9 @@ class DomainsStep extends React.Component {
 		// If we detect a 'blog' site type from Signup data
 		return (
 			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
-			( ( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
-				// Users choose `Blog` as their site type
-				'blog' === get( signupDependencies, 'siteType' ) ) &&
-			// Assign THE A/B test variation at the last moment, so we have a proper dataset split
-			'show' === abtest( 'hideDotBlogSubdomainsV2' )
+			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
+			// Users choose `Blog` as their site type
+			'blog' === get( signupDependencies, 'siteType' )
 		);
 	}
 
@@ -537,7 +535,7 @@ class DomainsStep extends React.Component {
 		const { flowName, siteType, translate } = this.props;
 		const onboardingSubHeaderCopy =
 			siteType &&
-			includes( [ 'onboarding-for-business', 'onboarding' ], flowName ) &&
+			includes( [ 'onboarding-blog', 'onboarding' ], flowName ) &&
 			getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
 
 		if ( onboardingSubHeaderCopy ) {
@@ -604,7 +602,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { translate, selectedSite } = this.props;
+		const { flowName, translate, selectedSite } = this.props;
 		let backUrl, backLabelText;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
@@ -623,6 +621,7 @@ class DomainsStep extends React.Component {
 
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
+		const showSkip = isDomainStepSkippable( flowName );
 
 		return (
 			<StepWrapper
@@ -644,6 +643,11 @@ class DomainsStep extends React.Component {
 				showSiteMockups={ this.props.showSiteMockups }
 				allowBackFirstStep={ !! selectedSite }
 				backLabelText={ backLabelText }
+				hideSkip={ ! showSkip }
+				isLargeSkipLayout={ showSkip }
+				goToNextStep={ this.handleSkip }
+				skipHeadingText={ translate( 'Not sure yet?' ) }
+				skipLabelText={ translate( 'Choose a domain later' ) }
 			/>
 		);
 	}

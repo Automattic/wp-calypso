@@ -68,6 +68,9 @@ export class AuthFormHeader extends Component {
 			case 'bluehost':
 				host = 'Bluehost';
 				break;
+			case 'eurodns':
+				host = 'EuroDNS';
+				break;
 		}
 
 		if ( host ) {

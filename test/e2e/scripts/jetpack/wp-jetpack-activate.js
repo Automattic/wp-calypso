@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,10 +11,7 @@ import * as driverHelper from '../../lib/driver-helper';
 import * as dataHelper from '../../lib/data-helper';
 
 import LoginFlow from '../../lib/flows/login-flow';
-
 import PickAPlanPage from '../../lib/pages/signup/pick-a-plan-page';
-import WPAdminJetpackPage from '../../lib/pages/wp-admin/wp-admin-jetpack-page';
-
 import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
 import WPAdminPluginsPage from '../../lib/pages/wp-admin/wp-admin-plugins-page';
 import JetpackAuthorizePage from '../../lib/pages/jetpack-authorize-page';
@@ -74,12 +69,6 @@ describe( `[${ host }] Jetpack Connection: (${ screenSize }) @jetpack`, function
 		step( 'Can select Free plan', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
-		} );
-
-		step( 'Can activate recommended features', async function() {
-			await driverHelper.refreshIfJNError( driver );
-			this.jetpackDashboard = await WPAdminJetpackPage.Expect( driver );
-			return await this.jetpackDashboard.activateRecommendedFeatures();
 		} );
 	} );
 } );

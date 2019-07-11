@@ -16,7 +16,6 @@ import { times } from 'lodash';
 import config from 'config';
 import {
 	getName,
-	creditCardExpiresBeforeSubscription,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -110,7 +109,7 @@ class PurchaseMeta extends Component {
 	renderRenewsOrExpiresOnLabel() {
 		const { purchase, translate } = this.props;
 
-		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
+		if ( isExpiring( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				return translate( 'Domain expires on' );
 			}
@@ -170,11 +169,7 @@ class PurchaseMeta extends Component {
 			);
 		}
 
-		if (
-			isExpiring( purchase ) ||
-			isExpired( purchase ) ||
-			creditCardExpiresBeforeSubscription( purchase )
-		) {
+		if ( isExpiring( purchase ) || isExpired( purchase ) ) {
 			return moment( purchase.expiryDate ).format( 'LL' );
 		}
 

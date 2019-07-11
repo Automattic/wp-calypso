@@ -195,12 +195,23 @@ export function getFirstInvalidStep( flowName, progress ) {
 	return find( getFilteredSteps( flowName, progress ), { status: 'invalid' } );
 }
 
-export function getCompletedSteps( flowName, progress ) {
+export function getCompletedSteps( flowName, progress, options = {} ) {
+	// Option to check that the current `flowName` matches the `lastKnownFlow`.
+	// This is to ensure that when resuming progress, we only do so if
+	// the last known flow matches the one that the user is returning to.
+	if ( options.shouldMatchFlowName ) {
+		return filter(
+			getFilteredSteps( flowName, progress ),
+			step => 'in-progress' !== step.status && step.lastKnownFlow === flowName
+		);
+	}
 	return filter( getFilteredSteps( flowName, progress ), step => 'in-progress' !== step.status );
 }
 
 export function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	const flowStepsInProgressStore = getCompletedSteps( flowName, progress );
+	const flowStepsInProgressStore = getCompletedSteps( flowName, progress, {
+		shouldMatchFlowName: true,
+	} );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }

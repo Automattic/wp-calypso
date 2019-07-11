@@ -29,6 +29,10 @@ class StepWrapper extends Component {
 		// Allows to force a back button in the first step for example.
 		// You should only force this when you're passing a backUrl.
 		allowBackFirstStep: PropTypes.bool,
+		skipLabelText: PropTypes.string,
+		skipHeadingText: PropTypes.string,
+		// Displays an <hr> above the skip button and adds more white space
+		isLargeSkipLayout: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,14 +61,20 @@ class StepWrapper extends Component {
 	renderSkip() {
 		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
 			return (
-				<NavigationLink
-					direction="forward"
-					goToNextStep={ this.props.goToNextStep }
-					defaultDependencies={ this.props.defaultDependencies }
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					labelText={ this.props.skipLabelText }
-				/>
+				<>
+					{ !! this.props.skipHeadingText && (
+						<div className="step-wrapper__skip-heading">{ this.props.skipHeadingText }</div>
+					) }
+					<NavigationLink
+						direction="forward"
+						goToNextStep={ this.props.goToNextStep }
+						defaultDependencies={ this.props.defaultDependencies }
+						flowName={ this.props.flowName }
+						stepName={ this.props.stepName }
+						labelText={ this.props.skipLabelText }
+						cssClass={ !! this.props.skipHeadingText && ' navigation-link--has-skip-heading ' }
+					/>
+				</>
 			);
 		}
 	}
@@ -98,9 +108,18 @@ class StepWrapper extends Component {
 	}
 
 	render() {
-		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
+		const {
+			stepContent,
+			headerButton,
+			hideFormattedHeader,
+			hideBack,
+			hideSkip,
+			isLargeSkipLayout,
+			isWideLayout,
+		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
-			'is-wide-layout': this.props.isWideLayout,
+			'is-wide-layout': isWideLayout,
+			'is-large-skip-layout': isLargeSkipLayout,
 		} );
 
 		return (
@@ -120,7 +139,12 @@ class StepWrapper extends Component {
 
 					<div className="step-wrapper__content">{ stepContent }</div>
 
-					{ ! hideSkip && <div className="step-wrapper__buttons">{ this.renderSkip() }</div> }
+					{ ! hideSkip && (
+						<div className="step-wrapper__buttons">
+							{ isLargeSkipLayout && <hr className="step-wrapper__skip-hr" /> }
+							{ this.renderSkip() }
+						</div>
+					) }
 				</div>
 			</>
 		);

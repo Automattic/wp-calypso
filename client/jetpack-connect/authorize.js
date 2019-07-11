@@ -10,7 +10,6 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
-import urlUtils from 'url';
 
 /**
  * Internal dependencies
@@ -77,7 +76,6 @@ import {
 	isSiteBlacklistedError as isSiteBlacklistedSelector,
 } from 'state/jetpack-connect/selectors';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { affiliateReferral } from 'state/refer/actions';
 
 /**
  * Constants
@@ -172,30 +170,6 @@ export class JetpackAuthorize extends Component {
 		}
 	}
 
-	componentDidMount() {
-		this.trackAffiliate();
-	}
-
-	/**
-	 * Track affiliate code based on the aff and cid URL params.
-	 */
-	trackAffiliate() {
-		const urlPath = location.href;
-		const parsedUrl = urlUtils.parse( urlPath, true );
-		const affiliateId = parsedUrl.query.aff;
-		const campaignId = parsedUrl.query.cid;
-		const subId = parsedUrl.query.sid;
-
-		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			const hostPath = `${ parsedUrl.host }${ parsedUrl.pathname }`;
-			this.props.recordTracksEvent( 'calypso_jpc_refer_visit', {
-				flow: this.props.flowName,
-				page: hostPath,
-			} );
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, hostPath } );
-		}
-	}
-
 	authorize() {
 		this.props.authorize( {
 			_wp_nonce: this.props.authQuery.nonce,
@@ -256,11 +230,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldAutoAuthorize() {
-		const { alreadyAuthorized, authApproved } = this.props.authQuery;
-
+		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			this.isWoo() ||
+			( 'woocommerce-services-auto-authorize' === from ||
+				( ! config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+					'woocommerce-setup-wizard' === ' from' ) ) ||
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -302,9 +277,29 @@ export class JetpackAuthorize extends Component {
 		return partnerRedirectFlag ? partnerSlug && 'pressable' !== partnerSlug : partnerSlug;
 	}
 
+	handleSignIn = () => {
+		const { recordTracksEvent } = this.props;
+		const { from } = this.props.authQuery;
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
+		}
+	};
+
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
+		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
+
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
+		}
+
 		userUtilities.logout( window.location.href );
 	};
 
@@ -328,7 +323,7 @@ export class JetpackAuthorize extends Component {
 	handleSubmit = () => {
 		const { recordTracksEvent } = this.props;
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
-		const { alreadyAuthorized, redirectAfterAuth } = this.props.authQuery;
+		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
@@ -354,6 +349,14 @@ export class JetpackAuthorize extends Component {
 		}
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
+
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+		}
+
 		return this.authorize();
 	};
 
@@ -624,7 +627,9 @@ export class JetpackAuthorize extends Component {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
+						isWoo: this.isWoo(),
 					} ) }
+					onClick={ this.handleSignIn }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
@@ -729,7 +734,6 @@ const connectComponent = connect(
 		authorize: authorizeAction,
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
-		trackAffiliateReferral: affiliateReferral,
 	}
 );
 

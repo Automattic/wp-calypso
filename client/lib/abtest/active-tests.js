@@ -72,27 +72,11 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	builderReferralHelpPopover: {
-		datestamp: '20190227',
-		variations: {
-			builderReferralLink: 10,
-			original: 90,
-		},
-		defaultVariation: 'original',
-	},
 	gSuiteContinueButtonCopy: {
 		datestamp: '20190307',
 		variations: {
 			purchase: 50,
 			original: 50,
-		},
-		defaultVariation: 'original',
-	},
-	builderReferralHelpBanner: {
-		datestamp: '20190304',
-		variations: {
-			builderReferralBanner: 25,
-			original: 75,
 		},
 		defaultVariation: 'original',
 	},
@@ -114,16 +98,6 @@ export default {
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
-	},
-	hideDotBlogSubdomainsV2: {
-		datestamp: '20190626',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	popularPlanBy: {
 		datestamp: '20190529',
@@ -150,6 +124,15 @@ export default {
 			variant: 50,
 		},
 		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	skippableDomainStep: {
+		datestamp: '20190702',
+		variations: {
+			skippable: 50,
+			notSkippable: 50,
+		},
+		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
 };

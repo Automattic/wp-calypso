@@ -29,6 +29,7 @@ export class NavigationLink extends Component {
 		direction: PropTypes.oneOf( [ 'back', 'forward' ] ),
 		flowName: PropTypes.string.isRequired,
 		labelText: PropTypes.string,
+		cssClass: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		previousPath: PropTypes.string,
 		signupProgress: PropTypes.array,
@@ -138,7 +139,11 @@ export class NavigationLink extends Component {
 			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
-		const buttonClasses = classnames( 'navigation-link', this.props.direction );
+		const buttonClasses = classnames(
+			'navigation-link',
+			this.props.direction,
+			this.props.cssClass
+		);
 
 		return (
 			<Button

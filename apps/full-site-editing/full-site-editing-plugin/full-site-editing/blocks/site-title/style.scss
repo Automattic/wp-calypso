@@ -11,10 +11,17 @@
 			line-height: 1.2;
 			margin: 0;
 			box-shadow: none;
+			background-color: transparent;
 		}
 	}
 	.site-title__save-button {
 		margin-left: auto;
 		display: block;
+	}
+	.site-title a:link,
+	.site-title a:visited {
+		color: #111;
+		text-decoration: none;
+		font-weight: 400;
 	}
 }

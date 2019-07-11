@@ -34,6 +34,7 @@ import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
@@ -46,7 +47,7 @@ import { promisify } from '../../utils';
 
 // Others
 import flows from 'signup/config/flows';
-import steps from 'signup/config/steps';
+import steps, { isDomainStepSkippable } from 'signup/config/steps';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
 
@@ -171,16 +172,26 @@ export function createSiteWithCart(
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
 	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
 
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
+
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
 		newSiteParams.options.nux_import_engine = importEngine;
+	} else if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
+		newSiteParams.blog_name =
+			get( user.get(), 'username' ) ||
+			get( getSignupDependencyStore( state ), 'username' ) ||
+			siteTitle ||
+			siteType ||
+			getSiteVertical( state );
+		newSiteParams.find_available_url = true;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
 	}
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
+
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
 		newSiteParams.options.in_page_builder = true;
 	}

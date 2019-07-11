@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Fragment, FunctionComponent, ReactNode } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import GSuiteNewUser from './new-user';
-import { newUser, GSuiteNewUser as NewUser, validateUser } from 'lib/gsuite/new-users';
+import { newUser, GSuiteNewUser as NewUser, validateUsers } from 'lib/gsuite/new-users';
 
 /**
  * Style dependencies
@@ -37,13 +37,10 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	const onUserValueChange = ( index: number ) => ( field: string, value: string ) => {
-		const modifiedUser = extraValidation(
-			validateUser( { ...users[ index ], [ field ]: { value, error: null } } )
-		);
+		const modifiedUserList = users;
+		modifiedUserList[ index ] = { ...users[ index ], [ field ]: { value, error: null } };
 
-		onUsersChange(
-			users.map( ( user, userIndex ) => ( userIndex === index ? modifiedUser : user ) )
-		);
+		onUsersChange( validateUsers( modifiedUserList, extraValidation ) );
 	};
 
 	const onUserAdd = () => {

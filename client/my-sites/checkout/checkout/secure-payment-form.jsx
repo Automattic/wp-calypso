@@ -277,6 +277,8 @@ export class SecurePaymentForm extends Component {
 			success = parameters.success;
 
 		getDomainRegistrations( cart ).forEach( function( cartItem ) {
+			analytics.ga.recordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
+
 			analytics.tracks.recordEvent( 'calypso_domain_registration', {
 				domain_name: cartItem.meta,
 				domain_tld: getTld( cartItem.meta ),

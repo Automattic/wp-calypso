@@ -186,7 +186,7 @@ class RegistrantVerificationPage extends Component {
 				errorState = this.getExpiredState();
 				break;
 
-			case 'Key_Systems_error':
+			case 'KS_RAM_error':
 				errorState = this.getKeySystemsErrorState( error.message );
 				break;
 

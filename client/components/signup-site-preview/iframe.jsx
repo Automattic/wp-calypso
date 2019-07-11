@@ -7,11 +7,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
+import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
  */
-import { getIframeSource, isIE, revokeObjectURL } from 'components/signup-site-preview/utils';
+import {
+	createPreviewDocumentTitle,
+	getIframeSource,
+	getPreviewParamClass,
+	isIE,
+	revokeObjectURL,
+} from 'components/signup-site-preview/utils';
 
 export default class SignupSitePreviewIframe extends Component {
 	static propTypes = {
@@ -71,15 +78,36 @@ export default class SignupSitePreviewIframe extends Component {
 			return false;
 		}
 
-		if ( this.props.content.title !== nextProps.content.title ) {
-			this.setIframeElementContent( '.signup-site-preview__title', nextProps.content.title );
+		if (
+			this.props.content.title !== nextProps.content.title ||
+			this.props.content.tagline !== nextProps.content.tagline
+		) {
+			this.setContentTitle( nextProps.content.title, nextProps.content.tagline );
 		}
 
 		if ( this.props.content.body !== nextProps.content.body ) {
 			this.setIframeBodyContent( nextProps.content );
 		}
 
+		if (
+			this.props.content.body !== nextProps.content.body ||
+			! shallowEqual( this.props.content.params, nextProps.content.params )
+		) {
+			this.setContentParams( nextProps.content.params );
+		}
+
 		return false;
+	}
+
+	setContentTitle( title, tagline ) {
+		this.setIframeElementContent( '.signup-site-preview__title', title );
+		this.setIframeElementContent( 'title', createPreviewDocumentTitle( title, tagline ) );
+	}
+
+	setContentParams( params ) {
+		for ( const [ key, value ] of Object.entries( params ) ) {
+			this.setIframeElementContent( `.${ getPreviewParamClass( key ) }`, value );
+		}
 	}
 
 	setIframeBodyContent( content ) {
@@ -98,9 +126,9 @@ export default class SignupSitePreviewIframe extends Component {
 		if ( ! this.iframe.current ) {
 			return;
 		}
-		const element = this.iframe.current.contentWindow.document.querySelector( selector );
+		const elements = this.iframe.current.contentWindow.document.querySelectorAll( selector );
 
-		if ( element ) {
+		for ( const element of elements ) {
 			element.textContent = content;
 		}
 	}
@@ -143,6 +171,11 @@ export default class SignupSitePreviewIframe extends Component {
 		this.setOnPreviewClick();
 		this.setIframeIsLoading();
 		this.props.resize && this.setContainerHeight();
+
+		const { params, tagline, title } = this.props.content;
+
+		this.setContentTitle( title, tagline );
+		this.setContentParams( params );
 	};
 
 	setIframeSource = ( { content, cssUrl, fontUrl, gutenbergStylesUrl, isRtl, langSlug } ) => {
@@ -166,8 +199,13 @@ export default class SignupSitePreviewIframe extends Component {
 			this.iframe.current.contentWindow.document.close();
 		} else {
 			revokeObjectURL( this.iframe.current.src );
-			this.iframe.current.src = iframeSrc;
+			this.iframe.current.contentWindow.location.replace( iframeSrc );
 		}
+
+		const { params, tagline, title } = content;
+
+		this.setContentTitle( title, tagline );
+		this.setContentParams( params );
 	};
 
 	render() {

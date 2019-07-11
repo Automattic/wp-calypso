@@ -18,7 +18,6 @@ import { ChecklistUserEmailTour } from 'layout/guided-tours/tours/checklist-user
 import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
 import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integration-tour';
 import { JetpackBackupsRewindTour } from 'layout/guided-tours/tours/jetpack-backups-rewind-tour';
-import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
 import { JetpackChecklistTour } from 'layout/guided-tours/tours/jetpack-checklist-tour';
 import { JetpackLazyImagesTour } from 'layout/guided-tours/tours/jetpack-lazy-images-tour';
 import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
@@ -48,7 +47,6 @@ export default combineTours( {
 	checklistUserEmail: ChecklistUserEmailTour,
 	editorBasicsTour: EditorBasicsTour,
 	gdocsIntegrationTour: GDocsIntegrationTour,
-	jetpack: JetpackBasicTour,
 	jetpackBackupsRewind: JetpackBackupsRewindTour,
 	jetpackChecklistTour: JetpackChecklistTour,
 	jetpackLazyImages: JetpackLazyImagesTour,

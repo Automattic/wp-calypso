@@ -915,8 +915,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			margin-right: auto;
 			margin-left: auto;
 			padding-left: 0;
-			margin-top: 15px;
 			display: block;
+			height: 56px;
+			border-bottom: 1px solid var( --color-woocommerce-header-border );
+			background: var( --color-white );
+
+			svg {
+				margin-top: 15px;
+			}
 		}
 
 		.formatted-header__subtitle {
@@ -958,6 +964,111 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		.jetpack-header__partner-logo-plus .gridicon {
 			color: var( --color-gray-800 );
 		}
+
+		.jetpack-connect__main,
+		.jetpack-connect__site.card,
+		.logged-out-form,
+		.jetpack-connect__logged-in-card.card {
+			max-width: 476px;
+		}
+
+		.jetpack-connect__main {
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.logged-out-form input:focus {
+			border: 0;
+			box-shadow: none;
+		}
+
+		.signup-form__terms-of-service-link,
+		.signup-form__terms-of-service-link a {
+			text-align: left;
+			color: var( --color-gray-600 );
+		}
+
+		.logged-out-form__link-item {
+			text-align: center;
+			text-decoration: underline;
+			color: var( --color-gray-600 );
+			font-size: 14px;
+		}
+
+		.signup-form__social {
+			padding-bottom: 0;
+			margin-top: 16px;
+			p {
+				font-size: 12px;
+			}
+
+			.social-buttons__button {
+				border: 1px solid $muriel-woo-purple-500;
+				color: $muriel-woo-purple-500;
+				box-shadow: none;
+			}
+		}
+
+		.logged-out-form__footer {
+			text-align: center;
+
+			.button {
+				max-width: 310px;
+				margin-right: auto;
+				margin-left: auto;
+				height: 48px;
+			}
+		}
+
+		.jetpack-connect__logged-in-card button {
+			border: 0;
+			box-shadow: none;
+		}
+
+		.jetpack-connect__notices-container {
+			margin-top: 20px;
+		}
+
+		.jetpack-connect__action-disclaimer {
+			padding-top: 0;
+
+			.jetpack-connect__tos-link,
+			.jetpack-connect__tos-link a {
+				text-align: left;
+				color: var( --color-gray-600 );
+				font-size: 12px;
+			}
+		}
+
+		.signup-form__woocommerce .card {
+			padding-bottom: 0;
+		}
+
+		.form-input-validation {
+			padding-bottom: 0;
+			padding-top: 0;
+		}
+
+		.woocommerce-muriel-text-control,
+		.muriel-input-text {
+			border-color: var( --color-gray-200 );
+
+			.components-base-control__label,
+			.text-control__label {
+				color: var( --color-gray-500 );
+			}
+
+			&.active {
+				box-shadow: 0 0 0 2px var( --color-hot-purple-600 );
+				border-color: transparent;
+			}
+		}
+	}
+}
+
+body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
+	.wpcom-site__logo {
+		display: none;
 	}
 }
 

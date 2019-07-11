@@ -504,10 +504,12 @@ ul.module-content-list-item-action-submenu {
 		@extend %mobile-interface-element;
 		text-align: center;
 		margin: 0;
+		opacity: 0;
 		line-height: inherit;
 
 		@include breakpoint( '<480px' ) {
 			min-width: 24px;
+			opacity: 1;
 			padding: 0 12px;
 
 			&.toggle {

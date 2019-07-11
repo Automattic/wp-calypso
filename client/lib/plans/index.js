@@ -29,11 +29,6 @@ import {
 } from './constants';
 import { PLANS_LIST } from './plans-list';
 
-/**
- * Module vars
- */
-const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
-
 export function getPlans() {
 	return PLANS_LIST;
 }
@@ -160,6 +155,7 @@ export function filterPlansBySiteAndProps(
 	intervalType,
 	showJetpackFreePlan
 ) {
+	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
 	return plans.filter( function( plan ) {

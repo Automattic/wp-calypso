@@ -13,6 +13,8 @@ import Badge from 'components/badge';
 import Card from 'components/card';
 import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -52,7 +54,7 @@ class SiteTypeForm extends Component {
 							<span className="site-type__option-description">
 								{ siteTypeProperties.description }
 							</span>
-							{ siteTypeProperties.purchaseRequired && (
+							{ ! this.props.isJetpack && siteTypeProperties.purchaseRequired && (
 								<Badge className="site-type__option-badge" type="info">
 									{ this.props.translate( 'Purchase required' ) }
 								</Badge>
@@ -66,7 +68,11 @@ class SiteTypeForm extends Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		// TODO: Better handling for Jetpack flows in the site-type lib,
+		// so we don't depend on injecting conditionals into components like this.
+		isJetpack: !! isJetpackSite( state, getSelectedSiteId( state ) ),
+	} ),
 	{
 		recordTracksEvent,
 	}
