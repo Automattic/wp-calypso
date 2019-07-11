@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { identity, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -14,7 +15,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { getLocaleSlug } from 'lib/i18n-utils';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import TranslatableString from 'components/translatable/proptype';
 
 // the locale slugs for each stores' image paths follow different rules
@@ -97,7 +98,7 @@ export class AppsBadge extends PureComponent {
 
 	onLinkClick = () => {
 		const { storeName } = this.props;
-		analytics.tracks.recordEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent, {} );
+		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
 	};
 
 	render() {
@@ -124,4 +125,9 @@ export class AppsBadge extends PureComponent {
 	}
 }
 
-export default localize( AppsBadge );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( AppsBadge ) );
