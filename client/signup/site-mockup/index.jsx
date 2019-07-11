@@ -123,11 +123,12 @@ class SiteMockups extends Component {
 	}
 
 	getPreviewParams() {
-		const { title: CompanyName } = this.props;
+		const { title: CompanyName, siteVerticalName } = this.props;
 		return {
 			CompanyName,
 			Address: translate( 'Your Address' ),
 			Phone: translate( 'Your Phone Number' ),
+			Vertical: siteVerticalName || '',
 		};
 	}
 

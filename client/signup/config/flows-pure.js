@@ -137,21 +137,6 @@ export function generateFlows( {
 			lastModified: '2019-06-05',
 		},
 
-		'onboarding-blog': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains',
-				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'The improved onboarding flow.',
-			lastModified: '2019-04-30',
-		},
-
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getChecklistDestination,
