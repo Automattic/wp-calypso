@@ -12,9 +12,17 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
+import { getSite } from 'state/sites/selectors';
 import './style.scss';
+
+const DIALOG = {
+	GENERAL: 'general',
+	ATOMIC: 'atomic',
+	SURVEY: 'survey',
+};
 
 class AutoRenewDisablingDialog extends Component {
 	static propTypes = {
@@ -26,6 +34,7 @@ class AutoRenewDisablingDialog extends Component {
 
 	state = {
 		showAtomicFollowUpDialog: false,
+		dialogType: DIALOG.GENERAL,
 	};
 
 	getVariation() {
@@ -107,7 +116,11 @@ class AutoRenewDisablingDialog extends Component {
 	}
 
 	onClickAtomicFollowUpConfirm = () => {
-		this.props.onConfirm() || this.props.onClose();
+		// this.props.onConfirm() || this.props.onClose();
+		this.props.onConfirm();
+		this.setState( {
+			dialogType: DIALOG.SURVEY,
+		} );
 	};
 
 	renderAtomicFollowUpDialog = () => {
@@ -148,12 +161,16 @@ class AutoRenewDisablingDialog extends Component {
 	onClickGeneralConfirm = () => {
 		if ( 'atomic' === this.getVariation() ) {
 			this.setState( {
-				showAtomicFollowUpDialog: true,
+				dialogType: DIALOG.ATOMIC,
 			} );
 			return;
 		}
 
-		this.props.onConfirm() || this.props.onClose();
+		// this.props.onConfirm() || this.props.onClose();
+		this.props.onConfirm();
+		this.setState( {
+			dialogType: DIALOG.SURVEY,
+		} );
 	};
 
 	renderGeneralDialog = () => {
@@ -178,13 +195,36 @@ class AutoRenewDisablingDialog extends Component {
 		);
 	};
 
+	renderSurvey = () => {
+		const { purchase, selectedSite, onClose } = this.props;
+
+		return (
+			<CancelPurchaseForm
+				defaultContent={ '' }
+				onInputChange={ () => {} }
+				purchase={ purchase }
+				selectedSite={ selectedSite }
+				isVisible={ true }
+				onClose={ onClose }
+				onClickFinalConfirm={ onClose }
+				flowType={ 'cancel_autorenew_survey_only' }
+			/>
+		);
+	};
+
 	render() {
-		return this.state.showAtomicFollowUpDialog
-			? this.renderAtomicFollowUpDialog()
-			: this.renderGeneralDialog();
+		switch ( this.state.dialogType ) {
+			case DIALOG.GENERAL:
+				return this.renderGeneralDialog();
+			case DIALOG.ATOMIC:
+				return this.renderAtomicFollowUpDialog();
+			case DIALOG.SURVEY:
+				return this.renderSurvey();
+		}
 	}
 }
 
 export default connect( ( state, { purchase } ) => ( {
 	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
+	selectedSite: getSite( state, purchase.siteId ),
 } ) )( localize( AutoRenewDisablingDialog ) );
