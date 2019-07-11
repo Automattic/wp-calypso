@@ -47,7 +47,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<header className="plan-upgrade-upsell__header">
+			<header className="plan-upgrade-upsell__small-header">
 				<h2 className="plan-upgrade-upsell__title">
 					{ translate( 'Hold tight, your site is being upgraded.' ) }
 				</h2>
@@ -60,35 +60,31 @@ export class PlanUpgradeUpsell extends PureComponent {
 		const bundleValue = planRawPrice * 77;
 		return (
 			<>
-				<h2 className="plan-upgrade-upsell__sub-header">
-					{ translate( 'Do you want your site to look great?' ) }
-				</h2>
-
-				<h4 className="plan-upgrade-upsell__sub-header">
+				<h2 className="plan-upgrade-upsell__header">
 					{ translate(
-						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium Designs to your order {{u}}for just %(discountPrice)s{{/u}}!',
+						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium Designs to your order {{br/}}{{u}}for just %(discountPrice)s{{/u}}!',
 						{
 							args: {
 								bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
 								discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode ),
 							},
-							components: { u: <u /> },
+							components: { u: <u />, br: <br /> },
 						}
 					) }
-				</h4>
+				</h2>
 
 				<div className="plan-upgrade-upsell__column-pane">
 					<div className="plan-upgrade-upsell__column-content">
 						<p>
 							<b>
 								{ translate(
-									'According to Google, design is quite possibly the best investment you can make.'
+									'According to Google, design is possibly the best investment you can make for your website.'
 								) }
 							</b>
 						</p>
 						<p>
 							{ translate(
-								'Why? Cause based on their research, 50% of the people visiting your site decide to leave or stay within the first three seconds.'
+								'Why? Based on their research, 50% of the people visiting your site decide to leave or stay within the first three seconds.'
 							) }
 						</p>
 						<p>
@@ -98,13 +94,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"Wouldn't you like a sure-fire way to make a great first impression in those 3 seconds?"
+								"Wouldn't you like to make a great first impression in those three seconds?"
 							) }
 						</p>
-						<p>{ translate( "Of course! And thankfully, there's a way." ) }</p>
+						<p>{ translate( "Thankfully, there's a way." ) }</p>
 						<p>
 							{ translate(
-								"Great looking sites {{b}}always{{/b}} create great first impressions and leave people wanting to know more about your site. And that's what we want, right?",
+								'Great looking sites {{b}}always{{/b}} create great first impressions and leave people wanting to know more about you.',
 								{
 									components: { b: <b /> },
 								}
@@ -112,22 +108,22 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"That's exactly why we've partnered with some of the world's greatest designers to create nearly 200 high-end designs that you can use to make your site looks incredible."
+								"That's exactly why we've partnered with some of the world's greatest designers to offer nearly 200 high-end designs that you can use to make your site looks incredible."
 							) }
 						</p>
 						<p>
 							{ translate(
-								'These premium themes are beautiful, optimized for mobile and search engines, and most importantly, they are ready to use for almost any scenario you can think of…'
+								'These premium themes are beautiful and optimized for mobile and search engines. Most importantly, they are ready to use regardless of your goals.'
 							) }
 						</p>
 						<p>
 							{ translate(
-								'…small businesses, brick-and-mortar shops, boutiques, photography, clubs, portfolios, fashion, food, blogging, music, freelancing, NGOs, agencies, travel, boutiques, associations, announcements, weddings and more…'
+								"From small businesses to blogs, wedding sites to designer portfolios, you'll find the perfect theme for your needs."
 							) }
 						</p>
 						<p>
 							{ translate(
-								'Normally, this type of premium WordPress themes {{b}}cost $100 or more each{{/b}}.',
+								'Normally, each of these WordPress themes {{b}}cost between $49 and $100 or more{{/b}}.',
 								{
 									components: { b: <b /> },
 								}
@@ -135,22 +131,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"But because we made a bundle with all these designs inside our Premium plan, you won't pay anywhere near that much today."
-							) }
-						</p>
-						<p>
-							{ translate(
-								"In fact, if you take advantage of this offer you won't even pay the full price %(fullPrice)s/yr that the Premium plan costs!",
-								{
-									args: {
-										fullPrice: formatCurrency( planRawPrice, currencyCode ),
-									},
-								}
-							) }{' '}
-						</p>
-						<p>
-							{ translate(
-								"Because you just purchased a brand new plan, we'll give you a one-time-only special price. Which means that you can get unlimited access to nearly 200 high-end designs for just %(discountPrice)s/yr!",
+								'But if you upgrade to a Premium plan with this special offer, you can enjoy the full collection of premium themes for just an additional %(discountPrice)s!',
 								{
 									args: {
 										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode ),
@@ -160,7 +141,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'Oh, and in addition to the nearly 200 beautiful site themes included, the Premium plan also comes with some really useful features that our customers truly enjoy:'
+								"You'll also gain access to some of the most powerful features on WordPress.com:"
 							) }
 						</p>
 
@@ -169,7 +150,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
 								<span className="plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'Like {{b}}the ability to monetize your site{{/b}}. Yes, to make money with your site. You can sell stuff on your site without any hassle. Or make earnings through our special premium advertising program. Or why not both?',
+										'{{b}}More ways to monetize your site.{{/b}} You can sell stuff on your site without any hassle. Or earn through our special advertising program. Or why not both?',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
@@ -181,7 +162,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
 								<span className="plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										"Or like {{b}}our special tools to turn yourself into a social media pro{{/b}}. Like scheduling posts in advance (so you don't have to become a slave of social media to make it work) and our nifty promotion tools.",
+										'{{b}}Advanced tools to become a social media pro.{{/b}} Schedule posts in advance, resurface your older content, to scheduling multiple social posts at a time.',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
@@ -193,7 +174,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
 								<span className="plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'Or what about the chance to {{b}}customize your premium theme to your exact needs{{/b}}? Meaning your site can be totally customized and have its unique essence, so it will never be the same as others.',
+										'{{b}}Customize your premium theme to your exact needs.{{/b}} With advanced design features, you can make your site stand and never be the same as others.',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
@@ -205,7 +186,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 
 						<p>
 							{ translate(
-								'And to top it all off, you can give the Premium plan a risk-free test drive thanks to our {{u}}30-day Money Back Guarantee{{/u}}.',
+								'Give the Premium plan a risk-free test drive with our {{u}}30-day Money Back Guarantee{{/u}}.',
 								{
 									components: { u: <u /> },
 								}
@@ -213,13 +194,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'Are you ready to get started? Go for it now, because this special one-time offer will be gone once you leave this screen.'
+								'Are you ready to get started? Go for it now — this special one-time offer will be gone once you leave this screen.'
 							) }
 						</p>
 						<p>
 							<b>
 								{ translate(
-									'Upgrade to the Premium plan (with %(bundleValue)s worth of premium themes) for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s/yr.',
+									'Upgrade to the Premium plan (and access nearly 200 premium themes) for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s/yr.',
 									{
 										components: { del: <del /> },
 										args: {
@@ -231,14 +212,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 								) }
 							</b>
 						</p>
-
-						<div className="plan-upgrade-upsell__column-doodle">
-							<img
-								className="plan-upgrade-upsell__doodle"
-								alt="Website expert offering a support session"
-								src="/calypso/images/illustrations/themes.svg"
-							/>
-						</div>
+					</div>
+					<div className="plan-upgrade-upsell__column-doodle">
+						<img
+							className="plan-upgrade-upsell__doodle"
+							alt="Website expert offering a support session"
+							src="/calypso/images/illustrations/themes.svg"
+						/>
 					</div>
 				</div>
 			</>
@@ -246,31 +226,21 @@ export class PlanUpgradeUpsell extends PureComponent {
 	}
 
 	footer() {
-		const {
-			translate,
-			planDiscountedRawPrice,
-			currencyCode,
-			handleClickAccept,
-			handleClickDecline,
-		} = this.props;
+		const { translate, handleClickAccept, handleClickDecline } = this.props;
 		return (
 			<footer className="plan-upgrade-upsell__footer">
 				<Button
 					className="plan-upgrade-upsell__decline-offer-button"
 					onClick={ handleClickDecline }
 				>
-					{ translate( 'Skip' ) }
+					{ translate( "No thanks, I'll stick with the free themes" ) }
 				</Button>
 				<Button
 					primary
 					className="plan-upgrade-upsell__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( 'Upgrade now for %(amount)s', {
-						args: {
-							amount: formatCurrency( planDiscountedRawPrice, currencyCode ),
-						},
-					} ) }
+					{ translate( "Yes, I'd love to try those Premium designs!" ) }
 				</Button>
 			</footer>
 		);

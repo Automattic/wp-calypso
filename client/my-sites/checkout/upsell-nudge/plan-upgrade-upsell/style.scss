@@ -3,10 +3,6 @@ main.plan-upgrade-upsell.main {
 }
 
 .plan-upgrade-upsell {
-	max-height: calc(
-		100vh - 120px
-	); // 120 px is for masterbar and all the paddings around this nudge
-	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 
@@ -83,17 +79,30 @@ main.plan-upgrade-upsell.main {
 		margin-top: 85px;
 	}
 
-	&__header {
+	&__small-header {
+		font-style: italic;
 		text-align: center;
-		font-weight: bold;
 	}
 
+	&__header {
+		font-size: 23px;
+		font-weight: bold;
+		text-align: center;
+		line-height: 1.4;
+		margin-top: 0.5em;
+		margin-bottom: 0.4em;
+
+		@include breakpoint( '<660px' ) {
+			font-size: 21px;
+		}
+	}
 	&__sub-header {
 		font-size: 21px;
 		font-weight: normal;
+		text-align: center;
 		line-height: 1.4;
 		margin-top: 5px;
-		margin-bottom: 0.75em;
+		margin-bottom: 1.6em;
 
 		@include breakpoint( '<660px' ) {
 			font-size: 18px;
@@ -106,8 +115,8 @@ main.plan-upgrade-upsell.main {
 		&-item {
 			display: flex;
 			width: 100%;
-			align-items: center;
-			margin-bottom: 4px;
+			align-items: flex-start;
+			margin-bottom: 1.2em;
 
 			@include breakpoint( '<660px' ) {
 				align-items: flex-start;
