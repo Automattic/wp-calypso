@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,8 +25,7 @@ import {
 import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Button from 'components/button';
 import Card from 'components/card';
 import DismissibleCard from 'blocks/dismissible-card';
@@ -144,7 +145,6 @@ export class Banner extends Component {
 			description,
 			event,
 			feature,
-			isAdmin,
 			list,
 			price,
 			title,
@@ -179,7 +179,7 @@ export class Banner extends Component {
 						</ul>
 					) }
 				</div>
-				{ isAdmin && ( callToAction || price ) && (
+				{ ( callToAction || price ) && (
 					<div className="banner__action">
 						{ size( prices ) === 1 && <PlanPrice rawPrice={ prices[ 0 ] } /> }
 						{ size( prices ) === 2 && (
@@ -264,7 +264,6 @@ export class Banner extends Component {
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
-	isAdmin: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 } );
 
 export default connect(
