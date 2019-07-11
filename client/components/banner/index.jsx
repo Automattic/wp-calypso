@@ -23,7 +23,7 @@ import {
 import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import Button from 'components/button';
 import Card from 'components/card';
