@@ -366,7 +366,7 @@ export class Checkout extends React.Component {
 		return domainsForGSuite;
 	}
 
-	maybeShowPlanUpgradeABTest( receiptId ) {
+	maybeShowPlanUpgradeOffer( receiptId ) {
 		const { cart, selectedSite, selectedSiteSlug } = this.props;
 		const isSiteOnFreePlan = get( selectedSite, 'plan.is_free' );
 
@@ -376,8 +376,8 @@ export class Checkout extends React.Component {
 			if ( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) ) {
 				if ( 'variantShowNudge' === abtest( 'showPlanUpsellNudge' ) ) {
 					return hasBloggerPlan( cart )
-						? `/checkout/${ selectedSiteSlug }/add-plan-upgrade/personal/${ receiptId }`
-						: `/checkout/${ selectedSiteSlug }/add-plan-upgrade/premium/${ receiptId }`;
+						? `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/personal/${ receiptId }`
+						: `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 				}
 			}
 		}
@@ -471,7 +471,7 @@ export class Checkout extends React.Component {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
 					return (
-						this.maybeShowPlanUpgradeABTest( receiptId ) ||
+						this.maybeShowPlanUpgradeOffer( receiptId ) ||
 						`/checkout/${ selectedSiteSlug }/with-gsuite/${
 							domainsForGSuite[ 0 ].meta
 						}/${ receiptId }`
@@ -480,7 +480,7 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		const upgradePath = this.maybeShowPlanUpgradeABTest( receiptId );
+		const upgradePath = this.maybeShowPlanUpgradeOffer( receiptId );
 		if ( upgradePath ) {
 			return upgradePath;
 		}
@@ -532,7 +532,7 @@ export class Checkout extends React.Component {
 		window.location.href = redirectUrl;
 	}
 
-	handleCheckoutCompleteRedirect = ( isRedirectedFrom, previousReceiptId ) => {
+	handleCheckoutCompleteRedirect = () => {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -543,10 +543,7 @@ export class Checkout extends React.Component {
 			transaction: { step: { data: receipt = null } = {} } = {},
 			translate,
 		} = this.props;
-		const redirectPath = this.getCheckoutCompleteRedirectPath(
-			isRedirectedFrom,
-			previousReceiptId
-		);
+		const redirectPath = this.getCheckoutCompleteRedirectPath();
 
 		this.props.clearPurchases();
 
