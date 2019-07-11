@@ -29,10 +29,12 @@ export class MediaLibraryDataSource extends Component {
 		source: PropTypes.string.isRequired,
 		onSourceChange: PropTypes.func.isRequired,
 		disabledSources: PropTypes.array,
+		ignorePermissions: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		disabledSources: [],
+		ignorePermissions: false,
 	};
 
 	state = { popover: false };
@@ -50,7 +52,8 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	getSources = () => {
-		const { disabledSources, translate, canUserUploadFiles } = this.props;
+		const { disabledSources, translate, ignorePermissions, canUserUploadFiles } = this.props;
+		const includeExternalMedia = ignorePermissions || canUserUploadFiles;
 		const sources = [
 			{
 				value: '',
@@ -58,14 +61,14 @@ export class MediaLibraryDataSource extends Component {
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
-		if ( config.isEnabled( 'external-media/google-photos' ) && canUserUploadFiles ) {
+		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'google_photos',
 				label: translate( 'Google Photos library' ),
 				icon: <GooglePhotosIcon />,
 			} );
 		}
-		if ( config.isEnabled( 'external-media/free-photo-library' ) && canUserUploadFiles ) {
+		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Free photo library' ),
