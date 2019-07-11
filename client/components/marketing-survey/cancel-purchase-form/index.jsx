@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
@@ -324,7 +325,7 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
-	render() {
+	surveyContent() {
 		const { translate, showSurvey, surveyStep } = this.props;
 		if ( showSurvey ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
@@ -383,6 +384,19 @@ class CancelPurchaseForm extends React.Component {
 
 		// just return the default if we don't want to show the survey
 		return <div>{ this.props.defaultContent }</div>;
+	}
+
+	render() {
+		return (
+			<Dialog
+				isVisible={ this.props.isVisible }
+				onClose={ this.props.onClose }
+				buttons={ this.props.buttons }
+				className="cancel-purchase-form__dialog"
+			>
+				{ this.surveyContent() }
+			</Dialog>
+		);
 	}
 }
 

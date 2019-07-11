@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -17,8 +18,6 @@ import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgra
 import { clearPurchases } from 'state/purchases/actions';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { connect } from 'react-redux';
-import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
@@ -169,21 +168,17 @@ class CancelPurchaseButton extends Component {
 		}
 
 		return (
-			<Dialog
+			<CancelPurchaseForm
+				chatInitiated={ this.chatInitiated }
+				defaultContent={ this.renderCancellationEffect() }
+				onInputChange={ this.onSurveyChange }
+				purchase={ purchase }
+				selectedSite={ selectedSite }
+				surveyStep={ this.state.surveyStep }
 				isVisible={ this.state.showDialog }
 				buttons={ buttonsArr }
 				onClose={ this.closeDialog }
-				className="cancel-purchase__button-warning-dialog"
-			>
-				<CancelPurchaseForm
-					chatInitiated={ this.chatInitiated }
-					defaultContent={ this.renderCancellationEffect() }
-					onInputChange={ this.onSurveyChange }
-					purchase={ purchase }
-					selectedSite={ selectedSite }
-					surveyStep={ this.state.surveyStep }
-				/>
-			</Dialog>
+			/>
 		);
 	};
 
