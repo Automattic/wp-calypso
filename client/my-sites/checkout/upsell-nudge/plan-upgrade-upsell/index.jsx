@@ -246,7 +246,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 	}
 
 	footer() {
-		const { translate, productDisplayCost, handleClickAccept, handleClickDecline } = this.props;
+		const {
+			translate,
+			planDiscountedRawPrice,
+			currencyCode,
+			handleClickAccept,
+			handleClickDecline,
+		} = this.props;
 		return (
 			<footer className="plan-upgrade-upsell__footer">
 				<Button
@@ -262,7 +268,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 				>
 					{ translate( 'Upgrade now for %(amount)s', {
 						args: {
-							amount: productDisplayCost,
+							amount: formatCurrency( planDiscountedRawPrice, currencyCode ),
 						},
 					} ) }
 				</Button>

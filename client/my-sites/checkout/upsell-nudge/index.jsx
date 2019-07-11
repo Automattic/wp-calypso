@@ -114,6 +114,8 @@ export class UpsellNudge extends React.Component {
 			currencyCode,
 			productCost,
 			productDisplayCost,
+			planRawPrice,
+			planDiscountedRawPrice,
 			isLoggedIn,
 			upsellType,
 			translate,
@@ -152,7 +154,8 @@ export class UpsellNudge extends React.Component {
 				return (
 					<PlanUpgradeUpsell
 						currencyCode={ currencyCode }
-						productDisplayCost={ productDisplayCost }
+						planRawPrice={ planRawPrice }
+						planDiscountedRawPrice={ planDiscountedRawPrice }
 						receiptId={ receiptId }
 						translate={ translate }
 						handleClickAccept={ this.handleClickAccept }
@@ -191,7 +194,7 @@ export default connect(
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
 		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
-		const planSlug = getUpgradePlanSlugFromPath( state, selectedSiteId, props.product );
+		const planSlug = getUpgradePlanSlugFromPath( state, selectedSiteId, props.upgradeItem );
 		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
@@ -208,7 +211,6 @@ export default connect(
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 			planRawPrice: annualPrice,
 			planDiscountedRawPrice: annualDiscountPrice,
-			planSlug: planSlug,
 			isLoggedIn: isUserLoggedIn( state ),
 			siteSlug,
 			selectedSiteId,
