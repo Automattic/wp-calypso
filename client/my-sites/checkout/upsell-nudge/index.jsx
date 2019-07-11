@@ -43,13 +43,7 @@ export class UpsellNudge extends React.Component {
 	};
 
 	render() {
-		const {
-			selectedSiteId,
-			isLoading,
-			hasProductsList,
-			hasSitePlans,
-			upsellType,
-		} = this.props;
+		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
 
 		return (
 			<Main className={ upsellType }>
@@ -150,15 +144,9 @@ export class UpsellNudge extends React.Component {
 	}
 
 	handleClickDecline = () => {
-		const {
-			trackUpsellButtonClick,
-			upsellType,
-			handleCheckoutCompleteRedirect,
-		} = this.props;
+		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
-		trackUpsellButtonClick(
-			`calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click`
-		);
+		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 		handleCheckoutCompleteRedirect();
 	};
 
@@ -173,7 +161,7 @@ export class UpsellNudge extends React.Component {
 }
 
 const trackUpsellButtonClick = eventName => {
-	// Track concierge session get started / accept / decline events
+	// Track upsell get started / accept / decline events
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
