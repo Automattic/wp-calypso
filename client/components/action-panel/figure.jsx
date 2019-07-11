@@ -8,10 +8,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
-const ActionPanelFigure = ( { inlineBodyText, children } ) => {
+const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
 	const figureClasses = classNames( {
 		'action-panel__figure': true,
 		'is-inline-body-text': inlineBodyText,
+		'is-aligned-left': 'left' === align,
 	} );
 
 	return <div className={ figureClasses }>{ children }</div>;

@@ -41,6 +41,30 @@ const ActionPanelExample = () => (
 				</ActionPanelFooter>
 			</ActionPanel>
 		</div>
+		<div>
+			<ActionPanel>
+				<ActionPanelBody>
+					<ActionPanelFigure inlineBodyText={ true } align="left">
+						<img
+							src="/calypso/images/wordpress/logo-stars.svg"
+							width="170"
+							height="143"
+							alt="WordPress logo"
+						/>
+					</ActionPanelFigure>
+					<ActionPanelTitle>Action panel with left aligned image</ActionPanelTitle>
+					<p>
+						This is a description of the action. It gives a bit more detail and explains what we are
+						inviting the user to do.
+					</p>
+					<ActionPanelFooter>
+						<Button className="action-panel__support-button" href="/help/contact">
+							Call to action!
+						</Button>
+					</ActionPanelFooter>
+				</ActionPanelBody>
+			</ActionPanel>
+		</div>
 	</div>
 );
 
