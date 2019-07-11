@@ -29,18 +29,28 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 }
-
+/*
+ * Clear all previous errors from a field
+ */
 const removePreviousErrors = ( { value }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error: null,
 } );
 
+/*
+ * Add a new error if field has no errors and value is empty
+ */
 const requiredField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
-		! error && ( ! value || '' === value.trim() ) ? i18n.translate( 'This field is required.' ) : error,
+		! error && ( ! value || '' === value.trim() )
+			? i18n.translate( 'This field is required.' )
+			: error,
 } );
 
+/*
+ * Add a new error if field has no errors and is more than sixty characters
+ */
 const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
@@ -51,6 +61,9 @@ const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewU
 			: error,
 } );
 
+/*
+ * Add a new error if field has no errors and contains invalid characters
+ */
 const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
@@ -61,6 +74,9 @@ const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuit
 			: error,
 } );
 
+/*
+ * Add a new error if the mailBox field has no errors and the full email failed the emailValidator
+ */
 const validateOverallEmail = (
 	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
 	{ value: domain }: GSuiteNewUserField
@@ -72,6 +88,9 @@ const validateOverallEmail = (
 			: mailBoxError,
 } );
 
+/*
+ * Add a new error if the mailBox field has no errors and the existing mailboxes matches the field
+ */
 const validateOverallEmailAgainstExistingEmails = (
 	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
 	{ value: domain }: GSuiteNewUserField,
@@ -85,10 +104,16 @@ const validateOverallEmailAgainstExistingEmails = (
 			: mailBoxError,
 } );
 
+/*
+ * Clear all previous errors from all fields on a User
+ */
 const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
 	return users.map( user => mapValues( user, field => removePreviousErrors( field ) ) );
 };
 
+/*
+ *  Add a new error if the mailBox field has no errors and the mailBox appear more than once in the map
+ */
 const validateNewUserMailboxIsUnique = (
 	{ value: mailBox, error: previousError }: GSuiteNewUserField,
 	mailboxesByCount: { [mailbox: string]: number }
@@ -100,6 +125,9 @@ const validateNewUserMailboxIsUnique = (
 			: previousError,
 } );
 
+/*
+ * Adds a duplicate error to each mailBox with a duplicate mailbox
+ */
 const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
 	const mailboxesByCount: { [mailbox: string]: number } = countBy(
 		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
@@ -113,6 +141,13 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
 	} ) );
 };
 
+/*
+ * Run all validations on a user:
+ * domain - required
+ * mailBox - required, vaildEmailCharacters, valid overall email
+ * firstName - required, less than sixty characters
+ * lastName - required, less than sixty characters
+ */
 const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	// every field is required. Also scrubs previous errors.
 	const { domain, mailBox, firstName, lastName } = mapValues( user, field =>
@@ -127,6 +162,9 @@ const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	};
 };
 
+/*
+ * Run a full validation on all users
+ */
 const validateUsers = (
 	users: GSuiteNewUser[],
 	extraValidation: ( user: GSuiteNewUser ) => GSuiteNewUser = user => user
