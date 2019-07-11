@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { find, includes } from 'lodash';
@@ -20,6 +21,8 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';
 import config from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {
@@ -47,20 +50,22 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	getSources = () => {
-		const { disabledSources, translate } = this.props;
+		const { disabledSources, translate, canUserUploadFiles } = this.props;
 		const sources = [
 			{
 				value: '',
 				label: translate( 'WordPress library' ),
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
-			{
+		];
+		if ( config.isEnabled( 'external-media/google-photos' ) && canUserUploadFiles ) {
+			sources.push( {
 				value: 'google_photos',
 				label: translate( 'Google Photos library' ),
 				icon: <GooglePhotosIcon />,
-			},
-		];
-		if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
+			} );
+		}
+		if ( config.isEnabled( 'external-media/free-photo-library' ) && canUserUploadFiles ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Free photo library' ),
@@ -127,4 +132,8 @@ export class MediaLibraryDataSource extends Component {
 	}
 }
 
-export default localize( MediaLibraryDataSource );
+const mapStateToProps = state => ( {
+	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
+} );
+
+export default connect( mapStateToProps )( localize( MediaLibraryDataSource ) );
