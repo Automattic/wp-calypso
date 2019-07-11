@@ -25,7 +25,7 @@ export default class SidebarItem extends React.Component {
 		link: PropTypes.string.isRequired,
 		onNavigate: PropTypes.func,
 		icon: PropTypes.string,
-		customIcon: PropTypes.func,
+		customIcon: PropTypes.object,
 		materialIcon: PropTypes.string,
 		selected: PropTypes.bool,
 		expandSection: PropTypes.func,

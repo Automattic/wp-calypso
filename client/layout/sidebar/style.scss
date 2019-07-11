@@ -41,7 +41,7 @@
 
 // This button is hidden until focused. It allows screen-readers
 // and other assistive technology to skip the sidebar.
-.sidebar .sidebar__skip-navigation {
+.sidebar__skip-navigation {
 	position: absolute;
 	left: -10000px;
 	flex-shrink: 0;

@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ReaderSidebarTagsList from './list';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { requestFollowTag } from 'state/reader/tags/items/actions';
 import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
@@ -47,12 +48,6 @@ export class ReaderSidebarTags extends Component {
 		this.props.onFollowTag( tag );
 	};
 
-	handleAddClick = () => {
-		recordAction( 'follow_topic_open_input' );
-		recordGaEvent( 'Clicked Add Topic to Open Input' );
-		recordTrack( 'calypso_reader_add_tag_clicked' );
-	};
-
 	render() {
 		const { tags, isOpen, translate, onClick } = this.props;
 		return (
@@ -61,14 +56,17 @@ export class ReaderSidebarTags extends Component {
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
-					addLabel={ translate( 'New tag name' ) }
-					addPlaceholder={ translate( 'Add any tag' ) }
-					onAddSubmit={ this.followTag }
-					onAddClick={ this.handleAddClick }
 					onClick={ onClick }
 					materialIcon="local_offer"
 				>
 					<ReaderSidebarTagsList { ...this.props } />
+
+					<FormTextInputWithAction
+						className="sidebar__tags-input"
+						action={ translate( 'Add' ) }
+						placeholder={ translate( 'Add a tag' ) }
+						onAction={ this.followTag }
+					/>
 				</ExpandableSidebarMenu>
 			</ul>
 		);

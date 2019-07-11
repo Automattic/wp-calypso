@@ -40,16 +40,7 @@ export class ReaderSidebarTagsList extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		const { tags, translate } = this.props;
-		if ( ! tags || tags.length === 0 ) {
-			return (
-				<div key="empty" className="sidebar__menu-empty">
-					{ translate( 'Find relevant posts by adding a tag.' ) }
-				</div>
-			);
-		}
-
-		return <ul className="sidebar__menu-list">{ this.renderItems() }</ul>;
+		return <ul className="sidebar__tags-list">{ this.renderItems() }</ul>;
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
