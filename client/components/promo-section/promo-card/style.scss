@@ -1,0 +1,22 @@
+.promo-card {
+	display: flex;
+
+	.action-panel__figure {
+		max-width: 47px;
+		order: 1;
+
+		&.is-aligned-left {
+			order: -1;
+		}
+	}
+}
+
+.promo-card__body {
+	flex-grow: 1;
+}
+
+.promo-card__cta {
+	.button {
+		margin: 0 1em 4px 0;
+	}
+}
