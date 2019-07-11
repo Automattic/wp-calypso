@@ -217,6 +217,12 @@ export class Translatable extends Component {
 							</a>
 						) }
 						<Gridicon icon="help" className="community-translator__nav-link" size={ 12 } />
+						<Gridicon
+							icon="cross-circle"
+							className="community-translator__close-icon"
+							size={ 12 }
+							onClick={ this.closeDialog }
+						/>
 					</nav>
 				</header>
 				<section className="community-translator__dialog-body">
