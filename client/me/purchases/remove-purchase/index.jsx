@@ -76,11 +76,6 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	chatInitiated = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
-		this.closeDialog();
-	};
-
 	openDialog = event => {
 		event.preventDefault();
 
@@ -191,7 +186,6 @@ class RemovePurchase extends Component {
 
 		return (
 			<CancelPurchaseForm
-				chatInitiated={ this.chatInitiated }
 				disableButtons={ this.state.isRemoving }
 				defaultContent={ this.renderPlanDialogText() }
 				onInputChange={ this.onSurveyChange }

@@ -15,8 +15,6 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import {
 	getName,
@@ -29,9 +27,7 @@ import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
-import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -66,11 +62,6 @@ class CancelPurchaseButton extends Component {
 		this.setState( {
 			showDialog: false,
 		} );
-	};
-
-	chatInitiated = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
-		this.closeDialog();
 	};
 
 	onSurveyChange = update => {
@@ -265,7 +256,6 @@ class CancelPurchaseButton extends Component {
 					{ text }
 				</Button>
 				<CancelPurchaseForm
-					chatInitiated={ this.chatInitiated }
 					disableButtons={ disableButtons }
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }
@@ -282,14 +272,9 @@ class CancelPurchaseButton extends Component {
 }
 
 export default connect(
-	state => ( {
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
-	} ),
+	null,
 	{
 		clearPurchases,
-		recordTracksEvent,
 		refreshSitePlans,
 	}
 )( localize( CancelPurchaseButton ) );
