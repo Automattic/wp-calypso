@@ -197,7 +197,7 @@ class Full_Site_Editing {
 				'rest_base'          => 'template_types',
 				'show_tagcloud'      => false,
 				'show_admin_column'  => true,
-				'hierarchical'       => true,
+				'hierarchical'       => false,
 				'rewrite'            => false,
 				'capabilities'       => array(
 					'manage_terms' => 'edit_theme_options',
@@ -237,7 +237,7 @@ class Full_Site_Editing {
 				'rest_base'          => 'template_part_types',
 				'show_tagcloud'      => false,
 				'show_admin_column'  => true,
-				'hierarchical'       => true,
+				'hierarchical'       => false,
 				'rewrite'            => false,
 				'capabilities'       => array(
 					'manage_terms' => 'edit_theme_options',
