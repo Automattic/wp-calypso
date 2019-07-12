@@ -12,7 +12,6 @@ import React, { FC } from 'react';
 import Button from 'components/button';
 
 interface CtaButton {
-	isPrimary: boolean;
 	text: string;
 	url: string;
 }
@@ -20,12 +19,17 @@ interface CtaButton {
 interface Props {
 	button: CtaButton;
 	learnMoreLink?: string;
+	isPrimary?: boolean;
 }
 
-const PromoCardCta: FC< Props > = ( { button, learnMoreLink } ) => {
+const PromoCardCta: FC< Props > = ( { button, learnMoreLink, isPrimary } ) => {
 	return (
-		<div class="promo-card__cta">
-			<Button className="promo-card__cta-button" href="{ button.url }">
+		<div className="promo-card__cta">
+			<Button
+				className="promo-card__cta-button"
+				href="{ button.url }"
+				primary={ true === isPrimary }
+			>
 				{ button.text }
 			</Button>
 			{ learnMoreLink && (

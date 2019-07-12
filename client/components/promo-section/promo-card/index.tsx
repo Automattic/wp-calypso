@@ -9,6 +9,8 @@ import React, { FC, ReactNode } from 'react';
 import Card from 'components/card';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelTitle from 'components/action-panel/title';
+import PromoCardCta from './cta';
+import classNames from 'classnames';
 
 /**
  * Style dependencies
@@ -24,20 +26,34 @@ interface Image {
 interface Props {
 	image?: Image;
 	title: string;
+	isPrimary?: boolean;
 	children: ReactNode;
 }
 
-const PromoCard: FC< Props > = ( { title, image, children } ) => {
+const PromoCard: FC< Props > = ( { title, image, isPrimary, children } ) => {
+	const classes = classNames( {
+		'action-panel': true,
+		'promo-card': true,
+		'is-primary': isPrimary,
+	} );
 	return (
-		<Card className="action-panel promo-card">
+		<Card className={ classes }>
 			{ image && (
 				<ActionPanelFigure inlineBodyText={ false } align={ image.align || 'left' }>
 					<img src={ image.path } alt={ image.alt } />
 				</ActionPanelFigure>
 			) }
-			<div class="promo-card__body">
-				<ActionPanelTitle>{ title }</ActionPanelTitle>
-				{ children }
+			<div className="promo-card__body">
+				<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
+					{ title }
+				</ActionPanelTitle>
+				{ isPrimary
+					? React.Children.map( children, child => {
+							return PromoCardCta === child.type
+								? React.cloneElement( child, { isPrimary } )
+								: child;
+					  } )
+					: children }
 			</div>
 		</Card>
 	);

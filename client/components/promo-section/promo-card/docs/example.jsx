@@ -19,13 +19,13 @@ const PromoCardExample = () => {
 	return (
 		<div className="design-assets__group">
 			<div>
-				<PromoCard title="Under-used Feature" image={ img }>
+				<PromoCard title="Under-used Feature" image={ img } isPrimary={ false }>
 					<p>
 						This is a description of the action. It gives a bit more detail and explains what we are
 						inviting the user to do.
 					</p>
 					<PromoCardCta
-						button={ { isPrimary: false, text: 'Call To Action!', url: '/my-sites' } }
+						button={ { text: 'Call To Action!', url: '/my-sites' } }
 						learnMoreLink="/learn-more"
 					/>
 				</PromoCard>

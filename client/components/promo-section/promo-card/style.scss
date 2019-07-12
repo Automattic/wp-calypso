@@ -2,17 +2,30 @@
 	display: flex;
 
 	.action-panel__figure {
-		max-width: 47px;
+		margin-top: 3px;
+		max-width: 24px;
 		order: 1;
 
 		&.is-aligned-left {
 			order: -1;
 		}
 	}
+
+	&.is-primary {
+		.action-panel__figure {
+			max-width: 310px;
+		}
+		background-color: var( --color-primary-0 );
+	}
 }
 
 .promo-card__body {
 	flex-grow: 1;
+	.promo-card.is-primary & {
+		display: flex;
+		flex-direction: column;
+		justify-content:center;
+	}
 }
 
 .promo-card__cta {
