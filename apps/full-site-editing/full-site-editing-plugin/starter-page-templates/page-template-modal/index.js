@@ -76,20 +76,6 @@ class PageTemplateModal extends Component {
 				<div className="page-template-modal__inner">
 					<form className="page-template-modal__form">
 						<fieldset className="page-template-modal__list">
-							<legend className="page-template-modal__intro">
-								<p>
-									{ __(
-										'Pick a Template that matches the purpose of your page.',
-										'full-site-editing'
-									) }
-								</p>
-								<p>
-									{ __(
-										'You can customize each Template to meet your needs.',
-										'full-site-editing'
-									) }
-								</p>
-							</legend>
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ map( this.props.templates, template => ( {
