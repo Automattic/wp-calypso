@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, omit } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Style dependencies
@@ -43,6 +44,7 @@ class ExternalLink extends Component {
 				'has-icon': !! this.props.icon,
 			}
 		);
+
 		const props = assign(
 			{},
 			omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
@@ -51,6 +53,8 @@ class ExternalLink extends Component {
 				rel: 'external',
 			}
 		);
+
+		const { translate } = this.props;
 
 		if ( this.props.icon ) {
 			props.target = '_blank';
@@ -76,14 +80,12 @@ class ExternalLink extends Component {
 				{ this.props.icon && (
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<span className="screen-reader-text">
-						{
-							/* translators: accessibility text */
-							'(opens in a new tab)'
-						}
+						{ /* translators: accessibility text */
+						translate( '(opens in a new tab)' ) }
 					</span>
 				) }
 			</a>
 		);
 	}
 }
-export default ExternalLink;
+export default localize( ExternalLink );
