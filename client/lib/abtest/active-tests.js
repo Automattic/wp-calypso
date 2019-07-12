@@ -136,7 +136,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	showPlanUpsellNudge: {
-		datestamp: '20190529',
+		datestamp: '20190712',
 		variations: {
 			variantShowNudge: 50,
 			control: 50,
