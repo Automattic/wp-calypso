@@ -1,49 +1,70 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, {
+	AnchorHTMLAttributes,
+	ButtonHTMLAttributes,
+	DetailedHTMLProps,
+	FunctionComponent,
+} from 'react';
 import classNames from 'classnames';
 
-interface Props {
+interface OwnProps {
+	className?: string;
 	compact?: boolean;
+	block?: boolean;
 	primary?: boolean;
 	scary?: boolean;
 	busy?: boolean;
-	type?: string;
-	href?: string;
 	borderless?: boolean;
-	target?: string;
-	rel?: string;
 }
 
-export default class Button extends PureComponent< Props > {
-	static defaultProps = {
-		type: 'button',
-	};
+type AnchorProps = { href: string } & DetailedHTMLProps<
+	AnchorHTMLAttributes< HTMLAnchorElement >,
+	HTMLAnchorElement
+>;
 
-	render() {
-		const className = classNames( 'button', this.props.className, {
-			'is-compact': this.props.compact,
-			'is-primary': this.props.primary,
-			'is-scary': this.props.scary,
-			'is-busy': this.props.busy,
-			'is-block': this.props.block,
-			'is-borderless': this.props.borderless,
-		} );
+type ButtonProps = DetailedHTMLProps<
+	ButtonHTMLAttributes< HTMLButtonElement >,
+	HTMLButtonElement
+>;
 
-		if ( this.props.href ) {
-			const { compact, primary, scary, busy, borderless, type, ...props } = this.props;
+type Props = Exclude< OwnProps & AnchorProps, 'type' > | Exclude< OwnProps & ButtonProps, 'href' >;
 
-			// block referrers when external link
-			const rel = props.target
-				? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
-				: props.rel;
+function isButton( props: ButtonProps | AnchorProps ): props is ButtonProps {
+	return ! ( props as AnchorProps ).href;
+}
 
-			return <a { ...props } rel={ rel } className={ className } />;
-		}
+const Button: FunctionComponent< Props > = ( {
+	className,
+	compact,
+	block,
+	primary,
+	scary,
+	busy,
+	borderless,
+	...props
+}: Props ) => {
+	const buttonClass = classNames( 'button', className, {
+		'is-compact': compact,
+		'is-primary': primary,
+		'is-scary': scary,
+		'is-busy': busy,
+		'is-block': block,
+		'is-borderless': borderless,
+	} );
 
-		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
-
-		return <button { ...props } className={ className } />;
+	if ( isButton( props ) ) {
+		return (
+			<button { ...props } type={ props.type ? props.type : 'button' } className={ buttonClass } />
+		);
 	}
-}
+	// block referrers when external link
+	const rel = props.target
+		? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
+		: props.rel;
+
+	return <a { ...props } rel={ rel } className={ buttonClass } />;
+};
+
+export default Button;
