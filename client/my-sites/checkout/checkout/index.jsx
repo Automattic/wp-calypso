@@ -67,7 +67,6 @@ import {
 	setDomainDetails,
 } from 'lib/upgrades/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
@@ -78,12 +77,7 @@ import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { requestSite } from 'state/sites/actions';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-	getSectionName,
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
@@ -510,10 +504,6 @@ export class Checkout extends React.Component {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 		}
 
-		if ( ! receiptId ) {
-			return `/stats/day/${ selectedSiteSlug }`;
-		}
-
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
 					this.props.selectedFeature
@@ -828,7 +818,6 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
-			sectionName: getSectionName( state ),
 			cards: getStoredCards( state ),
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
@@ -842,7 +831,6 @@ export default connect(
 				selectedSiteId,
 				props.cart
 			),
-			isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
