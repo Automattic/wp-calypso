@@ -95,8 +95,9 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { isApplePayAvailable } from 'lib/web-payment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -389,6 +390,7 @@ export class Checkout extends React.Component {
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
+			previousRoute,
 			transaction: { step: { data: stepResult = null } = {} } = {},
 		} = this.props;
 		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
@@ -470,8 +472,6 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		const isPlanUpgradeParticipant = getABTestVariation( 'showPlanUpsellNudge' );
-
 		// Test showing the concierge session upsell page after the user purchases a qualifying plan
 		// This tests the flow that was not eligible for G Suite
 		// There's an additional test above that tests directly aginst the G Suite upsell
@@ -480,7 +480,7 @@ export class Checkout extends React.Component {
 			! hasConciergeSession( cart ) &&
 			! hasJetpackPlan( cart ) &&
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
-			! isPlanUpgradeParticipant
+			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
 			const upgradePath = this.maybeShowPlanUpgradeOffer( receiptId );
 			if ( upgradePath ) {
@@ -848,6 +848,7 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
+			previousRoute: getPreviousPath( state ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};
