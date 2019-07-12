@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const AutomatticLogo = ( { className, size } ) => (
+interface Props {
+	className?: string;
+	size?: number;
+}
+
+const AutomatticLogo: FunctionComponent< Props > = ( { className = '', size = 96 } ) => (
 	<svg className={ `automattic-logo ${ className }` } height={ size } viewBox="0 0 792 96">
 		<path d="M292.1,80.5c-19.4,0-31.9-13.9-31.9-28.5v-1.8c0-14.8,12.6-28.5,31.9-28.5c19.4,0,32,13.7,32,28.5V52C324.1,66.5,311.6,80.5,292.1,80.5z M313.8,50.3c0-10.6-7.7-20-21.7-20s-21.6,9.4-21.6,20v1.3c0,10.6,7.6,20.2,21.6,20.2s21.7-9.6,21.7-20.2V50.3z" />
 		<path d="M73.5,78.3l-7.2-13.5H34.2l-7,13.5H16.4L46,23.7h8.5l30,54.6H73.5z M50,34.4l-11.9,23h24.2L50,34.4z" />
@@ -24,15 +28,5 @@ const AutomatticLogo = ( { className, size } ) => (
 		<path d="M298.9,40.7c1.8,1.2,2.4,3.7,1.2,5.5l-9.4,14.5c-1.2,1.9-3.7,2.4-5.5,1.2l0,0c-1.8-1.2-2.4-3.7-1.2-5.5l9.4-14.5C294.6,40.1,297,39.5,298.9,40.7L298.9,40.7z" />
 	</svg>
 );
-
-AutomatticLogo.propTypes = {
-	className: PropTypes.string,
-	size: PropTypes.number,
-};
-
-AutomatticLogo.defaultProps = {
-	className: '',
-	size: 96,
-};
 
 export default AutomatticLogo;
