@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce, isEqual, find, isEmpty, isArray, repeat } from 'lodash';
+import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -117,9 +117,8 @@ export class HelpContactForm extends React.PureComponent {
 
 		if ( npsSurveyFeedback ) {
 			this.state.message =
-				'\n' +
 				translate( 'The below comment is copied from your survey response:' ) +
-				`\n${ repeat( '-', 20 ) }\n${ npsSurveyFeedback }`;
+				`\n-----------------------------\n${ npsSurveyFeedback }`;
 		}
 	}
 
