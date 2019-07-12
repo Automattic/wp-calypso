@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { pick } from 'lodash';
 import url from 'url';
 
@@ -11,11 +8,11 @@ import url from 'url';
  * Given a URL or path and search terms, returns a path including the search
  * query parameter and preserving existing parameters.
  *
- * @param  {string} uri    URL or path to modify
- * @param  {string} search Search terms
- * @return {string}        Path including search terms
+ * @param  uri    URL or path to modify
+ * @param  search Search terms
+ * @return        Path including search terms
  */
-export default function( uri, search ) {
+export default function( uri: string, search: string ): string {
 	let parsedUrl = url.parse( uri, true );
 
 	if ( search ) {
