@@ -1,24 +1,22 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-export default class Button extends PureComponent {
-	static propTypes = {
-		compact: PropTypes.bool,
-		primary: PropTypes.bool,
-		scary: PropTypes.bool,
-		busy: PropTypes.bool,
-		type: PropTypes.string,
-		href: PropTypes.string,
-		borderless: PropTypes.bool,
-		target: PropTypes.string,
-		rel: PropTypes.string,
-	};
+interface Props {
+	compact?: boolean;
+	primary?: boolean;
+	scary?: boolean;
+	busy?: boolean;
+	type?: string;
+	href?: string;
+	borderless?: boolean;
+	target?: string;
+	rel?: string;
+}
 
+export default class Button extends PureComponent< Props > {
 	static defaultProps = {
 		type: 'button',
 	};
