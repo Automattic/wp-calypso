@@ -166,7 +166,7 @@ class AdsWrapper extends Component {
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ this.props.translate( 'You are not authorized to view this page.' ) }
+				title={ this.props.translate( 'You are not authorized to view this page' ) }
 			/>
 		);
 	}
