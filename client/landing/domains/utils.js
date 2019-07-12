@@ -9,7 +9,7 @@ export function getMaintenanceMessageFromError( error, translate ) {
 
 	if ( maintenanceEndTime ) {
 		return translate(
-			"There is an active domain maintenance and we can't serve your request at this moment. Please try again %(when)s.",
+			"Our domain management system is currently undergoing maintenance and we can't process your request right now. Please try again %(when)s.",
 			{
 				args: {
 					when: moment.unix( maintenanceEndTime ).fromNow(),
@@ -21,6 +21,6 @@ export function getMaintenanceMessageFromError( error, translate ) {
 	}
 
 	return translate(
-		"There is an active domain maintenance and we can't serve your request at this moment. Please try again later."
+		"Our domain management system is currently undergoing maintenance and we can't process your request right now. Please try again later."
 	);
 }
