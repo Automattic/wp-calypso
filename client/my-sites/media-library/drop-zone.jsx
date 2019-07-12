@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,9 +17,8 @@ import analytics from 'lib/analytics';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
-import { translate } from 'i18n-calypso';
 
-export default class extends React.Component {
+class MediaLibraryDropZone extends React.Component {
 	static displayName = 'MediaLibraryDropZone';
 
 	static propTypes = {
@@ -72,7 +72,8 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const canUploadFiles = userCan( 'upload_files', this.props.site );
+		const { site, fullScreen, translate } = this.props;
+		const canUploadFiles = userCan( 'upload_files', site );
 		const textLabel = ! canUploadFiles
 			? translate( 'You are not authorized to upload files to this site' )
 			: null;
@@ -83,7 +84,7 @@ export default class extends React.Component {
 		);
 		return (
 			<DropZone
-				fullScreen={ this.props.fullScreen }
+				fullScreen={ fullScreen }
 				onVerifyValidTransfer={ this.isValidTransfer }
 				onFilesDrop={ this.uploadFiles }
 				textLabel={ textLabel }
@@ -92,3 +93,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default localize( MediaLibraryDropZone );
