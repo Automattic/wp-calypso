@@ -48,7 +48,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 				</ActionPanelTitle>
 				{ isPrimary
 					? React.Children.map( children, child => {
-							return PromoCardCta === child.type
+							return child && PromoCardCta === child.type
 								? React.cloneElement( child, { isPrimary } )
 								: child;
 					  } )
