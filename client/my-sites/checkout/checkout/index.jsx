@@ -96,7 +96,7 @@ import { isApplePayAvailable } from 'lib/web-payment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import config from 'config';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -367,20 +367,14 @@ export class Checkout extends React.Component {
 	}
 
 	maybeShowPlanUpgradeOffer( receiptId ) {
-		const { cart, selectedSite, selectedSiteSlug } = this.props;
-		const isSiteOnFreePlan = get( selectedSite, 'plan.is_free' );
+		const { cart, selectedSiteSlug } = this.props;
 
-		if ( isSiteOnFreePlan ) {
-			// For Blogger and Personal plan purchase, show an upgrade nudge for the Premium plan.
-			// Show the nudge only if the user is upgrading from a Free plan.
-			if ( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) ) {
-				if ( 'variantShowNudge' === abtest( 'showPlanUpsellNudge' ) ) {
-					return hasBloggerPlan( cart )
-						? `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/personal/${ receiptId }`
-						: `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-				}
+		if ( hasPersonalPlan( cart ) ) {
+			if ( 'variantShowNudge' === abtest( 'showPlanUpsellNudge' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 			}
 		}
+
 		return;
 	}
 
@@ -441,10 +435,6 @@ export class Checkout extends React.Component {
 			return `/stats/day/${ selectedSiteSlug }`;
 		}
 
-		if ( hasPersonalPlan( cart ) ) {
-			// return `/checkout/${ selectedSiteSlug }/add-plan-upgrade/${ receiptId }`;
-		}
-
 		if ( this.props.isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
 			const hasGoogleAppsInCart = hasGoogleApps( cart );
@@ -480,10 +470,7 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		const upgradePath = this.maybeShowPlanUpgradeOffer( receiptId );
-		if ( upgradePath ) {
-			return upgradePath;
-		}
+		const isPlanUpgradeParticipant = getABTestVariation( 'showPlanUpsellNudge' );
 
 		// Test showing the concierge session upsell page after the user purchases a qualifying plan
 		// This tests the flow that was not eligible for G Suite
@@ -492,8 +479,14 @@ export class Checkout extends React.Component {
 			config.isEnabled( 'upsell/concierge-session' ) &&
 			! hasConciergeSession( cart ) &&
 			! hasJetpackPlan( cart ) &&
-			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
+			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
+			! isPlanUpgradeParticipant
 		) {
+			const upgradePath = this.maybeShowPlanUpgradeOffer( receiptId );
+			if ( upgradePath ) {
+				return upgradePath;
+			}
+
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
