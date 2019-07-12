@@ -12,6 +12,7 @@ import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import wp from 'lib/wp';
+import { getMaintenanceMessageFromError } from '../utils';
 
 const wpcom = wp.undocumented();
 
@@ -196,6 +197,17 @@ class TransferAwayConfirmationPage extends Component {
 		};
 	};
 
+	getRunningMaintenanceErrorState = error => {
+		const { translate } = this.props;
+
+		const message = getMaintenanceMessageFromError( error, translate );
+
+		return {
+			title: translate( 'Domain maintenance in progress' ),
+			message: message,
+		};
+	};
+
 	getDefaultErrorState = () => {
 		const { translate } = this.props;
 		const defaultErrorFooter = translate(
@@ -240,6 +252,11 @@ class TransferAwayConfirmationPage extends Component {
 
 			case 'no_pending_transfer':
 				errorState = this.getNotPendingTransferErrorState();
+				break;
+
+			case 'domain_registration_unavailable':
+			case 'tld-in-maintenance':
+				errorState = this.getRunningMaintenanceErrorState( error );
 				break;
 		}
 
