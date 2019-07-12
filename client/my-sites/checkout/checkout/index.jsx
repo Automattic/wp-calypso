@@ -466,9 +466,10 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		// Test showing the concierge session upsell page after the user purchases a qualifying plan
-		// This tests the flow that was not eligible for G Suite
-		// There's an additional test above that tests directly aginst the G Suite upsell
+		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
+		// This tests the flow that was not eligible for G Suite.
+		// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
+		// then skip this section so that we do not show further upsells.
 		if (
 			config.isEnabled( 'upsell/concierge-session' ) &&
 			! hasConciergeSession( cart ) &&
