@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import analytics from 'lib/analytics';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
+import { translate } from 'i18n-calypso';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryDropZone';
@@ -33,7 +35,7 @@ export default class extends React.Component {
 	};
 
 	uploadFiles = files => {
-		if ( ! this.props.site ) {
+		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
 			return;
 		}
 
@@ -70,15 +72,22 @@ export default class extends React.Component {
 	};
 
 	render() {
-		if ( ! userCan( 'upload_files', this.props.site ) ) {
-			return null;
-		}
-
+		const canUploadFiles = userCan( 'upload_files', this.props.site );
+		const textLabel = ! canUploadFiles
+			? translate( 'You are not authorized to upload files to this site' )
+			: null;
+		const icon = ! canUploadFiles ? (
+			<Gridicon icon="cross" size={ 48 } />
+		) : (
+			<Gridicon icon="cloud-upload" size={ 48 } />
+		);
 		return (
 			<DropZone
 				fullScreen={ this.props.fullScreen }
 				onVerifyValidTransfer={ this.isValidTransfer }
 				onFilesDrop={ this.uploadFiles }
+				textLabel={ textLabel }
+				icon={ icon }
 			/>
 		);
 	}
