@@ -4,25 +4,25 @@
  * External dependencies
  */
 
-import React, { FC } from 'react';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Internal depencies
  */
 import Button from 'components/button';
 
-interface CtaButton {
+export interface CtaButton {
 	text: string;
 	url: string;
 }
 
-interface Props {
+export interface Props {
 	button: CtaButton;
 	learnMoreLink?: string;
 	isPrimary?: boolean;
 }
 
-const PromoCardCta: FC< Props > = ( { button, learnMoreLink, isPrimary } ) => {
+const PromoCardCta: FunctionComponent< Props > = ( { button, learnMoreLink, isPrimary } ) => {
 	return (
 		<div className="promo-card__cta">
 			<Button

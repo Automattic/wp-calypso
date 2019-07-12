@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FC, ReactNode } from 'react';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -17,20 +17,19 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-interface Image {
+export interface Image {
 	path: string;
 	alt?: string;
 	align?: 'left' | 'right';
 }
 
-interface Props {
+export interface Props {
 	image?: Image;
 	title: string;
 	isPrimary?: boolean;
-	children: ReactNode;
 }
 
-const PromoCard: FC< Props > = ( { title, image, isPrimary, children } ) => {
+const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children } ) => {
 	const classes = classNames( {
 		'action-panel': true,
 		'promo-card': true,
