@@ -343,8 +343,13 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, translate } = this.props;
+		const { hideFreePlan, translate, flowName, isInSignup } = this.props;
 		const className = 'is-free-plan';
+		const callToAction =
+			isInSignup && flowName === 'launch-site'
+				? translate( 'Continue with your free site' )
+				: translate( 'Start with a free site' );
+
 		if ( hideFreePlan ) {
 			return null;
 		}
@@ -354,7 +359,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__banner-content">
 					{ translate( 'Not sure yet?' ) }
 					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
-						{ translate( 'Start with a free site' ) }
+						{ callToAction }
 					</Button>
 				</div>
 			</div>
@@ -415,6 +420,7 @@ PlansFeaturesMain.propTypes = {
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
 	customerType: PropTypes.string,
+	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
