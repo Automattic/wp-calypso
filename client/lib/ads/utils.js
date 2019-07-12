@@ -6,6 +6,8 @@
 
 import { userCan } from 'lib/site/utils';
 import { isBusiness, isPremium, isEcommerce } from 'lib/products-values';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Returns true if the site has WordAds access
@@ -32,7 +34,8 @@ export function canAccessWordads( site ) {
 }
 
 export function canAccessAds( site ) {
-	return canAccessWordads( site ) || canUpgradeToUseWordAds( site );
+	return ( canAccessWordads( site ) || canUpgradeToUseWordAds( site ) ) 
+	&& canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' );
 }
 
 export function isWordadsInstantActivationEligible( site ) {
