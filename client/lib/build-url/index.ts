@@ -22,5 +22,5 @@ export default function( uri: string, search: string ): string {
 	}
 
 	parsedUrl = pick( parsedUrl, 'pathname', 'hash', 'query' );
-	return url.format( parsedUrl ).replace( /\%20/g, '+' );
+	return url.format( parsedUrl ).replace( /%20/g, '+' );
 }
