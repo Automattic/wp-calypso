@@ -25,6 +25,13 @@ class A8C_WP_Template {
 	 */
 	private $template_id;
 
+	/**
+	 * Name of the currently active theme that is used to reference its template CPTs.
+	 *
+	 * @var string $current_theme_name Name of currently active theme on the site.
+	 */
+	private $current_theme_name;
+
 
 	/**
 	 * A8C_WP_Template constructor.
@@ -42,8 +49,9 @@ class A8C_WP_Template {
 			$post_id = $post->ID;
 		}
 
-		$this->current_post_id = $post_id;
-		$this->template_id     = $this->get_template_id();
+		$this->current_post_id    = $post_id;
+		$this->template_id        = $this->get_template_id();
+		$this->current_theme_name = get_option( 'stylesheet' );
 	}
 
 	/**
@@ -65,8 +73,10 @@ class A8C_WP_Template {
 			return $template_id;
 		}
 
-		// Otherwise, fall back to latest global page template.
-		$term = get_term_by( 'name', 'page_template', 'wp_template_type', ARRAY_A );
+		$current_theme_name = get_option( 'stylesheet' );
+
+		// Otherwise, fall back to latest global page template defined for current theme.
+		$term = get_term_by( 'name', "$current_theme_name-page-template", 'wp_template_type', ARRAY_A );
 
 		if ( ! isset( $term['term_id'] ) ) {
 			return null;
@@ -131,7 +141,7 @@ class A8C_WP_Template {
 
 		$header_id = $template_blocks[0]['attrs']['templateId'];
 
-		if ( ! has_term( 'header', 'wp_template_part_type', $header_id ) ) {
+		if ( ! has_term( "$this->current_theme_name-header", 'wp_template_part_type', $header_id ) ) {
 			return null;
 		}
 
@@ -155,7 +165,7 @@ class A8C_WP_Template {
 
 		$footer_id = end( $template_blocks )['attrs']['templateId'];
 
-		if ( ! has_term( 'footer', 'wp_template_part_type', $footer_id ) ) {
+		if ( ! has_term( "$this->current_theme_name-footer", 'wp_template_part_type', $footer_id ) ) {
 			return null;
 		}
 
