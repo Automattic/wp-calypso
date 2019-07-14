@@ -112,7 +112,7 @@ class MediaLibraryListPlanPromo extends React.Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
+export default connect( ( state ) => {
 	return {
 		canUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};
