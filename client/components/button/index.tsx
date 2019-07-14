@@ -35,6 +35,10 @@ function isButton( props: ButtonProps | AnchorProps ): props is ButtonProps {
 	return ! ( props as AnchorProps ).href;
 }
 
+function isAnchor( props: ButtonProps | AnchorProps ): props is AnchorProps {
+	return !! isButton( props );
+}
+
 const Button: FunctionComponent< Props > = ( {
 	className,
 	compact,
@@ -58,13 +62,14 @@ const Button: FunctionComponent< Props > = ( {
 		return (
 			<button { ...props } type={ props.type ? props.type : 'button' } className={ buttonClass } />
 		);
-	}
-	// block referrers when external link
-	const rel = props.target
-		? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
-		: props.rel;
+	} else if ( isAnchor( props ) ) {
+		// block referrers when external link
+		const rel = props.target
+			? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
+			: props.rel;
 
-	return <a { ...props } rel={ rel } className={ buttonClass } />;
+		return <a { ...props } rel={ rel } className={ buttonClass } />;
+	}
 };
 
 export default Button;
