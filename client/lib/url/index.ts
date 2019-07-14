@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,8 @@ import { has, isString, omit, startsWith } from 'lodash';
  */
 import config from 'config';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
+import { URL, SiteSlug, Scheme } from 'types';
+import { Falsey } from 'utility-types';
 
 export { addQueryArgs } from 'lib/route';
 
@@ -19,14 +20,14 @@ export { addQueryArgs } from 'lib/route';
  * it only returns false for absolute URLs, so it misses
  * relative URLs, or pure query strings, or hashbangs.
  *
- * @param {string} url - URL to check
- * @return {bool} true if the given URL is located outside of Calypso
+ * @param  url URL to check
+ * @return     true if the given URL is located outside of Calypso
  */
-export function isOutsideCalypso( url ) {
-	return url && ( startsWith( url, '//' ) || ! startsWith( url, '/' ) );
+export function isOutsideCalypso( url: URL ): boolean {
+	return !! url && ( startsWith( url, '//' ) || ! startsWith( url, '/' ) );
 }
 
-export function isExternal( url ) {
+export function isExternal( url: URL ): boolean {
 	// parseURL will return hostname = null if no protocol or double-slashes
 	// the url passed in might be of form `en.support.wordpress.com`
 	// so for this function we'll append double-slashes to fake it
@@ -60,8 +61,8 @@ export function isExternal( url ) {
 	return hostname !== config( 'hostname' );
 }
 
-export function isHttps( url ) {
-	return url && startsWith( url, 'https://' );
+export function isHttps( url: URL ): boolean {
+	return !! url && startsWith( url, 'https://' );
 }
 
 const schemeRegex = /^\w+:\/\//;
@@ -69,10 +70,13 @@ const urlWithoutHttpRegex = /^https?:\/\//;
 
 /**
  * Returns the supplied URL without the initial http(s).
- * @param  {String}  url The URL to remove http(s) from
- * @return {?String}     URL without the initial http(s)
+ * @param  url The URL to remove http(s) from
+ * @return     URL without the initial http(s)
  */
-export function withoutHttp( url ) {
+export function withoutHttp( url: '' ): '';
+export function withoutHttp( url: Falsey ): null;
+export function withoutHttp( url: URL ): URL;
+export function withoutHttp( url: URL | Falsey ): URL | null {
 	if ( url === '' ) {
 		return '';
 	}
@@ -84,14 +88,14 @@ export function withoutHttp( url ) {
 	return url.replace( urlWithoutHttpRegex, '' );
 }
 
-export function addSchemeIfMissing( url, scheme ) {
+export function addSchemeIfMissing( url: URL, scheme: Scheme ): URL {
 	if ( false === schemeRegex.test( url ) ) {
 		return scheme + '://' + url;
 	}
 	return url;
 }
 
-export function setUrlScheme( url, scheme ) {
+export function setUrlScheme( url: URL, scheme: Scheme ) {
 	const schemeWithSlashes = scheme + '://';
 	if ( startsWith( url, schemeWithSlashes ) ) {
 		return url;
@@ -105,7 +109,9 @@ export function setUrlScheme( url, scheme ) {
 	return url.replace( schemeRegex, schemeWithSlashes );
 }
 
-export function urlToSlug( url ) {
+export function urlToSlug( url: Falsey ): null;
+export function urlToSlug( url: URL ): SiteSlug;
+export function urlToSlug( url: URL | Falsey ): SiteSlug | null {
 	if ( ! url ) {
 		return null;
 	}
@@ -118,10 +124,10 @@ export function urlToSlug( url ) {
  * "http://blog.wordpress.com" will be converted into "blog.wordpress.com".
  * "https://www.wordpress.com/blog/" will be converted into "www.wordpress.com/blog".
  *
- * @param  {String} urlToConvert The URL to convert
- * @return {String} The URL's domain and path
+ * @param  urlToConvert The URL to convert
+ * @return              The URL's domain and path
  */
-export function urlToDomainAndPath( urlToConvert ) {
+export function urlToDomainAndPath( urlToConvert: URL ): URL {
 	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
 }
 
@@ -131,10 +137,10 @@ export function urlToDomainAndPath( urlToConvert ) {
  *  - does it have a .suffix?
  *  - does it have at least two parts separated by a dot?
  *
- * @param  {String}  query The string to check
- * @return {Boolean} Does it appear to be a URL?
+ * @param  query The string to check
+ * @return       Does it appear to be a URL?
  */
-export function resemblesUrl( query ) {
+export function resemblesUrl( query: string ): boolean {
 	if ( ! query ) {
 		return false;
 	}
@@ -171,7 +177,9 @@ export function resemblesUrl( query ) {
  * @param  {Array|String}  paramsToOmit The collection of params or single param to reject
  * @return {String} Url less the omitted params.
  */
-export function omitUrlParams( url, paramsToOmit ) {
+export function omitUrlParams( url: Falsey, paramsToOmit: string | string[] ): null;
+export function omitUrlParams( url: URL, paramsToOmit: string | string[] ): URL;
+export function omitUrlParams( url: URL | Falsey, paramsToOmit: string | string[] ): URL | null {
 	if ( ! url ) {
 		return null;
 	}
@@ -186,10 +194,10 @@ export function omitUrlParams( url, paramsToOmit ) {
 /**
  * Wrap decodeURI in a try / catch block to prevent `URIError` on invalid input
  * Passing a non-string value will return an empty string.
- * @param  {String} encodedURI URI to attempt to decode
- * @return {String}            Decoded URI (or passed in value on error)
+ * @param  encodedURI URI to attempt to decode
+ * @return            Decoded URI (or passed in value on error)
  */
-export function decodeURIIfValid( encodedURI ) {
+export function decodeURIIfValid( encodedURI: string ): string {
 	if ( ! ( isString( encodedURI ) || has( encodedURI, 'toString' ) ) ) {
 		return '';
 	}
@@ -203,10 +211,10 @@ export function decodeURIIfValid( encodedURI ) {
 /**
  * Wrap decodeURIComponent in a try / catch block to prevent `URIError` on invalid input
  * Passing a non-string value will return an empty string.
- * @param  {String} encodedURIComponent URI component to attempt to decode
- * @return {String}            Decoded URI component (or passed in value on error)
+ * @param  encodedURIComponent URI component to attempt to decode
+ * @return                     Decoded URI component (or passed in value on error)
  */
-export function decodeURIComponentIfValid( encodedURIComponent ) {
+export function decodeURIComponentIfValid( encodedURIComponent: string ): string {
 	if ( ! ( isString( encodedURIComponent ) || has( encodedURIComponent, 'toString' ) ) ) {
 		return '';
 	}
