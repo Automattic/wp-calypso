@@ -4,6 +4,7 @@
 import page from 'page';
 import urlModule from 'url';
 import { pickBy } from 'lodash';
+import { Primitive } from 'utility-types';
 
 // @TODO: change once we stop compiling to CommonJS
 // export * from './path';
@@ -17,10 +18,13 @@ export {
 	sectionify,
 } from './path';
 
-const appendQueryString = ( basepath, querystring ) =>
+const appendQueryString = ( basepath: string, querystring: string ): string =>
 	basepath + ( querystring ? '?' + querystring : '' );
 
-export const addQueryArgs = ( args, url ) => {
+interface QueryArgs {
+	[key: string]: Primitive;
+}
+export const addQueryArgs = ( args: QueryArgs, url: URL ): URL => {
 	if ( 'object' !== typeof args ) {
 		throw new Error( 'addQueryArgs expects the first argument to be an object.' );
 	}
@@ -48,11 +52,12 @@ export const addQueryArgs = ( args, url ) => {
 	return urlModule.format( updatedUrlObject );
 };
 
-export const trailingslashit = path => path.replace( /(\/)?$/, '/' );
+export const trailingslashit = ( path: string ): string => path.replace( /(\/)?$/, '/' );
 
-export const untrailingslashit = path => ( path === '/' ? path : path.replace( /\/$/, '' ) );
+export const untrailingslashit = ( path: string ): string =>
+	path === '/' ? path : path.replace( /\/$/, '' );
 
-export const normalize = ( context, next ) => {
+export const normalize: PageJS.Callback = ( context, next ) => {
 	const normalizedPathName = untrailingslashit( context.pathname );
 	if ( normalizedPathName !== context.pathname ) {
 		page.redirect( appendQueryString( normalizedPathName, context.querystring ) );
@@ -61,7 +66,7 @@ export const normalize = ( context, next ) => {
 	}
 };
 
-export function redirect( path ) {
+export function redirect( path: string ): void {
 	if ( process.env.NODE_ENV === 'development' ) {
 		throw 'route.redirect() is deprecated, use page.redirect()';
 	}
