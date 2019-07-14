@@ -77,7 +77,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					<Button
 						compact
 						onClick={ handleCreateALogoClick }
-						href={ 'http://logojoy.grsm.io/looka' }
+						href="http://logojoy.grsm.io/looka"
 						target="_blank"
 					>
 						{ translate( 'Create A Logo' ) }
