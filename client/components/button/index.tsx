@@ -19,24 +19,20 @@ interface OwnProps {
 	borderless?: boolean;
 }
 
-type AnchorProps = { href: string } & DetailedHTMLProps<
-	AnchorHTMLAttributes< HTMLAnchorElement >,
-	HTMLAnchorElement
+type AnchorProps = { href: string } & Exclude<
+	DetailedHTMLProps< AnchorHTMLAttributes< HTMLAnchorElement >, HTMLAnchorElement >,
+	'type'
 >;
 
-type ButtonProps = DetailedHTMLProps<
-	ButtonHTMLAttributes< HTMLButtonElement >,
-	HTMLButtonElement
+type ButtonProps = Exclude<
+	DetailedHTMLProps< ButtonHTMLAttributes< HTMLButtonElement >, HTMLButtonElement >,
+	'href'
 >;
 
-type Props = Exclude< OwnProps & AnchorProps, 'type' > | Exclude< OwnProps & ButtonProps, 'href' >;
-
-function isButton( props: ButtonProps | AnchorProps ): props is ButtonProps {
-	return ! ( props as AnchorProps ).href;
-}
+type Props = ( OwnProps & AnchorProps ) | ( OwnProps & ButtonProps );
 
 function isAnchor( props: ButtonProps | AnchorProps ): props is AnchorProps {
-	return !! isButton( props );
+	return !! ( props as AnchorProps ).href;
 }
 
 const Button: FunctionComponent< Props > = ( {
@@ -58,11 +54,7 @@ const Button: FunctionComponent< Props > = ( {
 		'is-borderless': borderless,
 	} );
 
-	if ( isButton( props ) ) {
-		return (
-			<button { ...props } type={ props.type ? props.type : 'button' } className={ buttonClass } />
-		);
-	} else if ( isAnchor( props ) ) {
+	if ( isAnchor( props ) ) {
 		// block referrers when external link
 		const rel = props.target
 			? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
@@ -70,6 +62,14 @@ const Button: FunctionComponent< Props > = ( {
 
 		return <a { ...props } rel={ rel } className={ buttonClass } />;
 	}
+
+	return (
+		<button
+			{ ...props as ButtonProps }
+			type={ props.type ? ( props as ButtonProps ).type : 'button' }
+			className={ buttonClass }
+		/>
+	);
 };
 
 export default Button;
