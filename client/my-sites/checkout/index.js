@@ -158,4 +158,12 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	page(
+		'/checkout/:site/offer-plan-upgrade/:upgradeItem/pending/:receiptId?',
+		siteSelection,
+		checkoutPending,
+		makeLayout,
+		clientRender
+	);
 }
