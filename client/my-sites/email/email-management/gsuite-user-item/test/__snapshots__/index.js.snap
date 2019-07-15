@@ -27,13 +27,9 @@ exports[`GSuiteUserItem renders user item with manage correctly 1`] = `
   <a
     className="external-link gsuite-user-item has-icon"
     href="https://accounts.google.com/AccountChooser?Email=foo@bar.buzz&service=CPanel&continue=https://admin.google.com/a/bar.buzz"
-    locale="en"
-    moment={[Function]}
-    numberFormat={[Function]}
     onClick={[Function]}
     rel="external noopener noreferrer"
     target="_blank"
-    translate={[Function]}
   >
     Manage
     <svg

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, omit } from 'lodash';
 import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Style dependencies
@@ -31,7 +31,6 @@ class ExternalLink extends Component {
 		target: PropTypes.string,
 		showIconFirst: PropTypes.bool,
 		iconClassName: PropTypes.string,
-		translate: PropTypes.func,
 	};
 
 	render() {
@@ -79,11 +78,11 @@ class ExternalLink extends Component {
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<span className="screen-reader-text">
 						{ /* translators: accessibility text */
-						this.props.translate( '(opens in a new tab)' ) }
+						translate( '(opens in a new tab)' ) }
 					</span>
 				) }
 			</a>
 		);
 	}
 }
-export default localize( ExternalLink );
+export default ExternalLink;
