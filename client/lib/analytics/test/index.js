@@ -12,10 +12,12 @@ import url from 'url';
  * Internal dependencies
  */
 import analytics from '../';
+import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
 
 jest.mock( 'config', () => require( './mocks/config' ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
+	recordAliasInFloodlight: jest.fn(),
 } ) );
 jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
 
@@ -94,4 +96,38 @@ describe( 'Analytics', () => {
 			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 	} );
+
+	describe( 'identifyUser', () => {
+		let userMock;
+		beforeEach( () => {
+			analytics.tracks.anonymousUserId = jest.fn( () => true );
+			userMock = {
+				get: jest.fn( () => ( {
+					ID: '007',
+					username: 'james',
+				} ) ),
+				initialized: true,
+			};
+			window._tkq.push = jest.fn();
+		} );
+		test( 'should not call window._tkq.push or recordAliasInFloodlight when there is no user info', () => {
+			analytics.identifyUser();
+			expect( window._tkq.push ).not.toBeCalled();
+			expect( recordAliasInFloodlight ).not.toBeCalled();
+		} );
+
+		test( 'should call window._tkq.push and recordAliasInFloodlight when user object exists', () => {
+			analytics.identifyUser( userMock );
+			expect( recordAliasInFloodlight ).toBeCalled();
+			expect( userMock.get ).toBeCalled();
+			expect( window._tkq.push ).toBeCalledWith( [ 'identifyUser', '007', 'james' ] );
+		} );
+
+		test( 'should call window._tkq.push and recordAliasInFloodlight when user info is passed as arguments', () => {
+			analytics.identifyUser( null, '123', 'oneTwoThree' );
+			expect( recordAliasInFloodlight ).toBeCalled();
+			expect( window._tkq.push ).toBeCalledWith( [ 'identifyUser', '123', 'oneTwoThree' ] );
+		} );
+	} );
+
 } );
