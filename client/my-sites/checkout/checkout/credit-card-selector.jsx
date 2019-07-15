@@ -33,7 +33,7 @@ class CreditCardSelector extends React.Component {
 
 	storedCards = () => {
 		return this.props.cards.map( card => {
-			const onSelect = this.handleClickedSection.bind( this, card.stored_details_id );
+			const onSelect = () => this.handleClickedSection( card.stored_details_id );
 			return (
 				<CreditCard
 					key={ card.stored_details_id }
@@ -61,7 +61,7 @@ class CreditCardSelector extends React.Component {
 	}
 
 	newCardForm = () => {
-		const onSelect = this.handleClickedSection.bind( this, 'new-card' );
+		const onSelect = () => this.handleClickedSection( 'new-card' );
 		const classes = classNames( 'checkout__payment-box-section', {
 			'no-stored-cards': this.props.cards.length === 0,
 		} );
