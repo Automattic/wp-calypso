@@ -93,10 +93,18 @@ export function generateFlows( {
 		},
 
 		website: {
-			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with website themes',
-			lastModified: '2017-09-01',
+			steps: [
+				'user',
+				'site-type-website',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getChecklistDestination,
+			description: 'Signup flow for a website, hiding blog site type',
+			lastModified: '2019-07-15',
 		},
 
 		'rebrand-cities': {

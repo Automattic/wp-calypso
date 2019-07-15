@@ -51,6 +51,7 @@ class SiteType extends Component {
 			stepName,
 			translate,
 			hasInitializedSitesBackUrl,
+			hideBlogSiteType,
 		} = this.props;
 
 		const headerText = translate( 'What kind of site are you building?' );
@@ -68,7 +69,13 @@ class SiteType extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
-				stepContent={ <SiteTypeForm submitForm={ this.submitStep } siteType={ siteType } /> }
+				stepContent={
+					<SiteTypeForm
+						submitForm={ this.submitStep }
+						siteType={ siteType }
+						hideBlogSiteType={ hideBlogSiteType }
+					/>
+				}
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
 				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }

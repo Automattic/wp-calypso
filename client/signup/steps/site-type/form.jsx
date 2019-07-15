@@ -41,26 +41,29 @@ class SiteTypeForm extends Component {
 		return (
 			<Fragment>
 				<Card className="site-type__wrapper">
-					{ getAllSiteTypes().map( siteTypeProperties => (
-						<Card
-							className="site-type__option"
-							key={ siteTypeProperties.id }
-							tagName="button"
-							displayAsLink
-							data-e2e-title={ siteTypeProperties.slug }
-							onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
-						>
-							<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
-							<span className="site-type__option-description">
-								{ siteTypeProperties.description }
-							</span>
-							{ ! this.props.isJetpack && siteTypeProperties.purchaseRequired && (
-								<Badge className="site-type__option-badge" type="info">
-									{ this.props.translate( 'Purchase required' ) }
-								</Badge>
-							) }
-						</Card>
-					) ) }
+					{ getAllSiteTypes().map(
+						siteTypeProperties =>
+							! ( this.props.hideBlogSiteType && siteTypeProperties.slug === 'blog' ) && (
+								<Card
+									className="site-type__option"
+									key={ siteTypeProperties.id }
+									tagName="button"
+									displayAsLink
+									data-e2e-title={ siteTypeProperties.slug }
+									onClick={ this.handleSubmit.bind( this, siteTypeProperties.slug ) }
+								>
+									<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+									<span className="site-type__option-description">
+										{ siteTypeProperties.description }
+									</span>
+									{ ! this.props.isJetpack && siteTypeProperties.purchaseRequired && (
+										<Badge className="site-type__option-badge" type="info">
+											{ this.props.translate( 'Purchase required' ) }
+										</Badge>
+									) }
+								</Card>
+							)
+					) }
 				</Card>
 			</Fragment>
 		);

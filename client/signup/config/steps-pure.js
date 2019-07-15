@@ -437,6 +437,15 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
+		'site-type-website': {
+			stepName: 'site-type-website',
+			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
+			props: {
+				hideBlogSiteType: true,
+			},
+		},
+
 		'site-topic': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
