@@ -31,6 +31,7 @@ class ExternalLink extends Component {
 		target: PropTypes.string,
 		showIconFirst: PropTypes.bool,
 		iconClassName: PropTypes.string,
+		translate: PropTypes.func,
 	};
 
 	render() {
