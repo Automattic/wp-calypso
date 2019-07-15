@@ -91,13 +91,10 @@ class CreditCardSelector extends React.Component {
 	};
 
 	savePayment = section => {
-		let newPayment;
 		if ( 'new-card' === section ) {
-			newPayment = newCardPayment( this.props.transaction.newCardRawDetails );
-		} else {
-			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
+			return setPayment( newCardPayment( this.props.transaction.newCardRawDetails ) );
 		}
-		setPayment( newPayment );
+		setPayment( storedCardPayment( this.getStoredCardDetails( section ) ) );
 	};
 
 	getStoredCardDetails = section => {
