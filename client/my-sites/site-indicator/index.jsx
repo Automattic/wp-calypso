@@ -256,7 +256,7 @@ class SiteIndicator extends Component {
 						borderless
 						compact
 						scary
-						href="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
+						href="https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/"
 						onClick={ this.props.trackSiteDisconnect }
 						target="_blank"
 					>
