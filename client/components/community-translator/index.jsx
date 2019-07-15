@@ -6,6 +6,8 @@ import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -14,6 +16,10 @@ import { languages } from 'languages';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import { loadUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
+import { getCurrentUserName, getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -47,6 +53,14 @@ class CommunityTranslator extends Component {
 		userSettings.on( 'change', this.refresh );
 	}
 
+	shouldComponentUpdate( nextProps ) {
+		// TODO
+	}
+
+	componentDidUpdate( prevProps ) {
+		this.refresh();
+	}
+
 	componentWillUnmount() {
 		i18n.off( 'change', this.refresh );
 		user.removeListener( 'change', this.refresh );
@@ -60,8 +74,11 @@ class CommunityTranslator extends Component {
 		// be a legitimately translatable string)
 		// See https://messageformat.github.io/Jed/
 		const { localeSlug, localeVariant } = this.languageJson[ '' ];
+		const { username } = this.props;
+
 		this.localeCode = localeVariant || localeSlug;
 		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
+		loadUndeployedTranslations( { username, locale: this.localeCode, translationStatus: 'waiting' } )
 	}
 
 	refresh = () => {
@@ -165,4 +182,10 @@ class CommunityTranslator extends Component {
 	}
 }
 
-export default localize( CommunityTranslator );
+const mapState = state => ( {
+	localeSlug: getCurrentLocaleSlug( state ),
+	localeVariant: getCurrentLocaleVariant( state ),
+	username: getCurrentUserName( state ),
+} );
+
+export default connect( mapState )( localize( CommunityTranslator ) );

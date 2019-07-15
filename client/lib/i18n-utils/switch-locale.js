@@ -158,19 +158,41 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		locale = currentLocaleSlug,
 	} = parsedURL.query;
 
-	if ( ! username ) {
+	const translationParams = {
+		username,
+		project,
+		translationSet,
+		translationStatus,
+		locale,
+	};
+
+	return loadUndeployedTranslations( translationParams );
+}
+
+export function loadUndeployedTranslations( {
+	username,
+	locale,
+	project = 'wpcom',
+	translationSet = 'default',
+	translationStatus = 'current',
+} ) {
+	if ( ! username || ! locale ) {
+		username || debug( 'unable to load undeployed translations, username missing.' );
+		locale || debug( 'unable to load undeployed translations, username missing.' );
 		return;
 	}
 
-	if ( ! includes( [ 'current', 'waiting' ], translationStatus ) ) {
+	if ( ! includes( [ 'current', 'waiting', 'current-or-waiting' ], translationStatus ) ) {
+		debug( 'unrecognized translationStatus', translationStatus );
 		return;
 	}
 
 	if ( 'waiting' === translationStatus ) {
 		// TODO only allow loading your own waiting translations. Disallow loading them for now.
-		return;
+		// return;
 	}
 
+	debug( `loading undeployed translations for ${ username } from ${ project }/${ translationSet }` );
 	const pathname = [
 		'api',
 		'projects',
