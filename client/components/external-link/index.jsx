@@ -44,7 +44,6 @@ class ExternalLink extends Component {
 				'has-icon': !! this.props.icon,
 			}
 		);
-
 		const props = assign(
 			{},
 			omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
@@ -53,8 +52,6 @@ class ExternalLink extends Component {
 				rel: 'external',
 			}
 		);
-
-		const { translate } = this.props;
 
 		if ( this.props.icon ) {
 			props.target = '_blank';
@@ -81,7 +78,7 @@ class ExternalLink extends Component {
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<span className="screen-reader-text">
 						{ /* translators: accessibility text */
-						translate( '(opens in a new tab)' ) }
+						this.props.translate( '(opens in a new tab)' ) }
 					</span>
 				) }
 			</a>
