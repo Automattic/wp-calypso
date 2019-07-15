@@ -69,7 +69,7 @@ import {
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-checkout-to-checklist';
+import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { getPlan, findPlansKeys } from 'lib/plans';
@@ -409,7 +409,7 @@ export class Checkout extends React.Component {
 		} else {
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
-		
+
 		const destinationFromCookie = retrieveSignupDestination();
 		const signupDestination = destinationFromCookie
 			? destinationFromCookie
@@ -442,7 +442,7 @@ export class Checkout extends React.Component {
 		if ( ':receiptId' === pendingOrReceiptId && isEmpty( getAllCartItems( cart ) ) ) {
 			return `/stats/day/${ selectedSiteSlug }`;
 		}
-		
+
 		if ( this.props.isJetpackNotAtomic ) {
 			return signupDestination;
 		}
