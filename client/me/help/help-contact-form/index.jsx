@@ -118,7 +118,7 @@ export class HelpContactForm extends React.PureComponent {
 		if ( npsSurveyFeedback ) {
 			this.state.message =
 				'\n' +
-				translate( 'The below comment is copied from your survey response:' ) +
+				translate( 'The comment below is copied from your survey response:' ) +
 				`\n--------------------\n${ npsSurveyFeedback }`;
 		}
 	}
