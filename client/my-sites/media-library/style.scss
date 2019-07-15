@@ -252,6 +252,11 @@
 	position: absolute;
 	top: 50px;
 	bottom: 72px;
+	
+	.empty-content__line {
+		margin-right: 20px;
+		margin-left: 20px;
+	}
 }
 
 .empty-content .media-library__videopress-nudge-regular.card.upgrade-nudge {
