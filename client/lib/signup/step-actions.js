@@ -257,9 +257,6 @@ export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 }
 
 export function fetchUser( userInstance = user ) {
-	userInstance.fetching = false;
-	userInstance.fetch();
-
 	// @TODO: When user fetching is reduxified, let's get rid of this hack.
 	return new Promise( resolve => {
 		const userFetched = setInterval( () => {
@@ -540,6 +537,8 @@ export function createAccount(
 
 				// Fire after a new user registers.
 				analytics.recordRegistration();
+
+				// Try to fetch the user so we can track the newly-created account
 				fetchUser( user ).then( () => {
 					analytics.setUser( user );
 					analytics.identifyUser();
