@@ -45,7 +45,7 @@ export const SeoPreviewNudge = ( { canCurrentUserUpgrade, translate, site, isJet
 					} )
 				}
 				title={ canCurrentUserUpgrade ? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' ) 
-						: translate ( "Contact your site's administrator to upgrade to a Business plan and unlock the power of our SEO tools!" ) 
+						: translate ( "Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan." ) 
 					  }
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"
