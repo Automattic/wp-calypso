@@ -256,6 +256,23 @@ export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	] ).then( onComplete );
 }
 
+export function fetchUser( userInstance = user ) {
+	userInstance.fetching = false;
+	userInstance.fetch();
+
+	// @TODO: When user fetching is reduxified, let's get rid of this hack.
+	return new Promise( resolve => {
+		const userFetched = setInterval( () => {
+			const loadedUser = userInstance.get();
+			if ( loadedUser ) {
+				clearInterval( userFetched );
+				resolve( loadedUser );
+				return;
+			}
+		}, 333 );
+	} );
+}
+
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
@@ -523,6 +540,10 @@ export function createAccount(
 
 				// Fire after a new user registers.
 				analytics.recordRegistration();
+				fetchUser( user ).then( () => {
+					analytics.setUser( user );
+					analytics.identifyUser();
+				} );
 
 				const username =
 					( response && response.signup_sandbox_username ) ||

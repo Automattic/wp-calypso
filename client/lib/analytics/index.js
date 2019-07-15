@@ -781,17 +781,16 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function( user = _user, newUserId = '', newUserName = '' ) {
+	identifyUser: function( user = _user ) {
 		const anonymousUserId = this.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
-		if ( ( user && user.initialized ) || ( newUserId && newUserName ) ) {
+		if ( user && user.initialized ) {
 			if ( anonymousUserId ) {
 				recordAliasInFloodlight();
 			}
 
-			const userId = newUserId || user.get().ID;
-			const userName = newUserName || user.get().username;
+			const { ID: userId, username: userName } = user.get();
 
 			window._tkq.push( [ 'identifyUser', userId, userName ] );
 		}

@@ -122,12 +122,5 @@ describe( 'Analytics', () => {
 			expect( userMock.get ).toBeCalled();
 			expect( window._tkq.push ).toBeCalledWith( [ 'identifyUser', '007', 'james' ] );
 		} );
-
-		test( 'should call window._tkq.push and recordAliasInFloodlight when user info is passed as arguments', () => {
-			analytics.identifyUser( null, '123', 'oneTwoThree' );
-			expect( recordAliasInFloodlight ).toBeCalled();
-			expect( window._tkq.push ).toBeCalledWith( [ 'identifyUser', '123', 'oneTwoThree' ] );
-		} );
 	} );
-
 } );
