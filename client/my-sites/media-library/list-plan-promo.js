@@ -57,7 +57,8 @@ class MediaLibraryListPlanPromo extends React.Component {
 						textOnly: true,
 						context: 'Media upgrade promo',
 					} )
-					: this.props.translate( "If you'd like to upload video files, contact your site administrator and ask them to upgrade their plan." ),
+					: this.props.translate( "Uploading video requires a paid plan." )
+					+ " " + this.props.translate( 'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.' ),
 					2
 				);
 
@@ -68,7 +69,8 @@ class MediaLibraryListPlanPromo extends React.Component {
 						textOnly: true,
 						context: 'Media upgrade promo',
 					} )
-					: this.props.translate( "If you'd like to upload audio files, contact your site administrator and ask them to upgrade their plan." ),
+					: this.props.translate( "Uploading audio requires a paid plan." )
+					+ " " + this.props.translate( 'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.' ),
 					2
 				);
 
