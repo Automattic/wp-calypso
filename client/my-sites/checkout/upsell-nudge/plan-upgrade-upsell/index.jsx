@@ -58,6 +58,8 @@ export class PlanUpgradeUpsell extends PureComponent {
 	body() {
 		const { translate, planRawPrice, planDiscountedRawPrice, currencyCode } = this.props;
 		const bundleValue = planRawPrice * 77;
+		const premiumThemePriceLow = planDiscountedRawPrice * 1.37;
+		const premiumThemePriceHigh = planDiscountedRawPrice * 2.75;
 		return (
 			<>
 				<h2 className="plan-upgrade-upsell__header">
@@ -66,7 +68,9 @@ export class PlanUpgradeUpsell extends PureComponent {
 						{
 							args: {
 								bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
-								discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode ),
+								discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+									precision: 0,
+								} ),
 							},
 							components: { u: <u />, br: <br /> },
 						}
@@ -123,8 +127,16 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'Normally, each of these WordPress themes {{b}}cost between $49 and $100 or more{{/b}}.',
+								'Normally, each of these WordPress themes {{b}}cost between %(premiumThemePriceLow)s and %(premiumThemePriceHigh)s or more{{/b}}.',
 								{
+									args: {
+										premiumThemePriceLow: formatCurrency( premiumThemePriceLow, currencyCode, {
+											precision: 0,
+										} ),
+										premiumThemePriceHigh: formatCurrency( premiumThemePriceHigh, currencyCode, {
+											precision: 0,
+										} ),
+									},
 									components: { b: <b /> },
 								}
 							) }
