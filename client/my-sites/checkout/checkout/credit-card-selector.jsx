@@ -18,11 +18,7 @@ import { setPayment } from 'lib/upgrades/actions';
 class CreditCardSelector extends React.Component {
 	constructor( props ) {
 		super( props );
-		if ( props.initialCard ) {
-			this.state = { section: props.initialCard.stored_details_id };
-		} else {
-			this.state = { section: 'new-card' };
-		}
+		this.state = { section: props.initialCard ? props.initialCard.stored_details_id : 'new-card' };
 	}
 
 	render() {
