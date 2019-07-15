@@ -37,7 +37,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function() {
+describe.skip( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Public Pages: @parallel', function() {
