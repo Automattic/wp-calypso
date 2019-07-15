@@ -43,6 +43,6 @@
 		"@wordpress/plugins": "^2.2.0",
 		"@wordpress/url": "^2.5.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.11"
+		"lodash": "^4.17.14"
 	}
 }
