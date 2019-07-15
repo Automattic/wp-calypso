@@ -45,7 +45,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function() {
+describe.skip( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Public Posts: Preview and Publish a Public Post @parallel', function() {
