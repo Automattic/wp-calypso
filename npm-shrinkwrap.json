@@ -20,8 +20,6 @@
 			"version": "file:packages/calypso-build",
 			"dev": true,
 			"requires": {
-				"@automattic/calypso-color-schemes": "file:packages/calypso-color-schemes",
-				"@automattic/wordpress-external-dependencies-plugin": "file:packages/wordpress-external-dependencies-plugin",
 				"@babel/core": "7.4.0",
 				"@babel/plugin-proposal-class-properties": "7.4.0",
 				"@babel/plugin-syntax-dynamic-import": "7.2.0",
@@ -82,10 +80,7 @@
 			}
 		},
 		"@automattic/format-currency": {
-			"version": "file:packages/format-currency",
-			"requires": {
-				"i18n-calypso": "file:packages/i18n-calypso"
-			}
+			"version": "file:packages/format-currency"
 		},
 		"@automattic/load-script": {
 			"version": "file:packages/load-script",
@@ -122,14 +117,6 @@
 		"@automattic/webpack-inline-constant-exports-plugin": {
 			"version": "file:packages/webpack-inline-constant-exports-plugin",
 			"dev": true
-		},
-		"@automattic/wordpress-external-dependencies-plugin": {
-			"version": "file:packages/wordpress-external-dependencies-plugin",
-			"dev": true,
-			"requires": {
-				"webpack": "^4.29.6",
-				"webpack-sources": "^1.3.0"
-			}
 		},
 		"@babel/cli": {
 			"version": "7.4.4",
@@ -14021,9 +14008,9 @@
 			}
 		},
 		"lodash": {
-			"version": "4.17.11",
-			"resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.11.tgz",
-			"integrity": "sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg=="
+			"version": "4.17.13",
+			"resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.13.tgz",
+			"integrity": "sha512-vm3/XWXfWtRua0FkUyEHBZy8kCPjErNBT9fJx8Zvs+U6zjqPbTUOpkaoum3O5uiA8sm+yNMHXfYkTUHFoMxFNA=="
 		},
 		"lodash-es": {
 			"version": "4.17.11",
