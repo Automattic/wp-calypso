@@ -13,6 +13,7 @@ import classNames from 'classnames';
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import Button from 'components/button';
 
 /**
  * Style dependencies
@@ -56,6 +57,12 @@ class StepWrapper extends Component {
 				allowBackFirstStep={ this.props.allowBackFirstStep }
 			/>
 		);
+	}
+
+	renderImportOption() {
+		const { translate } = this.props;
+
+		return <Button borderless>{ translate( 'Already have a website?' ) }</Button>;
 	}
 
 	renderSkip() {
@@ -145,6 +152,10 @@ class StepWrapper extends Component {
 							{ this.renderSkip() }
 						</div>
 					) }
+
+					<div className="step-wrapper__buttons step-wrapper__import">
+						{ this.renderImportOption() }
+					</div>
 				</div>
 			</>
 		);

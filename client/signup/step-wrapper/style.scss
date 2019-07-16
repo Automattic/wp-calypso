@@ -17,6 +17,22 @@
 	color: var( --color-white );
 }
 
+.step-wrapper__import {
+	margin-top: 20px;
+
+	.button.is-borderless {
+		padding: 0;
+		color: var( --color-white );
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: underline;
+
+		svg {
+			fill: var( --color-white );
+		}
+	}
+}
+
 .is-large-skip-layout .step-wrapper__buttons {
 	margin-bottom: 34px;
 
