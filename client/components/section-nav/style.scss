@@ -36,6 +36,7 @@
 
 .section-nav__mobile-header {
 	display: flex;
+	width: 100%;
 	padding: 15px;
 	font-size: 14px;
 	line-height: 16px;
@@ -47,7 +48,7 @@
 
 	.gridicons-chevron-down {
 		fill: var( --color-neutral-500 );
-		flex-shrink: 0;
+		flex: none;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
@@ -71,12 +72,12 @@
 }
 
 .section-nav__mobile-header-text {
-	width: 0;
 	margin-right: 4px;
-	flex: 1 0 auto;
+	flex: auto;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	text-align: left;
 
 	small {
 		margin-left: 5px;
@@ -84,11 +85,6 @@
 		color: var( --color-neutral-light );
 		font-weight: 600;
 		text-transform: uppercase;
-	}
-
-	.section-nav.has-pinned-items & {
-		width: auto;
-		flex: 0 1 auto;
 	}
 }
 

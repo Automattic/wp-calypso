@@ -52,18 +52,18 @@ class SectionNav extends Component {
 		}
 	}
 
-	renderDropdown = () => {
+	renderDropdown() {
 		if ( ! this.props.allowDropdown ) {
-			return <div />;
+			return null;
 		}
 
 		return (
-			<div className="section-nav__mobile-header" onClick={ this.toggleMobileOpenState }>
+			<button className="section-nav__mobile-header" onClick={ this.toggleMobileOpenState }>
 				<span className="section-nav__mobile-header-text">{ this.props.selectedText }</span>
 				<Gridicon icon="chevron-down" size={ 18 } />
-			</div>
+			</button>
 		);
-	};
+	}
 
 	render() {
 		const children = this.getChildren();
