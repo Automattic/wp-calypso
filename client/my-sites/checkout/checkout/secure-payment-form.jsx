@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, defer, pick, isEqual } from 'lodash';
+import { get, defer, pick, isEqual, indexOf } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -616,7 +616,8 @@ export class SecurePaymentForm extends Component {
 		const visiblePaymentBox = this.getVisiblePaymentBox( this.props ),
 			moneyBackGuarantee =
 				! hasOnlyDomainProducts( this.props.cart ) &&
-				'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
+				'variantShowGuarantee' === abtest( 'checkoutGuarantee' ) &&
+				indexOf( [ 'credits', 'free-trial', 'free-cart' ], visiblePaymentBox ) === -1;
 
 		this.props.showGuaranteeSeal( moneyBackGuarantee );
 		if ( visiblePaymentBox === null ) {
