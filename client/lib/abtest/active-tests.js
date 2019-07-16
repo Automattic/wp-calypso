@@ -138,12 +138,10 @@ export default {
 	singleJetpackPlan: {
 		datestamp: '20190715',
 		variations: {
-			premiumOnlyMonthly: 25,
-			premiumOnlyYearly: 25,
-			allPlansMonthly: 25,
-			allPlansYearly: 25,
+			premiumOnly: 20,
+			allPlans: 80,
 		},
-		defaultVariation: 'allPlansYearly',
+		defaultVariation: 'allPlans',
 		allowExistingUsers: true,
 	},
 };

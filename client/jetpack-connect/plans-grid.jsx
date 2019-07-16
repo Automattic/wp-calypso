@@ -43,7 +43,7 @@ class JetpackPlansGrid extends Component {
 
 	renderConnectHeader() {
 		const { isLanding, translate } = this.props;
-		const isPremiumOnly = abtest( 'singleJetpackPlan' ).startsWith( 'premiumOnly' );
+		const isPremiumOnly = abtest( 'singleJetpackPlan' ) === 'premiumOnly';
 
 		// mutable headers
 		let headerText = translate( 'Explore our Jetpack plans' );
@@ -64,12 +64,8 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
-		const { interval } = this.props;
-
 		// single-plan AB test
-		const abTestVariation = abtest( 'singleJetpackPlan' );
-		const isPremiumOnly = abTestVariation.startsWith( 'premiumOnly' );
-		const defaultInterval = abTestVariation.endsWith( 'Monthly' ) ? 'monthly' : 'yearly';
+		const isPremiumOnly = abtest( 'singleJetpackPlan' ) === 'premiumOnly';
 		const planTypes = isPremiumOnly ? [ TYPE_PREMIUM ] : [];
 
 		return (
@@ -83,7 +79,7 @@ class JetpackPlansGrid extends Component {
 							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
-							intervalType={ interval ? interval : defaultInterval }
+							intervalType={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
 							planTypes={ planTypes }

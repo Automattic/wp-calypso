@@ -197,7 +197,7 @@ class Plans extends Component {
 
 		const helpButtonLabel = translate( 'Need help?' );
 
-		const isPremiumOnly = abtest( 'singleJetpackPlan' ).startsWith( 'premiumOnly' );
+		const isPremiumOnly = abtest( 'singleJetpackPlan' ) === 'premiumOnly';
 
 		return (
 			<Fragment>
