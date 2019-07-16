@@ -21,6 +21,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
 	isRenewing,
@@ -192,7 +193,7 @@ class PurchaseMeta extends Component {
 		if ( hasPaymentMethod( purchase ) ) {
 			let paymentInfo = null;
 
-			if ( purchase.payment.type === 'credits' ) {
+			if ( isPaidWithCredits( purchase ) ) {
 				return translate( 'Credits' );
 			}
 
@@ -308,6 +309,7 @@ class PurchaseMeta extends Component {
 			config.isEnabled( 'autorenewal-toggle' ) &&
 			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
 			hasPaymentMethod( purchase ) &&
+			! isPaidWithCredits( purchase ) &&
 			! isExpired( purchase )
 		) {
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;
