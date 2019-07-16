@@ -6,9 +6,10 @@
 
 import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Fragment } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -23,9 +24,12 @@ import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import QueryUserSettings from 'components/data/query-user-settings';
 
-class TranslatorLauncher extends React.PureComponent {
-	static displayName = 'TranslatorLauncher';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
+class TranslatorLauncher extends React.Component {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
@@ -92,56 +96,61 @@ class TranslatorLauncher extends React.PureComponent {
 		this.setState( { isActive: nextIsActive } );
 	};
 
-	render() {
-		let launcherClasses = 'community-translator';
-		let toggleString;
-
-		if ( this.state.isActive ) {
-			toggleString = this.props.translate( 'Disable Translator' );
-			launcherClasses += ' is-active';
-		} else {
-			toggleString = this.props.translate( 'Enable Translator' );
-		}
-
-		const infoDialogButtons = [ { action: 'cancel', label: this.props.translate( 'Ok' ) } ];
+	renderConfirmationModal() {
+		const { translate } = this.props;
+		const infoDialogButtons = [ { action: 'cancel', label: translate( 'OK' ) } ];
 
 		return (
-			<div>
+			<Dialog
+				isVisible
+				buttons={ infoDialogButtons }
+				onClose={ this.infoDialogClose }
+				additionalClassNames="community-translator__modal"
+			>
+				<h1>{ translate( 'Community Translator' ) }</h1>
+				<p>
+					{ translate(
+						'You have now enabled the translator. Right click the text to translate it.'
+					) }
+				</p>
+				<p>
+					<label htmlFor="toggle">
+						<input type="checkbox" id="toggle" onClick={ this.toggleInfoCheckbox } />
+						<span>{ translate( "Don't show again" ) }</span>
+					</label>
+				</p>
+			</Dialog>
+		);
+	}
+
+	render() {
+		const { translate } = this.props;
+		const { isEnabled, isActive, infoDialogVisible } = this.state;
+
+		const launcherClasses = classNames( 'community-translator', { 'is-active': isActive } );
+		const toggleString = isActive
+			? translate( 'Disable Translator' )
+			: translate( 'Enable Translator' );
+
+		return (
+			<Fragment>
 				<QueryUserSettings />
-				{ this.state.isEnabled && (
-					<Dialog
-						isVisible={ this.state.infoDialogVisible }
-						buttons={ infoDialogButtons }
-						onClose={ this.infoDialogClose }
-						additionalClassNames="community-translator__modal"
-					>
-						<h1>{ this.props.translate( 'Community Translator' ) }</h1>
-						<p>
-							{ this.props.translate(
-								'You have now enabled the translator. Right click the text to translate it.'
-							) }
-						</p>
-						<p>
-							<label htmlFor="toggle">
-								<input type="checkbox" id="toggle" onClick={ this.toggleInfoCheckbox } />
-								<span>{ this.props.translate( "Don't show again" ) }</span>
-							</label>
-						</p>
-					</Dialog>
+				{ isEnabled && (
+					<Fragment>
+						<div className={ launcherClasses }>
+							<button
+								className="community-translator__button"
+								onClick={ this.toggle }
+								title={ translate( 'Community Translator' ) }
+							>
+								<Gridicon icon="globe" />
+								<div className="community-translator__text">{ toggleString }</div>
+							</button>
+						</div>
+						{ infoDialogVisible && this.renderConfirmationModal() }
+					</Fragment>
 				) }
-				{ this.state.isEnabled && (
-					<div className={ launcherClasses }>
-						<button
-							className="community-translator__button"
-							onClick={ this.toggle }
-							title={ this.props.translate( 'Community Translator' ) }
-						>
-							<Gridicon icon="globe" />
-							<div className="community-translator__text">{ toggleString }</div>
-						</button>
-					</div>
-				) }
-			</div>
+			</Fragment>
 		);
 	}
 }
