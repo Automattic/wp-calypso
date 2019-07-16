@@ -3,131 +3,50 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
-import page from 'page';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import QuerySites from 'components/data/query-sites';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePlans from 'components/data/query-site-plans';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import { siteQualifiesForPageBuilder, getEditHomeUrl } from 'lib/signup/page-builder';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import {
-	getProductsList,
-	getProductDisplayCost,
-	getProductCost,
-	isProductsListFetching,
-} from 'state/products-list/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { localize } from 'i18n-calypso';
-import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
-import analytics from 'lib/analytics';
+import DocumentHead from 'components/data/document-head';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export class ConciergeQuickstartSession extends React.Component {
-	static propTypes = {
-		receiptId: PropTypes.number,
-	};
-
+export class ConciergeQuickstartSession extends PureComponent {
 	render() {
-		const {
-			selectedSiteId,
-			isLoading,
-			hasProductsList,
-			hasSitePlans,
-			translate,
-			receiptId,
-		} = this.props;
+		const { receiptId, translate } = this.props;
+
 		const title = translate( 'Checkout ‹ Quick Start Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
 		return (
-			<Main className="concierge-quickstart-session">
+			<>
 				<PageViewTracker
 					path="/checkout/:site/offer-quickstart-session/:receipt_id"
 					title={ title }
 				/>
 				<DocumentHead title={ title } />
-				<QuerySites siteId={ selectedSiteId } />
-				{ ! hasProductsList && <QueryProductsList /> }
-				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
-
-				{ isLoading ? (
-					this.renderPlaceholders()
-				) : (
-					<>
-						{ receiptId ? (
-							<CompactCard className="concierge-quickstart-session__card-header">
-								{ this.header() }
-							</CompactCard>
-						) : (
-							''
-						) }
-						<CompactCard className="concierge-quickstart-session__card-body">
-							{ this.body() }
-						</CompactCard>
-						<CompactCard className="concierge-quickstart-session__card-footer">
-							{ this.footer() }
-						</CompactCard>
-					</>
-				) }
-			</Main>
-		);
-	}
-
-	renderPlaceholders() {
-		const { receiptId } = this.props;
-		return (
-			<>
 				{ receiptId ? (
-					<CompactCard>
-						<div className="concierge-quickstart-session__header">
-							<div className="concierge-quickstart-session__placeholders">
-								<div className="concierge-quickstart-session__placeholder-row is-placeholder" />
-							</div>
-						</div>
+					<CompactCard className="concierge-quickstart-session__card-header">
+						{ this.header() }
 					</CompactCard>
 				) : (
 					''
 				) }
-				<CompactCard>
-					<div className="concierge-quickstart-session__placeholders">
-						<>
-							<div className="concierge-quickstart-session__placeholder-row is-placeholder" />
-							<div className="concierge-quickstart-session__placeholder-row is-placeholder" />
-							<div className="concierge-quickstart-session__placeholder-row is-placeholder" />
-							<div className="concierge-quickstart-session__placeholder-row is-placeholder" />
-						</>
-					</div>
+				<CompactCard className="concierge-quickstart-session__card-body">
+					{ this.body() }
 				</CompactCard>
-				<CompactCard>
-					<div className="concierge-quickstart-session__footer">
-						<div className="concierge-quickstart-session__placeholders">
-							<div className="concierge-quickstart-session__placeholder-button-container">
-								<div className="concierge-quickstart-session__placeholder-button is-placeholder" />
-								<div className="concierge-quickstart-session__placeholder-button is-placeholder" />
-							</div>
-						</div>
-					</div>
+				<CompactCard className="concierge-quickstart-session__card-footer">
+					{ this.footer() }
 				</CompactCard>
 			</>
 		);
@@ -135,6 +54,7 @@ export class ConciergeQuickstartSession extends React.Component {
 
 	header() {
 		const { translate } = this.props;
+
 		return (
 			<header className="concierge-quickstart-session__header">
 				<h2 className="concierge-quickstart-session__title">
@@ -148,7 +68,7 @@ export class ConciergeQuickstartSession extends React.Component {
 		const { translate, productCost, productDisplayCost, currencyCode } = this.props;
 		const fullCost = Math.round( productCost * 2.021 );
 		return (
-			<Fragment>
+			<>
 				<h4 className="concierge-quickstart-session__sub-header">
 					{ translate( 'Presenting… a personal WordPress Expert, by your side' ) }
 				</h4>
@@ -296,24 +216,30 @@ export class ConciergeQuickstartSession extends React.Component {
 					<div className="concierge-quickstart-session__column-doodle">
 						<img
 							className="concierge-quickstart-session__doodle"
-							alt=""
+							alt="Website expert offering a support session"
 							src="/calypso/images/illustrations/support.svg"
 						/>
 					</div>
 				</div>
-			</Fragment>
+			</>
 		);
 	}
 
 	footer() {
-		const { translate, productDisplayCost, isLoggedIn } = this.props;
+		const {
+			translate,
+			productDisplayCost,
+			isLoggedIn,
+			handleClickAccept,
+			handleClickDecline,
+		} = this.props;
 		return (
 			<footer className="concierge-quickstart-session__footer">
 				{ ! isLoggedIn && (
 					<Button
 						primary
 						className="concierge-quickstart-session__get-started-button"
-						onClick={ () => this.handleClickAccept( 'get_started' ) }
+						onClick={ () => handleClickAccept( 'get_started' ) }
 					>
 						{ translate( 'Get Started!' ) }
 					</Button>
@@ -322,14 +248,14 @@ export class ConciergeQuickstartSession extends React.Component {
 					<>
 						<Button
 							className="concierge-quickstart-session__decline-offer-button"
-							onClick={ this.handleClickDecline }
+							onClick={ handleClickDecline }
 						>
 							{ translate( "No thanks, I'll do it on my own" ) }
 						</Button>
 						<Button
 							primary
 							className="concierge-quickstart-session__accept-offer-button"
-							onClick={ () => this.handleClickAccept( 'accept' ) }
+							onClick={ () => handleClickAccept( 'accept' ) }
 						>
 							{ translate( 'Yes, I want a WordPress Expert by my side!', {
 								args: {
@@ -342,70 +268,4 @@ export class ConciergeQuickstartSession extends React.Component {
 			</footer>
 		);
 	}
-
-	handleClickDecline = () => {
-		const {
-			siteSlug,
-			receiptId,
-			isEligibleForChecklist,
-			trackUpsellButtonClick,
-			redirectToPageBuilder,
-		} = this.props;
-
-		trackUpsellButtonClick( `calypso_offer_quickstart_upsell_decline_button_click` );
-
-		if ( ! receiptId ) {
-			// Send the user to a generic page (not post-purchase related).
-			page( `/stats/day/${ siteSlug }` );
-		} else if ( isEligibleForChecklist ) {
-			if ( redirectToPageBuilder ) {
-				return page( getEditHomeUrl( siteSlug ) );
-			}
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: siteSlug,
-				plan: 'paid',
-			} );
-			page( `/checklist/${ siteSlug }` );
-		} else {
-			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
-		}
-	};
-
-	handleClickAccept = buttonAction => {
-		const { trackUpsellButtonClick, siteSlug } = this.props;
-
-		trackUpsellButtonClick( `calypso_offer_quickstart_upsell_${ buttonAction }_button_click` );
-		page( `/checkout/${ siteSlug }/concierge-session` );
-	};
 }
-
-const trackUpsellButtonClick = eventName => {
-	// Track concierge session get started / accept / decline events
-	return recordTracksEvent( eventName, { section: 'checkout' } );
-};
-
-export default connect(
-	( state, props ) => {
-		const { siteSlugParam } = props;
-		const selectedSiteId = getSelectedSiteId( state );
-		const productsList = getProductsList( state );
-		const sitePlans = getPlansBySiteId( state ).data;
-		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
-		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
-			hasProductsList: Object.keys( productsList ).length > 0,
-			hasSitePlans: sitePlans && sitePlans.length > 0,
-			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
-			redirectToPageBuilder: siteQualifiesForPageBuilder( state, selectedSiteId ),
-			productCost: getProductCost( state, 'concierge-session' ),
-			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
-			isLoggedIn: isUserLoggedIn( state ),
-			siteSlug,
-			selectedSiteId,
-		};
-	},
-	{
-		trackUpsellButtonClick,
-	}
-)( localize( ConciergeQuickstartSession ) );

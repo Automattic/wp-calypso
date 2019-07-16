@@ -326,8 +326,6 @@ export class PluginMeta extends Component {
 			'wp-staging',
 
 			// misc
-			'anywhere-elementor',
-			'anywhere-elementor-pro',
 			'ari-adminer',
 			'automatic-video-posts',
 			'bwp-minify',

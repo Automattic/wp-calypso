@@ -12,6 +12,7 @@ import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import wp from 'lib/wp';
+import { getMaintenanceMessageFromError } from '../utils';
 
 const wpcom = wp.undocumented();
 
@@ -174,6 +175,17 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
+	getRunningMaintenanceErrorState = error => {
+		const { translate } = this.props;
+
+		const message = getMaintenanceMessageFromError( error, translate );
+
+		return {
+			title: translate( 'Domain maintenance in progress' ),
+			message: message,
+		};
+	};
+
 	setErrorState = error => {
 		let errorState;
 
@@ -186,12 +198,17 @@ class RegistrantVerificationPage extends Component {
 				errorState = this.getExpiredState();
 				break;
 
-			case 'Key_Systems_error':
+			case 'KS_RAM_error':
 				errorState = this.getKeySystemsErrorState( error.message );
 				break;
 
 			case 'resend_email_failed':
 				errorState = this.getResendEmailErrorState();
+				break;
+
+			case 'domain_registration_unavailable':
+			case 'tld-in-maintenance':
+				errorState = this.getRunningMaintenanceErrorState( error );
 				break;
 		}
 

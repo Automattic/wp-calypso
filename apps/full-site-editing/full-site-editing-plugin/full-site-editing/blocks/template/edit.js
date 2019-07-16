@@ -4,119 +4,125 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-import { Button, IconButton, Placeholder, Toolbar } from '@wordpress/components';
+import { parse, createBlock } from '@wordpress/blocks';
+import { BlockEdit } from '@wordpress/editor';
+import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
-import { BlockControls } from '@wordpress/editor';
-import { Fragment, RawHTML } from '@wordpress/element';
+import { withDispatch, withSelect } from '@wordpress/data';
+import { Fragment, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+
 /**
  * Internal dependencies
  */
-import PostAutocomplete from '../../components/post-autocomplete';
 import './style.scss';
 
 const TemplateEdit = compose(
-	withSelect( ( select, { attributes } ) => {
+	withState( { templateClientId: null } ),
+	withSelect( ( select, { attributes, templateClientId } ) => {
 		const { getEntityRecord } = select( 'core' );
 		const { getCurrentPostId } = select( 'core/editor' );
+		const { getBlock } = select( 'core/block-editor' );
 
 		const { templateId } = attributes;
+		const currentPostId = getCurrentPostId();
+		const template = templateId && getEntityRecord( 'postType', 'wp_template_part', templateId );
+		const editTemplatePartUrl = addQueryArgs( fullSiteEditing.editTemplatePartBaseUrl, {
+			post: templateId,
+			fse_parent_post: currentPostId,
+		} );
+
 		return {
-			currentPostId: getCurrentPostId(),
-			template: templateId && getEntityRecord( 'postType', 'wp_template_part', templateId ),
+			currentPostId,
+			editTemplatePartUrl,
+			template,
+			templateBlock: getBlock( templateClientId ),
+			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
 		};
 	} ),
-	withState( { isEditing: false } )
-)( ( { attributes, currentPostId, isEditing, template, setAttributes, setState } ) => {
-	const { align, templateId } = attributes;
+	withDispatch( ( dispatch, ownProps ) => {
+		const { receiveBlocks } = dispatch( 'core/block-editor' );
+		const { template, templateClientId, setState } = ownProps;
 
-	const toggleEditing = () => setState( { isEditing: ! isEditing } );
+		return {
+			receiveTemplateBlocks: () => {
+				if ( ! template || templateClientId ) {
+					return;
+				}
 
-	const onSelectTemplate = ( { id } ) => {
-		setState( { isEditing: false } );
-		setAttributes( { templateId: id } );
-	};
+				const templateBlocks = parse( get( template, [ 'content', 'raw' ], '' ) );
+				const templateBlock =
+					templateBlocks.length === 1
+						? templateBlocks[ 0 ]
+						: createBlock( 'core/template', {}, templateBlocks );
 
-	const showToggleButton = ! isEditing || !! templateId;
-	const showPlaceholder = isEditing || ! templateId;
-	const showContent = ! isEditing && !! templateId;
-	const isTemplate = 'wp_template' === fullSiteEditing.editorPostType;
+				receiveBlocks( [ templateBlock ] );
+				setState( { templateClientId: templateBlock.clientId } );
+			},
+		};
+	} )
+)(
+	( {
+		attributes,
+		editTemplatePartUrl,
+		receiveTemplateBlocks,
+		template,
+		templateBlock,
+		templateTitle,
+	} ) => {
+		if ( ! template ) {
+			return (
+				<Placeholder>
+					<Spinner />
+				</Placeholder>
+			);
+		}
 
-	const editTemplatePartUrl = addQueryArgs( fullSiteEditing.editTemplatePartBaseUrl, {
-		post: templateId,
-		fse_parent_post: currentPostId,
-	} );
+		useEffect( () => {
+			receiveTemplateBlocks();
+		} );
 
-	return (
-		<Fragment>
-			{ showToggleButton && isTemplate && (
-				<BlockControls>
-					<Toolbar>
-						<IconButton
-							className={ classNames( 'components-icon-button components-toolbar__control', {
-								'is-active': isEditing,
-							} ) }
-							label={ __( 'Change Template Part' ) }
-							onClick={ toggleEditing }
-							icon="edit"
-						/>
-					</Toolbar>
-				</BlockControls>
-			) }
+		const { align } = attributes;
+
+		return (
 			<div
 				className={ classNames( 'template-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
-				{ showPlaceholder && (
-					<Placeholder
-						icon="layout"
-						label={ __( 'Template Part' ) }
-						instructions={ __( 'Select a template part to display' ) }
-					>
-						<div className="template-block__selector">
-							<PostAutocomplete
-								initialValue={ get( template, [ 'title', 'rendered' ] ) }
-								onSelectPost={ onSelectTemplate }
-								postType="wp_template_part"
-							/>
-							{ !! template && (
-								<a href={ editTemplatePartUrl }>
-									{ sprintf( __( 'Edit "%s"' ), get( template, [ 'title', 'rendered' ], '' ) ) }
-								</a>
-							) }
-						</div>
-					</Placeholder>
-				) }
-				{ showContent && (
+				{ templateBlock && (
 					<Fragment>
-						<RawHTML className="template-block__content">
-							{ get( template, [ 'content', 'rendered' ] ) }
-						</RawHTML>
-						{ ! isTemplate && (
-							<Placeholder
-								className="template-block__overlay"
-								instructions={ __(
-									'This block is part of your site template and may appear on multiple pages.'
-								) }
-							>
-								<Button href={ editTemplatePartUrl } isDefault>
-									{ sprintf( __( 'Edit %s' ), get( template, [ 'title', 'rendered' ], '' ) ) }
-								</Button>
-							</Placeholder>
-						) }
+						<Disabled>
+							<BlockEdit
+								attributes={ templateBlock.attributes }
+								block={ templateBlock }
+								clientId={ templateBlock.clientId }
+								isSelected={ false }
+								name={ templateBlock.name }
+								setAttributes={ noop }
+							/>
+						</Disabled>
+						<Placeholder
+							className="template-block__overlay"
+							instructions={ __(
+								'This block is part of your site template and may appear on multiple pages.'
+							) }
+						>
+							<Button href={ editTemplatePartUrl } isDefault>
+								{ sprintf( __( 'Edit %s' ), templateTitle ) }
+							</Button>
+						</Placeholder>
 					</Fragment>
 				) }
 			</div>
-		</Fragment>
-	);
-} );
+		);
+	}
+);
 
 export default TemplateEdit;

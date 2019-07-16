@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -30,6 +29,11 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';
 
@@ -135,7 +139,7 @@ class SiteSelector extends Component {
 			highlightedSiteId = this.props.highlightedSiteId || this.lastMouseHover;
 			highlightedIndex = this.visibleSites.indexOf( highlightedSiteId );
 		} else {
-			debug( 'reseting highlight as mouse left site selector' );
+			debug( 'resetting highlight as mouse left site selector' );
 			highlightedSiteId = null;
 			highlightedIndex = -1;
 		}

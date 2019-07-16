@@ -130,11 +130,11 @@ class StatsSite extends Component {
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 		let videoList;
-		let podcastList;
+		let fileDownloadList;
 
 		const query = memoizedQuery( period, endOf );
 
-		// Video plays, and tags and categories are not supported in JetPack Stats
+		// Video plays and file downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
 			videoList = (
 				<StatsModule
@@ -146,18 +146,19 @@ class StatsSite extends Component {
 					showSummaryLink
 				/>
 			);
-		}
-		if ( config.isEnabled( 'manage/stats/file-downloads' ) ) {
-			podcastList = (
-				<StatsModule
-					path="filedownloads"
-					moduleStrings={ moduleStrings.filedownloads }
-					period={ this.props.period }
-					query={ query }
-					statType="statsFileDownloads"
-					showSummaryLink
-				/>
-			);
+
+			if ( config.isEnabled( 'manage/stats/file-downloads' ) ) {
+				fileDownloadList = (
+					<StatsModule
+						path="filedownloads"
+						moduleStrings={ moduleStrings.filedownloads }
+						period={ this.props.period }
+						query={ query }
+						statType="statsFileDownloads"
+						showSummaryLink
+					/>
+				);
+			}
 		}
 
 		return (
@@ -260,7 +261,7 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink
 							/>
-							{ podcastList }
+							{ fileDownloadList }
 						</div>
 					</div>
 				</div>

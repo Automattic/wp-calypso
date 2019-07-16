@@ -45,7 +45,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function() {
+describe.skip( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Public Posts: Preview and Publish a Public Post @parallel', function() {
@@ -295,7 +295,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 	describe( 'Check Activity Log for Public Post @parallel', function() {
 		const blogPostTitle = dataHelper.randomPhrase();
 		const blogPostQuote =
-			'“We are what we pretend to be, so we must be careful about what we pretend to be.”\n- Kurt Vonnegut';
+			'“We are what we pretend to be, so we must be careful about what we pretend to be”\n- Kurt Vonnegut';
 
 		step( 'Can log in', async function() {
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );

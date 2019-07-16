@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import url from 'url';
 
 /**
@@ -61,9 +60,9 @@ describe( 'Analytics', () => {
 	describe( 'mc', () => {
 		test( 'bumpStat with group and stat', () => {
 			analytics.mc.bumpStat( 'go', 'time' );
-			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom-no-pv' );
-			expect( imagesLoaded[ 0 ].query.x_go ).to.eql( 'time' );
-			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
+			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom-no-pv' );
+			expect( imagesLoaded[ 0 ].query.x_go ).toEqual( 'time' );
+			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 
 		test( 'bumpStat with value object', () => {
@@ -71,17 +70,17 @@ describe( 'Analytics', () => {
 				go: 'time',
 				another: 'one',
 			} );
-			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom-no-pv' );
-			expect( imagesLoaded[ 0 ].query.x_go ).to.eql( 'time' );
-			expect( imagesLoaded[ 0 ].query.x_another ).to.eql( 'one' );
-			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
+			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom-no-pv' );
+			expect( imagesLoaded[ 0 ].query.x_go ).toEqual( 'time' );
+			expect( imagesLoaded[ 0 ].query.x_another ).toEqual( 'one' );
+			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 
 		test( 'bumpStatWithPageView with group and stat', () => {
 			analytics.mc.bumpStatWithPageView( 'go', 'time' );
-			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom' );
-			expect( imagesLoaded[ 0 ].query.go ).to.eql( 'time' );
-			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
+			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom' );
+			expect( imagesLoaded[ 0 ].query.go ).toEqual( 'time' );
+			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 
 		test( 'bumpStatWithPageView with value object', () => {
@@ -89,10 +88,10 @@ describe( 'Analytics', () => {
 				go: 'time',
 				another: 'one',
 			} );
-			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom' );
-			expect( imagesLoaded[ 0 ].query.go ).to.eql( 'time' );
-			expect( imagesLoaded[ 0 ].query.another ).to.eql( 'one' );
-			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
+			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom' );
+			expect( imagesLoaded[ 0 ].query.go ).toEqual( 'time' );
+			expect( imagesLoaded[ 0 ].query.another ).toEqual( 'one' );
+			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 	} );
 } );

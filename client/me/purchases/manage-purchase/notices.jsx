@@ -118,7 +118,7 @@ class PurchaseNotice extends Component {
 		}
 
 		if (
-			! hasPaymentMethod( purchase ) &&
+			( ! config.isEnabled( 'autorenewal-toggle' ) || ! hasPaymentMethod( purchase ) ) &&
 			( ! canExplicitRenew( purchase ) ||
 				shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment ) )
 		) {

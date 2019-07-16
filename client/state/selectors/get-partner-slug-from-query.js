@@ -49,6 +49,9 @@ export const getPartnerSlugFromQuery = function( state ) {
 		case 60178:
 		case 60179:
 			return 'liquidweb';
+		case 65773:
+		case 65774:
+			return 'eurodns';
 		default:
 			return null;
 	}

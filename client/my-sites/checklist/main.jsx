@@ -9,16 +9,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ChecklistShowShare from './share';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import WpcomChecklist from './wpcom-checklist';
+import ChecklistShowShare from './share';
+import GetAppsBlock from 'blocks/get-apps';
+
+/**
+ * State dependencies
+ */
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isNewSite } from 'state/sites/selectors';
@@ -128,6 +133,7 @@ class ChecklistMain extends PureComponent {
 						) }
 					/>
 					<ChecklistShowShare className="checklist__share" siteSlug={ this.props.siteSlug } />
+					<GetAppsBlock />
 				</>
 			);
 		}

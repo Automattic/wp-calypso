@@ -12,7 +12,7 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AppsBadge from 'me/get-apps/apps-badge';
+import AppsBadge from './apps-badge';
 import ReauthRequired from 'me/reauth-required';
 import Card from 'components/card';
 import Button from 'components/button';

@@ -125,4 +125,13 @@
 		margin-left: 0.5em;
 		position: static;
 	}
+
+	> span {
+		display: flex;
+		flex-direction: column;
+
+		.button.is-borderless.is-scary {
+			align-self: baseline;
+		}
+	}
 }

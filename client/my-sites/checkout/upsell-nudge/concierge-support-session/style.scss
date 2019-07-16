@@ -1,4 +1,12 @@
-.concierge-quickstart-session {
+main.concierge-support-session.main {
+	margin:auto;
+}
+
+.concierge-support-session {
+	max-height: calc(
+		100vh - 120px
+	); // 120 px is for masterbar and all the paddings around this nudge
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 
@@ -77,19 +85,18 @@
 
 	&__header {
 		text-align: center;
-		font-style: italic;
+		font-weight: bold;
 	}
 
 	&__sub-header {
-		font-size: 23px;
-		text-align: center;
-		font-weight: bold;
+		font-size: 21px;
+		font-weight: normal;
 		line-height: 1.4;
-		margin-top: 0.5em;
-		margin-bottom: 1.4em;
+		margin-top: 5px;
+		margin-bottom: 0.75em;
 
 		@include breakpoint( '<660px' ) {
-			font-size: 21px;
+			font-size: 18px;
 		}
 	}
 
@@ -99,7 +106,7 @@
 		&-item {
 			display: flex;
 			width: 100%;
-			align-items: flex-start;
+			align-items: center;
 			margin-bottom: 4px;
 
 			@include breakpoint( '<660px' ) {
@@ -140,8 +147,5 @@
 			float: right;
 		}
 	}
-
-	.concierge-quickstart-session__footer .concierge-quickstart-session__get-started-button {
-		width: 100%;
-	}
 }
+

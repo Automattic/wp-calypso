@@ -52,6 +52,7 @@ export const domainAvailability = {
 	REGISTERED_SAME_SITE: 'registered_on_same_site',
 	RESTRICTED: 'restricted_domain',
 	TLD_NOT_SUPPORTED: 'tld_not_supported',
+	TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: 'tld_not_supported_and_domain_not_available',
 	TLD_NOT_SUPPORTED_TEMPORARILY: 'tld_not_supported_temporarily',
 	TRANSFER_PENDING: 'transfer_pending',
 	TRANSFER_PENDING_SAME_USER: 'transfer_pending_same_user',

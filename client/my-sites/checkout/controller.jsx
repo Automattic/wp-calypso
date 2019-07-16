@@ -18,8 +18,7 @@ import CheckoutContainer from './checkout/checkout-container';
 import CartData from 'components/data/cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import ConciergeSessionNudge from './concierge-session-nudge';
-import ConciergeQuickstartSession from './concierge-quickstart-session';
+import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
 
@@ -49,6 +48,7 @@ export function checkout( context, next ) {
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
 			redirectTo={ context.query.redirect_to }
+			clearTransaction={ false }
 		/>
 	);
 
@@ -122,36 +122,30 @@ export function gsuiteNudge( context, next ) {
 	next();
 }
 
-export function conciergeSessionNudge( context, next ) {
-	const { receiptId, site } = context.params;
-	context.store.dispatch(
-		setSection( { name: 'concierge-session-nudge' }, { hasSidebar: false } )
-	);
-
-	context.primary = (
-		<CartData>
-			<ConciergeSessionNudge receiptId={ Number( receiptId ) } siteSlugParam={ site } />
-		</CartData>
-	);
-
-	next();
-}
-
-export function conciergeQuickstartSession( context, next ) {
+export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	context.store.dispatch(
-		setSection( { name: 'concierge-quickstart-session' }, { hasSidebar: false } )
-	);
+	let upsellType;
+
+	if ( context.path.includes( 'offer-quickstart-session' ) ) {
+		upsellType = 'concierge-quickstart-session';
+	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
+		upsellType = 'concierge-support-session';
+	}
+	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
 	context.primary = (
-		<CartData>
-			<ConciergeQuickstartSession
-				receiptId={ Number( receiptId ) }
+		<CheckoutContainer
+			shouldShowCart={ false }
+			clearTransaction={ true }
+			purchaseId={ Number( receiptId ) }
+		>
+			<UpsellNudge
 				siteSlugParam={ site }
-				path={ context.path }
+				receiptId={ Number( receiptId ) }
+				upsellType={ upsellType }
 			/>
-		</CartData>
+		</CheckoutContainer>
 	);
 
 	next();
