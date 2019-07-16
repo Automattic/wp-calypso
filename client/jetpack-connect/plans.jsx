@@ -124,7 +124,7 @@ class Plans extends Component {
 
 	getMyPlansDestination() {
 		const redirectTo = CALYPSO_MY_PLAN_PAGE + this.props.selectedSiteSlug;
-		const args = { 'thank-you': '' };
+		const args = { 'thank-you': '', install: 'all' };
 
 		return addQueryArgs( args, redirectTo );
 	}
