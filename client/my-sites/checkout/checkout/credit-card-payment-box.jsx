@@ -31,7 +31,7 @@ import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 
-function isFormSubmitting( transactionStep, props ) {
+function isFormSubmitting( transactionStep ) {
 	switch ( transactionStep.name ) {
 		case BEFORE_SUBMIT:
 			return false;
@@ -43,7 +43,7 @@ function isFormSubmitting( transactionStep, props ) {
 			return true;
 
 		case RECEIVED_PAYMENT_KEY_RESPONSE:
-			if ( props.transactionStep.error ) {
+			if ( transactionStep.error ) {
 				return false;
 			}
 			return true;
@@ -93,8 +93,8 @@ export class CreditCardPaymentBox extends React.Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
-			! isFormSubmitting( this.props.transactionStep, this.props ) &&
-			isFormSubmitting( nextProps.transactionStep, this.props )
+			! isFormSubmitting( this.props.transactionStep ) &&
+			isFormSubmitting( nextProps.transactionStep )
 		) {
 			this.timer = setInterval( this.tick, 100 );
 		}
@@ -161,10 +161,7 @@ export class CreditCardPaymentBox extends React.Component {
 
 	paymentBoxActions = () => {
 		let content = this.paymentButtons();
-		if (
-			this.props.transactionStep &&
-			isFormSubmitting( this.props.transactionStep, this.props )
-		) {
+		if ( this.props.transactionStep && isFormSubmitting( this.props.transactionStep ) ) {
 			content = this.progressBar();
 		}
 
