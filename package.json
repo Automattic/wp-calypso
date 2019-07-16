@@ -92,7 +92,7 @@
 		"events": "3.0.0",
 		"exports-loader": "0.7.0",
 		"express": "4.16.4",
-		"express-useragent": "1.0.12",
+		"express-useragent": "1.0.13",
 		"filesize": "3.6.1",
 		"flag-icon-css": "3.3.0",
 		"flux": "3.1.3",
