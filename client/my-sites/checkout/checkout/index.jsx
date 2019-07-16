@@ -459,7 +459,7 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				return `/${ signupDestination }?d=gsuite`;
+				return `${ signupDestination }?d=gsuite`;
 			}
 
 			// Maybe show either the G Suite or Concierge Session upsell pages
@@ -509,7 +509,7 @@ export class Checkout extends React.Component {
 
 		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
-		if ( this.props.isEligibleForSignupDestination & ( ':receiptId' !== pendingOrReceiptId ) ) {
+		if ( ':receiptId' !== pendingOrReceiptId && this.props.isEligibleForSignupDestination ) {
 			return `${ signupDestination }${ queryParam }`;
 		}
 
@@ -535,10 +535,17 @@ export class Checkout extends React.Component {
 			transaction: { step: { data: receipt = null } = {} } = {},
 			translate,
 		} = this.props;
+
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
+		const destinationFromCookie = retrieveSignupDestination();
 
 		this.props.clearPurchases();
-		clearSignupDestinationCookie();
+
+		// Removes the destination cookie only if redirecting to the signup destination.
+		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
+		if ( redirectPath.includes( destinationFromCookie ) ) {
+			clearSignupDestinationCookie();
+		}
 
 		if ( hasRenewalItem( cart ) ) {
 			// checkouts for renewals redirect back to `/purchases` with a notice

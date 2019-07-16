@@ -230,6 +230,9 @@ export const retrieveSignupDestination = () => {
 };
 
 export const clearSignupDestinationCookie = () => {
-	const options = { path: '/' };
+	// Set expiration to a random time in the past so that the cookie gets removed.
+	const expirationDate = new Date( new Date().getTime() - 1000 );
+	const options = { path: '/', expires: expirationDate };
+
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
