@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
@@ -12,14 +12,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Translatable from './translatable';
-import { languages } from 'languages';
-import User from 'lib/user';
-import userSettings from 'lib/user-settings';
-import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { loadUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
-import { getCurrentUserName, getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUserName } from 'state/current-user/selectors';
+import getUserSetting from 'state/selectors/get-user-setting.js';
+import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
+import QueryUserSettings from 'components/data/query-user-settings';
 
 /**
  * Style dependencies
@@ -30,17 +28,13 @@ import './style.scss';
  * Local variables
  */
 const debug = debugModule( 'calypso:community-translator' );
-const user = new User();
 
-class CommunityTranslator extends Component {
-	languageJson = null;
-	currentLocale = null;
-	initialized = false;
+class CommunityTranslator extends PureComponent {
+	state = { currentLocale: null };
 
 	componentDidMount() {
-		this.setLanguage();
-
 		// wrap translations from i18n
+		debug( 'registering wrapTranslation()' );
 		i18n.registerTranslateHook( ( translation, options ) =>
 			this.wrapTranslation( options.original, translation, options )
 		);
@@ -48,64 +42,64 @@ class CommunityTranslator extends Component {
 		// callback when translated component changes.
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 		i18n.registerComponentUpdateHook( () => {} );
-		i18n.on( 'change', this.refresh );
-		user.on( 'change', this.refresh );
-		userSettings.on( 'change', this.refresh );
+		i18n.on( 'change', this.checkForI18nLocaleChange );
+		this.checkForI18nLocaleChange();
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		// TODO
+	componentDidUpdate() {
+		if ( ! this.props.translatorEnabled ) {
+			return;
+		}
+
+		// Anything in our props or state changing means we need a new check
+		this.setLanguage();
 	}
 
-	componentDidUpdate( prevProps ) {
-		this.refresh();
-	}
+	// Trigger react updates when i18n changes locale (and not just an
+	// individual translation)
+	//
+	// We could use the current user locale & variant out of the redux state,
+	// but this way avoids a race condition between the loading the normal
+	// locale translations and the undeployed translations for the user.
+	checkForI18nLocaleChange = () => {
+		const { localeSlug, localeVariant } = i18n.getLocale()[ '' ];
+		const newLocaleCode = localeVariant || localeSlug;
+		const { currentLocale } = this.state || {};
+
+		if ( ! currentLocale || newLocaleCode !== currentLocale.langSlug ) {
+			debug( 'Changing locale to ' + newLocaleCode );
+			this.setState( {
+				currentLocale: find( languages, lang => lang.langSlug === newLocaleCode ),
+			} );
+		}
+	};
 
 	componentWillUnmount() {
-		i18n.off( 'change', this.refresh );
-		user.removeListener( 'change', this.refresh );
-		userSettings.removeListener( 'change', this.refresh );
+		i18n.off( 'change', this.checkForI18nLocaleChange );
 	}
 
 	setLanguage() {
-		this.languageJson = i18n.getLocale() || { '': {} };
 		// The '' here is a Jed convention used for storing configuration data
 		// alongside translations in the same dictionary (because '' will never
 		// be a legitimately translatable string)
 		// See https://messageformat.github.io/Jed/
-		const { localeSlug, localeVariant } = this.languageJson[ '' ];
+		const { localeSlug, localeVariant } = i18n.getLocale()[ '' ];
 		const { username } = this.props;
 
-		this.localeCode = localeVariant || localeSlug;
-		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
-		loadUndeployedTranslations( { username, locale: this.localeCode, translationStatus: 'waiting' } )
+		if ( ! canDisplayCommunityTranslator( localeSlug, localeVariant ) ) {
+			return;
+		}
+
+		const newLocaleCode = localeVariant || localeSlug;
+
+		if ( ! canDisplayCommunityTranslator( localeSlug, localeVariant ) ) {
+			debug( 'community translator not activated for ', newLocaleCode );
+			return;
+		}
+
+		debug( "fetching user's waiting translations", username, newLocaleCode );
+		loadUndeployedTranslations( { username, locale: newLocaleCode, translationStatus: 'waiting' } );
 	}
-
-	refresh = () => {
-		if ( this.initialized ) {
-			return;
-		}
-
-		if ( ! userSettings.getSettings() ) {
-			debug( 'initialization failed because userSettings are not ready' );
-			return;
-		}
-
-		if ( ! isCommunityTranslatorEnabled() ) {
-			debug( 'not initializing, not enabled' );
-			return;
-		}
-
-		this.setLanguage();
-
-		if ( ! this.localeCode || ! this.languageJson ) {
-			debug( 'trying to initialize translator without loaded language' );
-			return;
-		}
-
-		debug( 'Successfully initialized' );
-		this.initialized = true;
-	};
 
 	/**
 	 * Wraps translation in a DOM object and attaches `toString()` method in case in can't be rendered
@@ -115,7 +109,11 @@ class CommunityTranslator extends Component {
 	 * @returns {Object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		if ( ! isCommunityTranslatorEnabled() ) {
+		if ( ! this.props.translatorEnabled ) {
+			return displayedTranslationFromPage;
+		}
+
+		if ( ! canDisplayCommunityTranslator() ) {
 			return displayedTranslationFromPage;
 		}
 
@@ -135,7 +133,7 @@ class CommunityTranslator extends Component {
 
 		const props = {
 			singular: originalFromPage,
-			locale: this.currentLocale,
+			locale: this.state.currentLocale,
 		};
 
 		let key = originalFromPage;
@@ -155,7 +153,7 @@ class CommunityTranslator extends Component {
 
 		// Has no translation in current locale
 		// Must be a string to be a valid DOM attribute value
-		if ( isEmpty( this.languageJson[ key ] ) ) {
+		if ( isEmpty( i18n.getLocale()[ key ] ) ) {
 			props.untranslated = 'true';
 		}
 
@@ -178,14 +176,13 @@ class CommunityTranslator extends Component {
 	}
 
 	render() {
-		return null;
+		return <QueryUserSettings />;
 	}
 }
 
 const mapState = state => ( {
-	localeSlug: getCurrentLocaleSlug( state ),
-	localeVariant: getCurrentLocaleVariant( state ),
 	username: getCurrentUserName( state ),
+	translatorEnabled: getUserSetting( state, ENABLE_TRANSLATOR_KEY ),
 } );
 
 export default connect( mapState )( localize( CommunityTranslator ) );
