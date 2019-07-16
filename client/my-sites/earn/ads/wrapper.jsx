@@ -216,7 +216,9 @@ class AdsWrapper extends Component {
 		let component = this.props.children;
 		let notice = null;
 
-		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
+		if ( ! canAccessAds( site ) ) {
+			component = this.renderEmptyContent();
+		} else if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
