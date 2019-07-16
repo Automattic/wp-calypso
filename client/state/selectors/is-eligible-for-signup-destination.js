@@ -24,7 +24,6 @@ import { retrieveSignupDestination } from 'signup/utils';
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
  * @param {Object} cart object
- * @param {String} destination The final destination URL after signup completes
  * @return {Boolean} True if current user is able to see the checklist after checkout
  */
 export default function isEligibleForSignupDestination( state, siteId, cart ) {
