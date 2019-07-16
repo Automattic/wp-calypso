@@ -15,7 +15,7 @@ const by = webdriver.By;
 
 export default class PurchasesPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( 'a[href="/me/purchases"][aria-selected="true"]' ) );
+		super( driver, by.css( 'a[href="/me/purchases"][aria-current="true"]' ) );
 	}
 
 	async _postInit() {
