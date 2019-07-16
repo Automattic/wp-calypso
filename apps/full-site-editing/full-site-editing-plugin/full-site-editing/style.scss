@@ -1,29 +1,11 @@
-// Adjust the top bar
-.edit-post-layout .edit-post-header {
-	//background: #f3f4f5;
-	//border: none;
-
-	// This is the back button
-	.edit-post-fullscreen-mode-close__toolbar {
-		//border: none;
-		background: transparent;
-	}
-}
-
-// Hide the title
-.editor-post-title__block {
-	display: none;
-}
-
-
 // Add a Frame around the editor
 .edit-post-layout__content {
-	padding: 24px 32px;
+	padding: 36px 32px 0;
 	background: #f3f4f5;
 }
 
 .edit-post-visual-editor {
-	background: white;
+	background: #ffffff;
 	padding: 0;
-	box-shadow: 0 0 12px rgba( 0, 0, 0, 0.2 );
+	box-shadow: 0 0 0 1px #e2e4e7;
 }
