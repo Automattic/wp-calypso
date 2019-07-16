@@ -45,7 +45,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe.skip( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function() {
+describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Public Posts: Preview and Publish a Public Post @parallel', function() {
@@ -264,6 +264,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, 
 
 			step( 'Can enter post title and text content', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.closeSidebar();
 				await gEditorComponent.enterTitle( blogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
 
