@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import cookie from 'cookie';
 import { noop } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -59,14 +59,14 @@ function GdprBanner( props ) {
 
 	const { recordCookieBannerOk, recordCookieBannerView } = props;
 
-	const acknowledgeClicked = useCallback( () => {
+	const acknowledgeClicked = () => {
 		document.cookie = cookie.serialize( 'sensitive_pixel_option', 'yes', {
 			path: '/',
 			maxAge: SIX_MONTHS,
 		} );
 		recordCookieBannerOk();
 		setBannerStatus( STATUS.RENDERED_BUT_HIDDEN );
-	}, [ recordCookieBannerOk ] );
+	};
 
 	// We want to ensure that the first render is always empty, to match the server.
 	// This avoids potential hydration issues.
