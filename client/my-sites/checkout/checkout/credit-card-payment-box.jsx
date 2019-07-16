@@ -32,6 +32,9 @@ import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 
 function isFormSubmitting( transactionStep ) {
+	if ( ! transactionStep ) {
+		return false;
+	}
 	switch ( transactionStep.name ) {
 		case BEFORE_SUBMIT:
 			return false;
@@ -159,15 +162,6 @@ export class CreditCardPaymentBox extends React.Component {
 		);
 	};
 
-	paymentBoxActions = () => {
-		let content = this.paymentButtons();
-		if ( this.props.transactionStep && isFormSubmitting( this.props.transactionStep ) ) {
-			content = this.progressBar();
-		}
-
-		return <div className="checkout__payment-box-actions">{ content }</div>;
-	};
-
 	submit = event => {
 		event.preventDefault();
 		this.setState( {
@@ -195,7 +189,11 @@ export class CreditCardPaymentBox extends React.Component {
 
 					<CheckoutTerms cart={ cart } />
 
-					{ this.paymentBoxActions() }
+					<div className="checkout__payment-box-actions">
+						{ isFormSubmitting( this.props.transactionStep )
+							? this.progressBar()
+							: this.paymentButtons() }
+					</div>
 				</form>
 				<CartCoupon cart={ cart } />
 				<CartToggle />
