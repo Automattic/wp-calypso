@@ -23,6 +23,11 @@ import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
 import QueryUserSettings from 'components/data/query-user-settings';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class TranslatorLauncher extends React.PureComponent {
 	static displayName = 'TranslatorLauncher';
 
