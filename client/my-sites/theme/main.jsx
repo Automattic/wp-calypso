@@ -228,24 +228,6 @@ class ThemeSheet extends React.Component {
 		return demo_uri && ! retired;
 	}
 
-	renderPreviewButton() {
-		return (
-			<a
-				className="theme__sheet-preview-link"
-				onClick={ this.previewAction }
-				data-tip-target="theme-sheet-preview"
-				href={ this.props.demo_uri }
-				rel="noopener noreferrer"
-			>
-				<span className="theme__sheet-preview-link-text">
-					{ i18n.translate( 'Open Live Demo', {
-						context: 'Individual theme live preview button',
-					} ) }
-				</span>
-			</a>
-		);
-	}
-
 	renderScreenshot() {
 		const { isWpcomTheme, name: themeName } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
@@ -271,7 +253,6 @@ class ThemeSheet extends React.Component {
 					onClick={ this.previewAction }
 					rel="noopener noreferrer"
 				>
-					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
 					{ img }
 				</a>
 			);
