@@ -94,15 +94,15 @@ export class CreditCardPaymentBox extends React.Component {
 		this.timer = null;
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			! isFormSubmitting( this.props.transactionStep ) &&
-			isFormSubmitting( nextProps.transactionStep )
+			! isFormSubmitting( prevProps.transactionStep ) &&
+			isFormSubmitting( this.props.transactionStep )
 		) {
 			this.timer = setInterval( this.tick, 100 );
 		}
 
-		if ( nextProps.transactionStep.error ) {
+		if ( this.props.transactionStep.error ) {
 			this.clearTickInterval();
 		}
 	}
