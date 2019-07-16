@@ -264,6 +264,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can enter post title and text content', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.closeSidebar();
 				await gEditorComponent.enterTitle( blogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
 
