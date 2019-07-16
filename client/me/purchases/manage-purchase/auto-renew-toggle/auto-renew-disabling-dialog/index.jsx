@@ -35,6 +35,7 @@ class AutoRenewDisablingDialog extends Component {
 
 	state = {
 		dialogType: DIALOG.GENERAL,
+		surveyHasShown: false,
 	};
 
 	getVariation() {
@@ -124,6 +125,10 @@ class AutoRenewDisablingDialog extends Component {
 
 	closeAndCleanup = () => {
 		this.props.onClose();
+
+		// It is intentional that we don't reset `surveyHasShown` flag here.
+		// That state is for preventing the survey from showing excessively.
+		// The current behavior is that it won't show up until this component has been unmounted and then remounted.
 		this.setState( {
 			dialogType: DIALOG.GENERAL,
 		} );
@@ -173,8 +178,14 @@ class AutoRenewDisablingDialog extends Component {
 		}
 
 		this.props.onConfirm();
+
+		if ( this.state.surveyHasShown ) {
+			return this.closeAndCleanup();
+		}
+
 		this.setState( {
 			dialogType: DIALOG.SURVEY,
+			surveyHasShown: true,
 		} );
 	};
 
