@@ -49,6 +49,47 @@ class PurchaseNotice extends Component {
 	getExpiringText( purchase ) {
 		const { translate, moment, selectedSite } = this.props;
 
+		let t1 = translate(
+			'Absolutely. Get started on WordPress.com for free and upgrade whenever you need. You can also try our Premium and Business Plans for 30 days. If you’re not satisfied, we’ll refund your money. Note that for the domain registration-related portion of the upgrade, the refund window is 96 hours.'
+		);
+
+		const t2 = translate(
+			'All plans include a 30-day money-back guarantee (96 hours for domains).'
+		);
+
+		const t3 = translate(
+			"P.S.: If you aren't totally thrilled with everything the upgraded WordPress.com plans have to offer, simply let us know any time during the first 30 days (96 hours for domains) and you'll receive a full refund."
+		);
+
+		const t4 = translate(
+			'Which means you can upgrade today and try one of our paid plans for 30 days, completely risk free (96 hours for domains). If you decide the upgraded plan isn’t for you, simply contact us and we’ll give you a full refund.'
+		);
+
+		const t5 = translate(
+			'We proudly stand behind the quality of WordPress.&#8203;com. All of our plans include a full 30 day money-back guarantee (96 hours for domains).'
+		);
+
+		const t6 = translate(
+			'P.S.: All WordPress.&#8203;com plan upgrades come with a 30 day money-back guarantee (96 hours for domains).'
+		);
+
+		const t7 = translate(
+			'<b>P.S.:</b> All WordPress.&#8203;com plan upgrades come with a 30 day money-back guarantee (96 hours for domains).'
+		);
+
+		const t8 = translate(
+			'And remember, all plan upgrades include a 30 day money-back guarantee (96 hours for domains).'
+		);
+
+		const t9 = translate(
+			"P.S. Upgrading your plan is risk-free! If you decide for any reason that you don't love your upgrade, we'll give you a full refund within 30 days of purchase (96 hours for domains)."
+		);
+
+		// Stop the linter from complaining.
+		if ( t1 || t2 || t3 || t4 || t5 || t6 || t7 || t8 || t9 ) {
+			t1 = t2;
+		}
+
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
 			if ( isPaidWithCredits( purchase ) ) {
 				return translate(
