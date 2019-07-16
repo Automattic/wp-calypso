@@ -36,6 +36,7 @@ const ActivityLogConfirmDialog = ( {
 	title,
 	translate,
 	happychatEvent,
+	partial,
 } ) => (
 	<div className="activity-log-item activity-log-item__restore-confirm">
 		<div className="activity-log-item__type">
@@ -46,44 +47,39 @@ const ActivityLogConfirmDialog = ( {
 
 			<div className="activity-log-confirm-dialog__highlight">{ children }</div>
 
-			<Card className="activity-log-confirm-dialog__partial-restore-settings">
-				<p>
-					<strong>
+			{ partial && (
+				<div className="activity-log-confirm-dialog__partial-restore-settings">
+					<p>
 						{ notice
-							? translate( 'Partial Restore Settings' )
-							: translate( 'Partial Download Settings' ) }
-					</strong>
-				</p>
-				<p>
-					{ notice
-						? translate( 'Include the following things in this restore:' )
-						: translate( 'Include the following things in this download:' ) }
-				</p>
-				<FormLabel>
-					<FormCheckbox name="themes" onChange={ onSettingsChange } defaultChecked />
-					{ translate( 'WordPress Themes' ) }
-				</FormLabel>
-				<FormLabel>
-					<FormCheckbox name="plugins" onChange={ onSettingsChange } defaultChecked />
-					{ translate( 'WordPress Plugins' ) }
-				</FormLabel>
-				<FormLabel>
-					<FormCheckbox name="uploads" onChange={ onSettingsChange } defaultChecked />
-					{ translate( 'Media Uploads' ) }
-				</FormLabel>
-				<FormLabel>
-					<FormCheckbox name="roots" onChange={ onSettingsChange } defaultChecked />
-					{ translate( 'WordPress Root (includes wp-config.php and any non-WordPress files)' ) }
-				</FormLabel>
-				<FormLabel>
-					<FormCheckbox name="contents" onChange={ onSettingsChange } defaultChecked />
-					{ translate( 'WP-Content Directory (excluding themes, plugins, and uploads)' ) }
-				</FormLabel>
-				<FormLabel>
-					<FormCheckbox name="sqls" onChange={ onSettingsChange } defaultChecked />
-					{ translate( 'Site Database (SQL)' ) }
-				</FormLabel>
-			</Card>
+							? translate( 'Choose the items you wish to rewind:' )
+							: translate( 'Choose the items you wish to include in the download:' ) }
+					</p>
+					<FormLabel>
+						<FormCheckbox name="themes" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WordPress Themes' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="plugins" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WordPress Plugins' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="uploads" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'Media Uploads' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="roots" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WordPress Root (includes wp-config.php and any non-WordPress files)' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="contents" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WP-Content Directory (excluding themes, plugins, and uploads)' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="sqls" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'Site Database (SQL)' ) }
+					</FormLabel>
+				</div>
+			) }
 
 			{ notice && (
 				<div className="activity-log-confirm-dialog__notice">

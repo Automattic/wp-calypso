@@ -77,6 +77,7 @@ class ActivityLogItem extends Component {
 			roots: true,
 			contents: true,
 		},
+		partialSelected: false,
 	};
 
 	confirmBackup = () =>
@@ -192,10 +193,19 @@ class ActivityLogItem extends Component {
 
 	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
 
+	createPartialRewind = () => {
+		this.setState( { partialSelected: true } );
+		this.props.createRewind();
+	};
+
+	createFullRewind = () => {
+		this.setState( { partialSelected: false } );
+		this.props.createRewind();
+	};
+
 	renderRewindAction() {
 		const {
 			createBackup,
-			createRewind,
 			disableRestore,
 			disableBackup,
 			hideRestore,
@@ -210,8 +220,20 @@ class ActivityLogItem extends Component {
 		return (
 			<div className="activity-log-item__action">
 				<EllipsisMenu>
-					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
+					<PopoverMenuItem
+						disabled={ disableRestore }
+						icon="history"
+						onClick={ this.createFullRewind }
+					>
 						{ translate( 'Rewind to this point' ) }
+					</PopoverMenuItem>
+
+					<PopoverMenuItem
+						disabled={ disableRestore }
+						icon="history"
+						onClick={ this.createPartialRewind }
+					>
+						{ translate( 'Partial rewind' ) }
 					</PopoverMenuItem>
 
 					<PopoverMenuSeparator />
@@ -299,13 +321,14 @@ class ActivityLogItem extends Component {
 						key="activity-rewind-dialog"
 						confirmTitle={ translate( 'Confirm Rewind' ) }
 						notice={ translate(
-							'This will remove all content and options created or changed since then.'
+							'This will override and remove all content created after this point.'
 						) }
 						onClose={ dismissRewind }
 						onConfirm={ this.confirmRewind }
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Rewind Site' ) }
+						partial={ this.state.partialSelected }
 					>
 						{ translate(
 							'This is the selected point for your site Rewind. ' +
@@ -329,6 +352,7 @@ class ActivityLogItem extends Component {
 						title={ translate( 'Create downloadable backup' ) }
 						type={ 'backup' }
 						icon={ 'cloud-download' }
+						partial={ true }
 					>
 						{ translate(
 							'We will build a downloadable backup of your site at {{time/}}. ' +
