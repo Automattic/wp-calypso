@@ -14,6 +14,11 @@ import { getLocaleSlug } from 'i18n-calypso';
  */
 import { getLanguage } from 'lib/i18n-utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class LocaleSuggestionsListItem extends Component {
 	static propTypes = {
 		locale: PropTypes.object.isRequired,
