@@ -143,7 +143,7 @@ export default {
 			allPlansMonthly: 25,
 			allPlansYearly: 25,
 		},
-		defaultVariation: 'premiumOnlyMonthly',
+		defaultVariation: 'allPlansYearly',
 		allowExistingUsers: true,
 	},
 };
