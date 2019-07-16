@@ -14,6 +14,8 @@ import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
+import { TYPE_PREMIUM } from 'lib/plans/constants';
 
 /**
  * Constants
@@ -41,17 +43,35 @@ class JetpackPlansGrid extends Component {
 
 	renderConnectHeader() {
 		const { isLanding, translate } = this.props;
+		const isPremiumOnly = abtest( 'singleJetpackPlan' ).startsWith( 'premiumOnly' );
 
-		const headerText = translate( 'Explore our Jetpack plans' );
+		// mutable headers
+		let headerText = translate( 'Explore our Jetpack plans' );
 		let subheaderText = translate( "Now that you're set up, pick a plan that fits your needs." );
 
 		if ( isLanding ) {
 			subheaderText = translate( 'Pick a plan that fits your needs.' );
 		}
+
+		if ( isPremiumOnly ) {
+			headerText = translate( 'Build like a pro with Jetpack Premium' );
+			subheaderText = translate(
+				'Jetpack Premium automatically protects your site from spam, prevents data loss and enhances SEO'
+			);
+		}
+
 		return <FormattedHeader headerText={ headerText } subHeaderText={ subheaderText } />;
 	}
 
 	render() {
+		const { interval } = this.props;
+
+		// single-plan AB test
+		const abTestVariation = abtest( 'singleJetpackPlan' );
+		const isPremiumOnly = abTestVariation.startsWith( 'premiumOnly' );
+		const defaultInterval = abTestVariation.endsWith( 'Monthly' ) ? 'monthly' : 'yearly';
+		const planTypes = isPremiumOnly ? [ TYPE_PREMIUM ] : [];
+
 		return (
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
@@ -63,9 +83,10 @@ class JetpackPlansGrid extends Component {
 							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
-							intervalType={ this.props.interval }
+							intervalType={ interval ? interval : defaultInterval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
+							planTypes={ planTypes }
 						/>
 
 						<PlansSkipButton onClick={ this.handleSkipButtonClick } />

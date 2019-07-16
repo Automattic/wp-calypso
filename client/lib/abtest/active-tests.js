@@ -135,4 +135,15 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
+	singleJetpackPlan: {
+		datestamp: '20190715',
+		variations: {
+			premiumOnlyMonthly: 25,
+			premiumOnlyYearly: 25,
+			allPlansMonthly: 25,
+			allPlansYearly: 25,
+		},
+		defaultVariation: 'premiumOnlyMonthly',
+		allowExistingUsers: true,
+	},
 };
