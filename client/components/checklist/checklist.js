@@ -19,7 +19,7 @@ class Checklist extends PureComponent {
 		isPlaceholder: PropTypes.bool,
 		onExpandTask: PropTypes.func,
 		showChecklistHeader: PropTypes.bool,
-		checklistFooter: PropTypes.func,
+		checklistFooter: PropTypes.node,
 		updateCompletion: PropTypes.func,
 		translate: PropTypes.func,
 	};
