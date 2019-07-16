@@ -76,20 +76,6 @@ class PageTemplateModal extends Component {
 				<div className="page-template-modal__inner">
 					<form className="page-template-modal__form">
 						<fieldset className="page-template-modal__list">
-							<legend className="page-template-modal__intro">
-								<p>
-									{ __(
-										'Pick a Template that matches the purpose of your page.',
-										'full-site-editing'
-									) }
-								</p>
-								<p>
-									{ __(
-										'You can customize each Template to meet your needs.',
-										'full-site-editing'
-									) }
-								</p>
-							</legend>
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ map( this.props.templates, template => ( {
@@ -111,6 +97,9 @@ class PageTemplateModal extends Component {
 const PageTemplatesPlugin = compose(
 	withSelect( select => ( {
 		getMeta: () => select( 'core/editor' ).getEditedPostAttribute( 'meta' ),
+		postContentBlock: select( 'core/editor' )
+			.getBlocks()
+			.find( block => block.name === 'a8c/post-content' ),
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => {
 		// Disable tips right away as the collide with the modal window.
@@ -135,8 +124,13 @@ const PageTemplatesPlugin = compose(
 				} );
 
 				// Insert blocks.
+				const postContentBlock = ownProps.postContentBlock;
 				const blocks = parseBlocks( template.content );
-				editorDispatcher.insertBlocks( blocks );
+				editorDispatcher.insertBlocks(
+					blocks,
+					0,
+					postContentBlock ? postContentBlock.clientId : ''
+				);
 			},
 		};
 	} )

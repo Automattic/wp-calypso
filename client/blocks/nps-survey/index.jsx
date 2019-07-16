@@ -59,10 +59,13 @@ export class NpsSurvey extends PureComponent {
 	};
 
 	componentDidUpdate( _, prevState ) {
+		const { hasAvailableConciergeSession, onChangeForm } = this.props;
+
 		if ( prevState.currentForm !== this.state.currentForm ) {
-			this.props.onChangeForm && this.props.onChangeForm( this.state.currentForm );
+			onChangeForm && onChangeForm( this.state.currentForm );
 			this.props.recordTracksEvent( 'calypso_nps_survey_page_displayed', {
 				name: this.state.currentForm,
+				has_available_concierge_sessions: hasAvailableConciergeSession,
 			} );
 		}
 	}
@@ -111,6 +114,7 @@ export class NpsSurvey extends PureComponent {
 	handleLinkClick = event => {
 		this.props.recordTracksEvent( 'calypso_nps_survey_link_clicked', {
 			url: event.target.href,
+			type: event.target.dataset.type,
 		} );
 		this.onClose( noop );
 	};
@@ -236,8 +240,20 @@ export class NpsSurvey extends PureComponent {
 								'{{booking}}Reserve a 1:1 Support Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
 								{
 									components: {
-										booking: <a href="/me/concierge" onClick={ this.handleLinkClick } />,
-										contact: <a href={ CALYPSO_CONTACT } onClick={ this.handleLinkClick } />,
+										booking: (
+											<a
+												href="/me/concierge"
+												onClick={ this.handleLinkClick }
+												data-type="booking"
+											/>
+										),
+										contact: (
+											<a
+												href={ CALYPSO_CONTACT }
+												onClick={ this.handleLinkClick }
+												data-type="contact"
+											/>
+										),
 									},
 								}
 							) }
@@ -250,7 +266,13 @@ export class NpsSurvey extends PureComponent {
 							'If you would like help with your site, our WordPress.com Happiness Engineers are ready {{contact}}over live chat or email{{/contact}} now.',
 							{
 								components: {
-									contact: <a href={ CALYPSO_CONTACT } onClick={ this.handleLinkClick } />,
+									contact: (
+										<a
+											href={ CALYPSO_CONTACT }
+											onClick={ this.handleLinkClick }
+											data-type="contact"
+										/>
+									),
 								},
 							}
 						) }

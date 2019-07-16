@@ -142,6 +142,7 @@ export class PlansStep extends Component {
 			isLaunchPage,
 			selectedSite,
 			planTypes,
+			flowName,
 		} = this.props;
 
 		return (
@@ -161,6 +162,7 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ true }
 					planTypes={ planTypes }
+					flowName={ flowName }
 				/>
 			</div>
 		);

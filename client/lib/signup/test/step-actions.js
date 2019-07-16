@@ -15,9 +15,6 @@ import flows from 'signup/config/flows';
 import { isDomainStepSkippable } from 'signup/config/steps';
 import { getUserStub } from 'lib/user';
 
-// This is necessary since localforage will throw "no local storage method found" promise rejection without this.
-// See how lib/user-settings/test apply the same trick.
-jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
 
 jest.mock( 'lib/user', () => {
