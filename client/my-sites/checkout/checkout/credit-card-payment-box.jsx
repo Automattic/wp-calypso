@@ -33,6 +33,8 @@ import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import { injectStripe } from 'react-stripe-elements';
 import { setStripeObject } from 'lib/upgrades/actions';
+import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
+import { abtest } from 'lib/abtest';
 
 function isFormSubmitting( transactionStep ) {
 	if ( ! transactionStep ) {
@@ -145,13 +147,27 @@ class CreditCardPaymentBox extends React.Component {
 				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			),
 			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
-			paymentButtonClasses = 'payment-box__payment-buttons';
+			paymentButtonClasses = 'payment-box__payment-buttons',
+			moneyBackGuarantee =
+				! hasOnlyDomainProducts( cart ) && 'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
 
 		return (
 			<div className={ paymentButtonClasses }>
 				<PayButton cart={ cart } transactionStep={ transactionStep } />
 
 				<div className="checkout__secure-payment">
+					{ moneyBackGuarantee && (
+						<div className="checkout__secure-payment-content">
+							<Gridicon icon="refresh" />
+							{ translate( ' 30-day Money Back Guarantee' ) }
+							{ hasDomainRegistration( cart ) && (
+								<>
+									<br className="checkout__mobile-separator" />
+									{ ' ' + translate( '(96 hrs for domains)' ) }
+								</>
+							) }
+						</div>
+					) }
 					<div className="checkout__secure-payment-content">
 						<Gridicon icon="lock" />
 						{ translate( 'Secure Payment' ) }

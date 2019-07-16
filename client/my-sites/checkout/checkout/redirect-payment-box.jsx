@@ -30,6 +30,9 @@ import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 
+import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
+import { abtest } from 'lib/abtest';
+
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
 
@@ -291,6 +294,9 @@ export class RedirectPaymentBox extends PureComponent {
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
+		const moneyBackGuarantee =
+			! hasOnlyDomainProducts( this.props.cart ) &&
+			'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
 
 		return (
 			<React.Fragment>
@@ -324,6 +330,18 @@ export class RedirectPaymentBox extends PureComponent {
 							</span>
 
 							<div className="checkout__secure-payment">
+								{ moneyBackGuarantee && (
+									<div className="checkout__secure-payment-content">
+										<Gridicon icon="refresh" />
+										{ translate( ' 30-day Money Back Guarantee' ) }
+										{ hasDomainRegistration( this.props.cart ) && (
+											<>
+												<br className="checkout__mobile-separator" />
+												{ ' ' + translate( '(96 hrs for domains)' ) }
+											</>
+										) }
+									</div>
+								) }
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
 									{ translate( 'Secure Payment' ) }

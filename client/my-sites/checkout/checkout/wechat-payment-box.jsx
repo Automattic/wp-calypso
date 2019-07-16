@@ -34,6 +34,9 @@ import DomainRegistrationRefundPolicy from './domain-registration-refund-policy'
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import CheckoutTerms from './checkout-terms';
 
+import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
+import { abtest } from 'lib/abtest';
+
 export class WechatPaymentBox extends Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
@@ -137,6 +140,8 @@ export class WechatPaymentBox extends Component {
 			some( cart.products, ( { product_slug } ) =>
 				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			);
+		const moneyBackGuarantee =
+			! hasOnlyDomainProducts( cart ) && 'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
 
 		// Wechat qr codes get set on desktop instead of redirecting
 		if ( redirectUrl && ! isMobile ) {
@@ -196,6 +201,18 @@ export class WechatPaymentBox extends Component {
 								<SubscriptionText cart={ cart } />
 							</span>
 							<div className="checkout__secure-payment">
+								{ moneyBackGuarantee && (
+									<div className="checkout__secure-payment-content">
+										<Gridicon icon="refresh" />
+										{ translate( ' 30-day Money Back Guarantee' ) }
+										{ hasDomainRegistration( cart ) && (
+											<>
+												<br className="checkout__mobile-separator" />
+												{ ' ' + translate( '(96 hrs for domains)' ) }
+											</>
+										) }
+									</div>
+								) }
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
 									{ translate( 'Secure Payment' ) }

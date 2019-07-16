@@ -28,6 +28,9 @@ import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 
+import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
+import { abtest } from 'lib/abtest';
+
 const wpcom = wp.undocumented();
 
 export class PaypalPaymentBox extends React.Component {
@@ -137,11 +140,13 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart } = this.props;
+		const { cart, translate } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
+		const moneyBackGuarantee =
+			! hasOnlyDomainProducts( cart ) && 'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
 
 		return (
 			<React.Fragment>
@@ -151,7 +156,7 @@ export class PaypalPaymentBox extends React.Component {
 							<PaymentCountrySelect
 								additionalClasses="checkout-field"
 								name="country"
-								label={ this.props.translate( 'Country', { textOnly: true } ) }
+								label={ translate( 'Country', { textOnly: true } ) }
 								countriesList={ this.props.countriesList }
 								onCountrySelected={ this.updateLocalStateWithFieldValue }
 								disabled={ this.state.formDisabled }
@@ -160,7 +165,7 @@ export class PaypalPaymentBox extends React.Component {
 							<Input
 								additionalClasses="checkout-field"
 								name="postal-code"
-								label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
+								label={ translate( 'Postal Code', { textOnly: true } ) }
 								value={ getTaxPostalCode( cart ) || '' }
 								onChange={ this.handlePostalCodeChange }
 								disabled={ this.state.formDisabled }
@@ -189,9 +194,21 @@ export class PaypalPaymentBox extends React.Component {
 							</span>
 
 							<div className="checkout__secure-payment">
+								{ moneyBackGuarantee && (
+									<div className="checkout__secure-payment-content">
+										<Gridicon icon="refresh" />
+										{ translate( ' 30-day Money Back Guarantee' ) }
+										{ hasDomainRegistration( cart ) && (
+											<>
+												<br className="checkout__mobile-separator" />
+												{ ' ' + translate( '(96 hrs for domains)' ) }
+											</>
+										) }
+									</div>
+								) }
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ this.props.translate( 'Secure Payment' ) }
+									{ translate( 'Secure Payment' ) }
 								</div>
 							</div>
 

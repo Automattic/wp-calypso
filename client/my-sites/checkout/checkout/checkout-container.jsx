@@ -8,6 +8,7 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import FormattedHeader from 'components/formatted-header';
+import GuaranteeSeal from './guarantee-seal';
 import Checkout from '../checkout';
 import CartData from 'components/data/cart';
 import CheckoutData from 'components/data/checkout';
@@ -18,6 +19,7 @@ class CheckoutContainer extends React.Component {
 		super();
 		this.state = {
 			headerText: '',
+			shouldShowSeal: false,
 		};
 	}
 
@@ -27,6 +29,14 @@ class CheckoutContainer extends React.Component {
 
 	setHeaderText = newHeaderText => {
 		this.setState( { headerText: newHeaderText } );
+	};
+
+	renderGuaranteeSeal() {
+		return this.state.shouldShowSeal && <GuaranteeSeal visible={ this.state.shouldShowSeal } />;
+	}
+
+	showGuaranteeSeal = visible => {
+		this.setState( { shouldShowSeal: visible } );
 	};
 
 	render() {
@@ -56,6 +66,7 @@ class CheckoutContainer extends React.Component {
 							couponCode={ couponCode }
 							plan={ plan }
 							setHeaderText={ this.setHeaderText }
+							showGuaranteeSeal={ this.showGuaranteeSeal }
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 						>
@@ -64,9 +75,12 @@ class CheckoutContainer extends React.Component {
 					</TransactionData>
 
 					{ shouldShowCart && (
-						<CartData>
-							<SecondaryCart selectedSite={ selectedSite } />
-						</CartData>
+						<div className="secondary-cart__container">
+							<CartData>
+								<SecondaryCart selectedSite={ selectedSite } />
+							</CartData>
+							{ this.renderGuaranteeSeal() }
+						</div>
 					) }
 				</div>
 			</>

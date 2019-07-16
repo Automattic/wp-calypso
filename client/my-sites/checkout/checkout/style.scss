@@ -718,6 +718,7 @@
 	@include breakpoint( '>660px' ) {
 		display: flex;
 		flex-wrap: wrap;
+		flex-direction: column;
 	}
 
 	.checkout__pay-button,
@@ -740,20 +741,34 @@
 .checkout__secure-payment {
 	color: var( --color-neutral-200 );
 	flex-grow: 1;
-	margin-top: 10px;
+	margin-top: 15px;
+	font-size: 14px;
+	&-column {
+		flex-direction: column;
+	}
 
 	@include breakpoint( '>660px' ) {
+		margin-top: 20px;
 		flex: 1 0 40%;
+
+		.checkout__mobile-separator {
+			display: none;
+		}
 	}
+
 }
 
 .checkout__secure-payment-content {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	text-align: center;
+	margin-bottom: 20px;
 
 	@include breakpoint( '>660px' ) {
 		justify-content: left;
+		text-align: left;
+		margin-bottom: 5px;
 	}
 }
 

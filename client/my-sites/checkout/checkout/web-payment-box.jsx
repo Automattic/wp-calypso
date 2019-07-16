@@ -48,6 +48,9 @@ import RecentRenewals from './recent-renewals';
 import SubscriptionText from './subscription-text';
 import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
 
+import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
+import { abtest } from 'lib/abtest';
+
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
 /**
@@ -432,6 +435,8 @@ export class WebPaymentBox extends React.Component {
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
+		const moneyBackGuarantee =
+			! hasOnlyDomainProducts( cart ) && 'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
 
 		const buttonState = this.getButtonState();
 		const buttonDisabled = buttonState.disabled;
@@ -526,6 +531,18 @@ export class WebPaymentBox extends React.Component {
 							<span className="payment-request-button">{ button }</span>
 							<SubscriptionText cart={ cart } />
 						</span>
+						{ moneyBackGuarantee && (
+							<div className="checkout__secure-payment-content">
+								<Gridicon icon="refresh" />
+								{ translate( ' 30-day Money Back Guarantee' ) }
+								{ hasDomainRegistration( cart ) && (
+									<>
+										<br className="checkout__mobile-separator" />
+										{ ' ' + translate( '(96 hrs for domains)' ) }
+									</>
+								) }
+							</div>
+						) }
 						<div className="checkout__secure-payment">
 							<div className="checkout__secure-payment-content">
 								<Gridicon icon="lock" />

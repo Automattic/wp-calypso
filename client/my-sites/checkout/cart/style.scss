@@ -414,6 +414,15 @@ div.popover-cart__popover {
 	}
 }
 
+.secondary-cart__container {
+	margin: 0 auto;
+	margin-left: 20px;
+
+	@include breakpoint( '<660px' ) {
+		left: 0;
+	}
+}
+
 .secondary-cart {
 	background: var( --color-white );
 
@@ -429,6 +438,29 @@ div.popover-cart__popover {
 
 	.jetpack-logo {
 		margin: 32px 0;
+	}
+
+}
+
+
+.guarantee-seal {
+
+	img {
+		width: 40%;
+		transform: rotate( 15deg );
+	}
+
+	@include breakpoint( '<660px' ) {
+		margin: 20px auto;
+		text-align: center;
+
+		img {
+			width: 30%;
+		}
+	}
+
+	&__hidden {
+		display: none;
 	}
 }
 
