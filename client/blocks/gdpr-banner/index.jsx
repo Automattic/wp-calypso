@@ -27,6 +27,12 @@ import './style.scss';
 
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 
+const STATUS = {
+	NOT_RENDERED: 'not-rendered',
+	RENDERED: 'rendered',
+	RENDERED_BUT_HIDDEN: 'rendered-but-hidden',
+};
+
 const hasDocument = typeof document !== 'undefined';
 
 function shouldShowBanner() {
@@ -48,8 +54,7 @@ function shouldShowBanner() {
 }
 
 function GdprBanner( props ) {
-	const [ hideBanner, setHideBanner ] = useState( false );
-	const [ renderBanner, setRenderBanner ] = useState( false );
+	const [ bannerStatus, setBannerStatus ] = useState( STATUS.NOT_RENDERED );
 	const translate = useTranslate();
 
 	const { recordCookieBannerOk, recordCookieBannerView } = props;
@@ -60,20 +65,20 @@ function GdprBanner( props ) {
 			maxAge: SIX_MONTHS,
 		} );
 		recordCookieBannerOk();
-		setHideBanner( true );
+		setBannerStatus( STATUS.RENDERED_BUT_HIDDEN );
 	}, [ recordCookieBannerOk ] );
 
 	// We want to ensure that the first render is always empty, to match the server.
 	// This avoids potential hydration issues.
 	useEffect( () => {
-		setRenderBanner( true );
+		setBannerStatus( shouldShowBanner() ? STATUS.RENDERED : STATUS.RENDERED_BUT_HIDDEN );
 	}, [] );
 
 	useEffect( () => {
-		! hideBanner && renderBanner && recordCookieBannerView();
-	}, [ hideBanner, renderBanner, recordCookieBannerView ] );
+		bannerStatus === STATUS.RENDERED && recordCookieBannerView();
+	}, [ bannerStatus, recordCookieBannerView ] );
 
-	if ( ! renderBanner || ! shouldShowBanner() ) {
+	if ( bannerStatus === STATUS.NOT_RENDERED ) {
 		return null;
 	}
 
@@ -87,7 +92,12 @@ function GdprBanner( props ) {
 		}
 	);
 	return (
-		<Card compact className={ classNames( 'gdpr-banner', { 'gdpr-banner__hiding': hideBanner } ) }>
+		<Card
+			compact
+			className={ classNames( 'gdpr-banner', {
+				'gdpr-banner__hiding': bannerStatus === STATUS.RENDERED_BUT_HIDDEN,
+			} ) }
+		>
 			<div className="gdpr-banner__text-content">{ preventWidows( decodeEntities( copy ) ) }</div>
 			<div className="gdpr-banner__buttons">
 				<Button className="gdpr-banner__acknowledge-button" onClick={ acknowledgeClicked }>
