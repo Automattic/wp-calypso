@@ -127,10 +127,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	skippableDomainStep: {
-		datestamp: '20190702',
+		datestamp: '20190717',
 		variations: {
-			skippable: 50,
-			notSkippable: 50,
+			skippable: 0,
+			notSkippable: 100,
 		},
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
