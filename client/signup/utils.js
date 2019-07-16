@@ -218,7 +218,9 @@ export function canResumeFlow( flowName, progress ) {
 }
 
 export const persistSignupDestination = url => {
-	const options = { path: '/' };
+	const WEEK_IN_SECONDS = 3600 * 24 * 7;
+	const expirationDate = new Date( new Date().getTime() + WEEK_IN_SECONDS * 1000 );
+	const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url, options );
 };
 
