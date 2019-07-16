@@ -28,9 +28,7 @@ import QueryUserSettings from 'components/data/query-user-settings';
  */
 import './style.scss';
 
-class TranslatorLauncher extends React.PureComponent {
-	static displayName = 'TranslatorLauncher';
-
+class TranslatorLauncher extends React.Component {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
