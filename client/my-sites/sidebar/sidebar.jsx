@@ -44,6 +44,7 @@ import {
 	canCurrentUserUseAds,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -103,9 +104,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	tools() {
-		const { canUserManageOptions } = this.props;
-
-		if ( ! canUserManageOptions ) {
+		if ( ! this.props.canUserManageOptions && ! this.props.canUserManagePlugins ) {
 			return null;
 		}
 
@@ -724,6 +723,7 @@ function mapStateToProps( state ) {
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
+		canUserManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
