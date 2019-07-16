@@ -199,7 +199,18 @@ class ActivityLogItem extends Component {
 	};
 
 	createFullRewind = () => {
-		this.setState( { partialSelected: false } );
+		this.setState( {
+			restoreArgs: {
+				themes: true,
+				plugins: true,
+				uploads: true,
+				sqls: true,
+				roots: true,
+				contents: true,
+			},
+			partialSelected: false,
+		} );
+
 		this.props.createRewind();
 	};
 
@@ -447,7 +458,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				recordTracksEvent( 'calypso_activitylog_restore_confirm', {
 					action_id: rewindId,
 					activity_name: activityName,
-					restore_types: restoreArgs.join( ',' ),
+					restore_types: JSON.stringify( restoreArgs ),
 				} ),
 				rewindRestore( siteId, rewindId, restoreArgs )
 			)
