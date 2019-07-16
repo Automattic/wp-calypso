@@ -17,7 +17,6 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import notices from 'notices';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
-import { updateWhois } from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
@@ -26,6 +25,13 @@ import DesignatedAgentNotice from 'my-sites/domains/domain-management/components
 import Dialog from 'components/dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import { saveWhois } from 'state/domains/management/actions';
+import {
+	isUpdatingWhois,
+	getWhoisData,
+	getWhoisSaveError,
+	getWhoisSaveSuccess,
+} from 'state/domains/management/selectors';
 
 const wpcom = wp.undocumented();
 
@@ -36,6 +42,10 @@ class EditContactInfoFormCard extends React.Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		currentUser: PropTypes.object.isRequired,
 		domainRegistrationAgreementUrl: PropTypes.string.isRequired,
+		isUpdatingWhois: PropTypes.bool,
+		whoisData: PropTypes.array,
+		whoisSaveError: PropTypes.object,
+		whoisSaveSuccess: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -49,17 +59,49 @@ class EditContactInfoFormCard extends React.Component {
 			hasEmailChanged: false,
 			requiresConfirmation: false,
 			haveContactDetailsChanged: false,
-			newContactDetails: null,
 		};
 
 		this.contactFormFieldValues = this.getContactFormFieldValues();
 	}
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		return (
-			! isEqual( this.state, nextState ) ||
-			! isEqual( this.props.contactInformation, nextProps.contactInformation )
-		);
+	// shouldComponentUpdate( nextProps, nextState ) {
+	// 	return (
+	// 		! isEqual( this.state, nextState ) ||
+	// 		! isEqual( this.props.whoisData, nextProps.whoisData ) ||
+	// 		! isEqual( this.props.isUpdatingWhois, nextProps.isUpdatingWhois ) ||
+	// 		! isEqual( this.props.whoisSaveSuccess, nextProps.whoisSaveSuccess ) ||
+	// 		! isEqual( this.props.whoisSaveError, nextProps.whoisSaveError ) ||
+	// 		! isEqual( this.props.contactInformation, nextProps.contactInformation )
+	// 	);
+	// }
+
+	// 	getDerivedStateFromProps( nextProps, prevState ) {
+	// console.log( prevState.formSubmitting );
+	// console.log( nextProps.isUpdatingWhois );
+	// console.log( '------------------------------' );
+	//
+	// 		if ( prevState.formSubmitting && ! nextProps.isUpdatingWhois ) {
+	// 			return{
+	// 				formSubmitting: false,
+	// 			};
+	// 		}
+	// 		return {};
+	// 	}
+
+	componentDidUpdate( prevProps ) {
+		if ( this.state.formSubmitting && prevProps.isUpdatingWhois && ! this.props.isUpdatingWhois ) {
+			this.handleFormSubmittingComplete();
+
+			if ( this.props.whoisSaveSuccess ) {
+				this.onWhoisUpdateSuccess();
+				return;
+			}
+
+			if ( this.props.whoisSaveError ) {
+				this.onWhoisUpdateError();
+				return;
+			}
+		}
 	}
 
 	UNSAFE_componentWillMount() {
@@ -101,6 +143,8 @@ class EditContactInfoFormCard extends React.Component {
 
 	handleDialogClose = () => this.setState( { showNonDaConfirmationDialog: false } );
 
+	handleFormSubmittingComplete = () => this.setState( { formSubmitting: false } );
+
 	renderTransferLockOptOut() {
 		const { domainRegistrationAgreementUrl, translate } = this.props;
 		return (
@@ -109,6 +153,7 @@ class EditContactInfoFormCard extends React.Component {
 					<FormCheckbox
 						name="transfer-lock-opt-out"
 						disabled={ this.state.formSubmitting }
+						// disabled={ this.props.isUpdatingWhois }
 						onChange={ this.onTransferLockOptOutChange }
 					/>
 					<span>
@@ -246,73 +291,133 @@ class EditContactInfoFormCard extends React.Component {
 				showNonDaConfirmationDialog: false,
 			},
 			() => {
-				updateWhois( selectedDomain.name, newContactDetails, transferLock, this.onWhoisUpdate );
+				// updateWhois( selectedDomain.name, newContactDetails, transferLock, this.onWhoisUpdate );
+				this.props.saveWhois( selectedDomain.name, newContactDetails, transferLock );
 			}
 		);
 	};
 
-	onWhoisUpdate = ( error, data ) => {
+	onWhoisUpdateSuccess = () => {
+		this.contactFormFieldValues = this.getContactFormFieldValues();
+
 		this.setState( {
-			formSubmitting: false,
+			haveContactDetailsChanged: ! isEqual(
+				this.contactFormFieldValues,
+				this.state.newContactDetails
+			),
 		} );
 
-		if ( data && data.success ) {
-			this.contactFormFieldValues = this.getContactFormFieldValues();
-
-			this.setState( {
-				haveContactDetailsChanged: ! isEqual(
-					this.contactFormFieldValues,
-					this.state.newContactDetails
-				),
-			} );
-
-			if ( ! this.state.requiresConfirmation ) {
-				this.props.successNotice(
-					this.props.translate(
-						'The contact info has been updated. ' +
-							'There may be a short delay before the changes show up in the public records.'
-					)
-				);
-				return;
-			}
-
-			const currentEmail = this.props.contactInformation.email;
-			const strong = <strong />;
-			const { hasEmailChanged, newContactDetails = {} } = this.state;
-			let message;
-
-			if ( hasEmailChanged && newContactDetails.email ) {
-				message = this.props.translate(
-					'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
-						"Please ensure they're both confirmed to finish this process.",
-					{
-						args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
-						components: { strong },
-					}
-				);
-			} else {
-				message = this.props.translate(
-					'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
-						'Please confirm it to finish this process.',
-					{
-						args: { email: currentEmail },
-						components: { strong },
-					}
-				);
-			}
-
-			this.props.successNotice( message );
-		} else if ( error && error.message ) {
-			notices.error( error.message );
-		} else {
-			notices.error(
+		if ( ! this.state.requiresConfirmation ) {
+			this.props.successNotice(
 				this.props.translate(
-					'There was a problem updating your contact info. ' +
-						'Please try again later or contact support.'
+					'The contact info has been updated. ' +
+						'There may be a short delay before the changes show up in the public records.'
 				)
 			);
+			return;
 		}
+
+		const currentEmail = this.props.contactInformation.email;
+		const strong = <strong />;
+		const { hasEmailChanged, newContactDetails = {} } = this.state;
+		let message;
+
+		if ( hasEmailChanged && newContactDetails.email ) {
+			message = this.props.translate(
+				'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
+					"Please ensure they're both confirmed to finish this process.",
+				{
+					args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
+					components: { strong },
+				}
+			);
+		} else {
+			message = this.props.translate(
+				'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
+					'Please confirm it to finish this process.',
+				{
+					args: { email: currentEmail },
+					components: { strong },
+				}
+			);
+		}
+
+		this.props.successNotice( message );
 	};
+
+	onWhoisUpdateError = () => {
+		const message =
+			this.props.whoisSaveError ||
+			this.props.translate(
+				'There was a problem updating your contact info. ' +
+					'Please try again later or contact support.'
+			);
+
+		notices.error( message );
+	};
+
+	// onWhoisUpdate = ( error, data ) => {
+	// 	this.setState( {
+	// 		formSubmitting: false,
+	// 	} );
+	//
+	// 	if ( data && data.success ) {
+	// 		this.contactFormFieldValues = this.getContactFormFieldValues();
+	//
+	// 		this.setState( {
+	// 			haveContactDetailsChanged: ! isEqual(
+	// 				this.contactFormFieldValues,
+	// 				this.state.newContactDetails
+	// 			),
+	// 		} );
+	//
+	// 		if ( ! this.state.requiresConfirmation ) {
+	// 			this.props.successNotice(
+	// 				this.props.translate(
+	// 					'The contact info has been updated. ' +
+	// 						'There may be a short delay before the changes show up in the public records.'
+	// 				)
+	// 			);
+	// 			return;
+	// 		}
+	//
+	// 		const currentEmail = this.props.contactInformation.email;
+	// 		const strong = <strong />;
+	// 		const { hasEmailChanged, newContactDetails = {} } = this.state;
+	// 		let message;
+	//
+	// 		if ( hasEmailChanged && newContactDetails.email ) {
+	// 			message = this.props.translate(
+	// 				'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
+	// 					"Please ensure they're both confirmed to finish this process.",
+	// 				{
+	// 					args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
+	// 					components: { strong },
+	// 				}
+	// 			);
+	// 		} else {
+	// 			message = this.props.translate(
+	// 				'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
+	// 					'Please confirm it to finish this process.',
+	// 				{
+	// 					args: { email: currentEmail },
+	// 					components: { strong },
+	// 				}
+	// 			);
+	// 		}
+	//
+	// 		this.props.successNotice( message );
+	// 	} else if ( error && error.message ) {
+	// 		notices.error( error.message );
+	// 	} else {
+	// 		notices.error(
+	// 			this.props.translate(
+	// 				'There was a problem updating your contact info. ' +
+	// 					'Please try again later or contact support.'
+	// 			)
+	// 		);
+	// 	}
+	// };
 
 	handleSubmitButtonClick = newContactDetails => {
 		this.setState(
@@ -337,11 +442,13 @@ class EditContactInfoFormCard extends React.Component {
 			[]
 		);
 		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
+		// return this.props.isWhoisUpdating || includes( unmodifiableFields, snakeCase( name ) );
 	};
 
 	shouldDisableSubmitButton() {
 		const { haveContactDetailsChanged, formSubmitting } = this.state;
 		return formSubmitting === true || haveContactDetailsChanged === false;
+		// return this.props.isUpdatingWhois === true || haveContactDetailsChanged === false;
 	}
 
 	render() {
@@ -373,10 +480,17 @@ class EditContactInfoFormCard extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		currentUser: getCurrentUser( state ),
-	} ),
+	( state, ownProps ) => {
+		return {
+			currentUser: getCurrentUser( state ),
+			isUpdatingWhois: isUpdatingWhois( state, ownProps.selectedDomain.name ),
+			whoisData: getWhoisData( state, ownProps.selectedDomain.name ),
+			whoisSaveError: getWhoisSaveError( state, ownProps.selectedDomain.name ),
+			whoisSaveSuccess: getWhoisSaveSuccess( state, ownProps.selectedDomain.name ),
+		};
+	},
 	{
+		saveWhois,
 		successNotice,
 	}
 )( localize( EditContactInfoFormCard ) );
