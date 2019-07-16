@@ -43,6 +43,9 @@ class NavTabs extends Component {
 		isDropdown: false,
 	};
 
+	navGroupRef = React.createRef();
+	tabWidthMap = new Map();
+
 	componentDidMount() {
 		this.setDropdownAfterLayoutFlush();
 		window.addEventListener( 'resize', this.setDropdownDebounced );
@@ -60,9 +63,21 @@ class NavTabs extends Component {
 		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
+	/* Ref that stores the width of given tab element */
+	storeTabWidth( index ) {
+		return tabElement => {
+			if ( tabElement === null ) {
+				this.tabWidthMap.delete( index );
+			} else {
+				const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
+				this.tabWidthMap.set( index, tabWidth );
+			}
+		};
+	}
+
 	render() {
-		const tabs = React.Children.map( this.props.children, function( child, index ) {
-			return child && React.cloneElement( child, { ref: 'tab-' + index } );
+		const tabs = React.Children.map( this.props.children, ( child, index ) => {
+			return child && React.cloneElement( child, { ref: this.storeTabWidth( index ) } );
 		} );
 
 		const tabsClassName = classNames( 'section-nav-tabs', {
@@ -75,7 +90,7 @@ class NavTabs extends Component {
 
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<div className="section-nav-group" ref="navGroup">
+			<div className="section-nav-group" ref={ this.navGroupRef }>
 				<div className={ tabsClassName }>
 					{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 					<ul className="section-nav-tabs__list" role="menu" onKeyDown={ this.keyHandler }>
@@ -89,25 +104,18 @@ class NavTabs extends Component {
 		);
 	}
 
-	getTabWidths = () => {
+	getTabWidths() {
 		let totalWidth = 0;
 
-		React.Children.forEach(
-			this.props.children,
-			function( child, index ) {
-				if ( ! child ) {
-					return;
-				}
-				const tabWidth = ReactDom.findDOMNode( this.refs[ 'tab-' + index ] ).offsetWidth;
-				totalWidth += tabWidth;
-			}.bind( this )
-		);
+		this.tabWidthMap.forEach( tabWidth => {
+			totalWidth += tabWidth;
+		} );
 
 		this.tabsWidth = Math.max( totalWidth, this.tabsWidth || 0 );
-	};
+	}
 
-	getDropdown = () => {
-		const dropdownOptions = React.Children.map( this.props.children, function( child, index ) {
+	getDropdown() {
+		const dropdownOptions = React.Children.map( this.props.children, ( child, index ) => {
 			if ( ! child ) {
 				return null;
 			}
@@ -117,6 +125,7 @@ class NavTabs extends Component {
 				</DropdownItem>
 			);
 		} );
+
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<SelectDropdown
@@ -128,17 +137,15 @@ class NavTabs extends Component {
 			</SelectDropdown>
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 		);
-	};
+	}
 
 	setDropdown = () => {
-		let navGroupWidth;
-
 		if ( window.innerWidth > MOBILE_PANEL_THRESHOLD ) {
-			if ( ! this.refs.navGroup ) {
+			if ( ! this.navGroupRef.current ) {
 				return;
 			}
 
-			navGroupWidth = this.refs.navGroup.offsetWidth;
+			const navGroupWidth = this.navGroupRef.current.offsetWidth;
 
 			this.getTabWidths();
 
