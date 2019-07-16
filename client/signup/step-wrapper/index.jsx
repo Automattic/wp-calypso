@@ -11,6 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
 import Button from 'components/button';
@@ -62,7 +63,11 @@ class StepWrapper extends Component {
 	renderImportOption() {
 		const { translate } = this.props;
 
-		return <Button borderless>{ translate( 'Already have a website?' ) }</Button>;
+		return (
+			<div className="step-wrapper__buttons step-wrapper__import">
+				<Button borderless>{ translate( 'Already have a website?' ) }</Button>
+			</div>
+		);
 	}
 
 	renderSkip() {
@@ -128,6 +133,7 @@ class StepWrapper extends Component {
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 		} );
+		const showImport = isEnabled( 'signup/import-flow' );
 
 		return (
 			<>
@@ -153,9 +159,7 @@ class StepWrapper extends Component {
 						</div>
 					) }
 
-					<div className="step-wrapper__buttons step-wrapper__import">
-						{ this.renderImportOption() }
-					</div>
+					{ showImport && this.renderImportOption() }
 				</div>
 			</>
 		);
