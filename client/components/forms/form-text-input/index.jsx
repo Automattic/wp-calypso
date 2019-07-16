@@ -17,15 +17,19 @@ export default class FormTextInput extends PureComponent {
 	currentTextField = undefined;
 
 	textFieldRef = element => {
+		this.currentTextField = element;
+
 		const { inputRef } = this.props;
 
-		if ( inputRef && typeof inputRef === 'function' ) {
-			inputRef( element );
-		} else if ( inputRef && inputRef.hasOwnProperty( 'current' ) ) {
-			inputRef.current = element;
+		if ( ! inputRef ) {
+			return;
 		}
 
-		this.currentTextField = element;
+		if ( typeof inputRef === 'function' ) {
+			inputRef( element );
+		} else {
+			inputRef.current = element;
+		}
 	};
 
 	focus() {
