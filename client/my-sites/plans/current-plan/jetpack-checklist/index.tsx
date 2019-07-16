@@ -148,7 +148,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					className="jetpack-checklist"
 					isPlaceholder={ ! taskStatuses }
 					onExpandTask={ this.trackExpandTask }
-					progressText={ translate( 'Your Jetpack setup progress' ) }
 					checklistFooter={ this.renderJetpackFooter() }
 				>
 					<Task
