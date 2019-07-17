@@ -13,7 +13,6 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import {
 	getName,
 	isExpired,
@@ -207,13 +206,6 @@ class PurchaseMeta extends Component {
 				} );
 			}
 
-			// Before code-D29008, the purchase info endpoint excluded the payment info
-			// if the auto-renewal is off. This is for emulating the behavior before rolling out the toggle,
-			// so that users can at least still re-enable the auto-renewal through adding a new payment method.
-			if ( ! config.isEnabled( 'autorenewal-toggle' ) && ! isRenewing( purchase ) ) {
-				return translate( 'None' );
-			}
-
 			return (
 				<>
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
@@ -306,7 +298,6 @@ class PurchaseMeta extends Component {
 		}
 
 		if (
-			config.isEnabled( 'autorenewal-toggle' ) &&
 			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
 			hasPaymentMethod( purchase ) &&
 			! isPaidWithCredits( purchase ) &&
