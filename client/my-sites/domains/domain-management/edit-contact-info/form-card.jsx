@@ -64,30 +64,6 @@ class EditContactInfoFormCard extends React.Component {
 		this.contactFormFieldValues = this.getContactFormFieldValues();
 	}
 
-	// shouldComponentUpdate( nextProps, nextState ) {
-	// 	return (
-	// 		! isEqual( this.state, nextState ) ||
-	// 		! isEqual( this.props.whoisData, nextProps.whoisData ) ||
-	// 		! isEqual( this.props.isUpdatingWhois, nextProps.isUpdatingWhois ) ||
-	// 		! isEqual( this.props.whoisSaveSuccess, nextProps.whoisSaveSuccess ) ||
-	// 		! isEqual( this.props.whoisSaveError, nextProps.whoisSaveError ) ||
-	// 		! isEqual( this.props.contactInformation, nextProps.contactInformation )
-	// 	);
-	// }
-
-	// 	getDerivedStateFromProps( nextProps, prevState ) {
-	// console.log( prevState.formSubmitting );
-	// console.log( nextProps.isUpdatingWhois );
-	// console.log( '------------------------------' );
-	//
-	// 		if ( prevState.formSubmitting && ! nextProps.isUpdatingWhois ) {
-	// 			return{
-	// 				formSubmitting: false,
-	// 			};
-	// 		}
-	// 		return {};
-	// 	}
-
 	componentDidUpdate( prevProps ) {
 		if ( this.state.formSubmitting && prevProps.isUpdatingWhois && ! this.props.isUpdatingWhois ) {
 			this.handleFormSubmittingComplete();
@@ -102,12 +78,6 @@ class EditContactInfoFormCard extends React.Component {
 				return;
 			}
 		}
-	}
-
-	UNSAFE_componentWillMount() {
-		this.setState( {
-			transferLock: true,
-		} );
 	}
 
 	getContactFormFieldValues() {
@@ -153,7 +123,6 @@ class EditContactInfoFormCard extends React.Component {
 					<FormCheckbox
 						name="transfer-lock-opt-out"
 						disabled={ this.state.formSubmitting }
-						// disabled={ this.props.isUpdatingWhois }
 						onChange={ this.onTransferLockOptOutChange }
 					/>
 					<span>
@@ -291,7 +260,6 @@ class EditContactInfoFormCard extends React.Component {
 				showNonDaConfirmationDialog: false,
 			},
 			() => {
-				// updateWhois( selectedDomain.name, newContactDetails, transferLock, this.onWhoisUpdate );
 				this.props.saveWhois( selectedDomain.name, newContactDetails, transferLock );
 			}
 		);
@@ -355,69 +323,6 @@ class EditContactInfoFormCard extends React.Component {
 
 		notices.error( message );
 	};
-
-	// onWhoisUpdate = ( error, data ) => {
-	// 	this.setState( {
-	// 		formSubmitting: false,
-	// 	} );
-	//
-	// 	if ( data && data.success ) {
-	// 		this.contactFormFieldValues = this.getContactFormFieldValues();
-	//
-	// 		this.setState( {
-	// 			haveContactDetailsChanged: ! isEqual(
-	// 				this.contactFormFieldValues,
-	// 				this.state.newContactDetails
-	// 			),
-	// 		} );
-	//
-	// 		if ( ! this.state.requiresConfirmation ) {
-	// 			this.props.successNotice(
-	// 				this.props.translate(
-	// 					'The contact info has been updated. ' +
-	// 						'There may be a short delay before the changes show up in the public records.'
-	// 				)
-	// 			);
-	// 			return;
-	// 		}
-	//
-	// 		const currentEmail = this.props.contactInformation.email;
-	// 		const strong = <strong />;
-	// 		const { hasEmailChanged, newContactDetails = {} } = this.state;
-	// 		let message;
-	//
-	// 		if ( hasEmailChanged && newContactDetails.email ) {
-	// 			message = this.props.translate(
-	// 				'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
-	// 					"Please ensure they're both confirmed to finish this process.",
-	// 				{
-	// 					args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
-	// 					components: { strong },
-	// 				}
-	// 			);
-	// 		} else {
-	// 			message = this.props.translate(
-	// 				'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
-	// 					'Please confirm it to finish this process.',
-	// 				{
-	// 					args: { email: currentEmail },
-	// 					components: { strong },
-	// 				}
-	// 			);
-	// 		}
-	//
-	// 		this.props.successNotice( message );
-	// 	} else if ( error && error.message ) {
-	// 		notices.error( error.message );
-	// 	} else {
-	// 		notices.error(
-	// 			this.props.translate(
-	// 				'There was a problem updating your contact info. ' +
-	// 					'Please try again later or contact support.'
-	// 			)
-	// 		);
-	// 	}
-	// };
 
 	handleSubmitButtonClick = newContactDetails => {
 		this.setState(
