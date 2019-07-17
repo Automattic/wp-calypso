@@ -371,7 +371,7 @@ export class Checkout extends React.Component {
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
-			transaction: { step: { data: receipt = null } = {} } = {},
+			transaction: { step: { data: stepResult = null } = {} } = {},
 		} = this.props;
 		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
 
@@ -381,11 +381,14 @@ export class Checkout extends React.Component {
 
 		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		let receiptId;
-		if ( receipt ) {
-			receiptId = receipt.receipt_id;
+		let pendingOrReceiptId;
+
+		if ( get( stepResult, 'receipt_id', false ) ) {
+			pendingOrReceiptId = stepResult.receipt_id;
+		} else if ( get( stepResult, 'orderId', false ) ) {
+			pendingOrReceiptId = 'pending/' + stepResult.orderId;
 		} else {
-			receiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
+			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 
 		if ( hasRenewalItem( cart ) ) {
@@ -401,7 +404,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( cart.create_new_blog ) {
-			return `/checkout/thank-you/no-site/${ receiptId }`;
+			return `/checkout/thank-you/no-site/${ pendingOrReceiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {
@@ -410,11 +413,11 @@ export class Checkout extends React.Component {
 
 		// If cart is empty, then send the user to a generic page (not post-purchase related).
 		// For example, this case arises when a Skip button is clicked on a concierge upsell nudge
-		if ( ':receiptId' === receiptId && isEmpty( getAllCartItems( cart ) ) ) {
+		if ( ':receiptId' === pendingOrReceiptId && isEmpty( getAllCartItems( cart ) ) ) {
 			return `/stats/day/${ selectedSiteSlug }`;
 		}
 
-		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
+		if ( this.props.isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
 			const hasGoogleAppsInCart = hasGoogleApps( cart );
 
@@ -441,7 +444,7 @@ export class Checkout extends React.Component {
 				if ( domainsForGSuite.length ) {
 					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
 						domainsForGSuite[ 0 ].meta
-					}/${ receiptId }`;
+					}/${ pendingOrReceiptId }`;
 				}
 			}
 		}
@@ -458,7 +461,7 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-quickstart-session/${ receiptId }`;
+				return `/checkout/${ selectedSiteSlug }/offer-quickstart-session/${ pendingOrReceiptId }`;
 			}
 		}
 
@@ -468,7 +471,7 @@ export class Checkout extends React.Component {
 
 		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
-		if ( this.props.isEligibleForCheckoutToChecklist & ( ':receiptId' !== receiptId ) ) {
+		if ( this.props.isEligibleForCheckoutToChecklist & ( ':receiptId' !== pendingOrReceiptId ) ) {
 			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
 
 			return `/${ destination }/${ selectedSiteSlug }${ queryParam }`;
@@ -481,8 +484,8 @@ export class Checkout extends React.Component {
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
 					this.props.selectedFeature
-			  }/${ selectedSiteSlug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }${ queryParam }`;
+			  }/${ selectedSiteSlug }/${ pendingOrReceiptId }`
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ pendingOrReceiptId }${ queryParam }`;
 	};
 
 	handleCheckoutExternalRedirect( redirectUrl ) {

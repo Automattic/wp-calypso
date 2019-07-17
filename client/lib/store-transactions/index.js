@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:store-transactions' );
@@ -19,6 +18,8 @@ import {
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
 	REDIRECTING_FOR_AUTHORIZATION,
+	MODAL_AUTHORIZATION,
+	RECEIVED_AUTHORIZATION_RESPONSE,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
@@ -28,6 +29,7 @@ import {
 	translatedEbanxError,
 } from 'lib/checkout/processor-specific';
 import analytics from 'lib/analytics';
+import { createStripePaymentMethod, confirmStripePaymentIntent } from 'lib/stripe';
 
 const wpcom = wp.undocumented();
 
@@ -73,17 +75,17 @@ TransactionFlow.prototype._pushStep = function( options ) {
 };
 
 TransactionFlow.prototype._paymentHandlers = {
-	WPCOM_Billing_MoneyPress_Stored: function() {
+	WPCOM_Billing_MoneyPress_Stored: async function() {
 		const {
 				mp_ref: payment_key,
 				stored_details_id,
 				payment_partner,
 			} = this._initialData.payment.storedCard,
-			{ successUrl, cancelUrl } = this._initialData;
+			{ successUrl, cancelUrl, stripeConfiguration } = this._initialData;
 
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with stored card' );
-		this._submitWithPayment( {
+		const response = await this._submitWithPayment( {
 			payment_method: 'WPCOM_Billing_MoneyPress_Stored',
 			payment_key,
 			payment_partner,
@@ -91,6 +93,11 @@ TransactionFlow.prototype._paymentHandlers = {
 			successUrl,
 			cancelUrl,
 		} );
+
+		// Authentication via modal screen
+		if ( response && response.message && response.message.payment_intent_client_secret ) {
+			await this.stripeModalAuth( stripeConfiguration, response );
+		}
 	},
 
 	WPCOM_Billing_MoneyPress_Paygate: function() {
@@ -150,6 +157,64 @@ TransactionFlow.prototype._paymentHandlers = {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		this._submitWithPayment( { payment_method: 'WPCOM_Billing_WPCOM' } );
 	},
+
+	WPCOM_Billing_Stripe_Payment_Method: async function() {
+		const { newCardDetails } = this._initialData.payment;
+		const { successUrl, cancelUrl, stripe, stripeConfiguration } = this._initialData;
+		debug( 'validating transaction with new stripe elements card' );
+		const validation = validatePaymentDetails( newCardDetails, 'stripe' );
+
+		if ( ! isEmpty( validation.errors ) ) {
+			this._pushStep( {
+				name: INPUT_VALIDATION,
+				error: new ValidationError( 'invalid-card-details', validation.errors ),
+				first: true,
+				last: true,
+			} );
+			return;
+		}
+
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
+		debug( 'submitting transaction with new stripe elements card' );
+
+		const { name, country, 'postal-code': zip } = newCardDetails;
+		const paymentDetailsForStripe = {
+			name,
+			address: {
+				country: country,
+				postal_code: zip,
+			},
+		};
+
+		try {
+			const stripePaymentMethod = await createStripePaymentMethod(
+				stripe,
+				paymentDetailsForStripe
+			);
+			this._pushStep( { name: RECEIVED_PAYMENT_KEY_RESPONSE } );
+			const response = await this._submitWithPayment( {
+				payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+				payment_key: stripePaymentMethod.id,
+				payment_partner: stripeConfiguration.processor_id,
+				name,
+				zip,
+				country,
+				successUrl,
+				cancelUrl,
+			} );
+
+			// Authentication via modal screen
+			if ( response && response.message && response.message.payment_intent_client_secret ) {
+				await this.stripeModalAuth( stripeConfiguration, response );
+			}
+		} catch ( error ) {
+			this._pushStep( {
+				name: RECEIVED_PAYMENT_KEY_RESPONSE,
+				error,
+				last: true,
+			} );
+		}
+	},
 };
 
 TransactionFlow.prototype._createCardToken = function( callback ) {
@@ -181,29 +246,74 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
-	wpcom.transactions( 'POST', transaction, ( error, data ) => {
-		if ( error ) {
-			return this._pushStep( {
+	return new Promise( resolve => {
+		wpcom.transactions( 'POST', transaction, ( error, data ) => {
+			if ( error ) {
+				this._pushStep( {
+					name: RECEIVED_WPCOM_RESPONSE,
+					error,
+					last: true,
+				} );
+				// This should probably reject but since the error is already
+				// reported just above, that might risk double-reporting or
+				// changing the step to the wrong one, so this just resolves
+				// without data instead.
+				resolve();
+				return;
+			}
+
+			if ( data.message ) {
+				this._pushStep( {
+					name: MODAL_AUTHORIZATION,
+					data: data,
+					last: false,
+				} );
+				resolve( data );
+				return;
+			}
+
+			if ( data.redirect_url ) {
+				this._pushStep( {
+					name: REDIRECTING_FOR_AUTHORIZATION,
+					data: data,
+					last: true,
+				} );
+				resolve( data );
+				return;
+			}
+
+			this._pushStep( {
 				name: RECEIVED_WPCOM_RESPONSE,
-				error,
+				data,
 				last: true,
 			} );
-		}
 
-		if ( data.redirect_url ) {
-			return this._pushStep( {
-				name: REDIRECTING_FOR_AUTHORIZATION,
-				data: data,
-				last: true,
-			} );
-		}
-
-		this._pushStep( {
-			name: RECEIVED_WPCOM_RESPONSE,
-			data,
-			last: true,
+			resolve( data );
 		} );
 	} );
+};
+
+TransactionFlow.prototype.stripeModalAuth = async function( stripeConfiguration, response ) {
+	try {
+		const authenticationResponse = await confirmStripePaymentIntent(
+			stripeConfiguration,
+			response.message.payment_intent_client_secret
+		);
+
+		if ( authenticationResponse ) {
+			this._pushStep( {
+				name: RECEIVED_AUTHORIZATION_RESPONSE,
+				data: { status: authenticationResponse.status, orderId: response.order_id },
+				last: true,
+			} );
+		}
+	} catch ( error ) {
+		this._pushStep( {
+			name: RECEIVED_AUTHORIZATION_RESPONSE,
+			error,
+			last: true,
+		} );
+	}
 };
 
 function createPaygateToken( requestType, cardDetails, callback ) {
@@ -348,6 +458,12 @@ export function createCardToken( requestType, cardDetails, callback, forcedPayga
 	return createPaygateToken( requestType, cardDetails, callback );
 }
 
+export async function getStripeConfiguration( { country } ) {
+	const config = await wpcom.stripeConfiguration( { country } );
+	debug( 'Stripe configuration', config );
+	return config;
+}
+
 export function hasDomainDetails( transaction ) {
 	return ! isEmpty( transaction.domainDetails );
 }
@@ -355,6 +471,13 @@ export function hasDomainDetails( transaction ) {
 export function newCardPayment( newCardDetails ) {
 	return {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
+		newCardDetails: newCardDetails || {},
+	};
+}
+
+export function newStripeCardPayment( newCardDetails ) {
+	return {
+		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
 		newCardDetails: newCardDetails || {},
 	};
 }

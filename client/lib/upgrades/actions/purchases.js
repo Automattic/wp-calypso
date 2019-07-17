@@ -32,7 +32,7 @@ export function submitSurvey( surveyName, siteID, surveyData ) {
 	survey.addResponses( surveyData );
 
 	debug( 'Survey responses', survey );
-	survey
+	return survey
 		.submit()
 		.then( res => {
 			debug( 'Survey submit response', res );

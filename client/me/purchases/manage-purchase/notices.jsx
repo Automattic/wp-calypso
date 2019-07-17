@@ -63,7 +63,7 @@ class PurchaseNotice extends Component {
 				);
 			}
 
-			if ( config.isEnabled( 'autorenewal-toggle' ) && hasPaymentMethod( purchase ) ) {
+			if ( hasPaymentMethod( purchase ) ) {
 				return translate(
 					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
 						"Please enable auto-renewal so you don't lose out on your paid features!",
@@ -110,7 +110,7 @@ class PurchaseNotice extends Component {
 		} );
 	}
 
-	renderRenewNoticeAction( onClick ) {
+	renderRenewNoticeAction() {
 		const { editCardDetailsPath, purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
@@ -127,12 +127,7 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		// With the toggle, it doesn't make much sense to have this button.
-		return (
-			! config.isEnabled( 'autorenewal-toggle' ) && (
-				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
-			)
-		);
+		return null;
 	}
 
 	trackImpression( warning ) {
@@ -150,13 +145,6 @@ class PurchaseNotice extends Component {
 			eventProperties( warning )
 		);
 	}
-
-	handleExpiringNoticeRenewal = () => {
-		this.trackClick( 'purchase-expiring' );
-		if ( this.props.handleRenew ) {
-			this.props.handleRenew();
-		}
-	};
 
 	renderPurchaseExpiringNotice() {
 		const { moment, purchase } = this.props;
@@ -179,7 +167,7 @@ class PurchaseNotice extends Component {
 				status={ noticeStatus }
 				text={ this.getExpiringText( purchase ) }
 			>
-				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
+				{ this.renderRenewNoticeAction() }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
@@ -236,13 +224,6 @@ class PurchaseNotice extends Component {
 		}
 	}
 
-	handleExpiredNoticeRenewal = () => {
-		this.trackClick( 'purchase-expired' );
-		if ( this.props.handleRenew ) {
-			this.props.handleRenew();
-		}
-	};
-
 	renderExpiredRenewNotice() {
 		const { purchase, translate } = this.props;
 
@@ -260,7 +241,7 @@ class PurchaseNotice extends Component {
 				status="is-error"
 				text={ translate( 'This purchase has expired and is no longer in use.' ) }
 			>
-				{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
+				{ this.renderRenewNoticeAction() }
 				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);

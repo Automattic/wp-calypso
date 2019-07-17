@@ -1,4 +1,4 @@
-.concierge-session-nudge__placeholders {
+.upsell-nudge__placeholders {
     display: flex;
     flex-direction: column;
 
@@ -8,13 +8,13 @@
     }
 }
 
-.concierge-session-nudge__placeholder-row {
+.upsell-nudge__placeholder-row {
     height: 40px;
     flex: 0 0 100%;
     margin-bottom: 15px;
 }
 
-.concierge-session-nudge__placeholder-button {
+.upsell-nudge__placeholder-button {
     height: 50px;
     width: 100%;
 
@@ -24,7 +24,7 @@
     }
 }
 
-.concierge-session-nudge__placeholder-button-container {
+.upsell-nudge__placeholder-button-container {
     display: flex;
     justify-content: space-between;
 }

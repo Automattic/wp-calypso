@@ -17,6 +17,10 @@ import { generateFlows } from './flows-pure';
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
+	if ( dependencies.couponCode ) {
+		return `/checkout/${ dependencies.siteSlug }?coupon=${ dependencies.couponCode }`;
+	}
+
 	return '/checkout/' + dependencies.siteSlug;
 }
 

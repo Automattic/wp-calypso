@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import ExporterContainer from 'my-sites/exporter/container';
 import Main from 'components/main';
+import DocumentHead from 'components/data/document-head';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -23,13 +25,15 @@ import './style.scss';
 
 const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => (
 	<Main>
-		{ canUserExport && (
-			<FormattedHeader
-				className="exporter__section-header"
-				headerText={ translate( 'Export your content' ) }
-				subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
-			/>
-		) }
+		<DocumentHead title={ translate( 'Export' ) } />
+		<SidebarNavigation />
+		{ canUserExport && ( 
+      <FormattedHeader
+			  className="exporter__section-header"
+			  headerText={ translate( 'Export your content' ) }
+			  subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+		  />
+    ) }
 		{ isJetpack && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"

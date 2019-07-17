@@ -7,6 +7,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty, noop } from 'lodash';
+import { CardCVCElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
  * Internal dependencies
@@ -24,6 +25,140 @@ import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-spec
  */
 import './style.scss';
 
+function CvvPopover( { translate, card } ) {
+	const brand = getCreditCardType( card.number );
+
+	let popoverText = translate(
+		'This is the 3-digit number printed on the signature panel on the back of your card.'
+	);
+	let popoverImage = '/calypso/images/upgrades/cc-cvv-back.svg';
+
+	if ( brand === 'amex' ) {
+		popoverText = translate(
+			'This is the 4-digit number printed above the account number ' + 'on the front of your card.'
+		);
+		popoverImage = '/calypso/images/upgrades/cc-cvv-front.svg';
+	}
+
+	return (
+		<InfoPopover position="top" className="credit-card-form-fields__cvv-info">
+			<img
+				className="credit-card-form-fields__cvv-illustration"
+				src={ popoverImage }
+				width="42"
+				height="30"
+				alt={ translate( 'Credit card Security Code illustration' ) }
+			/>
+			{ popoverText }
+		</InfoPopover>
+	);
+}
+
+CvvPopover.propTypes = {
+	translate: PropTypes.func.isRequired,
+	card: PropTypes.object.isRequired,
+};
+
+function CreditCardNumberField( { translate, stripe, createField } ) {
+	if ( stripe ) {
+		const elementClasses = {
+			base: 'credit-card-form-fields__element',
+			invalid: 'is-error',
+			focus: 'has-focus',
+		};
+
+		return (
+			<div className="credit-card-form-fields__field number">
+				<label className="credit-card-form-fields__label form-label">
+					{ translate( 'Card Number' ) }
+					<CardNumberElement classes={ elementClasses } />
+				</label>
+			</div>
+		);
+	}
+
+	return createField( 'number', CreditCardNumberInput, {
+		inputMode: 'numeric',
+		label: translate( 'Card Number', {
+			comment: 'Card number label on credit card form',
+		} ),
+		placeholder: '•••• •••• •••• ••••',
+	} );
+}
+
+CreditCardNumberField.propTypes = {
+	translate: PropTypes.func.isRequired,
+	createField: PropTypes.func.isRequired,
+	stripe: PropTypes.object,
+};
+
+function CreditCardExpiryAndCvvFields( { translate, stripe, createField, card } ) {
+	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
+		components: {
+			span: <span className="credit-card-form-fields__explainer" />,
+		},
+	} );
+
+	const expiryLabel = translate( 'Expiry Date', {
+		comment: 'Expiry label on credit card form',
+	} );
+
+	if ( stripe ) {
+		const elementClasses = {
+			base: 'credit-card-form-fields__element',
+			invalid: 'is-error',
+			focus: 'has-focus',
+		};
+
+		return (
+			<React.Fragment>
+				<div className="credit-card-form-fields__field expiration-date">
+					<label className="credit-card-form-fields__label form-label">
+						{ expiryLabel }
+						<CardExpiryElement classes={ elementClasses } />
+					</label>
+				</div>
+				<div className="credit-card-form-fields__field cvv">
+					<label className="credit-card-form-fields__label form-label">
+						{ cvcLabel }
+						<CardCVCElement classes={ elementClasses } />
+					</label>
+				</div>
+			</React.Fragment>
+		);
+	}
+
+	return (
+		<React.Fragment>
+			{ createField( 'expiration-date', Input, {
+				inputMode: 'numeric',
+				label: expiryLabel,
+				placeholder: translate( 'MM/YY', {
+					comment: 'Expiry placeholder for Expiry date on credit card form',
+				} ),
+			} ) }
+
+			{ createField( 'cvv', Input, {
+				inputMode: 'numeric',
+				placeholder: ' ',
+				label: translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
+					components: {
+						infoPopover: <CvvPopover translate={ translate } card={ card } />,
+						span: <span className="credit-card-form-fields__explainer" />,
+					},
+				} ),
+			} ) }
+		</React.Fragment>
+	);
+}
+
+CreditCardExpiryAndCvvFields.propTypes = {
+	translate: PropTypes.func.isRequired,
+	createField: PropTypes.func.isRequired,
+	card: PropTypes.object.isRequired,
+	stripe: PropTypes.object,
+};
+
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
 		card: PropTypes.object.isRequired,
@@ -33,6 +168,7 @@ export class CreditCardFormFields extends React.Component {
 		getErrorMessage: PropTypes.func,
 		autoFocus: PropTypes.bool,
 		isNewTransaction: PropTypes.bool,
+		stripe: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -95,37 +231,6 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
-	getCvvPopover = () => {
-		const { translate, card } = this.props;
-		const brand = getCreditCardType( card.number );
-
-		let popoverText = translate(
-			'This is the 3-digit number printed on the signature panel on the back of your card.'
-		);
-		let popoverImage = '/calypso/images/upgrades/cc-cvv-back.svg';
-
-		if ( brand === 'amex' ) {
-			popoverText = translate(
-				'This is the 4-digit number printed above the account number ' +
-					'on the front of your card.'
-			);
-			popoverImage = '/calypso/images/upgrades/cc-cvv-front.svg';
-		}
-
-		return (
-			<InfoPopover position="top" className="credit-card-form-fields__cvv-info">
-				<img
-					className="credit-card-form-fields__cvv-illustration"
-					src={ popoverImage }
-					width="42"
-					height="30"
-					alt={ translate( 'Credit card Security Code illustration' ) }
-				/>
-				{ popoverText }
-			</InfoPopover>
-		);
-	};
-
 	shouldRenderCountrySpecificFields() {
 		// The add/update card endpoints do not process Ebanx payment details
 		// so we only show Ebanx fields at checkout,
@@ -156,37 +261,21 @@ export class CreditCardFormFields extends React.Component {
 					} ),
 					placeholder: ' ',
 				} ) }
-
-				{ this.createField( 'number', CreditCardNumberInput, {
-					inputMode: 'numeric',
-					label: translate( 'Card Number', {
-						comment: 'Card number label on credit card form',
-					} ),
-					placeholder: '•••• •••• •••• ••••',
-				} ) }
+				<div className="credit-card-form-fields__field number">
+					<CreditCardNumberField
+						translate={ this.props.translate }
+						stripe={ this.props.stripe }
+						createField={ this.createField }
+					/>
+				</div>
 
 				<div className={ creditCardFormFieldsExtrasClassNames }>
-					{ this.createField( 'expiration-date', Input, {
-						inputMode: 'numeric',
-						label: translate( 'Expiry Date', {
-							comment: 'Expiry label on credit card form',
-						} ),
-						placeholder: translate( 'MM/YY', {
-							comment: 'Expiry placeholder for Expiry date on credit card form',
-						} ),
-					} ) }
-
-					{ this.createField( 'cvv', Input, {
-						inputMode: 'numeric',
-						placeholder: ' ',
-						label: translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
-							components: {
-								infoPopover: this.getCvvPopover(),
-								span: <span className="credit-card-form-fields__explainer" />,
-							},
-						} ),
-					} ) }
-
+					<CreditCardExpiryAndCvvFields
+						translate={ this.props.translate }
+						stripe={ this.props.stripe }
+						createField={ this.createField }
+						card={ this.props.card }
+					/>
 					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
 						placeholder: ' ',

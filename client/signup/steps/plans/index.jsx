@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { intersection } from 'lodash';
+import { get, intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -103,7 +103,13 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItem } );
+		if ( this.props.provideCouponCode ) {
+			const couponCode = get( this.props.queryObject, 'discount', '' );
+			this.props.submitSignupStep( step, { cartItem, couponCode } );
+		} else {
+			this.props.submitSignupStep( step, { cartItem } );
+		}
+
 		this.props.goToNextStep();
 	};
 
@@ -142,6 +148,7 @@ export class PlansStep extends Component {
 			isLaunchPage,
 			selectedSite,
 			planTypes,
+			flowName,
 		} = this.props;
 
 		return (
@@ -161,6 +168,7 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ true }
 					planTypes={ planTypes }
+					flowName={ flowName }
 				/>
 			</div>
 		);

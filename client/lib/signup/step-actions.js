@@ -163,6 +163,9 @@ export function createSiteWithCart(
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
+			site_information: {
+				title: siteTitle,
+			},
 		},
 		public: 1,
 		validate: false,

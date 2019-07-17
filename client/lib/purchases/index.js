@@ -135,10 +135,7 @@ function isExpired( purchase ) {
 }
 
 function isExpiring( purchase ) {
-	return includes(
-		[ 'cardExpired', 'cardExpiring', 'manualRenew', 'expiring' ],
-		purchase.expiryStatus
-	);
+	return includes( [ 'manualRenew', 'expiring' ], purchase.expiryStatus );
 }
 
 function isIncludedWithPlan( purchase ) {
@@ -223,7 +220,7 @@ function maybeWithinRefundPeriod( purchase ) {
 /**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
  * Purchases usually can be refunded up to 30 days after purchase.
- * Domains and domain mappings can be refunded up to 48 hours.
+ * Domains and domain mappings can be refunded up to 96 hours.
  * Purchases included with plan can't be refunded.
  *
  * If this function returns false but you want to see if the subscription may

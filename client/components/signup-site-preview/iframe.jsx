@@ -163,19 +163,20 @@ export default class SignupSitePreviewIframe extends Component {
 		const element = this.iframe.current.contentWindow.document.querySelector( '#page' );
 
 		if ( element ) {
-			this.props.setWrapperHeight( element.scrollHeight + 25 );
+			this.props.setWrapperHeight( element.scrollHeight + 50 );
 		}
 	};
 
 	setLoaded = () => {
 		this.setOnPreviewClick();
 		this.setIframeIsLoading();
-		this.props.resize && this.setContainerHeight();
 
 		const { params, tagline, title } = this.props.content;
 
 		this.setContentTitle( title, tagline );
 		this.setContentParams( params );
+
+		this.props.resize && this.setContainerHeight();
 	};
 
 	setIframeSource = ( { content, cssUrl, fontUrl, gutenbergStylesUrl, isRtl, langSlug } ) => {

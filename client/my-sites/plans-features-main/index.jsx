@@ -274,12 +274,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	constructPath( plansUrl, intervalType, customerType = '' ) {
-		const { selectedFeature, selectedPlan, siteSlug } = this.props;
+		const { selectedFeature, selectedPlan, siteSlug, withDiscount } = this.props;
+
 		return addQueryArgs(
 			{
 				customerType,
 				feature: selectedFeature,
 				plan: selectedPlan,
+				discount: withDiscount,
 			},
 			plansLink( plansUrl, siteSlug, intervalType, true )
 		);
@@ -315,21 +317,24 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getCustomerTypeToggle() {
-		const { customerType, translate } = this.props;
+		const { customerType, translate, withDiscount } = this.props;
 		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
+		const queryArgs = {
+			discount: withDiscount,
+		};
 
 		return (
 			<SegmentedControl className={ segmentClasses } primary={ true }>
 				<SegmentedControlItem
 					selected={ customerType === 'personal' }
-					path={ '?customerType=personal' }
+					path={ addQueryArgs( { ...queryArgs, customerType: 'personal' }, '' ) }
 				>
 					{ translate( 'Blogs and Personal Sites' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
 					selected={ customerType === 'business' }
-					path={ '?customerType=business' }
+					path={ addQueryArgs( { ...queryArgs, customerType: 'business' }, '' ) }
 				>
 					{ translate( 'Business Sites and Online Stores' ) }
 				</SegmentedControlItem>
@@ -343,8 +348,13 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, translate } = this.props;
+		const { hideFreePlan, translate, flowName, isInSignup } = this.props;
 		const className = 'is-free-plan';
+		const callToAction =
+			isInSignup && flowName === 'launch-site'
+				? translate( 'Continue with your free site' )
+				: translate( 'Start with a free site' );
+
 		if ( hideFreePlan ) {
 			return null;
 		}
@@ -354,7 +364,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__banner-content">
 					{ translate( 'Not sure yet?' ) }
 					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
-						{ translate( 'Start with a free site' ) }
+						{ callToAction }
 					</Button>
 				</div>
 			</div>
@@ -415,6 +425,7 @@ PlansFeaturesMain.propTypes = {
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
 	customerType: PropTypes.string,
+	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,

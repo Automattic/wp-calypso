@@ -72,9 +72,14 @@ class A8C_WP_Template_Data_Inserter {
 	 */
 	public function get_header_content() {
 		// TODO: replace with header blocks once they are ready.
-		return '<!-- wp:a8c/site-title /-->' .
+		return '<!-- wp:group {"className":"site-header site-branding"} -->' .
+				'<div class="wp-block-group site-header site-branding">' .
+				'<div class="wp-block-group__inner-container">' .
 				'<!-- wp:a8c/site-description /-->' .
-				'<!-- wp:a8c/navigation-menu /-->';
+				'<!-- wp:a8c/site-title /-->' .
+				'<!-- wp:a8c/navigation-menu /-->' .
+				'</div></div>' .
+				'<!-- /wp:group -->';
 	}
 
 	/**

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
@@ -15,6 +12,11 @@ import classnames from 'classnames';
 import Popover from 'components/popover';
 import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class SitesPopover extends React.Component {
 	static propTypes = {
@@ -48,7 +50,7 @@ class SitesPopover extends React.Component {
 				onSiteSelect={ this.props.onSiteSelect }
 				showAddNewSite={ false }
 				indicator={ false }
-				autoFocus={ ! hasTouch() }
+				autoFocus={ ! hasTouch() } // eslint-disable-line jsx-a11y/no-autofocus
 				groups={ true }
 				onClose={ this.props.onClose }
 			/>

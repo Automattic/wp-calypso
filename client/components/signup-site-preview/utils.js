@@ -64,7 +64,7 @@ export function getIframeSource(
 			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
 				body {
-					padding-bottom: 25px;
+					padding-bottom: 50px;
 				}
 
 				* {
@@ -86,6 +86,7 @@ export function getIframeSource(
 				.site {
 					opacity: 1;
 					transition: opacity 1s ease-in;
+					pointer-events: none;
 				}
 
 				@media only screen and (min-width: 768px) {

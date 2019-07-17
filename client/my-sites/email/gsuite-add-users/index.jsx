@@ -89,6 +89,13 @@ class GSuiteAddUsers extends React.Component {
 		this.goToEmail();
 	};
 
+	handleReturnKeyPress = event => {
+		// Simulate an implicit submission for the add user form :)
+		if ( event.key === 'Enter' ) {
+			this.handleContinue();
+		}
+	};
+
 	handleUsersChange = changedUsers => {
 		const { users: previousUsers } = this.state;
 
@@ -190,6 +197,7 @@ class GSuiteAddUsers extends React.Component {
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
+							onReturnKeyPress={ this.handleReturnKeyPress }
 						>
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>

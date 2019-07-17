@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,13 +13,15 @@ import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 
 /**
+ * Style dependencies
+ */
+import './segmented.scss';
+
+/**
  * Internal variables
  */
 let _instance = 1;
 
-/**
- * Main
- */
 class NavSegmented extends Component {
 	static propTypes = {
 		label: PropTypes.string,
@@ -45,11 +45,13 @@ class NavSegmented extends Component {
 		} );
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className={ segmentedClassName }>
 				{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 
 				<SegmentedControl>{ this.getControlItems() }</SegmentedControl>
 			</div>
+			/* eslint-enable wpcalyspo/jsx-classname-namespace */
 		);
 	}
 

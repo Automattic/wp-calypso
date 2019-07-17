@@ -1,3 +1,5 @@
+/* eslint-disable no-case-declarations */
+
 /** @format */
 
 /**
@@ -196,6 +198,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.MAPPABLE:
 		case domainAvailability.AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED:
+		case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 		case domainAvailability.UNKNOWN:
 			// unavailable domains are displayed in the search results, not as a notice OR

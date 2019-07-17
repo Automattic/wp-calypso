@@ -18,7 +18,7 @@ import CheckoutContainer from './checkout/checkout-container';
 import CartData from 'components/data/cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import ConciergeSessionNudge from './concierge-session-nudge';
+import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
 
@@ -122,17 +122,17 @@ export function gsuiteNudge( context, next ) {
 	next();
 }
 
-export function conciergeSessionNudge( context, next ) {
+export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let conciergeSessionType;
+	let upsellType;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
-		conciergeSessionType = 'concierge-quickstart-session';
+		upsellType = 'concierge-quickstart-session';
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
-		conciergeSessionType = 'concierge-support-session';
+		upsellType = 'concierge-support-session';
 	}
-	context.store.dispatch( setSection( { name: conciergeSessionType }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
 	context.primary = (
 		<CheckoutContainer
@@ -140,10 +140,10 @@ export function conciergeSessionNudge( context, next ) {
 			clearTransaction={ true }
 			purchaseId={ Number( receiptId ) }
 		>
-			<ConciergeSessionNudge
+			<UpsellNudge
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }
-				conciergeSessionType={ conciergeSessionType }
+				upsellType={ upsellType }
 			/>
 		</CheckoutContainer>
 	);

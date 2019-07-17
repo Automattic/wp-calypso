@@ -12,7 +12,7 @@ import {
 	checkoutPending,
 	checkoutThankYou,
 	gsuiteNudge,
-	conciergeSessionNudge,
+	upsellNudge,
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
@@ -27,12 +27,7 @@ export default function() {
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
-		page(
-			'/checkout/:site/offer-quickstart-session',
-			conciergeSessionNudge,
-			makeLayout,
-			clientRender
-		);
+		page( '/checkout/:site/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
 		page( '/checkout*', redirectLoggedOut );
 
@@ -110,7 +105,7 @@ export default function() {
 		page(
 			'/checkout/:site/(add|offer)-support-session/:receiptId?',
 			siteSelection,
-			conciergeSessionNudge,
+			upsellNudge,
 			makeLayout,
 			clientRender
 		);
@@ -126,7 +121,7 @@ export default function() {
 		page(
 			'/checkout/:site/offer-quickstart-session/:receiptId?',
 			siteSelection,
-			conciergeSessionNudge,
+			upsellNudge,
 			makeLayout,
 			clientRender
 		);
