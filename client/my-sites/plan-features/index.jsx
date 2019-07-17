@@ -859,7 +859,6 @@ export default connect(
 								}
 
 								const args = {};
-
 								// Auto-apply the coupon code to the cart for WPCOM sites
 								if ( ! displayJetpackPlans && withDiscount ) {
 									args.coupon = withDiscount;
