@@ -24,6 +24,22 @@ function assertFails( validator, { props }, propName = 'translatableString' ) {
 
 const Translatable = () => <span />;
 
+function testHOC( ComposedComponent ) {
+	const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
+
+	return class extends React.Component {
+		static displayName = 'Localized(' + componentName + ')';
+
+		render() {
+			const props = {
+				...this.props,
+			};
+			return <ComposedComponent { ...props } />;
+		}
+	};
+}
+const WrappedTranslatable = testHOC( Translatable );
+
 describe( 'translatable proptype', () => {
 	test( 'should pass when no propType Name declared', () => {
 		assertPasses( translatableString, <legend />, '' );
@@ -66,4 +82,10 @@ describe( 'translatable proptype', () => {
 	} );
 
 	it( 'should fail when required', () => assertFails( translatableString.isRequired, <legend /> ) );
+
+	it( 'should pass with <Translatable> component wrapped in a HOC', () =>
+		assertPasses(
+			translatableString.isRequired,
+			<legend translatableString={ <WrappedTranslatable /> } />
+		) );
 } );
