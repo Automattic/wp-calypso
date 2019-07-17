@@ -32,6 +32,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import { getDiscountByName } from 'lib/discounts';
+import { addQueryArgs } from 'lib/url';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -763,6 +764,7 @@ export default connect(
 			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
+			withDiscount,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -856,7 +858,18 @@ export default connect(
 									return;
 								}
 
-								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
+								const args = {};
+								// Auto-apply the coupon code to the cart for WPCOM sites
+								if ( ! displayJetpackPlans && withDiscount ) {
+									args.coupon = withDiscount;
+								}
+
+								page(
+									addQueryArgs(
+										args,
+										`/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }`
+									)
+								);
 						  },
 					planConstantObj,
 					planName: plan,
