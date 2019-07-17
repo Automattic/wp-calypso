@@ -33,7 +33,13 @@ class A8C_WP_Template {
 	 */
 	public function __construct( $post_id = null ) {
 		if ( null === $post_id ) {
-			$post_id = get_post()->ID;
+			$post = get_post();
+
+			if ( ! $post ) {
+				return;
+			}
+
+			$post_id = $post->ID;
 		}
 
 		$this->current_post_id = $post_id;
