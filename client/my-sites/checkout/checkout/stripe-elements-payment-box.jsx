@@ -64,7 +64,7 @@ export function StripeElementsPaymentBox( {
 	cards,
 } ) {
 	// TODO: send the country to useStripeConfiguration
-	const stripeConfiguration = useStripeConfiguration( CreditCardPaymentBox );
+	const stripeConfiguration = useStripeConfiguration();
 	const stripeJs = useStripeJs( stripeConfiguration );
 	return (
 		<StripeProvider stripe={ stripeJs }>
