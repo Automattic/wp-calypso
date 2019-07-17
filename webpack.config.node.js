@@ -61,11 +61,6 @@ function getExternals() {
 		'commonjs devdocs/components-usage-stats.json';
 	// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
 	externals[ 'bundler/assets' ] = 'commonjs bundler/assets';
-	// Map React and redux to the minimized version in production
-	if ( config( 'env' ) === 'production' ) {
-		externals.react = 'commonjs react/umd/react.production.min.js';
-		externals.redux = 'commonjs redux/dist/redux.min';
-	}
 
 	return externals;
 }
