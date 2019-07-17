@@ -23,37 +23,29 @@ const initialState = {
 class TemplateUpdateConfirmationButton extends Component {
 	constructor( props ) {
 		super( props );
-		this.onResize = debounce( this.onResize, 100 );
+		this.onSetButtonStyles = debounce( this.onSetButtonStyles, 100 );
 		this.state = initialState;
-		this.onResize();
-	}
-
-	componentDidUpdate( props, prevProps ) {
-		if ( props.isFullScreen !== prevProps.isFullScreen ) {
-			// this ensures the button is repositioned properly when toggling fullscreen mode
-			setTimeout( () => this.onResize(), 1 );
-		}
+		this.onSetButtonStyles();
 	}
 
 	getOriginalButton() {
 		return document.querySelector( '.edit-post-header .editor-post-publish-button' );
 	}
 
-	onResize() {
+	onSetButtonStyles() {
 		const originalButton = this.getOriginalButton();
 		let { buttonStyle } = initialState;
 		if ( isNil( originalButton ) || ! ( 'getBoundingClientRect' in originalButton ) ) {
 			// if it's not there, might need a timeout to await it?
 			return this.setState( { buttonStyle } );
 		}
-		const rect = originalButton.getBoundingClientRect();
+
 		buttonStyle = {
 			// height doesn't line up perfectly with default styles
 			height: '33px',
-			position: 'fixed',
-			zIndex: '10001',
-			top: rect.top,
-			left: rect.x,
+			position: 'absolute',
+			right: '96px',
+			top: '12px',
 		};
 		if ( ! window.matchMedia( '(min-width: 600px)' ).matches ) {
 			buttonStyle.paddingLeft = '5px';

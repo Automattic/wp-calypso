@@ -16,6 +16,7 @@ domReady( () => {
 	}
 	const element = document.createElement( 'div' );
 	element.id = 'template-update-confirmation';
-	document.getElementById( 'wpcontent' ).appendChild( element );
+	const settingsElement = document.querySelector( '.edit-post-header .edit-post-header__settings' );
+	settingsElement.appendChild( element );
 	render( <TemplateUpdateConfirmationButton />, element );
 } );
