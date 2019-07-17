@@ -198,11 +198,13 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 			}
 
 			if ( data.redirect_url ) {
-				return this._pushStep( {
+				this._pushStep( {
 					name: REDIRECTING_FOR_AUTHORIZATION,
 					data: data,
 					last: true,
 				} );
+				resolve( data );
+				return;
 			}
 
 			this._pushStep( {
