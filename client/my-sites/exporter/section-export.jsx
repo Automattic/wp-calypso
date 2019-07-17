@@ -28,12 +28,12 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => (
 		<DocumentHead title={ translate( 'Export' ) } />
 		<SidebarNavigation />
 		{ canUserExport && ( 
-      <FormattedHeader
-			  className="exporter__section-header"
-			  headerText={ translate( 'Export your content' ) }
-			  subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
-		  />
-    ) }
+      		<FormattedHeader
+			  	className="exporter__section-header"
+			  	headerText={ translate( 'Export your content' ) }
+			  	subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+		 	 />
+    	) }
 		{ isJetpack && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
