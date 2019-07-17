@@ -98,6 +98,7 @@ const REDUX_TRACKING = {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
 		moveBlocksDown: getBlocksTracker( 'wpcom_block_moved_down' ),
 		removeBlocks: getBlocksTracker( 'wpcom_block_deleted' ),
+		removeBlock: getBlocksTracker( 'wpcom_block_deleted' ),
 		moveBlockToPosition: getBlocksTracker( 'wpcom_block_moved_via_dragging' ),
 	},
 };
