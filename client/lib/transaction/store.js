@@ -17,6 +17,7 @@ import {
 	TRANSACTION_PAYMENT_SET,
 	TRANSACTION_RESET,
 	TRANSACTION_STEP_SET,
+	TRANSACTION_STRIPE_SET,
 } from 'lib/upgrades/action-types';
 import { hasDomainRegistration } from 'lib/cart-values/cart-items';
 import CartStore from 'lib/cart/store';
@@ -62,6 +63,10 @@ function setPayment( payment ) {
 	replaceData( assign( {}, _transaction, { payment: payment } ) );
 }
 
+function setStripeObject( stripe, stripeConfiguration ) {
+	replaceData( assign( {}, _transaction, { stripe, stripeConfiguration } ) );
+}
+
 function setStep( step ) {
 	replaceData(
 		assign( {}, _transaction, {
@@ -104,6 +109,10 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 		case TRANSACTION_PAYMENT_SET:
 			setPayment( action.payment );
+			break;
+
+		case TRANSACTION_STRIPE_SET:
+			setStripeObject( action.stripe, action.stripeConfiguration );
 			break;
 
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
