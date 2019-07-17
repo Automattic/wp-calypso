@@ -120,6 +120,7 @@ export function render( element, key = JSON.stringify( element ), req ) {
 
 		return renderedLayout;
 	} catch ( ex ) {
+		bumpStat( 'calypso-ssr', 'render-exception' );
 		if ( process.env.NODE_ENV === 'development' ) {
 			throw ex;
 		}
