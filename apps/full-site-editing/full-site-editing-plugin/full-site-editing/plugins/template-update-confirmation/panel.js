@@ -6,6 +6,11 @@ import { Component } from '@wordpress/element';
 import { Button, IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
 export default class Panel extends Component {
 	render() {
 		const { onSave, onClose, isBusy, disabled } = this.props;
