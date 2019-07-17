@@ -327,6 +327,10 @@ class Full_Site_Editing {
 						'default' => 'main-1',
 						'type'    => 'string',
 					],
+					'className'     => [
+						'default' => '',
+						'type'    => 'string',
+					],
 				],
 				'render_callback' => 'render_navigation_menu_block',
 			)
