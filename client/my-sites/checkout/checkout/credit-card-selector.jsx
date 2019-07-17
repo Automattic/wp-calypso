@@ -18,11 +18,7 @@ import { setPayment } from 'lib/upgrades/actions';
 class CreditCardSelector extends React.Component {
 	constructor( props ) {
 		super( props );
-		if ( props.initialCard ) {
-			this.state = { section: props.initialCard.stored_details_id };
-		} else {
-			this.state = { section: 'new-card' };
-		}
+		this.state = { section: props.initialCard ? props.initialCard.stored_details_id : 'new-card' };
 	}
 
 	render() {
@@ -37,7 +33,7 @@ class CreditCardSelector extends React.Component {
 
 	storedCards = () => {
 		return this.props.cards.map( card => {
-			const onSelect = this.handleClickedSection.bind( this, card.stored_details_id );
+			const onSelect = () => this.handleClickedSection( card.stored_details_id );
 			return (
 				<CreditCard
 					key={ card.stored_details_id }
@@ -65,7 +61,7 @@ class CreditCardSelector extends React.Component {
 	}
 
 	newCardForm = () => {
-		const onSelect = this.handleClickedSection.bind( this, 'new-card' );
+		const onSelect = () => this.handleClickedSection( 'new-card' );
 		const classes = classNames( 'checkout__payment-box-section', {
 			'no-stored-cards': this.props.cards.length === 0,
 		} );
@@ -95,13 +91,10 @@ class CreditCardSelector extends React.Component {
 	};
 
 	savePayment = section => {
-		let newPayment;
 		if ( 'new-card' === section ) {
-			newPayment = newCardPayment( this.props.transaction.newCardRawDetails );
-		} else {
-			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
+			return setPayment( newCardPayment( this.props.transaction.newCardRawDetails ) );
 		}
-		setPayment( newPayment );
+		setPayment( storedCardPayment( this.getStoredCardDetails( section ) ) );
 	};
 
 	getStoredCardDetails = section => {
