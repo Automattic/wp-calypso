@@ -24,7 +24,7 @@ class ImportButton extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	trackImportClick = () => {
+	handleImportClick = () => {
 		this.props.recordTracksEvent( 'calypso_signup_import_cta_click' );
 		this.props.goToNextStep( 'import' );
 	};
@@ -41,7 +41,7 @@ class ImportButton extends Component {
 
 		return (
 			<div className="site-type__import-buttons">
-				<Button borderless onClick={ this.trackImportClick }>
+				<Button borderless onClick={ this.handleImportClick }>
 					{ translate( 'Already have a website?' ) }
 				</Button>
 			</div>
