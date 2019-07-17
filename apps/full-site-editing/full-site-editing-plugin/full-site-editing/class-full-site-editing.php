@@ -328,6 +328,10 @@ class Full_Site_Editing {
 						'default' => 'main-1',
 						'type'    => 'string',
 					],
+					'className'     => [
+						'default' => '',
+						'type'    => 'string',
+					],
 				],
 				'render_callback' => 'render_navigation_menu_block',
 			)
@@ -587,7 +591,7 @@ class Full_Site_Editing {
 			foreach ( $template_blocks as $block ) {
 				$template[] = fse_map_block_to_editor_template_setting( $block );
 			}
-			$editor_settings['template'] = $template;
+			$editor_settings['template']     = $template;
 			$editor_settings['templateLock'] = 'all';
 		}
 		return $editor_settings;

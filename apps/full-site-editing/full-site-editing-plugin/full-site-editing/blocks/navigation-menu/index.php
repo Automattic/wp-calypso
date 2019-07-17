@@ -82,10 +82,11 @@ function get_wrapper_attributes_by_theme_location( $location ) {
 function render_navigation_menu_block( $attributes ) {
 	$location     = ! empty( $attributes['themeLocation'] ) ? $attributes['themeLocation'] : null;
 	$wrapper_attr = get_wrapper_attributes_by_theme_location( $location );
+	$class_name   = ! empty( $attributes['className'] ) ? ' ' . $attributes['className'] : '';
 	ob_start();
 	// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
 	?>
-	<nav class="<?php echo esc_attr( $wrapper_attr['class'] . ' wp-block-a8c-navigation-menu' ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
+	<nav class="<?php echo esc_attr( $wrapper_attr['class'] . ' wp-block-a8c-navigation-menu' . $class_name ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
 		<?php
 			wp_nav_menu( get_menu_params_by_theme_location( $location ) );
 		?>
