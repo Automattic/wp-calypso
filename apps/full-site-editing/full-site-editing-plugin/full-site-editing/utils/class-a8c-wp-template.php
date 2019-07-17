@@ -35,7 +35,7 @@ class A8C_WP_Template {
 		if ( null === $post_id ) {
 			$post = get_post();
 
-			if ( !$post ) {
+			if ( ! $post ) {
 				return;
 			}
 
