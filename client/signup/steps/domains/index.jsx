@@ -535,7 +535,7 @@ class DomainsStep extends React.Component {
 		const { flowName, siteType, translate } = this.props;
 		const onboardingSubHeaderCopy =
 			siteType &&
-			includes( [ 'onboarding-blog', 'onboarding' ], flowName ) &&
+			includes( [ 'onboarding' ], flowName ) &&
 			getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
 
 		if ( onboardingSubHeaderCopy ) {
