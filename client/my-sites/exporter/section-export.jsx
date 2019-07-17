@@ -23,11 +23,13 @@ import './style.scss';
 
 const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => (
 	<Main>
-		<FormattedHeader
-			className="exporter__section-header"
-			headerText={ translate( 'Export your content' ) }
-			subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
-		/>
+		{ canUserExport && (
+			<FormattedHeader
+				className="exporter__section-header"
+				headerText={ translate( 'Export your content' ) }
+				subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+			/>
+		) }
 		{ isJetpack && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
@@ -44,7 +46,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => (
 				title={ translate( 'You are not authorized to view this page' ) }
 			/>
 		) }
-		{ isJetpack === false && canUserExport === true && <ExporterContainer /> }
+		{ ! isJetpack && canUserExport && <ExporterContainer /> }
 	</Main>
 );
 
