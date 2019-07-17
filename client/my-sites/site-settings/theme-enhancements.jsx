@@ -131,17 +131,17 @@ class ThemeEnhancements extends Component {
 				{ this.renderRadio(
 					'infinite_scroll',
 					'default',
-					translate( 'Don’t load more content automatically' )
+					translate( 'Load more posts using the default theme behavior' )
 				) }
 				{ this.renderRadio(
 					'infinite_scroll',
 					'button',
-					translate( 'Add a button to let users load content manually' )
+					translate( 'Load more posts in page with a button' )
 				) }
 				{ this.renderRadio(
 					'infinite_scroll',
 					'scroll',
-					translate( 'Enable infinite scrolling' )
+					translate( 'Load more posts as the reader scrolls down' )
 				) }
 			</FormFieldset>
 		);
