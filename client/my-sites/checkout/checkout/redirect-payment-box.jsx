@@ -18,7 +18,12 @@ import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
 import { Input, Select } from 'my-sites/domains/components/form';
 import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
-import { hasRenewalItem, hasRenewableSubscription } from 'lib/cart-values/cart-items';
+import {
+	hasRenewalItem,
+	hasRenewableSubscription,
+	hasDomainRegistration,
+	hasOnlyDomainProducts,
+} from 'lib/cart-values/cart-items';
 import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
@@ -29,8 +34,6 @@ import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
-
-import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
 import { abtest } from 'lib/abtest';
 
 export class RedirectPaymentBox extends PureComponent {
@@ -333,13 +336,12 @@ export class RedirectPaymentBox extends PureComponent {
 								{ moneyBackGuarantee && (
 									<div className="checkout__secure-payment-content">
 										<Gridicon icon="refresh" />
-										{ translate( ' 30-day Money Back Guarantee' ) }
-										{ hasDomainRegistration( this.props.cart ) && (
-											<>
-												<br className="checkout__mobile-separator" />
-												{ ' ' + translate( '(96 hrs for domains)' ) }
-											</>
-										) }
+										<div className="checkout__money-back-guarantee">
+											<div>{ translate( '30-day Money Back Guarantee' ) }</div>
+											{ hasDomainRegistration( this.props.cart ) && (
+												<div>{ translate( '(96 hrs for domains)' ) }</div>
+											) }
+										</div>
 									</div>
 								) }
 								<div className="checkout__secure-payment-content">

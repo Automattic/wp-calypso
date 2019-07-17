@@ -760,15 +760,30 @@
 
 .checkout__secure-payment-content {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: center;
 	text-align: center;
 	margin-bottom: 20px;
 
 	@include breakpoint( '>660px' ) {
 		justify-content: left;
+		align-items: center;
 		text-align: left;
 		margin-bottom: 5px;
+	}
+
+	.checkout__money-back-guarantee {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		
+		div {
+			margin-right:5px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			flex-direction: column;
+		}
 	}
 }
 

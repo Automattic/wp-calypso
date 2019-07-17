@@ -204,13 +204,12 @@ export class WechatPaymentBox extends Component {
 								{ moneyBackGuarantee && (
 									<div className="checkout__secure-payment-content">
 										<Gridicon icon="refresh" />
-										{ translate( ' 30-day Money Back Guarantee' ) }
-										{ hasDomainRegistration( cart ) && (
-											<>
-												<br className="checkout__mobile-separator" />
-												{ ' ' + translate( '(96 hrs for domains)' ) }
-											</>
-										) }
+										<div className="checkout__money-back-guarantee">
+											<div>{ translate( '30-day Money Back Guarantee' ) }</div>
+											{ hasDomainRegistration( cart ) && (
+												<div>{ translate( '(96 hrs for domains)' ) }</div>
+											) }
+										</div>
 									</div>
 								) }
 								<div className="checkout__secure-payment-content">

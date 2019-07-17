@@ -14,7 +14,11 @@ import Gridicon from 'gridicons';
  */
 import analytics from 'lib/analytics';
 import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
-import { hasRenewalItem } from 'lib/cart-values/cart-items';
+import {
+	hasRenewalItem,
+	hasDomainRegistration,
+	hasOnlyDomainProducts,
+} from 'lib/cart-values/cart-items';
 import { setTaxPostalCode } from 'lib/upgrades/actions/cart';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
@@ -27,8 +31,6 @@ import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
-
-import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
 import { abtest } from 'lib/abtest';
 
 const wpcom = wp.undocumented();
@@ -197,13 +199,12 @@ export class PaypalPaymentBox extends React.Component {
 								{ moneyBackGuarantee && (
 									<div className="checkout__secure-payment-content">
 										<Gridicon icon="refresh" />
-										{ translate( ' 30-day Money Back Guarantee' ) }
-										{ hasDomainRegistration( cart ) && (
-											<>
-												<br className="checkout__mobile-separator" />
-												{ ' ' + translate( '(96 hrs for domains)' ) }
-											</>
-										) }
+										<div className="checkout__money-back-guarantee">
+											<div>{ translate( '30-day Money Back Guarantee' ) }</div>
+											{ hasDomainRegistration( cart ) && (
+												<div>{ translate( '(96 hrs for domains)' ) }</div>
+											) }
+										</div>
 									</div>
 								) }
 								<div className="checkout__secure-payment-content">
