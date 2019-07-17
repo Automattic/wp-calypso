@@ -27,18 +27,8 @@ class SiteType extends Component {
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
 
-		// TODO Hack to fix the `/start/premium|business|personal` routes
-		if (
-			( this.props.flowName === 'premium' ||
-				this.props.flowName === 'business' ||
-				this.props.flowName === 'personal' ) &&
-			siteTypeValue === 'blog'
-		) {
-			this.props.goToNextStep( this.props.flowName );
-		} else {
-			// Modify the flowname if the site type matches an override.
-			this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
-		}
+		// Modify the flowname if the site type matches an override.
+		this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
 	};
 
 	render() {
