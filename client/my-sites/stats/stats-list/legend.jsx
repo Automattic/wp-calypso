@@ -10,12 +10,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import TranslatableString from 'components/translatable/proptype';
 
 export default class extends React.PureComponent {
 	static displayName = 'StatsListLegend';
 
 	static propTypes = {
-		value: PropTypes.string,
+		value: TranslatableString,
 		label: PropTypes.string,
 	};
 
