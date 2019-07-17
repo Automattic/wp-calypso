@@ -38,6 +38,7 @@ export default ( { onSave, onClose, isBusy, disabled } ) => {
 						<strong>{ __( 'Are you ready to publish?' ) }</strong>
 					</p>
 					<div className="warning">
+						{ /* TODO:  if we want to keep the icon it should be added to @automattic/material-design-icons */ }
 						<Icon
 							icon={
 								<svg
