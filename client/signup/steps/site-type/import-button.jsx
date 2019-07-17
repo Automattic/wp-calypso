@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { isEnabled } from 'config';
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class ImportButton extends Component {
 	trackImportClick = () => {
@@ -22,7 +23,7 @@ class ImportButton extends Component {
 	render() {
 		const { translate } = this.props;
 
-		if ( ! isEnabled( 'signup/import-flow' ) ) {
+		if ( ! isEnabled( 'signup/import-flow' ) || isJetpackSite ) {
 			return null;
 		}
 
@@ -38,5 +39,5 @@ class ImportButton extends Component {
 
 export default connect(
 	null,
-	{ recordTracksEvent }
+	{ isJetpackSite, recordTracksEvent }
 )( localize( ImportButton ) );
