@@ -123,6 +123,16 @@ export function render( element, key = JSON.stringify( element ), req ) {
 
 		return renderedLayout;
 	} catch ( ex ) {
+		// Log 1% of errors
+		if ( Math.random() < 0.01 ) {
+			logToLogstash( {
+				feature: 'calypso_ssr',
+				message: 'Exception thrown on render',
+				extra: {
+					error: ex,
+				},
+			} );
+		}
 		if ( process.env.NODE_ENV === 'development' ) {
 			throw ex;
 		}
