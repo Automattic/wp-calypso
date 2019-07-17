@@ -63,6 +63,33 @@ export function getCreditCardFieldRules() {
 }
 
 /**
+ * Returns the credit card validation rule set for stripe elements
+ * @returns {object} the ruleset
+ */
+export function getStripeElementsRules() {
+	return {
+		name: {
+			description: i18n.translate( 'Cardholder Name', {
+				comment: 'Cardholder name label on credit card form',
+			} ),
+			rules: [ 'required' ],
+		},
+
+		country: {
+			description: i18n.translate( 'Country' ),
+			rules: [ 'required' ],
+		},
+
+		'postal-code': {
+			description: i18n.translate( 'Postal Code', {
+				comment: 'Postal code on credit card form',
+			} ),
+			rules: [ 'required' ],
+		},
+	};
+}
+
+/**
  * Returns the tef payment validation rule set
  * See: client/my-sites/checkout/checkout/redirect-payment-box.jsx
  * @returns {object} the ruleset
@@ -109,7 +136,7 @@ export function tokenFieldRules() {
 /**
  * Returns a validation ruleset to use for the given payment type
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token
+ * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
@@ -126,6 +153,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			return countrySpecificFieldRules( 'IN' );
 		case 'token':
 			return tokenFieldRules();
+		case 'stripe':
+			return getStripeElementsRules();
 		default:
 			return null;
 	}
@@ -260,7 +289,7 @@ validators.validStreetNumber = {
  * Runs payment fields through the relevant validation rules
  * use these validation rules, for example, in <CreditCardForm />, <PayPalPaymentBox /> and <RedirectPaymentBox />
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token
+ * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
  * @returns {object} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
