@@ -57,7 +57,13 @@ class SiteType extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
-				stepContent={ <SiteTypeForm submitForm={ this.submitStep } siteType={ siteType } /> }
+				stepContent={
+					<SiteTypeForm
+						goToNextStep={ this.props.goToNextStep }
+						submitForm={ this.submitStep }
+						siteType={ siteType }
+					/>
+				}
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
 				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }

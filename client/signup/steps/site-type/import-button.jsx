@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -16,8 +17,16 @@ import { abtest } from 'lib/abtest';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class ImportButton extends Component {
+	static propTypes = {
+		goToNextStep: PropTypes.func.isRequired,
+
+		// from localize() HoC
+		translate: PropTypes.func.isRequired,
+	};
+
 	trackImportClick = () => {
 		this.props.recordTracksEvent( 'calypso_signup_import_cta_click' );
+		this.props.goToNextStep( 'import' );
 	};
 
 	render() {
@@ -32,7 +41,7 @@ class ImportButton extends Component {
 
 		return (
 			<div className="site-type__import-buttons">
-				<Button borderless href="/start/import" onClick={ this.trackImportClick }>
+				<Button borderless onClick={ this.trackImportClick }>
 					{ translate( 'Already have a website?' ) }
 				</Button>
 			</div>

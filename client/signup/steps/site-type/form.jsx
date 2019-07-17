@@ -26,6 +26,7 @@ class SiteTypeForm extends Component {
 	static propTypes = {
 		siteType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
+		goToNextStep: PropTypes.func.isRequired,
 
 		// from localize() HoC
 		translate: PropTypes.func.isRequired,
@@ -63,7 +64,7 @@ class SiteTypeForm extends Component {
 						</Card>
 					) ) }
 				</Card>
-				{ ! this.props.isJetpack && <ImportButton /> }
+				{ ! this.props.isJetpack && <ImportButton goToNextStep={ this.props.goToNextStep } /> }
 			</Fragment>
 		);
 	}
