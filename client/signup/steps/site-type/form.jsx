@@ -63,7 +63,7 @@ class SiteTypeForm extends Component {
 						</Card>
 					) ) }
 				</Card>
-				<ImportButton />
+				{ ! this.props.isJetpack && <ImportButton /> }
 			</Fragment>
 		);
 	}

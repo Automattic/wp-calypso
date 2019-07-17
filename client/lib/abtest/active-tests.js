@@ -134,4 +134,13 @@ export default {
 		defaultVariation: 'yearlyPlan',
 		allowExistingUsers: true,
 	},
+	showImportFlowInSiteTypeStep: {
+		datestamp: '20190717',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
 };

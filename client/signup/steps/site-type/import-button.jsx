@@ -10,10 +10,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import Button from 'components/button';
+import { isEnabled } from 'config';
+import { abtest } from 'lib/abtest';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
 
 class ImportButton extends Component {
 	trackImportClick = () => {
@@ -23,12 +23,15 @@ class ImportButton extends Component {
 	render() {
 		const { translate } = this.props;
 
-		if ( ! isEnabled( 'signup/import-flow' ) || isJetpackSite ) {
+		if (
+			! isEnabled( 'signup/import-flow' ) ||
+			'show' !== abtest( 'showImportFlowInSiteTypeStep' )
+		) {
 			return null;
 		}
 
 		return (
-			<div className="site-type__buttons site-type__import">
+			<div className="site-type__import-buttons">
 				<Button borderless href="/start/import" onClick={ this.trackImportClick }>
 					{ translate( 'Already have a website?' ) }
 				</Button>
@@ -39,5 +42,5 @@ class ImportButton extends Component {
 
 export default connect(
 	null,
-	{ isJetpackSite, recordTracksEvent }
+	{ recordTracksEvent }
 )( localize( ImportButton ) );
