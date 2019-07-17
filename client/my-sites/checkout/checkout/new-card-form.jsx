@@ -23,6 +23,7 @@ class NewCardForm extends Component {
 		hasStoredCards: PropTypes.bool.isRequired,
 		transaction: PropTypes.object.isRequired,
 		selected: PropTypes.bool,
+		stripe: PropTypes.object,
 	};
 
 	getErrorMessage = fieldName => {
@@ -30,8 +31,22 @@ class NewCardForm extends Component {
 		return transaction.step.name === INPUT_VALIDATION && transaction.errors[ fieldName ];
 	};
 
+	getFields = () => {
+		return (
+			<CreditCardFormFields
+				card={ this.props.transaction.newCardFormFields }
+				countriesList={ this.props.countriesList }
+				isNewTransaction={ !! this.props.transaction }
+				eventFormName="Checkout Form"
+				onFieldChange={ this.handleFieldChange }
+				getErrorMessage={ this.getErrorMessage }
+				stripe={ this.props.stripe }
+			/>
+		);
+	};
+
 	render() {
-		const { countriesList, hasStoredCards, translate, transaction, selected } = this.props;
+		const { hasStoredCards, translate, selected } = this.props;
 
 		return (
 			<div className="checkout__new-card">
@@ -46,16 +61,7 @@ class NewCardForm extends Component {
 						</h6>
 					) : null }
 
-					{ ( selected || ! hasStoredCards ) && (
-						<CreditCardFormFields
-							card={ transaction.newCardFormFields }
-							countriesList={ countriesList }
-							isNewTransaction={ !! transaction }
-							eventFormName="Checkout Form"
-							onFieldChange={ this.handleFieldChange }
-							getErrorMessage={ this.getErrorMessage }
-						/>
-					) }
+					{ ( selected || ! hasStoredCards ) && this.getFields() }
 				</div>
 			</div>
 		);

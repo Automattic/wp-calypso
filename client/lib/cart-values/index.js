@@ -42,6 +42,7 @@ const PAYMENT_METHODS = {
 	wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
 	'web-payment': 'WPCOM_Billing_Web_Payment',
 	sofort: 'WPCOM_Billing_Stripe_Source_Sofort',
+	stripe: 'WPCOM_Billing_Stripe_Payment_Method',
 };
 
 /**
@@ -302,6 +303,11 @@ export function getEnabledPaymentMethods( cart ) {
 	// Ebanx is used as part of the credit-card method, does not need to be listed.
 	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
 		return 'WPCOM_Billing_Ebanx' !== method;
+	} );
+
+	// Stripe Elements is used as part of the credit-card method, does not need to be listed.
+	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+		return 'WPCOM_Billing_Stripe_Payment_Method' !== method;
 	} );
 
 	// Web payment methods such as Apple Pay are enabled based on client-side
