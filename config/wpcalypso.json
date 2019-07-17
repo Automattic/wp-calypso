@@ -19,7 +19,6 @@
 	"features": {
 		"async-payments": false,
 		"ad-tracking": false,
-		"autorenewal-toggle": true,
 		"automated-transfer": true,
 		"blogger-plan": false,
 		"comments/management/threaded-view": false,
