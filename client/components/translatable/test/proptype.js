@@ -7,6 +7,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,22 +24,7 @@ function assertFails( validator, { props }, propName = 'translatableString' ) {
 }
 
 const Translatable = () => <span />;
-
-function testHOC( ComposedComponent ) {
-	const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
-
-	return class extends React.Component {
-		static displayName = 'Localized(' + componentName + ')';
-
-		render() {
-			const props = {
-				...this.props,
-			};
-			return <ComposedComponent { ...props } />;
-		}
-	};
-}
-const WrappedTranslatable = testHOC( Translatable );
+const LocalizedTranslatable = localize( Translatable );
 
 describe( 'translatable proptype', () => {
 	test( 'should pass when no propType Name declared', () => {
@@ -83,9 +69,9 @@ describe( 'translatable proptype', () => {
 
 	it( 'should fail when required', () => assertFails( translatableString.isRequired, <legend /> ) );
 
-	it( 'should pass with <Translatable> component wrapped in a HOC', () =>
+	it( 'should pass with <Translatable> component run through i18n-calypso.localize()', () =>
 		assertPasses(
 			translatableString.isRequired,
-			<legend translatableString={ <WrappedTranslatable /> } />
+			<legend translatableString={ <LocalizedTranslatable /> } />
 		) );
 } );
