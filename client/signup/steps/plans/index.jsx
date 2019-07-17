@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { intersection } from 'lodash';
+import { get, intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -70,7 +70,9 @@ export class PlansStep extends Component {
 	}
 
 	onSelectPlan = cartItem => {
-		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
+		const { additionalStepData, stepSectionName, stepName, flowName, queryObject } = this.props;
+		const couponCode =
+			cartItem && flowName === 'site-selected' && get( queryObject, 'discount', '' );
 
 		if ( cartItem ) {
 			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
@@ -103,7 +105,7 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItem } );
+		this.props.submitSignupStep( step, { cartItem, couponCode } );
 		this.props.goToNextStep();
 	};
 

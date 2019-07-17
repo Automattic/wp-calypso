@@ -109,7 +109,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'couponCode' ],
 		},
 
 		site: {
