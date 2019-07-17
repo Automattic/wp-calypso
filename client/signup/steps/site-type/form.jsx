@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Badge from 'components/badge';
 import Card from 'components/card';
+import ImportButton from './import-button';
 import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -62,6 +63,7 @@ class SiteTypeForm extends Component {
 						</Card>
 					) ) }
 				</Card>
+				<ImportButton />
 			</Fragment>
 		);
 	}

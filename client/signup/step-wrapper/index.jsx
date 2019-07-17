@@ -11,10 +11,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
-import Button from 'components/button';
 
 /**
  * Style dependencies
@@ -57,16 +55,6 @@ class StepWrapper extends Component {
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
 			/>
-		);
-	}
-
-	renderImportOption() {
-		const { translate } = this.props;
-
-		return (
-			<div className="step-wrapper__buttons step-wrapper__import">
-				<Button borderless>{ translate( 'Already have a website?' ) }</Button>
-			</div>
 		);
 	}
 
@@ -133,7 +121,6 @@ class StepWrapper extends Component {
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 		} );
-		const showImport = isEnabled( 'signup/import-flow' );
 
 		return (
 			<>
@@ -158,8 +145,6 @@ class StepWrapper extends Component {
 							{ this.renderSkip() }
 						</div>
 					) }
-
-					{ showImport && this.renderImportOption() }
 				</div>
 			</>
 		);
