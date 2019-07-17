@@ -181,27 +181,39 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
-	wpcom.transactions( 'POST', transaction, ( error, data ) => {
-		if ( error ) {
-			return this._pushStep( {
+	return new Promise( resolve => {
+		wpcom.transactions( 'POST', transaction, ( error, data ) => {
+			if ( error ) {
+				this._pushStep( {
+					name: RECEIVED_WPCOM_RESPONSE,
+					error,
+					last: true,
+				} );
+				// This should probably reject but since the error is already
+				// reported just above, that might risk double-reporting or
+				// changing the step to the wrong one, so this just resolves
+				// without data instead.
+				resolve();
+				return;
+			}
+
+			if ( data.redirect_url ) {
+				this._pushStep( {
+					name: REDIRECTING_FOR_AUTHORIZATION,
+					data: data,
+					last: true,
+				} );
+				resolve( data );
+				return;
+			}
+
+			this._pushStep( {
 				name: RECEIVED_WPCOM_RESPONSE,
-				error,
+				data,
 				last: true,
 			} );
-		}
 
-		if ( data.redirect_url ) {
-			return this._pushStep( {
-				name: REDIRECTING_FOR_AUTHORIZATION,
-				data: data,
-				last: true,
-			} );
-		}
-
-		this._pushStep( {
-			name: RECEIVED_WPCOM_RESPONSE,
-			data,
-			last: true,
+			resolve( data );
 		} );
 	} );
 };
