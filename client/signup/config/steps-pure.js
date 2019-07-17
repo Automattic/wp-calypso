@@ -109,6 +109,9 @@ export function generateSteps( {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			props: {
+				provideCouponCode: true,
+			},
 			providesDependencies: [ 'cartItem', 'couponCode' ],
 		},
 

@@ -70,9 +70,7 @@ export class PlansStep extends Component {
 	}
 
 	onSelectPlan = cartItem => {
-		const { additionalStepData, stepSectionName, stepName, flowName, queryObject } = this.props;
-		const couponCode =
-			cartItem && flowName === 'site-selected' && get( queryObject, 'discount', '' );
+		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
 
 		if ( cartItem ) {
 			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
@@ -105,7 +103,13 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItem, couponCode } );
+		if ( this.props.provideCouponCode ) {
+			const couponCode = get( this.props.queryObject, 'discount', '' );
+			this.props.submitSignupStep( step, { cartItem, couponCode } );
+		} else {
+			this.props.submitSignupStep( step, { cartItem } );
+		}
+
 		this.props.goToNextStep();
 	};
 
