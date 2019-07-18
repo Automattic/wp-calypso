@@ -1,11 +1,16 @@
 .banner.card {
 	border-left: 3px solid;
+	cursor: default;
 	display: flex;
 	padding: 12px 6px 12px 12px;
 	line-height: 29px;
 
 	&.is-dismissible {
 		padding-right: 48px;
+	}
+	
+	&[href] {
+		cursor: pointer;
 	}
 
 	@include banner-color( var( --color-primary ) );
