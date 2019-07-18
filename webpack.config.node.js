@@ -22,6 +22,7 @@ const config = require( 'config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const nodeExternals = require( 'webpack-node-externals' );
 
 /**
  * Internal variables
@@ -34,35 +35,26 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
  *
- * @returns { object } list of externals
+ * @returns {Array} list of externals
  */
 function getExternals() {
-	const externals = {};
-
-	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
-	// with modules that are incompatible with webpack bundling.
-	fs.readdirSync( 'node_modules' )
-		.filter( function( module ) {
-			return [ '.bin' ].indexOf( module ) === -1;
-		} )
-		.forEach( function( module ) {
-			externals[ module ] = 'commonjs ' + module;
-		} );
-
-	// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
-	externals[ 'webpack.config' ] = 'commonjs webpack.config';
-	// Exclude hot-reloader, as webpack will try and resolve this in production builds,
-	// and error.
-	externals[ 'bundler/hot-reloader' ] = 'commonjs bundler/hot-reloader';
-	// Exclude the devdocs search-index, as it's huge.
-	externals[ 'devdocs/search-index' ] = 'commonjs devdocs/search-index';
-	// Exclude the devdocs components usage stats data
-	externals[ 'devdocs/components-usage-stats.json' ] =
-		'commonjs devdocs/components-usage-stats.json';
-	// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
-	externals[ 'bundler/assets' ] = 'commonjs bundler/assets';
-
-	return externals;
+	return [
+		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
+		// with modules that are incompatible with webpack bundling.
+		nodeExternals(),
+		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
+		'webpack.config',
+		// Exclude hot-reloader, as webpack will try and resolve this in production builds,
+		// and error.
+		'bundler/hot-reloader',
+		// Exclude the devdocs search-index, as it's huge.
+		'devdocs/search-index',
+		// Exclude the devdocs components usage stats data
+		'devdocs/components-usage-stats.json',
+		'devdocs/components-usage-stats.json',
+		// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
+		'bundler/assets',
+	];
 }
 
 const webpackConfig = {
@@ -133,6 +125,7 @@ const webpackConfig = {
 			raw: true,
 			entryOnly: false,
 		} ),
+		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
@@ -150,7 +143,6 @@ const webpackConfig = {
 			'components/empty-component'
 		), // Depends on BOM
 	] ),
-	externals: getExternals(),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
