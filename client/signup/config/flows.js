@@ -122,6 +122,20 @@ const Flows = {
 			flow = removeUserStepFromFlow( flow );
 		}
 
+		/*
+			AB Test: testing whether a passwordless account creation and login
+			improves signup rate
+		 */
+		if (
+			abtest( 'createAccountUserStep' ) === 'createAccount' &&
+			'onboarding' === flowName &&
+			includes( flow.steps, 'user' )
+		) {
+			flow = assign( {}, flow, {
+				steps: flow.steps.map( stepName => ( 'user' === stepName ? 'create-account' : stepName ) ),
+			} );
+		}
+
 		return Flows.filterExcludedSteps( flow );
 	},
 
