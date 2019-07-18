@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEmpty, reduce, snakeCase } from 'lodash';
+import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,9 +45,15 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			// Ensure we don't capture identifiable user data we don't need.
-			if ( includes( [ 'email', 'address', 'phone' ], propName ) ) {
+			if ( includes( [ 'email' ], propName ) ) {
 				propName = `user_entered_${ propName }`;
 				propValue = !! propValue;
+			}
+
+			if ( propName === 'cart_item' && typeof propValue !== 'string' ) {
+				propValue = toPairs( propValue )
+					.map( pair => pair.join( ':' ) )
+					.join( ',' );
 			}
 
 			return {
