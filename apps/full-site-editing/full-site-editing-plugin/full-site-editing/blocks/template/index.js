@@ -19,12 +19,14 @@ if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 		category: 'layout',
 		attributes: { templateId: { type: 'number' } },
 		supports: {
-			align: [ 'wide', 'full' ],
 			anchor: true,
 			html: false,
 			reusable: false,
 		},
 		edit,
 		save: () => null,
+		getEditWrapperProps() {
+			return { 'data-align': 'full' };
+		},
 	} );
 }

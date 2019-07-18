@@ -17,7 +17,6 @@ registerBlockType( 'a8c/post-content', {
 	icon: 'layout',
 	category: 'layout',
 	supports: {
-		align: [ 'wide', 'full' ],
 		anchor: true,
 		html: false,
 		multiple: false,
