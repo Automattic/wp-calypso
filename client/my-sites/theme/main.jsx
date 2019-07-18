@@ -228,6 +228,21 @@ class ThemeSheet extends React.Component {
 		return demo_uri && ! retired;
 	}
 
+	// Render "Open Live Demo" pseudo-button for mobiles.
+	// This is a legacy hack that shows the button under the preview screenshot for mobiles
+	// but not for desktop (becomes hidden behind the screenshot).
+	renderPreviewButton() {
+		return (
+			<div className="theme__sheet-preview-link" data-tip-target="theme-sheet-preview">
+				<span className="theme__sheet-preview-link-text">
+					{ i18n.translate( 'Open Live Demo', {
+						context: 'Individual theme live preview button',
+					} ) }
+				</span>
+			</div>
+		);
+	}
+
 	renderScreenshot() {
 		const { isWpcomTheme, name: themeName } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
@@ -253,6 +268,7 @@ class ThemeSheet extends React.Component {
 					onClick={ this.previewAction }
 					rel="noopener noreferrer"
 				>
+					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
 					{ img }
 				</a>
 			);
