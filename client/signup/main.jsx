@@ -519,24 +519,27 @@ class Signup extends React.Component {
 					{ this.state.shouldShowLoadingScreen ? (
 						<SignupProcessingScreen />
 					) : (
-						<CurrentComponent
-							path={ this.props.path }
-							step={ currentStepProgress }
-							initialContext={ this.props.initialContext }
-							steps={ flow.steps }
-							stepName={ this.props.stepName }
-							meta={ flow.meta || {} }
-							goToNextStep={ this.goToNextStep }
-							goToStep={ this.goToStep }
-							previousFlowName={ this.state.previousFlowName }
-							flowName={ this.props.flowName }
-							signupProgress={ this.props.progress }
-							signupDependencies={ this.props.signupDependencies }
-							stepSectionName={ this.props.stepSectionName }
-							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ hideFreePlan }
-							{ ...propsFromConfig }
-						/>
+						<>
+							<CurrentComponent
+								path={ this.props.path }
+								step={ currentStepProgress }
+								initialContext={ this.props.initialContext }
+								steps={ flow.steps }
+								stepName={ this.props.stepName }
+								meta={ flow.meta || {} }
+								goToNextStep={ this.goToNextStep }
+								goToStep={ this.goToStep }
+								previousFlowName={ this.state.previousFlowName }
+								flowName={ this.props.flowName }
+								signupProgress={ this.props.progress }
+								signupDependencies={ this.props.signupDependencies }
+								stepSectionName={ this.props.stepSectionName }
+								positionInFlow={ this.getPositionInFlow() }
+								hideFreePlan={ hideFreePlan }
+								{ ...propsFromConfig }
+							/>
+							{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
+						</>
 					) }
 				</div>
 			</div>
@@ -598,7 +601,6 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
 			</div>
 		);
 	}
