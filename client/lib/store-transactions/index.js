@@ -49,9 +49,20 @@ export function submit( params, onStep ) {
 	return new TransactionFlow( params, onStep );
 }
 
-function ValidationError( code, message ) {
+/**
+ * An error for display by the payment form
+ *
+ * TODO: This sets `message` to an object, which is a non-standard way to use
+ * an Error since `Error.message` should be a string. We should set the
+ * messagesByField to a separate property and use that instead. See
+ * `StripeValidationError` for a better pattern.
+ *
+ * @param {string} code - The error code
+ * @param {object} messagesByField - An object whose keys are input field names and whose values are arrays of error strings for that field
+ */
+function ValidationError( code, messagesByField ) {
 	this.code = code;
-	this.message = message;
+	this.message = messagesByField;
 }
 inherits( ValidationError, Error );
 
