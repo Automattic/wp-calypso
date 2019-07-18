@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
-import { find, isEmpty } from 'lodash';
+import { find, isEmpty, isMatch } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -29,8 +29,22 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:community-translator' );
 
+/**
+ * @returns {Object} of shape { localeSlug, localeVariant, localeCode } (all strings)
+ */
+function getLocaleSlugsFromLoadedTranslations() {
+	const { localeSlug, localeVariant } = i18n.getLocale()[ '' ];
+	return {
+		localeSlug,
+		localeVariant,
+		localeCode: localeVariant || localeSlug
+	};
+}
+
 class CommunityTranslator extends PureComponent {
-	state = { currentLocale: null };
+	// The i18n-calypso localize() HOC will force an update when i18n changes
+	// (see boundForceUpdate()), so we need to track what we've set
+	currentLocale = ( { localeSlug: 'en' } )
 
 	componentDidMount() {
 		// wrap translations from i18n
@@ -39,46 +53,48 @@ class CommunityTranslator extends PureComponent {
 			this.wrapTranslation( options.original, translation, options )
 		);
 
-		// callback when translated component changes.
-		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
-		i18n.registerComponentUpdateHook( () => {} );
-		i18n.on( 'change', this.checkForI18nLocaleChange );
-		this.checkForI18nLocaleChange();
+		this.componentDidMountOrUpdate()
+
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevprops ) {
+		this.componentDidMountOrUpdate( prevprops );
+	}
+
+	componentDidMountOrUpdate( prevprops = {} ) {
+		const { username, translatorEnabled } = this.props;
 		if ( ! this.props.translatorEnabled ) {
 			return;
 		}
 
-		// Anything in our props or state changing means we need a new check
-		this.setLanguage();
-	}
+		// This is a bit weird because we get forcedUpdates from i18n where
+		// our props haven't changed in addition to normal props-driven updates
+		const {
+			localeSlug,
+			localeVariant,
+			localeCode: newLocaleCode,
+		} = getLocaleSlugsFromLoadedTranslations();
 
-	// Trigger react updates when i18n changes locale (and not just an
-	// individual translation)
-	//
-	// We could use the current user locale & variant out of the redux state,
-	// but this way avoids a race condition between the loading the normal
-	// locale translations and the undeployed translations for the user.
-	checkForI18nLocaleChange = () => {
-		const { localeSlug, localeVariant } = i18n.getLocale()[ '' ];
-		const newLocaleCode = localeVariant || localeSlug;
-		const { currentLocale } = this.state || {};
+		const languageChanged = this.setLanguageIfNecessary();
 
-		if ( ! currentLocale || newLocaleCode !== currentLocale.langSlug ) {
-			debug( 'Changing locale to ' + newLocaleCode );
-			this.setState( {
-				currentLocale: find( languages, lang => lang.langSlug === newLocaleCode ),
-			} );
+		// ignore additional props from i18n-calypso
+		const relevantProps = { username, translatorEnabled };
+		if ( languageChanged || ! isMatch( prevprops, relevantProps ) ) {
+			debug( "fetching user's waiting translations", username, newLocaleCode );
+			loadUndeployedTranslations( { username, locale: newLocaleCode, translationStatus: 'waiting' } );
 		}
-	};
 
-	componentWillUnmount() {
-		i18n.off( 'change', this.checkForI18nLocaleChange );
+		// i18n will force a rerender if the language has changed, so we
+		// shouldn't cause another.
+		if ( ! languageChanged && ! prevprops.translatorEnabled ) {
+			i18n.rerenderTranslations();
+		}
 	}
 
-	setLanguage() {
+	/**
+	 * @return {bool} returns true if the current language actually changed.
+	 */
+	setLanguageIfNecessary() {
 		// The '' here is a Jed convention used for storing configuration data
 		// alongside translations in the same dictionary (because '' will never
 		// be a legitimately translatable string)
@@ -87,6 +103,13 @@ class CommunityTranslator extends PureComponent {
 		const { username } = this.props;
 		const newLocaleCode = localeVariant || localeSlug;
 
+		if( newLocaleCode === this.currentLocale.langSlug ) {
+			return;
+		}
+
+		debug( 'Changing locale to ' + newLocaleCode );
+		this.currentLocale = find( languages, lang => lang.langSlug === newLocaleCode );
+
 		if ( ! canDisplayCommunityTranslator( localeSlug, localeVariant ) ) {
 			debug(
 				`community translator not activated for ${ newLocaleCode } (${ localeSlug }/${ localeVariant })`
@@ -94,8 +117,12 @@ class CommunityTranslator extends PureComponent {
 			return;
 		}
 
+		debug(
+			`community translator activated for ${ newLocaleCode } (${ localeSlug }/${ localeVariant })`
+		);
 		debug( "fetching user's waiting translations", username, newLocaleCode );
 		loadUndeployedTranslations( { username, locale: newLocaleCode, translationStatus: 'waiting' } );
+		return true;
 	}
 
 	/**
@@ -110,7 +137,17 @@ class CommunityTranslator extends PureComponent {
 			return displayedTranslationFromPage;
 		}
 
-		if ( ! canDisplayCommunityTranslator() ) {
+		// This checks the currently loaded translations rather than user
+		// settings or the last one we saw.
+		// This means when a user changes locale, it will still show
+		// the old translations until the new translations are loaded, but:
+		// - it won't try to show translations when it can't
+		// - it will change all the translations over when i18n-calypso
+		//   triggers a rerender (it can't "miss" part of the rerender due to
+		//   the order of callbacks triggered by the change)
+		const currentlyLoadedTranslationsSlug =
+			getLocaleSlugsFromLoadedTranslations().localeCode;
+		if ( ! canDisplayCommunityTranslator( currentlyLoadedTranslationsSlug ) ) {
 			return displayedTranslationFromPage;
 		}
 
@@ -130,7 +167,7 @@ class CommunityTranslator extends PureComponent {
 
 		const props = {
 			singular: originalFromPage,
-			locale: this.state.currentLocale,
+			locale: this.currentLocale,
 		};
 
 		let key = originalFromPage;
