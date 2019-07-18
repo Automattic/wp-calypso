@@ -21,9 +21,9 @@ function button( label, icon ) {
 	};
 }
 
-// we use this translate to ensure the strings get picked up by the scripts that
-// scan for translations, and 'useTranslate' above to make sure the strings get
-// the right update hooks for runtime localization
+// we use this translate because the i18n scripts are scanning for
+// translate( string ) calls, but the runtime translation hooks are set up with
+// the 'useTranslate' above
 const translate = ( ...args ) => args;
 
 export const AddContentButton = button( translate( 'Add' ), <Gridicon icon="add-outline" /> );
