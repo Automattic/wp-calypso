@@ -4,14 +4,14 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import ThreatAlert from './threat-alert';
-import { getSiteThreats } from 'state/selectors/get-site-threats';
+import getSiteThreats from 'state/selectors/get-site-threats';
 
 /**
  * Style dependencies
@@ -19,10 +19,10 @@ import { getSiteThreats } from 'state/selectors/get-site-threats';
 import './rewind-alerts.scss';
 
 export class RewindAlerts extends Component {
-	getRewindAlerts = alerts => {
-		const translate = useTranslate();
+	render() {
+		const { threats, translate } = this.props;
 
-		if ( ! alerts || ! alerts.threats || alerts.threats.length === 0 ) {
+		if ( ! threats || threats.length === 0 ) {
 			return null;
 		}
 
@@ -31,16 +31,16 @@ export class RewindAlerts extends Component {
 				<div className="activity-log__threats-heading">
 					{ translate( 'These items require your immediate attention' ) }
 				</div>
-				{ alerts.threats.map( threat => (
+				{ threats.map( threat => (
 					<ThreatAlert key={ threat.id } threat={ threat } />
 				) ) }
 			</Card>
 		);
-	};
+	}
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	alerts: getSiteThreats( state, siteId ),
+	threats: getSiteThreats( state, siteId ),
 } );
 
-export default connect( mapStateToProps )( RewindAlerts );
+export default connect( mapStateToProps )( localize( RewindAlerts ) );
