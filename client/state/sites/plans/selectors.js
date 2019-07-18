@@ -172,7 +172,7 @@ export function isRequestingSitePlans( state, siteId ) {
 
 export function isCurrentPlanExpiring( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
-	const expiration = get( currentPlan, 'userFacingExpiryMoment', null );
+	const expiration = get( currentPlan, 'expiryMoment', null );
 	return expiration < moment().add( 30, 'days' );
 }
 
