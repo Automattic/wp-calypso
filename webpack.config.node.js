@@ -41,7 +41,10 @@ function getExternals() {
 	return [
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 		// with modules that are incompatible with webpack bundling.
-		nodeExternals(),
+		//
+		// `@automattic/calypso-ui` is forced to be webpack-ed because it has SCSS and other
+		// non-JS asset imports that couldn't be processed by Node.js at runtime.
+		nodeExternals( { whitelist: [ '@automattic/calypso-ui' ] } ),
 		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 		'webpack.config',
 		// Exclude hot-reloader, as webpack will try and resolve this in production builds,
