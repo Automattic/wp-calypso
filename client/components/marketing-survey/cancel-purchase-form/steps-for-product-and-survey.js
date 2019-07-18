@@ -58,7 +58,7 @@ export default function stepsForProductAndSurvey(
 		return steps.DEFAULT_STEPS_WITH_HAPPYCHAT;
 	}
 
-	if ( isPlan( product ) ) {
+	if ( product && isPlan( product ) ) {
 		return [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 	}
 
