@@ -5,22 +5,26 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 
 // Returns React component with a localized label and optional icon
 function button( label, icon ) {
-	return localize( ( { translate: tr } ) => (
-		<strong>
-			{ icon }
-			{ icon && '\u00A0' /* NBSP between icon and label */ }
-			{ tr( label ) }
-		</strong>
-	) );
+	return () => {
+		const tr = useTranslate();
+		return (
+			<strong>
+				{ icon }
+				{ icon && '\u00A0' /* NBSP between icon and label */ }
+				{ tr( ...label ) }
+			</strong>
+		);
+	};
 }
 
-// Localized texts need to be wrapped in a `translate` function to be found by the l10n bot
-const translate = identity;
+// we use this translate to ensure the strings get picked up by the scripts that
+// scan for translations, and 'useTranslate' above to make sure the strings get
+// the right update hooks for runtime localization
+const translate = ( ...args ) => args;
 
 export const AddContentButton = button( translate( 'Add' ), <Gridicon icon="add-outline" /> );
 export const AddMediaButton = button( translate( 'Add Media' ) );
