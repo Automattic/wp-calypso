@@ -521,15 +521,11 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function handleGoToAllPosts( calypsoPort ) {
-	if ( ! calypsoifyGutenberg.closeUrl ) {
-		return;
-	}
-
+function handleCloseEditor( calypsoPort ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
 		calypsoPort.postMessage( {
-			action: 'goToAllPosts',
+			action: 'closeEditor',
 			payload: {
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 			},
@@ -657,7 +653,7 @@ function initPort( message ) {
 
 		handlePreview( calypsoPort );
 
-		handleGoToAllPosts( calypsoPort );
+		handleCloseEditor( calypsoPort );
 
 		openLinksInParentFrame();
 
