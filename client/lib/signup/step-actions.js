@@ -171,17 +171,15 @@ export function createSiteWithCart(
 		validate: false,
 	};
 
-	const importingFromUrl =
-		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
-	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
-
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	if ( importingFromUrl ) {
-		newSiteParams.blog_name = importingFromUrl;
+	if ( 'import' === flowName ) {
+		const importingFromUrl = getNuxUrlInputValue( state );
+		newSiteParams.blog_name = normalizeImportUrl( importingFromUrl );
 		newSiteParams.find_available_url = true;
-		newSiteParams.options.nux_import_engine = importEngine;
+		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
+		newSiteParams.options.nux_import_from_url = importingFromUrl;
 	} else if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
