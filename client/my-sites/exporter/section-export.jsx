@@ -14,6 +14,7 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { isJetpackSite } from 'state/sites/selectors';
 import FormattedHeader from 'components/formatted-header';
 
@@ -22,15 +23,17 @@ import FormattedHeader from 'components/formatted-header';
  */
 import './style.scss';
 
-const SectionExport = ( { isJetpack, site, translate } ) => (
+const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => (
 	<Main>
 		<DocumentHead title={ translate( 'Export' ) } />
 		<SidebarNavigation />
-		<FormattedHeader
-			className="exporter__section-header"
-			headerText={ translate( 'Export your content' ) }
-			subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
-		/>
+		{ canUserExport && ( 
+      		<FormattedHeader
+			  	className="exporter__section-header"
+			  	headerText={ translate( 'Export your content' ) }
+			  	subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+		 	 />
+    	) }
 		{ isJetpack && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
@@ -41,16 +44,24 @@ const SectionExport = ( { isJetpack, site, translate } ) => (
 				actionTarget="_blank"
 			/>
 		) }
-		{ isJetpack === false && <ExporterContainer /> }
+		{ ! canUserExport && (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'You are not authorized to view this page' ) }
+			/>
+		) }
+		{ ! isJetpack && canUserExport && <ExporterContainer /> }
 	</Main>
 );
 
 export default connect( state => {
 	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
 
 	return {
-		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+		isJetpack: isJetpackSite( state, siteId ),
 		site,
 		siteSlug: getSelectedSiteSlug( state ),
+		canUserExport: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } )( localize( SectionExport ) );
