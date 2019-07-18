@@ -29,7 +29,11 @@ import {
 	translatedEbanxError,
 } from 'lib/checkout/processor-specific';
 import analytics from 'lib/analytics';
-import { createStripePaymentMethod, confirmStripePaymentIntent } from 'lib/stripe';
+import {
+	createStripePaymentMethod,
+	confirmStripePaymentIntent,
+	StripeValidationError,
+} from 'lib/stripe';
 
 const wpcom = wp.undocumented();
 
@@ -208,9 +212,19 @@ TransactionFlow.prototype._paymentHandlers = {
 				await this.stripeModalAuth( stripeConfiguration, response );
 			}
 		} catch ( error ) {
+			if ( error instanceof StripeValidationError ) {
+				debug( 'There was a validation error:', error );
+				this._pushStep( {
+					name: INPUT_VALIDATION,
+					error: new ValidationError( 'invalid-card-details', error.messagesByField ),
+					first: true,
+					last: true,
+				} );
+				return;
+			}
 			this._pushStep( {
 				name: RECEIVED_PAYMENT_KEY_RESPONSE,
-				error,
+				error: error.message,
 				last: true,
 			} );
 		}
@@ -310,7 +324,7 @@ TransactionFlow.prototype.stripeModalAuth = async function( stripeConfiguration,
 	} catch ( error ) {
 		this._pushStep( {
 			name: RECEIVED_AUTHORIZATION_RESPONSE,
-			error,
+			error: error.message,
 			last: true,
 		} );
 	}
