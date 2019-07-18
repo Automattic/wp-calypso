@@ -30,6 +30,7 @@ import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
@@ -59,6 +60,7 @@ interface Props {
 	postType: T.PostType;
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
+	fseParentPostId: T.PostId;
 }
 
 interface State {
@@ -81,7 +83,8 @@ enum WindowActions {
 }
 
 enum EditorActions {
-	GoToAllPosts = 'goToAllPosts',
+	GoToAllPosts = 'goToAllPosts', // Unused action in favor of CloseEditor. Maintained here to support cached scripts.
+	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenRevisions = 'openRevisions',
 	PreviewPost = 'previewPost',
@@ -216,14 +219,14 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.props.navigate( postTypeTrashUrl );
 		}
 
-		if ( EditorActions.GoToAllPosts === action ) {
+		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
 			if ( unsavedChanges ) {
 				this.props.markChanged();
 			} else {
 				this.props.markSaved();
 			}
-			this.props.navigate( this.props.allPostsUrl );
+			this.props.navigate( this.props.closeUrl );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -503,7 +506,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	}
 }
 
-const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) => {
+const mapStateToProps = (
+	state,
+	{ postId, postType, duplicatePostId, fseParentPageId }: Props
+) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
@@ -533,8 +539,13 @@ const mapStateToProps = ( state, { postId, postType, duplicatePostId }: Props ) 
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
+	let closeUrl = getPostTypeAllPostsUrl( state, postType );
+	if ( fseParentPageId ) {
+		closeUrl = getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
+	}
+
 	return {
-		allPostsUrl: getPostTypeAllPostsUrl( state, postType ),
+		closeUrl,
 		currentRoute,
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
