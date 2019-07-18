@@ -1,12 +1,7 @@
 .editor-post-publish-panel__prepublish {
-	.warning {
-		display: flex;
-		.icon {
-			width: 32px;
-			height: 32px;
-		}
-		.message {
-			margin-left: 4px;
+	.components-notice.is-warning {
+		.components-notice__content {
+			margin: 1em 0;
 		}
 	}
 }
