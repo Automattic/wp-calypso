@@ -51,7 +51,9 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			if ( propName === 'cart_item' && typeof propValue !== 'string' ) {
-				propValue = toPairs( propValue ).join( ';' );
+				propValue = toPairs( propValue )
+					.map( pair => pair.join( ':' ) )
+					.join( ',' );
 			}
 
 			return {
