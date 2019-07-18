@@ -1,7 +1,6 @@
-/** @format */
 const me = function() {
 	return {
-		get() {},
+		get: async () => ( {} ),
 		settings() {
 			return {
 				get( callback ) {
