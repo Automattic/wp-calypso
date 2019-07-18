@@ -71,7 +71,7 @@ function GdprBanner( props ) {
 	// We want to ensure that the first render is always empty, to match the server.
 	// This avoids potential hydration issues.
 	useEffect( () => {
-		setBannerStatus( shouldShowBanner() ? STATUS.RENDERED : STATUS.RENDERED_BUT_HIDDEN );
+		shouldShowBanner() && setBannerStatus( STATUS.RENDERED );
 	}, [] );
 
 	useEffect( () => {
