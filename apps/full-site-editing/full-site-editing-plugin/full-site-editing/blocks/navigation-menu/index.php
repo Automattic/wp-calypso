@@ -66,33 +66,11 @@ function get_wrapper_attributes_by_theme_location( $location ) {
 		default:
 			$attributes = [
 				'class' => 'main-navigation',
-				'label' => 'Top Menu',
+				'label' => 'Primary Menu',
 			];
 			break;
 	}
 	return $attributes;
-}
-
-/**
- * Determines the message to display if a menu is not set for the given location.
- *
- * @param string $location Theme location.
- * @return string
- */
-function get_add_menu_message( $location ) {
-	switch ( $location ) {
-		case 'footer':
-			$message = __( 'Add a menu to the Footer Menu display location', 'full-site-editing' );
-			break;
-		case 'social':
-			$message = __( 'Add a menu to the Social Links Menu display location', 'full-site-editing' );
-			break;
-		case 'main-1':
-		default:
-			$message = __( 'Add a menu to the Primary display location', 'full-site-editing' );
-			break;
-	}
-	return $message;
 }
 
 /**
@@ -108,7 +86,8 @@ function render_navigation_menu_block( $attributes ) {
 	$params       = get_menu_params_by_theme_location( $location );
 
 	if ( ! array_key_exists( $params['theme_location'], get_nav_menu_locations() ) ) {
-		return get_add_menu_message( $location );
+		// translators: message to indicate to the user that they need to add a menu in a specific location.
+		return sprintf( __( 'Add a menu to the %1$s display location', 'full-site-editing' ), $wrapper_attr['label'] );
 	} else {
 		ob_start();
 		// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
