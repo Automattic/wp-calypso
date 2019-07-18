@@ -147,12 +147,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can log out and request a magic link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			await driverManager.ensureNotLoggedIn( driver );
 			const loginPage = await LoginPage.Visit( driver );
 			return await loginPage.requestMagicLink( emailAddress );
 		} );
 
 		step( 'Can see email containing magic link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			const emailClient = new EmailClient( signupInboxId );
 			const validator = emails => emails.find( email => email.subject.includes( 'WordPress.com' ) );
 			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
@@ -173,6 +179,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can visit the magic link and we should be logged in', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			await driver.get( magicLoginLink );
 			const magicLoginPage = await MagicLoginPage.Expect( driver );
 			await magicLoginPage.finishLogin();
@@ -1549,6 +1558,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
 
 		before( async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
