@@ -457,10 +457,10 @@ export class Checkout extends React.Component {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
 					return (
-						this.maybeShowPlanUpgradeOffer( receiptId ) ||
+						this.maybeShowPlanUpgradeOffer( pendingOrReceiptId ) ||
 						`/checkout/${ selectedSiteSlug }/with-gsuite/${
 							domainsForGSuite[ 0 ].meta
-						}/${ receiptId }`
+						}/${ pendingOrReceiptId }`
 					);
 				}
 			}
@@ -477,7 +477,7 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			const upgradePath = this.maybeShowPlanUpgradeOffer( receiptId );
+			const upgradePath = this.maybeShowPlanUpgradeOffer( pendingOrReceiptId );
 			if ( upgradePath ) {
 				return upgradePath;
 			}
