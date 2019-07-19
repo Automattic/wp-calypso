@@ -9,6 +9,7 @@ import { By, until } from 'selenium-webdriver';
  * Internal dependencies
  */
 import * as driverHelper from '../driver-helper';
+import { getJetpackHost } from '../data-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
@@ -168,6 +169,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				prefix = 'jetpack-contact-';
 				break;
 			case 'Simple Payments':
+			case 'Markdown':
 				prefix = 'jetpack-';
 				break;
 		}
@@ -270,10 +272,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async waitForSuccessViewPostNotice() {
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.components-snackbar' )
-		);
+		// FIXME: Temporary hack to make sure it works with both 6.1 and core's Gutenberg (WP 5.2)
+		const noticeSelector =
+			getJetpackHost() === 'WPCOM' ? '.components-snackbar' : '.components-notice.is-success';
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( noticeSelector ) );
 	}
 
 	async dismissSuccessNotice() {
