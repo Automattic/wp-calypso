@@ -302,7 +302,7 @@ class MembershipsSection extends Component {
 	renderOnboarding( cta ) {
 		return (
 			<div className="memberships__onboarding-wrapper">
-				<div className="memberships__onboarding-column">
+				<div className="memberships__onboarding-column-info">
 					<div className="memberships__onboarding-header">
 						{ this.props.translate( 'Introducing Recurring Payments.' ) }
 					</div>
@@ -327,7 +327,7 @@ class MembershipsSection extends Component {
 						</div>
 					</div>
 				</div>
-				<div className="memberships__onboarding-column">
+				<div className="memberships__onboarding-column-image">
 					<img
 						src="/calypso/images/recurring-payments/checkout-form-gradient.png"
 						aria-hidden="true"

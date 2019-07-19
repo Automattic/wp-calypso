@@ -25,11 +25,21 @@
 	padding-top: 30px;
 }
 
-.memberships__onboarding-column {
+.memberships__onboarding-column-info {
 	flex: 1;
 	padding-left: 10px;
 	padding-right: 10px;
 }
+.memberships__onboarding-column-image {
+	display:none;
+	@include breakpoint( '>800px' ) {
+		display: block;
+		flex: 1;
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+
 
 .memberships__onboarding-header {
 	font-size: 24px;
