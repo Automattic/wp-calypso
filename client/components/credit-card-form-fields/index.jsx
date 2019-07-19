@@ -21,6 +21,10 @@ import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import FormInputValidation from 'components/forms/form-input-validation';
 
+const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
+const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
+const CardCVCElementWithValidation = withStripeElementValidation( CardCVCElement );
+
 /**
  * Style dependencies
  */
@@ -60,6 +64,23 @@ CvvPopover.propTypes = {
 	card: PropTypes.object.isRequired,
 };
 
+function withStripeElementValidation( ElementComponent ) {
+	return ( { getErrorMessage, fieldName, ...props } ) => {
+		const [ errorMessage, setErrorMessage ] = useState();
+		const onChange = ( { error } ) => setErrorMessage( error ? error.message : null );
+		return (
+			<React.Fragment>
+				<ElementComponent onChange={ onChange } { ...props } />
+				<StripeElementErrors
+					errorMessage={ errorMessage }
+					getErrorMessage={ getErrorMessage }
+					fieldName={ fieldName }
+				/>
+			</React.Fragment>
+		);
+	};
+}
+
 function StripeElementErrors( { errorMessage, getErrorMessage, fieldName } ) {
 	// If `errorMessage` is set, it will be displayed; otherwise the
 	// `getErrorMessage` function will be called for the `fieldName` to determine
@@ -82,15 +103,11 @@ StripeElementErrors.propTypes = {
 };
 
 function CreditCardNumberField( { translate, stripe, createField, getErrorMessage } ) {
-	const [ cardError, setCardError ] = useState();
 	const cardNumberLabel = translate( 'Card Number', {
 		comment: 'Card number label on credit card form',
 	} );
 
 	if ( stripe ) {
-		const onChange = ( { error } ) => {
-			setCardError( error ? error.message : null );
-		};
 		const elementClasses = {
 			base: 'credit-card-form-fields__element',
 			invalid: 'is-error',
@@ -100,11 +117,10 @@ function CreditCardNumberField( { translate, stripe, createField, getErrorMessag
 			<div className="credit-card-form-fields__field number">
 				<label className="credit-card-form-fields__label form-label">
 					{ cardNumberLabel }
-					<CardNumberElement classes={ elementClasses } onChange={ onChange } />
-					<StripeElementErrors
-						errorMessage={ cardError }
-						getErrorMessage={ getErrorMessage }
+					<CardNumberElementWithValidation
 						fieldName="card_number"
+						getErrorMessage={ getErrorMessage }
+						classes={ elementClasses }
 					/>
 				</label>
 			</div>
@@ -126,8 +142,6 @@ CreditCardNumberField.propTypes = {
 };
 
 function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErrorMessage, card } ) {
-	const [ expiryError, setExpiryError ] = useState();
-	const [ cvcError, setCvcError ] = useState();
 	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
 		components: {
 			span: <span className="credit-card-form-fields__explainer" />,
@@ -144,34 +158,26 @@ function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErro
 			invalid: 'is-error',
 			focus: 'has-focus',
 		};
-		const onExpiryChange = ( { error } ) => {
-			setExpiryError( error ? error.message : null );
-		};
-		const onCvcChange = ( { error } ) => {
-			setCvcError( error ? error.message : null );
-		};
 
 		return (
 			<React.Fragment>
 				<div className="credit-card-form-fields__field expiration-date">
 					<label className="credit-card-form-fields__label form-label">
 						{ expiryLabel }
-						<CardExpiryElement classes={ elementClasses } onChange={ onExpiryChange } />
-						<StripeElementErrors
-							errorMessage={ expiryError }
-							getErrorMessage={ getErrorMessage }
+						<CardExpiryElementWithValidation
 							fieldName="card_expiry"
+							getErrorMessage={ getErrorMessage }
+							classes={ elementClasses }
 						/>
 					</label>
 				</div>
 				<div className="credit-card-form-fields__field cvv">
 					<label className="credit-card-form-fields__label form-label">
 						{ cvcLabel }
-						<CardCVCElement classes={ elementClasses } onChange={ onCvcChange } />
-						<StripeElementErrors
-							errorMessage={ cvcError }
-							getErrorMessage={ getErrorMessage }
+						<CardCVCElementWithValidation
 							fieldName="card_cvc"
+							getErrorMessage={ getErrorMessage }
+							classes={ elementClasses }
 						/>
 					</label>
 				</div>
