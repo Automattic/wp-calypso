@@ -410,7 +410,7 @@ export class Checkout extends React.Component {
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 
-		const signupDestination = retrieveSignupDestination() || `/view/${ selectedSiteSlug }`;
+		const signupDestination = retrieveSignupDestination() || `/`;
 
 		persistSignupDestination( signupDestination );
 
