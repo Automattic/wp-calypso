@@ -21,6 +21,11 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import DocumentHead from 'components/data/document-head';
 import TipInfo from '../../components/purchase-detail/tip-info';
 
+/**
+ * Image dependencies
+ */
+import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 class FeaturesComponent extends Component {
@@ -100,7 +105,7 @@ class FeaturesComponent extends Component {
 
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
-						icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
+						icon={ <img alt="" src={ googleAdwordsImage } /> }
 						title={ '$100 for Google Ads' }
 						description={ 'Attract new (and more!) traffic immediately with Google Ads.' }
 						body={
