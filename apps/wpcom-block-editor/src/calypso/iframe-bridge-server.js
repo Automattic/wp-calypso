@@ -585,18 +585,74 @@ function openCustomizer( calypsoPort ) {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openTemplatePartEditor( calypsoPort ) {
-	const editTemplatePartLinkSelector = '.template-block__overlay a';
-	$( '#editor' ).on( 'click', editTemplatePartLinkSelector, e => {
-		e.preventDefault();
+async function openTemplatePartEditor( calypsoPort ) {
+	// We only want this when editing a full site page.
+	if ( ! window.fullSiteEditing || 'page' !== window.fullSiteEditing.editorPostType ) {
+		return;
+	}
 
-		calypsoPort.postMessage( {
-			action: 'openTemplatePartEditor',
-			payload: {
-				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
-				templatePartId: getQueryArg( e.currentTarget.href, 'post' ),
-			},
+	const getTemplatePartLinks = async () =>
+		new Promise( resolve => {
+			const unsubscribe = subscribe( () => {
+				const currentPost = select( 'core/editor' ).getCurrentPost();
+				const initialized = currentPost && currentPost.id;
+
+				if ( ! initialized ) {
+					return;
+				}
+
+				unsubscribe();
+
+				const interval = setInterval( () => {
+					const links = document.querySelectorAll(
+						'[data-type="a8c/template"] .template-block__overlay a'
+					);
+					const blocks = select( 'core/editor' )
+						.getBlocks()
+						.filter( block => block.name === 'a8c/template' );
+
+					if ( links.length !== blocks.length ) {
+						return;
+					}
+
+					clearInterval( interval );
+					resolve( links );
+				} );
+			} );
 		} );
+
+	const editTemplatePartLinks = await getTemplatePartLinks();
+
+	editTemplatePartLinks.forEach( link => {
+		const templatePartId = getQueryArg( link.getAttribute( 'href' ), 'post' );
+
+		// Delegates the navigation to Calypso in order to avoid a full load page.
+		link.addEventListener( 'click', e => {
+			e.preventDefault();
+
+			calypsoPort.postMessage( {
+				action: 'openTemplatePartEditor',
+				payload: {
+					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+					templatePartId,
+				},
+			} );
+		} );
+
+		// But overrides the link just in case the user treats the link as a link.
+		const { port1, port2 } = new MessageChannel();
+		calypsoPort.postMessage(
+			{
+				action: 'getTemplatePartEditorUrl',
+				payload: { templatePartId },
+			},
+			[ port2 ]
+		);
+		port1.onmessage = ( { data } ) => {
+			link.setAttribute( 'target', '_parent' );
+			link.setAttribute( 'href', data );
+			port1.close();
+		};
 	} );
 }
 

@@ -93,6 +93,7 @@ enum EditorActions {
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	OpenTemplatePartEditor = 'openTemplatePartEditor',
+	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -254,6 +255,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( EditorActions.OpenTemplatePartEditor === action ) {
 			const { templatePartId = null, unsavedChanges = false } = payload;
 			this.openTemplatePartEditor( templatePartId, unsavedChanges );
+		}
+
+		if ( EditorActions.GetTemplatePartEditorUrl === action ) {
+			const { templatePartId = null } = payload;
+			this.getTemplatePartEditorUrl( templatePartId, ports[ 0 ] );
 		}
 	};
 
@@ -425,6 +431,21 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 
 		goTo( templatePartEditorUrl );
+	};
+
+	getTemplatePartEditorUrl = ( templatePartId: object, port: MessagePort ) => {
+		const { getTemplatePartEditorUrl, editedPostId } = this.props;
+
+		let templatePartEditorUrl = getTemplatePartEditorUrl( templatePartId );
+		if ( editedPostId ) {
+			templatePartEditorUrl = addQueryArgs(
+				{ fse_parent_post: editedPostId },
+				templatePartEditorUrl
+			);
+		}
+
+		port.postMessage( `${ window.location.origin }${ templatePartEditorUrl }` );
+		port.close();
 	};
 
 	handleConversionResponse = ( confirmed: boolean ) => {
