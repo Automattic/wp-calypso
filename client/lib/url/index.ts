@@ -197,7 +197,7 @@ export function omitUrlParams( url: URL | Falsey, paramsToOmit: string | string[
  * @param  encodedURI URI to attempt to decode
  * @return            Decoded URI (or passed in value on error)
  */
-export function decodeURIIfValid( encodedURI: string ): string {
+export function decodeURIIfValid( encodedURI: string ): URL {
 	if ( ! ( isString( encodedURI ) || has( encodedURI, 'toString' ) ) ) {
 		return '';
 	}
