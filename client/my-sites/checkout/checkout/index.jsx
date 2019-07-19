@@ -786,8 +786,8 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.children ) {
+			this.props.setHeaderText( '' );
 			return React.Children.map( this.props.children, child => {
-				this.props.setHeaderText( '' );
 				return React.cloneElement( child, {
 					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
 				} );
