@@ -281,7 +281,7 @@ export function generateFlows( {
 	};
 
 	flows.import = {
-		steps: [ 'from-url', 'user', 'domains' ],
+		steps: [ 'user', 'site-type', 'from-url', 'domains' ],
 		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
 			addQueryArgs(
 				{

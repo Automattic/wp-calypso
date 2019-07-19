@@ -16,6 +16,7 @@ import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
 
 const siteTypeToFlowname = {
+	import: 'import',
 	'online-store': 'ecommerce-onboarding',
 };
 
