@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -23,18 +23,18 @@ import FormattedHeader from 'components/formatted-header';
  */
 import './style.scss';
 
-const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => (
-	<Main>
-		<DocumentHead title={ translate( 'Export' ) } />
-		<SidebarNavigation />
-		{ canUserExport && ( 
-      		<FormattedHeader
-			  	className="exporter__section-header"
-			  	headerText={ translate( 'Export your content' ) }
-			  	subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
-		 	 />
-    	) }
-		{ isJetpack && (
+const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
+	
+	let sectionContent;
+
+	if ( ! canUserExport ) {
+		sectionContent =
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'You are not authorized to view this page' ) }
+			/>
+	} else if ( isJetpack ) {
+		sectionContent =
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 				title={ translate( 'Want to export your site?' ) }
@@ -43,16 +43,26 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => (
 				actionURL={ site.options.admin_url + 'export.php' }
 				actionTarget="_blank"
 			/>
-		) }
-		{ ! canUserExport && (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ translate( 'You are not authorized to view this page' ) }
-			/>
-		) }
-		{ ! isJetpack && canUserExport && <ExporterContainer /> }
-	</Main>
-);
+	} else {
+		sectionContent =
+		<Fragment>
+			<FormattedHeader
+				className="exporter__section-header"
+				headerText={ translate( 'Export your content' ) }
+				subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+		 	/> 
+			<ExporterContainer />
+		</Fragment>
+	}
+	
+	return (
+		<Main>
+			<DocumentHead title={ translate( 'Export' ) } />
+			<SidebarNavigation />
+			{ sectionContent }
+		</Main>
+	);
+};
 
 export default connect( state => {
 	const site = getSelectedSite( state );
