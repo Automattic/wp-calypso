@@ -182,7 +182,7 @@ class CreditCardPaymentBox extends React.Component {
 
 		// setStripeObject uses Flux Dispatcher so they are deferred. This
 		// defers the submit so it will occur after they take effect.
-		setTimeout( () => this.props.onSubmit( event ), 0 );
+		setTimeout( () => this.props.onSubmit(), 0 );
 	};
 
 	render = () => {
