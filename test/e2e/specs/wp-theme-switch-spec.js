@@ -72,7 +72,7 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel @jetpack`,
 	describe( 'Activating Themes:', function() {
 		step( 'Login', async function() {
 			const loginFlow = new LoginFlow( driver );
-			return await loginFlow.loginAndSelectMySite();
+			return await loginFlow.loginAndSelectMySite( null, { useFreshLogin: true } );
 		} );
 
 		step( 'Can open Themes menu', async function() {
@@ -105,6 +105,7 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel @jetpack`,
 			} else {
 				step( 'Can log in via Jetpack SSO', async function() {
 					const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
+					assert( false );
 					return await wpAdminLogonPage.logonSSO();
 				} );
 
