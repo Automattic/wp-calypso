@@ -38,6 +38,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { abtest } from 'lib/abtest';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -196,6 +197,8 @@ class Plans extends Component {
 
 		const helpButtonLabel = translate( 'Need help?' );
 
+		const isPremiumOnly = abtest( 'singleJetpackPlan' ) === 'premiumOnly';
+
 		return (
 			<Fragment>
 				<DocumentHead title={ translate( 'Plans' ) } />
@@ -209,7 +212,7 @@ class Plans extends Component {
 					interval={ interval }
 					selectedSite={ selectedSite }
 				>
-					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
+					{ ! isPremiumOnly && <PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } /> }
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }
