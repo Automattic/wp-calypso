@@ -561,7 +561,7 @@ function openLinksInParentFrame() {
 }
 
 /**
- * Ensures the Calypso Customizer is opened when clicking on the the FSE blocks' edit buttons.
+ * Ensures the Calypso Customizer is opened when clicking on the FSE blocks' edit buttons.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
@@ -575,6 +575,26 @@ function openCustomizer( calypsoPort ) {
 			payload: {
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 				autofocus: getQueryArg( e.currentTarget.href, 'autofocus' ),
+			},
+		} );
+	} );
+}
+
+/**
+ * Ensures the Calypso block editor is opened when editing a template part.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function openTemplatePartEditor( calypsoPort ) {
+	const editTemplatePartLinkSelector = '.template-block__overlay a';
+	$( '#editor' ).on( 'click', editTemplatePartLinkSelector, e => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'openTemplatePartEditor',
+			payload: {
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				templatePartId: getQueryArg( e.currentTarget.href, 'post' ),
 			},
 		} );
 	} );
@@ -658,6 +678,8 @@ function initPort( message ) {
 		openLinksInParentFrame();
 
 		openCustomizer( calypsoPort );
+
+		openTemplatePartEditor( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, pickBy, startsWith } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
 import url from 'url';
 
 /**
@@ -92,6 +92,7 @@ enum EditorActions {
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
+	OpenTemplatePartEditor = 'openTemplatePartEditor',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -249,6 +250,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			const { autofocus = null, unsavedChanges = false } = payload;
 			this.openCustomizer( autofocus, unsavedChanges );
 		}
+
+		if ( EditorActions.OpenTemplatePartEditor === action ) {
+			const { templatePartId = null, unsavedChanges = false } = payload;
+			this.openTemplatePartEditor( templatePartId, unsavedChanges );
+		}
 	};
 
 	loadRevision = ( {
@@ -393,6 +399,32 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.props.markSaved();
 		}
 		this.props.navigate( customizerUrl );
+	};
+
+	openTemplatePartEditor = ( templatePartId: object, unsavedChanges: boolean ) => {
+		const {
+			getTemplatePartEditorUrl,
+			editedPostId,
+			markChanged,
+			markSaved,
+			navigate: goTo,
+		} = this.props;
+
+		let templatePartEditorUrl = getTemplatePartEditorUrl( templatePartId );
+		if ( editedPostId ) {
+			templatePartEditorUrl = addQueryArgs(
+				{ fse_parent_post: editedPostId },
+				templatePartEditorUrl
+			);
+		}
+
+		if ( unsavedChanges ) {
+			markChanged();
+		} else {
+			markSaved();
+		}
+
+		goTo( templatePartEditorUrl );
 	};
 
 	handleConversionResponse = ( confirmed: boolean ) => {
@@ -540,7 +572,7 @@ const mapStateToProps = (
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
 	let closeUrl = getPostTypeAllPostsUrl( state, postType );
-	if ( fseParentPageId ) {
+	if ( 'wp_template_part' === postType ) {
 		closeUrl = getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
 	}
 
@@ -555,6 +587,14 @@ const mapStateToProps = (
 		siteAdminUrl,
 		siteId,
 		customizerUrl: getCustomizerUrl( state, siteId ),
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		getTemplatePartEditorUrl: partial(
+			getGutenbergEditorUrl,
+			state,
+			siteId,
+			partial.placeholder,
+			'wp_template_part'
+		),
 	};
 };
 
