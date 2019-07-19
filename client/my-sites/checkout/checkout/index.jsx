@@ -306,8 +306,6 @@ export class Checkout extends React.Component {
 			return true;
 		}
 
-		let redirectTo = '/plans/';
-
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
 			return false;
@@ -330,6 +328,8 @@ export class Checkout extends React.Component {
 			// some post-transaction requests to complete.
 			return false;
 		}
+
+		let redirectTo = '/plans/';
 
 		if ( this.state.previousCart ) {
 			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
