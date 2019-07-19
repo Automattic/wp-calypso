@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
@@ -30,6 +27,8 @@ class Month extends PureComponent {
 		showPopover: false,
 	};
 
+	monthRef = React.createRef();
+
 	static defaultProps = {
 		position: 'top',
 	};
@@ -55,7 +54,7 @@ class Month extends PureComponent {
 			tagName,
 			{
 				className: className,
-				ref: 'month',
+				ref: this.monthRef,
 				onClick: this.openPopover,
 			},
 			concat(
@@ -65,7 +64,7 @@ class Month extends PureComponent {
 					onClose={ this.closePopover }
 					position={ position }
 					key="popover"
-					context={ this.refs && this.refs.month }
+					context={ this.monthRef.current }
 				>
 					<div style={ { padding: '10px' } }>{ value }</div>
 				</Popover>
