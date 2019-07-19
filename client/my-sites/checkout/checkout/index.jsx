@@ -410,10 +410,7 @@ export class Checkout extends React.Component {
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 
-		const destinationFromCookie = retrieveSignupDestination();
-		const signupDestination = destinationFromCookie
-			? destinationFromCookie
-			: `/view/${ selectedSiteSlug }`;
+		const signupDestination = retrieveSignupDestination() || `/view/${ selectedSiteSlug }`;
 
 		persistSignupDestination( signupDestination );
 
@@ -430,7 +427,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( cart.create_new_blog ) {
-			return `${ signUpdestination }/${ pendingOrReceiptId }`;
+			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {
