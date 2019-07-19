@@ -1,5 +1,6 @@
 // Web stuff
 export type URL = string;
+export type Scheme = 'http' | 'https';
 
 // User stuff
 
