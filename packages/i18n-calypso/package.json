@@ -36,6 +36,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"prepare": "transpile",
+		"test": "pwd | ( cd ../../; npm run test-packages $(cat -))"
 	}
 }
