@@ -24,17 +24,17 @@ import FormattedHeader from 'components/formatted-header';
 import './style.scss';
 
 const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
-	
 	let sectionContent;
 
 	if ( ! canUserExport ) {
-		sectionContent =
+		sectionContent = (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ translate( 'You are not authorized to view this page' ) }
 			/>
+		);
 	} else if ( isJetpack ) {
-		sectionContent =
+		sectionContent = (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 				title={ translate( 'Want to export your site?' ) }
@@ -43,18 +43,20 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 				actionURL={ site.options.admin_url + 'export.php' }
 				actionTarget="_blank"
 			/>
+		);
 	} else {
-		sectionContent =
-		<Fragment>
-			<FormattedHeader
-				className="exporter__section-header"
-				headerText={ translate( 'Export your content' ) }
-				subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
-		 	/> 
-			<ExporterContainer />
-		</Fragment>
+		sectionContent = (
+			<Fragment>
+				<FormattedHeader
+					className="exporter__section-header"
+					headerText={ translate( 'Export your content' ) }
+					subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+				/>
+				<ExporterContainer />
+			</Fragment>
+		);
 	}
-	
+
 	return (
 		<Main>
 			<DocumentHead title={ translate( 'Export' ) } />
