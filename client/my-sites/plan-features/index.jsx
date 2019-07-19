@@ -520,7 +520,7 @@ export class PlanFeatures extends Component {
 				buttonText = null;
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+				if ( planMatches( planName, { type: TYPE_BLOGGER } ) && availableForPurchase ) {
 					availableForPurchase = false;
 					forceDisplayButton = true;
 					buttonText = translate( 'Only with .blog domains' );
