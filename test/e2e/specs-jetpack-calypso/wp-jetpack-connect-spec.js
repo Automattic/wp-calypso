@@ -39,10 +39,11 @@ import * as dataHelper from '../lib/data-helper';
 import JetpackComPricingPage from '../lib/pages/external/jetpackcom-pricing-page';
 import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import WPHomePage from '../lib/pages/wp-home-page';
-import CheckOutThankyouPage from '../lib/pages/signup/checkout-thankyou-page';
 import JetpackConnectSiteTypePage from '../lib/pages/jetpack/jetpack-connect-site-type-page';
 import JetpackConnectSiteTopicPage from '../lib/pages/jetpack/jetpack-connect-site-topic-page';
 import JetpackConnectUserTypePage from '../lib/pages/jetpack/jetpack-connect-user-type-page';
+import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
+import MyPlanPage from '../lib/pages/my-plan-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -358,10 +359,13 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			}
 		);
 
-		step( 'Can see Premium Thank You page', async function() {
-			const checkOutThankyouPage = await CheckOutThankyouPage.Expect( driver );
-			const isPremium = await checkOutThankyouPage.isPremiumPlan();
-			return assert( isPremium, 'The Thank You Notice is not for the Premium Plan' );
+		step( 'Can see Premium plan', async function() {
+			const thankYouModal = await ThankYouModalComponent.Expect( driver );
+			await thankYouModal.continue();
+
+			const myPlanPage = await MyPlanPage.Expect( driver );
+			const isPremium = await myPlanPage.isPremium();
+			assert( isPremium, 'Can not verify Premium plan' );
 		} );
 	} );
 
