@@ -14,7 +14,6 @@ import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getRewindState from 'state/selectors/get-rewind-state';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import JetpackChecklistFooter from './footer';
 import JetpackChecklistHeader from './header';
 import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-product-install-status';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -30,6 +29,8 @@ import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import Button from 'components/button';
+import Card from 'components/card';
 
 /**
  * Style dependencies
@@ -98,6 +99,24 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 			product: 'Jetpack',
 		} );
 
+	renderJetpackFooter = () => {
+		const translate = this.props.translate;
+
+		return (
+			<Card compact className="jetpack-checklist__footer">
+				<p>{ translate( 'Return to your self-hosted WordPress dashboard.' ) }</p>
+				<Button
+					compact
+					data-tip-target="jetpack-checklist-wpadmin-link"
+					href={ this.props.wpAdminUrl }
+					onClick={ this.handleWpAdminLink }
+				>
+					{ translate( 'Return to WP Admin' ) }
+				</Button>
+			</Card>
+		);
+	};
+
 	render() {
 		const {
 			akismetFinished,
@@ -111,7 +130,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 			taskStatuses,
 			translate,
 			vaultpressFinished,
-			wpAdminUrl,
 		} = this.props;
 
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
@@ -130,7 +148,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					className="jetpack-checklist"
 					isPlaceholder={ ! taskStatuses }
 					onExpandTask={ this.trackExpandTask }
-					progressText={ translate( 'Your Jetpack setup progress' ) }
+					checklistFooter={ this.renderJetpackFooter() }
 				>
 					<Task
 						id="jetpack_task_protect"
@@ -340,13 +358,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						/>
 					) }
 				</Checklist>
-
-				{ wpAdminUrl && (
-					<JetpackChecklistFooter
-						wpAdminUrl={ wpAdminUrl }
-						handleWpAdminLink={ this.handleWpAdminLink }
-					/>
-				) }
 			</Fragment>
 		);
 	}
