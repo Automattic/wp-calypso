@@ -42,6 +42,13 @@
 }
 .memberships__onboarding-benefits {
 	color: var( --color-neutral-400 );
+	margin-top: 24px;
+}
+.memberships__onboarding-benefits > div {
+	line-height: 24px;
+}
+.memberships__onboarding-benefits > div > svg {
+	margin-right: 12px;
 }
 
 .memberships__earnings-breakdown-list {

@@ -313,9 +313,18 @@ class MembershipsSection extends Component {
 					</p>
 					{ cta }
 					<div className="memberships__onboarding-benefits">
-						<li>{ this.props.translate( 'Add multiple subscription options' ) }</li>
-						<li>{ this.props.translate( 'Collect payments in 135 countries' ) }</li>
-						<li>{ this.props.translate( 'Easily manage subscribers' ) }</li>
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Add multiple subscription options' ) }
+						</div>
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Collect payments in 135 countries' ) }
+						</div>
+						<div>
+							<Gridicon size={ 18 } icon="checkmark" />
+							{ this.props.translate( 'Easily manage subscribers' ) }
+						</div>
 					</div>
 				</div>
 				<div className="memberships__onboarding-column">
