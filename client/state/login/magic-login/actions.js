@@ -1,11 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { get } from 'lodash';
-import request from 'superagent';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -92,6 +88,28 @@ export const fetchMagicLoginRequestEmail = ( email, redirectTo ) => dispatch => 
 		} );
 };
 
+class MagicLoginError extends Error {
+	constructor( status ) {
+		super();
+		this.name = 'MagicLoginError';
+		this.status = status;
+	}
+}
+
+async function postMagicLoginRequest( url, bodyObj ) {
+	const response = await fetch( url, {
+		method: 'POST',
+		credentials: 'include',
+		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: stringify( bodyObj ),
+	} );
+
+	if ( response.ok ) {
+		return await response.json();
+	}
+	throw new MagicLoginError( response.status );
+}
+
 /**
  * Logs a user in from a token included in a magic link.
  *
@@ -102,23 +120,16 @@ export const fetchMagicLoginRequestEmail = ( email, redirectTo ) => dispatch => 
 export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
-	request
-		.post( AUTHENTICATE_URL )
-		.withCredentials()
-		.set( {
-			Accept: 'application/json',
-			'Content-Type': 'application/x-www-form-urlencoded',
-		} )
-		.send( {
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-			token,
-			redirect_to: redirectTo,
-		} )
-		.then( response => {
+	postMagicLoginRequest( AUTHENTICATE_URL, {
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		token,
+		redirect_to: redirectTo,
+	} )
+		.then( json => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
-				data: get( response, 'body.data' ),
+				data: json.data,
 			} );
 
 			dispatch( {

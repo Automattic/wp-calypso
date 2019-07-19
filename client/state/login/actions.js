@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import request from 'superagent';
 import { get, defer, replace } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -109,6 +107,29 @@ export const remoteLoginUser = loginLinks => {
 	);
 };
 
+class LoginError extends Error {
+	constructor( response, json ) {
+		super();
+		this.name = 'LoginError';
+		this.status = response.status;
+		this.response = { body: json };
+	}
+}
+
+async function postLoginRequest( url, bodyObj ) {
+	const response = await fetch( url, {
+		method: 'POST',
+		credentials: 'include',
+		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: stringify( bodyObj ),
+	} );
+
+	if ( response.ok ) {
+		return { body: await response.json() };
+	}
+	throw new LoginError( response, await response.json() );
+}
+
 /**
  * Logs a user in.
  *
@@ -123,12 +144,9 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => di
 		type: LOGIN_REQUEST,
 	} );
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=login-endpoint' ) )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
+	return postLoginRequest(
+		localizeUrl( 'https://wordpress.com/wp-login.php?action=login-endpoint' ),
+		{
 			username: usernameOrEmail,
 			password,
 			remember_me: true,
@@ -136,7 +154,8 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => di
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			domain: domain,
-		} )
+		}
+	)
 		.then( response => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
@@ -195,14 +214,9 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request
-		.post(
-			localizeUrl( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
-		)
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
+	return postLoginRequest(
+		localizeUrl( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' ),
+		{
 			user_id: getTwoFactorUserId( getState() ),
 			auth_type: twoFactorAuthType,
 			two_step_code: replace( twoStepCode, /\s/g, '' ),
@@ -210,7 +224,8 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 			remember_me: true,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-		} )
+		}
+	)
 		.then( response => {
 			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
@@ -247,17 +262,15 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' ) )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
+	return postLoginRequest(
+		localizeUrl( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' ),
+		{
 			...socialInfo,
 			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-		} )
+		}
+	)
 		.then( response => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
@@ -433,16 +446,15 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		},
 	} );
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' ) )
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
+	return postLoginRequest(
+		localizeUrl( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' ),
+		{
 			user_id: getTwoFactorUserId( getState() ),
 			two_step_nonce: getTwoFactorAuthNonce( getState(), 'sms' ),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-		} )
+		}
+	)
 		.then( response => {
 			const message = getSMSMessageFromResponse( response );
 
@@ -485,17 +497,15 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
 	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
 	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=logout-endpoint' ) )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
+	return postLoginRequest(
+		localizeUrl( 'https://wordpress.com/wp-login.php?action=logout-endpoint' ),
+		{
 			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			logout_nonce: logoutNonce,
-		} )
+		}
+	)
 		.then( response => {
 			const data = get( response, 'body.data', {} );
 
