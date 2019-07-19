@@ -6,6 +6,7 @@
 import I18N from './i18n';
 import localizeFactory from './localize';
 import useTranslateFactory from './use-translate';
+import thunkFactory from './thunk-translate';
 
 const i18n = new I18N();
 export { I18N };
@@ -28,3 +29,4 @@ export const off = i18n.off.bind( i18n );
 export const emit = i18n.emit.bind( i18n );
 export const localize = localizeFactory( i18n );
 export const useTranslate = useTranslateFactory( i18n );
+export const thunk = { translate: thunkFactory( i18n ) };
