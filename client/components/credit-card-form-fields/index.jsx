@@ -75,17 +75,20 @@ StripeElementErrors.propTypes = {
 };
 
 function CreditCardNumberField( { translate, stripe, createField, getErrorMessage } ) {
+	const cardNumberLabel = translate( 'Card Number', {
+		comment: 'Card number label on credit card form',
+	} );
+
 	if ( stripe ) {
 		const elementClasses = {
 			base: 'credit-card-form-fields__element',
 			invalid: 'is-error',
 			focus: 'has-focus',
 		};
-
 		return (
 			<div className="credit-card-form-fields__field number">
 				<label className="credit-card-form-fields__label form-label">
-					{ translate( 'Card Number' ) }
+					{ cardNumberLabel }
 					<CardNumberElement classes={ elementClasses } />
 					<StripeElementErrors getErrorMessage={ getErrorMessage } fieldName="card_number" />
 				</label>
@@ -95,9 +98,7 @@ function CreditCardNumberField( { translate, stripe, createField, getErrorMessag
 
 	return createField( 'number', CreditCardNumberInput, {
 		inputMode: 'numeric',
-		label: translate( 'Card Number', {
-			comment: 'Card number label on credit card form',
-		} ),
+		label: cardNumberLabel,
 		placeholder: '•••• •••• •••• ••••',
 	} );
 }
