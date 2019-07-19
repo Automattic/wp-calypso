@@ -74,6 +74,7 @@ export default class InfoPopover extends Component {
 					type="button"
 					aria-haspopup
 					aria-expanded={ this.state.showPopover }
+					aria-label={ 'More information' }
 					onClick={ this.handleClick }
 					ref={ this.iconRef }
 					className={ classNames(

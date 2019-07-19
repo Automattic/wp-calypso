@@ -113,6 +113,7 @@ export class PlanFeatures extends Component {
 							initialSelectedIndex={ initialSelectedIndex }
 						>
 							<table className={ tableClasses }>
+								<caption class="screen-reader-text">Available plans to choose from</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									{ ! withScroll && planDescriptions }
@@ -428,7 +429,7 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
+				<th key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
 						availableForPurchase={ availableForPurchase }
@@ -452,7 +453,7 @@ export class PlanFeatures extends Component {
 						title={ planConstantObj.getTitle() }
 						plansWithScroll={ withScroll }
 					/>
-				</td>
+				</th>
 			);
 		} );
 	}
