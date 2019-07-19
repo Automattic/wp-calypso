@@ -39,5 +39,8 @@
 		"prepare": "transpile",
 		"test": "pwd | ( cd ../../; npm run test-packages $(cat -))",
 		"test:watch": "pwd | ( cd ../../; npm run test-packages:watch $(cat -))"
+	},
+	"devDependencies": {
+		"react-dom": "^16.8.6"
 	}
 }
