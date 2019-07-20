@@ -429,7 +429,7 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
-				<th key={ planName } className={ classes }>
+				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
 						availableForPurchase={ availableForPurchase }
