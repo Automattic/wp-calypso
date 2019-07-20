@@ -92,7 +92,6 @@ enum EditorActions {
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
-	OpenTemplatePartEditor = 'openTemplatePartEditor',
 	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
 }
 
@@ -110,6 +109,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
+	templateParts: [T.PostId, MessagePort][] = [];
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -213,6 +213,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 				this.props.startEditingPost( siteId, postId );
 			}
+
+			// Update the edit template part links with the ID of the FSE parent page.
+			this.templateParts.forEach( ( [ templatePartId ] ) => {
+				this.sendTemplatePartEditorUrl( templatePartId );
+			} );
 		}
 
 		if ( EditorActions.TrashPost === action ) {
@@ -252,14 +257,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.openCustomizer( autofocus, unsavedChanges );
 		}
 
-		if ( EditorActions.OpenTemplatePartEditor === action ) {
-			const { templatePartId = null, unsavedChanges = false } = payload;
-			this.openTemplatePartEditor( templatePartId, unsavedChanges );
-		}
-
 		if ( EditorActions.GetTemplatePartEditorUrl === action ) {
-			const { templatePartId = null } = payload;
-			this.getTemplatePartEditorUrl( templatePartId, ports[ 0 ] );
+			const { templatePartId } = payload;
+			this.templateParts.push( [ templatePartId, ports[ 0 ] ] );
+			this.sendTemplatePartEditorUrl( templatePartId );
 		}
 	};
 
@@ -407,33 +408,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		this.props.navigate( customizerUrl );
 	};
 
-	openTemplatePartEditor = ( templatePartId: object, unsavedChanges: boolean ) => {
-		const {
-			getTemplatePartEditorUrl,
-			editedPostId,
-			markChanged,
-			markSaved,
-			navigate: goTo,
-		} = this.props;
-
-		let templatePartEditorUrl = getTemplatePartEditorUrl( templatePartId );
-		if ( editedPostId ) {
-			templatePartEditorUrl = addQueryArgs(
-				{ fse_parent_post: editedPostId },
-				templatePartEditorUrl
-			);
-		}
-
-		if ( unsavedChanges ) {
-			markChanged();
-		} else {
-			markSaved();
-		}
-
-		goTo( templatePartEditorUrl );
-	};
-
-	getTemplatePartEditorUrl = ( templatePartId: object, port: MessagePort ) => {
+	getTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
 		const { getTemplatePartEditorUrl, editedPostId } = this.props;
 
 		let templatePartEditorUrl = getTemplatePartEditorUrl( templatePartId );
@@ -444,8 +419,15 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			);
 		}
 
+		return templatePartEditorUrl;
+	};
+
+	sendTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
+		const templatePartEditorUrl = this.getTemplatePartEditorUrl( templatePartId );
+		const port = this.templateParts.find(
+			( [ portTemplatePartId ] ) => portTemplatePartId === templatePartId
+		)[ 1 ];
 		port.postMessage( `${ window.location.origin }${ templatePartEditorUrl }` );
-		port.close();
 	};
 
 	handleConversionResponse = ( confirmed: boolean ) => {

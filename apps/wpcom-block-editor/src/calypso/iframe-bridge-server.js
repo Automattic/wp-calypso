@@ -624,22 +624,8 @@ async function openTemplatePartEditor( calypsoPort ) {
 	const editTemplatePartLinks = await getTemplatePartLinks();
 
 	editTemplatePartLinks.forEach( link => {
-		const templatePartId = getQueryArg( link.getAttribute( 'href' ), 'post' );
+		const templatePartId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
 
-		// Delegates the navigation to Calypso in order to avoid a full load page.
-		link.addEventListener( 'click', e => {
-			e.preventDefault();
-
-			calypsoPort.postMessage( {
-				action: 'openTemplatePartEditor',
-				payload: {
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
-					templatePartId,
-				},
-			} );
-		} );
-
-		// But overrides the link just in case the user treats the link as a link.
 		const { port1, port2 } = new MessageChannel();
 		calypsoPort.postMessage(
 			{
@@ -651,7 +637,6 @@ async function openTemplatePartEditor( calypsoPort ) {
 		port1.onmessage = ( { data } ) => {
 			link.setAttribute( 'target', '_parent' );
 			link.setAttribute( 'href', data );
-			port1.close();
 		};
 	} );
 }
