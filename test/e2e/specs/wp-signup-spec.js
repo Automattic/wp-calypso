@@ -756,7 +756,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @parallel', function() {
+	describe.skip( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @parallel', function() {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
