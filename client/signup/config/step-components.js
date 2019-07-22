@@ -56,6 +56,7 @@ const stepNameToModuleName = {
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
+	'rivet-business-info': 'rivet-business-info',
 };
 
 export async function getStepComponent( stepName ) {
