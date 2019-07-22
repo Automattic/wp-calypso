@@ -781,18 +781,16 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function( user = _user ) {
+	identifyUser: function() {
 		const anonymousUserId = this.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
-		if ( user && user.initialized ) {
+		if ( _user && _user.initialized ) {
 			if ( anonymousUserId ) {
 				recordAliasInFloodlight();
 			}
 
-			const { ID: userId, username: userName } = user.get();
-
-			window._tkq.push( [ 'identifyUser', userId, userName ] );
+			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
 		}
 	},
 
