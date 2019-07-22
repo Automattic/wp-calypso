@@ -26,12 +26,6 @@ registerBlockType( 'a8c/navigation-menu', {
 		html: false,
 		reusable: false,
 	},
-	attributes: {
-		themeLocation: {
-			type: 'string',
-			default: 'menu-1',
-		},
-	},
 	edit,
 	save: () => null,
 } );

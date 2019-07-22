@@ -323,16 +323,12 @@ class Full_Site_Editing {
 			'a8c/navigation-menu',
 			array(
 				'attributes'      => [
-					'themeLocation' => [
-						'default' => 'main-1',
-						'type'    => 'string',
-					],
 					'className'     => [
 						'default' => '',
 						'type'    => 'string',
 					],
 				],
-				'render_callback' => 'render_navigation_menu_block',
+				'render_callback' => 'a8c_fse_render_navigation_menu_block',
 			)
 		);
 
