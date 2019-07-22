@@ -514,8 +514,8 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 		},
 
-		'rivet-business-info': {
-			stepName: 'rivet-business-info',
+		'rivet-name-address': {
+			stepName: 'rivet-name-address',
 			providesDependencies: [ 'siteTitle', 'businessAddress' ],
 		},
 	};

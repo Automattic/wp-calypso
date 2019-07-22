@@ -18,7 +18,7 @@ import StepWrapper from 'signup/step-wrapper';
  */
 import './style.scss';
 
-class RivetBusinessInfo extends React.Component {
+class RivetNameAddress extends React.Component {
 	renderBusinessInfoForm = () => {
 		return <div>Gather business info here!</div>;
 	};
@@ -40,4 +40,4 @@ class RivetBusinessInfo extends React.Component {
 export default connect(
 	null,
 	null
-)( localize( RivetBusinessInfo ) );
+)( localize( RivetNameAddress ) );

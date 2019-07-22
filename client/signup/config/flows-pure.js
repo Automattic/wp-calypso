@@ -323,7 +323,9 @@ export function generateFlows( {
 			steps: [
 				'user',
 				'site-type',
-				/*'rivet-name-address', 'rivet-confirmation',*/ 'domains',
+				'rivet-name-address',
+				/*'rivet-confirmation',*/
+				'domains',
 				'plans',
 			],
 			destination: getChecklistDestination,
