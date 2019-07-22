@@ -504,7 +504,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ shouldLoadIframe && (
+					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
