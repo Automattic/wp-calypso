@@ -129,7 +129,8 @@ const PageTemplatesPlugin = compose(
 				editorDispatcher.insertBlocks(
 					blocks,
 					0,
-					postContentBlock ? postContentBlock.clientId : ''
+					postContentBlock ? postContentBlock.clientId : '',
+					false
 				);
 			},
 		};
