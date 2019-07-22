@@ -11,6 +11,7 @@ import React from 'react';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCta from 'components/promo-section/promo-card/cta';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoCardExample = () => {
 	const img = {
 		path: '/calypso/images/earn/referral.svg',
@@ -25,7 +26,7 @@ const PromoCardExample = () => {
 						inviting the user to do.
 					</p>
 					<PromoCardCta
-						button={ { text: 'Call To Action!', url: '/my-sites' } }
+						button={ { text: 'Call To Action!', action: () => alert( 'Clicked' ) } }
 						learnMoreLink="/learn-more"
 					/>
 				</PromoCard>
@@ -33,6 +34,7 @@ const PromoCardExample = () => {
 		</div>
 	);
 };
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 PromoCardExample.displayName = 'PromoCard';
 

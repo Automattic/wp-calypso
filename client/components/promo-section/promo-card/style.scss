@@ -6,30 +6,34 @@
 		max-width: 24px;
 		order: 1;
 
-		&.is-aligned-left {
+		&.align-left {
 			order: -1;
 		}
+	}
+
+	.action-panel__body {
+		flex-grow: 1;
 	}
 
 	&.is-primary {
 		.action-panel__figure {
 			max-width: 310px;
 		}
+		
+		.action-panel__body {
+			display: flex;
+			flex-direction: column;
+			justify-content:center;
+		}
+
+
 		background-color: var( --color-primary-0 );
 	}
-}
 
-.promo-card__body {
-	flex-grow: 1;
-	.promo-card.is-primary & {
-		display: flex;
-		flex-direction: column;
-		justify-content:center;
+	.action-panel__cta {
+		.button {
+			margin: 0 1em 4px 0;
+		}
 	}
 }
 
-.promo-card__cta {
-	.button {
-		margin: 0 1em 4px 0;
-	}
-}

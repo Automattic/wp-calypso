@@ -9,6 +9,7 @@ import React, { FunctionComponent } from 'react';
 import Card from 'components/card';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelTitle from 'components/action-panel/title';
+import ActionPanelBody from 'components/action-panel/body';
 import PromoCardCta from './cta';
 import classNames from 'classnames';
 
@@ -42,7 +43,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 					<img src={ image.path } alt={ image.alt } />
 				</ActionPanelFigure>
 			) }
-			<div className="promo-card__body">
+			<ActionPanelBody>
 				<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
 					{ title }
 				</ActionPanelTitle>
@@ -53,7 +54,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 								: child;
 					  } )
 					: children }
-			</div>
+			</ActionPanelBody>
 		</Card>
 	);
 };

@@ -10,10 +10,13 @@ import React, { FunctionComponent } from 'react';
  * Internal depencies
  */
 import Button from 'components/button';
+import ActionPanelCta from 'components/action-panel/cta';
+
+type ClickCallback = () => void;
 
 export interface CtaButton {
 	text: string;
-	url: string;
+	action: string | ClickCallback;
 }
 
 export interface Props {
@@ -23,21 +26,21 @@ export interface Props {
 }
 
 const PromoCardCta: FunctionComponent< Props > = ( { button, learnMoreLink, isPrimary } ) => {
+	const props = {
+		className: 'promo-card__cta-button',
+		primary: true === isPrimary,
+		[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
+	};
+
 	return (
-		<div className="promo-card__cta">
-			<Button
-				className="promo-card__cta-button"
-				href="{ button.url }"
-				primary={ true === isPrimary }
-			>
-				{ button.text }
-			</Button>
+		<ActionPanelCta>
+			<Button { ...props }>{ button.text }</Button>
 			{ learnMoreLink && (
 				<Button borderless className="promo-card__cta-learn-more" href="{ learnMoreLink }">
 					Learn More
 				</Button>
 			) }
-		</div>
+		</ActionPanelCta>
 	);
 };
 
