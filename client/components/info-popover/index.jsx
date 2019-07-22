@@ -14,6 +14,11 @@ import classNames from 'classnames';
 import Popover from 'components/popover';
 import analytics from 'lib/analytics';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class InfoPopover extends Component {
 	static propTypes = {
 		autoRtl: PropTypes.bool,
