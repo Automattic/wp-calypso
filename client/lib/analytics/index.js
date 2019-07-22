@@ -570,7 +570,7 @@ const analytics = {
 			if ( window.location ) {
 				const parsedUrl = url.parse( window.location.href );
 				const urlParams = parse( parsedUrl.query );
-				const utmParams = pickBy( urlParams, ( value, key = '' ) => key.startsWith( 'utm_' ) );
+				const utmParams = pickBy( urlParams, ( value, key ) => key.startsWith( 'utm_' ) );
 
 				eventProperties = assign( eventProperties, utmParams );
 			}
