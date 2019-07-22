@@ -233,7 +233,7 @@ class ThemeSheet extends React.Component {
 	// but not for desktop (becomes hidden behind the screenshot).
 	renderPreviewButton() {
 		return (
-			<div className="theme__sheet-preview-link" data-tip-target="theme-sheet-preview">
+			<div className="theme__sheet-preview-link">
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', {
 						context: 'Individual theme live preview button',
