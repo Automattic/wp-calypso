@@ -11,8 +11,8 @@ import classNames from 'classnames';
 const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
 	const figureClasses = classNames( {
 		'action-panel__figure': true,
+		[ `align-${ 'left' === align ? 'left' : 'right' }` ]: true,
 		'is-inline-body-text': inlineBodyText,
-		'is-aligned-left': 'left' === align,
 	} );
 
 	return <div className={ figureClasses }>{ children }</div>;

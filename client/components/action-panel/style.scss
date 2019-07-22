@@ -51,7 +51,7 @@ a.action-panel__body-text-link {
 			margin-top: 40px;
 		}
 
-		&.is-aligned-left {
+		&.align-left {
 			float: left;
 			margin-left: 0;
 			margin-right: 24px;
@@ -108,10 +108,6 @@ a.action-panel__body-text-link {
 			left: -24px;
 			right: -24px;
 		}
-	}
-
-	.action-panel__body &::before {
-		background-color: transparent;
 	}
 
 }
