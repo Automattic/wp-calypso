@@ -26,6 +26,11 @@ import {
 	resetGuidedToursHistory,
 } from 'state/ui/guided-tours/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GuidedToursComponent extends Component {
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
