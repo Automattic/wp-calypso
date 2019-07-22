@@ -74,7 +74,7 @@ import './style.scss';
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll } = this.props;
+		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -113,7 +113,10 @@ export class PlanFeatures extends Component {
 							initialSelectedIndex={ initialSelectedIndex }
 						>
 							<table className={ tableClasses }>
-								<caption class="screen-reader-text">Available plans to choose from</caption>
+								<caption class="screen-reader-text">
+									{' '}
+									{ translate( 'Available plans to choose from' ) }{' '}
+								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									{ ! withScroll && planDescriptions }
