@@ -140,7 +140,7 @@ export default {
 			monthlyPlan: 50,
 			yearlyPlan: 50,
 		},
-		defaultVariation: 'monthlyPlan',
+		defaultVariation: 'yearlyPlan',
 		allowExistingUsers: true,
 	},
 };
