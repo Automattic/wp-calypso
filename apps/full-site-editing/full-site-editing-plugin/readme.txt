@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, ge
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.2
-Stable tag: 0.3
+Stable tag: 0.4
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,9 @@ It adds an excerpt! And meta information! It really is much more useful, especia
 This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
 == Changelog ==
+
+= 0.4 =
+* Move template data initialization out of the plugin and delegate it to themes.
 
 = 0.3 =
 * Update modal UI.
