@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -9,6 +8,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import nock from 'nock';
+// Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
+import 'jest-fetch-mock';
 
 /**
  * Internal dependencies
@@ -70,6 +71,6 @@ describe( 'AuthCodeButton', () => {
 		await request;
 		expect( button.state( 'status' ) ).toBe( 'complete' );
 		expect( button.state( 'errorLevel' ) ).toBe( 'is-error' );
-		expect( button.state( 'errorMessage' ) ).toBe( 'Failed' );
+		expect( button.state( 'errorMessage' ) ).toContain( 'Failed' );
 	} );
 } );
