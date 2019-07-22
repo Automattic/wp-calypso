@@ -318,6 +318,15 @@ export function generateFlows( {
 		lastModified: '2018-12-12',
 	};
 
+	if ( config.isEnabled( 'signup/rivet-flow' ) ) {
+		flows.rivet = {
+			steps: [ 'user' ],
+			destination: '/', // @todo: Rivet-specific destination? Checklist?
+			description: 'Signup flow for starting a site using Rivet',
+			lastModified: '2019-07-22',
+		};
+	}
+
 	return flows;
 }
 
