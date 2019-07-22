@@ -41,7 +41,6 @@ See [docs/API.md](docs/API.md)
 ## List of Tours
 
 - [Main Tour](tours/main-tour.js): This tour is just an example and shouldn't be used in production. It helps useful for trying out framework features and can act as a bit of a canary for problems. The tour shows a few important features of Calypso and was built to help new users find their way around. It didn't perform too well in a test, though, and since then has been used in the aforementioned capacity. ([URL scheme to trigger.](https://wordpress.com/?tour=main))
-- [Design Showcase Welcome Tour](tours/design-showcase-welcome-tour.js): This tour explains the design showcase's most important UI elements. It will get triggered under `/themes` paths (i.e. the theme showcase / searchable list of themes) for new users (account age <= a week) on desktop, given that they can change the theme for the current site. ([URL scheme to trigger.](https://wordpress.com/design/SITE_SLUG_HERE?tour=designShowcaseWelcome))
 
 ## Further Reading
 
