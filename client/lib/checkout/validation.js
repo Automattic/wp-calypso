@@ -287,7 +287,14 @@ validators.validStreetNumber = {
 
 /**
  * Runs payment fields through the relevant validation rules
- * use these validation rules, for example, in <CreditCardForm />, <PayPalPaymentBox /> and <RedirectPaymentBox />
+ *
+ * Use these validation rules, for example, in <CreditCardForm />,
+ * <PayPalPaymentBox /> and <RedirectPaymentBox />
+ *
+ * Returns an object with one property: `errors`. That object is another object
+ * with keys that are the field names of those errors.  The value of each
+ * property of that object is an array of error strings.
+ *
  * @param {object} paymentDetails object containing fieldname/value keypairs
  * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
  * @returns {object} validation errors, if any

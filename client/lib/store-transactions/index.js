@@ -29,7 +29,11 @@ import {
 	translatedEbanxError,
 } from 'lib/checkout/processor-specific';
 import analytics from 'lib/analytics';
-import { createStripePaymentMethod, confirmStripePaymentIntent } from 'lib/stripe';
+import {
+	createStripePaymentMethod,
+	confirmStripePaymentIntent,
+	StripeValidationError,
+} from 'lib/stripe';
 
 const wpcom = wp.undocumented();
 
@@ -45,9 +49,20 @@ export function submit( params, onStep ) {
 	return new TransactionFlow( params, onStep );
 }
 
-function ValidationError( code, message ) {
+/**
+ * An error for display by the payment form
+ *
+ * TODO: This sets `message` to an object, which is a non-standard way to use
+ * an Error since `Error.message` should be a string. We should set the
+ * messagesByField to a separate property and use that instead. See
+ * `StripeValidationError` for a better pattern.
+ *
+ * @param {string} code - The error code
+ * @param {object} messagesByField - An object whose keys are input field names and whose values are arrays of error strings for that field
+ */
+function ValidationError( code, messagesByField ) {
 	this.code = code;
-	this.message = message;
+	this.message = messagesByField;
 }
 inherits( ValidationError, Error );
 
@@ -208,9 +223,19 @@ TransactionFlow.prototype._paymentHandlers = {
 				await this.stripeModalAuth( stripeConfiguration, response );
 			}
 		} catch ( error ) {
+			if ( error instanceof StripeValidationError ) {
+				debug( 'There was a validation error:', error );
+				this._pushStep( {
+					name: INPUT_VALIDATION,
+					error: new ValidationError( 'invalid-card-details', error.messagesByField ),
+					first: true,
+					last: true,
+				} );
+				return;
+			}
 			this._pushStep( {
 				name: RECEIVED_PAYMENT_KEY_RESPONSE,
-				error,
+				error: error.message,
 				last: true,
 			} );
 		}
@@ -310,7 +335,7 @@ TransactionFlow.prototype.stripeModalAuth = async function( stripeConfiguration,
 	} catch ( error ) {
 		this._pushStep( {
 			name: RECEIVED_AUTHORIZATION_RESPONSE,
-			error,
+			error: error.message,
 			last: true,
 		} );
 	}
