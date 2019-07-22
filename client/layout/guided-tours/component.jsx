@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 
 /**
@@ -139,4 +138,4 @@ export default connect(
 		quitGuidedTour,
 		resetGuidedToursHistory,
 	}
-)( localize( GuidedToursComponent ) );
+)( GuidedToursComponent );
