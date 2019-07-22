@@ -91,9 +91,12 @@ a.action-panel__body-text-link {
 }
 
 // Footer
+.action-panel__cta {
+	padding-top: 17px;
+}
+
 .action-panel__footer {
 	position: relative;
-	padding-top: 17px;
 
 	&::before {
 		content: '';

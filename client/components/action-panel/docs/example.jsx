@@ -12,9 +12,11 @@ import ActionPanel from 'components/action-panel';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
+import ActionPanelCta from 'components/action-panel/cta';
 import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActionPanelExample = () => (
 	<div className="design-assets__group">
 		<div>
@@ -57,16 +59,17 @@ const ActionPanelExample = () => (
 						This is a description of the action. It gives a bit more detail and explains what we are
 						inviting the user to do.
 					</p>
-					<ActionPanelFooter>
+					<ActionPanelCta>
 						<Button className="action-panel__support-button" href="/help/contact">
 							Call to action!
 						</Button>
-					</ActionPanelFooter>
+					</ActionPanelCta>
 				</ActionPanelBody>
 			</ActionPanel>
 		</div>
 	</div>
 );
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 ActionPanelExample.displayName = 'ActionPanel';
 
