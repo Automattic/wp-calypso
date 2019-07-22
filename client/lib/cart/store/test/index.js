@@ -40,7 +40,7 @@ jest.mock( 'lib/products-list', () => () => ( { get: () => [] } ) );
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {} ),
 	me: () => ( {
-		get: async () => ( {} ),
+		get: () => ( {} ),
 	} ),
 } ) );
 
