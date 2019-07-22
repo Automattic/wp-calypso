@@ -23,6 +23,7 @@ class Starter_Page_Templates {
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_scripts' ] );
 		add_action( 'init', [ $this, 'register_meta_field' ] );
+		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 	}
 
@@ -67,6 +68,14 @@ class Starter_Page_Templates {
 			},
 		];
 		register_meta( 'post', '_starter_page_template', $args );
+	}
+
+	/**
+	 * Register rest api endpoint for side-loading images.
+	 */
+	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-image-sideload-controller.php';
+		( new WP_REST_Image_Sideload_Controller() )->register_routes();
 	}
 
 	/**
