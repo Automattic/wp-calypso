@@ -134,4 +134,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	defaultMonthlyJetpackPlan: {
+		datestamp: '20190722',
+		variations: {
+			monthlyPlan: 50,
+			yearlyPlan: 50,
+		},
+		defaultVariation: 'monthlyPlan',
+		allowExistingUsers: true,
+	},
 };
