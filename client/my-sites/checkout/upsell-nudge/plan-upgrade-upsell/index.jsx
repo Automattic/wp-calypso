@@ -64,7 +64,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 			<>
 				<h2 className="plan-upgrade-upsell__header">
 					{ translate(
-						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium Designs to your order {{br/}}{{u}}for just %(discountPrice)s{{/u}}!',
+						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium Designs to your order {{br/}}{{u}}for just %(discountPrice)s more{{/u}}!',
 						{
 							args: {
 								bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
@@ -205,14 +205,9 @@ export class PlanUpgradeUpsell extends PureComponent {
 							) }
 						</p>
 						<p>
-							{ translate(
-								'Are you ready to get started? Go for it now — this special one-time offer will be gone once you leave this screen.'
-							) }
-						</p>
-						<p>
 							<b>
 								{ translate(
-									'Upgrade to the Premium plan (and access nearly 200 premium themes) for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s/yr.',
+									'Upgrade to the Premium plan (and access nearly 200 premium themes) for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
 									{
 										components: { del: <del /> },
 										args: {
