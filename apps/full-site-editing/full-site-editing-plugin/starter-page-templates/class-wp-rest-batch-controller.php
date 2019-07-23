@@ -130,7 +130,6 @@ class WP_REST_Batch_Controller extends WP_REST_Controller {
 		}
 
 		return $data;
-
 	}
 
 	/**
