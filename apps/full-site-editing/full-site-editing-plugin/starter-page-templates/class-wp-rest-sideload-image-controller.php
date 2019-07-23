@@ -1,17 +1,17 @@
 <?php
 /**
- * WP_REST_Image_Sideload_Controller file.
+ * WP_REST_Sideload_Image_Controller file.
  *
  * @package full-site-editing
  */
 
 /**
- * Class WP_REST_Image_Sideload_Controller.
+ * Class WP_REST_Sideload_Image_Controller.
  */
-class WP_REST_Image_Sideload_Controller extends WP_REST_Attachments_Controller {
+class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 
 	/**
-	 * WP_REST_Image_Upload_Controller constructor.
+	 * WP_REST_Sideload_Image_Controller constructor.
 	 */
 	public function __construct() {
 		$this->namespace = 'fse/v1';
