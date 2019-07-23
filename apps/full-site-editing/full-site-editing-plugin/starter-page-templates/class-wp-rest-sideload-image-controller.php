@@ -32,11 +32,16 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'show_in_index'       => false,
 					'args'                => [
-						'url' => [
+						'url'     => [
 							'description' => 'URL to the image to be side-loaded.',
 							'type'        => 'string',
 							'format'      => 'uri',
 							'required'    => true,
+						],
+						'post_id' => [
+							'description' => 'ID of the post to associate the image with',
+							'type'        => 'integer',
+							'default'     => 0,
 						],
 					],
 				],
@@ -52,8 +57,8 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 	 * @return WP_Error|WP_REST_Response Response object on success, WP_Error object on failure.
 	 */
 	public function create_item( $request ) {
-		if ( ! empty( $request['post'] ) && in_array( get_post_type( $request['post'] ), array( 'revision', 'attachment' ), true ) ) {
-			return new WP_Error( 'rest_invalid_param', __( 'Invalid parent type.' ), array( 'status' => 400 ) );
+		if ( in_array( get_post_type( $request->get_param( 'post_id' ) ), [ 'revision', 'attachment' ], true ) ) {
+			return new WP_Error( 'rest_invalid_param', __( 'Invalid parent type.' ), [ 'status' => 400 ] );
 		}
 
 		// Include image functions to get access to wp_read_image_metadata().
@@ -62,7 +67,12 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 
 		// The post ID on success, WP_Error on failure.
-		$id = media_sideload_image( $request->get_param( 'url' ), 0, null, 'id' );
+		$id = media_sideload_image(
+			$request->get_param( 'url' ),
+			$request->get_param( 'post_id' ),
+			null,
+			'id'
+		);
 
 		if ( is_wp_error( $id ) ) {
 			if ( 'db_update_error' === $id->get_error_code() ) {
