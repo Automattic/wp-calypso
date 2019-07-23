@@ -29,6 +29,7 @@ import {
 import getUserSettings from 'state/selectors/get-user-settings';
 import hasUserSettings from 'state/selectors/has-user-settings';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import wpcom from 'lib/wp';
 import phoneValidation from 'lib/phone-validation';
 import userAgent from 'lib/user-agent';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -56,13 +57,11 @@ function sendSMS( phone ) {
 }
 
 function sendMagicLink( email ) {
-
-	var duration = { duration: 4000 }
-	dispatch( infoNotice( i18n.translate( 'Sending email' ), duration ) );
-
 	//Actions must be plain objects. Use custom middleware for async actions.
 	// https://stackoverflow.com/questions/46765896/react-redux-actions-must-be-plain-objects-use-custom-middleware-for-async-acti
 	return function( dispatch ) {
+		const duration = { duration: 4000 }
+		dispatch( infoNotice( i18n.translate( 'Sending email' ), duration ) );
 
 		return wpcom
 			.undocumented()
@@ -326,7 +325,7 @@ class MobileDownloadCard extends React.Component {
 
 	onSubmitLink = () => {
 		this.props.recordTracksEvent( 'calypso_get_apps_magic_link_button_click' );
-		var email = this.props.userSettings.user_email;
+		const email = this.props.userSettings.user_email;
 		this.props.sendMagicLink( email )
 	}
 }
