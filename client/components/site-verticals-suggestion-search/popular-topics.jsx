@@ -56,14 +56,16 @@ class PopularTopics extends PureComponent {
 		onSelect: PropTypes.func.isRequired,
 	};
 
-	onClick = event => {
+	onClick = index => event => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.onSelect( event.currentTarget.value );
 		this.props.recordTracksEvent( 'calypso_signup_common_site_vertical_clicked', {
 			value: event.currentTarget.value,
+			position_in_list: index,
 		} );
 	};
+
 	render() {
 		const { popularTopics } = this.props;
 
@@ -82,7 +84,7 @@ class PopularTopics extends PureComponent {
 						key={ index }
 						value={ topic }
 						className="site-verticals-suggestion-search__topic-list-item"
-						onClick={ this.onClick }
+						onClick={ this.onClick( index ) }
 						tabIndex="0"
 					>
 						{ topic }
