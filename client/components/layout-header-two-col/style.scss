@@ -1,0 +1,56 @@
+.layout-header-two-col__list {
+	position: relative;
+	left: calc( -0.5em );
+	display: flex;
+	flex-wrap: wrap;
+	// margins of the items will "hang off the side" invisibly
+	width: calc( 100% + 1em );
+}
+
+.layout-header-two-col__list-item {
+	display: flex;
+	flex-direction: column;
+	margin: 0.5em;
+	width: calc( 100% - 1em );
+
+	@include breakpoint( '>1040px' ) {
+		width: calc( 50% - 1em );
+	}
+}
+
+.layout-header-two-col__list-item-disclaimer {
+	color: var( --color-text-subtle );
+	font-style: italic;
+}
+
+.layout-header-two-col__list-item-body {
+	align-items: flex-start;
+	display: flex; // grow this, leave buttons on the bottom of the card
+	flex: 1 0 auto;
+}
+
+.layout-header-two-col__list-item-body-text {
+	width: 100%;
+
+	> p {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		width: 75%;
+	}
+}
+
+.layout-header-two-col__list-item-body-image {
+	margin: 10px 20px 0 0;
+	max-width: 150px;
+	width: 15%;
+
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+	}
+
+	@include breakpoint( '<480px' ) {
+		display: none;
+	}
+}
