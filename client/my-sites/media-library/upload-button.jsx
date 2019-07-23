@@ -1,11 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, uniq, startsWith } from 'lodash';
+import { connect } from 'react-redux';
+import { noop, uniq } from 'lodash';
 import classNames from 'classnames';
 import page from 'page';
 
@@ -16,14 +15,14 @@ import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import { getSectionName } from 'state/ui/selectors';
 
 /**
  * Style dependencies
  */
 import './upload-button.scss';
 
-export default class extends React.Component {
+class MediaLibraryUploadButton extends React.Component {
 	static displayName = 'MediaLibraryUploadButton';
 
 	static propTypes = {
@@ -82,7 +81,7 @@ export default class extends React.Component {
 
 	render() {	
 		const classes = classNames( 'media-library__upload-button', 'button', this.props.className, {
-			'is-primary': startsWith( getCurrentRoute( state ), '/media' ),
+			'is-primary': this.props.sectionName === 'media',
 		} );
 
 		return (
@@ -100,3 +99,9 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect(
+	state => ( {
+		sectionName: getSectionName( state ),
+	} ),
+)( MediaLibraryUploadButton );
