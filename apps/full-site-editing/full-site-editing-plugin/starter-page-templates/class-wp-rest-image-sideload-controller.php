@@ -14,8 +14,8 @@ class WP_REST_Image_Sideload_Controller extends WP_REST_Attachments_Controller {
 	 * WP_REST_Image_Upload_Controller constructor.
 	 */
 	public function __construct() {
-		$this->namespace = 'wp/v2';
-		$this->rest_base = 'media/image';
+		$this->namespace = 'fse/v1';
+		$this->rest_base = 'sideload/image';
 	}
 
 	/**
@@ -31,6 +31,14 @@ class WP_REST_Image_Sideload_Controller extends WP_REST_Attachments_Controller {
 					'callback'            => [ $this, 'create_item' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'show_in_index'       => false,
+					'args'                => [
+						'url' => [
+							'description' => 'URL to the image to be side-loaded.',
+							'type'        => 'string',
+							'format'      => 'uri',
+							'required'    => true,
+						],
+					],
 				],
 				'schema' => [ $this, 'get_item_schema' ],
 			]
@@ -48,27 +56,33 @@ class WP_REST_Image_Sideload_Controller extends WP_REST_Attachments_Controller {
 			return new WP_Error( 'rest_invalid_param', __( 'Invalid parent type.' ), array( 'status' => 400 ) );
 		}
 
-		$url = esc_url_raw( $request->get_body() );
-
 		// Include image functions to get access to wp_read_image_metadata().
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 
-		$id = media_sideload_image( $url, 0, null, 'id' );
+		// The post ID on success, WP_Error on failure.
+		$id = media_sideload_image( $request->get_param( 'url' ), 0, null, 'id' );
 
 		if ( is_wp_error( $id ) ) {
 			if ( 'db_update_error' === $id->get_error_code() ) {
-				$id->add_data( array( 'status' => 500 ) );
+				$id->add_data( [ 'status' => 500 ] );
 			} else {
-				$id->add_data( array( 'status' => 400 ) );
+				$id->add_data( [ 'status' => 400 ] );
 			}
-			return $id;
+
+			return rest_ensure_response( $id ); // Return error.
 		}
 
 		$attachment = get_post( $id );
 
-		/** This filter is documented in wp-includes/rest-api/endpoints/class-wp-rest-attachments-controller.php */
+		/**
+		 * Fires after a single attachment is created or updated via the REST API.
+		 *
+		 * @param WP_Post         $attachment Inserted or updated attachment object.
+		 * @param WP_REST_Request $request    The request sent to the API.
+		 * @param bool            $creating   True when creating an attachment, false when updating.
+		 */
 		do_action( 'rest_insert_attachment', $attachment, $request, true );
 
 		if ( isset( $request['alt_text'] ) ) {
@@ -83,7 +97,13 @@ class WP_REST_Image_Sideload_Controller extends WP_REST_Attachments_Controller {
 
 		$request->set_param( 'context', 'edit' );
 
-		/** This filter is documented in wp-includes/rest-api/endpoints/class-wp-rest-attachments-controller.php */
+		/**
+		 * Fires after a single attachment is completely created or updated via the REST API.
+		 *
+		 * @param WP_Post         $attachment Inserted or updated attachment object.
+		 * @param WP_REST_Request $request    Request object.
+		 * @param bool            $creating   True when creating an attachment, false when updating.
+		 */
 		do_action( 'rest_after_insert_attachment', $attachment, $request, true );
 
 		$response = $this->prepare_item_for_response( $attachment, $request );
