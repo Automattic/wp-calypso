@@ -188,7 +188,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, name );
-		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
+		const button = await this.driver.findElement( inserterBlockItemSelector );
+		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
