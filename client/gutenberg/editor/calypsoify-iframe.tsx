@@ -69,6 +69,7 @@ interface State {
 	editedPost?: any;
 	gallery?: any;
 	isIframeLoaded: boolean;
+	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
 	isConversionPromptVisible: boolean;
@@ -102,6 +103,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		isPreviewVisible: false,
 		isConversionPromptVisible: false,
 		previewUrl: 'about:blank',
+		currentIFrameUrl: '',
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -487,6 +489,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			previewUrl,
 			postUrl,
 			editedPost,
+			currentIFrameUrl,
 		} = this.state;
 
 		return (
@@ -510,8 +513,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 							ref={ this.iframeRef }
 							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
-							src={ iframeUrl }
-							onLoad={ () => this.setState( { isIframeLoaded: true } ) }
+							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
+							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
+							// in Jetpack sites
+							onLoad={ () =>
+								this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } )
+							}
 						/>
 					) }
 				</div>
