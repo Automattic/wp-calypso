@@ -435,8 +435,12 @@ export class Checkout extends React.Component {
 		}
 
 		// If cart is empty, then send the user to a generic page (not post-purchase related).
-		// For example, this case arises when a Skip button is clicked on a concierge upsell nudge
-		if ( ':receiptId' === pendingOrReceiptId && isEmpty( getAllCartItems( cart ) ) ) {
+		// For example, this case arises when a Skip button is clicked on a concierge upsell
+		// nudge opened by a direct link to /offer-support-session.
+		if (
+			':receiptId' === pendingOrReceiptId &&
+			isEmpty( getAllCartItems( cart ) && ! previousRoute.includes( '/checkout' ) )
+		) {
 			return `/stats/day/${ selectedSiteSlug }`;
 		}
 
