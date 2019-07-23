@@ -1,13 +1,20 @@
 .promo-card {
 	display: flex;
+	flex-direction: column;
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+	}
 
 	.action-panel__figure {
 		margin-top: 3px;
-		max-width: 24px;
-		order: 1;
 
-		&.align-left {
-			order: -1;
+		@include breakpoint( '>480px' ) {
+			max-width: 24px;
+			order: 1;
+
+			&.align-left {
+				order: -1;
+			}
 		}
 	}
 
