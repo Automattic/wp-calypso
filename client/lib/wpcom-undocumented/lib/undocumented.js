@@ -2493,4 +2493,17 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 	} );
 };
 
+Undocumented.prototype.getRivetSuggestions = function( service, { name, address } ) {
+	return this.wpcom.req.post(
+		{
+			path: `/rivet/suggest/${ service }`,
+		},
+		{ apiVersion: '1.1' },
+		{
+			name,
+			address,
+		}
+	);
+};
+
 export default Undocumented;

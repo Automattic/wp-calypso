@@ -19,6 +19,7 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getRivetAddress } from 'state/signup/steps/rivet-name-address/selectors';
 import { setRivetAddress } from 'state/signup/steps/rivet-name-address/actions';
+import { requestRivetSuggestions } from 'state/rivet/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
@@ -48,6 +49,17 @@ class RivetNameAddress extends Component {
 
 	handleInputChange = action => ( { currentTarget: { value = '' } } ) =>
 		this.props[ action ]( value );
+
+	handleSearch = event => {
+		event.preventDefault();
+
+		const { rivetAddress, siteTitle } = this.props;
+
+		this.props.requestRivetSuggestions( 'google', {
+			name: siteTitle,
+			address: rivetAddress,
+		} );
+	};
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -91,7 +103,7 @@ class RivetNameAddress extends Component {
 								maxLength={ 800 }
 								aria-label="Business Address"
 							/>
-							<Button primary type="submit" onClick={ this.handleSubmit }>
+							<Button primary type="submit" onClick={ this.handleSearch }>
 								{ this.props.translate( 'Continue' ) }
 							</Button>{' '}
 						</FormFieldset>
@@ -121,6 +133,7 @@ export default connect(
 		siteTitle: getSiteTitle( state ),
 	} ),
 	{
+		requestRivetSuggestions,
 		saveSignupStep,
 		recordTracksEvent,
 		setRivetAddress,
