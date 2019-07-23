@@ -59,6 +59,7 @@ export { default as Notices } from 'components/notice/docs/example';
 export { default as PaginationExample } from 'components/pagination/docs/example';
 export { default as PaymentLogo } from 'components/payment-logo/docs/example';
 export { default as PieChart } from 'components/pie-chart/docs/example';
+export { default as PlanGate } from 'components/plan-gate/docs/example';
 export { default as Popovers } from 'components/popover/docs/example';
 export { default as ProgressBar } from '@automattic/calypso-ui/src/progress-bar/docs/example';
 export { default as Ranges } from 'components/forms/range/docs/example';

@@ -87,6 +87,7 @@ import Notices from 'components/notice/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
 import PieChart from 'components/pie-chart/docs/example';
+import PlanGate from 'components/plan-gate/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
@@ -247,6 +248,7 @@ class DesignAssets extends React.Component {
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
 					<PieChart readmeFilePath="pie-chart" />
+					<PlanGate readmeFilePath="plan-gate" />
 					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
