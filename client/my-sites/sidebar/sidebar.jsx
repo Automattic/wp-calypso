@@ -634,7 +634,7 @@ export class MySitesSidebar extends Component {
 				<ExpandableSidebarMenu
 					onClick={ this.toggleSection( SIDEBAR_SECTION_SITE ) }
 					expanded={ this.props.isSiteSectionOpen }
-					title={ this.props.translate( 'Site' ) }
+					title={ this.props.translate( 'Content' ) }
 					materialIcon="edit"
 				>
 					{ this.site() }
