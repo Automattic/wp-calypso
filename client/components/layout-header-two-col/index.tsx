@@ -11,6 +11,10 @@ import { map } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import ActionPanel from 'components/action-panel';
+import ActionPanelTitle from 'components/action-panel/title';
+import ActionPanelBody from 'components/action-panel/body';
+import ActionPanelFigure from 'components/action-panel/figure';
+import ActionPanelCta from 'components/action-panel/cta';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -28,8 +32,16 @@ interface Props {
 	selectedSiteSlug: T.SiteSlug | null;
 	viewTrackerPath: string; // /marketing/tools/:site
 	viewTrackerTitle: string; // Marketing > Tools
-	header: ReactNode;
-	headerClick: null | Function;
+	header: {
+		title: string;
+		desc: string;
+		iconSrc: string;
+		iconWidth: '170' | string;
+		iconHeight: '143' | string;
+		alt: string;
+		buttonLabel: string;
+		buttonHref: string;
+	};
 	cards: ReactNode[];
 }
 
@@ -48,16 +60,32 @@ export const LayoutHeaderTwoCol: FunctionComponent< Props > = ( {
 	viewTrackerPath,
 	viewTrackerTitle,
 	header,
-	headerClick,
 	cards,
 } ) => {
 	return (
 		<Fragment>
 			<PageViewTracker path={ viewTrackerPath } title={ viewTrackerTitle } />
 			<ActionPanel>
-				<div>{ header }</div>
-				<div>{ headerClick }</div>
-				<div>{ selectedSiteSlug }</div>
+				<ActionPanelBody>
+					<ActionPanelFigure inlineBodyText={ true } align="left">
+						<img
+							src={ header.iconSrc }
+							width={ header.iconWidth }
+							height={ header.iconHeight }
+							alt={ header.alt }
+						/>
+					</ActionPanelFigure>
+					<ActionPanelTitle>{ header.title }</ActionPanelTitle>
+					<p>
+						{ header.description }
+						{ `remove this ${ selectedSiteSlug }` }
+					</p>
+					<ActionPanelCta>
+						<Button className="layout-header-two-col__header-button" href={ header.buttonHref }>
+							{ header.buttonLabel }
+						</Button>
+					</ActionPanelCta>
+				</ActionPanelBody>
 			</ActionPanel>
 			<div className="layout-header-two-col__list">{ map( cards, renderCards ) }</div>
 		</Fragment>
