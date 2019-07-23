@@ -119,7 +119,30 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 		$response = $this->prepare_item_for_response( $attachment, $request );
 		$response = rest_ensure_response( $response );
 		$response->set_status( 201 );
-		$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', $this->namespace, 'media', $id ) ) );
+		$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', 'wp/v2', 'media', $id ) ) );
+
+		return $response;
+	}
+
+	/**
+	 * Prepares a single attachment output for response.
+	 *
+	 * @param WP_Post         $post    Attachment object.
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response Response object.
+	 */
+	public function prepare_item_for_response( $post, $request ) {
+		$response = parent::prepare_item_for_response( $post, $request );
+		$base     = 'wp/v2/media';
+
+		foreach ( [ 'self', 'collection', 'about' ] as $link ) {
+			$response->remove_link( $link );
+
+		}
+
+		$response->add_link( 'self', rest_url( trailingslashit( $base ) . $post->ID ) );
+		$response->add_link( 'collection', rest_url( $base ) );
+		$response->add_link( 'about', rest_url( 'wp/v2/types/' . $post->post_type ) );
 
 		return $response;
 	}
