@@ -75,7 +75,10 @@ class Starter_Page_Templates {
 	 */
 	public function register_rest_api() {
 		require_once __DIR__ . '/class-wp-rest-sideload-image-controller.php';
+		require_once __DIR__ . '/class-wp-rest-batch-controller.php';
+
 		( new WP_REST_Sideload_Image_Controller() )->register_routes();
+		( new WP_REST_Batch_Controller() )->register_routes();
 	}
 
 	/**
