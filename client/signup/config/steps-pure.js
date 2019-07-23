@@ -516,7 +516,13 @@ export function generateSteps( {
 
 		'rivet-name-address': {
 			stepName: 'rivet-name-address',
-			providesDependencies: [ 'siteTitle', 'rivetAddress' ],
+			providesDependencies: [ 'siteTitle', 'placeId' ],
+		},
+
+		'rivet-confirmation': {
+			stepName: 'rivet-confirmation',
+			dependencies: [ 'placeId' ],
+			providesDependencies: [ 'rivetId' ],
 		},
 	};
 }

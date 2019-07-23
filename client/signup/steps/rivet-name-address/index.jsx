@@ -66,14 +66,12 @@ class RivetNameAddress extends Component {
 		} );
 	};
 
-	handleSubmit = event => {
-		event.preventDefault();
-
+	handleSubmit = placeId => {
 		const { flowName, rivetAddress, siteTitle, stepName } = this.props;
 
 		this.props.setRivetAddress( rivetAddress );
 		this.props.setSiteTitle( siteTitle );
-		this.props.submitSignupStep( { stepName, flowName }, { rivetAddress, siteTitle } );
+		this.props.submitSignupStep( { stepName, flowName }, { siteTitle, placeId } );
 		// @todo: continue tracking this event? track a new event with both values?
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_title', {
 			value: siteTitle,
@@ -130,7 +128,11 @@ class RivetNameAddress extends Component {
 		return (
 			<Card>
 				{ suggestions.map( suggestion => (
-					<Card key={ suggestion.id }>
+					<Card
+						displayAsLink
+						key={ suggestion.id }
+						onClick={ this.handleSubmit.bind( this, suggestion.id ) }
+					>
 						<strong>{ suggestion.title }</strong>
 						<span>{ suggestion.address }</span>
 					</Card>

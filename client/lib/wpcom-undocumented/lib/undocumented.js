@@ -2493,7 +2493,7 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 	} );
 };
 
-Undocumented.prototype.getRivetSuggestions = function( service, { name, address } ) {
+Undocumented.prototype.getRivetSuggestions = function( service = 'google', { name, address } ) {
 	return this.wpcom.req.post(
 		{
 			path: `/rivet/suggest/${ service }`,
@@ -2502,6 +2502,21 @@ Undocumented.prototype.getRivetSuggestions = function( service, { name, address 
 		{
 			name,
 			address,
+		}
+	);
+};
+
+Undocumented.prototype.getRivetSource = function(
+	rivetId = 'new',
+	{ service = 'google', placeId }
+) {
+	return this.wpcom.req.post(
+		{
+			path: `/rivet/source/${ rivetId }`,
+		},
+		{ apiVersion: '1.1' },
+		{
+			source: JSON.stringify( [ { type: service, source: placeId } ] ),
 		}
 	);
 };

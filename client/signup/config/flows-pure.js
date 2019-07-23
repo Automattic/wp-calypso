@@ -324,7 +324,7 @@ export function generateFlows( {
 				'user',
 				'site-type',
 				'rivet-name-address',
-				/*'rivet-confirmation',*/
+				'rivet-confirmation',
 				'domains',
 				'plans',
 			],
