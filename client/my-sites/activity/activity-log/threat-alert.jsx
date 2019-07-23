@@ -5,6 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -144,7 +146,7 @@ const headerSubtitle = ( translate, threat ) => {
 
 export class ThreatAlert extends Component {
 	mainDescription() {
-		const { threat, translate } = this.props;
+		const { siteSlug, threat, translate } = this.props;
 
 		if ( threat.filename ) {
 			return (
@@ -169,10 +171,16 @@ export class ThreatAlert extends Component {
 				<Fragment>
 					{ Object.values( threat.rows ).map( row => (
 						<div key={ row.id }>
-							<p>{ row.description }</p>
-							<p>{ threat.objectType }</p>
-							<p>{ row.id }</p>
-							<p>{ row.url }</p>
+							<pre className="activity-log__threat-alert-row-description">
+								{ threat.objectType } id { row.id } ( { row.description } ) contains the malicious
+								link { row.url }
+							</pre>
+							<a
+								className="activity-log__threat-alert-row-link"
+								href={ `/post/${ siteSlug }/${ row.id }` }
+							>
+								Edit post
+							</a>
 						</div>
 					) ) }
 				</Fragment>
@@ -255,4 +263,8 @@ export class ThreatAlert extends Component {
 	}
 }
 
-export default localize( ThreatAlert );
+const mapStateToProps = state => ( {
+	siteSlug: getSelectedSiteSlug( state ),
+} );
+
+export default connect( mapStateToProps )( localize( ThreatAlert ) );
