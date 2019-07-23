@@ -206,7 +206,10 @@ export function withStripe( WrappedComponent ) {
 		return (
 			<StripeProvider stripe={ stripeJs }>
 				<Elements>
-					<StripeInjectedWrappedComponent { ...props } />
+					<StripeInjectedWrappedComponent
+						stripeConfiguration={ stripeConfiguration }
+						{ ...props }
+					/>
 				</Elements>
 			</StripeProvider>
 		);
