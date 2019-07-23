@@ -133,6 +133,10 @@ rendered as a button.
 
 Sets a custom className on the button or link.
 
+#### `isFocusOnShow { bool } - default: false`
+
+Focuses the Popover when it shows. Useful for controlling/improving keyboard navigation.
+
 #### `isSelected { bool } - default: false`
 
 Defines whether or not the `PopoverMenuItem` is the currently selected one.
