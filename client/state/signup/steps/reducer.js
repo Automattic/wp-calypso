@@ -13,6 +13,7 @@ import siteType from './site-type/reducer';
 import siteVertical from './site-vertical/reducer';
 import { combineReducers } from 'state/utils';
 import survey from './survey/reducer';
+import rivetNameAddress from './rivet-name-address/reducer';
 
 export default combineReducers( {
 	designType,
@@ -23,4 +24,5 @@ export default combineReducers( {
 	siteType,
 	siteVertical,
 	survey,
+	rivetNameAddress,
 } );

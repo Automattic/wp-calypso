@@ -516,7 +516,7 @@ export function generateSteps( {
 
 		'rivet-name-address': {
 			stepName: 'rivet-name-address',
-			providesDependencies: [ 'siteTitle', 'businessAddress' ],
+			providesDependencies: [ 'siteTitle', 'rivetAddress' ],
 		},
 	};
 }
