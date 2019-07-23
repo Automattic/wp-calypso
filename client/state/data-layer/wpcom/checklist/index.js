@@ -20,10 +20,7 @@ export const fetchChecklist = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'GET',
-			apiNamespace: 'rest/v1.1',
-			query: {
-				http_envelope: 1,
-			},
+			apiVersion: '1.1',
 		},
 		action
 	);
@@ -60,10 +57,7 @@ export const updateChecklistTask = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
-			apiNamespace: 'rest/v1.1',
-			query: {
-				http_envelope: 1,
-			},
+			apiVersion: '1.1',
 			body: { taskId: action.taskId },
 		},
 		action
