@@ -188,6 +188,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, name );
+		// Using a JS click here since the Webdriver click wasn't working
 		const button = await this.driver.findElement( inserterBlockItemSelector );
 		await this.driver
 			.actions( { bridge: true } )
