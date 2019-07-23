@@ -522,13 +522,23 @@ export function createAccount(
 					);
 				}
 
-				// Fire after a new user registers.
-				analytics.recordRegistration();
-
 				const username =
 					( response && response.signup_sandbox_username ) ||
 					( response && response.username ) ||
 					userData.username;
+
+				const userId =
+					( response && response.signup_sandbox_user_id ) ||
+					( response && response.user_id ) ||
+					userData.ID;
+
+				// Fire after a new user registers.
+				analytics.recordRegistration();
+				analytics.identifyUser( {
+					newUserName: username,
+					newUserId: userId,
+				} );
+
 				const providedDependencies = assign( { username }, bearerToken );
 
 				if ( oauth2Signup ) {
