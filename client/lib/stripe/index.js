@@ -4,8 +4,9 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loadScript } from '@automattic/load-script';
+import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 
 /**
  * Internal dependencies
@@ -188,4 +189,26 @@ export function useStripeConfiguration( country ) {
 		);
 	}, [ country ] );
 	return stripeConfiguration;
+}
+
+/**
+ * HOC to render a component with StripeJS
+ *
+ * @param {object} WrappedComponent The component to wrap
+ * @return {object} WrappedComponent
+ */
+export function withStripe( WrappedComponent ) {
+	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
+	return props => {
+		const stripeConfiguration = useStripeConfiguration();
+		const stripeJs = useStripeJs( stripeConfiguration );
+
+		return (
+			<StripeProvider stripe={ stripeJs }>
+				<Elements>
+					<StripeInjectedWrappedComponent { ...props } />
+				</Elements>
+			</StripeProvider>
+		);
+	};
 }
