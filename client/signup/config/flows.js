@@ -51,9 +51,7 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
-	return abtest( 'improvedOnboarding' ) === 'main'
-		? `/view/${ dependencies.siteSlug }`
-		: `/checklist/${ dependencies.siteSlug }`;
+	return `/checklist/${ dependencies.siteSlug }`;
 }
 
 function getThankYouNoSiteDestination() {
