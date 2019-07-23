@@ -3,11 +3,12 @@
  */
 import debugFactory from 'debug';
 import interpolateComponents from 'interpolate-components';
-import Jed from 'jed';
+import Tannin from 'tannin';
 import LRU from 'lru';
 import moment from 'moment';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import { EventEmitter } from 'events';
+import { sprintf } from 'sprintf-js';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ const debug = debugFactory( 'i18n-calypso' );
  */
 const decimal_point_translation_key = 'number_format_decimals';
 const thousands_sep_translation_key = 'number_format_thousands_sep';
+const domain_key = 'messages';
 
 const translationLookup = [
 	// By default don't modify the options when looking up translations.
@@ -106,54 +108,27 @@ function normalizeTranslateArguments( args ) {
 }
 
 /**
- * Pull the right set of arguments for the Jed method
- * @param  {string} jedMethod Name of jed gettext-style method. [See docs](http://slexaxton.github.io/Jed/)
- * @param  {[object]} props     properties passed into `translate()` method
- * @return {[array]}           array of properties to pass into gettext-style method
- */
-function getJedArgs( jedMethod, props ) {
-	switch ( jedMethod ) {
-		case 'gettext':
-			return [ props.original ];
-		case 'ngettext':
-			return [ props.original, props.plural, props.count ];
-		case 'npgettext':
-			return [ props.context, props.original, props.plural, props.count ];
-		case 'pgettext':
-			return [ props.context, props.original ];
-	}
-
-	return [];
-}
-
-/**
- * Takes translate options object and coerces to a Jed request to retrieve translation
- * @param  {object} jed     - jed data object
+ * Takes translate options object and coerces to a Tannin request to retrieve translation
+ * @param  {object} tannin  - tannin data object
  * @param  {object} options - object describing translation
- * @return {string}         - the returned translation from Jed
+ * @return {string}         - the returned translation from Tannin
  */
-function getTranslationFromJed( jed, options ) {
-	let jedMethod = 'gettext';
-
-	if ( options.context ) {
-		jedMethod = 'p' + jedMethod;
-	}
-
-	if ( typeof options.original === 'string' && typeof options.plural === 'string' ) {
-		jedMethod = 'n' + jedMethod;
-	}
-
-	const jedArgs = getJedArgs( jedMethod, options );
-
-	return jed[ jedMethod ].apply( jed, jedArgs );
+function getTranslationFromTannin( tannin, options ) {
+	return tannin.dcnpgettext(
+		domain_key,
+		options.context,
+		options.original,
+		options.plural,
+		options.count
+	);
 }
 
 function getTranslation( i18n, options ) {
 	for ( let i = translationLookup.length - 1; i >= 0; i-- ) {
 		const lookup = translationLookup[ i ]( Object.assign( {}, options ) );
-		// Only get the translation from jed if it exists.
+		// Only get the translation from tannin if it exists.
 		if ( i18n.state.locale[ lookup.original ] ) {
-			return getTranslationFromJed( i18n.state.jed, lookup );
+			return getTranslationFromTannin( i18n.state.tannin, lookup );
 		}
 	}
 
@@ -165,9 +140,11 @@ function I18N() {
 		return new I18N();
 	}
 	this.defaultLocaleSlug = 'en';
+	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
+	this.defaultPluralForms = n => ( n === 1 ? 0 : 1 );
 	this.state = {
 		numberFormatSettings: {},
-		jed: undefined,
+		tannin: undefined,
 		locale: undefined,
 		localeSlug: undefined,
 		textDirection: undefined,
@@ -276,7 +253,9 @@ I18N.prototype.setLocale = function( localeData ) {
 
 	// if localeData is not given, assumes default locale and reset
 	if ( ! localeData || ! localeData[ '' ].localeSlug ) {
-		this.state.locale = { '': { localeSlug: this.defaultLocaleSlug } };
+		this.state.locale = {
+			'': { localeSlug: this.defaultLocaleSlug, plural_forms: this.defaultPluralForms },
+		};
 	} else if ( localeData[ '' ].localeSlug === this.state.localeSlug ) {
 		// Exit if same data as current (comparing references only)
 		if ( localeData === this.state.locale ) {
@@ -298,21 +277,17 @@ I18N.prototype.setLocale = function( localeData ) {
 		this.state.locale[ 'text direction\u0004ltr' ]?.[ 0 ] ||
 		this.state.locale[ '' ]?.momentjs_locale?.textDirection;
 
-	this.state.jed = new Jed( {
-		locale_data: {
-			messages: this.state.locale,
-		},
-	} );
+	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
 
 	moment.locale( this.state.localeSlug );
 
 	// Updates numberFormat preferences with settings from translations
-	this.state.numberFormatSettings.decimal_point = getTranslationFromJed(
-		this.state.jed,
+	this.state.numberFormatSettings.decimal_point = getTranslationFromTannin(
+		this.state.tannin,
 		normalizeTranslateArguments( [ decimal_point_translation_key ] )
 	);
-	this.state.numberFormatSettings.thousands_sep = getTranslationFromJed(
-		this.state.jed,
+	this.state.numberFormatSettings.thousands_sep = getTranslationFromTannin(
+		this.state.tannin,
 		normalizeTranslateArguments( [ thousands_sep_translation_key ] )
 	);
 
@@ -356,7 +331,7 @@ I18N.prototype.isRtl = function() {
 I18N.prototype.addTranslations = function( localeData ) {
 	for ( const prop in localeData ) {
 		if ( prop !== '' ) {
-			this.state.jed.options.locale_data.messages[ prop ] = localeData[ prop ];
+			this.state.tannin.data.messages[ prop ] = localeData[ prop ];
 		}
 	}
 
@@ -377,7 +352,7 @@ I18N.prototype.hasTranslation = function() {
 };
 
 /**
- * Exposes single translation method, which is converted into its respective Jed method.
+ * Exposes single translation method.
  * See sibling README
  * @param  {string} original  the string to translate
  * @param  {string} plural    the plural string to translate (if applicable), original used as singular
@@ -409,9 +384,9 @@ I18N.prototype.translate = function() {
 
 	let translation = getTranslation( this, options );
 	if ( ! translation ) {
-		// This purposefully calls jed for a case where there is no translation,
-		// so that jed gives us the expected object with English text.
-		translation = getTranslationFromJed( this.state.jed, options );
+		// This purposefully calls tannin for a case where there is no translation,
+		// so that tannin gives us the expected object with English text.
+		translation = getTranslationFromTannin( this.state.tannin, options );
 	}
 
 	// handle any string substitution
@@ -419,7 +394,7 @@ I18N.prototype.translate = function() {
 		const sprintfArgs = Array.isArray( options.args ) ? options.args.slice( 0 ) : [ options.args ];
 		sprintfArgs.unshift( translation );
 		try {
-			translation = Jed.sprintf.apply( Jed, sprintfArgs );
+			translation = sprintf( ...sprintfArgs );
 		} catch ( error ) {
 			if ( ! window || ! window.console ) {
 				return;
