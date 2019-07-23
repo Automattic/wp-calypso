@@ -5,17 +5,20 @@
  */
 import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
-import { dispatch, select, subscribe } from '@wordpress/data';
+import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse, rawHandler } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { inIframe, sendMessage } from './utils';
+
+const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 /**
  * Monitors Gutenberg for when an editor is opened with content originally authored in the classic editor.
@@ -92,10 +95,19 @@ function transmitDraftId( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.editor-post-trash', e => {
-		e.preventDefault();
-
-		calypsoPort.postMessage( { action: 'trashPost' } );
+	use( registry => {
+		return {
+			dispatch: namespace => {
+				const actions = { ...registry.dispatch( namespace ) };
+				if ( namespace === 'core/editor' && actions.trashPost ) {
+					actions.trashPost = () => {
+						debug( 'override core/editor trashPost action to use postlist trash' );
+						calypsoPort.postMessage( { action: 'trashPost' } );
+					};
+				}
+				return actions;
+			},
+		};
 	} );
 }
 
