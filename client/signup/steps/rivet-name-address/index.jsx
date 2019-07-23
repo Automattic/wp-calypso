@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import StepWrapper from 'signup/step-wrapper';
@@ -19,6 +20,7 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getRivetAddress } from 'state/signup/steps/rivet-name-address/selectors';
 import { setRivetAddress } from 'state/signup/steps/rivet-name-address/actions';
+import { getError, getSuggestions, isRequesting } from 'state/rivet/selectors';
 import { requestRivetSuggestions } from 'state/rivet/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
@@ -30,8 +32,10 @@ import './style.scss';
 
 class RivetNameAddress extends Component {
 	static propTypes = {
+		error: PropTypes.string,
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
+		isRequesting: PropTypes.bool,
 		positionInFlow: PropTypes.number,
 		recordTracksEvent: PropTypes.func.isRequired,
 		rivetAddress: PropTypes.string,
@@ -40,6 +44,7 @@ class RivetNameAddress extends Component {
 		signupProgress: PropTypes.array,
 		siteTitle: PropTypes.string,
 		stepName: PropTypes.string,
+		suggestions: PropTypes.array,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -77,7 +82,7 @@ class RivetNameAddress extends Component {
 	};
 
 	renderNameAddressForm = () => {
-		const { rivetAddress, siteTitle } = this.props;
+		const { rivetAddress, siteTitle, suggestions } = this.props;
 
 		return (
 			<div className="rivet-name-address__wrapper">
@@ -103,13 +108,34 @@ class RivetNameAddress extends Component {
 								maxLength={ 800 }
 								aria-label="Business Address"
 							/>
-							<Button primary type="submit" onClick={ this.handleSearch }>
+							<Button
+								primary
+								type="submit"
+								busy={ this.props.isRequesting }
+								onClick={ this.handleSearch }
+							>
 								{ this.props.translate( 'Continue' ) }
 							</Button>{' '}
 						</FormFieldset>
 					</div>
 				</form>
+				{ suggestions && this.renderSuggestionsList() }
 			</div>
+		);
+	};
+
+	renderSuggestionsList = () => {
+		const { suggestions } = this.props;
+
+		return (
+			<Card>
+				{ suggestions.map( suggestion => (
+					<Card key={ suggestion.id }>
+						<strong>{ suggestion.title }</strong>
+						<span>{ suggestion.address }</span>
+					</Card>
+				) ) }
+			</Card>
 		);
 	};
 
@@ -129,6 +155,9 @@ class RivetNameAddress extends Component {
 
 export default connect(
 	state => ( {
+		isRequesting: isRequesting( state ),
+		error: getError( state ),
+		suggestions: getSuggestions( state ),
 		rivetAddress: getRivetAddress( state ),
 		siteTitle: getSiteTitle( state ),
 	} ),
