@@ -110,7 +110,7 @@ class PurchaseNotice extends Component {
 		} );
 	}
 
-	renderRenewNoticeAction() {
+	renderRenewNoticeAction( onClick ) {
 		const { editCardDetailsPath, purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
@@ -127,7 +127,12 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		return null;
+		// In case of `manualRenew`, the text encouraging users to enable auto-renewal through the toggle will be presented.
+		return (
+			purchase.expiryStatus !== 'manualRenew' && (
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+			)
+		);
 	}
 
 	trackImpression( warning ) {
@@ -145,6 +150,13 @@ class PurchaseNotice extends Component {
 			eventProperties( warning )
 		);
 	}
+
+	handleExpiringNoticeRenewal = () => {
+		this.trackClick( 'purchase-expiring' );
+		if ( this.props.handleRenew ) {
+			this.props.handleRenew();
+		}
+	};
 
 	renderPurchaseExpiringNotice() {
 		const { moment, purchase } = this.props;
@@ -167,7 +179,7 @@ class PurchaseNotice extends Component {
 				status={ noticeStatus }
 				text={ this.getExpiringText( purchase ) }
 			>
-				{ this.renderRenewNoticeAction() }
+				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
@@ -224,6 +236,13 @@ class PurchaseNotice extends Component {
 		}
 	}
 
+	handleExpiredNoticeRenewal = () => {
+		this.trackClick( 'purchase-expired' );
+		if ( this.props.handleRenew ) {
+			this.props.handleRenew();
+		}
+	};
+
 	renderExpiredRenewNotice() {
 		const { purchase, translate } = this.props;
 
@@ -241,7 +260,7 @@ class PurchaseNotice extends Component {
 				status="is-error"
 				text={ translate( 'This purchase has expired and is no longer in use.' ) }
 			>
-				{ this.renderRenewNoticeAction() }
+				{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);
