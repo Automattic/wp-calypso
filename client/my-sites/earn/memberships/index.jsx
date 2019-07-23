@@ -36,6 +36,7 @@ import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import ExternalLink from 'components/external-link';
 
 /**
  * Style dependencies
@@ -309,7 +310,13 @@ class MembershipsSection extends Component {
 					<p className="memberships__onboarding-paragraph">
 						{ this.props.translate(
 							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-						) }
+						) }{' '}
+						<ExternalLink
+							href="https://support.wordpress.com/recurring-payments-button/"
+							icon={ true }
+						>
+							{ this.props.translate( 'Learn more.' ) }
+						</ExternalLink>
 					</p>
 					{ cta }
 					<div className="memberships__onboarding-benefits">
