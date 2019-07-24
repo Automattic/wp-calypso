@@ -63,7 +63,7 @@ const stepNameToModuleName = {
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[a-z-]+\/index.jsx$/ */ `signup/steps/${ moduleName }`
+		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[a-z-]+\/index.(jsx|tsx)$/ */ `signup/steps/${ moduleName }`
 	);
 	return module.default;
 }
