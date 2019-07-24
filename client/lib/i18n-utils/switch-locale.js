@@ -65,7 +65,7 @@ async function getLanguageFile( targetLocaleSlug ) {
 
 	const response = await fetch( url );
 	if ( response.ok ) {
-		return await response.body;
+		return await response.json();
 	}
 
 	// Invalid response.
