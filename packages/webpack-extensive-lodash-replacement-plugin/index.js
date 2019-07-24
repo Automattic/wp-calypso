@@ -338,18 +338,24 @@ function createError( message, error = null ) {
 
 function getModuleForPath( moduleResolver, rootPath, packageName ) {
 	return new Promise( ( resolve, reject ) => {
-		moduleResolver.resolve( {}, rootPath, packageName, {}, ( error, filepath, context ) => {
-			if ( error ) {
-				reject(
-					createError(
-						`Could not find module ${ packageName } for import on ${ rootPath }.`,
-						error
-					)
-				);
-			}
+		moduleResolver.resolve(
+			{},
+			rootPath,
+			packageName,
+			{},
+			( error, resource, resourceResolveData ) => {
+				if ( error ) {
+					reject(
+						createError(
+							`Could not find module ${ packageName } for import on ${ rootPath }.`,
+							error
+						)
+					);
+				}
 
-			resolve( context );
-		} );
+				resolve( resourceResolveData );
+			}
+		);
 	} );
 }
 
@@ -360,7 +366,7 @@ class ExtensiveLodashReplacementPlugin {
 
 	async initBaseLodashData() {
 		try {
-			this.baseLodashContext = await getModuleForPath(
+			this.baseLodashResolveData = await getModuleForPath(
 				this.moduleResolver,
 				this.baseDir,
 				'lodash'
@@ -387,19 +393,24 @@ class ExtensiveLodashReplacementPlugin {
 	// Figure out the version for a given import.
 	// It follows the node resolution algorithm until it finds the package, returning its version.
 	async findRequestedVersion( file, packageName ) {
-		const foundContext = await getModuleForPath(
+		const foundResolveData = await getModuleForPath(
 			this.moduleResolver,
 			path.dirname( file ),
 			packageName
 		);
-		const baseLodashContext = this.baseLodashContext;
 
-		if ( foundContext.path === baseLodashContext.path ) {
+		// We resolved to the root's lodash.
+		// This means that we're in Calypso or somewhere that doesn't have its own node_modules.
+		// Since we keep lodash and lodash-es in sync in Calypso, we can just return the base
+		// lodash-es version here.
+		if ( foundResolveData.path === this.baseLodashResolveData.path ) {
 			return this.baseLodashESVersion;
 		}
 
 		return (
-			foundContext && foundContext.descriptionFileData && foundContext.descriptionFileData.version
+			foundResolveData &&
+			foundResolveData.descriptionFileData &&
+			foundResolveData.descriptionFileData.version
 		);
 	}
 
@@ -409,7 +420,6 @@ class ExtensiveLodashReplacementPlugin {
 		const importVersion = await this.findRequestedVersion( file, packageName );
 		const isVersionMatch =
 			importVersion &&
-			this.baseLodashESVersion &&
 			semver.major( this.baseLodashESVersion ) === semver.major( importVersion ) &&
 			semver.gte( this.baseLodashESVersion, importVersion );
 
@@ -531,10 +541,6 @@ class ExtensiveLodashReplacementPlugin {
 			this.init = this.init || this.initBaseLodashData();
 
 			nmf.hooks.beforeResolve.tapPromise(
-				'LodashReplacementPlugin',
-				this.modifyResult.bind( this )
-			);
-			nmf.hooks.afterResolve.tapPromise(
 				'LodashReplacementPlugin',
 				this.modifyResult.bind( this )
 			);
