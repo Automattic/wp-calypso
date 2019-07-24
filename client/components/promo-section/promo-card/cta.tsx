@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,12 +13,13 @@ import Button from 'components/button';
 import ActionPanelCta from 'components/action-panel/cta';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { URL } from 'types';
 
 type ClickCallback = () => void;
 
 export interface CtaButton {
 	text: string;
-	action: string | ClickCallback;
+	action: URL | ClickCallback;
 }
 
 export type Cta =
