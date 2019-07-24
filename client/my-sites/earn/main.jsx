@@ -50,7 +50,8 @@ class EarningsMain extends Component {
 		const { siteSlug, translate } = this.props;
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
-		if ( config.isEnabled( 'memberships' ) ) {
+
+		if ( config.isEnabled( 'memberships' ) && ! config.isEnabled( 'earn-relayout' ) ) {
 			tabs.push( {
 				title: translate( 'Recurring Payments' ),
 				path: '/earn/payments' + pathSuffix,
@@ -125,17 +126,16 @@ class EarningsMain extends Component {
 	getHeaderText = () => {
 		const { translate } = this.props;
 
-		switch ( this.getCurrentPath().replace( /^\/earn\/([-a-z]*)(\/.*)?$/gm, '$1' ) ) {
+		switch ( this.props.section ) {
 			case 'payments':
 				return translate( 'Recurring Payments' );
 
 			case 'ads-earnings':
 			case 'ads-settings':
 				return translate( 'Ads' );
-				return translate( 'Ads Earnings' );
 
-			case 'ads-settings':
-				return translate( 'Ads Settings' );
+			default:
+				return '';
 		}
 	};
 
@@ -167,9 +167,10 @@ class EarningsMain extends Component {
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
-				{ config.isEnabled( 'earn-relayout' ) ? (
+				{ config.isEnabled( 'earn-relayout' ) && (
 					<HeaderCake backHref={ this.goBack() }>{ this.getHeaderText() }</HeaderCake>
-				) : (
+				) }
+				{ ( 'payments' !== this.props.section || ! config.isEnabled( 'earn-relayout' ) ) && (
 					<SectionNav selectedText={ this.getSelectedText() }>
 						<NavTabs>
 							{ this.getFilters().map( filterItem => {
