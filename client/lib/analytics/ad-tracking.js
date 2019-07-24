@@ -618,6 +618,7 @@ function splitWpcomJetpackCartInfo( cart ) {
 		wpcomCost: wpcomCost,
 		jetpackCostUSD: costToUSD( jetpackCost, cart.currency ),
 		wpcomCostUSD: costToUSD( wpcomCost, cart.currency ),
+		totalCostUSD: costToUSD( cart.total_cost, cart.currency ),
 	};
 }
 
@@ -1195,11 +1196,11 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 
 	debug( 'recordOrderInFloodlight:' );
 	recordParamsInFloodlightGtag( {
-		value: cart.total_cost,
+		value: wpcomJetpackCartInfo.totalCostUSD,
 		transaction_id: orderId,
-		u1: cart.total_cost,
+		u1: wpcomJetpackCartInfo.totalCostUSD,
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
-		u3: cart.currency,
+		u3: 'USD',
 		send_to: 'DC-6355556/wpsal0/wpsale+transactions',
 	} );
 
@@ -1207,11 +1208,11 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		debug( 'recordOrderInFloodlight: WPCom' );
 		recordParamsInFloodlightGtag( {
-			value: wpcomJetpackCartInfo.wpcomCost,
+			value: wpcomJetpackCartInfo.wpcomCostUSD,
 			transaction_id: orderId,
-			u1: wpcomJetpackCartInfo.wpcomCost,
+			u1: wpcomJetpackCartInfo.wpcomCostUSD,
 			u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
-			u3: cart.currency,
+			u3: 'USD',
 			send_to: 'DC-6355556/wpsal0/purch0+transactions',
 		} );
 	}
@@ -1220,11 +1221,11 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		debug( 'recordOrderInFloodlight: Jetpack' );
 		recordParamsInFloodlightGtag( {
-			value: wpcomJetpackCartInfo.jetpackCost,
+			value: wpcomJetpackCartInfo.jetpackCostUSD,
 			transaction_id: orderId,
-			u1: wpcomJetpackCartInfo.jetpackCost,
+			u1: wpcomJetpackCartInfo.jetpackCostUSD,
 			u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
-			u3: cart.currency,
+			u3: 'USD',
 			send_to: 'DC-6355556/wpsal0/purch00+transactions',
 		} );
 	}
