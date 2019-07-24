@@ -50,14 +50,19 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getChecklistDestination( dependencies ) {
-	return '/checklist/' + dependencies.siteSlug;
+function getSignupDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }`;
+}
+
+function getThankYouNoSiteDestination() {
+	return `/checkout/thank-you/no-site`;
 }
 
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
-	getChecklistDestination,
+	getSignupDestination,
+	getThankYouNoSiteDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
