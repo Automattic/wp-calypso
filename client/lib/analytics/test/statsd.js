@@ -29,9 +29,9 @@ describe( 'StatsD Analytics', () => {
 				true,
 				true
 			);
-			expect( sdUrl.query.v ).to.eql( 'calypso' );
-			expect( sdUrl.query.u ).to.eql( 'post_mysite_com' );
-			expect( sdUrl.query.json ).to.eql(
+			expect( sdUrl.query.v ).toEqual( 'calypso' );
+			expect( sdUrl.query.u ).toEqual( 'post_mysite_com' );
+			expect( sdUrl.query.json ).toEqual(
 				JSON.stringify( {
 					beacons: [ 'calypso.development.post_mysite_com.page_count:1|c' ],
 				} )
