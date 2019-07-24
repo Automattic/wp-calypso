@@ -26,7 +26,7 @@ export async function postRequest( glotPressUrl, postFormData ) {
 			body: postFormData,
 		} );
 		if ( response.ok ) {
-			return await response.body;
+			return await response.json();
 		}
 	} catch ( err ) {
 		throw err;
