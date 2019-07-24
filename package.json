@@ -119,7 +119,7 @@
 		"jquery": "1.12.3",
 		"json-stable-stringify": "1.0.1",
 		"keymaster": "1.6.2",
-		"lerna": "3.15.0",
+		"lerna": "3.16.4",
 		"loader-utils": "1.2.3",
 		"lodash": "4.17.14",
 		"lodash-es": "4.17.14",
