@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
@@ -101,6 +102,48 @@ class EarningsMain extends Component {
 		this.props.dismissWordAdsError( siteId );
 	};
 
+	/**
+	 * Remove any query parameters from the path before using it to
+	 * identify which screen the user is seeing.
+	 *
+	 * @returns {String} Path to current screen.
+	 */
+	getCurrentPath = () => {
+		let currentPath = this.props.path;
+		const queryStartPosition = currentPath.indexOf( '?' );
+		if ( queryStartPosition > -1 ) {
+			currentPath = currentPath.substring( 0, queryStartPosition );
+		}
+		return currentPath;
+	};
+
+	/**
+	 * Check the current path and returns an appropriate title.
+	 *
+	 * @returns {String} Header text for current screen.
+	 */
+	getHeaderText = () => {
+		const { translate } = this.props;
+
+		switch ( this.getCurrentPath().replace( /^\/earn\/([-a-z]*)(\/.*)?$/gm, '$1' ) ) {
+			case 'payments':
+				return translate( 'Recurring Payments' );
+
+			case 'ads-earnings':
+				return translate( 'Ads Earnings' );
+
+			case 'ads-settings':
+				return translate( 'Ads Settings' );
+		}
+	};
+
+	/**
+	 * Goes back to Earn home.
+	 *
+	 * @returns {string} Path to Earn home. Has site slug append if it exists.
+	 */
+	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
+
 	render() {
 		const { adsProgramName, section, translate } = this.props;
 		const component = this.getComponent( this.props.section );
@@ -112,13 +155,7 @@ class EarningsMain extends Component {
 			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
 
-		// Remove any query parameters from the path before using it to
-		// identify which navigation tab is the active one.
-		let currentPath = this.props.path;
-		const queryStartPosition = currentPath.indexOf( '?' );
-		if ( queryStartPosition > -1 ) {
-			currentPath = currentPath.substring( 0, queryStartPosition );
-		}
+		const currentPath = this.getCurrentPath();
 
 		return (
 			<Main className="earn">
@@ -128,21 +165,25 @@ class EarningsMain extends Component {
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs>
-						{ this.getFilters().map( filterItem => {
-							return (
-								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === currentPath }
-								>
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-				</SectionNav>
+				{ config.isEnabled( 'earn-relayout' ) ? (
+					<HeaderCake backHref={ this.goBack() }>{ this.getHeaderText() }</HeaderCake>
+				) : (
+					<SectionNav selectedText={ this.getSelectedText() }>
+						<NavTabs>
+							{ this.getFilters().map( filterItem => {
+								return (
+									<NavItem
+										key={ filterItem.id }
+										path={ filterItem.path }
+										selected={ filterItem.path === currentPath }
+									>
+										{ filterItem.title }
+									</NavItem>
+								);
+							} ) }
+						</NavTabs>
+					</SectionNav>
+				) }
 				{ component }
 			</Main>
 		);
