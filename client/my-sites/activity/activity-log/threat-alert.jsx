@@ -5,6 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
+import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
 
 /**
  * Style dependencies
@@ -218,4 +220,7 @@ export class ThreatAlert extends Component {
 	}
 }
 
-export default localize( ThreatAlert );
+export default connect(
+	null,
+	{ fixThreatAlert, ignoreThreatAlert }
+)( localize( ThreatAlert ) );
