@@ -116,16 +116,6 @@ export default {
 		defaultVariation: 'control',
 		localeTargets: 'any',
 	},
-	proratedCreditsBanner: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20190626',
-		variations: {
-			control: 50,
-			variant: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	skippableDomainStep: {
 		datestamp: '20190717',
 		variations: {

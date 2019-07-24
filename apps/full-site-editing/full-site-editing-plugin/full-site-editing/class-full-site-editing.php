@@ -474,25 +474,7 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template_blocks = parse_blocks( $template_content );
-		$content_attrs   = $this->get_post_content_block_attrs( $template_blocks );
-
-		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content %s -->%s<!-- /wp:a8c/post-content -->', $content_attrs, $post->post_content );
-		$post->post_content   = str_replace( "<!-- wp:a8c/post-content $content_attrs /-->", $wrapped_post_content, $template_content );
-	}
-
-	/**
-	 * This will extract the attributes from the post content block
-	 * json encode them.
-	 *
-	 * @param array $blocks    An array of template blocks.
-	 */
-	private function get_post_content_block_attrs( $blocks ) {
-		foreach ( $blocks as $key => $value ) {
-			if ( 'a8c/post-content' === $value['blockName'] ) {
-				return count( $value['attrs'] ) > 0 ? wp_json_encode( $value['attrs'] ) : '';
-			}
-		}
+		$post->post_content = preg_replace( '@(<!-- wp:a8c/post-content)(.*?)(/-->)@', "$1$2-->$post->post_content<!-- /wp:a8c/post-content -->", $template_content );
 	}
 
 	/**

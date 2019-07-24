@@ -561,7 +561,7 @@ function openLinksInParentFrame() {
 }
 
 /**
- * Ensures the Calypso Customizer is opened when clicking on the the FSE blocks' edit buttons.
+ * Ensures the Calypso Customizer is opened when clicking on the FSE blocks' edit buttons.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
@@ -577,6 +577,67 @@ function openCustomizer( calypsoPort ) {
 				autofocus: getQueryArg( e.currentTarget.href, 'autofocus' ),
 			},
 		} );
+	} );
+}
+
+/**
+ * Ensures the Calypso block editor is opened when editing a template part.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+async function openTemplatePartEditor( calypsoPort ) {
+	// We only want this when editing a full site page.
+	if ( ! window.fullSiteEditing || 'page' !== window.fullSiteEditing.editorPostType ) {
+		return;
+	}
+
+	const getTemplatePartLinks = async () =>
+		new Promise( resolve => {
+			const unsubscribe = subscribe( () => {
+				const currentPost = select( 'core/editor' ).getCurrentPost();
+				const initialized = currentPost && currentPost.id;
+
+				if ( ! initialized ) {
+					return;
+				}
+
+				unsubscribe();
+
+				const interval = setInterval( () => {
+					const links = document.querySelectorAll(
+						'[data-type="a8c/template"] .template-block__overlay a'
+					);
+					const blocks = select( 'core/editor' )
+						.getBlocks()
+						.filter( block => block.name === 'a8c/template' );
+
+					if ( links.length !== blocks.length ) {
+						return;
+					}
+
+					clearInterval( interval );
+					resolve( links );
+				} );
+			} );
+		} );
+
+	const editTemplatePartLinks = await getTemplatePartLinks();
+
+	editTemplatePartLinks.forEach( link => {
+		const templatePartId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
+
+		const { port1, port2 } = new MessageChannel();
+		calypsoPort.postMessage(
+			{
+				action: 'getTemplatePartEditorUrl',
+				payload: { templatePartId },
+			},
+			[ port2 ]
+		);
+		port1.onmessage = ( { data } ) => {
+			link.setAttribute( 'target', '_parent' );
+			link.setAttribute( 'href', data );
+		};
 	} );
 }
 
@@ -658,6 +719,8 @@ function initPort( message ) {
 		openLinksInParentFrame();
 
 		openCustomizer( calypsoPort );
+
+		openTemplatePartEditor( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

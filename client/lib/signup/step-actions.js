@@ -257,20 +257,6 @@ export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	] ).then( onComplete );
 }
 
-export function fetchUser( userInstance = user ) {
-	// @TODO: When user fetching is reduxified, let's get rid of this hack.
-	return new Promise( resolve => {
-		const userFetched = setInterval( () => {
-			const loadedUser = userInstance.get();
-			if ( loadedUser ) {
-				clearInterval( userFetched );
-				resolve( loadedUser );
-				return;
-			}
-		}, 333 );
-	} );
-}
-
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
@@ -536,19 +522,20 @@ export function createAccount(
 					);
 				}
 
-				// Fire after a new user registers.
-				analytics.recordRegistration();
-
-				// Try to fetch the user so we can track the newly-created account
-				fetchUser( user ).then( () => {
-					analytics.setUser( user );
-					analytics.identifyUser();
-				} );
-
 				const username =
 					( response && response.signup_sandbox_username ) ||
 					( response && response.username ) ||
 					userData.username;
+
+				const userId =
+					( response && response.signup_sandbox_user_id ) ||
+					( response && response.user_id ) ||
+					userData.ID;
+
+				// Fire after a new user registers.
+				analytics.recordRegistration();
+				analytics.identifyUser( username, userId );
+
 				const providedDependencies = assign( { username }, bearerToken );
 
 				if ( oauth2Signup ) {

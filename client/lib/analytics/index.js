@@ -197,7 +197,8 @@ const analytics = {
 	initialize: function( user, superProps ) {
 		analytics.setUser( user );
 		analytics.setSuperProps( superProps );
-		analytics.identifyUser();
+		const userData = user.get();
+		analytics.identifyUser( userData.username, userData.ID );
 	},
 
 	setUser: function( user ) {
@@ -781,18 +782,15 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function( user = _user ) {
+	identifyUser: function( newUserName, newUserId ) {
 		const anonymousUserId = this.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
-		if ( user && user.initialized ) {
+		if ( newUserId && newUserName ) {
 			if ( anonymousUserId ) {
 				recordAliasInFloodlight();
 			}
-
-			const { ID: userId, username: userName } = user.get();
-
-			window._tkq.push( [ 'identifyUser', userId, userName ] );
+			window._tkq.push( [ 'identifyUser', newUserId, newUserName ] );
 		}
 	},
 

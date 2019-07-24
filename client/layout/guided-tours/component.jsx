@@ -6,14 +6,13 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { tracks } from 'lib/analytics';
-import AllTours from 'layout/guided-tours/all-tours';
+import AllTours from './all-tours';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
@@ -25,6 +24,11 @@ import {
 	quitGuidedTour,
 	resetGuidedToursHistory,
 } from 'state/ui/guided-tours/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class GuidedToursComponent extends Component {
 	shouldComponentUpdate( nextProps ) {
@@ -134,4 +138,4 @@ export default connect(
 		quitGuidedTour,
 		resetGuidedToursHistory,
 	}
-)( localize( GuidedToursComponent ) );
+)( GuidedToursComponent );

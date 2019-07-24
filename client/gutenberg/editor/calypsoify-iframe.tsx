@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, pickBy, startsWith } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
 import url from 'url';
 
 /**
@@ -69,6 +69,7 @@ interface State {
 	editedPost?: any;
 	gallery?: any;
 	isIframeLoaded: boolean;
+	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
 	isConversionPromptVisible: boolean;
@@ -92,6 +93,7 @@ enum EditorActions {
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
+	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -101,6 +103,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		isPreviewVisible: false,
 		isConversionPromptVisible: false,
 		previewUrl: 'about:blank',
+		currentIFrameUrl: '',
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -108,6 +111,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
+	templateParts: [T.PostId, MessagePort][] = [];
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -211,6 +215,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 				this.props.startEditingPost( siteId, postId );
 			}
+
+			// Update the edit template part links with the ID of the FSE parent page.
+			this.templateParts.forEach( ( [ templatePartId ] ) => {
+				this.sendTemplatePartEditorUrl( templatePartId );
+			} );
 		}
 
 		if ( EditorActions.TrashPost === action ) {
@@ -248,6 +257,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( EditorActions.OpenCustomizer === action ) {
 			const { autofocus = null, unsavedChanges = false } = payload;
 			this.openCustomizer( autofocus, unsavedChanges );
+		}
+
+		if ( EditorActions.GetTemplatePartEditorUrl === action ) {
+			const { templatePartId } = payload;
+			this.templateParts.push( [ templatePartId, ports[ 0 ] ] );
+			this.sendTemplatePartEditorUrl( templatePartId );
 		}
 	};
 
@@ -395,6 +410,28 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		this.props.navigate( customizerUrl );
 	};
 
+	getTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
+		const { getTemplatePartEditorUrl, editedPostId } = this.props;
+
+		let templatePartEditorUrl = getTemplatePartEditorUrl( templatePartId );
+		if ( editedPostId ) {
+			templatePartEditorUrl = addQueryArgs(
+				{ fse_parent_post: editedPostId },
+				templatePartEditorUrl
+			);
+		}
+
+		return templatePartEditorUrl;
+	};
+
+	sendTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
+		const templatePartEditorUrl = this.getTemplatePartEditorUrl( templatePartId );
+		const port = this.templateParts.find(
+			( [ portTemplatePartId ] ) => portTemplatePartId === templatePartId
+		)[ 1 ];
+		port.postMessage( `${ window.location.origin }${ templatePartEditorUrl }` );
+	};
+
 	handleConversionResponse = ( confirmed: boolean ) => {
 		this.setState( { isConversionPromptVisible: false } );
 
@@ -452,6 +489,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			previewUrl,
 			postUrl,
 			editedPost,
+			currentIFrameUrl,
 		} = this.state;
 
 		return (
@@ -469,14 +507,18 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ shouldLoadIframe && (
+					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
 							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
-							src={ iframeUrl }
-							onLoad={ () => this.setState( { isIframeLoaded: true } ) }
+							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
+							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
+							// in Jetpack sites
+							onLoad={ () =>
+								this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } )
+							}
 						/>
 					) }
 				</div>
@@ -540,7 +582,7 @@ const mapStateToProps = (
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
 	let closeUrl = getPostTypeAllPostsUrl( state, postType );
-	if ( fseParentPageId ) {
+	if ( 'wp_template_part' === postType ) {
 		closeUrl = getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
 	}
 
@@ -555,6 +597,14 @@ const mapStateToProps = (
 		siteAdminUrl,
 		siteId,
 		customizerUrl: getCustomizerUrl( state, siteId ),
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		getTemplatePartEditorUrl: partial(
+			getGutenbergEditorUrl,
+			state,
+			siteId,
+			partial.placeholder,
+			'wp_template_part'
+		),
 	};
 };
 

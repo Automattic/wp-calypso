@@ -48,7 +48,13 @@ a.action-panel__body-text-link {
 		margin: 0 0 20px 24px;
 
 		&.is-inline-body-text {
-			margin: 40px 0 20px 24px;
+			margin-top: 40px;
+		}
+
+		&.align-left {
+			float: left;
+			margin-left: 0;
+			margin-right: 24px;
 		}
 	}
 }
@@ -85,9 +91,12 @@ a.action-panel__body-text-link {
 }
 
 // Footer
+.action-panel__cta {
+	padding-top: 17px;
+}
+
 .action-panel__footer {
 	position: relative;
-	padding-top: 17px;
 
 	&::before {
 		content: '';
@@ -103,7 +112,9 @@ a.action-panel__body-text-link {
 			right: -24px;
 		}
 	}
+
 }
+
 
 .action-panel__export-button .gridicon,
 .action-panel__support-button .gridicon {

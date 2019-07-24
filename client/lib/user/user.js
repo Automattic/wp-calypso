@@ -162,9 +162,6 @@ User.prototype.fetch = function() {
  * @param {Error} error network response error
  */
 User.prototype.handleFetchFailure = function( error ) {
-	// Release lock from subsequent fetches
-	this.fetching = false;
-
 	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
 		/**
 		 * if the user bootstrap is disabled (in development), we need to rely on a request to

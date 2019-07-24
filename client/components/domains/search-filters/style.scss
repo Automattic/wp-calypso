@@ -14,6 +14,7 @@
 
 	.button {
 		align-items: center;
+		border-radius: 0 3px 3px 0;
 		display: flex;
 		flex-direction: column;
 		font-weight: normal;
@@ -22,6 +23,14 @@
 		padding: 0 1em;
 		transition: 0.1s all linear;
 		width: 100%;
+
+		&.is-borderless {
+			&:hover,
+			&:focus {
+				border-color: transparent;
+				box-shadow: 0 0 0 3px var( --color-accent-light ), -1px 0 0 3px var( --color-accent-light );
+			}
+		}
 
 		.gridicon {
 			top: 0;
@@ -82,14 +91,14 @@
 
 .search-filters__buttons {
 	display: flex;
-	flex-flow: row wrap;
+	flex-flow: row-reverse;
 	justify-content: space-between;
 
 	.button {
 		flex: 1 0 auto;
-		margin-right: 1em;
+		margin-left: 1em;
 		&:last-child {
-			margin-right: 0;
+			margin-left: 0;
 		}
 
 		&.search-filters__button--is-placeholder {
