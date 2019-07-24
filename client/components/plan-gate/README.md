@@ -14,10 +14,11 @@ import { FEATURE_GOOGLE_MY_BUSINESS } from 'lib/plans/constants';
 const PlanGateExample = () => {
 	return (
 		<div>
-			<PlanGate feature={ FEATURE_GOOGLE_MY_BUSINESS }>
-				<Button>Upgrade to Business</Button>
-				<p>You've got the Google My Business feature</p>
-			</PlanGate>
+			<PlanGate
+				feature={ FEATURE_GOOGLE_MY_BUSINESS }
+				noFeatureContent={ <Button>Upgrade to Business</Button> }
+				hasFeatureContent={ <p>You have got the Google My Business feature</p> }
+				/>
 		</div>
 	);
 }

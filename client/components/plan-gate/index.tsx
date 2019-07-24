@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 
 /**
  * Internal dependencies
@@ -19,24 +19,22 @@ interface ConnectedProps {
 
 interface ExternalProps {
 	feature: string;
-	children: JSX.Element[];
+	hasFeatureContent: ReactNode; // Content to show when plan covers the feature.
+	noFeatureContent: ReactNode; // Content shown when plan doesn't cover the feature.
 }
 
 const PlanGate: FunctionComponent< ConnectedProps & ExternalProps > = ( {
 	hasPlanFeature,
-	children,
+	hasFeatureContent,
+	noFeatureContent,
 } ) => {
-	if ( hasPlanFeature ) {
-		return children[ 1 ];
-	}
-
-	return children[ 0 ];
+	return hasPlanFeature ? hasFeatureContent : noFeatureContent;
 };
 
 export default connect< ConnectedProps, {}, ExternalProps >( ( state, { feature } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
-		hasPlanFeature: selectedSiteId ? hasFeature( state, selectedSiteId, feature ) : false,
+		hasPlanFeature: selectedSiteId ? hasFeature( state, selectedSiteId, feature ) : null,
 	};
 } )( PlanGate );
