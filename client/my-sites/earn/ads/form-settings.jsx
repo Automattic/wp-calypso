@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import FoldableCard from 'components/foldable-card';
 import StateSelector from 'components/forms/us-state-selector';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -349,16 +350,6 @@ class AdsFormSettings extends Component {
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
-					<FormTextInput
-						name="paypal"
-						id="paypal"
-						value={ this.state.paypal || '' }
-						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
-					/>
-				</FormFieldset>
-				<FormFieldset>
 					<FormLabel htmlFor="who_owns">{ translate( 'Who owns this site?' ) }</FormLabel>
 					<FormSelect
 						name="who_owns"
@@ -395,7 +386,6 @@ class AdsFormSettings extends Component {
 
 		return (
 			<div>
-				<FormSectionHeading>{ translate( 'Tax Reporting Information' ) }</FormSectionHeading>
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
 					<FormLabel htmlFor="taxid">
 						{ translate( 'Social Security Number or US Tax ID' ) }
@@ -501,12 +491,20 @@ class AdsFormSettings extends Component {
 					/>
 					<span>
 						{ translate(
-							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.',
+							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}. {{br/}}I agree to post only {{b}}family-friendly content{{/b}} and will not purchase non-human traffic.',
 							{
 								components: {
 									a: (
 										<a
 											href="https://wordpress.com/automattic-ads-tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									br: <br />,
+									b: (
+										<a
+											href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -526,30 +524,101 @@ class AdsFormSettings extends Component {
 
 		return (
 			<Fragment>
-				<SectionHeader label={ translate( 'Ads Settings' ) }>
+				<FoldableCard
+					actionButtonIcon="cog"
+					header={
+						<div>
+							<h1 className="export-card__title">
+								<strong>{ translate( 'MyTestWebsite.com' ) }</strong>
+							</h1>
+							<h2 className="export-card__subtitle">
+								<em>{ translate( 'Application submitted 3 days ago.' ) }</em>
+							</h2>
+						</div>
+					}
+				>
+					<form
+						id="wordads-account"
+						onSubmit={ this.handleSubmit }
+						onChange={ this.props.markChanged }
+					>
+						<FormSectionHeading>{ translate( '1. Site Owner' ) }</FormSectionHeading>
+
+						{ this.siteOwnerOptions() }
+						{ this.state.us_checked ? this.taxOptions() : null }
+
+						<FormSectionHeading>{ translate( '2. Payment Information' ) }</FormSectionHeading>
+						<FormFieldset>
+							<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
+							<FormTextInput
+								name="paypal"
+								id="paypal"
+								value={ this.state.paypal || '' }
+								onChange={ this.handleChange }
+								disabled={ this.state.isLoading }
+							/>
+						</FormFieldset>
+
+						<FormSectionHeading>{ translate( '3. Ad Placements' ) }</FormSectionHeading>
+						<FormFieldset>
+							<FormLegend>
+								<em>
+									{ translate(
+										'We can automatically place ads on your site, or you can manually insert them yourself. {{br/}}Which would you prefer?',
+										{
+											components: {
+												br: <br />,
+											},
+										}
+									) }
+								</em>
+							</FormLegend>
+							<br />
+							{
+								// @TODO need to update these values
+							 }
+							<CompactFormToggle
+								checked={ !! this.state.display_options.enable_header_ad }
+								disabled={ this.state.isLoading }
+								onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
+							>
+								{ translate( 'Automatically place ads to maximize revenue.' ) }
+							</CompactFormToggle>
+						</FormFieldset>
+
+						<FormSectionHeading>{ translate( '4. Terms of Service' ) }</FormSectionHeading>
+						{ this.acceptCheckbox() }
+						<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
+							{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						</Button>
+					</form>
+				</FoldableCard>
+
+				<SectionHeader label={ translate( 'Placements' ) }>
 					<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
-						{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						{ isPending ? translate( 'Saving…' ) : translate( 'Update Placements' ) }
 					</Button>
 				</SectionHeader>
 
 				<Card>
 					<form
-						id="wordads-settings"
+						id="wordads-placements"
 						onSubmit={ this.handleSubmit }
 						onChange={ this.props.markChanged }
 					>
 						{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
 
 						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
-
-						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
-						{ this.siteOwnerOptions() }
-						{ this.state.us_checked ? this.taxOptions() : null }
-
-						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
-						{ this.acceptCheckbox() }
+						<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
+							{ isPending ? translate( 'Saving…' ) : translate( 'Update Placements' ) }
+						</Button>
 					</form>
 				</Card>
+
+				{
+					// @TODO update link
+				 }
+				<Card href="/stats/ads/day/site">View Ads Earnings</Card>
 			</Fragment>
 		);
 	}
