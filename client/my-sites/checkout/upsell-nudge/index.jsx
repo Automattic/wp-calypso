@@ -173,12 +173,13 @@ export class UpsellNudge extends React.Component {
 	};
 
 	handleClickAccept = buttonAction => {
-		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
+		const { trackUpsellButtonClick, upsellType, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
-		page( `/checkout/${ siteSlug }/${ upgradeItem }` );
+
+		page( `/checkout/${ upgradeItem }` );
 	};
 }
 

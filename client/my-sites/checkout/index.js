@@ -27,7 +27,7 @@ export default function() {
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
-		page( '/checkout/:site/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
+		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
 		page( '/checkout*', redirectLoggedOut );
 
@@ -95,7 +95,7 @@ export default function() {
 
 	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
 		page(
-			'/checkout/:site/(add|offer)-support-session/pending/:orderId',
+			'/checkout/:site?/(add|offer)-support-session/pending/:orderId',
 			siteSelection,
 			checkoutPending,
 			makeLayout,
@@ -103,7 +103,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/(add|offer)-support-session/:receiptId?',
+			'/checkout/:site?/(add|offer)-support-session/:receiptId?',
 			siteSelection,
 			upsellNudge,
 			makeLayout,
@@ -111,7 +111,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/offer-quickstart-session/pending/:orderId',
+			'/checkout/offer-quickstart-session/pending/:orderId',
 			siteSelection,
 			checkoutPending,
 			makeLayout,
@@ -119,7 +119,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/:site/offer-quickstart-session/:receiptId?',
+			'/checkout/offer-quickstart-session/:receiptId?',
 			siteSelection,
 			upsellNudge,
 			makeLayout,
