@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -14,9 +14,9 @@ import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
+import Button from 'components/button';
 
 const siteTypeToFlowname = {
-	import: 'import',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -32,12 +32,32 @@ class SiteType extends Component {
 		this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
 	};
 
+	renderImportButton = () => {
+		if ( 'import' === this.props.flowName ) {
+			return null;
+		}
+
+		return (
+			<div className="site-type__import-button">
+				<Button borderless onClick={ this.props.goToNextStep.bind( this, 'import' ) }>
+					{ this.props.translate( 'Already have a website?' ) }
+				</Button>
+			</div>
+		);
+	};
+
+	renderContent = () => (
+		<Fragment>
+			<SiteTypeForm submitForm={ this.submitStep } siteType={ this.props.siteType } />
+			{ this.renderImportButton() }
+		</Fragment>
+	);
+
 	render() {
 		const {
 			flowName,
 			positionInFlow,
 			signupProgress,
-			siteType,
 			stepName,
 			translate,
 			hasInitializedSitesBackUrl,
@@ -58,7 +78,7 @@ class SiteType extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
-				stepContent={ <SiteTypeForm submitForm={ this.submitStep } siteType={ siteType } /> }
+				stepContent={ this.renderContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
 				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }

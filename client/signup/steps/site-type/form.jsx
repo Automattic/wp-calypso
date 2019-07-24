@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Badge from 'components/badge';
-import Button from 'components/button';
 import Card from 'components/card';
 import { getAllSiteTypes } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -63,11 +62,6 @@ class SiteTypeForm extends Component {
 						</Card>
 					) ) }
 				</Card>
-				<div className="site-type__import-button">
-					<Button borderless onClick={ this.handleSubmit.bind( this, 'import' ) }>
-						{ this.props.translate( 'Already have a website?' ) }
-					</Button>
-				</div>
 			</Fragment>
 		);
 	}

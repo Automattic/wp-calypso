@@ -637,14 +637,17 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) {
-	let siteType, siteTypeValue;
-
-	if ( nextProps.flowName === 'import' ) {
-		siteType = siteTypeValue = 'import';
-	} else {
-		siteType = get( nextProps, [ 'initialContext', 'query', 'site_type' ], null );
-		siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
+		return;
 	}
+
+	const {
+		initialContext: {
+			query: { site_type: siteType },
+		},
+	} = nextProps;
+
+	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
 
 	let fulfilledDependencies = [];
 
