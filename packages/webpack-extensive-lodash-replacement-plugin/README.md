@@ -30,10 +30,10 @@ const ExtensiveLodashReplacementPlugin =
 module.exports = {
   ...,
   plugins: [
-    new ExtensiveLodashReplacementPlugin( '.' ),
+    new ExtensiveLodashReplacementPlugin( { baseDir: '.' } ),
     ...
   ]
 };
 ```
 
-The optional constructor argument is the base directory for the root project.
+The optional `baseDir` is the base directory for the root project.
