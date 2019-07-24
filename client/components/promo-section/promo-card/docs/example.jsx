@@ -10,6 +10,7 @@ import React from 'react';
  */
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardCta from 'components/promo-section/promo-card/cta';
+import { FEATURE_MEMBERSHIPS } from 'lib/plans/constants';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoCardExample = () => {
@@ -17,6 +18,7 @@ const PromoCardExample = () => {
 		path: '/calypso/images/earn/referral.svg',
 		alt: 'Using Props',
 	};
+	const clicked = () => alert( 'Clicked!' );
 	return (
 		<div className="design-assets__group">
 			<div>
@@ -26,7 +28,11 @@ const PromoCardExample = () => {
 						inviting the user to do.
 					</p>
 					<PromoCardCta
-						button={ { text: 'Call To Action!', action: () => alert( 'Clicked' ) } }
+						cta={ {
+							feature: FEATURE_MEMBERSHIPS,
+							upgradeButton: { text: 'Upgrade!', action: clicked },
+							defaultButton: { text: 'Memberships', action: clicked },
+						} }
 						learnMoreLink="/learn-more"
 					/>
 				</PromoCard>
