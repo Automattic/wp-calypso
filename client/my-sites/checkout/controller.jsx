@@ -21,12 +21,24 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
+import { sites } from 'my-sites/controller';
 
 export function checkout( context, next ) {
-	const { feature, plan, product, purchaseId } = context.params;
+	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite ) {
+		sites( context, next );
+	}
+
+	let product;
+	if ( selectedSite.domain !== domainOrProduct ) {
+		product = domainOrProduct;
+	} else {
+		product = context.params.product;
+	}
 
 	if ( 'thank-you' === product ) {
 		return;
