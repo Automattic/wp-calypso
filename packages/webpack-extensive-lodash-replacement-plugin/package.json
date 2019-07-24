@@ -25,7 +25,6 @@
 		"webpack": "^4.29.6"
 	},
 	"dependencies": {
-		"enhanced-resolve": "^4.1.0",
 		"semver": "^6.1.1"
 	}
 }

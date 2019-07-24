@@ -2,11 +2,6 @@
 /* eslint-disable import/no-nodejs-modules */
 const path = require( 'path' );
 const semver = require( 'semver' );
-const {
-	NodeJsInputFileSystem,
-	CachedInputFileSystem,
-	ResolverFactory,
-} = require( 'enhanced-resolve' );
 
 // List of all known lodash module names.
 // Used for normalizing names to avoid code duplication.
@@ -341,15 +336,7 @@ function createError( message, error = null ) {
 	);
 }
 
-const resolverOptions = {
-	fileSystem: new CachedInputFileSystem( new NodeJsInputFileSystem(), 4000 ),
-	extensions: [ '.js' ],
-	resolveToContext: true,
-};
-
-function getModuleForPath( rootPath, packageName ) {
-	const moduleResolver = ResolverFactory.createResolver( resolverOptions );
-
+function getModuleForPath( moduleResolver, rootPath, packageName ) {
 	return new Promise( ( resolve, reject ) => {
 		moduleResolver.resolve( {}, rootPath, packageName, {}, ( error, filepath, context ) => {
 			if ( error ) {
@@ -369,19 +356,48 @@ function getModuleForPath( rootPath, packageName ) {
 class ExtensiveLodashReplacementPlugin {
 	constructor( baseDir = '.' ) {
 		this.baseDir = path.resolve( baseDir );
-		this.baseLodashContext = getModuleForPath( this.baseDir, 'lodash' );
-		this.baseLodashESVersion = ( async () => {
-			const baseLodashES = await getModuleForPath( this.baseDir, 'lodash-es' );
-			return (
-				baseLodashES && baseLodashES.descriptionFileData && baseLodashES.descriptionFileData.version
+	}
+
+	async initBaseLodashData() {
+		if ( this.hasInit ) {
+			return;
+		}
+
+		this.hasInit = true;
+
+		try {
+			this.baseLodashContext = await getModuleForPath(
+				this.moduleResolver,
+				this.baseDir,
+				'lodash'
 			);
-		} )();
+		} catch ( error ) {
+			throw createError( 'Could not find root `lodash`.' );
+		}
+
+		try {
+			const baseLodashES = await getModuleForPath( this.moduleResolver, this.baseDir, 'lodash-es' );
+			this.baseLodashESVersion =
+				baseLodashES &&
+				baseLodashES.descriptionFileData &&
+				baseLodashES.descriptionFileData.version;
+		} catch ( error ) {
+			throw createError( 'Could not find root `lodash-es`.' );
+		}
+
+		if ( ! this.baseLodashESVersion ) {
+			throw createError( 'Could not determine root `lodash-es` version.' );
+		}
 	}
 
 	// Figure out the version for a given import.
 	// It follows the node resolution algorithm until it finds the package, returning its version.
 	async findRequestedVersion( file, packageName ) {
-		const foundContext = await getModuleForPath( path.dirname( file ), packageName );
+		const foundContext = await getModuleForPath(
+			this.moduleResolver,
+			path.dirname( file ),
+			packageName
+		);
 		const baseLodashContext = await this.baseLodashContext;
 
 		if ( foundContext.path === baseLodashContext.path ) {
@@ -467,6 +483,9 @@ class ExtensiveLodashReplacementPlugin {
 		} );
 
 		compiler.hooks.normalModuleFactory.tap( 'LodashReplacementPlugin', nmf => {
+			this.moduleResolver = this.moduleResolver || nmf.getResolver( 'normal' );
+			this.initBaseLodashData();
+
 			nmf.hooks.beforeResolve.tapPromise( 'LodashReplacementPlugin', async result => {
 				if ( ! result ) return;
 				result.request = await this.getModifiedRequest( result );
