@@ -197,7 +197,8 @@ const analytics = {
 	initialize: function( user, superProps ) {
 		analytics.setUser( user );
 		analytics.setSuperProps( superProps );
-		analytics.identifyUser( user.get().username, user.get().ID );
+		const userData = user.get();
+		analytics.identifyUser( userData.username, userData.ID );
 	},
 
 	setUser: function( user ) {
