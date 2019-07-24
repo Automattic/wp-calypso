@@ -61,12 +61,16 @@ class EarningsMain extends Component {
 
 		if ( canAccessAds( this.props.site ) ) {
 			tabs.push( {
-				title: translate( 'Ads Earnings' ),
+				title: config.isEnabled( 'earn-relayout' )
+					? translate( 'Earnings' )
+					: translate( 'Ads Earnings' ),
 				path: '/earn/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
 			} );
 			tabs.push( {
-				title: translate( 'Ads Settings' ),
+				title: config.isEnabled( 'earn-relayout' )
+					? translate( 'Settings' )
+					: translate( 'Ads Settings' ),
 				path: '/earn/ads-settings' + pathSuffix,
 				id: 'ads-settings',
 			} );
