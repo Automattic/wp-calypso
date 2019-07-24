@@ -19,13 +19,12 @@ import NavItem from 'components/section-nav/item';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
 import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import Home from './home';
-import AdsWrapper from './ads/wrapper';
+import AdsSection from './ads/index';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import { canAccessAds } from 'lib/ads/utils';
@@ -53,14 +52,9 @@ class EarningsMain extends Component {
 
 		if ( canAccessAds( this.props.site ) ) {
 			tabs.push( {
-				title: translate( 'Earnings' ),
-				path: '/earn/ads-earnings' + pathSuffix,
-				id: 'ads-earnings',
-			} );
-			tabs.push( {
-				title: translate( 'Settings' ),
-				path: '/earn/ads-settings' + pathSuffix,
-				id: 'ads-settings',
+				title: translate( 'Ads' ),
+				path: '/earn/ads' + pathSuffix,
+				id: 'ads',
 			} );
 		}
 
@@ -69,17 +63,11 @@ class EarningsMain extends Component {
 
 	getComponent( section ) {
 		switch ( section ) {
-			case 'ads-earnings':
+			case 'ads':
 				return (
-					<AdsWrapper section={ this.props.section }>
-						<WordAdsEarnings site={ this.props.site } />
-					</AdsWrapper>
-				);
-			case 'ads-settings':
-				return (
-					<AdsWrapper section={ this.props.section }>
+					<AdsSection section={ this.props.section }>
 						<AdsSettings />
-					</AdsWrapper>
+					</AdsSection>
 				);
 			case 'payments':
 				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
@@ -122,6 +110,7 @@ class EarningsMain extends Component {
 			case 'payments':
 				return translate( 'Recurring Payments' );
 
+			case 'ads':
 			case 'ads-earnings':
 			case 'ads-settings':
 				return translate( 'Ads' );
@@ -187,7 +176,7 @@ class EarningsMain extends Component {
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
 				{ this.getHeaderCake() }
-				{ section && this.getSectionNav( section ) }
+				{ /* section && this.getSectionNav( section ) */ }
 				{ component }
 			</Main>
 		);
