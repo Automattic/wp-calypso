@@ -782,7 +782,7 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function( newUserName = '', newUserId = '' ) {
+	identifyUser: function( newUserName, newUserId ) {
 		const anonymousUserId = this.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
