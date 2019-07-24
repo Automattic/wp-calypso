@@ -5,6 +5,7 @@
  */
 
 import React, { FunctionComponent } from 'react';
+import { connect } from 'react-redux';
 import { partialRight } from 'lodash';
 
 /**
@@ -12,7 +13,8 @@ import { partialRight } from 'lodash';
  */
 import Button from 'components/button';
 import ActionPanelCta from 'components/action-panel/cta';
-import PlanGate from 'components/plan-gate';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 type ClickCallback = () => void;
 
@@ -29,6 +31,10 @@ export type Cta =
 			defaultButton: CtaButton;
 			activatedButton?: CtaButton;
 	  };
+
+interface ConnectedProps {
+	hasPlanFeature: boolean;
+}
 
 export interface Props {
 	cta: Cta;
@@ -47,18 +53,22 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 		[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
 	};
 }
-const PromoCardCta: FunctionComponent< Props > = ( { cta, learnMoreLink, isPrimary } ) => {
+const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
+	cta,
+	learnMoreLink,
+	isPrimary,
+	hasPlanFeature,
+} ) => {
 	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
 	let ctaBtn;
 
 	if ( isCtaButton( cta ) ) {
 		ctaBtn = <Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>;
 	} else {
-		ctaBtn = (
-			<PlanGate feature={ cta.feature }>
-				<Button { ...ctaBtnProps( cta.upgradeButton ) }>{ cta.upgradeButton.text }</Button>
-				<Button { ...ctaBtnProps( cta.defaultButton ) }>{ cta.defaultButton.text }</Button>
-			</PlanGate>
+		ctaBtn = hasPlanFeature ? (
+			<Button { ...ctaBtnProps( cta.defaultButton ) }>{ cta.defaultButton.text }</Button>
+		) : (
+			<Button { ...ctaBtnProps( cta.upgradeButton ) }>{ cta.upgradeButton.text }</Button>
 		);
 	}
 	return (
@@ -73,4 +83,13 @@ const PromoCardCta: FunctionComponent< Props > = ( { cta, learnMoreLink, isPrima
 	);
 };
 
-export default PromoCardCta;
+export default connect< ConnectedProps, {}, Props >( ( state, { cta } ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+
+	return {
+		hasPlanFeature:
+			selectedSiteId && ! isCtaButton( cta )
+				? hasFeature( state, selectedSiteId, cta.feature )
+				: false,
+	};
+} )( PromoCardCta );

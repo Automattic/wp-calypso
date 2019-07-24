@@ -9,19 +9,26 @@ A [`Card` component](../../components/card) based on [`ActionPanel'](../../compo
 import PromoCard from 'my-sites/promo-section/promo-card';
 
 const PromoCardExample = () => {
-  return (
-      <PromoCard title="Under-used Feature">
-            <img
-              src="/calypso/images/wordpress/logo-stars.svg"
-              width="170"
-              height="143"
-              alt="WordPress logo"
-            />
-          <p>
-            This is a description of the action. It gives a bit more detail and explains what we are
-            inviting the user to do.
-          </p>
-      </PromoCard>
-  );
+	const img = {
+		path: '/calypso/images/earn/referral.svg',
+		alt: 'Using Props',
+	};
+	const clicked = () => alert( 'Clicked!' );
+	return (
+		<PromoCard title="Under-used Feature" image={ img } isPrimary={ false }>
+			<p>
+				This is a description of the action. It gives a bit more detail and explains what we are
+				inviting the user to do.
+			</p>
+			<PromoCardCta
+				cta={ {
+					feature: FEATURE_MEMBERSHIPS,
+					upgradeButton: { text: 'Upgrade!', action: clicked },
+					defaultButton: { text: 'Memberships', action: clicked },
+				} }
+				learnMoreLink="/learn-more"
+			/>
+		</PromoCard>
+	);
 }
 ```
