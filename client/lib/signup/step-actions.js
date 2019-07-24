@@ -637,7 +637,6 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) {
-	// debugger;
 	let siteType, siteTypeValue;
 
 	if ( nextProps.flowName === 'import' ) {
