@@ -92,7 +92,7 @@ class Sites extends Component {
 				break;
 		}
 
-		return translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
+		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: { path },
 			components: {
 				strong: <strong />,
