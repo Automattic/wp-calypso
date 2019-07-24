@@ -300,7 +300,6 @@ I18N.prototype.setLocale = function( localeData ) {
 		this.state.numberFormatSettings.thousands_sep = ',';
 	}
 
-	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
@@ -335,7 +334,6 @@ I18N.prototype.addTranslations = function( localeData ) {
 		}
 	}
 
-	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
@@ -361,26 +359,6 @@ I18N.prototype.hasTranslation = function() {
  */
 I18N.prototype.translate = function() {
 	const options = normalizeTranslateArguments( arguments );
-
-	let optionsString;
-	let cacheable = ! options.components;
-	if ( cacheable ) {
-		// Safe JSON stringification here to catch Circular JSON error
-		// caused by passing a React component into args where only scalars are allowed
-		try {
-			optionsString = JSON.stringify( options );
-		} catch ( e ) {
-			cacheable = false;
-		}
-
-		if ( optionsString ) {
-			const translation = this.state.translations.get( optionsString );
-			// Return the cached translation.
-			if ( translation ) {
-				return translation;
-			}
-		}
-	}
 
 	let translation = getTranslation( this, options );
 	if ( ! translation ) {
@@ -422,10 +400,6 @@ I18N.prototype.translate = function() {
 		translation = hook( translation, options );
 	} );
 
-	if ( cacheable ) {
-		this.state.translations.set( optionsString, translation );
-	}
-
 	return translation;
 };
 
@@ -441,7 +415,6 @@ I18N.prototype.translate = function() {
  */
 I18N.prototype.reRenderTranslations = function() {
 	debug( 'Re-rendering all translations due to external request' );
-	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
