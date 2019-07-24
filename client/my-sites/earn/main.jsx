@@ -130,6 +130,8 @@ class EarningsMain extends Component {
 				return translate( 'Recurring Payments' );
 
 			case 'ads-earnings':
+			case 'ads-settings':
+				return translate( 'Ads' );
 				return translate( 'Ads Earnings' );
 
 			case 'ads-settings':
