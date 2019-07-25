@@ -32,7 +32,7 @@ import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {
-		section: PropTypes.string.isRequired,
+		section: PropTypes.string,
 		site: PropTypes.object,
 		query: PropTypes.object,
 	};
@@ -98,7 +98,7 @@ class EarningsMain extends Component {
 			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
-				return null;
+				return <p>The default</p>;
 		}
 	}
 
@@ -150,6 +150,35 @@ class EarningsMain extends Component {
 	 */
 	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
 
+	getHeaderCake = () => {
+		const headerText = this.getHeaderText();
+		return config.isEnabled( 'earn-relayout' ) && headerText ? (
+			<HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>
+		) : null;
+	};
+
+	getSectionNav = section => {
+		const currentPath = this.getCurrentPath();
+
+		return 'payments' !== section || ! config.isEnabled( 'earn-relayout' ) ? (
+			<SectionNav selectedText={ this.getSelectedText() }>
+				<NavTabs>
+					{ this.getFilters().map( filterItem => {
+						return (
+							<NavItem
+								key={ filterItem.id }
+								path={ filterItem.path }
+								selected={ filterItem.path === currentPath }
+							>
+								{ filterItem.title }
+							</NavItem>
+						);
+					} ) }
+				</NavTabs>
+			</SectionNav>
+		) : null;
+	};
+
 	render() {
 		const { adsProgramName, section, translate } = this.props;
 		const component = this.getComponent( this.props.section );
@@ -161,36 +190,16 @@ class EarningsMain extends Component {
 			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
 
-		const currentPath = this.getCurrentPath();
-
 		return (
 			<Main className="earn">
 				<PageViewTracker
-					path={ `/earn/${ section }/:site` }
+					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
-				{ config.isEnabled( 'earn-relayout' ) && (
-					<HeaderCake backHref={ this.goBack() }>{ this.getHeaderText() }</HeaderCake>
-				) }
-				{ ( 'payments' !== this.props.section || ! config.isEnabled( 'earn-relayout' ) ) && (
-					<SectionNav selectedText={ this.getSelectedText() }>
-						<NavTabs>
-							{ this.getFilters().map( filterItem => {
-								return (
-									<NavItem
-										key={ filterItem.id }
-										path={ filterItem.path }
-										selected={ filterItem.path === currentPath }
-									>
-										{ filterItem.title }
-									</NavItem>
-								);
-							} ) }
-						</NavTabs>
-					</SectionNav>
-				) }
+				{ this.getHeaderCake() }
+				{ section && this.getSectionNav( section ) }
 				{ component }
 			</Main>
 		);
