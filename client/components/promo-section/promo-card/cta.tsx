@@ -5,6 +5,7 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { partialRight } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal depencies
@@ -60,6 +61,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 } ) => {
 	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
 	let ctaBtn;
+	const translate = useTranslate();
 
 	if ( isCtaButton( cta ) ) {
 		ctaBtn = <Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>;
@@ -74,8 +76,8 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 		<ActionPanelCta>
 			{ ctaBtn }
 			{ learnMoreLink && (
-				<Button borderless className="promo-card__cta-learn-more" href="{ learnMoreLink }">
-					Learn More
+				<Button borderless className="promo-card__cta-learn-more" href={ learnMoreLink }>
+					{ translate( 'Learn more' ) }
 				</Button>
 			) }
 		</ActionPanelCta>
