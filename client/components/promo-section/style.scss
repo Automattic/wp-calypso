@@ -5,17 +5,20 @@
 	flex-wrap: wrap;
 	// margins of the items will "hang off the side" invisibly
 	width: calc( 100% + 1em );
-
-}
-
-.promo-section__promo {
-	display: flex;
 	flex-direction: column;
-	margin: 0.5em;
-	width: calc( 100% - 1em );
-
 	@include breakpoint( '>1040px' ) {
-		width: calc( 50% - 1em );
+		flex-direction: row;
+	}
+
+	.promo-card {
+		display: flex;
+		margin: 0.5em;
+		width: calc( 100% - 1em );
+
+		@include breakpoint( '>1040px' ) {
+			width: calc( 50% - 1em );
+		}
 	}
 }
+
 

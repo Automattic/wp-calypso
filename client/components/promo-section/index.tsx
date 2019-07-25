@@ -34,7 +34,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	return (
 		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image }>
 			<p>{ body }</p>
-			{ cta && <PromoCardCta { ...cta } /> }
+			{ cta && <PromoCardCta cta={ cta } /> }
 		</PromoCard>
 	);
 };
@@ -45,9 +45,7 @@ const PromoSection: FunctionComponent< Props > = ( { header, promos } ) => {
 			{ header && <PromoSectionCard isPrimary={ true } { ...header } /> }
 			<div className="promo-section__promos">
 				{ promos.map( ( promo, i ) => (
-					<div className="promo-section__promo">
-						<PromoSectionCard { ...promo } key={ i } />
-					</div>
+					<PromoSectionCard { ...promo } key={ i } />
 				) ) }
 			</div>
 		</div>

@@ -10,6 +10,7 @@ import React from 'react';
  */
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoSectionExample = () => {
 	const promos: PromoSectionProps = {
 		header: {
@@ -28,10 +29,8 @@ const PromoSectionExample = () => {
 					path: '/calypso/images/earn/simple-payments.svg',
 				},
 				cta: {
-					button: {
-						text: 'Collect One-time Payments',
-						url: '/',
-					},
+					text: 'Collect One-time Payments',
+					url: '/',
 				},
 			},
 			{
@@ -42,10 +41,8 @@ const PromoSectionExample = () => {
 					path: '/calypso/images/earn/recurring.svg',
 				},
 				cta: {
-					button: {
-						text: 'Collect Recurring Payments',
-						url: '/',
-					},
+					text: 'Collect Recurring Payments',
+					url: '/',
 				},
 			},
 		],
@@ -59,6 +56,7 @@ const PromoSectionExample = () => {
 		</div>
 	);
 };
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 PromoSectionExample.displayName = 'PromoSection';
 
