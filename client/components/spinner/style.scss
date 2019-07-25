@@ -7,6 +7,15 @@
 .spinner {
 	display: flex;
 	align-items: center;
+
+	&.right {
+		margin-left: auto;
+		margin-right: 0.5em;
+	}
+	&.left {
+		margin-left: 0.5em;
+		margin-right: auto;
+	}
 }
 
 .spinner__outer, .spinner__inner {

@@ -17,14 +17,16 @@ export default class Spinner extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 		size: PropTypes.number,
+		align: PropTypes.oneOf( [ 'right', 'left' ] ),
 	};
 
 	static defaultProps = {
 		size: 20,
+		align: null,
 	};
 
 	render() {
-		const className = classNames( 'spinner', this.props.className );
+		const className = classNames( 'spinner', this.props.align, this.props.className );
 
 		const style = {
 			width: this.props.size,

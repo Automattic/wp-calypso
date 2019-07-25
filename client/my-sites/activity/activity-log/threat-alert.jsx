@@ -172,7 +172,7 @@ export class ThreatAlert extends Component {
 											dateFormat="ll"
 										/>
 									</span>
-									{ inProgress && <Spinner /> }
+									{ inProgress && <Spinner align="right" /> }
 									{ inProgress && (
 										<Interval onTick={ this.refreshRewindState } period={ EVERY_TEN_SECONDS } />
 									) }
