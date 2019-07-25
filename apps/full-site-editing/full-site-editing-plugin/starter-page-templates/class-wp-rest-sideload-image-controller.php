@@ -35,10 +35,13 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 					'show_in_index'       => false,
 					'args'                => [
 						'url'     => [
-							'description' => 'URL to the image to be side-loaded.',
-							'type'        => 'string',
-							'format'      => 'uri',
-							'required'    => true,
+							'description'       => 'URL to the image to be side-loaded.',
+							'type'              => 'string',
+							'format'            => 'uri',
+							'sanitize_callback' => function( $url ) {
+								return esc_url_raw( strtok( $url, '?' ) );
+							},
+							'required'          => true,
 						],
 						'post_id' => [
 							'description' => 'ID of the post to associate the image with',
