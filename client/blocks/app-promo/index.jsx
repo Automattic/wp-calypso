@@ -193,9 +193,9 @@ export class AppPromo extends React.Component {
 					/>
 					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
 				</a>
-				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
+				<Dialog className="app-promo__dialog" isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
 					<h1>{ translate( 'Check your mail!' ) }</h1>
-					<p>{ translate( "We've sent you links to download and log in to the mobile app. Use the links from your mobile device." ) }</p>
+					<p>{ translate( "We've sent you an email with links to download and effortlessly log in to the mobile app. Be sure to use them from your mobile device!" ) }</p>
 				</Dialog>
 			</div>
 		)
@@ -206,6 +206,7 @@ export class AppPromo extends React.Component {
 			return null;
 		}
 		const { promoItem } = this.state;
+		return this.mobilePromo();
 		return ( promoItem.type === 'mobile' ) ? this.mobilePromo() : this.desktopPromo( promoItem );
 	}
 }
