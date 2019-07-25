@@ -439,7 +439,8 @@ export class Checkout extends React.Component {
 		// nudge opened by a direct link to /offer-support-session.
 		if (
 			':receiptId' === pendingOrReceiptId &&
-			isEmpty( getAllCartItems( cart ) && ! previousRoute.includes( '/checkout' ) )
+			isEmpty( getAllCartItems( cart ) ) &&
+			! previousRoute.includes( '/checkout' )
 		) {
 			return `/stats/day/${ selectedSiteSlug }`;
 		}
