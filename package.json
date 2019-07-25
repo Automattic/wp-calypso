@@ -275,7 +275,7 @@
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "file:./packages/webpack-extensive-lodash-replacement-plugin",
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
-		"@types/classnames": "2.2.7",
+		"@types/classnames": "2.2.9",
 		"@types/debug": "4.1.4",
 		"@types/lodash": "4.14.123",
 		"@types/page": "1.8.0",
