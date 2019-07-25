@@ -6,7 +6,7 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import ActionPanel from 'components/action-panel';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
@@ -32,12 +32,11 @@ export interface Props {
 
 const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, children } ) => {
 	const classes = classNames( {
-		'action-panel': true,
 		'promo-card': true,
 		'is-primary': isPrimary,
 	} );
 	return (
-		<Card className={ classes }>
+		<ActionPanel className={ classes }>
 			{ image && (
 				<ActionPanelFigure inlineBodyText={ false } align={ image.align || 'left' }>
 					<img src={ image.path } alt={ image.alt } />
@@ -55,7 +54,7 @@ const PromoCard: FunctionComponent< Props > = ( { title, image, isPrimary, child
 					  } )
 					: children }
 			</ActionPanelBody>
-		</Card>
+		</ActionPanel>
 	);
 };
 
