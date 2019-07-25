@@ -514,13 +514,13 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 		},
 
-		'rivet-name-address': {
-			stepName: 'rivet-name-address',
+		'business-details': {
+			stepName: 'business-details',
 			providesDependencies: [ 'siteTitle', 'placeId' ],
 		},
 
-		'rivet-confirmation': {
-			stepName: 'rivet-confirmation',
+		'business-confirmation': {
+			stepName: 'business-confirmation',
 			dependencies: [ 'placeId' ],
 			providesDependencies: [ 'rivetId' ],
 		},

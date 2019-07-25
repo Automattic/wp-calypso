@@ -320,14 +320,7 @@ export function generateFlows( {
 
 	if ( config.isEnabled( 'signup/rivet-flow' ) ) {
 		flows.rivet = {
-			steps: [
-				'user',
-				'site-type',
-				'rivet-name-address',
-				'rivet-confirmation',
-				'domains',
-				'plans',
-			],
+			steps: [ 'user', 'business-details', 'business-confirmation', 'domains', 'plans' ],
 			destination: getChecklistDestination,
 			description: 'Signup flow for starting a site using Rivet',
 			lastModified: '2019-07-22',

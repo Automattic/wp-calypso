@@ -2493,10 +2493,10 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
 	} );
 };
 
-Undocumented.prototype.getRivetSuggestions = function( service = 'google', { name, address } ) {
+Undocumented.prototype.getRivetSuggestions = function( { name, address } ) {
 	return this.wpcom.req.post(
 		{
-			path: `/rivet/suggest/${ service }`,
+			path: `/rivet/suggest/google`,
 		},
 		{ apiVersion: '1.1' },
 		{
