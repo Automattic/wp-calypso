@@ -19,21 +19,9 @@ const user = userFactory();
 const { defaultFlowName } = flows;
 
 export function getFlowName( parameters ) {
-	const flow =
-		parameters.flowName && isFlowName( parameters.flowName )
-			? parameters.flowName
-			: defaultFlowName;
-	return maybeFilterFlowName( flow, flows.filterFlowName );
-}
-
-function maybeFilterFlowName( flowName, filterCallback ) {
-	if ( filterCallback && typeof filterCallback === 'function' ) {
-		const filteredFlow = filterCallback( flowName );
-		if ( isFlowName( filteredFlow ) ) {
-			return filteredFlow;
-		}
-	}
-	return flowName;
+	return parameters.flowName && isFlowName( parameters.flowName )
+		? parameters.flowName
+		: defaultFlowName;
 }
 
 function isFlowName( pathFragment ) {
