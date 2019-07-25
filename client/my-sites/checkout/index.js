@@ -16,7 +16,7 @@ import {
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
-import { noSite, siteSelection, sites } from 'my-sites/controller';
+import { noSite, siteSelection } from 'my-sites/controller';
 import config from 'config';
 import userFactory from 'lib/user';
 
@@ -127,9 +127,7 @@ export default function() {
 		);
 	}
 
-	page( '/checkout/:domain', siteSelection, checkout, makeLayout, clientRender );
-
-	page( '/checkout/:product', siteSelection, sites, makeLayout, clientRender );
+	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
