@@ -173,7 +173,7 @@ class Login extends Component {
 				},
 			} );
 		} else if ( privateSite ) {
-			headerText = translate( 'This is a private WordPress.com site' );
+			headerText = translate( 'This is a private WordPress.com site.' );
 		} else if ( oauth2Client ) {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {

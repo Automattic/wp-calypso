@@ -23,7 +23,7 @@ export default function PrivateSite() {
 			</div>
 
 			<h2 className="wp-login__private-site-header">
-				{ translate( 'This is a private WordPress.com site' ) }
+				{ translate( 'This is a private WordPress.com site.' ) }
 			</h2>
 
 			<p>
