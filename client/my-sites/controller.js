@@ -23,7 +23,7 @@ import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/act
 import { savePreference } from 'state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
 import NavigationComponent from 'my-sites/navigation';
-import { getSiteFragment, sectionify } from 'lib/route';
+import { addQueryArgs, getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -264,6 +264,7 @@ function createSitesComponent( context ) {
 		<SitesComponent
 			siteBasePath={ basePath }
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
+			fromSite={ context.query.site }
 		/>
 	);
 }
@@ -308,7 +309,6 @@ export function siteSelection( context, next ) {
 	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
-	const allSitesPath = sectionify( context.path, siteFragment );
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
@@ -396,6 +396,10 @@ export function siteSelection( context, next ) {
 				}
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+				const allSitesPath = addQueryArgs(
+					{ site: siteFragment },
+					sectionify( context.path, siteFragment )
+				);
 				page.redirect( allSitesPath );
 			}
 		} );
