@@ -24,6 +24,7 @@ import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
+import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
@@ -98,7 +99,7 @@ class EarningsMain extends Component {
 			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
-				return <p>The default</p>;
+				return <Home />;
 		}
 	}
 
