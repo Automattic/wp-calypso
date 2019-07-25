@@ -149,6 +149,7 @@ export class ThreatAlert extends Component {
 
 	render() {
 		const { threat, translate } = this.props;
+		const inProgress = this.state.requesting || threat.fixer_status === 'in_progress';
 
 		return (
 			<Fragment>
@@ -171,8 +172,8 @@ export class ThreatAlert extends Component {
 											dateFormat="ll"
 										/>
 									</span>
-									{ this.state.requesting && <Spinner /> }
-									{ this.state.requesting && (
+									{ inProgress && <Spinner /> }
+									{ inProgress && (
 										<Interval onTick={ this.refreshRewindState } period={ EVERY_TEN_SECONDS } />
 									) }
 									<SplitButton
@@ -182,7 +183,7 @@ export class ThreatAlert extends Component {
 											threat.fixable ? translate( 'Fix threat' ) : translate( 'Ignore threat' )
 										}
 										onClick={ threat.fixable ? this.handleFix : this.handleIgnore }
-										disabled={ this.state.requesting }
+										disabled={ inProgress }
 									>
 										<PopoverMenuItem
 											onClick={ () => debug( 'documentation clicked' ) }
