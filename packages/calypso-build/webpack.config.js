@@ -52,7 +52,7 @@ function getWebpackConfig(
 		'output-chunk-filename': outputChunkFilename,
 		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
-		'output-libary-target': outputLibraryTarget = 'window',
+		'output-library-target': outputLibraryTarget = 'window',
 	}
 ) {
 	const workerCount = 1;

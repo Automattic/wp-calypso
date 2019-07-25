@@ -2,6 +2,7 @@
 
 - Update Jest config to be able to handle `import`s otherwise handled by Webpack's `file-loader` and `sass-loader`.
 - Update Jest setup to properly initialize Enzyme's adapter.
+- Fix typo that prevented the `output-library-target` argument from being passed to Webpack.
 
 # 2.0.0
 
