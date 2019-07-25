@@ -20,7 +20,6 @@ import wpcom from 'lib/wp';
 import Dialog from 'components/dialog'
 import { fetchUserSettings } from 'state/user-settings/actions';
 import getUserSettings from 'state/selectors/get-user-settings';
-import hasUserSettings from 'state/selectors/has-user-settings';
 
 /**
  * Style dependencies
@@ -125,9 +124,7 @@ export class AppPromo extends React.Component {
 		this.setState( { showDialog: true } );
 	};
 
-	onCloseDialog = ( action ) => {
-		// action is the `action` property of the button clicked to close the dialog. If the dialog is closed
-		// by pressing ESC or clicking outside of the dialog, action will be `undefined`
+	onCloseDialog = () => {
 		this.setState( { showDialog: false } );
 	};
 	
@@ -165,7 +162,7 @@ export class AppPromo extends React.Component {
 		)
 	}
 	
-	mobilePromo = ( promoItem ) => {
+	mobilePromo = () => {
 		const { translate } = this.props;
 		const buttons = [
 			{ action: 'cancel', label: translate( 'OK' ) },
@@ -182,6 +179,7 @@ export class AppPromo extends React.Component {
 					<Gridicon icon="cross" size={ 24 } />
 				</button>
 				<a
+					href="#"
 					onClick={ this.sendMagicLink }
 					className="app-promo__link"
 					title="Try the mobile app!"
@@ -197,7 +195,7 @@ export class AppPromo extends React.Component {
 				</a>
 				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
 					<h1>{ translate( 'Check your mail!' ) }</h1>
-					<p>{ translate( "We've sent you links to download and log in to the mobile app.  Use the links from your mobile device." ) }</p>
+					<p>{ translate( "We've sent you links to download and log in to the mobile app. Use the links from your mobile device." ) }</p>
 				</Dialog>
 			</div>
 		)
@@ -208,7 +206,7 @@ export class AppPromo extends React.Component {
 			return null;
 		}
 		const { promoItem } = this.state;
-		return ( promoItem.type == 'mobile' ) ? this.mobilePromo( promoItem ) : this.desktopPromo( promoItem );
+		return ( promoItem.type === 'mobile' ) ? this.mobilePromo() : this.desktopPromo( promoItem );
 	}
 }
 
