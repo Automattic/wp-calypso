@@ -63,65 +63,75 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 			return new WP_Error( 'rest_invalid_param', __( 'Invalid parent type.' ), [ 'status' => 400 ] );
 		}
 
-		// Include image functions to get access to wp_read_image_metadata().
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		require_once ABSPATH . 'wp-admin/includes/media.php';
+		$inserted   = false;
+		$attachment = $this->get_attachment( $request->get_param( 'url' ) );
+		if ( ! $attachment ) {
+			// Include image functions to get access to wp_read_image_metadata().
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+			require_once ABSPATH . 'wp-admin/includes/media.php';
 
-		// The post ID on success, WP_Error on failure.
-		$id = media_sideload_image(
-			$request->get_param( 'url' ),
-			$request->get_param( 'post_id' ),
-			null,
-			'id'
-		);
+			// The post ID on success, WP_Error on failure.
+			$id = media_sideload_image(
+				$request->get_param( 'url' ),
+				$request->get_param( 'post_id' ),
+				null,
+				'id'
+			);
 
-		if ( is_wp_error( $id ) ) {
-			if ( 'db_update_error' === $id->get_error_code() ) {
-				$id->add_data( [ 'status' => 500 ] );
-			} else {
-				$id->add_data( [ 'status' => 400 ] );
+			if ( is_wp_error( $id ) ) {
+				if ( 'db_update_error' === $id->get_error_code() ) {
+					$id->add_data( [ 'status' => 500 ] );
+				} else {
+					$id->add_data( [ 'status' => 400 ] );
+				}
+
+				return rest_ensure_response( $id ); // Return error.
 			}
 
-			return rest_ensure_response( $id ); // Return error.
+			$attachment = get_post( $id );
+
+			/**
+			 * Fires after a single attachment is created or updated via the REST API.
+			 *
+			 * @param WP_Post         $attachment Inserted or updated attachment object.
+			 * @param WP_REST_Request $request    The request sent to the API.
+			 * @param bool            $creating   True when creating an attachment, false when updating.
+			 */
+			do_action( 'rest_insert_attachment', $attachment, $request, true );
+
+			if ( isset( $request['alt_text'] ) ) {
+				update_post_meta( $id, '_wp_attachment_image_alt', sanitize_text_field( $request['alt_text'] ) );
+			}
+
+			update_post_meta( $id, '_sideloaded_url', $request->get_param( 'url' ) );
+
+			$fields_update = $this->update_additional_fields_for_object( $attachment, $request );
+
+			if ( is_wp_error( $fields_update ) ) {
+				return $fields_update;
+			}
+
+			$inserted = true;
+			$request->set_param( 'context', 'edit' );
+
+			/**
+			 * Fires after a single attachment is completely created or updated via the REST API.
+			 *
+			 * @param WP_Post         $attachment Inserted or updated attachment object.
+			 * @param WP_REST_Request $request    Request object.
+			 * @param bool            $creating   True when creating an attachment, false when updating.
+			 */
+			do_action( 'rest_after_insert_attachment', $attachment, $request, true );
 		}
-
-		$attachment = get_post( $id );
-
-		/**
-		 * Fires after a single attachment is created or updated via the REST API.
-		 *
-		 * @param WP_Post         $attachment Inserted or updated attachment object.
-		 * @param WP_REST_Request $request    The request sent to the API.
-		 * @param bool            $creating   True when creating an attachment, false when updating.
-		 */
-		do_action( 'rest_insert_attachment', $attachment, $request, true );
-
-		if ( isset( $request['alt_text'] ) ) {
-			update_post_meta( $id, '_wp_attachment_image_alt', sanitize_text_field( $request['alt_text'] ) );
-		}
-
-		$fields_update = $this->update_additional_fields_for_object( $attachment, $request );
-
-		if ( is_wp_error( $fields_update ) ) {
-			return $fields_update;
-		}
-
-		$request->set_param( 'context', 'edit' );
-
-		/**
-		 * Fires after a single attachment is completely created or updated via the REST API.
-		 *
-		 * @param WP_Post         $attachment Inserted or updated attachment object.
-		 * @param WP_REST_Request $request    Request object.
-		 * @param bool            $creating   True when creating an attachment, false when updating.
-		 */
-		do_action( 'rest_after_insert_attachment', $attachment, $request, true );
 
 		$response = $this->prepare_item_for_response( $attachment, $request );
 		$response = rest_ensure_response( $response );
-		$response->set_status( 201 );
-		$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', 'wp/v2', 'media', $id ) ) );
+		$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', 'wp/v2', 'media', $attachment->ID ) ) );
+
+		if ( $inserted ) {
+			$response->set_status( 201 );
+		}
 
 		return $response;
 	}
@@ -147,5 +157,41 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 		$response->add_link( 'about', rest_url( 'wp/v2/types/' . $post->post_type ) );
 
 		return $response;
+	}
+
+	/**
+	 * Gets the attachment if an image has been sideloaded previously.
+	 *
+	 * @param string $url URL of the image to sideload.
+	 * @return object|bool Attachment object on success, false on failure.
+	 */
+	public function get_attachment( $url ) {
+		$cache_key  = 'fse_sideloaded_image_' . md5( $url );
+		$attachment = get_transient( $cache_key );
+
+		if ( false === $attachment ) {
+			$attachments = new WP_Query(
+				[
+					'no_found_rows'  => true,
+					'posts_per_page' => 1,
+					'post_status'    => 'inherit',
+					'post_type'      => 'attachment',
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					'meta_query'     => [
+						[
+							'key'   => '_sideloaded_url',
+							'value' => $url,
+						],
+					],
+				]
+			);
+
+			if ( $attachments->have_posts() ) {
+				$attachment = $attachments->post;
+				set_transient( $cache_key, $attachment );
+			}
+		}
+
+		return $attachment;
 	}
 }

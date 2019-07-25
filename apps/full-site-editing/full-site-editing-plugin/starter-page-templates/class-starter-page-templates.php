@@ -25,6 +25,7 @@ class Starter_Page_Templates {
 		add_action( 'init', [ $this, 'register_meta_field' ] );
 		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
+		add_action( 'delete_attachment', [ $this, 'clear_sideloaded_image_cache' ] );
 	}
 
 	/**
@@ -201,6 +202,18 @@ class Starter_Page_Templates {
 		}
 
 		return $vertical_templates;
+	}
+
+	/**
+	 * Deletes cached attachment data when attachment gets deleted.
+	 *
+	 * @param int $id Attachment ID of the attachment to be deleted.
+	 */
+	public function clear_sideloaded_image_cache( $id ) {
+		$url = get_post_meta( $id, '_sideloaded_url', true );
+		if ( ! empty( $url ) ) {
+			delete_transient( 'fse_sideloaded_image_' . md5( $url ) );
+		}
 	}
 
 	/**
