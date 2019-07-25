@@ -13,6 +13,8 @@ import {
 	checkoutThankYou,
 	gsuiteNudge,
 	upsellNudge,
+	redirectToSupportSession,
+	sitePicker,
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
@@ -102,8 +104,19 @@ export default function() {
 			clientRender
 		);
 
+		// For backwards compatibility, retaining the old URL structure.
+		page( '/checkout/:site/(add|offer)-support-session/:receiptId?', redirectToSupportSession );
+
 		page(
-			'/checkout/:site?/(add|offer)-support-session/:receiptId?',
+			'/checkout/(add|offer)-support-session/:site?',
+			siteSelection,
+			upsellNudge,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/checkout/(add|offer)-support-session/:receiptId/:site',
 			siteSelection,
 			upsellNudge,
 			makeLayout,
@@ -119,7 +132,15 @@ export default function() {
 		);
 
 		page(
-			'/checkout/offer-quickstart-session/:receiptId?',
+			'/checkout/offer-quickstart-session/:site?',
+			siteSelection,
+			upsellNudge,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/checkout/offer-quickstart-session/:receiptId/:site',
 			siteSelection,
 			upsellNudge,
 			makeLayout,
@@ -127,9 +148,23 @@ export default function() {
 		);
 	}
 
-	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page(
+		'/checkout/:domainOrProduct',
+		siteSelection,
+		sitePicker,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page(
+		'/checkout/:product/:domainOrProduct',
+		siteSelection,
+		sitePicker,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
 	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );

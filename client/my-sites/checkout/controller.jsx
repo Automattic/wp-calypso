@@ -5,6 +5,7 @@
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -29,12 +30,8 @@ export function checkout( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
-	if ( ! selectedSite ) {
-		sites( context, next );
-	}
-
 	let product;
-	if ( selectedSite && selectedSite.domain !== domainOrProduct ) {
+	if ( selectedSite && selectedSite.siteSlug !== domainOrProduct ) {
 		product = domainOrProduct;
 	} else {
 		product = context.params.product;
@@ -167,4 +164,23 @@ export function upsellNudge( context, next ) {
 	);
 
 	next();
+}
+
+export function sitePicker( context, next ) {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite ) {
+		sites( context, next );
+	}
+
+	next();
+}
+
+export function redirectToSupportSession( context ) {
+	const { receiptId, site } = context.params;
+	if ( context.params.receiptId ) {
+		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
+	}
+	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
