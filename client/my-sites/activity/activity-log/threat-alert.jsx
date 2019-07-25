@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import Spinner from 'components/spinner';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 
 /**
  * Internal dependencies
@@ -149,6 +149,7 @@ export class ThreatAlert extends Component {
 
 	render() {
 		const { threat, translate } = this.props;
+		const inProgress = this.state.requesting || threat.fixer_status === 'in_progress';
 
 		return (
 			<Fragment>
@@ -171,9 +172,9 @@ export class ThreatAlert extends Component {
 											dateFormat="ll"
 										/>
 									</span>
-									{ this.state.requesting && <Spinner /> }
-									{ this.state.requesting && (
-										<Interval onTick={ this.refreshRewindState } period={ EVERY_FIVE_SECONDS } />
+									{ inProgress && <Spinner /> }
+									{ inProgress && (
+										<Interval onTick={ this.refreshRewindState } period={ EVERY_TEN_SECONDS } />
 									) }
 									<SplitButton
 										compact
@@ -182,7 +183,7 @@ export class ThreatAlert extends Component {
 											threat.fixable ? translate( 'Fix threat' ) : translate( 'Ignore threat' )
 										}
 										onClick={ threat.fixable ? this.handleFix : this.handleIgnore }
-										disabled={ this.state.requesting }
+										disabled={ inProgress }
 									>
 										<PopoverMenuItem
 											onClick={ () => debug( 'documentation clicked' ) }
