@@ -198,7 +198,7 @@ function handlePressThis( calypsoPort ) {
 				);
 			}
 
-			dispatch( 'core/editor' ).resetBlocks( blocks );
+			dispatch( 'core/editor' ).resetEditorBlocks( blocks );
 			dispatch( 'core/editor' ).editPost( { title: title } );
 		} );
 	}
