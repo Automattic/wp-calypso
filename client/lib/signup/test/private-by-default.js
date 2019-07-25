@@ -22,19 +22,23 @@ describe( 'getNewSitePublicSetting()', () => {
 } );
 
 describe( 'shouldBePrivateByDefault()', () => {
-	test( 'should return `true` by default', () => {
-		expect( shouldBePrivateByDefault() ).toBeTrue;
+	test( 'should throw with no input', () => {
+		expect( () => shouldBePrivateByDefault() ).toThrowError( TypeError );
+	} );
+
+	test( 'should return `true` with no flowName', () => {
+		expect( shouldBePrivateByDefault( { notFlowName: 'really' } ) ).toBe( true );
 	} );
 
 	test( 'should return `true` for onboarding flow', () => {
-		expect( shouldBePrivateByDefault( { flowName: 'onboarding' } ) ).toBeTrue;
+		expect( shouldBePrivateByDefault( { flowName: 'onboarding' } ) ).toBe( true );
 	} );
 
 	test( 'should return `false` for ecommerce flow', () => {
-		expect( shouldBePrivateByDefault( { flowName: 'ecommerce' } ) ).toBeFalse;
+		expect( shouldBePrivateByDefault( { flowName: 'ecommerce' } ) ).toBe( false );
 	} );
 
 	test( 'should return `false` for ecommerce-onboarding flow', () => {
-		expect( shouldBePrivateByDefault( { flowName: 'ecommerce-onboarding' } ) ).toBeFalse;
+		expect( shouldBePrivateByDefault( { flowName: 'ecommerce-onboarding' } ) ).toBe( false );
 	} );
 } );
