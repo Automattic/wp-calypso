@@ -37,7 +37,6 @@
 		"gutenberg/redirect": false,
 		"help": true,
 		"help/courses": true,
-		"jetpack/checklist/performance": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,
