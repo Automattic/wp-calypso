@@ -1,11 +1,15 @@
 .create-account__form-wrapper {
 	.create-account__terms-of-service-link {
 		font-size: 12px;
+		margin: 4px 0;
 	}
 	.logged-out-form__footer {
 		margin-top: 0;
 	}
 	.validation-fieldset__validation-message {
 		min-height: auto;
+	}
+	.create-account__footer-links::before {
+		display: none;
 	}
 }

@@ -213,9 +213,11 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 			: localizeUrl( config( 'login_url' ), locale );
 
 		return (
-			<LoggedOutFormLinks>
+			<LoggedOutFormLinks className="create-account__footer-links">
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ translate( 'Log in to create a site for your existing account.' ) }
+					{ translate( 'Already have a WordPress.com account?' ) }
+					&nbsp;
+					{ translate( 'Log in' ) }
 				</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
 		);
@@ -238,6 +240,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 							disabled={ isSubmitting }
 						/>
 					</ValidationFieldset>
+					{ this.renderTerms() }
 					<LoggedOutFormFooter>
 						<Button
 							type="submit"
@@ -263,7 +266,9 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 				flowName={ flowName }
 				stepName={ stepName }
 				headerText={ translate( "Let's get started" ) }
-				subHeaderText={ translate( 'First, create your WordPress.com account.' ) }
+				subHeaderText={ translate(
+					'All you need to create a WordPress.com account is an email address.'
+				) }
 				positionInFlow={ positionInFlow }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
