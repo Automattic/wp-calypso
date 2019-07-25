@@ -23,8 +23,10 @@
 	}
 
 	&.is-primary {
-		.action-panel__figure {
-			max-width: 310px;
+		@include breakpoint( '>480px' ) {
+			.action-panel__figure {
+				max-width: 310px;
+			}
 		}
 		
 		.action-panel__body {
