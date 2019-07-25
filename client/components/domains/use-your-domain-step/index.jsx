@@ -48,6 +48,7 @@ import './style.scss';
  * Image dependencies
  */
 import themesImage from 'assets/images/illustrations/themes.svg';
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
@@ -340,7 +341,7 @@ class UseYourDomainStep extends React.Component {
 	renderSelectTransfer = () => {
 		const { translate } = this.props;
 
-		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
+		const image = migratingHostImage;
 		const title = translate( 'Transfer your domain away from your current registrar.' );
 		const reasons = [
 			translate(
