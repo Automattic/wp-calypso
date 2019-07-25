@@ -97,13 +97,8 @@ function dependenciesContainCartItem( dependencies ) {
 }
 
 class Signup extends React.Component {
-	static displayName = 'Signup';
-
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	static propTypes = {
+		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
@@ -122,16 +117,12 @@ class Signup extends React.Component {
 		shouldShowMockups: PropTypes.bool,
 	};
 
-	constructor( props, context ) {
-		super( props, context );
-
-		this.state = {
-			controllerHasReset: false,
-			shouldShowLoadingScreen: false,
-			resumingStep: undefined,
-			previousFlowName: null,
-		};
-	}
+	state = {
+		controllerHasReset: false,
+		shouldShowLoadingScreen: false,
+		resumingStep: undefined,
+		previousFlowName: null,
+	};
 
 	UNSAFE_componentWillMount() {
 		// Signup updates the cart through `SignupCart`. To prevent
@@ -153,7 +144,7 @@ class Signup extends React.Component {
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
-			reduxStore: this.context.store,
+			reduxStore: this.props.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
