@@ -35,7 +35,7 @@ export function shouldBePrivateByDefault( {
  *
  * @param dependencies The `dependencies` passed to the `apiRequestFunction` step action function call
  * @param stepData The `stepData` passed to the `apiRequestFunction` step action function call
- * @returns `1` for private by default & `1` for public
+ * @returns `-1` for private by default & `1` for public
  */
 export function getNewSitePublicSetting( dependencies: object, stepData: object ): number {
 	debug( 'getNewSitePublicSetting input', { dependencies, stepData } );
