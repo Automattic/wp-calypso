@@ -114,8 +114,7 @@ export class PlanFeatures extends Component {
 						>
 							<table className={ tableClasses }>
 								<caption class="screen-reader-text">
-									{' '}
-									{ translate( 'Available plans to choose from' ) }{' '}
+									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
