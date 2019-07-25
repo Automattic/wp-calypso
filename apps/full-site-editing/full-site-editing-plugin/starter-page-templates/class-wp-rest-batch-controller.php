@@ -78,9 +78,9 @@ class WP_REST_Batch_Controller extends WP_REST_Controller {
 
 		// Foreach request specified in the requests param, run the endpoint.
 		foreach ( $request['requests'] as $request_params ) {
-			$response     = $this->handle_request( $request_params );
-			$key          = $request_params['method'] . ' ' . $request_params['route'];
-			$data[ $key ] = $this->prepare_for_collection( $response );
+			$response       = $this->handle_request( $request_params );
+			$key            = $request_params['method'] . ' ' . $request_params['route'];
+			$data[ $key ][] = $this->prepare_for_collection( $response );
 		}
 
 		return rest_ensure_response( $data );
