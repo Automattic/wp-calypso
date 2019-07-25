@@ -169,6 +169,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.setState( {
 				classicBlockEditorId: data.editorId,
 				isMediaModalVisible: true,
+				multiple: true,
 			} );
 		}
 
@@ -492,6 +493,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			currentIFrameUrl,
 		} = this.state;
 
+		const isUsingClassicBlock = !! classicBlockEditorId;
+
 		return (
 			<Fragment>
 				<PageViewTracker
@@ -526,8 +529,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					<EditorMediaModal
 						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
 						enabledFilters={ getEnabledFilters( allowedTypes ) }
-						galleryViewEnabled={ false }
-						isGutenberg={ ! classicBlockEditorId }
+						galleryViewEnabled={ isUsingClassicBlock }
+						isGutenberg={ ! isUsingClassicBlock }
 						onClose={ this.closeMediaModal }
 						onInsertMedia={ this.insertClassicBlockMedia }
 						single={ ! multiple }
