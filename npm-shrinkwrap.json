@@ -66,6 +66,35 @@
 						"electron-to-chromium": "^1.3.122",
 						"node-releases": "^1.1.13"
 					}
+				},
+				"enzyme": {
+					"version": "3.9.0",
+					"resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.9.0.tgz",
+					"integrity": "sha512-JqxI2BRFHbmiP7/UFqvsjxTirWoM1HfeaJrmVSZ9a1EADKkZgdPcAuISPMpoUiHlac9J4dYt81MC5BBIrbJGMg==",
+					"dev": true,
+					"requires": {
+						"array.prototype.flat": "^1.2.1",
+						"cheerio": "^1.0.0-rc.2",
+						"function.prototype.name": "^1.1.0",
+						"has": "^1.0.3",
+						"html-element-map": "^1.0.0",
+						"is-boolean-object": "^1.0.0",
+						"is-callable": "^1.1.4",
+						"is-number-object": "^1.0.3",
+						"is-regex": "^1.0.4",
+						"is-string": "^1.0.4",
+						"is-subset": "^0.1.1",
+						"lodash.escape": "^4.0.1",
+						"lodash.isequal": "^4.5.0",
+						"object-inspect": "^1.6.0",
+						"object-is": "^1.0.1",
+						"object.assign": "^4.1.0",
+						"object.entries": "^1.0.4",
+						"object.values": "^1.0.4",
+						"raf": "^3.4.0",
+						"rst-selector-parser": "^2.2.3",
+						"string.prototype.trim": "^1.1.2"
+					}
 				}
 			}
 		},
@@ -9020,9 +9049,9 @@
 			"integrity": "sha1-QWgTO0K7BcOKNbGuQ5fIKYqzaeA="
 		},
 		"enzyme": {
-			"version": "3.9.0",
-			"resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.9.0.tgz",
-			"integrity": "sha512-JqxI2BRFHbmiP7/UFqvsjxTirWoM1HfeaJrmVSZ9a1EADKkZgdPcAuISPMpoUiHlac9J4dYt81MC5BBIrbJGMg==",
+			"version": "3.10.0",
+			"resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.10.0.tgz",
+			"integrity": "sha512-p2yy9Y7t/PFbPoTvrWde7JIYB2ZyGC+NgTNbVEGvZ5/EyoYSr9aG/2rSbVvyNvMHEhw9/dmGUJHWtfQIEiX9pg==",
 			"dev": true,
 			"requires": {
 				"array.prototype.flat": "^1.2.1",
@@ -11199,9 +11228,9 @@
 			"dev": true
 		},
 		"html-element-map": {
-			"version": "1.0.1",
-			"resolved": "https://registry.npmjs.org/html-element-map/-/html-element-map-1.0.1.tgz",
-			"integrity": "sha512-BZSfdEm6n706/lBfXKWa4frZRZcT5k1cOusw95ijZsHlI+GdgY0v95h6IzO3iIDf2ROwq570YTwqNPqHcNMozw==",
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/html-element-map/-/html-element-map-1.1.0.tgz",
+			"integrity": "sha512-iqiG3dTZmy+uUaTmHarTL+3/A2VW9ox/9uasKEZC+R/wAtUrTcRlXPSaPqsnWPfIu8wqn09jQNwMRqzL54jSYA==",
 			"dev": true,
 			"requires": {
 				"array-filter": "^1.0.0"
@@ -21651,14 +21680,14 @@
 			}
 		},
 		"string.prototype.trim": {
-			"version": "1.1.2",
-			"resolved": "https://registry.npmjs.org/string.prototype.trim/-/string.prototype.trim-1.1.2.tgz",
-			"integrity": "sha1-0E3iyJ4Tf019IG8Ia17S+ua+jOo=",
+			"version": "1.2.0",
+			"resolved": "https://registry.npmjs.org/string.prototype.trim/-/string.prototype.trim-1.2.0.tgz",
+			"integrity": "sha512-9EIjYD/WdlvLpn987+ctkLf0FfvBefOCuiEr2henD8X+7jfwPnyvTdmW8OJhj5p+M0/96mBdynLWkxUr+rHlpg==",
 			"dev": true,
 			"requires": {
-				"define-properties": "^1.1.2",
-				"es-abstract": "^1.5.0",
-				"function-bind": "^1.0.2"
+				"define-properties": "^1.1.3",
+				"es-abstract": "^1.13.0",
+				"function-bind": "^1.1.1"
 			}
 		},
 		"string_decoder": {
