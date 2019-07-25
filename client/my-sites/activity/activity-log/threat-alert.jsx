@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import Spinner from 'components/spinner';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 
 /**
  * Internal dependencies
@@ -173,7 +173,7 @@ export class ThreatAlert extends Component {
 									</span>
 									{ this.state.requesting && <Spinner /> }
 									{ this.state.requesting && (
-										<Interval onTick={ this.refreshRewindState } period={ EVERY_FIVE_SECONDS } />
+										<Interval onTick={ this.refreshRewindState } period={ EVERY_TEN_SECONDS } />
 									) }
 									<SplitButton
 										compact
