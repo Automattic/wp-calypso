@@ -31,7 +31,7 @@ export function checkout( context, next ) {
 	const selectedSite = getSelectedSite( state );
 
 	let product;
-	if ( selectedSite && selectedSite.siteSlug !== domainOrProduct ) {
+	if ( selectedSite && selectedSite.slug !== domainOrProduct ) {
 		product = domainOrProduct;
 	} else {
 		product = context.params.product;
@@ -179,6 +179,8 @@ export function sitePicker( context, next ) {
 
 export function redirectToSupportSession( context ) {
 	const { receiptId, site } = context.params;
+
+	// Redirect the old URL structure to the new URL structure to maintain backwards compatibility.
 	if ( context.params.receiptId ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}

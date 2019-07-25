@@ -40,6 +40,11 @@ export default function isEligibleForSignupDestination( state, siteId, cart ) {
 	}
 
 	const destination = retrieveSignupDestination();
+
+	if ( destination === '/' ) {
+		return false;
+	}
+
 	if ( destination && destination.includes( '/checklist/' ) ) {
 		return isNewSite( state, siteId ) && isEligibleForDotcomChecklist( state, siteId );
 	}
