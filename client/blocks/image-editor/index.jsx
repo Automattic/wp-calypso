@@ -171,9 +171,7 @@ class ImageEditor extends React.Component {
 			return;
 		}
 
-		const canvasComponent = this.editCanvasRef.current.getWrappedInstance();
-
-		canvasComponent.toBlob( this.convertBlobToImage );
+		this.editCanvasRef.current.toBlob( this.convertBlobToImage );
 	};
 
 	onCancel = () => {
