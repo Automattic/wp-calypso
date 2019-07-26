@@ -96,7 +96,7 @@ export default function() {
 
 	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
 		page(
-			'/checkout/:site?/(add|offer)-support-session/pending/:orderId',
+			'/checkout/(add|offer)-support-session/pending/:site/:orderId',
 			siteSelection,
 			checkoutPending,
 			makeLayout,
