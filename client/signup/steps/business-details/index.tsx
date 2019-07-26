@@ -76,7 +76,8 @@ class BusinessDetails extends Component< Props & ConnectedProps & LocalizeProps,
 	handleSubmit = ( placeId: string | null ) => {
 		const { businessAddress, businessName, flowName, stepName } = this.props;
 
-		this.props.submitSignupStep( { stepName, flowName }, { siteTitle: businessName, placeId } );
+		// siteTitle is a required dependency to complete the signup flow.
+		this.props.submitSignupStep( { stepName, flowName }, { businessName, placeId } );
 		// @todo: continue tracking this event? track a new event with both values?
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_business_details', {
 			business_name: businessName,

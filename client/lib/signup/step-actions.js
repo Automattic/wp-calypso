@@ -150,6 +150,7 @@ export function createSiteWithCart(
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
+	const { businessContact, businessName } = getSignupDependencyStore( state );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -191,6 +192,14 @@ export function createSiteWithCart(
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
+	}
+
+	if ( 'rivet' === flowToCheck ) {
+		newSiteParams.blog_title = businessName;
+		newSiteParams.options.site_information.title = businessName;
+		newSiteParams.options.site_information.address = businessContact.address;
+		newSiteParams.options.site_information.phone = businessContact.phone;
+		newSiteParams.options.site_information.geo_location = businessContact.geo;
 	}
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {

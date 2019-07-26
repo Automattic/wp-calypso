@@ -516,13 +516,13 @@ export function generateSteps( {
 
 		'business-details': {
 			stepName: 'business-details',
-			providesDependencies: [ 'siteTitle', 'placeId' ],
+			providesDependencies: [ 'businessName', 'placeId' ],
 		},
 
 		'business-confirmation': {
 			stepName: 'business-confirmation',
 			dependencies: [ 'placeId' ],
-			providesDependencies: [ 'rivetId' ],
+			providesDependencies: [ 'businessContact', 'rivetId' ],
 		},
 	};
 }
