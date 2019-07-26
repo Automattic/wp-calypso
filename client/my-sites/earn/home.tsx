@@ -14,14 +14,19 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
-import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_SIMPLE_PAYMENTS,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_NO_ADS,
+} from 'lib/plans/constants';
 
 interface ConnectedProps {
 	selectedSiteSlug: SiteSlug;
 	currentPlan: string;
 }
 
-const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug, currentPlan } ) => {
+const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 	const translate = useTranslate();
 
 	/**
@@ -30,8 +35,10 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug, currentP
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		console.log( currentPlan );
 		// Todo: get plan and return different content based on it.
+
+		const supportLink =
+			'https://en.support.wordpress.com/wordpress-editor/blocks/simple-payments-block/';
 		return {
 			title: translate( 'Collect one-time payments' ),
 			body: translate(
@@ -46,11 +53,17 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug, currentP
 				path: '/calypso/images/earn/simple-payments.svg',
 			},
 			cta: {
-				text: translate( 'Collect One-time Payments' ),
-				action: '/',
+				feature: FEATURE_SIMPLE_PAYMENTS,
+				upgradeButton: {
+					text: translate( 'Upgrade to Premium Plan' ),
+					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+				},
+				defaultButton: {
+					text: translate( 'Collect One-time Payments' ),
+					action: supportLink,
+				},
 			},
-			learnMoreLink:
-				'https://en.support.wordpress.com/wordpress-editor/blocks/simple-payments-block/',
+			learnMoreLink: supportLink,
 		};
 	};
 
@@ -75,15 +88,22 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug, currentP
 				path: '/calypso/images/earn/recurring.svg',
 			},
 			cta: {
-				text: translate( 'Collect Recurring Payments' ),
-				action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
+				feature: FEATURE_NO_ADS,
+				upgradeButton: {
+					text: translate( 'Upgrade to a Paid Plan' ),
+					action: () => page( `/plans/${ selectedSiteSlug }` ),
+				},
+				defaultButton: {
+					text: translate( 'Collect Recurring Payments' ),
+					action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
+				},
 			},
 			learnMoreLink: 'https://en.support.wordpress.com/recurring-payments/',
 		};
 	};
 
 	/**
-	 * Return the content to display in the Recurring Payments card based on the current plan.
+	 * Return the content to display in the Store card based on the current plan.
 	 *
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
@@ -103,8 +123,15 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug, currentP
 				path: '/calypso/images/earn/woo.svg',
 			},
 			cta: {
-				text: translate( 'Upgrade to Premium Plan' ),
-				action: () => page( `/checkout/${ selectedSiteSlug }/business/` ),
+				feature: FEATURE_UPLOAD_PLUGINS,
+				upgradeButton: {
+					text: translate( 'Upgrade to Business Plan' ),
+					action: () => page( `/checkout/${ selectedSiteSlug }/business/` ),
+				},
+				defaultButton: {
+					text: translate( 'Set Up a Simple Store' ),
+					action: () => page( `/store/${ selectedSiteSlug }` ),
+				},
 			},
 			learnMoreLink: 'https://en.support.wordpress.com/store/',
 		};
@@ -131,8 +158,15 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug, currentP
 				path: '/calypso/images/earn/ads.svg',
 			},
 			cta: {
-				text: translate( 'Upgrade to Premium Plan' ),
-				action: () => page( `/checkout/${ selectedSiteSlug }/business/` ),
+				feature: FEATURE_WORDADS_INSTANT,
+				upgradeButton: {
+					text: translate( 'Upgrade to Premium Plan' ),
+					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+				},
+				defaultButton: {
+					text: translate( 'Earn Ad Revenue' ),
+					action: () => page( `/earn/ads-earnings/${ selectedSiteSlug }` ),
+				},
 			},
 			learnMoreLink: 'https://wordads.co/',
 		};
