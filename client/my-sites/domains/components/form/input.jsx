@@ -16,7 +16,19 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 export default class Input extends React.Component {
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
 
-	inputRef = React.createRef();
+	inputRef = element => {
+		this.inputElement = element;
+
+		if ( ! this.props.inputRef ) {
+			return;
+		}
+
+		if ( typeof inputRef === 'function' ) {
+			this.props.inputRef( element );
+		} else {
+			this.props.inputRef.current = element;
+		}
+	};
 
 	componentDidMount() {
 		this.setupInputModeHandlers();
@@ -50,7 +62,7 @@ export default class Input extends React.Component {
 	}
 
 	focus = () => {
-		const node = this.inputRef.current;
+		const node = this.inputElement;
 		if ( node ) {
 			node.focus();
 			scrollIntoViewport( node, {
@@ -98,7 +110,6 @@ export default class Input extends React.Component {
 					id={ this.props.name }
 					value={ this.props.value }
 					name={ this.props.name }
-					ref={ this.inputRef }
 					autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }
@@ -107,7 +118,7 @@ export default class Input extends React.Component {
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
-					inputRef={ this.props.inputRef }
+					inputRef={ this.inputRef }
 				/>
 				{ this.props.errorMessage && (
 					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />
