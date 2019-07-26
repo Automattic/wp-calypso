@@ -45,5 +45,5 @@ export default function isEligibleForSignupDestination( state, siteId, cart ) {
 		return isNewSite( state, siteId ) && isEligibleForDotcomChecklist( state, siteId );
 	}
 
-	return isNewSite( state, siteId );
+	return '/' === destination ? false : isNewSite( state, siteId );
 }
