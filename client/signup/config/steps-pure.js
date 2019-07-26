@@ -522,7 +522,13 @@ export function generateSteps( {
 		'business-confirmation': {
 			stepName: 'business-confirmation',
 			dependencies: [ 'placeId' ],
-			providesDependencies: [ 'businessContact', 'rivetId' ],
+			providesDependencies: [
+				'businessContact',
+				'businessHours',
+				'siteImages',
+				'siteLogoUrl',
+				'socialLinks',
+			],
 		},
 	};
 }

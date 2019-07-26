@@ -74,15 +74,10 @@ class BusinessDetails extends Component< Props & ConnectedProps & LocalizeProps,
 	} ) => this.props[ action ]( value );
 
 	handleSubmit = ( placeId: string | null ) => {
-		const { businessAddress, businessName, flowName, stepName } = this.props;
+		const { businessName, flowName, stepName } = this.props;
 
 		// siteTitle is a required dependency to complete the signup flow.
 		this.props.submitSignupStep( { stepName, flowName }, { businessName, placeId } );
-		// @todo: continue tracking this event? track a new event with both values?
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_business_details', {
-			business_name: businessName,
-			business_address: businessAddress,
-		} );
 		this.props.goToNextStep();
 	};
 
@@ -121,24 +116,18 @@ class BusinessDetails extends Component< Props & ConnectedProps & LocalizeProps,
 				return (
 					<Card>
 						{ suggestionsRequest.suggestions.length
-							? suggestionsRequest.suggestions
-									.map( suggestion => (
-										<Card
-											displayAsLink
-											key={ suggestion.id }
-											onClick={ this.handleSubmit.bind( this, suggestion.id ) }
-										>
-											<div>
-												<strong>{ suggestion.title }</strong>
-											</div>
-											<div>{ suggestion.address }</div>
-										</Card>
-									) )
-									.concat(
-										<Card key="none" displayAsLink onClick={ this.handleSubmit.bind( this, null ) }>
-											<strong>{ translate( 'None of the above' ) }</strong>
-										</Card>
-									)
+							? suggestionsRequest.suggestions.map( suggestion => (
+									<Card
+										displayAsLink
+										key={ suggestion.id }
+										onClick={ this.handleSubmit.bind( this, suggestion.id ) }
+									>
+										<div>
+											<strong>{ suggestion.title }</strong>
+										</div>
+										<div>{ suggestion.address }</div>
+									</Card>
+							  ) )
 							: translate( 'No results for that location.' ) }
 					</Card>
 				);

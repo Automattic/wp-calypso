@@ -15,7 +15,7 @@ import Card from 'components/card';
 import Image from 'components/image';
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getBusinessAddress } from 'state/signup/steps/business-details/selectors';
+import { getBusinessAddress, getBusinessName } from 'state/signup/steps/business-details/selectors';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -24,6 +24,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
 import './style.scss';
 
 interface Suggestion {
+	type: string;
 	list: {
 		id: string;
 		text: string;
@@ -39,31 +40,44 @@ interface Props {
 	stepName: string;
 }
 
-interface BusinessContact {
-	title?: string;
+interface SiteContact {
+	placeId: string;
 	address?: string;
 	geo?: string;
 	email?: string;
 	phone?: string;
-	placeId?: string;
 }
 
-interface Business extends BusinessContact {
-	image?: string;
+interface SocialLinks {
+	[key: string]: string;
 }
 
 interface State {
-	publicId: string | null;
-	business: Business;
+	businessContact: {
+		address?: string;
+		email?: string;
+		geo?: string;
+		phone?: string;
+	};
+	businessHours: object[];
+	businessTitle: string;
+	siteImages: object[];
+	siteLogoUrl: string;
+	socialLinks: SocialLinks;
 }
 
-class RivetConfirmation extends Component< Props & ConnectedProps & LocalizeProps > {
+class BusinessConfirmation extends Component< Props & ConnectedProps & LocalizeProps > {
 	state: State = {
-		publicId: null,
-		business: {},
+		businessContact: {},
+		businessHours: [],
+		businessTitle: '',
+		siteImages: [],
+		siteLogoUrl: '',
+		socialLinks: {},
 	};
 
 	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 		this.requestRivetSource();
 	}
 
@@ -73,48 +87,66 @@ class RivetConfirmation extends Component< Props & ConnectedProps & LocalizeProp
 		wpcom
 			.undocumented()
 			.getRivetSource( 'new', { placeId } )
-			.then( ( { publicId, site, suggestions = [] }: any ) => {
-				const [ image ] = suggestions.reduce(
-					( images: string[], suggestion: Suggestion ) =>
-						suggestion.list.image ? images.concat( suggestion.list.image ) : images,
+			.then( ( { site: { contact, images, times, title }, suggestions = [] }: any ) => {
+				// Get the first image from suggestions, this is usually a site logo or header image.
+				const [ siteLogoUrl ] = suggestions.reduce(
+					( suggestedImages: string[], suggestion: Suggestion ) =>
+						suggestion.list.image
+							? suggestedImages.concat( suggestion.list.image )
+							: suggestedImages,
 					[]
 				);
-				const contact: BusinessContact = pickBy( site.contact );
-				this.setState( { publicId, business: { ...contact, image } } );
+				// Extract social links from suggestions into the format `{ facebook_page: 'https://facebook.com' }`.
+				// These are passed to Headstart to build a social menu.
+				const socialLinks = suggestions.reduce( ( links: SocialLinks, suggestion: Suggestion ) => {
+					const type = `${ suggestion.type }_page`;
+					if ( ! links[ type ] ) {
+						links[ type ] = suggestion.list.text;
+					}
+					return links;
+				}, {} );
+
+				this.setState( {
+					businessContact: pickBy( contact ),
+					businessHours: times,
+					businessTitle: title,
+					siteImages: images,
+					siteLogoUrl,
+					socialLinks,
+				} );
 			} )
 			.catch();
 	};
 
 	handleSubmit = () => {
 		const { flowName, stepName } = this.props;
-		const { business, publicId } = this.state;
+		const { businessHours, siteImages, siteLogoUrl, socialLinks } = this.state;
 
 		// Fallback to user's address input if rivet doesn't find a business address.
 		const businessContact = {
-			...business,
-			address: business.address || this.props.businessAddress,
+			...this.state.businessContact,
+			address: this.state.businessContact.address || this.props.businessAddress,
 		};
-		this.props.submitSignupStep( { stepName, flowName }, { businessContact, rivetId: publicId } );
-		// @todo: continue tracking this event?
-		this.props.recordTracksEvent( 'calypso_signup_actions_submit_business_confirmation', {
-			rivet_id: publicId,
-		} );
+		this.props.submitSignupStep(
+			{ stepName, flowName },
+			{ businessContact, businessHours, siteImages, siteLogoUrl, socialLinks }
+		);
 		this.props.goToNextStep();
 	};
 
 	renderContent = () => {
-		const { translate } = this.props;
-		const { business } = this.state;
+		const { translate, businessName } = this.props;
+		const { businessContact, businessTitle, siteLogoUrl } = this.state;
 		return (
 			<Card>
 				<h2>{ translate( 'Is this your business?' ) }</h2>
-				{ business.image && <Image src={ business.image } /> }
-				{ business.title && (
+				{ siteLogoUrl && <Image src={ siteLogoUrl } /> }
+				{ ( businessTitle || businessName ) && (
 					<div>
-						<strong>{ business.title }</strong>
+						<strong>{ businessTitle || businessName }</strong>
 					</div>
 				) }
-				{ business.address && <div>{ business.address }</div> }
+				{ businessContact.address && <div>{ businessContact.address }</div> }
 				<Button primary onClick={ this.handleSubmit }>
 					{ translate( 'Continue' ) }
 				</Button>
@@ -138,6 +170,7 @@ class RivetConfirmation extends Component< Props & ConnectedProps & LocalizeProp
 
 const mapStateToProps = ( state: object, { signupDependencies: { placeId } }: any ) => ( {
 	businessAddress: getBusinessAddress( state ),
+	businessName: getBusinessName( state ),
 	placeId,
 } );
 
@@ -152,4 +185,4 @@ type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchT
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( RivetConfirmation ) );
+)( localize( BusinessConfirmation ) );
