@@ -63,7 +63,7 @@ class DisconnectSurvey extends PureComponent {
 					{ translate( "I don't know what it does." ) }
 				</CompactCard>
 				<CompactCard href={ confirmHref + '?reason=delete' }>
-					{ translate( "I'm deleting or migrating my site." ) }
+					{ translate( "I'm deleting/migrating my site." ) }
 				</CompactCard>
 				<CompactCard
 					className="disconnect-site__survey-other-option"

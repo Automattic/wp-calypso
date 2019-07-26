@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { compact, find, flowRight, isArray, without } from 'lodash';
+import { find, flowRight, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -61,11 +61,7 @@ class ConfirmDisconnection extends PureComponent {
 	};
 
 	render() {
-		const { reason, siteId, siteSlug, translate } = this.props;
-		const previousStep = find(
-			without( this.constructor.reasonWhitelist, 'troubleshooting', 'other' ), // Redirect those back to initial survey
-			r => r === reason
-		);
+		const { siteId, siteSlug, translate } = this.props;
 
 		return (
 			<Main className="disconnect-site__confirm">
@@ -85,12 +81,7 @@ class ConfirmDisconnection extends PureComponent {
 					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
-					<NavigationLink
-						href={
-							'/settings/disconnect-site/' + compact( [ previousStep, siteSlug ] ).join( '/' )
-						}
-						direction="back"
-					/>
+					<NavigationLink href={ '/settings/disconnect-site/' + siteSlug } direction="back" />
 				</div>
 			</Main>
 		);
