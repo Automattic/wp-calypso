@@ -373,7 +373,7 @@ export class LoginForm extends Component {
 							{ preventWidows(
 								this.props.translate(
 									// To make any changes to this copy please speak to the legal team
-									'By continuing with any of the options below, ' +
+									'By creating an account, ' +
 										'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
 									{
 										components: {
