@@ -4,6 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import { get } from 'lodash';
 import emailValidator from 'email-validator';
 
 /**
@@ -20,11 +21,19 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import StepWrapper from 'signup/step-wrapper';
 import ValidationFieldset from 'signup/validation-fieldset';
+import SocialSignupForm from 'blocks/signup-form/social';
 import { localizeUrl } from 'lib/i18n-utils';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { login } from 'lib/paths';
-import { getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
+import {
+	getNextStepName,
+	getPreviousStepName,
+	getStepUrl,
+	getSocialServiceFromClientId,
+} from 'signup/utils';
 import { onboardPasswordlessUser } from 'lib/signup/step-actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 /**
  * Style dependencies
@@ -35,7 +44,9 @@ interface RequiredProps {
 	flowName: string;
 	stepName: string;
 	positionInFlow: number;
-	submitCreateAccountStep: ( step: object, providedDependencies: object ) => void;
+	saveCreateAccountStep: ( { stepName: string } ) => void;
+	saveCreateAccountStep: ( step: object, providedDependencies: object ) => void;
+	recordTracksEvent: ( event: string, properties: object ) => void;
 	goToNextStep: () => any;
 	signupProgress: {
 		lastKnownFlow: string;
@@ -47,10 +58,19 @@ interface RequiredProps {
 
 interface AcceptedProps {
 	locale?: string;
+	contextHashObject?: {
+		client_id?: string;
+	};
+	isSocialSignupEnabled?: boolean;
+	step: any;
+	contextQueryObject: object;
 }
 
 interface DefaultProps {
 	locale: 'en';
+	isSocialSignupEnabled: false;
+	contextHashObject: {};
+	contextQueryObject: {};
 }
 
 interface State {
@@ -72,6 +92,38 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 		errorMessages: null,
 	};
 
+	componentDidMount() {
+		this.props.saveCreateAccountStep( { stepName: this.props.stepName } );
+	}
+
+	/**
+	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
+	 *
+	 * @param {String} service      The name of the social service
+	 * @param {String} access_token An OAuth2 acccess token
+	 * @param {String} id_token     (Optional) a JWT id_token which contains the signed user info
+	 *                              So our server doesn't have to request the user profile on its end.
+	 */
+	handleSocialResponse = ( service, access_token, id_token = null ) => {
+		this.submitStep( {
+			service,
+			access_token,
+			id_token,
+			queryArgs: this.props.contextQueryObject,
+		} );
+	};
+
+	userCreationComplete() {
+		return this.props.step && 'completed' === this.props.step.status;
+	}
+
+	submitTracksEvent = ( isSuccessful, message, isOauth2Signup = false ) =>
+		this.props.recordTracksEvent( 'calypso_signup_actions_onboarding_passwordless_login', {
+			is_successful: isSuccessful,
+			action_message: message,
+			is_oauth: isOauth2Signup,
+		} );
+
 	onFormSubmit = event => {
 		event.preventDefault();
 
@@ -80,7 +132,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
 				isSubmitting: false,
 			} );
-
+			this.submitTracksEvent( false, 'Please provide a valid email address.' );
 			return;
 		}
 
@@ -89,7 +141,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 		} );
 
 		onboardPasswordlessUser( this.onboardPasswordlessUserCallback, {
-			email: this.state.email,
+			email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 		} );
 	};
 
@@ -100,7 +152,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 				errorMessages: [ errorMessage ],
 				isSubmitting: false,
 			} );
-
+			this.submitTracksEvent( false, error.message );
 			return;
 		}
 
@@ -113,17 +165,16 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 	};
 
 	getErrorMessage( errorObj = { error: null, message: null } ) {
-		if ( ! errorObj.message || ! errorObj.error ) {
-			return null;
-		}
+		const { translate } = this.props;
+
 		switch ( errorObj.error ) {
 			case 'already_taken':
 			case 'already_active':
 				return (
 					<Fragment>
-						{ this.props.translate( 'An account with this email address already exists.' ) }
+						{ translate( 'An account with this email address already exists.' ) }
 						&nbsp;
-						{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
+						{ translate( 'If this is you {{a}}log in now{{/a}}.', {
 							components: {
 								a: (
 									<a
@@ -137,21 +188,37 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 					</Fragment>
 				);
 			default:
-				return errorObj.message;
+				return (
+					errorObj.message ||
+					translate(
+						'Sorry, something went wrong when trying to create your account. Please try again.'
+					)
+				);
 		}
 	}
 
-	submitStep = providedDependencies => {
-		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
+	submitStep = data => {
+		const { flowName, stepName, goToNextStep, submitCreateAccountStep, oauth2Signup } = this.props;
+		let stepDependencies = {};
 
+		if ( oauth2Signup ) {
+			const { oauth2_client_id, oauth2_redirect } = data.queryArgs;
+			stepDependencies = {
+				oauth2_client_id,
+				oauth2_redirect,
+			};
+		}
 		submitCreateAccountStep(
 			{
 				flowName,
 				stepName,
+				oauth2Signup,
+				...data,
 			},
-			providedDependencies
+			stepDependencies
 		);
 
+		this.submitTracksEvent( true, 'Successful login', !! oauth2Signup );
 		goToNextStep();
 	};
 
@@ -164,7 +231,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 	onClickTermsLink = () => analytics.tracks.recordEvent( 'calypso_signup_tos_link_click' );
 
 	getLoginLink() {
-		const { flowName, locale, stepName } = this.props;
+		const { flowName, locale, stepName, oauth2Client } = this.props;
 		const stepAfterRedirect =
 			getNextStepName( flowName, stepName ) || getPreviousStepName( flowName, stepName );
 
@@ -177,6 +244,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo,
 			locale,
+			oauth2ClientId: oauth2Client && oauth2Client.id,
 		} );
 	}
 	renderTerms() {
@@ -215,17 +283,24 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 		return (
 			<LoggedOutFormLinks className="create-account__footer-links">
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ translate( 'Already have a WordPress.com account?' ) }
-					&nbsp;
-					{ translate( 'Log in' ) }
+					{ translate( 'Log in to create a site for your existing account.' ) }
 				</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
 		);
 	}
 
 	renderStepContent() {
-		const { translate } = this.props;
+		const { translate, isSocialSignupEnabled, contextHashObject } = this.props;
 		const { email, errorMessages, isSubmitting } = this.state;
+		let socialService, socialServiceResponse;
+		if ( isSocialSignupEnabled && contextHashObject.client_id ) {
+			const clientId = contextHashObject.client_id;
+			socialService = getSocialServiceFromClientId( clientId );
+			if ( socialService ) {
+				socialServiceResponse = contextHashObject;
+			}
+		}
+
 		return (
 			<div className="create-account__form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
@@ -246,7 +321,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 							type="submit"
 							primary
 							busy={ isSubmitting }
-							disabled={ isSubmitting || ! email }
+							disabled={ isSubmitting || ! emailValidator.validate( email ) }
 						>
 							{ isSubmitting
 								? translate( 'Creating your account…' )
@@ -254,6 +329,13 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 						</Button>
 					</LoggedOutFormFooter>
 				</LoggedOutForm>
+				{ isSocialSignupEnabled && ! this.userCreationComplete() && (
+					<SocialSignupForm
+						handleResponse={ this.handleSocialResponse }
+						socialService={ socialService }
+						socialServiceResponse={ socialServiceResponse }
+					/>
+				) }
 				{ this.renderFooterLink() }
 			</div>
 		);
@@ -261,6 +343,7 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+
 		return (
 			<StepWrapper
 				flowName={ flowName }
@@ -278,6 +361,14 @@ export class CreateAccount extends Component< Props & LocalizeProps, State > {
 }
 
 export default connect(
-	null,
-	{ submitCreateAccountStep: submitSignupStep }
+	( state, ownProps ) => ( {
+		oauth2Client: getCurrentOAuth2Client( state ),
+		contextHashObject: get( ownProps.initialContext, 'hash', {} ),
+		contextQueryObject: get( ownProps.initialContext, 'query', {} ),
+	} ),
+	{
+		submitCreateAccountStep: submitSignupStep,
+		recordTracksEvent,
+		saveCreateAccountStep: saveSignupStep,
+	}
 )( localize( CreateAccount ) );
