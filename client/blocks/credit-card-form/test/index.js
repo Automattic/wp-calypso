@@ -13,7 +13,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { CreditCardForm } from '../';
+import { CreditCardForm, getParamsForApi } from '../';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
@@ -38,10 +38,8 @@ describe( 'Credit Card Form', () => {
 
 	describe( 'getParamsForApi()', () => {
 		test( 'should return expected api params from form credit card values', () => {
-			const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
-
 			expect(
-				wrapper.instance().getParamsForApi(
+				getParamsForApi(
 					{
 						country: 'AU',
 						'postal-code': '33333',
