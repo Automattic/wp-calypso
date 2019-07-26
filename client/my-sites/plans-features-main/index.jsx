@@ -40,7 +40,6 @@ import {
 	getPlan,
 	getPopularPlanSpec,
 	isFreePlan,
-	isBloggerPlan,
 	planMatches,
 	plansLink,
 } from 'lib/plans';
@@ -147,20 +146,9 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const {
-			displayJetpackPlans,
-			intervalType,
-			selectedPlan,
-			hideFreePlan,
-			sitePlanSlug,
-		} = this.props;
+		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
-
-		const hideBloggerPlan =
-			! isBloggerPlan( selectedPlan ) &&
-			! isBloggerPlan( sitePlanSlug ) &&
-			abtest( 'hideBloggerPlan2' ) === 'hide';
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -199,12 +187,12 @@ export class PlansFeaturesMain extends Component {
 		} else {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				hideBloggerPlan ? null : findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			].filter( el => el !== null );
+			];
 		}
 
 		if ( hideFreePlan ) {
@@ -483,7 +471,6 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
-			sitePlanSlug: currentPlan && currentPlan.product_slug,
 			siteType,
 		};
 	},
