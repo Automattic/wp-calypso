@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import React, { FunctionComponent } from 'react';
 import page from 'page';
-import { get } from 'lodash';
+import { get, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature, getCurrentPlan } from 'state/sites/plans/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import {
 	FEATURE_WORDADS_INSTANT,
@@ -24,6 +25,7 @@ import {
 
 interface ConnectedProps {
 	selectedSiteSlug: SiteSlug;
+	isAJetpackSite: boolean;
 	isFreePlan: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
@@ -32,6 +34,7 @@ interface ConnectedProps {
 
 const Home: FunctionComponent< ConnectedProps > = ( {
 	selectedSiteSlug,
+	isAJetpackSite,
 	isFreePlan,
 	hasSimplePayments,
 	hasWordAds,
@@ -114,6 +117,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getStoreCard = () => {
+		if ( isAJetpackSite ) {
+			return null;
+		}
+
 		const cta = hasUploadPlugins
 			? {
 					text: translate( 'Set Up a Simple Store' ),
@@ -182,7 +189,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			},
 			body: translate( 'There is a range of ways to earn money through your WordPress.com Site.' ),
 		},
-		promos: [ getSimplePaymentsCard(), getRecurringPaymentsCard(), getStoreCard(), getAdsCard() ],
+		promos: compact( [
+			getSimplePaymentsCard(),
+			getRecurringPaymentsCard(),
+			getStoreCard(),
+			getAdsCard(),
+		] ),
 	};
 
 	return <PromoSection { ...promos } />;
@@ -198,5 +210,6 @@ export default connect< ConnectedProps, {}, {} >( state => {
 		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
+		isAJetpackSite: isJetpackSite( state, site.ID ),
 	};
 } )( Home );
