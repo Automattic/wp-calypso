@@ -104,10 +104,10 @@ export default function() {
 		);
 
 		// For backwards compatibility, retaining the old URL structure.
-		page( '/checkout/:site/(add|offer)-support-session/:receiptId?', redirectToSupportSession );
+		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
 		page(
-			'/checkout/(add|offer)-support-session/:site?',
+			'/checkout/offer-support-session/:site?',
 			siteSelection,
 			upsellNudge,
 			makeLayout,
@@ -115,7 +115,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/(add|offer)-support-session/:receiptId/:site',
+			'/checkout/offer-support-session/:receiptId/:site',
 			siteSelection,
 			upsellNudge,
 			makeLayout,
