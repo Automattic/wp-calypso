@@ -116,6 +116,29 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
+
+		// get the domain of the iframed editor so we can check if it is different to parent frame
+		// if so we want to redirect to that domain to set auth cookie to prevent 3rd party cookie
+		// blocking by browser security
+		const iFrameDomain = this.props.iframeUrl
+			.toString()
+			.replace( 'http://', '' )
+			.replace( 'https://', '' )
+			.split( /[/?#]/ )[ 0 ];
+
+		// get the query params from parent frame to check if we have already readirected back from 3rd party auth
+		const urlParams = new URLSearchParams( window.location.search );
+
+		// if editor iFrame is a different domain then redirect to that domain to auth
+		// and redirect back here with 3rdPartyAuthed param set
+		if (
+			iFrameDomain.indexOf( window.location.hostname ) === -1 &&
+			! urlParams.get( '3rdPartyAuthed' )
+		) {
+			const returnURL = encodeURIComponent( `${ window.location.href }?3rdPartyAuthed=true` );
+			( window.location
+				.href as any ) = `https://${ iFrameDomain }/wp-login.php?redirect_to=${ returnURL }`;
+		}
 	}
 
 	componentWillUnmount() {
@@ -580,6 +603,8 @@ const mapStateToProps = (
 	const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
+	// console.log( iframeUrl );
+	// console.log( window.location.hostname );
 
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
