@@ -24,12 +24,15 @@ import {
 
 interface ConnectedProps {
 	selectedSiteSlug: SiteSlug;
-	currentPlan: string;
+	isFreePlan: boolean;
+	hasSimplePayments: boolean;
+	hasWordAds: boolean;
+	hasUploadPlugins: boolean;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
 	selectedSiteSlug,
-	currentPlan,
+	isFreePlan,
 	hasSimplePayments,
 	hasWordAds,
 	hasUploadPlugins,
@@ -78,16 +81,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
-		const cta =
-			PLAN_FREE !== currentPlan
-				? {
-						text: translate( 'Collect Recurring Payments' ),
-						action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
-				  }
-				: {
-						text: translate( 'Upgrade to a Paid Plan' ),
-						action: () => page( `/plans/${ selectedSiteSlug }` ),
-				  };
+		const cta = isFreePlan
+			? {
+					text: translate( 'Upgrade to a Paid Plan' ),
+					action: () => page( `/plans/${ selectedSiteSlug }` ),
+			  }
+			: {
+					text: translate( 'Collect Recurring Payments' ),
+					action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
+			  };
 		return {
 			title: translate( 'Collect recurring payments' ),
 			body: translate(
@@ -192,7 +194,7 @@ export default connect< ConnectedProps, {}, {} >( state => {
 	const plan = getCurrentPlan( state, site.ID );
 	return {
 		selectedSiteSlug,
-		currentPlan: get( plan, 'productSlug', '' ),
+		isFreePlan: get( plan, 'productSlug', '' ) === PLAN_FREE,
 		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
