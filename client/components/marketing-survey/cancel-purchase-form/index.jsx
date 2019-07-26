@@ -545,6 +545,7 @@ class CancelPurchaseForm extends React.Component {
 
 	getStepButtons = () => {
 		const { flowType, translate, disableButtons, purchase } = this.props;
+		const { surveyStep } = this.state;
 		const disabled = disableButtons || this.state.isSubmitting;
 
 		const close = {
@@ -555,7 +556,13 @@ class CancelPurchaseForm extends React.Component {
 						? translate( 'Skip' )
 						: translate( "I'll Keep It" ),
 			},
-			chat = <PrecancellationChatButton purchase={ purchase } onClick={ this.closeDialog } />,
+			chat = (
+				<PrecancellationChatButton
+					purchase={ purchase }
+					onClick={ this.closeDialog }
+					surveyStep={ surveyStep }
+				/>
+			),
 			next = {
 				action: 'next',
 				disabled: disabled || ! isSurveyFilledIn( this.state ),
@@ -591,12 +598,11 @@ class CancelPurchaseForm extends React.Component {
 			};
 
 		const firstButtons =
-			config.isEnabled( 'upgrades/precancellation-chat' ) &&
-			this.state.surveyStep !== 'happychat_step'
+			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
 				? [ chat, close ]
 				: [ close ];
 
-		if ( this.state.surveyStep === steps.FINAL_STEP ) {
+		if ( surveyStep === steps.FINAL_STEP ) {
 			const stepsCount = this.getAllSurveySteps().length;
 			const prevButton = stepsCount > 1 ? [ prev ] : [];
 
