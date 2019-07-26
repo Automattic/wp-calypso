@@ -14,6 +14,7 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import StepWrapper from 'signup/step-wrapper';
 import { getBusinessAddress, getBusinessName } from 'state/signup/steps/business-details/selectors';
@@ -150,37 +151,48 @@ class BusinessDetails extends Component< Props & ConnectedProps & LocalizeProps,
 
 		return (
 			<div className="business-details__wrapper">
-				<form>
-					<FormFieldset className="business-details__field-control">
-						<FormTextInput
-							id="title"
-							name="title"
-							placeholder=""
-							onChange={ this.handleInputChange( 'setBusinessName' ) }
-							value={ businessName }
-							maxLength={ 100 }
-							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							aria-label="Business Name"
-						/>
-						<FormTextInput
-							id="address"
-							name="address"
-							placeholder=""
-							onChange={ this.handleInputChange( 'setBusinessAddress' ) }
-							value={ businessAddress }
-							maxLength={ 800 }
-							aria-label="Business Address"
-						/>
-						<Button
-							primary
-							type="submit"
-							busy={ suggestionsRequest.status === RequestStatus.Loading }
-							onClick={ this.suggestionsSearch }
-						>
-							{ this.props.translate( 'Search' ) }
-						</Button>
-					</FormFieldset>
-				</form>
+				<Card>
+					<form>
+						<FormFieldset className="business-details__field-control">
+							<FormLabel htmlFor="title">
+								{ this.props.translate( 'Your business name' ) }
+							</FormLabel>
+							<FormTextInput
+								id="title"
+								name="title"
+								placeholder=""
+								onChange={ this.handleInputChange( 'setBusinessName' ) }
+								value={ businessName }
+								maxLength={ 100 }
+								autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+								aria-label="Business Name"
+								className="business-details__input"
+							/>
+							<FormLabel htmlFor="address">
+								{ this.props.translate( 'Your business address' ) }
+							</FormLabel>
+							<FormTextInput
+								id="address"
+								name="address"
+								placeholder=""
+								onChange={ this.handleInputChange( 'setBusinessAddress' ) }
+								value={ businessAddress }
+								maxLength={ 800 }
+								aria-label="Business Address"
+								className="business-details__input"
+							/>
+							<Button
+								primary
+								type="submit"
+								busy={ suggestionsRequest.status === RequestStatus.Loading }
+								onClick={ this.suggestionsSearch }
+								className="business-details__button"
+							>
+								{ this.props.translate( 'Search' ) }
+							</Button>
+						</FormFieldset>
+					</form>
+				</Card>
 				{ this.renderSuggestions() }
 			</div>
 		);

@@ -1,0 +1,30 @@
+@import 'woocommerce/components/text-control/style.scss';
+
+
+.business-details__wrapper {
+	max-width: 540px;
+	margin: 0 auto 16px;
+	padding: 16px;
+	box-sizing: border-box;
+
+	.business-details__input {
+		margin-bottom: 20px;
+		transition: none;
+	}
+
+	p {
+		font-size: 13px;
+		color: var( --color-white );
+		margin: 0 0 12px;
+		text-align: center;
+
+		&:last-child {
+			margin: 10px 0 0;
+		}
+	}
+
+	.business-details__button {
+		width: 100%;
+	}
+}
+
