@@ -167,8 +167,6 @@ class VideoEditor extends Component {
 
 		return (
 			<div className={ classes }>
-				{ error && this.renderError() }
-
 				<figure>
 					<div className="video-editor__content">
 						<div className="video-editor__preview-wrapper">
@@ -202,6 +200,8 @@ class VideoEditor extends Component {
 						/>
 					</div>
 				</figure>
+
+				{ error && this.renderError() }
 			</div>
 		);
 	}

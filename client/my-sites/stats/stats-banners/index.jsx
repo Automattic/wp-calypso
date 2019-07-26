@@ -113,9 +113,7 @@ class StatsBanners extends Component {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				{ config.isEnabled( 'onboarding-checklist' ) && 'ecommerce-bundle' !== planSlug && (
-					<WpcomChecklist viewMode="banner" />
-				) }
+				{ 'ecommerce-bundle' !== planSlug && <WpcomChecklist viewMode="banner" /> }
 				{ 'ecommerce-bundle' === planSlug && <ECommerceManageNudge siteId={ siteId } /> }
 				{ this.renderBanner() }
 			</Fragment>

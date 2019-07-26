@@ -125,15 +125,14 @@ class AutoRenewToggle extends Component {
 					disabled={ this.isUpdatingAutoRenew() }
 					onChange={ this.onToggleAutoRenew }
 				/>
-				{ this.state.showAutoRenewDisablingDialog && (
-					<AutoRenewDisablingDialog
-						planName={ planName }
-						purchase={ purchase }
-						siteDomain={ siteDomain }
-						onClose={ this.onCloseAutoRenewDisablingDialog }
-						onConfirm={ this.toggleAutoRenew }
-					/>
-				) }
+				<AutoRenewDisablingDialog
+					isVisible={ this.state.showAutoRenewDisablingDialog }
+					planName={ planName }
+					purchase={ purchase }
+					siteDomain={ siteDomain }
+					onClose={ this.onCloseAutoRenewDisablingDialog }
+					onConfirm={ this.toggleAutoRenew }
+				/>
 			</>
 		);
 	}

@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
- * Internal dependencies
+ * Style dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
+import './style.scss';
 
 export class Notice extends Component {
 	static defaultProps = {
@@ -119,10 +119,13 @@ export class Notice extends Component {
 				</span>
 				{ text ? children : null }
 				{ showDismiss && (
-					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick }>
+					<button
+						className="notice__dismiss"
+						onClick={ onDismissClick }
+						aria-label={ translate( 'Dismiss' ) }
+					>
 						<Gridicon icon="cross" size={ 24 } />
-						<ScreenReaderText>{ translate( 'Dismiss' ) }</ScreenReaderText>
-					</span>
+					</button>
 				) }
 			</div>
 		);

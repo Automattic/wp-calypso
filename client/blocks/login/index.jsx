@@ -38,6 +38,7 @@ import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import AsyncLoad from 'components/async-load';
+import VisitSite from 'blocks/visit-site';
 
 /**
  * Style dependencies
@@ -152,22 +153,21 @@ class Login extends Component {
 			socialConnect,
 			translate,
 			twoStepNonce,
+			fromSite,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account.' );
+		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
-			headerText = translate(
-				'Log in to update your payment details and renew your subscription.'
-			);
+			headerText = translate( 'Log in to update your payment details and renew your subscription' );
 		}
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
 		} else if ( socialConnect ) {
-			headerText = translate( 'Connect your %(service)s account.', {
+			headerText = translate( 'Connect your %(service)s account', {
 				args: {
 					service: capitalize( linkingSocialService ),
 				},
@@ -238,7 +238,7 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
+			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
@@ -249,6 +249,9 @@ class Login extends Component {
 					/>
 				</div>
 			);
+		} else if ( fromSite ) {
+			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
+			postHeader = <VisitSite siteSlug={ fromSite } />;
 		}
 
 		return (

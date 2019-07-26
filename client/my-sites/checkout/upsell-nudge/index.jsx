@@ -27,9 +27,16 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
-import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
+import {
+	isRequestingSitePlans,
+	getPlansBySiteId,
+	getSitePlanRawPrice,
+	getPlanDiscountedRawPrice,
+} from 'state/sites/plans/selectors';
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
+import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
+import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 
 /**
  * Style dependencies
@@ -107,6 +114,8 @@ export class UpsellNudge extends React.Component {
 			currencyCode,
 			productCost,
 			productDisplayCost,
+			planRawPrice,
+			planDiscountedRawPrice,
 			isLoggedIn,
 			upsellType,
 			translate,
@@ -140,6 +149,19 @@ export class UpsellNudge extends React.Component {
 						handleClickDecline={ this.handleClickDecline }
 					/>
 				);
+
+			case 'plan-upgrade-upsell':
+				return (
+					<PlanUpgradeUpsell
+						currencyCode={ currencyCode }
+						planRawPrice={ planRawPrice }
+						planDiscountedRawPrice={ planDiscountedRawPrice }
+						receiptId={ receiptId }
+						translate={ translate }
+						handleClickAccept={ this.handleClickAccept }
+						handleClickDecline={ this.handleClickDecline }
+					/>
+				);
 		}
 	}
 
@@ -151,12 +173,12 @@ export class UpsellNudge extends React.Component {
 	};
 
 	handleClickAccept = buttonAction => {
-		const { trackUpsellButtonClick, upsellType, siteSlug } = this.props;
+		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
-		page( `/checkout/${ siteSlug }/concierge-session` );
+		page( `/checkout/${ siteSlug }/${ upgradeItem }` );
 	};
 }
 
@@ -172,6 +194,14 @@ export default connect(
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
 		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
+		const planSlug = getUpgradePlanSlugFromPath( state, selectedSiteId, props.upgradeItem );
+		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, {
+			isMonthly: false,
+		} );
+		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+			isMonthly: false,
+		} );
+
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
@@ -179,6 +209,8 @@ export default connect(
 			hasSitePlans: sitePlans && sitePlans.length > 0,
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			planRawPrice: annualPrice,
+			planDiscountedRawPrice: annualDiscountPrice,
 			isLoggedIn: isUserLoggedIn( state ),
 			siteSlug,
 			selectedSiteId,

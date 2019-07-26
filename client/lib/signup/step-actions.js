@@ -163,22 +163,23 @@ export function createSiteWithCart(
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
+			site_information: {
+				title: siteTitle,
+			},
 		},
 		public: 1,
 		validate: false,
 	};
 
-	const importingFromUrl =
-		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
-	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
-
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	if ( importingFromUrl ) {
-		newSiteParams.blog_name = importingFromUrl;
+	if ( 'import' === flowName ) {
+		const importingFromUrl = getNuxUrlInputValue( state );
+		newSiteParams.blog_name = normalizeImportUrl( importingFromUrl );
 		newSiteParams.find_available_url = true;
-		newSiteParams.options.nux_import_engine = importEngine;
+		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
+		newSiteParams.options.nux_import_from_url = importingFromUrl;
 	} else if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
@@ -521,13 +522,20 @@ export function createAccount(
 					);
 				}
 
-				// Fire after a new user registers.
-				analytics.recordRegistration();
-
 				const username =
 					( response && response.signup_sandbox_username ) ||
 					( response && response.username ) ||
 					userData.username;
+
+				const userId =
+					( response && response.signup_sandbox_user_id ) ||
+					( response && response.user_id ) ||
+					userData.ID;
+
+				// Fire after a new user registers.
+				analytics.recordRegistration();
+				analytics.identifyUser( username, userId );
+
 				const providedDependencies = assign( { username }, bearerToken );
 
 				if ( oauth2Signup ) {

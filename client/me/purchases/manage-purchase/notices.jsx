@@ -63,7 +63,7 @@ class PurchaseNotice extends Component {
 				);
 			}
 
-			if ( config.isEnabled( 'autorenewal-toggle' ) && hasPaymentMethod( purchase ) ) {
+			if ( hasPaymentMethod( purchase ) ) {
 				return translate(
 					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
 						"Please enable auto-renewal so you don't lose out on your paid features!",
@@ -118,7 +118,7 @@ class PurchaseNotice extends Component {
 		}
 
 		if (
-			( ! config.isEnabled( 'autorenewal-toggle' ) || ! hasPaymentMethod( purchase ) ) &&
+			! hasPaymentMethod( purchase ) &&
 			( ! canExplicitRenew( purchase ) ||
 				shouldAddPaymentSourceInsteadOfRenewingNow( purchase.expiryMoment ) )
 		) {
@@ -127,9 +127,9 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		// With the toggle, it doesn't make much sense to have this button.
+		// In case of `manualRenew`, the text encouraging users to enable auto-renewal through the toggle will be presented.
 		return (
-			! config.isEnabled( 'autorenewal-toggle' ) && (
+			purchase.expiryStatus !== 'manualRenew' && (
 				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
 			)
 		);

@@ -32,7 +32,6 @@ class Full_Site_Editing {
 		add_action( 'init', array( $this, 'register_meta_template_id' ) );
 		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
-		add_filter( 'template_include', array( $this, 'load_page_template' ) );
 		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
 		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
 		add_filter( 'admin_body_class', array( $this, 'toggle_editor_post_title_visibility' ) );
@@ -324,12 +323,12 @@ class Full_Site_Editing {
 			'a8c/navigation-menu',
 			array(
 				'attributes'      => [
-					'themeLocation' => [
-						'default' => 'main-1',
+					'className'     => [
+						'default' => '',
 						'type'    => 'string',
 					],
 				],
-				'render_callback' => 'render_navigation_menu_block',
+				'render_callback' => 'a8c_fse_render_navigation_menu_block',
 			)
 		);
 
@@ -475,25 +474,7 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template_blocks = parse_blocks( $template_content );
-		$content_attrs   = $this->get_post_content_block_attrs( $template_blocks );
-
-		$wrapped_post_content = sprintf( '<!-- wp:a8c/post-content %s -->%s<!-- /wp:a8c/post-content -->', $content_attrs, $post->post_content );
-		$post->post_content   = str_replace( "<!-- wp:a8c/post-content $content_attrs /-->", $wrapped_post_content, $template_content );
-	}
-
-	/**
-	 * This will extract the attributes from the post content block
-	 * json encode them.
-	 *
-	 * @param array $blocks    An array of template blocks.
-	 */
-	private function get_post_content_block_attrs( $blocks ) {
-		foreach ( $blocks as $key => $value ) {
-			if ( 'a8c/post-content' === $value['blockName'] ) {
-				return count( $value['attrs'] ) > 0 ? wp_json_encode( $value['attrs'] ) : '';
-			}
-		}
+		$post->post_content = preg_replace( '@(<!-- wp:a8c/post-content)(.*?)(/-->)@', "$1$2-->$post->post_content<!-- /wp:a8c/post-content -->", $template_content );
 	}
 
 	/**
@@ -542,21 +523,6 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Determine the page template to use.
-	 * If it's a full site page being loaded, use our FSE template.
-	 *
-	 * @param string $template template URL passed to filter.
-	 * @return string Filtered template path.
-	 */
-	public function load_page_template( $template ) {
-		if ( $this->is_full_site_page() ) {
-			return plugin_dir_path( __FILE__ ) . 'page-fse.php';
-		}
-
-		return $template;
-	}
-
-	/**
 	 * Return an extra class that will be assigned to the body element if a full site page is being edited.
 	 *
 	 * That class hides the default post title of the editor and displays a new post title rendered by the post content
@@ -587,7 +553,7 @@ class Full_Site_Editing {
 			foreach ( $template_blocks as $block ) {
 				$template[] = fse_map_block_to_editor_template_setting( $block );
 			}
-			$editor_settings['template'] = $template;
+			$editor_settings['template']     = $template;
 			$editor_settings['templateLock'] = 'all';
 		}
 		return $editor_settings;

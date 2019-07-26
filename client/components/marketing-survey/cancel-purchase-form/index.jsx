@@ -32,7 +32,7 @@ import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import { getName } from 'lib/purchases';
-import { isDomainRegistration, isGoogleApps } from 'lib/products-values';
+import { isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
@@ -74,6 +74,26 @@ class CancelPurchaseForm extends React.Component {
 		extraPrependedButtons: [],
 	};
 
+	getAllSurveySteps = () => {
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
+
+		return stepsForProductAndSurvey(
+			this.state,
+			purchase,
+			isChatAvailable || isChatActive,
+			precancellationChatAvailable
+		);
+	};
+
+	initSurveyState() {
+		const [ firstStep ] = this.getAllSurveySteps();
+
+		this.setState( {
+			surveyStep: firstStep,
+			...initialSurveyState(),
+		} );
+	}
+
 	constructor( props ) {
 		super( props );
 
@@ -88,15 +108,12 @@ class CancelPurchaseForm extends React.Component {
 		}
 
 		this.state = {
-			questionOneRadio: null,
 			questionOneText: '',
 			questionOneOrder: questionOneOrder,
-			questionTwoRadio: null,
 			questionTwoText: '',
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: '',
 
-			surveyStep: steps.INITIAL_STEP,
 			isSubmitting: false,
 		};
 	}
@@ -191,7 +208,7 @@ class CancelPurchaseForm extends React.Component {
 	onSubmit = () => {
 		const { purchase, selectedSite } = this.props;
 
-		if ( ! isDomainRegistration( purchase ) && ! isGoogleApps( purchase ) ) {
+		if ( ! isGoogleApps( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -498,23 +515,13 @@ class CancelPurchaseForm extends React.Component {
 
 	closeDialog = () => {
 		this.props.onClose();
-
-		this.setState( {
-			surveyStep: steps.INITIAL_STEP,
-			...initialSurveyState(),
-		} );
+		this.initSurveyState();
 
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 	};
 
 	changeSurveyStep = stepFunction => {
-		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
-		const allSteps = stepsForProductAndSurvey(
-			this.state,
-			purchase,
-			isChatAvailable || isChatActive,
-			precancellationChatAvailable
-		);
+		const allSteps = this.getAllSurveySteps();
 		const newStep = stepFunction( this.state.surveyStep, allSteps );
 
 		this.setState( { surveyStep: newStep } );
@@ -585,13 +592,16 @@ class CancelPurchaseForm extends React.Component {
 		const firstButtons = [ ...this.props.extraPrependedButtons, close ];
 
 		if ( this.state.surveyStep === steps.FINAL_STEP ) {
+			const stepsCount = this.getAllSurveySteps().length;
+			const prevButton = stepsCount > 1 ? [ prev ] : [];
+
 			switch ( flowType ) {
 				case CANCEL_FLOW_TYPE.REMOVE:
-					return firstButtons.concat( [ prev, remove ] );
+					return firstButtons.concat( [ ...prevButton, remove ] );
 				case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY:
-					return firstButtons.concat( [ prev, submit ] );
+					return firstButtons.concat( [ ...prevButton, submit ] );
 				default:
-					return firstButtons.concat( [ prev, cancel ] );
+					return firstButtons.concat( [ ...prevButton, cancel ] );
 			}
 		}
 
@@ -608,6 +618,10 @@ class CancelPurchaseForm extends React.Component {
 		) {
 			this.recordEvent( 'calypso_purchases_cancel_form_start' );
 		}
+	}
+
+	componentDidMount() {
+		this.initSurveyState();
 	}
 
 	render() {

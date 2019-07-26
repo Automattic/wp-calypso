@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import moment from 'moment';
 import { format as urlFormat, parse as urlParse } from 'url';
 import { difference, get, includes, pick, values } from 'lodash';
 
@@ -105,43 +104,6 @@ export function planHasFeature( plan, feature ) {
 	);
 
 	return includes( allFeatures, feature );
-}
-
-export function getCurrentTrialPeriodInDays( plan ) {
-	const { expiryMoment, subscribedDayMoment, userFacingExpiryMoment } = plan;
-
-	if ( isInGracePeriod( plan ) ) {
-		return expiryMoment.diff( userFacingExpiryMoment, 'days' );
-	}
-
-	return userFacingExpiryMoment.diff( subscribedDayMoment, 'days' );
-}
-
-export function getDayOfTrial( plan ) {
-	const { subscribedDayMoment } = plan;
-
-	// we return the difference plus one day so that the first day is day 1 instead of day 0
-	return (
-		moment()
-			.startOf( 'day' )
-			.diff( subscribedDayMoment, 'days' ) + 1
-	);
-}
-
-export function getDaysUntilUserFacingExpiry( plan ) {
-	const { userFacingExpiryMoment } = plan;
-
-	return userFacingExpiryMoment.diff( moment().startOf( 'day' ), 'days' );
-}
-
-export function getDaysUntilExpiry( plan ) {
-	const { expiryMoment } = plan;
-
-	return expiryMoment.diff( moment().startOf( 'day' ), 'days' );
-}
-
-export function isInGracePeriod( plan ) {
-	return getDaysUntilUserFacingExpiry( plan ) <= 0;
 }
 
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {

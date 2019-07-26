@@ -5,6 +5,9 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { connect } from 'react-redux';
+import Spinner from 'components/spinner';
+import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 
 /**
  * Internal dependencies
@@ -16,6 +19,8 @@ import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
+import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
+import { requestRewindState } from 'state/rewind/actions';
 
 /**
  * Style dependencies
@@ -126,8 +131,25 @@ const headerSubtitle = ( translate, threat ) => {
 };
 
 export class ThreatAlert extends Component {
+	state = { requesting: false };
+
+	handleFix = () => {
+		this.setState( { requesting: true } );
+		this.props.fixThreatAlert( this.props.siteId, this.props.threat.id );
+	};
+
+	handleIgnore = () => {
+		this.setState( { requesting: true } );
+		this.props.ignoreThreatAlert( this.props.siteId, this.props.threat.id );
+	};
+
+	refreshRewindState = () => {
+		this.props.requestRewindState( this.props.siteId );
+	};
+
 	render() {
 		const { threat, translate } = this.props;
+		const inProgress = this.state.requesting || threat.fixer_status === 'in_progress';
 
 		return (
 			<Fragment>
@@ -150,12 +172,18 @@ export class ThreatAlert extends Component {
 											dateFormat="ll"
 										/>
 									</span>
+									{ inProgress && <Spinner /> }
+									{ inProgress && (
+										<Interval onTick={ this.refreshRewindState } period={ EVERY_TEN_SECONDS } />
+									) }
 									<SplitButton
 										compact
 										primary
-										label={ translate( 'Fix threat' ) }
-										onClick={ () => debug( 'main button clicked' ) }
-										disabled={ false }
+										label={
+											threat.fixable ? translate( 'Fix threat' ) : translate( 'Ignore threat' )
+										}
+										onClick={ threat.fixable ? this.handleFix : this.handleIgnore }
+										disabled={ inProgress }
 									>
 										<PopoverMenuItem
 											onClick={ () => debug( 'documentation clicked' ) }
@@ -171,13 +199,15 @@ export class ThreatAlert extends Component {
 										>
 											<span>{ translate( 'Get help' ) }</span>
 										</PopoverMenuItem>
-										<PopoverMenuItem
-											onClick={ () => debug( 'ignore threat clicked' ) }
-											className="activity-log__threat-menu-item"
-											icon="trash"
-										>
-											<span>{ translate( 'Ignore threat' ) }</span>
-										</PopoverMenuItem>
+										{ threat.fixable && (
+											<PopoverMenuItem
+												onClick={ this.handleIgnore }
+												className="activity-log__threat-menu-item"
+												icon="trash"
+											>
+												<span>{ translate( 'Ignore threat' ) }</span>
+											</PopoverMenuItem>
+										) }
 									</SplitButton>
 								</div>
 								<span className="activity-log__threat-alert-type">
@@ -218,4 +248,7 @@ export class ThreatAlert extends Component {
 	}
 }
 
-export default localize( ThreatAlert );
+export default connect(
+	null,
+	{ fixThreatAlert, ignoreThreatAlert, requestRewindState }
+)( localize( ThreatAlert ) );

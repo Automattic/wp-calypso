@@ -53,19 +53,3 @@
 		}
 	}
 }
-
-.global-notices .notice a.notice__action {
-
-	@include breakpoint( '>660px' ) {
-		font-size: 14px;
-		padding: 13px 16px;
-	}
-}
-
-.global-notices .notice__dismiss {
-	flex-shrink: 0;
-
-	@include breakpoint( '>660px' ) {
-		padding: 13px 16px 0;
-	}
-}

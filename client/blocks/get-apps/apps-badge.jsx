@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { identity, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -97,7 +98,7 @@ export class AppsBadge extends PureComponent {
 
 	onLinkClick = () => {
 		const { storeName } = this.props;
-		recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
+		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
 	};
 
 	render() {
@@ -111,7 +112,12 @@ export class AppsBadge extends PureComponent {
 
 		return (
 			<figure className={ figureClassNames }>
-				<a href={ storeLink } onClick={ this.onLinkClick }>
+				<a
+					href={ storeLink }
+					onClick={ this.onLinkClick }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					<img src={ imageSrc } title={ titleText } alt={ altText } />
 				</a>
 			</figure>
@@ -119,4 +125,9 @@ export class AppsBadge extends PureComponent {
 	}
 }
 
-export default localize( AppsBadge );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( AppsBadge ) );

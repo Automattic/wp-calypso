@@ -26,6 +26,7 @@ const DIALOG = {
 
 class AutoRenewDisablingDialog extends Component {
 	static propTypes = {
+		isVisible: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		planName: PropTypes.string.isRequired,
 		siteDomain: PropTypes.string.isRequired,
@@ -33,8 +34,8 @@ class AutoRenewDisablingDialog extends Component {
 	};
 
 	state = {
-		showAtomicFollowUpDialog: false,
 		dialogType: DIALOG.GENERAL,
+		surveyHasShown: false,
 	};
 
 	getVariation() {
@@ -122,16 +123,27 @@ class AutoRenewDisablingDialog extends Component {
 		} );
 	};
 
+	closeAndCleanup = () => {
+		this.props.onClose();
+
+		// It is intentional that we don't reset `surveyHasShown` flag here.
+		// That state is for preventing the survey from showing excessively.
+		// The current behavior is that it won't show up until this component has been unmounted and then remounted.
+		this.setState( {
+			dialogType: DIALOG.GENERAL,
+		} );
+	};
+
 	renderAtomicFollowUpDialog = () => {
-		const { siteDomain, onClose, translate } = this.props;
+		const { siteDomain, isVisible, translate } = this.props;
 
 		const exportPath = '//' + siteDomain + '/wp-admin/export.php';
 
 		return (
 			<Dialog
-				isVisible={ true }
+				isVisible={ isVisible }
 				additionalClassNames="auto-renew-disabling-dialog atomic-follow-up"
-				onClose={ onClose }
+				onClose={ this.closeAndCleanup }
 			>
 				<p>
 					{ translate(
@@ -166,27 +178,33 @@ class AutoRenewDisablingDialog extends Component {
 		}
 
 		this.props.onConfirm();
+
+		if ( this.state.surveyHasShown ) {
+			return this.closeAndCleanup();
+		}
+
 		this.setState( {
 			dialogType: DIALOG.SURVEY,
+			surveyHasShown: true,
 		} );
 	};
 
 	renderGeneralDialog = () => {
-		const { onClose, translate } = this.props;
+		const { isVisible, translate } = this.props;
 		const description = this.getCopy( this.getVariation() );
 
 		return (
 			<Dialog
-				isVisible={ true }
+				isVisible={ isVisible }
 				additionalClassNames="auto-renew-disabling-dialog"
-				onClose={ onClose }
+				onClose={ this.closeAndCleanup }
 			>
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
 				<Button onClick={ this.onClickGeneralConfirm }>
 					{ translate( 'Confirm cancellation' ) }
 				</Button>
-				<Button onClick={ onClose } primary>
+				<Button onClick={ this.closeAndCleanup } primary>
 					{ translate( "I'll keep it" ) }
 				</Button>
 			</Dialog>
@@ -194,15 +212,15 @@ class AutoRenewDisablingDialog extends Component {
 	};
 
 	renderSurvey = () => {
-		const { purchase, selectedSite, onClose } = this.props;
+		const { purchase, isVisible, selectedSite } = this.props;
 
 		return (
 			<CancelPurchaseForm
 				purchase={ purchase }
 				selectedSite={ selectedSite }
-				isVisible={ true }
-				onClose={ onClose }
-				onClickFinalConfirm={ onClose }
+				isVisible={ isVisible }
+				onClose={ this.closeAndCleanup }
+				onClickFinalConfirm={ this.closeAndCleanup }
 				flowType={ 'cancel_autorenew_survey_only' }
 			/>
 		);

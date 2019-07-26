@@ -147,12 +147,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can log out and request a magic link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			await driverManager.ensureNotLoggedIn( driver );
 			const loginPage = await LoginPage.Visit( driver );
 			return await loginPage.requestMagicLink( emailAddress );
 		} );
 
 		step( 'Can see email containing magic link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			const emailClient = new EmailClient( signupInboxId );
 			const validator = emails => emails.find( email => email.subject.includes( 'WordPress.com' ) );
 			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
@@ -173,6 +179,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can visit the magic link and we should be logged in', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			await driver.get( magicLoginLink );
 			const magicLoginPage = await MagicLoginPage.Expect( driver );
 			await magicLoginPage.finishLogin();
@@ -747,7 +756,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @parallel', function() {
+	describe.skip( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @parallel', function() {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
@@ -1549,6 +1558,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
 
 		before( async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -1714,6 +1726,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await siteTitlePage.submitForm();
 		} );
 
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteStylePage = await SiteStylePage.Expect( driver );
+			return await siteStylePage.submitForm();
+		} );
+
 		step(
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
 			async function() {
@@ -1823,6 +1840,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( blogName );
 			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteStylePage = await SiteStylePage.Expect( driver );
+			return await siteStylePage.submitForm();
 		} );
 
 		step(

@@ -116,23 +116,31 @@ export default {
 		defaultVariation: 'control',
 		localeTargets: 'any',
 	},
-	proratedCreditsBanner: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20190626',
+	skippableDomainStep: {
+		datestamp: '20190717',
 		variations: {
+			skippable: 0,
+			notSkippable: 100,
+		},
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
+	},
+	showPlanUpsellNudge: {
+		datestamp: '20190712',
+		variations: {
+			variantShowNudge: 50,
 			control: 50,
-			variant: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	skippableDomainStep: {
-		datestamp: '20190702',
+	defaultMonthlyJetpackPlan: {
+		datestamp: '20190722',
 		variations: {
-			skippable: 50,
-			notSkippable: 50,
+			monthlyPlan: 50,
+			yearlyPlan: 50,
 		},
-		defaultVariation: 'notSkippable',
+		defaultVariation: 'yearlyPlan',
 		allowExistingUsers: true,
 	},
 };

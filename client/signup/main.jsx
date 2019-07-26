@@ -79,6 +79,7 @@ import {
 	getFilteredSteps,
 	getFirstInvalidStep,
 	getStepUrl,
+	persistSignupDestination,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from 'signup/site-mockup';
@@ -107,6 +108,9 @@ class Signup extends React.Component {
 		isLoggedIn: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
 		setSurvey: PropTypes.func.isRequired,
+		submitSiteType: PropTypes.func.isRequired,
+		submitSiteVertical: PropTypes.func.isRequired,
+		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
 		isPaidPlan: PropTypes.bool,
@@ -224,6 +228,12 @@ class Signup extends React.Component {
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
+
+		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
+		if ( destination !== filteredDestination ) {
+			persistSignupDestination( destination );
+		}
+
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
 
@@ -519,24 +529,27 @@ class Signup extends React.Component {
 					{ this.state.shouldShowLoadingScreen ? (
 						<SignupProcessingScreen />
 					) : (
-						<CurrentComponent
-							path={ this.props.path }
-							step={ currentStepProgress }
-							initialContext={ this.props.initialContext }
-							steps={ flow.steps }
-							stepName={ this.props.stepName }
-							meta={ flow.meta || {} }
-							goToNextStep={ this.goToNextStep }
-							goToStep={ this.goToStep }
-							previousFlowName={ this.state.previousFlowName }
-							flowName={ this.props.flowName }
-							signupProgress={ this.props.progress }
-							signupDependencies={ this.props.signupDependencies }
-							stepSectionName={ this.props.stepSectionName }
-							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ hideFreePlan }
-							{ ...propsFromConfig }
-						/>
+						<>
+							<CurrentComponent
+								path={ this.props.path }
+								step={ currentStepProgress }
+								initialContext={ this.props.initialContext }
+								steps={ flow.steps }
+								stepName={ this.props.stepName }
+								meta={ flow.meta || {} }
+								goToNextStep={ this.goToNextStep }
+								goToStep={ this.goToStep }
+								previousFlowName={ this.state.previousFlowName }
+								flowName={ this.props.flowName }
+								signupProgress={ this.props.progress }
+								signupDependencies={ this.props.signupDependencies }
+								stepSectionName={ this.props.stepSectionName }
+								positionInFlow={ this.getPositionInFlow() }
+								hideFreePlan={ hideFreePlan }
+								{ ...propsFromConfig }
+							/>
+							{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
+						</>
 					) }
 				</div>
 			</div>
@@ -598,7 +611,6 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
 			</div>
 		);
 	}

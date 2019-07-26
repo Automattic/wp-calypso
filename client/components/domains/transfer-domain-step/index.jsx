@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
@@ -519,10 +519,13 @@ class TransferDomainStep extends React.Component {
 
 							this.setState( {
 								notice: this.props.translate(
-									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
-										'but you can {{a}}map it{{/a}} instead.',
+									'Domain transfers are temporarily disabled until %(transferEnableDate)s, ' +
+										'but you can {{a}}map your domain{{/a}} instead.',
 									{
-										args: { tld },
+										args: {
+											tld: tld,
+											transferEnableDate: moment( '2019-07-30T08:00:00' ).format( 'LL' ),
+										},
 										components: {
 											strong: <strong />,
 											a: <a href="#" onClick={ this.goToMapDomainStep } />, // eslint-disable-line jsx-a11y/anchor-is-valid

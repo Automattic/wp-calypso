@@ -29,6 +29,7 @@ export {
 	setDomainDetails,
 	setNewCreditCardDetails,
 	setPayment,
+	setStripeObject,
 	submitTransaction,
 } from './checkout';
 

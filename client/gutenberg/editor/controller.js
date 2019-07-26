@@ -108,6 +108,7 @@ export const post = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const pressThis = getPressThisData( context.query );
+	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
 
 	// Set postId on state.ui.editor.postId, so components like editor revisions can read from it.
 	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
@@ -118,6 +119,7 @@ export const post = ( context, next ) => {
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
 			pressThis={ pressThis }
+			fseParentPageId={ fseParentPageId }
 		/>
 	);
 

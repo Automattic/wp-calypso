@@ -15,7 +15,9 @@ import page from 'page';
  */
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import Main from 'components/main';
+import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -84,7 +86,7 @@ class Plans extends React.Component {
 	};
 
 	render() {
-		const { selectedSite, translate, displayJetpackPlans } = this.props;
+		const { selectedSite, translate, displayJetpackPlans, canAccessPlans } = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
 			return this.renderPlaceholder();
@@ -98,22 +100,29 @@ class Plans extends React.Component {
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
-
-					<div id="plans" className="plans plans__has-sidebar">
-						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-						<PlansFeaturesMain
-							displayJetpackPlans={ displayJetpackPlans }
-							hideFreePlan={ true }
-							customerType={ this.props.customerType }
-							intervalType={ this.props.intervalType }
-							selectedFeature={ this.props.selectedFeature }
-							selectedPlan={ this.props.selectedPlan }
-							withDiscount={ this.props.withDiscount }
-							discountEndDate={ this.props.discountEndDate }
-							site={ selectedSite }
-							plansWithScroll={ false }
+					{ ! canAccessPlans && (
+						<EmptyContent
+							illustration="/calypso/images/illustrations/illustration-404.svg"
+							title={ translate( 'You are not authorized to view this page' ) }
 						/>
-					</div>
+					) }
+					{ canAccessPlans && (
+						<div id="plans" className="plans plans__has-sidebar">
+							<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+							<PlansFeaturesMain
+								displayJetpackPlans={ displayJetpackPlans }
+								hideFreePlan={ true }
+								customerType={ this.props.customerType }
+								intervalType={ this.props.intervalType }
+								selectedFeature={ this.props.selectedFeature }
+								selectedPlan={ this.props.selectedPlan }
+								withDiscount={ this.props.withDiscount }
+								discountEndDate={ this.props.discountEndDate }
+								site={ selectedSite }
+								plansWithScroll={ false }
+							/>
+						</div>
+					) }
 				</Main>
 			</div>
 		);
@@ -129,5 +138,6 @@ export default connect( state => {
 	return {
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
+		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};
 } )( localize( Plans ) );

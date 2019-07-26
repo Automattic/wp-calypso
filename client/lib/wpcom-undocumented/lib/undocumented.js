@@ -1166,6 +1166,19 @@ Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 };
 
 /**
+ * GET stripe configuration
+ *
+ * @param {Object} query - query parameters
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.stripeConfiguration = function( query, fn ) {
+	debug( '/me/stripe-configuration query' );
+
+	return this.wpcom.req.get( '/me/stripe-configuration', query, fn );
+};
+
+/**
  * GET ebanx js configuration
  *
  * @param {Object} query - query parameters

@@ -13,7 +13,6 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import {
 	getName,
 	isExpired,
@@ -21,6 +20,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
 	isRenewing,
@@ -192,7 +192,7 @@ class PurchaseMeta extends Component {
 		if ( hasPaymentMethod( purchase ) ) {
 			let paymentInfo = null;
 
-			if ( purchase.payment.type === 'credits' ) {
+			if ( isPaidWithCredits( purchase ) ) {
 				return translate( 'Credits' );
 			}
 
@@ -204,13 +204,6 @@ class PurchaseMeta extends Component {
 						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' ),
 					},
 				} );
-			}
-
-			// Before code-D29008, the purchase info endpoint excluded the payment info
-			// if the auto-renewal is off. This is for emulating the behavior before rolling out the toggle,
-			// so that users can at least still re-enable the auto-renewal through adding a new payment method.
-			if ( ! config.isEnabled( 'autorenewal-toggle' ) && ! isRenewing( purchase ) ) {
-				return translate( 'None' );
 			}
 
 			return (
@@ -305,9 +298,9 @@ class PurchaseMeta extends Component {
 		}
 
 		if (
-			config.isEnabled( 'autorenewal-toggle' ) &&
 			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
 			hasPaymentMethod( purchase ) &&
+			! isPaidWithCredits( purchase ) &&
 			! isExpired( purchase )
 		) {
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;

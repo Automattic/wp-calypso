@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import request from 'superagent';
 import debugFactory from 'debug';
 
 /**
@@ -19,15 +16,24 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
  * @param {String} postFormData post data url param string
  * @returns {Object} request object
  */
-export function postRequest( glotPressUrl, postFormData ) {
-	return request
-		.post( glotPressUrl )
-		.withCredentials()
-		.send( postFormData )
-		.then( response => response.body )
-		.catch( error => {
-			throw error; // pass on the error so the call sites can handle it accordingly.
+export async function postRequest( glotPressUrl, postFormData ) {
+	let response;
+
+	try {
+		response = await fetch( glotPressUrl, {
+			method: 'POST',
+			credentials: 'include',
+			body: postFormData,
 		} );
+		if ( response.ok ) {
+			return await response.json();
+		}
+	} catch ( err ) {
+		throw err;
+	}
+
+	// Invalid response.
+	throw new Error( await response.body );
 }
 
 export function encodeOriginalKey( { original, context } ) {

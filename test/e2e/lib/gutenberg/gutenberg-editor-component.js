@@ -82,15 +82,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		if ( visit ) {
+			await this.waitForSuccessViewPostNotice();
+			await this.driver.sleep( 1000 );
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( '.components-notice.is-success a' )
+				By.css( '.components-snackbar__content a' )
 			);
 		}
 	}
 
 	async enterTitle( title ) {
-		const titleFieldSelector = By.css( '#post-title-0' );
+		const titleFieldSelector = By.css( '.editor-post-title__input' );
 		await driverHelper.clearTextArea( this.driver, titleFieldSelector );
 		return await this.driver.findElement( titleFieldSelector ).sendKeys( title );
 	}
@@ -186,13 +188,19 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, name );
-		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
+		// Using a JS click here since the Webdriver click wasn't working
+		const button = await this.driver.findElement( inserterBlockItemSelector );
+		await this.driver
+			.actions( { bridge: true } )
+			.move( { origin: button } )
+			.perform();
+		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
 
 	async titleShown() {
-		const titleSelector = By.css( '#post-title-0' );
+		const titleSelector = By.css( '.editor-post-title__input' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );
@@ -264,16 +272,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async waitForSuccessViewPostNotice() {
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
-			By.css( '.components-notice.is-success' )
+			By.css( '.components-snackbar' )
 		);
 	}
 
 	async dismissSuccessNotice() {
 		await this.waitForSuccessViewPostNotice();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.components-notice__dismiss' )
-		);
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.components-snackbar' ) );
 	}
 
 	async launchPreview() {
@@ -304,7 +309,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async viewPublishedPostOrPage() {
-		const viewPostSelector = By.css( '.components-notice__content a' );
+		const viewPostSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, viewPostSelector );
 	}
 

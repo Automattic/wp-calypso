@@ -91,6 +91,8 @@ import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
 import ProgressBar from '@automattic/calypso-ui/src/progress-bar/docs/example';
+import PromoSection from 'components/promo-section/docs/example';
+import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
 import Ribbon from 'components/ribbon/docs/example';
@@ -251,6 +253,8 @@ class DesignAssets extends React.Component {
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
 					<ProgressBar readmeFilePath="progress-bar" />
+					<PromoSection readmeFilePath="promo-section" />
+					<PromoCard readmeFilePath="promo-section/promo-card" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
 					<Ribbon readmeFilePath="ribbon" />

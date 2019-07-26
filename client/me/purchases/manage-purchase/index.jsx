@@ -28,7 +28,6 @@ import {
 	hasPaymentMethod,
 	isCancelable,
 	isExpired,
-	isExpiring,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 	isRefundable,
@@ -140,14 +139,7 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// This is hidden for expired and expiring subscriptions because they
-		// will get a PurchaseNotice will a renewal call-to-action instead.
-		if (
-			! isRenewable( purchase ) ||
-			isExpired( purchase ) ||
-			isExpiring( purchase ) ||
-			! this.props.site
-		) {
+		if ( ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -165,9 +157,6 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// Unlike renderRenewButton(), this shows the link even for expired or
-		// expiring subscriptions (as long as they are renewable), which keeps
-		// the nav items consistent.
 		if ( ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
@@ -198,22 +187,13 @@ class ManagePurchase extends Component {
 				return null;
 			}
 
-			const textEdit = translate( 'Change Payment Method' );
-			const textAdd = translate( 'Add Credit Card' );
-
-			// With the self-serving auto-renewal toggle enabled, the payment data should be always there.
-			// Thus, to show "edit" or "add" text will depend on whether or not there is a payment method already.
-			if ( config.isEnabled( 'autorenewal-toggle' ) ) {
-				return (
-					<CompactCard href={ path }>
-						{ hasPaymentMethod( purchase ) ? textEdit : textAdd }
-					</CompactCard>
-				);
-			}
-
-			// Before rolling out the auto-renewal toggle, the only way that our users can "re-enable" auto-renewal
-			// is to add a new payment method to a purchase. That's why the text presenting here relating to the renewal status.
-			return <CompactCard href={ path }>{ renewing ? textEdit : textAdd }</CompactCard>;
+			return (
+				<CompactCard href={ path }>
+					{ hasPaymentMethod( purchase )
+						? translate( 'Change Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</CompactCard>
+			);
 		}
 
 		return null;

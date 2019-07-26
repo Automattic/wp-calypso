@@ -228,21 +228,18 @@ class ThemeSheet extends React.Component {
 		return demo_uri && ! retired;
 	}
 
+	// Render "Open Live Demo" pseudo-button for mobiles.
+	// This is a legacy hack that shows the button under the preview screenshot for mobiles
+	// but not for desktop (becomes hidden behind the screenshot).
 	renderPreviewButton() {
 		return (
-			<a
-				className="theme__sheet-preview-link"
-				onClick={ this.previewAction }
-				data-tip-target="theme-sheet-preview"
-				href={ this.props.demo_uri }
-				rel="noopener noreferrer"
-			>
+			<div className="theme__sheet-preview-link">
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', {
 						context: 'Individual theme live preview button',
 					} ) }
 				</span>
-			</a>
+			</div>
 		);
 	}
 

@@ -79,6 +79,19 @@ export default [
 		],
 	},
 	{
+		name: 'sale_julybusiness40',
+		startsAt: new Date( '2019-07-22 00:00:00' ),
+		endsAt: new Date( '2019-07-25 23:59:59' ),
+		plansPageNoticeText:
+			'Enter coupon code "JULYBUSINESS40" at checkout to save 40% on a Business plan site upgrade',
+		targetPlans: [
+			{ type: TYPE_FREE, group: GROUP_WPCOM },
+			{ type: TYPE_BLOGGER, group: GROUP_WPCOM },
+			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
+			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
+		],
+	},
+	{
 		name: 'plans_no_tabs',
 		startsAt: new Date( 2018, 2, 7, 0, 0, 0 ),
 		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),

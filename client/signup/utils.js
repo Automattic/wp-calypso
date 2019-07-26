@@ -2,6 +2,7 @@
 /**
  * Exernal dependencies
  */
+import cookie from 'cookie';
 import { filter, find, includes, indexOf, isEmpty, pick } from 'lodash';
 import { translate } from 'i18n-calypso';
 
@@ -18,21 +19,9 @@ const user = userFactory();
 const { defaultFlowName } = flows;
 
 export function getFlowName( parameters ) {
-	const flow =
-		parameters.flowName && isFlowName( parameters.flowName )
-			? parameters.flowName
-			: defaultFlowName;
-	return maybeFilterFlowName( flow, flows.filterFlowName );
-}
-
-function maybeFilterFlowName( flowName, filterCallback ) {
-	if ( filterCallback && typeof filterCallback === 'function' ) {
-		const filteredFlow = filterCallback( flowName );
-		if ( isFlowName( filteredFlow ) ) {
-			return filteredFlow;
-		}
-	}
-	return flowName;
+	return parameters.flowName && isFlowName( parameters.flowName )
+		? parameters.flowName
+		: defaultFlowName;
 }
 
 function isFlowName( pathFragment ) {
@@ -215,3 +204,23 @@ export function canResumeFlow( flowName, progress ) {
 	} );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
+
+export const persistSignupDestination = url => {
+	const WEEK_IN_SECONDS = 3600 * 24 * 7;
+	const expirationDate = new Date( new Date().getTime() + WEEK_IN_SECONDS * 1000 );
+	const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
+	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url, options );
+};
+
+export const retrieveSignupDestination = () => {
+	const cookies = cookie.parse( document.cookie );
+	return cookies.wpcom_signup_complete_destination;
+};
+
+export const clearSignupDestinationCookie = () => {
+	// Set expiration to a random time in the past so that the cookie gets removed.
+	const expirationDate = new Date( new Date().getTime() - 1000 );
+	const options = { path: '/', expires: expirationDate };
+
+	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
+};

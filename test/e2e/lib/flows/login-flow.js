@@ -10,6 +10,7 @@ import ReaderPage from '../pages/reader-page.js';
 import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
+import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
@@ -111,6 +112,11 @@ export default class LoginFlow {
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickCreateNewPost( { siteURL: siteURL } );
 
+		if ( usingGutenberg ) {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			await gEditorComponent.closeSidebar();
+		}
+
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
@@ -135,6 +141,11 @@ export default class LoginFlow {
 
 		const pagesPage = await PagesPage.Expect( this.driver );
 		await pagesPage.selectAddNewPage();
+
+		if ( usingGutenberg ) {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			await gEditorComponent.closeSidebar();
+		}
 
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );

@@ -7,12 +7,18 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Popover from 'components/popover';
 import analytics from 'lib/analytics';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class InfoPopover extends Component {
 	static propTypes = {
@@ -74,6 +80,7 @@ export default class InfoPopover extends Component {
 					type="button"
 					aria-haspopup
 					aria-expanded={ this.state.showPopover }
+					aria-label={ translate( 'More information' ) }
 					onClick={ this.handleClick }
 					ref={ this.iconRef }
 					className={ classNames(

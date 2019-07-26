@@ -32,6 +32,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import { getDiscountByName } from 'lib/discounts';
+import { addQueryArgs } from 'lib/url';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -74,7 +75,7 @@ import './style.scss';
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll } = this.props;
+		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -113,6 +114,9 @@ export class PlanFeatures extends Component {
 							initialSelectedIndex={ initialSelectedIndex }
 						>
 							<table className={ tableClasses }>
+								<caption class="screen-reader-text">
+									{ translate( 'Available plans to choose from' ) }
+								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									{ ! withScroll && planDescriptions }
@@ -213,31 +217,18 @@ export class PlanFeatures extends Component {
 				icon="info-outline"
 				status="is-success"
 			>
-				{ 'variant' === abtest( 'proratedCreditsBanner' )
-					? translate(
-							'Need to upgrade? You have {{b}}%(amountInCurrency)s{{/b}} pro-rated credits available from your current plan. ' +
-								'We have applied them to the plan upgrades below.',
-							{
-								args: {
-									amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
-								},
-								components: {
-									b: <strong />,
-								},
-							}
-					  )
-					: translate(
-							'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
-								'Apply those credits towards an upgrade before they expire!',
-							{
-								args: {
-									amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
-								},
-								components: {
-									b: <strong />,
-								},
-							}
-					  ) }
+				{ translate(
+					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
+						'Apply those credits towards an upgrade before they expire!',
+					{
+						args: {
+							amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
 			</Notice>,
 			bannerContainer
 		);
@@ -428,7 +419,7 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
+				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
 						availableForPurchase={ availableForPurchase }
@@ -452,7 +443,7 @@ export class PlanFeatures extends Component {
 						title={ planConstantObj.getTitle() }
 						plansWithScroll={ withScroll }
 					/>
-				</td>
+				</th>
 			);
 		} );
 	}
@@ -763,6 +754,7 @@ export default connect(
 			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
+			withDiscount,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -856,7 +848,18 @@ export default connect(
 									return;
 								}
 
-								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }` );
+								const args = {};
+								// Auto-apply the coupon code to the cart for WPCOM sites
+								if ( ! displayJetpackPlans && withDiscount ) {
+									args.coupon = withDiscount;
+								}
+
+								page(
+									addQueryArgs(
+										args,
+										`/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }`
+									)
+								);
 						  },
 					planConstantObj,
 					planName: plan,
