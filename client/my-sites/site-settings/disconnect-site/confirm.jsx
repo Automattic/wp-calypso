@@ -34,10 +34,12 @@ class ConfirmDisconnection extends PureComponent {
 	};
 
 	static reasonWhitelist = [
-		'missing-feature',
-		'too-difficult',
-		'too-expensive',
 		'troubleshooting',
+		'cannot-work',
+		'slow',
+		'buggy',
+		'no-clarity',
+		'delete',
 		'other',
 	];
 
