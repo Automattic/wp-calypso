@@ -151,8 +151,8 @@ class WordAds extends Component {
 				{ ! canAccessAds && (
 					<EmptyContent
 						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ ! isAdmin ? translate( 'You are not authorized to view this page' ) : translate( 'You currently do not have access to WordAds' ) }
-						action={ isAdmin ? translate( 'Explore WordAds!' ) : false }
+						title={ ! isAdmin ? translate( 'You are not authorized to view this page' ) : translate( 'WordAds is not enabled on your site' ) }
+						action={ isAdmin ? translate( 'Explore WordAds' ) : false }
 						actionURL={ "/earn/ads-settings/" + slug }
 					/>
 				) }
