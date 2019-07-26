@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import WPorgActions from 'lib/plugins/wporg-data/actions';
-import mockedWporg from 'lib/wporg';
+import * as mockedWporg from 'lib/wporg';
 jest.mock( 'lib/wporg', () => require( './mocks/wporg' ) );
 jest.mock( 'lib/impure-lodash', () => ( {
 	debounce: cb => cb,
@@ -38,7 +37,7 @@ describe( 'WPorg Data Actions', () => {
 	} );
 
 	test( "when fetching a plugin list, it shouldn't do the wporg request if there's a previous one still not finished for the same category", () => {
-		mockedWporg.deactivatedCallbacks = true;
+		mockedWporg.setInternalState( { deactivatedCallbacks: true } );
 		WPorgActions.fetchPluginsList( 'new', 1 );
 		WPorgActions.fetchPluginsList( 'new', 1 );
 		assert.equal( mockedWporg.getActivity().fetchPluginsList, 1 );
@@ -68,7 +67,7 @@ describe( 'WPorg Data Actions', () => {
 	} );
 
 	test( 'when fetching for the next page, it should not do any request if the next page is over the number of total pages', () => {
-		mockedWporg.mockedNumberOfReturnedPages = 1;
+		mockedWporg.setInternalState( { mockedNumberOfReturnedPages: 1 } );
 		WPorgActions.fetchPluginsList( 'new', 1 );
 		WPorgActions.fetchNextCategoryPage( 'new' );
 		assert.equal( mockedWporg.getActivity().fetchPluginsList, 1 );
