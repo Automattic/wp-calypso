@@ -12,13 +12,13 @@ import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { hasFeature, getCurrentPlan } from 'state/sites/plans/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_UPLOAD_PLUGINS,
-	FEATURE_NO_ADS,
+	PLAN_FREE,
 } from 'lib/plans/constants';
 
 interface ConnectedProps {
@@ -26,7 +26,13 @@ interface ConnectedProps {
 	currentPlan: string;
 }
 
-const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
+const Home: FunctionComponent< ConnectedProps > = ( {
+	selectedSiteSlug,
+	currentPlan,
+	hasSimplePayments,
+	hasWordAds,
+	hasUploadPlugins,
+} ) => {
 	const translate = useTranslate();
 
 	/**
@@ -35,10 +41,18 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
-		// Todo: get plan and return different content based on it.
-
 		const supportLink =
 			'https://en.support.wordpress.com/wordpress-editor/blocks/simple-payments-block/';
+		const cta = hasSimplePayments
+			? {
+					text: translate( 'Collect One-time Payments' ),
+					action: supportLink,
+			  }
+			: {
+					text: translate( 'Upgrade to Premium Plan' ),
+					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+			  };
+		const learnMoreLink = hasSimplePayments ? null : supportLink;
 		return {
 			title: translate( 'Collect one-time payments' ),
 			body: translate(
@@ -52,18 +66,8 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 			image: {
 				path: '/calypso/images/earn/simple-payments.svg',
 			},
-			cta: {
-				feature: FEATURE_SIMPLE_PAYMENTS,
-				upgradeButton: {
-					text: translate( 'Upgrade to Premium Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
-				},
-				defaultButton: {
-					text: translate( 'Collect One-time Payments' ),
-					action: supportLink,
-				},
-			},
-			learnMoreLink: supportLink,
+			cta,
+			learnMoreLink,
 		};
 	};
 
@@ -73,7 +77,16 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
-		// Todo: get plan and return different content based on it.
+		const cta =
+			PLAN_FREE !== currentPlan
+				? {
+						text: translate( 'Collect Recurring Payments' ),
+						action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
+				  }
+				: {
+						text: translate( 'Upgrade to a Paid Plan' ),
+						action: () => page( `/plans/${ selectedSiteSlug }` ),
+				  };
 		return {
 			title: translate( 'Collect recurring payments' ),
 			body: translate(
@@ -87,17 +100,7 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 			image: {
 				path: '/calypso/images/earn/recurring.svg',
 			},
-			cta: {
-				feature: FEATURE_NO_ADS,
-				upgradeButton: {
-					text: translate( 'Upgrade to a Paid Plan' ),
-					action: () => page( `/plans/${ selectedSiteSlug }` ),
-				},
-				defaultButton: {
-					text: translate( 'Collect Recurring Payments' ),
-					action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
-				},
-			},
+			cta,
 			learnMoreLink: 'https://en.support.wordpress.com/recurring-payments/',
 		};
 	};
@@ -108,7 +111,15 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getStoreCard = () => {
-		// Todo: get plan and return different content based on it.
+		const cta = hasUploadPlugins
+			? {
+					text: translate( 'Set Up a Simple Store' ),
+					action: () => page( `/store/${ selectedSiteSlug }` ),
+			  }
+			: {
+					text: translate( 'Upgrade to Business Plan' ),
+					action: () => page( `/checkout/${ selectedSiteSlug }/business/` ),
+			  };
 		return {
 			title: translate( 'Sell a few items' ),
 			body: translate(
@@ -122,17 +133,7 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 			image: {
 				path: '/calypso/images/earn/woo.svg',
 			},
-			cta: {
-				feature: FEATURE_UPLOAD_PLUGINS,
-				upgradeButton: {
-					text: translate( 'Upgrade to Business Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/business/` ),
-				},
-				defaultButton: {
-					text: translate( 'Set Up a Simple Store' ),
-					action: () => page( `/store/${ selectedSiteSlug }` ),
-				},
-			},
+			cta,
 			learnMoreLink: 'https://en.support.wordpress.com/store/',
 		};
 	};
@@ -143,7 +144,15 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getAdsCard = () => {
-		// Todo: get plan and return different content based on it.
+		const cta = hasWordAds
+			? {
+					text: translate( 'Earn Ad Revenue' ),
+					action: () => page( `/earn/ads-earnings/${ selectedSiteSlug }` ),
+			  }
+			: {
+					text: translate( 'Upgrade to Premium Plan' ),
+					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+			  };
 		return {
 			title: translate( 'Earn ad revenue' ),
 			body: translate(
@@ -157,17 +166,7 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 			image: {
 				path: '/calypso/images/earn/ads.svg',
 			},
-			cta: {
-				feature: FEATURE_WORDADS_INSTANT,
-				upgradeButton: {
-					text: translate( 'Upgrade to Premium Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
-				},
-				defaultButton: {
-					text: translate( 'Earn Ad Revenue' ),
-					action: () => page( `/earn/ads-earnings/${ selectedSiteSlug }` ),
-				},
-			},
+			cta,
 			learnMoreLink: 'https://wordads.co/',
 		};
 	};
@@ -189,8 +188,12 @@ const Home: FunctionComponent< ConnectedProps > = ( { selectedSiteSlug } ) => {
 export default connect< ConnectedProps, {}, {} >( state => {
 	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const site = getSiteBySlug( state, selectedSiteSlug );
+	const plan = getCurrentPlan( state, site.ID );
 	return {
 		selectedSiteSlug,
-		currentPlan: getCurrentPlan( state, site.ID ),
+		currentPlan: plan && plan.productSlug,
+		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
+		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
+		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
 	};
 } )( Home );
