@@ -54,7 +54,7 @@ class ConfirmDisconnection extends PureComponent {
 		};
 
 		submitSurvey(
-			'calypso-disconnect-jetpack',
+			'calypso-disconnect-jetpack-july2019',
 			siteId,
 			enrichedSurveyData( surveyData, moment(), site, purchase )
 		);
