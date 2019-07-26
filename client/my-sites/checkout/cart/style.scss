@@ -151,36 +151,27 @@
 		margin-left: 70%;
 	}
 
-	.cart__coupon {
-		font-size: 11px;
-
+	.cart__form {
+		display: block;
+		border-top: 1px solid var( --color-border-subtle );
+		margin: 15px -15px 0;
+		padding: 15px 15px 0;
+		
 		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 
-		a {
-			color: var( --color-accent );
-			outline: none;
+		input[type='text'] {
+			font-size: 12px;
+			margin: 0 4% 0 0;
+			width: 70%;
 		}
 
-		form {
-			display: block;
-			border-top: 1px solid var( --color-border-subtle );
-			margin: 15px -15px 0;
-			padding: 15px 15px 0;
-
-			input[type='text'] {
-				font-size: 12px;
-				margin: 0 4% 0 0;
-				width: 70%;
-			}
-
-			.button {
-				font-size: 12px;
-				height: 34px;
-				padding: 4px;
-				width: 26%;
-			}
+		.button {
+			font-size: 12px;
+			height: 34px;
+			padding: 4px;
+			width: 26%;
 		}
 	}
 }
