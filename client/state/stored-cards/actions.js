@@ -1,8 +1,12 @@
 /** @format */
-// External dependencies
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
