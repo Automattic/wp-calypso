@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import React, { FunctionComponent } from 'react';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -191,7 +192,7 @@ export default connect< ConnectedProps, {}, {} >( state => {
 	const plan = getCurrentPlan( state, site.ID );
 	return {
 		selectedSiteSlug,
-		currentPlan: plan && plan.productSlug,
+		currentPlan: get( plan, 'productSlug', '' ),
 		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
