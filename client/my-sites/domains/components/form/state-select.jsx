@@ -23,7 +23,19 @@ import Input from './input';
 class StateSelect extends Component {
 	static instances = 0;
 
-	inputRef = React.createRef();
+	inputRef = element => {
+		this.inputElement = element;
+
+		if ( ! this.props.inputRef ) {
+			return;
+		}
+
+		if ( typeof inputRef === 'function' ) {
+			this.props.inputRef( element );
+		} else {
+			this.props.inputRef.current = element;
+		}
+	};
 
 	componentWillMount() {
 		this.instance = ++this.constructor.instances;
@@ -38,7 +50,7 @@ class StateSelect extends Component {
 	};
 
 	focus() {
-		const node = this.inputRef.current;
+		const node = this.inputElement;
 		if ( node ) {
 			node.focus();
 			scrollIntoViewport( node, {
@@ -60,7 +72,6 @@ class StateSelect extends Component {
 			onBlur,
 			onChange,
 			isError,
-			inputRef,
 			selectText,
 		} = this.props;
 		const validationId = `validation-field-${ this.props.name }`;
@@ -69,7 +80,7 @@ class StateSelect extends Component {
 			<div>
 				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
 				{ isEmpty( countryStates ) ? (
-					<Input ref={ this.inputRef } { ...this.props } />
+					<Input inputRef={ this.inputRef } { ...this.props } />
 				) : (
 					<div className={ classes }>
 						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>
@@ -78,7 +89,6 @@ class StateSelect extends Component {
 						<FormSelect
 							aria-invalid={ isError }
 							aria-describedby={ validationId }
-							ref={ this.inputRef }
 							id={ `${ this.constructor.name }-${ this.instance }` }
 							name={ name }
 							value={ value }
@@ -87,7 +97,7 @@ class StateSelect extends Component {
 							onChange={ onChange }
 							onClick={ this.recordStateSelectClick }
 							isError={ isError }
-							inputRef={ inputRef }
+							inputRef={ this.inputRef }
 						>
 							<option key="--" value="" disabled="disabled">
 								{ selectText || this.props.translate( 'Select State' ) }
