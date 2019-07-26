@@ -5,7 +5,7 @@
  */
 
 import debugModule from 'debug';
-import { get, map, pick, throttle } from 'lodash';
+import { cloneDeep, get, isNil, map, pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import { getStoredItem, setStoredItem, clearStorage } from 'lib/browser-storage'
 import { isSupportSession } from 'lib/user/support-user-interop';
 import config from 'config';
 import User from 'lib/user';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -69,7 +70,7 @@ function shouldAddSympathy() {
 	}
 
 	// If `no-force-sympathy` flag is enabled, never clear persistent state.
-	if ( config.isEnabled( 'no-force-sympathy' ) ) {
+	if ( config.isEnabled( 'no-force-sympathy' ) || 'last' === abtest( 'moveUserStepPosition' ) ) {
 		return false;
 	}
 
@@ -108,10 +109,18 @@ export async function getStateFromLocalStorage( reducer, subkey, forceLoggedOutU
 	const reduxStateKey = getReduxStateKey( forceLoggedOutUser ) + ( subkey ? ':' + subkey : '' );
 
 	try {
-		const storedState = await getStoredItem( reduxStateKey );
+		let loggedOutState;
+		let storedState = await getStoredItem( reduxStateKey );
+		if ( reduxStateKey !== 'redux-state-logged-out' ) {
+			loggedOutState = await getStoredItem( 'redux-state-logged-out' );
+			debug( 'fetched stored logged out Redux state from persistent storage', loggedOutState );
+		}
 		debug( 'fetched stored Redux state from persistent storage', storedState );
 
-		if ( storedState === null ) {
+		if ( isNil( storedState ) && loggedOutState ) {
+			debug( 'stored Redux state not found, loading from loggedOutState instead' );
+			storedState = cloneDeep( loggedOutState );
+		} else if ( storedState === null ) {
 			debug( 'stored Redux state not found in persistent storage' );
 			return null;
 		}
@@ -127,7 +136,11 @@ export async function getStateFromLocalStorage( reducer, subkey, forceLoggedOutU
 			return null;
 		}
 
-		if ( ! subkey && ! verifyStoredRootState( deserializedState ) ) {
+		if (
+			! subkey &&
+			get( deserializedState, [ 'currentUser', 'id' ], null ) !== null &&
+			! verifyStoredRootState( deserializedState )
+		) {
 			debug( 'stored root Redux state has invalid currentUser.id, dropping' );
 			return null;
 		}

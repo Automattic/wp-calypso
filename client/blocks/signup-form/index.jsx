@@ -810,10 +810,6 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, translate } = this.props;
 
-		if ( this.props.positionInFlow !== 0 ) {
-			return;
-		}
-
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? this.getLoginLink()
 			: localizeUrl( config( 'login_url' ), this.props.locale );

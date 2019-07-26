@@ -17,6 +17,7 @@ import {
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
+	SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
@@ -71,6 +72,11 @@ function saveStep( state, { step } ) {
 	return addStep( state, { ...step, status: 'in-progress' } );
 }
 
+function setResumeAfterLogin( state, { resumeStep } ) {
+	debug( `Setting resume after login for step ${ resumeStep.stepName }` );
+	return updateStep( state, { ...resumeStep, status: 'in-progress' } );
+}
+
 function submitStep( state, { step } ) {
 	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
@@ -123,6 +129,7 @@ export default createReducer(
 		[ SIGNUP_PROGRESS_INVALIDATE_STEP ]: invalidateStep,
 		[ SIGNUP_PROGRESS_PROCESS_STEP ]: processStep,
 		[ SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS ]: removeUnneededSteps,
+		[ SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET ]: setResumeAfterLogin,
 		[ SIGNUP_PROGRESS_SAVE_STEP ]: saveStep,
 		[ SIGNUP_PROGRESS_SUBMIT_STEP ]: submitStep,
 	},

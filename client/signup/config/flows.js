@@ -159,4 +159,8 @@ const Flows = {
 	},
 };
 
+if ( abtest( 'moveUserStepPosition' ) === 'last' && Flows.defaultFlowName === 'onboarding' ) {
+	Flows.defaultFlowName = 'onboarding-user-last';
+}
+
 export default Flows;
