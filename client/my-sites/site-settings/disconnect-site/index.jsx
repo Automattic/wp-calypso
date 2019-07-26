@@ -37,9 +37,7 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 				<FormattedHeader
 					headerText={ translate( 'Disconnect Site' ) }
-					subHeaderText={ translate(
-						"We'd love to know why you're disconnecting — it will help us improve Jetpack."
-					) }
+					subHeaderText={ translate( "Please let us know why you're disabling Jetpack." ) }
 				/>
 				<DisconnectSurvey confirmHref={ confirmHref } />
 				<div className="disconnect-site__navigation-links">

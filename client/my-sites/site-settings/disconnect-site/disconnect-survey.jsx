@@ -39,17 +39,12 @@ class DisconnectSurvey extends PureComponent {
 	};
 
 	render() {
-		const { confirmHref, siteId, siteSlug, translate } = this.props;
+		const { confirmHref, siteId, translate } = this.props;
 		return (
 			<div className="disconnect-site__survey main">
 				<QuerySitePlans siteId={ siteId } />
 				<SettingsSectionHeader
-					title={ translate(
-						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com?',
-						{
-							args: { siteName: siteSlug },
-						}
-					) }
+					title={ translate( 'Your feedback will help us improve the product.' ) }
 				/>
 				<CompactCard href={ confirmHref + '?reason=troubleshooting' }>
 					{ translate( "Troubleshooting — I'll be reconnecting afterwards." ) }
