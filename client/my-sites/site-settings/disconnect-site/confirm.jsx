@@ -51,6 +51,9 @@ class ConfirmDisconnection extends PureComponent {
 				response: find( this.constructor.reasonWhitelist, r => r === reason ),
 				text: isArray( text ) ? text.join() : text,
 			},
+			source: {
+				from: 'Calypso',
+			},
 		};
 
 		submitSurvey(
