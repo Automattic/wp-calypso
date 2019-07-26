@@ -1,16 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -19,13 +15,15 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { getCountryStates } from 'state/country-states/selectors';
-import Input from './input';
 import QueryCountryStates from 'components/data/query-country-states';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
+import Input from './input';
 
 class StateSelect extends Component {
 	static instances = 0;
+
+	inputRef = React.createRef();
 
 	componentWillMount() {
 		this.instance = ++this.constructor.instances;
@@ -40,12 +38,13 @@ class StateSelect extends Component {
 	};
 
 	focus() {
-		const node = ReactDom.findDOMNode( this.refs.input );
+		const node = this.inputRef.current;
 		if ( node ) {
 			node.focus();
-			scrollIntoViewport( node );
-		} else {
-			this.refs.state.focus();
+			scrollIntoViewport( node, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
 		}
 	}
 
@@ -70,7 +69,7 @@ class StateSelect extends Component {
 			<div>
 				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
 				{ isEmpty( countryStates ) ? (
-					<Input ref="input" { ...this.props } />
+					<Input ref={ this.inputRef } { ...this.props } />
 				) : (
 					<div className={ classes }>
 						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>
@@ -79,7 +78,7 @@ class StateSelect extends Component {
 						<FormSelect
 							aria-invalid={ isError }
 							aria-describedby={ validationId }
-							ref="input"
+							ref={ this.inputRef }
 							id={ `${ this.constructor.name }-${ this.instance }` }
 							name={ name }
 							value={ value }

@@ -188,7 +188,7 @@ function validatePlacement( placement: DialogPosition, target: Element | null ):
 }
 
 function scrollIntoView( target: Element, scrollContainer: Element | null ) {
-	// TODO(lsinger): consider replacing with Element.scrollIntoView
+	// TODO(lsinger): consider replacing with lib/scroll-into-viewport
 	const container = scrollContainer || getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
 	const clientHeight = isMobile() ? document.documentElement.clientHeight : container.clientHeight;

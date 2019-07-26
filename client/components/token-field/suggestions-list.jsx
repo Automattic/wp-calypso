@@ -5,6 +5,7 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 class SuggestionsList extends React.PureComponent {
 	static propTypes = {
@@ -39,10 +40,11 @@ class SuggestionsList extends React.PureComponent {
 			const node = this.listRef.current;
 
 			const child = node && node.children[ this.props.selectedIndex ];
-			if ( child && child.scrollIntoViewIfNeeded ) {
-				child.scrollIntoViewIfNeeded( false );
-			} else if ( child && child.scrollIntoView ) {
-				child.scrollIntoView( { block: 'nearest', scrollMode: 'if-needed' } );
+			if ( child ) {
+				scrollIntoViewport( child, {
+					block: 'nearest',
+					scrollMode: 'if-needed',
+				} );
 			}
 
 			setTimeout(

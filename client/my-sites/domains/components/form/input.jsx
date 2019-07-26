@@ -1,26 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import analytics from 'lib/analytics';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-export default class extends React.Component {
-	static displayName = 'Input';
+export default class Input extends React.Component {
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
+
+	inputRef = React.createRef();
 
 	componentDidMount() {
 		this.setupInputModeHandlers();
@@ -28,9 +24,9 @@ export default class extends React.Component {
 	}
 
 	setupInputModeHandlers = () => {
-		const inputElement = ReactDom.findDOMNode( this.refs.input );
+		const inputElement = this.inputRef.current;
 
-		if ( this.props.inputMode === 'numeric' ) {
+		if ( inputElement && this.props.inputMode === 'numeric' ) {
 			// This forces mobile browsers to use a numeric keyboard. We have to
 			// toggle the pattern on and off to avoid getting errors against the
 			// masked value (which could contain characters other than digits).
@@ -54,9 +50,14 @@ export default class extends React.Component {
 	}
 
 	focus = () => {
-		const node = ReactDom.findDOMNode( this.refs.input );
-		node.focus();
-		scrollIntoViewport( node );
+		const node = this.inputRef.current;
+		if ( node ) {
+			node.focus();
+			scrollIntoViewport( node, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
+		}
 	};
 
 	autoFocusInput = () => {
@@ -97,7 +98,7 @@ export default class extends React.Component {
 					id={ this.props.name }
 					value={ this.props.value }
 					name={ this.props.name }
-					ref="input"
+					ref={ this.inputRef }
 					autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }

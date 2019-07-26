@@ -28,6 +28,7 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 /**
  * Style dependencies
@@ -120,11 +121,10 @@ class SiteSelector extends Component {
 			return;
 		}
 
-		if ( highlightedSiteElem.scrollIntoViewIfNeeded ) {
-			highlightedSiteElem.scrollIntoViewIfNeeded( false );
-		} else if ( highlightedSiteElem.scrollIntoView ) {
-			highlightedSiteElem.scrollIntoView( { block: 'nearest', scrollMode: 'if-needed' } );
-		}
+		scrollIntoViewport( highlightedSiteElem, {
+			block: 'nearest',
+			scrollMode: 'if-needed',
+		} );
 	}
 
 	computeHighlightedSite() {
