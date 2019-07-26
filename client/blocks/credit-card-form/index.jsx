@@ -13,7 +13,6 @@ import Gridicon from 'gridicons';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import config from 'config';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import FormButton from 'components/forms/form-button';
 import notices from 'notices';
@@ -325,12 +324,7 @@ async function saveCreditCard( {
 		throw new Error( response );
 	}
 
-	if (
-		purchase &&
-		siteSlug &&
-		isRenewable( purchase ) &&
-		config.isEnabled( 'upgrades/checkout' )
-	) {
+	if ( purchase && siteSlug && isRenewable( purchase ) ) {
 		const noticeMessage = translate(
 			'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
 		);
