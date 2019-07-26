@@ -16,6 +16,7 @@
 	.activity-log-item__activity-icon {
 		margin-right: 16px;
 		padding: 7px;
+		width: 24px;
 
 		@include breakpoint( '>480px' ) {
 			padding-left: 8px;
