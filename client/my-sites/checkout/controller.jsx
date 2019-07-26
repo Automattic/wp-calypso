@@ -30,6 +30,11 @@ export function checkout( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
+	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+		sites( context, next );
+		return;
+	}
+
 	let product;
 	if ( selectedSite && selectedSite.slug !== domainOrProduct ) {
 		product = domainOrProduct;
@@ -162,17 +167,6 @@ export function upsellNudge( context, next ) {
 			/>
 		</CheckoutContainer>
 	);
-
-	next();
-}
-
-export function sitePicker( context, next ) {
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
-	if ( ! selectedSite ) {
-		sites( context, next );
-	}
 
 	next();
 }

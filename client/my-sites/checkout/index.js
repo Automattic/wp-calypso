@@ -14,7 +14,6 @@ import {
 	gsuiteNudge,
 	upsellNudge,
 	redirectToSupportSession,
-	sitePicker,
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
@@ -124,7 +123,7 @@ export default function() {
 		);
 
 		page(
-			'/checkout/offer-quickstart-session/pending/:orderId',
+			'/checkout/offer-quickstart-session/pending/:site/:orderId',
 			siteSelection,
 			checkoutPending,
 			makeLayout,
@@ -148,23 +147,9 @@ export default function() {
 		);
 	}
 
-	page(
-		'/checkout/:domainOrProduct',
-		siteSelection,
-		sitePicker,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
-	page(
-		'/checkout/:product/:domainOrProduct',
-		siteSelection,
-		sitePicker,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
 	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
