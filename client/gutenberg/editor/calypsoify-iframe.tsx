@@ -126,7 +126,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			.replace( 'https://', '' )
 			.split( /[/?#]/ )[ 0 ];
 
-		// get the query params from parent frame to check if we have already readirected back from 3rd party auth
+		// get the query params from parent frame to check if we have already redirected back from 3rd party auth
 		const urlParams = new URLSearchParams( window.location.search );
 
 		// if editor iFrame is a different domain then redirect to that domain to auth
@@ -603,8 +603,6 @@ const mapStateToProps = (
 	const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
-	// console.log( iframeUrl );
-	// console.log( window.location.hostname );
 
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
