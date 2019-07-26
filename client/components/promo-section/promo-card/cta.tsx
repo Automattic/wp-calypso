@@ -8,7 +8,7 @@ import { partialRight } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 
 /**
- * Internal depencies
+ * Internal dependencies
  */
 import Button from 'components/button';
 import ActionPanelCta from 'components/action-panel/cta';
