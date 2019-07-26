@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,6 @@ export class CartCoupon extends React.Component {
 		super( props );
 
 		this.state = {
-			isCouponFormShowing: false,
 			couponInputValue: this.appliedCouponCode,
 			userChangedCoupon: false,
 		};
@@ -40,7 +37,7 @@ export class CartCoupon extends React.Component {
 			return this.renderAppliedCoupon();
 		}
 
-		return this.renderApplyCouponUI();
+		return this.renderCouponForm();
 	}
 
 	get appliedCouponCode() {
@@ -64,27 +61,11 @@ export class CartCoupon extends React.Component {
 		);
 	}
 
-	renderApplyCouponUI() {
+	renderCouponForm() {
 		if ( this.props.cart.total_cost === 0 ) {
 			return null;
 		}
-
-		return (
-			<div className="cart__coupon">
-				<button onClick={ this.toggleCouponDetails } className="button is-link cart__toggle-link">
-					{ this.props.translate( 'Have a coupon code?' ) }
-				</button>
-
-				{ this.renderCouponForm() }
-			</div>
-		);
-	}
-
-	renderCouponForm = () => {
-		if ( ! this.state.isCouponFormShowing ) {
-			return null;
-		}
-
+		
 		return (
 			<form onSubmit={ this.applyCoupon } className={ 'cart__form' }>
 				<input
@@ -94,7 +75,6 @@ export class CartCoupon extends React.Component {
 					placeholder={ this.props.translate( 'Enter Coupon Code', { textOnly: true } ) }
 					onChange={ this.handleCouponInputChange }
 					value={ this.state.couponInputValue }
-					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 				/>
 				<Button
 					type="submit"
@@ -112,25 +92,12 @@ export class CartCoupon extends React.Component {
 		return ! this.props.cart.is_coupon_applied && this.props.cart.coupon ? true : false;
 	}
 
-	toggleCouponDetails = event => {
-		event.preventDefault();
-
-		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
-
-		if ( this.state.isCouponFormShowing ) {
-			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
-		} else {
-			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
-		}
-	};
-
 	clearCoupon = event => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.setState(
 			{
 				couponInputValue: '',
-				isCouponFormShowing: false,
 			},
 			() => {
 				this.removeCoupon( event );
