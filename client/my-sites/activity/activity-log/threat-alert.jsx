@@ -129,7 +129,7 @@ export class ThreatAlert extends Component {
 
 			case 'database':
 				return translate(
-					'Jetpack identified %(threatCount)d threat in your database.',
+					'Jetpack identified $(threatCount)d threat in your database.',
 					'Jetpack identified %(threatCount)d threats in your database.',
 					{
 						count: Object.keys( threat.rows ).length,
@@ -181,6 +181,8 @@ export class ThreatAlert extends Component {
 			threat: { rows },
 		} = this.props;
 
+		let indexedRows = {};
+
 		Object.keys( rows ).map( idx => {
 			const row = rows[ idx ];
 
@@ -192,6 +194,25 @@ export class ThreatAlert extends Component {
 		} );
 
 		return indexedRows;
+	}
+
+	getEditUrl( title ) {
+		const {
+			siteSlug,
+			threat: { rows },
+		} = this.props;
+
+		const postId = 0;
+
+		Object.keys( rows ).map( idx => {
+			console.log( rows[ idx ].description, title );
+			if ( rows[ idx ].description == title ) {
+				console.log( 'match!' );
+				return `/post/${ siteSlug }/${ rows[ idx ].id }`;
+			}
+		} );
+
+		return null;
 	}
 
 	renderCardContent() {
@@ -231,7 +252,9 @@ export class ThreatAlert extends Component {
 										<li key={ urlIndex }>{ rows[ title ][ url ] }</li>
 									) ) }
 								</ol>
-								<Button compact>{ translate( 'Edit post' ) }</Button>
+								<Button compact href={ this.getEditUrl( title ) }>
+									{ translate( 'Edit post' ) }
+								</Button>
 							</Card>
 						) ) }
 					</Fragment>
