@@ -38,7 +38,6 @@ const wpcom = wp.undocumented();
 
 class EditContactInfoFormCard extends React.Component {
 	static propTypes = {
-		contactInformation: PropTypes.object.isRequired,
 		selectedDomain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		currentUser: PropTypes.object.isRequired,
@@ -115,7 +114,7 @@ class EditContactInfoFormCard extends React.Component {
 	};
 
 	requiresConfirmation( newContactDetails ) {
-		const { firstName, lastName, organization, email } = this.props.contactInformation;
+		const { firstName, lastName, organization, email } = this.getContactFormFieldValues();
 		const isWwdDomain = this.props.selectedDomain.registrar === registrarNames.WWD;
 
 		const primaryFieldsChanged = ! (
@@ -164,17 +163,17 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	renderBackupEmail() {
-		const currentEmail = this.props.contactInformation.email,
+		const { email } = this.getContactFormFieldValues(),
 			wpcomEmail = this.props.currentUser.email,
 			strong = <strong />;
 
 		return (
 			<p>
 				{ this.props.translate(
-					'If you don’t have access to {{strong}}%(currentEmail)s{{/strong}}, ' +
+					'If you don’t have access to {{strong}}%(email)s{{/strong}}, ' +
 						'we will also email you at {{strong}}%(wpcomEmail)s{{/strong}}, as backup.',
 					{
-						args: { currentEmail, wpcomEmail },
+						args: { email, wpcomEmail },
 						components: { strong },
 					}
 				) }
@@ -198,7 +197,7 @@ class EditContactInfoFormCard extends React.Component {
 				isPrimary: true,
 			},
 		];
-		const currentEmail = this.props.contactInformation.email;
+		const { email } = this.getContactFormFieldValues();
 		const wpcomEmail = this.props.currentUser.email;
 
 		let text;
@@ -208,15 +207,15 @@ class EditContactInfoFormCard extends React.Component {
 				'We’ll email you at {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}} ' +
 					'with a link to confirm the new details. The change won’t go live until we receive confirmation from both emails.',
 				{
-					args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
+					args: { oldEmail: email, newEmail: newContactDetails.email },
 					components: { strong },
 				}
 			);
 		} else {
 			text = translate(
-				'We’ll email you at {{strong}}%(currentEmail)s{{/strong}} with a link to confirm the new details. ' +
+				'We’ll email you at {{strong}}%(email)s{{/strong}} with a link to confirm the new details. ' +
 					"The change won't go live until we receive confirmation from this email.",
-				{ args: { currentEmail }, components: { strong } }
+				{ args: { email }, components: { strong } }
 			);
 		}
 		return (
@@ -227,18 +226,16 @@ class EditContactInfoFormCard extends React.Component {
 			>
 				<h1>{ translate( 'Confirmation Needed' ) }</h1>
 				<p>{ text }</p>
-				{ currentEmail !== wpcomEmail && this.renderBackupEmail() }
+				{ email !== wpcomEmail && this.renderBackupEmail() }
 			</Dialog>
 		);
 	}
 
 	needsFax() {
 		const NETHERLANDS_TLD = '.nl';
+		const { fax } = this.getContactFormFieldValues();
 
-		return (
-			endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) ||
-			!! this.props.contactInformation.fax
-		);
+		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) || !! fax;
 	}
 
 	onTransferLockOptOutChange = event => this.setState( { transferLock: ! event.target.checked } );
@@ -306,7 +303,7 @@ class EditContactInfoFormCard extends React.Component {
 			return;
 		}
 
-		const currentEmail = this.props.contactInformation.email;
+		const { email } = this.getContactFormFieldValues();
 		const strong = <strong />;
 		const { hasEmailChanged, newContactDetails = {} } = this.state;
 		let message;
@@ -316,7 +313,7 @@ class EditContactInfoFormCard extends React.Component {
 				'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
 					"Please ensure they're both confirmed to finish this process.",
 				{
-					args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
+					args: { oldEmail: email, newEmail: newContactDetails.email },
 					components: { strong },
 				}
 			);
@@ -325,7 +322,7 @@ class EditContactInfoFormCard extends React.Component {
 				'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
 					'Please confirm it to finish this process.',
 				{
-					args: { email: currentEmail },
+					args: { email: email },
 					components: { strong },
 				}
 			);
