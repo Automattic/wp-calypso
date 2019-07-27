@@ -131,6 +131,7 @@ export class ContactDetailsFormFields extends Component {
 	// This is an attempt limit the redraws to only what we need.
 	shouldComponentUpdate( nextProps, nextState ) {
 		return (
+			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
 			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
 			! isEqual( nextState.form, this.state.form ) ||
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||

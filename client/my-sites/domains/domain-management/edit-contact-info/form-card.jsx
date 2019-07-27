@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
-import { endsWith, get, isEqual, omit, includes, snakeCase } from 'lodash';
+import { endsWith, find, get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -25,7 +25,8 @@ import DesignatedAgentNotice from 'my-sites/domains/domain-management/components
 import Dialog from 'components/dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
-import { saveWhois } from 'state/domains/management/actions';
+import { requestWhois, saveWhois } from 'state/domains/management/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 import {
 	isUpdatingWhois,
 	getWhoisData,
@@ -81,7 +82,22 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	getContactFormFieldValues() {
-		return omit( this.props.contactInformation, [ 'countryName', 'stateName', 'type' ] );
+		const registrantWhoisData = find( this.props.whoisData, { type: 'registrant' } );
+
+		return {
+			firstName: get( registrantWhoisData, 'fname' ),
+			lastName: get( registrantWhoisData, 'lname' ),
+			organization: get( registrantWhoisData, 'org' ),
+			email: get( registrantWhoisData, 'email' ),
+			phone: get( registrantWhoisData, 'phone' ),
+			address1: get( registrantWhoisData, 'sa1' ),
+			address2: get( registrantWhoisData, 'sa2' ),
+			city: get( registrantWhoisData, 'city' ),
+			state: get( registrantWhoisData, 'state' ),
+			countryCode: get( registrantWhoisData, 'country_code' ),
+			postalCode: get( registrantWhoisData, 'pc' ),
+			fax: get( registrantWhoisData, 'fax' ),
+		};
 	}
 
 	validate = ( fieldValues, onComplete ) => {
@@ -239,10 +255,12 @@ class EditContactInfoFormCard extends React.Component {
 
 	handleContactDetailsChange = newContactDetails => {
 		const { email } = newContactDetails;
+		const registrantWhoisData = this.getContactFormFieldValues();
+
 		this.setState( {
 			newContactDetails,
-			haveContactDetailsChanged: ! isEqual( this.contactFormFieldValues, newContactDetails ),
-			hasEmailChanged: get( this.props, 'contactInformation.email' ) !== email,
+			haveContactDetailsChanged: ! isEqual( registrantWhoisData, newContactDetails ),
+			hasEmailChanged: get( registrantWhoisData, 'email' ) !== email,
 		} );
 	};
 
@@ -253,6 +271,8 @@ class EditContactInfoFormCard extends React.Component {
 		if ( formSubmitting ) {
 			return;
 		}
+
+		this.contactFormFieldValues = newContactDetails;
 
 		this.setState(
 			{
@@ -266,7 +286,8 @@ class EditContactInfoFormCard extends React.Component {
 	};
 
 	onWhoisUpdateSuccess = () => {
-		this.contactFormFieldValues = this.getContactFormFieldValues();
+		this.props.fetchSiteDomains( this.props.selectedSite.ID );
+		this.props.requestWhois( this.props.selectedDomain.name );
 
 		this.setState( {
 			haveContactDetailsChanged: ! isEqual(
@@ -331,6 +352,8 @@ class EditContactInfoFormCard extends React.Component {
 				newContactDetails,
 			},
 			() => {
+				this.contactFormFieldValues = this.getContactFormFieldValues();
+
 				if ( this.state.requiresConfirmation ) {
 					this.showNonDaConfirmationDialog();
 				} else {
@@ -347,25 +370,28 @@ class EditContactInfoFormCard extends React.Component {
 			[]
 		);
 		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
-		// return this.props.isWhoisUpdating || includes( unmodifiableFields, snakeCase( name ) );
 	};
 
 	shouldDisableSubmitButton() {
 		const { haveContactDetailsChanged, formSubmitting } = this.state;
 		return formSubmitting === true || haveContactDetailsChanged === false;
-		// return this.props.isUpdatingWhois === true || haveContactDetailsChanged === false;
 	}
 
 	render() {
-		const { selectedDomain, translate } = this.props;
+		const { selectedDomain, translate, whoisData } = this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
+		const whoisRegistrantData = this.getContactFormFieldValues();
+
+		if ( isEmpty( whoisData ) ) {
+			this.props.requestWhois( selectedDomain.name );
+		}
 
 		return (
 			<Card>
 				<form>
 					<ContactDetailsFormFields
 						eventFormName="Edit Contact Info"
-						contactDetails={ this.state.newContactDetails || this.contactFormFieldValues }
+						contactDetails={ whoisRegistrantData }
 						needsFax={ this.needsFax() }
 						getIsFieldDisabled={ this.getIsFieldDisabled }
 						onContactDetailsChange={ this.handleContactDetailsChange }
@@ -374,6 +400,7 @@ class EditContactInfoFormCard extends React.Component {
 						labelTexts={ { submitButton: translate( 'Save Contact Info' ) } }
 						onCancel={ this.goToContactsPrivacy }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
+						isSubmitting={ this.state.formSubmitting }
 					>
 						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
 					</ContactDetailsFormFields>
@@ -395,6 +422,8 @@ export default connect(
 		};
 	},
 	{
+		fetchSiteDomains,
+		requestWhois,
 		saveWhois,
 		successNotice,
 	}
