@@ -664,11 +664,11 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 export function onboardPasswordlessUser( callback, { email } ) {
 	wpcom
 		.undocumented()
-		.usersEmailOnboard( { email } )
+		.usersEmailOnboard( { email }, null )
 		.then( response =>
-			callback( null, { email, username: response.username, bearer_token: response.token.access_token } )
+			callback( null, { username: response.username, bearer_token: response.token.access_token } )
 		)
-		.catch( error => callback( error ) );
+		.catch( err => callback( err ) );
 }
 
 /**

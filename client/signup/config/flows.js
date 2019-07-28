@@ -102,7 +102,7 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * @param {String}   flowName The name of the flow to return
+	 * @param   {String} flowName The name of the flow to return
 	 * @returns {Object} A flow object
 	 */
 	getFlow( flowName ) {
@@ -115,21 +115,6 @@ const Flows = {
 
 		if ( user && user.get() ) {
 			flow = removeUserStepFromFlow( flow );
-		}
-		/*
-			AB Test: testing whether a passwordless account creation and login
-			improves signup rate in the onboarding flow
-
-			If the flow contains a user step, we replace it with the passwordless create-account step.
-		 */
-		if (
-			abtest( 'createAccountUserStep' ) === 'createAccount' &&
-			'onboarding' === flowName &&
-			includes( flow.steps, 'user' )
-		) {
-			flow = assign( {}, flow, {
-				steps: flow.steps.map( stepName => ( 'user' === stepName ? 'create-account' : stepName ) ),
-			} );
 		}
 
 		return Flows.filterExcludedSteps( flow );
