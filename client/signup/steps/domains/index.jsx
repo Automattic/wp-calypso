@@ -66,7 +66,7 @@ class DomainsStep extends React.Component {
 		path: PropTypes.string.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
 		queryObject: PropTypes.object,
-		signupProgress: PropTypes.array.isRequired,
+		signupProgress: PropTypes.object.isRequired,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,

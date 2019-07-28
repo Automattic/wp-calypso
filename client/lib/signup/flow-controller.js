@@ -11,11 +11,11 @@ import {
 	flatMap,
 	forEach,
 	get,
-	includes,
 	isEmpty,
 	keys,
 	pick,
 	reject,
+	reduce,
 } from 'lodash';
 import page from 'page';
 
@@ -26,7 +26,7 @@ import analytics from 'lib/analytics';
 import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import wpcom from 'lib/wp';
-import { getStepUrl } from 'signup/utils';
+import { getStepUrl, getFilteredSteps } from 'signup/utils';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
@@ -193,8 +193,9 @@ assign( SignupFlowController.prototype, {
 
 	_process: function() {
 		const currentSteps = this._flow.steps;
-		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), step =>
-			includes( currentSteps, step.stepName )
+		const signupProgress = getFilteredSteps(
+			this._flowName,
+			getSignupProgress( this._reduxStore.getState() )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
 		const completedSteps = filter( signupProgress, { status: 'completed' } );
@@ -225,17 +226,17 @@ assign( SignupFlowController.prototype, {
 		);
 		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
 		const currentSteps = this._flow.steps;
-		const signupProgress = filter(
-			getSignupProgress( this._reduxStore.getState() ),
-			( { stepName } ) => includes( currentSteps, stepName )
+		const signupProgress = getFilteredSteps(
+			this._flowName,
+			getSignupProgress( this._reduxStore.getState() )
 		);
-		const allStepsSubmitted =
+		const isEveryStepSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
 
 		return (
 			dependenciesSatisfied &&
 			( providesToken || this._canMakeAuthenticatedRequests() ) &&
-			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
+			( ! steps[ step.stepName ].delayApiRequestUntilComplete || isEveryStepSubmitted )
 		);
 	},
 
@@ -268,6 +269,7 @@ assign( SignupFlowController.prototype, {
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					//
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
 			},
@@ -290,7 +292,8 @@ assign( SignupFlowController.prototype, {
 			get( steps, [ stepName, 'providesDependencies' ], [] )
 		);
 
-		return getSignupProgress( this._reduxStore.getState() ).reduce(
+		return reduce(
+			getSignupProgress( this._reduxStore.getState() ),
 			( current, step ) => ( {
 				...current,
 				...pick( step.providedDependencies, requiredDependencies ),

@@ -33,7 +33,9 @@ class SiteTitleStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setSiteTitle: PropTypes.func.isRequired,
-		signupProgress: PropTypes.array,
+		// should this not be connected
+		// would we ever need this component to take different values for this and others?
+		signupProgress: PropTypes.object,
 		stepName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		siteTitle: PropTypes.string,

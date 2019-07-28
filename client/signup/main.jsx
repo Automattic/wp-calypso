@@ -253,9 +253,9 @@ class Signup extends React.Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
-			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
-			startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
+		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress );
+		const waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress );
+		const startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
 		if ( ! this.isEveryStepSubmitted( progress ) ) {
 			this.goToFirstInvalidStep( progress );
@@ -401,11 +401,11 @@ class Signup extends React.Component {
 	};
 
 	firstUnsubmittedStepName = () => {
-		const currentSteps = flows.getFlow( this.props.flowName ).steps,
-			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
-			nextStepName = currentSteps[ signupProgress.length ],
-			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
-			firstInProgressStepName = firstInProgressStep.stepName;
+		const currentSteps = flows.getFlow( this.props.flowName ).steps;
+		const signupProgress = getFilteredSteps( this.props.flowName, this.props.progress );
+		const nextStepName = currentSteps[ signupProgress.length ];
+		const firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {};
+		const firstInProgressStepName = firstInProgressStep.stepName;
 
 		return firstInProgressStepName || nextStepName || last( currentSteps );
 	};
@@ -456,11 +456,11 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName ).steps,
-			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
-			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
-			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
+		const flowSteps = flows.getFlow( nextFlowName ).steps;
+		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const nextStepName = flowSteps[ currentStepIndex + 1 ];
+		const nextProgressItem = get( this.props.progress, nextStepName );
+		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
 			this.props.removeUnneededSteps( nextFlowName );
@@ -621,6 +621,7 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )

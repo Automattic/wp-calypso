@@ -26,7 +26,7 @@ class SiteTopicStep extends Component {
 		isUserInput: PropTypes.bool,
 		positionInFlow: PropTypes.number.isRequired,
 		submitSiteVertical: PropTypes.func.isRequired,
-		signupProgress: PropTypes.array,
+		signupProgress: PropTypes.object,
 		stepName: PropTypes.string,
 		siteType: PropTypes.string,
 		translate: PropTypes.func.isRequired,
