@@ -177,7 +177,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = hasWordAds
 			? {
 					text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
-					action: () => page( `/earn/ads-earnings/${ selectedSiteSlug }` ),
+					action: () =>
+						page(
+							`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
+						),
 			  }
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
