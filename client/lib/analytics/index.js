@@ -368,9 +368,9 @@ const analytics = {
 		recordSignupStartInFloodlight();
 	},
 
-	recordRegistration: function() {
+	recordRegistration: function( { flow } ) {
 		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
 		// Google Analytics
 		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 		// Marketing
