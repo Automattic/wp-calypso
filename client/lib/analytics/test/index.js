@@ -113,33 +113,33 @@ describe( 'Analytics', () => {
 
 		test( 'should not call window._tkq.push or recordAliasInFloodlight when there is no user info', () => {
 			analytics.identifyUser();
-			expect( window._tkq.push ).not.toBeCalled();
-			expect( recordAliasInFloodlight ).not.toBeCalled();
+			expect( window._tkq.push ).not.toHaveBeenCalled();
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when username does not exist', () => {
 			analytics.identifyUser( undefined, '8' );
-			expect( window._tkq.push ).not.toBeCalled();
-			expect( recordAliasInFloodlight ).not.toBeCalled();
+			expect( window._tkq.push ).not.toHaveBeenCalled();
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when user id does not exist', () => {
 			analytics.identifyUser( 'eight', undefined );
-			expect( window._tkq.push ).not.toBeCalled();
-			expect( recordAliasInFloodlight ).not.toBeCalled();
+			expect( window._tkq.push ).not.toHaveBeenCalled();
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call window._tkq.push and recordAliasInFloodlight when username and id exists', () => {
 			analytics.identifyUser( 'eight', '8' );
-			expect( recordAliasInFloodlight ).toBeCalled();
-			expect( window._tkq.push ).toBeCalledWith( [ 'identifyUser', '8', 'eight' ] );
+			expect( recordAliasInFloodlight ).toHaveBeenCalled();
+			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', '8', 'eight' ] );
 		} );
 
 		test( 'should not call recordAliasInFloodlight when anonymousUserId does not exist', () => {
 			cookie.parse.mockImplementationOnce( () => ( {} ) );
 			analytics.identifyUser( 'eight', '8' );
-			expect( recordAliasInFloodlight ).not.toBeCalled();
-			expect( window._tkq.push ).toBeCalledWith( [ 'identifyUser', '8', 'eight' ] );
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
+			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', '8', 'eight' ] );
 		} );
 	} );
 } );
