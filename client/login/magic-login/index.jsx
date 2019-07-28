@@ -29,6 +29,7 @@ import {
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
 import Main from 'components/main';
+import JetpackHeader from 'components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
 import Gridicon from 'gridicons';
