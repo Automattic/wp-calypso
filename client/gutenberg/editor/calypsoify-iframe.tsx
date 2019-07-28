@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith, some } from 'lodash';
 import url from 'url';
 
 /**
@@ -61,6 +61,7 @@ interface Props {
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPostId: T.PostId;
+	iframeUrl: string;
 }
 
 interface State {
@@ -117,27 +118,35 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
-		// get the domain of the iframed editor so we can check if it is different to parent frame
-		// if so we want to redirect to that domain to set auth cookie to prevent 3rd party cookie
-		// blocking by browser security
-		const iFrameDomain = this.props.iframeUrl
-			.toString()
-			.replace( 'http://', '' )
-			.replace( 'https://', '' )
-			.split( /[/?#]/ )[ 0 ];
+		// get the domain of the iframed editor so we can check if it is 3rd party domain
+		// if so we want to initially redirect to that domain to set auth cookie to prevent
+		// 3rd party cookie blocking by browser security
 
-		// get the query params from parent frame to check if we have already redirected back from 3rd party auth
-		const urlParams = new URLSearchParams( window.location.search );
+		const { hostname: iFrameDomain, protocol } = url.parse( this.props.iframeUrl );
+		const firstPartyDomains = [ 'wordpress.com', 'calypso.live', 'calypso.localhost' ];
+		const isThirdPartyDomain = ! some( firstPartyDomains, domain => {
+			return endsWith( iFrameDomain, domain );
+		} );
 
-		// if editor iFrame is a different domain then redirect to that domain to auth
-		// and redirect back here with 3rdPartyAuthed param set
-		if (
-			iFrameDomain.indexOf( window.location.hostname ) === -1 &&
-			! urlParams.get( '3rdPartyAuthed' )
-		) {
-			const returnURL = encodeURIComponent( `${ window.location.href }?3rdPartyAuthed=true` );
-			( window.location
-				.href as any ) = `https://${ iFrameDomain }/wp-login.php?redirect_to=${ returnURL }`;
+		if ( isThirdPartyDomain ) {
+			// get the query params from parent frame to check if we have already redirected back from 3rd party auth
+			const thirdPartyAuthed = get(
+				url.parse( window.location.href, true ),
+				[ 'query', 'thirdPartyAuthed' ],
+				false
+			);
+			// if successfully redirected save to session storage so we don't need to redirect on every editor load
+			if ( thirdPartyAuthed ) {
+				sessionStorage.setItem( `${ iFrameDomain }ThirdPartyAuthed`, 'true' );
+			}
+
+			// if 3rd party iFrame is not authenticated yet then redirect to that domain to auth
+			// and redirect back here with 3rdPartyAuthed param set
+			if ( ! sessionStorage.getItem( `${ iFrameDomain }ThirdPartyAuthed` ) ) {
+				const returnURL = encodeURIComponent( `${ window.location.href }?thirdPartyAuthed=true` );
+				( window.location
+					.href as any ) = `${ protocol }//${ iFrameDomain }/wp-login.php?redirect_to=${ returnURL }`;
+			}
 		}
 	}
 
