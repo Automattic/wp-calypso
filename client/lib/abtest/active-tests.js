@@ -107,15 +107,6 @@ export default {
 		},
 		defaultVariation: 'siteType',
 	},
-	hideBloggerPlan2: {
-		datestamp: '20190627',
-		variations: {
-			hide: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		localeTargets: 'any',
-	},
 	skippableDomainStep: {
 		datestamp: '20190717',
 		variations: {
