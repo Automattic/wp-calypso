@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, Fragment } from 'react';
 import page from 'page';
 import { get, compact } from 'lodash';
 
@@ -16,6 +16,7 @@ import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature, getCurrentPlan } from 'state/sites/plans/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
+import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_SIMPLE_PAYMENTS,
@@ -24,21 +25,25 @@ import {
 } from 'lib/plans/constants';
 
 interface ConnectedProps {
+	siteId: number;
 	selectedSiteSlug: SiteSlug;
 	isAJetpackSite: boolean;
 	isFreePlan: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
 	hasUploadPlugins: boolean;
+	hasConnectedAccount: boolean;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
+	siteId,
 	selectedSiteSlug,
 	isAJetpackSite,
 	isFreePlan,
 	hasSimplePayments,
 	hasWordAds,
 	hasUploadPlugins,
+	hasConnectedAccount,
 } ) => {
 	const translate = useTranslate();
 
@@ -93,21 +98,32 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					text: translate( 'Collect Recurring Payments' ),
 					action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
 			  };
+		const title = hasConnectedAccount
+			? translate( 'Manage Recurring Payments' )
+			: translate( 'Collect recurring payments' );
+		const body = hasConnectedAccount
+			? translate(
+					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+			  )
+			: translate(
+					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. {{em}}Available to any site with a paid plan{{/em}}.',
+					{
+						components: {
+							em: <em />,
+						},
+					}
+			  );
+		const learnMoreLink = isFreePlan
+			? 'https://en.support.wordpress.com/recurring-payments/'
+			: null;
 		return {
-			title: translate( 'Collect recurring payments' ),
-			body: translate(
-				'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. {{em}}Available to any site with a paid plan{{/em}}.',
-				{
-					components: {
-						em: <em />,
-					},
-				}
-			),
+			title,
+			body,
 			image: {
 				path: '/calypso/images/earn/recurring.svg',
 			},
 			cta,
-			learnMoreLink: 'https://en.support.wordpress.com/recurring-payments/',
+			learnMoreLink,
 		};
 	};
 
@@ -197,7 +213,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		] ),
 	};
 
-	return <PromoSection { ...promos } />;
+	return (
+		<Fragment>
+			{ ! isFreePlan && <QueryMembershipsSettings siteId={ siteId } /> }
+			<PromoSection { ...promos } />;
+		</Fragment>
+	);
 };
 
 export default connect< ConnectedProps, {}, {} >( state => {
@@ -205,11 +226,14 @@ export default connect< ConnectedProps, {}, {} >( state => {
 	const site = getSiteBySlug( state, selectedSiteSlug );
 	const plan = getCurrentPlan( state, site.ID );
 	return {
+		siteId: site.ID,
 		selectedSiteSlug,
 		isFreePlan: get( plan, 'productSlug', '' ) === PLAN_FREE,
 		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
 		isAJetpackSite: isJetpackSite( state, site.ID ),
+		hasConnectedAccount:
+			null !== get( state, [ 'memberships', 'settings', site.ID, 'connectedAccountId' ], null ),
 	};
 } )( Home );
