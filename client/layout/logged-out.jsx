@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { includes, get } from 'lodash';
+import { includes, get, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -119,8 +119,8 @@ LayoutLoggedOut.propTypes = {
 export default connect( state => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
-	const isJetpackLogin = currentRoute === '/log-in/jetpack';
-	const noMasterbarForRoute = currentRoute === '/log-in/jetpack';
+	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
+	const noMasterbarForRoute = startsWith( currentRoute, '/log-in/jetpack' );
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
 		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );

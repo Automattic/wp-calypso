@@ -25,7 +25,13 @@ export default router => {
 			makeLayout
 		);
 
-		router( `/log-in/link/${ lang }`, setUpLocale, redirectLoggedIn, magicLogin, makeLayout );
+		router(
+			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }` ],
+			setUpLocale,
+			redirectLoggedIn,
+			magicLogin,
+			makeLayout
+		);
 	}
 
 	if ( config.isEnabled( 'login/wp-login' ) ) {

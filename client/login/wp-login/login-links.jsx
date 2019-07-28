@@ -68,7 +68,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: 'link',
+			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
 		};
 		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
 		if ( emailAddress ) {
@@ -177,7 +177,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: 'link',
+			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
 		};
 
 		return (
