@@ -533,7 +533,7 @@ export function createAccount(
 					userData.ID;
 
 				// Fire after a new user registers.
-				analytics.recordRegistration();
+				analytics.recordRegistration( { flow: flowName } );
 				analytics.identifyUser( username, userId );
 
 				const providedDependencies = assign( { username }, bearerToken );
