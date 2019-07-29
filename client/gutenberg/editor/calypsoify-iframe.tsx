@@ -118,6 +118,15 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
+		this.handleThirdPartyiFrameDomains();
+	}
+
+	componentWillUnmount() {
+		MediaStore.off( 'change', this.updateImageBlocks );
+		window.removeEventListener( 'message', this.onMessage, false );
+	}
+
+	handleThirdPartyiFrameDomains() {
 		// get the domain of the iframed editor so we can check if it is 3rd party domain.
 		// If so we want to initially redirect to that domain to set auth cookie to prevent
 		// 3rd party cookie blocking by browser security
@@ -139,12 +148,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// check query params from parent frame to check if we have already redirected back from 3rd party auth.
 			if ( parentQuery.thirdPartyAuthed ) {
 				// If successfully redirected save to session storage so we don't need to redirect on every editor load
-				sessionStorage.setItem( `${ iFrameDomain }ThirdPartyAuthed`, 'true' );
+				sessionStorage.setItem( `calypsoify_${ iFrameDomain }_thirdPartyAuthed`, 'true' );
 			}
 
 			// if 3rd party iFrame is not authenticated yet then redirect to that domain to auth
 			// and redirect back here with 3rdPartyAuthed param set
-			if ( ! sessionStorage.getItem( `${ iFrameDomain }ThirdPartyAuthed` ) ) {
+			if ( ! sessionStorage.getItem( `calypsoify_${ iFrameDomain }_thirdPartyAuthed` ) ) {
 				// Add new params to existing in case there are new calypsoify query params added in future that
 				// need to be included in the redirect
 				parentQuery.thirdPartyAuthed = 'true';
@@ -157,11 +166,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				window.location.href = `${ iFrameProtocol }//${ iFrameDomain }/wp-login.php?redirect_to=${ returnURL }`;
 			}
 		}
-	}
-
-	componentWillUnmount() {
-		MediaStore.off( 'change', this.updateImageBlocks );
-		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
 	onMessage = ( { data, origin }: MessageEvent ) => {
