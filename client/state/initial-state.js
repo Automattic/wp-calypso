@@ -15,7 +15,6 @@ import { getStoredItem, setStoredItem, clearStorage } from 'lib/browser-storage'
 import { isSupportSession } from 'lib/user/support-user-interop';
 import config from 'config';
 import User from 'lib/user';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -70,7 +69,7 @@ function shouldAddSympathy() {
 	}
 
 	// If `no-force-sympathy` flag is enabled, never clear persistent state.
-	if ( config.isEnabled( 'no-force-sympathy' ) || 'last' === abtest( 'moveUserStepPosition' ) ) {
+	if ( config.isEnabled( 'no-force-sympathy' ) ) {
 		return false;
 	}
 
