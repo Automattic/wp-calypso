@@ -20,6 +20,8 @@ import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
+import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
 
 /**
  * Style dependencies
@@ -35,6 +37,7 @@ const PurchasesSite = ( {
 	name,
 	domain,
 	slug,
+	nextAppointment,
 } ) => {
 	let items;
 
@@ -47,6 +50,7 @@ const PurchasesSite = ( {
 			<PurchaseItem
 				key={ purchase.id }
 				slug={ slug }
+				siteId={ siteId }
 				isDisconnectedSite={ ! site }
 				purchase={ purchase }
 				isJetpack={ isJetpack }
@@ -57,9 +61,10 @@ const PurchasesSite = ( {
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
-
+			{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
 			<PurchaseSiteHeader
 				siteId={ siteId }
+				nextAppointment={ nextAppointment }
 				name={ name }
 				domain={ domain }
 				isPlaceholder={ isPlaceholder }
@@ -94,4 +99,5 @@ PurchasesSite.propTypes = {
 export default connect( ( state, { siteId } ) => ( {
 	site: getSite( state, siteId ),
 	hasLoadedSite: ! isRequestingSite( state, siteId ),
+	nextAppointment: getConciergeNextAppointment( state ),
 } ) )( PurchasesSite );
