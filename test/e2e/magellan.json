@@ -2,7 +2,7 @@
 	"mocha_tests": [ "specs" ],
 	"mocha_opts": "test/mocha.opts",
 	"mocha_args": "-R spec-xunit-reporter",
-	"max_test_attempts": 1,
+	"max_test_attempts": 3,
 	"max_workers": 8,
 	"suiteTag": "parallel",
 	"sauce": false,
