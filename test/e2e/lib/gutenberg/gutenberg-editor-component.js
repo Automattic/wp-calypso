@@ -18,7 +18,7 @@ import config from 'config';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
-		super( driver, By.css( '.edit-post-header' ), url, config.get( 'explicitWaitMS' ) * 2 );
+		super( driver, By.css( '.edit-post-header' ), url, config.get( 'explicitWaitMS' ) * 4 );
 		this.editorType = editorType;
 
 		this.publishSelector = By.css(
