@@ -19,20 +19,20 @@ class ConfirmationStep extends Component {
 		this.props.recordTracksEvent( 'calypso_concierge_book_confirmation_step' );
 	}
 
+	handleClick = () => {
+		window.location.reload();
+	};
+
 	render() {
-		const { site, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Confirmation
 				description={ translate( 'We will send you an email with information on how to prepare.' ) }
 				title={ translate( 'Your session is booked!' ) }
 			>
-				<Button
-					className="book__schedule-button"
-					href={ `/stats/day/${ site.slug }` }
-					primary={ true }
-				>
-					{ translate( 'Return to your dashboard' ) }
+				<Button className="book__schedule-button" onClick={ this.handleClick } primary={ true }>
+					{ translate( 'Check your appointment details' ) }
 				</Button>
 			</Confirmation>
 		);

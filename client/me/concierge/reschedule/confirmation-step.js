@@ -19,8 +19,14 @@ class ConfirmationStep extends Component {
 		this.props.recordTracksEvent( 'calypso_concierge_reschedule_confirmation_step' );
 	}
 
+	handleClick = () => {
+		const { site } = this.props;
+
+		window.location.href = `/me/concierge/${ site.slug }/book`;
+	};
+
 	render() {
-		const { site, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Confirmation
@@ -29,10 +35,10 @@ class ConfirmationStep extends Component {
 			>
 				<Button
 					className="reschedule__schedule-button"
-					href={ `/stats/day/${ site.slug }` }
+					onClick={ this.handleClick }
 					primary={ true }
 				>
-					{ translate( 'Return to your dashboard' ) }
+					{ translate( 'Check your appointment details' ) }
 				</Button>
 			</Confirmation>
 		);
