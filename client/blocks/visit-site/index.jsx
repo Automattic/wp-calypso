@@ -39,7 +39,10 @@ export default function VisitSite( { siteSlug } ) {
 
 	return (
 		<div className="visit-site">
-			{ translate( 'or visit {{siteLink/}}', { components: { siteLink } } ) }
+			{ translate( 'or visit {{siteLink/}}', {
+				components: { siteLink },
+				context: 'Alternative link under login/site-selection header, leads to site frontend.',
+			} ) }
 		</div>
 	);
 }
