@@ -65,7 +65,7 @@ describe( 'index', () => {
 
 				expect( analytics.statsd.recordCounting ).to.have.been.calledWith(
 					'reader',
-					'target-fallback'
+					'target.fallback'
 				);
 			} );
 

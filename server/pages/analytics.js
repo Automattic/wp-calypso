@@ -15,7 +15,7 @@ const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_
 const logAnalyticsThrottled = throttle( function( sectionName, duration, target ) {
 	analytics.statsd.recordTiming( sectionName, 'response-time', duration );
 	if ( target ) {
-		analytics.statsd.recordCounting( sectionName, `target-${ target }` );
+		analytics.statsd.recordCounting( sectionName, `target.${ target }` );
 	}
 }, THROTTLE_MILLIS );
 
