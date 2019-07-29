@@ -118,34 +118,43 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
-		// get the domain of the iframed editor so we can check if it is 3rd party domain
-		// if so we want to initially redirect to that domain to set auth cookie to prevent
+		// get the domain of the iframed editor so we can check if it is 3rd party domain.
+		// If so we want to initially redirect to that domain to set auth cookie to prevent
 		// 3rd party cookie blocking by browser security
 
-		const { hostname: iFrameDomain, protocol } = url.parse( this.props.iframeUrl );
+		const { hostname: iFrameDomain, protocol: iFrameProtocol } = url.parse( this.props.iframeUrl );
+		const {
+			hostname: parentDomain,
+			protocol: parentProtocol,
+			port,
+			query: parentQuery,
+		} = url.parse( window.location.href, true );
+		const parentPort = port ? `:${ port }` : '';
 		const firstPartyDomains = [ 'wordpress.com', 'calypso.live', 'calypso.localhost' ];
 		const isThirdPartyDomain = ! some( firstPartyDomains, domain => {
 			return endsWith( iFrameDomain, domain );
 		} );
 
 		if ( isThirdPartyDomain ) {
-			// get the query params from parent frame to check if we have already redirected back from 3rd party auth
-			const thirdPartyAuthed = get(
-				url.parse( window.location.href, true ),
-				[ 'query', 'thirdPartyAuthed' ],
-				false
-			);
-			// if successfully redirected save to session storage so we don't need to redirect on every editor load
-			if ( thirdPartyAuthed ) {
+			// check query params from parent frame to check if we have already redirected back from 3rd party auth.
+			if ( parentQuery.thirdPartyAuthed ) {
+				// If successfully redirected save to session storage so we don't need to redirect on every editor load
 				sessionStorage.setItem( `${ iFrameDomain }ThirdPartyAuthed`, 'true' );
 			}
 
 			// if 3rd party iFrame is not authenticated yet then redirect to that domain to auth
 			// and redirect back here with 3rdPartyAuthed param set
 			if ( ! sessionStorage.getItem( `${ iFrameDomain }ThirdPartyAuthed` ) ) {
-				const returnURL = encodeURIComponent( `${ window.location.href }?thirdPartyAuthed=true` );
-				( window.location
-					.href as any ) = `${ protocol }//${ iFrameDomain }/wp-login.php?redirect_to=${ returnURL }`;
+				// Add new params to existing in case there are new calypsoify query params added in future that
+				// need to be included in the redirect
+				parentQuery.thirdPartyAuthed = 'true';
+				const queryParams = map( parentQuery, ( value, key ) => `${ key }=${ value }` ).join( '&' );
+				const returnURL = encodeURIComponent(
+					`${ parentProtocol }//${ parentDomain }${ parentPort }${
+						this.props.currentRoute
+					}?${ queryParams }`
+				);
+				window.location.href = `${ iFrameProtocol }//${ iFrameDomain }/wp-login.php?redirect_to=${ returnURL }`;
 			}
 		}
 	}
