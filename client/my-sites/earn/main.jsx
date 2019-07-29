@@ -161,7 +161,7 @@ class EarningsMain extends Component {
 	getSectionNav = section => {
 		const currentPath = this.getCurrentPath();
 
-		return 'payments' !== section || ! config.isEnabled( 'earn-relayout' ) ? (
+		return ! section.startsWith( 'payments' ) || ! config.isEnabled( 'earn-relayout' ) ? (
 			<SectionNav selectedText={ this.getSelectedText() }>
 				<NavTabs>
 					{ this.getFilters().map( filterItem => {
