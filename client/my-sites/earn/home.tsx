@@ -28,7 +28,6 @@ interface ConnectedProps {
 	isFreePlan: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
-	hasUploadPlugins: boolean;
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
 	canUserUseStore: boolean;
@@ -41,7 +40,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isFreePlan,
 	hasSimplePayments,
 	hasWordAds,
-	hasUploadPlugins,
 	hasConnectedAccount,
 	hasSetupAds,
 	canUserUseStore,
