@@ -20,6 +20,10 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 }
 
+.checklist__task-launch-site-blocked-notice {
+	margin: 10px 0 0;
+}
+
 .checklist__task {
 	width: 100%;
 	order: 1;

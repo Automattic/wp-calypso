@@ -7,6 +7,8 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
+import Notice from 'components/notice';
 import ScreenReaderText from 'components/screen-reader-text';
 import Spinner from 'components/spinner';
 
@@ -132,6 +135,7 @@ class Task extends PureComponent {
 			description,
 			duration,
 			href,
+			isBlockedLaunchSiteTask,
 			inProgress,
 			isWarning,
 			onClick,
@@ -192,6 +196,7 @@ class Task extends PureComponent {
 								<div className="checklist__task-action-wrapper">
 									<Button
 										className="checklist__task-action"
+										disabled={ isBlockedLaunchSiteTask }
 										href={ href }
 										onClick={ onClick }
 										primary={ ! collapsed }
@@ -203,6 +208,16 @@ class Task extends PureComponent {
 										<Button className="checklist__task-skip" onClick={ onDismiss }>
 											{ translate( 'Skip' ) }
 										</Button>
+									) }
+									{ isBlockedLaunchSiteTask && (
+										<Notice
+											className="checklist__task-launch-site-blocked-notice"
+											showDismiss={ false }
+										>
+											{ translate(
+												'Please confirm your email address before launching your site.'
+											) }
+										</Notice>
 									) }
 								</div>
 							</div>
@@ -216,4 +231,7 @@ class Task extends PureComponent {
 	}
 }
 
-export default localize( Task );
+export default connect( ( state, { completed, id } ) => ( {
+	isBlockedLaunchSiteTask:
+		'site_launched' === id && ! completed && ! isCurrentUserEmailVerified( state ),
+} ) )( localize( Task ) );
