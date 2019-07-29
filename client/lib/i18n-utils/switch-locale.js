@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { includes, map, pick } from 'lodash';
@@ -145,7 +144,7 @@ export default function switchLocale( localeSlug ) {
 					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
 				);
 			}
-		} );
+		);
 	}
 }
 
