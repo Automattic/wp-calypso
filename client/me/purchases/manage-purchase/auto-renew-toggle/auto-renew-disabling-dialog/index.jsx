@@ -154,7 +154,7 @@ class AutoRenewDisablingDialog extends Component {
 				<ul>
 					<li>
 						<Button href={ exportPath } primary>
-							{ translate( 'Download a backup' ) }
+							{ translate( 'Download a current backup' ) }
 						</Button>
 					</li>
 					<li>
