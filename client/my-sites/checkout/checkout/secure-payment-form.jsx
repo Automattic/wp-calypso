@@ -51,7 +51,6 @@ import {
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
-import { isE2ETest } from 'lib/e2e';
 
 /**
  * Module variables
@@ -94,8 +93,7 @@ export class SecurePaymentForm extends Component {
 
 		if (
 			this.props.cart &&
-			this.props.cart.allowed_payment_methods.includes( 'WPCOM_Billing_Stripe_Payment_Method' ) &&
-			! isE2ETest()
+			this.props.cart.allowed_payment_methods.includes( 'WPCOM_Billing_Stripe_Payment_Method' )
 		) {
 			this.shouldUseStripeElements = true;
 		}
