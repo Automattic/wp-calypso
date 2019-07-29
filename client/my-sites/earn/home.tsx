@@ -248,8 +248,11 @@ export default connect< ConnectedProps, {}, {} >( state => {
 		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
 		isAJetpackSite: isJetpackSite( state, site.ID ),
-		hasConnectedAccount:
-			null !== get( state, [ 'memberships', 'settings', site.ID, 'connectedAccountId' ], null ),
+		hasConnectedAccount: !! get(
+			state,
+			[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
+			false
+		),
 		hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
 	};
 } )( Home );
