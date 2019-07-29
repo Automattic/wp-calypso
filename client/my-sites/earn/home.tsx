@@ -231,7 +231,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
 			{ ! isFreePlan && <QueryMembershipsSettings siteId={ siteId } /> }
-			<PromoSection { ...promos } />;
+			<PromoSection { ...promos } />
 		</Fragment>
 	);
 };
