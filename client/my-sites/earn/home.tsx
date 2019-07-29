@@ -13,8 +13,8 @@ import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
-import { hasFeature, getCurrentPlan } from 'state/sites/plans/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
@@ -23,7 +23,6 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_UPLOAD_PLUGINS,
-	PLAN_FREE,
 } from 'lib/plans/constants';
 
 interface ConnectedProps {
@@ -239,11 +238,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 export default connect< ConnectedProps, {}, {} >( state => {
 	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const site = getSiteBySlug( state, selectedSiteSlug );
-	const plan = getCurrentPlan( state, site.ID );
 	return {
 		siteId: site.ID,
 		selectedSiteSlug,
-		isFreePlan: get( plan, 'productSlug', '' ) === PLAN_FREE,
+		isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
 		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
