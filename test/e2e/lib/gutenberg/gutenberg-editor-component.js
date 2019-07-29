@@ -14,10 +14,11 @@ import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
+import config from 'config';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
-		super( driver, By.css( '.edit-post-header' ), url );
+		super( driver, By.css( '.edit-post-header' ), url, config.get( 'explicitWaitMS' ) * 2 );
 		this.editorType = editorType;
 
 		this.publishSelector = By.css(
