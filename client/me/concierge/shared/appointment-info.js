@@ -42,7 +42,7 @@ class AppointmentInfo extends Component {
 
 				<CompactCard>
 					<FormattedHeader
-						subHeaderText={ translate( 'Your scheduled Business Concierge session details are:' ) }
+						subHeaderText={ translate( 'Your scheduled Quick Start session details are:' ) }
 					/>
 
 					<FormFieldset>
