@@ -9470,11 +9470,12 @@
 			"dev": true
 		},
 		"eslint-plugin-jsx-a11y": {
-			"version": "6.2.1",
-			"resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.1.tgz",
-			"integrity": "sha512-cjN2ObWrRz0TTw7vEcGQrx+YltMvZoOEx4hWU8eEERDnBIU00OTq7Vr+jA7DFKxiwLNv4tTh5Pq2GUNEa8b6+w==",
+			"version": "6.2.3",
+			"resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.3.tgz",
+			"integrity": "sha512-CawzfGt9w83tyuVekn0GDPU9ytYtxyxyFZ3aSWROmnRRFQFT2BiPJd7jvRdzNDi6oLWaS2asMeYSNMjWTV4eNg==",
 			"dev": true,
 			"requires": {
+				"@babel/runtime": "^7.4.5",
 				"aria-query": "^3.0.0",
 				"array-includes": "^3.0.3",
 				"ast-types-flow": "^0.0.7",
@@ -9482,7 +9483,19 @@
 				"damerau-levenshtein": "^1.0.4",
 				"emoji-regex": "^7.0.2",
 				"has": "^1.0.3",
-				"jsx-ast-utils": "^2.0.1"
+				"jsx-ast-utils": "^2.2.1"
+			},
+			"dependencies": {
+				"jsx-ast-utils": {
+					"version": "2.2.1",
+					"resolved": "https://registry.npmjs.org/jsx-ast-utils/-/jsx-ast-utils-2.2.1.tgz",
+					"integrity": "sha512-v3FxCcAf20DayI+uxnCuw795+oOIkVu6EnJ1+kSzhqqTZHNkTZ7B66ZgLp4oLJ/gbA64cI0B7WRoHZMSRdyVRQ==",
+					"dev": true,
+					"requires": {
+						"array-includes": "^3.0.3",
+						"object.assign": "^4.1.0"
+					}
+				}
 			}
 		},
 		"eslint-plugin-react": {
