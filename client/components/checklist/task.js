@@ -231,7 +231,11 @@ class Task extends PureComponent {
 	}
 }
 
-export default connect( ( state, { completed, id } ) => ( {
-	isBlockedLaunchSiteTask:
-		'site_launched' === id && ! completed && ! isCurrentUserEmailVerified( state ),
-} ) )( localize( Task ) );
+export default connect( ( state, { completed, disableIcon, id } ) => {
+	const isBlockedLaunchSiteTask =
+		'site_launched' === id && ! completed && ! isCurrentUserEmailVerified( state );
+	return {
+		disableIcon: isBlockedLaunchSiteTask || disableIcon,
+		isBlockedLaunchSiteTask,
+	};
+} )( localize( Task ) );
