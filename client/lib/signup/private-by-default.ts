@@ -21,7 +21,7 @@ interface PrivateByDefaultSiteSettings {
  */
 export function shouldBePrivateByDefault( {
 	flowName = '',
-}: PrivateByDefaultSiteSettings ): boolean {
+}: Readonly<PrivateByDefaultSiteSettings> ): boolean {
 	if ( flowName.match( /^ecommerce/ ) ) {
 		// ecommerce plans go atomic after checkout. These sites should default to public for now.
 		return false;
