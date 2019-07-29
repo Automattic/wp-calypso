@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,6 @@ import {
 	indexOf,
 	isEqual,
 	kebabCase,
-	last,
 	map,
 	pick,
 	startsWith,
@@ -76,7 +74,6 @@ import {
 	canResumeFlow,
 	getCompletedSteps,
 	getDestination,
-	getFilteredSteps,
 	getFirstInvalidStep,
 	getStepUrl,
 	persistSignupDestination,
@@ -153,8 +150,8 @@ class Signup extends React.Component {
 		this.updateShouldShowLoadingScreen();
 
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
-			// Resume progress if possible
-			return this.resumeProgress();
+			// Resume from the current window location
+			return;
 		}
 
 		if ( this.getPositionInFlow() !== 0 ) {
@@ -406,28 +403,6 @@ class Signup extends React.Component {
 		}
 		return redirectTo + path;
 	};
-
-	firstUnsubmittedStepName = () => {
-		const currentSteps = flows.getFlow( this.props.flowName ).steps,
-			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
-			nextStepName = currentSteps[ signupProgress.length ],
-			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
-			firstInProgressStepName = firstInProgressStep.stepName;
-
-		return firstInProgressStepName || nextStepName || last( currentSteps );
-	};
-
-	resumeProgress() {
-		const firstUnsubmittedStep = this.firstUnsubmittedStepName();
-		const stepSectionName = firstUnsubmittedStep.stepSectionName;
-
-		// set `resumingStep` so we don't render/animate anything until we have mounted this step
-		this.setState( { firstUnsubmittedStep } );
-
-		return page.redirect(
-			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
-		);
-	}
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
