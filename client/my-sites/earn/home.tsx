@@ -14,17 +14,12 @@ import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature, getCurrentPlan } from 'state/sites/plans/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, canCurrentUserUseStore } from 'state/sites/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
-import {
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_SIMPLE_PAYMENTS,
-	FEATURE_UPLOAD_PLUGINS,
-	PLAN_FREE,
-} from 'lib/plans/constants';
+import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS, PLAN_FREE } from 'lib/plans/constants';
 
 interface ConnectedProps {
 	siteId: number;
@@ -36,6 +31,7 @@ interface ConnectedProps {
 	hasUploadPlugins: boolean;
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
+	canUserUseStore: boolean;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -48,6 +44,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasUploadPlugins,
 	hasConnectedAccount,
 	hasSetupAds,
+	canUserUseStore,
 } ) => {
 	const translate = useTranslate();
 
@@ -137,18 +134,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getStoreCard = () => {
-		if ( isAJetpackSite ) {
+		if ( isAJetpackSite && ! canUserUseStore ) {
 			return null;
 		}
 
-		const cta = hasUploadPlugins
+		const cta = canUserUseStore
 			? {
 					text: translate( 'Set Up a Simple Store' ),
 					action: () => page( `/store/${ selectedSiteSlug }` ),
 			  }
 			: {
-					text: translate( 'Upgrade to Business Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/business/` ),
+					text: translate( 'Upgrade to eCommerce Plan' ),
+					action: () => page( `/checkout/${ selectedSiteSlug }/ecommerce/` ),
 			  };
 		return {
 			title: translate( 'Sell a few items' ),
@@ -245,11 +242,11 @@ export default connect< ConnectedProps, {}, {} >( state => {
 		selectedSiteSlug,
 		isFreePlan: get( plan, 'productSlug', '' ) === PLAN_FREE,
 		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
-		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
 		isAJetpackSite: isJetpackSite( state, site.ID ),
 		hasConnectedAccount:
 			null !== get( state, [ 'memberships', 'settings', site.ID, 'connectedAccountId' ], null ),
 		hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
+		canUserUseStore: canCurrentUserUseStore( state, site.ID ),
 	};
 } )( Home );
