@@ -68,8 +68,8 @@ class SiteRedirect extends Component {
 				<EmptyContent
 					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 					title={ translate( 'Site Redirects are not available for this site.' ) }
-					line={ translate( 'Try searching for a redirection plugin instead.' ) }
-					action={ translate( 'Explore the Plugin Directory!' ) }
+					line={ translate( "Try searching plugins for 'redirect'." ) }
+					action={ translate( 'Explore the Plugin Directory' ) }
 					actionURL={ selectedSiteAdminUrl }
 				/>
 			);
