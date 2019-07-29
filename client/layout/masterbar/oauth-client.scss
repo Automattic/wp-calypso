@@ -201,7 +201,7 @@
 		}
 
 		.login__divider {
-			margin: 30px auto;
+			margin: 10px auto;
 			text-transform: lowercase;
 
 			span {
@@ -248,6 +248,7 @@
 				@include breakpoint( '>660px' ) {
 					display: block;
 					position: initial;
+					margin-bottom: 30px;
 				}
 			}
 
