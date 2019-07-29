@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
-import scrollIntoView from 'dom-scroll-into-view';
 import debugFactory from 'debug';
 
 /**
@@ -29,6 +28,7 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 /**
  * Style dependencies
@@ -121,8 +121,9 @@ class SiteSelector extends Component {
 			return;
 		}
 
-		scrollIntoView( highlightedSiteElem, selectorElement, {
-			onlyScrollIfNeeded: true,
+		scrollIntoViewport( highlightedSiteElem, {
+			block: 'nearest',
+			scrollMode: 'if-needed',
 		} );
 	}
 
