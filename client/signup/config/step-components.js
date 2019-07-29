@@ -25,6 +25,7 @@ const stepNameToModuleName = {
 	'plans-business': 'plans',
 	'plans-store-nux': 'plans-atomic-store',
 	'plans-site-selected': 'plans',
+	'plans-without-ecommerce': 'plans',
 	site: 'site',
 	'rebrand-cities-welcome': 'rebrand-cities-welcome',
 	'rewind-migrate': 'rewind-migrate',
