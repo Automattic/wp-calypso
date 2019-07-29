@@ -17,7 +17,12 @@ export async function saveLogin( driver, username ) {
 	createDir( directory );
 	await driver.get( 'https://public-api.wordpress.com/wp-admin/' );
 	const cookies = await driver.manage().getCookies();
-	await fs.writeFileSync( cookieFile, JSON.stringify( cookies ), 'utf-8' );
+	try {
+		await fs.writeFileSync( cookieFile, JSON.stringify( cookies ), 'utf-8' );
+	} catch ( error ) {
+		console.log( 'Saving login info failed with error: ' + error );
+	}
+
 	await driver.navigate().back();
 }
 
@@ -60,6 +65,5 @@ function createDir( dir ) {
 		if ( error.code === 'ENOENT' ) {
 			return createDir( path.dirname( dir ) ) && createDir( dir );
 		}
-		throw error;
 	}
 }
