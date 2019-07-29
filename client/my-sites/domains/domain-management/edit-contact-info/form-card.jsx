@@ -333,7 +333,7 @@ class EditContactInfoFormCard extends React.Component {
 
 	onWhoisUpdateError = () => {
 		const message =
-			this.props.whoisSaveError ||
+			get( this.props.whoisSaveError, 'message' ) ||
 			this.props.translate(
 				'There was a problem updating your contact info. ' +
 					'Please try again later or contact support.'
