@@ -94,7 +94,7 @@ enum EditorActions {
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
-	GetCloseButtonDetails = 'getCloseButtonDetails',
+	GetCloseButtonUrl = 'getCloseButtonUrl',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -232,12 +232,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
-			if ( unsavedChanges ) {
-				this.props.markChanged();
-			} else {
-				this.props.markSaved();
-			}
-			this.props.navigate( this.props.closeUrl );
+			this.onCloseEditor( unsavedChanges, ports[ 0 ] );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -267,12 +262,25 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.sendTemplatePartEditorUrl( templatePartId );
 		}
 
-		if ( EditorActions.GetCloseButtonDetails === action ) {
+		if ( EditorActions.GetCloseButtonUrl === action ) {
 			const { closeUrl } = this.props;
-			ports[ 0 ].postMessage( {
-				closeUrl: `${ window.location.origin }${ closeUrl }`,
-				shouldDoServerBackNav: this.shouldDoServerBackNav(),
-			} );
+			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
+		}
+	};
+
+	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
+		const { closeUrl } = this.props;
+
+		if ( hasUnsavedChanges ) {
+			this.props.markChanged();
+		} else {
+			this.props.markSaved();
+		}
+
+		if ( this.shouldDoServerBackNav() ) {
+			messagePort.postMessage( `${ window.location.origin }${ closeUrl }` );
+		} else {
+			this.props.navigate( closeUrl );
 		}
 	};
 

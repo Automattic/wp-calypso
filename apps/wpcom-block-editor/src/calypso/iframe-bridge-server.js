@@ -537,16 +537,25 @@ function handleCloseEditor( calypsoPort ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
 
-		if ( calypsoifyGutenberg.closeUrl && calypsoifyGutenberg.shouldDoServerBackNav ) {
-			window.open( calypsoifyGutenberg.closeUrl, '_top' );
-		} else {
-			calypsoPort.postMessage( {
+		const { port1, port2 } = new MessageChannel();
+		calypsoPort.postMessage(
+			{
 				action: 'closeEditor',
 				payload: {
 					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 				},
-			} );
-		}
+			},
+			[ port2 ]
+		);
+
+		// We only want to navigate back if the client tells us to.
+		// We need to give it a chance to set ift is dirty
+		// before we can navigate away from the page.
+		port1.onmessage = ( { data } ) => {
+			port1.close(); // We only want to recieve this once.
+			// data is the URL to which we go back:
+			window.open( data, '_top' );
+		};
 	} );
 }
 
@@ -661,24 +670,22 @@ async function openTemplatePartEditor( calypsoPort ) {
 /**
  * Ensures the calypsoifyGutenberg close URL matches the one on the client.
  * This is important because we modify the close URL client side in the
- * context of template part blocks in FSE. Also stores a variable which checks
- * if we should perform a server-side navigation on close.
+ * context of template part blocks in FSE.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function getCloseButtonDetails( calypsoPort ) {
+function getCloseButtonUrl( calypsoPort ) {
 	const { port1, port2 } = new MessageChannel();
 	calypsoPort.postMessage(
 		{
-			action: 'getCloseButtonDetails',
+			action: 'getCloseButtonUrl',
 			payload: {},
 		},
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { closeUrl, shouldDoServerBackNav } = data;
-		calypsoifyGutenberg.closeUrl = closeUrl;
-		calypsoifyGutenberg.shouldDoServerBackNav = shouldDoServerBackNav;
+		// data is the closeUrl:
+		calypsoifyGutenberg.closeUrl = data;
 	};
 }
 
@@ -763,7 +770,7 @@ function initPort( message ) {
 
 		openTemplatePartEditor( calypsoPort );
 
-		getCloseButtonDetails( calypsoPort );
+		getCloseButtonUrl( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
