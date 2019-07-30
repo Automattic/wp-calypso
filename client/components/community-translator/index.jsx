@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import i18n, { localize, reRenderTranslations } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty, isMatch } from 'lodash';
@@ -41,7 +41,7 @@ function getLocaleSlugsFromLoadedTranslations() {
 	};
 }
 
-class CommunityTranslator extends PureComponent {
+class CommunityTranslator extends Component {
 	// The i18n-calypso localize() HOC will force an update when i18n changes
 	// (see boundForceUpdate()), so we need to track what we've set
 	currentLocale = ( { localeSlug: 'en' } )
