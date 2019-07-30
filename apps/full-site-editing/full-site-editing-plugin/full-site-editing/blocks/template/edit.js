@@ -88,11 +88,11 @@ const TemplateEdit = compose(
 			receiveTemplateBlocks();
 		} );
 
-		const { align } = attributes;
+		const { align, className } = attributes;
 
 		return (
 			<div
-				className={ classNames( 'template-block', {
+				className={ classNames( 'template-block', className, {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
