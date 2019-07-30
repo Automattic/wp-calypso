@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { camelCase, kebabCase, values, debounce } from 'lodash';
+import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 
@@ -17,20 +17,25 @@ import CreditCardFormFields from 'components/credit-card-form-fields';
 import FormButton from 'components/forms/form-button';
 import notices from 'notices';
 import { validatePaymentDetails } from 'lib/checkout';
-import { handleRenewNowClick, isRenewable } from 'lib/purchases';
 import ValidationErrorList from 'notices/validation-error-list';
-import wpcomFactory from 'lib/wp';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { localizeUrl } from 'lib/i18n-utils';
+import {
+	getInitializedFields,
+	camelCaseFormFields,
+	kebabCaseFormFields,
+	assignAllFormFields,
+	areFormFieldsEmpty,
+	useDebounce,
+	saveCreditCard,
+} from './helpers';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const wpcom = wpcomFactory.undocumented();
 
 export function CreditCardForm( {
 	apiParams = {},
@@ -187,56 +192,6 @@ function SaveButton( { translate, formSubmitting } ) {
 	);
 }
 
-function areFormFieldsEmpty( formFieldValues ) {
-	return Object.keys( formFieldValues ).reduce( ( isEmpty, key ) => {
-		return formFieldValues[ key ].length ? false : isEmpty;
-	}, true );
-}
-
-function kebabCaseFormFields( formFieldValues ) {
-	return Object.keys( formFieldValues ).reduce( ( fields, key ) => {
-		fields[ kebabCase( key ) ] = formFieldValues[ key ];
-		return fields;
-	}, {} );
-}
-
-function camelCaseFormFields( formFieldValues ) {
-	return Object.keys( formFieldValues ).reduce( ( fields, key ) => {
-		fields[ camelCase( key ) ] = formFieldValues[ key ];
-		return fields;
-	}, {} );
-}
-
-function assignAllFormFields( formFieldValues, value ) {
-	return Object.keys( formFieldValues ).reduce( ( fields, key ) => {
-		fields[ key ] = value;
-		return fields;
-	}, {} );
-}
-
-function getInitializedFields( initialValues = {} ) {
-	const fieldNames = [
-		'name',
-		'number',
-		'cvv',
-		'expirationDate',
-		'country',
-		'postalCode',
-		'streetNumber',
-		'address1',
-		'address2',
-		'phoneNumber',
-		'streetNumber',
-		'city',
-		'state',
-		'document',
-		'brand',
-	];
-	return fieldNames.reduce( ( finalFields, fieldName ) => {
-		return { ...finalFields, ...{ [ fieldName ]: initialValues[ fieldName ] || '' } };
-	}, {} );
-}
-
 function TosText( { translate } ) {
 	return translate(
 		'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
@@ -275,94 +230,6 @@ function UsedForExistingPurchasesInfo( { translate, showUsedForExistingPurchases
 			<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
 		</div>
 	);
-}
-
-function createCardTokenAsync( { cardDetails, createCardToken } ) {
-	return new Promise( ( resolve, reject ) => {
-		createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
-			if ( gatewayError || ! gatewayData.token ) {
-				reject( gatewayError || new Error( 'No card token returned' ) );
-				return;
-			}
-			resolve( gatewayData );
-		} );
-	} );
-}
-
-async function saveCreditCard( {
-	createCardToken,
-	saveStoredCard,
-	translate,
-	successCallback,
-	apiParams,
-	purchase,
-	siteSlug,
-	formFieldValues,
-} ) {
-	const cardDetails = kebabCaseFormFields( formFieldValues );
-	const { token } = await createCardTokenAsync( { cardDetails, createCardToken } );
-
-	if ( saveStoredCard ) {
-		await saveStoredCard( { token } );
-		notices.success( translate( 'Card added successfully' ), {
-			persistent: true,
-		} );
-		successCallback();
-		return;
-	}
-
-	const updatedCreditCardApiParams = getParamsForApi( cardDetails, token, apiParams );
-	const response = wpcom.updateCreditCard( updatedCreditCardApiParams );
-	if ( response.error ) {
-		throw new Error( response );
-	}
-
-	if ( purchase && siteSlug && isRenewable( purchase ) ) {
-		const noticeMessage = translate(
-			'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
-		);
-		const noticeOptions = {
-			button: translate( 'Renew Now' ),
-			onClick: function( event, closeFunction ) {
-				handleRenewNowClick( purchase, siteSlug );
-				closeFunction();
-			},
-			persistent: true,
-		};
-		notices.info( noticeMessage, noticeOptions );
-		successCallback();
-		return;
-	}
-	notices.success( response.success, {
-		persistent: true,
-	} );
-	successCallback();
-}
-
-export function getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
-	return {
-		...extraParams,
-		country: cardDetails.country,
-		zip: cardDetails[ 'postal-code' ],
-		month: cardDetails[ 'expiration-date' ].split( '/' )[ 0 ],
-		year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
-		name: cardDetails.name,
-		document: cardDetails.document,
-		street_number: cardDetails[ 'street-number' ],
-		address_1: cardDetails[ 'address-1' ],
-		address_2: cardDetails[ 'address-2' ],
-		city: cardDetails.city,
-		state: cardDetails.state,
-		phone_number: cardDetails[ 'phone-number' ],
-		cardToken,
-	};
-}
-
-function useDebounce( value, delay ) {
-	const [ debouncedValue, setDebouncedValue ] = useState( value );
-	const debounced = useRef( debounce( newValue => setDebouncedValue( newValue ), delay ) );
-	useEffect( () => debounced.current( value ), [ value ] );
-	return [ debouncedValue, setDebouncedValue ];
 }
 
 export default connect( state => ( {
