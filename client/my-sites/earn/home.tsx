@@ -20,6 +20,7 @@ import PromoSection, { Props as PromoSectionProps } from 'components/promo-secti
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 interface ConnectedProps {
 	siteId: number;
@@ -29,6 +30,7 @@ interface ConnectedProps {
 	hasWordAds: boolean;
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
+	trackUpgrade: ( plan: string, feature: string ) => void;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -39,6 +41,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasWordAds,
 	hasConnectedAccount,
 	hasSetupAds,
+	trackUpgrade,
 } ) => {
 	const translate = useTranslate();
 
@@ -58,11 +61,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
 					action: () => {
-						analytics.tracks.recordEvent( 'calypso_earn_upgrade', {
-							plan: 'premium',
-							feature: 'simple-payments',
-						} );
-
+						trackUpgrade( 'premium', 'simple-payments' );
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
 					},
 			  };
@@ -95,11 +94,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			? {
 					text: translate( 'Upgrade to a Paid Plan' ),
 					action: () => {
-						analytics.tracks.recordEvent( 'calypso_earn_upgrade', {
-							plan: 'any-paid-plan',
-							feature: 'recurring-payments',
-						} );
-
+						trackUpgrade( 'any-paid-plan', 'recurring-payments' );
 						page( `/plans/${ selectedSiteSlug }` );
 					},
 			  }
@@ -180,11 +175,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
 					action: () => {
-						analytics.tracks.recordEvent( 'calypso_earn_upgrade', {
-							plan: 'premium',
-							feature: 'ads',
-						} );
-
+						trackUpgrade( 'premium', 'ads' );
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
 					},
 			  };
@@ -238,20 +229,31 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >( state => {
-	const selectedSiteSlug = getSelectedSiteSlug( state );
-	const site = getSiteBySlug( state, selectedSiteSlug );
-	return {
-		siteId: site.ID,
-		selectedSiteSlug,
-		isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
-		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
-		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
-		hasConnectedAccount: !! get(
-			state,
-			[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
-			false
-		),
-		hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
-	};
-} )( Home );
+export default connect< ConnectedProps, {}, {} >(
+	state => {
+		const selectedSiteSlug = getSelectedSiteSlug( state );
+		const site = getSiteBySlug( state, selectedSiteSlug );
+		return {
+			siteId: site.ID,
+			selectedSiteSlug,
+			isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
+			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
+			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
+			hasConnectedAccount: !! get(
+				state,
+				[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
+				false
+			),
+			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
+		};
+	},
+	dispatch => ( {
+		trackUpgrade: ( plan: string, feature: string ) =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_earn_upgrade', { plan, feature } ),
+					bumpStat( 'calypso_earn_upgrade', feature )
+				)
+			),
+	} )
+)( Home );
