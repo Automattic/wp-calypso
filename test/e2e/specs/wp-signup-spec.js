@@ -1718,11 +1718,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1808,11 +1803,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {

@@ -11,7 +11,6 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
 import { generateFlows } from 'signup/config/flows-pure';
 
 const user = userFactory();
@@ -83,12 +82,14 @@ function filterDestination( destination, dependencies ) {
 	return destination;
 }
 
+function getDefaultFlowName() {
+	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+}
+
 const Flows = {
 	filterDestination,
 
-	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
-		? abtest( 'improvedOnboarding' )
-		: 'main',
+	defaultFlowName: getDefaultFlowName(),
 	excludedSteps: [],
 
 	/**
