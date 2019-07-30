@@ -57,7 +57,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  }
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+					action: () => {
+						analytics.tracks.recordEvent( 'calypso_earn_upgrade', {
+							plan: 'premium',
+							feature: 'simple-payments',
+						} );
+
+						page( `/checkout/${ selectedSiteSlug }/premium/` );
+					},
 			  };
 		const learnMoreLink = hasSimplePayments ? null : supportLink;
 		return {
@@ -87,7 +94,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = isFreePlan
 			? {
 					text: translate( 'Upgrade to a Paid Plan' ),
-					action: () => page( `/plans/${ selectedSiteSlug }` ),
+					action: () => {
+						analytics.tracks.recordEvent( 'calypso_earn_upgrade', {
+							plan: 'any-paid-plan',
+							feature: 'recurring-payments',
+						} );
+
+						page( `/plans/${ selectedSiteSlug }` );
+					},
 			  }
 			: {
 					text: translate( 'Collect Recurring Payments' ),
@@ -165,7 +179,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  }
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+					action: () => {
+						analytics.tracks.recordEvent( 'calypso_earn_upgrade', {
+							plan: 'premium',
+							feature: 'ads',
+						} );
+
+						page( `/checkout/${ selectedSiteSlug }/premium/` );
+					},
 			  };
 		const title = hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn ad revenue' );
 		const body = hasSetupAds
@@ -194,7 +215,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	const promos: PromoSectionProps = {
 		header: {
-			title: translate( 'Start earning money' ),
+			title: translate( 'Start earning money now' ),
 			image: {
 				path: '/calypso/images/earn/earn-section.svg',
 			},
