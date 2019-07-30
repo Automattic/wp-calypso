@@ -294,12 +294,7 @@ describe( 'index', () => {
 
 			sinon.assert.calledOnce( fakeEvent.preventDefault );
 
-			const {
-				refs: {
-					dropdownContainer: { focus: focusSpy },
-				},
-				closeDropdown: closeDropdownSpy,
-			} = fakeContext;
+			const { closeDropdown: closeDropdownSpy, focusContainer: focusSpy } = fakeContext;
 			sinon.assert.calledOnce( closeDropdownSpy );
 			sinon.assert.calledOnce( focusSpy );
 		} );
@@ -327,16 +322,12 @@ describe( 'index', () => {
 
 		function prepareFakeContext() {
 			return {
-				refs: {
-					dropdownContainer: {
-						focus: sinon.spy(),
-					},
-				},
 				activateItem: sinon.spy(),
 				closeDropdown: sinon.spy(),
 				focusSibling: sinon.spy(),
 				navigateItemByTabKey: sinon.spy(),
 				openDropdown: sinon.spy(),
+				focusContainer: sinon.spy(),
 			};
 		}
 
