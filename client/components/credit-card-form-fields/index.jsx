@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty, noop } from 'lodash';
-import { CardCVCElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
+import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
-const CardCVCElementWithValidation = withStripeElementValidation( CardCVCElement );
+const CardCvcElementWithValidation = withStripeElementValidation( CardCvcElement );
 
 /**
  * Style dependencies
@@ -174,7 +174,7 @@ function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErro
 				<div className="credit-card-form-fields__field cvv">
 					<label className="credit-card-form-fields__label form-label">
 						{ cvcLabel }
-						<CardCVCElementWithValidation
+						<CardCvcElementWithValidation
 							fieldName="card_cvc"
 							getErrorMessage={ getErrorMessage }
 							classes={ elementClasses }
