@@ -61,7 +61,7 @@ const PurchasesSite = ( {
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
-			{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
+			{ ! siteId && <QueryConciergeInitial siteId={ siteId } /> }
 			<PurchaseSiteHeader
 				siteId={ siteId }
 				nextAppointment={ nextAppointment }
