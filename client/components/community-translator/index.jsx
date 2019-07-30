@@ -62,6 +62,9 @@ class CommunityTranslator extends Component {
 	componentDidMountOrUpdate( prevprops = {} ) {
 		const { username, translatorEnabled } = this.props;
 		if ( ! this.props.translatorEnabled ) {
+			if ( prevprops.translatorEnabled ) {
+				reRenderTranslations();
+			}
 			return;
 		}
 
