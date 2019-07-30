@@ -19,10 +19,15 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
 export async function postRequest( glotPressUrl, postFormData ) {
 	let response;
 
+	// TODO: make sure this works for recordOriginals as well
 	try {
 		response = await fetch( glotPressUrl, {
 			method: 'POST',
 			credentials: 'include',
+			mode: 'cors',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 			body: postFormData,
 		} );
 		if ( response.ok ) {
