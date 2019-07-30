@@ -13,7 +13,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { CreditCardForm, getParamsForApi } from '../';
+import { CreditCardForm } from '../';
+import { getParamsForApi } from '../helpers';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
