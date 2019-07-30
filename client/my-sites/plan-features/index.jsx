@@ -40,6 +40,7 @@ import {
 	getPlanPath,
 	isFreePlan,
 	getPlanClass,
+	planHasFeature,
 } from 'lib/plans';
 import {
 	getPlanDiscountedRawPrice,
@@ -54,10 +55,13 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import {
 	isBestValue,
 	isMonthly,
 	isNew,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_THEMES,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -497,6 +501,7 @@ export class PlanFeatures extends Component {
 				planName,
 				primaryUpgrade,
 				isPlaceholder,
+				isUnlaunchedAndGoingAtomic,
 				planConstantObj,
 				popular,
 			} = properties;
@@ -540,6 +545,16 @@ export class PlanFeatures extends Component {
 						primaryUpgrade={ primaryUpgrade }
 						selectedPlan={ selectedPlan }
 					/>
+					{ isUnlaunchedAndGoingAtomic && (
+						<Notice
+							className="plan-features__notice-launching"
+							showDismiss={ false }
+							icon="info-outline"
+							status="is-success"
+						>
+							{ translate( 'Selecting this plan will launch your site' ) }
+						</Notice>
+					) }
 				</td>
 			);
 		} );
@@ -761,6 +776,7 @@ export default connect(
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
+		const siteIsUnlaunched = isUnlaunchedSite( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -826,6 +842,10 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
+				const isUnlaunchedAndGoingAtomic =
+					siteIsUnlaunched &&
+					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
+						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
 
 				return {
 					availableForPurchase,
@@ -837,6 +857,7 @@ export default connect(
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
+					isUnlaunchedAndGoingAtomic,
 					onUpgradeClick: onUpgradeClick
 						? () => {
 								const planSlug = getPlanSlug( state, planProductId );
@@ -854,10 +875,21 @@ export default connect(
 									args.coupon = withDiscount;
 								}
 
+								if ( isUnlaunchedAndGoingAtomic ) {
+									if ( isInSignup ) {
+										// Let signup do its thing
+										return;
+									}
+									args.siteSlug = selectedSiteSlug;
+									args.plan = planObject.product_slug;
+								}
+
 								page(
 									addQueryArgs(
 										args,
-										`/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }`
+										isUnlaunchedAndGoingAtomic
+											? '/start/launch-site'
+											: `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }`
 									)
 								);
 						  },
