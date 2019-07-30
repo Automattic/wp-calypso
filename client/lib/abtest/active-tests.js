@@ -122,6 +122,7 @@ export default {
 			control: 10,
 		},
 		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 	checkoutSealsCopyBundle: {
 		datestamp: '20190613',
