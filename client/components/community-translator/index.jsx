@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import i18n, { localize, reRenderTranslations } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty, isMatch } from 'lodash';
 import { connect } from 'react-redux';
@@ -87,7 +87,7 @@ class CommunityTranslator extends PureComponent {
 		// i18n will force a rerender if the language has changed, so we
 		// shouldn't cause another.
 		if ( ! languageChanged && ! prevprops.translatorEnabled ) {
-			i18n.rerenderTranslations();
+			reRenderTranslations();
 		}
 	}
 
