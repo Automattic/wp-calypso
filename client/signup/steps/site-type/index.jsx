@@ -29,6 +29,8 @@ class SiteType extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
+	handleImportFlowClick = () => this.props.goToNextStep( 'import' );
+
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
 
@@ -46,7 +48,7 @@ class SiteType extends Component {
 
 		return (
 			<div className="site-type__import-button">
-				<Button borderless onClick={ this.props.goToNextStep.bind( this, 'import' ) }>
+				<Button borderless onClick={ this.handleImportFlowClick }>
 					{ this.props.translate( 'Already have a website?' ) }
 				</Button>
 			</div>
