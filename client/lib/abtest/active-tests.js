@@ -124,6 +124,14 @@ export default {
 		defaultVariation: 'yearlyPlan',
 		allowExistingUsers: true,
 	},
+	privateByDefault: {
+		datestamp: '20190730',
+		variations: {
+			selected: 90,
+			control: 10,
+		},
+		defaultVariation: 'control',
+	},
 	checkoutSealsCopyBundle: {
 		datestamp: '20190613',
 		variations: {
@@ -133,7 +141,7 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		//localeTargets: 'any',
-  },
+	},
 	showImportFlowInSiteTypeStep: {
 		datestamp: '20991231',
 		variations: {
