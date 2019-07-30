@@ -478,15 +478,15 @@ export function saveCouponQueryArgument() {
 	// Read coupon list from localStorage, create new if it's not there yet, refresh existing.
 	const couponsJson = localStorage.getItem( MARKETING_COUPONS_KEY );
 	const coupons = JSON.parse( couponsJson ) || {};
-	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
 	debug( 'Found coupons in localStorage: ', coupons );
 
 	coupons[ couponCode ] = now;
 
-	// Delete coupons if they're older than a week.
+	// Delete coupons if they're older than 30 days.
 	Object.keys( coupons ).forEach( key => {
-		if ( now > coupons[ key ] + ONE_WEEK_MILLISECONDS ) {
+		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
 			delete coupons[ key ];
 		}
 	} );
