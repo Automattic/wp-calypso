@@ -15,7 +15,7 @@ import { parse as parseURL } from 'url';
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-import { getSavedVariations } from 'lib/abtest';
+import { abtest, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import {
 	updatePrivacyForDomain,
@@ -167,7 +167,7 @@ export function createSiteWithCart(
 				title: siteTitle,
 			},
 		},
-		public: -1,
+		public: abtest( 'privateByDefault' ) === 'selected' ? -1 : 1,
 		validate: false,
 	};
 
