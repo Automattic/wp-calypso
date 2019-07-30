@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -15,58 +12,58 @@ import Gridicon from 'gridicons';
 import Count from 'components/count';
 import TranslatableString from 'components/translatable/proptype';
 
-class SelectDropdownItem extends Component {
-	static propTypes = {
-		children: TranslatableString.isRequired,
-		compactCount: PropTypes.bool,
-		path: PropTypes.string,
-		isDropdownOpen: PropTypes.bool,
-		selected: PropTypes.bool,
-		onClick: PropTypes.func,
-		count: PropTypes.number,
-		disabled: PropTypes.bool,
-		icon: PropTypes.element,
-	};
+const SelectDropdownItem = React.forwardRef( ( props, ref ) => {
+	const optionClassName = classNames( props.className, {
+		'select-dropdown__item': true,
+		'is-selected': props.selected,
+		'is-disabled': props.disabled,
+		'has-icon': !! props.icon,
+	} );
 
-	static defaultProps = {
-		isDropdownOpen: false,
-		selected: false,
-	};
-
-	render() {
-		const optionClassName = classNames( this.props.className, {
-			'select-dropdown__item': true,
-			'is-selected': this.props.selected,
-			'is-disabled': this.props.disabled,
-			'has-icon': !! this.props.icon,
-		} );
-
-		return (
-			<li className="select-dropdown__option">
-				<a
-					ref="itemLink"
-					href={ this.props.path }
-					className={ optionClassName }
-					onClick={ this.props.disabled ? null : this.props.onClick }
-					data-bold-text={ this.props.value || this.props.children }
-					role="menuitem"
-					tabIndex={ this.props.isDropdownOpen ? 0 : '' }
-					aria-selected={ this.props.selected }
-					data-e2e-title={ this.props.e2eTitle }
-				>
-					<span className="select-dropdown__item-text">
-						{ this.props.icon && this.props.icon.type === Gridicon ? this.props.icon : null }
-						{ this.props.children }
+	return (
+		<li className="select-dropdown__option">
+			<a
+				ref={ ref }
+				href={ props.path }
+				className={ optionClassName }
+				onClick={ props.disabled ? null : props.onClick }
+				data-bold-text={ props.value || props.children }
+				role="option"
+				tabIndex={ props.isDropdownOpen ? 0 : '' }
+				aria-selected={ props.selected }
+				data-e2e-title={ props.e2eTitle }
+			>
+				<span className="select-dropdown__item-text">
+					{ props.icon && props.icon.type === Gridicon ? props.icon : null }
+					{ props.children }
+				</span>
+				{ 'number' === typeof props.count && (
+					<span data-text={ props.count } className="select-dropdown__item-count">
+						<Count count={ props.count } compact={ props.compactCount } />
 					</span>
-					{ 'number' === typeof this.props.count && (
-						<span data-text={ this.props.count } className="select-dropdown__item-count">
-							<Count count={ this.props.count } compact={ this.props.compactCount } />
-						</span>
-					) }
-				</a>
-			</li>
-		);
-	}
-}
+				) }
+			</a>
+		</li>
+	);
+} );
+
+SelectDropdownItem.displayName = 'SelectDropdownItem';
+
+SelectDropdownItem.propTypes = {
+	children: TranslatableString.isRequired,
+	compactCount: PropTypes.bool,
+	path: PropTypes.string,
+	isDropdownOpen: PropTypes.bool,
+	selected: PropTypes.bool,
+	onClick: PropTypes.func,
+	count: PropTypes.number,
+	disabled: PropTypes.bool,
+	icon: PropTypes.element,
+};
+
+SelectDropdownItem.defaultProps = {
+	isDropdownOpen: false,
+	selected: false,
+};
 
 export default SelectDropdownItem;

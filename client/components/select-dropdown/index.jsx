@@ -1,10 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { filter, find, findIndex, map, result } from 'lodash';
@@ -55,8 +51,11 @@ class SelectDropdown extends Component {
 
 	static instances = 0;
 
-	constructor( props ) {
-		super( props );
+	constructor( props, ...otherParams ) {
+		super( props, ...otherParams );
+
+		this.containerRef = React.createRef();
+		this.itemRefs = [];
 
 		// bounds
 		this.navigateItem = this.navigateItem.bind( this );
@@ -156,6 +155,9 @@ class SelectDropdown extends Component {
 		let refIndex = 0;
 		const self = this;
 
+		// Clear existing refs.
+		this.itemRefs = [];
+
 		if ( this.props.children ) {
 			// add keys and refs to children
 			return React.Children.map(
@@ -165,8 +167,11 @@ class SelectDropdown extends Component {
 						return null;
 					}
 
+					const itemRef = React.createRef();
+					this.itemRefs[ refIndex ] = itemRef;
+
 					const newChild = React.cloneElement( child, {
-						ref: child.type === DropdownItem ? 'item-' + refIndex : null,
+						ref: child.type === DropdownItem ? itemRef : null,
 						key: 'item-' + index,
 						isDropdownOpen: this.state.isOpen,
 						onClick: function( event ) {
@@ -202,10 +207,13 @@ class SelectDropdown extends Component {
 				);
 			}
 
+			const itemRef = React.createRef();
+			this.itemRefs[ refIndex ] = itemRef;
+
 			const dropdownItem = (
 				<DropdownItem
 					key={ 'dropdown-item-' + this.state.instanceId + '-' + item.value }
-					ref={ 'item-' + refIndex }
+					ref={ itemRef }
 					isDropdownOpen={ this.state.isOpen }
 					selected={ this.state.selected === item.value }
 					onClick={ this.onSelectItem( item ) }
@@ -237,10 +245,11 @@ class SelectDropdown extends Component {
 		return (
 			<div style={ this.props.style } className={ dropdownClassName }>
 				<div
-					ref="dropdownContainer"
+					ref={ this.containerRef }
 					className="select-dropdown__container"
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
+					role="listbox"
 					aria-haspopup="true"
 					aria-owns={ 'select-submenu-' + this.state.instanceId }
 					aria-controls={ 'select-submenu-' + this.state.instanceId }
@@ -322,7 +331,7 @@ class SelectDropdown extends Component {
 			selected: option.value,
 		} );
 
-		this.refs.dropdownContainer.focus();
+		this.focusContainer();
 	}
 
 	navigateItem( event ) {
@@ -348,7 +357,7 @@ class SelectDropdown extends Component {
 			case 27: // escape
 				event.preventDefault();
 				this.closeDropdown();
-				this.refs.dropdownContainer.focus();
+				this.focusContainer();
 				break;
 		}
 	}
@@ -369,6 +378,12 @@ class SelectDropdown extends Component {
 			return this.openDropdown();
 		}
 		document.activeElement.click();
+	}
+
+	focusContainer() {
+		if ( this.containerRef.current ) {
+			this.containerRef.current.focus();
+		}
 	}
 
 	focusSibling( direction ) {
@@ -409,12 +424,15 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		ReactDom.findDOMNode( this.refs[ 'item-' + newIndex ].refs.itemLink ).focus();
+		const itemRef = this.itemRefs[ newIndex ];
+		if ( itemRef && itemRef.current ) {
+			itemRef.current.focus();
+		}
 		this.focused = newIndex;
 	}
 
 	handleOutsideClick( event ) {
-		if ( ! ReactDom.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
+		if ( ! this.containerRef.current || ! this.containerRef.current.contains( event.target ) ) {
 			this.closeDropdown();
 		}
 	}
