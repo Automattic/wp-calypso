@@ -15,7 +15,6 @@ import { getStoredItem, setStoredItem, clearStorage } from 'lib/browser-storage'
 import { isSupportSession } from 'lib/user/support-user-interop';
 import config from 'config';
 import User from 'lib/user';
-import { getInitialState as getEmptyState } from 'state/utils/get-initial-state';
 
 /**
  * Module variables
@@ -236,10 +235,6 @@ async function getInitialStoredState( initialReducer ) {
 	}
 
 	let initialStoredState = await getStateFromLocalStorage( initialReducer );
-	if ( ! initialStoredState ) {
-		initialStoredState = getEmptyState( initialReducer );
-	}
-
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
 	async function loadReducerState( { storageKey, reducer } ) {
@@ -251,7 +246,7 @@ async function getInitialStoredState( initialReducer ) {
 		}
 
 		if ( storedState ) {
-			initialStoredState = initialReducer( initialStoredState, {
+			initialStoredState = initialReducer( initialStoredState || {}, {
 				type: APPLY_STORED_STATE,
 				storageKey,
 				storedState,

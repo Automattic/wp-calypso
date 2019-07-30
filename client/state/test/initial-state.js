@@ -265,7 +265,7 @@ describe( 'initial-state', () => {
 				} );
 
 				test( 'does not build initial state using IndexedDB state', () => {
-					expect( state.currentUser.id ).toBeNull();
+					expect( state.currentUser ).toBeUndefined();
 				} );
 
 				test( 'does not add timestamp to store', () => {
@@ -365,7 +365,7 @@ describe( 'initial-state', () => {
 				} );
 
 				test( 'does not build initial state using IndexedDB state', () => {
-					expect( state.postTypes.items ).toEqual( {} );
+					expect( state.postTypes ).toBeUndefined();
 				} );
 
 				test( 'does not add timestamp to initial state', () => {
