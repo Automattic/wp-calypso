@@ -93,7 +93,11 @@ export default connect( state => ( {
 	selectedSite: getSelectedSite( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
-	selectedSiteAdminUrl: getSiteAdminUrl( state, getSelectedSiteId( state ), 'plugin-install.php' ),
+	selectedSiteAdminUrl: getSiteAdminUrl(
+		state,
+		getSelectedSiteId( state ),
+		'/plugin-install.php?s=redirect&tab=search'
+	),
 	isSiteAtomic: isSiteWpcomAtomic( state, getSelectedSiteId( state ) ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
