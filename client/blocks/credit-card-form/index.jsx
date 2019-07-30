@@ -22,6 +22,7 @@ import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { localizeUrl } from 'lib/i18n-utils';
+import { createStripeSetupIntent } from 'lib/stripe';
 import {
 	getInitializedFields,
 	camelCaseFormFields,
@@ -30,6 +31,7 @@ import {
 	areFormFieldsEmpty,
 	useDebounce,
 	saveCreditCard,
+	makeAsyncCreateCardToken,
 } from './helpers';
 
 /**
@@ -53,6 +55,7 @@ export function CreditCardForm( {
 	onCancel,
 	translate,
 	stripe,
+	stripeConfiguration,
 } ) {
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
@@ -107,8 +110,20 @@ export function CreditCardForm( {
 				throw new Error( translate( 'Your credit card information is not valid' ) );
 			}
 			recordFormSubmitEvent();
+			const createCardTokenAsync = makeAsyncCreateCardToken( createCardToken );
+			const createStripeSetupIntentAsync = async paymentDetails => {
+				const { name, country, 'postal-code': zip } = paymentDetails;
+				const paymentDetailsForStripe = {
+					name,
+					address: {
+						country: country,
+						postal_code: zip,
+					},
+				};
+				return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
+			};
 			await saveCreditCard( {
-				createCardToken,
+				createCardToken: stripe ? createStripeSetupIntentAsync : createCardTokenAsync,
 				saveStoredCard,
 				translate,
 				successCallback,
@@ -116,6 +131,7 @@ export function CreditCardForm( {
 				purchase,
 				siteSlug,
 				formFieldValues,
+				stripeConfiguration,
 			} );
 		} catch ( error ) {
 			setFormSubmitting( false );

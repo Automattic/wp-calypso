@@ -22,12 +22,21 @@ export async function saveCreditCard( {
 	purchase,
 	siteSlug,
 	formFieldValues,
+	stripeConfiguration,
 } ) {
 	const cardDetails = kebabCaseFormFields( formFieldValues );
-	const { token } = await createCardTokenAsync( { cardDetails, createCardToken } );
+	const tokenResponse = await createCardToken( cardDetails );
+	// createStripePaymentMethod returns the token as `id`, but otherwise it is `token`
+	const token = tokenResponse.token || tokenResponse.id || null;
+	if ( ! token ) {
+		throw new Error( translate( 'Failed to add card.' ) );
+	}
 
 	if ( saveStoredCard ) {
-		await saveStoredCard( { token } );
+		const additionalData = stripeConfiguration
+			? { payment_partner: stripeConfiguration.processor_id }
+			: {};
+		await saveStoredCard( { token, additionalData } );
 		notices.success( translate( 'Card added successfully' ), {
 			persistent: true,
 		} );
@@ -89,16 +98,18 @@ export function useDebounce( value, delay ) {
 	return [ debouncedValue, setDebouncedValue ];
 }
 
-function createCardTokenAsync( { cardDetails, createCardToken } ) {
-	return new Promise( ( resolve, reject ) => {
-		createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
-			if ( gatewayError || ! gatewayData.token ) {
-				reject( gatewayError || new Error( 'No card token returned' ) );
-				return;
-			}
-			resolve( gatewayData );
+export function makeAsyncCreateCardToken( createCardToken ) {
+	return cardDetails => {
+		return new Promise( ( resolve, reject ) => {
+			createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
+				if ( gatewayError || ! gatewayData.token ) {
+					reject( gatewayError || new Error( 'No card token returned' ) );
+					return;
+				}
+				resolve( gatewayData );
+			} );
 		} );
-	} );
+	};
 }
 
 export function areFormFieldsEmpty( formFieldValues ) {
