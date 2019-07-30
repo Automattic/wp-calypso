@@ -31,6 +31,7 @@ import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
+import DowngradeStep from './step-components/downgrade-step';
 import { getName } from 'lib/purchases';
 import { isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
@@ -259,6 +260,11 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onClickFinalConfirm();
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
+	};
+
+	downgradePlan = () => {
+		this.props.downgradePlan();
+		this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
 	};
 
 	renderQuestionOne = () => {
@@ -562,6 +568,10 @@ class CancelPurchaseForm extends React.Component {
 				return <UpgradeATStep />;
 			}
 
+			if ( surveyStep === steps.DOWNGRADE_STEP ) {
+				return <DowngradeStep />;
+			}
+
 			return (
 				<div>
 					<FormSectionHeading>
@@ -644,6 +654,13 @@ class CancelPurchaseForm extends React.Component {
 				onClick: this.onSubmit,
 				isPrimary: true,
 			},
+			downgrade = {
+				action: 'downgrade',
+				disabled: this.state.isSubmitting,
+				label: translate( 'Switch to Personal' ),
+				onClick: this.downgradePlan,
+				isPrimary: true,
+			},
 			remove = {
 				action: 'remove',
 				disabled,
@@ -667,6 +684,10 @@ class CancelPurchaseForm extends React.Component {
 				default:
 					return firstButtons.concat( [ ...prevButton, cancel ] );
 			}
+		}
+
+		if ( this.state.surveyStep === steps.DOWNGRADE_STEP ) {
+			return firstButtons.concat( [ prev, downgrade, next ] );
 		}
 
 		return firstButtons.concat(
