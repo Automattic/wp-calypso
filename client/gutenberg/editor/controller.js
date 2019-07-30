@@ -71,7 +71,6 @@ function handleJetpackSSO( context ) {
 	// with 3rd party cookie setting being blocked by the browser
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
-
 	const { URL: selectedSiteUrl, domain: selectedSiteDomain, jetpack } = getSelectedSite( state );
 
 	if ( ! jetpack ) {
