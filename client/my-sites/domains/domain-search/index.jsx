@@ -19,6 +19,8 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
 import {
 	hasDomainInCart,
@@ -29,6 +31,7 @@ import {
 } from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import { getSiteTitle } from 'state/sites/selectors';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
@@ -36,6 +39,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import { hasCustomDomain } from 'lib/site/utils';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 /**
@@ -124,7 +128,7 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate } = this.props;
+		const { selectedSite, selectedSiteTitle, selectedSiteSlug, translate } = this.props;
 		const classes = classnames( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
@@ -158,7 +162,23 @@ class DomainSearch extends Component {
 				<span>
 					<div className="domain-search__content">
 						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-
+						{ hasCustomDomain( selectedSite ) && (
+							<Notice
+								status="is-warning"
+								showDismiss={ false }
+								text={
+									translate( "You're purchasing an additional domain for %(title)s.", {
+										args: { title: selectedSiteTitle },
+									} ) +
+									' ' +
+									translate( 'Would you like to create a new site instead?' )
+								}
+							>
+								<NoticeAction href="/jetpack/new?ref=calypso-selector">
+									{ translate( 'Create new site' ) }
+								</NoticeAction>
+							</Notice>
+						) }
 						<EmailVerificationGate
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
@@ -204,6 +224,7 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId: siteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			selectedSiteTitle: getSiteTitle( state, siteId ),
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
 			productsList: getProductsList( state ),
