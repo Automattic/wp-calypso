@@ -140,5 +140,7 @@ export default {
 			selected: 90,
 			control: 10,
 		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };
