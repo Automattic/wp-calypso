@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith, some } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
 import url from 'url';
 
 /**
@@ -61,7 +61,6 @@ interface Props {
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPostId: T.PostId;
-	iframeUrl: string;
 }
 
 interface State {
@@ -117,55 +116,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
-
-		this.handleThirdPartyiFrameDomains();
 	}
 
 	componentWillUnmount() {
 		MediaStore.off( 'change', this.updateImageBlocks );
 		window.removeEventListener( 'message', this.onMessage, false );
-	}
-
-	handleThirdPartyiFrameDomains() {
-		// get the domain of the iframed editor so we can check if it is 3rd party domain.
-		// If so we want to initially redirect to that domain to set auth cookie to prevent
-		// 3rd party cookie blocking by browser security
-
-		const { hostname: iFrameDomain, protocol: iFrameProtocol } = url.parse( this.props.iframeUrl );
-		const {
-			hostname: parentDomain,
-			protocol: parentProtocol,
-			port,
-			query: parentQuery,
-		} = url.parse( window.location.href, true );
-		const parentPort = port ? `:${ port }` : '';
-		const firstPartyDomains = [ 'wordpress.com', 'calypso.live', 'calypso.localhost' ];
-		const isThirdPartyDomain = ! some( firstPartyDomains, domain => {
-			return endsWith( iFrameDomain, domain );
-		} );
-
-		if ( isThirdPartyDomain ) {
-			// check query params from parent frame to check if we have already redirected back from 3rd party auth.
-			if ( parentQuery.thirdPartyAuthed ) {
-				// If successfully redirected save to session storage so we don't need to redirect on every editor load
-				sessionStorage.setItem( `calypsoify_${ iFrameDomain }_thirdPartyAuthed`, 'true' );
-			}
-
-			// if 3rd party iFrame is not authenticated yet then redirect to that domain to auth
-			// and redirect back here with 3rdPartyAuthed param set
-			if ( ! sessionStorage.getItem( `calypsoify_${ iFrameDomain }_thirdPartyAuthed` ) ) {
-				// Add new params to existing in case there are new calypsoify query params added in future that
-				// need to be included in the redirect
-				parentQuery.thirdPartyAuthed = 'true';
-				const queryParams = map( parentQuery, ( value, key ) => `${ key }=${ value }` ).join( '&' );
-				const returnURL = encodeURIComponent(
-					`${ parentProtocol }//${ parentDomain }${ parentPort }${
-						this.props.currentRoute
-					}?${ queryParams }`
-				);
-				window.location.href = `${ iFrameProtocol }//${ iFrameDomain }/wp-login.php?redirect_to=${ returnURL }`;
-			}
-		}
 	}
 
 	onMessage = ( { data, origin }: MessageEvent ) => {

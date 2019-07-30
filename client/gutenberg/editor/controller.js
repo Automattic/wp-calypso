@@ -5,6 +5,8 @@
 import React from 'react';
 import page from 'page';
 import { get, isInteger } from 'lodash';
+import urlLib from 'url';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -12,7 +14,8 @@ import { get, isInteger } from 'lodash';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import { EDITOR_START } from 'state/action-types';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug, getSelectedSite } from 'state/ui/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import CalypsoifyIframe from './calypsoify-iframe';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
@@ -62,6 +65,49 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
+function handleJetpackSSO( context ) {
+	// If we are dealing with an Atomic or Jetpack site we need to make sure that Jetpack SSO
+	// has been handled before we load the editor in an iFrame in order to prevent any issues
+	// with 3rd party cookie setting being blocked by the browser
+	const state = context.store.getState();
+	const currentRoute = getCurrentRoute( state );
+
+	const { URL: selectedSiteUrl, domain: selectedSiteDomain, jetpack } = getSelectedSite( state );
+
+	if ( ! jetpack ) {
+		return;
+	}
+
+	const {
+		hostname: parentDomain,
+		protocol: parentProtocol,
+		port,
+		query: parentQuery,
+	} = urlLib.parse( window.location.href, true );
+	const parentPort = port ? `:${ port }` : '';
+
+	// check query params from parent frame to check if we have already redirected back from Jetpack auth.
+	if ( parentQuery.jetpackSSO ) {
+		// If successfully redirected save to session storage so we don't need to redirect on every editor load
+		sessionStorage.setItem( `calypsoify_${ selectedSiteDomain }_jetpackSSO`, 'true' );
+		return;
+	}
+
+	if ( sessionStorage.getItem( `calypsoify_${ selectedSiteDomain }_jetpackSSO` ) ) {
+		return;
+	}
+
+	// if site is not authenticated yet then redirect to that domain to auth
+	// and redirect back here with jetpackSSO param set
+	parentQuery.jetpackSSO = 'true';
+	const returnURL = encodeURIComponent(
+		`${ parentProtocol }//${ parentDomain }${ parentPort }${ currentRoute }?${ stringify(
+			parentQuery
+		) }`
+	);
+	window.location.href = `${ selectedSiteUrl }/wp-login.php?redirect_to=${ returnURL }`;
+}
+
 export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
@@ -98,6 +144,7 @@ function getPressThisData( query ) {
 export const post = ( context, next ) => {
 	// See post-editor/controller.js for reference.
 
+	handleJetpackSSO( context );
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
