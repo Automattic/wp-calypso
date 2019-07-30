@@ -60,7 +60,7 @@ interface Props {
 	postType: T.PostType;
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
-	fseParentPostId: T.PostId;
+	fseParentPageId: T.PostId;
 }
 
 interface State {
@@ -94,6 +94,7 @@ enum EditorActions {
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
+	GetCloseButtonDetails = 'getCloseButtonDetails',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -265,6 +266,21 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.templateParts.push( [ templatePartId, ports[ 0 ] ] );
 			this.sendTemplatePartEditorUrl( templatePartId );
 		}
+
+		if ( EditorActions.GetCloseButtonDetails === action ) {
+			const { closeUrl } = this.props;
+			ports[ 0 ].postMessage( {
+				closeUrl: `${ window.location.origin }${ closeUrl }`,
+				shouldDoServerBackNav: this.shouldDoServerBackNav(),
+			} );
+		}
+	};
+
+	// If we are on a template part and have a parent page
+	// ID, we want to do a server nav back to that page.
+	shouldDoServerBackNav = () => {
+		const { fseParentPageId, postType } = this.props;
+		return null != fseParentPageId && 'wp_template_part' === postType;
 	};
 
 	loadRevision = ( {
