@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { intersection } from 'lodash';
+import { get, intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -27,6 +27,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { planItem } from 'lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -35,6 +36,8 @@ import './style.scss';
 
 export class PlansStep extends Component {
 	componentDidMount() {
+		const { flowName, initialContext } = this.props;
+
 		if (
 			typeof window !== 'undefined' &&
 			window.location &&
@@ -64,6 +67,17 @@ export class PlansStep extends Component {
 			);
 			salesTeamScript.setAttribute( 'defer', true );
 			document.head.appendChild( salesTeamScript );
+		}
+
+		if ( 'launch-site' === flowName ) {
+			const planQueryArg = get( initialContext, 'query.plan' );
+
+			if ( planQueryArg ) {
+				const cartItem = planItem( planQueryArg );
+				if ( planQueryArg === cartItem.product_slug ) {
+					this.onSelectPlan( cartItem );
+				}
+			}
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
