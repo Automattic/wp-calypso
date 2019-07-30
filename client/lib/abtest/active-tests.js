@@ -134,4 +134,11 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	privateByDefault: {
+		datestamp: '20190730',
+		variations: {
+			selected: 90,
+			control: 10,
+		},
+	},
 };
