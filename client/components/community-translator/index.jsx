@@ -42,8 +42,6 @@ function getLocaleSlugsFromLoadedTranslations() {
 }
 
 class CommunityTranslator extends Component {
-	// The i18n-calypso localize() HOC will force an update when i18n changes
-	// (see boundForceUpdate()), so we need to track what we've set
 	currentLocale = ( { localeSlug: 'en' } )
 
 	componentDidMount() {
@@ -84,6 +82,7 @@ class CommunityTranslator extends Component {
 			loadUndeployedTranslations( { username, locale: newLocaleCode, translationStatus: 'waiting' } );
 		}
 
+		// We need to force a rerender if the translator has just been enabled
 		// i18n will force a rerender if the language has changed, so we
 		// shouldn't cause another.
 		if ( ! languageChanged && ! prevprops.translatorEnabled ) {
@@ -219,4 +218,7 @@ const mapState = state => ( {
 	translatorEnabled: getUserSetting( state, ENABLE_TRANSLATOR_KEY ),
 } );
 
+// The i18n-calypso localize() HOC will force an update when i18n changes
+// (see boundForceUpdate()), so we use it to react to those changes even though
+// we actually don't use translate() directly.
 export default connect( mapState )( localize( CommunityTranslator ) );
