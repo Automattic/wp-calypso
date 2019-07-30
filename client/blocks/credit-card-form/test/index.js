@@ -15,6 +15,7 @@ import React from 'react';
  */
 import { CreditCardForm } from '../';
 import { getParamsForApi } from '../helpers';
+import CreditCardFormFields from 'components/credit-card-form-fields';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
@@ -36,6 +37,50 @@ describe( 'Credit Card Form', () => {
 	test( 'does not blow up with default props', () => {
 		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
 		expect( wrapper ).toHaveLength( 1 );
+	} );
+
+	test( 'renders CreditCardFormFields', () => {
+		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
+		expect( wrapper.find( CreditCardFormFields ) ).toHaveLength( 1 );
+	} );
+
+	test( 'renders CreditCardFormFields with appropriate fields', () => {
+		const wrapper = shallow( <CreditCardForm { ...defaultProps } /> );
+		const child = wrapper.find( CreditCardFormFields );
+		expect( child.prop( 'card' ) ).toEqual( {
+			'address-1': '',
+			'address-2': '',
+			brand: '',
+			city: '',
+			country: '',
+			cvv: '',
+			document: '',
+			'expiration-date': '',
+			name: '',
+			number: '',
+			'phone-number': '',
+			'postal-code': '',
+			state: '',
+			'street-number': '',
+		} );
+	} );
+
+	test( 'has getErrorMessage return no errors for an empty field', () => {
+		const initialValues = { number: '' };
+		const props = { ...defaultProps, initialValues };
+		const wrapper = shallow( <CreditCardForm { ...props } /> );
+		const child = wrapper.find( CreditCardFormFields );
+		const getErrorMessage = child.prop( 'getErrorMessage' );
+		expect( getErrorMessage( 'number' ) ).toEqual( '' );
+	} );
+
+	test( 'has getErrorMessage return the correct errors', () => {
+		const initialValues = { number: '234' };
+		const props = { ...defaultProps, initialValues };
+		const wrapper = shallow( <CreditCardForm { ...props } /> );
+		const child = wrapper.find( CreditCardFormFields );
+		const getErrorMessage = child.prop( 'getErrorMessage' );
+		expect( getErrorMessage( 'number' )[ 0 ] ).toMatch( /invalid/ );
 	} );
 
 	describe( 'getParamsForApi()', () => {
