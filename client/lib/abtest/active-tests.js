@@ -115,6 +115,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	privateByDefault: {
+		datestamp: '20190730',
+		variations: {
+			selected: 90,
+			control: 10,
+		},
+		defaultVariation: 'control',
+	},
 	checkoutSealsCopyBundle: {
 		datestamp: '20190613',
 		variations: {
