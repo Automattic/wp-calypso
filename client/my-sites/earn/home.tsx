@@ -31,6 +31,7 @@ interface ConnectedProps {
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
+	trackLink: ( feature: string ) => void;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -42,6 +43,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasConnectedAccount,
 	hasSetupAds,
 	trackUpgrade,
+	trackLink,
 } ) => {
 	const translate = useTranslate();
 
@@ -56,7 +58,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Collect One-time Payments' ),
-					action: supportLink,
+					action: { url: supportLink, onClick: () => trackLink( 'simple-payments' ) },
 			  }
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
@@ -65,7 +67,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
 					},
 			  };
-		const learnMoreLink = hasSimplePayments ? null : supportLink;
+		const learnMoreLink = hasSimplePayments
+			? null
+			: { url: supportLink, onClick: () => trackLink( 'simple-payments' ) };
 		return {
 			title: translate( 'Collect one-time payments' ),
 			body: translate(
@@ -118,7 +122,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					}
 			  );
 		const learnMoreLink = isFreePlan
-			? 'https://en.support.wordpress.com/recurring-payments/'
+			? {
+					url: 'https://en.support.wordpress.com/recurring-payments/',
+					onClick: () => trackLink( 'recurring-payments' ),
+			  }
 			: null;
 		return {
 			title,
@@ -139,7 +146,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getReferralsCard = () => {
 		const cta = {
 			text: translate( 'Earn Cash from Referrals' ),
-			action: 'https://refer.wordpress.com/',
+			action: { url: 'https://refer.wordpress.com/', onClick: () => trackLink( 'referral' ) },
 		};
 		return {
 			title: translate( 'Earn Cash from Referrals' ),
@@ -192,7 +199,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  );
-		const learnMoreLink = ! hasWordAds ? 'https://wordads.co/' : null;
+		const learnMoreLink = ! hasWordAds
+			? { url: 'https://wordads.co/', onClick: () => trackLink( 'ads' ) }
+			: null;
 		return {
 			title,
 			body,
@@ -253,6 +262,13 @@ export default connect< ConnectedProps, {}, {} >(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_earn_upgrade', { plan, feature } ),
 					bumpStat( 'calypso_earn_upgrade', feature )
+				)
+			),
+		trackLink: ( feature: string ) =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_earn_link', { feature } ),
+					bumpStat( 'calypso_earn_link', feature )
 				)
 			),
 	} )
