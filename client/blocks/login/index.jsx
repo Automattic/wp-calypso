@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { capitalize, findLast, get, includes, isArray } from 'lodash';
+import { capitalize, findLast, get, includes, size } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
@@ -146,7 +146,7 @@ class Login extends Component {
 				window.location.href = url;
 			} );
 		} else {
-			if ( isArray( this.props.signupProgress ) ) {
+			if ( size( this.props.signupProgress ) ) {
 				const lastStep = findLast( this.props.signupProgress, step => step.stepName !== 'user' );
 				if ( lastStep ) {
 					this.props.setResumeAfterLogin( lastStep );
