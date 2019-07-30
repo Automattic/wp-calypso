@@ -32,13 +32,6 @@ import './style.scss';
 
 const wpcom = wpcomFactory.undocumented();
 
-function useDebounce( value, delay ) {
-	const [ debouncedValue, setDebouncedValue ] = useState( value );
-	const debounced = useRef( debounce( newValue => setDebouncedValue( newValue ), delay ) );
-	useEffect( () => debounced.current( value ), [ value ] );
-	return [ debouncedValue, setDebouncedValue ];
-}
-
 export function CreditCardForm( {
 	apiParams = {},
 	createCardToken,
@@ -67,7 +60,7 @@ export function CreditCardForm( {
 	const onFieldChange = rawDetails => {
 		const newValues = { ...formFieldValues, ...camelCaseFormFields( rawDetails ) };
 		setFormFieldValues( newValues );
-		setTouchedFormFields( camelCaseFormFields( rawDetails ) );
+		setTouchedFormFields( { ...touchedFormFields, ...camelCaseFormFields( rawDetails ) } );
 		// Clear the errors of updated fields when typing then display them again after debounce
 		const clearedErrors = assignAllFormFields( camelCaseFormFields( rawDetails ), [] );
 		setDebouncedFieldErrors( { ...debouncedFieldErrors, ...clearedErrors } );
@@ -363,6 +356,13 @@ export function getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
 		phone_number: cardDetails[ 'phone-number' ],
 		cardToken,
 	};
+}
+
+function useDebounce( value, delay ) {
+	const [ debouncedValue, setDebouncedValue ] = useState( value );
+	const debounced = useRef( debounce( newValue => setDebouncedValue( newValue ), delay ) );
+	useEffect( () => debounced.current( value ), [ value ] );
+	return [ debouncedValue, setDebouncedValue ];
 }
 
 export default connect( state => ( {
