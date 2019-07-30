@@ -44,6 +44,9 @@ export { StripeValidationError };
  * example, `name` (string), `address` (object with `country` [string] and
  * `postal_code` [string]).
  *
+ * On success, the Promise will be resolved with an object that contains the
+ * PaymentMethod token in the `id` field.
+ *
  * If there is an error, it will include a `message` field which can be used to
  * display the error. It will also include a `type` and possibly other fields
  * depending on the type. For example, validation errors should be type
