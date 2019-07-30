@@ -6,11 +6,12 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
+import { TranslateResult } from 'i18n-calypso';
 import PromoCard, { Props as PromoCardProps } from './promo-card';
 import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
 
 interface PromoSectionCardProps extends PromoCardProps {
-	body: string;
+	body: string | TranslateResult;
 	cta?: PromoCardCtaProps;
 	learnMoreLink?: PromoCardCtaProps;
 }

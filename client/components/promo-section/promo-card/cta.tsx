@@ -18,9 +18,14 @@ import { URL } from 'types';
 
 type ClickCallback = () => void;
 
+interface CtaAction {
+	url: URL;
+	onClick: ClickCallback;
+}
+
 export interface CtaButton {
 	text: string;
-	action: URL | ClickCallback;
+	action: URL | ClickCallback | CtaAction;
 }
 
 export type Cta =
@@ -46,11 +51,23 @@ function isCtaButton( cta: Cta ): cta is CtaButton {
 	return undefined !== ( cta as CtaButton ).text;
 }
 
+function isCtaAction( action: any ): action is CtaAction {
+	return undefined !== ( action as CtaAction ).onClick;
+}
+
 function buttonProps( button: CtaButton, isPrimary: boolean ) {
+	const actionProps = isCtaAction( button.action )
+		? {
+				href: button.action.url,
+				onClick: button.action.onClick,
+		  }
+		: {
+				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
+		  };
 	return {
 		className: 'promo-card__cta-button',
 		primary: isPrimary,
-		[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
+		...actionProps,
 	};
 }
 const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
@@ -62,6 +79,18 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
 	let ctaBtn;
 	const translate = useTranslate();
+	let learnMore = null;
+
+	if ( learnMoreLink ) {
+		learnMore = isCtaAction( learnMoreLink )
+			? {
+					href: learnMoreLink.url,
+					onClick: learnMoreLink.onClick,
+			  }
+			: {
+					href: learnMoreLink,
+			  };
+	}
 
 	if ( isCtaButton( cta ) ) {
 		ctaBtn = <Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>;
@@ -75,8 +104,8 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	return (
 		<ActionPanelCta>
 			{ ctaBtn }
-			{ learnMoreLink && (
-				<Button borderless className="promo-card__cta-learn-more" href={ learnMoreLink }>
+			{ learnMore && (
+				<Button borderless className="promo-card__cta-learn-more" { ...learnMore }>
 					{ translate( 'Learn more' ) }
 				</Button>
 			) }

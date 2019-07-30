@@ -20,6 +20,7 @@ import PromoSection, { Props as PromoSectionProps } from 'components/promo-secti
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 interface ConnectedProps {
 	siteId: number;
@@ -29,6 +30,8 @@ interface ConnectedProps {
 	hasWordAds: boolean;
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
+	trackUpgrade: ( plan: string, feature: string ) => void;
+	trackLink: ( feature: string ) => void;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -39,6 +42,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasWordAds,
 	hasConnectedAccount,
 	hasSetupAds,
+	trackUpgrade,
+	trackLink,
 } ) => {
 	const translate = useTranslate();
 
@@ -53,13 +58,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Collect One-time Payments' ),
-					action: supportLink,
+					action: { url: supportLink, onClick: () => trackLink( 'simple-payments' ) },
 			  }
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+					action: () => {
+						trackUpgrade( 'premium', 'simple-payments' );
+						page( `/checkout/${ selectedSiteSlug }/premium/` );
+					},
 			  };
-		const learnMoreLink = hasSimplePayments ? null : supportLink;
+		const learnMoreLink = hasSimplePayments
+			? null
+			: { url: supportLink, onClick: () => trackLink( 'simple-payments' ) };
 		return {
 			title: translate( 'Collect one-time payments' ),
 			body: translate(
@@ -87,7 +97,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = isFreePlan
 			? {
 					text: translate( 'Upgrade to a Paid Plan' ),
-					action: () => page( `/plans/${ selectedSiteSlug }` ),
+					action: () => {
+						trackUpgrade( 'any-paid-plan', 'recurring-payments' );
+						page( `/plans/${ selectedSiteSlug }` );
+					},
 			  }
 			: {
 					text: translate( 'Collect Recurring Payments' ),
@@ -109,7 +122,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					}
 			  );
 		const learnMoreLink = isFreePlan
-			? 'https://en.support.wordpress.com/recurring-payments/'
+			? {
+					url: 'https://en.support.wordpress.com/recurring-payments/',
+					onClick: () => trackLink( 'recurring-payments' ),
+			  }
 			: null;
 		return {
 			title,
@@ -130,10 +146,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getReferralsCard = () => {
 		const cta = {
 			text: translate( 'Earn Cash from Referrals' ),
-			action: 'https://refer.wordpress.com/',
+			action: { url: 'https://refer.wordpress.com/', onClick: () => trackLink( 'referral' ) },
 		};
 		return {
-			title: translate( 'Earn Cash from Referrals' ),
+			title: translate( 'Earn cash from referrals' ),
 			body: translate(
 				"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
 				{
@@ -165,7 +181,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  }
 			: {
 					text: translate( 'Upgrade to Premium Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/premium/` ),
+					action: () => {
+						trackUpgrade( 'premium', 'ads' );
+						page( `/checkout/${ selectedSiteSlug }/premium/` );
+					},
 			  };
 		const title = hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn ad revenue' );
 		const body = hasSetupAds
@@ -180,7 +199,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  );
-		const learnMoreLink = ! hasWordAds ? 'https://wordads.co/' : null;
+		const learnMoreLink = ! hasWordAds
+			? { url: 'https://wordads.co/', onClick: () => trackLink( 'ads' ) }
+			: null;
 		return {
 			title,
 			body,
@@ -194,7 +215,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	const promos: PromoSectionProps = {
 		header: {
-			title: translate( 'Start earning money' ),
+			title: translate( 'Start earning money now' ),
 			image: {
 				path: '/calypso/images/earn/earn-section.svg',
 			},
@@ -217,20 +238,38 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >( state => {
-	const selectedSiteSlug = getSelectedSiteSlug( state );
-	const site = getSiteBySlug( state, selectedSiteSlug );
-	return {
-		siteId: site.ID,
-		selectedSiteSlug,
-		isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
-		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
-		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
-		hasConnectedAccount: !! get(
-			state,
-			[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
-			false
-		),
-		hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
-	};
-} )( Home );
+export default connect< ConnectedProps, {}, {} >(
+	state => {
+		const selectedSiteSlug = getSelectedSiteSlug( state );
+		const site = getSiteBySlug( state, selectedSiteSlug );
+		return {
+			siteId: site.ID,
+			selectedSiteSlug,
+			isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
+			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
+			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
+			hasConnectedAccount: !! get(
+				state,
+				[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
+				false
+			),
+			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
+		};
+	},
+	dispatch => ( {
+		trackUpgrade: ( plan: string, feature: string ) =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_earn_upgrade', { plan, feature } ),
+					bumpStat( 'calypso_earn_upgrade', feature )
+				)
+			),
+		trackLink: ( feature: string ) =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_earn_link', { feature } ),
+					bumpStat( 'calypso_earn_link', feature )
+				)
+			),
+	} )
+)( Home );
