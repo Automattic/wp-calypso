@@ -14,25 +14,19 @@ import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
+import { isCurrentPlanPaid } from 'state/sites/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
-import {
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_SIMPLE_PAYMENTS,
-	FEATURE_UPLOAD_PLUGINS,
-} from 'lib/plans/constants';
+import { FEATURE_WORDADS_INSTANT, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
-	isAJetpackSite: boolean;
 	isFreePlan: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
-	hasUploadPlugins: boolean;
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
 }
@@ -40,11 +34,9 @@ interface ConnectedProps {
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
-	isAJetpackSite,
 	isFreePlan,
 	hasSimplePayments,
 	hasWordAds,
-	hasUploadPlugins,
 	hasConnectedAccount,
 	hasSetupAds,
 } ) => {
@@ -131,28 +123,19 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	/**
-	 * Return the content to display in the Store card based on the current plan.
+	 * Return the content to display in the Referrals card based on the current plan.
 	 *
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
-	const getStoreCard = () => {
-		if ( isAJetpackSite ) {
-			return null;
-		}
-
-		const cta = hasUploadPlugins
-			? {
-					text: translate( 'Set Up a Simple Store' ),
-					action: () => page( `/store/${ selectedSiteSlug }` ),
-			  }
-			: {
-					text: translate( 'Upgrade to Business Plan' ),
-					action: () => page( `/checkout/${ selectedSiteSlug }/business/` ),
-			  };
+	const getReferralsCard = () => {
+		const cta = {
+			text: translate( 'Earn Cash from Referrals' ),
+			action: 'https://refer.wordpress.com/',
+		};
 		return {
-			title: translate( 'Sell a few items' ),
+			title: translate( 'Earn Cash from Referrals' ),
 			body: translate(
-				'Create a basic store with minimal setup -- add your products, and use the built-in shipping, coupon, and tax tools. {{em}}Available to sites with a Business plan{{/em}}.',
+				"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
 				{
 					components: {
 						em: <em />,
@@ -160,10 +143,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				}
 			),
 			image: {
-				path: '/calypso/images/earn/woo.svg',
+				path: '/calypso/images/earn/referral.svg',
 			},
 			cta,
-			learnMoreLink: 'https://en.support.wordpress.com/store/',
 		};
 	};
 
@@ -221,8 +203,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		promos: compact( [
 			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
-			getStoreCard(),
 			getAdsCard(),
+			getReferralsCard(),
 		] ),
 	};
 
@@ -243,9 +225,7 @@ export default connect< ConnectedProps, {}, {} >( state => {
 		selectedSiteSlug,
 		isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
 		hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
-		hasUploadPlugins: hasFeature( state, site.ID, FEATURE_UPLOAD_PLUGINS ),
 		hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
-		isAJetpackSite: isJetpackSite( state, site.ID ),
 		hasConnectedAccount: !! get(
 			state,
 			[ 'memberships', 'settings', site.ID, 'connectedAccountId' ],
