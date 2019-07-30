@@ -33,7 +33,7 @@ class SiteTitleStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setSiteTitle: PropTypes.func.isRequired,
-		signupProgress: PropTypes.array,
+		signupProgress: PropTypes.object,
 		stepName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		siteTitle: PropTypes.string,

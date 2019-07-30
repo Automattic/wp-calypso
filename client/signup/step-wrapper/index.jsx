@@ -13,6 +13,7 @@ import classNames from 'classnames';
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import { getFilteredSteps } from '../utils';
 
 /**
  * Style dependencies
@@ -51,7 +52,7 @@ class StepWrapper extends Component {
 				stepName={ this.props.stepName }
 				stepSectionName={ this.props.stepSectionName }
 				backUrl={ this.props.backUrl }
-				signupProgress={ this.props.signupProgress }
+				signupProgress={ getFilteredSteps( this.props.flowName, this.props.signupProgress ) }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
 			/>

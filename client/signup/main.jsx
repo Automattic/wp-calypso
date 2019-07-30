@@ -9,6 +9,7 @@ import React from 'react';
 import {
 	assign,
 	defer,
+	isEmpty,
 	find,
 	get,
 	includes,
@@ -466,11 +467,11 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName ).steps,
-			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
-			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
-			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
+		const flowSteps = flows.getFlow( nextFlowName ).steps;
+		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const nextStepName = flowSteps[ currentStepIndex + 1 ];
+		const nextProgressItem = get( this.props.progress, nextStepName );
+		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
 			this.props.removeUnneededSteps( nextFlowName );
@@ -512,6 +513,7 @@ class Signup extends React.Component {
 	}
 
 	getFlowLength() {
+		// this would need to change if we used journeys
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
@@ -587,13 +589,24 @@ class Signup extends React.Component {
 	}
 
 	render() {
+		console.log( this.props.progress );
+
 		if (
 			! this.props.stepName ||
-			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
+			( this.getPositionInFlow() > 0 && isEmpty( this.props.progress ) ) ||
 			this.state.resumingStep
 		) {
+			console.log( 'rendering null', {
+				stepName: this.props.stepName,
+				pos: this.getPositionInFlow(),
+				emptyProgress: isEmpty( this.props.progress ),
+				resumingStep: this.state.resumingStep,
+			} );
+
 			return null;
 		}
+
+		console.log( 'not rendering null...' );
 
 		// Removes flicker of steps that have been removed from the flow
 		const waitToRenderReturnValue = this.shouldWaitToRender();
