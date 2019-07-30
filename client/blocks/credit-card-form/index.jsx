@@ -58,7 +58,12 @@ export function CreditCardForm( {
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
 	const [ formFieldErrors, setFormFieldErrors ] = useState(
-		camelCaseFormFields( validatePaymentDetails( kebabCaseFormFields( formFieldValues ) ).errors )
+		camelCaseFormFields(
+			validatePaymentDetails(
+				kebabCaseFormFields( formFieldValues ),
+				stripe ? 'stripe' : 'credit-card'
+			).errors
+		)
 	);
 	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
 
@@ -71,7 +76,12 @@ export function CreditCardForm( {
 		setDebouncedFieldErrors( { ...debouncedFieldErrors, ...clearedErrors } );
 		// Debounce updating validation errors
 		setFormFieldErrors(
-			camelCaseFormFields( validatePaymentDetails( kebabCaseFormFields( newValues ) ).errors )
+			camelCaseFormFields(
+				validatePaymentDetails(
+					kebabCaseFormFields( newValues ),
+					stripe ? 'stripe' : 'credit-card'
+				).errors
+			)
 		);
 	};
 
