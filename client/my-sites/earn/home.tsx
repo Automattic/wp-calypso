@@ -149,7 +149,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			action: { url: 'https://refer.wordpress.com/', onClick: () => trackLink( 'referral' ) },
 		};
 		return {
-			title: translate( 'Earn Cash from Referrals' ),
+			title: translate( 'Earn cash from referrals' ),
 			body: translate(
 				"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
 				{
