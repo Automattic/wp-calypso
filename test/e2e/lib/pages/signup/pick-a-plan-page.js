@@ -45,6 +45,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		const freePlanButton = By.css( '.plans-skip-button button' );
 
 		await driverHelper.waitTillNotPresent( this.driver, disabledPersonalPlanButton );
+		await driverHelper.scrollIntoView( this.driver, freePlanButton );
 		return await driverHelper.clickWhenClickable( this.driver, freePlanButton );
 	}
 
