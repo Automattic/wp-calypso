@@ -35,9 +35,27 @@ import { planItem } from 'lib/cart-values/cart-items';
 import './style.scss';
 
 export class PlansStep extends Component {
-	componentDidMount() {
-		const { flowName, initialContext } = this.props;
+	constructor( props ) {
+		super( props );
+		const { flowName, initialContext } = props;
 
+		if ( 'launch-site' === flowName ) {
+			const planQueryArg = get( initialContext, 'query.plan' );
+
+			if ( planQueryArg ) {
+				const cartItem = planItem( planQueryArg );
+				if ( planQueryArg === cartItem.product_slug ) {
+					this.onSelectPlan( cartItem );
+					this.skipRender = true;
+				}
+			}
+		}
+	}
+
+	componentDidMount() {
+		if ( this.skipRender ) {
+			return;
+		}
 		if (
 			typeof window !== 'undefined' &&
 			window.location &&
@@ -67,17 +85,6 @@ export class PlansStep extends Component {
 			);
 			salesTeamScript.setAttribute( 'defer', true );
 			document.head.appendChild( salesTeamScript );
-		}
-
-		if ( 'launch-site' === flowName ) {
-			const planQueryArg = get( initialContext, 'query.plan' );
-
-			if ( planQueryArg ) {
-				const cartItem = planItem( planQueryArg );
-				if ( planQueryArg === cartItem.product_slug ) {
-					this.onSelectPlan( cartItem );
-				}
-			}
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
@@ -223,6 +230,9 @@ export class PlansStep extends Component {
 	}
 
 	render() {
+		if ( this.skipRender ) {
+			return null;
+		}
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': true,

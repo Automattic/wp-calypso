@@ -32,7 +32,6 @@ import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
-import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import {
@@ -395,7 +394,6 @@ export class PlansFeaturesMain extends Component {
 				{ ! plansWithScroll && this.renderToggle() }
 				{ plansWithScroll && this.renderFreePlanBanner() }
 				<QueryPlans />
-				{ siteId && <QuerySites siteId={ siteId } /> }
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
 				<CartData>
