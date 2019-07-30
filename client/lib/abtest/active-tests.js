@@ -131,6 +131,7 @@ export default {
 			control: 10,
 		},
 		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 	checkoutSealsCopyBundle: {
 		datestamp: '20190613',
@@ -158,6 +159,5 @@ export default {
 			last: 50,
 		},
 		defaultVariation: 'first',
-		allowExistingUsers: true,
 	},
 };
