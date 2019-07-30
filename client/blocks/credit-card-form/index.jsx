@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -38,6 +39,8 @@ import {
  * Style dependencies
  */
 import './style.scss';
+
+const debug = debugFactory( 'calypso:credit-card-form' );
 
 export function CreditCardForm( {
 	apiParams = {},
@@ -134,6 +137,7 @@ export function CreditCardForm( {
 				stripeConfiguration,
 			} );
 		} catch ( error ) {
+			debug( 'Error while submitting', error );
 			setFormSubmitting( false );
 			error &&
 				notices.error(
