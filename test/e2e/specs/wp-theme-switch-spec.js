@@ -104,8 +104,11 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel @jetpack`,
 				} );
 			} else {
 				step( 'Can log in via Jetpack SSO', async function() {
-					const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
-					assert( false );
+					// const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
+					const wpAdminLogonPage = await WPAdminLogonPage.Visit(
+						this.driver,
+						dataHelper.getJetpackSiteName()
+					);
 					return await wpAdminLogonPage.logonSSO();
 				} );
 
