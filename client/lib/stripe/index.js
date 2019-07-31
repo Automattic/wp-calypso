@@ -181,16 +181,16 @@ export function useStripeJs( stripeConfiguration ) {
 /**
  * React custom Hook for loading the Stripe Configuration
  *
- * @param {string} country (optional) The country code
+ * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
  * @return {object} Stripe Configuration as returned by the stripe configuration endpoint
  */
-export function useStripeConfiguration( country ) {
+export function useStripeConfiguration( requestArgs = {} ) {
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
-		getStripeConfiguration( { country } ).then( configuration =>
+		getStripeConfiguration( requestArgs ).then( configuration =>
 			setStripeConfiguration( configuration )
 		);
-	}, [ country ] );
+	}, [ requestArgs ] );
 	return stripeConfiguration;
 }
 
@@ -198,12 +198,13 @@ export function useStripeConfiguration( country ) {
  * HOC to render a component with StripeJS
  *
  * @param {object} WrappedComponent The component to wrap
+ * @param {object} configurationArgs (optional) Options for configuration endpoint request. Can include `country` or `needs_intent`
  * @return {object} WrappedComponent
  */
-export function withStripe( WrappedComponent ) {
+export function withStripe( WrappedComponent, configurationArgs = {} ) {
 	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
 	return props => {
-		const stripeConfiguration = useStripeConfiguration();
+		const stripeConfiguration = useStripeConfiguration( configurationArgs );
 		const stripeJs = useStripeJs( stripeConfiguration );
 
 		return (
