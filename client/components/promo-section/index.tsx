@@ -11,7 +11,7 @@ import { TranslateResult } from 'i18n-calypso';
 import PromoCard, { Props as PromoCardProps } from './promo-card';
 import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
 
-interface PromoSectionCardProps extends PromoCardProps {
+export interface PromoSectionCardProps extends PromoCardProps {
 	body: string | TranslateResult;
 	actions?: PromoCardCtaProps;
 }

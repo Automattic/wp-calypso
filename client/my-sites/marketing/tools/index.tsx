@@ -19,6 +19,11 @@ import { marketingConnections, marketingTraffic } from 'my-sites/marketing/paths
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
+import PromoSection, {
+	Props as PromoSectionProps,
+	PromoSectionCardProps,
+} from 'components/promo-section';
+
 /**
  * Types
  */
@@ -60,9 +65,50 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		page( marketingConnections( selectedSiteSlug ) );
 	};
 
+	const getLogoCard = (): PromoSectionCardProps => {
+		return {
+			title: translate( 'Want to build a great brand? Start with a great logo' ),
+			body: translate(
+				"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
+			),
+			image: {
+				path: '/calypso/images/marketing/looka-logo.svg',
+			},
+			actions: {
+				cta: {
+					text: translate( 'Create A Logo' ),
+					action: {
+						url: 'http://logojoy.grsm.io/looka',
+						onClick: handleCreateALogoClick,
+					},
+				},
+			},
+		};
+	};
+
+	const promos: PromoSectionProps = {
+		header: {
+			title: translate( 'Drive more traffic to your site with better SEO' ),
+			body: translate(
+				"Optimize your site for search engines and get more exposure for your business. Let's make the most of your site's built-in SEO tools!"
+			),
+			image: {
+				path: '/calypso/images/illustrations/illustration-404.svg',
+			},
+			actions: {
+				cta: {
+					text: translate( 'Boost My Traffic' ),
+					action: handleBoostMyTrafficClick,
+				},
+			},
+		},
+		promos: [ getLogoCard() ],
+	};
+
 	return (
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
+			<PromoSection { ...promos } />
 
 			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
 
