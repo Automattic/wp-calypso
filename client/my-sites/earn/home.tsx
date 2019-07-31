@@ -61,7 +61,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					action: { url: supportLink, onClick: () => trackLink( 'simple-payments' ) },
 			  }
 			: {
-					text: translate( 'Upgrade to Premium Plan' ),
+					text: translate( 'Upgrade to a Premium Plan!' ),
 					action: () => {
 						trackUpgrade( 'premium', 'simple-payments' );
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
@@ -186,7 +186,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						),
 			  }
 			: {
-					text: translate( 'Upgrade to Premium Plan' ),
+					text: translate( 'Upgrade to a Premium Plan!' ),
 					action: () => {
 						trackUpgrade( 'premium', 'ads' );
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
@@ -227,7 +227,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			image: {
 				path: '/calypso/images/earn/earn-section.svg',
 			},
-			body: translate( 'There is a range of ways to earn money through your WordPress.com Site.' ),
+			body: translate( 'There is a range of ways to earn money through your WordPress site.' ),
 		},
 		promos: compact( [
 			getSimplePaymentsCard(),
