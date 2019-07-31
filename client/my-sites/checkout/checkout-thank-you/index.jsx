@@ -82,6 +82,8 @@ import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import getSiteSlug from 'state/sites/selectors/get-site-slug.js';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getActiveTheme } from 'state/themes/selectors';
+import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 
 /**
  * Style dependencies
@@ -530,7 +532,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, sitePlans, displayMode } = this.props;
+		const { selectedSite, sitePlans, displayMode, customizeUrl } = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -588,6 +590,7 @@ export class CheckoutThankYou extends React.Component {
 				{ ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
 						<ComponentClass
+							customizeUrl={ customizeUrl }
 							domain={ domain }
 							purchases={ purchases }
 							failedPurchases={ failedPurchases }
@@ -608,6 +611,7 @@ export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
+		const activeTheme = getActiveTheme( state, siteId );
 
 		return {
 			isFetchingTransfer: isFetchingTransfer( state, siteId ),
@@ -622,6 +626,7 @@ export default connect(
 				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			selectedSiteSlug: getSiteSlug( state, siteId ),
+			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
 		};
 	},
 	dispatch => {

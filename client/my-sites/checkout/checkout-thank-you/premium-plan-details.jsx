@@ -10,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import GoogleVoucherDetails from './google-voucher';
@@ -19,6 +18,7 @@ import { isPremium, isGoogleApps } from 'lib/products-values';
 import { newPost } from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import QueryBlogStickers from 'components/data/query-blog-stickers';
 
 /**
  * Image dependencies
@@ -29,14 +29,14 @@ import customizeThemeImage from 'assets/images/upgrades/customize-theme.svg';
 import mediaPostImage from 'assets/images/upgrades/media-post.svg';
 import wordAdsImage from 'assets/images/upgrades/word-ads.svg';
 
-const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
+const PremiumPlanDetails = ( {
+	selectedSite,
+	sitePlans,
+	selectedFeature,
+	purchases,
+	customizeUrl,
+} ) => {
 	const translate = useTranslate();
-	const adminUrl = selectedSite.URL + '/wp-admin/';
-	const customizerInAdmin =
-		adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
-	const customizeLink = config.isEnabled( 'manage/customize' )
-		? '/customize/' + selectedSite.slug
-		: customizerInAdmin;
 	const plan = find( sitePlans.data, isPremium ),
 		isPremiumPlan = isPremium( selectedSite.plan );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
@@ -89,19 +89,24 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 			/>
 
 			{ ! selectedFeature && (
-				<PurchaseDetail
-					icon={
-						<img alt={ translate( 'Customize Theme Illustration' ) } src={ customizeThemeImage } />
-					}
-					title={ translate( 'Customize your theme' ) }
-					description={ translate(
-						"You now have direct control over your site's fonts and colors in the customizer. " +
-							"Change your site's entire look in a few clicks."
-					) }
-					buttonText={ translate( 'Start customizing' ) }
-					href={ customizeLink }
-					target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' }
-				/>
+				<>
+					<QueryBlogStickers blogId={ selectedSite.ID } />
+					<PurchaseDetail
+						icon={
+							<img
+								alt={ translate( 'Customize Theme Illustration' ) }
+								src={ customizeThemeImage }
+							/>
+						}
+						title={ translate( 'Customize your theme' ) }
+						description={ translate(
+							"You now have direct control over your site's fonts and colors in the customizer. " +
+								"Change your site's entire look in a few clicks."
+						) }
+						buttonText={ translate( 'Start customizing' ) }
+						href={ customizeUrl }
+					/>
+				</>
 			) }
 
 			<PurchaseDetail
