@@ -97,6 +97,7 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'signup/utils';
+import { isExternal, withoutHttp } from 'lib/url';
 
 /**
  * Style dependencies
@@ -533,6 +534,7 @@ export class Checkout extends React.Component {
 			cart,
 			isDomainOnly,
 			reduxStore,
+			selectedSite,
 			selectedSiteId,
 			transaction: { step: { data: receipt = null } = {} } = {},
 			translate,
@@ -638,6 +640,14 @@ export class Checkout extends React.Component {
 
 				return;
 			}
+		}
+
+		const adminUrl = withoutHttp( get( selectedSite, [ 'options', 'admin_url' ] ) );
+
+		// Are we supposed to redirect to a Jetpack or WP.com site's wp-admin (block) editor?
+		// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
+		if ( isExternal( redirectPath ) && redirectPath.startsWith( adminUrl ) ) {
+			return this.handleCheckoutExternalRedirect( redirectPath );
 		}
 
 		page( redirectPath );
