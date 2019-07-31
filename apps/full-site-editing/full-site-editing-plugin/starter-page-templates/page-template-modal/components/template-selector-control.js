@@ -25,6 +25,14 @@ function TemplateSelectorControl( {
 		return null;
 	}
 
+	const renderTemplatePreview = ( { preview, previewAlt = '' } ) => {
+		if ( ! preview ) {
+			return null;
+		}
+
+		return <img className="template-selector-control__media" src={ preview } alt={ previewAlt } />;
+	};
+
 	return (
 		<BaseControl
 			label={ label }
@@ -44,13 +52,7 @@ function TemplateSelectorControl( {
 							aria-describedby={ help ? `${ id }__help` : undefined }
 						>
 							<div className="template-selector-control__media-wrap">
-								{ option.preview && (
-									<img
-										className="template-selector-control__media"
-										src={ option.preview }
-										alt={ option.previewAlt || '' }
-									/>
-								) }
+								{ renderTemplatePreview( option ) }
 							</div>
 							{ option.label }
 						</button>
