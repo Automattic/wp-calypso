@@ -176,8 +176,8 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-without-ecommerce': {
-			stepName: 'plans-without-ecommerce',
+		'plans-import': {
+			stepName: 'plans-import',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
