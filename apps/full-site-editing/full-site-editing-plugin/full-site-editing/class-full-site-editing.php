@@ -163,6 +163,7 @@ class Full_Site_Editing {
 				'supports'              => array(
 					'title',
 					'editor',
+					'revisions',
 				),
 			)
 		);
@@ -323,7 +324,7 @@ class Full_Site_Editing {
 			'a8c/navigation-menu',
 			array(
 				'attributes'      => [
-					'className'     => [
+					'className' => [
 						'default' => '',
 						'type'    => 'string',
 					],
