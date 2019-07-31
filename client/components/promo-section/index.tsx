@@ -13,7 +13,7 @@ import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
 
 interface PromoSectionCardProps extends PromoCardProps {
 	body: string | TranslateResult;
-	ctaProps?: PromoCardCtaProps;
+	actions?: PromoCardCtaProps;
 }
 
 export interface Props {
@@ -31,10 +31,10 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	title,
 	image,
 	body,
-	ctaProps,
+	actions,
 } ) => {
-	const cta = get( ctaProps, 'cta', null );
-	const learnMoreLink = get( ctaProps, 'learnMoreLink', null );
+	const cta = get( actions, 'cta', null );
+	const learnMoreLink = get( actions, 'learnMoreLink', null );
 	return (
 		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image }>
 			<p>{ body }</p>

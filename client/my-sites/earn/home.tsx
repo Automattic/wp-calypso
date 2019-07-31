@@ -83,7 +83,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			image: {
 				path: '/calypso/images/earn/simple-payments.svg',
 			},
-			ctaProps: {
+			actions: {
 				cta,
 				learnMoreLink,
 			},
@@ -135,7 +135,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			image: {
 				path: '/calypso/images/earn/recurring.svg',
 			},
-			ctaProps: {
+			actions: {
 				cta,
 				learnMoreLink,
 			},
@@ -165,7 +165,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			image: {
 				path: '/calypso/images/earn/referral.svg',
 			},
-			ctaProps: {
+			actions: {
 				cta,
 			},
 		};
@@ -214,7 +214,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			image: {
 				path: '/calypso/images/earn/ads.svg',
 			},
-			ctaProps: {
+			actions: {
 				cta,
 				learnMoreLink,
 			},
