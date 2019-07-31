@@ -19,7 +19,6 @@ import formatCurrency from '@automattic/format-currency';
 import FoldableCard from 'components/foldable-card';
 import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
@@ -551,17 +550,20 @@ export class PlanFeatures extends Component {
 						<Notice
 							className="plan-features__notice-launching"
 							showDismiss={ false }
-							isCompact
-							text={ translate( 'Selecting this plan launches your site.' ) }
-						>
-							<NoticeAction>
-								<InlineSupportLink
-									showText={ false }
-									supportLink="https://support.wordpress.com/settings/privacy-settings/"
-									supportPostId={ 1507 }
-								/>
-							</NoticeAction>
-						</Notice>
+							text={ translate( 'This {{planLink/}} launches your site.', {
+								comment: 'planLink is an inline support link with the (localized) text: "plan"',
+								components: {
+									planLink: (
+										<InlineSupportLink
+											showIcon={ false }
+											supportLink="https://support.wordpress.com/settings/privacy-settings/"
+											supportPostId={ 1507 }
+											text={ translate( 'plan', { context: 'noun' } ) }
+										/>
+									),
+								},
+							} ) }
+						/>
 					) }
 				</td>
 			);
