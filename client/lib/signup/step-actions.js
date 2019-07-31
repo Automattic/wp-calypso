@@ -741,7 +741,7 @@ export async function createPasswordlessUser( callback, { email } ) {
 export async function verifyPasswordlessUser( callback, { email, code } ) {
 	try {
 		const response = await wpcom.undocumented().usersEmailVerification( { email, code }, null );
-		callback( null, { username: email, bearer_token: response.bearer_token } );
+		callback( null, { email, username: email, bearer_token: response.bearer_token } );
 	} catch ( err ) {
 		callback( err );
 	}
