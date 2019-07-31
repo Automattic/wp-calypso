@@ -18,6 +18,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
+import './style.scss';
 
 class CancelAutoRenewalForm extends Component {
 	state = {
@@ -50,7 +51,11 @@ class CancelAutoRenewalForm extends Component {
 		const { checkedRadio, feedback } = this.state;
 
 		return (
-			<Dialog isVisible={ isVisible } onClose={ this.closeDialog }>
+			<Dialog
+				className="cancel-auto-renewal-form__dialog"
+				isVisible={ isVisible }
+				onClose={ this.closeDialog }
+			>
 				<FormSectionHeading className="cancel-auto-renewal-form__header">
 					{ translate( 'Your thoughts are needed.' ) }
 				</FormSectionHeading>
