@@ -14,6 +14,7 @@ import { compact, includes, isEqual, property, snakeCase } from 'lodash';
  */
 import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
+import QueryBlogStickers from 'components/data/query-blog-stickers';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -142,11 +143,12 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, listLabel, themesCount, upsellUrl } = this.props;
+		const { source, query, listLabel, themesCount, upsellUrl, siteId } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
+				<QueryBlogStickers blogId={ siteId } />
 				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
