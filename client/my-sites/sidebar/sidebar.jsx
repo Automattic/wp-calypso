@@ -19,6 +19,7 @@ import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
 import JetpackLogo from 'components/jetpack-logo';
+import QueryBlogStickers from 'components/data/query-blog-stickers';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
@@ -54,6 +55,7 @@ import {
 } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import {
 	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
@@ -233,7 +235,14 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const { path, site, translate, canUserEditThemeOptions } = this.props,
+		const {
+				path,
+				site,
+				translate,
+				canUserEditThemeOptions,
+				siteId,
+				isFullSiteEditing,
+			} = this.props,
 			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -251,16 +260,19 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<ul>
-				<SidebarItem
-					label={ translate( 'Customize' ) }
-					selected={ itemLinkMatches( '/customize', path ) }
-					link={ this.props.customizeUrl }
-					onNavigate={ this.trackCustomizeClick }
-					icon="customize"
-					preloadSectionName="customize"
-					forceInternalLink
-					expandSection={ this.expandDesignSection }
-				/>
+				<QueryBlogStickers blogId={ siteId } />
+				{ ! isFullSiteEditing && (
+					<SidebarItem
+						label={ translate( 'Customize' ) }
+						selected={ itemLinkMatches( '/customize', path ) }
+						link={ this.props.customizeUrl }
+						onNavigate={ this.trackCustomizeClick }
+						icon="customize"
+						preloadSectionName="customize"
+						forceInternalLink
+						expandSection={ this.expandDesignSection }
+					/>
+				) }
 				<SidebarItem
 					label={ translate( 'Themes' ) }
 					selected={ itemLinkMatches( themesLink, path ) }
@@ -738,6 +750,7 @@ function mapStateToProps( state ) {
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
+		isFullSiteEditing: isSiteUsingFullSiteEditing( state, siteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
