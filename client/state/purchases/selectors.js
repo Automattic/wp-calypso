@@ -16,7 +16,9 @@ import {
 	isDomainRegistration,
 	isDomainMapping,
 } from 'lib/products-values';
-
+import { getPlan, findPlansKeys } from 'lib/plans';
+import { TYPE_PERSONAL } from 'lib/plans/constants';
+import { getPlanRawPrice } from 'state/plans/selectors';
 /**
  * Return the list of purchases from state object
  *
@@ -96,6 +98,29 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 	);
 
 	return domainPurchase;
+};
+
+export const getDowngradePlanFromPurchase = purchase => {
+	const plan = getPlan( purchase.productSlug );
+	if ( ! plan ) {
+		return null;
+	}
+
+	const newPlanKeys = findPlansKeys( {
+		group: plan.group,
+		type: TYPE_PERSONAL,
+		term: plan.term,
+	} );
+
+	return getPlan( newPlanKeys[ 0 ] );
+};
+
+export const getDowngradePlanRawPrice = ( state, purchase ) => {
+	const plan = getDowngradePlanFromPurchase( purchase );
+	if ( ! plan ) {
+		return null;
+	}
+	return getPlanRawPrice( state, plan.getProductId(), false );
 };
 
 /**

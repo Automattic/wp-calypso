@@ -6,6 +6,7 @@ import React from 'react';
 import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -45,6 +46,7 @@ import isSurveyFilledIn from './is-survey-filled-in';
 import stepsForProductAndSurvey from './steps-for-product-and-survey';
 import enrichedSurveyData from './enriched-survey-data';
 import { CANCEL_FLOW_TYPE } from './constants';
+import { getIncludedDomainPurchase, getDowngradePlanRawPrice } from 'state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -262,8 +264,8 @@ class CancelPurchaseForm extends React.Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	downgradePlan = () => {
-		this.props.downgradePlan();
+	downgradeClick = () => {
+		this.props.downgradeClick();
 		this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
 	};
 
@@ -519,6 +521,21 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
+	getRefundAmount = () => {
+		const { purchase, downgradePlanPrice, includedDomainPurchase } = this.props;
+		const { precision } = getCurrencyDefaults( purchase.currencyCode );
+		const refundAmount =
+			purchase.refundAmount +
+			( includedDomainPurchase ? includedDomainPurchase.costToUnbundle : 0 ) -
+			downgradePlanPrice;
+
+		if ( refundAmount < 0 ) {
+			return 0;
+		}
+
+		return purchase.currencySymbol + parseFloat( refundAmount ).toFixed( precision );
+	};
+
 	surveyContent() {
 		const { translate, isImport, showSurvey } = this.props;
 		const { surveyStep } = this.state;
@@ -569,7 +586,12 @@ class CancelPurchaseForm extends React.Component {
 			}
 
 			if ( surveyStep === steps.DOWNGRADE_STEP ) {
-				return <DowngradeStep />;
+				return (
+					<DowngradeStep
+						planCost={ this.props.downgradePlanPrice }
+						refundAmount={ this.getRefundAmount() }
+					/>
+				);
 			}
 
 			return (
@@ -658,7 +680,7 @@ class CancelPurchaseForm extends React.Component {
 				action: 'downgrade',
 				disabled: this.state.isSubmitting,
 				label: translate( 'Switch to Personal' ),
-				onClick: this.downgradePlan,
+				onClick: this.downgradeClick,
 				isPrimary: true,
 			},
 			remove = {
@@ -730,6 +752,8 @@ export default connect(
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
+		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 	} ),
 	{
 		recordTracksEvent,

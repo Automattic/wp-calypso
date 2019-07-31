@@ -29,8 +29,7 @@ import notices from 'notices';
 import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
-import { getPlan, findPlansKeys } from 'lib/plans';
-import { TYPE_PERSONAL } from 'lib/plans/constants';
+import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -183,22 +182,19 @@ class CancelPurchaseButton extends Component {
 		);
 	};
 
-	downgradePlan = () => {
+	downgradeClick = () => {
 		const { purchase } = this.props;
-
-		const plan = getPlan( purchase.productSlug );
-		const newPlanKeys = findPlansKeys( {
-			group: plan.group,
-			type: TYPE_PERSONAL,
-			term: plan.term,
-		} );
-		const downgradeTo = getPlan( newPlanKeys[ 0 ] ).getProductId();
+		const downgradePlan = getDowngradePlanFromPurchase( purchase );
 
 		this.setDisabled( true );
 
 		cancelAndRefundPurchase(
 			purchase.id,
-			{ product_id: purchase.productId, type: 'downgrade', to_product_id: downgradeTo },
+			{
+				product_id: purchase.productId,
+				type: 'downgrade',
+				to_product_id: downgradePlan.getProductId(),
+			},
 			( error, response ) => {
 				this.setDisabled( false );
 
@@ -307,7 +303,7 @@ class CancelPurchaseButton extends Component {
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
-					downgradePlan={ this.downgradePlan }
+					downgradeClick={ this.downgradeClick }
 					flowType={ this.getCancellationFlowType() }
 				/>
 			</div>

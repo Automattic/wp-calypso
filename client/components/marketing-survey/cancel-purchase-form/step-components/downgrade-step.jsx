@@ -21,7 +21,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 export class DowngradeStep extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		refundAmount: PropTypes.string.isRequired,
+		planCost: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -34,7 +35,7 @@ export class DowngradeStep extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, refundAmount, planCost } = this.props;
 
 		return (
 			<div>
@@ -43,9 +44,16 @@ export class DowngradeStep extends Component {
 				</FormSectionHeading>
 				<FormFieldset>
 					<p>
-						{ translate(
-							'You can downgrade to Personal and get a partial refund or continue to the next step and cancel the plan.'
-						) }
+						{ refundAmount
+							? translate(
+									'You can downgrade to Personal and get a partial refund of %(refundAmount)s or ' +
+										'continue to the next step and cancel the plan.',
+									{ args: { refundAmount } }
+							  )
+							: translate(
+									'You can downgrade to Personal and the new plan will renew at only %(planCost)s.',
+									{ args: { planCost } }
+							  ) }
 					</p>
 				</FormFieldset>
 			</div>
