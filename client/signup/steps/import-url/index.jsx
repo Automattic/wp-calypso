@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke, isEmpty, isEqual, pickBy } from 'lodash';
+import { flow, get, includes, invoke, isEmpty, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ class ImportURLStepComponent extends Component {
 			return;
 		}
 
-		const { urlInputValue, stepName } = this.props;
+		const { stepName, translate, urlInputValue } = this.props;
 
 		this.setState( {
 			isLoading: true,
@@ -97,15 +97,20 @@ class ImportURLStepComponent extends Component {
 					importer_types: importerTypes,
 				} ) => {
 					if ( 404 === siteStatus ) {
-						return this.setUrlError( '404' );
+						return this.setUrlError(
+							translate( 'The URL entered was not found. Double-check the URL and try again.' )
+						);
 					}
 
 					if ( includes( importerTypes, 'url' ) && 200 !== siteStatus ) {
-						return this.setUrlError( '200 not status for url' );
+						return this.setUrlError(
+							translate( "We're not able to reach that URL. Double-check the URL and try again." )
+						);
 					}
 
 					if ( 'unknown' !== siteEngine && isEmpty( importerTypes ) ) {
-						return this.setUrlError( 'no importer for engine' );
+						// @todo: Do we actually want an error here? Shouldn't this lead to the fallback step?
+						// return this.setUrlError( '...' );
 					}
 
 					this.props.submitSignupStep(
@@ -122,9 +127,13 @@ class ImportURLStepComponent extends Component {
 				error => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
-							return this.setUrlError( 'url unresolvable' );
+							return this.setUrlError(
+								translate( "We're not able to parse that URL. Double-check the URL and try again." )
+							);
 					}
-					return this.setUrlError( 'problem happened' );
+					return this.setUrlError(
+						translate( 'Something went wrong. Double-check the URL and try again later.' )
+					);
 				}
 			)
 			.finally( () =>
