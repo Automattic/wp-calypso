@@ -30,10 +30,10 @@ const errorFields = {
 	invalid_username: 'usernameOrEmail',
 };
 
-export class HttpError extends Error {
+export class HTTPError extends Error {
 	constructor( response, body ) {
 		super();
-		this.name = 'HttpError';
+		this.name = 'HTTPError';
 		this.status = response.status;
 		try {
 			this.response = { body: JSON.parse( body ) };

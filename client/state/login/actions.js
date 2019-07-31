@@ -50,7 +50,7 @@ import {
 	getErrorFromHTTPError,
 	getErrorFromWPCOMError,
 	getSMSMessageFromResponse,
-	HttpError,
+	HTTPError,
 } from './utils';
 import wpcom from 'lib/wp';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -126,7 +126,7 @@ async function postLoginRequest( action, bodyObj ) {
 	if ( response.ok ) {
 		return { body: await response.json() };
 	}
-	throw new HttpError( response, await response.body );
+	throw new HTTPError( response, await response.body );
 }
 
 /**

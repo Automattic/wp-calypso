@@ -9,7 +9,7 @@ import { stringify } from 'qs';
 import config from 'config';
 import wpcom from 'lib/wp';
 import { AUTHENTICATE_URL } from './constants';
-import { HttpError } from '../utils';
+import { HTTPError } from '../utils';
 import {
 	LOGIN_REQUEST_SUCCESS,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
@@ -100,7 +100,7 @@ async function postMagicLoginRequest( url, bodyObj ) {
 	if ( response.ok ) {
 		return await response.json();
 	}
-	throw new HttpError( response.status, await response.body );
+	throw new HTTPError( response.status, await response.body );
 }
 
 /**
