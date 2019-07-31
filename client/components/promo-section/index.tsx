@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,12 +33,8 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	body,
 	ctaProps,
 } ) => {
-	let cta = null;
-	let learnMoreLink = null;
-	if ( undefined !== ctaProps ) {
-		cta = ctaProps.cta;
-		learnMoreLink = ctaProps.learnMoreLink;
-	}
+	const cta = get( ctaProps, 'cta', null );
+	const learnMoreLink = get( ctaProps, 'learnMoreLink', null );
 	return (
 		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image }>
 			<p>{ body }</p>
