@@ -17,8 +17,6 @@ import { abtest } from 'lib/abtest';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 
 const siteTypeToFlowname = {
 	'online-store': 'ecommerce-onboarding',
@@ -108,7 +106,6 @@ export default connect(
 	state => ( {
 		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isJetpack: !! isJetpackSite( state, getSelectedSiteId( state ) ),
 	} ),
 	{ saveSignupStep, submitSiteType }
 )( localize( SiteType ) );
