@@ -549,8 +549,8 @@ function handleCloseEditor( calypsoPort ) {
 		);
 
 		// We only want to navigate back if the client tells us to.
-		// We need to give it a chance to set ift is dirty
-		// before we can navigate away from the page.
+		// We need to give it a chance to set if the post is dirty
+		// before we can navigate away.
 		port1.onmessage = ( { data } ) => {
 			port1.close(); // We only want to recieve this once.
 			// data is the URL to which we go back:
