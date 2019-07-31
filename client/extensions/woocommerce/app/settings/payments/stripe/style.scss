@@ -1,4 +1,7 @@
+
 .stripe__connect-account {
+
+
 	.stripe__connect-account-heading {
 		font-size: 14px;
 		font-weight: 600;
@@ -77,6 +80,7 @@
 	font-size: 18px;
 	justify-content: space-between;
 	padding: 0 0 16px;
+	font-weight: 600;
 
 	&.placeholder {
 		margin-bottom: 16px;
@@ -92,4 +96,8 @@
 		height: 60px;
 		@include placeholder();
 	}
+}
+
+.form-fieldset {
+	margin-left: 40px;
 }

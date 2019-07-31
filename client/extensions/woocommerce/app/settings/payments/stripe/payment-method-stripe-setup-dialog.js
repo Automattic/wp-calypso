@@ -146,7 +146,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 				isVisible
 			>
 				<div className="stripe__method-edit-header">
-					{ translate( 'Take credit card payments with Stripe' ) }
+					{ translate( 'Accept credit card payments with Stripe' ) }
 				</div>
 				<StripeConnectPrompt
 					isCreateSelected={ this.state.createSelected }
