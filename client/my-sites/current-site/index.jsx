@@ -78,6 +78,8 @@ class CurrentSite extends Component {
 					</span>
 				) }
 
+				<AsyncLoad require="my-sites/current-site/launch-status-notice" placeholder={ null } />
+
 				{ selectedSite ? (
 					<div>
 						<Site site={ selectedSite } homeLink={ true } />
@@ -85,6 +87,7 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
+
 				<AsyncLoad
 					require="my-sites/current-site/notice"
 					placeholder={ null }
