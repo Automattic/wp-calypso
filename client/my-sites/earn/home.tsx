@@ -31,7 +31,8 @@ interface ConnectedProps {
 	hasConnectedAccount: boolean;
 	hasSetupAds: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
-	trackLink: ( feature: string ) => void;
+	trackLearnLink: ( feature: string ) => void;
+	trackCtaButton: ( feature: string ) => void;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -43,7 +44,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasConnectedAccount,
 	hasSetupAds,
 	trackUpgrade,
-	trackLink,
+	trackLearnLink,
+	trackCtaButton,
 } ) => {
 	const translate = useTranslate();
 
@@ -58,7 +60,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Collect One-time Payments' ),
-					action: { url: supportLink, onClick: () => trackLink( 'simple-payments' ) },
+					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
 					text: translate( 'Upgrade to a Premium Plan!' ),
@@ -69,7 +71,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  };
 		const learnMoreLink = hasSimplePayments
 			? null
-			: { url: supportLink, onClick: () => trackLink( 'simple-payments' ) };
+			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		return {
 			title: translate( 'Collect one-time payments' ),
 			body: translate(
@@ -106,7 +108,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  }
 			: {
 					text: translate( 'Collect Recurring Payments' ),
-					action: () => page( `/earn/payments/${ selectedSiteSlug }` ),
+					action: () => {
+						trackCtaButton( 'recurring-payments' );
+						page( `/earn/payments/${ selectedSiteSlug }` );
+					},
 			  };
 		const title = hasConnectedAccount
 			? translate( 'Manage Recurring Payments' )
@@ -126,7 +131,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://en.support.wordpress.com/recurring-payments/',
-					onClick: () => trackLink( 'recurring-payments' ),
+					onClick: () => trackLearnLink( 'recurring-payments' ),
 			  }
 			: null;
 		return {
@@ -150,7 +155,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const getReferralsCard = () => {
 		const cta = {
 			text: translate( 'Earn Cash from Referrals' ),
-			action: { url: 'https://refer.wordpress.com/', onClick: () => trackLink( 'referral' ) },
+			action: { url: 'https://refer.wordpress.com/', onClick: () => trackCtaButton( 'referral' ) },
 		};
 		return {
 			title: translate( 'Earn cash from referrals' ),
@@ -180,10 +185,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta = hasWordAds
 			? {
 					text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
-					action: () =>
+					action: () => {
+						trackCtaButton( 'ads' );
 						page(
 							`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
-						),
+						);
+					},
 			  }
 			: {
 					text: translate( 'Upgrade to a Premium Plan!' ),
@@ -206,7 +213,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					}
 			  );
 		const learnMoreLink = ! hasWordAds
-			? { url: 'https://wordads.co/', onClick: () => trackLink( 'ads' ) }
+			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
 		return {
 			title,
@@ -268,15 +275,22 @@ export default connect< ConnectedProps, {}, {} >(
 		trackUpgrade: ( plan: string, feature: string ) =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_upgrade', { plan, feature } ),
-					bumpStat( 'calypso_earn_upgrade', feature )
+					recordTracksEvent( 'calypso_earn_page_upgrade_button_click', { plan, feature } ),
+					bumpStat( 'calypso_earn_page', 'upgrade-button-' + feature )
 				)
 			),
-		trackLink: ( feature: string ) =>
+		trackLearnLink: ( feature: string ) =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_link', { feature } ),
-					bumpStat( 'calypso_earn_link', feature )
+					recordTracksEvent( 'calypso_earn_page_learn_link_click', { feature } ),
+					bumpStat( 'calypso_earn_page', 'learn-link-' + feature )
+				)
+			),
+		trackCtaButton: ( feature: string ) =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
+					bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
 				)
 			),
 	} )
