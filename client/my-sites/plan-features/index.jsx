@@ -558,7 +558,7 @@ export class PlanFeatures extends Component {
 								<InlineSupportLink
 									showText={ false }
 									supportLink="https://support.wordpress.com/settings/privacy-settings/"
-									supportPostId="1507"
+									supportPostId={ 1507 }
 								/>
 							</NoticeAction>
 						</Notice>
