@@ -13,37 +13,77 @@ import wpcomFactory from 'lib/wp';
 
 const wpcom = wpcomFactory.undocumented();
 
-export async function saveCreditCard( {
+export async function saveOrUpdateCreditCard( {
 	createCardToken,
 	saveStoredCard,
 	translate,
-	successCallback,
 	apiParams,
 	purchase,
 	siteSlug,
 	formFieldValues,
 	stripeConfiguration,
+	parseTokenFromResponse,
+} ) {
+	const token = await getTokenForSavingCard( {
+		formFieldValues,
+		createCardToken,
+		parseTokenFromResponse,
+		translate,
+	} );
+
+	if ( saveStoredCard ) {
+		return saveCreditCard( {
+			token,
+			translate,
+			saveStoredCard,
+			stripeConfiguration,
+		} );
+	}
+
+	return updateCreditCard( {
+		formFieldValues,
+		apiParams,
+		purchase,
+		siteSlug,
+		token,
+		translate,
+	} );
+}
+
+async function getTokenForSavingCard( {
+	formFieldValues,
+	createCardToken,
+	parseTokenFromResponse,
+	translate,
 } ) {
 	const cardDetails = kebabCaseFormFields( formFieldValues );
 	const tokenResponse = await createCardToken( cardDetails );
-	// createStripePaymentMethod returns the token as `id`, but otherwise it is `token`
-	const token = tokenResponse.token || tokenResponse.id || null;
+	const token = parseTokenFromResponse( tokenResponse );
 	if ( ! token ) {
 		throw new Error( translate( 'Failed to add card.' ) );
 	}
+	return token;
+}
 
-	if ( saveStoredCard ) {
-		const additionalData = stripeConfiguration
-			? { payment_partner: stripeConfiguration.processor_id }
-			: {};
-		await saveStoredCard( { token, additionalData } );
-		notices.success( translate( 'Card added successfully' ), {
-			persistent: true,
-		} );
-		successCallback();
-		return;
-	}
+async function saveCreditCard( { token, translate, saveStoredCard, stripeConfiguration } ) {
+	const additionalData = stripeConfiguration
+		? { payment_partner: stripeConfiguration.processor_id }
+		: {};
+	await saveStoredCard( { token, additionalData } );
+	notices.success( translate( 'Card added successfully' ), {
+		persistent: true,
+	} );
+}
 
+async function updateCreditCard( {
+	formFieldValues,
+	apiParams,
+	purchase,
+	siteSlug,
+	token,
+	translate,
+} ) {
+	const cardDetails = kebabCaseFormFields( formFieldValues );
 	const updatedCreditCardApiParams = getParamsForApi( cardDetails, token, apiParams );
 	const response = wpcom.updateCreditCard( updatedCreditCardApiParams );
 	if ( response.error ) {
@@ -63,13 +103,11 @@ export async function saveCreditCard( {
 			persistent: true,
 		};
 		notices.info( noticeMessage, noticeOptions );
-		successCallback();
 		return;
 	}
 	notices.success( response.success, {
 		persistent: true,
 	} );
-	successCallback();
 }
 
 export function getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
