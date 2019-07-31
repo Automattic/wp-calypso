@@ -17,7 +17,9 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
+import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
@@ -549,10 +551,16 @@ export class PlanFeatures extends Component {
 						<Notice
 							className="plan-features__notice-launching"
 							showDismiss={ false }
-							icon="info-outline"
-							status="is-success"
+							isCompact
+							text={ translate( 'Selecting this plan launches your site.' ) }
 						>
-							{ translate( 'Selecting this plan will launch your site' ) }
+							<NoticeAction>
+								<InlineSupportLink
+									showText={ false }
+									supportLink="https://support.wordpress.com/settings/privacy-settings/"
+									supportPostId="1507"
+								/>
+							</NoticeAction>
 						</Notice>
 					) }
 				</td>
