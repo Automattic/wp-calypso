@@ -174,8 +174,8 @@ class DomainSearch extends Component {
 									translate( 'Would you like to create a new site instead?' )
 								}
 							>
-								<NoticeAction href="/start">
-									{ translate( 'Create new site' ) }
+								<NoticeAction href="/jetpack/new?ref=calypso-selector">
+									{ translate( 'Create a new site' ) }
 								</NoticeAction>
 							</Notice>
 						) }
