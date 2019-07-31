@@ -19,7 +19,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
 import { setNuxUrlInputValue, submitImportUrlStep } from 'state/importer-nux/actions';
-import { getNuxUrlInputValue, isUrlInputDisabled } from 'state/importer-nux/temp-selectors';
+import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from 'lib/importers/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
@@ -304,7 +304,6 @@ export default flow(
 	connect(
 		state => ( {
 			urlInputValue: getNuxUrlInputValue( state ),
-			isLoading: isUrlInputDisabled( state ),
 		} ),
 		{
 			setNuxUrlInputValue,

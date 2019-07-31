@@ -11,7 +11,6 @@ import {
 	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
-	SIGNUP_PROGRESS_SAVE_STEP,
 } from 'state/action-types';
 
 import { registerActionForward } from 'lib/redux-bridge';
@@ -26,13 +25,6 @@ export const urlInputValue = createReducer( '', {
 export const isFromSignupFlow = createReducer( false, {
 	[ IMPORTER_NUX_FROM_SIGNUP_SET ]: () => true,
 	[ IMPORTER_NUX_FROM_SIGNUP_CLEAR ]: () => false,
-} );
-
-export const isUrlInputDisabled = createReducer( false, {
-	[ IMPORT_IS_SITE_IMPORTABLE_START_FETCH ]: () => true,
-	[ SIGNUP_PROGRESS_SAVE_STEP ]: () => false,
-	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => false,
-	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => false,
 } );
 
 export const siteDetails = createReducer( null, {
@@ -60,7 +52,6 @@ export const error = createReducer( null, {
 export default combineReducers( {
 	error,
 	isFromSignupFlow,
-	isUrlInputDisabled,
 	siteDetails,
 	urlInputValue,
 } );
