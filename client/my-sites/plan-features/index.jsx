@@ -550,15 +550,16 @@ export class PlanFeatures extends Component {
 						<Notice
 							className="plan-features__notice-launching"
 							showDismiss={ false }
-							text={ translate( 'This {{planLink/}} launches your site.', {
-								comment: 'planLink is an inline support link with the (localized) text: "plan"',
+							text={ translate( 'This plan {{launchesLink/}} your site.', {
+								comment:
+									'launchesLink is an inline support link with the (localized) text: "launches"',
 								components: {
-									planLink: (
+									launchesLink: (
 										<InlineSupportLink
 											showIcon={ false }
 											supportLink="https://support.wordpress.com/settings/privacy-settings/"
 											supportPostId={ 1507 }
-											text={ translate( 'plan', { context: 'noun' } ) }
+											text={ translate( 'launches', { context: 'verb' } ) }
 										/>
 									),
 								},
