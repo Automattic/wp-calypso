@@ -10,5 +10,4 @@ import './blocks/site-logo';
 import './plugins/template-selector-sidebar';
 import './plugins/close-button-override';
 import './plugins/template-update-confirmation';
-import './plugins/template-remove-page-title';
 import './editor';
