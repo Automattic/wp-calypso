@@ -35,7 +35,8 @@ export class DowngradeStep extends Component {
 	};
 
 	render() {
-		const { translate, refundAmount, planCost } = this.props;
+		const { translate, refundAmount, planCost, currencySymbol } = this.props;
+		const amount = currencySymbol + ( refundAmount ? refundAmount : planCost );
 
 		return (
 			<div>
@@ -46,13 +47,13 @@ export class DowngradeStep extends Component {
 					<p>
 						{ refundAmount
 							? translate(
-									'You can downgrade to Personal and get a partial refund of %(refundAmount)s or ' +
+									'You can downgrade to Personal and get a partial refund of %(amount)s or ' +
 										'continue to the next step and cancel the plan.',
-									{ args: { refundAmount } }
+									{ args: { amount } }
 							  )
 							: translate(
-									'You can downgrade to Personal and the new plan will renew at only %(planCost)s.',
-									{ args: { planCost } }
+									'You can downgrade to Personal and the new plan will renew at only %(amount)s.',
+									{ args: { amount } }
 							  ) }
 					</p>
 				</FormFieldset>

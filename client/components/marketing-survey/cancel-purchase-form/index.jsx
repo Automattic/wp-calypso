@@ -33,7 +33,7 @@ import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
-import { getName } from 'lib/purchases';
+import { getName, isRefundable } from 'lib/purchases';
 import { isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
 import {
@@ -524,6 +524,11 @@ class CancelPurchaseForm extends React.Component {
 	getRefundAmount = () => {
 		const { purchase, downgradePlanPrice, includedDomainPurchase } = this.props;
 		const { precision } = getCurrencyDefaults( purchase.currencyCode );
+
+		if ( ! isRefundable( purchase ) ) {
+			return 0;
+		}
+
 		const refundAmount =
 			purchase.refundAmount +
 			( includedDomainPurchase ? includedDomainPurchase.costToUnbundle : 0 ) -
@@ -533,11 +538,11 @@ class CancelPurchaseForm extends React.Component {
 			return 0;
 		}
 
-		return purchase.currencySymbol + parseFloat( refundAmount ).toFixed( precision );
+		return parseFloat( refundAmount ).toFixed( precision );
 	};
 
 	surveyContent() {
-		const { translate, isImport, showSurvey } = this.props;
+		const { translate, isImport, showSurvey, purchase } = this.props;
 		const { surveyStep } = this.state;
 
 		if ( showSurvey ) {
@@ -588,6 +593,7 @@ class CancelPurchaseForm extends React.Component {
 			if ( surveyStep === steps.DOWNGRADE_STEP ) {
 				return (
 					<DowngradeStep
+						currencySymbol={ purchase.currencySymbol }
 						planCost={ this.props.downgradePlanPrice }
 						refundAmount={ this.getRefundAmount() }
 					/>
