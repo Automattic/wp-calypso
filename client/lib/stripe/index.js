@@ -76,6 +76,30 @@ export async function createStripePaymentMethod( stripe, paymentDetails ) {
 	return paymentMethod;
 }
 
+export async function createStripeSetupIntent( stripe, stripeConfiguration, paymentDetails ) {
+	debug( 'creating setup intent...', paymentDetails );
+	const { setupIntent, error } = await stripe.handleCardSetup(
+		stripeConfiguration.setup_intent_id,
+		{
+			payment_method_data: {
+				billing_details: paymentDetails,
+			},
+		}
+	);
+	debug( 'setup intent creation complete', setupIntent, error );
+	if ( error ) {
+		// Note that this is a promise rejection
+		if ( error.type === 'validation_error' ) {
+			throw new StripeValidationError(
+				error.code,
+				getValidationErrorsFromStripeError( error ) || {}
+			);
+		}
+		throw new Error( error.message );
+	}
+	return setupIntent;
+}
+
 /**
  * Confirm any PaymentIntent from Stripe response and carry out 3DS or
  * other next_actions if they are required.
