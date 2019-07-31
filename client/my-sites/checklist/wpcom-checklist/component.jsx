@@ -611,7 +611,7 @@ class WpcomChecklistComponent extends PureComponent {
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/launch.svg"
 				buttonText={ translate( 'Launch site' ) }
-				completedTitle={ translate( '' + 'You created your site' ) }
+				completedTitle={ translate( 'You created your site' ) }
 				description={ translate(
 					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
 				) }
