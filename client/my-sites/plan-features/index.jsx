@@ -114,7 +114,7 @@ export class PlanFeatures extends Component {
 							initialSelectedIndex={ initialSelectedIndex }
 						>
 							<table className={ tableClasses }>
-								<caption class="screen-reader-text">
+								<caption className="plan-features__content screen-reader-text">
 									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
