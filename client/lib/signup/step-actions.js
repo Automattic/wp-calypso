@@ -723,13 +723,12 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
  * @param {function} callback Callback function
  * @param {object}   data     POST data object
  */
-export async function createPasswordlessUser( callback, { email } ) {
-	try {
-		const response = await wpcom.undocumented().usersEmailNew( { email }, null );
-		callback( null, response );
-	} catch ( err ) {
-		callback( err );
-	}
+export function createPasswordlessUser( callback, { email } ) {
+	wpcom
+		.undocumented()
+		.usersEmailNew( { email }, null )
+		.then( response => callback( null, response ) )
+		.catch( err => callback( err ) );
 }
 
 /**
@@ -739,10 +738,11 @@ export async function createPasswordlessUser( callback, { email } ) {
  * @param {object}   data     POST data object
  */
 export async function verifyPasswordlessUser( callback, { email, code } ) {
-	try {
-		const response = await wpcom.undocumented().usersEmailVerification( { email, code }, null );
-		callback( null, { email, username: email, bearer_token: response.bearer_token } );
-	} catch ( err ) {
-		callback( err );
-	}
+	wpcom
+		.undocumented()
+		.usersEmailVerification( { email, code }, null )
+		.then( response =>
+			callback( null, { email, username: email, bearer_token: response.bearer_token } )
+		)
+		.catch( err => callback( err ) );
 }
