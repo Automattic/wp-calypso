@@ -9,6 +9,7 @@ import { stringify } from 'qs';
 import config from 'config';
 import wpcom from 'lib/wp';
 import { AUTHENTICATE_URL } from './constants';
+import { HttpError } from '../utils';
 import {
 	LOGIN_REQUEST_SUCCESS,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
@@ -88,14 +89,6 @@ export const fetchMagicLoginRequestEmail = ( email, redirectTo ) => dispatch => 
 		} );
 };
 
-class MagicLoginError extends Error {
-	constructor( status ) {
-		super();
-		this.name = 'MagicLoginError';
-		this.status = status;
-	}
-}
-
 async function postMagicLoginRequest( url, bodyObj ) {
 	const response = await fetch( url, {
 		method: 'POST',
@@ -107,7 +100,7 @@ async function postMagicLoginRequest( url, bodyObj ) {
 	if ( response.ok ) {
 		return await response.json();
 	}
-	throw new MagicLoginError( response.status );
+	throw new HttpError( response.status, await response.body );
 }
 
 /**
