@@ -57,7 +57,7 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import isPrivateSite from 'state/selectors/is-private-site';
 import {
 	isBestValue,
 	isMonthly,
@@ -503,7 +503,7 @@ export class PlanFeatures extends Component {
 				planName,
 				primaryUpgrade,
 				isPlaceholder,
-				isUnlaunchedAndGoingAtomic,
+				isPrivateAndGoingAtomic,
 				planConstantObj,
 				popular,
 			} = properties;
@@ -547,7 +547,7 @@ export class PlanFeatures extends Component {
 						primaryUpgrade={ primaryUpgrade }
 						selectedPlan={ selectedPlan }
 					/>
-					{ isUnlaunchedAndGoingAtomic && (
+					{ isPrivateAndGoingAtomic && (
 						<Notice
 							className="plan-features__notice-launching"
 							showDismiss={ false }
@@ -784,7 +784,7 @@ export default connect(
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
-		const siteIsUnlaunched = isUnlaunchedSite( state, selectedSiteId );
+		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -850,8 +850,8 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
-				const isUnlaunchedAndGoingAtomic =
-					siteIsUnlaunched &&
+				const isPrivateAndGoingAtomic =
+					siteIsPrivate &&
 					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
 						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
 
@@ -865,7 +865,7 @@ export default connect(
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
-					isUnlaunchedAndGoingAtomic,
+					isPrivateAndGoingAtomic,
 					onUpgradeClick: onUpgradeClick
 						? () => {
 								const planSlug = getPlanSlug( state, planProductId );
@@ -883,7 +883,7 @@ export default connect(
 									args.coupon = withDiscount;
 								}
 
-								if ( isUnlaunchedAndGoingAtomic ) {
+								if ( isPrivateAndGoingAtomic ) {
 									if ( isInSignup ) {
 										// Let signup do its thing
 										return;
@@ -895,7 +895,7 @@ export default connect(
 								page(
 									addQueryArgs(
 										args,
-										isUnlaunchedAndGoingAtomic
+										isPrivateAndGoingAtomic
 											? '/start/launch-site'
 											: `/checkout/${ selectedSiteSlug }/${ getPlanPath( plan ) || '' }`
 									)
