@@ -1552,7 +1552,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	} );
 
 	describe( 'Import a site while signing up @parallel', function() {
-		// Currently must use a Wix site to be importable through this flow.
+		// Currently must use a Wix or GoDaddy site to be importable through this flow.
 		const siteURL = 'https://hi6822.wixsite.com/eat-here-its-good';
 		const userName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
@@ -1564,12 +1564,24 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can visit import in signup page and prefill url', async function() {
-			await StartPage.Visit(
+		step( 'Can start the import signup flow', async function() {
+			return await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( { culture: locale, flow: 'import', query: `url=${ siteURL }` } )
 			);
+		} );
 
+		step( 'Can then enter account details and continue', async function() {
+			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+
+			return await createYourAccountPage.enterAccountDetailsAndSubmit(
+				emailAddress,
+				userName,
+				passwordForTestAccounts
+			);
+		} );
+
+		step( 'Can then prefill url of site to import using a query param', async function() {
 			const importFromURLPage = await ImportFromURLPage.Expect( driver );
 			const urlValue = await importFromURLPage.getURLInputValue();
 
@@ -1631,16 +1643,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					}
 				}
 			}
-		} );
-
-		step( 'Can then enter account details and continue', async function() {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				userName,
-				passwordForTestAccounts
-			);
 		} );
 
 		step(

@@ -281,7 +281,7 @@ export function generateFlows( {
 	};
 
 	flows.import = {
-		steps: [ 'from-url', 'user', 'domains' ],
+		steps: [ 'user', 'from-url', 'domains' ],
 		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
 			addQueryArgs(
 				{
@@ -293,7 +293,7 @@ export function generateFlows( {
 			),
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
-		lastModified: '2018-09-12',
+		lastModified: '2019-07-30',
 	};
 
 	flows.reader = {
