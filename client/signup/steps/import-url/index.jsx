@@ -264,16 +264,21 @@ class ImportURLStepComponent extends Component {
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
+		const headerText = translate( 'Where can we find your old site?' );
+		const subHeaderText = translate(
+			'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
+		);
+
 		return (
 			<StepWrapper
 				className="import-url"
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Where can we find your old site?' ) }
-				subHeaderText={ translate(
-					'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
-				) }
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 			/>
