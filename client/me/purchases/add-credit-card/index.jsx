@@ -3,9 +3,8 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { curry } from 'lodash';
 import page from 'page';
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -23,43 +22,33 @@ import titles from 'me/purchases/titles';
 import { billingHistory } from 'me/purchases/paths';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-class AddCreditCard extends Component {
-	static propTypes = {
-		addStoredCard: PropTypes.func.isRequired,
-	};
-
-	constructor( props ) {
-		super( props );
-		this.createCardToken = curry( createCardToken )( 'card_add' );
-	}
-
-	goToBillingHistory() {
-		page( billingHistory );
-	}
-
-	recordFormSubmitEvent() {
+function AddCreditCard( props ) {
+	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
+	const goToBillingHistory = () => page( billingHistory );
+	const recordFormSubmitEvent = () =>
 		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
-	}
 
-	render() {
-		return (
-			<Main>
-				<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
-				<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
+	return (
+		<Main>
+			<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
+			<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
-				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
+			<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
 
-				<CreditCardForm
-					createCardToken={ this.createCardToken }
-					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					saveStoredCard={ this.props.addStoredCard }
-					successCallback={ this.goToBillingHistory }
-					showUsedForExistingPurchasesInfo={ true }
-				/>
-			</Main>
-		);
-	}
+			<CreditCardForm
+				createCardToken={ createAddCardToken }
+				recordFormSubmitEvent={ recordFormSubmitEvent }
+				saveStoredCard={ props.addStoredCard }
+				successCallback={ goToBillingHistory }
+				showUsedForExistingPurchasesInfo={ true }
+			/>
+		</Main>
+	);
 }
+
+AddCreditCard.propTypes = {
+	addStoredCard: PropTypes.func.isRequired,
+};
 
 const mapDispatchToProps = {
 	addStoredCard,
