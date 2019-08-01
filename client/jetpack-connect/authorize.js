@@ -235,7 +235,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso() ||
 			( 'woocommerce-services-auto-authorize' === from ||
 				( ! config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-					'woocommerce-setup-wizard' === ' from' ) ) ||
+					'woocommerce-setup-wizard' === from ) ) ||
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
