@@ -126,7 +126,7 @@ async function postLoginRequest( action, bodyObj ) {
 	if ( response.ok ) {
 		return { body: await response.json() };
 	}
-	throw new HTTPError( response, await response.body );
+	throw new HTTPError( response, await response.text() );
 }
 
 /**

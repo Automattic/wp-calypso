@@ -100,7 +100,7 @@ async function postMagicLoginRequest( url, bodyObj ) {
 	if ( response.ok ) {
 		return await response.json();
 	}
-	throw new HTTPError( response.status, await response.body );
+	throw new HTTPError( response, await response.text() );
 }
 
 /**
