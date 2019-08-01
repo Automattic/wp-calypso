@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { PlainText } from '@wordpress/editor';
+import { RichText } from '@wordpress/editor';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
@@ -34,9 +34,11 @@ function SiteDescriptionEdit( {
 
 	return (
 		<Fragment>
-			<PlainText
+			<RichText
 				className={ className }
 				value={ option }
+				tagName="p"
+				formattingControls={ [] }
 				onChange={ value => handleChange( value ) }
 				placeholder={ __( 'Site Description' ) }
 				aria-label={ __( 'Site Description' ) }
