@@ -103,15 +103,21 @@ class SelectDropdown extends Component {
 	}
 
 	getInitialSelectedItem() {
+		// This method is only useful for the case when the component is uncontrolled, i.e., the
+		// selected state is in local state as opposed to being maintained by parent container.
+		// The `SelectDropdown` is uncontrolled iff the items are specified as `options` prop.
+		// (And is controlled when the items are specified as `children`.)
+		if ( ! this.props.options.length ) {
+			return null;
+		}
+
+		// Use the `initialSelected` prop if specified
 		if ( this.props.initialSelected ) {
 			return this.props.initialSelected;
 		}
 
-		if ( ! this.props.options.length ) {
-			return;
-		}
-
-		const selectedItem = find( this.props.options, value => ! value.isLabel );
+		// Otherwise find the first option that is an item, i.e., not label or separator
+		const selectedItem = find( this.props.options, item => item && ! item.isLabel );
 		return selectedItem && selectedItem.value;
 	}
 
