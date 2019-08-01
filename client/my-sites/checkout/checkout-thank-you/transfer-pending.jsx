@@ -76,7 +76,7 @@ class TransferPending extends PureComponent {
 		// Non standard gridicon sizes are used here because we display giant, floating icons on the page with an animation
 		/* eslint-disable wpcalypso/jsx-gridicon-size, wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="checkout-processing-screen__floaties">
+			<div className="checkout-thank-you__floaties">
 				<Gridicon icon="add" size={ 64 } />
 				<Gridicon icon="aside" size={ 64 } />
 				<Gridicon icon="attachment" size={ 64 } />

@@ -336,7 +336,7 @@
 	}
 }
 
-.checkout-processing-screen__floaties {
+.checkout-thank-you__floaties {
 	pointer-events: none;
 	position: fixed;
 	top: 40px;
@@ -587,12 +587,13 @@
 	}
 }
 
-.checkout-thank-you .empty-content__title {
+.is-section-checkout-thank-you .empty-content__title {
 	font-size: 20px;
 	font-weight: normal;
 }
 
-.checkout-thank-you .empty-content__line {
+.is-section-checkout-thank-you .empty-content__line {
+	font-size: 16px;
 	font-weight: normal;
 }
 
