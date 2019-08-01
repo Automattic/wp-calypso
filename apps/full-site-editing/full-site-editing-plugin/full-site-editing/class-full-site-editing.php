@@ -356,19 +356,6 @@ class Full_Site_Editing {
 		);
 
 		register_block_type(
-			'a8c/site-logo',
-			array(
-				'attributes'      => array(
-					'editorPreview' => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-				),
-				'render_callback' => 'render_site_logo',
-			)
-		);
-
-		register_block_type(
 			'a8c/site-title',
 			array(
 				'render_callback' => 'render_site_title_block',
