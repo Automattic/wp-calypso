@@ -82,8 +82,9 @@ class CancelAutoRenewalForm extends Component {
 	};
 
 	createRadioButton = ( value, text ) => {
+		// adding `key` for resolving the unique key prop requirement when performing `map`
 		return (
-			<FormLabel>
+			<FormLabel key={ value }>
 				<FormRadio
 					value={ value }
 					onChange={ this.onRadioChange }
