@@ -99,8 +99,8 @@ const TemplateEdit = compose(
 			if ( ! isDirty ) {
 				return;
 			}
-			setNavigateToTemplate( true );
 			event.preventDefault();
+			setNavigateToTemplate( true );
 			savePost();
 		};
 
