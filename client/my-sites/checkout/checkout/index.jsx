@@ -410,7 +410,7 @@ export class Checkout extends React.Component {
 
 			// We cannot simply compare `hostname` to `selectedSiteSlug`, since the latter
 			// might contain a path in the case of Jetpack subdirectory installs.
-			if ( redirectTo.startsWith( adminUrl ) && pathname.endsWith( '/wp-admin/post.php' ) ) {
+			if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
 				const sanitizedRedirectTo = formatUrl( {
 					protocol,
 					hostname,
@@ -421,7 +421,6 @@ export class Checkout extends React.Component {
 						action: 'edit',
 					},
 				} );
-
 				return sanitizedRedirectTo;
 			}
 		}
