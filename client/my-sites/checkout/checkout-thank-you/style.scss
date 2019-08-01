@@ -587,10 +587,19 @@
 	}
 }
 
+.checkout-thank-you .empty-content__title {
+	font-size: 20px;
+	font-weight: normal;
+}
+
+.checkout-thank-you .empty-content__line {
+	font-weight: normal;
+}
+
 .checkout-thank-you__wordpress-logo {
 	height: 180px;
 	width: 180px;
-	fill: var( --color-text-subtle );
+	fill: var( --color-accent );
 	margin: 0 auto;
 	display: block;
 	transition: transform 0.8s cubic-bezier( 0.075, 0.82, 0.165, 1 );
