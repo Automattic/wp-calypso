@@ -37,7 +37,7 @@ export class HTTPError extends Error {
 		this.status = response.status;
 		try {
 			this.response = { body: JSON.parse( body ) };
-		} catch ( error ) {
+		} catch {
 			this.response = { body };
 		}
 	}
