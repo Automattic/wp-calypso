@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import request from 'superagent';
 import { get, defer, replace } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -48,7 +46,12 @@ import {
 } from 'state/action-types';
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getErrorFromHTTPError, getErrorFromWPCOMError, getSMSMessageFromResponse } from './utils';
+import {
+	getErrorFromHTTPError,
+	getErrorFromWPCOMError,
+	getSMSMessageFromResponse,
+	HTTPError,
+} from './utils';
 import wpcom from 'lib/wp';
 import { localizeUrl } from 'lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -109,6 +112,23 @@ export const remoteLoginUser = loginLinks => {
 	);
 };
 
+async function postLoginRequest( action, bodyObj ) {
+	const response = await fetch(
+		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: stringify( bodyObj ),
+		}
+	);
+
+	if ( response.ok ) {
+		return { body: await response.json() };
+	}
+	throw new HTTPError( response, await response.text() );
+}
+
 /**
  * Logs a user in.
  *
@@ -123,20 +143,15 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => di
 		type: LOGIN_REQUEST,
 	} );
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=login-endpoint' ) )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			username: usernameOrEmail,
-			password,
-			remember_me: true,
-			redirect_to: redirectTo,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-			domain: domain,
-		} )
+	return postLoginRequest( 'login-endpoint', {
+		username: usernameOrEmail,
+		password,
+		remember_me: true,
+		redirect_to: redirectTo,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		domain: domain,
+	} )
 		.then( response => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
@@ -195,22 +210,15 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request
-		.post(
-			localizeUrl( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
-		)
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			user_id: getTwoFactorUserId( getState() ),
-			auth_type: twoFactorAuthType,
-			two_step_code: replace( twoStepCode, /\s/g, '' ),
-			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-			remember_me: true,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} )
+	return postLoginRequest( 'two-step-authentication-endpoint', {
+		user_id: getTwoFactorUserId( getState() ),
+		auth_type: twoFactorAuthType,
+		two_step_code: replace( twoStepCode, /\s/g, '' ),
+		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
+		remember_me: true,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	} )
 		.then( response => {
 			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
@@ -247,17 +255,12 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' ) )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			...socialInfo,
-			redirect_to: redirectTo,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} )
+	return postLoginRequest( 'social-login-endpoint', {
+		...socialInfo,
+		redirect_to: redirectTo,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	} )
 		.then( response => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
@@ -433,16 +436,12 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		},
 	} );
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' ) )
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			user_id: getTwoFactorUserId( getState() ),
-			two_step_nonce: getTwoFactorAuthNonce( getState(), 'sms' ),
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} )
+	return postLoginRequest( 'send-sms-code-endpoint', {
+		user_id: getTwoFactorUserId( getState() ),
+		two_step_nonce: getTwoFactorAuthNonce( getState(), 'sms' ),
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	} )
 		.then( response => {
 			const message = getSMSMessageFromResponse( response );
 
@@ -485,17 +484,12 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
 	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
 	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
 
-	return request
-		.post( localizeUrl( 'https://wordpress.com/wp-login.php?action=logout-endpoint' ) )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			redirect_to: redirectTo,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-			logout_nonce: logoutNonce,
-		} )
+	return postLoginRequest( 'logout-endpoint', {
+		redirect_to: redirectTo,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		logout_nonce: logoutNonce,
+	} )
 		.then( response => {
 			const data = get( response, 'body.data', {} );
 
