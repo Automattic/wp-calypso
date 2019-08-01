@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, ReactNode, isValidElement } from 'react';
 import { get } from 'lodash';
 
 /**
@@ -13,7 +13,7 @@ import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
 
 export interface PromoSectionCardProps extends PromoCardProps {
 	body: string | TranslateResult;
-	actions?: PromoCardCtaProps;
+	actions?: PromoCardCtaProps | ReactNode;
 }
 
 export interface Props {
@@ -34,11 +34,13 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	actions,
 } ) => {
 	const cta = get( actions, 'cta', null );
+	const ctaNode = ! cta && isValidElement( actions ) ? actions : null;
 	const learnMoreLink = get( actions, 'learnMoreLink', null );
 	return (
 		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image }>
 			<p>{ body }</p>
 			{ cta && <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } /> }
+			{ ctaNode }
 		</PromoCard>
 	);
 };
