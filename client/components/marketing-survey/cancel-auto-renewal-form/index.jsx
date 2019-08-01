@@ -58,7 +58,10 @@ class CancelAutoRenewalForm extends Component {
 		const { purchase, selectedSite } = this.props;
 		const { response, feedback } = this.state;
 
-		const surveyData = { response, feedback };
+		const surveyData = {
+			response,
+			feedback: feedback.trim(),
+		};
 
 		submitSurvey(
 			'calypso-cancel-auto-renewal',
@@ -99,6 +102,8 @@ class CancelAutoRenewalForm extends Component {
 		const { translate, isVisible, onClose } = this.props;
 		const { response, feedback } = this.state;
 
+		const disableSubmit = ! response || ( response === OTHER_FEEDBACK && ! feedback.trim() );
+
 		return (
 			<Dialog
 				className="cancel-auto-renewal-form__dialog"
@@ -128,7 +133,9 @@ class CancelAutoRenewalForm extends Component {
 				</FormFieldset>
 
 				<FormButtonsBar>
-					<FormButton onClick={ this.onSubmit }>{ translate( 'Submit' ) }</FormButton>
+					<FormButton onClick={ this.onSubmit } disabled={ disableSubmit }>
+						{ translate( 'Submit' ) }
+					</FormButton>
 					<FormButton isPrimary={ false } onClick={ onClose }>
 						{ translate( 'Skip' ) }
 					</FormButton>
