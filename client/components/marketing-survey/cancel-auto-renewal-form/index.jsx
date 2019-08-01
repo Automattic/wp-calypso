@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
@@ -25,6 +26,14 @@ import './style.scss';
 const OTHER_FEEDBACK = 'other-feedback';
 
 class CancelAutoRenewalForm extends Component {
+	static propTypes = {
+		purchase: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object.isRequired,
+		isVisible: PropTypes.bool,
+		onClose: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
 	state = {
 		response: '',
 		feedback: '',
