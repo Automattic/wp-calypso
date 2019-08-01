@@ -140,11 +140,11 @@ export async function getStateFromLocalStorage( reducer, subkey, forceLoggedOutU
 }
 
 function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( get( user.get(), 'ID', null ), forceLoggedOutUser );
+	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : get( user.get(), 'ID', null ) );
 }
 
-function getReduxStateKeyForUserId( userId, forceLoggedOutUser = false ) {
-	if ( ! userId || forceLoggedOutUser ) {
+function getReduxStateKeyForUserId( userId ) {
+	if ( ! userId ) {
 		return 'redux-state-logged-out';
 	}
 	return 'redux-state-' + userId;
@@ -246,7 +246,7 @@ async function getInitialStoredState( initialReducer ) {
 		}
 
 		if ( storedState ) {
-			initialStoredState = initialReducer( initialStoredState || {}, {
+			initialStoredState = initialReducer( initialStoredState, {
 				type: APPLY_STORED_STATE,
 				storageKey,
 				storedState,
