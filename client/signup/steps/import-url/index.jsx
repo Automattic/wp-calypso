@@ -37,6 +37,7 @@ const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
 
 class ImportURLStepComponent extends Component {
 	state = {
+		displayFallbackEngines: false,
 		isLoading: false,
 		// Url message could be client-side validation or server-side error.
 		urlValidationMessage: '',
@@ -80,6 +81,7 @@ class ImportURLStepComponent extends Component {
 		const { stepName, translate, urlInputValue } = this.props;
 
 		this.setState( {
+			displayFallbackEngines: false,
 			isLoading: true,
 			urlValidationMessage: '',
 		} );
@@ -111,6 +113,12 @@ class ImportURLStepComponent extends Component {
 					if ( 'unknown' !== siteEngine && isEmpty( importerTypes ) ) {
 						// @todo: Do we actually want an error here? Shouldn't this lead to the fallback step?
 						// return this.setUrlError( '...' );
+					}
+
+					if ( 'unknown' === siteEngine || isEmpty( importerTypes ) ) {
+						return this.setState( {
+							displayFallbackEngines: true,
+						} );
 					}
 
 					this.props.setImportOriginSiteDetails( {
@@ -193,6 +201,10 @@ class ImportURLStepComponent extends Component {
 		} );
 	};
 
+	renderFallbackEngines = () => {
+		return <div className="import-url__escape">Display fallback engines here...</div>;
+	};
+
 	renderNotice = () => {
 		const { urlValidationMessage } = this.state;
 
@@ -209,7 +221,7 @@ class ImportURLStepComponent extends Component {
 
 	renderContent = () => {
 		const { urlInputValue, translate } = this.props;
-		const { isLoading, urlValidationMessage } = this.state;
+		const { displayFallbackEngines, isLoading, urlValidationMessage } = this.state;
 
 		return (
 			<Fragment>
@@ -247,6 +259,8 @@ class ImportURLStepComponent extends Component {
 					</form>
 					{ this.renderNotice() }
 				</div>
+
+				{ displayFallbackEngines && this.renderFallbackEngines() }
 
 				<div className="import-url__example">
 					<ul className="import-url__example-urls">
