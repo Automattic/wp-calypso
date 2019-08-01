@@ -42,6 +42,7 @@ const EditorTemplateClasses = withSelect( select => {
 			'editor-writing-flow',
 			...templatePartClasses
 		);
+		blockList.style.padding = 0;
 	} );
 
 	return null;
