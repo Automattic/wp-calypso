@@ -10,6 +10,14 @@ import { includes } from 'lodash';
  */
 import getBlogStickers from 'state/selectors/get-blog-stickers';
 import { hasStaticFrontPage } from 'state/sites/selectors';
+import { getActiveTheme } from 'state/themes/selectors';
+
+/**
+ * List of themes that are supported by Full Site Editing so we can call it "active"
+ *
+ * @type {Array}
+ */
+const supportedThemes = [ 'modern-business' ];
 
 /**
  * Checks if a site is using the new Full Site Editing experience
@@ -19,5 +27,10 @@ import { hasStaticFrontPage } from 'state/sites/selectors';
  */
 export default function isSiteUsingFullSiteEditing( state, siteId ) {
 	const stickers = getBlogStickers( state, siteId );
-	return hasStaticFrontPage( state, siteId ) && includes( stickers, 'full-site-editing' );
+	const activeTheme = getActiveTheme( state, siteId );
+	return (
+		hasStaticFrontPage( state, siteId ) &&
+		includes( supportedThemes, activeTheme ) &&
+		includes( stickers, 'full-site-editing' )
+	);
 }
