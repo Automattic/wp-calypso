@@ -350,4 +350,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( '.edit-post-fullscreen-mode-close__toolbar, .edit-post-header-toolbar__back' )
 		);
 	}
+
+	async dismissPageTemplateSelector() {
+		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.page-template-modal .components-modal__header button' )
+			);
+		}
+	}
 }
