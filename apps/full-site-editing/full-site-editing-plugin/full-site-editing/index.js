@@ -9,6 +9,6 @@ import './blocks/template';
 import './blocks/site-logo';
 import './plugins/template-selector-sidebar';
 import './plugins/close-button-override';
-import './plugins/template-update-confirmation';
 import './plugins/editor-template-classes';
+import './plugins/template-update-notice';
 import './editor';
