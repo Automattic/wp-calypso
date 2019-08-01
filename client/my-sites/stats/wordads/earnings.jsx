@@ -144,7 +144,7 @@ class WordAdsEarnings extends Component {
 				}
 			),
 			payout = translate(
-				'Outstanding amount of $%(amountOwed)s will be paid by the last business day of the month.',
+				'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
 				{
 					comment: 'Payout will proceed.',
 					args: { amountOwed: owed },
