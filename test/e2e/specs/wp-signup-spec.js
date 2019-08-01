@@ -1249,6 +1249,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
+				if ( process.env.HORIZON_TESTS === 'true' ) {
+					return this.skip();
+				}
 				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
 			}
 		);
@@ -1256,6 +1259,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the secure payment page with the chosen theme in the cart',
 			async function() {
+				if ( process.env.HORIZON_TESTS === 'true' ) {
+					return this.skip();
+				}
 				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 				const products = await securePaymentComponent.getProductsNames();
 				assert(
