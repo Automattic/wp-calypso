@@ -1,0 +1,129 @@
+.color-scheme.is-midnight {
+	--color-primary: #{$muriel-gray-700};
+	--color-primary-rgb: #{hex-to-rgb( $muriel-gray-700 )};
+	--color-primary-light: #{$muriel-gray-500};
+	--color-primary-light-rgb: #{hex-to-rgb( $muriel-gray-500 )};
+	--color-primary-dark: #{$muriel-gray-800};
+	--color-primary-dark-rgb: #{hex-to-rgb( $muriel-gray-800 )};
+	--color-primary-0: #{$muriel-gray-0};
+	--color-primary-0-rgb: #{hex-to-rgb( $muriel-gray-0 )};
+	--color-primary-50: #{$muriel-gray-50};
+	--color-primary-50-rgb: #{hex-to-rgb( $muriel-gray-50 )};
+	--color-primary-100: #{$muriel-gray-100};
+	--color-primary-100-rgb: #{hex-to-rgb( $muriel-gray-100 )};
+	--color-primary-200: #{$muriel-gray-200};
+	--color-primary-200-rgb: #{hex-to-rgb( $muriel-gray-200 )};
+	--color-primary-300: #{$muriel-gray-300};
+	--color-primary-300-rgb: #{hex-to-rgb( $muriel-gray-300 )};
+	--color-primary-400: #{$muriel-gray-400};
+	--color-primary-400-rgb: #{hex-to-rgb( $muriel-gray-400 )};
+	--color-primary-500: #{$muriel-gray-500};
+	--color-primary-500-rgb: #{hex-to-rgb( $muriel-gray-500 )};
+	--color-primary-600: #{$muriel-gray-600};
+	--color-primary-600-rgb: #{hex-to-rgb( $muriel-gray-600 )};
+	--color-primary-700: #{$muriel-gray-700};
+	--color-primary-700-rgb: #{hex-to-rgb( $muriel-gray-700 )};
+	--color-primary-800: #{$muriel-gray-800};
+	--color-primary-800-rgb: #{hex-to-rgb( $muriel-gray-800 )};
+	--color-primary-900: #{$muriel-gray-900};
+	--color-primary-900-rgb: #{hex-to-rgb( $muriel-gray-900 )};
+
+	--color-accent: #{$muriel-blue-400};
+	--color-accent-rgb: #{hex-to-rgb( $muriel-blue-400 )};
+	--color-accent-dark: #{$muriel-blue-700};
+	--color-accent-dark-rgb: #{hex-to-rgb( $muriel-blue-700 )};
+	--color-accent-light: #{$muriel-blue-300};
+	--color-accent-light-rgb: #{hex-to-rgb( $muriel-blue-300 )};
+	--color-accent-0: #{$muriel-blue-0};
+	--color-accent-0-rgb: #{hex-to-rgb( $muriel-blue-0 )};
+	--color-accent-50: #{$muriel-blue-50};
+	--color-accent-50-rgb: #{hex-to-rgb( $muriel-blue-50 )};
+	--color-accent-100: #{$muriel-blue-100};
+	--color-accent-100-rgb: #{hex-to-rgb( $muriel-blue-100 )};
+	--color-accent-200: #{$muriel-blue-200};
+	--color-accent-200-rgb: #{hex-to-rgb( $muriel-blue-200 )};
+	--color-accent-300: #{$muriel-blue-300};
+	--color-accent-300-rgb: #{hex-to-rgb( $muriel-blue-300 )};
+	--color-accent-400: #{$muriel-blue-400};
+	--color-accent-400-rgb: #{hex-to-rgb( $muriel-blue-400 )};
+	--color-accent-500: #{$muriel-blue-500};
+	--color-accent-500-rgb: #{hex-to-rgb( $muriel-blue-500 )};
+	--color-accent-600: #{$muriel-blue-600};
+	--color-accent-600-rgb: #{hex-to-rgb( $muriel-blue-600 )};
+	--color-accent-700: #{$muriel-blue-700};
+	--color-accent-700-rgb: #{hex-to-rgb( $muriel-blue-700 )};
+	--color-accent-800: #{$muriel-blue-800};
+	--color-accent-800-rgb: #{hex-to-rgb( $muriel-blue-800 )};
+	--color-accent-900: #{$muriel-blue-900};
+	--color-accent-900-rgb: #{hex-to-rgb( $muriel-blue-900 )};
+
+	--color-text: #{$muriel-gray-900};
+	--color-text-subtle: #{$muriel-gray-600};
+	--color-surface: #{$muriel-white};
+	--color-surface-backdrop: #{$muriel-gray-0};
+
+	--color-link: #{$muriel-red-600};
+	--color-link-rgb: #{hex-to-rgb( $muriel-red-600 )};
+	--color-link-dark: #{$muriel-red-700};
+	--color-link-dark-rgb: #{hex-to-rgb( $muriel-red-700 )};
+	--color-link-light: #{$muriel-red-300};
+	--color-link-light-rgb: #{hex-to-rgb( $muriel-red-300 )};
+	--color-link-0: #{$muriel-red-0};
+	--color-link-0-rgb: #{hex-to-rgb( $muriel-red-0 )};
+	--color-link-50: #{$muriel-red-50};
+	--color-link-50-rgb: #{hex-to-rgb( $muriel-red-50 )};
+	--color-link-100: #{$muriel-red-100};
+	--color-link-100-rgb: #{hex-to-rgb( $muriel-red-100 )};
+	--color-link-200: #{$muriel-red-200};
+	--color-link-200-rgb: #{hex-to-rgb( $muriel-red-200 )};
+	--color-link-300: #{$muriel-red-300};
+	--color-link-300-rgb: #{hex-to-rgb( $muriel-red-300 )};
+	--color-link-400: #{$muriel-red-400};
+	--color-link-400-rgb: #{hex-to-rgb( $muriel-red-400 )};
+	--color-link-500: #{$muriel-red-500};
+	--color-link-500-rgb: #{hex-to-rgb( $muriel-red-500 )};
+	--color-link-600: #{$muriel-red-600};
+	--color-link-600-rgb: #{hex-to-rgb( $muriel-red-600 )};
+	--color-link-700: #{$muriel-red-700};
+	--color-link-700-rgb: #{hex-to-rgb( $muriel-red-700 )};
+	--color-link-800: #{$muriel-red-800};
+	--color-link-800-rgb: #{hex-to-rgb( $muriel-red-800 )};
+	--color-link-900: #{$muriel-red-900};
+	--color-link-900-rgb: #{hex-to-rgb( $muriel-red-900 )};
+
+	--color-button-primary-background-hover: #{$muriel-blue-500};
+	--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
+
+	--masterbar-color: #{$muriel-white};
+	--masterbar-border-color: #{$muriel-gray-700};
+	--masterbar-item-new-editor-background: #{$muriel-gray-500};
+	--masterbar-item-new-editor-hover-background: #{$muriel-gray-600};
+	--masterbar-toggle-drafts-editor-background: #{$muriel-gray-600};
+	--masterbar-toggle-drafts-editor-border-color: #{$muriel-gray-100};
+	--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
+
+	--sidebar-background: #{$muriel-gray-800};
+	--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-800 )};
+	--sidebar-secondary-background: #{$muriel-white};
+	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
+	--sidebar-border-color: #{$muriel-gray-700};
+	--sidebar-text-color: #{$muriel-white};
+	--sidebar-gridicon-fill: #{$muriel-white};
+	--sidebar-heading-color: #{$muriel-gray-100};
+	--sidebar-menu-link-secondary-text-color: #{$muriel-gray-300};
+	--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-800 )};
+	--sidebar-menu-selected-background-color: #{$muriel-red-600};
+	--sidebar-menu-selected-a-color: #{$muriel-white};
+	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-red-600 )};
+	--sidebar-menu-hover-background: #{$muriel-gray-700};
+	--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-700 )};
+	--sidebar-menu-hover-color: #{$muriel-white};
+
+	// TODO:
+	// Once we replace the current default theme with Classic Bright, we can
+	// remove these and increase consistency by using the sidebar colors instead
+	--button-is-borderless-color: #{$muriel-gray-600};
+	--count-border-color: #{$muriel-gray-600};
+	--count-color: #{$muriel-gray-600};
+	--profile-gravatar-user-secondary-info-color: #{$muriel-gray-300};
+}

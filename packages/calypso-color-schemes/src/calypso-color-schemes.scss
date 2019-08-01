@@ -1,3 +1,17 @@
 @import 'shared/functions/hex-to-rgb';
 @import 'shared/colors';
-@import 'shared/color-schemes';
+
+// Default color scheme
+@import 'shared/color-schemes/defaults/generic';
+@import 'shared/color-schemes/defaults/scheme';
+@import 'shared/color-schemes/defaults/brands';
+
+// Color schemes that override default properties
+@import 'shared/color-schemes/classic-blue';
+@import 'shared/color-schemes/contrast';
+@import 'shared/color-schemes/midnight';
+@import 'shared/color-schemes/nightfall';
+@import 'shared/color-schemes/ocean';
+@import 'shared/color-schemes/powder-snow';
+@import 'shared/color-schemes/sakura';
+@import 'shared/color-schemes/sunset';

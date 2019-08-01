@@ -1,9 +1,11 @@
 // External Dependencies
 @import 'vendor';
 
+// Color Schemes
+@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
-@import '~@automattic/calypso-color-schemes/src/shared/color-schemes'; // import color schemes
 @import 'shared/animation'; // all UI animation
 @import 'shared/forms'; // form styling
 

@@ -10,15 +10,13 @@
 //
 // Usage:
 // @include long-content-fade();
-// @include long-content-fade( $color: hex-to-rgb( $muriel-gray-500 ) );
-// --sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-blue-50 )};
 // @include long-content-fade( $color: var( --sidebar-secondary-background-gradient ) );
 // ==========================================================================
 
 @mixin long-content-fade(
 	$direction: right,
 	$size: 20%,
-	$color: hex-to-rgb( $muriel-white ),
+	$color: var( --color-white-rgb ),
 	$edge: 0,
 	$z-index: false
 ) {

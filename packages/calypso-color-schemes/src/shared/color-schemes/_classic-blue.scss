@@ -1,0 +1,49 @@
+.color-scheme.is-classic-blue {
+	--color-accent: #{$muriel-orange-500};
+	--color-accent-rgb: #{hex-to-rgb( $muriel-orange-500 )};
+	--color-accent-dark: #{$muriel-orange-700};
+	--color-accent-dark-rgb: #{hex-to-rgb( $muriel-orange-700 )};
+	--color-accent-light: #{$muriel-orange-300};
+	--color-accent-light-rgb: #{hex-to-rgb( $muriel-orange-300 )};
+	--color-accent-0: #{$muriel-orange-0};
+	--color-accent-0-rgb: #{hex-to-rgb( $muriel-orange-0 )};
+	--color-accent-50: #{$muriel-orange-50};
+	--color-accent-50-rgb: #{hex-to-rgb( $muriel-orange-50 )};
+	--color-accent-100: #{$muriel-orange-100};
+	--color-accent-100-rgb: #{hex-to-rgb( $muriel-orange-100 )};
+	--color-accent-200: #{$muriel-orange-200};
+	--color-accent-200-rgb: #{hex-to-rgb( $muriel-orange-200 )};
+	--color-accent-300: #{$muriel-orange-300};
+	--color-accent-300-rgb: #{hex-to-rgb( $muriel-orange-300 )};
+	--color-accent-400: #{$muriel-orange-400};
+	--color-accent-400-rgb: #{hex-to-rgb( $muriel-orange-400 )};
+	--color-accent-500: #{$muriel-orange-500};
+	--color-accent-500-rgb: #{hex-to-rgb( $muriel-orange-500 )};
+	--color-accent-600: #{$muriel-orange-600};
+	--color-accent-600-rgb: #{hex-to-rgb( $muriel-orange-600 )};
+	--color-accent-700: #{$muriel-orange-700};
+	--color-accent-700-rgb: #{hex-to-rgb( $muriel-orange-700 )};
+	--color-accent-800: #{$muriel-orange-800};
+	--color-accent-800-rgb: #{hex-to-rgb( $muriel-orange-800 )};
+	--color-accent-900: #{$muriel-orange-900};
+	--color-accent-900-rgb: #{hex-to-rgb( $muriel-orange-900 )};
+
+	--color-button-primary-background-hover: #{$muriel-orange-400};
+
+	--sidebar-background: #{$muriel-gray-50};
+	--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
+	--sidebar-heading-color: #{$muriel-gray-600};
+	--sidebar-border-color: #{$muriel-gray-100};
+	--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-50 )};
+	--sidebar-menu-selected-background-color: #{$muriel-gray-500};
+	--sidebar-menu-selected-a-color: #{$muriel-white};
+	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-500 )};
+	--sidebar-menu-hover-background: #{$muriel-white};
+	--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-white )};
+	--sidebar-menu-hover-color: #{$muriel-blue-500};
+
+	// TODO:
+	// Once we replace the current default theme with Classic Bright, we can
+	// remove these and increase consistency by using the sidebar colors instead
+	--profile-gravatar-user-secondary-info-color: #{$muriel-gray-500};
+}
