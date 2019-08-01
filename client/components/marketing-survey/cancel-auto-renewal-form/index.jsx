@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,25 +18,51 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
+import { submitSurvey } from 'lib/upgrades/actions';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import './style.scss';
+
+const OTHER_FEEDBACK = 'other-feedback';
 
 class CancelAutoRenewalForm extends Component {
 	state = {
-		checkedRadio: '',
+		response: '',
 		feedback: '',
 	};
 
-	onSubmit = () => {
-		this.props.onClose();
-	};
+	radioButtons = {};
 
-	closeDialog = () => {
+	constructor( props ) {
+		super( props );
+
+		const { translate } = props;
+
+		this.radioButtons = [
+			[ 'take-a-break', translate( "Yes, I'm just taking a break for now." ) ],
+			[ 'manual-renew', translate( 'Yes, I want to renew manually.' ) ],
+			[ 'stop-renew', translate( 'No, I don’t have any plans to renew it.' ) ],
+			[ OTHER_FEEDBACK, translate( 'Another reason' ) ],
+		];
+	}
+
+	onSubmit = () => {
+		const { purchase, selectedSite } = this.props;
+		const { response, feedback } = this.state;
+
+		const surveyData = { response, feedback };
+
+		submitSurvey(
+			'calypso-cancel-auto-renewal',
+			selectedSite.ID,
+			enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
+		);
+
 		this.props.onClose();
 	};
 
 	onRadioChange = event => {
 		this.setState( {
-			checkedRadio: event.currentTarget.value,
+			response: event.currentTarget.value,
 		} );
 	};
 
@@ -46,15 +72,28 @@ class CancelAutoRenewalForm extends Component {
 		} );
 	};
 
+	createRadioButton = ( value, text ) => {
+		return (
+			<FormLabel>
+				<FormRadio
+					value={ value }
+					onChange={ this.onRadioChange }
+					checked={ this.state.response === value }
+				/>
+				<span>{ text }</span>
+			</FormLabel>
+		);
+	};
+
 	render() {
-		const { translate, isVisible } = this.props;
-		const { checkedRadio, feedback } = this.state;
+		const { translate, isVisible, onClose } = this.props;
+		const { response, feedback } = this.state;
 
 		return (
 			<Dialog
 				className="cancel-auto-renewal-form__dialog"
 				isVisible={ isVisible }
-				onClose={ this.closeDialog }
+				onClose={ onClose }
 			>
 				<FormSectionHeading className="cancel-auto-renewal-form__header">
 					{ translate( 'Your thoughts are needed.' ) }
@@ -66,39 +105,10 @@ class CancelAutoRenewalForm extends Component {
 								'Do you think you might use your current subscription after it expires?'
 						) }
 					</p>
-					<FormLabel>
-						<FormRadio
-							value="radio-1"
-							onChange={ this.onRadioChange }
-							checked={ checkedRadio === 'radio-1' }
-						/>
-						<span>{ translate( "Yes, I'm just taking a break for now." ) }</span>
-					</FormLabel>
-					<FormLabel>
-						<FormRadio
-							value="radio-2"
-							onChange={ this.onRadioChange }
-							checked={ checkedRadio === 'radio-2' }
-						/>
-						<span>{ translate( 'Yes, I want to renew manually.' ) }</span>
-					</FormLabel>
-					<FormLabel>
-						<FormRadio
-							value="radio-3"
-							onChange={ this.onRadioChange }
-							checked={ checkedRadio === 'radio-3' }
-						/>
-						<span>{ translate( 'No, I don’t have any plans to renew it.' ) }</span>
-					</FormLabel>
-					<FormLabel>
-						<FormRadio
-							value="radio-4"
-							onChange={ this.onRadioChange }
-							checked={ checkedRadio === 'radio-4' }
-						/>
-						<span>{ translate( 'Another reason' ) }</span>
-					</FormLabel>
-					{ checkedRadio === 'radio-4' && (
+					{ this.radioButtons.map( radioButton =>
+						this.createRadioButton( radioButton[ 0 ], radioButton[ 1 ] )
+					) }
+					{ response === OTHER_FEEDBACK && (
 						<FormTextInput
 							placeholder={ translate( 'Please enter your feedback here.' ) }
 							value={ feedback }
@@ -109,7 +119,7 @@ class CancelAutoRenewalForm extends Component {
 
 				<FormButtonsBar>
 					<FormButton onClick={ this.onSubmit }>{ translate( 'Submit' ) }</FormButton>
-					<FormButton isPrimary={ false } onClick={ this.closeDialog }>
+					<FormButton isPrimary={ false } onClick={ onClose }>
 						{ translate( 'Skip' ) }
 					</FormButton>
 				</FormButtonsBar>
