@@ -214,9 +214,7 @@ class Task extends PureComponent {
 											className="checklist__task-launch-site-blocked-notice"
 											showDismiss={ false }
 										>
-											{ translate(
-												'Please confirm your email address before launching your site.'
-											) }
+											{ translate( 'Confirm your email address before launching your site.' ) }
 										</Notice>
 									) }
 								</div>

@@ -613,7 +613,7 @@ class WpcomChecklistComponent extends PureComponent {
 				buttonText={ translate( 'Launch site' ) }
 				completedTitle={ translate( 'You launched your site' ) }
 				description={ translate(
-					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
+					'Your site is private and only visible to you. When you are ready, launch your site to make it public.'
 				) }
 				onClick={ this.handleLaunchSite( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
