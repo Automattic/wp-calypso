@@ -3,3 +3,14 @@
 		display: none;
 	}
 }
+
+.post-type-page, .post-type-wp_template_part {
+	.editor-styles-wrapper {
+		padding: 0;
+		margin: 0;
+	}
+
+	.template-block {
+		margin-top: -28px;
+	}
+}
