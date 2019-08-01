@@ -59,7 +59,6 @@
 		"jetpack/connect/site-questions": true,
 		"jetpack/connect/woocommerce": false,
 		"jetpack/happychat": true,
-		"jetpack/gutenframe": true,
 		"jitms": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
