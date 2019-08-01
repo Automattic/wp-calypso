@@ -18,7 +18,7 @@ import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
-import { setNuxUrlInputValue } from 'state/importer-nux/actions';
+import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from 'lib/importers/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -113,13 +113,22 @@ class ImportURLStepComponent extends Component {
 						// return this.setUrlError( '...' );
 					}
 
+					this.props.setImportOriginSiteDetails( {
+						importerTypes,
+						importSiteUrl: siteUrl,
+						siteEngine,
+						siteFavicon,
+						siteTitle,
+					} );
+
 					this.props.submitSignupStep(
 						{ stepName },
 						pickBy( {
-							siteEngine,
-							siteFavicon,
-							siteUrl,
+							importSiteEngine: siteEngine,
+							importSiteFavicon: siteFavicon,
+							importSiteUrl: siteUrl,
 							siteTitle,
+							themeSlugWithRepo: 'pub/modern-business',
 						} )
 					);
 					this.props.goToNextStep();
@@ -307,6 +316,7 @@ export default flow(
 		} ),
 		{
 			recordTracksEvent,
+			setImportOriginSiteDetails,
 			setNuxUrlInputValue,
 		}
 	),

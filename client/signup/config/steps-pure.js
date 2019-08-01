@@ -416,9 +416,9 @@ export function generateSteps( {
 		'from-url': {
 			stepName: 'from-url',
 			providesDependencies: [
-				'siteEngine',
-				'siteFavicon',
-				'siteUrl',
+				'importSiteEngine',
+				'importSiteFavicon',
+				'importSiteUrl',
 				'siteTitle',
 				'themeSlugWithRepo',
 			],
