@@ -14,7 +14,8 @@ import { SiteSlug } from 'types';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { isCurrentPlanPaid } from 'state/sites/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
 import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
@@ -26,6 +27,8 @@ interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
 	isFreePlan: boolean;
+	isJetpack: boolean;
+	isAtomicSite: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
 	hasConnectedAccount: boolean;
@@ -39,6 +42,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
+	isJetpack,
+	isAtomicSite,
 	hasSimplePayments,
 	hasWordAds,
 	hasConnectedAccount,
@@ -153,20 +158,36 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getReferralsCard = () => {
+		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 		const cta = {
 			text: translate( 'Earn Cash from Referrals' ),
-			action: { url: 'https://refer.wordpress.com/', onClick: () => trackCtaButton( 'referral' ) },
+			action: isJetpackNotAtomic
+				? {
+						url: 'https://jetpack.com/for/affiliates/',
+						onClick: () => trackCtaButton( 'referral-jetpack' ),
+				  }
+				: {
+						url: 'https://refer.wordpress.com/',
+						onClick: () => trackCtaButton( 'referral-wpcom' ),
+				  },
 		};
+		const components = {
+			components: {
+				em: <em />,
+			},
+		};
+
 		return {
 			title: translate( 'Earn cash from referrals' ),
-			body: translate(
-				"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
-				{
-					components: {
-						em: <em />,
-					},
-				}
-			),
+			body: isJetpackNotAtomic
+				? translate(
+						"Promote Jetpack to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
+						components
+				  )
+				: translate(
+						"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
+						components
+				  ),
 			image: {
 				path: '/calypso/images/earn/referral.svg',
 			},
@@ -261,6 +282,8 @@ export default connect< ConnectedProps, {}, {} >(
 			siteId: site.ID,
 			selectedSiteSlug,
 			isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
+			isJetpack: isJetpackSite( state, site.ID ),
+			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
 			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount: !! get(
