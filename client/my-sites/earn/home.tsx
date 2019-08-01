@@ -28,7 +28,7 @@ interface ConnectedProps {
 	selectedSiteSlug: SiteSlug;
 	isFreePlan: boolean;
 	isJetpack: boolean;
-	isATSite: boolean;
+	isAtomicSite: boolean;
 	hasSimplePayments: boolean;
 	hasWordAds: boolean;
 	hasConnectedAccount: boolean;
@@ -43,7 +43,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	selectedSiteSlug,
 	isFreePlan,
 	isJetpack,
-	isATSite,
+	isAtomicSite,
 	hasSimplePayments,
 	hasWordAds,
 	hasConnectedAccount,
@@ -158,15 +158,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getReferralsCard = () => {
-		const isJetpackNotATSite: boolean = isJetpack && ! isATSite;
+		const isJetpackNotAtomic: boolean = isJetpack && ! isAtomicSite;
 		const cta = {
 			text: translate( 'Earn Cash from Referrals' ),
-			action: {
-				url: isJetpackNotATSite
-					? 'https://jetpack.com/for/affiliates/'
-					: 'https://refer.wordpress.com/',
-				onClick: () => trackCtaButton( 'referral' ),
-			},
+			action: isJetpackNotAtomic
+				? {
+						url: 'https://jetpack.com/for/affiliates/',
+						onClick: () => trackCtaButton( 'referral-jetpack' ),
+				  }
+				: {
+						url: 'https://refer.wordpress.com/',
+						onClick: () => trackCtaButton( 'referral-wpcom' ),
+				  },
 		};
 		const components = {
 			components: {
@@ -176,7 +179,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		return {
 			title: translate( 'Earn cash from referrals' ),
-			body: isJetpackNotATSite
+			body: isJetpackNotAtomic
 				? translate(
 						"Promote Jetpack to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
 						components
@@ -280,7 +283,7 @@ export default connect< ConnectedProps, {}, {} >(
 			selectedSiteSlug,
 			isFreePlan: ! isCurrentPlanPaid( state, site.ID ),
 			isJetpack: isJetpackSite( state, site.ID ),
-			isATSite: isSiteAutomatedTransfer( state, site.ID ),
+			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
 			hasWordAds: hasFeature( state, site.ID, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, site.ID, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount: !! get(
