@@ -64,6 +64,9 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 		: {
 				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
 		  };
+	if ( undefined !== actionProps.href ) {
+		actionProps.target = '_blank';
+	}
 	return {
 		className: 'promo-card__cta-button',
 		primary: isPrimary,
@@ -85,9 +88,11 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 		learnMore = isCtaAction( learnMoreLink )
 			? {
 					href: learnMoreLink.url,
+					target: '_blank',
 					onClick: learnMoreLink.onClick,
 			  }
 			: {
+					target: '_blank',
 					href: learnMoreLink,
 			  };
 	}
