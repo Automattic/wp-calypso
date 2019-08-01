@@ -2,8 +2,10 @@
 /**
  * Render template block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Renders template.

@@ -1,14 +1,16 @@
 <?php
 /**
- * A8C WP Template file.
+ * WP Template file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
 
+namespace A8C\FSE;
+
 /**
- * Class A8C_WP_Template
+ * Class WP_Template
  */
-class A8C_WP_Template {
+class WP_Template {
 	/**
 	 * Header template part type constant.
 	 *

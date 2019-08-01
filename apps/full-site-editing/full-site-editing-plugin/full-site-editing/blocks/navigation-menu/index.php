@@ -1,16 +1,18 @@
 <?php
 /**
- * Render navigation menu block file
+ * Render navigation menu block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Render the navigation menu.
  *
  * @return string
  */
-function a8c_fse_render_navigation_menu_block() {
+function render_navigation_menu_block() {
 	$menu = wp_nav_menu(
 		[
 			'echo'           => false,
@@ -25,7 +27,7 @@ function a8c_fse_render_navigation_menu_block() {
 	?>
 	<nav class="main-navigation wp-block-a8c-navigation-menu">
 		<div class="menu-nav-container">
-			<?php echo $menu ? $menu : a8c_fse_get_fallback_navigation_menu(); ?>
+			<?php echo $menu ? $menu : get_fallback_navigation_menu(); ?>
 		</div>
 	</nav>
 	<!-- #site-navigation -->
@@ -40,7 +42,7 @@ function a8c_fse_render_navigation_menu_block() {
  *
  * @return string
  */
-function a8c_fse_get_fallback_navigation_menu() {
+function get_fallback_navigation_menu() {
 	$menu = wp_page_menu(
 		[
 			'after'       => false,
