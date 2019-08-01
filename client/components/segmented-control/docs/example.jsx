@@ -11,7 +11,6 @@ import React from 'react';
  */
 import SegmentedControl from 'components/segmented-control';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
-import ControlItem from 'components/segmented-control/item';
 
 class SegmentedControlDemo extends React.PureComponent {
 	static displayName = 'SegmentedControl';
@@ -36,7 +35,7 @@ class SegmentedControlDemo extends React.PureComponent {
 	};
 
 	render() {
-		var controlDemoStyles = { maxWidth: 386 };
+		const controlDemoStyles = { maxWidth: 386 };
 
 		return (
 			<div>
@@ -59,40 +58,40 @@ class SegmentedControlDemo extends React.PureComponent {
 					primary={ true }
 					compact={ this.state.compact }
 				>
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'all' }
 						onClick={ this.selectChildSegment.bind( this, 'all' ) }
 					>
 						All
-					</ControlItem>
+					</SegmentedControl.Item>
 
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'unread' }
 						onClick={ this.selectChildSegment.bind( this, 'unread' ) }
 					>
 						Unread
-					</ControlItem>
+					</SegmentedControl.Item>
 
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'comments' }
 						onClick={ this.selectChildSegment.bind( this, 'comments' ) }
 					>
 						Comments
-					</ControlItem>
+					</SegmentedControl.Item>
 
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'follows' }
 						onClick={ this.selectChildSegment.bind( this, 'follows' ) }
 					>
 						Follows
-					</ControlItem>
+					</SegmentedControl.Item>
 
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'likes' }
 						onClick={ this.selectChildSegment.bind( this, 'likes' ) }
 					>
 						Likes
-					</ControlItem>
+					</SegmentedControl.Item>
 				</SegmentedControl>
 
 				<h3 style={ { marginTop: 20 } }>Three items</h3>
@@ -101,26 +100,26 @@ class SegmentedControlDemo extends React.PureComponent {
 					selectedText={ this.state.childSelected }
 					style={ { maxWidth: 280 } }
 				>
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'all' }
 						onClick={ this.selectChildSegment.bind( this, 'all' ) }
 					>
 						All
-					</ControlItem>
+					</SegmentedControl.Item>
 
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'unread' }
 						onClick={ this.selectChildSegment.bind( this, 'unread' ) }
 					>
 						Unread
-					</ControlItem>
+					</SegmentedControl.Item>
 
-					<ControlItem
+					<SegmentedControl.Item
 						selected={ this.state.childSelected === 'comments' }
 						onClick={ this.selectChildSegment.bind( this, 'comments' ) }
 					>
 						Comments
-					</ControlItem>
+					</SegmentedControl.Item>
 				</SegmentedControl>
 			</div>
 		);

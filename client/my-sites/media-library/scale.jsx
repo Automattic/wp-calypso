@@ -16,7 +16,6 @@ import Gridicon from 'gridicons';
  */
 import FormRange from 'components/forms/range';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import { setPreference, savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { SCALE_CHOICES } from 'lib/media/constants';
@@ -116,20 +115,20 @@ class MediaLibraryScale extends Component {
 		return (
 			<div className="media-library__scale">
 				<SegmentedControl className="media-library__scale-toggle" compact>
-					<SegmentedControlItem
+					<SegmentedControl.Item
 						selected={ 1 !== scale }
 						onClick={ this.setScaleToMobileGrid }
 						title={ translate( 'Grid' ) }
 					>
 						<Gridicon icon="grid" size={ 18 } />
-					</SegmentedControlItem>
-					<SegmentedControlItem
+					</SegmentedControl.Item>
+					<SegmentedControl.Item
 						selected={ 1 === scale }
 						onClick={ this.setScaleToMobileFull }
 						title={ translate( 'List' ) }
 					>
 						<Gridicon icon="menu" size={ 18 } />
-					</SegmentedControlItem>
+					</SegmentedControl.Item>
 				</SegmentedControl>
 				<FormRange
 					step="1"

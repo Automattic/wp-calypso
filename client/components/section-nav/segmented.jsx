@@ -9,7 +9,6 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 
 /**
@@ -45,7 +44,7 @@ class NavSegmented extends Component {
 
 	getControlItems() {
 		return React.Children.map( this.props.children, ( child, index ) => (
-			<ControlItem { ...child.props } key={ index } />
+			<SegmentedControl.Item { ...child.props } key={ index } />
 		) );
 	}
 }

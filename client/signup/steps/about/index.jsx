@@ -46,8 +46,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import ScreenReaderText from 'components/screen-reader-text';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
+import SegmentedControl, { SegmentedControlItem } from 'components/segmented-control';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 
 /**
@@ -382,7 +381,7 @@ class AboutStep extends Component {
 					</span>
 
 					<SegmentedControl className="is-primary about__segmented-control">
-						<ControlItem
+						<SegmentedControlItem
 							selected={ this.state.userExperience === 1 }
 							onClick={ this.handleSegmentClick( 1 ) }
 						>
@@ -390,35 +389,35 @@ class AboutStep extends Component {
 								{ translate( 'How comfortable are you with creating a website?' ) }
 							</ScreenReaderText>
 							1<ScreenReaderText>{ translate( 'Beginner' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControlItem>
 
-						<ControlItem
+						<SegmentedControlItem
 							selected={ this.state.userExperience === 2 }
 							onClick={ this.handleSegmentClick( 2 ) }
 						>
 							2
-						</ControlItem>
+						</SegmentedControlItem>
 
-						<ControlItem
+						<SegmentedControlItem
 							selected={ this.state.userExperience === 3 }
 							onClick={ this.handleSegmentClick( 3 ) }
 						>
 							3
-						</ControlItem>
+						</SegmentedControlItem>
 
-						<ControlItem
+						<SegmentedControlItem
 							selected={ this.state.userExperience === 4 }
 							onClick={ this.handleSegmentClick( 4 ) }
 						>
 							4
-						</ControlItem>
+						</SegmentedControlItem>
 
-						<ControlItem
+						<SegmentedControlItem
 							selected={ this.state.userExperience === 5 }
 							onClick={ this.handleSegmentClick( 5 ) }
 						>
 							5<ScreenReaderText>{ translate( 'Expert' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControlItem>
 					</SegmentedControl>
 					<span
 						className="about__segment-label about__max-label"

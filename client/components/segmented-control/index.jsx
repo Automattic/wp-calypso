@@ -7,7 +7,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import SegmentedControlItem from './item';
+
 export default class SegmentedControl extends React.Component {
+	static Item = SegmentedControlItem;
+
 	static propTypes = {
 		className: PropTypes.string,
 		compact: PropTypes.bool,

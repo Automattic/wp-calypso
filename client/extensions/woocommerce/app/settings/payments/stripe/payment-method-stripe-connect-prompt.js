@@ -22,7 +22,7 @@ class StripeConnectPrompt extends Component {
 		onSelectConnect: PropTypes.func.isRequired,
 	};
 
-	render = () => {
+	render() {
 		const { isCreateSelected, onSelectCreate, onSelectConnect, translate } = this.props;
 
 		return (
@@ -54,7 +54,7 @@ class StripeConnectPrompt extends Component {
 				</FormFieldset>
 			</div>
 		);
-	};
+	}
 }
 
 export default localize( StripeConnectPrompt );

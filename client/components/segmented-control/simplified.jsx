@@ -11,7 +11,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import SegmentedControl from '.';
-import ControlItem from './item';
 
 function SimplifiedSegmentedControl( {
 	options,
@@ -22,7 +21,7 @@ function SimplifiedSegmentedControl( {
 	const [ selected, setSelected ] = useState( initialSelected );
 
 	const renderedOptions = options.map( ( option, index ) => (
-		<ControlItem
+		<SegmentedControl.Item
 			index={ index }
 			key={ index }
 			onClick={ () => {
@@ -34,7 +33,7 @@ function SimplifiedSegmentedControl( {
 			value={ option.value }
 		>
 			{ option.label }
-		</ControlItem>
+		</SegmentedControl.Item>
 	) );
 
 	return <SegmentedControl { ...props }>{ renderedOptions }</SegmentedControl>;
