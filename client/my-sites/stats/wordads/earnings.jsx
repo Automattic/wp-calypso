@@ -129,6 +129,7 @@ class WordAdsEarnings extends Component {
 		);
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	payoutNotice() {
 		const { earnings, numberFormat, translate } = this.props;
 		const owed =
@@ -267,7 +268,7 @@ class WordAdsEarnings extends Component {
 					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
 					<ul className="ads__module-header-actions module-header-actions">
 						<li className="ads__module-header-action module-header-action toggle-info">
-							{ /* eslint-disable */ }
+							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 							<a
 								href="#"
 								className="ads__module-header-action-link module-header-action-link"
@@ -275,7 +276,6 @@ class WordAdsEarnings extends Component {
 								title={ translate( 'Show or hide panel information' ) }
 								onClick={ this.handleInfoToggle( type ) }
 							>
-								{ /* eslint-enable */ }
 								<Gridicon icon={ infoIcon } />
 							</a>
 						</li>
@@ -317,7 +317,7 @@ class WordAdsEarnings extends Component {
 						</h1>
 						<ul className="ads__module-header-actions module-header-actions">
 							<li className="ads__module-header-action module-header-action toggle-info">
-								{ /* eslint-disable */ }
+								{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 								<a
 									href="#"
 									className="ads__module-header-action-link module-header-action-link"
@@ -325,7 +325,6 @@ class WordAdsEarnings extends Component {
 									title={ translate( 'Show or hide panel information' ) }
 									onClick={ this.handleEarningsNoticeToggle }
 								>
-									{ /* eslint-disable */ }
 									<Gridicon icon={ infoIcon } />
 								</a>
 							</li>
@@ -355,6 +354,7 @@ class WordAdsEarnings extends Component {
 					: null }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
