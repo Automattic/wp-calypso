@@ -280,18 +280,21 @@ export function generateFlows( {
 		pageTitle: translate( 'Launch your site' ),
 	};
 
+	const importSteps = [ 'from-url', 'domains' ];
+
+	const importDestination = ( { importEngine, importSiteUrl, siteSlug } ) =>
+		addQueryArgs(
+			{
+				engine: importEngine || null,
+				'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
+				signup: 1,
+			},
+			`/import/${ siteSlug }`
+		);
+
 	flows.import = {
-		// IMPORTANT: Steps changed here should also be changed in the `import-onboarding` flow.
-		steps: [ 'user', 'from-url', 'domains' ],
-		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
-			addQueryArgs(
-				{
-					engine: importEngine || null,
-					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
-					signup: 1,
-				},
-				`/import/${ siteSlug }`
-			),
+		steps: [ 'user', ...importSteps ],
+		destination: importDestination,
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
 		lastModified: '2019-07-30',
@@ -299,9 +302,9 @@ export function generateFlows( {
 
 	flows[ 'import-onboarding' ] = {
 		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
-		// when switching form the onboarding flow. After `site-type`, steps should match the import flow.
-		steps: [ 'user', 'site-type', 'from-url', 'domains' ],
-		destination: flows.import.destination,
+		// when switching form the onboarding flow.
+		steps: [ 'user', 'site-type', ...importSteps ],
+		destination: importDestination,
 		description: 'Import flow that can be used from the onboarding flow',
 		disallowResume: true,
 		lastModified: '2019-08-01',
