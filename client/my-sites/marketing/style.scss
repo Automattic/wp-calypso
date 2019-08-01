@@ -77,6 +77,24 @@
 	}
 }
 
+.is-section-marketing {
+	.promo-card:not( .is-primary ) {
+		.action-panel__cta {
+			padding-top: 0;
+		}
+		.action-panel__figure {
+			max-width: 64px;
+		}
+		.action-panel__body p {
+			flex-grow: 0;
+		}
+		img {
+			margin: 0 20px 0 0;
+	    width: 64px;
+		}
+	}
+}
+
 .sharing-settings {
 	// labels, checkboxes, radio
 
