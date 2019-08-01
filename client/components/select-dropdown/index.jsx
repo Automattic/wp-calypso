@@ -64,7 +64,7 @@ class SelectDropdown extends Component {
 		const initialState = { isOpen: false };
 
 		if ( props.options.length ) {
-			initialState.selected = this.getInitialSelectedItem( props );
+			initialState.selected = this.getInitialSelectedItem();
 		}
 
 		this.state = initialState;
@@ -102,18 +102,16 @@ class SelectDropdown extends Component {
 		}
 	}
 
-	getInitialSelectedItem( props ) {
-		props = props || this.props;
-
-		if ( props.initialSelected ) {
-			return props.initialSelected;
+	getInitialSelectedItem() {
+		if ( this.props.initialSelected ) {
+			return this.props.initialSelected;
 		}
 
-		if ( ! props.options.length ) {
+		if ( ! this.props.options.length ) {
 			return;
 		}
 
-		const selectedItem = find( props.options, value => ! value.isLabel );
+		const selectedItem = find( this.props.options, value => ! value.isLabel );
 		return selectedItem && selectedItem.value;
 	}
 
@@ -126,7 +124,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected text
-		const selectedValue = selected || this.getInitialSelectedItem( this.props );
+		const selectedValue = selected || this.getInitialSelectedItem();
 		return result( find( options, { value: selectedValue } ), 'label' );
 	}
 
@@ -139,7 +137,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected icon
-		const selectedValue = selected || this.getInitialSelectedItem( this.props );
+		const selectedValue = selected || this.getInitialSelectedItem();
 		return result( find( options, { value: selectedValue } ), 'icon' );
 	}
 
