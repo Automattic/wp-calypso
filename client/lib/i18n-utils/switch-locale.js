@@ -13,6 +13,23 @@ import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
+const getPromises = {};
+
+/**
+ * De-duplicates repeated GET fetches of the same URL while one is taking place.
+ * Once it's finished, it'll allow for the same request to be done again.
+ * @param {string} url The URL to fetch
+ *
+ * @returns {Promise} The fetch promise.
+ */
+function dedupedGet( url ) {
+	if ( ! ( url in getPromises ) ) {
+		getPromises[ url ] = fetch( url ).finally( () => delete getPromises[ url ] );
+	}
+
+	return getPromises[ url ];
+}
+
 /**
  * Get the protocol, domain, and path part of the language file URL.
  * Normally it should only serve as a helper function for `getLanguageFileUrl`,
@@ -63,7 +80,7 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 async function getLanguageFile( targetLocaleSlug ) {
 	const url = getLanguageFileUrl( targetLocaleSlug );
 
-	const response = await fetch( url );
+	const response = await dedupedGet( url );
 	if ( response.ok ) {
 		return await response.json();
 	}
