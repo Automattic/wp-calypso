@@ -19,7 +19,5 @@ const unsubscribe = subscribe( () => {
 	}
 	if ( select( 'core/editor' ).isValidTemplate() === false ) {
 		dispatch( 'core/editor' ).setTemplateValidity( true );
-		// should only need to do this once
-		unsubscribe();
 	}
 } );
