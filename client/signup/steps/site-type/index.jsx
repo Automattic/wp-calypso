@@ -19,6 +19,7 @@ import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
 
 const siteTypeToFlowname = {
+	import: 'import-onboarding',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -27,7 +28,7 @@ class SiteType extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	handleImportFlowClick = () => this.props.goToNextStep( 'import' );
+	handleImportFlowClick = () => this.submitStep( 'import' );
 
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );

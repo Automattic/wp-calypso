@@ -281,6 +281,7 @@ export function generateFlows( {
 	};
 
 	flows.import = {
+		// IMPORTANT: Steps changed here should also be changed in the `import-onboarding` flow.
 		steps: [ 'user', 'from-url', 'domains' ],
 		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
 			addQueryArgs(
@@ -294,6 +295,16 @@ export function generateFlows( {
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
 		lastModified: '2019-07-30',
+	};
+
+	flows[ 'import-onboarding' ] = {
+		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
+		// when switching form the onboarding flow. After `site-type`, steps should match the import flow.
+		steps: [ 'user', 'site-type', 'from-url', 'domains' ],
+		destination: flows.import.destination,
+		description: 'Import flow that can be used from the onboarding flow',
+		disallowResume: true,
+		lastModified: '2019-08-01',
 	};
 
 	flows.reader = {
