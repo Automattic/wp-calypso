@@ -158,7 +158,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getReferralsCard = () => {
-		const isJetpackNotAtomic: boolean = isJetpack && ! isAtomicSite;
+		const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 		const cta = {
 			text: translate( 'Earn Cash from Referrals' ),
 			action: isJetpackNotAtomic
