@@ -2,9 +2,10 @@
 	.components-notice {
 		margin: 0;
 		height: 50px;
+		display: flex;
+		align-items: center;
 	}
 	.components-notice__content {
 		margin: 0 25px 0 0;
-		line-height: 34px;
 	}
 }
