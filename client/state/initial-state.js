@@ -104,8 +104,8 @@ function verifyStateTimestamp( state ) {
 	return state._timestamp && state._timestamp + MAX_AGE > Date.now();
 }
 
-export async function getStateFromLocalStorage( reducer, subkey ) {
-	const reduxStateKey = getReduxStateKey() + ( subkey ? ':' + subkey : '' );
+export async function getStateFromLocalStorage( reducer, subkey, forceLoggedOutUser = false ) {
+	const reduxStateKey = getReduxStateKey( forceLoggedOutUser ) + ( subkey ? ':' + subkey : '' );
 
 	try {
 		const storedState = await getStoredItem( reduxStateKey );
@@ -139,8 +139,8 @@ export async function getStateFromLocalStorage( reducer, subkey ) {
 	}
 }
 
-function getReduxStateKey() {
-	return getReduxStateKeyForUserId( get( user.get(), 'ID', null ) );
+function getReduxStateKey( forceLoggedOutUser = false ) {
+	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : get( user.get(), 'ID', null ) );
 }
 
 function getReduxStateKeyForUserId( userId ) {
@@ -235,14 +235,16 @@ async function getInitialStoredState( initialReducer ) {
 	}
 
 	let initialStoredState = await getStateFromLocalStorage( initialReducer );
-	if ( ! initialStoredState ) {
-		return null;
-	}
-
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
 	async function loadReducerState( { storageKey, reducer } ) {
-		const storedState = await getStateFromLocalStorage( reducer, storageKey );
+		let storedState = await getStateFromLocalStorage( reducer, storageKey, false );
+
+		if ( ! storedState && storageKey === 'signup' ) {
+			storedState = await getStateFromLocalStorage( reducer, storageKey, true );
+			debug( 'fetched signup state from logged out state', storedState );
+		}
+
 		if ( storedState ) {
 			initialStoredState = initialReducer( initialStoredState, {
 				type: APPLY_STORED_STATE,

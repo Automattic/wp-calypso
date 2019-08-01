@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mapValues, reduce, reduceRight } from 'lodash';
+import { get, mapValues, reduce, reduceRight } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 
 /**
@@ -153,7 +153,7 @@ function applyStoredState( reducers, state, action ) {
 		}
 
 		// Descend into nested state levels, possibly the storageKey will be found there?
-		const prevStateForKey = state[ key ];
+		const prevStateForKey = get( state, key );
 		const nextStateForKey = reducer( prevStateForKey, action );
 		hasChanged = hasChanged || nextStateForKey !== prevStateForKey;
 		return nextStateForKey;
