@@ -24,6 +24,7 @@ import { addItems, removeItem } from 'lib/upgrades/actions';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { isDotComPlan } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getCurrentFlowName } from 'state/signup/flow/selectors';
 
 /**
  * Style dependencies
@@ -35,13 +36,14 @@ export class GSuiteNudge extends React.Component {
 		domain: PropTypes.string.isRequired,
 		receiptId: PropTypes.number.isRequired,
 		selectedSiteId: PropTypes.number.isRequired,
+		isOnboardingFlow: PropTypes.bool.isRequired,
 	};
 
 	handleSkipClick = () => {
-		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
+		const { siteSlug, receiptId, isEligibleForChecklist, isOnboardingFlow } = this.props;
 		page(
 			isEligibleForChecklist
-				? `/view/${ siteSlug }`
+				? `/${ isOnboardingFlow ? 'view' : 'checklist' }/${ siteSlug }`
 				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
 		);
 	};
@@ -109,5 +111,6 @@ export default connect( ( state, props ) => {
 		siteSlug: getSiteSlug( state, props.selectedSiteId ),
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		isEligibleForChecklist,
+		isOnboardingFlow: 'onboarding' === getCurrentFlowName( state ),
 	};
 } )( localize( GSuiteNudge ) );
