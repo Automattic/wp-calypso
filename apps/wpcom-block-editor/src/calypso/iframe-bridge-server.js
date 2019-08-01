@@ -536,12 +536,26 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
 function handleCloseEditor( calypsoPort ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
-		calypsoPort.postMessage( {
-			action: 'closeEditor',
-			payload: {
-				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+
+		const { port1, port2 } = new MessageChannel();
+		calypsoPort.postMessage(
+			{
+				action: 'closeEditor',
+				payload: {
+					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				},
 			},
-		} );
+			[ port2 ]
+		);
+
+		// We only want to navigate back if the client tells us to.
+		// We need to give it a chance to set if the post is dirty
+		// before we can navigate away.
+		port1.onmessage = ( { data } ) => {
+			port1.close(); // We only want to recieve this once.
+			// data is the URL to which we go back:
+			window.open( data, '_top' );
+		};
 	} );
 }
 
@@ -653,6 +667,28 @@ async function openTemplatePartEditor( calypsoPort ) {
 	} );
 }
 
+/**
+ * Ensures the calypsoifyGutenberg close URL matches the one on the client.
+ * This is important because we modify the close URL client side in the
+ * context of template part blocks in FSE.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getCloseButtonUrl( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCloseButtonUrl',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		// data is the closeUrl:
+		calypsoifyGutenberg.closeUrl = data;
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -733,6 +769,8 @@ function initPort( message ) {
 		openCustomizer( calypsoPort );
 
 		openTemplatePartEditor( calypsoPort );
+
+		getCloseButtonUrl( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
