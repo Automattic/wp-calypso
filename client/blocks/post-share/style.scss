@@ -53,7 +53,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__placeholder {
-	@include placeholder;
+	@include placeholder();
 	margin: 0 0 0 24px;
 	width: 300px;
 	height: 80px;

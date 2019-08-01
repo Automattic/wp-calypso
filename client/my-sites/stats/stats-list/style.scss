@@ -31,7 +31,7 @@
 		}
 	}
 
-	border-top: 1px solid $transparent;
+	border-top: 1px solid rgba( var( --color-white-rgb ), 0 );
 
 	// Increase touch targets on mobile
 	@include breakpoint( '<480px' ) {
@@ -39,7 +39,7 @@
 		border-top: 1px solid var( --color-neutral-0 );
 
 		&:first-child {
-			border-top-color: $transparent;
+			border-top-color: rgba( var( --color-white-rgb ), 0 );
 		}
 
 		// Darken color for sublists
@@ -123,7 +123,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+			background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 		}
 
 		// Display hidden actions
@@ -157,7 +157,7 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Display hidden actions
@@ -317,7 +317,7 @@
 
 	// Fade out value if long
 	&::before {
-		@include stats-fade-text( var( --color-white ) );
+		@include stats-fade-text( rgba( var( --color-white-rgb ), 0 ), var( --color-white ) );
 	}
 }
 
@@ -748,7 +748,7 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-0 ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Rotate toggle icon
@@ -758,7 +758,7 @@ ul.module-content-list-legend {
 
 	// Hide the top border of an active sub-list
 	> .module-content-list-item {
-		border-top-color: $transparent;
+		border-top-color: rgba( var( --color-white-rgb ), 0 );
 	}
 
 	// Hover changes
@@ -771,7 +771,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-white-rgb ), 0 ) 0%, var( --color-white ) 90% );
 			}
 		}
 	}
@@ -798,7 +798,7 @@ ul.module-content-list-legend {
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, $transparent 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient( to right, rgba( var( --color-neutral-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
 	}
 
 	// Hover changes
@@ -812,7 +812,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, $transparent 0%, var( --color-white ) 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-white-rgb ), 0 ) 0%, var( --color-white ) 90% );
 			}
 		}
 	}

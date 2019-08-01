@@ -5,7 +5,7 @@
 	padding-bottom: 10px;
 
 	&.is-loading {
-		@include placeholder;
+		@include placeholder();
 		width: 80px;
 		display: inline-block;
 	}

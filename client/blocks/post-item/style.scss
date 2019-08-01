@@ -102,7 +102,7 @@ a.post-item__title-link:visited {
 	}
 
 	.post-item__panel.is-placeholder & {
-		@include placeholder;
+		@include placeholder();
 		display: inline-block;
 	}
 }
@@ -158,7 +158,7 @@ a.post-item__title-link:visited {
 	}
 
 	.post-item__card.is-placeholder & {
-		@include placeholder;
+		@include placeholder();
 	}
 }
 

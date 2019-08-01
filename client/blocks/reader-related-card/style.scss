@@ -357,7 +357,7 @@
 	.reader-related-card__title,
 	.reader-related-card__excerpt,
 	.reader-related-card__featured-image {
-		@include placeholder;
+		@include placeholder();
 
 		// Clobber the long-content-fade
 		&::after {
@@ -380,7 +380,7 @@
 .reader-related-card__meta.is-placeholder {
 	.reader-related-card__byline-author,
 	.reader-related-card__byline-site {
-		@include placeholder;
+		@include placeholder();
 
 		// Clobber the long-content-fade
 		&::after {

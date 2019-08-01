@@ -18,7 +18,7 @@
 
 	&.is-placeholder {
 		.section-header__label span {
-			@include placeholder(23%);
+			@include placeholder( --color-neutral-100 );
 		}
 	}
 

@@ -77,7 +77,7 @@
 
 	.current-plan__header-heading,
 	.current-plan__header-text {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-100 );
 
 		display: block;
 

@@ -31,7 +31,7 @@
 }
 
 .image-editor__toolbar-button {
-	background: $transparent;
+	background: rgba( var( --color-white-rgb ), 0 );
 	border: none;
 	color: var( --color-white );
 	margin: 0 10px;
@@ -63,7 +63,7 @@
 	top: 50%;
 	left: 50%;
 	&.is-placeholder {
-		@include placeholder-dark();
+		@include placeholder( --color-neutral-700 );
 	}
 }
 

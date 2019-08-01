@@ -414,7 +414,7 @@ $devdocs-max-width: 720px;
 	}
 
 	pre > code {
-		background-color: $transparent;
+		background-color: rgba( var( --color-white-rgb ), 0 );
 		padding: 2px 0;
 	}
 

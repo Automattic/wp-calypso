@@ -58,6 +58,6 @@
 
 .is-placeholder {
 	.section-header__label {
-		@include placeholder;
+		@include placeholder();
 	}
 }

@@ -328,7 +328,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: normal;
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-100 );
 		width: 140px;
 		height: 12px;
 		margin-bottom: 15px;
@@ -364,7 +364,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__price {
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-100 );
 			width: 45px;
 			height: 25px;
 			margin-top: 9px;
@@ -373,7 +373,7 @@ $plan-features-sidebar-width: 272px;
 }
 .plan-features__price-jetpack {
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-100 );
 			width: 140px;
 			height: 32px;
 			margin-top: 5px;
@@ -866,7 +866,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__pricing {
 		padding: 8px 16px;
 		margin: 0;
-		border-top: solid 1px lighten( $gray, 27% );
+		border-top: solid 1px var( --color-neutral-100 );
 
 		.plan-price {
 			font-weight: bold;

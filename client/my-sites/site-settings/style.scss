@@ -215,7 +215,7 @@
 
 	.card {
 		&.is-placeholder div {
-			@include placeholder;
+			@include placeholder();
 		}
 	}
 
@@ -459,7 +459,7 @@
 }
 
 .site-settings__placeholder-item {
-	@include placeholder;
+	@include placeholder();
 
 	& + & {
 		margin-top: 24px;

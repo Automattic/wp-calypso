@@ -69,12 +69,12 @@
 	}
 
 	.domain-management-list-item__title {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-100 );
 		width: 60%;
 	}
 
 	.domain-management-list-item__type {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-100 );
 		display: inline-block;
 		width: 40%;
 	}

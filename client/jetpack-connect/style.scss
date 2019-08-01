@@ -554,7 +554,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__sso-placeholder {
-	@include placeholder( 23% );
+	@include placeholder( --color-neutral-100 );
 	background-color: transparent;
 }
 

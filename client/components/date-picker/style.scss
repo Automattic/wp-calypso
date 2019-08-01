@@ -204,7 +204,7 @@ $date-picker_nav_button_size: 20px;
 	line-height: 24px;
 	border-radius: 50%;
 	cursor: pointer;
-	border: 1px solid $transparent;
+	border: 1px solid rgba( var( --color-white-rgb ), 0 );
 	color: var( --color-neutral-700 );
 	text-align: center;
 	margin: 0 auto;

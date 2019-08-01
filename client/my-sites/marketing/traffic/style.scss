@@ -205,7 +205,7 @@
 
 	.card {
 		&.is-placeholder div {
-			@include placeholder;
+			@include placeholder();
 		}
 	}
 

@@ -26,6 +26,6 @@
 }
 
 .site-icon__img {
-	background: $transparent;
+	background: rgba( var( --color-white-rgb ), 0 );
 	position: relative;
 }
