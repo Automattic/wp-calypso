@@ -52,6 +52,7 @@ import RecentRenewals from './recent-renewals';
 import SubscriptionText from './subscription-text';
 import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
 import { abtest } from 'lib/abtest';
+import classNames from 'classnames';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
@@ -437,8 +438,15 @@ export class WebPaymentBox extends React.Component {
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
-		const moneyBackGuarantee =
-			! hasOnlyDomainProducts( cart ) && 'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
+
+		const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
+			moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy,
+			paymentButtonClasses = classNames( 'payment-box__payment-buttons', {
+				'payment-box__payment-buttons-variant': testSealsCopy,
+			} ),
+			secureText = testSealsCopy
+				? translate( 'This is a secure 128-SSL encrypted connection' )
+				: translate( 'Secure Payment' );
 
 		const buttonState = this.getButtonState();
 		const buttonDisabled = buttonState.disabled;
@@ -528,7 +536,7 @@ export class WebPaymentBox extends React.Component {
 
 					<CheckoutTerms cart={ cart } />
 
-					<span className="payment-box__payment-buttons">
+					<span className={ paymentButtonClasses }>
 						<span className="pay-button">
 							<span className="payment-request-button">{ button }</span>
 							<SubscriptionText cart={ cart } />
@@ -547,7 +555,7 @@ export class WebPaymentBox extends React.Component {
 						<div className="checkout__secure-payment">
 							<div className="checkout__secure-payment-content">
 								<Gridicon icon="lock" />
-								{ translate( 'Secure Payment' ) }
+								{ secureText }
 							</div>
 						</div>
 

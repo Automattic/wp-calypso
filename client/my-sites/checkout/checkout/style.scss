@@ -718,7 +718,6 @@
 	@include breakpoint( '>660px' ) {
 		display: flex;
 		flex-wrap: wrap;
-		flex-direction: column;
 	}
 
 	.checkout__pay-button,
@@ -738,13 +737,45 @@
 	}
 }
 
+.checkout__payment-box-buttons-variant,
+.payment-box__payment-buttons-variant {
+
+	.checkout__pay-button-button,
+	.pay-button__button {
+		padding: 10px 17px 12px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		flex-direction: column;
+	}
+}
+
 .checkout__secure-payment {
 	color: var( --color-neutral-200 );
 	flex-grow: 1;
+	margin-top: 10px;
+
+	@include breakpoint( '>660px' ) {
+		flex: 1 0 40%;
+
+	}
+
+}
+
+.checkout__payment-box-buttons-variant .checkout__secure-payment,
+.payment-box__payment-buttons-variant .checkout__secure-payment {
+	color: var( --color-neutral-400 );
+	flex-grow: 1;
 	margin-top: 15px;
 	font-size: 14px;
+
 	&-column {
 		flex-direction: column;
+	}
+
+	.gridicon {
+		fill: var( --color-success-300 );
+		margin-right: 5px;
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -757,8 +788,20 @@
 	}
 
 }
-
+	
 .checkout__secure-payment-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	@include breakpoint( '>660px' ) {
+		justify-content: left;
+	}
+}
+
+
+.checkout__payment-box-buttons-variant .checkout__secure-payment-content,
+.payment-box__payment-buttons-variant .checkout__secure-payment-content {
 	display: flex;
 	align-items: flex-start;
 	justify-content: center;

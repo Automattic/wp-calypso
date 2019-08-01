@@ -8,35 +8,44 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import FormattedHeader from 'components/formatted-header';
-import GuaranteeSeal from './guarantee-seal';
+import CheckoutSeals from './checkout-seals';
 import Checkout from '../checkout';
 import CartData from 'components/data/cart';
 import CheckoutData from 'components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
+import { abtest } from 'lib/abtest';
 
 class CheckoutContainer extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			headerText: '',
-			shouldShowSeal: false,
+			subHeaderText: '',
+			shouldShowGuaranteeSeal: false,
 		};
 	}
 
 	renderCheckoutHeader() {
-		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
+		return (
+			this.state.headerText && (
+				<FormattedHeader
+					headerText={ this.state.headerText }
+					subHeaderText={ this.state.subHeaderText }
+				/>
+			)
+		);
 	}
 
-	setHeaderText = newHeaderText => {
-		this.setState( { headerText: newHeaderText } );
+	setHeaderText = ( newHeaderText, newSubHeaderText ) => {
+		this.setState( { headerText: newHeaderText, subHeaderText: newSubHeaderText } );
 	};
 
-	renderGuaranteeSeal() {
-		return this.state.shouldShowSeal && <GuaranteeSeal visible={ this.state.shouldShowSeal } />;
+	renderCheckoutSeals() {
+		return <CheckoutSeals guaranteeVisible={ this.state.shouldShowGuaranteeSeal } />;
 	}
 
 	showGuaranteeSeal = visible => {
-		this.setState( { shouldShowSeal: visible } );
+		this.setState( { shouldShowGuaranteeSeal: visible } );
 	};
 
 	render() {
@@ -79,7 +88,7 @@ class CheckoutContainer extends React.Component {
 							<CartData>
 								<SecondaryCart selectedSite={ selectedSite } />
 							</CartData>
-							{ this.renderGuaranteeSeal() }
+							{ 'variant' === abtest( 'checkoutSealsCopyBundle' ) && this.renderCheckoutSeals() }
 						</div>
 					) }
 				</div>

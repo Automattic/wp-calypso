@@ -140,8 +140,24 @@ export class WechatPaymentBox extends Component {
 			some( cart.products, ( { product_slug } ) =>
 				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			);
-		const moneyBackGuarantee =
-			! hasOnlyDomainProducts( cart ) && 'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
+
+		const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
+			moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy,
+			paymentButtonClasses = classNames(
+				'checkout__payment-box-buttons',
+				'payment-box__payment-buttons',
+				{
+					'checkout__payment-box-buttons-variant': testSealsCopy,
+				}
+			),
+			payButtonText = testSealsCopy
+				? translate( 'Complete purchase with WeChat Pay' )
+				: translate( 'Pay %(price)s with WeChat Pay', {
+						args: { price: cart.total_cost_display },
+				  } ),
+			secureText = testSealsCopy
+				? translate( 'This is a secure 128-SSL encrypted connection' )
+				: translate( 'Secure Payment' );
 
 		// Wechat qr codes get set on desktop instead of redirecting
 		if ( redirectUrl && ! isMobile ) {
@@ -186,7 +202,7 @@ export class WechatPaymentBox extends Component {
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
-						<div className="checkout__payment-buttons  payment-box__payment-buttons">
+						<div className={ paymentButtonClasses }>
 							<span className="checkout__payment-button pay-button">
 								<Button
 									type="submit"
@@ -194,9 +210,7 @@ export class WechatPaymentBox extends Component {
 									busy={ this.props.pending }
 									disabled={ this.props.pending || this.props.failure }
 								>
-									{ translate( 'Pay %(price)s with WeChat Pay', {
-										args: { price: cart.total_cost_display },
-									} ) }
+									{ payButtonText }
 								</Button>
 								<SubscriptionText cart={ cart } />
 							</span>
@@ -214,7 +228,7 @@ export class WechatPaymentBox extends Component {
 								) }
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ secureText }
 								</div>
 							</div>
 							{ showPaymentChatButton && (

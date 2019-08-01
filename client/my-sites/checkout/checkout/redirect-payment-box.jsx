@@ -35,6 +35,7 @@ import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import { abtest } from 'lib/abtest';
+import classNames from 'classnames';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -203,21 +204,41 @@ export class RedirectPaymentBox extends PureComponent {
 	};
 
 	renderButtonText() {
+		const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
+			renewalText = testSealsCopy
+				? this.props.translate( 'Complete subscription purchase with %(paymentProvider)s', {
+						args: {
+							paymentProvider: this.getPaymentProviderName(),
+						},
+						context: 'Pay button on /checkout',
+				  } )
+				: this.props.translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
+						args: {
+							price: this.props.cart.total_cost_display,
+							paymentProvider: this.getPaymentProviderName(),
+						},
+						context: 'Pay button on /checkout',
+				  } ),
+			purchaseText = testSealsCopy
+				? this.props.translate( 'Complete purchase with %(paymentProvider)s', {
+						args: {
+							paymentProvider: this.getPaymentProviderName(),
+						},
+						context: 'Pay button on /checkout',
+				  } )
+				: this.props.translate( 'Pay %(price)s with %(paymentProvider)s', {
+						args: {
+							price: this.props.cart.total_cost_display,
+							paymentProvider: this.getPaymentProviderName(),
+						},
+						context: 'Pay button on /checkout',
+				  } );
+
 		if ( hasRenewalItem( this.props.cart ) ) {
-			return translate( 'Purchase %(price)s subscription with %(paymentProvider)s', {
-				args: {
-					price: this.props.cart.total_cost_display,
-					paymentProvider: this.getPaymentProviderName(),
-				},
-			} );
+			return renewalText;
 		}
 
-		return translate( 'Pay %(price)s with %(paymentProvider)s', {
-			args: {
-				price: this.props.cart.total_cost_display,
-				paymentProvider: this.getPaymentProviderName(),
-			},
-		} );
+		return purchaseText;
 	}
 
 	getBankOptions( paymentType ) {
@@ -297,9 +318,15 @@ export class RedirectPaymentBox extends PureComponent {
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
-		const moneyBackGuarantee =
-			! hasOnlyDomainProducts( this.props.cart ) &&
-			'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
+
+		const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
+			moneyBackGuarantee = ! hasOnlyDomainProducts( this.props.cart ) && testSealsCopy,
+			paymentButtonClasses = classNames( 'checkout__payment-box-buttons', {
+				'checkout__payment-box-buttons-variant': testSealsCopy,
+			} ),
+			secureText = testSealsCopy
+				? translate( 'This is a secure 128-SSL encrypted connection' )
+				: translate( 'Secure Payment' );
 
 		return (
 			<React.Fragment>
@@ -320,7 +347,7 @@ export class RedirectPaymentBox extends PureComponent {
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
-						<div className="checkout__payment-box-buttons">
+						<div className={ paymentButtonClasses }>
 							<span className="checkout__pay-button">
 								<button
 									type="submit"
@@ -346,7 +373,7 @@ export class RedirectPaymentBox extends PureComponent {
 								) }
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ secureText }
 								</div>
 							</div>
 

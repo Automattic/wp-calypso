@@ -443,29 +443,93 @@ div.popover-cart__popover {
 }
 
 
-.guarantee-seal {
+.checkout-seals {
 
-	text-align: center;
+	display: flex;
+	flex-direction: column;
+
+	.checkout-seals__row {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+	> * {
+		margin-top: 1.5em;
+	}
 
 	img {
-		margin-left: 1em;
-		margin-top: 1em;
 		width: 40%;
+	}
+
+	.checkout-seals__security-seal, 
+	.checkout-seals__guarantee-seal, 
+	.checkout-seals__trustpilot {
+		width: 40%;
+	}
+
+	.checkout-seals__security-seal {
+		width: 43%;
+		max-width: 110px;
+		max-height: 45px;
+		margin: 0.6em 0 0 2em;
+	}
+
+	.checkout-seals__trustpilot {
+		display: block;
+		width: 40%;
+		max-width: 110px;
+
+		img {
+			display: block;
+			width: 100%;
+		}
+
+	}
+
+	.checkout-seals__trustpilot-rating {
+		margin-top: 0.35em;
+		margin-left: 0.25em;
+	}
+
+
+
+	.checkout-seals__guarantee-seal {
+		max-width: 128px;
+		margin: 2.5em auto;
 		transform: rotate( 15deg );
 	}
 
-	@include breakpoint( '<660px' ) {
-		margin: 20px auto;
-
-		img {
-			margin: 0;
-			width: 30%;
-		}
-	}
-
-	&__hidden {
+	.checkout-seals__guarantee-seal__hidden {
 		display: none;
 	}
+
+
+
+	@include breakpoint( '<660px' ) {
+		justify-content: center;
+		
+		margin: 20px auto;
+
+		> * {
+			margin: 1.5em auto;
+		}
+	
+		.checkout-seals__security-seal {
+			width: 50;
+			margin-left: 3em;
+		}
+
+		.checkout-seals__trustpilot {
+			width: 50%;
+		}
+
+		.checkout-seals__guarantee-seal {
+			width: 30%;
+		}
+
+	}
+
 }
 
 @include breakpoint( '<660px' ) {

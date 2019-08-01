@@ -32,6 +32,7 @@ import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import { abtest } from 'lib/abtest';
+import classNames from 'classnames';
 
 const wpcom = wp.undocumented();
 
@@ -128,17 +129,29 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	renderButtonText = () => {
+		const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
+			renewalText = testSealsCopy
+				? this.props.translate( 'Complete subscription purchase with PayPal', {
+						context: 'Pay button on /checkout',
+				  } )
+				: this.props.translate( 'Purchase %(price)s subscription with PayPal', {
+						args: { price: this.props.cart.total_cost_display },
+						context: 'Pay button on /checkout',
+				  } ),
+			purchaseText = testSealsCopy
+				? this.props.translate( 'Complete purchase with PayPal', {
+						context: 'Pay button on /checkout',
+				  } )
+				: this.props.translate( 'Pay %(price)s with PayPal', {
+						args: { price: this.props.cart.total_cost_display },
+						context: 'Pay button on /checkout',
+				  } );
+
 		if ( hasRenewalItem( this.props.cart ) ) {
-			return this.props.translate( 'Purchase %(price)s subscription with PayPal', {
-				args: { price: this.props.cart.total_cost_display },
-				context: 'Pay button on /checkout',
-			} );
+			return renewalText;
 		}
 
-		return this.props.translate( 'Pay %(price)s with PayPal', {
-			args: { price: this.props.cart.total_cost_display },
-			context: 'Pay button on /checkout',
-		} );
+		return purchaseText;
 	};
 
 	render = () => {
@@ -147,8 +160,15 @@ export class PaypalPaymentBox extends React.Component {
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
-		const moneyBackGuarantee =
-			! hasOnlyDomainProducts( cart ) && 'variantShowGuarantee' === abtest( 'checkoutGuarantee' );
+
+		const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
+			moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy,
+			paymentButtonClasses = classNames( 'checkout__payment-box-buttons', {
+				'checkout__payment-box-buttons-variant': testSealsCopy,
+			} ),
+			secureText = testSealsCopy
+				? translate( 'This is a secure 128-SSL encrypted connection' )
+				: translate( 'Secure Payment' );
 
 		return (
 			<React.Fragment>
@@ -183,7 +203,7 @@ export class PaypalPaymentBox extends React.Component {
 					<CheckoutTerms cart={ cart } />
 
 					<div className="checkout__payment-box-actions">
-						<div className="checkout__payment-box-buttons">
+						<div className={ paymentButtonClasses }>
 							<span className="checkout__pay-button">
 								<button
 									type="submit"
@@ -209,7 +229,7 @@ export class PaypalPaymentBox extends React.Component {
 								) }
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ secureText }
 								</div>
 							</div>
 
