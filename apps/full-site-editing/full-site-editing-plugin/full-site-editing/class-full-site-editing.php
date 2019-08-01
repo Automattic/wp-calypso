@@ -21,7 +21,7 @@ class Full_Site_Editing {
 	 *
 	 * @var Full_Site_Editing
 	 */
-	private $template_post_types = array( 'wp_template', 'wp_template_part' );
+	private $template_post_types = [ 'wp_template_part' ];
 
 	/**
 	 * Full_Site_Editing constructor.
@@ -29,8 +29,6 @@ class Full_Site_Editing {
 	private function __construct() {
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
 		add_action( 'init', array( $this, 'register_template_post_types' ) );
-		add_action( 'init', array( $this, 'register_meta_template_id' ) );
-		add_action( 'rest_api_init', array( $this, 'allow_searching_for_templates' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
 		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
 		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
@@ -55,62 +53,6 @@ class Full_Site_Editing {
 	 * Register post types.
 	 */
 	public function register_template_post_types() {
-		register_post_type(
-			'wp_template',
-			array(
-				'labels'                => array(
-					'name'                     => _x( 'Templates', 'post type general name', 'full-site-editing' ),
-					'singular_name'            => _x( 'Template', 'post type singular name', 'full-site-editing' ),
-					'menu_name'                => _x( 'Templates', 'admin menu', 'full-site-editing' ),
-					'name_admin_bar'           => _x( 'Template', 'add new on admin bar', 'full-site-editing' ),
-					'add_new'                  => _x( 'Add New', 'Template', 'full-site-editing' ),
-					'add_new_item'             => __( 'Add New Template', 'full-site-editing' ),
-					'new_item'                 => __( 'New Template', 'full-site-editing' ),
-					'edit_item'                => __( 'Edit Template', 'full-site-editing' ),
-					'view_item'                => __( 'View Template', 'full-site-editing' ),
-					'all_items'                => __( 'All Templates', 'full-site-editing' ),
-					'search_items'             => __( 'Search Templates', 'full-site-editing' ),
-					'not_found'                => __( 'No templates found.', 'full-site-editing' ),
-					'not_found_in_trash'       => __( 'No templates found in Trash.', 'full-site-editing' ),
-					'filter_items_list'        => __( 'Filter templates list', 'full-site-editing' ),
-					'items_list_navigation'    => __( 'Templates list navigation', 'full-site-editing' ),
-					'items_list'               => __( 'Templates list', 'full-site-editing' ),
-					'item_published'           => __( 'Template published.', 'full-site-editing' ),
-					'item_published_privately' => __( 'Template published privately.', 'full-site-editing' ),
-					'item_reverted_to_draft'   => __( 'Template reverted to draft.', 'full-site-editing' ),
-					'item_scheduled'           => __( 'Template scheduled.', 'full-site-editing' ),
-					'item_updated'             => __( 'Template updated.', 'full-site-editing' ),
-				),
-				'menu_icon'             => 'dashicons-layout',
-				'public'                => false,
-				'show_ui'               => true,
-				'show_in_menu'          => true,
-				'rewrite'               => false,
-				'show_in_rest'          => true,
-				'rest_base'             => 'templates',
-				'rest_controller_class' => 'A8C_REST_Templates_Controller',
-				'capability_type'       => 'template',
-				'capabilities'          => array(
-					// You need to be able to edit posts, in order to read templates in their raw form.
-					'read'                   => 'edit_posts',
-					// You need to be able to customize, in order to create templates.
-					'create_posts'           => 'edit_theme_options',
-					'edit_posts'             => 'edit_theme_options',
-					'delete_posts'           => 'edit_theme_options',
-					'edit_published_posts'   => 'edit_theme_options',
-					'delete_published_posts' => 'edit_theme_options',
-					'edit_others_posts'      => 'edit_theme_options',
-					'delete_others_posts'    => 'edit_theme_options',
-					'publish_posts'          => 'edit_theme_options',
-				),
-				'map_meta_cap'          => true,
-				'supports'              => array(
-					'title',
-					'editor',
-				),
-			)
-		);
-
 		register_post_type(
 			'wp_template_part',
 			array(
@@ -169,46 +111,6 @@ class Full_Site_Editing {
 		);
 
 		register_taxonomy(
-			'wp_template_type',
-			'wp_template',
-			array(
-				'labels'             => array(
-					'name'              => _x( 'Template Types', 'taxonomy general name', 'full-site-editing' ),
-					'singular_name'     => _x( 'Template Type', 'taxonomy singular name', 'full-site-editing' ),
-					'menu_name'         => _x( 'Template Types', 'admin menu', 'full-site-editing' ),
-					'all_items'         => __( 'All Template Types', 'full-site-editing' ),
-					'edit_item'         => __( 'Edit Template Type', 'full-site-editing' ),
-					'view_item'         => __( 'View Template Type', 'full-site-editing' ),
-					'update_item'       => __( 'Update Template Type', 'full-site-editing' ),
-					'add_new_item'      => __( 'Add New Template Type', 'full-site-editing' ),
-					'new_item_name'     => __( 'New Template Type', 'full-site-editing' ),
-					'parent_item'       => __( 'Parent Template Type', 'full-site-editing' ),
-					'parent_item_colon' => __( 'Parent Template Type:', 'full-site-editing' ),
-					'search_items'      => __( 'Search Template Types', 'full-site-editing' ),
-					'not_found'         => __( 'No template types found.', 'full-site-editing' ),
-					'back_to_items'     => __( 'Back to template types', 'full-site-editing' ),
-				),
-				'public'             => false,
-				'publicly_queryable' => true,
-				'show_ui'            => true,
-				'show_in_menu'       => false,
-				'show_in_nav_menu'   => false,
-				'show_in_rest'       => true,
-				'rest_base'          => 'template_types',
-				'show_tagcloud'      => false,
-				'show_admin_column'  => true,
-				'hierarchical'       => true,
-				'rewrite'            => false,
-				'capabilities'       => array(
-					'manage_terms' => 'edit_theme_options',
-					'edit_terms'   => 'edit_theme_options',
-					'delete_terms' => 'edit_theme_options',
-					'assign_terms' => 'edit_theme_options',
-				),
-			)
-		);
-
-		register_taxonomy(
 			'wp_template_part_type',
 			'wp_template_part',
 			array(
@@ -245,22 +147,6 @@ class Full_Site_Editing {
 					'delete_terms' => 'edit_theme_options',
 					'assign_terms' => 'edit_theme_options',
 				),
-			)
-		);
-	}
-
-	/**
-	 * Register post meta.
-	 */
-	public function register_meta_template_id() {
-		register_post_meta(
-			'',
-			'_wp_template_id',
-			array(
-				'auth_callback' => array( $this, 'meta_template_id_auth_callback' ),
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'integer',
 			)
 		);
 	}
@@ -364,41 +250,19 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * This will set the `wp_template` and `wp_template_part` post types to `public` to support
-	 * the core search endpoint, which looks for it.
-	 */
-	public function allow_searching_for_templates() {
-		$post_type = get_post_type_object( 'wp_template' );
-		if ( ! ( $post_type instanceof WP_Post_Type ) ) {
-			return;
-		}
-
-		// Setting this to `public` will allow it to be found in the search endpoint.
-		$post_type->public = true;
-
-		$post_type = get_post_type_object( 'wp_template_part' );
-		if ( ! ( $post_type instanceof WP_Post_Type ) ) {
-			return;
-		}
-
-		// Setting this to `public` will allow it to be found in the search endpoint.
-		$post_type->public = true;
-	}
-
-	/**
 	 * Returns the parent post ID if sent as query param when editing a Template Part from a
 	 * Post/Page or a Template.
 	 *
 	 * @return null|string The parent post ID, or null if not set.
 	 */
 	public function get_parent_post_id() {
-		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['fse_parent_post'] ) ) {
 			return null;
 		}
 
 		$parent_post_id = absint( $_GET['fse_parent_post'] );
-		// phpcs:enable WordPress.Security.NonceVerification.NoNonceVerification
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		if ( empty( $parent_post_id ) ) {
 			return null;
@@ -494,8 +358,8 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template         = new A8C_WP_Template( $post->ID );
-		$template_content = $template->get_template_content();
+		$template         = new A8C_WP_Template();
+		$template_content = $template->get_page_template_content();
 
 		// Bail if the template has no post content block.
 		if ( ! has_block( 'a8c/post-content', $template_content ) ) {
@@ -539,18 +403,6 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Determine if the current edited post is a full site page.
-	 * If it's a page being loaded that has a `wp_template`, it's a page that our FSE plugin should handle.
-	 *
-	 * @return boolean
-	 */
-	public function is_full_site_page() {
-		$fse_template = new A8C_WP_Template();
-
-		return 'page' === get_post_type() && $fse_template->get_template_id();
-	}
-
-	/**
 	 * Return an extra class that will be assigned to the body element if a full site page is being edited.
 	 *
 	 * That class hides the default post title of the editor and displays a new post title rendered by the post content
@@ -585,6 +437,16 @@ class Full_Site_Editing {
 			$editor_settings['templateLock'] = 'all';
 		}
 		return $editor_settings;
+	}
+
+	/**
+	 * Determine if the current edited post is a full site page.
+	 * So far we only support static pages.
+	 *
+	 * @return boolean
+	 */
+	public function is_full_site_page() {
+		return 'page' === get_post_type();
 	}
 }
 

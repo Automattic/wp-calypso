@@ -9,21 +9,19 @@
  * Class A8C_WP_Template
  */
 class A8C_WP_Template {
-	const TEMPLATE_META_KEY = '_wp_template_id';
+	/**
+	 * Header template part type constant.
+	 *
+	 * @var string HEADER
+	 */
+	const HEADER = 'header';
 
 	/**
-	 * ID of the current post that's being rendered.
+	 * Footer template part type constant
 	 *
-	 * @var int $current_post_id ID of the current post.
+	 * @var string FOOTER
 	 */
-	private $current_post_id;
-
-	/**
-	 * ID of the template associated with the current post.
-	 *
-	 * @var int $template_id ID of the template associated with the current post.
-	 */
-	private $template_id;
+	const FOOTER = 'footer';
 
 	/**
 	 * Name of the currently active theme that is used to reference its template CPTs.
@@ -32,78 +30,105 @@ class A8C_WP_Template {
 	 */
 	private $current_theme_name;
 
+	/**
+	 * List of template part types that FSE is currently supporting.
+	 *
+	 * @var array $supported_template_types Array of strings containing supported template part types.
+	 */
+	public $supported_template_types = [ self::HEADER, self::FOOTER ];
 
 	/**
 	 * A8C_WP_Template constructor.
-	 *
-	 * @param int|null $post_id Defaults to current post id if not passed.
 	 */
-	public function __construct( $post_id = null ) {
-		if ( null === $post_id ) {
-			$post = get_post();
-
-			if ( ! $post ) {
-				return;
-			}
-
-			$post_id = $post->ID;
-		}
-
-		$this->current_post_id    = $post_id;
-		$this->template_id        = $this->get_template_id();
+	public function __construct() {
 		$this->current_theme_name = get_option( 'stylesheet' );
 	}
 
 	/**
-	 * Returns template ID for current page if it exists.
+	 * Checks whether the provided template part type is supported in FSE.
 	 *
-	 * If template id is set in current post's meta (_wp_template_id) it will be returned.
-	 * Otherwise it falls back to global page template that is marked with page_template term
-	 * in wp_template_type taxonomy. Note that having only one term of this kind is not
-	 * currently enforced, so we'll just pick the latest page template that was created
-	 * (based on its post ID).
+	 * @param string $template_part_type String representing the template part type.
 	 *
-	 * @return null|int template ID for current page, or null if it doesn't exist.
+	 * @return bool True if provided template part type is supported in FSE, false otherwise.
 	 */
-	public function get_template_id() {
-		// If the specific template is referenced in post meta, use it.
-		$template_id = get_post_meta( $this->current_post_id, self::TEMPLATE_META_KEY, true );
+	public function is_supported_template_part_type( $template_part_type ) {
+		return in_array( $template_part_type, $this->supported_template_types, true );
+	}
 
-		if ( ! empty( $template_id ) ) {
-			return $template_id;
+	/**
+	 * Returns the post ID of the default template part CPT for a given template type.
+	 *
+	 * @param string $template_part_type String representing the template part type.
+	 *
+	 * @return null|int Template part ID if it exists or null otherwise.
+	 */
+	public function get_template_part_id( $template_part_type ) {
+		if ( ! $this->is_supported_template_part_type( $template_part_type ) ) {
+			return null;
 		}
 
-		$current_theme_name = get_option( 'stylesheet' );
+		$term = get_term_by( 'name', "$this->current_theme_name-$template_part_type", 'wp_template_part_type', ARRAY_A );
 
-		// Otherwise, fall back to latest global page template defined for current theme.
-		$term = get_term_by( 'name', "$current_theme_name-page-template", 'wp_template_type', ARRAY_A );
-
+		// Bail if current site doesn't have this term registered.
 		if ( ! isset( $term['term_id'] ) ) {
 			return null;
 		}
 
-		$template_ids = get_objects_in_term( $term['term_id'], $term['taxonomy'], [ 'order' => 'DESC' ] );
+		$template_part_ids = get_objects_in_term( $term['term_id'], $term['taxonomy'], [ 'order' => 'DESC' ] );
 
-		if ( empty( $template_ids ) ) {
+		// Bail if we haven't found any post instances for this template part type.
+		if ( empty( $template_part_ids ) ) {
 			return null;
 		}
 
-		return $template_ids[0];
+		/*
+		 * Assuming that we'll have just one default template part for now.
+		 * We'll add support for multiple header and footer variations in future iterations.
+		 */
+		return $template_part_ids[0];
 	}
 
 	/**
-	 * Returns template's post content.
+	 * Returns template part content for given template part type.
 	 *
-	 * @return null|string
+	 * @param string $template_part_type String representing the template part type.
+	 *
+	 * @return null|string Template part content if it exists or null otherwise.
 	 */
-	public function get_template_content() {
-		if ( empty( $this->template_id ) ) {
+	public function get_template_part_content( $template_part_type ) {
+		if ( ! $this->is_supported_template_part_type( $template_part_type ) ) {
 			return null;
 		}
 
-		$template_post = get_post( $this->template_id );
+		$template_part_id = $this->get_template_part_id( $template_part_type );
 
-		return null === $template_post ? null : $template_post->post_content;
+		if ( null === $template_part_id ) {
+			return null;
+		}
+
+		$template_part_post = get_post( $template_part_id );
+
+		if ( null === $template_part_post ) {
+			return;
+		}
+
+		return $template_part_post->post_content;
+	}
+
+	/**
+	 * Returns full page template content.
+	 *
+	 * We only support one page template for now with header at the top and footer at the bottom.
+	 *
+	 * @return null|string
+	 */
+	public function get_page_template_content() {
+		$header_id = $this->get_template_part_id( self::HEADER );
+		$footer_id = $this->get_template_part_id( self::FOOTER );
+
+		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"className\":\"site-header site-branding\"} /-->" .
+				'<!-- wp:a8c/post-content /-->' .
+				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"className\":\"site-footer\"} /-->";
 	}
 
 	/**
@@ -112,123 +137,24 @@ class A8C_WP_Template {
 	 * @return array
 	 */
 	public function get_template_blocks() {
-		$template_content = $this->get_template_content();
-
-		$template_blocks = parse_blocks( $template_content );
-
+		$template_content = $this->get_page_template_content();
+		$template_blocks  = parse_blocks( $template_content );
 		return is_array( $template_blocks ) ? $template_blocks : [];
 	}
 
 	/**
-	 * Returns the post ID of the template part CPT that represents the Header in this template.
+	 * Output FSE template part markup.
 	 *
-	 * This is simplified for now and we are just assuming that the first template part in every
-	 * template will represent the Header.
+	 * @param string $template_part_type String representing the template part type.
 	 *
-	 * @return null|int Header template part ID if it exists or null otherwise.
+	 * @return null|void Null if unsupported template part type is passed, outputs content otherwise.
 	 */
-	public function get_header_id() {
-		$template_blocks = $this->get_template_blocks();
-
-		if ( empty( $template_blocks ) ) {
+	public function output_template_part_content( $template_part_type ) {
+		if ( ! $this->is_supported_template_part_type( $template_part_type ) ) {
 			return null;
 		}
 
-		// TODO: Incorporate wp_template_part taxonomy checks.
-		if ( ! isset( $template_blocks[0]['attrs']['templateId'] ) ) {
-			return null;
-		}
-
-		$header_id = $template_blocks[0]['attrs']['templateId'];
-
-		if ( ! has_term( "$this->current_theme_name-header", 'wp_template_part_type', $header_id ) ) {
-			return null;
-		}
-
-		return $header_id;
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo do_blocks( $this->get_template_part_content( $template_part_type ) );
 	}
-
-	/**
-	 * Returns the post ID of the template part CPT that represents the Footer in this template.
-	 *
-	 * This is simplified for now and we are just assuming that the last template part in every
-	 * template will represent the Footer.
-	 *
-	 * @return null|int Footer template part ID if it exists or null otherwise.
-	 */
-	public function get_footer_id() {
-		$template_blocks = $this->get_template_blocks();
-
-		if ( ! isset( end( $template_blocks )['attrs']['templateId'] ) ) {
-			return null;
-		}
-
-		$footer_id = end( $template_blocks )['attrs']['templateId'];
-
-		if ( ! has_term( "$this->current_theme_name-footer", 'wp_template_part_type', $footer_id ) ) {
-			return null;
-		}
-
-		return $footer_id;
-	}
-
-	/**
-	 * Returns header template part content of current template.
-	 *
-	 * @return null|string
-	 */
-	public function get_header_content() {
-		$header_id = $this->get_header_id();
-
-		if ( null === $header_id ) {
-			return null;
-		}
-
-		$header = get_post( $header_id );
-
-		if ( null === $header ) {
-			return null;
-		}
-
-		return $header->post_content;
-	}
-
-	/**
-	 * Returns footer template part content of current template.
-	 *
-	 * @return null|string
-	 */
-	public function get_footer_content() {
-		$footer_id = $this->get_footer_id();
-
-		if ( null === $footer_id ) {
-			return null;
-		}
-
-		$footer = get_post( $footer_id );
-
-		if ( null === $footer ) {
-			return null;
-		}
-
-		return $footer->post_content;
-	}
-}
-
-/**
- * Template tag to output the FSE template header markup.
- */
-function fse_get_header() {
-	$template = new A8C_WP_Template();
-	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-	echo do_blocks( $template->get_header_content() );
-}
-
-/**
- * Template tag to output the FSE template footer markup.
- */
-function fse_get_footer() {
-	$template = new A8C_WP_Template();
-	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-	echo do_blocks( $template->get_footer_content() );
 }
