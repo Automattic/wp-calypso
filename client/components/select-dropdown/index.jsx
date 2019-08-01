@@ -58,11 +58,6 @@ class SelectDropdown extends Component {
 	constructor( props ) {
 		super( props );
 
-		// bounds
-		this.navigateItem = this.navigateItem.bind( this );
-		this.toggleDropdown = this.toggleDropdown.bind( this );
-		this.handleOutsideClick = this.handleOutsideClick.bind( this );
-
 		// state
 		const initialState = { isOpen: false };
 
@@ -277,7 +272,7 @@ class SelectDropdown extends Component {
 		);
 	}
 
-	toggleDropdown() {
+	toggleDropdown = () => {
 		if ( this.props && this.props.disabled ) {
 			return;
 		}
@@ -285,7 +280,7 @@ class SelectDropdown extends Component {
 		this.setState( {
 			isOpen: ! this.state.isOpen,
 		} );
-	}
+	};
 
 	openDropdown() {
 		if ( this.props && this.props.disabled ) {
@@ -325,7 +320,7 @@ class SelectDropdown extends Component {
 		this.refs.dropdownContainer.focus();
 	}
 
-	navigateItem( event ) {
+	navigateItem = event => {
 		switch ( event.keyCode ) {
 			case 9: //tab
 				this.navigateItemByTabKey( event );
@@ -351,7 +346,7 @@ class SelectDropdown extends Component {
 				this.refs.dropdownContainer.focus();
 				break;
 		}
-	}
+	};
 
 	navigateItemByTabKey( event ) {
 		if ( ! this.state.isOpen ) {
@@ -413,11 +408,11 @@ class SelectDropdown extends Component {
 		this.focused = newIndex;
 	}
 
-	handleOutsideClick( event ) {
+	handleOutsideClick = event => {
 		if ( ! ReactDom.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
 			this.closeDropdown();
 		}
-	}
+	};
 }
 
 export default SelectDropdown;
