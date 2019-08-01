@@ -60,6 +60,7 @@ import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+import QueryBlogStickers from 'components/data/query-blog-stickers';
 
 /**
  * Style dependencies
@@ -682,6 +683,7 @@ class ThemeSheet extends React.Component {
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
+				<QueryBlogStickers blogId={ siteId } />
 				<ThanksModal source={ 'details' } />
 				{ pageUpsellBanner }
 				<HeaderCake
