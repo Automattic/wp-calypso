@@ -9,11 +9,11 @@ import classNames from 'classnames';
 
 export default class SegmentedControl extends React.Component {
 	static propTypes = {
-		children: PropTypes.node.isRequired,
 		className: PropTypes.string,
 		compact: PropTypes.bool,
-		onSelect: PropTypes.func,
+		primary: PropTypes.bool,
 		style: PropTypes.object,
+		children: PropTypes.node.isRequired,
 	};
 
 	render() {
