@@ -55,6 +55,8 @@ class SelectDropdown extends Component {
 
 	static instances = 0;
 
+	instanceId = ++SelectDropdown.instances;
+
 	constructor( props ) {
 		super( props );
 
@@ -66,12 +68,6 @@ class SelectDropdown extends Component {
 		}
 
 		this.state = initialState;
-	}
-
-	componentWillMount() {
-		this.setState( {
-			instanceId: ++SelectDropdown.instances,
-		} );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -184,22 +180,16 @@ class SelectDropdown extends Component {
 
 		return this.props.options.map( function( item, index ) {
 			if ( ! item ) {
-				return (
-					<DropdownSeparator key={ 'dropdown-separator-' + this.state.instanceId + '-' + index } />
-				);
+				return <DropdownSeparator key={ 'dropdown-separator-' + index } />;
 			}
 
 			if ( item.isLabel ) {
-				return (
-					<DropdownLabel key={ 'dropdown-label-' + this.state.instanceId + '-' + index }>
-						{ item.label }
-					</DropdownLabel>
-				);
+				return <DropdownLabel key={ 'dropdown-label-' + index }>{ item.label }</DropdownLabel>;
 			}
 
 			const dropdownItem = (
 				<DropdownItem
-					key={ 'dropdown-item-' + this.state.instanceId + '-' + item.value }
+					key={ 'dropdown-item-' + item.value }
 					ref={ 'item-' + refIndex }
 					isDropdownOpen={ this.state.isOpen }
 					selected={ this.state.selected === item.value }
@@ -237,17 +227,14 @@ class SelectDropdown extends Component {
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
 					aria-haspopup="true"
-					aria-owns={ 'select-submenu-' + this.state.instanceId }
-					aria-controls={ 'select-submenu-' + this.state.instanceId }
+					aria-owns={ 'select-submenu-' + this.instanceId }
+					aria-controls={ 'select-submenu-' + this.instanceId }
 					aria-expanded={ this.state.isOpen }
 					aria-disabled={ this.props.disabled }
 					data-tip-target={ this.props.tipTarget }
 					onClick={ this.toggleDropdown }
 				>
-					<div
-						id={ 'select-dropdown-' + this.state.instanceId }
-						className="select-dropdown__header"
-					>
+					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text">
 							{ selectedIcon && selectedIcon.type === Gridicon ? selectedIcon : null }
 							{ selectedText }
@@ -259,10 +246,10 @@ class SelectDropdown extends Component {
 					</div>
 
 					<ul
-						id={ 'select-submenu-' + this.state.instanceId }
+						id={ 'select-submenu-' + this.instanceId }
 						className="select-dropdown__options"
 						role="menu"
-						aria-labelledby={ 'select-dropdown-' + this.state.instanceId }
+						aria-labelledby={ 'select-dropdown-' + this.instanceId }
 						aria-expanded={ this.state.isOpen }
 					>
 						{ this.dropdownOptions() }
