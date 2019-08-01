@@ -12,6 +12,11 @@ import classNames from 'classnames';
  */
 import SegmentedControlItem from './item';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class SegmentedControl extends React.Component {
 	static Item = SegmentedControlItem;
 
