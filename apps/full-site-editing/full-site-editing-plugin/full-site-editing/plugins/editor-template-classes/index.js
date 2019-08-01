@@ -30,9 +30,7 @@ const EditorTemplateClasses = withSelect( select => {
 	return { templatePartClasses };
 } )( ( { templatePartClasses } ) => {
 	const blockListInception = setInterval( () => {
-		const blockList = document.querySelector(
-			'.editor-block-list__layout.block-editor-block-list__layout'
-		);
+		const blockList = document.querySelector( '.block-editor-writing-flow.editor-writing-flow' );
 
 		if ( ! blockList ) {
 			return;
@@ -40,8 +38,8 @@ const EditorTemplateClasses = withSelect( select => {
 		clearInterval( blockListInception );
 
 		blockList.className = classNames(
-			'editor-block-list__layout',
-			'block-editor-block-list__layout',
+			'block-editor-writing-flow',
+			'editor-writing-flow',
 			...templatePartClasses
 		);
 	} );
