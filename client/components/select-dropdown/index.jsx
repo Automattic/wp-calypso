@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { filter, find, findIndex, map, result } from 'lodash';
@@ -69,6 +67,8 @@ class SelectDropdown extends Component {
 
 		this.state = initialState;
 	}
+
+	dropdownContainerRef = React.createRef();
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.state.isOpen ) {
@@ -161,7 +161,7 @@ class SelectDropdown extends Component {
 					ref: child.type === DropdownItem ? 'item-' + refIndex : null,
 					key: 'item-' + index,
 					onClick: event => {
-						this.refs.dropdownContainer.focus();
+						this.dropdownContainerRef.current.focus();
 						if ( typeof child.props.onClick === 'function' ) {
 							child.props.onClick( event );
 						}
@@ -219,7 +219,7 @@ class SelectDropdown extends Component {
 		return (
 			<div style={ this.props.style } className={ dropdownClassName }>
 				<div
-					ref="dropdownContainer"
+					ref={ this.dropdownContainerRef }
 					className="select-dropdown__container"
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
@@ -301,7 +301,7 @@ class SelectDropdown extends Component {
 			selected: option.value,
 		} );
 
-		this.refs.dropdownContainer.focus();
+		this.dropdownContainerRef.current.focus();
 	}
 
 	navigateItem = event => {
@@ -327,7 +327,7 @@ class SelectDropdown extends Component {
 			case 27: // escape
 				event.preventDefault();
 				this.closeDropdown();
-				this.refs.dropdownContainer.focus();
+				this.dropdownContainerRef.current.focus();
 				break;
 		}
 	};
@@ -384,7 +384,7 @@ class SelectDropdown extends Component {
 	}
 
 	handleOutsideClick = event => {
-		if ( ! ReactDom.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
+		if ( ! this.dropdownContainerRef.current.contains( event.target ) ) {
 			this.closeDropdown();
 		}
 	};
