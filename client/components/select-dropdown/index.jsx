@@ -70,6 +70,12 @@ class SelectDropdown extends Component {
 
 	dropdownContainerRef = React.createRef();
 
+	itemRefs = [];
+
+	setItemRef = index => itemEl => {
+		this.itemRefs[ index ] = itemEl;
+	};
+
 	componentWillReceiveProps( nextProps ) {
 		if ( this.state.isOpen ) {
 			this.closeDropdown();
@@ -157,8 +163,8 @@ class SelectDropdown extends Component {
 					return null;
 				}
 
-				const newChild = React.cloneElement( child, {
-					ref: child.type === DropdownItem ? 'item-' + refIndex : null,
+				return React.cloneElement( child, {
+					ref: child.type === DropdownItem ? this.setItemRef( refIndex++ ) : null,
 					key: 'item-' + index,
 					onClick: event => {
 						this.dropdownContainerRef.current.focus();
@@ -167,12 +173,6 @@ class SelectDropdown extends Component {
 						}
 					},
 				} );
-
-				if ( child.type === DropdownItem ) {
-					refIndex++;
-				}
-
-				return newChild;
 			} );
 		}
 
@@ -185,10 +185,10 @@ class SelectDropdown extends Component {
 				return <DropdownLabel key={ 'dropdown-label-' + index }>{ item.label }</DropdownLabel>;
 			}
 
-			const dropdownItem = (
+			return (
 				<DropdownItem
 					key={ 'dropdown-item-' + item.value }
-					ref={ 'item-' + refIndex }
+					ref={ this.setItemRef( refIndex++ ) }
 					selected={ this.state.selected === item.value }
 					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
@@ -197,10 +197,6 @@ class SelectDropdown extends Component {
 					{ item.label }
 				</DropdownItem>
 			);
-
-			refIndex++;
-
-			return dropdownItem;
 		} );
 	}
 
@@ -379,7 +375,7 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		this.refs[ 'item-' + newIndex ].focusLink();
+		this.itemRefs[ newIndex ].focusLink();
 		this.focused = newIndex;
 	}
 
