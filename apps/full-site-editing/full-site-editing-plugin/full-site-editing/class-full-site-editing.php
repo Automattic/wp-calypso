@@ -23,7 +23,7 @@ class Full_Site_Editing {
 	 *
 	 * @var array
 	 */
-	private $template_post_types = [ 'wp_template_part' ];
+	private $template_post_types = [ 'wp_template' ];
 
 	/**
 	 * Full_Site_Editing constructor.
@@ -56,30 +56,30 @@ class Full_Site_Editing {
 	 */
 	public function register_template_post_types() {
 		register_post_type(
-			'wp_template_part',
+			'wp_template',
 			array(
 				'labels'                => array(
-					'name'                     => _x( 'Template Parts', 'post type general name', 'full-site-editing' ),
-					'singular_name'            => _x( 'Template Part', 'post type singular name', 'full-site-editing' ),
-					'menu_name'                => _x( 'Template Parts', 'admin menu', 'full-site-editing' ),
-					'name_admin_bar'           => _x( 'Template Part', 'add new on admin bar', 'full-site-editing' ),
-					'add_new'                  => _x( 'Add New', 'Template Part', 'full-site-editing' ),
-					'add_new_item'             => __( 'Add New Template Part', 'full-site-editing' ),
-					'new_item'                 => __( 'New Template Part', 'full-site-editing' ),
-					'edit_item'                => __( 'Edit Template Part', 'full-site-editing' ),
-					'view_item'                => __( 'View Template Part', 'full-site-editing' ),
-					'all_items'                => __( 'All Template Parts', 'full-site-editing' ),
-					'search_items'             => __( 'Search Template Parts', 'full-site-editing' ),
-					'not_found'                => __( 'No template parts found.', 'full-site-editing' ),
-					'not_found_in_trash'       => __( 'No template parts found in Trash.', 'full-site-editing' ),
-					'filter_items_list'        => __( 'Filter template parts list', 'full-site-editing' ),
-					'items_list_navigation'    => __( 'Template parts list navigation', 'full-site-editing' ),
-					'items_list'               => __( 'Template parts list', 'full-site-editing' ),
-					'item_published'           => __( 'Template part published.', 'full-site-editing' ),
-					'item_published_privately' => __( 'Template part published privately.', 'full-site-editing' ),
-					'item_reverted_to_draft'   => __( 'Template part reverted to draft.', 'full-site-editing' ),
-					'item_scheduled'           => __( 'Template part scheduled.', 'full-site-editing' ),
-					'item_updated'             => __( 'Template part updated.', 'full-site-editing' ),
+					'name'                     => _x( 'Templates', 'post type general name', 'full-site-editing' ),
+					'singular_name'            => _x( 'Template', 'post type singular name', 'full-site-editing' ),
+					'menu_name'                => _x( 'Templates', 'admin menu', 'full-site-editing' ),
+					'name_admin_bar'           => _x( 'Template', 'add new on admin bar', 'full-site-editing' ),
+					'add_new'                  => _x( 'Add New', 'Template', 'full-site-editing' ),
+					'add_new_item'             => __( 'Add New Template', 'full-site-editing' ),
+					'new_item'                 => __( 'New Template', 'full-site-editing' ),
+					'edit_item'                => __( 'Edit Template', 'full-site-editing' ),
+					'view_item'                => __( 'View Template', 'full-site-editing' ),
+					'all_items'                => __( 'All Templates', 'full-site-editing' ),
+					'search_items'             => __( 'Search Templates', 'full-site-editing' ),
+					'not_found'                => __( 'No templates found.', 'full-site-editing' ),
+					'not_found_in_trash'       => __( 'No templates found in Trash.', 'full-site-editing' ),
+					'filter_items_list'        => __( 'Filter templates list', 'full-site-editing' ),
+					'items_list_navigation'    => __( 'Templates list navigation', 'full-site-editing' ),
+					'items_list'               => __( 'Templates list', 'full-site-editing' ),
+					'item_published'           => __( 'Template published.', 'full-site-editing' ),
+					'item_published_privately' => __( 'Template published privately.', 'full-site-editing' ),
+					'item_reverted_to_draft'   => __( 'Template reverted to draft.', 'full-site-editing' ),
+					'item_scheduled'           => __( 'Template scheduled.', 'full-site-editing' ),
+					'item_updated'             => __( 'Template updated.', 'full-site-editing' ),
 				),
 				'menu_icon'             => 'dashicons-layout',
 				'public'                => false,
@@ -87,9 +87,9 @@ class Full_Site_Editing {
 				'show_in_menu'          => true,
 				'rewrite'               => false,
 				'show_in_rest'          => true,
-				'rest_base'             => 'template_parts',
+				'rest_base'             => 'templates',
 				'rest_controller_class' => __NAMESPACE__ . '\REST_Templates_Controller',
-				'capability_type'       => 'template_part',
+				'capability_type'       => 'template',
 				'capabilities'          => array(
 					// You need to be able to edit posts, in order to read templates in their raw form.
 					'read'                   => 'edit_posts',
@@ -113,24 +113,24 @@ class Full_Site_Editing {
 		);
 
 		register_taxonomy(
-			'wp_template_part_type',
-			'wp_template_part',
+			'wp_template_type',
+			'wp_template',
 			array(
 				'labels'             => array(
-					'name'              => _x( 'Template Part Types', 'taxonomy general name', 'full-site-editing' ),
-					'singular_name'     => _x( 'Template Part Type', 'taxonomy singular name', 'full-site-editing' ),
-					'menu_name'         => _x( 'Template Part Types', 'admin menu', 'full-site-editing' ),
-					'all_items'         => __( 'All Template Part Types', 'full-site-editing' ),
-					'edit_item'         => __( 'Edit Template Part Type', 'full-site-editing' ),
-					'view_item'         => __( 'View Template Part Type', 'full-site-editing' ),
-					'update_item'       => __( 'Update Template Part Type', 'full-site-editing' ),
-					'add_new_item'      => __( 'Add New Template Part Type', 'full-site-editing' ),
-					'new_item_name'     => __( 'New Template Part Type', 'full-site-editing' ),
-					'parent_item'       => __( 'Parent Template Part Type', 'full-site-editing' ),
-					'parent_item_colon' => __( 'Parent Template Part Type:', 'full-site-editing' ),
-					'search_items'      => __( 'Search Template Part Types', 'full-site-editing' ),
-					'not_found'         => __( 'No template part types found.', 'full-site-editing' ),
-					'back_to_items'     => __( 'Back to template part types', 'full-site-editing' ),
+					'name'              => _x( 'Template Types', 'taxonomy general name', 'full-site-editing' ),
+					'singular_name'     => _x( 'Template Type', 'taxonomy singular name', 'full-site-editing' ),
+					'menu_name'         => _x( 'Template Types', 'admin menu', 'full-site-editing' ),
+					'all_items'         => __( 'All Template Types', 'full-site-editing' ),
+					'edit_item'         => __( 'Edit Template Type', 'full-site-editing' ),
+					'view_item'         => __( 'View Template Type', 'full-site-editing' ),
+					'update_item'       => __( 'Update Template Type', 'full-site-editing' ),
+					'add_new_item'      => __( 'Add New Template Type', 'full-site-editing' ),
+					'new_item_name'     => __( 'New Template Type', 'full-site-editing' ),
+					'parent_item'       => __( 'Parent Template Type', 'full-site-editing' ),
+					'parent_item_colon' => __( 'Parent Template Type:', 'full-site-editing' ),
+					'search_items'      => __( 'Search Template Types', 'full-site-editing' ),
+					'not_found'         => __( 'No template types found.', 'full-site-editing' ),
+					'back_to_items'     => __( 'Back to template types', 'full-site-editing' ),
 				),
 				'public'             => false,
 				'publicly_queryable' => true,
@@ -138,7 +138,7 @@ class Full_Site_Editing {
 				'show_in_menu'       => false,
 				'show_in_nav_menu'   => false,
 				'show_in_rest'       => true,
-				'rest_base'          => 'template_part_types',
+				'rest_base'          => 'template_types',
 				'show_tagcloud'      => false,
 				'show_admin_column'  => true,
 				'hierarchical'       => true,
@@ -186,11 +186,11 @@ class Full_Site_Editing {
 			'a8c-full-site-editing-script',
 			'fullSiteEditing',
 			array(
-				'editorPostType'          => get_current_screen()->post_type,
-				'featureFlags'            => $feature_flags->get_flags(),
-				'closeButtonLabel'        => $this->get_close_button_label(),
-				'closeButtonUrl'          => esc_url( $this->get_close_button_url() ),
-				'editTemplatePartBaseUrl' => esc_url( $this->get_edit_template_part_base_url() ),
+				'editorPostType'      => get_current_screen()->post_type,
+				'featureFlags'        => $feature_flags->get_flags(),
+				'closeButtonLabel'    => $this->get_close_button_label(),
+				'closeButtonUrl'      => esc_url( $this->get_close_button_url() ),
+				'editTemplateBaseUrl' => esc_url( $this->get_edit_template_base_url() ),
 			)
 		);
 
@@ -252,7 +252,7 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Returns the parent post ID if sent as query param when editing a Template Part from a
+	 * Returns the parent post ID if sent as query param when editing a Template from a
 	 * Post/Page or a Template.
 	 *
 	 * @return null|string The parent post ID, or null if not set.
@@ -276,9 +276,9 @@ class Full_Site_Editing {
 	/**
 	 * Returns the label for the Gutenberg close button.
 	 *
-	 * When we edit a Template Part from a Post/Page or a Template, we want to replace the close
+	 * When we edit a Template from a Post/Page or a Template, we want to replace the close
 	 * icon with a "Back to" button, to clarify that it will take us back to the previous editing
-	 * view, and not the Template Part CPT list.
+	 * view, and not the Template CPT list.
 	 *
 	 * @return null|string Override label string if it should be inserted, or null otherwise.
 	 */
@@ -301,7 +301,7 @@ class Full_Site_Editing {
 	 *
 	 * In some cases we want to override the default value which would take us to post listing
 	 * for a given post type. For example, when navigating back from Header, we want to show the
-	 * parent page editing view, and not the Template Part CPT list.
+	 * parent page editing view, and not the Template CPT list.
 	 *
 	 * @return null|string Override URL string if it should be inserted, or null otherwise.
 	 */
@@ -315,7 +315,7 @@ class Full_Site_Editing {
 		$close_button_url = get_edit_post_link( $parent_post_id );
 
 		/**
-		 * Filter the Gutenberg's close button URL when editing Template Part CPTs.
+		 * Filter the Gutenberg's close button URL when editing Template CPTs.
 		 *
 		 * @since 0.1
 		 *
@@ -325,24 +325,24 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Returns the base URL for the Edit Template Part button. The URL does not contain neither
-	 * the post ID nor the template part ID. Those query arguments should be provided by
-	 * the Template Part on the Block.
+	 * Returns the base URL for the Edit Template button. The URL does not contain neither
+	 * the post ID nor the template ID. Those query arguments should be provided by
+	 * the Template on the Block.
 	 *
 	 * @return string edit link without post ID
 	 */
-	public function get_edit_template_part_base_url() {
+	public function get_edit_template_base_url() {
 		$edit_post_link = remove_query_arg( 'post', get_edit_post_link( 0, 'edit' ) );
 
 		/**
-		 * Filter the Gutenberg's edit template part button base URL
+		 * Filter the Gutenberg's edit template button base URL
 		 * when editing pages or posts.
 		 *
 		 * @since 0.2
 		 *
 		 * @param string Current edit button URL.
 		 */
-		return apply_filters( 'a8c_fse_edit_template_part_base_url', $edit_post_link );
+		return apply_filters( 'a8c_fse_edit_template_base_url', $edit_post_link );
 	}
 
 	/** This will merge the post content with the post template, modifiying the $post parameter.

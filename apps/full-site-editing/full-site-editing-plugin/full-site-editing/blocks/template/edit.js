@@ -31,15 +31,15 @@ const TemplateEdit = compose(
 		const { getBlock } = select( 'core/block-editor' );
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
-		const template = templateId && getEntityRecord( 'postType', 'wp_template_part', templateId );
-		const editTemplatePartUrl = addQueryArgs( fullSiteEditing.editTemplatePartBaseUrl, {
+		const template = templateId && getEntityRecord( 'postType', 'wp_template', templateId );
+		const editTemplateUrl = addQueryArgs( fullSiteEditing.editTemplateBaseUrl, {
 			post: templateId,
 			fse_parent_post: currentPostId,
 		} );
 
 		return {
 			currentPostId,
-			editTemplatePartUrl,
+			editTemplateUrl,
 			template,
 			templateBlock: getBlock( templateClientId ),
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
@@ -70,7 +70,7 @@ const TemplateEdit = compose(
 )(
 	( {
 		attributes,
-		editTemplatePartUrl,
+		editTemplateUrl,
 		receiveTemplateBlocks,
 		template,
 		templateBlock,
@@ -88,7 +88,7 @@ const TemplateEdit = compose(
 		const [ navigateToTemplate, setNavigateToTemplate ] = useState( false );
 		useEffect( () => {
 			if ( navigateToTemplate && ! isDirty ) {
-				window.location.href = editTemplatePartUrl;
+				window.location.href = editTemplateUrl;
 			}
 			receiveTemplateBlocks();
 		} );
@@ -124,11 +124,9 @@ const TemplateEdit = compose(
 						</Disabled>
 						<Placeholder
 							className="template-block__overlay"
-							instructions={ __(
-								'This block is part of your site template and may appear on multiple pages.'
-							) }
+							instructions={ __( "This template will appear on all of your site's pages." ) }
 						>
-							<Button href={ editTemplatePartUrl } onClick={ save } isDefault>
+							<Button href={ editTemplateUrl } onClick={ save } isDefault>
 								{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
 							</Button>
 						</Placeholder>
