@@ -33,3 +33,36 @@
 		display: block;
 	}
 }
+
+/* Hide the content slot block UI */
+.block-editor-block-list__layout {
+	.post-content__block {
+		> .block-editor-block-list__block-edit {
+			&::before {
+				transition: none;
+			}
+
+			> .block-editor-block-list__breadcrumb {
+				display: none;
+			}
+		}
+
+		&.is-selected {
+			> .block-editor-block-list__block-edit::before {
+				border: none;
+				box-shadow: none;
+			}
+
+			.block-editor-block-contextual-toolbar {
+				display: none;
+			}
+		}
+
+		&.is-hovered {
+			> .block-editor-block-list__block-edit::before {
+				border: none;
+				box-shadow: none;
+			}
+		}
+	}
+}
