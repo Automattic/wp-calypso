@@ -7,7 +7,8 @@ import isSiteUsingFullSiteEditing from '../is-site-using-full-site-editing';
 
 describe( 'isSiteUsingFullSiteEditing', () => {
 	test( 'returns false if site does not exist', () => {
-		const isFSE = isSiteUsingFullSiteEditing( {}, 1 );
+		const state = { sites: { items: {} } };
+		const isFSE = isSiteUsingFullSiteEditing( state, 1 );
 		expect( isFSE ).toBe( false );
 	} );
 
