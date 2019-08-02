@@ -40,5 +40,5 @@ export function shouldBePrivateByDefault( {
 export function getNewSitePublicSetting( dependencies: object, stepData: object ): number {
 	debug( 'getNewSitePublicSetting input', { dependencies, stepData } );
 
-	return shouldBePrivateByDefault( { ...stepData } ) ? -1 : 1;
+	return shouldBePrivateByDefault( stepData ) ? -1 : 1;
 }

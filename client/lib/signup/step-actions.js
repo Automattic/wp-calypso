@@ -165,7 +165,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 		},
-		public: getNewSitePublicSetting( { ...dependencies, ...stepData } ),
+		public: getNewSitePublicSetting( dependencies, stepData ),
 		validate: false,
 	};
 
@@ -556,7 +556,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( { ...dependencies, ...stepData } ),
+		public: getNewSitePublicSetting( dependencies, stepData ),
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
