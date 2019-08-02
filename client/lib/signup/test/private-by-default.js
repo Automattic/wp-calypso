@@ -23,7 +23,7 @@ describe( 'getNewSitePublicSetting()', () => {
 
 describe( 'shouldBePrivateByDefault()', () => {
 	test( 'should throw with no input', () => {
-		expect( () => shouldBePrivateByDefault() ).toThrowError( TypeError );
+		expect( () => shouldBePrivateByDefault() ).toThrow( TypeError );
 	} );
 
 	test( 'should return `true` with no flowName', () => {
