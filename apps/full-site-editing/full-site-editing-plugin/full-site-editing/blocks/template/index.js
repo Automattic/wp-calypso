@@ -19,7 +19,8 @@ if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 		category: 'layout',
 		attributes: { templateId: { type: 'number' } },
 		supports: {
-			anchor: true,
+			anchor: false,
+			customClassName: true, // Needed to support the classname we inject
 			html: false,
 			reusable: false,
 		},

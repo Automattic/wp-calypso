@@ -20,7 +20,8 @@ registerBlockType( 'a8c/post-content', {
 	icon: 'layout',
 	category: 'layout',
 	supports: {
-		anchor: true,
+		anchor: false,
+		customClassName: false,
 		html: false,
 		multiple: false,
 		reusable: false,
