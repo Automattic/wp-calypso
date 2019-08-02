@@ -5,6 +5,7 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
+import { addFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -39,7 +40,7 @@ const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
 	};
 }, 'addContentSlotClassname' );
 
-wp.hooks.addFilter(
+addFilter(
 	'editor.BlockListBlock',
 	'full-site-editing/blocks/post-content',
 	addContentSlotClassname
