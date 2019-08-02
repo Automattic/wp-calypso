@@ -177,6 +177,44 @@ export class ThreatAlert extends Component {
 		}
 	}
 
+	getGroupedThreatRows() {
+		const {
+			threat: { rows },
+			siteSlug,
+		} = this.props;
+		let infectedPosts = [];
+
+		function findObjectIndexInArray( array, attr, value ) {
+			for ( var i = 0; i < array.length; i++ ) {
+				if ( array[ i ][ attr ] === value ) {
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		Object.keys( rows ).map( idx => {
+			const row = rows[ idx ];
+			const postIndex = findObjectIndexInArray( infectedPosts, 'postTitle', row.description );
+
+			if ( -1 === postIndex ) {
+				infectedPosts.push( {
+					postTitle: row.description,
+					editUrl: `/post/${ siteSlug }/${ row.id }`,
+					ids: [ parseInt( row.id ) ],
+					links: [ row.url ],
+				} );
+			} else {
+				infectedPosts[ postIndex ].ids.push( parseInt( row.id ) );
+				infectedPosts[ postIndex ].links.push( row.url );
+				const minId = Math.min.apply( null, infectedPosts[ postIndex ].ids );
+				infectedPosts[ postIndex ].editUrl = `/post/${ siteSlug }/${ minId }`;
+			}
+		} );
+
+		return infectedPosts;
+	}
+
 	formatGroupedPosts() {
 		const {
 			threat: { rows },
@@ -202,18 +240,18 @@ export class ThreatAlert extends Component {
 
 		switch ( this.getDetailType( threat ) ) {
 			case 'database':
-				const rows = this.formatGroupedPosts();
+				const infectedPosts = this.getGroupedThreatRows();
 
 				return (
 					<Fragment>
-						{ Object.keys( rows ).map( ( title, rowKey ) => (
-							<Card key={ rowKey } className="threat-alert__database-row">
+						{ infectedPosts.map( ( infectedPost, postKey ) => (
+							<Card key={ postKey } className="threat-alert__database-row">
 								<div className="threat-alert__database-row-icon">
 									<ActivityIcon activityIcon="posts" activityStatus="error" />
 								</div>
 								<div className="threat-alert__database-row-content">
 									<div>
-										<strong>{ title }</strong>
+										<strong>{ infectedPost.postTitle }</strong>
 									</div>
 									<div>
 										<em>
@@ -221,9 +259,9 @@ export class ThreatAlert extends Component {
 												'%(urlCount)d suspicious link on post',
 												'%(urlCount)d suspicious links on post',
 												{
-													count: Object.keys( rows[ title ] ).length,
+													count: infectedPost.links.length,
 													args: {
-														urlCount: Object.keys( rows[ title ] ).length,
+														urlCount: infectedPost.links.length,
 													},
 												}
 											) }
@@ -233,12 +271,16 @@ export class ThreatAlert extends Component {
 										</InfoPopover>
 									</div>
 									<ol className="threat-alert__database-row-list">
-										{ Object.keys( rows[ title ] ).map( ( url, urlIndex ) => (
-											<li key={ urlIndex }>{ rows[ title ][ url ] }</li>
+										{ infectedPost.links.map( ( link, linkKey ) => (
+											<li key={ linkKey }>{ link }</li>
 										) ) }
 									</ol>
 								</div>
-								<Button className="threat-alert__database-row-action" compact>
+								<Button
+									className="threat-alert__database-row-action"
+									compact
+									href={ infectedPost.editUrl }
+								>
 									{ translate( 'Edit post' ) }
 								</Button>
 							</Card>
