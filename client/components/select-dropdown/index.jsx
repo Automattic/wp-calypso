@@ -18,6 +18,11 @@ import DropdownLabel from './label';
 import Count from 'components/count';
 import TranslatableString from 'components/translatable/proptype';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SelectDropdown extends Component {
 	static Item = DropdownItem;
 	static Separator = DropdownSeparator;
