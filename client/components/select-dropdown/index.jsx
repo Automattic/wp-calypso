@@ -149,39 +149,34 @@ class SelectDropdown extends Component {
 
 	dropdownOptions() {
 		let refIndex = 0;
-		const self = this;
 
 		if ( this.props.children ) {
 			// add keys and refs to children
-			return React.Children.map(
-				this.props.children,
-				function( child, index ) {
-					if ( ! child ) {
-						return null;
-					}
+			return React.Children.map( this.props.children, ( child, index ) => {
+				if ( ! child ) {
+					return null;
+				}
 
-					const newChild = React.cloneElement( child, {
-						ref: child.type === DropdownItem ? 'item-' + refIndex : null,
-						key: 'item-' + index,
-						onClick: function( event ) {
-							self.refs.dropdownContainer.focus();
-							if ( typeof child.props.onClick === 'function' ) {
-								child.props.onClick( event );
-							}
-						},
-					} );
+				const newChild = React.cloneElement( child, {
+					ref: child.type === DropdownItem ? 'item-' + refIndex : null,
+					key: 'item-' + index,
+					onClick: event => {
+						this.refs.dropdownContainer.focus();
+						if ( typeof child.props.onClick === 'function' ) {
+							child.props.onClick( event );
+						}
+					},
+				} );
 
-					if ( child.type === DropdownItem ) {
-						refIndex++;
-					}
+				if ( child.type === DropdownItem ) {
+					refIndex++;
+				}
 
-					return newChild;
-				},
-				this
-			);
+				return newChild;
+			} );
 		}
 
-		return this.props.options.map( function( item, index ) {
+		return this.props.options.map( ( item, index ) => {
 			if ( ! item ) {
 				return <DropdownSeparator key={ 'dropdown-separator-' + index } />;
 			}
@@ -206,7 +201,7 @@ class SelectDropdown extends Component {
 			refIndex++;
 
 			return dropdownItem;
-		}, this );
+		} );
 	}
 
 	render() {
@@ -364,26 +359,17 @@ class SelectDropdown extends Component {
 		let items, focusedIndex;
 
 		if ( this.props.options.length ) {
-			items = map(
-				filter( this.props.options, item => {
-					return item && ! item.isLabel;
-				} ),
-				'value'
-			);
+			items = map( filter( this.props.options, item => item && ! item.isLabel ), 'value' );
 
 			focusedIndex =
 				typeof this.focused === 'number' ? this.focused : items.indexOf( this.state.selected );
 		} else {
-			items = filter( this.props.children, function( item ) {
-				return item.type === DropdownItem;
-			} );
+			items = filter( this.props.children, item => item.type === DropdownItem );
 
 			focusedIndex =
 				typeof this.focused === 'number'
 					? this.focused
-					: findIndex( items, function( item ) {
-							return item.props.selected;
-					  } );
+					: findIndex( items, item => item.props.selected );
 		}
 
 		const increment = direction === 'previous' ? -1 : 1;
