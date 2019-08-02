@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, findIndex, get, map, noop } from 'lodash';
+import { filter, find, get, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -327,17 +327,19 @@ class SelectDropdown extends Component {
 		let items, focusedIndex;
 
 		if ( this.props.options.length ) {
-			items = map( filter( this.props.options, item => item && ! item.isLabel ), 'value' );
+			items = filter( this.props.options, item => item && ! item.isLabel );
 
 			focusedIndex =
-				typeof this.focused === 'number' ? this.focused : items.indexOf( this.state.selected );
+				typeof this.focused === 'number'
+					? this.focused
+					: items.findIndex( item => item.value === this.state.selected );
 		} else {
 			items = filter( this.props.children, item => item.type === DropdownItem );
 
 			focusedIndex =
 				typeof this.focused === 'number'
 					? this.focused
-					: findIndex( items, item => item.props.selected );
+					: items.findIndex( item => item.props.selected );
 		}
 
 		const increment = direction === 'previous' ? -1 : 1;
