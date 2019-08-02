@@ -604,7 +604,8 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { needsVerification, translate } = this.props;
+		const disabled = ! baseProps.completed && needsVerification;
 
 		return (
 			<TaskComponent
@@ -615,6 +616,11 @@ class WpcomChecklistComponent extends PureComponent {
 				description={ translate(
 					'Your site is private and only visible to you. When you are ready, launch your site to make it public.'
 				) }
+				disableIcon={ disabled }
+				isButtonDisabled={ disabled }
+				noticeText={
+					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
+				}
 				onClick={ this.handleLaunchSite( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Launch your site' ) }

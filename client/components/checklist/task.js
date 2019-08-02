@@ -7,8 +7,6 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -32,7 +30,9 @@ class Task extends PureComponent {
 		duration: PropTypes.string,
 		href: PropTypes.string,
 		inProgress: PropTypes.bool,
+		isButtonDisabled: PropTypes.bool,
 		isWarning: PropTypes.bool,
+		noticeText: PropTypes.string,
 		onClick: PropTypes.func,
 		onTaskClick: PropTypes.func,
 		onDismiss: PropTypes.func,
@@ -135,9 +135,10 @@ class Task extends PureComponent {
 			description,
 			duration,
 			href,
-			isBlockedLaunchSiteTask,
+			isButtonDisabled,
 			inProgress,
 			isWarning,
+			noticeText,
 			onClick,
 			target,
 			title,
@@ -196,7 +197,7 @@ class Task extends PureComponent {
 								<div className="checklist__task-action-wrapper">
 									<Button
 										className="checklist__task-action"
-										disabled={ isBlockedLaunchSiteTask }
+										disabled={ isButtonDisabled }
 										href={ href }
 										onClick={ onClick }
 										primary={ ! collapsed }
@@ -209,12 +210,9 @@ class Task extends PureComponent {
 											{ translate( 'Skip' ) }
 										</Button>
 									) }
-									{ isBlockedLaunchSiteTask && (
-										<Notice
-											className="checklist__task-launch-site-blocked-notice"
-											showDismiss={ false }
-										>
-											{ translate( 'Confirm your email address before launching your site.' ) }
+									{ !! noticeText && (
+										<Notice className="checklist__task-notice" showDismiss={ false }>
+											{ noticeText }
 										</Notice>
 									) }
 								</div>
@@ -229,11 +227,4 @@ class Task extends PureComponent {
 	}
 }
 
-export default connect( ( state, { completed, disableIcon, id } ) => {
-	const isBlockedLaunchSiteTask =
-		'site_launched' === id && ! completed && ! isCurrentUserEmailVerified( state );
-	return {
-		disableIcon: isBlockedLaunchSiteTask || disableIcon,
-		isBlockedLaunchSiteTask,
-	};
-} )( localize( Task ) );
+export default localize( Task );
