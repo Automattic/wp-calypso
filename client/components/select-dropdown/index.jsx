@@ -55,18 +55,10 @@ class SelectDropdown extends Component {
 
 	instanceId = ++SelectDropdown.instances;
 
-	constructor( props ) {
-		super( props );
-
-		// state
-		const initialState = { isOpen: false };
-
-		if ( props.options.length ) {
-			initialState.selected = this.getInitialSelectedItem();
-		}
-
-		this.state = initialState;
-	}
+	state = {
+		isOpen: false,
+		selected: this.getInitialSelectedItem(),
+	};
 
 	dropdownContainerRef = React.createRef();
 
