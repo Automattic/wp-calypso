@@ -5,7 +5,7 @@ import { getNewSitePublicSetting, shouldBePrivateByDefault } from '../private-by
 
 describe( 'getNewSitePublicSetting()', () => {
 	test( 'should return `-1` by default', () => {
-		expect( getNewSitePublicSetting() ).toBe( -1 );
+		expect( getNewSitePublicSetting( {}, {} ) ).toBe( -1 );
 	} );
 
 	test( 'should return `-1` for onboarding flow', () => {
@@ -26,7 +26,7 @@ describe( 'shouldBePrivateByDefault()', () => {
 		expect( () => shouldBePrivateByDefault() ).toThrow( TypeError );
 	} );
 
-	test( 'should return `true` with no flowName', () => {
+	test( 'should return `true` with no flowName or lastKnownFlow', () => {
 		expect( shouldBePrivateByDefault( { notFlowName: 'really' } ) ).toBe( true );
 	} );
 
@@ -40,5 +40,15 @@ describe( 'shouldBePrivateByDefault()', () => {
 
 	test( 'should return `false` for ecommerce-onboarding flow', () => {
 		expect( shouldBePrivateByDefault( { flowName: 'ecommerce-onboarding' } ) ).toBe( false );
+	} );
+
+	test( 'should use lastKnownFlow if flowName is missing', () => {
+		expect( shouldBePrivateByDefault( { lastKnownFlow: 'ecommerce' } ) ).toBe( false );
+	} );
+
+	test( 'flowName takes precedence over lastKnownFlow', () => {
+		expect(
+			shouldBePrivateByDefault( { flowName: 'onboarding', lastKnownFlow: 'ecommerce' } )
+		).toBe( true );
 	} );
 } );
