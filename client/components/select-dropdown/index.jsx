@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, findIndex, get, map } from 'lodash';
+import { filter, find, findIndex, get, map, noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -43,8 +43,8 @@ class SelectDropdown extends Component {
 
 	static defaultProps = {
 		options: [],
-		onSelect: () => {},
-		onToggle: () => {},
+		onSelect: noop,
+		onToggle: noop,
 		style: {},
 	};
 
