@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -13,7 +11,9 @@ import {
 	redirectDefaultLocale,
 } from './controller';
 import { setShouldServerSideRenderLogin } from './ssr';
-import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
+import { makeLayout } from 'controller';
+import { setUpLocale } from 'controller/shared';
+import { redirectLoggedIn } from 'controller/web-util';
 
 export default router => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {
