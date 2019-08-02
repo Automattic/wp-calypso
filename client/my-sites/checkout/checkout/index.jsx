@@ -8,6 +8,7 @@ import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -97,6 +98,7 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'signup/utils';
+import { isExternal } from 'lib/url';
 
 /**
  * Style dependencies
@@ -394,8 +396,33 @@ export class Checkout extends React.Component {
 		} = this.props;
 		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
 
+		const adminUrl = get( selectedSite, [ 'options', 'admin_url' ] );
+
+		// If we're given an explicit `redirectTo` query arg, make sure it's either internal
+		// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
+		// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
 		if ( redirectTo ) {
-			return redirectTo;
+			if ( ! isExternal( redirectTo ) ) {
+				return redirectTo;
+			}
+
+			const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
+
+			// We cannot simply compare `hostname` to `selectedSiteSlug`, since the latter
+			// might contain a path in the case of Jetpack subdirectory installs.
+			if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
+				const sanitizedRedirectTo = formatUrl( {
+					protocol,
+					hostname,
+					port,
+					pathname,
+					query: {
+						post: parseInt( get( query, [ 'post' ] ), 10 ),
+						action: 'edit',
+					},
+				} );
+				return sanitizedRedirectTo;
+			}
 		}
 
 		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
