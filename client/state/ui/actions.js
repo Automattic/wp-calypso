@@ -1,14 +1,9 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
-	MASTERBAR_TOGGLE_VISIBILITY,
 	SELECTED_SITE_SET,
 	ROUTE_SET,
-	SECTION_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	NAVIGATE,
@@ -16,6 +11,12 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/jitm';
+
+/**
+ * Re-exports
+ */
+export { setSection } from './section/actions';
+export { showMasterbar, hideMasterbar } from './masterbar-visibility/actions';
 
 /**
  * Returns an action object to be used in signalling that a site has been set
@@ -59,15 +60,6 @@ export function setRoute( path, query = {} ) {
 	};
 }
 
-export function setSection( section, options = {} ) {
-	options.type = SECTION_SET;
-	if ( section ) {
-		options.section = section;
-	}
-	options.hasSidebar = options.hasSidebar === false ? false : true;
-	return options;
-}
-
 export function setPreviewShowing( isShowing ) {
 	return {
 		type: PREVIEW_IS_SHOWING,
@@ -105,17 +97,3 @@ export const replaceHistory = ( path, saveContext ) => ( {
 	path,
 	saveContext,
 } );
-
-/**
- * Hide the masterbar.
- *
- * @return {Object} Action object
- */
-export const hideMasterbar = () => ( { type: MASTERBAR_TOGGLE_VISIBILITY, isVisible: false } );
-
-/**
- * Show the masterbar.
- *
- * @return {Object} Action object
- */
-export const showMasterbar = () => ( { type: MASTERBAR_TOGGLE_VISIBILITY, isVisible: true } );
