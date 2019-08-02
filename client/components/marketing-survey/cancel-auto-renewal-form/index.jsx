@@ -50,7 +50,7 @@ class CancelAutoRenewalForm extends Component {
 		this.radioButtons = [
 			[ 'take-a-break', translate( "Yes, I'm just taking a break for now." ) ],
 			[ 'manual-renew', translate( 'Yes, I want to renew manually.' ) ],
-			[ 'stop-renew', translate( 'No, I don’t have any plans to renew it.' ) ],
+			[ 'stop-renew', translate( "No, I don't have any plans to renew it." ) ],
 			[ OTHER_FEEDBACK, translate( 'Another reason' ) ],
 		];
 	}
