@@ -139,7 +139,7 @@ export class NpsSurvey extends PureComponent {
 
 	shouldShowPromotion() {
 		return (
-			'en' === getLocaleSlug() &&
+			[ 'en', 'en-gb' ].indexOf( getLocaleSlug() ) >= 0 &&
 			this.props.isBusinessUser &&
 			isNumber( this.state.score ) &&
 			this.state.score < 7
