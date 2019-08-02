@@ -20,7 +20,6 @@ import {
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
-	getThemeCustomizeUrl,
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -28,6 +27,7 @@ import {
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 
 /**
  * Style dependencies
@@ -220,7 +220,7 @@ export default connect(
 			siteId,
 			currentTheme,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
+			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
