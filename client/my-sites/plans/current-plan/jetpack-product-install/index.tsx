@@ -96,7 +96,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 					apiVersion: '1.1',
 				} ),
 				{
-					freshness: 10,
+					freshness: 1000,
 					fromApi: () => data => [ [ dataKeyPluginData( siteId ), data.keys ] ],
 				}
 			);
