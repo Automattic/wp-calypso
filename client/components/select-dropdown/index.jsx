@@ -99,7 +99,7 @@ class SelectDropdown extends Component {
 		// The `SelectDropdown` is uncontrolled iff the items are specified as `options` prop.
 		// (And is controlled when the items are specified as `children`.)
 		if ( ! this.props.options.length ) {
-			return null;
+			return undefined;
 		}
 
 		// Use the `initialSelected` prop if specified
