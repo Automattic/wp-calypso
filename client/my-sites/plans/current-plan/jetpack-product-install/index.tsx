@@ -56,7 +56,7 @@ const PLUGINS: PluginSlug[] = [ 'akismet', 'vaultpress' ];
  */
 const MAX_RETRIES = 3;
 
-const dataKeyPluginData = siteId => `plugin-keys:${ siteId }`;
+const dataKeyPluginData = ( siteId: number ) => `plugin-keys:${ siteId }`;
 
 type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps & LocalizeProps;
 
@@ -78,7 +78,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 		this.maybeStartInstall();
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps: Props ) {
 		if ( prevProps.siteId !== this.props.siteId ) {
 			this.fetchPluginKeys();
 		}
@@ -86,19 +86,21 @@ export class JetpackProductInstall extends Component< Props, State > {
 	}
 
 	fetchPluginKeys() {
-		this.props.siteId &&
+		const { siteId } = this.props;
+		if ( siteId ) {
 			requestHttpData(
-				dataKeyPluginData( this.props.siteId ),
+				dataKeyPluginData( siteId ),
 				http( {
 					method: 'GET',
-					path: `/jetpack-blogs/${ this.props.siteId }/keys`,
+					path: `/jetpack-blogs/${ siteId }/keys`,
 					apiVersion: '1.1',
 				} ),
 				{
 					freshness: 10,
-					fromApi: () => data => [ [ dataKeyPluginData( this.props.siteId ), data.keys ] ],
+					fromApi: () => data => [ [ dataKeyPluginData( siteId ), data.keys ] ],
 				}
 			);
+		}
 	}
 
 	/**
@@ -111,6 +113,11 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 */
 	maybeStartInstall(): void {
 		const { pluginKeys, progressComplete, requestedInstalls, siteId } = this.props;
+
+		// We need a valid siteId
+		if ( ! siteId ) {
+			return;
+		}
 
 		// We're already installing
 		if ( this.state.startedInstallation ) {
@@ -224,7 +231,12 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * or by a retry if we discover we have a recoverable error.
 	 */
 	requestInstallationStatus = (): void => {
-		this.props.requestJetpackProductInstallStatus( this.props.siteId );
+		const { siteId } = this.props;
+		if ( ! siteId ) {
+			return;
+		}
+
+		this.props.requestJetpackProductInstallStatus( siteId );
 
 		if ( this.shouldRefetchInstallationStatus() ) {
 			this.retries++;
