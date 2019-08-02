@@ -20,7 +20,6 @@ class SelectDropdownItem extends Component {
 		children: TranslatableString.isRequired,
 		compactCount: PropTypes.bool,
 		path: PropTypes.string,
-		isDropdownOpen: PropTypes.bool,
 		selected: PropTypes.bool,
 		onClick: PropTypes.func,
 		count: PropTypes.number,
@@ -29,7 +28,6 @@ class SelectDropdownItem extends Component {
 	};
 
 	static defaultProps = {
-		isDropdownOpen: false,
 		selected: false,
 	};
 
@@ -50,7 +48,7 @@ class SelectDropdownItem extends Component {
 					onClick={ this.props.disabled ? null : this.props.onClick }
 					data-bold-text={ this.props.value || this.props.children }
 					role="menuitem"
-					tabIndex={ this.props.isDropdownOpen ? 0 : '' }
+					tabIndex="0"
 					aria-selected={ this.props.selected }
 					data-e2e-title={ this.props.e2eTitle }
 				>

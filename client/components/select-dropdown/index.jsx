@@ -163,7 +163,6 @@ class SelectDropdown extends Component {
 					const newChild = React.cloneElement( child, {
 						ref: child.type === DropdownItem ? 'item-' + refIndex : null,
 						key: 'item-' + index,
-						isDropdownOpen: this.state.isOpen,
 						onClick: function( event ) {
 							self.refs.dropdownContainer.focus();
 							if ( typeof child.props.onClick === 'function' ) {
@@ -195,7 +194,6 @@ class SelectDropdown extends Component {
 				<DropdownItem
 					key={ 'dropdown-item-' + item.value }
 					ref={ 'item-' + refIndex }
-					isDropdownOpen={ this.state.isOpen }
 					selected={ this.state.selected === item.value }
 					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
