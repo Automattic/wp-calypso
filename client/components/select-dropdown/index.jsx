@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, findIndex, map, result } from 'lodash';
+import { filter, find, findIndex, get, map } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -102,8 +102,7 @@ class SelectDropdown extends Component {
 		}
 
 		// Otherwise find the first option that is an item, i.e., not label or separator
-		const selectedItem = find( this.props.options, item => item && ! item.isLabel );
-		return selectedItem && selectedItem.value;
+		return get( find( this.props.options, item => item && ! item.isLabel ), 'value' );
 	}
 
 	getSelectedText() {
@@ -115,8 +114,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected text
-		const selectedValue = selected || this.getInitialSelectedItem();
-		return result( find( options, { value: selectedValue } ), 'label' );
+		return get( find( options, { value: selected } ), 'label' );
 	}
 
 	getSelectedIcon() {
@@ -128,8 +126,7 @@ class SelectDropdown extends Component {
 		}
 
 		// return currently selected icon
-		const selectedValue = selected || this.getInitialSelectedItem();
-		return result( find( options, { value: selectedValue } ), 'icon' );
+		return get( find( options, { value: selected } ), 'icon' );
 	}
 
 	dropdownOptions() {
