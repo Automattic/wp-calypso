@@ -2,8 +2,10 @@
 /**
  * Render post content block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Renders post content.

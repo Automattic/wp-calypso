@@ -2,8 +2,10 @@
 /**
  * Full site editing file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Class Full_Site_Editing
@@ -12,14 +14,14 @@ class Full_Site_Editing {
 	/**
 	 * Class instance.
 	 *
-	 * @var Full_Site_Editing
+	 * @var \A8C\FSE\Full_Site_Editing
 	 */
 	private static $instance = null;
 
 	/**
 	 * Custom post types.
 	 *
-	 * @var Full_Site_Editing
+	 * @var array
 	 */
 	private $template_post_types = [ 'wp_template_part' ];
 
@@ -39,7 +41,7 @@ class Full_Site_Editing {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \Full_Site_Editing
+	 * @return \A8C\FSE\Full_Site_Editing
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -86,7 +88,7 @@ class Full_Site_Editing {
 				'rewrite'               => false,
 				'show_in_rest'          => true,
 				'rest_base'             => 'template_parts',
-				'rest_controller_class' => 'A8C_REST_Templates_Controller',
+				'rest_controller_class' => __NAMESPACE__ . '\REST_Templates_Controller',
 				'capability_type'       => 'template_part',
 				'capabilities'          => array(
 					// You need to be able to edit posts, in order to read templates in their raw form.
@@ -178,7 +180,7 @@ class Full_Site_Editing {
 			true
 		);
 
-		$feature_flags = A8C_Full_Site_Editing_Feature_Flags::get_instance();
+		$feature_flags = Feature_Flags::get_instance();
 
 		wp_localize_script(
 			'a8c-full-site-editing-script',
@@ -216,35 +218,35 @@ class Full_Site_Editing {
 						'type'    => 'string',
 					],
 				],
-				'render_callback' => 'a8c_fse_render_navigation_menu_block',
+				'render_callback' => __NAMESPACE__ . '\render_navigation_menu_block',
 			)
 		);
 
 		register_block_type(
 			'a8c/post-content',
 			array(
-				'render_callback' => 'render_post_content_block',
+				'render_callback' => __NAMESPACE__ . '\render_post_content_block',
 			)
 		);
 
 		register_block_type(
 			'a8c/site-description',
 			array(
-				'render_callback' => 'render_site_description_block',
+				'render_callback' => __NAMESPACE__ . '\render_site_description_block',
 			)
 		);
 
 		register_block_type(
 			'a8c/template',
 			array(
-				'render_callback' => 'render_template_block',
+				'render_callback' => __NAMESPACE__ . '\render_template_block',
 			)
 		);
 
 		register_block_type(
 			'a8c/site-title',
 			array(
-				'render_callback' => 'render_site_title_block',
+				'render_callback' => __NAMESPACE__ . '\render_site_title_block',
 			)
 		);
 	}
@@ -256,13 +258,13 @@ class Full_Site_Editing {
 	 * @return null|string The parent post ID, or null if not set.
 	 */
 	public function get_parent_post_id() {
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification
 		if ( ! isset( $_GET['fse_parent_post'] ) ) {
 			return null;
 		}
 
 		$parent_post_id = absint( $_GET['fse_parent_post'] );
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		// phpcs:enable WordPress.Security.NonceVerification
 
 		if ( empty( $parent_post_id ) ) {
 			return null;
@@ -345,7 +347,7 @@ class Full_Site_Editing {
 
 	/** This will merge the post content with the post template, modifiying the $post parameter.
 	 *
-	 * @param WP_Post $post Post instance.
+	 * @param \WP_Post $post Post instance.
 	 */
 	public function merge_template_and_post( $post ) {
 		// Bail if not a REST API Request.
@@ -358,7 +360,7 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template         = new A8C_WP_Template();
+		$template         = new WP_Template();
 		$template_content = $template->get_page_template_content();
 
 		// Bail if the template has no post content block.
@@ -426,7 +428,7 @@ class Full_Site_Editing {
 	 */
 	public function set_block_template( $editor_settings ) {
 		if ( $this->is_full_site_page() ) {
-			$fse_template    = new A8C_WP_Template();
+			$fse_template    = new WP_Template();
 			$template_blocks = $fse_template->get_template_blocks();
 
 			$template = array();

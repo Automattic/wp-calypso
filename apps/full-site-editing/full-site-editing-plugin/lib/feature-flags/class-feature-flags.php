@@ -4,17 +4,19 @@
 /**
  * Feature flags file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
 
+namespace A8C\FSE;
+
 /**
- * Class A8C_Full_Site_Editing_Feature_Flags
+ * Class Feature_Flags
  */
-class A8C_Full_Site_Editing_Feature_Flags {
+class Feature_Flags {
 	/**
 	 * Class instance.
 	 *
-	 * @var A8C_Full_Site_Editing_Feature_Flags
+	 * @var \A8C\FSE\Feature_Flags
 	 */
 	private static $instance = null;
 
@@ -42,7 +44,7 @@ class A8C_Full_Site_Editing_Feature_Flags {
 	/**
 	 * Creates instance.
 	 *
-	 * @return A8C_Full_Site_Editing_Feature_Flags
+	 * @return \A8C\FSE\Feature_Flags
 	 */
 	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {

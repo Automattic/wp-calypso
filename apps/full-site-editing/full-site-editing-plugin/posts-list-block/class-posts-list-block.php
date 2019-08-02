@@ -2,8 +2,10 @@
 /**
  * Posts list block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Class Post_List_Block
@@ -13,7 +15,7 @@ class Posts_List_Block {
 	/**
 	 * Class instance.
 	 *
-	 * @var Posts_List_Block
+	 * @var \A8C\FSE\Posts_List_Block
 	 */
 	private static $instance = null;
 
@@ -29,7 +31,7 @@ class Posts_List_Block {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \Posts_List_Block
+	 * @return \A8C\FSE\Posts_List_Block
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -101,7 +103,7 @@ class Posts_List_Block {
 	 * @return string
 	 */
 	public function render_a8c_post_list_block( $attributes, $content ) {
-		$posts_list = new WP_Query(
+		$posts_list = new \WP_Query(
 			array(
 				'post_type'        => 'post',
 				'posts_per_page'   => $attributes['postsPerPage'],
@@ -112,7 +114,7 @@ class Posts_List_Block {
 
 		add_filter( 'excerpt_more', array( $this, 'custom_excerpt_read_more' ) );
 
-		$content = a8c_pl_render_template(
+		$content = render_template(
 			'posts-list',
 			array(
 				'posts_list' => $posts_list,
