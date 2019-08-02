@@ -379,7 +379,7 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		ReactDom.findDOMNode( this.refs[ 'item-' + newIndex ].refs.itemLink ).focus();
+		this.refs[ 'item-' + newIndex ].focusLink();
 		this.focused = newIndex;
 	}
 

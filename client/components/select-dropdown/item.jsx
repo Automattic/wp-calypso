@@ -31,6 +31,13 @@ class SelectDropdownItem extends Component {
 		selected: false,
 	};
 
+	linkRef = React.createRef();
+
+	// called by the parent `SelectDropdown` component to focus the item on keyboard navigation
+	focusLink() {
+		this.linkRef.current.focus();
+	}
+
 	render() {
 		const optionClassName = classNames( this.props.className, {
 			'select-dropdown__item': true,
@@ -42,7 +49,7 @@ class SelectDropdownItem extends Component {
 		return (
 			<li className="select-dropdown__option">
 				<a
-					ref="itemLink"
+					ref={ this.linkRef }
 					href={ this.props.path }
 					className={ optionClassName }
 					onClick={ this.props.disabled ? null : this.props.onClick }
