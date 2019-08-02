@@ -42,7 +42,7 @@ describe( 'flow-controller', () => {
 	describe( 'setup', () => {
 		test( 'should have a redux store attached', () => {
 			const store = createSignupStore();
-			signupFlowController = SignupFlowController( {
+			signupFlowController = new SignupFlowController( {
 				flowName: 'simple_flow',
 				onComplete: () => {},
 				reduxStore: store,
@@ -109,7 +109,7 @@ describe( 'flow-controller', () => {
 		let store;
 		beforeEach( () => {
 			store = createSignupStore();
-			signupFlowController = SignupFlowController( {
+			signupFlowController = new SignupFlowController( {
 				flowName: 'flow_with_async',
 				reduxStore: store,
 			} );
