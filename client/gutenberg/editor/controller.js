@@ -19,6 +19,7 @@ import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
 import { getSiteUrl, isJetpackSite } from 'state/sites/selectors';
+import { isEnabled } from 'config';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -87,6 +88,7 @@ export const authenticate = ( context, next ) => {
 	const isAuthenticated =
 		sessionStorage.getItem( storageKey ) || // Previously authenticated.
 		! isJetpackSite( state, siteId ) || // Simple sites users are always authenticated.
+		isEnabled( 'desktop' ) || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 	if ( isAuthenticated ) {
 		sessionStorage.setItem( storageKey, 'true' );
