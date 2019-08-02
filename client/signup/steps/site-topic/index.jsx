@@ -37,7 +37,10 @@ class SiteTopicStep extends Component {
 	};
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			stepTitle: getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '',
+		} );
 	}
 
 	submitSiteTopic = ( { isUserInput, name, slug } ) => {

@@ -21,7 +21,10 @@ const siteTypeToFlowname = {
 
 class SiteType extends Component {
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			stepTitle: this.props.translate( 'What kind of site are you building?' ),
+		} );
 	}
 
 	submitStep = siteTypeValue => {

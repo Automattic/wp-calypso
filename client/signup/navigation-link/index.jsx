@@ -62,6 +62,23 @@ export class NavigationLink extends Component {
 		return previousStep || { stepName: null };
 	}
 
+	getPreviousStepTitle() {
+		const { labelText, stepName, signupProgress, translate } = this.props;
+
+		if ( labelText ) {
+			return labelText;
+		}
+
+		const currentStepIndex = findIndex( signupProgress, { stepName } );
+
+		const previousStep = find(
+			signupProgress.slice( 0, currentStepIndex ).reverse(),
+			step => ! step.wasSkipped
+		);
+
+		return get( previousStep, 'stepTitle', translate( 'Back' ) );
+	}
+
 	getBackUrl() {
 		if ( this.props.direction !== 'back' ) {
 			return;
@@ -131,7 +148,7 @@ export class NavigationLink extends Component {
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
-			text = labelText ? labelText : translate( 'Back' );
+			text = this.getPreviousStepTitle();
 		}
 
 		if ( this.props.direction === 'forward' ) {

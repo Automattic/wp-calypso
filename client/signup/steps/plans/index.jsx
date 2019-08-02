@@ -66,7 +66,11 @@ export class PlansStep extends Component {
 			document.head.appendChild( salesTeamScript );
 		}
 
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			stepTitle:
+				this.props.headerText || this.props.translate( "Pick a plan that's right for you." ),
+		} );
 	}
 
 	onSelectPlan = cartItem => {

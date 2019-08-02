@@ -136,6 +136,10 @@ class DomainsStep extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName, stepTitle: this.getHeaderText() } );
+	}
+
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		let showTrademarkClaimsNotice = prevState.showTrademarkClaimsNotice;
 

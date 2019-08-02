@@ -43,7 +43,10 @@ class SiteTitleStep extends Component {
 	};
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			stepTitle: getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTitleLabel' ),
+		} );
 	}
 
 	handleInputChange = ( { currentTarget: { value = '' } } ) => this.props.setSiteTitle( value );

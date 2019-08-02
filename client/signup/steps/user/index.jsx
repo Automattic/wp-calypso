@@ -85,7 +85,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		this.props.saveSignupStep( { stepName: this.props.stepName, stepTitle: this.getHeaderText() } );
 	}
 
 	setSubHeaderText( props ) {
