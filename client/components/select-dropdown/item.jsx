@@ -56,7 +56,7 @@ class SelectDropdownItem extends Component {
 					data-bold-text={ this.props.value || this.props.children }
 					role="menuitem"
 					tabIndex="0"
-					aria-selected={ this.props.selected }
+					aria-current={ this.props.selected }
 					data-e2e-title={ this.props.e2eTitle }
 				>
 					<span className="select-dropdown__item-text">
