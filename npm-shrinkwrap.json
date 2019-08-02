@@ -108,6 +108,11 @@
 			"version": "file:packages/calypso-color-schemes",
 			"dev": true
 		},
+		"@automattic/color-studio": {
+			"version": "2.2.0",
+			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
+			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
+		},
 		"@automattic/components": {
 			"version": "file:packages/components",
 			"requires": {
@@ -117,11 +122,6 @@
 				"prop-types": "^15.7.2",
 				"react": "^16.8.3"
 			}
-		},
-		"@automattic/color-studio": {
-			"version": "2.2.0",
-			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
-			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
 		},
 		"@automattic/format-currency": {
 			"version": "file:packages/format-currency",
@@ -18873,9 +18873,9 @@
 			"integrity": "sha1-t+PqQkNaTJsnWdmeDyAesZWALuE="
 		},
 		"prismjs": {
-			"version": "1.16.0",
-			"resolved": "https://registry.npmjs.org/prismjs/-/prismjs-1.16.0.tgz",
-			"integrity": "sha512-OA4MKxjFZHSvZcisLGe14THYsug/nF6O1f0pAJc0KN0wTyAcLqmsbE+lTGKSpyh+9pEW57+k6pg2AfYR+coyHA==",
+			"version": "1.17.1",
+			"resolved": "https://registry.npmjs.org/prismjs/-/prismjs-1.17.1.tgz",
+			"integrity": "sha512-PrEDJAFdUGbOP6xK/UsfkC5ghJsPJviKgnQOoxaDbBjwc8op68Quupwt1DeAFoG8GImPhiKXAvvsH7wDSLsu1Q==",
 			"requires": {
 				"clipboard": "^2.0.0"
 			}
