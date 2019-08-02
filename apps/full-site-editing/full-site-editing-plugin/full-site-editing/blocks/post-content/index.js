@@ -1,3 +1,5 @@
+/* global wp */
+
 /**
  * External dependencies
  */
@@ -25,3 +27,20 @@ registerBlockType( 'a8c/post-content', {
 	edit,
 	save,
 } );
+
+const { createHigherOrderComponent } = wp.compose;
+const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
+	return props => {
+		if ( props.name !== 'a8c/post-content' ) {
+			return <BlockListBlock { ...props } />;
+		}
+
+		return <BlockListBlock { ...props } className={ 'post-content__block' } />;
+	};
+}, 'addContentSlotClassname' );
+
+wp.hooks.addFilter(
+	'editor.BlockListBlock',
+	'full-site-editing/blocks/post-content',
+	addContentSlotClassname
+);
