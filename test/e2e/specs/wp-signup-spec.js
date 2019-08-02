@@ -564,6 +564,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
+		step( 'Can then see the plans page and select the premium plan ', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const displayed = await pickAPlanPage.displayed();
+			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
+			return await pickAPlanPage.selectPremiumPlan();
+		} );
+
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
@@ -690,6 +697,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				);
 			}
 		);
+
+		step( 'Can then see the plans page and select the personal plan ', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const displayed = await pickAPlanPage.displayed();
+			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
+			return await pickAPlanPage.selectPersonalPlan();
+		} );
 
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
@@ -1034,6 +1048,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				}
 			}
 		);
+
+		step( 'Can then see the plans page and select the business plan ', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const displayed = await pickAPlanPage.displayed();
+			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
+			return await pickAPlanPage.selectBusinessPlan();
+		} );
 
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',

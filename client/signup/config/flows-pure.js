@@ -35,11 +35,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans-business',
+				'plans',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2019-06-20',
+			lastModified: '2019-08-01',
 		},
 
 		premium: {
@@ -50,11 +50,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans-premium',
+				'plans',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2019-06-20',
+			lastModified: '2019-08-01',
 		},
 
 		personal: {
@@ -65,11 +65,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans-personal',
+				'plans',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2019-06-20',
+			lastModified: '2019-08-01',
 		},
 
 		free: {
@@ -80,10 +80,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
+				'plans',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
-			lastModified: '2019-06-20',
+			lastModified: '2019-08-01',
 		},
 
 		blog: {

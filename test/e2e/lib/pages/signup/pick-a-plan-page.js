@@ -48,8 +48,16 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, freePlanButton );
 	}
 
+	async selectPersonalPlan() {
+		return await this._selectPlan( 'personal' );
+	}
+
 	async selectPremiumPlan() {
 		return await this._selectPlan( 'premium' );
+	}
+
+	async selectBusinessPlan() {
+		return await this._selectPlan( 'business' );
 	}
 
 	async _selectPlan( level ) {
