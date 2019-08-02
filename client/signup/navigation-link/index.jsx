@@ -63,18 +63,13 @@ export class NavigationLink extends Component {
 	}
 
 	getPreviousStepTitle() {
-		const { labelText, stepName, signupProgress, translate } = this.props;
+		const { labelText, translate } = this.props;
 
 		if ( labelText ) {
 			return labelText;
 		}
 
-		const currentStepIndex = findIndex( signupProgress, { stepName } );
-
-		const previousStep = find(
-			signupProgress.slice( 0, currentStepIndex ).reverse(),
-			step => ! step.wasSkipped
-		);
+		const previousStep = this.getPreviousStep();
 
 		return get( previousStep, 'stepTitle', translate( 'Back' ) );
 	}
