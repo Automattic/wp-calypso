@@ -173,8 +173,7 @@ class SelectDropdown extends Component {
 	}
 
 	render() {
-		const dropdownClassName = classNames( this.props.className, {
-			'select-dropdown': true,
+		const dropdownClassName = classNames( 'select-dropdown', this.props.className, {
 			'is-compact': this.props.compact,
 			'is-open': this.state.isOpen && ! this.props.disabled,
 			'is-disabled': this.props.disabled,

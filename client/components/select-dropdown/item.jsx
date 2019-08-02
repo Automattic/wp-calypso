@@ -39,11 +39,10 @@ class SelectDropdownItem extends Component {
 	}
 
 	render() {
-		const optionClassName = classNames( this.props.className, {
-			'select-dropdown__item': true,
+		const optionClassName = classNames( 'select-dropdown__item', this.props.className, {
 			'is-selected': this.props.selected,
 			'is-disabled': this.props.disabled,
-			'has-icon': !! this.props.icon,
+			'has-icon': this.props.icon,
 		} );
 
 		return (
