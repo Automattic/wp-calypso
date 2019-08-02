@@ -18,7 +18,7 @@ import { isFetchingUserPurchases } from 'state/purchases/selectors';
 import { fetchUserPurchases } from 'state/purchases/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import { errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 
@@ -42,11 +42,20 @@ class AutoRenewToggle extends Component {
 		showAutoRenewDisablingDialog: false,
 		isTogglingToward: null,
 		isRequesting: false,
+		requestHasFailed: false,
 	};
 
 	onCloseAutoRenewDisablingDialog = () => {
+		const { isTogglingToward, requestHasFailed } = this.state;
+
+		// Intentionally written in this way because it is not a successful / failing condition
+		if ( isTogglingToward === false && ! requestHasFailed ) {
+			this.props.successNotice( 'Auto-renewal has been turned off successfully.' );
+		}
+
 		this.setState( {
 			showAutoRenewDisablingDialog: false,
+			requestHasFailed: false,
 		} );
 	};
 
@@ -78,6 +87,10 @@ class AutoRenewToggle extends Component {
 						? translate( "We've failed to enable auto-renewal for you. Please try again." )
 						: translate( "We've failed to disable auto-renewal for you. Please try again." )
 				);
+
+				this.setState( {
+					requestHasFailed: true,
+				} );
 			}
 
 			this.props.fetchUserPurchases( currentUserId );
@@ -148,6 +161,7 @@ export default connect(
 	{
 		fetchUserPurchases,
 		recordTracksEvent,
+		successNotice,
 		errorNotice,
 	}
 )( localize( AutoRenewToggle ) );
