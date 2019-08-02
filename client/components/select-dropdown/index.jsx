@@ -12,13 +12,17 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownSeparator from 'components/select-dropdown/separator';
-import DropdownLabel from 'components/select-dropdown/label';
+import DropdownItem from './item';
+import DropdownSeparator from './separator';
+import DropdownLabel from './label';
 import Count from 'components/count';
 import TranslatableString from 'components/translatable/proptype';
 
 class SelectDropdown extends Component {
+	static Item = DropdownItem;
+	static Separator = DropdownSeparator;
+	static Label = DropdownLabel;
+
 	static propTypes = {
 		selectedText: TranslatableString,
 		selectedIcon: PropTypes.element,
