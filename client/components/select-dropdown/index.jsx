@@ -157,15 +157,14 @@ class SelectDropdown extends Component {
 		let refIndex = 0;
 
 		if ( this.props.children ) {
-			// add keys and refs to children
-			return React.Children.map( this.props.children, ( child, index ) => {
+			// add refs and focus-on-click handlers to children
+			return React.Children.map( this.props.children, child => {
 				if ( ! child ) {
 					return null;
 				}
 
 				return React.cloneElement( child, {
 					ref: child.type === DropdownItem ? this.setItemRef( refIndex++ ) : null,
-					key: 'item-' + index,
 					onClick: event => {
 						this.dropdownContainerRef.current.focus();
 						if ( typeof child.props.onClick === 'function' ) {
