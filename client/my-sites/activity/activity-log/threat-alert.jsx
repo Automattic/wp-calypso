@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Spinner from 'components/spinner';
 import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -196,25 +197,6 @@ export class ThreatAlert extends Component {
 		return indexedRows;
 	}
 
-	getEditUrl( title ) {
-		const {
-			siteSlug,
-			threat: { rows },
-		} = this.props;
-
-		const postId = 0;
-
-		Object.keys( rows ).map( idx => {
-			console.log( rows[ idx ].description, title );
-			if ( rows[ idx ].description == title ) {
-				console.log( 'match!' );
-				return `/post/${ siteSlug }/${ rows[ idx ].id }`;
-			}
-		} );
-
-		return null;
-	}
-
 	renderCardContent() {
 		const { threat, translate } = this.props;
 
@@ -225,34 +207,38 @@ export class ThreatAlert extends Component {
 				return (
 					<Fragment>
 						{ Object.keys( rows ).map( ( title, rowKey ) => (
-							<Card key={ rowKey }>
-								<ActivityIcon activityIcon="posts" activityStatus="error" />
-								<div>
-									<strong>{ title }</strong>
+							<Card key={ rowKey } className="threat-alert__database-row">
+								<div className="threat-alert__database-row-icon">
+									<ActivityIcon activityIcon="posts" activityStatus="error" />
 								</div>
-								<div>
-									<em>
-										{ this.props.translate(
-											'%(urlCount)d suspicious link on post',
-											'%(urlCount)d suspicious links on post',
-											{
-												count: Object.keys( rows[ title ] ).length,
-												args: {
-													urlCount: Object.keys( rows[ title ] ).length,
-												},
-											}
-										) }
-									</em>
-									<InfoPopover position="left">
-										{ translate( 'Suspicious links flagged by Jetpack Security Scanner' ) }
-									</InfoPopover>
+								<div className="threat-alert__database-row-content">
+									<div>
+										<strong>{ title }</strong>
+									</div>
+									<div>
+										<em>
+											{ this.props.translate(
+												'%(urlCount)d suspicious link on post',
+												'%(urlCount)d suspicious links on post',
+												{
+													count: Object.keys( rows[ title ] ).length,
+													args: {
+														urlCount: Object.keys( rows[ title ] ).length,
+													},
+												}
+											) }
+										</em>
+										<InfoPopover position="left" className="threat-alert__database-row-info">
+											{ translate( 'Suspicious links flagged by Jetpack Security Scanner' ) }
+										</InfoPopover>
+									</div>
+									<ol className="threat-alert__database-row-list">
+										{ Object.keys( rows[ title ] ).map( ( url, urlIndex ) => (
+											<li key={ urlIndex }>{ rows[ title ][ url ] }</li>
+										) ) }
+									</ol>
 								</div>
-								<ol>
-									{ Object.keys( rows[ title ] ).map( ( url, urlIndex ) => (
-										<li key={ urlIndex }>{ rows[ title ][ url ] }</li>
-									) ) }
-								</ol>
-								<Button compact href={ this.getEditUrl( title ) }>
+								<Button className="threat-alert__database-row-action" compact>
 									{ translate( 'Edit post' ) }
 								</Button>
 							</Card>
@@ -293,20 +279,22 @@ export class ThreatAlert extends Component {
 	render() {
 		const { threat, translate } = this.props;
 		const inProgress = this.state.requesting || threat.fixer_status === 'in_progress';
+		const className = classNames( {
+			'activity-log__threat-alert': true,
+			'activity-log__threat-alert-database': 'database' === this.getDetailType(),
+		} );
 
 		return (
 			<Fragment>
 				<FoldableCard
-					className="activity-log__threat-alert"
+					className={ className }
 					highlight="error"
 					compact
 					clickableHeader={ true }
 					actionButton={ <span /> }
 					header={
 						<Fragment>
-							{ 'database' !== this.getDetailType() ? (
-								<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
-							) : null }
+							<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
 							<div className="activity-log__threat-alert-header">
 								<div className="activity-log__threat-header-top">
 									<span className="activity-log__threat-alert-title">

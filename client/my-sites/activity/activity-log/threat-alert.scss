@@ -106,3 +106,38 @@
 		content: '\00b7\2004';
 	}
 }
+
+.threat-alert__database-row {
+	box-shadow: none;
+	border-bottom: 1px solid #e1e2e2;
+	padding: 1rem 0 1rem 3rem;
+	margin-bottom: 0;
+}
+
+.threat-alert__database-row-icon {
+	display: inline-block;
+	float: left;
+}
+
+.threat-alert__database-row-content {
+	display: inline-block;
+}
+
+.threat-alert__database-row-action {
+	display: inline-block;
+	float: right;
+}
+
+.threat-alert__database-row-list {
+	margin: 1rem 0 0 1rem;
+}
+
+.threat-alert__database-row-info {
+	position: relative;
+	left: 0.3rem;
+	top: 0.15rem;
+}
+
+.activity-log__threat-alert-database .foldable-card__content {
+	padding: 0 !important;
+}
