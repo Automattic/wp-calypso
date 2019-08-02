@@ -12,14 +12,14 @@ namespace A8C\FSE;
  */
 class WP_Template {
 	/**
-	 * Header template part type constant.
+	 * Header template type constant.
 	 *
 	 * @var string HEADER
 	 */
 	const HEADER = 'header';
 
 	/**
-	 * Footer template part type constant
+	 * Footer template type constant
 	 *
 	 * @var string FOOTER
 	 */
@@ -33,9 +33,9 @@ class WP_Template {
 	private $current_theme_name;
 
 	/**
-	 * List of template part types that FSE is currently supporting.
+	 * List of template types that FSE is currently supporting.
 	 *
-	 * @var array $supported_template_types Array of strings containing supported template part types.
+	 * @var array $supported_template_types Array of strings containing supported template types.
 	 */
 	public $supported_template_types = [ self::HEADER, self::FOOTER ];
 
@@ -47,74 +47,74 @@ class WP_Template {
 	}
 
 	/**
-	 * Checks whether the provided template part type is supported in FSE.
+	 * Checks whether the provided template type is supported in FSE.
 	 *
-	 * @param string $template_part_type String representing the template part type.
+	 * @param string $template_type String representing the template type.
 	 *
-	 * @return bool True if provided template part type is supported in FSE, false otherwise.
+	 * @return bool True if provided template type is supported in FSE, false otherwise.
 	 */
-	public function is_supported_template_part_type( $template_part_type ) {
-		return in_array( $template_part_type, $this->supported_template_types, true );
+	public function is_supported_template_type( $template_type ) {
+		return in_array( $template_type, $this->supported_template_types, true );
 	}
 
 	/**
-	 * Returns the post ID of the default template part CPT for a given template type.
+	 * Returns the post ID of the default template CPT for a given template type.
 	 *
-	 * @param string $template_part_type String representing the template part type.
+	 * @param string $template_type String representing the template type.
 	 *
-	 * @return null|int Template part ID if it exists or null otherwise.
+	 * @return null|int Template ID if it exists or null otherwise.
 	 */
-	public function get_template_part_id( $template_part_type ) {
-		if ( ! $this->is_supported_template_part_type( $template_part_type ) ) {
+	public function get_template_id( $template_type ) {
+		if ( ! $this->is_supported_template_type( $template_type ) ) {
 			return null;
 		}
 
-		$term = get_term_by( 'name', "$this->current_theme_name-$template_part_type", 'wp_template_part_type', ARRAY_A );
+		$term = get_term_by( 'name', "$this->current_theme_name-$template_type", 'wp_template_type', ARRAY_A );
 
 		// Bail if current site doesn't have this term registered.
 		if ( ! isset( $term['term_id'] ) ) {
 			return null;
 		}
 
-		$template_part_ids = get_objects_in_term( $term['term_id'], $term['taxonomy'], [ 'order' => 'DESC' ] );
+		$template_ids = get_objects_in_term( $term['term_id'], $term['taxonomy'], [ 'order' => 'DESC' ] );
 
-		// Bail if we haven't found any post instances for this template part type.
-		if ( empty( $template_part_ids ) ) {
+		// Bail if we haven't found any post instances for this template type.
+		if ( empty( $template_ids ) ) {
 			return null;
 		}
 
 		/*
-		 * Assuming that we'll have just one default template part for now.
+		 * Assuming that we'll have just one default template for now.
 		 * We'll add support for multiple header and footer variations in future iterations.
 		 */
-		return $template_part_ids[0];
+		return $template_ids[0];
 	}
 
 	/**
-	 * Returns template part content for given template part type.
+	 * Returns template content for given template type.
 	 *
-	 * @param string $template_part_type String representing the template part type.
+	 * @param string $template_type String representing the template type.
 	 *
-	 * @return null|string Template part content if it exists or null otherwise.
+	 * @return null|string Template content if it exists or null otherwise.
 	 */
-	public function get_template_part_content( $template_part_type ) {
-		if ( ! $this->is_supported_template_part_type( $template_part_type ) ) {
+	public function get_template_content( $template_type ) {
+		if ( ! $this->is_supported_template_type( $template_type ) ) {
 			return null;
 		}
 
-		$template_part_id = $this->get_template_part_id( $template_part_type );
+		$template_id = $this->get_template_id( $template_type );
 
-		if ( null === $template_part_id ) {
+		if ( null === $template_id ) {
 			return null;
 		}
 
-		$template_part_post = get_post( $template_part_id );
+		$template_post = get_post( $template_id );
 
-		if ( null === $template_part_post ) {
+		if ( null === $template_post ) {
 			return;
 		}
 
-		return $template_part_post->post_content;
+		return $template_post->post_content;
 	}
 
 	/**
@@ -125,8 +125,8 @@ class WP_Template {
 	 * @return null|string
 	 */
 	public function get_page_template_content() {
-		$header_id = $this->get_template_part_id( self::HEADER );
-		$footer_id = $this->get_template_part_id( self::FOOTER );
+		$header_id = $this->get_template_id( self::HEADER );
+		$footer_id = $this->get_template_id( self::FOOTER );
 
 		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"className\":\"site-header site-branding\"} /-->" .
 				'<!-- wp:a8c/post-content /-->' .
@@ -145,18 +145,18 @@ class WP_Template {
 	}
 
 	/**
-	 * Output FSE template part markup.
+	 * Output FSE template markup.
 	 *
-	 * @param string $template_part_type String representing the template part type.
+	 * @param string $template_type String representing the template type.
 	 *
-	 * @return null|void Null if unsupported template part type is passed, outputs content otherwise.
+	 * @return null|void Null if unsupported template type is passed, outputs content otherwise.
 	 */
-	public function output_template_part_content( $template_part_type ) {
-		if ( ! $this->is_supported_template_part_type( $template_part_type ) ) {
+	public function output_template_content( $template_type ) {
+		if ( ! $this->is_supported_template_type( $template_type ) ) {
 			return null;
 		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo do_blocks( $this->get_template_part_content( $template_part_type ) );
+		echo do_blocks( $this->get_template_content( $template_type ) );
 	}
 }
