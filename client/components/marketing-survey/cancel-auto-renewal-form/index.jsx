@@ -21,6 +21,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import { submitSurvey } from 'lib/upgrades/actions';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import './style.scss';
 
 const OTHER_FEEDBACK = 'other-feedback';
@@ -99,7 +100,7 @@ class CancelAutoRenewalForm extends Component {
 	};
 
 	render() {
-		const { translate, isVisible, onClose } = this.props;
+		const { translate, isVisible, purchase, onClose } = this.props;
 		const { response, feedback } = this.state;
 
 		const disableSubmit = ! response || ( response === OTHER_FEEDBACK && ! feedback.trim() );
@@ -139,6 +140,7 @@ class CancelAutoRenewalForm extends Component {
 					<FormButton isPrimary={ false } onClick={ onClose }>
 						{ translate( 'Skip' ) }
 					</FormButton>
+					<PrecancellationChatButton purchase={ purchase } onClick={ onClose } />
 				</FormButtonsBar>
 			</Dialog>
 		);
