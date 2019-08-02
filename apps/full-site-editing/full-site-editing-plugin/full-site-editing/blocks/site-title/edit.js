@@ -24,6 +24,7 @@ function SiteTitleEdit( {
 	shouldUpdateSiteOption,
 	isSelected,
 	setAttributes,
+	isLocked,
 	insertDefaultBlock,
 } ) {
 	const inititalTitle = __( 'Site title loading…' );
@@ -43,7 +44,9 @@ function SiteTitleEdit( {
 			return;
 		}
 		event.preventDefault();
-		insertDefaultBlock();
+		if ( ! isLocked ) {
+			insertDefaultBlock();
+		}
 	};
 
 	return (
@@ -65,12 +68,12 @@ export default compose( [
 		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
 			'core/editor'
 		);
-		const { getBlockIndex, getBlockRootClientId } = select( 'core/block-editor' );
+		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select( 'core/block-editor' );
 		const rootClientId = getBlockRootClientId( clientId );
-		const blockIndex = getBlockIndex( clientId, rootClientId );
 
 		return {
-			blockIndex,
+			blockIndex: getBlockIndex( clientId, rootClientId ),
+			isLocked: !! getTemplateLock( rootClientId ),
 			rootClientId,
 			shouldUpdateSiteOption:
 				( ( isSavingPost() && isCurrentPostPublished() ) || isPublishingPost() ) &&
