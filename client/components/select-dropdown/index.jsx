@@ -68,19 +68,6 @@ class SelectDropdown extends Component {
 		this.itemRefs[ index ] = itemEl;
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.state.isOpen ) {
-			this.closeDropdown();
-		}
-
-		if (
-			typeof this.state.selected !== 'undefined' &&
-			this.props.initialSelected !== nextProps.initialSelected
-		) {
-			this.setState( { selected: nextProps.initialSelected } );
-		}
-	}
-
 	componentWillUnmount() {
 		window.removeEventListener( 'click', this.handleOutsideClick );
 	}
