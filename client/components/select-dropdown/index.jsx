@@ -18,9 +18,6 @@ import DropdownLabel from 'components/select-dropdown/label';
 import Count from 'components/count';
 import TranslatableString from 'components/translatable/proptype';
 
-/**
- * SelectDropdown
- */
 class SelectDropdown extends Component {
 	static propTypes = {
 		selectedText: TranslatableString,
