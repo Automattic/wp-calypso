@@ -1,13 +1,12 @@
-/* global wp */
-
 /**
  * External dependencies
  */
 import { assign } from 'lodash';
+import { addFilter } from '@wordpress/hooks';
 
 const additionalKeywords = [ 'logo', 'brand', 'emblem', 'hallmark' ];
 
-wp.hooks.addFilter(
+addFilter(
 	'blocks.registerBlockType',
 	'full-site-editing/editor/image-block-keywords',
 	( settings, name ) => {
