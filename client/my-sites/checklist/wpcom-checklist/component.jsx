@@ -337,8 +337,6 @@ class WpcomChecklistComponent extends PureComponent {
 			siteSlug,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
-			// only render an unclickable grey circle
-			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
@@ -374,6 +372,8 @@ class WpcomChecklistComponent extends PureComponent {
 						},
 					}
 				) }
+				// only render an unclickable grey circle
+				disableIcon={ ! baseProps.isCompleted }
 				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
 				onClick={ this.handleSendVerificationEmail }
 				title={ translate( 'Confirm your email address' ) }
