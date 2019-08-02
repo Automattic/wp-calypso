@@ -68,7 +68,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					action: { url: supportLink, onClick: () => trackCtaButton( 'simple-payments' ) },
 			  }
 			: {
-					text: translate( 'Upgrade to a Premium Plan!' ),
+					text: translate( 'Upgrade to a Premium Plan' ),
 					action: () => {
 						trackUpgrade( 'premium', 'simple-payments' );
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
@@ -214,7 +214,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Upgrade to a Premium Plan!' ),
+					text: translate( 'Upgrade to a Premium Plan' ),
 					action: () => {
 						trackUpgrade( 'premium', 'ads' );
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
