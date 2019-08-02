@@ -55,6 +55,7 @@ import {
 } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import {
 	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
@@ -240,7 +241,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const { path, site, translate, canUserEditThemeOptions } = this.props,
+		const { path, site, translate, canUserEditThemeOptions, showCustomizerLink } = this.props,
 			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -258,16 +259,18 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<ul>
-				<SidebarItem
-					label={ translate( 'Customize' ) }
-					selected={ itemLinkMatches( '/customize', path ) }
-					link={ this.props.customizeUrl }
-					onNavigate={ this.trackCustomizeClick }
-					icon="customize"
-					preloadSectionName="customize"
-					forceInternalLink
-					expandSection={ this.expandDesignSection }
-				/>
+				{ showCustomizerLink && (
+					<SidebarItem
+						label={ translate( 'Customize' ) }
+						selected={ itemLinkMatches( '/customize', path ) }
+						link={ this.props.customizeUrl }
+						onNavigate={ this.trackCustomizeClick }
+						icon="customize"
+						preloadSectionName="customize"
+						forceInternalLink
+						expandSection={ this.expandDesignSection }
+					/>
+				) }
 				<SidebarItem
 					label={ translate( 'Themes' ) }
 					selected={ itemLinkMatches( themesLink, path ) }
@@ -746,6 +749,7 @@ function mapStateToProps( state ) {
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
+		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
