@@ -1,11 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from 'state/action-types';
-import request from 'superagent';
 
 /**
  * Return an action object to signaling that the "usage stats" have been requested
@@ -36,11 +32,15 @@ export function receiveComponentsUsageStats( componentsUsageStats ) {
 export default function fetchComponentsUsageStats() {
 	return dispatch => {
 		dispatch( requestComponentsUsageStats() );
-		return request.get( '/devdocs/service/components-usage-stats' ).end( ( error, res ) => {
-			if ( ! res.ok ) {
-				return;
-			}
-			dispatch( receiveComponentsUsageStats( res.body ) );
-		} );
+		return fetch( '/devdocs/service/components-usage-stats' )
+			.then( async response => {
+				if ( ! response.ok ) {
+					return;
+				}
+				dispatch( receiveComponentsUsageStats( await response.json() ) );
+			} )
+			.catch( () => {
+				// Do nothing.
+			} );
 	};
 }
