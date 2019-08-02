@@ -217,14 +217,13 @@ class Signup extends React.Component {
 		const { flowName, stepName } = this.props;
 		const positionInFlowPrev = indexOf( flows.getFlow( flowName ).steps, prevProps.stepName );
 
-		// TODO: Here we're tracking the impact of a bug that renders a
-		// blank screen. Remove when this bug is fixed.
+		// TODO: Here we're tracking the impact of a bug that renders a blank screen. Remove when this bug is fixed.
 		if (
 			! ( positionInFlowPrev > 0 && prevProps.progress.length === 0 ) &&
 			this.getPositionInFlow() > 0 &&
 			this.props.progress.length === 0
 		) {
-			analytics.tracks.recordEvent( 'calypso_signup_bsod_render', {
+			analytics.tracks.recordEvent( 'calypso_signup_error_main_render_null', {
 				flow: flowName,
 				step: stepName,
 			} );
