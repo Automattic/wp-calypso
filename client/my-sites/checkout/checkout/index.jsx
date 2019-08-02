@@ -473,6 +473,13 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isJetpackNotAtomic ) {
+			// @FIXME temporary fix for plans purcahsed via `/plans` or WP Admin for connected sites
+			// @see https://github.com/Automattic/wp-calypso/issues/35068
+			// Do not use the fallback `/` route after checkout
+			if ( selectedSiteSlug && signupDestination === '/' ) {
+				// Matches route from client/my-sites/checkout/checkout-thank-you/index.jsx:445
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+			}
 			return signupDestination;
 		}
 
