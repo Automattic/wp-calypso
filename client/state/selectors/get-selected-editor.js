@@ -4,11 +4,11 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
  */
+import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
 
 /**
  * Returns the editor of the selected site
@@ -30,13 +30,11 @@ export const getSelectedEditor = ( state, siteId ) => {
 		return null;
 	}
 
-	// Fallback to classic editor if we cannot redirect to WP Admin
-	if (
-		! isEnabled( 'gutenberg/redirect' ) &&
-		[ 'gutenberg-redirect', 'gutenberg-redirect-and-style' ].includes( selectedEditor )
-	) {
+	if ( isClassicEditorForced( state, siteId ) ) {
 		return 'classic';
 	}
 
 	return selectedEditor;
 };
+
+export default getSelectedEditor;

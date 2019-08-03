@@ -35,8 +35,6 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": true,
 		"google-my-business": false,
-		"gutenberg/opt-in": true,
-		"gutenberg/redirect": true,
 		"happychat": false,
 		"help": true,
 		"help/courses": true,
