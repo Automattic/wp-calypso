@@ -9187,12 +9187,12 @@
 			}
 		},
 		"enzyme-to-json": {
-			"version": "3.3.5",
-			"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.3.5.tgz",
-			"integrity": "sha512-DmH1wJ68HyPqKSYXdQqB33ZotwfUhwQZW3IGXaNXgR69Iodaoj8TF/D9RjLdz4pEhGq2Tx2zwNUIjBuqoZeTgA==",
+			"version": "3.4.0",
+			"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.4.0.tgz",
+			"integrity": "sha512-gbu8P8PMAtb+qtKuGVRdZIYxWHC03q1dGS3EKRmUzmTDIracu3o6cQ0d4xI2YWojbelbxjYOsmqM5EgAL0WgIA==",
 			"dev": true,
 			"requires": {
-				"lodash": "^4.17.4"
+				"lodash": "^4.17.12"
 			}
 		},
 		"equivalent-key-map": {
