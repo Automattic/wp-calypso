@@ -1,31 +1,41 @@
 .current-plan-thank-you {
+	display: flex;
+	flex-direction: row;
 	max-width: 720px;
-	text-align: center;
 
 	@include breakpoint( '>800px' ) {
 		font-size: 16px;
+		padding: 20px 0;
+	}
 
-		a {
-			font-size: 14px;
+	h1 {
+		@include breakpoint( '<660px' ) {
+			text-align: center;
+		}
+	}
+
+	a {
+		font-size: 14px;
+
+		@include breakpoint( '<660px' ) {
+			text-align: center;
+			width: 100%;
 		}
 	}
 
 	.progress-bar {
-		max-width: 80%;
+		@include breakpoint( '>660px' ) {
+			max-width: 80%;
+		}
 	}
 }
 
 .current-plan-thank-you__illustration {
-	display: none;
-	margin-bottom: 18px;
+	margin-right: 32px;
+	width: 35%;
 
-	@include breakpoint( '>480px' ) {
-		display: inline;
-		margin-bottom: 18px;
-		width: 70%;
-	}
-	@include breakpoint( '>800px' ) {
-		width: 52%;
+	@include breakpoint( '<660px' ) {
+		display: none;
 	}
 }
 
