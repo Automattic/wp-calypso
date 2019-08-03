@@ -210,13 +210,17 @@ class Signup extends React.Component {
 
 		// TODO: Here we're tracking the impact of a bug that renders a blank screen. Remove when this bug is fixed.
 		if (
+			prevProps.flowName &&
+			prevProps.flowName !== flowName && // Specifically tracking flow forking bug.
 			! ( positionInFlowPrev > 0 && prevProps.progress.length === 0 ) &&
 			this.getPositionInFlow() > 0 &&
 			this.props.progress.length === 0
 		) {
-			analytics.tracks.recordEvent( 'calypso_signup_error_main_render_null', {
+			analytics.tracks.recordEvent( 'calypso_signup_error_forked_flow_null_render', {
 				flow: flowName,
 				step: stepName,
+				previous_flow: prevProps.flowName,
+				previous_step: prevProps.stepName,
 			} );
 		}
 
