@@ -216,7 +216,7 @@ class Signup extends React.Component {
 			this.getPositionInFlow() > 0 &&
 			this.props.progress.length === 0
 		) {
-			analytics.tracks.recordEvent( 'calypso_signup_error_forking_null_render', {
+			analytics.tracks.recordEvent( 'calypso_signup_error_forked_flow_null_render', {
 				flow: flowName,
 				step: stepName,
 				previous_flow: prevProps.flowName,
