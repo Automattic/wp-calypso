@@ -4,6 +4,8 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { addFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -31,3 +33,15 @@ if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 		},
 	} );
 }
+
+const addFSETemplateClassname = createHigherOrderComponent( BlockListBlock => {
+	return props => {
+		if ( props.name !== 'a8c/template' ) {
+			return <BlockListBlock { ...props } />;
+		}
+
+		return <BlockListBlock { ...props } className="template__block-container" />;
+	};
+}, 'addFSETemplateClassname' );
+
+addFilter( 'editor.BlockListBlock', 'full-site-editing/blocks/template', addFSETemplateClassname );
