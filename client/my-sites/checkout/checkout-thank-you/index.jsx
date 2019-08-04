@@ -442,7 +442,7 @@ export class CheckoutThankYou extends React.Component {
 				</Main>
 			);
 		} else if ( wasJetpackPlanPurchased ) {
-			page( `/plans/my-plan/${ this.props.siteId }?thank-you` );
+			page( `/plans/my-plan/${ this.props.siteId }?thank-you&install=all` );
 			return null;
 		}
 
