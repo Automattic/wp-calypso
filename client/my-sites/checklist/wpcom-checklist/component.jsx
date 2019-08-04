@@ -614,7 +614,7 @@ class WpcomChecklistComponent extends PureComponent {
 				buttonText={ translate( 'Launch site' ) }
 				completedTitle={ translate( 'You launched your site' ) }
 				description={ translate(
-					'Your site is private and only visible to you. When you are ready, launch your site to make it public.'
+					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				) }
 				disableIcon={ disabled }
 				isButtonDisabled={ disabled }
