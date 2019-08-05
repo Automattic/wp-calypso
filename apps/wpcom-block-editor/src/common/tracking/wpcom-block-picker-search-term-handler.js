@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
  */
 import tracksRecordEvent from './track-record-event';
 
-const trackSearchTermNotFound = ( event, target ) => {
+const trackSearchTerm = ( event, target ) => {
 	const search_term = target.value;
 
 	if ( search_term.length < 3 ) {
@@ -35,5 +35,5 @@ const trackSearchTermNotFound = ( event, target ) => {
 export default () => ( {
 	selector: '.block-editor-inserter__search',
 	type: 'keyup',
-	handler: debounce( trackSearchTermNotFound, 500 ),
+	handler: debounce( trackSearchTerm, 500 ),
 } );
