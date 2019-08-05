@@ -28,7 +28,7 @@ describe( 'concierge/signupForm/reducer', () => {
 		timezone: 'UTC',
 		message: 'hello',
 		phoneNumber: '+910123456789',
-		countryCode: '+91',
+		countryCode: 'IN',
 		phoneNumberWithoutCountryCode: '987654321',
 		status: 'booking',
 		isRebrandCitiesSite: true,

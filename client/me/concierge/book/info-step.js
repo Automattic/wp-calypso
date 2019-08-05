@@ -75,7 +75,7 @@ class InfoStep extends Component {
 
 		this.props.updateConciergeSignupForm( {
 			...this.props.signupForm,
-			countryCode: phoneNumber.countryData.numeric_code,
+			countryCode: phoneNumber.countryData.code,
 			phoneNumberWithoutCountryCode: phoneNumber.phoneNumber,
 			phoneNumber: phoneNumber.phoneNumber ? phoneNumber.phoneNumberFull : '',
 		} );
