@@ -14,7 +14,7 @@ const addFSESiteLogoClassname = createHigherOrderComponent( BlockListBlock => {
 			return <BlockListBlock { ...props } />;
 		}
 
-		return <BlockListBlock { ...props } className="template__block-site-logo-placeholder" />;
+		return <BlockListBlock { ...props } className="template__site-logo" />;
 	};
 }, 'addFSESiteLogoClassname' );
 
