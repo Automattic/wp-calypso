@@ -106,14 +106,30 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellNudge: {
-		datestamp: '20190712',
+	defaultMonthlyJetpackPlan: {
+		datestamp: '20190722',
 		variations: {
-			variantShowNudge: 0,
-			control: 100,
+			monthlyPlan: 50,
+			yearlyPlan: 50,
+		},
+		defaultVariation: 'yearlyPlan',
+		allowExistingUsers: true,
+	},
+	showPlanUpsellGSuite: {
+		datestamp: '20190805',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20190805',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
 	},
 	privateByDefault: {
 		datestamp: '20190730',

@@ -404,11 +404,23 @@ export class Checkout extends React.Component {
 		return '/';
 	}
 
-	maybeShowPlanUpgradeOffer( receiptId ) {
+	maybeShowPlanBumpOfferGSuite( receiptId ) {
 		const { cart, selectedSiteSlug } = this.props;
 
 		if ( hasPersonalPlan( cart ) ) {
-			if ( 'variantShowNudge' === abtest( 'showPlanUpsellNudge' ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellGSuite' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+			}
+		}
+
+		return;
+	}
+
+	maybeShowPlanBumpOfferConcierge( receiptId ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasPersonalPlan( cart ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
 				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 			}
 		}
@@ -431,7 +443,7 @@ export class Checkout extends React.Component {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
 					return (
-						this.maybeShowPlanUpgradeOffer( pendingOrReceiptId ) ||
+						this.maybeShowPlanBumpOfferGSuite( pendingOrReceiptId ) ||
 						`/checkout/${ selectedSiteSlug }/with-gsuite/${
 							domainsForGSuite[ 0 ].meta
 						}/${ pendingOrReceiptId }`
@@ -457,7 +469,7 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			const upgradePath = this.maybeShowPlanUpgradeOffer( pendingOrReceiptId );
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId );
 			if ( upgradePath ) {
 				return upgradePath;
 			}
