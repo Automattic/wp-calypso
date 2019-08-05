@@ -145,10 +145,11 @@ function getValidationErrorsFromStripeError( error ) {
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
- * @return {object} stripeJs
+ * @return {object} { stripeJs, isStripeLoading }
  */
 export function useStripeJs( stripeConfiguration ) {
 	const [ stripeJs, setStripeJs ] = useState( null );
+	const [ isStripeLoading, setStripeLoading ] = useState( true );
 	useEffect( () => {
 		if ( ! stripeConfiguration ) {
 			return;
@@ -157,6 +158,7 @@ export function useStripeJs( stripeConfiguration ) {
 			if ( window.Stripe ) {
 				debug( 'stripe.js already loaded' );
 				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+				setStripeLoading( false );
 				return;
 			}
 			debug( 'loading stripe.js...' );
@@ -167,6 +169,7 @@ export function useStripeJs( stripeConfiguration ) {
 				}
 				debug( 'stripe.js loaded!' );
 				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+				setStripeLoading( false );
 			} );
 		} catch ( error ) {
 			if ( error ) {
@@ -175,7 +178,7 @@ export function useStripeJs( stripeConfiguration ) {
 			}
 		}
 	}, [ stripeConfiguration ] );
-	return stripeJs;
+	return { stripeJs, isStripeLoading };
 }
 
 /**
@@ -195,7 +198,13 @@ export function useStripeConfiguration( requestArgs = {} ) {
 }
 
 /**
- * HOC to render a component with StripeJS
+ * HOC to render a component with StripeJs
+ *
+ * The wrapped component will receieve the additional props:
+ *
+ * - stripe (the stripe.js object)
+ * - stripeConfiguration (the results of the stripe-configuration endpoint)
+ * - isStripeLoading (true while the other two props are still loading)
  *
  * @param {object} WrappedComponent The component to wrap
  * @param {object} configurationArgs (optional) Options for configuration endpoint request. Can include `country` or `needs_intent`
@@ -205,13 +214,14 @@ export function withStripe( WrappedComponent, configurationArgs = {} ) {
 	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
 	return props => {
 		const stripeConfiguration = useStripeConfiguration( configurationArgs );
-		const stripeJs = useStripeJs( stripeConfiguration );
+		const { stripeJs, isStripeLoading } = useStripeJs( stripeConfiguration );
 
 		return (
 			<StripeProvider stripe={ stripeJs }>
 				<Elements>
 					<StripeInjectedWrappedComponent
 						stripeConfiguration={ stripeConfiguration }
+						isStripeLoading={ isStripeLoading }
 						{ ...props }
 					/>
 				</Elements>
