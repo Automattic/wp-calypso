@@ -13,6 +13,7 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import { submitSurvey } from 'lib/upgrades/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -31,6 +32,7 @@ import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
+import PrecancellationChatButton from './precancellation-chat-button';
 import { getName } from 'lib/purchases';
 import { isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
@@ -62,7 +64,6 @@ class CancelPurchaseForm extends React.Component {
 		onClickFinalConfirm: PropTypes.func.isRequired,
 		flowType: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
-		extraPrependedButtons: PropTypes.array,
 		translate: PropTypes.func,
 	};
 
@@ -71,7 +72,6 @@ class CancelPurchaseForm extends React.Component {
 		onInputChange: () => {},
 		showSurvey: true,
 		isVisible: false,
-		extraPrependedButtons: [],
 	};
 
 	getAllSurveySteps = () => {
@@ -544,7 +544,8 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getStepButtons = () => {
-		const { flowType, translate, disableButtons } = this.props;
+		const { flowType, translate, disableButtons, purchase } = this.props;
+		const { surveyStep } = this.state;
 		const disabled = disableButtons || this.state.isSubmitting;
 
 		const close = {
@@ -555,6 +556,13 @@ class CancelPurchaseForm extends React.Component {
 						? translate( 'Skip' )
 						: translate( "I'll Keep It" ),
 			},
+			chat = (
+				<PrecancellationChatButton
+					purchase={ purchase }
+					onClick={ this.closeDialog }
+					surveyStep={ surveyStep }
+				/>
+			),
 			next = {
 				action: 'next',
 				disabled: disabled || ! isSurveyFilledIn( this.state ),
@@ -589,9 +597,12 @@ class CancelPurchaseForm extends React.Component {
 				isPrimary: true,
 			};
 
-		const firstButtons = [ ...this.props.extraPrependedButtons, close ];
+		const firstButtons =
+			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
+				? [ chat, close ]
+				: [ close ];
 
-		if ( this.state.surveyStep === steps.FINAL_STEP ) {
+		if ( surveyStep === steps.FINAL_STEP ) {
 			const stepsCount = this.getAllSurveySteps().length;
 			const prevButton = stepsCount > 1 ? [ prev ] : [];
 

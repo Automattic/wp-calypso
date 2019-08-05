@@ -60,7 +60,7 @@ interface Props {
 	postType: T.PostType;
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
-	fseParentPostId: T.PostId;
+	fseParentPageId: T.PostId;
 }
 
 interface State {
@@ -94,6 +94,7 @@ enum EditorActions {
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
+	GetCloseButtonUrl = 'getCloseButtonUrl',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -231,12 +232,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
-			if ( unsavedChanges ) {
-				this.props.markChanged();
-			} else {
-				this.props.markSaved();
-			}
-			this.props.navigate( this.props.closeUrl );
+			this.onCloseEditor( unsavedChanges, ports[ 0 ] );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -265,6 +261,34 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.templateParts.push( [ templatePartId, ports[ 0 ] ] );
 			this.sendTemplatePartEditorUrl( templatePartId );
 		}
+
+		if ( EditorActions.GetCloseButtonUrl === action ) {
+			const { closeUrl } = this.props;
+			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
+		}
+	};
+
+	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
+		const { closeUrl } = this.props;
+
+		if ( hasUnsavedChanges ) {
+			this.props.markChanged();
+		} else {
+			this.props.markSaved();
+		}
+
+		if ( this.shouldDoServerBackNav() ) {
+			messagePort.postMessage( `${ window.location.origin }${ closeUrl }` );
+		} else {
+			this.props.navigate( closeUrl );
+		}
+	};
+
+	// If we are on a template part and have a parent page
+	// ID, we want to do a server nav back to that page.
+	shouldDoServerBackNav = () => {
+		const { fseParentPageId, postType } = this.props;
+		return null != fseParentPageId && 'wp_template_part' === postType;
 	};
 
 	loadRevision = ( {

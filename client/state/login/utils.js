@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,6 +29,19 @@ const errorFields = {
 	invalid_two_step_code: 'twoStepCode',
 	invalid_username: 'usernameOrEmail',
 };
+
+export class HTTPError extends Error {
+	constructor( response, body ) {
+		super();
+		this.name = 'HTTPError';
+		this.status = response.status;
+		try {
+			this.response = { body: JSON.parse( body ) };
+		} catch {
+			this.response = { body };
+		}
+	}
+}
 
 /**
  * Retrieves the first error message from the specified HTTP error.

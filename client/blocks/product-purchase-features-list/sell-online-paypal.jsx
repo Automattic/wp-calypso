@@ -12,6 +12,11 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
+/**
+ * Image dependencies
+ */
+import paymentsImage from 'assets/images/illustrations/payments.svg';
+
 export default localize( ( { isJetpack, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
@@ -25,7 +30,7 @@ export default localize( ( { isJetpack, translate } ) => {
 						? 'https://jetpack.com/support/simple-payment-button/'
 						: 'https://en.support.wordpress.com/simple-payments/'
 				}
-				icon={ <img alt="" src="/calypso/images/illustrations/payments.svg" /> }
+				icon={ <img alt="" src={ paymentsImage } /> }
 				target="_blank"
 				title={ translate( 'Sell online with PayPal' ) }
 			/>
