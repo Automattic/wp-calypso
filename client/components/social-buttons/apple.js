@@ -22,6 +22,7 @@ class AppleLoginButton extends Component {
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,
 		clientId: PropTypes.string.isRequired,
+		redirectUri: PropTypes.string.isRequired,
 	};
 
 	componentDidMount() {
@@ -52,7 +53,7 @@ class AppleLoginButton extends Component {
 				AppleID.auth.init( {
 					clientId: this.props.clientId,
 					scope: 'name email',
-					redirectURI: 'https://wordpress.com/log-in/apple/callback',
+					redirectURI: this.props.redirectUri,
 					state: '1',
 				} )
 			)
