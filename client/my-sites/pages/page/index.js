@@ -231,7 +231,11 @@ class Page extends Component {
 	getFrontPageItem() {
 		const { page, translate } = this.props;
 
-		if ( ( this.props.hasStaticFrontPage && this.props.isPostsPage ) || this.props.isFrontPage ) {
+		if (
+			'publish' !== this.props.page.status ||
+			this.props.isFrontPage ||
+			( this.props.hasStaticFrontPage && this.props.isPostsPage )
+		) {
 			return null;
 		}
 
