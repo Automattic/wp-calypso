@@ -31,6 +31,7 @@ import {
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
 import Notice from 'components/notice';
+import { saveSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -50,6 +51,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 		this.setInputValueFromProps();
 		this.focusInput();
 	}
@@ -294,8 +296,9 @@ export default flow(
 			isLoading: isUrlInputDisabled( state ),
 		} ),
 		{
-			setNuxUrlInputValue,
 			recordTracksEvent,
+			saveSignupStep,
+			setNuxUrlInputValue,
 			submitImportUrlStep,
 		}
 	),

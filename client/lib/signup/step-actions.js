@@ -173,7 +173,7 @@ export function createSiteWithCart(
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	if ( 'import' === flowName ) {
+	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
 		const importingFromUrl = getNuxUrlInputValue( state );
 		newSiteParams.blog_name = normalizeImportUrl( importingFromUrl );
 		newSiteParams.find_available_url = true;
