@@ -79,13 +79,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		return {
 			title: translate( 'Collect one-time payments' ),
-			body: translate(
-				'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. {{em}}Available to any site with a Premium plan{{/em}}.',
-				{
-					components: {
-						em: <em />,
-					},
-				}
+			body: (
+				<Fragment>
+					{ translate(
+						'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations.'
+					) }{' '}
+					{ ! hasSimplePayments && (
+						<em>{ translate( 'Available to any site with a Premium plan.' ) }</em>
+					) }
+				</Fragment>
 			),
 			image: {
 				path: '/calypso/images/earn/simple-payments.svg',
@@ -121,18 +123,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const title = hasConnectedAccount
 			? translate( 'Manage Recurring Payments' )
 			: translate( 'Collect recurring payments' );
-		const body = hasConnectedAccount
-			? translate(
-					"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
-			  )
-			: translate(
-					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. {{em}}Available to any site with a paid plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  );
+		const body = hasConnectedAccount ? (
+			translate(
+				"Manage your subscribers, or your current subscription options and review the total revenue that you've made from recurring payments."
+			)
+		) : (
+			<Fragment>
+				{ translate(
+					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue.'
+				) }{' '}
+				{ isFreePlan && <em>{ translate( 'Available to any site with a paid plan.' ) }</em> }
+			</Fragment>
+		);
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://en.support.wordpress.com/recurring-payments/',
@@ -171,22 +173,15 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						onClick: () => trackCtaButton( 'referral-wpcom' ),
 				  },
 		};
-		const components = {
-			components: {
-				em: <em />,
-			},
-		};
 
 		return {
 			title: translate( 'Earn cash from referrals' ),
 			body: isJetpackNotAtomic
 				? translate(
-						"Promote Jetpack to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
-						components
+						"Promote Jetpack to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way."
 				  )
 				: translate(
-						"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way. {{em}}Available on every plan{{/em}}.",
-						components
+						"Promote WordPress.com to friends, family, and website visitors and you'll earn a referral payment for every paying customer you send our way."
 				  ),
 			image: {
 				path: '/calypso/images/earn/referral.svg',
@@ -226,14 +221,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			? translate(
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
 			  )
-			: translate(
-					'Publish as you normally would, display advertisements on all your posts and pages, and make money each time someone visits your site. {{em}}Available to sites with a Premium plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  );
+			:(
+			<Fragment>
+				{ translate(
+					'Publish as you normally would, display advertisements on all your posts and pages, and make money each time someone visits your site.'
+				) }{' '}
+				{ ! hasWordAds && <em>{ translate( 'Available to sites with a Premium plan.' ) }</em> }
+			</Fragment>
+		);
 		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
