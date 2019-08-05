@@ -173,7 +173,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ translate( 'Home' ) }
+				label={ translate( 'Checklist' ) }
 				className="stats"
 				selected={ itemLinkMatches( [ '/checklist' ], path ) }
 				link={ checklistLink }
@@ -761,7 +761,7 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canCurrentUserUseChecklist: canCurrentUserUseChecklist( state, siteId ),
+		canUserUseChecklist: canCurrentUserUseChecklist( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
