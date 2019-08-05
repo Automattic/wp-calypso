@@ -173,7 +173,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ translate( 'Checklist' ) }
+				label={ translate( 'Customer Home' ) }
 				className="stats"
 				selected={ itemLinkMatches( [ '/checklist' ], path ) }
 				link={ checklistLink }
