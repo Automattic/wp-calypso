@@ -80,16 +80,16 @@ class SocialLoginForm extends Component {
 
 		this.props.loginSocialUser( socialInfo, redirectTo ).then(
 			() => {
-				this.recordEvent( 'calypso_login_social_login_success' );
+				this.recordEvent( 'calypso_login_social_login_success', 'google' );
 
 				onSuccess();
 			},
 			error => {
 				if ( error.code === 'unknown_user' ) {
 					return this.props.createSocialUser( socialInfo, 'login' ).then(
-						() => this.recordEvent( 'calypso_login_social_signup_success' ),
+						() => this.recordEvent( 'calypso_login_social_signup_success', 'google' ),
 						createAccountError =>
-							this.recordEvent( 'calypso_login_social_signup_failure', {
+							this.recordEvent( 'calypso_login_social_signup_failure', 'google', {
 								error_code: createAccountError.code,
 								error_message: createAccountError.message,
 							} )
@@ -98,7 +98,7 @@ class SocialLoginForm extends Component {
 					this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
 				}
 
-				this.recordEvent( 'calypso_login_social_login_failure', {
+				this.recordEvent( 'calypso_login_social_login_failure', 'google', {
 					error_code: error.code,
 					error_message: error.message,
 				} );
@@ -106,40 +106,29 @@ class SocialLoginForm extends Component {
 		);
 	};
 
-	recordEvent = ( eventName, params ) =>
+	recordEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
-			social_account_type: 'google',
+			social_account_type: service,
 			...params,
 		} );
 
-	trackGoogleLogin = () => {
-		this.recordEvent( 'calypso_login_social_button_click', 'google' );
+	trackLogin = service => {
+		this.recordEvent( 'calypso_login_social_button_click', service );
 
 		if ( this.props.redirectTo ) {
 			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
 		}
 	};
 
-	trackAppleLogin = () => {
-		this.recordEvent( 'calypso_login_social_button_click', 'apple' );
-
-		if ( this.props.redirectTo ) {
-			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
-		}
+	getRedirectUrl = ( uxMode, service ) => {
+		return uxMode
+			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
+					login( { isNative: true, socialService: service } ) }`
+			: null;
 	};
 
 	render() {
 		const { redirectTo, uxMode } = this.props;
-		const redirectUri = uxMode
-			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
-					login( { isNative: true, socialService: 'google' } ) }`
-			: null;
-
-		const redirectUriApple = uxMode
-			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
-					login( { isNative: true, socialService: 'apple' } ) }`
-			: null;
-
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
@@ -147,13 +136,13 @@ class SocialLoginForm extends Component {
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
 						uxMode={ uxMode }
-						redirectUri={ redirectUri }
-						onClick={ this.trackGoogleLogin }
+						redirectUri={ this.getRedirectUrl( uxMode, 'google' ) }
+						onClick={ this.trackLogin.bind( null, 'google' ) }
 					/>
 					<AppleLoginButton
 						clientId={ config( 'apple_oauth_client_id' ) }
-						redirectUri={ redirectUriApple }
-						onClick={ this.trackAppleLogin }
+						redirectUri={ this.getRedirectUrl( uxMode, 'apple' ) }
+						onClick={ this.trackLogin.bind( null, 'apple' ) }
 					/>
 				</div>
 
