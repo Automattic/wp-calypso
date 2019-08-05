@@ -37,7 +37,6 @@ const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
 
 class ImportURLStepComponent extends Component {
 	state = {
-		displayFallbackEngines: false,
 		isLoading: false,
 		// Url message could be client-side validation or server-side error.
 		urlValidationMessage: '',
@@ -62,13 +61,7 @@ class ImportURLStepComponent extends Component {
 
 	focusInput = () => invoke( this.inputRef, 'focus' );
 
-	setUrlError = urlValidationMessage =>
-		this.setState(
-			{
-				urlValidationMessage,
-			},
-			this.focusInput
-		);
+	setUrlError = urlValidationMessage => this.setState( { urlValidationMessage }, this.focusInput );
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -81,7 +74,6 @@ class ImportURLStepComponent extends Component {
 		const { stepName, translate, urlInputValue } = this.props;
 
 		this.setState( {
-			displayFallbackEngines: false,
 			isLoading: true,
 			urlValidationMessage: '',
 		} );
@@ -100,25 +92,22 @@ class ImportURLStepComponent extends Component {
 				} ) => {
 					if ( 404 === siteStatus ) {
 						return this.setUrlError(
-							translate( 'The URL entered was not found. Double-check the URL and try again.' )
+							translate( 'That site was not found. Please check the URL and try again.' )
 						);
 					}
 
 					if ( includes( importerTypes, 'url' ) && 200 !== siteStatus ) {
 						return this.setUrlError(
-							translate( "We're not able to reach that URL. Double-check the URL and try again." )
+							translate( "We couldn't reach that site. Please check the URL and try again." )
 						);
 					}
 
-					if ( 'unknown' !== siteEngine && isEmpty( importerTypes ) ) {
-						// @todo: Do we actually want an error here? Shouldn't this lead to the fallback step?
-						// return this.setUrlError( '...' );
-					}
-
-					if ( 'unknown' === siteEngine || isEmpty( importerTypes ) ) {
-						return this.setState( {
-							displayFallbackEngines: true,
-						} );
+					if ( ! includes( importerTypes, 'url' ) ) {
+						return this.setUrlError(
+							translate(
+								"That doesn't seem to be a Wix or GoDaddy site. Please check the URL and try again."
+							)
+						);
 					}
 
 					this.props.setImportOriginSiteDetails( {
@@ -170,15 +159,11 @@ class ImportURLStepComponent extends Component {
 		const validationMessage = validateImportUrl( this.props.urlInputValue );
 		const isValid = ! validationMessage;
 
-		this.setUrlError( isValid ? '' : validationMessage );
+		if ( ! isValid ) {
+			this.setUrlError( validationMessage );
+		}
 
 		return isValid;
-	};
-
-	getIsSiteImportableError = () => {
-		if ( ! this.props.isSiteImportableError ) {
-			return null;
-		}
 	};
 
 	exitFlow = () => {
@@ -201,10 +186,6 @@ class ImportURLStepComponent extends Component {
 		} );
 	};
 
-	renderFallbackEngines = () => {
-		return <div className="import-url__escape">Display fallback engines here...</div>;
-	};
-
 	renderNotice = () => {
 		const { urlValidationMessage } = this.state;
 
@@ -221,7 +202,7 @@ class ImportURLStepComponent extends Component {
 
 	renderContent = () => {
 		const { urlInputValue, translate } = this.props;
-		const { displayFallbackEngines, isLoading, urlValidationMessage } = this.state;
+		const { isLoading, urlValidationMessage } = this.state;
 
 		return (
 			<Fragment>
@@ -259,8 +240,6 @@ class ImportURLStepComponent extends Component {
 					</form>
 					{ this.renderNotice() }
 				</div>
-
-				{ displayFallbackEngines && this.renderFallbackEngines() }
 
 				<div className="import-url__example">
 					<ul className="import-url__example-urls">
