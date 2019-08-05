@@ -247,7 +247,7 @@ class Page extends Component {
 			<MenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
 				<Gridicon icon="house" size={ 18 } />
-				{ translate( 'Set as Front Page' ) }
+				{ translate( 'Set as Homepage' ) }
 			</PopoverMenuItem>,
 		];
 	}
