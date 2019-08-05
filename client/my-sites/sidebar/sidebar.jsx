@@ -306,7 +306,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ translate( 'Domains' ) }
-				selected={ itemLinkMatches( [ '/domains' ], path ) }
+				selected={ itemLinkMatches( [ '/domains', '/email' ], path ) }
 				link={ domainsLink }
 				onNavigate={ this.trackDomainsClick }
 				icon="domains"
