@@ -372,8 +372,8 @@ class WpcomChecklistComponent extends PureComponent {
 						},
 					}
 				) }
-				// only render an unclickable grey circle
-				disableIcon={ ! baseProps.isCompleted }
+				// only render an unclickable grey circle when email conformation is incomplete
+				disableIcon={ ! baseProps.completed }
 				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
 				onClick={ this.handleSendVerificationEmail }
 				title={ translate( 'Confirm your email address' ) }
