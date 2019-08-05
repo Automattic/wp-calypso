@@ -166,15 +166,15 @@ export function getRememberedCoupon() {
 		'TXAM',
 		'FBSAVE15',
 	];
-	const ONE_WEEK_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
 	debug( 'Found coupons in localStorage: ', coupons );
 
-	// delete coupons if they're older than a week; find the most recent one
+	// delete coupons if they're older than thirty days; find the most recent one
 	let mostRecentTimestamp = 0;
 	let mostRecentCouponCode = null;
 	Object.keys( coupons ).forEach( key => {
-		if ( now > coupons[ key ] + ONE_WEEK_MILLISECONDS ) {
+		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
 			delete coupons[ key ];
 		} else if ( coupons[ key ] > mostRecentTimestamp ) {
 			mostRecentCouponCode = key;

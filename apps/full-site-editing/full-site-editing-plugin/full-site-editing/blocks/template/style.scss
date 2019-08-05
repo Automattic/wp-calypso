@@ -4,6 +4,9 @@
 	&:hover .template-block__overlay {
 		display: flex;
 	}
+	.components-button .components-spinner {
+		margin-top: 4px;
+	}
 }
 
 .template-block.alignfull {
@@ -39,5 +42,36 @@
 
 	.components-placeholder__instructions {
 		color: white;
+	}
+}
+
+/* Hide the content slot block UI */
+.block-editor-block-list__layout {
+	.template__block-container {
+		&.is-selected {
+			.block-editor-block-contextual-toolbar {
+				display: none;
+			}
+		}
+
+		&.block-editor-block-list__block {
+			// Need to get super specific to override the core css selectors:
+			&,
+			&.has-child-selected,
+			&.is-navigate-mode,
+			&.is-hovered {
+				> .block-editor-block-list__block-edit {
+					&::before {
+						transition: none;
+						border: none;
+						outline: none;
+						box-shadow: none;
+					}
+					> .block-editor-block-list__breadcrumb {
+						display: none;
+					}
+				}
+			}
+		}
 	}
 }

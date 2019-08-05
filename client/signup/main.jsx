@@ -97,13 +97,8 @@ function dependenciesContainCartItem( dependencies ) {
 }
 
 class Signup extends React.Component {
-	static displayName = 'Signup';
-
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	static propTypes = {
+		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
@@ -122,16 +117,12 @@ class Signup extends React.Component {
 		shouldShowMockups: PropTypes.bool,
 	};
 
-	constructor( props, context ) {
-		super( props, context );
-
-		this.state = {
-			controllerHasReset: false,
-			shouldShowLoadingScreen: false,
-			resumingStep: undefined,
-			previousFlowName: null,
-		};
-	}
+	state = {
+		controllerHasReset: false,
+		shouldShowLoadingScreen: false,
+		resumingStep: undefined,
+		previousFlowName: null,
+	};
 
 	UNSAFE_componentWillMount() {
 		// Signup updates the cart through `SignupCart`. To prevent
@@ -153,7 +144,7 @@ class Signup extends React.Component {
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
-			reduxStore: this.context.store,
+			reduxStore: this.props.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
@@ -214,6 +205,25 @@ class Signup extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const { flowName, stepName } = this.props;
+		const positionInFlowPrev = indexOf( flows.getFlow( flowName ).steps, prevProps.stepName );
+
+		// TODO: Here we're tracking the impact of a bug that renders a blank screen. Remove when this bug is fixed.
+		if (
+			prevProps.flowName &&
+			prevProps.flowName !== flowName && // Specifically tracking flow forking bug.
+			! ( positionInFlowPrev > 0 && prevProps.progress.length === 0 ) &&
+			this.getPositionInFlow() > 0 &&
+			this.props.progress.length === 0
+		) {
+			analytics.tracks.recordEvent( 'calypso_signup_error_forked_flow_null_render', {
+				flow: flowName,
+				step: stepName,
+				previous_flow: prevProps.flowName,
+				previous_step: prevProps.stepName,
+			} );
+		}
+
 		if (
 			get( this.props.signupDependencies, 'siteType' ) !==
 			get( prevProps.signupDependencies, 'siteType' )

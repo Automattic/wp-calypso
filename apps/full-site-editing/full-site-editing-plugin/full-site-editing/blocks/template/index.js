@@ -4,6 +4,8 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { addFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -11,15 +13,16 @@ import { __ } from '@wordpress/i18n';
 import edit from './edit';
 import './style.scss';
 
-if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
+if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/template', {
-		title: __( 'Template Part' ),
-		description: __( 'Display a template part.' ),
+		title: __( 'Template' ),
+		description: __( 'Display a template.' ),
 		icon: 'layout',
 		category: 'layout',
 		attributes: { templateId: { type: 'number' } },
 		supports: {
-			anchor: true,
+			anchor: false,
+			customClassName: true, // Needed to support the classname we inject
 			html: false,
 			reusable: false,
 		},
@@ -30,3 +33,15 @@ if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 		},
 	} );
 }
+
+const addFSETemplateClassname = createHigherOrderComponent( BlockListBlock => {
+	return props => {
+		if ( props.name !== 'a8c/template' ) {
+			return <BlockListBlock { ...props } />;
+		}
+
+		return <BlockListBlock { ...props } className="template__block-container" />;
+	};
+}, 'addFSETemplateClassname' );
+
+addFilter( 'editor.BlockListBlock', 'full-site-editing/blocks/template', addFSETemplateClassname );

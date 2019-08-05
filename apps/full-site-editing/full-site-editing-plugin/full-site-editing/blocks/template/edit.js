@@ -14,7 +14,7 @@ import { BlockEdit } from '@wordpress/editor';
 import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { Fragment, useEffect } from '@wordpress/element';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -27,30 +27,30 @@ const TemplateEdit = compose(
 	withState( { templateClientId: null } ),
 	withSelect( ( select, { attributes, templateClientId } ) => {
 		const { getEntityRecord } = select( 'core' );
-		const { getCurrentPostId } = select( 'core/editor' );
+		const { getCurrentPostId, isEditedPostDirty } = select( 'core/editor' );
 		const { getBlock } = select( 'core/block-editor' );
-
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
-		const template = templateId && getEntityRecord( 'postType', 'wp_template_part', templateId );
-		const editTemplatePartUrl = addQueryArgs( fullSiteEditing.editTemplatePartBaseUrl, {
+		const template = templateId && getEntityRecord( 'postType', 'wp_template', templateId );
+		const editTemplateUrl = addQueryArgs( fullSiteEditing.editTemplateBaseUrl, {
 			post: templateId,
 			fse_parent_post: currentPostId,
 		} );
 
 		return {
 			currentPostId,
-			editTemplatePartUrl,
+			editTemplateUrl,
 			template,
 			templateBlock: getBlock( templateClientId ),
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
+			isDirty: isEditedPostDirty(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const { receiveBlocks } = dispatch( 'core/block-editor' );
 		const { template, templateClientId, setState } = ownProps;
-
 		return {
+			savePost: dispatch( 'core/editor' ).savePost,
 			receiveTemplateBlocks: () => {
 				if ( ! template || templateClientId ) {
 					return;
@@ -70,11 +70,13 @@ const TemplateEdit = compose(
 )(
 	( {
 		attributes,
-		editTemplatePartUrl,
+		editTemplateUrl,
 		receiveTemplateBlocks,
 		template,
 		templateBlock,
 		templateTitle,
+		isDirty,
+		savePost,
 	} ) => {
 		if ( ! template ) {
 			return (
@@ -83,16 +85,28 @@ const TemplateEdit = compose(
 				</Placeholder>
 			);
 		}
-
+		const [ navigateToTemplate, setNavigateToTemplate ] = useState( false );
 		useEffect( () => {
+			if ( navigateToTemplate && ! isDirty ) {
+				window.location.href = editTemplateUrl;
+			}
 			receiveTemplateBlocks();
 		} );
 
-		const { align } = attributes;
+		const { align, className } = attributes;
+
+		const save = event => {
+			if ( ! isDirty ) {
+				return;
+			}
+			event.preventDefault();
+			setNavigateToTemplate( true );
+			savePost();
+		};
 
 		return (
 			<div
-				className={ classNames( 'template-block', {
+				className={ classNames( 'template-block', className, {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
@@ -110,12 +124,10 @@ const TemplateEdit = compose(
 						</Disabled>
 						<Placeholder
 							className="template-block__overlay"
-							instructions={ __(
-								'This block is part of your site template and may appear on multiple pages.'
-							) }
+							instructions={ __( "This template will appear on all of your site's pages." ) }
 						>
-							<Button href={ editTemplatePartUrl } isDefault>
-								{ sprintf( __( 'Edit %s' ), templateTitle ) }
+							<Button href={ editTemplateUrl } onClick={ save } isDefault>
+								{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
 							</Button>
 						</Placeholder>
 					</Fragment>

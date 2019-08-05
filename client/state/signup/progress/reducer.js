@@ -60,10 +60,7 @@ function removeUnneededSteps( state, { flowName } ) {
 		flowSteps = flowSteps.filter( item => item !== 'user' );
 	}
 
-	return state.filter(
-		( step, index ) =>
-			flowSteps.includes( step.stepName ) && index === flowSteps.indexOf( step.stepName )
-	);
+	return state.filter( step => flowSteps.includes( step.stepName ) );
 }
 
 function saveStep( state, { step } ) {

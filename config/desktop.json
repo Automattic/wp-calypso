@@ -40,6 +40,7 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,
+		"jetpack/connect/site-questions": true,
 		"jitms": false,
 		"login/magic-login": false,
 		"login/native-login-links": false,

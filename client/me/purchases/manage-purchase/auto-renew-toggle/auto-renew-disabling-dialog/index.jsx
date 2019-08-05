@@ -154,7 +154,7 @@ class AutoRenewDisablingDialog extends Component {
 				<ul>
 					<li>
 						<Button href={ exportPath } primary>
-							{ translate( 'Download a backup' ) }
+							{ translate( 'Download a current backup' ) }
 						</Button>
 					</li>
 					<li>
@@ -201,11 +201,9 @@ class AutoRenewDisablingDialog extends Component {
 			>
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
-				<Button onClick={ this.onClickGeneralConfirm }>
+				<Button onClick={ this.closeAndCleanup }>{ translate( "I'll keep it" ) }</Button>
+				<Button onClick={ this.onClickGeneralConfirm } primary>
 					{ translate( 'Confirm cancellation' ) }
-				</Button>
-				<Button onClick={ this.closeAndCleanup } primary>
-					{ translate( "I'll keep it" ) }
 				</Button>
 			</Dialog>
 		);

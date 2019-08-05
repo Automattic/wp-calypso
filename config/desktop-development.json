@@ -50,6 +50,7 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
+		"jetpack/connect/site-questions": true,
 		"jetpack/connection-rebranding": true,
 		"jetpack/happychat": true,
 		"jetpack/onboarding": true,

@@ -4,6 +4,13 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { useEffect, useState } from 'react';
+import { loadScript } from '@automattic/load-script';
+
+/**
+ * Internal dependencies
+ */
+import { getStripeConfiguration } from 'lib/store-transactions';
 
 const debug = debugFactory( 'calypso:stripe' );
 
@@ -126,4 +133,52 @@ function getValidationErrorsFromStripeError( error ) {
 			};
 	}
 	return null;
+}
+
+/**
+ * React custom Hook for loading stripeJs
+ *
+ * Its parameter is the value returned by useStripeConfiguration
+ *
+ * @param {object} stripeConfiguration An object containing { public_key, js_url }
+ * @return {object} stripeJs
+ */
+export function useStripeJs( stripeConfiguration ) {
+	const [ stripeJs, setStripeJs ] = useState( null );
+	useEffect( () => {
+		if ( ! stripeConfiguration ) {
+			return;
+		}
+		if ( window.Stripe ) {
+			debug( 'stripe.js already loaded' );
+			setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+			return;
+		}
+		debug( 'loading stripe.js...' );
+		loadScript( stripeConfiguration.js_url, function( error ) {
+			if ( error ) {
+				debug( 'stripe.js script ' + error.src + ' failed to load.' );
+				return;
+			}
+			debug( 'stripe.js loaded!' );
+			setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+		} );
+	}, [ stripeConfiguration ] );
+	return stripeJs;
+}
+
+/**
+ * React custom Hook for loading the Stripe Configuration
+ *
+ * @param {string} country (optional) The country code
+ * @return {object} Stripe Configuration as returned by the stripe configuration endpoint
+ */
+export function useStripeConfiguration( country ) {
+	const [ stripeConfiguration, setStripeConfiguration ] = useState();
+	useEffect( () => {
+		getStripeConfiguration( { country } ).then( configuration =>
+			setStripeConfiguration( configuration )
+		);
+	}, [ country ] );
+	return stripeConfiguration;
 }

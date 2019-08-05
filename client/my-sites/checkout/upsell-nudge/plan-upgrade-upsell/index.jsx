@@ -20,6 +20,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import premiumThemesImage from 'assets/images/illustrations/themes.svg';
+
 export class PlanUpgradeUpsell extends PureComponent {
 	render() {
 		const { receiptId, translate } = this.props;
@@ -224,7 +229,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						<img
 							className="plan-upgrade-upsell__doodle"
 							alt="Website expert offering a support session"
-							src="/calypso/images/illustrations/themes.svg"
+							src={ premiumThemesImage }
 						/>
 					</div>
 				</div>

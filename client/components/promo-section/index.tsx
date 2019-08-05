@@ -2,16 +2,18 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { TranslateResult } from 'i18n-calypso';
 import PromoCard, { Props as PromoCardProps } from './promo-card';
 import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
 
 interface PromoSectionCardProps extends PromoCardProps {
-	body: string;
-	cta?: PromoCardCtaProps;
+	body: string | TranslateResult;
+	actions?: PromoCardCtaProps;
 }
 
 export interface Props {
@@ -29,12 +31,14 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	title,
 	image,
 	body,
-	cta,
+	actions,
 } ) => {
+	const cta = get( actions, 'cta', null );
+	const learnMoreLink = get( actions, 'learnMoreLink', null );
 	return (
 		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image }>
 			<p>{ body }</p>
-			{ cta && <PromoCardCta cta={ cta } /> }
+			{ cta && <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } /> }
 		</PromoCard>
 	);
 };
