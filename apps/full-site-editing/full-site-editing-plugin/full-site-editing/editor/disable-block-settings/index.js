@@ -24,9 +24,9 @@ const unsubscribe = subscribe( () => {
 	const selectedBlock = select( 'core/editor' ).getSelectedBlock();
 	const blockName = get( selectedBlock, 'name', null );
 
-	// If we have selected one the template block, deselect it.
+	// If we have selected a template block, deselect it.
 	// Note: this does not work for post content because you can't
-	// edit inner blocks if the block is not selected.
+	// edit inner blocks if the outer block is deselected.
 	if ( 'a8c/template' === blockName ) {
 		dispatch( 'core/block-editor' ).clearSelectedBlock( blockName );
 	}
