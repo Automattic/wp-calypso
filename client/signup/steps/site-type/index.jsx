@@ -41,7 +41,7 @@ class SiteType extends Component {
 			this.props.flowName === 'onboarding-user-last' &&
 			siteTypeValue === 'online-store'
 		) {
-			this.props.goToNextStep( 'online-store-onboarding' );
+			this.props.goToNextStep( 'ecommerce-store-onboarding' );
 		} else {
 			// Modify the flowname if the site type matches an override.
 			this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );

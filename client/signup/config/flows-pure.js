@@ -351,7 +351,7 @@ export function generateFlows( {
 	};
 
 	// Used by moveUserStepPosition A/B test.
-	flows[ 'online-store-onboarding' ] = {
+	flows[ 'ecommerce-store-onboarding' ] = {
 		steps: [ 'site-type', 'domains', 'plans-ecommerce', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for creating an online store, with user step in last position',
