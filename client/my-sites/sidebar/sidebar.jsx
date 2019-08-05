@@ -44,6 +44,7 @@ import {
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
+	canCurrentUserUseChecklist,
 } from 'state/sites/selectors';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
@@ -161,9 +162,9 @@ export class MySitesSidebar extends Component {
 	};
 
 	checklist() {
-		const { siteSuffix, siteId, path, translate } = this.props;
+		const { siteSuffix, siteId, canUserUseChecklist, path, translate } = this.props;
 
-		if ( siteId ) {
+		if ( ! siteId || ! canUserUseChecklist ) {
 			return null;
 		}
 
@@ -760,6 +761,7 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
+		canCurrentUserUseChecklist: canCurrentUserUseChecklist( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
