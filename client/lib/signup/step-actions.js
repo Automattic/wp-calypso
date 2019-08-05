@@ -372,8 +372,6 @@ export function createAccount(
 	const siteVertical = getSiteVertical( state );
 	const surveySiteType = getSurveySiteType( state ).trim();
 	const userExperience = getUserExperience( state );
-	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
-	const importFromSite = 'import' === flowName ? getNuxUrlInputValue( state ) : '';
 
 	if ( service ) {
 		// We're creating a new social account
@@ -422,8 +420,6 @@ export function createAccount(
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: siteVertical,
 					nux_q_question_experience: userExperience || undefined,
-					import_engine: importEngine,
-					import_from_site: importFromSite,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 				},
