@@ -284,6 +284,7 @@
 		"@typescript-eslint/eslint-plugin": "1.10.2",
 		"@typescript-eslint/parser": "1.10.2",
 		"@wordpress/babel-plugin-makepot": "2.1.3",
+		"@wordpress/dependency-extraction-webpack-plugin": "^1.0.1",
 		"babel-eslint": "10.0.2",
 		"babel-jest": "24.8.0",
 		"babel-plugin-dynamic-import-node": "2.3.0",

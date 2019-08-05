@@ -39,7 +39,6 @@
 		"tinymce": "4.8.5"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "file:../../packages/calypso-build",
-		"@wordpress/dependency-extraction-webpack-plugin": "^1.0.1"
+		"@automattic/calypso-build": "file:../../packages/calypso-build"
 	}
 }
