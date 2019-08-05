@@ -64,7 +64,13 @@ class AppleLoginButton extends Component {
 		return (
 			<div>
 				{ ! this.props.isFormDisabled && (
-					<div id="appleid-signin" data-color="black" data-border="true" data-type="sign in" />
+					<div
+						className="apple__signin-button"
+						id="appleid-signin"
+						data-color="white"
+						data-border="false"
+						data-type="sign in"
+					/>
 				) }
 			</div>
 		);
