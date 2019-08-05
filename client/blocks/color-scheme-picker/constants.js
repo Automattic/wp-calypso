@@ -3,6 +3,13 @@
  */
 import { compact } from 'lodash';
 
+/**
+ * !! Note !!
+ *
+ * Every _value_ present in this list should appear in the colorScheme enum array in
+ * `client/state/preferences/schema.js` or preferences state persistence may be invalidated.
+ */
+
 export default function( translate ) {
 	return compact( [
 		{
