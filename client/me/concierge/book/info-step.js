@@ -77,7 +77,7 @@ class InfoStep extends Component {
 			...this.props.signupForm,
 			countryCode: phoneNumber.countryData.numeric_code,
 			phoneNumberWithoutCountryCode: phoneNumber.phoneNumber,
-			phoneNumber: phoneNumber.phoneNumberFull,
+			phoneNumber: phoneNumber.phoneNumber ? phoneNumber.phoneNumberFull : '',
 		} );
 	};
 
