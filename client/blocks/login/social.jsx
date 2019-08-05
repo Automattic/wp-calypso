@@ -135,6 +135,11 @@ class SocialLoginForm extends Component {
 					login( { isNative: true, socialService: 'google' } ) }`
 			: null;
 
+		const redirectUriApple = uxMode
+			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
+					login( { isNative: true, socialService: 'apple' } ) }`
+			: null;
+
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
@@ -146,10 +151,8 @@ class SocialLoginForm extends Component {
 						onClick={ this.trackGoogleLogin }
 					/>
 					<AppleLoginButton
-						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxMode }
-						redirectUri={ redirectUri }
+						clientId={ config( 'apple_oauth_client_id' ) }
+						redirectUri={ redirectUriApple }
 						onClick={ this.trackAppleLogin }
 					/>
 				</div>
