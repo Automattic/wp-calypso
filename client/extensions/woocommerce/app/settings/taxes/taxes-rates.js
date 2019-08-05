@@ -17,7 +17,6 @@ import Gridicon from 'gridicons';
  */
 import {
 	areSettingsGeneralLoaded,
-	areTaxCalculationsEnabled,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import {
@@ -257,7 +256,6 @@ class TaxesRates extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const address = getStoreLocation( state, ownProps.siteId );
-	const taxesEnabled = areTaxCalculationsEnabled( state, ownProps.siteId );
 	const countries = getAllCountries( state, ownProps.siteId );
 	const loadedLocations = areLocationsLoaded( state, ownProps.siteId );
 	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
@@ -277,7 +275,6 @@ function mapStateToProps( state, ownProps ) {
 
 	return {
 		address,
-		taxesEnabled,
 		countries,
 		countryName,
 		loadedLocations,
