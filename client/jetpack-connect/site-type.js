@@ -45,7 +45,7 @@ class JetpackSiteType extends Component {
 				<div className="jetpack-connect__step">
 					<FormattedHeader
 						headerText={ translate( 'What type of site are you connecting to Jetpack?' ) }
-						subHeaderText={ translate( "We'll use this info to your Jetpack experience." ) }
+						subHeaderText={ translate( "We'll use this to customize your Jetpack experience." ) }
 					/>
 
 					<SiteTypeForm showDescriptions={ false } submitForm={ this.handleSubmit } />
