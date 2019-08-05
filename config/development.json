@@ -39,6 +39,7 @@
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
 		"css-hot-reload": true,
+		"customer-home": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
