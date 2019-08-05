@@ -11,6 +11,7 @@ import { flow, get, includes, invoke, isEmpty, pickBy } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import ExampleDomainBrowser from 'components/domains/example-domain-browser';
 import ExternalLink from 'components/external-link';
 import StepWrapper from 'signup/step-wrapper';
@@ -24,6 +25,7 @@ import { validateImportUrl } from 'lib/importers/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import wpcom from 'lib/wp';
+import ImporterLogo from 'my-sites/importer/importer-logo';
 
 /**
  * Style dependencies
@@ -34,6 +36,34 @@ const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
 const EXAMPLE_CUSTOM_DOMAIN_URL = 'https://example.com';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
 const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
+
+// @TODO: put this all in one shared place for `my-sites/importer` and signup
+const FALLBACK_ENGINES = [
+	{
+		title: 'WordPress',
+		description: 'Import posts, pages, and media ' + 'from a WordPress export\u00A0file.',
+		engine: 'wordpress',
+		icon: 'wordpress',
+	},
+	{
+		title: 'Blogger',
+		description: 'blogger',
+		engine: 'blogger',
+		icon: 'blogger-alt',
+	},
+	{
+		title: 'Medium',
+		description: 'medium',
+		engine: 'medium',
+		icon: 'medium',
+	},
+	{
+		title: 'Squarespace',
+		description: 'squarespace',
+		engine: 'squarespace',
+		icon: 'squarespace',
+	},
+];
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -69,6 +99,10 @@ class ImportURLStepComponent extends Component {
 			},
 			this.focusInput
 		);
+
+	handleEngineSelect = engine => event => {
+		event.preventDefault();
+	};
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -202,7 +236,21 @@ class ImportURLStepComponent extends Component {
 	};
 
 	renderFallbackEngines = () => {
-		return <div className="import-url__escape">Display fallback engines here...</div>;
+		return (
+			<div className="import-url__fallback">
+				{ FALLBACK_ENGINES.map( ( { description, engine, icon, title } ) => {
+					return (
+						<Card displayAsLink onClick={ this.handleEngineSelect( engine ) }>
+							<ImporterLogo icon={ icon } />
+							<div className="importer-header__service-info">
+								<h1 className="importer-header__service-title">{ title }</h1>
+								<p>{ description }</p>
+							</div>
+						</Card>
+					);
+				} ) }
+			</div>
+		);
 	};
 
 	renderNotice = () => {
