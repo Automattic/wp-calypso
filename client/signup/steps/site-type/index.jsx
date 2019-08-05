@@ -14,7 +14,6 @@ import Button from 'components/button';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
