@@ -308,6 +308,7 @@ assign( SignupFlowController.prototype, {
 	},
 
 	changeFlowName( flowName ) {
+		flows.resetExcludedSteps();
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName );
 		this._reduxStore.dispatch( removeUnneededSteps( this._flowName ) );
