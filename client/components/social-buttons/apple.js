@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -42,13 +42,17 @@ class AppleLoginButton extends Component {
 			return this.initialized;
 		}
 
+		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
+			return;
+		}
+
 		this.setState( { error: '' } );
 		this.initialized = this.loadDependency()
 			.then( AppleID =>
 				AppleID.auth.init( {
 					clientId: this.props.clientId,
 					scope: 'name email',
-					redirectURI: this.props.redirectUri,
+					redirectURI: 'https://wordpress.com/log-in/apple/callback',
 					state: '1',
 				} )
 			)
@@ -63,7 +67,7 @@ class AppleLoginButton extends Component {
 	render() {
 		return (
 			<div>
-				{ ! this.props.isFormDisabled && (
+				{ ! this.props.isFormDisabled && config.isEnabled( 'sign-in-with-apple' ) && (
 					<div
 						className="apple__signin-button"
 						id="appleid-signin"
