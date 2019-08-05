@@ -36,7 +36,6 @@ import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
-import { isEnabled } from 'config';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
@@ -225,10 +224,6 @@ class Page extends Component {
 	}
 
 	getFrontPageItem() {
-		if ( ! isEnabled( 'manage/pages/set-front-page' ) ) {
-			return null;
-		}
-
 		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
 			return null;
 		}
