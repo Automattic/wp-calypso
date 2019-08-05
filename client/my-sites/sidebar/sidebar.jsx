@@ -173,13 +173,12 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ translate( 'Customer Home' ) }
+				label={ translate( 'Checklist' ) }
 				className="stats"
 				selected={ itemLinkMatches( [ '/checklist' ], path ) }
 				link={ checklistLink }
 				onNavigate={ this.trackChecklistClick }
-				icon="house"
-				materialIcon="home"
+				icon="checkmark-circle"
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
