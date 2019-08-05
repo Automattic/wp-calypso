@@ -522,7 +522,7 @@ form.sidebar__button input {
 	font-size: 11px;
 	font-weight: 600;
 	padding: 8px;
-	color: var( --sidebar-footer-button-color );
+	color: var( --sidebar-heading-color );
 	line-height: 2.1;
 	margin-right: auto;
 
@@ -535,7 +535,7 @@ form.sidebar__button input {
 	}
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --sidebar-text-color );
 	}
 
 	@include breakpoint( '<660px' ) {
