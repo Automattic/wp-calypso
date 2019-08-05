@@ -166,12 +166,17 @@ export const enhancer = next => ( ...args ) => {
 };
 
 /**
+ * @typedef RequestHttpDataOptions
+ * @property {function} [fromApi] when called produces a function that validates and transforms API data into Calypso data
+ * @property {number}   [freshness] indicates how many ms stale data is allowed to be before refetching
+ */
+
+/**
  * Fetches data from a fetchable action
  *
  * @param {string} requestId uniquely identifies the request or request type
  * @param {function|object} fetchAction action that when dispatched will request the data (may be wrapped in a lazy thunk)
- * @param {?function} fromApi when called produces a function that validates and transforms API data into Calypso data
- * @param {?number} freshness indicates how many ms stale data is allowed to be before refetching
+ * @param {RequestHttpDataOptions} options Request options
  * @return {*} stored data container for request
  */
 export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = Infinity } ) => {
