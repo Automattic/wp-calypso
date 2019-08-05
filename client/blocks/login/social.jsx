@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import AppleLoginButton from 'components/social-buttons/apple';
 import GoogleLoginButton from 'components/social-buttons/google';
 import { localize } from 'i18n-calypso';
 
@@ -112,7 +113,15 @@ class SocialLoginForm extends Component {
 		} );
 
 	trackGoogleLogin = () => {
-		this.recordEvent( 'calypso_login_social_button_click' );
+		this.recordEvent( 'calypso_login_social_button_click', 'google' );
+
+		if ( this.props.redirectTo ) {
+			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
+		}
+	};
+
+	trackAppleLogin = () => {
+		this.recordEvent( 'calypso_login_social_button_click', 'apple' );
 
 		if ( this.props.redirectTo ) {
 			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
@@ -135,6 +144,13 @@ class SocialLoginForm extends Component {
 						uxMode={ uxMode }
 						redirectUri={ redirectUri }
 						onClick={ this.trackGoogleLogin }
+					/>
+					<AppleLoginButton
+						clientId={ config( 'google_oauth_client_id' ) }
+						responseHandler={ this.handleAppleResponse }
+						uxMode={ uxMode }
+						redirectUri={ redirectUri }
+						onClick={ this.trackAppleLogin }
 					/>
 				</div>
 
