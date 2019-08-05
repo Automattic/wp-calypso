@@ -35,6 +35,15 @@ export const phoneNumber = createReducer( '', {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.phoneNumber,
 } );
 
+export const countryCode = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.countryCode,
+} );
+
+export const phoneNumberWithoutCountryCode = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) =>
+		action.signupForm.phoneNumberWithoutCountryCode,
+} );
+
 export const status = createReducer( null, {
 	[ CONCIERGE_UPDATE_BOOKING_STATUS ]: ( state, action ) => action.status,
 } );
@@ -47,4 +56,6 @@ export default combineReducers( {
 	status,
 	isRebrandCitiesSite,
 	phoneNumber,
+	countryCode,
+	phoneNumberWithoutCountryCode,
 } );

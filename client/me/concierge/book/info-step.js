@@ -72,7 +72,13 @@ class InfoStep extends Component {
 		} else {
 			this.setState( { validation: '' } );
 		}
-		this.updateSignupForm( 'phoneNumber', phoneNumber.phoneNumberFull );
+
+		this.props.updateConciergeSignupForm( {
+			...this.props.signupForm,
+			countryCode: phoneNumber.countryData.numeric_code,
+			phoneNumberWithoutCountryCode: phoneNumber.phoneNumber,
+			phoneNumber: phoneNumber.phoneNumberFull,
+		} );
 	};
 
 	setFieldValue = ( { target: { name, value } } ) => {
@@ -113,7 +119,14 @@ class InfoStep extends Component {
 		const {
 			currentUserLocale,
 			onComplete,
-			signupForm: { firstname, lastname, message, timezone },
+			signupForm: {
+				firstname,
+				lastname,
+				message,
+				timezone,
+				countryCode,
+				phoneNumberWithoutCountryCode,
+			},
 			site,
 			translate,
 		} = this.props;
@@ -170,6 +183,8 @@ class InfoStep extends Component {
 							name="phoneNumber"
 							countriesList={ this.props.countriesList }
 							onChange={ this.onChange }
+							initialCountryCode={ countryCode }
+							initialPhoneNumber={ phoneNumberWithoutCountryCode }
 							className="book__info-step-phone-input"
 						/>
 						<FormSettingExplanation>
