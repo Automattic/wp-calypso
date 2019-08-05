@@ -3,6 +3,10 @@
  */
 import { getNewSitePublicSetting, shouldBePrivateByDefault } from '../private-by-default';
 
+jest.mock( 'lib/abtest', () => ( {
+	abtest: testName => ( testName === 'privateByDefault' ? 'selected' : '' ),
+} ) );
+
 describe( 'getNewSitePublicSetting()', () => {
 	test( 'should return `-1` by default', () => {
 		expect( getNewSitePublicSetting( {}, {} ) ).toBe( -1 );
