@@ -22,6 +22,7 @@ module.exports = () => ( {
 				helpers: true,
 				regenerator: false,
 				useESModules: false,
+				version: '7.5.5', // needed so that helpers aren't duplicated
 			},
 		],
 	],
