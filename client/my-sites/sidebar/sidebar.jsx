@@ -144,13 +144,41 @@ export class MySitesSidebar extends Component {
 				) }
 				link={ statsLink }
 				onNavigate={ this.trackStatsClick }
-				icon="stats-alt"
+				icon="house"
 				materialIcon="bar_chart"
 			>
 				<a href={ statsLink }>
 					<StatsSparkline className="sidebar__sparkline" siteId={ siteId } />
 				</a>
 			</SidebarItem>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
+	trackChecklistClick = () => {
+		this.trackMenuItemClick( 'checklist' );
+		this.onNavigate();
+	};
+
+	checklist() {
+		const { siteSuffix, siteId, path, translate } = this.props;
+
+		if ( siteId ) {
+			return null;
+		}
+
+		const checklistLink = '/checklist' + siteSuffix;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<SidebarItem
+				tipTarget="menus"
+				label={ translate( 'Home' ) }
+				className="stats"
+				selected={ itemLinkMatches( [ '/checklist' ], path ) }
+				link={ checklistLink }
+				onNavigate={ this.trackChecklistClick }
+				icon="house"
+			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
@@ -632,6 +660,7 @@ export class MySitesSidebar extends Component {
 			<div className="sidebar__menu-wrapper">
 				<SidebarMenu>
 					<ul>
+						{ this.checklist() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
