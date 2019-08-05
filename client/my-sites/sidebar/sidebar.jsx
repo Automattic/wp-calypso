@@ -179,6 +179,7 @@ export class MySitesSidebar extends Component {
 				link={ checklistLink }
 				onNavigate={ this.trackChecklistClick }
 				icon="house"
+				materialIcon="home"
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
