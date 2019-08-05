@@ -59,6 +59,7 @@ export function CreditCardForm( {
 	translate,
 	stripe,
 	stripeConfiguration,
+	isStripeLoading,
 } ) {
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
@@ -162,6 +163,7 @@ export function CreditCardForm( {
 					card={ kebabCaseFormFields( formFieldValues ) }
 					countriesList={ countriesList }
 					stripe={ stripe }
+					isStripeLoading={ isStripeLoading }
 					eventFormName="Edit Card Details Form"
 					onFieldChange={ onFieldChange }
 					getErrorMessage={ getErrorMessage }
@@ -206,6 +208,7 @@ CreditCardForm.propTypes = {
 	heading: PropTypes.string,
 	onCancel: PropTypes.func,
 	stripe: PropTypes.object,
+	isStripeLoading: PropTypes.bool,
 	translate: PropTypes.func.isRequired,
 };
 
