@@ -48,9 +48,9 @@ class CancelAutoRenewalForm extends Component {
 		const { translate } = props;
 
 		this.radioButtons = [
-			[ 'take-a-break', translate( "Yes, I'm just taking a break for now." ) ],
-			[ 'manual-renew', translate( 'Yes, I want to renew manually.' ) ],
-			[ 'stop-renew', translate( "No, I don't have any plans to renew it." ) ],
+			[ 'let-it-expire', translate( "I'm going to let this plan expire." ) ],
+			[ 'manual-renew', translate( "I'm going to renew the plan, but will do it manually." ) ],
+			[ 'not-sure', translate( "I'm not sure." ) ],
 			[ OTHER_FEEDBACK, translate( 'Another reason' ) ],
 		];
 	}
@@ -117,8 +117,8 @@ class CancelAutoRenewalForm extends Component {
 				<FormFieldset>
 					<p>
 						{ translate(
-							'We have processed your request. Your feedback could help us improve our products.' +
-								'Do you think you might use your current subscription after it expires?'
+							"Auto-renewal is now off. Before you go, we'd love to know: " +
+								"are you letting this plan expire completely, or do you think you'll renew it manually?"
 						) }
 					</p>
 					{ this.radioButtons.map( radioButton =>
