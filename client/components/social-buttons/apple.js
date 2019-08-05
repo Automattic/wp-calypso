@@ -70,7 +70,7 @@ class AppleLoginButton extends Component {
 			<div>
 				{ ! this.props.isFormDisabled && config.isEnabled( 'sign-in-with-apple' ) && (
 					<div
-						className="apple__signin-button"
+						className="social-buttons__apple-button"
 						id="appleid-signin"
 						data-color="white"
 						data-border="false"
