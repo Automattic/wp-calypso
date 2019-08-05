@@ -162,9 +162,9 @@ export class MySitesSidebar extends Component {
 	};
 
 	checklist() {
-		const { siteSuffix, siteId, canUserUseChecklist, path, translate } = this.props;
+		const { canUserUseChecklist, isJetpack, path, siteSuffix, siteId, translate } = this.props;
 
-		if ( ! siteId || ! canUserUseChecklist ) {
+		if ( ! siteId || ! canUserUseChecklist || isJetpack ) {
 			return null;
 		}
 
