@@ -84,7 +84,7 @@ class CheckoutContainer extends React.Component {
 					</TransactionData>
 
 					{ shouldShowCart && (
-						<div className="secondary-cart__container">
+						<div className="checkout__secondary-cart-container">
 							<CartData>
 								<SecondaryCart selectedSite={ selectedSite } />
 							</CartData>

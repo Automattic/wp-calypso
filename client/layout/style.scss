@@ -386,7 +386,7 @@ div.checkout__container {
 
 @include breakpoint( '<660px' ) {
    	.layout__primary .secondary-cart,
-	.layout__primary .secondary-cart__container {
+	.layout__primary .checkout__secondary-cart-container {
 		margin-left: 0;
 	}
 }
