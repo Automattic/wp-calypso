@@ -102,7 +102,14 @@ StripeElementErrors.propTypes = {
 	fieldName: PropTypes.string.isRequired,
 };
 
-function CreditCardNumberField( { translate, stripe, createField, getErrorMessage, card } ) {
+function CreditCardNumberField( {
+	translate,
+	stripe,
+	isStripeLoading,
+	createField,
+	getErrorMessage,
+	card,
+} ) {
 	const cardNumberLabel = translate( 'Card Number', {
 		comment: 'Card number label on credit card form',
 	} );
@@ -131,6 +138,7 @@ function CreditCardNumberField( { translate, stripe, createField, getErrorMessag
 		inputMode: 'numeric',
 		label: cardNumberLabel,
 		placeholder: '•••• •••• •••• ••••',
+		disabled: !! isStripeLoading, // isStripeLoading might be undefined
 	} );
 }
 
@@ -140,9 +148,17 @@ CreditCardNumberField.propTypes = {
 	getErrorMessage: PropTypes.func.isRequired,
 	stripe: PropTypes.object,
 	card: PropTypes.object.isRequired,
+	isStripeLoading: PropTypes.bool,
 };
 
-function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErrorMessage, card } ) {
+function CreditCardExpiryAndCvvFields( {
+	translate,
+	stripe,
+	isStripeLoading,
+	createField,
+	getErrorMessage,
+	card,
+} ) {
 	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
 		components: {
 			span: <span className="credit-card-form-fields__explainer" />,
@@ -191,6 +207,7 @@ function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErro
 			{ createField( 'expiration-date', Input, {
 				inputMode: 'numeric',
 				label: expiryLabel,
+				disabled: !! isStripeLoading, // isStripeLoading might be undefined
 				placeholder: translate( 'MM/YY', {
 					comment: 'Expiry placeholder for Expiry date on credit card form',
 				} ),
@@ -198,6 +215,7 @@ function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErro
 
 			{ createField( 'cvv', Input, {
 				inputMode: 'numeric',
+				disabled: !! isStripeLoading, // isStripeLoading might be undefined
 				placeholder: ' ',
 				label: translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
 					components: {
@@ -216,6 +234,7 @@ CreditCardExpiryAndCvvFields.propTypes = {
 	getErrorMessage: PropTypes.func.isRequired,
 	card: PropTypes.object.isRequired,
 	stripe: PropTypes.object,
+	isStripeLoading: PropTypes.bool,
 };
 
 export class CreditCardFormFields extends React.Component {
@@ -228,6 +247,7 @@ export class CreditCardFormFields extends React.Component {
 		autoFocus: PropTypes.bool,
 		isNewTransaction: PropTypes.bool,
 		stripe: PropTypes.object,
+		isStripeLoading: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -324,6 +344,7 @@ export class CreditCardFormFields extends React.Component {
 					<CreditCardNumberField
 						translate={ this.props.translate }
 						stripe={ this.props.stripe }
+						isStripeLoading={ this.props.isStripeLoading }
 						createField={ this.createField }
 						getErrorMessage={ this.props.getErrorMessage }
 						card={ this.props.card }
@@ -334,6 +355,7 @@ export class CreditCardFormFields extends React.Component {
 					<CreditCardExpiryAndCvvFields
 						translate={ this.props.translate }
 						stripe={ this.props.stripe }
+						isStripeLoading={ this.props.isStripeLoading }
 						createField={ this.createField }
 						getErrorMessage={ this.props.getErrorMessage }
 						card={ this.props.card }
