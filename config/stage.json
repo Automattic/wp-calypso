@@ -112,6 +112,7 @@
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": false,
+		"sign-in-with-apple": true,
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
 		"signup/onboarding-flow": true,
