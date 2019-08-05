@@ -135,7 +135,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	showImportFlowInSiteTypeStep: {
-		datestamp: '20190717',
+		datestamp: '20991231',
 		variations: {
 			show: 50,
 			hide: 50,
