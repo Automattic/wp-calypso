@@ -83,7 +83,9 @@
 			content: '';
 			text-align: right;
 			position: absolute;
-			top: 0;
+			// 1px adjustment fixes visual glitch in menu item's active ring.
+			// Shouldn't impact the fade because text doesn't appear 1px from the top of the item.
+			top: 1px;
 			right: 0;
 			bottom: 0;
 			width: 15%;
