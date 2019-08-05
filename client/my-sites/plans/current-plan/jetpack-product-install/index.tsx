@@ -21,7 +21,11 @@ import {
 	startJetpackProductInstall,
 } from 'state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import {
+	empty as uninitializedHttpData,
+	getHttpData,
+	requestHttpData,
+} from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 type PluginStateDescriptor = string;
@@ -303,9 +307,15 @@ function mapStateToProps( state ) {
 		? /* If we want 'all', clone our known plugins */ [ ...PLUGINS ]
 		: PLUGINS.filter( slug => installQuery.includes( slug ) );
 
+	const httpData = siteId ? getHttpData( dataKeyPluginData( siteId ) ) : uninitializedHttpData;
+
 	return {
 		siteId,
-		pluginKeys: siteId ? getHttpData( dataKeyPluginData( siteId ) ).data : null,
+		pluginKeys:
+			httpData.state === 'success'
+				? getHttpData( dataKeyPluginData( siteId as number /* httpData.state.success ⇒ siteId */ ) )
+						.data
+				: null,
 		progressComplete: getJetpackProductInstallProgress( state, siteId ),
 		requestedInstalls,
 		status: getJetpackProductInstallStatus( state, siteId ),
