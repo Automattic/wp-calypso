@@ -742,7 +742,7 @@ export async function verifyPasswordlessUser( callback, { email, code } ) {
 		.undocumented()
 		.usersEmailVerification( { email, code }, null )
 		.then( response =>
-			callback( null, { email, username: email, bearer_token: response.bearer_token } )
+			callback( null, { email, username: email, bearer_token: response.token.access_token } )
 		)
 		.catch( err => callback( err ) );
 }
