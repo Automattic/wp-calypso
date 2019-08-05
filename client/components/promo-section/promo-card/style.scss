@@ -33,6 +33,9 @@
 			display: flex;
 			flex-direction: column;
 			justify-content:center;
+			p {
+				flex-grow: 0;
+			}
 		}
 
 

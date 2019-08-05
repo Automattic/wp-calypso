@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke, isEmpty, pickBy } from 'lodash';
+import { flow, get, includes, invoke, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import { validateImportUrl } from 'lib/importers/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import wpcom from 'lib/wp';
+import { saveSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -43,6 +44,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 		this.setInputValueFromProps();
 		this.focusInput();
 	}
@@ -309,6 +311,7 @@ export default flow(
 		} ),
 		{
 			recordTracksEvent,
+			saveSignupStep,
 			setImportOriginSiteDetails,
 			setNuxUrlInputValue,
 		}

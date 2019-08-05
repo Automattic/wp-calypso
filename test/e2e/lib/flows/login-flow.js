@@ -144,6 +144,7 @@ export default class LoginFlow {
 
 		if ( usingGutenberg ) {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			await gEditorComponent.dismissPageTemplateSelector();
 			await gEditorComponent.closeSidebar();
 		}
 

@@ -1,14 +1,16 @@
 <?php
 /**
- * A8C REST Templates Controller file.
+ * REST Templates Controller file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Based on `WP_REST_Blocks_Controller` from core
  */
-class A8C_REST_Templates_Controller extends WP_REST_Posts_Controller {
+class REST_Templates_Controller extends \WP_REST_Posts_Controller {
 
 	/**
 	 * Checks if a template can be read.

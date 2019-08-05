@@ -2,8 +2,10 @@
 /**
  * Starter page templates file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Class Starter_Page_Templates
@@ -29,7 +31,7 @@ class Starter_Page_Templates {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \Starter_Page_Templates
+	 * @return \A8C\FSE\Starter_Page_Templates
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -169,7 +171,7 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
-		$transient_key      = implode( '_', [ 'starter_page_templates', A8C_FSE_VERSION, $vertical_id, get_locale() ] );
+		$transient_key      = implode( '_', [ 'starter_page_templates', PLUGIN_VERSION, $vertical_id, get_locale() ] );
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.

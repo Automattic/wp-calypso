@@ -42,6 +42,7 @@ import {
 	getSite,
 	isJetpackSite,
 	canCurrentUserUseAds,
+	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
@@ -190,6 +191,12 @@ export class MySitesSidebar extends Component {
 	};
 
 	earn() {
+		const { site, canUserUseEarn } = this.props;
+
+		if ( site && ! canUserUseEarn ) {
+			return null;
+		}
+
 		const { path, translate } = this.props;
 
 		return (
@@ -299,7 +306,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ translate( 'Domains' ) }
-				selected={ itemLinkMatches( [ '/domains' ], path ) }
+				selected={ itemLinkMatches( [ '/domains', '/email' ], path ) }
 				link={ domainsLink }
 				onNavigate={ this.trackDomainsClick }
 				icon="domains"
@@ -725,6 +732,7 @@ function mapStateToProps( state ) {
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
+		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
