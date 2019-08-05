@@ -176,7 +176,7 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( [ '/checklist' ], path ) }
 				link={ checklistLink }
 				onNavigate={ this.trackChecklistClick }
-				icon="checkmark-circle"
+				materialIcon="check_circle"
 			/>
 		);
 	}
