@@ -39,6 +39,7 @@ import { withoutNotice } from 'state/notices/actions';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import { saveSiteSettings } from 'state/site-settings/actions';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -219,16 +220,22 @@ class Page extends Component {
 		);
 	}
 
-	setFrontPage() {
-		alert( 'This feature is still being developed.' );
-	}
+	setFrontPage = () => {
+		this.props.saveSiteSettings( this.props.siteId, {
+			show_on_front: 'page',
+			page_on_front: this.props.page.ID,
+			apiVersion: '1.3',
+		} );
+	};
 
 	getFrontPageItem() {
-		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+		const { page, translate } = this.props;
+
+		if ( ( this.props.hasStaticFrontPage && this.props.isPostsPage ) || this.props.isFrontPage ) {
 			return null;
 		}
 
-		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+		if ( ! utils.userCan( 'edit_post', page ) ) {
 			return null;
 		}
 
@@ -236,7 +243,7 @@ class Page extends Component {
 			<MenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
 				<Gridicon icon="house" size={ 18 } />
-				{ this.props.translate( 'Set as Front Page' ) }
+				{ translate( 'Set as Front Page' ) }
 			</PopoverMenuItem>,
 		];
 	}
@@ -637,6 +644,7 @@ const mapState = ( state, props ) => {
 		isPreviewable,
 		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
+		siteId: pageSiteId,
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
@@ -658,6 +666,7 @@ const mapDispatch = {
 	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
+	saveSiteSettings,
 };
 
 export default flow(
