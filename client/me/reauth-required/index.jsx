@@ -3,6 +3,7 @@
  */
 import { connect } from 'react-redux';
 import createReactClass from 'create-react-class';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -135,64 +136,43 @@ const ReauthRequired = createReactClass( {
 		return this.state.code.length && this.state.code.length > 5;
 	},
 
-
-	renderTopSendSMSButton: function() {
+	renderSendSMSButton: function() {
 		const { smsRequestsAllowed, smsCodeSent } = this.state;
 
 		const [ clickAction, buttonLabel ] = ! smsCodeSent
 			? [ 'Send SMS Code Button on Reauth Required', this.props.translate( 'Send SMS Code' ) ]
 			: [ 'Resend SMS Code Button on Reauth Required', this.props.translate( 'Resend SMS Code' ) ];
-		
-		if ( ! this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			return null;
-		}
-			return (
-				<FormButton
-					disabled={ ! smsRequestsAllowed }
-					isPrimary={ ! smsCodeSent }
-					onClick={ this.getClickHandler( clickAction, this.sendSMSCode ) }
-					type="button"
-					className="reauth-required__send-sms-code-top"
-				>
-					{ buttonLabel }
-				</FormButton>
-			);	
-		},
 
-	renderBottomSendSMSButton: function() {
-		if ( ! this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			
-			const { smsRequestsAllowed, smsCodeSent } = this.state;
-			const [ clickAction, buttonLabel ] = ! smsCodeSent
-				? [ 'Send SMS Code Button on Reauth Required', this.props.translate( 'Send SMS Code' ) ]
-				: [ 'Resend SMS Code Button on Reauth Required', this.props.translate( 'Resend SMS Code' ) ];
-	
+		const classes = classNames( 'reauth-required__send-sms-code', {
+			'is-sms-only': this.props.twoStepAuthorization.isTwoStepSMSEnabled(),
+		} );
+
+		return (
+			<FormButton
+				disabled={ ! smsRequestsAllowed }
+				isPrimary={ ! smsCodeSent && this.props.twoStepAuthorization.isTwoStepSMSEnabled() }
+				onClick={ this.getClickHandler( clickAction, this.sendSMSCode ) }
+				type="button"
+				className={ classes }
+			>
+				{ buttonLabel }
+			</FormButton>
+		);
+	},
+
+	renderVerifyButton: function() {
+		if ( this.state.smsCodeSent || ! this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
 			return (
 				<FormButton
-					disabled={ ! smsRequestsAllowed }
-					isPrimary={ false }
-					onClick={ this.getClickHandler( clickAction, this.sendSMSCode ) }
-					type="button"
+					disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
+					onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
 				>
-					{ buttonLabel }
+					{ this.props.translate( 'Verify' ) }
 				</FormButton>
 			);
 		}
 	},
-	
-	renderVerifyButton: function() {
-		if ( this.state.smsCodeSent || ! this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			return (
-					<FormButton
-						disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
-						onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
-						>
-						{ this.props.translate( 'Verify' ) }
-					</FormButton>
-				);
-		}
-	},
-	
+
 	renderFailedValidationMsg: function() {
 		if ( ! this.props.twoStepAuthorization.codeValidationFailed() ) {
 			return null;
@@ -236,8 +216,8 @@ const ReauthRequired = createReactClass( {
 				onClose={ null }
 			>
 				<p>{ this.getCodeMessage() }</p>
-				
-				{ this.renderTopSendSMSButton() }
+
+				{ this.props.twoStepAuthorization.isTwoStepSMSEnabled() && this.renderSendSMSButton() }
 
 				<p>
 					<a
@@ -254,7 +234,9 @@ const ReauthRequired = createReactClass( {
 						<FormVerificationCodeInput
 							autoFocus
 							id="code"
-							disabled={ ! this.state.smsCodeSent && this.props.twoStepAuthorization.isTwoStepSMSEnabled() }
+							disabled={
+								! this.state.smsCodeSent && this.props.twoStepAuthorization.isTwoStepSMSEnabled()
+							}
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
 							method={ method }
@@ -282,9 +264,10 @@ const ReauthRequired = createReactClass( {
 					{ this.renderSMSResendThrottled() }
 
 					<FormButtonsBar className="reauth-required__buttons">
-					{ this.renderVerifyButton() }
+						{ this.renderVerifyButton() }
 
-					{ this.renderBottomSendSMSButton() }
+						{ ! this.props.twoStepAuthorization.isTwoStepSMSEnabled() &&
+							this.renderSendSMSButton() }
 					</FormButtonsBar>
 				</form>
 			</Dialog>
