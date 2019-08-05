@@ -48,7 +48,11 @@ class JetpackSiteType extends Component {
 						subHeaderText={ translate( "We'll use this to customize your Jetpack experience." ) }
 					/>
 
-					<SiteTypeForm showDescriptions={ false } submitForm={ this.handleSubmit } />
+					<SiteTypeForm
+						showDescriptions={ false }
+						showPurchaseRequired={ false }
+						submitForm={ this.handleSubmit }
+					/>
 
 					<SkipButton
 						onClick={ this.goToNextStep }

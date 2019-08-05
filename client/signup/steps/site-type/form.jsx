@@ -22,6 +22,7 @@ import './style.scss';
 class SiteTypeForm extends Component {
 	static propTypes = {
 		showDescriptions: PropTypes.boolean,
+		showPurchaseRequired: PropTypes.boolean,
 		siteType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
 
@@ -31,6 +32,7 @@ class SiteTypeForm extends Component {
 
 	static defaultProps = {
 		showDescriptions: true,
+		showPurchaseRequired: true,
 	};
 
 	handleSubmit = type => {
@@ -41,7 +43,7 @@ class SiteTypeForm extends Component {
 	};
 
 	render() {
-		const { showDescriptions, translate } = this.props;
+		const { showDescriptions, showPurchaseRequired, translate } = this.props;
 
 		return (
 			<>
@@ -57,16 +59,14 @@ class SiteTypeForm extends Component {
 						>
 							<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
 							{ showDescriptions && (
-								<>
-									<span className="site-type__option-description">
-										{ siteTypeProperties.description }
-									</span>
-									{ siteTypeProperties.purchaseRequired && (
-										<Badge className="site-type__option-badge" type="info">
-											{ translate( 'Purchase required' ) }
-										</Badge>
-									) }
-								</>
+								<span className="site-type__option-description">
+									{ siteTypeProperties.description }
+								</span>
+							) }
+							{ showPurchaseRequired && siteTypeProperties.purchaseRequired && (
+								<Badge className="site-type__option-badge" type="info">
+									{ translate( 'Purchase required' ) }
+								</Badge>
 							) }
 						</Card>
 					) ) }
