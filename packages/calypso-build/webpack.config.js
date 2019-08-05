@@ -133,7 +133,7 @@ function getWebpackConfig(
 				minify: ! isDevelopment,
 			} ),
 			new DuplicatePackageCheckerPlugin(),
-			...( env.WP ? [ new DependencyExtractionWebpackPlugin() ] : [] ),
+			...( env.WP ? [ new DependencyExtractionWebpackPlugin( { injectPolyfill: true } ) ] : [] ),
 		],
 	};
 
