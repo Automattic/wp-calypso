@@ -50,7 +50,10 @@ class JetpackSiteType extends Component {
 						) }
 					/>
 
-					<SiteTypeForm submitForm={ this.handleSubmit } />
+					<SiteTypeForm
+						showDescriptions={ false }
+						submitForm={ this.handleSubmit }
+					/>
 
 					<SkipButton
 						onClick={ this.goToNextStep }
