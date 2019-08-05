@@ -169,19 +169,16 @@ export class MySitesSidebar extends Component {
 		}
 
 		const checklistLink = '/checklist' + siteSuffix;
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarItem
 				tipTarget="menus"
 				label={ translate( 'Checklist' ) }
-				className="stats"
 				selected={ itemLinkMatches( [ '/checklist' ], path ) }
 				link={ checklistLink }
 				onNavigate={ this.trackChecklistClick }
 				icon="checkmark-circle"
 			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackActivityClick = () => {
