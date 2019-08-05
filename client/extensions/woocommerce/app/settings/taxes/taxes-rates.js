@@ -67,7 +67,7 @@ class TaxesRates extends Component {
 
 	renderLocation = () => {
 		const {
-			areTaxesEnabled,
+			taxesEnabled,
 			countryName,
 			loadedSettingsGeneral,
 			loadedLocations,
@@ -75,7 +75,7 @@ class TaxesRates extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! areTaxesEnabled || ! loadedSettingsGeneral || ! loadedLocations ) {
+		if ( ! taxesEnabled || ! loadedSettingsGeneral || ! loadedLocations ) {
 			return null;
 		}
 
@@ -109,9 +109,9 @@ class TaxesRates extends Component {
 	};
 
 	renderCalculationStatus = () => {
-		const { areTaxesEnabled, translate } = this.props;
+		const { taxesEnabled, translate } = this.props;
 
-		if ( ! areTaxesEnabled ) {
+		if ( ! taxesEnabled ) {
 			return (
 				<Notice showDismiss={ false } status="is-warning">
 					{ translate(
@@ -137,8 +137,8 @@ class TaxesRates extends Component {
 	};
 
 	possiblyRenderRates = () => {
-		const { areTaxesEnabled, taxRates, translate } = this.props;
-		if ( ! areTaxesEnabled ) {
+		const { taxesEnabled, taxRates, translate } = this.props;
+		if ( ! taxesEnabled ) {
 			return null;
 		}
 
@@ -257,7 +257,7 @@ class TaxesRates extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const address = getStoreLocation( state, ownProps.siteId );
-	const areTaxesEnabled = areTaxCalculationsEnabled( state, ownProps.siteId );
+	const taxesEnabled = areTaxCalculationsEnabled( state, ownProps.siteId );
 	const countries = getAllCountries( state, ownProps.siteId );
 	const loadedLocations = areLocationsLoaded( state, ownProps.siteId );
 	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
@@ -277,7 +277,7 @@ function mapStateToProps( state, ownProps ) {
 
 	return {
 		address,
-		areTaxesEnabled,
+		taxesEnabled,
 		countries,
 		countryName,
 		loadedLocations,
