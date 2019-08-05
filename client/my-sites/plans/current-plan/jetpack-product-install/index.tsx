@@ -61,12 +61,12 @@ const PLUGIN_KEY_REFETCH_INTERVAL: TimeoutMS = 300;
 type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps & LocalizeProps;
 
 interface State {
-	startedInstallation: boolean;
+	initiatedInstalls: Set< PluginSlug >;
 }
 
 export class JetpackProductInstall extends Component< Props, State > {
 	state = {
-		startedInstallation: false,
+		initiatedInstalls: new Set(),
 	};
 
 	retries = 0;
@@ -106,7 +106,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 		}
 
 		// We're already installing
-		if ( this.state.startedInstallation ) {
+		if ( this.props.requestedInstalls.every( slug => this.state.initiatedInstalls.has( slug ) ) ) {
 			return;
 		}
 
@@ -130,22 +130,39 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return;
 		}
 
-		// If we don't request any installs, don't do anything.
-		if ( ! requestedInstalls.length ) {
-			return;
-		}
+		const installerPositionalArguments: ['akismet', 'vaultpress'] = [ 'akismet', 'vaultpress' ];
+		const startJetpackProductInstallArgs = installerPositionalArguments.map( slug =>
+			// Installation hasn't been initiated for the plugin
+			! this.state.initiatedInstalls.has( slug ) &&
+			// The plugin install was requested
+			requestedInstalls.includes( slug ) &&
+			// A key is available for the plugin
+			pluginKeys[ slug ]
+				? pluginKeys[ slug ]
+				: null
+		);
+
+		const [
+			akismetKeyIfRequestedAndPresent,
+			vaultpressKeyIfRequestedAndPresent,
+		] = startJetpackProductInstallArgs;
 
 		// Start installation if we requested a plugin and have its key
-		if (
-			( requestedInstalls.includes( 'akismet' ) && pluginKeys.akismet ) ||
-			( requestedInstalls.includes( 'vaultpress' ) && pluginKeys.vaultpress )
-		) {
-			this.setState( { startedInstallation: true } );
-
+		if ( akismetKeyIfRequestedAndPresent || vaultpressKeyIfRequestedAndPresent ) {
+			this.setState( ( { initiatedInstalls } ) => {
+				const next = new Set( initiatedInstalls );
+				if ( akismetKeyIfRequestedAndPresent ) {
+					next.add( 'akismet' );
+				}
+				if ( vaultpressKeyIfRequestedAndPresent ) {
+					next.add( 'vaultpress' );
+				}
+				return { initiatedInstalls: next };
+			} );
 			this.props.startJetpackProductInstall(
 				siteId,
-				requestedInstalls.includes( 'akismet' ) ? pluginKeys.akismet : null,
-				requestedInstalls.includes( 'vaultpress' ) ? pluginKeys.vaultpress : null
+				.../* We know this array will include exactly 2 items */
+				( startJetpackProductInstallArgs as [string | null, string | null] )
 			);
 		}
 	}
@@ -244,7 +261,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return true;
 		}
 
-		return requestedInstalls.some( ( slug: PluginSlug ) => ! pluginKeys.hasOwnProperty( slug ) );
+		return requestedInstalls.some( slug => ! pluginKeys.hasOwnProperty( slug ) );
 	}
 
 	render() {
