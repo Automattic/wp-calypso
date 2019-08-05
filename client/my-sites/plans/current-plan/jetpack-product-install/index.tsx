@@ -21,12 +21,8 @@ import {
 	startJetpackProductInstall,
 } from 'state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import {
-	empty as uninitializedHttpData,
-	getHttpData,
-	requestHttpData,
-} from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { getPluginKeys, requestPluginKeys } from 'state/data-getters/wpcom/jetpack-blogs/keys';
+import { SiteId, TimeoutMS } from 'client/types';
 
 type PluginStateDescriptor = string;
 type PluginSlug = 'akismet' | 'vaultpress';
@@ -60,7 +56,7 @@ const PLUGINS: PluginSlug[] = [ 'akismet', 'vaultpress' ];
  */
 const MAX_RETRIES = 3;
 
-const dataKeyPluginData = ( siteId: number ) => `plugin-keys:${ siteId }`;
+const PLUGIN_KEY_REFETCH_INTERVAL: TimeoutMS = 300;
 
 type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps & LocalizeProps;
 
@@ -77,35 +73,21 @@ export class JetpackProductInstall extends Component< Props, State > {
 	tracksEventSent = false;
 
 	componentDidMount() {
-		this.fetchPluginKeys();
 		this.requestInstallationStatus();
 		this.maybeStartInstall();
 	}
 
-	componentDidUpdate( prevProps: Props ) {
-		if ( prevProps.siteId !== this.props.siteId ) {
-			this.fetchPluginKeys();
-		}
+	componentDidUpdate() {
 		this.maybeStartInstall();
 	}
 
-	fetchPluginKeys() {
-		const { siteId } = this.props;
-		if ( siteId ) {
-			requestHttpData(
-				dataKeyPluginData( siteId ),
-				http( {
-					method: 'GET',
-					path: `/jetpack-blogs/${ siteId }/keys`,
-					apiVersion: '1.1',
-				} ),
-				{
-					freshness: 1000,
-					fromApi: () => data => [ [ dataKeyPluginData( siteId ), data.keys ] ],
-				}
-			);
+	fetchPluginKeys = (): void => {
+		if ( this.shouldRequestKeys() ) {
+			requestPluginKeys( this.props.siteId as SiteId, {
+				freshness: PLUGIN_KEY_REFETCH_INTERVAL - 1,
+			} );
 		}
-	}
+	};
 
 	/**
 	 * Start the plugin installation if all conditions are matched:
@@ -247,6 +229,24 @@ export class JetpackProductInstall extends Component< Props, State > {
 		}
 	};
 
+	shouldRequestKeys(): boolean {
+		const { siteId, pluginKeys, requestedInstalls } = this.props;
+
+		if ( ! siteId ) {
+			return false;
+		}
+
+		if ( ! requestedInstalls.length ) {
+			return false;
+		}
+
+		if ( ! pluginKeys ) {
+			return true;
+		}
+
+		return requestedInstalls.some( ( slug: PluginSlug ) => ! pluginKeys.hasOwnProperty( slug ) );
+	}
+
 	render() {
 		const { progressComplete, translate } = this.props;
 		/**
@@ -270,6 +270,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 		return (
 			<Fragment>
+				<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
 				{ hasErrorInstalling && (
 					<Notice
 						status="is-error"
@@ -291,7 +292,15 @@ export class JetpackProductInstall extends Component< Props, State > {
 	}
 }
 
-function mapStateToProps( state ) {
+interface ConnectedProps {
+	siteId: SiteId | null;
+	pluginKeys: { akismet: string; vaultpress: string } | null;
+	progressComplete: ReturnType< typeof getJetpackProductInstallProgress >;
+	requestedInstalls: PluginSlug[];
+	status: ReturnType< typeof getJetpackProductInstallProgress >;
+}
+
+function mapStateToProps( state ): ConnectedProps {
 	const siteId = getSelectedSiteId( state );
 	const queryArgs = getCurrentQueryArguments( state );
 
@@ -307,15 +316,11 @@ function mapStateToProps( state ) {
 		? /* If we want 'all', clone our known plugins */ [ ...PLUGINS ]
 		: PLUGINS.filter( slug => installQuery.includes( slug ) );
 
-	const httpData = siteId ? getHttpData( dataKeyPluginData( siteId ) ) : uninitializedHttpData;
+	const keyRequest = getPluginKeys( siteId );
 
 	return {
 		siteId,
-		pluginKeys:
-			httpData.state === 'success'
-				? getHttpData( dataKeyPluginData( siteId as number /* httpData.state.success ⇒ siteId */ ) )
-						.data
-				: null,
+		pluginKeys: keyRequest.state === 'success' ? keyRequest.data : null,
 		progressComplete: getJetpackProductInstallProgress( state, siteId ),
 		requestedInstalls,
 		status: getJetpackProductInstallStatus( state, siteId ),
