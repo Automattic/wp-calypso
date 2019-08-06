@@ -79,7 +79,7 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ map( this.props.templates, template => ( {
-									content: template.content,
+									content: replacePlaceholders( template.content, this.props.siteInformation ),
 									label: template.title,
 									value: template.slug,
 									preview: template.preview,
