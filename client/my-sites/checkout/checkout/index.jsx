@@ -93,6 +93,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
 import { abtest } from 'lib/abtest';
+import { loadTrackingTool } from 'state/analytics/actions';
 import {
 	persistSignupDestination,
 	retrieveSignupDestination,
@@ -111,6 +112,7 @@ export class Checkout extends React.Component {
 		couponCode: PropTypes.string,
 		isJetpackNotAtomic: PropTypes.bool,
 		selectedFeature: PropTypes.string,
+		loadTrackingTool: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -139,6 +141,7 @@ export class Checkout extends React.Component {
 			applyCoupon( this.props.couponCode );
 		}
 
+		this.props.loadTrackingTool( 'HotJar' );
 		window.scrollTo( 0, 0 );
 	}
 
@@ -902,5 +905,6 @@ export default connect(
 		clearSitePlans,
 		fetchReceiptCompleted,
 		requestSite,
+		loadTrackingTool,
 	}
 )( localize( Checkout ) );
