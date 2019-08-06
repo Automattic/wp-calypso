@@ -6262,10 +6262,9 @@
 			}
 		},
 		"caniuse-lite": {
-			"version": "1.0.30000974",
-			"resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000974.tgz",
-			"integrity": "sha512-xc3rkNS/Zc3CmpMKuczWEdY2sZgx09BkAxfvkxlAEBTqcMHeL8QnPqhKse+5sRTi3nrw2pJwToD2WvKn1Uhvww==",
-			"dev": true
+			"version": "1.0.30000988",
+			"resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000988.tgz",
+			"integrity": "sha512-lPj3T8poYrRc/bniW5SQPND3GRtSrQdUM/R4mCYTbZxyi3jQiggLvZH4+BYUuX0t4TXjU+vMM7KFDQg+rSzZUQ=="
 		},
 		"capture-exit": {
 			"version": "2.0.0",
