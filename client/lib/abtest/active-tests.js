@@ -130,7 +130,7 @@ export default {
 			show: 50,
 			hide: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'show',
 		allowExistingUsers: true,
 	},
 	moveUserStepPosition: {
