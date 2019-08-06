@@ -44,7 +44,7 @@ import {
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
-	canCurrentUserUseChecklist,
+	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
@@ -162,9 +162,9 @@ export class MySitesSidebar extends Component {
 	};
 
 	checklist() {
-		const { canUserUseChecklist, isJetpack, path, siteSuffix, siteId, translate } = this.props;
+		const { canUserUseChecklistMenu, path, siteSuffix, siteId, translate } = this.props;
 
-		if ( ! siteId || ! canUserUseChecklist || isJetpack ) {
+		if ( ! siteId || ! canUserUseChecklistMenu ) {
 			return null;
 		}
 
@@ -758,7 +758,7 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseChecklist: canCurrentUserUseChecklist( state, siteId ),
+		canUserUseChecklistMenu: canCurrentUserUseChecklistMenu( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
