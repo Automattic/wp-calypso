@@ -82,6 +82,12 @@ async function getLanguageFile( targetLocaleSlug ) {
 
 	const response = await dedupedGet( url );
 	if ( response.ok ) {
+		if ( response.bodyUsed ) {
+			// If the body was already used, we assume that we already parsed the
+			// response and set the locale in the DOM, so we don't need to do anything
+			// else here.
+			return;
+		}
 		return await response.json();
 	}
 
