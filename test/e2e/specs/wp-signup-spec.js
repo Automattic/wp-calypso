@@ -108,10 +108,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the "About" page, and enter some site information', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( blogName, 'Electronics' );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBusinessType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -215,10 +231,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the "About" page, and enter some site information', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( blogName, 'Electronics' );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBusinessType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -269,7 +301,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can visit the start page', async function() {
-			await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
+			await StartPage.Visit( driver, StartPage.getStartURL( { flow: 'main', culture: locale } ) );
 		} );
 
 		step( 'Can see the account page and enter account details', async function() {
@@ -403,14 +435,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can accept defaults for about page', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( 'Step Back', 'Store Test Topic', { sell: true } );
-			await aboutPage.submitForm();
-			await driverHelper.waitTillNotPresent( driver, By.css( '.signup is-store-nux' ) ); // Wait for /start/store-nux/themes to load
-			await driver.navigate().back();
-			await aboutPage.unsetCheckBox( { sell: true } );
-			await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBusinessType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step( 'Can then see the domains page ', async function() {
@@ -1167,9 +1211,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 		} );
 
-		step( 'Can see the about page and accept defaults', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBlogType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -1363,7 +1424,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				driver,
 				StartPage.getStartURL( {
 					culture: locale,
-					flow: 'onboarding',
 					query: 'vertical=art',
 				} )
 			);
@@ -1483,10 +1543,26 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		step( 'Can see the "About" page, and enter some site information', async function() {
-			const aboutPage = await AboutPage.Expect( driver );
-			await aboutPage.enterSiteDetails( blogName, 'Electronics' );
-			return await aboutPage.submitForm();
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBlogType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
 		} );
 
 		step(
@@ -1718,11 +1794,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
 		} );
 
 		step( 'Can visit the start page', async function() {
@@ -1808,11 +1879,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		before( async function() {
 			await driverManager.ensureNotLoggedIn( driver );
-			return await overrideABTests.setOverriddenABTests(
-				driver,
-				'improvedOnboarding',
-				'onboarding'
-			);
 		} );
 
 		step( 'Can enter the account flow and see the account details page', async function() {

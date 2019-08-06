@@ -32,6 +32,8 @@ jest.mock( 'signup/config/flows-pure', () => ( {
 } ) );
 
 describe( 'utils', () => {
+	const defaultFlowName = flows.defaultFlowName;
+
 	describe( 'getLocale', () => {
 		test( 'should find the locale anywhere in the params', () => {
 			expect( getLocale( { lang: 'fr' } ) ).toBe( 'fr' );
@@ -66,7 +68,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should return the default flow if the flow is missing', () => {
-			expect( getFlowName( {} ) ).toBe( 'main' );
+			expect( getFlowName( {} ) ).toBe( defaultFlowName );
 		} );
 	} );
 
@@ -80,7 +82,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should redirect to the default flow if the flow is the default', () => {
-			expect( getValidPath( { flowName: 'main' } ) ).toBe( '/start/user' );
+			expect( getValidPath( { flowName: defaultFlowName } ) ).toBe( '/start/user' );
 		} );
 
 		test( 'should redirect invalid steps to the default flow if no flow is present', () => {

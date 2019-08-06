@@ -83,12 +83,14 @@ function filterDestination( destination, dependencies ) {
 	return destination;
 }
 
+function getDefaultFlowName() {
+	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+}
+
 const Flows = {
 	filterDestination,
 
-	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
-		? abtest( 'improvedOnboarding' )
-		: 'main',
+	defaultFlowName: getDefaultFlowName(),
 	excludedSteps: [],
 
 	/**
