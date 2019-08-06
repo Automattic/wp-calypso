@@ -16,7 +16,7 @@ import moment from 'moment';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import { validateImportUrl } from 'lib/importers/url-validation';
+import { validateImportUrl } from 'lib/importer/url-validation';
 import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
 import { recordTracksEvent } from 'state/analytics/actions';
