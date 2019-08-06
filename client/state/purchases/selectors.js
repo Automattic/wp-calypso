@@ -120,7 +120,7 @@ export const getDowngradePlanRawPrice = ( state, purchase ) => {
 	if ( ! plan ) {
 		return null;
 	}
-	return getPlanRawPrice( state, plan.getProductId(), false );
+	return getPlanRawPrice( state, plan.getProductId() );
 };
 
 /**

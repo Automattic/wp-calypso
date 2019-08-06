@@ -47,6 +47,8 @@ import stepsForProductAndSurvey from './steps-for-product-and-survey';
 import enrichedSurveyData from './enriched-survey-data';
 import { CANCEL_FLOW_TYPE } from './constants';
 import { getIncludedDomainPurchase, getDowngradePlanRawPrice } from 'state/purchases/selectors';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 
 /**
  * Style dependencies
@@ -738,6 +740,7 @@ class CancelPurchaseForm extends React.Component {
 	}
 
 	render() {
+		const { selectedSite } = this.props;
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -746,6 +749,8 @@ class CancelPurchaseForm extends React.Component {
 				className="cancel-purchase-form__dialog"
 			>
 				{ this.surveyContent() }
+				<QueryPlans />
+				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 			</Dialog>
 		);
 	}
