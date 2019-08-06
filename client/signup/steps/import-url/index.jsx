@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke, pickBy } from 'lodash';
+import { flow, get, includes, invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,23 +92,24 @@ class ImportURLStepComponent extends Component {
 					site_url: siteUrl,
 					importer_types: importerTypes,
 				} ) => {
+					if ( ! includes( importerTypes, 'url' ) ) {
+						return this.setUrlError(
+							translate(
+								"That doesn't seem to be a Wix or GoDaddy site. Please check the URL and try again."
+							)
+						);
+					}
+
 					if ( 404 === siteStatus ) {
 						return this.setUrlError(
 							translate( 'That site was not found. Please check the URL and try again.' )
 						);
 					}
 
+					// We need a successful response for url importers to work.
 					if ( includes( importerTypes, 'url' ) && 200 !== siteStatus ) {
 						return this.setUrlError(
-							translate( "We couldn't reach that site. Please check the URL and try again." )
-						);
-					}
-
-					if ( ! includes( importerTypes, 'url' ) ) {
-						return this.setUrlError(
-							translate(
-								"That doesn't seem to be a Wix or GoDaddy site. Please check the URL and try again."
-							)
+							translate( 'That site responded with an error. Please check the URL and try again.' )
 						);
 					}
 
@@ -122,13 +123,13 @@ class ImportURLStepComponent extends Component {
 
 					this.props.submitSignupStep(
 						{ stepName },
-						pickBy( {
+						{
 							importSiteEngine: siteEngine,
 							importSiteFavicon: siteFavicon,
 							importSiteUrl: siteUrl,
 							siteTitle,
 							themeSlugWithRepo: 'pub/modern-business',
-						} )
+						}
 					);
 					this.props.goToNextStep();
 				},
@@ -136,11 +137,11 @@ class ImportURLStepComponent extends Component {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setUrlError(
-								translate( "We're not able to parse that URL. Double-check the URL and try again." )
+								translate( "We couldn't reach that site. Please check the URL and try again." )
 							);
 					}
 					return this.setUrlError(
-						translate( 'Something went wrong. Double-check the URL and try again later.' )
+						translate( 'Something went wrong. Please check the URL and try again.' )
 					);
 				}
 			)
