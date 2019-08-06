@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import {
-	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
+	IMPORTER_NUX_SITE_DETAILS_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
 	IMPORTER_NUX_FROM_SIGNUP_SET,
@@ -16,7 +16,7 @@ export const setNuxUrlInputValue = value => ( {
 } );
 
 export const setImportOriginSiteDetails = response => ( {
-	type: IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
+	type: IMPORTER_NUX_SITE_DETAILS_SET,
 	...response,
 } );
 

@@ -4,7 +4,7 @@
  */
 import { combineReducers, createReducer } from 'state/utils';
 import {
-	IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
+	IMPORTER_NUX_SITE_DETAILS_SET,
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
 	IMPORTER_NUX_FROM_SIGNUP_SET,
@@ -26,7 +26,7 @@ export const isFromSignupFlow = createReducer( false, {
 } );
 
 export const siteDetails = createReducer( null, {
-	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: (
+	[ IMPORTER_NUX_SITE_DETAILS_SET ]: (
 		state,
 		{ siteEngine, siteFavicon, siteTitle, importSiteUrl, importerTypes }
 	) => ( {
