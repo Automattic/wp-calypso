@@ -50,6 +50,7 @@ class SiteType extends Component {
 	renderImportButton() {
 		if (
 			! isEnabled( 'signup/import-flow' ) ||
+			'last' === abtest( 'moveUserStepPosition' ) ||
 			'show' !== abtest( 'showImportFlowInSiteTypeStep' )
 		) {
 			return null;
