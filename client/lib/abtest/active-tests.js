@@ -109,8 +109,8 @@ export default {
 	showPlanUpsellNudge: {
 		datestamp: '20190712',
 		variations: {
-			variantShowNudge: 50,
-			control: 50,
+			variantShowNudge: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -124,6 +124,16 @@ export default {
 		defaultVariation: 'yearlyPlan',
 		allowExistingUsers: true,
 	},
+	checkoutSealsCopyBundle: {
+		datestamp: '20190613',
+		variations: {
+			variant: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		//localeTargets: 'any',
+  },
 	showImportFlowInSiteTypeStep: {
 		datestamp: '20991231',
 		variations: {
