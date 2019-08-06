@@ -124,17 +124,19 @@ export default function switchLocale( localeSlug ) {
 		getLanguageFile( targetLocaleSlug ).then(
 			// Success.
 			body => {
-				// Handle race condition when we're requested to switch to a different
-				// locale while we're in the middle of request, we should abandon result
-				if ( targetLocaleSlug !== lastRequestedLocale ) {
-					return;
+				if ( body ) {
+					// Handle race condition when we're requested to switch to a different
+					// locale while we're in the middle of request, we should abandon result
+					if ( targetLocaleSlug !== lastRequestedLocale ) {
+						return;
+					}
+
+					i18n.setLocale( body );
+
+					setLocaleInDOM( domLocaleSlug, !! language.rtl );
+
+					loadUserUndeployedTranslations( targetLocaleSlug );
 				}
-
-				i18n.setLocale( body );
-
-				setLocaleInDOM( domLocaleSlug, !! language.rtl );
-
-				loadUserUndeployedTranslations( targetLocaleSlug );
 			},
 			// Failure.
 			() => {
