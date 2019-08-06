@@ -83,10 +83,10 @@ class Full_Site_Editing {
 				),
 				'menu_icon'             => 'dashicons-layout',
 				'public'                => false,
-				'show_ui'               => true,
-				'show_in_menu'          => true,
+				'show_ui'               => true, // Otherwise we'd get permission error when trying to edit them.
+				'show_in_menu'          => false,
 				'rewrite'               => false,
-				'show_in_rest'          => true,
+				'show_in_rest'          => true, // Otherwise previews won't be generated in full page view.
 				'rest_base'             => 'templates',
 				'rest_controller_class' => __NAMESPACE__ . '\REST_Templates_Controller',
 				'capability_type'       => 'template',
