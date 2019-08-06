@@ -25,6 +25,7 @@ import { validateImportUrl } from 'lib/importer/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import wpcom from 'lib/wp';
+import { getFileImporters } from 'lib/importer/importer-config';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 
 /**
@@ -36,34 +37,6 @@ const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
 const EXAMPLE_CUSTOM_DOMAIN_URL = 'https://example.com';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
 const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
-
-// @TODO: put this all in one shared place for `my-sites/importer` and signup
-const FALLBACK_ENGINES = [
-	{
-		title: 'WordPress',
-		description: 'Import posts, pages, and media ' + 'from a WordPress export\u00A0file.',
-		engine: 'wordpress',
-		icon: 'wordpress',
-	},
-	{
-		title: 'Blogger',
-		description: 'blogger',
-		engine: 'blogger',
-		icon: 'blogger-alt',
-	},
-	{
-		title: 'Medium',
-		description: 'medium',
-		engine: 'medium',
-		icon: 'medium',
-	},
-	{
-		title: 'Squarespace',
-		description: 'squarespace',
-		engine: 'squarespace',
-		icon: 'squarespace',
-	},
-];
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -236,11 +209,13 @@ class ImportURLStepComponent extends Component {
 	};
 
 	renderFallbackEngines = () => {
+		const fallbackEngines = getFileImporters();
+
 		return (
 			<div className="import-url__fallback">
-				{ FALLBACK_ENGINES.map( ( { description, engine, icon, title } ) => {
+				{ fallbackEngines.map( ( { description, engine, icon, title } ) => {
 					return (
-						<Card displayAsLink onClick={ this.handleEngineSelect( engine ) }>
+						<Card key={ engine } displayAsLink onClick={ this.handleEngineSelect( engine ) }>
 							<ImporterLogo icon={ icon } />
 							<div className="importer-header__service-info">
 								<h1 className="importer-header__service-title">{ title }</h1>
