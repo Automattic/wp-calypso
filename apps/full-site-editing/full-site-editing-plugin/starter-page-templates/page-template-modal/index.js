@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, isEmpty, map, reduce } from 'lodash';
+import { isEmpty, map, reduce, once } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
@@ -43,7 +43,7 @@ class PageTemplateModal extends Component {
 		this.props.saveTemplateChoice( template );
 
 		// Skip inserting if there's nothing to insert.
-		if ( ! has( template, 'content' ) ) {
+		if ( template.blocks.length === 0 ) {
 			return;
 		}
 
@@ -140,29 +140,35 @@ const {
 	tracksUserData,
 } = window.starterPageTemplatesConfig;
 
-// Enhance templates with their parsed blocks and processed titles. Key by their slug.
-const prepareTemplatesForPlugin = ( templatesBySlug, template ) => {
-	const content = replacePlaceholders( template.content, siteInformation );
-	return {
-		...templatesBySlug,
-		[ template.slug ]: {
-			...template,
-			title: replacePlaceholders( template.title, siteInformation ),
-			content,
-			blocks: parseBlocks( content ),
-		},
-	};
-};
-
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
+// Enhance templates with their parsed blocks and processed titles. Key by their slug.
+const getTemplatesForPlugin = once( () =>
+	reduce(
+		templates,
+		( templatesBySlug, template ) => {
+			const content = replacePlaceholders( template.content, siteInformation );
+			return {
+				...templatesBySlug,
+				[ template.slug ]: {
+					...template,
+					title: replacePlaceholders( template.title, siteInformation ),
+					content,
+					blocks: parseBlocks( content ),
+				},
+			};
+		},
+		{}
+	)
+);
+
 registerPlugin( 'page-templates', {
-	render: function() {
+	render: () => {
 		return (
 			<PageTemplatesPlugin
-				templates={ reduce( templates, prepareTemplatesForPlugin, {} ) }
+				templates={ getTemplatesForPlugin() }
 				vertical={ vertical }
 				segment={ segment }
 				siteInformation={ siteInformation }
