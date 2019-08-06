@@ -465,7 +465,7 @@ ul.module-header-actions {
 	}
 
 	.stats-module & td.highest-count {
-		color: var( --color-warning );
+		color: var( --color-accent );
 		position: relative;
 	}
 
@@ -491,7 +491,7 @@ ul.module-header-actions {
 		}
 
 		&.is-same {
-			color: var( --color-neutral-light );
+			color: var( --color-text-subtle );
 		}
 
 		&.is-rising,
