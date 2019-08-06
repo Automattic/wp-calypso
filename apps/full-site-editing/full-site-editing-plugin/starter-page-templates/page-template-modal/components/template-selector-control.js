@@ -24,7 +24,6 @@ function TemplateSelectorControl( {
 	}
 
 	const id = `template-selector-control-${ instanceId }`;
-	const handleButtonClick = event => onClick( event.target.value );
 
 	return (
 		<BaseControl
@@ -41,7 +40,7 @@ function TemplateSelectorControl( {
 							id={ `${ id }-${ option.value }` }
 							className="template-selector-control__label"
 							value={ option.value }
-							onClick={ handleButtonClick }
+							onClick={ () => onClick( option.value ) }
 							aria-describedby={ help ? `${ id }__help` : undefined }
 						>
 							<div className="template-selector-control__media-wrap">
