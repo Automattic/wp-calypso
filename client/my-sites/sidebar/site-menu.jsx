@@ -142,6 +142,11 @@ class SiteMenu extends PureComponent {
 			return null;
 		}
 
+		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
+		if ( 'wp_template' === menuItem.name ) {
+			return null;
+		}
+
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
 		const isEnabled = ! menuItem.config || config.isEnabled( menuItem.config );
