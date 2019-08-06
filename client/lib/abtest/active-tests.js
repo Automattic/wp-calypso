@@ -109,8 +109,8 @@ export default {
 	showPlanUpsellNudge: {
 		datestamp: '20190712',
 		variations: {
-			variantShowNudge: 50,
-			control: 50,
+			variantShowNudge: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
