@@ -19,7 +19,7 @@ const KEY_MAP = {
 
 const replacePlaceholders = ( pageContent, siteInformation = {} ) => {
 	if ( ! pageContent ) {
-		return null;
+		return '';
 	}
 
 	return pageContent.replace( /{{(\w+)}}/g, ( match, placeholder ) => {
