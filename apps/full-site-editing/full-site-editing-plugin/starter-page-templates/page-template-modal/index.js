@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, isEmpty, keyBy, map } from 'lodash';
+import { has, isEmpty, map, reduce } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
@@ -47,13 +47,7 @@ class PageTemplateModal extends Component {
 			return;
 		}
 
-		const processedTemplate = {
-			...template,
-			title: replacePlaceholders( template.title, this.props.siteInformation ),
-			content: replacePlaceholders( template.content, this.props.siteInformation ),
-		};
-
-		this.props.insertTemplate( processedTemplate );
+		this.props.insertTemplate( template );
 	};
 
 	closeModal = () => {
@@ -79,7 +73,7 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ map( this.props.templates, template => ( {
-									content: replacePlaceholders( template.content, this.props.siteInformation ),
+									blocks: template.blocks,
 									label: template.title,
 									value: template.slug,
 									preview: template.preview,
@@ -126,9 +120,8 @@ const PageTemplatesPlugin = compose(
 
 				// Insert blocks.
 				const postContentBlock = ownProps.postContentBlock;
-				const blocks = parseBlocks( template.content );
 				editorDispatcher.insertBlocks(
-					blocks,
+					template.blocks,
 					0,
 					postContentBlock ? postContentBlock.clientId : '',
 					false
@@ -147,6 +140,20 @@ const {
 	tracksUserData,
 } = window.starterPageTemplatesConfig;
 
+// Enhance templates with their parsed blocks and processed titles. Key by their slug.
+const prepareTemplatesForPlugin = ( templatesBySlug, template ) => {
+	const content = replacePlaceholders( template.content, siteInformation );
+	return {
+		...templatesBySlug,
+		[ template.slug ]: {
+			...template,
+			title: replacePlaceholders( template.title, siteInformation ),
+			content,
+			blocks: parseBlocks( content ),
+		},
+	};
+};
+
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
@@ -155,7 +162,7 @@ registerPlugin( 'page-templates', {
 	render: function() {
 		return (
 			<PageTemplatesPlugin
-				templates={ keyBy( templates, 'slug' ) }
+				templates={ reduce( templates, prepareTemplatesForPlugin, {} ) }
 				vertical={ vertical }
 				segment={ segment }
 				siteInformation={ siteInformation }

@@ -9,8 +9,6 @@ import classnames from 'classnames';
  */
 import { withInstanceId } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
-import { useMemo, useState } from '@wordpress/element';
-import { parse } from '@wordpress/blocks';
 import { BlockPreview } from '@wordpress/block-editor';
 
 function TemplateSelectorControl( {
@@ -21,24 +19,6 @@ function TemplateSelectorControl( {
 	onClick,
 	templates = [],
 } ) {
-	const [ templateIndex, setTemplateIndex ] = useState( 0 );
-	const template = templates[ templateIndex ];
-
-	const renderTemplatePreview = ( { content, preview, previewAlt } ) => {
-		if ( ! content ) {
-			setTemplateIndex( templateIndex + 1 );
-			return null;
-		}
-
-		return (
-			<BlockPreview blocks={ parse( content ) } /> || (
-				<img className="template-selector-control__media" src={ preview } alt={ previewAlt } />
-			)
-		);
-	};
-
-	const renderBlocks = useMemo( () => renderTemplatePreview( template ), templates );
-
 	if ( isEmpty( templates ) ) {
 		return null;
 	}
@@ -54,17 +34,20 @@ function TemplateSelectorControl( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ templates.map( ( option, index ) => (
-					<li key={ `${ id }-${ index }` } className="template-selector-control__option">
+				{ templates.map( option => (
+					<li key={ `${ id }-${ option.value }` } className="template-selector-control__option">
 						<button
 							type="button"
-							id={ `${ id }-${ index }` }
+							id={ `${ id }-${ option.value }` }
 							className="template-selector-control__label"
 							value={ option.value }
 							onClick={ handleButtonClick }
 							aria-describedby={ help ? `${ id }__help` : undefined }
 						>
-							<div className="template-selector-control__media-wrap">{ renderBlocks }</div>
+							<div className="template-selector-control__media-wrap">
+								<BlockPreview blocks={ option.blocks } />
+							</div>
+							{ option.label }
 						</button>
 					</li>
 				) ) }
