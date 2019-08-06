@@ -8,23 +8,6 @@
 	}
 }
 
-.post-trends__title {
-	color: var( --color-neutral-400 );
-	margin-left: 11px;
-	height: 40px;
-	font-weight: 600;
-	position: relative;
-	z-index: z-index( 'root', '.post-trends__title' );
-}
-
-.post-trends__value {
-	text-align: center;
-	font-size: 16px;
-	font-weight: 300;
-	color: var( --color-neutral-500 );
-	margin: 20px 0 30px;
-}
-
 .post-trends__year {
 	position: relative;
 		top: 0;
@@ -115,7 +98,7 @@
 .post-trends__label {
 	text-align: center;
 	font-size: 11px;
-	color: var( --color-neutral-400 );
+	color: var( --color-text-subtle );
 	margin-top: 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
