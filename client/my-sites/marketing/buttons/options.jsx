@@ -216,6 +216,7 @@ class SharingButtonsOptions extends Component {
 						) }
 						link="https://support.wordpress.com/comment-likes/"
 						privacyLink={ false }
+						position={ 'bottom left' }
 					/>
 				</label>
 			</fieldset>
