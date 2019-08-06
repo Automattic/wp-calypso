@@ -337,8 +337,6 @@ class WpcomChecklistComponent extends PureComponent {
 			siteSlug,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
-			// only render an unclickable grey circle
-			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
@@ -374,6 +372,8 @@ class WpcomChecklistComponent extends PureComponent {
 						},
 					}
 				) }
+				// only render an unclickable grey circle when email conformation is incomplete
+				disableIcon={ ! baseProps.completed }
 				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
 				onClick={ this.handleSendVerificationEmail }
 				title={ translate( 'Confirm your email address' ) }
@@ -604,7 +604,8 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { needsVerification, translate } = this.props;
+		const disabled = ! baseProps.completed && needsVerification;
 
 		return (
 			<TaskComponent
@@ -613,8 +614,13 @@ class WpcomChecklistComponent extends PureComponent {
 				buttonText={ translate( 'Launch site' ) }
 				completedTitle={ translate( 'You launched your site' ) }
 				description={ translate(
-					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
+					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				) }
+				disableIcon={ disabled }
+				isButtonDisabled={ disabled }
+				noticeText={
+					disabled && translate( 'Confirm your email address before launching your site.' )
+				}
 				onClick={ this.handleLaunchSite( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Launch your site' ) }
