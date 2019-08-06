@@ -589,7 +589,7 @@ ul.module-content-list-legend {
 .module-content-list-legend .module-content-list-item .module-content-list-item-label {
 	@extend %placeholder;
 
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	font-weight: bold;
 
 	// Limit width when loading for placeholders to take less visual space
