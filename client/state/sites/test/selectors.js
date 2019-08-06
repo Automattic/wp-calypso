@@ -3985,7 +3985,7 @@ describe( 'selectors', () => {
 			).toBe( false );
 		} );
 
-		test( 'should return flase for Jetpack site', () => {
+		test( 'should return false for Jetpack site', () => {
 			expect(
 				canCurrentUserUseChecklistMenu( createState( { created_at: '2020-01-01', jetpack: true } ) )
 			).toBe( false );
