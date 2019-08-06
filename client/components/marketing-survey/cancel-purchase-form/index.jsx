@@ -197,8 +197,6 @@ class CancelPurchaseForm extends React.Component {
 				return 'refund';
 			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
 				return 'cancel-autorenew';
-			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY:
-				return 'cancel-autorenew-survey-only';
 			default:
 				// Although we shouldn't allow it to reach here, we still include this default in case we forgot to add proper mappings.
 				return 'general';
@@ -551,10 +549,7 @@ class CancelPurchaseForm extends React.Component {
 		const close = {
 				action: 'close',
 				disabled,
-				label:
-					flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY
-						? translate( 'Skip' )
-						: translate( "I'll Keep It" ),
+				label: translate( "I'll Keep It" ),
 			},
 			chat = (
 				<PrecancellationChatButton
@@ -588,13 +583,6 @@ class CancelPurchaseForm extends React.Component {
 				label: translate( 'Remove Now' ),
 				onClick: this.onSubmit,
 				isPrimary: true,
-			},
-			submit = {
-				action: 'submit',
-				disabled: this.state.isSubmitting,
-				label: translate( 'Submit' ),
-				onClick: this.onSubmit,
-				isPrimary: true,
 			};
 
 		const firstButtons =
@@ -609,8 +597,6 @@ class CancelPurchaseForm extends React.Component {
 			switch ( flowType ) {
 				case CANCEL_FLOW_TYPE.REMOVE:
 					return firstButtons.concat( [ ...prevButton, remove ] );
-				case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY:
-					return firstButtons.concat( [ ...prevButton, submit ] );
 				default:
 					return firstButtons.concat( [ ...prevButton, cancel ] );
 			}
