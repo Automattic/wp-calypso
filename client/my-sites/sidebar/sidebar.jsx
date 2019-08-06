@@ -43,6 +43,7 @@ import {
 	isJetpackSite,
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
+	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
 	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
@@ -162,9 +163,21 @@ export class MySitesSidebar extends Component {
 	};
 
 	customerHome() {
-		const { canUserUseChecklistMenu, path, siteSuffix, siteId, translate } = this.props;
+		const {
+			canUserUseChecklistMenu,
+			canUserUseCustomerHome,
+			path,
+			siteSuffix,
+			siteId,
+			translate,
+		} = this.props;
 
-		if ( ! siteId || ! canUserUseChecklistMenu ) {
+		// This will be eventually removed when Customer Home is finally live
+		const canUserViewChecklistOrCustomerHome = isEnabled( 'customer-home' )
+			? canUserUseCustomerHome
+			: canUserUseChecklistMenu;
+
+		if ( ! siteId || ! canUserViewChecklistOrCustomerHome ) {
 			return null;
 		}
 
@@ -767,6 +780,7 @@ function mapStateToProps( state ) {
 		canUserUseChecklistMenu: canCurrentUserUseChecklistMenu( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
+		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,

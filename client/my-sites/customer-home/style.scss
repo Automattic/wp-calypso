@@ -1,0 +1,38 @@
+.customer-home__layout-col {
+	width: 49%;
+}
+
+.customer-home__card-subheader {
+	color: var( --color-neutral-light );
+	margin-top: -0.75rem;
+    font-size: 0.85rem;
+}
+
+.customer-home__layout {
+	display: flex;
+	justify-content: space-between;
+
+	ul {
+		list-style: none;
+		margin-left: 0;
+	}
+}
+
+.customer-home__card-button-pair {
+	display: flex;
+}
+
+.customer-home__card-boxes {
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-home__card-links {
+	li {
+		border-bottom: 1px solid #ccc;
+	
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+} 
