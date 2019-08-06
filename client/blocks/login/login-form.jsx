@@ -23,7 +23,6 @@ import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import Divider from './divider';
-import ExternalLink from 'components/external-link';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
@@ -37,7 +36,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'state/login/actions';
-import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -368,30 +367,6 @@ export class LoginForm extends Component {
 						</div>
 					</div>
 
-					{ config.isEnabled( 'signup/social' ) && (
-						<p className="login__form-terms">
-							{ preventWidows(
-								this.props.translate(
-									// To make any changes to this copy please speak to the legal team
-									'By creating an account, ' +
-										'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-									{
-										components: {
-											tosLink: (
-												<ExternalLink
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								),
-								5
-							) }
-						</p>
-					) }
-
 					<div className="login__form-footer">
 						<div className="login__form-action">
 							<Button
@@ -437,6 +412,7 @@ export class LoginForm extends Component {
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
+			wccomFrom,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
@@ -454,6 +430,15 @@ export class LoginForm extends Component {
 		}
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			return this.renderWooCommerce();
+		}
+
+		if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			oauth2Client &&
+			isWooOAuth2Client( oauth2Client ) &&
+			wccomFrom
+		) {
 			return this.renderWooCommerce();
 		}
 
@@ -653,6 +638,7 @@ export default connect(
 			userEmail:
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
+			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		};
 	},
 	{

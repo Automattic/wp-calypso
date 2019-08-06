@@ -52,6 +52,8 @@ import { isCommunityTranslatorEnabled } from 'components/community-translator/ut
 import { isE2ETest } from 'lib/e2e';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 /**
  * Style dependencies
@@ -122,6 +124,13 @@ class Layout extends Component {
 					'is-jetpack-woocommerce-flow':
 						config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 						this.props.isJetpackWooCommerceFlow,
+				},
+				{
+					'is-wccom-oauth-flow':
+						config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+						this.props.oauth2Client &&
+						isWooOAuth2Client( this.props.oauth2Client ) &&
+						this.props.wccomFrom,
 				}
 			),
 			loadingClass = classnames( {
@@ -199,6 +208,9 @@ export default connect( state => {
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
 		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
+	const oauth2Client = getCurrentOAuth2Client( state );
+	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
+
 	return {
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
@@ -206,6 +218,8 @@ export default connect( state => {
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,
 		isJetpackMobileFlow,
+		oauth2Client,
+		wccomFrom,
 		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,

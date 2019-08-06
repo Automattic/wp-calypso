@@ -128,7 +128,7 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 }
 
 // Signup headings
-body.is-section-signup .layout:not( .dops ) .formatted-header,
+body.is-section-signup .layout:not( .dops ):not( .is-wccom-oauth-flow ) .formatted-header,
 body.is-section-signup .layout.gravatar .formatted-header {
 	margin: 0 0 16px;
 
@@ -162,4 +162,145 @@ body.is-section-signup .layout.gravatar .formatted-header {
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
 	overflow: visible;
+}
+
+.layout.is-wccom-oauth-flow {
+	@import 'jetpack-connect/colors.scss';
+	@include woocommerce-colors();
+	background-color: var( --color-woocommerce-onboarding-background );
+	height: 100%;
+
+	.woocommerce-muriel-text-control,
+	.muriel-input-text {
+		border-color: var( --color-gray-200 );
+
+		.text-control__label,
+		.components-base-control__label {
+			color: var( --color-gray-500 );
+			font-size: 12px;
+			font-weight: normal;
+		}
+
+		&.active {
+			box-shadow: 0 0 0 2px var( --color-hot-purple-600 );
+			border-color: transparent;
+		}
+	}
+
+	.login__form-footer {
+		text-align: center;
+		.button {
+			max-width: 310px;
+			height: 48px;
+
+			&.is-primary {
+				border: 0;
+			}
+		}
+	}
+
+	.layout__content {
+		padding-top: 48px;
+	}
+
+	.masterbar {
+		display: none;
+	}
+
+	.wp-login__footer-links {
+		display: none;
+	}
+
+	.login__woocommerce-logo {
+		text-align: center;
+		border-bottom: 1px solid var( --color-gray-50 );
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 56px;
+
+		svg > g {
+			transform: translateX( 50% );
+		}
+	}
+
+	.connect-header {
+		margin: 0;
+		text-align: center;
+		margin-right: auto;
+		margin-left: auto;
+		padding-left: 0;
+		display: block;
+		height: 56px;
+		border-bottom: 1px solid var( --color-woocommerce-header-border );
+		background: #fff;
+
+		svg {
+			margin-top: 15px;
+		}
+	}
+
+	.login__form-header {
+		margin-top: 32px;
+	}
+
+	.formatted-header {
+		max-width: 476px;
+		margin-right: auto;
+		margin-left: auto;
+
+		.formatted-header__subtitle {
+			color: var( --color-primary-100 );
+			margin-top: 1em;
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 400;
+		}
+	}
+
+	.logged-out-form {
+		max-width: 476px;
+	}
+
+	.logged-out-form__link-item {
+		text-align: center;
+		text-decoration: underline;
+		color: var( --color-gray-600 );
+		font-size: 14px;
+	}
+
+	.signup-form__terms-of-service-link,
+	.signup-form__terms-of-service-link a {
+		text-align: left;
+		color: var( --color-gray-600 );
+	}
+
+	.signup-form__social {
+		padding-bottom: 0;
+		margin-top: 16px;
+		p {
+			font-size: 12px;
+			color: var( --color-gray-600 );
+		}
+
+		.social-buttons__button {
+			border: 1px solid $muriel-woo-purple-500;
+			color: $muriel-woo-purple-500;
+			box-shadow: none;
+		}
+	}
+	
+
+	.logged-out-form__footer {
+		text-align: center;
+		.button.is-primary {
+			border: 0;
+			box-shadow: none;
+			max-width: 310px;
+			margin-right: auto;
+			margin-left: auto;
+			height: 48px;
+		}
+	}
 }

@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { capitalize, findLast, get, includes, isArray } from 'lodash';
@@ -41,6 +41,7 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import userFactory from 'lib/user';
 import AsyncLoad from 'components/async-load';
 import VisitSite from 'blocks/visit-site';
+import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 
 /**
  * Style dependencies
@@ -160,6 +161,7 @@ class Login extends Component {
 		const {
 			isJetpack,
 			isJetpackWooCommerceFlow,
+			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
 			oauth2Client,
@@ -197,7 +199,7 @@ class Login extends Component {
 					"'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')",
 			} );
 
-			if ( isWooOAuth2Client( oauth2Client ) ) {
+			if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
 				postHeader = (
 					<p>
@@ -215,6 +217,40 @@ class Login extends Component {
 									br: <br />,
 								},
 							}
+						) }
+					</p>
+				);
+			}
+
+			if (
+				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+				isWooOAuth2Client( oauth2Client ) &&
+				wccomFrom
+			) {
+				preHeader = (
+					<Fragment>
+						{ 'cart' === wccomFrom ? (
+							<WooCommerceConnectCartHeader />
+						) : (
+							<div className="login__woocommerce-logo">
+								<div className={ classNames( 'connect-header' ) }>
+									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
+										<AsyncLoad
+											require="components/jetpack-header/woocommerce"
+											darkColorScheme={ false }
+											placeholder={ null }
+										/>
+									</svg>
+								</div>
+							</div>
+						) }
+					</Fragment>
+				);
+				headerText = translate( 'Log in with a WordPress.com account' );
+				postHeader = (
+					<p className="login__header-subtitle">
+						{ translate(
+							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
 						) }
 					</p>
 				);
@@ -381,6 +417,7 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
 		signupProgress: getSignupProgress( state ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
 		recordTracksEvent,

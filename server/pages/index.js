@@ -46,6 +46,7 @@ import { login } from 'lib/paths';
 import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -301,6 +302,14 @@ function getDefaultContext( request ) {
 
 	const target = getBuildTargetFromRequest( request );
 
+	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
+	const isWCComConnect =
+		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
+		request.query[ 'wccom-from' ] &&
+		oauthClientId &&
+		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -311,6 +320,7 @@ function getDefaultContext( request ) {
 		isRTL: config( 'rtl' ),
 		isDebug,
 		requestFrom: request.query.from,
+		isWCComConnect,
 		badge: false,
 		lang,
 		entrypoint: getFilesForEntrypoint( target, 'entry-main' ),

@@ -19,6 +19,7 @@ export function login( {
 	emailAddress,
 	socialService,
 	oauth2ClientId,
+	wccomFrom,
 	site,
 } = {} ) {
 	let url = config( 'login_url' );
@@ -63,6 +64,10 @@ export function login( {
 
 	if ( isWoo ) {
 		url = addQueryArgs( { from: 'woocommerce-setup-wizard' }, url );
+	}
+
+	if ( wccomFrom ) {
+		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
 	}
 
 	return url;

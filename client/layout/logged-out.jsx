@@ -18,7 +18,7 @@ import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
-import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -40,6 +40,7 @@ const LayoutLoggedOut = ( {
 	currentRoute,
 	isJetpackLogin,
 	isJetpackWooCommerceFlow,
+	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
 	primary,
@@ -61,21 +62,34 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-login': isJetpackLogin,
 		'is-jetpack-woocommerce-flow':
 			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
+		'is-wccom-oauth-flow':
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			useOAuth2Layout &&
+			isWooOAuth2Client( oauth2Client ) &&
+			wccomFrom,
 	};
 
 	let masterbar = null;
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
-		classes.dops = true;
-		classes[ oauth2Client.name ] = true;
+		if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			isWooOAuth2Client( oauth2Client ) &&
+			wccomFrom
+		) {
+			masterbar = null;
+		} else {
+			classes.dops = true;
+			classes[ oauth2Client.name ] = true;
 
-		// Force masterbar for all Crowdsignal OAuth pages
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			classes[ 'has-no-masterbar' ] = false;
+			// Force masterbar for all Crowdsignal OAuth pages
+			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+				classes[ 'has-no-masterbar' ] = false;
+			}
+
+			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
-
-		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -124,11 +138,13 @@ export default connect( state => {
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
 		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
+	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
 	return {
 		currentRoute,
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,
+		wccomFrom,
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 		section,
