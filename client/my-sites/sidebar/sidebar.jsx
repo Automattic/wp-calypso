@@ -44,6 +44,7 @@ import {
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
+	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
@@ -153,6 +154,31 @@ export class MySitesSidebar extends Component {
 			</SidebarItem>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
+	trackChecklistClick = () => {
+		this.trackMenuItemClick( 'checklist' );
+		this.onNavigate();
+	};
+
+	checklist() {
+		const { canUserUseChecklistMenu, path, siteSuffix, siteId, translate } = this.props;
+
+		if ( ! siteId || ! canUserUseChecklistMenu ) {
+			return null;
+		}
+
+		const checklistLink = '/checklist' + siteSuffix;
+		return (
+			<SidebarItem
+				tipTarget="menus"
+				label={ translate( 'Checklist' ) }
+				selected={ itemLinkMatches( [ '/checklist' ], path ) }
+				link={ checklistLink }
+				onNavigate={ this.trackChecklistClick }
+				materialIcon="check_circle"
+			/>
+		);
 	}
 
 	trackActivityClick = () => {
@@ -632,6 +658,7 @@ export class MySitesSidebar extends Component {
 			<div className="sidebar__menu-wrapper">
 				<SidebarMenu>
 					<ul>
+						{ this.checklist() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
@@ -731,6 +758,7 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
+		canUserUseChecklistMenu: canCurrentUserUseChecklistMenu( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),

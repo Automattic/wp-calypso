@@ -37,6 +37,7 @@ import {
 	getSiteFrontPageType,
 	hasStaticFrontPage,
 	canCurrentUserUseAds,
+	canCurrentUserUseChecklistMenu,
 	canCurrentUserUseStore,
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -3927,6 +3928,67 @@ describe( 'selectors', () => {
 
 		test( "should return false if site doesn't have WordAds and user can not manage it", () => {
 			expect( canCurrentUserUseAds( createState( false, false, 'free_plan' ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'canCurrentUserUseChecklistMenu()', () => {
+		const createState = ( { created_at, manage_options = true, jetpack = false } = {} ) => ( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			currentUser: {
+				capabilities: {
+					1: {
+						manage_options,
+					},
+				},
+			},
+			sites: {
+				items: {
+					1: {
+						jetpack,
+						options: { is_automated_transfer: false, created_at },
+					},
+				},
+			},
+		} );
+
+		test( 'should return true for a simple site created after 2019-08-06', () => {
+			expect( canCurrentUserUseChecklistMenu( createState( { created_at: '2020-01-01' } ) ) ).toBe(
+				true
+			);
+		} );
+
+		test( 'should return false for a simple site created before 2019-08-06', () => {
+			expect( canCurrentUserUseChecklistMenu( createState( { created_at: '2019-08-01' } ) ) ).toBe(
+				false
+			);
+		} );
+
+		test( 'should return false for a simple site created on the 2019-08-06', () => {
+			expect( canCurrentUserUseChecklistMenu( createState( { created_at: '2019-08-06' } ) ) ).toBe(
+				true
+			);
+		} );
+
+		test( "should return false for site with a zero'd out created_at option", () => {
+			expect(
+				canCurrentUserUseChecklistMenu( createState( { created_at: '0000-00-00T00:00:00+00:00' } ) )
+			).toBe( false );
+		} );
+
+		test( "should return false if user can't manage site options", () => {
+			expect(
+				canCurrentUserUseChecklistMenu(
+					createState( { created_at: '2020-01-01', manage_options: false } )
+				)
+			).toBe( false );
+		} );
+
+		test( 'should return false for Jetpack site', () => {
+			expect(
+				canCurrentUserUseChecklistMenu( createState( { created_at: '2020-01-01', jetpack: true } ) )
+			).toBe( false );
 		} );
 	} );
 } );
