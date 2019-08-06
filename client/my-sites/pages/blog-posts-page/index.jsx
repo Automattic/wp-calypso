@@ -68,7 +68,7 @@ class BlogPostsPage extends React.Component {
 				<span>
 					<Gridicon size={ 12 } icon="not-visible" className="blog-posts-page__not-used-icon" />
 					{ this.props.translate( 'Not in use.' ) + ' ' }
-					{ this.props.translate( '"%(pageTitle)s" is the front page.', {
+					{ this.props.translate( '"%(pageTitle)s" is the homepage.', {
 						args: {
 							pageTitle: this.getPageTitle( this.props.frontPage ),
 						},
@@ -81,7 +81,7 @@ class BlogPostsPage extends React.Component {
 			return (
 				<span>
 					<Gridicon size={ 12 } icon="house" className="blog-posts-page__front-page-icon" />
-					{ translate( 'Front page is showing your latest posts.' ) }
+					{ translate( 'The homepage is showing your latest posts.' ) }
 				</span>
 			);
 		}
