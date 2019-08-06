@@ -17,6 +17,7 @@ import { isEnabled } from 'config';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
@@ -28,7 +29,13 @@ class SiteType extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	handleImportFlowClick = () => this.submitStep( 'import' );
+	handleImportFlowClick = () => {
+		this.props.recordTracksEvent( 'calypso_signup_import_cta_click', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+		} );
+		this.submitStep( 'import' );
+	};
 
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
@@ -119,5 +126,5 @@ export default connect(
 		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
-	{ saveSignupStep, submitSiteType }
+	{ recordTracksEvent, saveSignupStep, submitSiteType }
 )( localize( SiteType ) );
