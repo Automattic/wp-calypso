@@ -8,12 +8,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import Button from 'components/button';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
@@ -33,13 +33,24 @@ class SiteType extends Component {
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
 
-		// Modify the flowname if the site type matches an override.
-		this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
+		// This hack ensures that users in the moveUserStepPosition A/B Test
+		// reach a compatible flow when selecting the online-store site type.
+		if (
+			abtest( 'moveUserStepPosition' ) === 'last' &&
+			this.props.flowName === 'onboarding-user-last' &&
+			siteTypeValue === 'online-store'
+		) {
+			this.props.goToNextStep( 'ecommerce-store-onboarding' );
+		} else {
+			// Modify the flowname if the site type matches an override.
+			this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
+		}
 	};
 
 	renderImportButton() {
 		if (
 			! isEnabled( 'signup/import-flow' ) ||
+			'last' === abtest( 'moveUserStepPosition' ) ||
 			'show' !== abtest( 'showImportFlowInSiteTypeStep' )
 		) {
 			return null;

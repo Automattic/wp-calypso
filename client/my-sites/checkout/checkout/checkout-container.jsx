@@ -8,25 +8,44 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import FormattedHeader from 'components/formatted-header';
+import CheckoutSeals from './checkout-seals';
 import Checkout from '../checkout';
 import CartData from 'components/data/cart';
 import CheckoutData from 'components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
+import { abtest } from 'lib/abtest';
 
 class CheckoutContainer extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			headerText: '',
+			subHeaderText: '',
+			shouldShowGuaranteeSeal: false,
 		};
 	}
 
 	renderCheckoutHeader() {
-		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
+		return (
+			this.state.headerText && (
+				<FormattedHeader
+					headerText={ this.state.headerText }
+					subHeaderText={ this.state.subHeaderText }
+				/>
+			)
+		);
 	}
 
-	setHeaderText = newHeaderText => {
-		this.setState( { headerText: newHeaderText } );
+	setHeaderText = ( newHeaderText, newSubHeaderText ) => {
+		this.setState( { headerText: newHeaderText, subHeaderText: newSubHeaderText } );
+	};
+
+	renderCheckoutSeals() {
+		return <CheckoutSeals guaranteeVisible={ this.state.shouldShowGuaranteeSeal } />;
+	}
+
+	showGuaranteeSeal = visible => {
+		this.setState( { shouldShowGuaranteeSeal: visible } );
 	};
 
 	render() {
@@ -56,6 +75,7 @@ class CheckoutContainer extends React.Component {
 							couponCode={ couponCode }
 							plan={ plan }
 							setHeaderText={ this.setHeaderText }
+							showGuaranteeSeal={ this.showGuaranteeSeal }
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 						>
@@ -64,9 +84,12 @@ class CheckoutContainer extends React.Component {
 					</TransactionData>
 
 					{ shouldShowCart && (
-						<CartData>
-							<SecondaryCart selectedSite={ selectedSite } />
-						</CartData>
+						<div className="checkout__secondary-cart-container">
+							<CartData>
+								<SecondaryCart selectedSite={ selectedSite } />
+							</CartData>
+							{ 'variant' === abtest( 'checkoutSealsCopyBundle' ) && this.renderCheckoutSeals() }
+						</div>
 					) }
 				</div>
 			</>

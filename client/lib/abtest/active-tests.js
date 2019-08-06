@@ -1,15 +1,5 @@
 /** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -119,8 +109,8 @@ export default {
 	showPlanUpsellNudge: {
 		datestamp: '20190712',
 		variations: {
-			variantShowNudge: 50,
-			control: 50,
+			variantShowNudge: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -134,13 +124,32 @@ export default {
 		defaultVariation: 'yearlyPlan',
 		allowExistingUsers: true,
 	},
+	checkoutSealsCopyBundle: {
+		datestamp: '20190613',
+		variations: {
+			variant: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		//localeTargets: 'any',
+  },
 	showImportFlowInSiteTypeStep: {
 		datestamp: '20991231',
 		variations: {
 			show: 50,
 			hide: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+	},
+	moveUserStepPosition: {
+		datestamp: '20190719',
+		variations: {
+			first: 50,
+			last: 50,
+		},
+		defaultVariation: 'first',
 		allowExistingUsers: true,
 	},
 };
