@@ -156,27 +156,27 @@ export class MySitesSidebar extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
-	trackChecklistClick = () => {
-		this.trackMenuItemClick( 'checklist' );
+	trackCustomerHomeClick = () => {
+		this.trackMenuItemClick( 'customer-home' );
 		this.onNavigate();
 	};
 
-	checklist() {
+	customerHome() {
 		const { canUserUseChecklistMenu, path, siteSuffix, siteId, translate } = this.props;
 
 		if ( ! siteId || ! canUserUseChecklistMenu ) {
 			return null;
 		}
 
-		const checklistLink = '/checklist' + siteSuffix;
+		const customerHomeLink = '/customer-home' + siteSuffix;
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ translate( 'Checklist' ) }
-				selected={ itemLinkMatches( [ '/checklist' ], path ) }
-				link={ checklistLink }
-				onNavigate={ this.trackChecklistClick }
-				materialIcon="check_circle"
+				label={ translate( 'Customer Home' ) }
+				selected={ itemLinkMatches( [ '/customer-home' ], path ) }
+				link={ customerHomeLink }
+				onNavigate={ this.trackCustomerHomeClick }
+				materialIcon="home"
 			/>
 		);
 	}
@@ -658,7 +658,7 @@ export class MySitesSidebar extends Component {
 			<div className="sidebar__menu-wrapper">
 				<SidebarMenu>
 					<ul>
-						{ this.checklist() }
+						{ this.customerHome() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
