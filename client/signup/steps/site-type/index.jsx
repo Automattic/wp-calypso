@@ -41,7 +41,14 @@ class SiteType extends Component {
 		this.props.submitSiteType( siteTypeValue );
 
 		// Modify the flowname if the site type matches an override.
-		this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
+		let flowName;
+		if ( 'import-onboarding' === this.props.flowName ) {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
+		} else {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || this.props.flowName;
+		}
+
+		this.props.goToNextStep( flowName );
 	};
 
 	renderImportButton() {
