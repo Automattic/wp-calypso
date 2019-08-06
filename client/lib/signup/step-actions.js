@@ -173,7 +173,7 @@ export function createSiteWithCart(
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	if ( 'import' === flowName ) {
+	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
 		const importingFromUrl = getNuxUrlInputValue( state );
 		newSiteParams.blog_name = normalizeImportUrl( importingFromUrl );
 		newSiteParams.find_available_url = true;
@@ -372,8 +372,6 @@ export function createAccount(
 	const siteVertical = getSiteVertical( state );
 	const surveySiteType = getSurveySiteType( state ).trim();
 	const userExperience = getUserExperience( state );
-	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
-	const importFromSite = 'import' === flowName ? getNuxUrlInputValue( state ) : '';
 
 	if ( service ) {
 		// We're creating a new social account
@@ -422,8 +420,6 @@ export function createAccount(
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: siteVertical,
 					nux_q_question_experience: userExperience || undefined,
-					import_engine: importEngine,
-					import_from_site: importFromSite,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 				},
@@ -653,32 +649,33 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 }
 
-export function createPasswordlessUser( callback, dependencies, data ) {
-	const { email } = data;
-
-	wpcom.undocumented().usersEmailNew( { email }, function( error, response ) {
-		if ( error ) {
-			callback( error );
-
-			return;
-		}
-		callback( error, response );
-	} );
+/**
+ * Creates a user account and sends the user a verification code via email to confirm the account.
+ * Returns the dependencies for the step.
+ *
+ * @param {function} callback Callback function
+ * @param {object}   data     POST data object
+ */
+export function createPasswordlessUser( callback, { email } ) {
+	wpcom
+		.undocumented()
+		.usersEmailNew( { email }, null )
+		.then( response => callback( null, response ) )
+		.catch( err => callback( err ) );
 }
 
-export function verifyPasswordlessUser( callback, dependencies, data ) {
-	const { email, code } = data;
-
-	wpcom.undocumented().usersEmailVerification( { email, code }, function( error, response ) {
-		if ( error ) {
-			callback( error );
-
-			return;
-		}
-		const providedDependencies = assign(
-			{},
-			{ email, username: email, bearer_token: response.token.access_token }
-		);
-		callback( error, providedDependencies );
-	} );
+/**
+ * Verifies a passwordless user code.
+ *
+ * @param {function} callback Callback function
+ * @param {object}   data     POST data object
+ */
+export async function verifyPasswordlessUser( callback, { email, code } ) {
+	wpcom
+		.undocumented()
+		.usersEmailVerification( { email, code }, null )
+		.then( response =>
+			callback( null, { email, username: email, bearer_token: response.token.access_token } )
+		)
+		.catch( err => callback( err ) );
 }

@@ -7,7 +7,7 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 domReady( () => {
-	if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
+	if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 		return;
 	}
 	dispatch( 'core/notices' ).createNotice(

@@ -220,7 +220,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						page( `/checkout/${ selectedSiteSlug }/premium/` );
 					},
 			  };
-		const title = hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn ad revenue' );
+		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
 		const body = hasSetupAds
 			? translate(
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."

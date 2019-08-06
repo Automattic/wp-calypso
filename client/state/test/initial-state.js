@@ -494,6 +494,10 @@ describe( 'initial-state', () => {
 						storedState[ 'redux-state-123456789:signup' ].progress
 					);
 				} );
+
+				test( 'does not add timestamp to initial state', () => {
+					expect( state._timestamp ).toBeUndefined();
+				} );
 			} );
 		} );
 	} );

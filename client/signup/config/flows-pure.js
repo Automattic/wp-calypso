@@ -35,11 +35,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans',
+				'plans-business',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2019-08-01',
+			lastModified: '2019-08-05',
 		},
 
 		premium: {
@@ -50,11 +50,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans',
+				'plans-premium',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2019-08-01',
+			lastModified: '2019-08-05',
 		},
 
 		personal: {
@@ -65,11 +65,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans',
+				'plans-personal',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2019-08-01',
+			lastModified: '2019-08-05',
 		},
 
 		free: {
@@ -80,11 +80,10 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans',
 			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
-			lastModified: '2019-08-01',
+			lastModified: '2019-08-05',
 		},
 
 		blog: {
@@ -281,20 +280,34 @@ export function generateFlows( {
 		pageTitle: translate( 'Launch your site' ),
 	};
 
+	const importSteps = [ 'from-url', 'domains' ];
+
+	const importDestination = ( { importEngine, importSiteUrl, siteSlug } ) =>
+		addQueryArgs(
+			{
+				engine: importEngine || null,
+				'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
+				signup: 1,
+			},
+			`/import/${ siteSlug }`
+		);
+
 	flows.import = {
-		steps: [ 'user', 'from-url', 'domains' ],
-		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
-			addQueryArgs(
-				{
-					engine: importEngine || null,
-					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
-					signup: 1,
-				},
-				`/import/${ siteSlug }`
-			),
+		steps: [ 'user', ...importSteps ],
+		destination: importDestination,
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
 		lastModified: '2019-07-30',
+	};
+
+	flows[ 'import-onboarding' ] = {
+		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
+		// when switching from the onboarding flow.
+		steps: [ 'user', 'site-type', ...importSteps ],
+		destination: importDestination,
+		description: 'Import flow that can be used from the onboarding flow',
+		disallowResume: true,
+		lastModified: '2019-08-01',
 	};
 
 	flows.reader = {
@@ -318,6 +331,30 @@ export function generateFlows( {
 		destination: getSiteDestination,
 		description: 'Allow users to select a plan without a domain',
 		lastModified: '2018-12-12',
+	};
+
+	// Used by moveUserStepPosition A/B test.
+	flows[ 'onboarding-user-last' ] = {
+		steps: [
+			'site-type',
+			'site-topic-with-preview',
+			'site-title-with-preview',
+			'site-style-with-preview',
+			'domains-with-preview',
+			'plans',
+			'user',
+		],
+		destination: getSignupDestination,
+		description: 'Variant of the onboarding flow, but with the user step in the last position.',
+		lastModified: '2019-07-19',
+	};
+
+	// Used by moveUserStepPosition A/B test.
+	flows[ 'ecommerce-store-onboarding' ] = {
+		steps: [ 'site-type', 'domains', 'plans-ecommerce', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow for creating an online store, with user step in last position',
+		lastModified: '2019-07-19',
 	};
 
 	return flows;

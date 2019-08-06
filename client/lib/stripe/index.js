@@ -149,20 +149,27 @@ export function useStripeJs( stripeConfiguration ) {
 		if ( ! stripeConfiguration ) {
 			return;
 		}
-		if ( window.Stripe ) {
-			debug( 'stripe.js already loaded' );
-			setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
-			return;
-		}
-		debug( 'loading stripe.js...' );
-		loadScript( stripeConfiguration.js_url, function( error ) {
-			if ( error ) {
-				debug( 'stripe.js script ' + error.src + ' failed to load.' );
+		try {
+			if ( window.Stripe ) {
+				debug( 'stripe.js already loaded' );
+				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				return;
 			}
-			debug( 'stripe.js loaded!' );
-			setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
-		} );
+			debug( 'loading stripe.js...' );
+			loadScript( stripeConfiguration.js_url, function( error ) {
+				if ( error ) {
+					debug( 'stripe.js script ' + error.src + ' failed to load.' );
+					return;
+				}
+				debug( 'stripe.js loaded!' );
+				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+			} );
+		} catch ( error ) {
+			if ( error ) {
+				debug( 'error while loading stripeJs', error );
+				return;
+			}
+		}
 	}, [ stripeConfiguration ] );
 	return stripeJs;
 }

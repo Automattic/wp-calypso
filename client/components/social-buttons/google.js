@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -191,7 +191,7 @@ class GoogleLoginButton extends Component {
 		}
 
 		return (
-			<div className="social-buttons__button-container">
+			<Fragment>
 				{ customButton ? (
 					customButton
 				) : (
@@ -224,7 +224,7 @@ class GoogleLoginButton extends Component {
 				>
 					{ preventWidows( this.state.error ) }
 				</Popover>
-			</div>
+			</Fragment>
 		);
 	}
 }

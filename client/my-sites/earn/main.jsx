@@ -28,7 +28,6 @@ import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
-import config from 'config';
 import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
@@ -52,26 +51,14 @@ class EarningsMain extends Component {
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
 
-		if ( config.isEnabled( 'memberships' ) && ! config.isEnabled( 'earn-relayout' ) ) {
-			tabs.push( {
-				title: translate( 'Recurring Payments' ),
-				path: '/earn/payments' + pathSuffix,
-				id: 'payments',
-			} );
-		}
-
 		if ( canAccessAds( this.props.site ) ) {
 			tabs.push( {
-				title: config.isEnabled( 'earn-relayout' )
-					? translate( 'Earnings' )
-					: translate( 'Ads Earnings' ),
+				title: translate( 'Earnings' ),
 				path: '/earn/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
 			} );
 			tabs.push( {
-				title: config.isEnabled( 'earn-relayout' )
-					? translate( 'Settings' )
-					: translate( 'Ads Settings' ),
+				title: translate( 'Settings' ),
 				path: '/earn/ads-settings' + pathSuffix,
 				id: 'ads-settings',
 			} );
@@ -153,31 +140,31 @@ class EarningsMain extends Component {
 
 	getHeaderCake = () => {
 		const headerText = this.getHeaderText();
-		return config.isEnabled( 'earn-relayout' ) && headerText ? (
-			<HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>
-		) : null;
+		return headerText && <HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>;
 	};
 
 	getSectionNav = section => {
 		const currentPath = this.getCurrentPath();
 
-		return ! section.startsWith( 'payments' ) || ! config.isEnabled( 'earn-relayout' ) ? (
-			<SectionNav selectedText={ this.getSelectedText() }>
-				<NavTabs>
-					{ this.getFilters().map( filterItem => {
-						return (
-							<NavItem
-								key={ filterItem.id }
-								path={ filterItem.path }
-								selected={ filterItem.path === currentPath }
-							>
-								{ filterItem.title }
-							</NavItem>
-						);
-					} ) }
-				</NavTabs>
-			</SectionNav>
-		) : null;
+		return (
+			! section.startsWith( 'payments' ) && (
+				<SectionNav selectedText={ this.getSelectedText() }>
+					<NavTabs>
+						{ this.getFilters().map( filterItem => {
+							return (
+								<NavItem
+									key={ filterItem.id }
+									path={ filterItem.path }
+									selected={ filterItem.path === currentPath }
+								>
+									{ filterItem.title }
+								</NavItem>
+							);
+						} ) }
+					</NavTabs>
+				</SectionNav>
+			)
+		);
 	};
 
 	render() {
