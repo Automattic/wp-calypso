@@ -86,21 +86,25 @@ describe( 'actions', () => {
 		test( 'should dispatch receive action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
-					receiveSiteSettings( 2916284, {
-						blogname: 'blog name',
-						blogdescription: 'blog description',
-						settingKey: 'cat',
-					} )
+					sinon.match(
+						receiveSiteSettings( 2916284, {
+							blogname: 'blog name',
+							blogdescription: 'blog description',
+							settingKey: 'cat',
+						} )
+					)
 				);
 			} );
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: SITE_SETTINGS_REQUEST_SUCCESS,
-					siteId: 2916284,
-				} );
+				expect( spy ).to.have.been.calledWith(
+					sinon.match( {
+						type: SITE_SETTINGS_REQUEST_SUCCESS,
+						siteId: 2916284,
+					} )
+				);
 			} );
 		} );
 
