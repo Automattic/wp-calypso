@@ -11,6 +11,7 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
+import { abtest } from 'lib/abtest';
 import { generateFlows } from 'signup/config/flows-pure';
 
 const user = userFactory();
