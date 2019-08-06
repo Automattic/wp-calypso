@@ -10787,9 +10787,9 @@
 			"integrity": "sha1-3BXKHGcjh8p2vTesCjlbogQqLCg="
 		},
 		"get-video-id": {
-			"version": "3.1.2",
-			"resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-3.1.2.tgz",
-			"integrity": "sha512-cz8/LJ6HHRkxUdOCDgdGoJCTGbaCEq0GsGFkxkabL6oy5OWfdsn3TizQtaOerbeX4JhiRmPQlCM/XZ9SSbed5Q==",
+			"version": "3.1.4",
+			"resolved": "https://registry.npmjs.org/get-video-id/-/get-video-id-3.1.4.tgz",
+			"integrity": "sha512-XOZ60NZ60ozTtoWtPPpA3TC9JgDXgcd5nTfYwjBhZWAx3w48HRq6EqKp2bUJ/3F+BWgiMMHg4IkQ+acO6LxfMQ==",
 			"requires": {
 				"get-src": "^1.0.1"
 			}
