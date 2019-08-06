@@ -41,7 +41,7 @@ import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
+import { getSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { JPC_PATH_PLANS, JPC_PATH_SITE_TYPE, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -69,6 +69,7 @@ import {
 import {
 	getAuthAttempts,
 	getAuthorizationData,
+	getJetpackSiteByUrl,
 	getUserAlreadyConnected,
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
@@ -580,7 +581,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, jpVersion, redirectAfterAuth } = this.props.authQuery;
-		const { canManageOptions, isAtomic, partnerSlug } = this.props;
+		const { canManageOptions, isAtomic, partnerSlug, site } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -593,6 +594,7 @@ export class JetpackAuthorize extends Component {
 		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
 		const nextRoute =
 			config.isEnabled( 'jetpack/connect/site-questions' ) &&
+			! site &&
 			isJetpackVersionSupported &&
 			canManageOptions &&
 			! isAtomic
@@ -712,8 +714,11 @@ const connectComponent = connect(
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
+		const rawSite = authQuery.site ? getJetpackSiteByUrl( state, authQuery.site ) : null;
+		const site = rawSite ? getSite( state, rawSite.ID ) : null;
 
 		return {
+			site,
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( authQuery.site ),
