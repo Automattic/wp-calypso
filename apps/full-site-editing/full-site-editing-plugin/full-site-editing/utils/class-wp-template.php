@@ -114,7 +114,7 @@ class WP_Template {
 			return;
 		}
 
-		return $template_post->post_content;
+		return '<div class="fse-template-content">' . $template_post->post_content . '</div>';
 	}
 
 	/**
