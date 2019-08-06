@@ -334,6 +334,30 @@ export function generateFlows( {
 		lastModified: '2018-12-12',
 	};
 
+	// Used by moveUserStepPosition A/B test.
+	flows[ 'onboarding-user-last' ] = {
+		steps: [
+			'site-type',
+			'site-topic-with-preview',
+			'site-title-with-preview',
+			'site-style-with-preview',
+			'domains-with-preview',
+			'plans',
+			'user',
+		],
+		destination: getSignupDestination,
+		description: 'Variant of the onboarding flow, but with the user step in the last position.',
+		lastModified: '2019-07-19',
+	};
+
+	// Used by moveUserStepPosition A/B test.
+	flows[ 'ecommerce-store-onboarding' ] = {
+		steps: [ 'site-type', 'domains', 'plans-ecommerce', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow for creating an online store, with user step in last position',
+		lastModified: '2019-07-19',
+	};
+
 	return flows;
 }
 
