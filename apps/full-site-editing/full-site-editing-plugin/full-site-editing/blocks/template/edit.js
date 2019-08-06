@@ -24,7 +24,7 @@ import { addQueryArgs } from '@wordpress/url';
 import './style.scss';
 
 const TemplateEdit = compose(
-	withState( { templateClientId: null } ),
+	withState( { templateClientId: null, shouldCloseSidebarOnSelect: true } ),
 	withSelect( ( select, { attributes, templateClientId } ) => {
 		const { getEntityRecord } = select( 'core' );
 		const { getCurrentPostId, isEditedPostDirty } = select( 'core/editor' );
@@ -44,6 +44,7 @@ const TemplateEdit = compose(
 			templateBlock: getBlock( templateClientId ),
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
 			isDirty: isEditedPostDirty(),
+			isEditorSidebarOpened: !! select( 'core/edit-post' ).isEditorSidebarOpened(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
@@ -65,6 +66,8 @@ const TemplateEdit = compose(
 				receiveBlocks( [ templateBlock ] );
 				setState( { templateClientId: templateBlock.clientId } );
 			},
+			closeGeneralSidebar: dispatch( 'core/edit-post' ).closeGeneralSidebar,
+			clearSelectedBlock: dispatch( 'core/editor' ).clearSelectedBlock,
 		};
 	} )
 )(
@@ -77,6 +80,12 @@ const TemplateEdit = compose(
 		templateTitle,
 		isDirty,
 		savePost,
+		isSelected,
+		isEditorSidebarOpened,
+		closeGeneralSidebar,
+		clearSelectedBlock,
+		shouldCloseSidebarOnSelect,
+		setState,
 	} ) => {
 		if ( ! template ) {
 			return (
@@ -91,6 +100,20 @@ const TemplateEdit = compose(
 				window.location.href = editTemplateUrl;
 			}
 			receiveTemplateBlocks();
+		} );
+
+		useEffect( () => {
+			if ( isSelected ) {
+				if ( ! isEditorSidebarOpened ) {
+					setState( { shouldCloseSidebarOnSelect: false } );
+				} else if ( shouldCloseSidebarOnSelect ) {
+					closeGeneralSidebar();
+				} else {
+					clearSelectedBlock();
+				}
+			} else {
+				setState( { shouldCloseSidebarOnSelect: true } );
+			}
 		} );
 
 		const { align, className } = attributes;
@@ -122,14 +145,16 @@ const TemplateEdit = compose(
 								setAttributes={ noop }
 							/>
 						</Disabled>
-						<Placeholder
-							className="template-block__overlay"
-							instructions={ __( "This template will appear on all of your site's pages." ) }
-						>
-							<Button href={ editTemplateUrl } onClick={ save } isDefault>
-								{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
-							</Button>
-						</Placeholder>
+						{ isSelected && (
+							<Placeholder
+								className="template-block__overlay"
+								instructions={ __( "This template will appear on all of your site's pages." ) }
+							>
+								<Button href={ editTemplateUrl } onClick={ save } isDefault>
+									{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
+								</Button>
+							</Placeholder>
+						) }
 					</Fragment>
 				) }
 			</div>

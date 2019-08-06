@@ -1,9 +1,6 @@
 .template-block {
 	min-height: 200px;
-
-	&:hover .template-block__overlay {
-		display: flex;
-	}
+	
 	.components-button .components-spinner {
 		margin-top: 4px;
 	}
@@ -32,16 +29,22 @@
 }
 
 .template-block__overlay {
-	display: none;
+	display: flex;
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: calc( 50% - 200px );
 	width: 100%;
-	height: 100%;
-	background: rgba( #000000, 0.75 );
-
+	max-width: 400px;
+	min-height: unset;
+	background: white;
+	z-index: 2;
+	
 	.components-placeholder__instructions {
-		color: white;
+		font-size: 16px;
+	}
+
+	@media screen and ( max-width: 600px ) {
+		left: 0;
 	}
 }
 
@@ -52,6 +55,11 @@
 			.block-editor-block-contextual-toolbar {
 				display: none;
 			}
+
+			& > .editor-block-list__block-edit.block-editor-block-list__block-edit::before {
+				background-color: rgba( #000000, 0.5 );
+				z-index: 1;
+			}
 		}
 
 		&.block-editor-block-list__block {
@@ -61,12 +69,6 @@
 			&.is-navigate-mode,
 			&.is-hovered {
 				> .block-editor-block-list__block-edit {
-					&::before {
-						transition: none;
-						border: none;
-						outline: none;
-						box-shadow: none;
-					}
 					> .block-editor-block-list__breadcrumb {
 						display: none;
 					}
