@@ -299,7 +299,6 @@ class Site extends React.Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your site.' ) }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSiteForm() }
 			/>
 		);

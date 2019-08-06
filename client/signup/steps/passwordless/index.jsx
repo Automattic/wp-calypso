@@ -249,7 +249,6 @@ export class PasswordlessStep extends Component {
 				headerText={ this.props.headerText }
 				subHeaderText={ this.props.translate( 'Create a WordPress.com account' ) }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

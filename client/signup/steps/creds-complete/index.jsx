@@ -25,7 +25,6 @@ class CredsCompleteStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -61,7 +60,6 @@ class CredsCompleteStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderStepContent() }
 				goToNextStep={ this.skipStep }
 				hideFormattedHeader={ true }

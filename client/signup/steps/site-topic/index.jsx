@@ -26,7 +26,6 @@ class SiteTopicStep extends Component {
 		isUserInput: PropTypes.bool,
 		positionInFlow: PropTypes.number.isRequired,
 		submitSiteVertical: PropTypes.func.isRequired,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		siteType: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -62,7 +61,6 @@ class SiteTopicStep extends Component {
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ this.props.signupProgress }
 					stepContent={
 						<SiteTopicForm submitForm={ this.submitSiteTopic } siteType={ this.props.siteType } />
 					}

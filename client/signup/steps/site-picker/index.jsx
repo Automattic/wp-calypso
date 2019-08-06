@@ -63,7 +63,6 @@ class SitePicker extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderScreen() }
 			/>
 		);

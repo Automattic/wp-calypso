@@ -29,7 +29,6 @@ class RewindFormCreds extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 
 		// Connected props
@@ -88,7 +87,6 @@ class RewindFormCreds extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.stepContent() }
 				hideFormattedHeader={ true }
 				hideSkip={ true }
