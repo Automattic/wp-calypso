@@ -39,7 +39,7 @@ import { withoutNotice } from 'state/notices/actions';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
-import { saveSiteSettings } from 'state/site-settings/actions';
+import { updateSiteFrontPage } from 'state/site-settings/actions';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -220,13 +220,11 @@ class Page extends Component {
 		);
 	}
 
-	setFrontPage = () => {
-		this.props.saveSiteSettings( this.props.siteId, {
-			show_on_front: 'page',
-			page_on_front: this.props.page.ID,
-			apiVersion: '1.3',
+	setFrontPage = () =>
+		this.props.updateSiteFrontPage( this.props.siteId, {
+			isPageOnFront: true,
+			frontPageId: this.props.page.ID,
 		} );
-	};
 
 	getFrontPageItem() {
 		const { page, translate } = this.props;
@@ -670,7 +668,7 @@ const mapDispatch = {
 	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
-	saveSiteSettings,
+	updateSiteFrontPage,
 };
 
 export default flow(

@@ -5,6 +5,12 @@
 import { isPlainObject, values } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { getSiteOption } from 'state/sites/selectors';
+import getSiteSetting from 'state/selectors/get-site-setting';
+
+/**
  * Normalize API Settings
  *
  * @format
@@ -32,3 +38,14 @@ export function normalizeSettings( settings ) {
 		return memo;
 	}, {} );
 }
+
+export const getDefaultSiteFrontPageSettings = ( state, siteId ) => {
+	if ( getSiteSetting( state, siteId, 'show_on_front' ) ) {
+		return {};
+	}
+	return {
+		show_on_front: getSiteOption( state, siteId, 'show_on_front' ),
+		page_on_front: getSiteOption( state, siteId, 'page_on_front' ),
+		page_for_posts: getSiteOption( state, siteId, 'page_for_posts' ),
+	};
+};
