@@ -49,6 +49,8 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
+import { getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
+import { suggestDomainFromImportUrl } from 'lib/importers/utils';
 
 /**
  * Style dependencies
@@ -88,7 +90,7 @@ class DomainsStep extends React.Component {
 		const search = get( props, 'queryObject.search', false ) === 'yes';
 
 		// If we landed anew from `/domains` and it's the `new-flow` variation, always rerun the search
-		if ( search && props.path.indexOf( '?' ) !== -1 ) {
+		if ( ( search && props.path.indexOf( '?' ) !== -1 ) || props.importSiteUrl ) {
 			this.searchOnInitialRender = true;
 		}
 
@@ -354,8 +356,8 @@ class DomainsStep extends React.Component {
 		// If it's the first load, rerun the search with whatever we get from the query param
 		const initialQuery = get( this.props, 'queryObject.new', '' );
 		if (
-			// If we landed here from /domains Search
-			( initialQuery && this.searchOnInitialRender ) ||
+			// If we landed here from /domains Search or in an import flow
+			( ( this.props.importSiteUrl || initialQuery ) && this.searchOnInitialRender ) ||
 			// If the subdomain type has changed, rerun the search
 			( initialState &&
 				initialState.subdomainSearchResults &&
@@ -383,6 +385,8 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
+		const importDomainSuggestion = suggestDomainFromImportUrl( this.props.importSiteUrl );
+
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -404,7 +408,7 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				suggestion={ initialQuery }
+				suggestion={ initialQuery || importDomainSuggestion }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
@@ -680,6 +684,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
+			importSiteUrl: getImporterSiteUrl( state ),
 		};
 	},
 	{
