@@ -619,7 +619,7 @@ class WpcomChecklistComponent extends PureComponent {
 				disableIcon={ disabled }
 				isButtonDisabled={ disabled }
 				noticeText={
-					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
+					disabled && translate( 'Confirm your email address before launching your site.' )
 				}
 				onClick={ this.handleLaunchSite( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
