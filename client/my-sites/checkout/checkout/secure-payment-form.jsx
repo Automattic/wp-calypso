@@ -612,7 +612,7 @@ export class SecurePaymentForm extends Component {
 		const { translate } = this.props;
 
 		if ( 'variant' === abtest( 'checkoutSealsCopyBundle' ) ) {
-			const headerText = translate( 'Confirm Your Order' );
+			const headerText = translate( 'Confirm your order' );
 			const subHeaderText = translate(
 				'Review your order and proceed with a payment method to finish'
 			);
