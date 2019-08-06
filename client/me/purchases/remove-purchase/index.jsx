@@ -17,6 +17,7 @@ import config from 'config';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
+import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
@@ -33,7 +34,6 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import HappychatButton from 'components/happychat/button';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
 
@@ -60,17 +60,6 @@ class RemovePurchase extends Component {
 		survey: {},
 	};
 
-	recordChatEvent( eventAction ) {
-		const { purchase } = this.props;
-		this.props.recordTracksEvent( eventAction, {
-			survey_step: this.state.surveyStep,
-			purchase: purchase.productSlug,
-			is_plan: isPlan( purchase ),
-			is_domain_registration: isDomainRegistration( purchase ),
-			has_included_domain: hasIncludedDomain( purchase ),
-		} );
-	}
-
 	closeDialog = () => {
 		this.setState( {
 			isDialogVisible: false,
@@ -83,10 +72,7 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: true } );
 	};
 
-	onClickChatButton = event => {
-		this.recordChatEvent( 'calypso_precancellation_chat_click' );
-		event.preventDefault();
-
+	onClickChatButton = () => {
 		this.setState( { isDialogVisible: false } );
 	};
 
@@ -139,13 +125,12 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	getChatButton = () => {
-		return (
-			<HappychatButton className="remove-purchase__chat-button" onClick={ this.onClickChatButton }>
-				{ this.props.translate( 'Need help? Chat with us' ) }
-			</HappychatButton>
-		);
-	};
+	getChatButton = () => (
+		<PrecancellationChatButton
+			onClick={ this.onClickChatButton }
+			purchase={ this.props.purchase }
+		/>
+	);
 
 	getContactUsButton = () => {
 		return (
@@ -179,11 +164,6 @@ class RemovePurchase extends Component {
 
 	renderPlanDialog() {
 		const { purchase, site } = this.props;
-		const prependedChatButton =
-			config.isEnabled( 'upgrades/precancellation-chat' ) &&
-			this.state.surveyStep !== 'happychat_step'
-				? [ this.getChatButton() ]
-				: [];
 
 		return (
 			<CancelPurchaseForm
@@ -195,7 +175,6 @@ class RemovePurchase extends Component {
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
-				extraPrependedButtons={ prependedChatButton }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
 			/>
 		);

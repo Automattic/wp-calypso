@@ -2,8 +2,10 @@
 /**
  * Render template block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Renders template.
@@ -24,12 +26,12 @@ function render_template_block( $attributes ) {
 	ob_start();
 	?>
 
-		<div class="template-part<?php echo esc_attr( $align ); ?>">
+		<div class="template<?php echo esc_attr( $align ); ?>">
 			<?php
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo apply_filters( 'the_content', get_the_content() );
 			?>
-		</div><!-- .template-part -->
+		</div><!-- .template -->
 
 	<?php
 	$content = ob_get_clean();

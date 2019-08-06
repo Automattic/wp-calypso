@@ -35,6 +35,7 @@ import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/a
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
 import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
+import { getNpsSurveyFeedback } from 'state/nps-survey/selectors';
 import { generateSubjectFromMessage } from './utils';
 
 /**
@@ -78,6 +79,7 @@ export class HelpContactForm extends React.PureComponent {
 			value: PropTypes.any,
 			requestChange: PropTypes.func.isRequired,
 		} ),
+		npsSurveyFeedback: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -94,6 +96,7 @@ export class HelpContactForm extends React.PureComponent {
 		},
 		showingQandAStep: false,
 		showQandAOnInlineHelpContactForm: () => {},
+		npsSurveyFeedback: '',
 	};
 
 	/**
@@ -108,6 +111,17 @@ export class HelpContactForm extends React.PureComponent {
 		sibylClicked: false,
 		qanda: [],
 	};
+
+	componentWillMount() {
+		const { npsSurveyFeedback, translate } = this.props;
+
+		if ( npsSurveyFeedback ) {
+			this.state.message =
+				'\n' +
+				translate( 'The comment below is copied from your survey response:' ) +
+				`\n--------------------\n${ npsSurveyFeedback }`;
+		}
+	}
 
 	componentDidMount() {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
@@ -465,6 +479,7 @@ const mapStateToProps = state => ( {
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
 	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
+	npsSurveyFeedback: getNpsSurveyFeedback( state ),
 } );
 
 const mapDispatchToProps = {

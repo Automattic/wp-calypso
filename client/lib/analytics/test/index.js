@@ -7,17 +7,23 @@
  * External dependencies
  */
 import url from 'url';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
 import analytics from '../';
+import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
 
 jest.mock( 'config', () => require( './mocks/config' ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
+	recordAliasInFloodlight: jest.fn(),
 } ) );
 jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
+jest.mock( 'cookie', () => ( {
+	parse: jest.fn(),
+} ) );
 
 function logImageLoads() {
 	const imagesLoaded = [];
@@ -92,6 +98,48 @@ describe( 'Analytics', () => {
 			expect( imagesLoaded[ 0 ].query.go ).toEqual( 'time' );
 			expect( imagesLoaded[ 0 ].query.another ).toEqual( 'one' );
 			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
+		} );
+	} );
+
+	describe( 'identifyUser', () => {
+		beforeEach( () => {
+			window._tkq.push = jest.fn();
+			cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
+		} );
+
+		afterEach( () => {
+			recordAliasInFloodlight.mockReset();
+		} );
+
+		test( 'should not call window._tkq.push or recordAliasInFloodlight when there is no user info', () => {
+			analytics.identifyUser();
+			expect( window._tkq.push ).not.toHaveBeenCalled();
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should not call window._tkq.push and recordAliasInFloodlight when username does not exist', () => {
+			analytics.identifyUser( undefined, '8' );
+			expect( window._tkq.push ).not.toHaveBeenCalled();
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should not call window._tkq.push and recordAliasInFloodlight when user id does not exist', () => {
+			analytics.identifyUser( 'eight', undefined );
+			expect( window._tkq.push ).not.toHaveBeenCalled();
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should call window._tkq.push and recordAliasInFloodlight when username and id exists', () => {
+			analytics.identifyUser( 'eight', '8' );
+			expect( recordAliasInFloodlight ).toHaveBeenCalled();
+			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', '8', 'eight' ] );
+		} );
+
+		test( 'should not call recordAliasInFloodlight when anonymousUserId does not exist', () => {
+			cookie.parse.mockImplementationOnce( () => ( {} ) );
+			analytics.identifyUser( 'eight', '8' );
+			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
+			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', '8', 'eight' ] );
 		} );
 	} );
 } );

@@ -60,7 +60,7 @@ interface Props {
 	postType: T.PostType;
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
-	fseParentPostId: T.PostId;
+	fseParentPageId: T.PostId;
 }
 
 interface State {
@@ -69,6 +69,7 @@ interface State {
 	editedPost?: any;
 	gallery?: any;
 	isIframeLoaded: boolean;
+	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
 	isConversionPromptVisible: boolean;
@@ -93,6 +94,7 @@ enum EditorActions {
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
+	GetCloseButtonUrl = 'getCloseButtonUrl',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -102,6 +104,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		isPreviewVisible: false,
 		isConversionPromptVisible: false,
 		previewUrl: 'about:blank',
+		currentIFrameUrl: '',
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -167,6 +170,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.setState( {
 				classicBlockEditorId: data.editorId,
 				isMediaModalVisible: true,
+				multiple: true,
 			} );
 		}
 
@@ -228,12 +232,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
-			if ( unsavedChanges ) {
-				this.props.markChanged();
-			} else {
-				this.props.markSaved();
-			}
-			this.props.navigate( this.props.closeUrl );
+			this.onCloseEditor( unsavedChanges, ports[ 0 ] );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -262,6 +261,34 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.templateParts.push( [ templatePartId, ports[ 0 ] ] );
 			this.sendTemplatePartEditorUrl( templatePartId );
 		}
+
+		if ( EditorActions.GetCloseButtonUrl === action ) {
+			const { closeUrl } = this.props;
+			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
+		}
+	};
+
+	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
+		const { closeUrl } = this.props;
+
+		if ( hasUnsavedChanges ) {
+			this.props.markChanged();
+		} else {
+			this.props.markSaved();
+		}
+
+		if ( this.shouldDoServerBackNav() ) {
+			messagePort.postMessage( `${ window.location.origin }${ closeUrl }` );
+		} else {
+			this.props.navigate( closeUrl );
+		}
+	};
+
+	// If we are on a template part and have a parent page
+	// ID, we want to do a server nav back to that page.
+	shouldDoServerBackNav = () => {
+		const { fseParentPageId, postType } = this.props;
+		return null != fseParentPageId && 'wp_template_part' === postType;
 	};
 
 	loadRevision = ( {
@@ -487,7 +514,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			previewUrl,
 			postUrl,
 			editedPost,
+			currentIFrameUrl,
 		} = this.state;
+
+		const isUsingClassicBlock = !! classicBlockEditorId;
 
 		return (
 			<Fragment>
@@ -504,14 +534,18 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ shouldLoadIframe && (
+					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						/* eslint-disable-next-line jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
 							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
-							src={ iframeUrl }
-							onLoad={ () => this.setState( { isIframeLoaded: true } ) }
+							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
+							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
+							// in Jetpack sites
+							onLoad={ () =>
+								this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } )
+							}
 						/>
 					) }
 				</div>
@@ -519,8 +553,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					<EditorMediaModal
 						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
 						enabledFilters={ getEnabledFilters( allowedTypes ) }
-						galleryViewEnabled={ false }
-						isGutenberg={ ! classicBlockEditorId }
+						galleryViewEnabled={ isUsingClassicBlock }
+						isGutenberg={ ! isUsingClassicBlock }
 						onClose={ this.closeMediaModal }
 						onInsertMedia={ this.insertClassicBlockMedia }
 						single={ ! multiple }

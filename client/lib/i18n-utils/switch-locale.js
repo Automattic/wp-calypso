@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
@@ -63,6 +60,18 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 	switchWebpackCSS( isRTL );
 }
 
+async function getLanguageFile( targetLocaleSlug ) {
+	const url = getLanguageFileUrl( targetLocaleSlug );
+
+	const response = await fetch( url );
+	if ( response.ok ) {
+		return await response.json();
+	}
+
+	// Invalid response.
+	throw new Error();
+}
+
 let lastRequestedLocale = null;
 export default function switchLocale( localeSlug ) {
 	// check if the language exists in config.languages
@@ -89,28 +98,28 @@ export default function switchLocale( localeSlug ) {
 		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
 		setLocaleInDOM( domLocaleSlug, !! language.rtl );
 	} else {
-		request.get( getLanguageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
-			if ( error ) {
+		getLanguageFile( targetLocaleSlug ).then(
+			// Success.
+			body => {
+				// Handle race condition when we're requested to switch to a different
+				// locale while we're in the middle of request, we should abandon result
+				if ( targetLocaleSlug !== lastRequestedLocale ) {
+					return;
+				}
+
+				i18n.setLocale( body );
+
+				setLocaleInDOM( domLocaleSlug, !! language.rtl );
+
+				loadUserUndeployedTranslations( targetLocaleSlug );
+			},
+			// Failure.
+			() => {
 				debug(
-					'Encountered an error loading locale file for ' +
-						localeSlug +
-						'. Falling back to English.'
+					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
 				);
-				return;
 			}
-
-			// Handle race condition when we're requested to switch to a different
-			// locale while we're in the middle of request, we should abondon result
-			if ( targetLocaleSlug !== lastRequestedLocale ) {
-				return;
-			}
-
-			i18n.setLocale( response.body );
-
-			setLocaleInDOM( domLocaleSlug, !! language.rtl );
-
-			loadUserUndeployedTranslations( targetLocaleSlug );
-		} );
+		);
 	}
 }
 
@@ -164,14 +173,12 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		query,
 	} );
 
-	return request
-		.get( requestUrl )
-		.set( 'Accept', 'application/json' )
-		.withCredentials()
-		.then( res => {
-			const translations = JSON.parse( res.text );
-			i18n.addTranslations( translations );
-		} );
+	return fetch( requestUrl, {
+		headers: { Accept: 'application/json' },
+		credentials: 'include',
+	} )
+		.then( res => res.json() )
+		.then( translations => i18n.addTranslations( translations ) );
 }
 
 const bundles = {};

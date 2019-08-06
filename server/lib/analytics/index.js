@@ -11,7 +11,7 @@ import { isUndefined, omit, assign, get, has } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { statsdTimingUrl } from '../../../client/lib/analytics/statsd';
+import { statsdTimingUrl, statsdCountingUrl } from '../../../client/lib/analytics/statsd';
 const URL = require( 'url' );
 
 function getUserFromRequest( request ) {
@@ -56,6 +56,13 @@ const analytics = {
 		recordTiming: function( featureSlug, eventType, duration ) {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
 				const url = statsdTimingUrl( featureSlug, eventType, duration );
+				superagent.get( url ).end();
+			}
+		},
+
+		recordCounting: function( featureSlug, eventType, increment = 1 ) {
+			if ( config( 'server_side_boom_analytics_enabled' ) ) {
+				const url = statsdCountingUrl( featureSlug, eventType, increment );
 				superagent.get( url ).end();
 			}
 		},

@@ -19,6 +19,48 @@
 	width: auto;
 }
 
+.memberships__onboarding-wrapper {
+	flex-direction: row;
+	display: flex;
+	padding-top: 30px;
+}
+
+.memberships__onboarding-column-info {
+	flex: 1;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.memberships__onboarding-column-image {
+	display:none;
+	@include breakpoint( '>800px' ) {
+		display: block;
+		flex: 1;
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+
+
+.memberships__onboarding-header {
+	font-size: 24px;
+	margin-bottom: 24px;
+}
+.memberships__onboarding-paragraph {
+	font-size: 15px;
+	margin-bottom: 24px;
+	color: var( --color-neutral-400 );
+}
+.memberships__onboarding-benefits {
+	color: var( --color-neutral-400 );
+	margin-top: 24px;
+}
+.memberships__onboarding-benefits > div {
+	line-height: 24px;
+}
+.memberships__onboarding-benefits > div > svg {
+	margin-right: 12px;
+}
+
 .memberships__earnings-breakdown-list {
 	margin: 0;
 }

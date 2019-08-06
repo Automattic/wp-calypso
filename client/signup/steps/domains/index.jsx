@@ -26,7 +26,6 @@ import {
 	domainTransfer,
 } from 'lib/cart-values/cart-items';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -49,6 +48,7 @@ import { getVerticalForDomainSuggestions } from 'state/signup/steps/site-vertica
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { isDomainStepSkippable } from 'signup/config/steps';
+import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 
 /**
  * Style dependencies
@@ -74,10 +74,6 @@ class DomainsStep extends React.Component {
 		vertical: PropTypes.string,
 	};
 
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	getDefaultState = () => ( {
 		previousStepSectionName: this.props.stepSectionName,
 		suggestion: null,
@@ -92,7 +88,7 @@ class DomainsStep extends React.Component {
 		const { flowName, signupDependencies } = props;
 		const importSiteUrl = get( signupDependencies, 'importSiteUrl' );
 
-		if ( flowName === 'import' && importSiteUrl ) {
+		if ( ( flowName === 'import' || flowName === 'import-onboarding' ) && importSiteUrl ) {
 			this.skipRender = true;
 
 			props.submitSignupStep( {
@@ -258,7 +254,7 @@ class DomainsStep extends React.Component {
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
-		getUsernameSuggestion( siteUrl.split( '.' )[ 0 ], this.context.store );
+		this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
 	handleAddMapping = ( sectionName, domain, state ) => {
@@ -713,5 +709,6 @@ export default connect(
 		setDesignType,
 		saveSignupStep,
 		submitSignupStep,
+		fetchUsernameSuggestion,
 	}
 )( localize( DomainsStep ) );

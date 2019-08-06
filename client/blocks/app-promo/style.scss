@@ -39,5 +39,14 @@
 
 	&:hover {
 		text-decoration: underline;
+		cursor: pointer;
 	}
+}
+
+.app-promo__dialog {
+	max-width: 480px;
+}
+
+button.app-promo__link {
+	text-align: left;
 }

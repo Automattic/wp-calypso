@@ -564,6 +564,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
+		step( 'Can then see the plans page and select the premium plan ', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const displayed = await pickAPlanPage.displayed();
+			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
+			return await pickAPlanPage.selectPremiumPlan();
+		} );
+
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
@@ -690,6 +697,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				);
 			}
 		);
+
+		step( 'Can then see the plans page and select the personal plan ', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const displayed = await pickAPlanPage.displayed();
+			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
+			return await pickAPlanPage.selectPersonalPlan();
+		} );
 
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
@@ -1035,6 +1049,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
+		step( 'Can then see the plans page and select the business plan ', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const displayed = await pickAPlanPage.displayed();
+			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
+			return await pickAPlanPage.selectBusinessPlan();
+		} );
+
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
@@ -1249,6 +1270,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
+				if ( process.env.HORIZON_TESTS === 'true' ) {
+					return this.skip();
+				}
 				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
 			}
 		);
@@ -1256,6 +1280,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		step(
 			'Can then see the secure payment page with the chosen theme in the cart',
 			async function() {
+				if ( process.env.HORIZON_TESTS === 'true' ) {
+					return this.skip();
+				}
 				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 				const products = await securePaymentComponent.getProductsNames();
 				assert(
@@ -1552,7 +1579,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 	} );
 
 	describe( 'Import a site while signing up @parallel', function() {
-		// Currently must use a Wix site to be importable through this flow.
+		// Currently must use a Wix or GoDaddy site to be importable through this flow.
 		const siteURL = 'https://hi6822.wixsite.com/eat-here-its-good';
 		const userName = dataHelper.getNewBlogName();
 		const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
@@ -1564,12 +1591,24 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can visit import in signup page and prefill url', async function() {
-			await StartPage.Visit(
+		step( 'Can start the import signup flow', async function() {
+			return await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( { culture: locale, flow: 'import', query: `url=${ siteURL }` } )
 			);
+		} );
 
+		step( 'Can then enter account details and continue', async function() {
+			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+
+			return await createYourAccountPage.enterAccountDetailsAndSubmit(
+				emailAddress,
+				userName,
+				passwordForTestAccounts
+			);
+		} );
+
+		step( 'Can then prefill url of site to import using a query param', async function() {
 			const importFromURLPage = await ImportFromURLPage.Expect( driver );
 			const urlValue = await importFromURLPage.getURLInputValue();
 
@@ -1631,16 +1670,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 					}
 				}
 			}
-		} );
-
-		step( 'Can then enter account details and continue', async function() {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				userName,
-				passwordForTestAccounts
-			);
 		} );
 
 		step(

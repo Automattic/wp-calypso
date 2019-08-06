@@ -1,0 +1,24 @@
+.promo-section__promos {
+	position: relative;
+	left: calc( -0.5em );
+	display: flex;
+	flex-wrap: wrap;
+	// margins of the items will "hang off the side" invisibly
+	width: calc( 100% + 1em );
+	flex-direction: column;
+	@include breakpoint( '>1280px' ) {
+		flex-direction: row;
+	}
+
+	.promo-card {
+		display: flex;
+		margin: 0.5em;
+		width: calc( 100% - 1em );
+
+		@include breakpoint( '>1280px' ) {
+			width: calc( 50% - 1em );
+		}
+	}
+}
+
+

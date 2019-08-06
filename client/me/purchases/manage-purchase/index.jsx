@@ -28,7 +28,6 @@ import {
 	hasPaymentMethod,
 	isCancelable,
 	isExpired,
-	isExpiring,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 	isRefundable,
@@ -140,14 +139,7 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// This is hidden for expired and expiring subscriptions because they
-		// will get a PurchaseNotice will a renewal call-to-action instead.
-		if (
-			! isRenewable( purchase ) ||
-			isExpired( purchase ) ||
-			isExpiring( purchase ) ||
-			! this.props.site
-		) {
+		if ( ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -165,9 +157,6 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// Unlike renderRenewButton(), this shows the link even for expired or
-		// expiring subscriptions (as long as they are renewable), which keeps
-		// the nav items consistent.
 		if ( ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}

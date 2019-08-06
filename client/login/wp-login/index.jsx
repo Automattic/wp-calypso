@@ -195,6 +195,7 @@ export class Login extends React.Component {
 			twoFactorAuthType,
 			socialService,
 			socialServiceResponse,
+			fromSite,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -212,6 +213,7 @@ export class Login extends React.Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
+				fromSite={ fromSite }
 			/>
 		);
 	}

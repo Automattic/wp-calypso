@@ -330,13 +330,15 @@ class PurchaseMeta extends Component {
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
 					<span className="manage-purchase__detail">{ subsRenewText }</span>
 					<span className="manage-purchase__detail">{ subsBillingText }</span>
-					<span className="manage-purchase__detail">
-						<AutoRenewToggle
-							planName={ site.plan.product_name_short }
-							siteDomain={ site.domain }
-							purchase={ purchase }
-						/>
-					</span>
+					{ site && (
+						<span className="manage-purchase__detail">
+							<AutoRenewToggle
+								planName={ site.plan.product_name_short }
+								siteDomain={ site.domain }
+								purchase={ purchase }
+							/>
+						</span>
+					) }
 				</li>
 			);
 		}

@@ -4,7 +4,6 @@
  */
 import { get, isBoolean, memoize, omit, pick, size } from 'lodash';
 import debugModule from 'debug';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -77,18 +76,16 @@ function getTasks( {
 		addTask( 'site_launched' );
 	}
 
-	if ( config.isEnabled( 'onboarding-checklist/email-setup' ) ) {
-		if ( hasTask( 'email_setup' ) ) {
-			addTask( 'email_setup' );
-		}
+	if ( hasTask( 'email_setup' ) ) {
+		addTask( 'email_setup' );
+	}
 
-		if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
-			addTask( 'email_forwarding_upgraded_to_gsuite' );
-		}
+	if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
+		addTask( 'email_forwarding_upgraded_to_gsuite' );
+	}
 
-		if ( hasTask( 'gsuite_tos_accepted' ) ) {
-			addTask( 'gsuite_tos_accepted' );
-		}
+	if ( hasTask( 'gsuite_tos_accepted' ) ) {
+		addTask( 'gsuite_tos_accepted' );
 	}
 
 	debug( 'Site info: ', { designType, segmentSlug, siteVerticals } );

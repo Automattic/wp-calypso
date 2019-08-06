@@ -157,10 +157,7 @@ export class PlansFeaturesMain extends Component {
 
 		const currentPlan = getPlan( selectedPlan );
 
-		const hideBloggerPlan =
-			! isBloggerPlan( selectedPlan ) &&
-			! isBloggerPlan( sitePlanSlug ) &&
-			abtest( 'hideBloggerPlan2' ) === 'hide';
+		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
 
 		let term;
 		if ( intervalType === 'monthly' ) {

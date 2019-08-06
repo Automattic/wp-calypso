@@ -1,9 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+// Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
+import 'jest-fetch-mock';
 
 /**
  * Internal dependencies
@@ -365,7 +366,7 @@ describe( 'actions', () => {
 						'/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
 							'&request%5Bslug%5D=twentyumpteen'
 					)
-					.reply( 200, false );
+					.reply( 200, 'false' );
 			} );
 
 			test( 'should dispatch request action when thunk triggered', () => {

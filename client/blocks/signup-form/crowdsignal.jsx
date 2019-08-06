@@ -140,17 +140,11 @@ class CrowdsignalSignupForm extends Component {
 
 				<div className="signup-form__crowdsignal-tos">
 					<span>
-						{ translate(
-							'By creating an account via any of the options above,{{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
-							{
-								components: {
-									a: (
-										<a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />
-									),
-									br: <br />,
-								},
-							}
-						) }
+						{ translate( 'By creating an account, you agree to our {{a}}Terms of Service{{/a}}.', {
+							components: {
+								a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
+							},
+						} ) }
 					</span>
 				</div>
 

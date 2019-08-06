@@ -14,6 +14,7 @@ import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -52,6 +53,10 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
+		const { interval } = this.props;
+		const defaultInterval =
+			abtest( 'defaultMonthlyJetpackPlan' ) === 'monthlyPlan' ? 'monthly' : 'yearly';
+
 		return (
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
@@ -63,7 +68,7 @@ class JetpackPlansGrid extends Component {
 							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
-							intervalType={ this.props.interval }
+							intervalType={ interval ? interval : defaultInterval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
 						/>

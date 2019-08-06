@@ -1,0 +1,23 @@
+.post-type-wp_template {
+	.editor-post-title {
+		display: none;
+	}
+
+	.edit-post-visual-editor {
+		margin-top: 20px;
+		padding-top: 0;
+	}
+}
+
+.post-type-page, .post-type-wp_template {
+	.edit-post-layout__content {
+		background: #eee;
+	}
+	
+	.edit-post-layout__content .edit-post-visual-editor {
+		flex: none;
+		margin: 40px;
+		box-shadow: 0 0 20px 0 rgba(0,0,0,0.1);
+		background: #fff;
+	}
+}

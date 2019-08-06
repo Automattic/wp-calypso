@@ -2,8 +2,10 @@
 /**
  * Render post content block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Renders post content.
@@ -15,15 +17,6 @@
 function render_post_content_block( $attributes, $content ) {
 	// Early return to avoid infinite loops in the REST API.
 	if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
-		return $content;
-	}
-
-	$post_id     = get_the_ID();
-	$post_type   = get_post_type();
-	$template_id = get_post_meta( $post_id, '_wp_template_id', true );
-
-	// Early return to avoid the infinite loop of a template rendering itself.
-	if ( 'wp_template' === $post_type || $template_id === $post_id ) {
 		return $content;
 	}
 

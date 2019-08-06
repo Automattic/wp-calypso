@@ -31,6 +31,7 @@ import {
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
 import Notice from 'components/notice';
+import { saveSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -50,6 +51,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 		this.setInputValueFromProps();
 		this.focusInput();
 	}
@@ -264,16 +266,21 @@ class ImportURLStepComponent extends Component {
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
+		const headerText = translate( 'Where can we find your old site?' );
+		const subHeaderText = translate(
+			'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
+		);
+
 		return (
 			<StepWrapper
 				className="import-url"
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Where can we find your old site?' ) }
-				subHeaderText={ translate(
-					'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
-				) }
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 			/>
@@ -289,8 +296,9 @@ export default flow(
 			isLoading: isUrlInputDisabled( state ),
 		} ),
 		{
-			setNuxUrlInputValue,
 			recordTracksEvent,
+			saveSignupStep,
+			setNuxUrlInputValue,
 			submitImportUrlStep,
 		}
 	),

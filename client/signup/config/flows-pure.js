@@ -15,7 +15,8 @@ import { addQueryArgs } from 'lib/route';
 export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
-	getChecklistDestination = noop,
+	getSignupDestination = noop,
+	getThankYouNoSiteDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -34,11 +35,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans-business',
+				'plans',
 			],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2019-06-17',
+			lastModified: '2019-08-01',
 		},
 
 		premium: {
@@ -49,11 +50,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans-premium',
+				'plans',
 			],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2019-06-17',
+			lastModified: '2019-08-01',
 		},
 
 		personal: {
@@ -64,11 +65,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
-				'plans-personal',
+				'plans',
 			],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2019-06-17',
+			lastModified: '2019-08-01',
 		},
 
 		free: {
@@ -79,10 +80,11 @@ export function generateFlows( {
 				'site-title-with-preview',
 				'site-style-with-preview',
 				'domains-with-preview',
+				'plans',
 			],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
-			lastModified: '2019-06-17',
+			lastModified: '2019-08-01',
 		},
 
 		blog: {
@@ -117,9 +119,9 @@ export function generateFlows( {
 
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-04-30',
+			lastModified: '2019-06-20',
 		},
 
 		onboarding: {
@@ -132,16 +134,16 @@ export function generateFlows( {
 				'domains-with-preview',
 				'plans',
 			],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-06-05',
+			lastModified: '2019-06-20',
 		},
 
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2019-04-30',
+			lastModified: '2019-06-20',
 		},
 
 		developer: {
@@ -256,10 +258,10 @@ export function generateFlows( {
 			'plans-site-selected',
 			'user',
 		],
-		destination: getSiteDestination,
+		destination: getThankYouNoSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		disallowResume: true,
-		lastModified: '2017-05-09',
+		lastModified: '2019-06-21',
 	};
 
 	flows[ 'site-selected' ] = {
@@ -279,20 +281,34 @@ export function generateFlows( {
 		pageTitle: translate( 'Launch your site' ),
 	};
 
+	const importSteps = [ 'from-url', 'domains' ];
+
+	const importDestination = ( { importEngine, importSiteUrl, siteSlug } ) =>
+		addQueryArgs(
+			{
+				engine: importEngine || null,
+				'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
+				signup: 1,
+			},
+			`/import/${ siteSlug }`
+		);
+
 	flows.import = {
-		steps: [ 'from-url', 'user', 'domains' ],
-		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
-			addQueryArgs(
-				{
-					engine: importEngine || null,
-					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
-					signup: 1,
-				},
-				`/import/${ siteSlug }`
-			),
+		steps: [ 'user', ...importSteps ],
+		destination: importDestination,
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
-		lastModified: '2018-09-12',
+		lastModified: '2019-07-30',
+	};
+
+	flows[ 'import-onboarding' ] = {
+		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
+		// when switching from the onboarding flow.
+		steps: [ 'user', 'site-type', ...importSteps ],
+		destination: importDestination,
+		description: 'Import flow that can be used from the onboarding flow',
+		disallowResume: true,
+		lastModified: '2019-08-01',
 	};
 
 	flows.reader = {

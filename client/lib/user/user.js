@@ -144,19 +144,15 @@ User.prototype.fetch = function() {
 	this.fetching = true;
 	debug( 'Getting user from api' );
 
-	me.get(
-		{ meta: 'flags', abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ) },
-		( error, data ) => {
-			if ( error ) {
-				this.handleFetchFailure( error );
-				return;
-			}
-
+	me.get( { meta: 'flags', abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ) } )
+		.then( data => {
 			const userData = filterUserObject( data );
 			this.handleFetchSuccess( userData );
 			debug( 'User successfully retrieved' );
-		}
-	);
+		} )
+		.catch( error => {
+			this.handleFetchFailure( error );
+		} );
 };
 
 /**
@@ -176,7 +172,8 @@ User.prototype.handleFetchFailure = function( error ) {
 		this.initialized = true;
 		this.emit( 'change' );
 	} else {
-		debug( 'Something went wrong trying to get the user.' );
+		// eslint-disable-next-line no-console
+		console.error( 'Failed to fetch the user from /me endpoint:', error );
 	}
 };
 

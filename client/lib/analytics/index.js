@@ -5,16 +5,7 @@ import cookie from 'cookie';
 import debug from 'debug';
 import { parse } from 'qs';
 import url from 'url';
-import {
-	assign,
-	includes,
-	isObjectLike,
-	isUndefined,
-	omit,
-	pickBy,
-	startsWith,
-	times,
-} from 'lodash';
+import { assign, includes, isObjectLike, isUndefined, omit, pickBy, times } from 'lodash';
 import { loadScript } from '@automattic/load-script';
 
 /**
@@ -48,11 +39,12 @@ import {
 	fireGoogleAnalyticsTiming,
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
-import { statsdTimingUrl } from 'lib/analytics/statsd';
+import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
 import { isE2ETest } from 'lib/e2e';
 import { getGoogleAnalyticsDefaultConfig } from './ad-tracking';
 import { affiliateReferral as trackAffiliateReferral } from 'state/refer/actions';
 import { reduxDispatch } from 'lib/redux-bridge';
+import { getFeatureSlugFromPageUrl } from './feature-slug';
 
 /**
  * Module variables
@@ -197,7 +189,8 @@ const analytics = {
 	initialize: function( user, superProps ) {
 		analytics.setUser( user );
 		analytics.setSuperProps( superProps );
-		analytics.identifyUser();
+		const userData = user.get();
+		analytics.identifyUser( userData.username, userData.ID );
 	},
 
 	setUser: function( user ) {
@@ -375,9 +368,9 @@ const analytics = {
 		recordSignupStartInFloodlight();
 	},
 
-	recordRegistration: function() {
+	recordRegistration: function( { flow } ) {
 		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
 		// Google Analytics
 		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 		// Marketing
@@ -577,9 +570,7 @@ const analytics = {
 			if ( window.location ) {
 				const parsedUrl = url.parse( window.location.href );
 				const urlParams = parse( parsedUrl.query );
-				const utmParams = pickBy( urlParams, function( value, key ) {
-					return startsWith( key, 'utm_' );
-				} );
+				const utmParams = pickBy( urlParams, ( value, key ) => key.startsWith( 'utm_' ) );
 
 				eventProperties = assign( eventProperties, utmParams );
 			}
@@ -612,41 +603,26 @@ const analytics = {
 			/* eslint-disable no-unused-vars */
 
 			if ( config( 'boom_analytics_enabled' ) ) {
-				let featureSlug =
-					pageUrl === '/' ? 'homepage' : pageUrl.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
-				let matched;
-				// prevent explosion of read list metrics
-				// this is a hack - ultimately we want to report this URLs in a more generic way to
-				// google analytics
-				if ( startsWith( featureSlug, 'read_list' ) ) {
-					featureSlug = 'read_list';
-				} else if ( startsWith( featureSlug, 'tag_' ) ) {
-					featureSlug = 'tag__id';
-				} else if ( startsWith( featureSlug, 'domains_add_suggestion_' ) ) {
-					featureSlug = 'domains_add_suggestion__suggestion__domain';
-				} else if ( featureSlug.match( /^plugins_[^_].*__/ ) ) {
-					featureSlug = 'plugins__site__plugin';
-				} else if ( featureSlug.match( /^plugins_[^_]/ ) ) {
-					featureSlug = 'plugins__site__unknown'; // fail safe because there seems to be some URLs we're not catching
-				} else if ( startsWith( featureSlug, 'read_post_feed_' ) ) {
-					featureSlug = 'read_post_feed__id';
-				} else if ( startsWith( featureSlug, 'read_post_id_' ) ) {
-					featureSlug = 'read_post_id__id';
-				} else if ( ( matched = featureSlug.match( /^start_(.*)_(..)$/ ) ) != null ) {
-					featureSlug = `start_${ matched[ 1 ] }`;
-				} else if ( startsWith( featureSlug, 'page__' ) ) {
-					// Fold post editor routes for page, post and CPT into one generic 'post__*' one
-					featureSlug = featureSlug.replace( /^page__/, 'post__' );
-				} else if ( startsWith( featureSlug, 'edit_' ) ) {
-					// use non-greedy +? operator to match the custom post type slug
-					featureSlug = featureSlug.replace( /^edit_.+?__/, 'post__' );
-				}
+				const featureSlug = getFeatureSlugFromPageUrl( pageUrl );
 
 				statsdDebug(
 					`Recording timing: path=${ featureSlug } event=${ eventType } duration=${ duration }ms`
 				);
 
 				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
+				new Image().src = imgUrl;
+			}
+		},
+
+		recordCounting: function( pageUrl, eventType, increment = 1 ) {
+			if ( config( 'boom_analytics_enabled' ) ) {
+				const featureSlug = getFeatureSlugFromPageUrl( pageUrl );
+
+				statsdDebug(
+					`Recording counting: path=${ featureSlug } event=${ eventType } increment=${ increment }`
+				);
+
+				const imgUrl = statsdCountingUrl( featureSlug, eventType, increment );
 				new Image().src = imgUrl;
 			}
 		},
@@ -781,16 +757,15 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function() {
+	identifyUser: function( newUserName, newUserId ) {
 		const anonymousUserId = this.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
-		if ( _user && _user.initialized ) {
+		if ( newUserId && newUserName ) {
 			if ( anonymousUserId ) {
 				recordAliasInFloodlight();
 			}
-
-			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
+			window._tkq.push( [ 'identifyUser', newUserId, newUserName ] );
 		}
 	},
 

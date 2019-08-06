@@ -84,3 +84,16 @@
 		transform: translateX( 0 );
 	}
 }
+
+.site-type__import-button {
+	text-align: center;
+	margin-top: 20px;
+
+	.button.is-borderless {
+		padding: 0;
+		color: var( --color-white );
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: underline;
+	}
+}
