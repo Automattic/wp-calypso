@@ -84,7 +84,6 @@ class SiteType extends Component {
 		const {
 			flowName,
 			positionInFlow,
-			signupProgress,
 			stepName,
 			translate,
 			hasInitializedSitesBackUrl,
@@ -104,7 +103,6 @@ class SiteType extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }

@@ -548,7 +548,6 @@ class Signup extends React.Component {
 								goToStep={ this.goToStep }
 								previousFlowName={ this.state.previousFlowName }
 								flowName={ this.props.flowName }
-								signupProgress={ this.props.progress }
 								signupDependencies={ this.props.signupDependencies }
 								stepSectionName={ this.props.stepSectionName }
 								positionInFlow={ this.getPositionInFlow() }

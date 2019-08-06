@@ -522,7 +522,6 @@ class AboutStep extends Component {
 		const {
 			flowName,
 			positionInFlow,
-			signupProgress,
 			stepName,
 			translate,
 			hasInitializedSitesBackUrl,
@@ -541,7 +540,6 @@ class AboutStep extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }

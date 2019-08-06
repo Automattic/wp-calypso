@@ -264,7 +264,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, positionInFlow, stepName, translate } = this.props;
 
 		const headerText = translate( 'Where can we find your old site?' );
 		const subHeaderText = translate(
@@ -281,7 +281,6 @@ class ImportURLStepComponent extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 			/>
 		);

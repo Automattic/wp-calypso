@@ -66,7 +66,6 @@ class DomainsStep extends React.Component {
 		path: PropTypes.string.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
 		queryObject: PropTypes.object,
-		signupProgress: PropTypes.array.isRequired,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
@@ -625,7 +624,6 @@ class DomainsStep extends React.Component {
 				stepName={ this.props.stepName }
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				headerText={ headerText }
 				subHeaderText={ fallbackSubHeaderText }
 				fallbackHeaderText={ headerText }
