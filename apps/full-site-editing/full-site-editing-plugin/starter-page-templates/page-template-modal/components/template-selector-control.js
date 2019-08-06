@@ -10,14 +10,16 @@ import classnames from 'classnames';
 import { withInstanceId } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
 import { Component } from '@wordpress/element';
+import { parse as parseBlocks } from '@wordpress/blocks';
 
 class TemplateSelectorControl extends Component {
-	renderTemplatePreview( { preview, previewAlt } ) {
-		if ( ! preview ) {
-			return null;
-		}
-
-		return <img className="template-selector-control__media" src={ preview } alt={ previewAlt } />;
+	renderTemplatePreview( { content, preview, previewAlt } ) {
+		const { BlockPreview } = window.wp.blockEditor;
+		return (
+			<BlockPreview blocks={ parseBlocks( content ) } /> || (
+				<img className="template-selector-control__media" src={ preview } alt={ previewAlt } />
+			)
+		);
 	}
 
 	render() {
