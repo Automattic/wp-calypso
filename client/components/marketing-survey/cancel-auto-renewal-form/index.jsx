@@ -18,13 +18,10 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
 import { submitSurvey } from 'lib/upgrades/actions';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import './style.scss';
-
-const OTHER_FEEDBACK = 'other-feedback';
 
 class CancelAutoRenewalForm extends Component {
 	static propTypes = {
@@ -37,7 +34,6 @@ class CancelAutoRenewalForm extends Component {
 
 	state = {
 		response: '',
-		feedback: '',
 	};
 
 	radioButtons = {};
@@ -51,17 +47,15 @@ class CancelAutoRenewalForm extends Component {
 			[ 'let-it-expire', translate( "I'm going to let this plan expire." ) ],
 			[ 'manual-renew', translate( "I'm going to renew the plan, but will do it manually." ) ],
 			[ 'not-sure', translate( "I'm not sure." ) ],
-			[ OTHER_FEEDBACK, translate( 'Another reason' ) ],
 		];
 	}
 
 	onSubmit = () => {
 		const { purchase, selectedSite } = this.props;
-		const { response, feedback } = this.state;
+		const { response } = this.state;
 
 		const surveyData = {
 			response,
-			feedback: feedback.trim(),
 		};
 
 		submitSurvey(
@@ -76,12 +70,6 @@ class CancelAutoRenewalForm extends Component {
 	onRadioChange = event => {
 		this.setState( {
 			response: event.currentTarget.value,
-		} );
-	};
-
-	onEnterFeedback = event => {
-		this.setState( {
-			feedback: event.target.value,
 		} );
 	};
 
@@ -101,9 +89,9 @@ class CancelAutoRenewalForm extends Component {
 
 	render() {
 		const { translate, isVisible, purchase, onClose } = this.props;
-		const { response, feedback } = this.state;
+		const { response } = this.state;
 
-		const disableSubmit = ! response || ( response === OTHER_FEEDBACK && ! feedback.trim() );
+		const disableSubmit = ! response;
 
 		return (
 			<Dialog
@@ -123,13 +111,6 @@ class CancelAutoRenewalForm extends Component {
 					</p>
 					{ this.radioButtons.map( radioButton =>
 						this.createRadioButton( radioButton[ 0 ], radioButton[ 1 ] )
-					) }
-					{ response === OTHER_FEEDBACK && (
-						<FormTextInput
-							placeholder={ translate( 'Please enter your feedback here.' ) }
-							value={ feedback }
-							onChange={ this.onEnterFeedback }
-						/>
 					) }
 				</FormFieldset>
 
