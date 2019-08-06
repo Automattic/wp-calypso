@@ -62,18 +62,8 @@
 			}
 		}
 
-		&.block-editor-block-list__block {
-			// Need to get super specific to override the core css selectors:
-			&,
-			&.has-child-selected,
-			&.is-navigate-mode,
-			&.is-hovered {
-				> .block-editor-block-list__block-edit {
-					> .block-editor-block-list__breadcrumb {
-						display: none;
-					}
-				}
-			}
+		&:not( .is-selected ):hover {
+			outline: #e2e4e7 solid;
 		}
 	}
 }
