@@ -157,7 +157,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackCustomerHomeClick = () => {
-		this.trackMenuItemClick( 'customer-home' );
+		this.trackMenuItemClick( isEnabled( 'customer-home' ) ? 'customer-home' : 'checklist' );
 		this.onNavigate();
 	};
 
@@ -168,15 +168,21 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const customerHomeLink = '/customer-home' + siteSuffix;
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ translate( 'Customer Home' ) }
-				selected={ itemLinkMatches( [ '/customer-home' ], path ) }
-				link={ customerHomeLink }
+				label={
+					isEnabled( 'customer-home' ) ? translate( 'Customer Home' ) : translate( 'Checklist' )
+				}
+				selected={ itemLinkMatches(
+					isEnabled( 'customer-home' ) ? [ '/customer-home' ] : [ '/checklist' ],
+					path
+				) }
+				link={
+					isEnabled( 'customer-home' ) ? '/customer-home' + siteSuffix : '/checklist' + siteSuffix
+				}
 				onNavigate={ this.trackCustomerHomeClick }
-				materialIcon="home"
+				materialIcon={ isEnabled( 'customer-home' ) ? 'home' : 'check_circle' }
 			/>
 		);
 	}
