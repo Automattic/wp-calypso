@@ -353,13 +353,13 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
-		// If it's the first load, rerun the search with whatever we get from signup dependencies or the query param
+		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
 		const initialQuery =
 			get( this.props, 'queryObject.new', '' ) ||
 			get( this.props, 'signupDependencies.suggestedDomain' );
 
 		if (
-			// If we landed here with a suggestedDomain or from /domains Search
+			// If we landed here with from /domains Search or with a suggested domain.
 			( initialQuery && this.searchOnInitialRender ) ||
 			// If the subdomain type has changed, rerun the search
 			( initialState &&
