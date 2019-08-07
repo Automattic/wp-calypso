@@ -38,7 +38,6 @@ class PageTemplateModal extends Component {
 		this.setState( { isOpen: false } );
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
-		// const template = this.props.templates[ slug ];
 		this.props.saveTemplateChoice( slug );
 
 		// Skip inserting if there's nothing to insert.
@@ -71,14 +70,7 @@ class PageTemplateModal extends Component {
 						<fieldset className="page-template-modal__list">
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
-								templates={ map( this.props.templates, template => ( {
-									// blocks: template.blocks,
-									label: template.title,
-									value: template.slug,
-									// preview: template.preview,
-									// previewAlt: template.description,
-									rawBlocks: template.content,
-								} ) ) }
+								templates={ this.props.templates }
 								onTemplateSelect={ newTemplate => this.selectTemplate( newTemplate ) }
 							/>
 						</fieldset>
@@ -144,31 +136,11 @@ if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
-// Enhance templates with their parsed blocks and processed titles. Key by their slug.
-const getTemplatesForPlugin = once( () =>
-	reduce(
-		templates,
-		( templatesBySlug, template ) => {
-			const content = replacePlaceholders( template.content, siteInformation );
-			return {
-				...templatesBySlug,
-				[ template.slug ]: {
-					...template,
-					title: replacePlaceholders( template.title, siteInformation ),
-					content,
-					// blocks: parseBlocks( content ),
-				},
-			};
-		},
-		{}
-	)
-);
-
 registerPlugin( 'page-templates', {
 	render: () => {
 		return (
 			<PageTemplatesPlugin
-				templates={ getTemplatesForPlugin() }
+				templates={ templates }
 				vertical={ vertical }
 				segment={ segment }
 				siteInformation={ siteInformation }
