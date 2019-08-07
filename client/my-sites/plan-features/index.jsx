@@ -573,12 +573,6 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		const args = {};
-		// Auto-apply the coupon code to the cart for WPCOM sites
-		if ( ! displayJetpackPlans && withDiscount ) {
-			args.coupon = withDiscount;
-		}
-
 		if ( isPrivateAndGoingAtomic ) {
 			if ( isInSignup ) {
 				// Let signup do its thing
@@ -589,6 +583,12 @@ export class PlanFeatures extends Component {
 				choosingPlanSlug: productSlug,
 			} );
 			return;
+		}
+
+		const args = {};
+		// Auto-apply the coupon code to the cart for WPCOM sites
+		if ( ! displayJetpackPlans && withDiscount ) {
+			args.coupon = withDiscount;
 		}
 
 		page( addQueryArgs( args, `/checkout/${ selectedSiteSlug }/${ planPath }` ) );
