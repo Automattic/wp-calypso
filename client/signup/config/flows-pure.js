@@ -286,7 +286,7 @@ export function generateFlows( {
 		addQueryArgs(
 			{
 				engine: importSiteEngine || null,
-				'from-site': encodeURIComponent( importSiteUrl ) || null,
+				'from-site': importSiteUrl ? encodeURIComponent( importSiteUrl ) : null,
 				signup: 1,
 			},
 			`/import/${ siteSlug }`
