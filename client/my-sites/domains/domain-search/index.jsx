@@ -166,13 +166,12 @@ class DomainSearch extends Component {
 							<Notice
 								status="is-warning"
 								showDismiss={ false }
-								text={
-									translate( "You're purchasing an additional domain for %(title)s.", {
+								text={ translate(
+									"You're purchasing an additional domain for %(title)s. Would you like to create a new site instead?",
+									{
 										args: { title: selectedSiteTitle },
-									} ) +
-									' ' +
-									translate( 'Would you like to create a new site instead?' )
-								}
+									}
+								) }
 							>
 								<NoticeAction href="/jetpack/new?ref=calypso-selector">
 									{ translate( 'Create a new site' ) }
