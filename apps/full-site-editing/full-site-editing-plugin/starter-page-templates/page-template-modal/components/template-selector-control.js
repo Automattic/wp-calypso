@@ -9,7 +9,7 @@ import classnames from 'classnames';
  */
 import { withInstanceId } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
-import { Component } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { BlockPreview } from '@wordpress/block-editor';
 
@@ -23,48 +23,34 @@ const {
 	siteInformation = {},
 } = window.starterPageTemplatesConfig;
 
-/**
+/*
  * It renders the block preview content for the template.
  * It the templates blocks are not ready yet or not exist,
  * it tries to render a static image, or simply return null.
  */
-class TemplateSelectorItem extends Component {
-	state = {
-		blocks: [],
-	};
+const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } ) => {
 
-	constructor( props ) {
-		super();
+	const blocks = useMemo( () => parseBlocks( rawBlocks ), [ rawBlocks ] );
 
-		if ( props.rawBlocks ) {
-			this.state.blocks = parseBlocks( props.rawBlocks );
-		}
-	}
+	return (
+		<button
+			type="button"
+			id={ `${ id }-${ value }` }
+			className="template-selector-control__label"
+			value={ value }
+			onClick={ () => onSelect( value, label, blocks ) }
+			aria-describedby={ help ? `${ id }__help` : undefined }
+		>
+			<div className="template-selector-control__preview-wrap">
+				{ blocks && blocks.length ? (
+					<BlockPreview blocks={ blocks } viewportWidth={ 800 } />
+				) : null }
+			</div>
 
-	render() {
-		const { blocks } = this.state;
-		const { id, value, help, onSelect, label } = this.props;
-
-		return (
-			<button
-				type="button"
-				id={ `${ id }-${ value }` }
-				className="template-selector-control__label"
-				value={ value }
-				onClick={ () => onSelect( value, label, blocks ) }
-				aria-describedby={ help ? `${ id }__help` : undefined }
-			>
-				<div className="template-selector-control__preview-wrap">
-					{ blocks && blocks.length ? (
-						<BlockPreview blocks={ blocks } viewportWidth={ 800 } />
-					) : null }
-				</div>
-
-				{ label }
-			</button>
-		);
-	}
-}
+			{ label }
+		</button>
+	);
+};
 
 function TemplateSelectorControl( {
 	label,
