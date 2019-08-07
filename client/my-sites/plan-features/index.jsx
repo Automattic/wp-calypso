@@ -194,14 +194,14 @@ export class PlanFeatures extends Component {
 	}
 
 	renderSiteLaunchDialog() {
-		const { isEmailVerfied, selectedSiteSlug, translate } = this.props;
+		const { isEmailVerified, selectedSiteSlug, translate } = this.props;
 		const { choosingPlanSlug, showingSiteLaunchDialog } = this.state;
 
 		if ( ! showingSiteLaunchDialog ) {
 			return null;
 		}
 
-		if ( ! isEmailVerfied ) {
+		if ( ! isEmailVerified ) {
 			return (
 				<EmailVerificationDialog
 					onClose={ () =>
@@ -236,10 +236,10 @@ export class PlanFeatures extends Component {
 				} }
 			>
 				<h1>{ translate( 'Site Privacy' ) }</h1>
-				{ translate( 'Your site is only visible to you and users you approve.' ) }
-				<br />
-				{ translate( 'If you continue with this plan, your site will be publicly visible.' ) }
-				<br />
+				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
+				<p>
+					{ translate( 'If you continue with this plan, your site will be publicly visible.' ) }
+				</p>
 				<InlineSupportLink
 					showIcon={ false }
 					supportLink="https://support.wordpress.com/settings/privacy-settings/"
@@ -996,7 +996,7 @@ export default connect(
 
 		return {
 			canPurchase,
-			isEmailVerfied: isCurrentUserEmailVerified( state ),
+			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
