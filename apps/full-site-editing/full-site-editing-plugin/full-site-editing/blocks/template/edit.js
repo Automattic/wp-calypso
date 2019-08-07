@@ -146,10 +146,7 @@ const TemplateEdit = compose(
 							/>
 						</Disabled>
 						{ isSelected && (
-							<Placeholder
-								className="template-block__overlay"
-								instructions={ __( "This template will appear on all of your site's pages." ) }
-							>
+							<Placeholder className="template-block__overlay">
 								<Button href={ editTemplateUrl } onClick={ save } isDefault>
 									{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
 								</Button>
