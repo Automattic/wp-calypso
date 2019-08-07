@@ -19,29 +19,25 @@ class QuerySiteFrontPage extends Component {
 	};
 
 	componentDidMount() {
-		const { showOnFrontSetting, pageOnFrontSetting } = this.props;
-		if ( showOnFrontSetting && pageOnFrontSetting ) {
+		if ( this.props.showOnFrontSetting ) {
 			return;
 		}
-
 		this.setFrontPageSettings();
 	}
 
-	componentDidUpdate( { showOnFrontSetting, pageOnFrontSetting } ) {
-		if ( showOnFrontSetting && pageOnFrontSetting ) {
+	componentDidUpdate() {
+		if ( this.props.showOnFrontSetting ) {
 			return;
 		}
-
 		this.setFrontPageSettings();
 	}
 
 	setFrontPageSettings() {
 		const { showOnFrontOption, pageOnFrontOption, pageForPostsOption, updateSettings } = this.props;
-
 		updateSettings( {
 			show_on_front: showOnFrontOption,
-			page_for_posts: parseInt( pageOnFrontOption, 10 ),
-			page_on_front: parseInt( pageForPostsOption, 10 ),
+			page_for_posts: pageOnFrontOption,
+			page_on_front: pageForPostsOption,
 		} );
 	}
 
@@ -56,7 +52,6 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	pageForPostsOption: getSiteOption( state, siteId, 'page_for_posts' ),
 
 	showOnFrontSetting: getSiteSetting( state, siteId, 'show_on_front' ),
-	pageOnFrontSetting: getSiteSetting( state, siteId, 'page_on_front' ),
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
