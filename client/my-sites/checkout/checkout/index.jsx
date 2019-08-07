@@ -456,23 +456,19 @@ export class Checkout extends React.Component {
 				: '/checkout/thank-you/plans';
 		}
 
+		// If cart is empty, then send the user to a generic page (not post-purchase related).
+		// For example, this case arises when a Skip button is clicked on a concierge upsell
+		// nudge opened by a direct link to /offer-support-session.
+		if ( ':receiptId' === pendingOrReceiptId && isEmpty( getAllCartItems( cart ) ) ) {
+			return signupDestination;
+		}
+
 		if ( cart.create_new_blog ) {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {
 			return '/checkout/thank-you/features';
-		}
-
-		// If cart is empty, then send the user to a generic page (not post-purchase related).
-		// For example, this case arises when a Skip button is clicked on a concierge upsell
-		// nudge opened by a direct link to /offer-support-session.
-		if (
-			':receiptId' === pendingOrReceiptId &&
-			isEmpty( getAllCartItems( cart ) ) &&
-			! previousRoute.includes( '/checkout' )
-		) {
-			return `/stats/day/${ selectedSiteSlug }`;
 		}
 
 		if ( this.props.isJetpackNotAtomic ) {
@@ -538,7 +534,7 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-quickstart-session/${ pendingOrReceiptId }`;
+				return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
 			}
 		}
 

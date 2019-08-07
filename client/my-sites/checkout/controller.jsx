@@ -5,6 +5,7 @@
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -21,12 +22,25 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/upgrades/actions';
+import { sites } from 'my-sites/controller';
 
 export function checkout( context, next ) {
-	const { feature, plan, product, purchaseId } = context.params;
+	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+		sites( context, next );
+		return;
+	}
+
+	let product;
+	if ( selectedSite && selectedSite.slug !== domainOrProduct ) {
+		product = domainOrProduct;
+	} else {
+		product = context.params.product;
+	}
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -155,4 +169,14 @@ export function upsellNudge( context, next ) {
 	);
 
 	next();
+}
+
+export function redirectToSupportSession( context ) {
+	const { receiptId, site } = context.params;
+
+	// Redirect the old URL structure to the new URL structure to maintain backwards compatibility.
+	if ( context.params.receiptId ) {
+		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
+	}
+	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
