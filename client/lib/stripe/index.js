@@ -157,8 +157,8 @@ export function useStripeJs( stripeConfiguration ) {
 		try {
 			if ( window.Stripe ) {
 				debug( 'stripe.js already loaded' );
-				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				setStripeLoading( false );
+				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				return;
 			}
 			debug( 'loading stripe.js...' );
@@ -168,12 +168,13 @@ export function useStripeJs( stripeConfiguration ) {
 					return;
 				}
 				debug( 'stripe.js loaded!' );
-				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				setStripeLoading( false );
+				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 			} );
 		} catch ( error ) {
 			if ( error ) {
 				debug( 'error while loading stripeJs', error );
+				setStripeLoading( false );
 				return;
 			}
 		}
