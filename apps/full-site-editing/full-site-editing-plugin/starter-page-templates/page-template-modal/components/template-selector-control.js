@@ -14,6 +14,16 @@ import { parse as parseBlocks } from '@wordpress/blocks';
 import { BlockPreview } from '@wordpress/block-editor';
 
 /**
+ * Internal dependencies
+ */
+import replacePlaceholders from '../utils/replace-placeholders';
+
+// Load config passed from backend.
+const {
+	siteInformation = {},
+} = window.starterPageTemplatesConfig;
+
+/**
  * It renders the block preview content for the template.
  * It the templates blocks are not ready yet or not exist,
  * it tries to render a static image, or simply return null.
@@ -84,15 +94,15 @@ function TemplateSelectorControl( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ templates.map( option => (
-					<li key={ `${ id }-${ option.value }` } className="template-selector-control__option">
+				{ templates.map( template => (
+					<li key={ `${ id }-${ template.value }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
-							value={ option.value }
-							label={ option.label }
+							value={ template.slug }
+							label={ replacePlaceholders( template.title, siteInformation ) }
 							help={ help }
 							onSelect={ onTemplateSelect }
-							rawBlocks={ option.rawBlocks }
+							rawBlocks={ replacePlaceholders( template.content, siteInformation ) }
 						/>
 					</li>
 				) ) }
