@@ -43,7 +43,7 @@ type Resource =
 type DataId = string;
 
 export const httpData = new Map< DataId, Resource >();
-export const listeners = new Set();
+export const listeners = new Set< () => void >();
 
 export const empty: Readonly< Resource > = Object.freeze( {
 	state: DataState.Uninitialized,
@@ -55,13 +55,13 @@ export const empty: Readonly< Resource > = Object.freeze( {
 
 export const getHttpData = ( id: DataId ) => httpData.get( id ) || empty;
 
-export const subscribe = ( f: Function ): ( () => void ) => {
+export const subscribe = ( f: () => void ): ( () => void ) => {
 	listeners.add( f );
 
 	return () => void listeners.delete( f );
 };
 
-export const updateData = ( id: DataId, state: DataState, data: any ) => {
+export const updateData = ( id: DataId, state: DataState, data: unknown ) => {
 	const lastUpdated: TimestampMS = Date.now();
 	const item = httpData.get( id ) || empty;
 
@@ -99,7 +99,7 @@ export const updateData = ( id: DataId, state: DataState, data: any ) => {
 	}
 };
 
-export const update = ( id: DataId, state: DataState, data?: any ) => {
+export const update = ( id: DataId, state: DataState, data?: unknown ) => {
 	const updated = updateData( id, state, data );
 
 	listeners.forEach( f => f() );
@@ -159,7 +159,7 @@ const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
 	}
 };
 
-const onSuccess = ( action: HttpDataAction, apiData: any ) => {
+const onSuccess = ( action: HttpDataAction, apiData: unknown ) => {
 	const [ error, data ] = parseResponse( apiData, action.fromApi() );
 
 	if ( undefined !== error ) {
@@ -220,7 +220,7 @@ type ResponseParser = ( apiData: any ) => ResourcePair[];
 
 interface RequestHttpDataOptions {
 	fromApi?: Lazy< ResponseParser >;
-	freshness: number;
+	freshness?: number;
 }
 
 /**
