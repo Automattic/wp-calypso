@@ -4,8 +4,9 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loadScript } from '@automattic/load-script';
+import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 
 /**
  * Internal dependencies
@@ -42,6 +43,9 @@ export { StripeValidationError };
  * paymentDetails should include data not gathered by Stripe Elements. For
  * example, `name` (string), `address` (object with `country` [string] and
  * `postal_code` [string]).
+ *
+ * On success, the Promise will be resolved with an object that contains the
+ * PaymentMethod token in the `id` field.
  *
  * If there is an error, it will include a `message` field which can be used to
  * display the error. It will also include a `type` and possibly other fields
@@ -141,10 +145,11 @@ function getValidationErrorsFromStripeError( error ) {
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
- * @return {object} stripeJs
+ * @return {object} { stripeJs, isStripeLoading }
  */
 export function useStripeJs( stripeConfiguration ) {
 	const [ stripeJs, setStripeJs ] = useState( null );
+	const [ isStripeLoading, setStripeLoading ] = useState( true );
 	useEffect( () => {
 		if ( ! stripeConfiguration ) {
 			return;
@@ -152,6 +157,7 @@ export function useStripeJs( stripeConfiguration ) {
 		try {
 			if ( window.Stripe ) {
 				debug( 'stripe.js already loaded' );
+				setStripeLoading( false );
 				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				return;
 			}
@@ -162,30 +168,65 @@ export function useStripeJs( stripeConfiguration ) {
 					return;
 				}
 				debug( 'stripe.js loaded!' );
+				setStripeLoading( false );
 				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 			} );
 		} catch ( error ) {
 			if ( error ) {
 				debug( 'error while loading stripeJs', error );
+				setStripeLoading( false );
 				return;
 			}
 		}
 	}, [ stripeConfiguration ] );
-	return stripeJs;
+	return { stripeJs, isStripeLoading };
 }
 
 /**
  * React custom Hook for loading the Stripe Configuration
  *
- * @param {string} country (optional) The country code
+ * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
  * @return {object} Stripe Configuration as returned by the stripe configuration endpoint
  */
-export function useStripeConfiguration( country ) {
+export function useStripeConfiguration( requestArgs = {} ) {
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
-		getStripeConfiguration( { country } ).then( configuration =>
+		getStripeConfiguration( requestArgs ).then( configuration =>
 			setStripeConfiguration( configuration )
 		);
-	}, [ country ] );
+	}, [ requestArgs ] );
 	return stripeConfiguration;
+}
+
+/**
+ * HOC to render a component with StripeJs
+ *
+ * The wrapped component will receieve the additional props:
+ *
+ * - stripe (the stripe.js object)
+ * - stripeConfiguration (the results of the stripe-configuration endpoint)
+ * - isStripeLoading (true while the other two props are still loading)
+ *
+ * @param {object} WrappedComponent The component to wrap
+ * @param {object} configurationArgs (optional) Options for configuration endpoint request. Can include `country` or `needs_intent`
+ * @return {object} WrappedComponent
+ */
+export function withStripe( WrappedComponent, configurationArgs = {} ) {
+	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
+	return props => {
+		const stripeConfiguration = useStripeConfiguration( configurationArgs );
+		const { stripeJs, isStripeLoading } = useStripeJs( stripeConfiguration );
+
+		return (
+			<StripeProvider stripe={ stripeJs }>
+				<Elements>
+					<StripeInjectedWrappedComponent
+						stripeConfiguration={ stripeConfiguration }
+						isStripeLoading={ isStripeLoading }
+						{ ...props }
+					/>
+				</Elements>
+			</StripeProvider>
+		);
+	};
 }
