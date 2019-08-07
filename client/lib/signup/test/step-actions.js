@@ -288,19 +288,27 @@ describe( 'isDomainFulfilled', () => {
 } );
 
 describe( 'isPlanFulfilled()', () => {
+	const setSkipStep = jest.fn();
 	const submitSignupStep = jest.fn();
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
 		submitSignupStep.mockClear();
+		setSkipStep.mockClear();
 	} );
 
 	test( 'should remove a step for existing paid plan', () => {
 		const stepName = 'plans';
-		const nextProps = { isPaidPlan: true, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+		const nextProps = {
+			isPaidPlan: true,
+			sitePlanSlug: 'sitePlanSlug',
+			setSkipStep,
+			submitSignupStep,
+		};
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( setSkipStep ).not.toHaveBeenCalled();
 
 		isPlanFulfilled( stepName, undefined, nextProps );
 
@@ -308,35 +316,50 @@ describe( 'isPlanFulfilled()', () => {
 			{ stepName, undefined },
 			{ cartItem: undefined }
 		);
+		expect( setSkipStep ).toHaveBeenCalledWith( { stepName } );
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
 	test( 'should remove a step when provided a cartItem default dependency', () => {
 		const stepName = 'plans';
-		const nextProps = { isPaidPlan: false, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+		const nextProps = {
+			isPaidPlan: false,
+			sitePlanSlug: 'sitePlanSlug',
+			setSkipStep,
+			submitSignupStep,
+		};
 		const defaultDependencies = { cartItem: 'testPlan' };
 		const cartItem = { free_trial: false, product_slug: defaultDependencies.cartItem };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( setSkipStep ).not.toHaveBeenCalled();
 
 		isPlanFulfilled( stepName, defaultDependencies, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith( { stepName, cartItem }, { cartItem } );
+		expect( setSkipStep ).toHaveBeenCalledWith( { stepName } );
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
 	test( 'should not remove unfulfilled step', () => {
 		const stepName = 'plans';
-		const nextProps = { isPaidPlan: false, sitePlanSlug: 'sitePlanSlug', submitSignupStep };
+		const nextProps = {
+			isPaidPlan: false,
+			sitePlanSlug: 'sitePlanSlug',
+			setSkipStep,
+			submitSignupStep,
+		};
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( setSkipStep ).not.toHaveBeenCalled();
 
 		isPlanFulfilled( stepName, undefined, nextProps );
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
+		expect( setSkipStep ).not.toHaveBeenCalled();
 	} );
 } );
 
