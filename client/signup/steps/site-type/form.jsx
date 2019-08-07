@@ -22,7 +22,7 @@ import './style.scss';
 class SiteTypeForm extends Component {
 	static propTypes = {
 		showDescriptions: PropTypes.bool,
-		showPurchaseRequired: PropTypes.boolean,
+		showPurchaseRequired: PropTypes.bool,
 		siteType: PropTypes.string,
 		submitForm: PropTypes.func.isRequired,
 
