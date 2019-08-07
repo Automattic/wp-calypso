@@ -35,7 +35,11 @@ class CredsCompleteStep extends Component {
 		return (
 			<Card className="creds-complete__card">
 				<h3 className="creds-complete__title">{ translate( 'Your site is set up and ready!' ) }</h3>
-				<img className="creds-complete__image" src="/calypso/images/upgrades/thank-you.svg" />
+				<img
+					className="creds-complete__image"
+					alt={ translate( 'Thank You' ) }
+					src="/calypso/images/upgrades/thank-you.svg"
+				/>
 				<p className="creds-complete__description">
 					{ get( signupDependencies, 'rewindconfig', false ) &&
 						translate(
