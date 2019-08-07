@@ -28,12 +28,12 @@ export const isFromSignupFlow = createReducer( false, {
 export const siteDetails = createReducer( null, {
 	[ IMPORTER_NUX_SITE_DETAILS_SET ]: (
 		state,
-		{ siteEngine, siteFavicon, siteTitle, importSiteUrl, importerTypes }
+		{ siteEngine, siteFavicon, siteTitle, siteUrl, importerTypes }
 	) => ( {
 		siteEngine,
 		siteFavicon,
 		siteTitle,
-		importSiteUrl,
+		siteUrl,
 		importerTypes,
 	} ),
 	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => null,

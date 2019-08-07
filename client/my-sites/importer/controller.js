@@ -35,7 +35,7 @@ export function importSite( context, next ) {
 	context.store.dispatch(
 		setImportOriginSiteDetails( {
 			siteEngine: get( context, 'state.engine' ),
-			importSiteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
+			siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
 		} )
 	);
 

@@ -13,4 +13,4 @@ export const getSelectedImportEngine = state => get( getSiteDetails( state ), 's
 
 export const isImportingFromSignupFlow = state => !! get( state, 'importerNux.isFromSignupFlow' );
 
-export const getImporterSiteUrl = state => get( getSiteDetails( state ), 'importSiteUrl' );
+export const getImporterSiteUrl = state => get( getSiteDetails( state ), 'siteUrl' );

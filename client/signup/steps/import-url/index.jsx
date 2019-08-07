@@ -115,7 +115,7 @@ class ImportURLStepComponent extends Component {
 
 					this.props.setImportOriginSiteDetails( {
 						importerTypes,
-						importSiteUrl: siteUrl,
+						siteUrl,
 						siteEngine,
 						siteFavicon,
 						siteTitle,
