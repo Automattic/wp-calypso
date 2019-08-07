@@ -166,8 +166,6 @@ const getTemplatesForPlugin = once( () =>
 
 registerPlugin( 'page-templates', {
 	render: () => {
-		// console.time( 'populating templates with blocks' );
-
 		return (
 			<PageTemplatesPlugin
 				templates={ getTemplatesForPlugin() }
