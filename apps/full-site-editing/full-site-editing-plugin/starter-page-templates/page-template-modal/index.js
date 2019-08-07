@@ -34,7 +34,7 @@ class PageTemplateModal extends Component {
 		}
 	}
 
-	selectTemplate = ( { title, slug, blocks } ) => {
+	selectTemplate = ( slug, title, blocks ) => {
 		this.setState( { isOpen: false } );
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
@@ -71,7 +71,7 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
-								onTemplateSelect={ newTemplate => this.selectTemplate( newTemplate ) }
+								onTemplateSelect={ ( slug, title, blocks ) => this.selectTemplate( slug, title, blocks ) }
 							/>
 						</fieldset>
 					</form>
@@ -106,9 +106,7 @@ const PageTemplatesPlugin = compose(
 			},
 			insertTemplate: ( title, blocks ) => {
 				// Set post title.
-				editorDispatcher.editPost( {
-					title: title,
-				} );
+				editorDispatcher.editPost( { title } );
 
 				// Insert blocks.
 				const postContentBlock = ownProps.postContentBlock;

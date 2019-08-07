@@ -51,13 +51,7 @@ class TemplateSelectorItem extends Component {
 				id={ `${ id }-${ value }` }
 				className="template-selector-control__label"
 				value={ value }
-				onClick={ () =>
-					onSelect( {
-						slug: value,
-						blocks,
-						title: label,
-					} )
-				}
+				onClick={ () => onSelect( value, label, blocks ) }
 				aria-describedby={ help ? `${ id }__help` : undefined }
 			>
 				<div className="template-selector-control__preview-wrap">
