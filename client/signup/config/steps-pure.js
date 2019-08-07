@@ -420,6 +420,7 @@ export function generateSteps( {
 				'importSiteFavicon',
 				'importSiteUrl',
 				'siteTitle',
+				'suggestedDomain',
 				'themeSlugWithRepo',
 			],
 		},
