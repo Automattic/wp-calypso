@@ -359,7 +359,7 @@ class DomainsStep extends React.Component {
 			get( this.props, 'signupDependencies.suggestedDomain' );
 
 		if (
-			// If we landed here with from /domains Search or with a suggested domain.
+			// If we landed here from /domains Search or with a suggested domain.
 			( initialQuery && this.searchOnInitialRender ) ||
 			// If the subdomain type has changed, rerun the search
 			( initialState &&
