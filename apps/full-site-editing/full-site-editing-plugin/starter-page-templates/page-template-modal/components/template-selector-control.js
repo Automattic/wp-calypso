@@ -33,21 +33,13 @@ class TemplatePreview extends Component {
 	}
 
 	render() {
-		const { preview, previewAlt } = this.props;
 		const { blocks } = this.state;
 
-		if ( blocks && blocks.length ) {
-			return <BlockPreview blocks={ blocks } viewportWidth={ 1024 } />;
-		}
-
-		if ( ! preview ) {
+		if ( ! blocks || ! blocks.length ) {
 			return null;
 		}
 
-		return (
-			<img className="template-selector-control__media" src={ preview } alt={ previewAlt || '' }/>
-		);
-
+		return <BlockPreview blocks={ blocks } viewportWidth={ 1024 } />;
 	}
 }
 
@@ -85,11 +77,7 @@ function TemplateSelectorControl( {
 							aria-describedby={ help ? `${ id }__help` : undefined }
 						>
 							<div className="template-selector-control__media-wrap">
-								<TemplatePreview
-									preview={ option.preview }
-									altPreview={ option.altPreview }
-									rawBlocks={ option.rawBlocks }
-								/>
+								<TemplatePreview rawBlocks={ option.rawBlocks } />
 							</div>
 							{ option.label }
 						</button>
