@@ -18,6 +18,7 @@ import formatCurrency from '@automattic/format-currency';
  */
 import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
+import EmailVerificationDialog from 'components/email-verification/email-verification-dialog';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
@@ -201,28 +202,9 @@ export class PlanFeatures extends Component {
 
 		if ( ! isEmailVerfied ) {
 			return (
-				<Dialog
-					isVisible
-					buttons={ [
-						{
-							action: 'resend',
-							label: translate( 'Resend email' ),
-							onClick: () => alert( 'TODO' ),
-						},
-						{ action: 'ok', label: translate( 'OK' ), isPrimary: true },
-					] }
-					onClose={ () => {
-						this.setState( {
-							showingSiteLaunchDialog: false,
-							choosingPlanSlug: null,
-						} );
-					} }
-					//additionalClassNames=""
-				>
-					<h1>
-						{ translate( 'Please confirm your email address before upgrading to this plan.' ) }
-					</h1>
-				</Dialog>
+				<EmailVerificationDialog
+					onClose={ () => this.setState( { showingSiteLaunchDialog: false } ) }
+				/>
 			);
 		}
 
