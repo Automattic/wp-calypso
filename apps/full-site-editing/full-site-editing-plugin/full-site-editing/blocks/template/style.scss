@@ -86,3 +86,12 @@
 		}
 	}
 }
+
+// don't display the site logo action buttons if not editing the template
+.block-editor-page:not( .post-type-wp_template ) {
+	.fse-site-logo {
+		.components-placeholder__fieldset, .components-placeholder__instructions {
+			display: none;
+		}
+	}
+}
