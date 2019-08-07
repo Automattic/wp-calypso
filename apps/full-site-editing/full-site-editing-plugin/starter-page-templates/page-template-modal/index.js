@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { isEmpty, map, keyBy, reduce, once } from 'lodash';
+import { isEmpty, map, reduce, once } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { parse as parseBlocks } from '@wordpress/blocks';
 import { Component } from '@wordpress/element';
 import '@wordpress/nux';
 
@@ -157,7 +156,7 @@ const getTemplatesForPlugin = once( () =>
 					...template,
 					title: replacePlaceholders( template.title, siteInformation ),
 					content,
-					blocks: parseBlocks( content ),
+					// blocks: parseBlocks( content ),
 				},
 			};
 		},
@@ -166,11 +165,12 @@ const getTemplatesForPlugin = once( () =>
 );
 
 registerPlugin( 'page-templates', {
-
 	render: () => {
+		// console.time( 'populating templates with blocks' );
+
 		return (
 			<PageTemplatesPlugin
-				templates={ templates }
+				templates={ getTemplatesForPlugin() }
 				vertical={ vertical }
 				segment={ segment }
 				siteInformation={ siteInformation }
