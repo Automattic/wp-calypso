@@ -7,27 +7,17 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { getSiteTypePropertyValue } from './site-type';
 
 const debug = debugFactory( 'calypso:signup:private-by-default' );
 
-interface PrivateByDefaultSiteSettings {
-	flowName?: string;
-	lastKnownFlow?: string;
-}
-
 /**
  * Should the site be private by default
- * @param siteSettings PrivateByDefaultSiteSettings
+ * @param siteType The selected site type / segment. Corresponds with the `slug` in ./site-type.js
  * @returns `true` for private by default & `false` for not
  */
-export function shouldBePrivateByDefault( {
-	flowName,
-	lastKnownFlow,
-}: Readonly< PrivateByDefaultSiteSettings > ): boolean {
-	const flowToCheck = flowName || lastKnownFlow || '';
-
-	if ( flowToCheck.match( /^ecommerce/ ) ) {
-		// ecommerce plans go atomic after checkout. These sites should default to public for now.
+export function shouldBePrivateByDefault( siteType: string = '' ): boolean {
+	if ( getSiteTypePropertyValue( 'slug', siteType, 'forcePublicSite' ) ) {
 		return false;
 	}
 
@@ -36,13 +26,11 @@ export function shouldBePrivateByDefault( {
 
 /**
  * Get the numeric value that should be provided to the "new site" endpoint
- *
- * @param dependencies The `dependencies` passed to the `apiRequestFunction` step action function call
- * @param stepData The `stepData` passed to the `apiRequestFunction` step action function call
+ * @param siteType The selected site type / segment. Corresponds with the `slug` in ./site-type.js
  * @returns `-1` for private by default & `1` for public
  */
-export function getNewSitePublicSetting( dependencies: object, stepData: object ): number {
-	debug( 'getNewSitePublicSetting input', { dependencies, stepData } );
+export function getNewSitePublicSetting( siteType: string = '' ): number {
+	debug( 'getNewSitePublicSetting input', { siteType } );
 
-	return shouldBePrivateByDefault( stepData ) ? -1 : 1;
+	return shouldBePrivateByDefault( siteType ) ? -1 : 1;
 }

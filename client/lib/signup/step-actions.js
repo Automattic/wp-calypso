@@ -164,7 +164,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 		},
-		public: getNewSitePublicSetting( dependencies, stepData ),
+		public: getNewSitePublicSetting( siteType ),
 		validate: false,
 	};
 
@@ -485,11 +485,13 @@ export function createAccount(
 export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
+	const state = reduxStore.getState();
+	const siteType = getSiteType( state ).trim();
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( dependencies, stepData ),
+		public: getNewSitePublicSetting( siteType ),
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
