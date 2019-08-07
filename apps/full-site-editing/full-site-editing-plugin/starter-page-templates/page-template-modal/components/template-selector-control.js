@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
+import { isEmpty, noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -18,7 +18,7 @@ import { BlockPreview } from '@wordpress/block-editor';
  * It the templates blocks are not ready yet or not exist,
  * it tries to render a static image, or simply return null.
  */
-class TemplatePreview extends Component {
+class TemplateSelectorItem extends Component {
 	state = {
 		blocks: [],
 	};
@@ -34,12 +34,28 @@ class TemplatePreview extends Component {
 
 	render() {
 		const { blocks } = this.state;
+		const { id, value, help, onSelect, label } = this.props;
 
-		if ( ! blocks || ! blocks.length ) {
-			return null;
-		}
+		return <button
+			type="button"
+			id={ `${ id }-${ value }` }
+			className="template-selector-control__label"
+			value={ value }
+			onClick={ () => onSelect( {
+				slug: value,
+				blocks,
+				title: label,
+			} ) }
+			aria-describedby={ help ? `${ id }__help` : undefined }
+		>
+			<div className="template-selector-control__media-wrap">
+				{ ( blocks && blocks.length ) &&
+					<BlockPreview blocks={ blocks } viewportWidth={1024}/>
+				}
+			</div>
 
-		return <BlockPreview blocks={ blocks } viewportWidth={ 1024 } />;
+			{ label }
+		</button>
 	}
 }
 
@@ -49,7 +65,7 @@ function TemplateSelectorControl( {
 	className,
 	help,
 	instanceId,
-	onClick,
+	onTemplateSelect = noop,
 	templates = [],
 } ) {
 	if ( isEmpty( templates ) ) {
@@ -68,19 +84,14 @@ function TemplateSelectorControl( {
 			<ul className="template-selector-control__options">
 				{ templates.map( option => (
 					<li key={ `${ id }-${ option.value }` } className="template-selector-control__option">
-						<button
-							type="button"
-							id={ `${ id }-${ option.value }` }
-							className="template-selector-control__label"
+						<TemplateSelectorItem
+							id={ id }
 							value={ option.value }
-							onClick={ () => onClick( option.value ) }
-							aria-describedby={ help ? `${ id }__help` : undefined }
-						>
-							<div className="template-selector-control__media-wrap">
-								<TemplatePreview rawBlocks={ option.rawBlocks } />
-							</div>
-							{ option.label }
-						</button>
+							label={ option.label }
+							help={ help }
+							onSelect={ onTemplateSelect }
+							rawBlocks={ option.rawBlocks }
+						/>
 					</li>
 				) ) }
 			</ul>
