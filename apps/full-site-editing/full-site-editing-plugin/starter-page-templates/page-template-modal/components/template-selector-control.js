@@ -25,7 +25,6 @@ class TemplatePreview extends Component {
 
 	constructor( props ) {
 		super();
-
 		if ( props.rawBlocks ) {
 			this.state.blocks = parseBlocks( props.rawBlocks );
 		}
@@ -46,6 +45,7 @@ class TemplatePreview extends Component {
 		return (
 			<img className="template-selector-control__media" src={preview} alt={ previewAlt || '' }/>
 		);
+
 	}
 }
 
