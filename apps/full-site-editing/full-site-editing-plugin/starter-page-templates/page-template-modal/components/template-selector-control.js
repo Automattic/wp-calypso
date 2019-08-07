@@ -48,9 +48,13 @@ class TemplateSelectorItem extends Component {
 			} ) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
-			<div className="template-selector-control__media-wrap">
-				{ ( blocks && blocks.length ) &&
-					<BlockPreview blocks={ blocks } viewportWidth={1024}/>
+			<div className="template-selector-control__preview-wrap">
+				{ ( blocks && blocks.length ) ?
+					<BlockPreview
+						blocks={ blocks }
+						viewportWidth={ 800 }
+					/> :
+					null
 				}
 			</div>
 
