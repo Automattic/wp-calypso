@@ -23,10 +23,12 @@ class TemplatePreview extends Component {
 		blocks: [],
 	};
 
-	constructor( props ) {
-		super();
-		if ( props.rawBlocks ) {
-			this.state.blocks = parseBlocks( props.rawBlocks );
+	componentDidMount() {
+		if (
+			this.props.rawBlocks &&
+			( ! this.state.blocks || ! this.state.blocks.length )
+		) {
+			this.state.blocks = parseBlocks( this.props.rawBlocks );
 		}
 	}
 
@@ -34,7 +36,7 @@ class TemplatePreview extends Component {
 		const { preview, previewAlt } = this.props;
 		const { blocks } = this.state;
 
-		if ( blocks || blocks.length ) {
+		if ( blocks && blocks.length ) {
 			return <BlockPreview blocks={ blocks } viewportWidth={ 1024 } />;
 		}
 
@@ -43,7 +45,7 @@ class TemplatePreview extends Component {
 		}
 
 		return (
-			<img className="template-selector-control__media" src={preview} alt={ previewAlt || '' }/>
+			<img className="template-selector-control__media" src={ preview } alt={ previewAlt || '' }/>
 		);
 
 	}
