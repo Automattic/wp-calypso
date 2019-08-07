@@ -75,8 +75,8 @@ class PageTemplateModal extends Component {
 									// blocks: template.blocks,
 									label: template.title,
 									value: template.slug,
-									preview: template.preview,
-									previewAlt: template.description,
+									// preview: template.preview,
+									// previewAlt: template.description,
 									rawBlocks: template.content,
 								} ) ) }
 								onTemplateSelect={ newTemplate => this.selectTemplate( newTemplate ) }
