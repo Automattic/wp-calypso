@@ -29,6 +29,7 @@ const TemplateEdit = compose(
 		const { getEntityRecord } = select( 'core' );
 		const { getCurrentPostId, isEditedPostDirty } = select( 'core/editor' );
 		const { getBlock } = select( 'core/block-editor' );
+		const { isEditorSidebarOpened } = select( 'core/edit-post' );
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
 		const template = templateId && getEntityRecord( 'postType', 'wp_template', templateId );
@@ -44,11 +45,13 @@ const TemplateEdit = compose(
 			templateBlock: getBlock( templateClientId ),
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
 			isDirty: isEditedPostDirty(),
-			isEditorSidebarOpened: !! select( 'core/edit-post' ).isEditorSidebarOpened(),
+			isEditorSidebarOpened: !! isEditorSidebarOpened(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const { receiveBlocks } = dispatch( 'core/block-editor' );
+		const { closeGeneralSidebar } = dispatch( 'core/edit-post' );
+		const { clearSelectedBlock } = dispatch( 'core/editor' );
 		const { template, templateClientId, setState } = ownProps;
 		return {
 			savePost: dispatch( 'core/editor' ).savePost,
@@ -66,8 +69,8 @@ const TemplateEdit = compose(
 				receiveBlocks( [ templateBlock ] );
 				setState( { templateClientId: templateBlock.clientId } );
 			},
-			closeGeneralSidebar: dispatch( 'core/edit-post' ).closeGeneralSidebar,
-			clearSelectedBlock: dispatch( 'core/editor' ).clearSelectedBlock,
+			closeGeneralSidebar,
+			clearSelectedBlock,
 		};
 	} )
 )(
