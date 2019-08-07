@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, map, reduce, once } from 'lodash';
+import { isEmpty } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
@@ -13,7 +13,6 @@ import '@wordpress/nux';
 /**
  * Internal dependencies
  */
-import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
