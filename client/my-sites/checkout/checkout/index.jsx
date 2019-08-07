@@ -478,7 +478,7 @@ export class Checkout extends React.Component {
 			// Do not use the fallback `/` route after checkout
 			if ( selectedSiteSlug && signupDestination === '/' ) {
 				// Matches route from client/my-sites/checkout/checkout-thank-you/index.jsx:445
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 			}
 			return signupDestination;
 		}

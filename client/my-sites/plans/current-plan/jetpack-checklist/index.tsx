@@ -30,6 +30,7 @@ import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import Button from 'components/button';
 import Card from 'components/card';
+import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
 
 /**
  * Style dependencies
@@ -140,6 +141,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ isPaidPlan && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
 				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
+				<JetpackProductInstall />
 
 				<JetpackChecklistHeader isPaidPlan={ isPaidPlan } />
 
