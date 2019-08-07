@@ -194,7 +194,7 @@ export class PlanFeatures extends Component {
 
 	renderSiteLaunchDialog() {
 		const { isEmailVerfied, selectedSiteSlug, translate } = this.props;
-		const { choosingPlanSlug = '', showingSiteLaunchDialog } = this.state;
+		const { choosingPlanSlug, showingSiteLaunchDialog } = this.state;
 
 		if ( ! showingSiteLaunchDialog ) {
 			return null;
@@ -203,7 +203,9 @@ export class PlanFeatures extends Component {
 		if ( ! isEmailVerfied ) {
 			return (
 				<EmailVerificationDialog
-					onClose={ () => this.setState( { showingSiteLaunchDialog: false } ) }
+					onClose={ () =>
+						this.setState( { showingSiteLaunchDialog: false, choosingPlanSlug: '' } )
+					}
 				/>
 			);
 		}
@@ -228,7 +230,7 @@ export class PlanFeatures extends Component {
 				onClose={ () => {
 					this.setState( {
 						showingSiteLaunchDialog: false,
-						choosingPlanSlug: null,
+						choosingPlanSlug: '',
 					} );
 				} }
 				//additionalClassNames=""
