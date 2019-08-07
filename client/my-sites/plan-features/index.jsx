@@ -24,7 +24,10 @@ import PlanFeaturesItem from './item';
 import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import {
+	getCurrentUserCurrencyCode,
+	isCurrentUserEmailVerified,
+} from 'state/current-user/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
@@ -189,11 +192,38 @@ export class PlanFeatures extends Component {
 	}
 
 	renderSiteLaunchDialog() {
-		const { selectedSiteSlug, translate } = this.props;
+		const { isEmailVerfied, selectedSiteSlug, translate } = this.props;
 		const { choosingPlanSlug = '', showingSiteLaunchDialog } = this.state;
 
 		if ( ! showingSiteLaunchDialog ) {
 			return null;
+		}
+
+		if ( ! isEmailVerfied ) {
+			return (
+				<Dialog
+					isVisible
+					buttons={ [
+						{
+							action: 'resend',
+							label: translate( 'Resend email' ),
+							onClick: () => alert( 'TODO' ),
+						},
+						{ action: 'ok', label: translate( 'OK' ), isPrimary: true },
+					] }
+					onClose={ () => {
+						this.setState( {
+							showingSiteLaunchDialog: false,
+							choosingPlanSlug: null,
+						} );
+					} }
+					//additionalClassNames=""
+				>
+					<h1>
+						{ translate( 'Please confirm your email address before upgrading to this plan.' ) }
+					</h1>
+				</Dialog>
+			);
 		}
 
 		const destination = addQueryArgs(
@@ -201,20 +231,18 @@ export class PlanFeatures extends Component {
 			'/start/launch-site'
 		);
 
-		const infoDialogButtons = [
-			{ action: 'cancel', label: translate( 'Cancel' ) },
-			{
-				action: 'continue',
-				label: translate( "Let's do it!" ),
-				isPrimary: true,
-				onClick: () => page( destination ),
-			},
-		];
-
 		return (
 			<Dialog
 				isVisible
-				buttons={ infoDialogButtons }
+				buttons={ [
+					{ action: 'cancel', label: translate( 'Cancel' ) },
+					{
+						action: 'continue',
+						label: translate( "Let's do it!" ),
+						isPrimary: true,
+						onClick: () => page( destination ),
+					},
+				] }
 				onClose={ () => {
 					this.setState( {
 						showingSiteLaunchDialog: false,
@@ -975,6 +1003,7 @@ export default connect(
 
 		return {
 			canPurchase,
+			isEmailVerfied: isCurrentUserEmailVerified( state ),
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
