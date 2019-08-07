@@ -33,15 +33,7 @@
 		&:first-child {
 			[data-block] {
 				.template-block {
-					padding-top: 0;
 					padding-bottom: 3rem;
-				}
-			}
-		}
-		&:last-child {
-			[data-block] {
-				.template-block {
-					padding-bottom: 0;
 				}
 			}
 		}
