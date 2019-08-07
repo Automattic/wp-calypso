@@ -139,6 +139,7 @@ CreditCardNumberField.propTypes = {
 	createField: PropTypes.func.isRequired,
 	getErrorMessage: PropTypes.func.isRequired,
 	stripe: PropTypes.object,
+	card: PropTypes.object.isRequired,
 };
 
 function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErrorMessage, card } ) {
