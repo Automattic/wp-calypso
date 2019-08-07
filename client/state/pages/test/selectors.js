@@ -15,15 +15,11 @@ describe( 'selectors', () => {
 		test( 'should return true if the page is set as the front page', () => {
 			const result = isFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'page',
-									page_on_front: 1,
-								},
+								show_on_front: 'page',
+								page_on_front: 1,
 							},
 						},
 					},
@@ -38,15 +34,11 @@ describe( 'selectors', () => {
 		test( 'should return false if the page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'page',
-									page_on_front: 2,
-								},
+								show_on_front: 'page',
+								page_on_front: 2,
 							},
 						},
 					},
@@ -61,15 +53,11 @@ describe( 'selectors', () => {
 		test( 'should return false if a static page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'posts',
-									page_on_front: 0,
-								},
+								show_on_front: 'posts',
+								page_on_front: 0,
 							},
 						},
 					},
@@ -84,7 +72,7 @@ describe( 'selectors', () => {
 		test( 'should return false if the site is not known', () => {
 			const result = isFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {},
 					},
 				},
@@ -100,14 +88,10 @@ describe( 'selectors', () => {
 		test( 'should return true if the page is set as the posts page', () => {
 			const result = isPostsPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									page_for_posts: 1,
-								},
+								page_for_posts: 1,
 							},
 						},
 					},
@@ -122,14 +106,10 @@ describe( 'selectors', () => {
 		test( 'should return false if the page is not set as the posts page', () => {
 			const result = isPostsPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									page_for_posts: 2,
-								},
+								page_for_posts: 2,
 							},
 						},
 					},
@@ -144,7 +124,7 @@ describe( 'selectors', () => {
 		test( 'should return false if the site is not known', () => {
 			const result = isPostsPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {},
 					},
 				},

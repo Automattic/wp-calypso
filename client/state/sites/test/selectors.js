@@ -2187,15 +2187,11 @@ describe( 'selectors', () => {
 		test( 'should return falsey if the site does not have a static page set as the front page', () => {
 			const frontPage = getSiteFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'posts',
-									page_on_front: 0,
-								},
+								show_on_front: 'posts',
+								page_on_front: 0,
 							},
 						},
 					},
@@ -2209,7 +2205,7 @@ describe( 'selectors', () => {
 		test( 'should return falsey if the site is not known', () => {
 			const frontPage = getSiteFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {},
 					},
 				},
@@ -2222,15 +2218,11 @@ describe( 'selectors', () => {
 		test( 'should return the page ID if the site has a static page set as the front page', () => {
 			const frontPage = getSiteFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'page',
-									page_on_front: 1,
-								},
+								show_on_front: 'page',
+								page_on_front: 1,
 							},
 						},
 					},
@@ -2246,15 +2238,11 @@ describe( 'selectors', () => {
 		test( 'should return false if the site does not have a static page set as the front page', () => {
 			const hasFrontPage = hasStaticFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'posts',
-									page_on_front: 0,
-								},
+								show_on_front: 'posts',
+								page_on_front: 0,
 							},
 						},
 					},
@@ -2268,14 +2256,10 @@ describe( 'selectors', () => {
 		test( 'should return false if the site does not have a `page_on_front` value', () => {
 			const hasFrontPage = hasStaticFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'posts',
-								},
+								show_on_front: 'posts',
 							},
 						},
 					},
@@ -2289,7 +2273,7 @@ describe( 'selectors', () => {
 		test( 'should return false if the site is not known', () => {
 			const hasFrontPage = hasStaticFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {},
 					},
 				},
@@ -2302,15 +2286,11 @@ describe( 'selectors', () => {
 		test( 'should return true if the site has a static page set as the front page', () => {
 			const hasFrontPage = hasStaticFrontPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'page',
-									page_on_front: 42,
-								},
+								show_on_front: 'page',
+								page_on_front: 42,
 							},
 						},
 					},
@@ -2326,16 +2306,12 @@ describe( 'selectors', () => {
 		test( 'should return falsey if the site does not have a static page set as the posts page', () => {
 			const postsPage = getSitePostsPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'posts',
-									page_on_front: 0,
-									page_for_posts: 0,
-								},
+								show_on_front: 'posts',
+								page_on_front: 0,
+								page_for_posts: 0,
 							},
 						},
 					},
@@ -2349,7 +2325,7 @@ describe( 'selectors', () => {
 		test( 'should return falsey if the site is not known', () => {
 			const postsPage = getSitePostsPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {},
 					},
 				},
@@ -2362,16 +2338,12 @@ describe( 'selectors', () => {
 		test( 'should return the page ID if the site has a static page set as the posts page', () => {
 			const postsPage = getSitePostsPage(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'page',
-									page_on_front: 1,
-									page_for_posts: 2,
-								},
+								show_on_front: 'page',
+								page_on_front: 1,
+								page_for_posts: 2,
 							},
 						},
 					},
@@ -2387,7 +2359,7 @@ describe( 'selectors', () => {
 		test( 'should return falsey if the site is not known', () => {
 			const frontPageType = getSiteFrontPageType(
 				{
-					sites: {
+					siteSettings: {
 						items: {},
 					},
 				},
@@ -2400,16 +2372,12 @@ describe( 'selectors', () => {
 		test( "should return the site's front page type", () => {
 			const frontPageType = getSiteFrontPageType(
 				{
-					sites: {
+					siteSettings: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									show_on_front: 'page',
-									page_on_front: 1,
-									page_for_posts: 2,
-								},
+								show_on_front: 'page',
+								page_on_front: 1,
+								page_for_posts: 2,
 							},
 						},
 					},

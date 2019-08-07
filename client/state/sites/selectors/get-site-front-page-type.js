@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getSiteOption from './get-site-option';
+import getSiteSetting from 'state/selectors/get-site-setting';
 
 /**
  * Returns the front page type.
@@ -11,5 +11,5 @@ import getSiteOption from './get-site-option';
  * @return {String} 'posts' if blog posts are set as the front page or 'page' if a static page is
  */
 export default function getSiteFrontPageType( state, siteId ) {
-	return getSiteOption( state, siteId, 'show_on_front' );
+	return getSiteSetting( state, siteId, 'show_on_front' );
 }

@@ -36,10 +36,10 @@ import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
-import { isEnabled } from 'config';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import { updateSiteFrontPage } from 'state/site-settings/actions';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -220,20 +220,24 @@ class Page extends Component {
 		);
 	}
 
-	setFrontPage() {
-		alert( 'This feature is still being developed.' );
-	}
+	setFrontPage = () =>
+		this.props.updateSiteFrontPage( this.props.siteId, {
+			isPageOnFront: true,
+			frontPageId: this.props.page.ID,
+		} );
 
 	getFrontPageItem() {
-		if ( ! isEnabled( 'manage/pages/set-front-page' ) ) {
+		const { page, translate } = this.props;
+
+		if (
+			'publish' !== this.props.page.status ||
+			this.props.isFrontPage ||
+			( this.props.hasStaticFrontPage && this.props.isPostsPage )
+		) {
 			return null;
 		}
 
-		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
-			return null;
-		}
-
-		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+		if ( ! utils.userCan( 'edit_post', page ) ) {
 			return null;
 		}
 
@@ -241,7 +245,7 @@ class Page extends Component {
 			<MenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
 				<Gridicon icon="house" size={ 18 } />
-				{ this.props.translate( 'Set as Front Page' ) }
+				{ translate( 'Set as Homepage' ) }
 			</PopoverMenuItem>,
 		];
 	}
@@ -642,6 +646,7 @@ const mapState = ( state, props ) => {
 		isPreviewable,
 		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
+		siteId: pageSiteId,
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
@@ -663,6 +668,7 @@ const mapDispatch = {
 	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
+	updateSiteFrontPage,
 };
 
 export default flow(
