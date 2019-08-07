@@ -19,7 +19,6 @@ import {
 	parseOrdersChartData,
 	parseStoreStatsReferrers,
 	rangeOfPeriod,
-	getWpcomFilesBaseUrl,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -169,30 +168,6 @@ describe( 'utils', () => {
 
 		test( 'should return correctly year format for short (new) formats', () => {
 			expect( getPeriodFormat( 'year', '2017' ) ).toBe( 'YYYY' );
-		} );
-	} );
-
-	describe( 'getWpcomFilesBaseUrl', () => {
-		test( 'should return null with an empty site object', () => {
-			expect( getWpcomFilesBaseUrl( null ) ).toEqual( false );
-		} );
-
-		test( 'should return the correct files URL for a mapped domain', () => {
-			expect(
-				getWpcomFilesBaseUrl( { wpcom_url: 'discover.wordpress.com', URL: 'http://example.com' } )
-			).toEqual( 'https://discover.files.wordpress.com' );
-		} );
-
-		test( 'should return the correct files URL for a wpcom domain', () => {
-			expect(
-				getWpcomFilesBaseUrl( { wpcom_url: null, URL: 'http://discover.wordpress.com' } )
-			).toEqual( 'https://discover.files.wordpress.com' );
-		} );
-
-		test( 'should return null if URL contains a non-wpcom domain and wpcom_url is empty', () => {
-			expect( getWpcomFilesBaseUrl( { wpcom_url: null, URL: 'http://example.com' } ) ).toEqual(
-				false
-			);
 		} );
 	} );
 
