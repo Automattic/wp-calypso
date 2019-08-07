@@ -85,7 +85,7 @@ export default class PageList extends Component {
 		return (
 			<div>
 				<QueryPosts siteId={ siteId } query={ query } />
-				<QuerySiteFrontPage siteId={ siteId } />
+				{ siteId && <QuerySiteFrontPage siteId={ siteId } /> }
 				<ConnectedPages incrementPage={ this.incrementPage } query={ query } siteId={ siteId } />
 			</div>
 		);

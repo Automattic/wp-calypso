@@ -22,6 +22,7 @@ import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import QuerySiteFrontPage from 'components/data/query-site-front-page';
 import { successNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -297,6 +298,7 @@ class WpcomChecklistComponent extends PureComponent {
 			<>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
+				{ siteId && <QuerySiteFrontPage siteId={ siteId } /> }
 				<ChecklistComponent
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ updateCompletion }

@@ -19,6 +19,7 @@ import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
 import JetpackLogo from 'components/jetpack-logo';
+import QuerySiteFrontPage from 'components/data/query-site-front-page';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
@@ -727,8 +728,10 @@ export class MySitesSidebar extends Component {
 	}
 
 	render() {
+		const { siteId } = this.props;
 		return (
 			<Sidebar className="sidebar__streamlined-nav-drawer">
+				{ siteId && <QuerySiteFrontPage siteId={ siteId } /> }
 				<SidebarRegion>
 					<CurrentSite />
 					{ this.renderSidebarMenus() }
