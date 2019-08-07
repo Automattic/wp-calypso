@@ -257,8 +257,8 @@ class StatsListItem extends React.Component {
 					};
 				}
 				itemLabel = (
-					<a onClick={ onClickHandler } href={ href }>
-						{ decodeEntities( labelItem.label ) }
+					<a onClick={ onClickHandler } href={ href } title={ labelItem.linkTitle }>
+						<Emojify>{ decodeEntities( labelItem.label ) }</Emojify>
 					</a>
 				);
 			} else {
