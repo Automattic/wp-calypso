@@ -9,31 +9,46 @@ import classnames from 'classnames';
  */
 import { withInstanceId } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
+import { Component } from '@wordpress/element';
+import { parse as parseBlocks } from '@wordpress/blocks';
 import { BlockPreview } from '@wordpress/block-editor';
 
 /**
- * Renders the block preview content for the template.
+ * It renders the block preview content for the template.
  * It the templates blocks are not ready yet or not exist,
  * it tries to render a static image, or simply return null.
- *
- * @param {string} preview     Image URL for the static preview.
- * @param {string} previewAlt  Alt text to for the <img />
- * @param {array}  blocks      Parsed blocks to dynamic preview.
- * @return {null|*}            Preview block component.
  */
-function renderBlockPreview( { preview, previewAlt, blocks } ) {
-	if ( ! blocks || ! blocks.length ) {
+class TemplatePreview extends Component {
+	state = {
+		blocks: [],
+	};
+
+	constructor( props ) {
+		super();
+
+		if ( props.rawBlocks ) {
+			this.state.blocks = parseBlocks( props.rawBlocks );
+		}
+	}
+
+	render() {
+		const { preview, previewAlt } = this.props;
+		const { blocks } = this.state;
+
+		if ( blocks || blocks.length ) {
+			return <BlockPreview blocks={ blocks } viewportWidth={ 1024 } />;
+		}
+
 		if ( ! preview ) {
 			return null;
 		}
 
 		return (
-			<img className="template-selector-control__media" src={ preview } alt={ previewAlt || '' } />
+			<img className="template-selector-control__media" src={preview} alt={ previewAlt || '' }/>
 		);
 	}
-
-	return <BlockPreview blocks={ blocks } viewportWidth={ 1024 } />;
 }
+
 
 function TemplateSelectorControl( {
 	label,
@@ -68,7 +83,11 @@ function TemplateSelectorControl( {
 							aria-describedby={ help ? `${ id }__help` : undefined }
 						>
 							<div className="template-selector-control__media-wrap">
-								{ renderBlockPreview( option ) }
+								<TemplatePreview
+									preview={ option.preview }
+									altPreview={ option.altPreview }
+									rawBlocks={ option.rawBlocks }
+								/>
 							</div>
 							{ option.label }
 						</button>

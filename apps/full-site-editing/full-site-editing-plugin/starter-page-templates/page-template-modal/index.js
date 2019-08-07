@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, map, reduce, once } from 'lodash';
+import { isEmpty, map, keyBy, reduce, once } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Modal } from '@wordpress/components';
@@ -73,11 +73,12 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ map( this.props.templates, template => ( {
-									blocks: template.blocks,
+									// blocks: template.blocks,
 									label: template.title,
 									value: template.slug,
 									preview: template.preview,
 									previewAlt: template.description,
+									rawBlocks: template.content,
 								} ) ) }
 								onClick={ newTemplate => this.selectTemplate( newTemplate ) }
 							/>
@@ -165,10 +166,11 @@ const getTemplatesForPlugin = once( () =>
 );
 
 registerPlugin( 'page-templates', {
+
 	render: () => {
 		return (
 			<PageTemplatesPlugin
-				templates={ getTemplatesForPlugin() }
+				templates={ templates }
 				vertical={ vertical }
 				segment={ segment }
 				siteInformation={ siteInformation }
