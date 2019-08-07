@@ -184,16 +184,12 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={
-					isEnabled( 'customer-home' ) ? translate( 'Customer Home' ) : translate( 'Checklist' )
-				}
+				label={ isEnabled( 'customer-home' ) ? translate( 'Home' ) : translate( 'Checklist' ) }
 				selected={ itemLinkMatches(
-					isEnabled( 'customer-home' ) ? [ '/customer-home' ] : [ '/checklist' ],
+					isEnabled( 'customer-home' ) ? [ '/home' ] : [ '/checklist' ],
 					path
 				) }
-				link={
-					isEnabled( 'customer-home' ) ? '/customer-home' + siteSuffix : '/checklist' + siteSuffix
-				}
+				link={ isEnabled( 'customer-home' ) ? '/home' + siteSuffix : '/checklist' + siteSuffix }
 				onNavigate={ this.trackCustomerHomeClick }
 				materialIcon={ isEnabled( 'customer-home' ) ? 'home' : 'check_circle' }
 			/>
