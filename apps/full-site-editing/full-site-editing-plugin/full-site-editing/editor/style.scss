@@ -14,10 +14,14 @@
 		background: #eee;
 	}
 	
-	.edit-post-layout__content .edit-post-visual-editor {
+	 .edit-post-layout__content .edit-post-visual-editor {
 		flex: none;
 		margin: 40px;
-		box-shadow: 0 0 20px 0 rgba(0,0,0,0.1);
-		background: #fff;
+		box-shadow: 0 0 20px 0 rgba( 0, 0, 0, 0.1 );
 	}
 }
+
+// If you uncomment this style, the color gets set:
+// .editor-styles-wrapper {
+// 	background: #fff;
+// }
