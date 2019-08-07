@@ -34,19 +34,19 @@ class PageTemplateModal extends Component {
 		}
 	}
 
-	selectTemplate = newTemplate => {
+	selectTemplate = ( { title, slug, blocks } ) => {
 		this.setState( { isOpen: false } );
-		trackSelection( this.props.segment.id, this.props.vertical.id, newTemplate );
+		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
-		const template = this.props.templates[ newTemplate ];
-		this.props.saveTemplateChoice( template );
+		// const template = this.props.templates[ slug ];
+		this.props.saveTemplateChoice( slug );
 
 		// Skip inserting if there's nothing to insert.
-		if ( template.blocks.length === 0 ) {
+		if ( blocks.length === 0 ) {
 			return;
 		}
 
-		this.props.insertTemplate( template );
+		this.props.insertTemplate( title, blocks );
 	};
 
 	closeModal = () => {
@@ -79,7 +79,7 @@ class PageTemplateModal extends Component {
 									previewAlt: template.description,
 									rawBlocks: template.content,
 								} ) ) }
-								onClick={ newTemplate => this.selectTemplate( newTemplate ) }
+								onTemplateSelect={ newTemplate => this.selectTemplate( newTemplate ) }
 							/>
 						</fieldset>
 					</form>
@@ -102,26 +102,26 @@ const PageTemplatesPlugin = compose(
 
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
-			saveTemplateChoice: template => {
+			saveTemplateChoice: slug => {
 				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();
 				editorDispatcher.editPost( {
 					meta: {
 						...currentMeta,
-						_starter_page_template: template.slug,
+						_starter_page_template: slug,
 					},
 				} );
 			},
-			insertTemplate: template => {
+			insertTemplate: ( title, blocks ) => {
 				// Set post title.
 				editorDispatcher.editPost( {
-					title: template.title,
+					title: title,
 				} );
 
 				// Insert blocks.
 				const postContentBlock = ownProps.postContentBlock;
 				editorDispatcher.insertBlocks(
-					template.blocks,
+					blocks,
 					0,
 					postContentBlock ? postContentBlock.clientId : '',
 					false
