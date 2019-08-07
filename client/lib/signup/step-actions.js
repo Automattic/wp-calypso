@@ -549,7 +549,7 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
+	const { isPaidPlan, setSkipStep, sitePlanSlug, submitSignupStep } = nextProps;
 	let fulfilledDependencies = [];
 
 	if ( isPaidPlan ) {
@@ -565,6 +565,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		setSkipStep( { stepName } );
 		flows.excludeStep( stepName );
 	}
 }

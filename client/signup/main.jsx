@@ -58,7 +58,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { removeUnneededSteps, submitSignupStep } from 'state/signup/progress/actions';
+import { removeUnneededSteps, submitSignupStep, setSkipStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -649,6 +649,7 @@ export default connect(
 	},
 	{
 		setSurvey,
+		setSkipStep,
 		submitSiteType,
 		submitSiteVertical,
 		submitSignupStep,

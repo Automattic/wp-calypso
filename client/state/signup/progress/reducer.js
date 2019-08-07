@@ -19,6 +19,7 @@ import {
 	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
 	SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 	SIGNUP_PROGRESS_SAVE_STEP,
+	SIGNUP_PROGRESS_SKIP_STEP_SET,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
@@ -77,6 +78,11 @@ function setResumeAfterLogin( state, { resumeStep } ) {
 	return updateStep( state, { ...resumeStep, status: 'in-progress' } );
 }
 
+function setSkipStep( state, { skipStep } ) {
+	debug( `Setting skip step for step ${ skipStep.stepName }` );
+	return updateStep( state, skipStep );
+}
+
 function submitStep( state, { step } ) {
 	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
@@ -131,6 +137,7 @@ export default createReducer(
 		[ SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS ]: removeUnneededSteps,
 		[ SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET ]: setResumeAfterLogin,
 		[ SIGNUP_PROGRESS_SAVE_STEP ]: saveStep,
+		[ SIGNUP_PROGRESS_SKIP_STEP_SET ]: setSkipStep,
 		[ SIGNUP_PROGRESS_SUBMIT_STEP ]: submitStep,
 	},
 	schema

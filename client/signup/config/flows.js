@@ -156,6 +156,10 @@ const Flows = {
 		} );
 	},
 
+	resetExcludedSteps() {
+		Flows.excludedSteps = [];
+	},
+
 	getFlows() {
 		return flows;
 	},

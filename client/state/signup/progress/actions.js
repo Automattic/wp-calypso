@@ -8,6 +8,7 @@ import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
  */
 import {
 	SIGNUP_PROGRESS_SAVE_STEP,
+	SIGNUP_PROGRESS_SKIP_STEP_SET,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
@@ -139,5 +140,13 @@ export function setResumeAfterLogin( step ) {
 	return {
 		type: SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 		resumeStep: { ...step, lastUpdated },
+	};
+}
+
+export function setSkipStep( step ) {
+	const lastUpdated = Date.now();
+	return {
+		type: SIGNUP_PROGRESS_SKIP_STEP_SET,
+		skipStep: { ...step, lastUpdated, wasSkipped: true },
 	};
 }
