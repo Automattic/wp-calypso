@@ -16,7 +16,7 @@ import { flowRight, isEqual, size, without } from 'lodash';
  */
 import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QuerySiteFrontPage from 'components/data/query-site-front-page';
 import Page from './page';
 import { preload } from 'sections-helper';
 import InfiniteScroll from 'components/infinite-scroll';
@@ -85,7 +85,7 @@ export default class PageList extends Component {
 		return (
 			<div>
 				<QueryPosts siteId={ siteId } query={ query } />
-				<QuerySiteSettings siteId={ siteId } />
+				<QuerySiteFrontPage siteId={ siteId } />
 				<ConnectedPages incrementPage={ this.incrementPage } query={ query } siteId={ siteId } />
 			</div>
 		);
