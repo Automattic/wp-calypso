@@ -23,9 +23,9 @@ export class ImporterCloseButton extends React.PureComponent {
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
+			engine: PropTypes.string.isRequired,
 			importerId: PropTypes.string.isRequired,
 			importerState: PropTypes.string.isRequired,
-			type: PropTypes.string.isRequired,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -35,7 +35,7 @@ export class ImporterCloseButton extends React.PureComponent {
 
 	handleClick = () => {
 		const {
-			importerStatus: { importerId, type },
+			importerStatus: { engine, importerId },
 			site: { ID: siteId },
 		} = this.props;
 
@@ -43,7 +43,7 @@ export class ImporterCloseButton extends React.PureComponent {
 
 		this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
 			blog_id: siteId,
-			importer_id: type,
+			engine,
 		} );
 	};
 
