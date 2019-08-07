@@ -31,18 +31,7 @@
 		display: block;
 	}
 
-	.wp-block[data-type='a8c/template'] {
-		[data-block] {
-			margin: 0;
-		}
-		&:first-child {
-			padding-top: 1rem;
-			padding-bottom: 4rem;
-			[data-block] {
-				.template-block {
-					padding: 0;
-				}
-			}
-		}
+	.wp-block[data-type='a8c/template'] [data-block] {
+		margin: 0;
 	}
 }
