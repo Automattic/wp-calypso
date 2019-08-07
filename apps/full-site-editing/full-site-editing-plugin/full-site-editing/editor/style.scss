@@ -13,11 +13,25 @@
 	.edit-post-layout__content {
 		background: #eee;
 	}
-	
+
 	.edit-post-layout__content .edit-post-visual-editor {
 		flex: none;
 		margin: 40px;
-		box-shadow: 0 0 20px 0 rgba(0,0,0,0.1);
+		box-shadow: 0 0 20px 0 rgba( 0, 0, 0, 0.1 );
 		background: #fff;
+	}
+}
+
+.post-type-page {
+	.edit-post-visual-editor {
+		padding: 0 0 4px;
+	}
+
+	.block-editor-writing-flow {
+		display: block;
+	}
+
+	.wp-block[data-type='a8c/template'] [data-block] {
+		margin: 0;
 	}
 }

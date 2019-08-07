@@ -32,7 +32,7 @@
 	display: flex;
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 2px;
 	width: 100%;
 	height: 100%;
 	justify-content: center;
@@ -72,11 +72,14 @@
 				> .block-editor-block-list__block-edit {
 					&::before {
 						border-left: 3px solid rgba( 145, 151, 162, 0.25 );
-						margin-left: 3px;
+						margin-left: 2px;
+						top: 0;
+						bottom: 0;
 					}
 
 					& > .block-editor-block-list__breadcrumb {
-						margin-left: 3px;
+						margin-left: 2px;
+						top: 0;
 					}
 				}
 			}
