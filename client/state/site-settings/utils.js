@@ -41,7 +41,11 @@ export function normalizeSettings( settings ) {
 
 export const getDefaultSiteFrontPageSettings = ( state, siteId ) => {
 	if ( getSiteSetting( state, siteId, 'show_on_front' ) ) {
-		return {};
+		return {
+			show_on_front: getSiteSetting( state, siteId, 'show_on_front' ),
+			page_on_front: getSiteSetting( state, siteId, 'page_on_front' ),
+			page_for_posts: getSiteSetting( state, siteId, 'page_for_posts' ),
+		};
 	}
 	return {
 		show_on_front: getSiteOption( state, siteId, 'show_on_front' ),
