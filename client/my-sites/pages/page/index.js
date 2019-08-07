@@ -41,6 +41,7 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { updateSiteFrontPage } from 'state/site-settings/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -228,17 +229,14 @@ class Page extends Component {
 		} );
 
 	getFrontPageItem() {
-		const { page, translate } = this.props;
+		const { canManageOptions, translate } = this.props;
 
 		if (
+			! canManageOptions ||
 			'publish' !== this.props.page.status ||
 			! this.props.hasStaticFrontPage ||
 			this.props.isFrontPage
 		) {
-			return null;
-		}
-
-		if ( ! utils.userCan( 'edit_post', page ) ) {
 			return null;
 		}
 
@@ -258,19 +256,16 @@ class Page extends Component {
 		} );
 
 	getPostsPageItem() {
-		const { isFullSiteEditing, page, translate } = this.props;
+		const { canManageOptions, isFullSiteEditing, translate } = this.props;
 
 		if (
+			! canManageOptions ||
 			isFullSiteEditing ||
 			! this.props.hasStaticFrontPage ||
 			'publish' !== this.props.page.status ||
 			this.props.isPostsPage ||
 			this.props.isFrontPage
 		) {
-			return null;
-		}
-
-		if ( ! utils.userCan( 'edit_post', page ) ) {
 			return null;
 		}
 
@@ -688,6 +683,7 @@ const mapState = ( state, props ) => {
 		wpAdminGutenberg: shouldRedirectGutenberg( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
+		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
 	};
 };
 
