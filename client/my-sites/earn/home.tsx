@@ -203,23 +203,24 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getAdsCard = () => {
-		const cta = hasWordAds
-			? {
-					text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
-					action: () => {
-						trackCtaButton( 'ads' );
-						page(
-							`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
-						);
-					},
-			  }
-			: {
-					text: translate( 'Upgrade to a Premium Plan' ),
-					action: () => {
-						trackUpgrade( 'premium', 'ads' );
-						page( `/checkout/${ selectedSiteSlug }/premium/` );
-					},
-			  };
+		const cta =
+			hasWordAds || hasSetupAds
+				? {
+						text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
+						action: () => {
+							trackCtaButton( 'ads' );
+							page(
+								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
+							);
+						},
+				  }
+				: {
+						text: translate( 'Upgrade to a Premium Plan' ),
+						action: () => {
+							trackUpgrade( 'premium', 'ads' );
+							page( `/checkout/${ selectedSiteSlug }/premium/` );
+						},
+				  };
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
 		const body = hasSetupAds
 			? translate(
@@ -233,7 +234,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  );
-		const learnMoreLink = ! hasWordAds
+		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
 		return {
