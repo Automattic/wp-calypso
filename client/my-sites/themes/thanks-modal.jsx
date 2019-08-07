@@ -27,6 +27,7 @@ import {
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 
 /**
@@ -40,6 +41,7 @@ class ThanksModal extends Component {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
 		clearActivated: PropTypes.func.isRequired,
+		refreshSite: PropTypes.func.isRequired,
 		currentTheme: PropTypes.shape( {
 			author: PropTypes.string,
 			author_uri: PropTypes.string,
@@ -54,6 +56,13 @@ class ThanksModal extends Component {
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 	};
+
+	componentDidUpdate( prevProps ) {
+		// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
+		if ( prevProps.hasActivated === false && this.props.hasActivated === true ) {
+			this.props.refreshSite( this.props.siteId );
+		}
+	}
 
 	onCloseModal = () => {
 		this.props.clearActivated( this.props.siteId );
@@ -227,5 +236,10 @@ export default connect(
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
-	{ clearActivated }
+	dispatch => {
+		return {
+			clearActivated: siteId => dispatch( clearActivated( siteId ) ),
+			refreshSite: siteId => dispatch( requestSite( siteId ) ),
+		};
+	}
 )( ThanksModal );
