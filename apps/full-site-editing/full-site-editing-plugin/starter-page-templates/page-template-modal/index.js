@@ -125,7 +125,6 @@ const PageTemplatesPlugin = compose(
 
 // Load config passed from backend.
 const {
-	siteInformation = {},
 	templates = [],
 	vertical,
 	segment,
@@ -143,7 +142,6 @@ registerPlugin( 'page-templates', {
 				templates={ templates }
 				vertical={ vertical }
 				segment={ segment }
-				siteInformation={ siteInformation }
 			/>
 		);
 	},
