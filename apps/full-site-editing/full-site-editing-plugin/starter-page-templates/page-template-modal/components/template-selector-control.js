@@ -23,12 +23,11 @@ class TemplateSelectorItem extends Component {
 		blocks: [],
 	};
 
-	componentDidMount() {
-		if (
-			this.props.rawBlocks &&
-			( ! this.state.blocks || ! this.state.blocks.length )
-		) {
-			this.state.blocks = parseBlocks( this.props.rawBlocks );
+	constructor( props ) {
+		super();
+
+		if ( props.rawBlocks ) {
+			this.state.blocks = parseBlocks( props.rawBlocks );
 		}
 	}
 
@@ -36,33 +35,32 @@ class TemplateSelectorItem extends Component {
 		const { blocks } = this.state;
 		const { id, value, help, onSelect, label } = this.props;
 
-		return <button
-			type="button"
-			id={ `${ id }-${ value }` }
-			className="template-selector-control__label"
-			value={ value }
-			onClick={ () => onSelect( {
-				slug: value,
-				blocks,
-				title: label,
-			} ) }
-			aria-describedby={ help ? `${ id }__help` : undefined }
-		>
-			<div className="template-selector-control__preview-wrap">
-				{ ( blocks && blocks.length ) ?
-					<BlockPreview
-						blocks={ blocks }
-						viewportWidth={ 800 }
-					/> :
-					null
+		return (
+			<button
+				type="button"
+				id={ `${ id }-${ value }` }
+				className="template-selector-control__label"
+				value={ value }
+				onClick={ () =>
+					onSelect( {
+						slug: value,
+						blocks,
+						title: label,
+					} )
 				}
-			</div>
+				aria-describedby={ help ? `${ id }__help` : undefined }
+			>
+				<div className="template-selector-control__preview-wrap">
+					{ blocks && blocks.length ? (
+						<BlockPreview blocks={ blocks } viewportWidth={ 800 } />
+					) : null }
+				</div>
 
-			{ label }
-		</button>
+				{ label }
+			</button>
+		);
 	}
 }
-
 
 function TemplateSelectorControl( {
 	label,
