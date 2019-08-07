@@ -580,9 +580,20 @@
 	margin-right: 8px;
 }
 
+.sharing-buttons__fieldset input[type='radio'] + span,
+.sharing-buttons__fieldset input[type='checkbox'] + span {
+	margin-left: 0;
+}
+
 .sharing-buttons__fieldset label {
-	display: block;
+	display: flex;
 	cursor: pointer;
+}
+
+.sharing-buttons__fieldset .support-info {
+	float: none;
+	margin-left: 6px;
+	margin-top: 2px;
 }
 
 .sharing-buttons__fieldset-heading {
