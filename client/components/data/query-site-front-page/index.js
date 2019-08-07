@@ -36,8 +36,8 @@ class QuerySiteFrontPage extends Component {
 		const { showOnFrontOption, pageOnFrontOption, pageForPostsOption, updateSettings } = this.props;
 		updateSettings( {
 			show_on_front: showOnFrontOption,
-			page_for_posts: pageOnFrontOption,
-			page_on_front: pageForPostsOption,
+			page_for_posts: pageForPostsOption,
+			page_on_front: pageOnFrontOption,
 		} );
 	}
 
