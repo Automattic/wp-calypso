@@ -56,6 +56,7 @@ import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import { abtest } from 'lib/abtest';
+import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 
 /**
  * Module variables
@@ -199,6 +200,11 @@ export class SecurePaymentForm extends Component {
 			params.cancelUrl += this.props.selectedSite.slug;
 		} else {
 			params.cancelUrl += 'no-site';
+		}
+
+		const cardDetailsCountry = get( params.transaction, 'payment.newCardDetails.country', null );
+		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
+			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
 		}
 
 		submitTransaction( params );
