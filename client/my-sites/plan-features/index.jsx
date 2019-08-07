@@ -17,6 +17,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
+import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
 import EmailVerificationDialog from 'components/email-verification/email-verification-dialog';
 import PlanFeaturesActions from './actions';
@@ -233,9 +234,17 @@ export class PlanFeatures extends Component {
 						choosingPlanSlug: '',
 					} );
 				} }
-				//additionalClassNames=""
 			>
-				<h1>{ translate( 'If you continue, your site will be publicly visible.' ) }</h1>
+				<h1>{ translate( 'Site Privacy' ) }</h1>
+				{ translate( 'Your site is only visible to you and users you approve.' ) }
+				<br />
+				{ translate( 'If you continue with this plan, your site will be publicly visible.' ) }
+				<br />
+				<InlineSupportLink
+					showIcon={ false }
+					supportLink="https://support.wordpress.com/settings/privacy-settings/"
+					supportPostId={ 1507 }
+				/>
 			</Dialog>
 		);
 	}
