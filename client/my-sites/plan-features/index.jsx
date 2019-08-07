@@ -237,9 +237,7 @@ export class PlanFeatures extends Component {
 			>
 				<h1>{ translate( 'Site Privacy' ) }</h1>
 				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
-				<p>
-					{ translate( 'If you continue with this plan, your site will be publicly visible.' ) }
-				</p>
+				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
 				<InlineSupportLink
 					showIcon={ false }
 					supportLink="https://support.wordpress.com/settings/privacy-settings/"
