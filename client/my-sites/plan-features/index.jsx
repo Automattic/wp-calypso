@@ -951,7 +951,7 @@ export default connect(
 					planObject: planObject,
 					planPath: getPlanPath( plan ) || '',
 					popular: popular,
-					productSlug: planObject.product_slug,
+					productSlug: get( planObject, 'product_slug' ),
 					newPlan: newPlan,
 					bestValue: bestValue,
 					hideMonthly: false,
