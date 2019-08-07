@@ -102,12 +102,12 @@ StripeElementErrors.propTypes = {
 	fieldName: PropTypes.string.isRequired,
 };
 
-function CreditCardNumberField( { translate, stripe, createField, getErrorMessage } ) {
+function CreditCardNumberField( { translate, stripe, createField, getErrorMessage, card } ) {
 	const cardNumberLabel = translate( 'Card Number', {
 		comment: 'Card number label on credit card form',
 	} );
 
-	if ( stripe ) {
+	if ( stripe && ! shouldRenderAdditionalCountryFields( card.country ) ) {
 		const elementClasses = {
 			base: 'credit-card-form-fields__element',
 			invalid: 'is-error',
@@ -139,6 +139,7 @@ CreditCardNumberField.propTypes = {
 	createField: PropTypes.func.isRequired,
 	getErrorMessage: PropTypes.func.isRequired,
 	stripe: PropTypes.object,
+	card: PropTypes.object.isRequired,
 };
 
 function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErrorMessage, card } ) {
@@ -152,7 +153,7 @@ function CreditCardExpiryAndCvvFields( { translate, stripe, createField, getErro
 		comment: 'Expiry label on credit card form',
 	} );
 
-	if ( stripe ) {
+	if ( stripe && ! shouldRenderAdditionalCountryFields( card.country ) ) {
 		const elementClasses = {
 			base: 'credit-card-form-fields__element',
 			invalid: 'is-error',
@@ -325,6 +326,7 @@ export class CreditCardFormFields extends React.Component {
 						stripe={ this.props.stripe }
 						createField={ this.createField }
 						getErrorMessage={ this.props.getErrorMessage }
+						card={ this.props.card }
 					/>
 				</div>
 
