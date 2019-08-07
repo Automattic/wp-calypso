@@ -871,7 +871,6 @@ class SignupForm extends Component {
 			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 				this.props.isJetpackWooCommerceFlow ) ||
 			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				this.props.oauth2Client &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom )
 		) {

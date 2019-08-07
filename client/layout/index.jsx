@@ -128,7 +128,6 @@ class Layout extends Component {
 				{
 					'is-wccom-oauth-flow':
 						config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-						this.props.oauth2Client &&
 						isWooOAuth2Client( this.props.oauth2Client ) &&
 						this.props.wccomFrom,
 				}

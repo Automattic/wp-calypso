@@ -64,7 +64,6 @@ const LayoutLoggedOut = ( {
 			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
 		'is-wccom-oauth-flow':
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			useOAuth2Layout &&
 			isWooOAuth2Client( oauth2Client ) &&
 			wccomFrom,
 	};

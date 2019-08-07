@@ -4,10 +4,11 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 import './style.scss';
 
-const WooCommercConnectCartHeader = () => {
+const WooCommercConnectCartHeader = ( { translate } ) => {
 	return (
 		<div className="woocommerce-connect-cart-header is-stepper">
 			<div className="woocommerce-connect-cart-header__stepper">
@@ -45,7 +46,9 @@ const WooCommercConnectCartHeader = () => {
 							</svg>
 						</div>
 						<div className="woocommerce-connect-cart-header__stepper-step-text">
-							<span className="woocommerce-connect-cart-header__stepper-step-label">Cart</span>
+							<span className="woocommerce-connect-cart-header__stepper-step-label">
+								{ translate( 'Cart' ) }
+							</span>
 						</div>
 					</div>
 					<div className="woocommerce-connect-cart-header__stepper-step-divider" />
@@ -54,7 +57,9 @@ const WooCommercConnectCartHeader = () => {
 							<span className="woocommerce-connect-cart-header__stepper-step-number">2</span>
 						</div>
 						<div className="woocommerce-connect-cart-header__stepper-step-text">
-							<span className="woocommerce-connect-cart-header__stepper-step-label">Payment</span>
+							<span className="woocommerce-connect-cart-header__stepper-step-label">
+								{ translate( 'Payment' ) }
+							</span>
 						</div>
 					</div>
 					<div className="woocommerce-connect-cart-header__stepper-step-divider" />
@@ -64,7 +69,7 @@ const WooCommercConnectCartHeader = () => {
 						</div>
 						<div className="woocommerce-connect-cart-header__stepper-step-text">
 							<span className="woocommerce-connect-cart-header__stepper-step-label">
-								Installation
+								{ translate( 'Installation' ) }
 							</span>
 						</div>
 					</div>
@@ -74,4 +79,4 @@ const WooCommercConnectCartHeader = () => {
 	);
 };
 
-export default WooCommercConnectCartHeader;
+export default localize( WooCommercConnectCartHeader );

@@ -173,7 +173,6 @@ export class LoginLinks extends React.Component {
 		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
 		if (
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			this.props.oauth2Client &&
 			isWooOAuth2Client( this.props.oauth2Client ) &&
 			this.props.wccomFrom
 		) {

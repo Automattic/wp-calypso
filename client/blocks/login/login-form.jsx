@@ -435,7 +435,6 @@ export class LoginForm extends Component {
 
 		if (
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			oauth2Client &&
 			isWooOAuth2Client( oauth2Client ) &&
 			wccomFrom
 		) {

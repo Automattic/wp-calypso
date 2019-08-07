@@ -234,7 +234,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		display: block;
 		height: 56px;
 		border-bottom: 1px solid var( --color-woocommerce-header-border );
-		background: #fff;
+		background: var( --color-white );
 
 		svg {
 			margin-top: 15px;

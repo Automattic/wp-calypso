@@ -307,7 +307,6 @@ function getDefaultContext( request ) {
 		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
 		request.query[ 'wccom-from' ] &&
-		oauthClientId &&
 		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
 
 	const context = Object.assign( {}, request.context, {
