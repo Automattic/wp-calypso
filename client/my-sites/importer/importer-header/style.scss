@@ -1,5 +1,5 @@
 .importer-header__service-info {
-	margin-bottom: 1.5em;
+	margin-bottom: 1em;
 
 	@include breakpoint( '>480px' ) {
 		margin-left: 60px;
@@ -15,5 +15,3 @@
 		clear: none;
 	}
 }
-
-

@@ -98,3 +98,24 @@
 	height: 47px;
 	margin: 16px auto;
 }
+
+
+.import-url__service-info {
+	margin-bottom: 1.5em;
+
+	@include breakpoint( '>480px' ) {
+		margin-left: 60px;
+	}
+}
+
+.import-url__service-title {
+	font-size: 21px;
+	font-weight: 300;
+	color: var( --color-text-subtle );
+
+	@include breakpoint( '>480px' ) {
+		clear: none;
+	}
+}
+
+

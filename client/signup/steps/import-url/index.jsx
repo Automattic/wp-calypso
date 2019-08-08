@@ -251,9 +251,8 @@ class ImportURLStepComponent extends Component {
 					return (
 						<Card key={ engine } displayAsLink onClick={ this.handleEngineSelect( engine ) }>
 							<ImporterLogo icon={ icon } />
-							<div className="importer-header__service-info">
-								<h1 className="importer-header__service-title">{ title }</h1>
-								<p>{ description }</p>
+							<div className="import-url__service-info">
+								<h1 className="import-url__service-title">{ title }</h1>
 							</div>
 						</Card>
 					);
