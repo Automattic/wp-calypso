@@ -100,15 +100,18 @@ function load_starter_page_templates() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
 
 /**
- * Inserts default template data for current theme during plugin activation.
+ * Inserts default full site editing data for current theme during plugin activation.
+ *
  * We usually perform this on theme activation hook, but this is needed to handle
- * the cases in which FSE supported theme was activated prior to the plugin.
+ * the cases in which FSE supported theme was activated prior to the plugin. This will
+ * populate the default header and footer for current theme, and create About and Contact
+ * pages provided that they don't already exist.
  */
 function populate_wp_template_data() {
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 
 	$fse = Full_Site_Editing::get_instance();
-	$fse->wp_template_inserter->insert_default_template_data();
+	$fse->insert_default_data();
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );

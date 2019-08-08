@@ -57,7 +57,7 @@ class Full_Site_Editing {
 		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
 		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
 		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
-		add_action( 'after_switch_theme', [ $this, 'insert_theme_template_data' ] );
+		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_option( 'stylesheet' ) );
@@ -94,18 +94,19 @@ class Full_Site_Editing {
 	 * This insertion will only happen if theme supports FSE.
 	 * It is hooked into after_switch_theme action.
 	 */
-	public function insert_theme_template_data() {
+	public function insert_default_data() {
 		// Bail if theme doesn't support FSE.
 		if ( ! $this->is_supported_theme( $this->theme_slug ) ) {
 			return;
 		}
 
-		// Bail if the data is already present.
-		if ( $this->wp_template_inserter->is_template_data_inserted() ) {
-			return;
+		if ( ! $this->wp_template_inserter->is_template_data_inserted() ) {
+			$this->wp_template_inserter->insert_default_template_data();
 		}
 
-		$this->wp_template_inserter->insert_default_template_data();
+		if ( ! $this->wp_template_inserter->is_pages_data_inserted() ) {
+			$this->wp_template_inserter->insert_default_pages();
+		}
 	}
 
 	/**
