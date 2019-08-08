@@ -30,6 +30,10 @@ import {
 } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import { setPayment, submitTransaction } from 'lib/upgrades/actions';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
+import isPrivateSite from 'state/selectors/is-private-site';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isPaidForFullyInCredits,
 	isFree,
@@ -56,6 +60,8 @@ import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import { abtest } from 'lib/abtest';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -321,8 +327,26 @@ export class SecurePaymentForm extends Component {
 	}
 
 	finishIfLastStep( cart, selectedSite, step ) {
+		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
+
 		if ( ! step.last || step.error ) {
 			return;
+		}
+
+		if ( ! isJetpack && siteIsPrivate ) {
+			const forcedAtomicProducts = get( cart, 'products', [] ).filter(
+				( { product_slug = '' } ) => {
+					return (
+						planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
+						planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
+					);
+				}
+			);
+
+			if ( forcedAtomicProducts.length ) {
+				// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+				this.props.saveSiteSettings( selectedSiteId, { blog_public: 1 } );
+			}
 		}
 
 		if ( step.data.redirect_url ) {
@@ -657,10 +681,15 @@ export class SecurePaymentForm extends Component {
 
 export default connect(
 	state => {
+		const selectedSiteId = getSelectedSiteId( state );
+
 		return {
 			countriesList: getCountries( state, 'payments' ),
+			isJetpack: isJetpackSite( state, selectedSiteId ),
 			presaleChatAvailable: isPresalesChatAvailable( state ),
+			selectedSiteId,
+			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
 		};
 	},
-	null
+	{ saveSiteSettings }
 )( localize( SecurePaymentForm ) );

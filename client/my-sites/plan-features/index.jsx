@@ -48,6 +48,7 @@ import {
 	planHasFeature,
 } from 'lib/plans';
 import {
+	getCurrentPlan,
 	getPlanDiscountedRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
@@ -83,18 +84,22 @@ import PlanFeaturesScroller from './scroller';
 import './style.scss';
 import Dialog from 'components/dialog';
 
+const defaultState = {
+	checkoutUrl: '/checkout',
+	showingSiteLaunchDialog: false,
+	choosingPlanSlug: '',
+};
+
 export class PlanFeatures extends Component {
-	state = {
-		showingSiteLaunchDialog: false,
-		choosingPlanSlug: '',
+	state = { ...defaultState };
+
+	setDefaultState = () => {
+		this.setState( defaultState );
 	};
 
 	componentWillReceiveProps( { siteId } ) {
 		if ( siteId !== this.props.siteId ) {
-			this.setState( {
-				showingSiteLaunchDialog: false,
-				choosingPlanSlug: '',
-			} );
+			this.setDefaultState();
 		}
 	}
 
@@ -194,30 +199,29 @@ export class PlanFeatures extends Component {
 	}
 
 	renderSiteLaunchDialog() {
-		const { isEmailVerified, selectedSiteSlug, translate } = this.props;
-		const { choosingPlanSlug, showingSiteLaunchDialog } = this.state;
+		const { currentSitePlanSlug, isEmailVerified, translate } = this.props;
+		const { checkoutUrl, choosingPlanSlug, showingSiteLaunchDialog } = this.state;
 
 		if ( ! showingSiteLaunchDialog ) {
 			return null;
 		}
 
 		if ( ! isEmailVerified ) {
-			return (
-				<EmailVerificationDialog
-					onClose={ () =>
-						this.setState( { showingSiteLaunchDialog: false, choosingPlanSlug: '' } )
-					}
-				/>
-			);
+			this.props.recordTracksEvent( 'calypso_plan_upgrade_email_unverified', {
+				current_plan: currentSitePlanSlug,
+				upgrading_to: choosingPlanSlug,
+			} );
+			return <EmailVerificationDialog onClose={ this.setDefaultState } />;
 		}
 
-		const destination = addQueryArgs(
-			{ siteSlug: selectedSiteSlug, plan: choosingPlanSlug },
-			'/start/launch-site'
-		);
+		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_shown', {
+			current_plan: currentSitePlanSlug,
+			upgrading_to: choosingPlanSlug,
+		} );
 
 		return (
 			<Dialog
+				additionalClassNames="plan-features__upgrade-launch-dialog"
 				isVisible
 				buttons={ [
 					{ action: 'cancel', label: translate( 'Cancel' ) },
@@ -225,15 +229,16 @@ export class PlanFeatures extends Component {
 						action: 'continue',
 						label: translate( "Let's do it!" ),
 						isPrimary: true,
-						onClick: () => page( destination ),
+						onClick: () => {
+							this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
+								current_plan: currentSitePlanSlug,
+								upgrading_to: choosingPlanSlug,
+							} );
+							page( checkoutUrl );
+						},
 					},
 				] }
-				onClose={ () => {
-					this.setState( {
-						showingSiteLaunchDialog: false,
-						choosingPlanSlug: '',
-					} );
-				} }
+				onClose={ this.setDefaultState }
 			>
 				<h1>{ translate( 'Site Privacy' ) }</h1>
 				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
@@ -555,19 +560,13 @@ export class PlanFeatures extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const {
-			displayJetpackPlans,
-			isInSignup,
-			selectedSiteSlug,
-			withDiscount,
-			onUpgradeClick: ownPropsOnUpgradeClick,
-		} = this.props;
+		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 
 		const {
 			availableForPurchase,
 			cartItemForPlan,
+			checkoutUrl,
 			isPrivateAndGoingAtomic,
-			planPath,
 			productSlug,
 		} = singlePlanProperties;
 
@@ -586,19 +585,14 @@ export class PlanFeatures extends Component {
 				return;
 			}
 			this.setState( {
-				showingSiteLaunchDialog: true,
+				checkoutUrl,
 				choosingPlanSlug: productSlug,
+				showingSiteLaunchDialog: true,
 			} );
 			return;
 		}
 
-		const args = {};
-		// Auto-apply the coupon code to the cart for WPCOM sites
-		if ( ! displayJetpackPlans && withDiscount ) {
-			args.coupon = withDiscount;
-		}
-
-		page( addQueryArgs( args, `/checkout/${ selectedSiteSlug }/${ planPath }` ) );
+		page( checkoutUrl );
 	}
 
 	renderTopButtons() {
@@ -876,6 +870,7 @@ export default connect(
 			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
+			withDiscount,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -883,6 +878,7 @@ export default connect(
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
+		const currentPlanObj = getCurrentPlan( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -908,6 +904,17 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
+				const planPath = getPlanPath( plan ) || '';
+
+				const checkoutUrlArgs = {};
+				// Auto-apply the coupon code to the cart for WPCOM sites
+				if ( ! displayJetpackPlans && withDiscount ) {
+					checkoutUrlArgs.coupon = withDiscount;
+				}
+				const checkoutUrl = addQueryArgs(
+					checkoutUrlArgs,
+					`/checkout/${ selectedSiteSlug }/${ planPath }`
+				);
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
@@ -956,6 +963,7 @@ export default connect(
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
+					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
@@ -968,7 +976,6 @@ export default connect(
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,
-					planPath: getPlanPath( plan ) || '',
 					popular: popular,
 					productSlug: get( planObject, 'product_slug' ),
 					newPlan: newPlan,
@@ -994,6 +1001,7 @@ export default connect(
 
 		return {
 			canPurchase,
+			currentSitePlanSlug: get( currentPlanObj, 'productSlug', null ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isJetpack,
 			planProperties,
