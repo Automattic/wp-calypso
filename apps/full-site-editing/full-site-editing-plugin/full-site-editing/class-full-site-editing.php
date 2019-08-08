@@ -26,17 +26,42 @@ class Full_Site_Editing {
 	private $template_post_types = [ 'wp_template' ];
 
 	/**
+	 * Current theme slug.
+	 *
+	 * @var string
+	 */
+	private $theme_slug = '';
+
+	/**
+	 * Instance of WP_Template_Inserter class.
+	 *
+	 * @var WP_Template_Inserter
+	 */
+	public $wp_template_inserter;
+
+	/**
+	 * List of FSE supported themes.
+	 *
+	 * @var array
+	 */
+	const SUPPORTED_THEMES = [ 'modern-business' ];
+
+	/**
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', array( $this, 'register_blocks' ), 100 );
-		add_action( 'init', array( $this, 'register_template_post_types' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
-		add_action( 'the_post', array( $this, 'merge_template_and_post' ) );
-		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
-		add_filter( 'admin_body_class', array( $this, 'toggle_editor_post_title_visibility' ) );
-		add_filter( 'block_editor_settings', array( $this, 'set_block_template' ) );
+		add_action( 'init', [ $this, 'register_blocks' ], 100 );
+		add_action( 'init', [ $this, 'register_template_post_types' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
+		add_action( 'the_post', [ $this, 'merge_template_and_post' ] );
+		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
+		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
+		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
+		add_action( 'after_switch_theme', [ $this, 'insert_theme_template_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
+
+		$this->theme_slug           = $this->normalize_theme_slug( get_option( 'stylesheet' ) );
+		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
 	}
 
 	/**
@@ -53,105 +78,60 @@ class Full_Site_Editing {
 	}
 
 	/**
+	 * Determines whether provided theme supports FSE.
+	 *
+	 * @param string $theme_slug Theme slug to check support for.
+	 *
+	 * @return bool True if passed theme supports FSE, false otherwise.
+	 */
+	public function is_supported_theme( $theme_slug ) {
+		return in_array( $theme_slug, self::SUPPORTED_THEMES, true );
+	}
+
+	/**
+	 * Inserts template data for the theme we are currently switching to.
+	 *
+	 * This insertion will only happen if theme supports FSE.
+	 * It is hooked into after_switch_theme action.
+	 */
+	public function insert_theme_template_data() {
+		// Bail if theme doesn't support FSE.
+		if ( ! $this->is_supported_theme( $this->theme_slug ) ) {
+			return;
+		}
+
+		// Bail if the data is already present.
+		if ( $this->wp_template_inserter->is_template_data_inserted() ) {
+			return;
+		}
+
+		$this->wp_template_inserter->insert_default_template_data();
+	}
+
+	/**
+	 * Returns normalized theme slug for the current theme.
+	 *
+	 * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
+	 * For example, we will get 'modern-business' when retrieving theme slug on self hosted sites,
+	 * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
+	 *
+	 * @param string $theme_slug Theme slug to check support for.
+	 *
+	 * @return string Normalized theme slug.
+	 */
+	public function normalize_theme_slug( $theme_slug ) {
+		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
+			$theme_slug = str_replace( 'pub/', '', $theme_slug );
+		}
+
+		return $theme_slug;
+	}
+
+	/**
 	 * Register post types.
 	 */
 	public function register_template_post_types() {
-		register_post_type(
-			'wp_template',
-			array(
-				'labels'                => array(
-					'name'                     => _x( 'Templates', 'post type general name', 'full-site-editing' ),
-					'singular_name'            => _x( 'Template', 'post type singular name', 'full-site-editing' ),
-					'menu_name'                => _x( 'Templates', 'admin menu', 'full-site-editing' ),
-					'name_admin_bar'           => _x( 'Template', 'add new on admin bar', 'full-site-editing' ),
-					'add_new'                  => _x( 'Add New', 'Template', 'full-site-editing' ),
-					'add_new_item'             => __( 'Add New Template', 'full-site-editing' ),
-					'new_item'                 => __( 'New Template', 'full-site-editing' ),
-					'edit_item'                => __( 'Edit Template', 'full-site-editing' ),
-					'view_item'                => __( 'View Template', 'full-site-editing' ),
-					'all_items'                => __( 'All Templates', 'full-site-editing' ),
-					'search_items'             => __( 'Search Templates', 'full-site-editing' ),
-					'not_found'                => __( 'No templates found.', 'full-site-editing' ),
-					'not_found_in_trash'       => __( 'No templates found in Trash.', 'full-site-editing' ),
-					'filter_items_list'        => __( 'Filter templates list', 'full-site-editing' ),
-					'items_list_navigation'    => __( 'Templates list navigation', 'full-site-editing' ),
-					'items_list'               => __( 'Templates list', 'full-site-editing' ),
-					'item_published'           => __( 'Template published.', 'full-site-editing' ),
-					'item_published_privately' => __( 'Template published privately.', 'full-site-editing' ),
-					'item_reverted_to_draft'   => __( 'Template reverted to draft.', 'full-site-editing' ),
-					'item_scheduled'           => __( 'Template scheduled.', 'full-site-editing' ),
-					'item_updated'             => __( 'Template updated.', 'full-site-editing' ),
-				),
-				'menu_icon'             => 'dashicons-layout',
-				'public'                => false,
-				'show_ui'               => true, // Otherwise we'd get permission error when trying to edit them.
-				'show_in_menu'          => false,
-				'rewrite'               => false,
-				'show_in_rest'          => true, // Otherwise previews won't be generated in full page view.
-				'rest_base'             => 'templates',
-				'rest_controller_class' => __NAMESPACE__ . '\REST_Templates_Controller',
-				'capability_type'       => 'template',
-				'capabilities'          => array(
-					// You need to be able to edit posts, in order to read templates in their raw form.
-					'read'                   => 'edit_posts',
-					// You need to be able to customize, in order to create templates.
-					'create_posts'           => 'edit_theme_options',
-					'edit_posts'             => 'edit_theme_options',
-					'delete_posts'           => 'edit_theme_options',
-					'edit_published_posts'   => 'edit_theme_options',
-					'delete_published_posts' => 'edit_theme_options',
-					'edit_others_posts'      => 'edit_theme_options',
-					'delete_others_posts'    => 'edit_theme_options',
-					'publish_posts'          => 'edit_theme_options',
-				),
-				'map_meta_cap'          => true,
-				'supports'              => array(
-					'title',
-					'editor',
-					'revisions',
-				),
-			)
-		);
-
-		register_taxonomy(
-			'wp_template_type',
-			'wp_template',
-			array(
-				'labels'             => array(
-					'name'              => _x( 'Template Types', 'taxonomy general name', 'full-site-editing' ),
-					'singular_name'     => _x( 'Template Type', 'taxonomy singular name', 'full-site-editing' ),
-					'menu_name'         => _x( 'Template Types', 'admin menu', 'full-site-editing' ),
-					'all_items'         => __( 'All Template Types', 'full-site-editing' ),
-					'edit_item'         => __( 'Edit Template Type', 'full-site-editing' ),
-					'view_item'         => __( 'View Template Type', 'full-site-editing' ),
-					'update_item'       => __( 'Update Template Type', 'full-site-editing' ),
-					'add_new_item'      => __( 'Add New Template Type', 'full-site-editing' ),
-					'new_item_name'     => __( 'New Template Type', 'full-site-editing' ),
-					'parent_item'       => __( 'Parent Template Type', 'full-site-editing' ),
-					'parent_item_colon' => __( 'Parent Template Type:', 'full-site-editing' ),
-					'search_items'      => __( 'Search Template Types', 'full-site-editing' ),
-					'not_found'         => __( 'No template types found.', 'full-site-editing' ),
-					'back_to_items'     => __( 'Back to template types', 'full-site-editing' ),
-				),
-				'public'             => false,
-				'publicly_queryable' => true,
-				'show_ui'            => true,
-				'show_in_menu'       => false,
-				'show_in_nav_menu'   => false,
-				'show_in_rest'       => true,
-				'rest_base'          => 'template_types',
-				'show_tagcloud'      => false,
-				'show_admin_column'  => true,
-				'hierarchical'       => true,
-				'rewrite'            => false,
-				'capabilities'       => array(
-					'manage_terms' => 'edit_theme_options',
-					'edit_terms'   => 'edit_theme_options',
-					'delete_terms' => 'edit_theme_options',
-					'assign_terms' => 'edit_theme_options',
-				),
-			)
-		);
+		$this->wp_template_inserter->register_template_post_types();
 	}
 
 	/**
@@ -434,7 +414,7 @@ class Full_Site_Editing {
 
 			$template = array();
 			foreach ( $template_blocks as $block ) {
-				$template[] = fse_map_block_to_editor_template_setting( $block );
+				$template[] = $this->fse_map_block_to_editor_template_setting( $block );
 			}
 			$editor_settings['template']     = $template;
 			$editor_settings['templateLock'] = 'all';
@@ -462,24 +442,24 @@ class Full_Site_Editing {
 		$classes[] = 'fse-enabled';
 		return $classes;
 	}
-}
 
-/**
- * Returns an array with the expected format of the block template setting syntax.
- *
- * @see https://github.com/WordPress/gutenberg/blob/1414cf0ad1ec3d0f3e86a40815513c15938bb522/docs/designers-developers/developers/block-api/block-templates.md
- *
- * @param array $block Block to convert.
- * @return array
- */
-function fse_map_block_to_editor_template_setting( $block ) {
-	$block_name   = $block['blockName'];
-	$attrs        = $block['attrs'];
-	$inner_blocks = $block['innerBlocks'];
+	/**
+	 * Returns an array with the expected format of the block template setting syntax.
+	 *
+	 * @see https://github.com/WordPress/gutenberg/blob/1414cf0ad1ec3d0f3e86a40815513c15938bb522/docs/designers-developers/developers/block-api/block-templates.md
+	 *
+	 * @param array $block Block to convert.
+	 * @return array
+	 */
+	private function fse_map_block_to_editor_template_setting( $block ) {
+		$block_name   = $block['blockName'];
+		$attrs        = $block['attrs'];
+		$inner_blocks = $block['innerBlocks'];
 
-	$inner_blocks_template = array();
-	foreach ( $inner_blocks as $inner_block ) {
-		$inner_blocks[] = fse_map_block_to_editor_template_setting( $inner_block );
+		$inner_blocks_template = array();
+		foreach ( $inner_blocks as $inner_block ) {
+			$inner_blocks[] = fse_map_block_to_editor_template_setting( $inner_block );
+		}
+		return array( $block_name, $attrs, $inner_blocks_template );
 	}
-	return array( $block_name, $attrs, $inner_blocks_template );
 }

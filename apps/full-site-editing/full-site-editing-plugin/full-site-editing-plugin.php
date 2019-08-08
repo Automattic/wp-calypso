@@ -45,7 +45,8 @@ function load_full_site_editing() {
 	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
 	require_once __DIR__ . '/full-site-editing/class-rest-templates-controller.php';
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
-	require_once __DIR__ . '/full-site-editing/utils/class-wp-template.php';
+	require_once __DIR__ . '/full-site-editing/templates/class-wp-template.php';
+	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 	require_once __DIR__ . '/full-site-editing/serialize-block-fallback.php';
 
 	Full_Site_Editing::get_instance();
@@ -98,3 +99,17 @@ function load_starter_page_templates() {
 	Starter_Page_Templates::get_instance();
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
+
+/**
+ * Inserts default template data for current theme during plugin activation.
+ * We usually perform this on theme activation hook, but this is needed to handle
+ * the cases in which FSE supported theme was activated prior to the plugin.
+ */
+function populate_wp_template_data() {
+	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
+
+	$fse = Full_Site_Editing::get_instance();
+	$fse->wp_template_inserter->insert_default_template_data();
+}
+register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
