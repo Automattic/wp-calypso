@@ -20,7 +20,7 @@ const updateSiteFrontPageRequest = action =>
 			method: 'POST',
 			apiVersion: '1.1',
 			body: {
-				is_page_on_front: get( action.frontPageOptions, 'show_on_front' ),
+				is_page_on_front: 'page' === get( action.frontPageOptions, 'show_on_front' ),
 				page_on_front_id: get( action.frontPageOptions, 'page_on_front' ),
 				page_for_posts_id: get( action.frontPageOptions, 'page_for_posts' ),
 			},
