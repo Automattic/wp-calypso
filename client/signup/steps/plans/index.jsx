@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -27,7 +27,6 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { planItem } from 'lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -35,27 +34,7 @@ import { planItem } from 'lib/cart-values/cart-items';
 import './style.scss';
 
 export class PlansStep extends Component {
-	constructor( props ) {
-		super( props );
-		const { flowName, initialContext } = props;
-
-		if ( 'launch-site' === flowName ) {
-			const planQueryArg = get( initialContext, 'query.plan' );
-
-			if ( planQueryArg ) {
-				const cartItem = planItem( planQueryArg );
-				if ( planQueryArg === cartItem.product_slug ) {
-					this.onSelectPlan( cartItem );
-					this.skipRender = true;
-				}
-			}
-		}
-	}
-
 	componentDidMount() {
-		if ( this.skipRender ) {
-			return;
-		}
 		if (
 			typeof window !== 'undefined' &&
 			window.location &&
@@ -190,15 +169,7 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			selectedSite,
-			siteSlug,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 
@@ -219,7 +190,6 @@ export class PlansStep extends Component {
 				headerText={ headerText }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 				allowBackFirstStep={ !! selectedSite }
@@ -230,9 +200,6 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		if ( this.skipRender ) {
-			return null;
-		}
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
