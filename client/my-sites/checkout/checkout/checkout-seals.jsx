@@ -14,6 +14,11 @@ import classNames from 'classnames';
 import Image from 'components/image';
 
 /**
+ * Image dependencies
+ */
+import moneyBackImage from 'assets/images/upgrades/money-back.svg';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -39,7 +44,7 @@ function CheckoutSeals( { guaranteeVisible } ) {
 						src="/calypso/images/upgrades/sectigo_trust_seal_md_2x.png"
 					/>
 				</div>
-				<Image className={ guaranteeClasses } src="/calypso/images/upgrades/money-back.svg" />
+				<Image className={ guaranteeClasses } src={ moneyBackImage } />
 			</div>
 		</>
 	);
