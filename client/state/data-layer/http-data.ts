@@ -315,7 +315,7 @@ export const waitForData = < T extends Query >(
 						allDone && ( value.state === DataState.Success || value.state === DataState.Failure ),
 					];
 				},
-				[ {}, true, true ]
+				[ {}, true, true ] as [Results< T >, boolean, boolean]
 			);
 
 		const listener = () => {
@@ -324,7 +324,7 @@ export const waitForData = < T extends Query >(
 			if ( allDone ) {
 				clearTimeout( timer );
 				unsubscribe();
-				allBad ? reject( values ) : resolve( values as Results< T > );
+				allBad ? reject( values ) : resolve( values );
 			}
 		};
 
