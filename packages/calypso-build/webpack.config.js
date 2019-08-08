@@ -121,6 +121,9 @@ function getWebpackConfig(
 		plugins: [
 			new webpack.DefinePlugin( {
 				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
+				'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
+					!! process.env.FORCE_REDUCED_MOTION || false
+				),
 				global: 'window',
 			} ),
 			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
