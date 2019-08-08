@@ -36,7 +36,7 @@ type Resource =
 			error: undefined;
 			pendingSince: undefined;
 	  }
-	| ResourceData & { state: DataState.Pending; error: undefined }
+	| ResourceData & { state: DataState.Pending; error: undefined; pendingSince: TimestampMS }
 	| ResourceData & { state: DataState.Failure; pendingSince: undefined }
 	| ResourceData & { state: DataState.Success; error: undefined; pendingSince: undefined };
 
