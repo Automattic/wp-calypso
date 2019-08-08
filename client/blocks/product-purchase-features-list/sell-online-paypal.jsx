@@ -21,9 +21,9 @@ export default localize( ( { isJetpack, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				buttonText={ translate( 'Start earning' ) }
+				buttonText={ translate( 'Sell online' ) }
 				description={ translate(
-					'Add a PayPal payment button and start selling your goods and services.'
+					'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations.'
 				) }
 				href={
 					isJetpack
