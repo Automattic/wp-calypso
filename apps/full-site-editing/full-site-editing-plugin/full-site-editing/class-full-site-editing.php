@@ -161,14 +161,11 @@ class Full_Site_Editing {
 			true
 		);
 
-		$feature_flags = Feature_Flags::get_instance();
-
 		wp_localize_script(
 			'a8c-full-site-editing-script',
 			'fullSiteEditing',
 			array(
 				'editorPostType'      => get_current_screen()->post_type,
-				'featureFlags'        => $feature_flags->get_flags(),
 				'closeButtonLabel'    => $this->get_close_button_label(),
 				'closeButtonUrl'      => esc_url( $this->get_close_button_url() ),
 				'editTemplateBaseUrl' => esc_url( $this->get_edit_template_base_url() ),
