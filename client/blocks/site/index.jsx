@@ -143,12 +143,11 @@ class Site extends React.Component {
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
 					<div className="site__info">
-						<div className="site__title">
+						<div className="site__title">{ site.title }</div>
+						<div className="site__domain">
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							{ this.props.site.is_private && (
-								<span className="site__badge">
-									<Gridicon icon="lock" size={ 14 } />
-								</span>
+								<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
 							) }
 							{ site.options && site.options.is_redirect && (
 								<span className="site__badge">
@@ -161,9 +160,6 @@ class Site extends React.Component {
 								</span>
 							) }
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ site.title }
-						</div>
-						<div className="site__domain">
 							{ this.props.homeLink
 								? translate( 'View %(domain)s', {
 										args: { domain: site.domain },
