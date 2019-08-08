@@ -36,6 +36,7 @@ class Full_Site_Editing {
 		add_filter( 'wp_insert_post_data', array( $this, 'remove_template_components' ), 10, 2 );
 		add_filter( 'admin_body_class', array( $this, 'toggle_editor_post_title_visibility' ) );
 		add_filter( 'block_editor_settings', array( $this, 'set_block_template' ) );
+		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 	}
 
 	/**
@@ -449,6 +450,17 @@ class Full_Site_Editing {
 	 */
 	public function is_full_site_page() {
 		return 'page' === get_post_type();
+	}
+
+	/**
+	 * Add fse-enabled class to body so we can target css only if plugin enabled.
+	 *
+	 * @param array $classes classes to be applied to body.
+	 * @return array classes to be applied to body.
+	 */
+	public function add_fse_body_class( $classes ) {
+		$classes[] = 'fse-enabled';
+		return $classes;
 	}
 }
 
