@@ -1,8 +1,7 @@
-/* global wp */
-
 /**
  * External dependencies
  */
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
@@ -30,7 +29,6 @@ registerBlockType( 'a8c/post-content', {
 	save,
 } );
 
-const { createHigherOrderComponent } = wp.compose;
 const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
 	return props => {
 		if ( props.name !== 'a8c/post-content' ) {
