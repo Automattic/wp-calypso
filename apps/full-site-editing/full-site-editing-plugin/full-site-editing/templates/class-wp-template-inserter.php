@@ -199,6 +199,10 @@ class WP_Template_Inserter {
 		$about_page_content   = '';
 		$contact_page_content = '';
 
+		/*
+		 * Array of returned templates is not keyed by name, so we have to access it directly like this.
+		 * About page is at position 6 in the array, and Contact page at 1.
+		 */
 		if ( ! empty( $api_response['templates'][6]['content'] ) ) {
 			$about_page_content = $api_response['templates'][6]['content'];
 		}
@@ -210,7 +214,7 @@ class WP_Template_Inserter {
 		if ( empty( get_page_by_title( 'About' ) ) ) {
 			wp_insert_post(
 				[
-					'post_title'   => 'About',
+					'post_title'   => _x( 'About', 'Default page title', 'full-site-editing' ),
 					'post_content' => $about_page_content,
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
@@ -221,7 +225,7 @@ class WP_Template_Inserter {
 		if ( empty( get_page_by_title( 'Contact' ) ) ) {
 			wp_insert_post(
 				[
-					'post_title'   => 'Contact',
+					'post_title'   => _x( 'Contact', 'Default page title', 'full-site-editing' ),
 					'post_content' => $contact_page_content,
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
