@@ -18,7 +18,8 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
-import { getSiteUrl, isJetpackSite } from 'state/sites/selectors';
+import { getSiteUrl } from 'state/sites/selectors';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
@@ -89,7 +90,7 @@ export const authenticate = ( context, next ) => {
 
 	const isAuthenticated =
 		sessionStorage.getItem( storageKey ) || // Previously authenticated.
-		! isJetpackSite( state, siteId ) || // Simple sites users are always authenticated.
+		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
 		isEnabled( 'desktop' ) || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 	if ( isAuthenticated ) {
