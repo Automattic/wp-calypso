@@ -38,16 +38,16 @@ class StripeConnectPrompt extends Component {
 						<FormRadio
 							value={ isCreateSelected }
 							checked={ isCreateSelected }
-							onClick={ onSelectCreate }
+							onChange={ onSelectCreate }
 						/>
-						<span>{ translate( 'Create new Stripe account' ) }</span>
+						<span>{ translate( 'Create a new Stripe account' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
 						<FormRadio
 							value={ ! isCreateSelected }
 							checked={ ! isCreateSelected }
-							onClick={ onSelectConnect }
+							onChange={ onSelectConnect }
 						/>
 						<span>{ translate( 'I already have a Stripe account' ) }</span>
 					</FormLabel>

@@ -1,7 +1,4 @@
-
 .stripe__connect-account {
-
-
 	.stripe__connect-account-heading {
 		font-size: 14px;
 		font-weight: 600;
@@ -74,6 +71,9 @@
 	ul {
 		margin-bottom: 16px;
 	}
+	.form-fieldset {
+		margin-left: 40px;
+	}
 }
 
 .stripe__method-edit-header {
@@ -96,8 +96,4 @@
 		height: 60px;
 		@include placeholder();
 	}
-}
-
-.form-fieldset {
-	margin-left: 40px;
 }
