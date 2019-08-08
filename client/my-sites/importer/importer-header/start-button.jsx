@@ -25,7 +25,7 @@ class StartButton extends React.PureComponent {
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
-			type: PropTypes.string.isRequired,
+			engine: PropTypes.string.isRequired,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -34,15 +34,15 @@ class StartButton extends React.PureComponent {
 
 	handleClick = () => {
 		const {
-			importerStatus: { type },
+			importerStatus: { engine },
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
+		startImport( siteId, engine );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
-			importer_id: type,
+			engine,
 		} );
 	};
 

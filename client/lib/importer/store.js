@@ -209,8 +209,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				importers: {
 					...state.importers,
 					[ action.importerId ]: {
+						engine: action.engine,
 						importerId: action.importerId,
-						type: action.importerType,
 						importerState: appStates.READY_FOR_UPLOAD,
 						site: { ID: action.siteId },
 					},
