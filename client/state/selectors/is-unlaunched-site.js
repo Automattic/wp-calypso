@@ -1,11 +1,9 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
+/** @format */
 
 /**
  * Internal dependencies
  */
+
 import getRawSite from 'state/selectors/get-raw-site';
 
 /**
@@ -16,5 +14,7 @@ import getRawSite from 'state/selectors/get-raw-site';
  * @return {Boolean} True if site is unlaunched
  */
 export default function isUnlaunchedSite( state, siteId ) {
-	return get( getRawSite( state, siteId ), 'launch_status' ) === 'unlaunched';
+	const site = getRawSite( state, siteId );
+
+	return site && site.launch_status && site.launch_status === 'unlaunched';
 }
