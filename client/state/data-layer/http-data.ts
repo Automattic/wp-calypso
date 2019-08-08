@@ -125,14 +125,14 @@ const fetch = ( action: HttpDataAction ) => {
 	];
 };
 
-const onError = ( action: HttpDataAction, error: any ) => {
+const onError = ( action: HttpDataAction, error: unknown ) => {
 	update( action.id, DataState.Failure, error );
 
 	return { type: HTTP_DATA_TICK };
 };
 
 type SuccessfulParse = [undefined, ReturnType< ResponseParser >];
-type FailedParse = [Error, undefined];
+type FailedParse = [unknown, undefined];
 type ParseResult = SuccessfulParse | FailedParse;
 
 /**
