@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke, isEmpty, pickBy } from 'lodash';
+import { flow, get, includes, invoke, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -94,13 +94,13 @@ class ImportURLStepComponent extends Component {
 
 		this.props.submitSignupStep(
 			{ stepName },
-			pickBy( {
+			{
 				importSiteEngine: siteEngine,
 				importSiteFavicon: siteFavicon,
 				importSiteUrl: siteUrl,
 				siteTitle,
 				themeSlugWithRepo: 'pub/modern-business',
-			} )
+			}
 		);
 
 		this.props.goToNextStep();
@@ -172,13 +172,13 @@ class ImportURLStepComponent extends Component {
 
 					this.props.submitSignupStep(
 						{ stepName },
-						pickBy( {
+						{
 							importSiteEngine: siteEngine,
 							importSiteFavicon: siteFavicon,
 							importSiteUrl: siteUrl,
 							siteTitle,
 							themeSlugWithRepo: 'pub/modern-business',
-						} )
+						}
 					);
 					this.props.goToNextStep();
 				},
