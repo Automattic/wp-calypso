@@ -19,17 +19,13 @@ import formatCurrency from '@automattic/format-currency';
 import FoldableCard from 'components/foldable-card';
 import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
-import EmailVerificationDialog from 'components/email-verification/email-verification-dialog';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
-import {
-	getCurrentUserCurrencyCode,
-	isCurrentUserEmailVerified,
-} from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
@@ -199,19 +195,11 @@ export class PlanFeatures extends Component {
 	}
 
 	renderSiteLaunchDialog() {
-		const { currentSitePlanSlug, isEmailVerified, translate } = this.props;
+		const { currentSitePlanSlug, translate } = this.props;
 		const { checkoutUrl, choosingPlanSlug, showingSiteLaunchDialog } = this.state;
 
 		if ( ! showingSiteLaunchDialog ) {
 			return null;
-		}
-
-		if ( ! isEmailVerified ) {
-			this.props.recordTracksEvent( 'calypso_plan_upgrade_email_unverified', {
-				current_plan: currentSitePlanSlug,
-				upgrading_to: choosingPlanSlug,
-			} );
-			return <EmailVerificationDialog onClose={ this.setDefaultState } />;
 		}
 
 		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_shown', {
@@ -566,7 +554,7 @@ export class PlanFeatures extends Component {
 			availableForPurchase,
 			cartItemForPlan,
 			checkoutUrl,
-			isPrivateAndGoingAtomic,
+			siteIsPrivateAndGoingAtomic,
 			productSlug,
 		} = singlePlanProperties;
 
@@ -579,7 +567,7 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		if ( isPrivateAndGoingAtomic ) {
+		if ( siteIsPrivateAndGoingAtomic ) {
 			if ( isInSignup ) {
 				// Let signup do its thing
 				return;
@@ -955,7 +943,7 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
-				const isPrivateAndGoingAtomic =
+				const siteIsPrivateAndGoingAtomic =
 					siteIsPrivate &&
 					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
 						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
@@ -972,7 +960,6 @@ export default connect(
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
-					isPrivateAndGoingAtomic,
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,
@@ -989,6 +976,7 @@ export default connect(
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan,
+					siteIsPrivateAndGoingAtomic,
 				};
 			} )
 		);
@@ -1002,10 +990,10 @@ export default connect(
 		return {
 			canPurchase,
 			currentSitePlanSlug: get( currentPlanObj, 'productSlug', null ),
-			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
+			siteIsPrivate,
 			sitePlan,
 			siteType,
 			planCredits,
