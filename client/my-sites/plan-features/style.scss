@@ -8,10 +8,10 @@ $plan-features-sidebar-width: 272px;
 .is-jetpack-site.is-section-plans {
 	.plans-features-main {
 		@include jetpack-connect-colors();
-	}
-	
-	.plan-features__header-title {
-		color: var( --color-neutral-700 );
+		
+		.plan-features__header-title {
+			color: var( --color-text );
+		}
 	}
 }
 
