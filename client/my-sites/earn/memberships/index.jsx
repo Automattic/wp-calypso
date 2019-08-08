@@ -311,7 +311,7 @@ class MembershipsSection extends Component {
 						status="is-success"
 						showDismiss={ false }
 						text={ this.props.translate(
-							'Congrats! Your site is now connected to Stripe. You can now close this window, Click "Re-check connection" and add your first payment plan.'
+							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
 						) }
 					>
 						<NoticeAction
