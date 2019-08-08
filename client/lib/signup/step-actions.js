@@ -620,7 +620,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 		nextProps.setSurvey( { vertical, otherText: '' } );
 
 		nextProps.submitSignupStep(
-			{ stepName: 'survey' },
+			{ stepName: 'survey', wasSkipped: true },
 			{ surveySiteType: 'blog', surveyQuestion: vertical }
 		);
 
