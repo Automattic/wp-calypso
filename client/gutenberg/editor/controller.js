@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { get, isInteger } from 'lodash';
+import { get, isInteger, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,8 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
 import { getSiteUrl, isJetpackSite } from 'state/sites/selectors';
 import { isEnabled } from 'config';
+import { Placeholder } from './placeholder';
+import { makeLayout, render } from 'controller';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -94,6 +96,11 @@ export const authenticate = ( context, next ) => {
 		sessionStorage.setItem( storageKey, 'true' );
 		return next();
 	}
+
+	// Shows the editor placeholder while doing the redirection.
+	context.primary = <Placeholder />;
+	makeLayout( context, noop );
+	render( context );
 
 	const returnUrl = addQueryArgs( { authWpAdmin: true }, window.location.href );
 	const siteUrl = getSiteUrl( state, siteId );
