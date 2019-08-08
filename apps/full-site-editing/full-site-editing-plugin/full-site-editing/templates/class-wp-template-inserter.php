@@ -187,8 +187,14 @@ class WP_Template_Inserter {
 			return;
 		}
 
-		$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates';
-		$response    = wp_remote_get( $request_url );
+		$request_url = add_query_arg(
+			[
+				'_locale' => $this->get_iso_639_locale(),
+			],
+			'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates'
+		);
+
+		$response = wp_remote_get( $request_url );
 
 		if ( is_wp_error( $response ) ) {
 			return;
@@ -234,6 +240,23 @@ class WP_Template_Inserter {
 		}
 
 		update_option( $this->fse_page_data_option, true );
+	}
+
+	/**
+	 * Returns ISO 639 conforming locale string.
+	 *
+	 * @return string ISO 639 locale string
+	 */
+	public function get_iso_639_locale() {
+		$language = strtolower( get_locale() );
+
+		if ( in_array( $language, [ 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
+			$language = str_replace( '_', '-', $language );
+		} else {
+			$language = preg_replace( '/([-_].*)$/i', '', $language );
+		}
+
+		return $language;
 	}
 
 	/**
