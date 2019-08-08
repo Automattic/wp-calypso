@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,9 +20,9 @@ const updateSiteFrontPageRequest = action =>
 			method: 'POST',
 			apiVersion: '1.1',
 			body: {
-				is_page_on_front: action.isPageOnFront,
-				page_for_posts_id: action.postsPageId,
-				page_on_front_id: action.frontPageId,
+				is_page_on_front: get( action.frontPageOptions, 'show_on_front' ),
+				page_on_front_id: get( action.frontPageOptions, 'page_on_front' ),
+				page_for_posts_id: get( action.frontPageOptions, 'page_for_posts' ),
 			},
 		},
 		action
@@ -30,14 +30,14 @@ const updateSiteFrontPageRequest = action =>
 
 const setSiteFrontPage = (
 	{ siteId },
-	{ is_page_on_front, page_for_posts_id, page_on_front_id }
+	{ is_page_on_front, page_on_front_id, page_for_posts_id }
 ) => dispatch => {
 	dispatch(
 		bypassDataLayer(
 			updateSiteFrontPage( siteId, {
 				show_on_front: is_page_on_front ? 'page' : 'posts',
-				page_for_posts: parseInt( page_for_posts_id, 10 ),
 				page_on_front: parseInt( page_on_front_id, 10 ),
+				page_for_posts: parseInt( page_for_posts_id, 10 ),
 			} )
 		)
 	);
