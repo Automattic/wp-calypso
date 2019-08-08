@@ -25,12 +25,7 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { successNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSiteOption,
-	getSiteSlug,
-	getSiteFrontPage,
-	isCurrentPlanPaid,
-} from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
@@ -1046,7 +1041,11 @@ const getTaskUrls = createSelector(
 		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
 		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getPageEditorUrl( state, siteId, getSiteFrontPage( state, siteId ) );
+		const frontPageUrl = getPageEditorUrl(
+			state,
+			siteId,
+			getSiteOption( state, siteId, 'page_on_front' )
+		);
 
 		return {
 			post_published: getPageEditorUrl( state, siteId, firstPostID ),
