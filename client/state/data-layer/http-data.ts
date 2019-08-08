@@ -186,8 +186,10 @@ export default {
 	],
 };
 
-export const reducer: Reducer< number > = ( state = 0, { type } ) =>
-	HTTP_DATA_TICK === type ? state + 1 : state;
+export const reducer: Reducer< number, Action< typeof HTTP_DATA_TICK > > = (
+	state = 0,
+	{ type }
+) => ( HTTP_DATA_TICK === type ? state + 1 : state );
 
 interface HttpDataAction extends Action< typeof HTTP_DATA_REQUEST > {
 	id: DataId;
