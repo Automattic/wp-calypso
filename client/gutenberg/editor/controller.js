@@ -103,7 +103,7 @@ export const authenticate = ( context, next ) => {
 	render( context );
 
 	// We could use `window.location.href` to generate the return URL but there are some potential race conditions that
-	// can cause the browser to don't update it before redirecting to WP Admin. To avoid that, we manually generate the
+	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
 	// URL from the relevant parts.
 	let origin = `${ window.location.protocol }//${ window.location.hostname }`;
 	if ( window.location.port ) {
