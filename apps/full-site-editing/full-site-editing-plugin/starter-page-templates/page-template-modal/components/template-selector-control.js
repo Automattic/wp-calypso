@@ -47,7 +47,9 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			const editorStylesWrapperEl = el.querySelector( '.editor-styles-wrapper' );
 
 			if ( editorStylesWrapperEl ) {
-				editorStylesWrapperEl.classList.remove( 'editor-styles-wrapper' );
+				setTimeout( () => {
+					editorStylesWrapperEl.classList.remove( 'editor-styles-wrapper' );
+				}, 0 );
 				setCssClasses( 'editor-styles-wrapper' );
 			}
 		}, 0 );
