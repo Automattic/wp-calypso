@@ -37,7 +37,6 @@ function load_full_site_editing() {
 		return;
 	}
 
-	require_once __DIR__ . '/lib/feature-flags/class-feature-flags.php';
 	require_once __DIR__ . '/full-site-editing/blocks/navigation-menu/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/site-description/index.php';
