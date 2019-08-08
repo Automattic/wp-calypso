@@ -12,6 +12,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import edit from './edit';
 import './style.scss';
+import './site-logo';
 
 if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/template', {
