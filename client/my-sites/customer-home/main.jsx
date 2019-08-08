@@ -15,10 +15,14 @@ import page from 'page';
 import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
+import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
+import VerticalNav from 'components/vertical-nav';
+import VerticalNavItem from 'components/vertical-nav/item';
+import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCustomizerUrl } from 'state/sites/selectors';
+import { getCustomizerUrl, canCurrentUserUseCustomerHome } from 'state/sites/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 
@@ -26,8 +30,6 @@ import DocumentHead from 'components/data/document-head';
  * Style dependencies
  */
 import './style.scss';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
 
 const ActionBox = ( { action, iconSrc, label } ) => {
 	const buttonAction = 'function' === typeof action ? { onClick: action } : { href: action };
@@ -47,10 +49,29 @@ class Home extends Component {
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		customizeUrl: PropTypes.string.isRequired,
+		canUserUseCustomerHome: PropTypes.bool.isRequired,
 	};
 
 	render() {
-		const { translate, customizeUrl, site, siteSlug } = this.props;
+		const { translate, canUserUseCustomerHome } = this.props;
+
+		if ( ! canUserUseCustomerHome ) {
+			return (
+				<EmptyContent
+					title={ preventWidows(
+						translate( 'Only site administrators can view the Customer Home.' )
+					) }
+					line={ preventWidows(
+						translate(
+							"Ensure you have selected the right site on the sidebar. If it's correct, you might want to contact the administrator of this site."
+						)
+					) }
+					illustration="/calypso/images/illustrations/error.svg"
+				/>
+			);
+		}
+
+		const { customizeUrl, site, siteSlug } = this.props;
 
 		return (
 			<Main className="customer-home__main is-wide-layout">
@@ -188,5 +209,6 @@ export default connect( state => {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
+		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 	};
 } )( localize( Home ) );
