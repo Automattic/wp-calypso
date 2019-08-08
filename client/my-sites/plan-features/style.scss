@@ -1,5 +1,19 @@
+@import 'jetpack-connect/colors.scss';
+
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
+
+/* Colors for Jetpack sites */
+
+.is-jetpack-site.is-section-plans {
+	.plans-features-main {
+		@include jetpack-connect-colors();
+	}
+	
+	.plan-features__header-title {
+		color: var( --color-neutral-700 );
+	}
+}
 
 /* Breakpoints 1150px, */
 
