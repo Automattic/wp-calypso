@@ -42,6 +42,15 @@ class WP_Template_Inserter {
 	private $fse_template_data_option;
 
 	/**
+	 * This site option will be used to indicate that default page data has already been
+	 * inserted for this theme, in order to prevent this functionality from running
+	 * more than once.
+	 *
+	 * @var string $fse_page_data_option
+	 */
+	private $fse_page_data_option = 'fse-page-data-v1';
+
+	/**
 	 * WP_Template_Inserter constructor.
 	 *
 	 * @param string $theme_slug Current theme slug.
@@ -155,6 +164,72 @@ class WP_Template_Inserter {
 		wp_set_object_terms( $footer_id, "$this->theme_slug-footer", 'wp_template_type' );
 
 		add_option( $this->fse_template_data_option, true );
+	}
+
+	/**
+	 * Determines whether default pages have already been created.
+	 *
+	 * @return bool True if default pages have already been created, false otherwise.
+	 */
+	public function is_pages_data_inserted() {
+		return get_option( $this->fse_page_data_option ) ? true : false;
+	}
+
+	/**
+	 * Inserts default About and Contact pages based on Starter Page Templates content.
+	 *
+	 * The insertion will not happen if this data has been already inserted or if pages
+	 * with 'About' and 'Contact' titles already exist.
+	 */
+	public function insert_default_pages() {
+		// Bail if this data has already been inserted.
+		if ( $this->is_pages_data_inserted() ) {
+			return;
+		}
+
+		$request_url = 'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates';
+		$response    = wp_remote_get( $request_url );
+
+		if ( is_wp_error( $response ) ) {
+			return;
+		}
+
+		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		$about_page_content   = '';
+		$contact_page_content = '';
+
+		if ( ! empty( $api_response['templates'][6]['content'] ) ) {
+			$about_page_content = $api_response['templates'][6]['content'];
+		}
+
+		if ( ! empty( $api_response['templates'][1]['content'] ) ) {
+			$contact_page_content = $api_response['templates'][1]['content'];
+		}
+
+		if ( empty( get_page_by_title( 'About' ) ) ) {
+			wp_insert_post(
+				[
+					'post_title'   => 'About',
+					'post_content' => $about_page_content,
+					'post_status'  => 'publish',
+					'post_type'    => 'page',
+				]
+			);
+		}
+
+		if ( empty( get_page_by_title( 'Contact' ) ) ) {
+			wp_insert_post(
+				[
+					'post_title'   => 'Contact',
+					'post_content' => $contact_page_content,
+					'post_status'  => 'publish',
+					'post_type'    => 'page',
+				]
+			);
+		}
+
+		update_option( $this->fse_page_data_option, true );
 	}
 
 	/**
