@@ -18,8 +18,14 @@
 		flex: none;
 		margin: 40px;
 		box-shadow: 0 0 20px 0 rgba( 0, 0, 0, 0.1 );
-		background: #fff;
 	}
+}
+
+// We separate this from the other styles so that
+// the theme style can override this class without
+// having to get as specific.
+.editor-styles-wrapper {
+	background: #fff;
 }
 
 .post-type-page {
