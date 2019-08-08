@@ -25,7 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import wpcom from 'lib/wp';
 import { saveSignupStep } from 'state/signup/progress/actions';
-import { suggestDomainFromImportUrl } from 'lib/importers/utils';
+import { suggestDomainFromImportUrl } from 'lib/importer/utils';
 
 /**
  * Style dependencies

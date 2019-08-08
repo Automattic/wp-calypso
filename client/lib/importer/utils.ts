@@ -23,14 +23,14 @@ export function suggestDomainFromImportUrl( siteUrl: string ): string | null {
 
 	if ( parsedUrl.hostname ) {
 		// Other services use a subdomain, like `example.wordpress.com`,
-		// return just the subdomain.
+		// return only the subdomain.
 		for ( const matcher of useSubdomainMatchers ) {
 			if ( parsedUrl.hostname.match( matcher ) ) {
 				return parsedUrl.hostname.split( '.' )[ 0 ];
 			}
 		}
 
-		// Otherwise, just return the hostname (domain and tld).
+		// Otherwise, return the full hostname.
 		return parsedUrl.hostname;
 	}
 
