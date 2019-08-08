@@ -46,6 +46,7 @@ export class DoneButton extends React.PureComponent {
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
 			engine,
+			importer_id: `importer-type-${ engine }`,
 		} );
 
 		const destination = '/view/' + ( siteSlug || '' );

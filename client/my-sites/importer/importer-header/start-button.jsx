@@ -43,6 +43,7 @@ class StartButton extends React.PureComponent {
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
 			engine,
+			importer_id: `importer-type-${ engine }`,
 		} );
 	};
 

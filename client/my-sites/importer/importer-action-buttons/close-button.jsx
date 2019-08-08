@@ -44,6 +44,7 @@ export class ImporterCloseButton extends React.PureComponent {
 		this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
 			blog_id: siteId,
 			engine,
+			importer_id: `importer-type-${ engine }`,
 		} );
 	};
 
