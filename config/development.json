@@ -127,6 +127,7 @@
 		"post-editor/media-advanced": false,
 		"posts/post-type-list/bulk-edit": false,
 		"press-this": true,
+		"private-by-default/non-atomic-plans": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
 		"push-notifications": true,
