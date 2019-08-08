@@ -293,6 +293,35 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
+				{ this.props.query.stripe_connect_success === 'earn' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+						) }
+					>
+						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
+							{ this.props.translate( 'Add a Payment Plan' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				{ this.props.query.stripe_connect_success === 'gutenberg' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
+						) }
+					>
+						<NoticeAction
+							href={ `https://support.wordpress.com/recurring-payments-button/#stripe-account-connected` }
+							icon="external"
+						>
+							{ this.props.translate( 'Learn how' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderProducts() }
