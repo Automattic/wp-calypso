@@ -344,8 +344,10 @@ export class SecurePaymentForm extends Component {
 			);
 
 			if ( forcedAtomicProducts.length ) {
-				// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-				this.props.saveSiteSettings( selectedSiteId, { blog_public: 1 } );
+				defer( () => {
+					// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+					this.props.saveSiteSettings( selectedSiteId, { blog_public: 1 } );
+				} );
 			}
 		}
 
