@@ -115,7 +115,8 @@ describe( 'Credit Card Form', () => {
 				city: 'city',
 				state: 'state',
 				phone_number: '+31222222',
-				cardToken: {},
+				paygate_token: {},
+				payment_partner: '',
 			} );
 		} );
 	} );
