@@ -282,11 +282,11 @@ export function generateFlows( {
 
 	const importSteps = [ 'from-url', 'domains' ];
 
-	const importDestination = ( { importEngine, importSiteUrl, siteSlug } ) =>
+	const importDestination = ( { importSiteEngine, importSiteUrl, siteSlug } ) =>
 		addQueryArgs(
 			{
-				engine: importEngine || null,
-				'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
+				engine: importSiteEngine || null,
+				'from-site': importSiteUrl ? encodeURIComponent( importSiteUrl ) : null,
 				signup: 1,
 			},
 			`/import/${ siteSlug }`

@@ -1895,10 +1895,10 @@ Undocumented.prototype.resetPasswordForMailbox = function( domainName, mailbox, 
 };
 
 Undocumented.prototype.isSiteImportable = function( site_url ) {
-	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
+	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
 	return this.wpcom.req.get(
-		{ path: '/site-importer-global/is-site-importable', apiNamespace: 'wpcom/v2' },
+		{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
 		{ site_url }
 	);
 };
