@@ -213,7 +213,32 @@ export class SecurePaymentForm extends Component {
 			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
 		}
 
+		this.maybeSetSiteToPublic( { cart: params.cart } );
+
 		submitTransaction( params );
+	}
+
+	maybeSetSiteToPublic( { cart } ) {
+		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
+
+		if ( isJetpack || ! siteIsPrivate ) {
+			return;
+		}
+
+		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
+			return (
+				planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
+				planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
+			);
+		} );
+
+		if ( forcedAtomicProducts.length ) {
+			defer( () => {
+				// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+				this.props.saveSiteSettings( selectedSiteId, { blog_public: 1 } );
+				debug( 'Setting site to public because it is an Atomic plan' );
+			} );
+		}
 	}
 
 	handleTransactionStep( { cart, selectedSite, transaction } ) {
@@ -333,28 +358,8 @@ export class SecurePaymentForm extends Component {
 	}
 
 	finishIfLastStep( cart, selectedSite, step ) {
-		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
-
 		if ( ! step.last || step.error ) {
 			return;
-		}
-
-		if ( ! isJetpack && siteIsPrivate ) {
-			const forcedAtomicProducts = get( cart, 'products', [] ).filter(
-				( { product_slug = '' } ) => {
-					return (
-						planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
-						planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
-					);
-				}
-			);
-
-			if ( forcedAtomicProducts.length ) {
-				defer( () => {
-					// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-					this.props.saveSiteSettings( selectedSiteId, { blog_public: 1 } );
-				} );
-			}
 		}
 
 		if ( step.data.redirect_url ) {
