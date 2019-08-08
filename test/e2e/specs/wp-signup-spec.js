@@ -1728,7 +1728,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step(
-			'Can see a the domains page prefilled with a suggested domain, and select a free domain',
+			'Can see the domains page prefilled with a suggested domain, and select a free domain',
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
 				const domainSearch = await findADomainComponent.getSearchInputValue();
