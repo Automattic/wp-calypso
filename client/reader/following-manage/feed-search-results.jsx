@@ -1,6 +1,5 @@
-/** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,7 +10,7 @@ import Gridicon from 'gridicons';
 import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Button from 'components/button';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
@@ -96,7 +95,6 @@ class FollowingManageSearchFeedsResults extends React.Component {
 					<div className="following-manage__show-more">
 						<Button
 							compact
-							icon
 							onClick={ onShowMoreResultsClicked }
 							className="following-manage__show-more-button button"
 						>
