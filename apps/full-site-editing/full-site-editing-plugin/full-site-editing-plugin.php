@@ -42,8 +42,8 @@ function load_full_site_editing() {
 	require_once __DIR__ . '/full-site-editing/blocks/site-description/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/site-title/index.php';
 	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
-	require_once __DIR__ . '/full-site-editing/class-rest-templates-controller.php';
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	require_once __DIR__ . '/full-site-editing/templates/class-rest-templates-controller.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 	require_once __DIR__ . '/full-site-editing/serialize-block-fallback.php';
