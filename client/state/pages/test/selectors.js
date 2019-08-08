@@ -15,11 +15,13 @@ describe( 'selectors', () => {
 		test( 'should return true if the page is set as the front page', () => {
 			const result = isFrontPage(
 				{
-					siteSettings: {
+					sites: {
 						items: {
 							77203074: {
-								show_on_front: 'page',
-								page_on_front: 1,
+								options: {
+									show_on_front: 'page',
+									page_on_front: 1,
+								},
 							},
 						},
 					},
@@ -34,11 +36,13 @@ describe( 'selectors', () => {
 		test( 'should return false if the page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
-					siteSettings: {
+					sites: {
 						items: {
 							77203074: {
-								show_on_front: 'page',
-								page_on_front: 2,
+								options: {
+									show_on_front: 'page',
+									page_on_front: 2,
+								},
 							},
 						},
 					},
@@ -53,11 +57,13 @@ describe( 'selectors', () => {
 		test( 'should return false if a static page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
-					siteSettings: {
+					sites: {
 						items: {
 							77203074: {
-								show_on_front: 'posts',
-								page_on_front: 0,
+								options: {
+									show_on_front: 'posts',
+									page_on_front: 0,
+								},
 							},
 						},
 					},
@@ -72,7 +78,7 @@ describe( 'selectors', () => {
 		test( 'should return false if the site is not known', () => {
 			const result = isFrontPage(
 				{
-					siteSettings: {
+					sites: {
 						items: {},
 					},
 				},
@@ -88,10 +94,12 @@ describe( 'selectors', () => {
 		test( 'should return true if the page is set as the posts page', () => {
 			const result = isPostsPage(
 				{
-					siteSettings: {
+					sites: {
 						items: {
 							77203074: {
-								page_for_posts: 1,
+								options: {
+									page_for_posts: 1,
+								},
 							},
 						},
 					},
@@ -106,10 +114,12 @@ describe( 'selectors', () => {
 		test( 'should return false if the page is not set as the posts page', () => {
 			const result = isPostsPage(
 				{
-					siteSettings: {
+					sites: {
 						items: {
 							77203074: {
-								page_for_posts: 2,
+								options: {
+									page_for_posts: 2,
+								},
 							},
 						},
 					},
@@ -124,7 +134,7 @@ describe( 'selectors', () => {
 		test( 'should return false if the site is not known', () => {
 			const result = isPostsPage(
 				{
-					siteSettings: {
+					sites: {
 						items: {},
 					},
 				},

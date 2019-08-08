@@ -14,9 +14,8 @@ import {
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
-	SITE_FRONT_PAGE_UPDATE,
 } from 'state/action-types';
-import { normalizeSettings, getDefaultSiteFrontPageSettings } from './utils';
+import { normalizeSettings } from './utils';
 
 import 'state/data-layer/wpcom/sites/homepage';
 
@@ -58,7 +57,7 @@ export function updateSiteSettings( siteId, settings ) {
  * @return {Function}      Action thunk
  */
 export function requestSiteSettings( siteId ) {
-	return ( dispatch, getState ) => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_SETTINGS_REQUEST,
 			siteId,
@@ -68,16 +67,10 @@ export function requestSiteSettings( siteId ) {
 			.undocumented()
 			.settings( siteId )
 			.then( ( { name, description, settings } ) => {
-				// Front page settings are not currently returned by the `sites/:site/settings` endpoint.
-				// This makes sure that, if there are no front page settings in state yet,
-				// they default to their site option values.
-				const siteFrontPageSettings = getDefaultSiteFrontPageSettings( getState(), siteId );
-
 				const savedSettings = {
 					...normalizeSettings( settings ),
 					blogname: name,
 					blogdescription: description,
-					...siteFrontPageSettings,
 				};
 
 				dispatch( receiveSiteSettings( siteId, savedSettings ) );
@@ -126,11 +119,3 @@ export function saveSiteSettings( siteId, settings ) {
 			} );
 	};
 }
-
-export const updateSiteFrontPage = ( siteId, { isPageOnFront, frontPageId, postsPageId } ) => ( {
-	type: SITE_FRONT_PAGE_UPDATE,
-	siteId,
-	isPageOnFront,
-	frontPageId,
-	postsPageId,
-} );

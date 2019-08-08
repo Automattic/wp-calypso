@@ -18,14 +18,10 @@ describe( 'isSiteUsingFullSiteEditing', () => {
 				items: {
 					123: {
 						is_fse_active: true,
-					},
-				},
-			},
-			siteSettings: {
-				items: {
-					123: {
-						show_on_front: 'page',
-						page_on_front: 2,
+						options: {
+							show_on_front: 'page',
+							page_on_front: 2,
+						},
 					},
 				},
 			},
@@ -40,14 +36,10 @@ describe( 'isSiteUsingFullSiteEditing', () => {
 				items: {
 					123: {
 						is_fse_active: true,
-					},
-				},
-			},
-			siteSettings: {
-				items: {
-					123: {
-						show_on_front: 'posts',
-						page_on_front: 0,
+						options: {
+							show_on_front: 'posts',
+							page_on_front: 0,
+						},
 					},
 				},
 			},
@@ -60,14 +52,11 @@ describe( 'isSiteUsingFullSiteEditing', () => {
 		const state = {
 			sites: {
 				items: {
-					123: {},
-				},
-			},
-			siteSettings: {
-				items: {
 					123: {
-						show_on_front: 'page',
-						page_on_front: 2,
+						options: {
+							show_on_front: 'page',
+							page_on_front: 2,
+						},
 					},
 				},
 			},

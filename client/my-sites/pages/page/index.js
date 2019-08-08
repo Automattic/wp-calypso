@@ -39,7 +39,7 @@ import { withoutNotice } from 'state/notices/actions';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
-import { updateSiteFrontPage } from 'state/site-settings/actions';
+import { updateSiteFrontPage } from 'state/sites/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import canCurrentUser from 'state/selectors/can-current-user';
 
@@ -224,8 +224,8 @@ class Page extends Component {
 
 	setFrontPage = () =>
 		this.props.updateSiteFrontPage( this.props.siteId, {
-			isPageOnFront: true,
-			frontPageId: this.props.page.ID,
+			show_on_front: 'page',
+			page_on_front: this.props.page.ID,
 		} );
 
 	getFrontPageItem() {
@@ -251,8 +251,8 @@ class Page extends Component {
 
 	setPostsPage = () =>
 		this.props.updateSiteFrontPage( this.props.siteId, {
-			isPageOnFront: true,
-			postsPageId: this.props.page.ID,
+			show_on_front: 'page',
+			page_for_posts: this.props.page.ID,
 		} );
 
 	getPostsPageItem() {
