@@ -459,9 +459,7 @@ class Full_Site_Editing {
 	 * @return array classes to be applied to body.
 	 */
 	public function add_fse_body_class( $classes ) {
-		if ( class_exists( 'A8C\FSE\WP_Template' ) ) {
-			$classes[] = 'fse-enabled';
-		}
+		$classes[] = 'fse-enabled';
 		return $classes;
 	}
 }
