@@ -15,7 +15,7 @@ const FileConfig = require( './webpack/file-loader' );
 const Minify = require( './webpack/minify' );
 const SassConfig = require( './webpack/sass' );
 const TranspileConfig = require( './webpack/transpile' );
-const WordPressExternalDependenciesPlugin = require( '@automattic/wordpress-external-dependencies-plugin' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -133,7 +133,7 @@ function getWebpackConfig(
 				minify: ! isDevelopment,
 			} ),
 			new DuplicatePackageCheckerPlugin(),
-			...( env.WP ? [ new WordPressExternalDependenciesPlugin() ] : [] ),
+			...( env.WP ? [ new DependencyExtractionWebpackPlugin( { injectPolyfill: true } ) ] : [] ),
 		],
 	};
 
