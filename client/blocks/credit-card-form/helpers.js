@@ -85,7 +85,7 @@ async function updateCreditCard( {
 } ) {
 	const cardDetails = kebabCaseFormFields( formFieldValues );
 	const updatedCreditCardApiParams = getParamsForApi( cardDetails, token, apiParams );
-	const response = wpcom.updateCreditCard( updatedCreditCardApiParams );
+	const response = await wpcom.updateCreditCard( updatedCreditCardApiParams );
 	if ( response.error ) {
 		throw new Error( response );
 	}
