@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
@@ -39,9 +36,9 @@ class SegmentedControlDemo extends React.PureComponent {
 
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleCompact }>
+				<button className="docs__design-toggle button" onClick={ this.toggleCompact }>
 					{ this.state.compact ? 'Normal' : 'Compact' }
-				</a>
+				</button>
 
 				<h3>Items passed as options prop</h3>
 				<SimplifiedSegmentedControl
@@ -130,10 +127,12 @@ class SegmentedControlDemo extends React.PureComponent {
 		this.setState( {
 			childSelected: childSelected,
 		} );
+		// eslint-disable-next-line no-console
 		console.log( 'Segmented Control (selected):', childSelected );
 	};
 
 	selectSegment = option => {
+		// eslint-disable-next-line no-console
 		console.log( 'Segmented Control (selected):', option );
 	};
 }
