@@ -115,15 +115,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	defaultMonthlyJetpackPlan: {
-		datestamp: '20190722',
-		variations: {
-			monthlyPlan: 50,
-			yearlyPlan: 50,
-		},
-		defaultVariation: 'yearlyPlan',
-		allowExistingUsers: true,
-	},
 	checkoutSealsCopyBundle: {
 		datestamp: '20190613',
 		variations: {
@@ -133,7 +124,7 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		//localeTargets: 'any',
-  },
+	},
 	showImportFlowInSiteTypeStep: {
 		datestamp: '20991231',
 		variations: {
