@@ -341,7 +341,7 @@ export const waitForData = < T extends Query >(
 		listener();
 	} );
 
-if ( 'object' === typeof window && window.app && window.app.isDebug && window ) {
+if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
 	window.requestHttpData = requestHttpData;
