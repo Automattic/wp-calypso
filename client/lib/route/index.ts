@@ -6,6 +6,11 @@ import urlModule from 'url';
 import { pickBy } from 'lodash';
 import { Primitive } from 'utility-types';
 
+/**
+ * Internal dependencies
+ */
+import { URL } from 'types';
+
 export * from './path';
 
 const appendQueryString = ( basepath: string, querystring: string ): string =>
