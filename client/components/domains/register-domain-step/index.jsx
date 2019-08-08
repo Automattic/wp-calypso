@@ -205,6 +205,9 @@ class RegisterDomainStep extends React.Component {
 				this.state.railcarId = this.getNewRailcarId();
 			}
 		}
+
+		this.state.filters = this.getInitialFiltersState();
+		this.state.lastFilters = this.getInitialFiltersState();
 	}
 
 	getState() {
