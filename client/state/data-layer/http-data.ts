@@ -61,7 +61,7 @@ export const subscribe = ( f: () => void ): ( () => void ) => {
 	return () => void listeners.delete( f );
 };
 
-export const updateData = ( id: DataId, state: DataState, data: unknown ) => {
+export const updateData = ( id: DataId, state: DataState, data: unknown ): typeof httpData => {
 	const lastUpdated: TimestampMS = Date.now();
 	const item = httpData.get( id ) || empty;
 
@@ -96,6 +96,10 @@ export const updateData = ( id: DataId, state: DataState, data: unknown ) => {
 				lastUpdated,
 				pendingSince: undefined,
 			} );
+
+		// We do not expect to hit this case, it is included for exhaustiveness.
+		case DataState.Uninitialized:
+			return httpData;
 	}
 };
 
