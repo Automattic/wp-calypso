@@ -41,6 +41,11 @@ const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
 class ImportURLStepComponent extends Component {
 	state = {
 		displayFallbackEngines: false,
+		fallbackSiteDetails: {
+			siteFavicon: '',
+			siteTitle: '',
+			siteUrl: '',
+		},
 		isLoading: false,
 		// Url message could be client-side validation or server-side error.
 		urlValidationMessage: '',
@@ -73,8 +78,32 @@ class ImportURLStepComponent extends Component {
 			this.focusInput
 		);
 
-	handleEngineSelect = engine => event => {
+	handleEngineSelect = siteEngine => event => {
 		event.preventDefault();
+
+		const { stepName } = this.props;
+		const { siteFavicon, siteTitle, siteUrl } = this.state.fallbackSiteDetails;
+
+		this.props.setImportOriginSiteDetails( {
+			importerTypes: [ 'file' ],
+			importSiteUrl: siteUrl,
+			siteEngine,
+			siteFavicon,
+			siteTitle,
+		} );
+
+		this.props.submitSignupStep(
+			{ stepName },
+			pickBy( {
+				importSiteEngine: siteEngine,
+				importSiteFavicon: siteFavicon,
+				importSiteUrl: siteUrl,
+				siteTitle,
+				themeSlugWithRepo: 'pub/modern-business',
+			} )
+		);
+
+		this.props.goToNextStep();
 	};
 
 	handleSubmit = event => {
@@ -125,6 +154,11 @@ class ImportURLStepComponent extends Component {
 					if ( 'unknown' === siteEngine || isEmpty( importerTypes ) ) {
 						return this.setState( {
 							displayFallbackEngines: true,
+							fallbackSiteDetails: {
+								siteFavicon,
+								siteTitle,
+								siteUrl,
+							},
 						} );
 					}
 
