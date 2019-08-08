@@ -58,9 +58,7 @@ class Home extends Component {
 		if ( ! canUserUseCustomerHome ) {
 			return (
 				<EmptyContent
-					title={ preventWidows(
-						translate( 'Only site administrators can view the Customer Home.' )
-					) }
+					title={ preventWidows( translate( 'You are not authorized to view this page.' ) ) }
 					line={ preventWidows(
 						translate(
 							"Ensure you have selected the right site on the sidebar. If it's correct, you might want to contact the administrator of this site."

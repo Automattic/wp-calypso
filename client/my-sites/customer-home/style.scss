@@ -1,5 +1,7 @@
 .customer-home__layout-col {
-	width: 49%;
+	@include breakpoint('>960px') {
+		width: 49%;
+	}
 }
 
 .customer-home__card-subheader {
@@ -9,8 +11,10 @@
 }
 
 .customer-home__layout {
-	display: flex;
-	justify-content: space-between;
+	@include breakpoint('>960px') {
+		display: flex;
+		justify-content: space-between;
+	}
 }
 
 .customer-home__card-button-pair {
