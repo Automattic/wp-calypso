@@ -1,5 +1,7 @@
-# [Unreleased]
+# 3.0.0
 
+- Switch to `@wordpress/dependency-extraction-webpack-plugin` from
+  `@automattic/wordpress-external-dependencies-plugin` for WordPress webpack externals.
 - Update `@wordpress/babel-plugin-import-jsx-pragma` dependency and correctly handle `<></>` via `@wordpress/element`.
 - Update Jest config to be able to handle `import`s otherwise handled by Webpack's `file-loader` and `sass-loader`.
 - Update Jest setup to properly initialize Enzyme's adapter.
