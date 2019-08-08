@@ -36,6 +36,7 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
+	SITE_FRONT_PAGE_UPDATE,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
@@ -53,6 +54,7 @@ export function items( state = null, action ) {
 	}
 	switch ( action.type ) {
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+			// eslint-disable-next-line no-case-declarations
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
 				return Object.assign( {}, state, {
@@ -64,10 +66,12 @@ export function items( state = null, action ) {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 			// Normalize incoming site(s) to array
+			// eslint-disable-next-line no-case-declarations
 			const sites = action.site ? [ action.site ] : action.sites;
 
 			// SITES_RECEIVE occurs when we receive the entire set of user
 			// sites (replace existing state). Otherwise merge into state.
+			// eslint-disable-next-line no-case-declarations
 			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
 
 			return reduce(
@@ -132,6 +136,7 @@ export function items( state = null, action ) {
 
 					switch ( key ) {
 						case 'blog_public':
+							// eslint-disable-next-line no-case-declarations
 							const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
 
 							if ( site.is_private === isPrivate ) {
@@ -144,6 +149,7 @@ export function items( state = null, action ) {
 							};
 							break;
 						case 'site_icon':
+							// eslint-disable-next-line no-case-declarations
 							const mediaId = settings.site_icon;
 							// Return unchanged if next icon matches current value,
 							// accounting for the fact that a non-existent icon property is
@@ -212,6 +218,23 @@ export function items( state = null, action ) {
 						total: siteUpdates.total - 1,
 					},
 				},
+			};
+		}
+
+		case SITE_FRONT_PAGE_UPDATE: {
+			const { siteId, frontPageOptions } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				break;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					options: {
+						...frontPageOptions,
+					},
+				} ),
 			};
 		}
 	}
