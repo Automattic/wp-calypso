@@ -25,7 +25,14 @@ class WpcomChecklist extends Component {
 		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
 		siteId: PropTypes.number,
 		taskStatuses: PropTypes.object,
-		viewMode: PropTypes.oneOf( [ 'checklist', 'banner', 'navigation', 'notification', 'prompt' ] ),
+		viewMode: PropTypes.oneOf( [
+			'checklist',
+			'banner',
+			'navigation',
+			'notification',
+			'prompt',
+			'sidebar-item',
+		] ),
 	};
 
 	static defaultProps = {
@@ -65,6 +72,10 @@ function shouldChecklistRender(
 	isSectionEligible,
 	siteId
 ) {
+	if ( viewMode === 'sidebar-item' ) {
+		return true;
+	}
+
 	// Render nothing in notification mode.
 	if ( viewMode === 'notification' ) {
 		return false;

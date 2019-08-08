@@ -27,6 +27,7 @@ import SidebarRegion from 'layout/sidebar/region';
 import SiteMenu from './site-menu';
 import StatsSparkline from 'blocks/stats-sparkline';
 import ToolsMenu from './tools-menu';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -163,21 +164,18 @@ export class MySitesSidebar extends Component {
 	};
 
 	checklist() {
-		const { canUserUseChecklistMenu, path, siteSuffix, siteId, translate } = this.props;
+		const { canUserUseChecklistMenu, path, siteId, siteSuffix } = this.props;
 
 		if ( ! siteId || ! canUserUseChecklistMenu ) {
 			return null;
 		}
 
-		const checklistLink = '/checklist' + siteSuffix;
 		return (
-			<SidebarItem
-				tipTarget="menus"
-				label={ translate( 'Checklist' ) }
-				selected={ itemLinkMatches( [ '/checklist' ], path ) }
-				link={ checklistLink }
-				onNavigate={ this.trackChecklistClick }
-				materialIcon="check_circle"
+			<WpcomChecklist
+				viewMode="sidebar-item"
+				sidebarItemSelected={ itemLinkMatches( [ '/checklist' ], path ) }
+				onSidebarNavigate={ this.trackChecklistClick }
+				siteSuffix={ siteSuffix }
 			/>
 		);
 	}

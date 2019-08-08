@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getTaskList } from './wpcom-task-list';
 import { Checklist, Task } from 'components/checklist';
+import ChecklistSidebarItem from './checklist-sidebar-item';
 import ChecklistBanner from './checklist-banner';
 import ChecklistBannerTask from './checklist-banner/task';
 import ChecklistNavigation from './checklist-navigation';
@@ -275,6 +276,9 @@ class WpcomChecklistComponent extends PureComponent {
 		let ChecklistComponent = Checklist;
 
 		switch ( viewMode ) {
+			case 'sidebar-item':
+				ChecklistComponent = ChecklistSidebarItem;
+				break;
 			case 'banner':
 				ChecklistComponent = ChecklistBanner;
 				break;
@@ -292,21 +296,30 @@ class WpcomChecklistComponent extends PureComponent {
 			<>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
-				<ChecklistComponent
-					isPlaceholder={ ! taskStatuses }
-					updateCompletion={ updateCompletion }
-					closePopover={ closePopover }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-					storedTask={ storedTask }
-					taskList={ taskList }
-					phase2={ phase2 }
-					onExpandTask={ this.trackExpandTask }
-					showChecklistHeader={ true }
-				>
-					{ taskList.getAll().map( task => this.renderTask( task ) ) }
-				</ChecklistComponent>
+				{ 'sidebar-item' === viewMode ? (
+					<ChecklistComponent
+						taskList={ taskList }
+						sidebarItemSelected={ this.props.sidebarItemSelected }
+						onSidebarNavigate={ this.props.onSidebarNavigate }
+						siteSuffix={ this.props.siteSuffix }
+					/>
+				) : (
+					<ChecklistComponent
+						isPlaceholder={ ! taskStatuses }
+						updateCompletion={ updateCompletion }
+						closePopover={ closePopover }
+						showNotification={ showNotification }
+						setNotification={ setNotification }
+						setStoredTask={ setStoredTask }
+						storedTask={ storedTask }
+						taskList={ taskList }
+						phase2={ phase2 }
+						onExpandTask={ this.trackExpandTask }
+						showChecklistHeader={ true }
+					>
+						{ taskList.getAll().map( task => this.renderTask( task ) ) }
+					</ChecklistComponent>
+				) }
 			</>
 		);
 	}
