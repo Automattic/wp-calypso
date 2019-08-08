@@ -9,7 +9,7 @@ import classnames from 'classnames';
  */
 import { withInstanceId } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useRef, useLayoutEffect, useState } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { BlockPreview } from '@wordpress/block-editor';
 
@@ -29,8 +29,41 @@ const {
  * it tries to render a static image, or simply return null.
  */
 const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } ) => {
+	const itemRef = useRef( null );
+	const [ cssClasses, setCssClasses ] = useState( 'is-rendering' );
 
 	const blocks = useMemo( () => parseBlocks( rawBlocks ), [ rawBlocks ] );
+
+	useLayoutEffect( () => {
+		const timerId = setTimeout( () => {
+			const el = itemRef ? itemRef.current : null;
+
+			if ( ! el ) {
+				setCssClasses( '' );
+				return;
+			}
+
+			// Try to pick up the editor styles wrapper element.
+			const editorStylesWrapperEl = el.querySelector( '.editor-styles-wrapper' );
+
+			if ( editorStylesWrapperEl ) {
+				editorStylesWrapperEl.classList.remove( 'editor-styles-wrapper' );
+				setCssClasses( 'editor-styles-wrapper' );
+			}
+		}, 0 );
+
+		// Cleanup
+		return () => {
+			if ( timerId ) {
+				window.clearTimeout( timerId );
+			}
+		};
+	}, [] );
+
+	const itemClasses = classnames(
+		"template-selector-control__preview-wrap",
+		cssClasses,
+	);
 
 	return (
 		<button
@@ -41,7 +74,7 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			onClick={ () => onSelect( value, label, blocks ) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
-			<div className="template-selector-control__preview-wrap">
+			<div ref={ itemRef } className={ itemClasses }>
 				{ blocks && blocks.length ? (
 					<BlockPreview blocks={ blocks } viewportWidth={ 800 } />
 				) : null }
