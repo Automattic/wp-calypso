@@ -166,14 +166,12 @@ const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
 const onSuccess = ( action: HttpDataAction, apiData: unknown ) => {
 	const [ error, data ] = parseResponse( apiData, action.fromApi() );
 
-	if ( undefined !== error ) {
+	if ( undefined === data ) {
 		return onError( action, error );
 	}
 
 	update( action.id, DataState.Success, apiData );
-	( data as ResourcePair[] ).forEach( ( [ id, resource ] ) =>
-		update( id, DataState.Success, resource )
-	);
+	data.forEach( ( [ id, resource ] ) => update( id, DataState.Success, resource ) );
 
 	return { type: HTTP_DATA_TICK };
 };
