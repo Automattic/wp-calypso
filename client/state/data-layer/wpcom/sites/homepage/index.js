@@ -11,7 +11,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
-import { updateSiteSettings } from 'state/site-settings/actions';
+import { updateSiteFrontPage } from 'state/sites/actions';
 
 const updateSiteFrontPageRequest = action =>
 	http(
@@ -34,7 +34,7 @@ const setSiteFrontPage = (
 ) => dispatch => {
 	dispatch(
 		bypassDataLayer(
-			updateSiteSettings( siteId, {
+			updateSiteFrontPage( siteId, {
 				show_on_front: is_page_on_front ? 'page' : 'posts',
 				page_for_posts: parseInt( page_for_posts_id, 10 ),
 				page_on_front: parseInt( page_on_front_id, 10 ),
