@@ -288,13 +288,11 @@ describe( 'isDomainFulfilled', () => {
 } );
 
 describe( 'isPlanFulfilled()', () => {
-	const setSkipStep = jest.fn();
 	const submitSignupStep = jest.fn();
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
 		submitSignupStep.mockClear();
-		setSkipStep.mockClear();
 	} );
 
 	test( 'should remove a step for existing paid plan', () => {
@@ -302,21 +300,18 @@ describe( 'isPlanFulfilled()', () => {
 		const nextProps = {
 			isPaidPlan: true,
 			sitePlanSlug: 'sitePlanSlug',
-			setSkipStep,
 			submitSignupStep,
 		};
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
-		expect( setSkipStep ).not.toHaveBeenCalled();
 
 		isPlanFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, undefined },
+			{ stepName, undefined, wasSkipped: true },
 			{ cartItem: undefined }
 		);
-		expect( setSkipStep ).toHaveBeenCalledWith( { stepName } );
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
@@ -325,7 +320,6 @@ describe( 'isPlanFulfilled()', () => {
 		const nextProps = {
 			isPaidPlan: false,
 			sitePlanSlug: 'sitePlanSlug',
-			setSkipStep,
 			submitSignupStep,
 		};
 		const defaultDependencies = { cartItem: 'testPlan' };
@@ -333,12 +327,13 @@ describe( 'isPlanFulfilled()', () => {
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
-		expect( setSkipStep ).not.toHaveBeenCalled();
 
 		isPlanFulfilled( stepName, defaultDependencies, nextProps );
 
-		expect( submitSignupStep ).toHaveBeenCalledWith( { stepName, cartItem }, { cartItem } );
-		expect( setSkipStep ).toHaveBeenCalledWith( { stepName } );
+		expect( submitSignupStep ).toHaveBeenCalledWith(
+			{ stepName, cartItem, wasSkipped: true },
+			{ cartItem }
+		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
@@ -347,19 +342,16 @@ describe( 'isPlanFulfilled()', () => {
 		const nextProps = {
 			isPaidPlan: false,
 			sitePlanSlug: 'sitePlanSlug',
-			setSkipStep,
 			submitSignupStep,
 		};
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
-		expect( setSkipStep ).not.toHaveBeenCalled();
 
 		isPlanFulfilled( stepName, undefined, nextProps );
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
-		expect( setSkipStep ).not.toHaveBeenCalled();
 	} );
 } );
 

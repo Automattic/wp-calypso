@@ -549,23 +549,22 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { isPaidPlan, setSkipStep, sitePlanSlug, submitSignupStep } = nextProps;
+	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	let fulfilledDependencies = [];
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
-		submitSignupStep( { stepName, cartItem }, { cartItem } );
+		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies = [ 'cartItem' ];
 	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
-		submitSignupStep( { stepName, cartItem }, { cartItem } );
+		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
 		fulfilledDependencies = [ 'cartItem' ];
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		setSkipStep( { stepName } );
 		flows.excludeStep( stepName );
 	}
 }
