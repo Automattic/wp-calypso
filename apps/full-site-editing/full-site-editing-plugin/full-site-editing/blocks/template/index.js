@@ -20,10 +20,13 @@ if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 		description: __( 'Display a template.' ),
 		icon: 'layout',
 		category: 'layout',
-		attributes: { templateId: { type: 'number' } },
+		attributes: {
+			templateId: { type: 'number' },
+			className: { type: 'string' },
+		},
 		supports: {
 			anchor: false,
-			customClassName: true, // Needed to support the classname we inject
+			customClassName: false,
 			html: false,
 			reusable: false,
 		},
