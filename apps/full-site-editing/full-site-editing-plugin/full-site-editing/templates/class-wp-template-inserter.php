@@ -115,7 +115,7 @@ class WP_Template_Inserter {
 			return $response;
 		}
 
-		if ( $attempt >= $max_retries ) {
+		if ( $attempt > $max_retries ) {
 			return;
 		}
 
