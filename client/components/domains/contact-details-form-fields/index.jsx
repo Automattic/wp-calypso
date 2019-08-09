@@ -345,18 +345,12 @@ export class ContactDetailsFormFields extends Component {
 		};
 	};
 
-	createField = ( name, componentClass, additionalProps, needsChildRef ) => (
-		<div className={ `contact-details-form-fields__container ${ kebabCase( name ) }` }>
-			{ createElement(
-				componentClass,
-				Object.assign(
-					{},
-					{ ...this.getFieldProps( name, needsChildRef ) },
-					{ ...additionalProps }
-				)
-			) }
-		</div>
-	);
+	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
+		return createElement(
+			componentClass,
+			Object.assign( {}, { ...this.getFieldProps( name, needsChildRef ) }, { ...additionalProps } )
+		);
+	};
 
 	getCountryCode() {
 		return get( this.state.form, 'countryCode.value', '' );
@@ -368,42 +362,50 @@ export class ContactDetailsFormFields extends Component {
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
-				{ this.createField(
-					'organization',
-					HiddenInput,
-					{
-						label: translate( 'Organization' ),
-						text: labelTexts.organization || translate( '+ Add organization name' ),
-					},
-					true
-				) }
+				<div className="contact-details-form-fields__row">
+					{ this.createField(
+						'organization',
+						HiddenInput,
+						{
+							label: translate( 'Organization' ),
+							text: labelTexts.organization || translate( '+ Add organization name' ),
+						},
+						true
+					) }
+				</div>
 
-				{ this.createField( 'email', Input, {
-					label: translate( 'Email' ),
-				} ) }
-
-				{ this.createField( 'phone', FormPhoneMediaInput, {
-					label: translate( 'Phone' ),
-					onChange: this.handlePhoneChange,
-					countriesList: this.props.countriesList,
-					countryCode: this.state.phoneCountryCode,
-					enableStickyCountry: false,
-				} ) }
-
-				{ needsFax &&
-					this.createField( 'fax', Input, {
-						label: translate( 'Fax' ),
+				<div className="contact-details-form-fields__row">
+					{ this.createField( 'email', Input, {
+						label: translate( 'Email' ),
 					} ) }
 
-				{ this.createField(
-					'country-code',
-					CountrySelect,
-					{
-						label: translate( 'Country' ),
+					{ this.createField( 'phone', FormPhoneMediaInput, {
+						label: translate( 'Phone' ),
+						onChange: this.handlePhoneChange,
 						countriesList: this.props.countriesList,
-					},
-					true
-				) }
+						countryCode: this.state.phoneCountryCode,
+						enableStickyCountry: false,
+					} ) }
+				</div>
+
+				<div className="contact-details-form-fields__row">
+					{ needsFax &&
+						this.createField( 'fax', Input, {
+							label: translate( 'Fax' ),
+						} ) }
+				</div>
+
+				<div className="contact-details-form-fields__row">
+					{ this.createField(
+						'country-code',
+						CountrySelect,
+						{
+							label: translate( 'Country' ),
+							countriesList: this.props.countriesList,
+						},
+						true
+					) }
+				</div>
 
 				{ countryCode && (
 					<RegionAddressFieldsets
@@ -420,7 +422,7 @@ export class ContactDetailsFormFields extends Component {
 	renderGAppsFieldset() {
 		const countryCode = this.getCountryCode();
 		return (
-			<div className="contact-details-form-fields__g-apps g-apps-fieldset">
+			<div className="contact-details-form-fields__row g-apps-fieldset">
 				<CountrySelect
 					label={ this.props.translate( 'Country' ) }
 					countriesList={ this.props.countriesList }
@@ -441,13 +443,15 @@ export class ContactDetailsFormFields extends Component {
 
 		return (
 			<FormFieldset className="contact-details-form-fields">
-				{ this.createField( 'first-name', Input, {
-					label: translate( 'First Name' ),
-				} ) }
+				<div className="contact-details-form-fields__row">
+					{ this.createField( 'first-name', Input, {
+						label: translate( 'First Name' ),
+					} ) }
 
-				{ this.createField( 'last-name', Input, {
-					label: translate( 'Last Name' ),
-				} ) }
+					{ this.createField( 'last-name', Input, {
+						label: translate( 'Last Name' ),
+					} ) }
+				</div>
 
 				{ this.props.needsOnlyGoogleAppsDetails
 					? this.renderGAppsFieldset()
