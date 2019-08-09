@@ -554,12 +554,12 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
-		submitSignupStep( { stepName, cartItem }, { cartItem } );
+		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies = [ 'cartItem' ];
 	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
-		submitSignupStep( { stepName, cartItem }, { cartItem } );
+		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
 		fulfilledDependencies = [ 'cartItem' ];
 	}
@@ -620,7 +620,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 		nextProps.setSurvey( { vertical, otherText: '' } );
 
 		nextProps.submitSignupStep(
-			{ stepName: 'survey' },
+			{ stepName: 'survey', wasSkipped: true },
 			{ surveySiteType: 'blog', surveyQuestion: vertical }
 		);
 
