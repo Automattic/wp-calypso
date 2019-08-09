@@ -33,24 +33,32 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 					'callback'            => [ $this, 'create_item' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'show_in_index'       => false,
-					'args'                => [
-						'url'     => [
-							'description'       => 'URL to the image to be side-loaded.',
-							'type'              => 'string',
-							'format'            => 'uri',
-							'sanitize_callback' => function( $url ) {
-								return esc_url_raw( strtok( $url, '?' ) );
-							},
-							'required'          => true,
-						],
-						'post_id' => [
-							'description' => 'ID of the post to associate the image with',
-							'type'        => 'integer',
-							'default'     => 0,
+					'args'                => $this->get_collection_params(),
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/batch',
+			[
+				[
+					'methods'       => WP_REST_Server::CREATABLE,
+					'callback'      => [ $this, 'create_items' ],
+					'show_in_index' => false,
+					'args'          => [
+						'resources' => [
+							'description' => 'URL to the image to be side-loaded.',
+							'type'        => 'array',
+							'required'    => true,
+							'items'       => [
+								'type'       => 'object',
+								'properties' => $this->get_collection_params(),
+							],
 						],
 					],
 				],
-				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
 	}
@@ -140,6 +148,58 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 	}
 
 	/**
+	 * Creates a batch of attachments.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_Error|WP_REST_Response Response object on success, WP_Error object on failure.
+	 */
+	public function create_items( $request ) {
+		$data = [];
+
+		// Foreach request specified in the requests param, run the endpoint.
+		foreach ( $request['resources'] as $resource ) {
+			$request = new WP_REST_Request( 'POST', "/{$this->namespace}/{$this->rest_base}" );
+
+			// Add specified request parameters into the request.
+			foreach ( $resource as $param_name => $param_value ) {
+				$request->set_param( $param_name, $param_value );
+			}
+
+			$response = rest_do_request( $request );
+			$data[]   = $this->prepare_for_collection( $response );
+		}
+
+		return rest_ensure_response( $data );
+	}
+
+	/**
+	 * Prepare a response for inserting into a collection of responses.
+	 *
+	 * @param WP_REST_Response $response Response object.
+	 * @return array|WP_REST_Response Response data, ready for insertion into collection data.
+	 */
+	public function prepare_for_collection( $response ) {
+		if ( ! ( $response instanceof WP_REST_Response ) ) {
+			return $response;
+		}
+
+		$data   = (array) $response->get_data();
+		$server = rest_get_server();
+
+		if ( method_exists( $server, 'get_compact_response_links' ) ) {
+			$links = call_user_func( [ $server, 'get_compact_response_links' ], $response );
+		} else {
+			$links = call_user_func( [ $server, 'get_response_links' ], $response );
+		}
+
+		if ( ! empty( $links ) ) {
+			$data['_links'] = $links;
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Prepares a single attachment output for response.
 	 *
 	 * @param WP_Post         $post    Attachment object.
@@ -196,5 +256,29 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 		}
 
 		return $attachment;
+	}
+
+	/**
+	 * Returns the endpoints request parameters.
+	 *
+	 * @return array Request parameters.
+	 */
+	public function get_collection_params() {
+		return [
+			'url'     => [
+				'description'       => 'URL to the image to be side-loaded.',
+				'type'              => 'string',
+				'required'          => true,
+				'format'            => 'uri',
+				'sanitize_callback' => function( $url ) {
+					return esc_url_raw( strtok( $url, '?' ) );
+				},
+			],
+			'post_id' => [
+				'description' => 'ID of the post to associate the image with',
+				'type'        => 'integer',
+				'default'     => 0,
+			],
+		];
 	}
 }
