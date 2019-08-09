@@ -25,6 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import wpcom from 'lib/wp';
 import { saveSignupStep } from 'state/signup/progress/actions';
+import { suggestDomainFromImportUrl } from 'lib/importer/utils';
 
 /**
  * Style dependencies
@@ -128,6 +129,7 @@ class ImportURLStepComponent extends Component {
 							importSiteFavicon: siteFavicon,
 							importSiteUrl: siteUrl,
 							siteTitle,
+							suggestedDomain: suggestDomainFromImportUrl( siteUrl ),
 							themeSlugWithRepo: 'pub/modern-business',
 						}
 					);
