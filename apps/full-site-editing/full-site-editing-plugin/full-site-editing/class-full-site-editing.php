@@ -59,6 +59,7 @@ class Full_Site_Editing {
 		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
 		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
+		add_action( 'post_updated', [ $this, 'mark_updated_templates' ] );
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_option( 'stylesheet' ) );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
@@ -142,6 +143,25 @@ class Full_Site_Editing {
 	 */
 	public function meta_template_id_auth_callback() {
 		return current_user_can( 'edit_theme_options' );
+	}
+
+	/**
+	 * Store the timestamp of last template update.
+	 *
+	 * We don't use this at the moment, but it might be useful bookkeeping for the future.
+	 * For example, we might want to update the default template content on existing sites,
+	 * but at the same time avoid overriding templates that have already been modified with
+	 * custom user content.
+	 *
+	 * @param int $post_id ID of the post that has been updated.
+	 */
+	public function mark_updated_templates( $post_id ) {
+		// We only want to mark template post type updates, bail otherwise.
+		if ( 'wp_template' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		update_post_meta( $post_id, 'fse-template-last-update', time() );
 	}
 
 	/**
