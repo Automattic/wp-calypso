@@ -156,6 +156,7 @@
 		"sign-in-with-apple": true,
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": true,
+		"signup/full-site-editing": true,
 		"signup/import-flow": true,
 		"signup/onboarding-flow": true,
 		"signup/social": true,
