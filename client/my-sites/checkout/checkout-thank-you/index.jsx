@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, identity } from 'lodash';
+import { find, get, identity, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -121,6 +121,17 @@ export class CheckoutThankYou extends React.Component {
 		fetchAtomicTransfer: identity,
 	};
 
+	maybeFetchAtomicTransfer() {
+		const { atomicTransfer, selectedSite } = this.props;
+
+		if ( ! isEmpty( atomicTransfer ) ) {
+			clearInterval( this.fetchTransferPoller );
+		}
+		if ( selectedSite && ! this.props.isFetchingTransfer ) {
+			this.props.fetchAtomicTransfer( selectedSite );
+		}
+	}
+
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 		this.redirectIfDomainOnly( this.props );
@@ -132,10 +143,16 @@ export class CheckoutThankYou extends React.Component {
 			receiptId,
 			selectedSite,
 			sitePlans,
+			transferComplete,
 		} = this.props;
 
-		if ( selectedSite && ! this.props.isFetchingTransfer ) {
-			this.props.fetchAtomicTransfer( selectedSite );
+		this.maybeFetchAtomicTransfer();
+
+		const purchases = getPurchases( this.props );
+		const wasEcommercePlanPurchased = purchases.some( isEcommerce );
+
+		if ( wasEcommercePlanPurchased && ! transferComplete ) {
+			this.fetchTransferPoller = setInterval( this.maybeFetchAtomicTransfer, 3000 );
 		}
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
@@ -162,6 +179,10 @@ export class CheckoutThankYou extends React.Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	componentWillUnmount() {
+		clearInterval( this.fetchTransferPoller );
+	}
+
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 		this.redirectIfDomainOnly( nextProps );
@@ -177,7 +198,16 @@ export class CheckoutThankYou extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { receiptId, selectedSiteSlug } = this.props;
+		const { receiptId, selectedSiteSlug, transferComplete } = this.props;
+
+		if ( ! this.fetchTransferPoller ) {
+			const purchases = getPurchases( this.props );
+			const wasEcommercePlanPurchased = purchases.some( isEcommerce );
+
+			if ( wasEcommercePlanPurchased && ! transferComplete ) {
+				this.fetchTransferPoller = setInterval( this.maybeFetchAtomicTransfer, 3000 );
+			}
+		}
 
 		// Update route when an ecommerce site goes Atomic and site slug changes
 		// from 'wordpress.com` to `wpcomstaging.com`.
@@ -607,9 +637,11 @@ export class CheckoutThankYou extends React.Component {
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
+		const atomicTransfer = getAtomicTransfer( state, siteId );
 		const planSlug = getSitePlanSlug( state, siteId );
 
 		return {
+			atomicTransfer,
 			isFetchingTransfer: isFetchingTransfer( state, siteId ),
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
@@ -618,8 +650,7 @@ export default connect(
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			transferComplete:
-				transferStates.COMPLETED ===
-				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
+				transferStates.COMPLETED === get( atomicTransfer, 'status', transferStates.PENDING ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			selectedSiteSlug: getSiteSlug( state, siteId ),
 		};
