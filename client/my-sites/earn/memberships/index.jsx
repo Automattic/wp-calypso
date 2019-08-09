@@ -386,7 +386,7 @@ class MembershipsSection extends Component {
 					/>
 				) }
 				{ this.renderOnboarding(
-					<Button primary={ true } href={ this.props.connectUrl } target="_blank">
+					<Button primary={ true } href={ this.props.connectUrl }>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{' '}
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>
