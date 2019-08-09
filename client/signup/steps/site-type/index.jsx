@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
+	'blank-slate': 'blank-slate',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -27,6 +28,14 @@ class SiteType extends Component {
 	componentDidMount() {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
+
+	handleBlankSlateClick = () => {
+		this.props.recordTracksEvent( 'calypso_signup_blank_slate_cta_click', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+		} );
+		this.submitStep( 'blank-slate' );
+	};
 
 	handleImportFlowClick = () => {
 		this.props.recordTracksEvent( 'calypso_signup_import_cta_click', {
@@ -64,6 +73,20 @@ class SiteType extends Component {
 		);
 	}
 
+	renderBlankSlateButton() {
+		if ( 'variant' !== abtest( 'signupEscapeHatch' ) ) {
+			return null;
+		}
+
+		return (
+			<div className="site-type__blank-slate">
+				<Button borderless onClick={ this.handleBlankSlateClick }>
+					{ this.props.translate( 'Need a site in a hurry? Start one from scratch.' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	renderStepContent() {
 		const { siteType } = this.props;
 
@@ -75,6 +98,7 @@ class SiteType extends Component {
 					siteType={ siteType }
 				/>
 				{ this.renderImportButton() }
+				{ this.renderBlankSlateButton() }
 			</Fragment>
 		);
 	}

@@ -153,5 +153,13 @@ export function getAllSiteTypes() {
 			purchaseRequired: true,
 			forcePublicSite: true,
 		},
+		{
+			id: 6, // This value must correspond with its sibling in the /segments API results
+			slug: 'blank-canvas',
+			label: i18n.translate( 'Blank Canvas' ),
+			description: i18n.translate( 'Start with a blank site.' ),
+			theme: 'pub/refresh-2019',
+			designType: 'blog',
+		},
 	];
 }

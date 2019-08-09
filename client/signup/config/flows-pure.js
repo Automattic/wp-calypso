@@ -138,6 +138,13 @@ export function generateFlows( {
 			lastModified: '2019-06-20',
 		},
 
+		'blank-slate': {
+			steps: [ 'user', 'site-type', 'domains', 'plans' ],
+			destination: getSignupDestination,
+			description: 'A blank slate flow used with the `signupEscapeHatch` AB test',
+			lastModified: '2019-08-09',
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,
