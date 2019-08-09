@@ -143,4 +143,13 @@ export default {
 		defaultVariation: 'yearlyPlan',
 		allowExistingUsers: true,
 	},
+	displayCouponInput: {
+		datestamp: '20190809',
+		variations: {
+			autodisplay: 50,
+			manualdisplay: 50,
+		},
+		defaultVariation: 'manualdisplay',
+		allowExistingUsers: true,
+	},
 };
