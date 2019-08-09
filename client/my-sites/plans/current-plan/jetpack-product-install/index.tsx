@@ -285,8 +285,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 				checklist_name: 'jetpack',
 				error: 'installation_error',
 				location: 'JetpackChecklist',
-				status_akismet: status ? status.akismet : '(unknown)',
-				status_vaultpress: status ? status.vaultpress : '(unknown)',
+				status_akismet: status ? status.akismet_status : '(unknown)',
+				status_vaultpress: status ? status.vaultpress_status : '(unknown)',
 			} );
 
 			this.props.logToLogstash( {
