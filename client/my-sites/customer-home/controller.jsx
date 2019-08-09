@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -16,7 +17,7 @@ export default function( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome />;
+	context.primary = <CustomerHome checklistMode={ get( context, 'query.d' ) } />;
 
 	next();
 }

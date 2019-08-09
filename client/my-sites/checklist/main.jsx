@@ -36,14 +36,6 @@ import './style.scss';
 class ChecklistMain extends PureComponent {
 	state = { complete: false };
 
-	componentDidMount() {
-		this.maybeRedirectJetpack();
-	}
-
-	componentDidUpdate( prevProps ) {
-		this.maybeRedirectJetpack( prevProps );
-	}
-
 	handleCompletionUpdate = ( { complete } ) => void this.setState( { complete } );
 
 	/**
@@ -170,11 +162,6 @@ class ChecklistMain extends PureComponent {
 	}
 
 	render() {
-		// Jetpack sites (excluding Atomic) should be redirected via this.maybeRedirectJetpack
-		if ( this.props.isJetpack && false === this.props.isAtomic ) {
-			return null;
-		}
-
 		const { displayMode, siteId, translate } = this.props;
 
 		let translatedTitle = translate( 'Site Checklist' );
