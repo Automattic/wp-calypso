@@ -95,7 +95,7 @@ export class CartCoupon extends React.Component {
 					placeholder={ this.props.translate( 'Enter Coupon Code', { textOnly: true } ) }
 					onChange={ this.handleCouponInputChange }
 					value={ this.state.couponInputValue }
-					autoFocus={ abtest( 'displayCouponInput' ) === 'manualdisplay' }
+					autoFocus={ abtest( 'displayCouponInput' ) === 'manualdisplay' } // eslint-disable-line jsx-a11y/no-autofocus
 				/>
 				<Button
 					type="submit"
