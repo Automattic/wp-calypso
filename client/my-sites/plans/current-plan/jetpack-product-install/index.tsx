@@ -290,8 +290,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 			} );
 
 			this.props.logToLogstash( {
-				feature: 'calypso_jetpack_product_install',
-				message: 'plugin installer error',
+				feature: 'calypso_client',
+				message: 'Jetpack plugin installer error',
 				...( this.props.siteId && { site_id: this.props.siteId } ),
 				extra: {
 					pluginStatus: this.props.status,
