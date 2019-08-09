@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isEnabled } from 'config';
 import { addQueryArgs } from 'lib/route';
 
 export function generateFlows( {
@@ -202,7 +202,7 @@ export function generateFlows( {
 		},
 	};
 
-	if ( config.isEnabled( 'rewind/clone-site' ) ) {
+	if ( isEnabled( 'rewind/clone-site' ) ) {
 		flows[ 'clone-site' ] = {
 			steps: [
 				'clone-start',
@@ -220,7 +220,7 @@ export function generateFlows( {
 		};
 	}
 
-	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
+	if ( isEnabled( 'signup/atomic-store-flow' ) ) {
 		// Important: For any changes done to the ecommerce flow,
 		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
@@ -238,7 +238,7 @@ export function generateFlows( {
 		};
 	}
 
-	if ( config.isEnabled( 'signup/wpcc' ) ) {
+	if ( isEnabled( 'signup/wpcc' ) ) {
 		flows.wpcc = {
 			steps: [ 'oauth2-user' ],
 			destination: getRedirectDestination,
@@ -356,6 +356,22 @@ export function generateFlows( {
 		description: 'Signup flow for creating an online store, with user step in last position',
 		lastModified: '2019-07-19',
 	};
+
+	if ( isEnabled( 'signup/full-site-editing' ) ) {
+		flows[ 'test-fse' ] = {
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getSignupDestination,
+			description: 'A copy of `onboarding` for testing Full Site Editing',
+			lastModified: '2019-08-08',
+		};
+	}
 
 	return flows;
 }
