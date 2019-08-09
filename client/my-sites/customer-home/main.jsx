@@ -155,7 +155,7 @@ class Home extends Component {
 								iconSrc="/calypso/images/customer-home/menus.svg"
 							/>
 							<ActionBox
-								action="https://en.support.wordpress.com/images/"
+								action="https://support.wordpress.com/images/"
 								label={ translate( 'Change images' ) }
 								iconSrc="/calypso/images/customer-home/images.svg"
 							/>
@@ -204,7 +204,7 @@ class Home extends Component {
 								<VerticalNavItem path="https://en.support.wordpress.com/" external>
 									{ translate( 'Support docs' ) }
 								</VerticalNavItem>
-								<VerticalNavItem path="https://wordpress.com/help/contact" external>
+								<VerticalNavItem path="/help/contact" external>
 									{ translate( 'Contact us' ) }
 								</VerticalNavItem>
 							</VerticalNav>
