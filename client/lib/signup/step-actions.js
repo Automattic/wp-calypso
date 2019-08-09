@@ -48,7 +48,6 @@ import { promisify } from '../../utils';
 // Others
 import flows from 'signup/config/flows';
 import steps, { isDomainStepSkippable } from 'signup/config/steps';
-import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
 
 /**
@@ -171,13 +170,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
-		const importingFromUrl = getNuxUrlInputValue( state );
-		newSiteParams.blog_name = normalizeImportUrl( importingFromUrl );
-		newSiteParams.find_available_url = true;
-		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
-		newSiteParams.options.nux_import_from_url = importingFromUrl;
-	} else if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
+	if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
 			get( getSignupDependencyStore( state ), 'username' ) ||
@@ -188,6 +181,11 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
+	}
+
+	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
+		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
+		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {

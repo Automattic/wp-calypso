@@ -84,27 +84,13 @@ class DomainsStep extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		const { flowName, signupDependencies } = props;
-		const importSiteUrl = get( signupDependencies, 'importSiteUrl' );
-
-		if ( ( flowName === 'import' || flowName === 'import-onboarding' ) && importSiteUrl ) {
-			this.skipRender = true;
-
-			props.submitSignupStep( {
-				flowName,
-				siteUrl: importSiteUrl,
-				stepName: props.stepName,
-				stepSectionName: props.stepSectionName,
-			} );
-			props.goToNextStep();
-			return;
-		}
-
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
+		const suggestedDomain = get( props, 'signupDependencies.suggestedDomain' );
 
-		// If we landed anew from `/domains` and it's the `new-flow` variation, always rerun the search
-		if ( search && props.path.indexOf( '?' ) !== -1 ) {
+		// If we landed anew from `/domains` and it's the `new-flow` variation
+		// or there's a suggestedDomain from previous steps, always rerun the search.
+		if ( ( search && props.path.indexOf( '?' ) !== -1 ) || suggestedDomain ) {
 			this.searchOnInitialRender = true;
 		}
 
@@ -367,10 +353,13 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
-		// If it's the first load, rerun the search with whatever we get from the query param
-		const initialQuery = get( this.props, 'queryObject.new', '' );
+		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
+		const initialQuery =
+			get( this.props, 'queryObject.new', '' ) ||
+			get( this.props, 'signupDependencies.suggestedDomain' );
+
 		if (
-			// If we landed here from /domains Search
+			// If we landed here from /domains Search or with a suggested domain.
 			( initialQuery && this.searchOnInitialRender ) ||
 			// If the subdomain type has changed, rerun the search
 			( initialState &&

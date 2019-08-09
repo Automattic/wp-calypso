@@ -1746,6 +1746,23 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step(
+			'Can see the domains page prefilled with a suggested domain, and select a free domain',
+			async function() {
+				const findADomainComponent = await FindADomainComponent.Expect( driver );
+				const domainSearch = await findADomainComponent.getSearchInputValue();
+
+				assert.strictEqual(
+					domainSearch,
+					'eat-here-its-good',
+					"The suggested domain doesn't match the import site url"
+				);
+
+				await findADomainComponent.waitForResults();
+				return await findADomainComponent.selectFreeAddress();
+			}
+		);
+
+		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
 				return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
