@@ -23,7 +23,6 @@ import {
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getPluginKeys, requestPluginKeys } from 'state/data-getters/wpcom/jetpack-blogs/keys';
 import { SiteId, TimeoutMS } from 'client/types';
-import { logToLogstash } from 'state/logstash/actions';
 
 type PluginStateDescriptor = string;
 type PluginSlug = 'akismet' | 'vaultpress';
@@ -67,11 +66,11 @@ interface State {
 
 export class JetpackProductInstall extends Component< Props, State > {
 	state = {
-		initiatedInstalls: new Set< PluginSlug >(),
+		initiatedInstalls: new Set(),
 	};
 
-	retries: number = 0;
-	tracksEventSent: boolean = false;
+	retries = 0;
+	tracksEventSent = false;
 
 	componentDidMount() {
 		this.requestInstallationStatus();
@@ -288,20 +287,6 @@ export class JetpackProductInstall extends Component< Props, State > {
 				status_akismet: status ? status.akismet_status : '(unknown)',
 				status_vaultpress: status ? status.vaultpress_status : '(unknown)',
 			} );
-
-			this.props.logToLogstash( {
-				feature: 'calypso_jetpack_product_install',
-				message: 'plugin installer error',
-				...( this.props.siteId && { site_id: this.props.siteId } ),
-				extra: {
-					pluginStatus: this.props.status,
-					knownPluginKeys: {
-						// Clean plugin keys for logging
-						akismet: !! this.props.pluginKeys && !! this.props.pluginKeys.akismet,
-						vaultpress: !! this.props.pluginKeys && !! this.props.pluginKeys.vaultpress,
-					},
-				},
-			} );
 		}
 
 		return (
@@ -330,10 +315,10 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 interface ConnectedProps {
 	siteId: SiteId | null;
-	pluginKeys: { [key in PluginSlug]: string } | null;
+	pluginKeys: { akismet: string; vaultpress: string } | null;
 	progressComplete: ReturnType< typeof getJetpackProductInstallProgress >;
 	requestedInstalls: PluginSlug[];
-	status: ReturnType< typeof getJetpackProductInstallStatus >;
+	status: ReturnType< typeof getJetpackProductInstallProgress >;
 }
 
 function mapStateToProps( state ): ConnectedProps {
@@ -363,14 +348,17 @@ function mapStateToProps( state ): ConnectedProps {
 	};
 }
 
-const mapDispatchToProps = {
+interface ConnectedDispatchProps {
+	recordTracksEvent: typeof recordTracksEvent;
+	requestJetpackProductInstallStatus: typeof requestJetpackProductInstallStatus;
+	startJetpackProductInstall: typeof startJetpackProductInstall;
+}
+
+const mapDispatchToProps: ConnectedDispatchProps = {
 	recordTracksEvent,
 	requestJetpackProductInstallStatus,
 	startJetpackProductInstall,
-	logToLogstash,
 };
-
-type ConnectedDispatchProps = typeof mapDispatchToProps;
 
 export default connect(
 	mapStateToProps,
