@@ -297,8 +297,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 					pluginStatus: this.props.status,
 					knownPluginKeys: {
 						// Clean plugin keys for logging
-						akismet: !! this.props.pluginKeys && !! this.props.pluginKeys.akismet,
-						vaultpress: !! this.props.pluginKeys && !! this.props.pluginKeys.vaultpress,
+						akismet: !! ( this.props.pluginKeys && this.props.pluginKeys.akismet ),
+						vaultpress: !! ( this.props.pluginKeys && this.props.pluginKeys.vaultpress ),
 					},
 				},
 			} );
