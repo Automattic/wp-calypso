@@ -213,16 +213,18 @@ export class SecurePaymentForm extends Component {
 			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
 		}
 
-		await this.maybeSetSiteToPublic( { cart: params.cart } );
+		const success = await this.maybeSetSiteToPublic( { cart: params.cart } );
 
-		submitTransaction( params );
+		if ( success ) {
+			submitTransaction( params );
+		}
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
 		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
 
 		if ( isJetpack || ! siteIsPrivate ) {
-			return;
+			return true;
 		}
 
 		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
@@ -233,15 +235,24 @@ export class SecurePaymentForm extends Component {
 		} );
 
 		if ( forcedAtomicProducts.length ) {
-			await new Promise( resolve => {
+			await new Promise( ( resolve, reject ) => {
 				defer( async () => {
-					// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-					await this.props.saveSiteSettings( selectedSiteId, { blog_public: 1 } );
-					debug( 'Setting site to public because it is an Atomic plan' );
-					resolve();
+					try {
+						// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+						debug( 'Setting site to public because it is an Atomic plan' );
+						const response = await this.props.saveSiteSettings( selectedSiteId, {
+							blog_public: 1,
+						} );
+
+						resolve( get( response, [ 'updated', 'blog_public' ] ) );
+					} catch ( error ) {
+						reject( error );
+					}
 				} );
 			} );
 		}
+
+		return true;
 	}
 
 	handleTransactionStep( { cart, selectedSite, transaction } ) {
