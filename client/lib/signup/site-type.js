@@ -72,9 +72,10 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
- * @return {array} current list of site types
+ * @param  {Array} allowedSiteTypes Optional array of segment ids so that we can return all, some or no site type definitions.
+ * @return {Array} current list of site types
  */
-export function getAllSiteTypes() {
+export function getAllSiteTypes( allowedSiteTypes = [ 1, 2, 3, 4 ] ) {
 	return [
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
@@ -156,10 +157,9 @@ export function getAllSiteTypes() {
 		{
 			id: 6, // This value must correspond with its sibling in the /segments API results
 			slug: 'blank-canvas',
-			label: i18n.translate( 'Blank Canvas' ),
-			description: i18n.translate( 'Start with a blank site.' ),
+			label: i18n.translate( 'Start from scratch' ),
+			description: i18n.translate( 'Create a blank website.' ),
 			theme: 'pub/refresh-2019',
-			designType: 'blog',
 		},
-	];
+	].filter( siteType => allowedSiteTypes.indexOf( siteType.id ) >= 0 );
 }

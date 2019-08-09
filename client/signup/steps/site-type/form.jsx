@@ -28,11 +28,13 @@ class SiteTypeForm extends Component {
 
 		// from localize() HoC
 		translate: PropTypes.func.isRequired,
+		siteTypeDefinitions: PropTypes.array,
 	};
 
 	static defaultProps = {
 		showDescriptions: true,
 		showPurchaseRequired: true,
+		siteTypeDefinitions: getAllSiteTypes(),
 	};
 
 	handleSubmit = type => {
@@ -43,12 +45,12 @@ class SiteTypeForm extends Component {
 	};
 
 	render() {
-		const { showDescriptions, showPurchaseRequired, translate } = this.props;
+		const { showDescriptions, showPurchaseRequired, siteTypeDefinitions, translate } = this.props;
 
 		return (
 			<>
 				<Card className="site-type__wrapper">
-					{ getAllSiteTypes().map( siteTypeProperties => (
+					{ siteTypeDefinitions.map( siteTypeProperties => (
 						<Card
 							className="site-type__option"
 							key={ siteTypeProperties.id }
@@ -76,6 +78,9 @@ class SiteTypeForm extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( SiteTypeForm ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( SiteTypeForm ) );
