@@ -151,27 +151,36 @@
 		margin-left: 70%;
 	}
 
-	.cart__form {
-		display: block;
-		border-top: 1px solid var( --color-border-subtle );
-		margin: 15px -15px 0;
-		padding: 15px 15px 0;
-		
+	.cart__coupon {
+		font-size: 11px;
+
 		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 
-		input[type='text'] {
-			font-size: 12px;
-			margin: 0 4% 0 0;
-			width: 70%;
+		a {
+			color: var( --color-accent );
+			outline: none;
 		}
 
-		.button {
-			font-size: 12px;
-			height: 34px;
-			padding: 4px;
-			width: 26%;
+		form {
+			display: block;
+			border-top: 1px solid var( --color-border-subtle );
+			margin: 15px -15px 0;
+			padding: 15px 15px 0;
+
+			input[type='text'] {
+				font-size: 12px;
+				margin: 0 4% 0 0;
+				width: 70%;
+			}
+
+			.button {
+				font-size: 12px;
+				height: 34px;
+				padding: 4px;
+				width: 26%;
+			}
 		}
 	}
 }
