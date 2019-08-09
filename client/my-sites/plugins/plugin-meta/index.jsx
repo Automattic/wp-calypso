@@ -35,7 +35,7 @@ import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer'
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
-import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
@@ -589,7 +589,7 @@ export class PluginMeta extends Component {
 
 	handleUpgradeNudgeClick = () => {
 		const { slug } = this.props;
-		const href = `/plans/${ slug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
+		const href = `/checkout/${ slug }/business`;
 		page.redirect( href );
 	};
 
@@ -605,7 +605,6 @@ export class PluginMeta extends Component {
 			<div className="plugin-meta__upgrade_nudge">
 				<Banner
 					event="calypso_plugin_detail_page_upgrade_nudge"
-					disableHref={ true }
 					onClick={ this.handleUpgradeNudgeClick }
 					plan={ plan }
 					title={ title }

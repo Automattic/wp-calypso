@@ -47,7 +47,6 @@ import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
-import { abtest } from 'lib/abtest';
 import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins';
 
 /**
@@ -563,7 +562,6 @@ export class PluginsBrowser extends Component {
 		return (
 			<Banner
 				event="calypso_plugins_browser_upgrade_nudge"
-				disableHref={ true }
 				onClick={ this.handleUpgradeNudgeClick }
 				plan={ plan }
 				title={ title }
