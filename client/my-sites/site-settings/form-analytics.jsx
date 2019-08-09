@@ -23,15 +23,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import {
-	isBusiness,
-	isEnterprise,
-	isFreeJetpackPlan,
-	isJetpackBusiness,
-	isJetpackPremium,
-	isVipPlan,
-	isEcommerce,
-} from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
