@@ -217,7 +217,7 @@ export class SecurePaymentForm extends Component {
 			await this.maybeSetSiteToPublic( { cart: params.cart } );
 		} catch ( e ) {
 			debug( 'Error setting site to public', e );
-			// TODO: Bubble this up to the error notice
+			displayError();
 			return;
 		}
 
