@@ -149,9 +149,9 @@ class MasterbarLoggedIn extends React.Component {
 					tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 					preloadSection={ this.preloadMe }
 				>
-					<Gravatar user={ this.props.user } alt="Me" size={ 18 } />
+					<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
 					<span className="masterbar__item-me-label">
-						{ translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+						{ translate( 'My Profile', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
 					</span>
 				</Item>
 				<Notifications
