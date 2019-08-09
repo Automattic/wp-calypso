@@ -1073,3 +1073,9 @@ button.plan-features__scroll-button {
 		opacity: 1;
 	}
 }
+
+@include breakpoint( '<480px' ) {
+	.plan-features__upgrade-launch-dialog .dialog__content p {
+		padding: 0 20px;
+	}
+}
