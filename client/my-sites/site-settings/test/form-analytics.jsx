@@ -72,12 +72,12 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		showUpgradeNudge: true,
 	};
 
-	test( `Business 1 year for (${ PLAN_FREE })`, () => {
+	test( `Blogger 1 year for (${ PLAN_FREE })`, () => {
 		const comp = shallow(
 			<GoogleAnalyticsForm
 				{ ...myProps }
 				siteIsJetpack={ false }
-				site={ { plan: { PLAN_FREE } } }
+				site={ { plan: { product_slug: PLAN_FREE } } }
 			/>
 		);
 		expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
