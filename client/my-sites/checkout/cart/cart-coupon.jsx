@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
@@ -21,6 +22,7 @@ export class CartCoupon extends React.Component {
 		super( props );
 
 		this.state = {
+			isCouponFormShowing: abtest( 'displayCouponInput' ) === 'autodisplay',
 			couponInputValue: this.appliedCouponCode,
 			userChangedCoupon: false,
 		};
@@ -37,7 +39,7 @@ export class CartCoupon extends React.Component {
 			return this.renderAppliedCoupon();
 		}
 
-		return this.renderCouponForm();
+		return this.renderApplyCouponUI();
 	}
 
 	get appliedCouponCode() {
@@ -61,11 +63,29 @@ export class CartCoupon extends React.Component {
 		);
 	}
 
-	renderCouponForm() {
+	renderApplyCouponUI() {
 		if ( this.props.cart.total_cost === 0 ) {
 			return null;
 		}
-		
+
+		return (
+			<div className="cart__coupon">
+				{ abtest( 'displayCouponInput' ) === 'manualdisplay' && (
+					<button onClick={ this.toggleCouponDetails } className="button is-link cart__toggle-link">
+						{ this.props.translate( 'Have a coupon code?' ) }
+					</button>
+				) }
+
+				{ this.renderCouponForm() }
+			</div>
+		);
+	}
+
+	renderCouponForm = () => {
+		if ( ! this.state.isCouponFormShowing ) {
+			return null;
+		}
+
 		return (
 			<form onSubmit={ this.applyCoupon } className={ 'cart__form' }>
 				<input
@@ -75,6 +95,7 @@ export class CartCoupon extends React.Component {
 					placeholder={ this.props.translate( 'Enter Coupon Code', { textOnly: true } ) }
 					onChange={ this.handleCouponInputChange }
 					value={ this.state.couponInputValue }
+					autoFocus={ abtest( 'displayCouponInput' ) === 'manualdisplay' }
 				/>
 				<Button
 					type="submit"
@@ -92,12 +113,25 @@ export class CartCoupon extends React.Component {
 		return ! this.props.cart.is_coupon_applied && this.props.cart.coupon ? true : false;
 	}
 
+	toggleCouponDetails = event => {
+		event.preventDefault();
+
+		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
+
+		if ( this.state.isCouponFormShowing ) {
+			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );
+		} else {
+			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
+		}
+	};
+
 	clearCoupon = event => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.setState(
 			{
 				couponInputValue: '',
+				isCouponFormShowing: false,
 			},
 			() => {
 				this.removeCoupon( event );
