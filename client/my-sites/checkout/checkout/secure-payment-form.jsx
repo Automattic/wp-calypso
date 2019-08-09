@@ -213,18 +213,22 @@ export class SecurePaymentForm extends Component {
 			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
 		}
 
-		const success = await this.maybeSetSiteToPublic( { cart: params.cart } );
-
-		if ( success ) {
-			submitTransaction( params );
+		try {
+			await this.maybeSetSiteToPublic( { cart: params.cart } );
+		} catch ( e ) {
+			debug( 'Error setting site to public', e );
+			// TODO: Bubble this up to the error notice
+			return;
 		}
+
+		submitTransaction( params );
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
 		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
 
 		if ( isJetpack || ! siteIsPrivate ) {
-			return true;
+			return;
 		}
 
 		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
@@ -234,25 +238,18 @@ export class SecurePaymentForm extends Component {
 			);
 		} );
 
-		if ( forcedAtomicProducts.length ) {
-			await new Promise( ( resolve, reject ) => {
-				defer( async () => {
-					try {
-						// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-						debug( 'Setting site to public because it is an Atomic plan' );
-						const response = await this.props.saveSiteSettings( selectedSiteId, {
-							blog_public: 1,
-						} );
-
-						resolve( get( response, [ 'updated', 'blog_public' ] ) );
-					} catch ( error ) {
-						reject( error );
-					}
-				} );
-			} );
+		if ( ! forcedAtomicProducts.length ) {
+			return;
 		}
 
-		return true;
+		// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+		debug( 'Setting site to public because it is an Atomic plan' );
+		const response = await this.props.saveSiteSettings( selectedSiteId, {
+			blog_public: 1,
+		} );
+		if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
+			throw 'Invalid response';
+		}
 	}
 
 	handleTransactionStep( { cart, selectedSite, transaction } ) {
