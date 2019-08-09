@@ -41,6 +41,7 @@ import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
 import { getSiteTypePropertyValue } from './site-type';
+import { getNewSitePublicSetting } from './private-by-default';
 import SignupCart from './cart';
 import { promisify } from '../../utils';
 
@@ -124,10 +125,8 @@ function getSiteVertical( state ) {
 	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
-export function createSiteWithCart(
-	callback,
-	dependencies,
-	{
+export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
+	const {
 		cartItem,
 		domainItem,
 		flowName,
@@ -137,9 +136,8 @@ export function createSiteWithCart(
 		siteUrl,
 		themeSlugWithRepo,
 		themeItem,
-	},
-	reduxStore
-) {
+	} = stepData;
+
 	const state = reduxStore.getState();
 
 	const designType = getDesignType( state ).trim();
@@ -166,7 +164,7 @@ export function createSiteWithCart(
 				title: siteTitle,
 			},
 		},
-		public: 1,
+		public: getNewSitePublicSetting( siteType ),
 		validate: false,
 	};
 
@@ -484,11 +482,16 @@ export function createAccount(
 	}
 }
 
-export function createSite( callback, { themeSlugWithRepo }, { site }, reduxStore ) {
+export function createSite( callback, dependencies, stepData, reduxStore ) {
+	const { themeSlugWithRepo } = dependencies;
+	const { site } = stepData;
+	const state = reduxStore.getState();
+	const siteType = getSiteType( state ).trim();
+
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: -1,
+		public: getNewSitePublicSetting( siteType ),
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
