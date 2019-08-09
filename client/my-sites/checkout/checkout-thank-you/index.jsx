@@ -121,7 +121,7 @@ export class CheckoutThankYou extends React.Component {
 		fetchAtomicTransfer: identity,
 	};
 
-	maybeFetchAtomicTransfer() {
+	maybeFetchAtomicTransfer = () => {
 		const { atomicTransfer, selectedSite } = this.props;
 
 		if ( ! isEmpty( atomicTransfer ) ) {
@@ -130,7 +130,7 @@ export class CheckoutThankYou extends React.Component {
 		if ( selectedSite && ! this.props.isFetchingTransfer ) {
 			this.props.fetchAtomicTransfer( selectedSite );
 		}
-	}
+	};
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
