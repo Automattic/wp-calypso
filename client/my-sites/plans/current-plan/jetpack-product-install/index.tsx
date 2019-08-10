@@ -278,10 +278,14 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 		if ( hasErrorInstalling && ! this.tracksEventSent ) {
 			this.tracksEventSent = true;
+			const { status } = this.props;
+
 			this.props.recordTracksEvent( 'calypso_plans_autoconfig_error', {
 				checklist_name: 'jetpack',
 				error: 'installation_error',
 				location: 'JetpackChecklist',
+				status_akismet: status ? status.akismet_status : '(unknown)',
+				status_vaultpress: status ? status.vaultpress_status : '(unknown)',
 			} );
 		}
 
