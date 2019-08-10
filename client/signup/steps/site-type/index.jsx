@@ -17,32 +17,17 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getAllSiteTypes } from 'lib/signup/site-type';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
-	'blank-slate': 'blank-slate',
+	'blank-canvas': 'blank-canvas',
 	'online-store': 'ecommerce-onboarding',
 };
-
-const allowedSiteTypes = [ 1, 2, 3, 4 ];
-if ( 'variant' === abtest( 'signupEscapeHatch' ) ) {
-	allowedSiteTypes.push( 6 );
-}
-const siteTypeDefinitions = getAllSiteTypes( allowedSiteTypes );
 
 class SiteType extends Component {
 	componentDidMount() {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
-
-	handleBlankSlateClick = () => {
-		this.props.recordTracksEvent( 'calypso_signup_blank_slate_cta_click', {
-			flow: this.props.flowName,
-			step: this.props.stepName,
-		} );
-		this.submitStep( 'blank-slate' );
-	};
 
 	handleImportFlowClick = () => {
 		this.props.recordTracksEvent( 'calypso_signup_import_cta_click', {
@@ -89,7 +74,6 @@ class SiteType extends Component {
 					goToNextStep={ this.props.goToNextStep }
 					submitForm={ this.submitStep }
 					siteType={ siteType }
-					siteTypeDefinitions={ siteTypeDefinitions }
 				/>
 				{ this.renderImportButton() }
 			</Fragment>

@@ -8,6 +8,13 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
+
+const allowedSiteSegments = [ 1, 2, 3, 4 ];
+
+if ( 'variant' === abtest( 'signupEscapeHatch' ) ) {
+	allowedSiteSegments.push( 6 );
+}
 
 const getSiteTypePropertyDefaults = propertyKey =>
 	get(
@@ -75,7 +82,7 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  * @param  {Array} allowedSiteTypes Optional array of segment ids so that we can return all, some or no site type definitions.
  * @return {Array} current list of site types
  */
-export function getAllSiteTypes( allowedSiteTypes = [ 1, 2, 3, 4 ] ) {
+export function getAllSiteTypes( allowedSiteTypes = allowedSiteSegments ) {
 	return [
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
