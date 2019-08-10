@@ -7,6 +7,10 @@
 		margin-top: 20px;
 		padding-top: 0;
 	}
+
+	.editor-post-switch-to-draft {
+		display: none;
+	}
 }
 
 .post-type-page, .post-type-wp_template {
@@ -17,9 +21,9 @@
 	.edit-post-layout__content .edit-post-visual-editor {
 		flex: none;
 		margin: 36px 32px;
-		box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.20);
+		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 
-		@media (max-width: 768px) {
+		@media ( max-width: 768px ) {
   			margin: 0;
 		}
 	}
