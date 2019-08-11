@@ -119,6 +119,7 @@ class WP_Template_Inserter {
 			return;
 		}
 
+		sleep( pow( 2, $attempt ) );
 		$attempt++;
 		$this->fetch_retry( $request_url, $request_args, $attempt );
 	}
