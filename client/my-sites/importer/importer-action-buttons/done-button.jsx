@@ -27,8 +27,8 @@ export class DoneButton extends React.PureComponent {
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
-			engine: PropTypes.string.isRequired,
 			importerId: PropTypes.string.isRequired,
+			type: PropTypes.string.isRequired,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -37,7 +37,7 @@ export class DoneButton extends React.PureComponent {
 
 	handleClick = () => {
 		const {
-			importerStatus: { engine },
+			importerStatus: { type },
 			site: { ID: siteId },
 			isSignup,
 			siteSlug,
@@ -45,8 +45,7 @@ export class DoneButton extends React.PureComponent {
 
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
-			engine,
-			importer_id: `importer-type-${ engine }`,
+			importer_id: type,
 		} );
 
 		const destination = '/view/' + ( siteSlug || '' );

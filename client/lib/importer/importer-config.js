@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { filter, orderBy, values } from 'lodash';
+import { filter, head, orderBy, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 
 	importerConfig.wordpress = {
 		engine: 'wordpress',
+		key: 'importer-type-wordpress',
 		type: 'file',
 		title: 'WordPress',
 		icon: 'wordpress',
@@ -50,6 +51,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 
 	importerConfig.blogger = {
 		engine: 'blogger',
+		key: 'importer-type-blogger',
 		type: 'file',
 		title: 'Blogger',
 		icon: 'blogger-alt',
@@ -90,6 +92,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 
 	importerConfig[ 'godaddy-gocentral' ] = {
 		engine: 'godaddy-gocentral',
+		key: 'importer-type-godaddy-gocentral',
 		type: 'url',
 		title: 'GoDaddy',
 		icon: 'godaddy-gocentral',
@@ -102,6 +105,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 
 	importerConfig.medium = {
 		engine: 'medium',
+		key: 'importer-type-medium',
 		type: 'file',
 		title: 'Medium',
 		icon: 'medium',
@@ -136,6 +140,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 
 	importerConfig.squarespace = {
 		engine: 'squarespace',
+		key: 'importer-type-squarespace',
 		type: 'file',
 		title: 'Squarespace',
 		icon: 'squarespace',
@@ -176,6 +181,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 
 	importerConfig.wix = {
 		engine: 'wix',
+		key: 'importer-type-wix',
 		type: 'url',
 		title: 'Wix',
 		icon: 'wix',
@@ -199,6 +205,10 @@ export function getImporters( params = {} ) {
 
 export function getFileImporters( params = {} ) {
 	return filter( getImporters( params ), importer => importer.type === 'file' );
+}
+
+export function getImporterByKey( key, params = {} ) {
+	return head( filter( getImporters( params ), importer => importer.key === key ) );
 }
 
 export default getConfig;

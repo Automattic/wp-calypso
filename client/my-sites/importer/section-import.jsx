@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, flow, get, isEmpty, once } from 'lodash';
+import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,8 +23,9 @@ import WixImporter from 'my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState, startImport } from 'lib/importer/actions';
-import { getImporters } from 'lib/importer/importer-config';
+import { getImporters, getImporterByKey } from 'lib/importer/importer-config';
 import { appStates } from 'state/imports/constants';
+
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
@@ -60,6 +61,8 @@ const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => importItem.site.ID === siteID );
 };
 
+const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
+
 class SectionImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -84,7 +87,7 @@ class SectionImport extends Component {
 			return;
 		}
 
-		startImport( site.ID, engine );
+		startImport( site.ID, getImporterTypeForEngine( engine ) );
 	} );
 
 	componentDidMount() {
@@ -128,9 +131,9 @@ class SectionImport extends Component {
 					key={ engine }
 					site={ site }
 					importerStatus={ {
-						engine,
 						importerState: state,
 						siteTitle,
+						type: getImporterTypeForEngine( engine ),
 					} }
 				/>
 			);
@@ -164,19 +167,22 @@ class SectionImport extends Component {
 	 */
 	renderActiveImporters( importsForSite ) {
 		return importsForSite.map( ( importItem, idx ) => {
-			const ImporterComponent = importerComponents[ importItem.engine ];
-
-			if ( ! ImporterComponent ) {
+			const importer = getImporterByKey( importItem.type );
+			if ( ! importer ) {
 				return;
 			}
 
+			const ImporterComponent = importerComponents[ importer.engine ];
+
 			return (
-				<ImporterComponent
-					key={ importItem.engine + idx }
-					site={ importItem.site }
-					fromSite={ this.props.fromSite }
-					importerStatus={ importItem }
-				/>
+				ImporterComponent && (
+					<ImporterComponent
+						key={ importItem.type + idx }
+						site={ importItem.site }
+						fromSite={ this.props.fromSite }
+						importerStatus={ importItem }
+					/>
+				)
 			);
 		} );
 	}
