@@ -1146,9 +1146,15 @@ Undocumented.prototype.transactions = function( method, data, fn ) {
 };
 
 Undocumented.prototype.updateCreditCard = function( params, fn ) {
-	const data = pick( params, [ 'country', 'zip', 'month', 'year', 'name' ] );
-	data.paygate_token = params.cardToken;
-
+	const data = pick( params, [
+		'country',
+		'zip',
+		'month',
+		'year',
+		'name',
+		'payment_partner',
+		'paygate_token',
+	] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
