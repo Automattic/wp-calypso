@@ -41,8 +41,8 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
  */
 import './style.scss';
 
-const ActionBox = ( { action, iconSrc, label } ) => {
-	const buttonAction = 'function' === typeof action ? { onClick: action } : { href: action };
+const ActionBox = ( { href, onClick, iconSrc, label } ) => {
+	const buttonAction = { href, onClick };
 	return (
 		<div className="customer-home__box-action">
 			<Button { ...buttonAction }>
@@ -132,42 +132,42 @@ class Home extends Component {
 					<Card className="customer-home__card-boxes">
 						<div className="customer-home__boxes">
 							<ActionBox
-								action={ () => page( `/page/${ siteSlug }` ) }
+								onClick={ () => page( `/page/${ siteSlug }` ) }
 								label={ translate( 'Add a page' ) }
 								iconSrc="/calypso/images/customer-home/page.svg"
 							/>
 							<ActionBox
-								action={ () => page( `/post/${ siteSlug }` ) }
+								onClick={ () => page( `/post/${ siteSlug }` ) }
 								label={ translate( 'Write blog post' ) }
 								iconSrc="/calypso/images/customer-home/post.svg"
 							/>
 							<ActionBox
-								action={ customizeUrl }
+								href={ customizeUrl }
 								label={ translate( 'Customize theme' ) }
 								iconSrc="/calypso/images/customer-home/customize.svg"
 							/>
 							<ActionBox
-								action={ () => page( `/themes/${ siteSlug }` ) }
+								onClick={ () => page( `/themes/${ siteSlug }` ) }
 								label={ translate( 'Change theme' ) }
 								iconSrc="/calypso/images/customer-home/theme.svg"
 							/>
 							<ActionBox
-								action={ customizeUrl }
+								href={ customizeUrl }
 								label={ translate( 'Edit menus' ) }
 								iconSrc="/calypso/images/customer-home/menus.svg"
 							/>
 							<ActionBox
-								action="https://support.wordpress.com/images/"
+								href="https://support.wordpress.com/images/"
 								label={ translate( 'Change images' ) }
 								iconSrc="/calypso/images/customer-home/images.svg"
 							/>
 							<ActionBox
-								action="https://logojoy.grsm.io/looka"
+								href="https://logojoy.grsm.io/looka"
 								label={ translate( 'Design a logo' ) }
 								iconSrc="/calypso/images/customer-home/logo.svg"
 							/>
 							<ActionBox
-								action={ `https://wordpress.com/email/${ siteSlug }` }
+								href={ `https://wordpress.com/email/${ siteSlug }` }
 								label={ translate( 'Add G Suite' ) }
 								iconSrc="/calypso/images/customer-home/gsuite.svg"
 							/>
