@@ -34,6 +34,7 @@ import {
 	hasBloggerPlan,
 	hasPersonalPlan,
 	hasPremiumPlan,
+	hasEcommercePlan,
 	hasPlan,
 	hasOnlyRenewalItems,
 	hasTransferProduct,
@@ -600,7 +601,9 @@ export class Checkout extends React.Component {
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
-		if ( redirectPath.includes( destinationFromCookie ) ) {
+		// An exception is when we have an eCommerce plan in cart, in which case we always
+		// take to the thank you page so destination cookie can be cleared.
+		if ( redirectPath.includes( destinationFromCookie ) || hasEcommercePlan( cart ) ) {
 			clearSignupDestinationCookie();
 		}
 
