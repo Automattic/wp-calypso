@@ -54,7 +54,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 		try {
 			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
 		} catch ( e ) {
-			this.driver.navigate.refresh();
+			this.driver.navigate().refresh();
 			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
 		}
 
