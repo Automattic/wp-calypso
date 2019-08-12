@@ -1,3 +1,8 @@
+# [Unreleased]
+
+- Added transform-runtime versioning to babel/default.js
+  This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
+
 # 3.0.0
 
 - Switch to `@wordpress/dependency-extraction-webpack-plugin` from
