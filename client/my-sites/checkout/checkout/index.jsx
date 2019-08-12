@@ -94,11 +94,7 @@ import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
-import {
-	persistSignupDestination,
-	retrieveSignupDestination,
-	clearSignupDestinationCookie,
-} from 'signup/utils';
+import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { isExternal } from 'lib/url';
 
 /**
@@ -372,15 +368,24 @@ export class Checkout extends React.Component {
 	}
 
 	getFallbackDestination( pendingOrReceiptId ) {
-		const { selectedSiteSlug, selectedFeature, cart } = this.props;
+		const { selectedSiteSlug, selectedFeature, cart, isJetpackNotAtomic } = this.props;
 
-		if ( ! selectedSiteSlug || isEmpty( getAllCartItems( cart ) ) ) {
-			return '/';
+		const isCartEmpty = isEmpty( getAllCartItems( cart ) );
+		const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
+
+		// We will show the Thank You page if there's a site slug and either one of the following is true:
+		// - has a receipt number
+		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
+		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
+			if ( isJetpackNotAtomic ) {
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
+			}
+			return selectedFeature && isValidFeatureKey( selectedFeature )
+				? `/checkout/thank-you/features/${ selectedFeature }/${ selectedSiteSlug }/${ pendingOrReceiptId }`
+				: `/checkout/thank-you/${ selectedSiteSlug }/${ pendingOrReceiptId }`;
 		}
 
-		return selectedFeature && isValidFeatureKey( selectedFeature )
-			? `/checkout/thank-you/features/${ selectedFeature }/${ selectedSiteSlug }/${ pendingOrReceiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ pendingOrReceiptId }`;
+		return '/';
 	}
 
 	maybeShowPlanUpgradeOffer( receiptId ) {
@@ -507,10 +512,8 @@ export class Checkout extends React.Component {
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 
-		let signupDestination =
+		const signupDestination =
 			retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
-		signupDestination = signupDestination.replace( ':receiptId', pendingOrReceiptId );
-		persistSignupDestination( signupDestination );
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
