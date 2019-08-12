@@ -116,10 +116,8 @@ export const saveJetpackSettings = action => ( dispatch, getState ) => {
 // the save request has finished. Tracking those requests is necessary for
 // displaying an up to date progress indicator for some steps.
 // We also need this to store a regenerated post-by-email address in Redux state.
-export const handleSaveSuccess = (
-	{ siteId },
-	{ data: { code, message, ...updatedSettings } } // eslint-disable-line no-unused-vars
-) => saveJetpackSettingsSuccess( siteId, updatedSettings );
+export const handleSaveSuccess = ( { siteId }, { data: { code, message, ...updatedSettings } } ) =>
+	saveJetpackSettingsSuccess( siteId, updatedSettings );
 
 export const handleSaveFailure = ( { siteId }, { meta: { settings: previousSettings } } ) => [
 	updateJetpackSettings( siteId, previousSettings ),
