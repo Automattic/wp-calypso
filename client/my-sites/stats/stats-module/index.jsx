@@ -16,6 +16,7 @@ import { includes } from 'lodash';
  */
 import ErrorPanel from '../stats-error';
 import StatsModuleExpand from './expand';
+import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
@@ -167,6 +168,10 @@ class StatsModule extends Component {
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
+				<StatsModuleAvailabilityWarning
+					statType={ statType }
+					startOfPeriod={ period && period.startOf }
+				/>
 				{ ! isAllTime && (
 					<SectionHeader
 						className={ headerClass }
