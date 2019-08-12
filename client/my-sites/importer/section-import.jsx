@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,15 +23,9 @@ import WixImporter from 'my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState, startImport } from 'lib/importer/actions';
-import {
-	appStates,
-	WORDPRESS,
-	MEDIUM,
-	BLOGGER,
-	WIX,
-	GODADDY_GOCENTRAL,
-	SQUARESPACE,
-} from 'state/imports/constants';
+import { getImporters, getImporterByKey } from 'lib/importer/importer-config';
+import { appStates } from 'state/imports/constants';
+
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
@@ -48,53 +42,26 @@ import EmptyContent from 'components/empty-content';
 import './section-import.scss';
 
 /**
- * Configuration for each of the importers to be rendered in this section. If
- * you're adding a new importer, add it here. Importers will be rendered in the
- * order they are listed in this array.
+ * Configuration mapping import engines to associated import components.
+ * The key is the engine, and the value is the component. To add new importers,
+ * add it here and add its configuration to lib/importer/importer-config.
  *
- * @type {Array}
+ * @type {Object}
  */
-const importers = [
-	{
-		type: WORDPRESS,
-		isImporterEnabled: true,
-		component: WordPressImporter,
-	},
-	{
-		type: BLOGGER,
-		isImporterEnabled: true,
-		component: BloggerImporter,
-	},
-	{
-		type: GODADDY_GOCENTRAL,
-		isImporterEnabled: true,
-		component: GoDaddyGoCentralImporter,
-	},
-	{
-		type: MEDIUM,
-		isImporterEnabled: true,
-		component: MediumImporter,
-	},
-	{
-		type: SQUARESPACE,
-		isImporterEnabled: true,
-		component: SquarespaceImporter,
-	},
-	{
-		type: WIX,
-		isImporterEnabled: true,
-		component: WixImporter,
-	},
-];
+const importerComponents = {
+	blogger: BloggerImporter,
+	'godaddy-gocentral': GoDaddyGoCentralImporter,
+	medium: MediumImporter,
+	squarespace: SquarespaceImporter,
+	wix: WixImporter,
+	wordpress: WordPressImporter,
+};
 
 const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => importItem.site.ID === siteID );
 };
 
 const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
-const getImporterForEngine = memoize( engine =>
-	find( importers, [ 'type', getImporterTypeForEngine( engine ) ] )
-);
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -116,7 +83,7 @@ class SectionImport extends Component {
 			return;
 		}
 
-		if ( ! getImporterForEngine( engine ) ) {
+		if ( ! importerComponents[ engine ] ) {
 			return;
 		}
 
@@ -151,21 +118,22 @@ class SectionImport extends Component {
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( site, siteTitle, state ) {
-		const importerElements = importers.map( importer => {
-			const { type, isImporterEnabled, component: ImporterComponent } = importer;
+		const importerElements = getImporters().map( importer => {
+			const { engine } = importer;
+			const ImporterComponent = importerComponents[ engine ];
 
-			if ( ! isImporterEnabled ) {
+			if ( ! ImporterComponent ) {
 				return;
 			}
 
 			return (
 				<ImporterComponent
-					key={ type }
+					key={ engine }
 					site={ site }
 					importerStatus={ {
 						importerState: state,
 						siteTitle,
-						type,
+						type: getImporterTypeForEngine( engine ),
 					} }
 				/>
 			);
@@ -198,23 +166,24 @@ class SectionImport extends Component {
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
 	renderActiveImporters( importsForSite ) {
-		return importers.map( importer => {
-			const { type, isImporterEnabled, component: ImporterComponent } = importer;
-
-			if ( ! isImporterEnabled ) {
+		return importsForSite.map( ( importItem, idx ) => {
+			const importer = getImporterByKey( importItem.type );
+			if ( ! importer ) {
 				return;
 			}
 
-			return importsForSite
-				.filter( importItem => importItem.type === type )
-				.map( ( importItem, idx ) => (
+			const ImporterComponent = importerComponents[ importer.engine ];
+
+			return (
+				ImporterComponent && (
 					<ImporterComponent
-						key={ type + idx }
+						key={ importItem.type + idx }
 						site={ importItem.site }
 						fromSite={ this.props.fromSite }
 						importerStatus={ importItem }
 					/>
-				) );
+				)
+			);
 		} );
 	}
 
@@ -232,7 +201,7 @@ class SectionImport extends Component {
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
-		if ( getImporterForEngine( engine ) ) {
+		if ( engine && importerComponents[ engine ] ) {
 			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
 		}
 

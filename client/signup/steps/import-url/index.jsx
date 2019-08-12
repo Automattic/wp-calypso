@@ -20,7 +20,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
 import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { validateImportUrl } from 'lib/importers/url-validation';
+import { validateImportUrl } from 'lib/importer/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import wpcom from 'lib/wp';
