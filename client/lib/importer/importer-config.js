@@ -21,9 +21,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		type: 'file',
 		title: 'WordPress',
 		icon: 'wordpress',
-		description: translate(
-			'Import posts, pages, and media ' + 'from a WordPress export\u00A0file.'
-		),
+		description: translate( 'Import posts, pages, and media from a WordPress export\u00A0file.' ),
 		uploadDescription: translate(
 			'Upload a {{b}}WordPress export file{{/b}} to start ' +
 				'importing into {{b2}}%(title)s{{/b2}}. A WordPress export is ' +
