@@ -414,6 +414,8 @@ export class Checkout extends React.Component {
 			// We cannot simply compare `hostname` to `selectedSiteSlug`, since the latter
 			// might contain a path in the case of Jetpack subdirectory installs.
 			if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
+				const plan = get( query, [ 'plan' ] );
+				const action = get( query, [ 'action' ] );
 				const sanitizedRedirectTo = formatUrl( {
 					protocol,
 					hostname,
@@ -421,7 +423,8 @@ export class Checkout extends React.Component {
 					pathname,
 					query: {
 						post: parseInt( get( query, [ 'post' ] ), 10 ),
-						action: 'edit',
+						...( action && { action } ),
+						...( plan && { plan } ),
 					},
 				} );
 				return sanitizedRedirectTo;
