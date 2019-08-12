@@ -15,7 +15,6 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	TYPE_FREE,
-	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
@@ -183,7 +182,7 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
-				planTypes: [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
+				planTypes: [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			},
 		},
 
