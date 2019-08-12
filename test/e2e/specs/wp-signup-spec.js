@@ -1447,6 +1447,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await siteTitlePage.submitForm();
 		} );
 
+		step( 'Can see the "Site style" page, and continue with the default style', async function() {
+			const siteTitlePage = await SiteStylePage.Expect( driver );
+			return await siteTitlePage.submitForm();
+		} );
+
 		step(
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results',
 			async function() {
