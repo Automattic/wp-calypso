@@ -40,6 +40,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
+= 0.5 =
+* Fetch templates data from the API.
+* Improve UX flows and fix styling issues.
+
 = 0.4 =
 * Move template data initialization out of the plugin and delegate it to themes.
 
