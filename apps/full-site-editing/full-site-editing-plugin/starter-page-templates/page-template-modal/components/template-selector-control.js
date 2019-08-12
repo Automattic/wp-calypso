@@ -41,14 +41,13 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			const el = itemRef ? itemRef.current : null;
 
 			if ( ! el ) {
-				console.time( `tpl-${ value }` );
+				console.timeEnd( `tpl-${ value }` );
 				setCssClasses( '' );
 				return;
 			}
 
 			// Try to pick up the editor styles wrapper element.
 			const editorStylesWrapperEl = el.querySelector( '.editor-styles-wrapper' );
-
 			if ( editorStylesWrapperEl ) {
 				setTimeout( () => {
 					editorStylesWrapperEl.classList.remove( 'editor-styles-wrapper' );
@@ -65,7 +64,7 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 				window.clearTimeout( timerId );
 			}
 		};
-	}, [ blocks.length ] );
+	}, [ blocks, value ] );
 
 	const itemClasses = classnames(
 		"template-selector-control__preview-wrap",
@@ -81,7 +80,7 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			onClick={ () => onSelect( value, label, parseBlocks( rawBlocks ) ) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
-			<div className={ itemClasses }>
+			<div ref={ itemRef } className={ itemClasses }>
 				{ blocks && blocks.length ? (
 					<BlockPreview blocks={ blocks } viewportWidth={ 800 } />
 				) : null }
