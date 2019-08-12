@@ -138,7 +138,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
-				options.addArguments( getChromeWindowSize( screenSize ) );
 
 				if ( useCustomUA ) {
 					options.addArguments(
@@ -207,7 +206,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	await driver
 		.manage()
 		.setTimeouts( { implicit: webDriverImplicitTimeOutMS, pageLoad: webDriverPageLoadTimeOutMS } );
-	if ( resizeBrowserWindow && browser.toLowerCase() !== 'chrome' ) {
+	if ( resizeBrowserWindow ) {
 		await resizeBrowser( driver, screenSize );
 	}
 
@@ -255,39 +254,6 @@ export async function resizeBrowser( driver, screenSize ) {
 				'). Supported values are desktop, tablet and mobile.'
 		);
 	}
-}
-
-export function getChromeWindowSize( screenSize ) {
-	let windowSize;
-	if ( typeof screenSize === 'string' ) {
-		switch ( screenSize.toLowerCase() ) {
-			case 'mobile':
-				windowSize = '--window-size=400,1000';
-				break;
-			case 'tablet':
-				windowSize = '--window-size=1024,1000';
-				break;
-			case 'desktop':
-				windowSize = '--window-size=1440,1000';
-				break;
-			case 'laptop':
-				windowSize = '--window-size=1400,790';
-				break;
-			default:
-				throw new Error(
-					'Unsupported screen size specified (' +
-						screenSize +
-						'). Supported values are desktop, tablet and mobile.'
-				);
-		}
-	} else {
-		throw new Error(
-			'Unsupported screen size specified (' +
-				screenSize +
-				'). Supported values are desktop, tablet and mobile.'
-		);
-	}
-	return windowSize;
 }
 
 export async function clearCookiesAndDeleteLocalStorage( driver, siteURL = null ) {
