@@ -133,6 +133,7 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
 			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
+			! isEqual( nextProps.contactDetails, this.props.contactDetails ) ||
 			! isEqual( nextState.form, this.state.form ) ||
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||
 			! isEqual( nextProps.countriesList, this.props.countriesList ) ||

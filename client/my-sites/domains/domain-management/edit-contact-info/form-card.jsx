@@ -62,9 +62,13 @@ class EditContactInfoFormCard extends React.Component {
 		};
 
 		this.contactFormFieldValues = this.getContactFormFieldValues();
+
+		this.fetchWhois();
 	}
 
 	componentDidUpdate( prevProps ) {
+		this.fetchWhois();
+
 		if ( this.state.formSubmitting && prevProps.isUpdatingWhois && ! this.props.isUpdatingWhois ) {
 			this.handleFormSubmittingComplete();
 
@@ -79,6 +83,12 @@ class EditContactInfoFormCard extends React.Component {
 			}
 		}
 	}
+
+	fetchWhois = () => {
+		if ( isEmpty( this.props.whoisData ) && ! isEmpty( this.props.selectedDomain.name ) ) {
+			this.props.requestWhois( this.props.selectedDomain.name );
+		}
+	};
 
 	getContactFormFieldValues() {
 		const registrantWhoisData = find( this.props.whoisData, { type: 'registrant' } );
@@ -375,12 +385,12 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	render() {
-		const { selectedDomain, translate, whoisData } = this.props;
+		const { selectedDomain, translate } = this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
-		if ( isEmpty( whoisData ) ) {
-			this.props.requestWhois( selectedDomain.name );
+		if ( Object.values( whoisRegistrantData ).every( value => isEmpty( value ) ) ) {
+			return null;
 		}
 
 		return (
