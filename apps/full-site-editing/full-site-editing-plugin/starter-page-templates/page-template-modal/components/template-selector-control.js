@@ -65,7 +65,7 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 				window.clearTimeout( timerId );
 			}
 		};
-	}, [] );
+	}, [ blocks.length ] );
 
 	const itemClasses = classnames(
 		"template-selector-control__preview-wrap",
