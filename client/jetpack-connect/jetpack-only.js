@@ -11,6 +11,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { checklistUrl } from 'my-sites/customer-home';
 
 /**
  * Internal dependencies
@@ -29,7 +30,7 @@ const jetpackOnly = WrappedComponent => {
 
 			if ( notJetpack ) {
 				// Redirect to My Plan page if this is not a Jetpack site
-				page.redirect( `/plans/my-plan/${ siteSlug }` );
+				page.redirect( checklistUrl().replace( ':site', siteSlug ) );
 			} else if ( ! siteId ) {
 				// Redirect to /jetpack/connect if this is not a valid connected site
 				page.redirect( `/jetpack/connect` );

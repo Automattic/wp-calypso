@@ -19,6 +19,7 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
+import { checklistUrl } from 'my-sites/customer-home';
 
 const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
 
@@ -74,9 +75,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 							click
 							hidden
 						/>
-						<SiteLink href="/plans/my-plan/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
+						<SiteLink href={ checklistUrl() }>{ translate( 'Return to the checklist' ) }</SiteLink>
 					</ButtonRow>
 				</Fragment>
 			) }
@@ -97,7 +96,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<SiteLink isButton href="/plans/my-plan/:site">
+						<SiteLink isButton href={ checklistUrl() }>
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>

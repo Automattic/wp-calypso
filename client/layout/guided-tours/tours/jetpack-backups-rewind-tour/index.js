@@ -23,6 +23,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { not } from 'layout/guided-tours/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { checklistUrl } from 'my-sites/customer-home';
 
 function whenWeCanAutoconfigure( state ) {
 	const siteId = getSelectedSiteId( state );
@@ -33,7 +34,7 @@ function whenWeCanAutoconfigure( state ) {
 
 const JetpackBackupsRewindTourButtons = ( { backText, translate } ) => (
 	<Fragment>
-		<SiteLink isButton isPrimaryButton={ false } href="/plans/my-plan/:site">
+		<SiteLink isButton isPrimaryButton={ false } href={ checklistUrl() }>
 			{ backText || translate( 'Return to the checklist' ) }
 		</SiteLink>
 		<Quit>{ translate( 'No, thanks.' ) }</Quit>

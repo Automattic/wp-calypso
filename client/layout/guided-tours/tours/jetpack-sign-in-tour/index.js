@@ -19,6 +19,7 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
+import { checklistUrl } from 'my-sites/customer-home';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackSignInTour = makeTour(
@@ -43,9 +44,7 @@ export const JetpackSignInTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue target=".sso__card .form-toggle__switch" step="finish" click hidden />
-						<SiteLink href="/plans/my-plan/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
+						<SiteLink href={ checklistUrl() }>{ translate( 'Return to the checklist' ) }</SiteLink>
 					</ButtonRow>
 				</Fragment>
 			) }
@@ -67,7 +66,7 @@ export const JetpackSignInTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<SiteLink isButton href="/plans/my-plan/:site">
+						<SiteLink isButton href={ checklistUrl() }>
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
