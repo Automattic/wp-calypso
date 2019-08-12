@@ -18,8 +18,20 @@
 	}
 
 	.editor-styles-wrapper [data-block] {
-		margin-top: 15px;
-		margin-bottom: 15px;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.block-editor-block-list__block {
+	    margin-top: 0;
+		margin-bottom: 0;
+		transition: ease all 0.5s;
+		&:hover, &.is-selected {
+			transition: ease all 0.5s;
+			transition-delay: 0.3s;
+			margin-top: 28px;
+		    margin-bottom: 28px;
+		}
 	}
 }
 
