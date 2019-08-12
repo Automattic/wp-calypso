@@ -86,18 +86,19 @@ export function generateFlows( {
 			lastModified: '2019-08-05',
 		},
 
-		blog: {
-			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with blog themes',
-			lastModified: '2017-09-01',
-		},
-
 		website: {
-			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with website themes',
-			lastModified: '2017-09-01',
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating a website',
+			lastModified: '2019-08-12',
 		},
 
 		'rebrand-cities': {
