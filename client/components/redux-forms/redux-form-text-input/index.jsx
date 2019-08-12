@@ -11,7 +11,6 @@ import { Field } from 'redux-form';
  */
 import FormTextInput from 'components/forms/form-text-input';
 
-// eslint-disable-next-line no-unused-vars
 const TextInputRenderer = ( { input, meta, ...props } ) => (
 	<FormTextInput { ...input } { ...props } />
 );

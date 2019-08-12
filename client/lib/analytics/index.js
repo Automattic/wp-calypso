@@ -597,11 +597,7 @@ const analytics = {
 	},
 
 	statsd: {
-		/* eslint-enable no-unused-vars */
-		recordTiming: function( pageUrl, eventType, duration /* triggerName */ ) {
-			// ignore triggerName for now, it has no obvious place in statsd
-			/* eslint-disable no-unused-vars */
-
+		recordTiming: function( pageUrl, eventType, duration ) {
 			if ( config( 'boom_analytics_enabled' ) ) {
 				const featureSlug = getFeatureSlugFromPageUrl( pageUrl );
 
