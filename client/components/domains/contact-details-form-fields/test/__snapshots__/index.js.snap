@@ -5,7 +5,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
   className="contact-details-form-fields"
 >
   <div
-    className="contact-details-form-fields__container first-name"
+    className="contact-details-form-fields__row first-name"
   >
     <Input
       additionalClasses="contact-details-form-fields__field"
@@ -24,7 +24,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
     />
   </div>
   <div
-    className="contact-details-form-fields__container last-name"
+    className="contact-details-form-fields__row last-name"
   >
     <Input
       additionalClasses="contact-details-form-fields__field"
@@ -46,7 +46,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
     className="contact-details-form-fields__contact-details"
   >
     <div
-      className="contact-details-form-fields__container organization"
+      className="contact-details-form-fields__row organization"
     >
       <HiddenInput
         additionalClasses="contact-details-form-fields__field"
@@ -65,7 +65,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       />
     </div>
     <div
-      className="contact-details-form-fields__container email"
+      className="contact-details-form-fields__row email"
     >
       <Input
         additionalClasses="contact-details-form-fields__field"
@@ -84,7 +84,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       />
     </div>
     <div
-      className="contact-details-form-fields__container phone"
+      className="contact-details-form-fields__row phone"
     >
       <FormPhoneMediaInput
         additionalClasses="contact-details-form-fields__field"
@@ -115,7 +115,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       />
     </div>
     <div
-      className="contact-details-form-fields__container country-code"
+      className="contact-details-form-fields__row country-code"
     >
       <CountrySelect
         additionalClasses="contact-details-form-fields__field"
