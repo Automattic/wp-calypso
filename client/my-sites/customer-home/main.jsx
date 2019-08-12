@@ -8,7 +8,6 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { some, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,6 +53,8 @@ const ActionBox = ( { action, iconSrc, label } ) => {
 	);
 };
 
+const isPendingTask = task => false === task.isCompleted;
+
 class Home extends Component {
 	static propTypes = {
 		checklistMode: PropTypes.string,
@@ -63,7 +64,8 @@ class Home extends Component {
 		siteSlug: PropTypes.string.isRequired,
 		customizeUrl: PropTypes.string.isRequired,
 		canUserUseCustomerHome: PropTypes.bool.isRequired,
-		siteChecklist: PropTypes.object.isRequired,
+		hasChecklistData: PropTypes.bool.isRequired,
+		shouldRenderChecklist: PropTypes.bool.isRequired,
 		isJetpackNotAtomic: PropTypes.bool.isRequired,
 	};
 
@@ -84,9 +86,23 @@ class Home extends Component {
 			);
 		}
 
-		const { siteId, checklistMode, siteChecklist, isJetpackNotAtomic } = this.props;
+		const { siteId, hasChecklistData, shouldRenderChecklist } = this.props;
 
-		const checklistToRender = isJetpackNotAtomic ? (
+		return (
+			<Main className="customer-home__main is-wide-layout">
+				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
+				<DocumentHead title={ translate( 'Customer Home' ) } />
+				<SidebarNavigation />
+				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
+				{ shouldRenderChecklist ? this.renderChecklist() : this.renderCustomerHome() }
+			</Main>
+		);
+	}
+
+	renderChecklist = () => {
+		const { siteId, checklistMode, isJetpackNotAtomic } = this.props;
+
+		return isJetpackNotAtomic ? (
 			<Fragment>
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<JetpackChecklist />
@@ -94,21 +110,7 @@ class Home extends Component {
 		) : (
 			<ChecklistWpcom displayMode={ checklistMode } />
 		);
-
-		return (
-			<Main className="customer-home__main is-wide-layout">
-				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
-				<DocumentHead title={ translate( 'Customer Home' ) } />
-				<SidebarNavigation />
-				{ siteId && isEmpty( siteChecklist ) && <QuerySiteChecklist siteId={ siteId } /> }
-				{ siteId &&
-					! isEmpty( siteChecklist ) &&
-					( some( siteChecklist.tasks, [ 'isCompleted', false ] )
-						? checklistToRender
-						: this.renderCustomerHome() ) }
-			</Main>
-		);
-	}
+	};
 
 	renderCustomerHome = () => {
 		const { translate, customizeUrl, site, siteSlug } = this.props;
@@ -241,6 +243,7 @@ export default connect( state => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 	const siteChecklist = getSiteChecklist( state, siteId );
+	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 
 	return {
 		site: getSelectedSite( state ),
@@ -248,7 +251,8 @@ export default connect( state => {
 		siteSlug: getSelectedSiteSlug( state ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		siteChecklist: null === siteChecklist ? {} : siteChecklist,
+		hasChecklistData,
+		shouldRenderChecklist: hasChecklistData && siteChecklist.tasks.some( isPendingTask ),
 		isJetpackNotAtomic: false === isAutomatedTransfer && isJetpack,
 	};
 } )( localize( Home ) );
