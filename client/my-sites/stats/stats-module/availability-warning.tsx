@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import moment from 'moment';
+import Gridicon from 'gridicons';
 
 interface Props {
 	statType?: string;
@@ -25,7 +26,11 @@ const StatsModuleAvailabilityWarning: FunctionComponent< Props > = ( {
 		return null;
 	}
 
-	return <div>oops - complete stats might not be available for this period</div>;
+	return (
+		<div className="stats-module__availability-warning">
+			<Gridicon icon="info-outline" size="18" /> info info info
+		</div>
+	);
 };
 
 export default StatsModuleAvailabilityWarning;

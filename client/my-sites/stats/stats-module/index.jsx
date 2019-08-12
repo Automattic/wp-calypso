@@ -168,10 +168,6 @@ class StatsModule extends Component {
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				<StatsModuleAvailabilityWarning
-					statType={ statType }
-					startOfPeriod={ period && period.startOf }
-				/>
 				{ ! isAllTime && (
 					<SectionHeader
 						className={ headerClass }
@@ -188,6 +184,10 @@ class StatsModule extends Component {
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
 					{ this.props.children }
+					<StatsModuleAvailabilityWarning
+						statType={ statType }
+						startOfPeriod={ period && period.startOf }
+					/>
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />

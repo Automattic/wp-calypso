@@ -570,3 +570,8 @@ ul.module-header-actions {
 .stats-module__header.is-refreshing {
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
+
+.stats-module__availability-warning {
+	font-size: 12px;
+	padding: 8px 20px 0;
+}
