@@ -14,10 +14,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	TYPE_FREE,
-	TYPE_BLOGGER,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from 'lib/plans/constants';
@@ -173,17 +169,6 @@ export function generateSteps( {
 			props: {
 				hideFreePlan: true,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
-			},
-		},
-
-		'plans-import': {
-			stepName: 'plans-import',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				planTypes: [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ],
 			},
 		},
 

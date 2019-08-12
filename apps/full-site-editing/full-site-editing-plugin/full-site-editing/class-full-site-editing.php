@@ -60,6 +60,13 @@ class Full_Site_Editing {
 		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 
+		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
+		add_filter( 'bulk_actions-edit-wp_template', [ $this, 'remove_trash_bulk_action_for_template_post_type' ] );
+		add_action( 'wp_trash_post', [ $this, 'restrict_template_deletion' ] );
+		add_filter( 'wp_template_type_row_actions', [ $this, 'remove_delete_row_action_for_template_taxonomy' ], 10, 2 );
+		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
+		add_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
+
 		$this->theme_slug           = $this->normalize_theme_slug( get_option( 'stylesheet' ) );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
 	}
@@ -459,5 +466,78 @@ class Full_Site_Editing {
 			$inner_blocks[] = fse_map_block_to_editor_template_setting( $inner_block );
 		}
 		return array( $block_name, $attrs, $inner_blocks_template );
+	}
+
+	/**
+	 * Removes the Trash action from the quick actions on the Templates list
+	 *
+	 * @param array   $actions Array of row action links.
+	 * @param WP_Post $post The post object.
+	 * @return array
+	 */
+	public function remove_trash_row_action_for_template_post_types( $actions, $post ) {
+		if ( in_array( $post->post_type, $this->template_post_types, true ) ) {
+			unset( $actions['trash'] );
+		}
+		return $actions;
+	}
+
+	/**
+	 * Removes the Trash bulk action from the Template List page.
+	 *
+	 * @param array $bulk_actions Array of bulk actions.
+	 * @return array;
+	 */
+	public function remove_trash_bulk_action_for_template_post_type( $bulk_actions ) {
+		unset( $bulk_actions['trash'] );
+		return $bulk_actions;
+	}
+
+	/**
+	 * Prevents posts for the template post types to be deleted
+	 *
+	 * @param integer $post_id The post id.
+	 */
+	public function restrict_template_deletion( $post_id ) {
+		if ( in_array( get_post_type( $post_id ), $this->template_post_types, true ) ) {
+			wp_die( esc_html__( 'Templates cannot be deleted.' ) );
+		}
+	}
+
+	/**
+	 * Removes the Delete action from the quick actions for the template taxonomy.
+	 *
+	 * @param array   $actions Array of row action links.
+	 * @param WP_Term $term The Term object.
+	 * @return array
+	 */
+	public function remove_delete_row_action_for_template_taxonomy( $actions, $term ) {
+		if ( 'wp_template_type' === $term->taxonomy ) {
+			unset( $actions['delete'] );
+		}
+		return $actions;
+	}
+
+	/**
+	 * Removes the Delete bulk action from the Template Taxonomy list.
+	 *
+	 * @param array $bulk_actions Array of bulk actions.
+	 * @return array
+	 */
+	public function remove_delete_bulk_action_for_template_taxonomy( $bulk_actions ) {
+		unset( $bulk_actions['delete'] );
+		return $bulk_actions;
+	}
+
+	/**
+	 * Prevents template types to be deleted.
+	 *
+	 * @param integer $term The Term Id.
+	 * @param string  $taxonomy Taxonomy name.
+	 */
+	public function restrict_template_taxonomy_deletion( $term, $taxonomy ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+		if ( 'wp_template_type' === $taxonomy ) {
+			wp_die( esc_html__( 'Template Types cannon be deleted.' ) );
+		}
 	}
 }

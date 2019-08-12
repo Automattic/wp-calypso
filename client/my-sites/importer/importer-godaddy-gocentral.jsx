@@ -12,19 +12,10 @@ import React from 'react';
  * Internal dependencies
  */
 import SiteImporter from './site-importer';
+import importerConfig from 'lib/importer/importer-config';
 
 class ImporterGoDaddyGoCentral extends React.PureComponent {
 	static displayName = 'ImporterGoDaddyGoCentral';
-
-	importerData = {
-		title: 'GoDaddy',
-		icon: 'godaddy-gocentral',
-		description: this.props.translate(
-			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.'
-		),
-		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
-		engine: 'godaddy-gocentral',
-	};
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
@@ -38,7 +29,9 @@ class ImporterGoDaddyGoCentral extends React.PureComponent {
 	};
 
 	render() {
-		return <SiteImporter importerData={ this.importerData } { ...this.props } />;
+		const importerData = importerConfig()[ 'godaddy-gocentral' ];
+
+		return <SiteImporter importerData={ importerData } { ...this.props } />;
 	}
 }
 

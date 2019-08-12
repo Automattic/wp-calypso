@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isEnabled } from 'config';
 import debugFactory from 'debug';
 
 /**
@@ -18,10 +17,6 @@ const debug = debugFactory( 'calypso:signup:private-by-default' );
  * @returns `true` for private by default & `false` for not
  */
 export function shouldBePrivateByDefault( siteType: string = '' ): boolean {
-	if ( ! isEnabled( 'private-by-default/non-atomic-plans' ) ) {
-		return false;
-	}
-
 	if ( getSiteTypePropertyValue( 'slug', siteType, 'forcePublicSite' ) ) {
 		return false;
 	}

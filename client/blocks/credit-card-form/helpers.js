@@ -47,6 +47,7 @@ export async function saveOrUpdateCreditCard( {
 		siteSlug,
 		token,
 		translate,
+		stripeConfiguration,
 	} );
 }
 
@@ -82,9 +83,15 @@ async function updateCreditCard( {
 	siteSlug,
 	token,
 	translate,
+	stripeConfiguration,
 } ) {
 	const cardDetails = kebabCaseFormFields( formFieldValues );
-	const updatedCreditCardApiParams = getParamsForApi( cardDetails, token, apiParams );
+	const updatedCreditCardApiParams = getParamsForApi(
+		cardDetails,
+		token,
+		stripeConfiguration,
+		apiParams
+	);
 	const response = await wpcom.updateCreditCard( updatedCreditCardApiParams );
 	if ( response.error ) {
 		throw new Error( response );
@@ -110,7 +117,7 @@ async function updateCreditCard( {
 	} );
 }
 
-export function getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
+export function getParamsForApi( cardDetails, cardToken, stripeConfiguration, extraParams = {} ) {
 	return {
 		...extraParams,
 		country: cardDetails.country,
@@ -125,7 +132,8 @@ export function getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
 		city: cardDetails.city,
 		state: cardDetails.state,
 		phone_number: cardDetails[ 'phone-number' ],
-		cardToken,
+		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
+		paygate_token: cardToken,
 	};
 }
 

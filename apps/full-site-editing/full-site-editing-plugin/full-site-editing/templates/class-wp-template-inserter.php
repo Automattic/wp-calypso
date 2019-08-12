@@ -79,9 +79,9 @@ class WP_Template_Inserter {
 			'body' => [ 'theme_slug' => $this->theme_slug ],
 		];
 
-		$response = wp_remote_get( $request_url, $request_args );
+		$response = $this->fetch_retry( $request_url, $request_args );
 
-		if ( is_wp_error( $response ) ) {
+		if ( ! $response ) {
 			return;
 		}
 
@@ -96,6 +96,32 @@ class WP_Template_Inserter {
 		if ( ! empty( $api_response['footers'] ) ) {
 			$this->footer_content = $api_response['footers'][0];
 		}
+	}
+
+	/**
+	 * Retries a call to wp_remote_get on error.
+	 *
+	 * @param string $request_url Url of the api call to make.
+	 * @param string $request_args Addtional arguments for the api call.
+	 * @param int    $attempt The number of the attempt being made.
+	 * @return array wp_remote_get reponse array
+	 */
+	private function fetch_retry( $request_url, $request_args = null, $attempt = 1 ) {
+		$max_retries = 3;
+
+		$response = wp_remote_get( $request_url, $request_args );
+
+		if ( ! is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		if ( $attempt > $max_retries ) {
+			return;
+		}
+
+		sleep( pow( 2, $attempt ) );
+		$attempt++;
+		$this->fetch_retry( $request_url, $request_args, $attempt );
 	}
 
 	/**
@@ -194,9 +220,9 @@ class WP_Template_Inserter {
 			'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates'
 		);
 
-		$response = wp_remote_get( $request_url );
+		$response = $this->fetch_retry( $request_url );
 
-		if ( is_wp_error( $response ) ) {
+		if ( ! $response ) {
 			return;
 		}
 
