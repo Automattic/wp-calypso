@@ -73,7 +73,7 @@ class StatsDownloadCsv extends Component {
 
 		return (
 			<Button
-				className="download-csv"
+				className="stats-download-csv"
 				compact
 				onClick={ this.downloadCsv }
 				disabled={ disabled }
