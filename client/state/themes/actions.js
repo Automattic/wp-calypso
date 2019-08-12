@@ -76,7 +76,7 @@ import accept from 'lib/accept';
 
 import 'state/data-layer/wpcom/theme-filters';
 
-const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:themes:actions' );
 
 // Set destination for 'back' button on theme sheet
 export function setBackPath( path ) {

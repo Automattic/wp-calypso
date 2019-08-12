@@ -44,8 +44,7 @@ class AutoRenewToggle extends Component {
 		isRequesting: false,
 	};
 
-	/* eslint-disable-next-line no-unused-vars */
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate() {
 		if ( ! this.state.showAutoRenewDisablingDialog && this.state.pendingNotice ) {
 			this.props.createNotice( ...this.state.pendingNotice );
 

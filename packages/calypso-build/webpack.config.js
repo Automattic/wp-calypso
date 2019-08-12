@@ -46,7 +46,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @return {object}                                webpack config
  */
 function getWebpackConfig(
-	env = {}, // eslint-disable-line no-unused-vars
+	env = {},
 	{
 		entry,
 		'output-chunk-filename': outputChunkFilename,
