@@ -11,7 +11,7 @@ import {
 	redirectDefaultLocale,
 } from './controller';
 import { setShouldServerSideRenderLogin } from './ssr';
-import { makeLayout } from 'controller';
+import { makeForcedLoggedOutLayout } from 'controller';
 import { setUpLocale } from 'controller/shared';
 import { redirectLoggedIn } from 'controller/web-util';
 
@@ -22,10 +22,16 @@ export default router => {
 			setUpLocale,
 			redirectLoggedIn,
 			magicLoginUse,
-			makeLayout
+			makeForcedLoggedOutLayout
 		);
 
-		router( `/log-in/link/${ lang }`, setUpLocale, redirectLoggedIn, magicLogin, makeLayout );
+		router(
+			`/log-in/link/${ lang }`,
+			setUpLocale,
+			redirectLoggedIn,
+			magicLogin,
+			makeForcedLoggedOutLayout
+		);
 	}
 
 	if ( config.isEnabled( 'login/wp-login' ) ) {
@@ -42,7 +48,7 @@ export default router => {
 			setUpLocale,
 			login,
 			setShouldServerSideRenderLogin,
-			makeLayout
+			makeForcedLoggedOutLayout
 		);
 	}
 };
