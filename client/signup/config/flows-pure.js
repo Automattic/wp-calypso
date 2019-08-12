@@ -86,6 +86,21 @@ export function generateFlows( {
 			lastModified: '2019-08-05',
 		},
 
+		blog: {
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'site-style-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating a blog',
+			lastModified: '2019-08-12',
+		},
+
 		website: {
 			steps: [
 				'user',

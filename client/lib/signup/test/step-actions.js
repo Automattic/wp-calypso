@@ -377,6 +377,20 @@ describe( 'isSiteTypeFulfilled()', () => {
 		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-type' );
 	} );
 
+	test( 'should remove a fulfilled step when flowName is blog', () => {
+		const stepName = 'site-type';
+		const initialContext = { params: { flowName: 'blog' } };
+		const nextProps = { initialContext, submitSiteType };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSiteType ).not.toHaveBeenCalled();
+
+		isSiteTypeFulfilled( stepName, undefined, nextProps );
+
+		expect( submitSiteType ).toHaveBeenCalledWith( 'blog' );
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-type' );
+	} );
+
 	test( 'should not remove unfulfilled step', () => {
 		const stepName = 'site-type';
 		const initialContext = {};
