@@ -54,7 +54,7 @@
 		"request-promise": "^4.2.2",
 		"sanitize-filename": "1.6.0",
 		"saucelabs": "^1.5.0",
-		"selenium-webdriver": "4.0.0-alpha.1",
+		"selenium-webdriver": "4.0.0-alpha.4",
 		"slack-notify": "^0.1.7",
 		"speakeasy": "^2.0.0",
 		"spec-xunit-reporter": "./lib/reporter",
