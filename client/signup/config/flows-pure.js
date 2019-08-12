@@ -280,7 +280,7 @@ export function generateFlows( {
 		pageTitle: translate( 'Launch your site' ),
 	};
 
-	const importSteps = [ 'from-url', 'domains', 'plans-import' ];
+	const importSteps = [ 'from-url', 'domains' ];
 
 	const importDestination = ( { importSiteEngine, importSiteUrl, siteSlug } ) =>
 		addQueryArgs(
