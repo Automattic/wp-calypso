@@ -32,13 +32,16 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 	const itemRef = useRef( null );
 	const [ cssClasses, setCssClasses ] = useState( 'is-rendering' );
 
-	const blocks = useMemo( () => ( parseBlocks( rawBlocks ) ).slice( 0, 10 ), [ rawBlocks ] );
+	const blocks = useMemo( () => ( parseBlocks( rawBlocks ) ), [ rawBlocks ] );
+
+	console.time( `tpl-${ value }` );
 
 	useLayoutEffect( () => {
 		const timerId = setTimeout( () => {
 			const el = itemRef ? itemRef.current : null;
 
 			if ( ! el ) {
+				console.time( `tpl-${ value }` );
 				setCssClasses( '' );
 				return;
 			}
@@ -54,6 +57,8 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			}
 		}, 0 );
 
+		console.timeEnd( `tpl-${ value }` );
+
 		// Cleanup
 		return () => {
 			if ( timerId ) {
@@ -61,10 +66,6 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			}
 		};
 	}, [] );
-
-	if ( ! rawBlocks ) {
-		return null;
-	}
 
 	const itemClasses = classnames(
 		"template-selector-control__preview-wrap",
@@ -80,7 +81,7 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			onClick={ () => onSelect( value, label, parseBlocks( rawBlocks ) ) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
-			<div ref={ itemRef } className={ itemClasses }>
+			<div className={ itemClasses }>
 				{ blocks && blocks.length ? (
 					<BlockPreview blocks={ blocks } viewportWidth={ 800 } />
 				) : null }
