@@ -32,7 +32,7 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 	const itemRef = useRef( null );
 	const [ cssClasses, setCssClasses ] = useState( 'is-rendering' );
 
-	const blocks = useMemo( () => ( parseBlocks( rawBlocks ) ), [ rawBlocks ] );
+	const blocks = useMemo( () => ( parseBlocks( rawBlocks ) ).slice( 0, 10 ), [ rawBlocks ] );
 
 	console.time( `tpl-${ value }` );
 
