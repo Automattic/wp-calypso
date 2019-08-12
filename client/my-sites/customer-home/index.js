@@ -14,5 +14,5 @@ import { makeLayout, render as clientRender } from 'controller';
 export default function() {
 	page( '/home', siteSelection, sites, makeLayout, clientRender );
 
-	page( '/home/:site_id', siteSelection, navigation, home, makeLayout, clientRender );
+	page( '/home/:siteId', siteSelection, navigation, home, makeLayout, clientRender );
 }
