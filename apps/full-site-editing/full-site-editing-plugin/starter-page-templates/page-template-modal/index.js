@@ -23,6 +23,7 @@ class PageTemplateModal extends Component {
 	};
 
 	constructor( props ) {
+		console.time( 'PageTemplateModal' );
 		super();
 		this.state.isOpen = ! isEmpty( props.templates );
 	}
@@ -31,6 +32,8 @@ class PageTemplateModal extends Component {
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
+
+		console.timeEnd( 'PageTemplateModal' );
 	}
 
 	selectTemplate = ( slug, title, blocks ) => {
