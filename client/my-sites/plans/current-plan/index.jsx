@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import { isEnabled } from 'config';
 import Dialog from 'components/dialog';
 import Main from 'components/main';
 import {
@@ -154,7 +155,7 @@ class CurrentPlan extends Component {
 					siteSlug={ selectedSite ? selectedSite.slug : null }
 				/>
 
-				{ showJetpackChecklist && (
+				{ ! isEnabled( 'customer-home' ) && showJetpackChecklist && (
 					<Fragment>
 						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
 						<JetpackChecklist />
