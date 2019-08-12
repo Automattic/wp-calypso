@@ -10,10 +10,10 @@ import { find, get } from 'lodash';
  */
 import { abtest } from 'lib/abtest';
 
-const allowedSiteSegments = [ 1, 2, 3, 4 ];
+const allowedSiteTypeIds = [ 1, 2, 3, 4 ];
 
 if ( 'variant' === abtest( 'signupEscapeHatch' ) ) {
-	allowedSiteSegments.push( 6 );
+	allowedSiteTypeIds.push( 6 );
 }
 
 const getSiteTypePropertyDefaults = propertyKey =>
@@ -79,10 +79,10 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
- * @param  {Array} allowedSiteTypes Optional array of segment ids so that we can return all, some or no site type definitions.
- * @return {Array} current list of site types
+ * @param  {Array} siteTypeIds Optional array of segment ids so that we can return all, some or no site type definitions.
+ * @return {Array}             current list of site types
  */
-export function getAllSiteTypes( allowedSiteTypes = allowedSiteSegments ) {
+export function getAllSiteTypes( siteTypeIds = allowedSiteTypeIds ) {
 	return [
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
@@ -168,5 +168,5 @@ export function getAllSiteTypes( allowedSiteTypes = allowedSiteSegments ) {
 			description: i18n.translate( 'Create a blank website.' ),
 			theme: 'pub/refresh-2019',
 		},
-	].filter( siteType => allowedSiteTypes.indexOf( siteType.id ) >= 0 );
+	].filter( siteType => siteTypeIds.indexOf( siteType.id ) >= 0 );
 }
