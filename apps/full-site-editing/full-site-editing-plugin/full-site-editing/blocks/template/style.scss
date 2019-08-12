@@ -43,6 +43,10 @@
 
 .block-editor-block-list__layout {
 	.template__block-container {
+		&.is-hovered {
+			cursor: pointer;
+		}
+
 		&.is-selected {
 			// Hide the toolbar for this block
 			.block-editor-block-contextual-toolbar {
@@ -58,6 +62,7 @@
 			// Need to get super specific to override the core css selectors:
 			&,
 			&.has-child-selected,
+			&.is-hovered,
 			&.is-navigate-mode {
 				> .block-editor-block-list__block-edit {
 					&::before {
@@ -66,20 +71,8 @@
 						outline: none;
 						box-shadow: none;
 					}
-				}
-			}
-			&.is-hovered {
-				> .block-editor-block-list__block-edit {
-					&::before {
-						border-left: 3px solid rgba( 145, 151, 162, 0.25 );
-						margin-left: 2px;
-						top: 0;
-						bottom: 0;
-					}
-
-					& > .block-editor-block-list__breadcrumb {
-						margin-left: 2px;
-						top: 0;
+					> .block-editor-block-list__breadcrumb {
+						display: none;
 					}
 				}
 			}
