@@ -402,6 +402,7 @@ export class Checkout extends React.Component {
 
 	maybeRedirectToGSuiteNudge( pendingOrReceiptId, stepResult ) {
 		const { isNewlyCreatedSite, selectedSiteSlug, cart } = this.props;
+
 		if ( isNewlyCreatedSite && stepResult && isEmpty( stepResult.failed_purchases ) ) {
 			const hasGoogleAppsInCart = hasGoogleApps( cart );
 
@@ -428,6 +429,7 @@ export class Checkout extends React.Component {
 
 	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
+
 		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
 		// This tests the flow that was not eligible for G Suite.
 		// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
