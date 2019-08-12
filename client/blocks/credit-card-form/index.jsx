@@ -23,7 +23,7 @@ import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { localizeUrl } from 'lib/i18n-utils';
-import { createStripeSetupIntent } from 'lib/stripe';
+import { createStripeSetupIntent, StripeSetupIntentError, StripeValidationError } from 'lib/stripe';
 import {
 	getInitializedFields,
 	camelCaseFormFields,
@@ -60,6 +60,7 @@ export function CreditCardForm( {
 	stripe,
 	stripeConfiguration,
 	isStripeLoading,
+	setStripeError,
 } ) {
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
@@ -143,14 +144,8 @@ export function CreditCardForm( {
 		} catch ( error ) {
 			debug( 'Error while submitting', error );
 			setFormSubmitting( false );
-			error &&
-				notices.error(
-					typeof error.message === 'object' ? (
-						<ValidationErrorList messages={ values( error.message ) } />
-					) : (
-						error.message
-					)
-				);
+			error && setStripeError && setStripeError( error );
+			error && displayError( { translate, error } );
 		}
 	};
 
@@ -209,6 +204,7 @@ CreditCardForm.propTypes = {
 	onCancel: PropTypes.func,
 	stripe: PropTypes.object,
 	isStripeLoading: PropTypes.bool,
+	setStripeError: PropTypes.func,
 	translate: PropTypes.func.isRequired,
 };
 
@@ -266,6 +262,28 @@ function UsedForExistingPurchasesInfo( { translate, showUsedForExistingPurchases
 			<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
 		</div>
 	);
+}
+
+function StripeError( { translate } ) {
+	return (
+		<div>
+			{ translate(
+				'There was a problem with your credit card. Please check your information and try again.'
+			) }
+		</div>
+	);
+}
+
+function displayError( { translate, error } ) {
+	if ( error instanceof StripeSetupIntentError || error instanceof StripeValidationError ) {
+		notices.error( <StripeError translate={ translate } /> );
+		return;
+	}
+	if ( typeof error.message === 'object' ) {
+		notices.error( <ValidationErrorList messages={ values( error.message ) } /> );
+		return;
+	}
+	notices.error( error.message );
 }
 
 export default connect( state => ( {
