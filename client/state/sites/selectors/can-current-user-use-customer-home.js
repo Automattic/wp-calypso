@@ -6,11 +6,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getSite from './get-site';
 
 /**
- * Returns true if the current user can see the CustomerHome menu item and the corresponding section.
+ * Returns true if the current user can see the Customer Home menu item and the corresponding section.
  *
  * @param  {Object}   state  Global state tree
  * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether user can access the Earn section.
+ * @return {?Boolean}        Whether user can access the Custome Home section.
  */
 export default function canCurrentUserUseCustomerHome( state, siteId = null ) {
 	if ( ! siteId ) {

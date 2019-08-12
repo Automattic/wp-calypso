@@ -167,7 +167,7 @@ class Home extends Component {
 								iconSrc="/calypso/images/customer-home/logo.svg"
 							/>
 							<ActionBox
-								href={ `https://wordpress.com/email/${ siteSlug }` }
+								onClick={ () => page( `/email/${ siteSlug }` ) }
 								label={ translate( 'Add G Suite' ) }
 								iconSrc="/calypso/images/customer-home/gsuite.svg"
 							/>
