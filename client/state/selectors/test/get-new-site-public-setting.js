@@ -12,7 +12,7 @@ describe( 'getNewSitePublicSetting()', () => {
 		expect( getNewSitePublicSetting() ).toBe( -1 );
 	} );
 
-	test( 'should return `true` if on test-fse flow', () => {
+	test( 'should return `-1` if on test-fse flow', () => {
 		const mockState = { signup: { flow: { currentFlowName: 'test-fse' } } };
 		expect( getNewSitePublicSetting( mockState, 'someOtherSiteType' ) ).toBe( -1 );
 	} );
