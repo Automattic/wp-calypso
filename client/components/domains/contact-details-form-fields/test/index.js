@@ -64,7 +64,6 @@ describe( 'ContactDetailsFormFields', () => {
 			const newProps = { ...defaultProps, contactDetails: {} };
 
 			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
-			//expect( wrapper.debug() ).toEqual( '' );
 
 			expect( wrapper.find( '[name="first-name"]' ) ).toHaveLength( 1 );
 			expect( wrapper.find( '[name="last-name"]' ) ).toHaveLength( 1 );
