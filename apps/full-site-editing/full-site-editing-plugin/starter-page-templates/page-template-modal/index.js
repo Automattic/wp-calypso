@@ -9,6 +9,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import '@wordpress/nux';
+import { BlockPreview } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from 
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
+		previewBlocks: [],
 	};
 
 	constructor( props ) {
@@ -38,7 +40,7 @@ class PageTemplateModal extends Component {
 	}
 
 	selectTemplate = ( slug, title, blocks ) => {
-		this.setState( { isOpen: false } );
+		// this.setState( { isOpen: false } );
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
 		this.props.saveTemplateChoice( slug );
@@ -51,8 +53,12 @@ class PageTemplateModal extends Component {
 		this.props.insertTemplate( title, blocks );
 	};
 
+	focusTemplate = ( slug, title, blocks ) => {
+		this.setState( { previewBlocks: blocks } );
+	};
+
 	closeModal = () => {
-		this.setState( { isOpen: false } );
+		// this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
@@ -75,11 +81,14 @@ class PageTemplateModal extends Component {
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
 								onTemplateSelect={ ( slug, title, blocks ) => this.selectTemplate( slug, title, blocks ) }
+								onTemplateFocus={ ( slug, title, blocks ) => this.focusTemplate( slug, title, blocks ) }
 								dynamicPreview={ true }
 							/>
 						</fieldset>
 					</form>
-					<TemplateSelectorPreview />
+					<TemplateSelectorPreview>
+						<BlockPreview blocks={ this.state.previewBlocks } viewportWidth={ 800 } />
+					</TemplateSelectorPreview>
 				</div>
 			</Modal>
 		);

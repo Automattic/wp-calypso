@@ -204,6 +204,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	border: 1px solid $template-selector-border-color;
 	border-radius: 6px;
 	pointer-events: none;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 // Preview adjustments.
