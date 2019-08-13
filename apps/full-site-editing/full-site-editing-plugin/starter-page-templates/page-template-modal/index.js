@@ -86,7 +86,7 @@ class PageTemplateModal extends Component {
 								onTemplateFocus={ ( slug, title, blocks ) =>
 									this.focusTemplate( slug, title, blocks )
 								}
-								dynamicPreview={ true }
+								dynamicPreview={ false }
 							/>
 						</fieldset>
 					</form>

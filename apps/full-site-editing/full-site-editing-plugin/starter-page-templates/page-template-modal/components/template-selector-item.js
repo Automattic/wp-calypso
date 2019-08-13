@@ -83,7 +83,7 @@ const TemplateSelectorItem = props => {
 			className="template-selector-item__label"
 			value={ value }
 			onClick={ () =>
-				onSelect( value, label, blocksInPreview ? parseBlocks( rawBlocks ) : blocks )
+				onSelect( value, label, ( blocksInPreview || ! dynamicPreview ) ? parseBlocks( rawBlocks ) : blocks )
 			}
 			onMouseEnter={ throttle( () =>
 				onFocus( value, label, dynamicPreview ? blocks : parseBlocks( rawBlocks ) )
