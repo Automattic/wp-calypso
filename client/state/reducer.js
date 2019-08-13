@@ -38,6 +38,7 @@ import emailForwarding from './email-forwarding/reducer';
 import exporter from './exporter/reducers';
 import googleMyBusiness from './google-my-business/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
+import gutenbergOptIn from './gutenberg-opt-in/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import help from './help/reducer';
@@ -127,6 +128,7 @@ const reducers = {
 	form,
 	googleMyBusiness,
 	gsuiteUsers,
+	gutenbergOptIn,
 	happinessEngineers,
 	happychat,
 	help,
