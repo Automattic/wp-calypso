@@ -26,11 +26,11 @@ const { siteInformation = {} } = window.starterPageTemplatesConfig;
  * It the templates blocks are not ready yet or not exist,
  * it tries to render a static image, or simply return null.
  */
-const TemplateDynamicPreview = ( { value, rawBlocks } ) => {
+const TemplateDynamicPreview = ( { value, rawBlocks, blocksInPreview = 10 } ) => {
 	const itemRef = useRef( null );
 	const [ dynamicCssClasses, setDynamicCssClasses ] = useState( 'is-rendering' );
 
-	const blocks = useMemo( () => parseBlocks( rawBlocks ).slice( 0, 10 ), [ rawBlocks ] );
+	const blocks = useMemo( () => parseBlocks( rawBlocks ).slice( 0, blocksInPreview ), [ rawBlocks ] );
 
 	useLayoutEffect( () => {
 		const timerId = setTimeout( () => {
@@ -79,6 +79,7 @@ const TemplateSelectorItem = ( {
 	dynamicPreview = false,
 	preview,
 	previewAlt = '',
+	blocksInPreview,
 } ) => {
 	const innerPreview = dynamicPreview ? (
 		<TemplateDynamicPreview
@@ -89,6 +90,7 @@ const TemplateSelectorItem = ( {
 			onSelect={ onSelect }
 			preview={ preview }
 			rawBlocks={ replacePlaceholders( rawBlocks, siteInformation ) }
+			blocksInPreview={ blocksInPreview }
 		/>
 	) : (
 		<img
