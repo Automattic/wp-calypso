@@ -37,11 +37,12 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { getNewSitePublicSetting } from 'state/selectors/get-new-site-public-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
 import { getSiteTypePropertyValue } from './site-type';
-import { getNewSitePublicSetting } from './private-by-default';
+
 import SignupCart from './cart';
 import { promisify } from '../../utils';
 
@@ -163,7 +164,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 		},
-		public: getNewSitePublicSetting( siteType, state ),
+		public: getNewSitePublicSetting( state, siteType ),
 		validate: false,
 	};
 
@@ -489,7 +490,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( siteType ),
+		public: getNewSitePublicSetting( state, siteType ),
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
