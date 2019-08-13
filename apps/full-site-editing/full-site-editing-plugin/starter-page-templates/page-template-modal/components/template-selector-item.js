@@ -81,7 +81,9 @@ const TemplateSelectorItem = props => {
 			id={ `${ id }-${ value }` }
 			className="template-selector-item__label"
 			value={ value }
-			onClick={ () => onSelect( value, label, parseBlocks( rawBlocks ) ) }
+			onClick={ () =>
+				onSelect( value, label, blocksInPreview ? parseBlocks( rawBlocks ) : blocks )
+			}
 			onMouseEnter={ () =>
 				onFocus( value, label, dynamicPreview ? blocks : parseBlocks( rawBlocks ) )
 			}

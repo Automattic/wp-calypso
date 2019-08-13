@@ -40,7 +40,7 @@ class PageTemplateModal extends Component {
 	}
 
 	selectTemplate = ( slug, title, blocks ) => {
-		// this.setState( { isOpen: false } );
+		this.setState( { isOpen: false } );
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
 		this.props.saveTemplateChoice( slug );
@@ -58,7 +58,7 @@ class PageTemplateModal extends Component {
 	};
 
 	closeModal = () => {
-		// this.setState( { isOpen: false } );
+		this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
