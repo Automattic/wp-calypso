@@ -573,9 +573,6 @@ ul.module-header-actions {
 
 .stats-module__availability-warning {
 	padding: 12px 20px 0;
-	.stats-module__availability-warning-message {
-		margin-bottom: 0;
-	}
 	display: flex;
 
 	.gridicon {
@@ -586,6 +583,7 @@ ul.module-header-actions {
 .stats-module__availability-warning-message {
 	font-size: 14px;
 	margin-left: 8px;
+	margin-bottom: 0;
 	color: var( --color-text-subtle );
 }
 

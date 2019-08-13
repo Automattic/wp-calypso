@@ -180,10 +180,12 @@ class StatsModule extends Component {
 					</SectionHeader>
 				) }
 				<Card compact className={ cardClasses }>
-					statType === 'statsFileDownloads' && <StatsModuleAvailabilityWarning
-						statType={ statType }
-						startOfPeriod={ period && period.startOf }
-					/>
+					{ statType === 'statsFileDownloads' && (
+						<StatsModuleAvailabilityWarning
+							statType={ statType }
+							startOfPeriod={ period && period.startOf }
+						/>
+					) }
 					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
