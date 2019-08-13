@@ -64,10 +64,11 @@ describe( 'ContactDetailsFormFields', () => {
 			const newProps = { ...defaultProps, contactDetails: {} };
 
 			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			//expect( wrapper.debug() ).toEqual( '' );
 
-			expect( wrapper.find( '.contact-details-form-fields__field.first-name' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.contact-details-form-fields__field.last-name' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.contact-details-form-fields__field.phone' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="first-name"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="last-name"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="phone"]' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -121,13 +122,13 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should not render fax field by default', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__field.fax' ) ).toHaveLength( 0 );
+			expect( wrapper.find( '[name="fax"]' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should render fax field when fax required', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__field.fax' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="fax"]' ) ).toHaveLength( 1 );
 		} );
 	} );
 
