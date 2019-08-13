@@ -15,6 +15,7 @@ import '@wordpress/nux';
  */
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
+import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
 
 class PageTemplateModal extends Component {
@@ -78,6 +79,7 @@ class PageTemplateModal extends Component {
 							/>
 						</fieldset>
 					</form>
+					<TemplateSelectorPreview />
 				</div>
 			</Modal>
 		);

@@ -11,6 +11,9 @@
 	word-wrap: normal !important;
 }
 
+$template-selector-border-color: #a1aab2;
+$template-selector-empty-background: #f6f6f6;
+
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	animation: none;
@@ -78,7 +81,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			// stylelint-disable unit-whitelist
 			grid-template-columns: repeat(
 				auto-fit,
-				minmax( 200px, 1fr )
+				minmax( 110px, 1fr )
 			); // allow grid to take over number of cols on large screens
 			// stylelint-enable unit-whitelist
 		}
@@ -93,7 +96,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		width: 100%;
 		font-size: 14px;
 		text-align: center;
-		border: 1px solid #a1aab2;
+		border: 1px solid $template-selector-border-color;
 		border-radius: 6px;
 		cursor: pointer;
 		background: none;
@@ -115,7 +118,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		display: block;
 		margin: 0 auto 14px;
 		border-bottom: 1px solid #a1aab2;
-		background: #f6f6f6;
+		background: $template-selector-empty-background;
 		border-radius: 0;
 		overflow: hidden;
 		padding-bottom: 110%;
@@ -159,6 +162,29 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@media screen and ( min-width: 960px ) {
 		margin-right: 1em;
 	}
+}
+
+.page-template-modal__form {
+	@media screen and ( min-width: 660px ) {
+		max-width: 50%;
+	}
+}
+
+// Template Selector Preview
+.template-selector-preview {
+	@media screen and ( max-width: 659px ) {
+		display: none;
+	}
+
+	position: fixed;
+	top: 93px;
+	bottom: 25px;
+	right: 32px;
+	width: calc( 50% - 50px );
+	background: $template-selector-empty-background;
+	border: 1px solid $template-selector-border-color;
+	border-radius: 6px;
+	pointer-events: none;
 }
 
 // Preview adjustments.
