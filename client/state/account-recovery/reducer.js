@@ -4,7 +4,6 @@
  * Internal dependencies
  */
 
-import reset from './reset/reducer';
 import { combineReducers, createReducer } from 'state/utils';
 import settings from './settings/reducer';
 import {
@@ -21,6 +20,5 @@ const isFetchingSettings = createReducer( false, {
 
 export default combineReducers( {
 	settings,
-	reset,
 	isFetchingSettings,
 } );
