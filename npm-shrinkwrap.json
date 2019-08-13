@@ -24079,15 +24079,6 @@
 				"wpcom-xhr-request": "^1.1.2"
 			}
 		},
-		"wpcom-oauth": {
-			"version": "0.3.4",
-			"resolved": "https://registry.npmjs.org/wpcom-oauth/-/wpcom-oauth-0.3.4.tgz",
-			"integrity": "sha512-EJfIhiIRsgppbaTN2+GuTnGdtCG+0Lie0Fbu9G9vxBnyReLP52uUK8EFqjt42QSm6sx2MjIDTtsMEAgqVgqXnA==",
-			"requires": {
-				"debug": "*",
-				"superagent": "^3.8.3"
-			}
-		},
 		"wpcom-proxy-request": {
 			"version": "5.0.2",
 			"resolved": "https://registry.npmjs.org/wpcom-proxy-request/-/wpcom-proxy-request-5.0.2.tgz",
