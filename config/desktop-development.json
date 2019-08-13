@@ -18,7 +18,6 @@
 	"readerFollowingSource": "desktop",
 	"features": {
 		"async-payments": true,
-		"account-recovery": true,
 		"ad-tracking": true,
 		"always_use_logout_url": true,
 		"automated-transfer": true,
