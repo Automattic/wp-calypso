@@ -2,13 +2,15 @@
 /**
  * WP_REST_Sideload_Image_Controller file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Class WP_REST_Sideload_Image_Controller.
  */
-class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
+class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller {
 
 	/**
 	 * WP_REST_Sideload_Image_Controller constructor.
@@ -29,7 +31,7 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 			'/' . $this->rest_base,
 			[
 				[
-					'methods'             => WP_REST_Server::CREATABLE,
+					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'create_item' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'show_in_index'       => false,
@@ -44,7 +46,7 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 			'/' . $this->rest_base . '/batch',
 			[
 				[
-					'methods'       => WP_REST_Server::CREATABLE,
+					'methods'       => \WP_REST_Server::CREATABLE,
 					'callback'      => [ $this, 'create_items' ],
 					'show_in_index' => false,
 					'args'          => [
@@ -66,12 +68,12 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 	/**
 	 * Creates a single attachment.
 	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @return WP_Error|WP_REST_Response Response object on success, WP_Error object on failure.
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_Error|\WP_REST_Response Response object on success, WP_Error object on failure.
 	 */
 	public function create_item( $request ) {
 		if ( ! empty( $request['post_id'] ) && in_array( get_post_type( $request['post_id'] ), [ 'revision', 'attachment' ], true ) ) {
-			return new WP_Error( 'rest_invalid_param', __( 'Invalid parent type.' ), [ 'status' => 400 ] );
+			return new \WP_Error( 'rest_invalid_param', __( 'Invalid parent type.' ), [ 'status' => 400 ] );
 		}
 
 		$inserted   = false;
@@ -150,15 +152,15 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 	/**
 	 * Creates a batch of attachments.
 	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @return WP_Error|WP_REST_Response Response object on success, WP_Error object on failure.
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_Error|\WP_REST_Response Response object on success, WP_Error object on failure.
 	 */
 	public function create_items( $request ) {
 		$data = [];
 
 		// Foreach request specified in the requests param, run the endpoint.
 		foreach ( $request['resources'] as $resource ) {
-			$request = new WP_REST_Request( 'POST', "/{$this->namespace}/{$this->rest_base}" );
+			$request = new \WP_REST_Request( 'POST', "/{$this->namespace}/{$this->rest_base}" );
 
 			// Add specified request parameters into the request.
 			foreach ( $resource as $param_name => $param_value ) {
@@ -175,11 +177,11 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 	/**
 	 * Prepare a response for inserting into a collection of responses.
 	 *
-	 * @param WP_REST_Response $response Response object.
-	 * @return array|WP_REST_Response Response data, ready for insertion into collection data.
+	 * @param \WP_REST_Response $response Response object.
+	 * @return array|\WP_REST_Response Response data, ready for insertion into collection data.
 	 */
 	public function prepare_for_collection( $response ) {
-		if ( ! ( $response instanceof WP_REST_Response ) ) {
+		if ( ! ( $response instanceof \WP_REST_Response ) ) {
 			return $response;
 		}
 
@@ -202,9 +204,9 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 	/**
 	 * Prepares a single attachment output for response.
 	 *
-	 * @param WP_Post         $post    Attachment object.
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response Response object.
+	 * @param \WP_Post         $post    Attachment object.
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_REST_Response Response object.
 	 */
 	public function prepare_item_for_response( $post, $request ) {
 		$response = parent::prepare_item_for_response( $post, $request );
@@ -233,7 +235,7 @@ class WP_REST_Sideload_Image_Controller extends WP_REST_Attachments_Controller {
 		$attachment = get_transient( $cache_key );
 
 		if ( false === $attachment ) {
-			$attachments = new WP_Query(
+			$attachments = new \WP_Query(
 				[
 					'no_found_rows'  => true,
 					'posts_per_page' => 1,
