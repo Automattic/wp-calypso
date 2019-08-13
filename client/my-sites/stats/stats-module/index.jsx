@@ -180,14 +180,14 @@ class StatsModule extends Component {
 					</SectionHeader>
 				) }
 				<Card compact className={ cardClasses }>
-					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-					{ hasError && <ErrorPanel /> }
-					{ this.props.children }
 					<StatsModuleAvailabilityWarning
 						statType={ statType }
 						startOfPeriod={ period && period.startOf }
 					/>
+					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
+					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+					{ hasError && <ErrorPanel /> }
+					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />

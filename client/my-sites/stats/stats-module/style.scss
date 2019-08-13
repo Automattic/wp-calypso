@@ -572,6 +572,21 @@ ul.module-header-actions {
 }
 
 .stats-module__availability-warning {
+	padding: 12px 20px 0;
+	margin-bottom: -18px;
+	display: flex;
+
+	.gridicon {
+		fill: var( --color-text-subtle );
+	}
+}
+
+.stats-module__availability-warning-message {
+	font-size: 14px;
+	margin-left: 8px;
+	color: var( --color-text-subtle );
+}
+
+.stats__module-list .stats-module__availability-warning-message {
 	font-size: 12px;
-	padding: 8px 20px 0;
 }

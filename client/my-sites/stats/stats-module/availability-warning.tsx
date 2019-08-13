@@ -4,6 +4,7 @@
 import React, { FunctionComponent } from 'react';
 import moment from 'moment';
 import Gridicon from 'gridicons';
+import { localize, LocalizeProps } from 'i18n-calypso';
 
 interface Props {
 	statType?: string;
@@ -14,9 +15,10 @@ interface Props {
 // so we want to warn the user if the start date is earlier
 const fileDownloadsRecordingStartDate = '2019-06-29T00:00:00Z';
 
-const StatsModuleAvailabilityWarning: FunctionComponent< Props > = ( {
+const StatsModuleAvailabilityWarning: FunctionComponent< Props & LocalizeProps > = ( {
 	statType,
 	startOfPeriod,
+	translate,
 } ) => {
 	if ( statType !== 'statsFileDownloads' ) {
 		return null;
@@ -28,9 +30,12 @@ const StatsModuleAvailabilityWarning: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="stats-module__availability-warning">
-			<Gridicon icon="info-outline" size="18" /> info info info
+			<Gridicon icon="info-outline" size="24" />
+			<p className="stats-module__availability-warning-message">
+				{ translate( 'File download stats were not recorded before June 28th 2019.' ) }
+			</p>
 		</div>
 	);
 };
 
-export default StatsModuleAvailabilityWarning;
+export default localize( StatsModuleAvailabilityWarning );
