@@ -1,13 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 
-// Shape of context provided by the `makeTour` context provider
-export const childContextTypes = Object.freeze( {
+// Shape of context provided by the `makeTour` context provider.
+// The same shape is expected by the context consumers, too.
+export const contextTypes = Object.freeze( {
 	branching: PropTypes.object.isRequired,
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
@@ -21,11 +19,4 @@ export const childContextTypes = Object.freeze( {
 	step: PropTypes.string.isRequired,
 	lastAction: PropTypes.object,
 	dispatch: PropTypes.func.isRequired,
-} );
-
-// Shape of context expected by the consumers: in addition to the context from the
-// `makeTour` context provider, they expect also `store` from Redux.
-export const contextTypes = Object.freeze( {
-	...childContextTypes,
-	store: PropTypes.object.isRequired,
 } );
