@@ -1943,7 +1943,6 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
 		const req = this.wpcom.req.post(
 			{
 				path: `/sites/${ siteId }/imports/new`,
-
 				formData: [
 					[ 'importStatus', JSON.stringify( params.importStatus ) ],
 					[ 'import', params.file ],
