@@ -163,7 +163,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 		},
-		public: getNewSitePublicSetting( siteType ),
+		public: getNewSitePublicSetting( siteType, state ),
 		validate: false,
 	};
 
