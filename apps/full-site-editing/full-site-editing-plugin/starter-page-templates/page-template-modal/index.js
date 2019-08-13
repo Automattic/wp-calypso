@@ -75,7 +75,7 @@ class PageTemplateModal extends Component {
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
 								onTemplateSelect={ ( slug, title, blocks ) => this.selectTemplate( slug, title, blocks ) }
-								dynamicPreview={ false }
+								dynamicPreview={ true }
 							/>
 						</fieldset>
 					</form>
