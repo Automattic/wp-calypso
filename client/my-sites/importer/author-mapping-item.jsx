@@ -50,6 +50,18 @@ class ImporterAuthorMapping extends React.Component {
 		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
 
 		if ( hasSingleAuthor ) {
+			/**
+			 * Using `defer` here is a leftover from using Flux store here.
+			 *
+			 * It's not ideal and should be refactored in the future to read
+			 * the state, instead of automating the UI in this way.
+			 *
+			 * This effort is quite big as it requires refactoring a a few things on more fundamental
+			 * level in the imports section.
+			 *
+			 * TODO: Refactor this to not automate the UI but use proper state
+			 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
+			 */
 			defer( () => selectAuthor( this.props.currentUser ) );
 		}
 	}
