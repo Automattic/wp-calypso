@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -587,14 +586,9 @@ export class PluginMeta extends Component {
 		);
 	};
 
-	handleUpgradeNudgeClick = () => {
-		const { slug } = this.props;
-		const href = `/checkout/${ slug }/business`;
-		page.redirect( href );
-	};
-
 	renderUpsell() {
-		const { translate } = this.props;
+		const { translate, slug } = this.props;
+		const bannerURL = `/checkout/${ slug }/business`;
 		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
@@ -605,7 +599,7 @@ export class PluginMeta extends Component {
 			<div className="plugin-meta__upgrade_nudge">
 				<Banner
 					event="calypso_plugin_detail_page_upgrade_nudge"
-					onClick={ this.handleUpgradeNudgeClick }
+					href={ bannerURL }
 					plan={ plan }
 					title={ title }
 				/>
