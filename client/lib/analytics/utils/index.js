@@ -12,3 +12,5 @@ export { default as mayWeTrackCurrentUserGdpr } from './may-we-track-current-use
 export { default as isCurrentUserMaybeInGdprZone } from './is-current-user-maybe-in-gdpr-zone';
 export { default as urlParseAmpCompatible } from './url-parse-amp-compatible';
 export { default as shouldReportOmitBlogId } from './should-report-omit-blog-id';
+export { default as saveCouponQueryArgument } from './save-coupon-query-argument';
+export { default as getNormalizedHashedUserEmail } from './get-normalized-hashed-user-email';
