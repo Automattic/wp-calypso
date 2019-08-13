@@ -55,6 +55,14 @@
 	margin-right: 10px;
 }
 
+.book__info-step-phone-input {
+	display: flex;
+	& fieldset {
+		flex: 1;
+		margin-bottom: 0;
+	}
+}
+
 .book__schedule-button,
 .cancel__schedule-button,
 .reschedule__schedule-button,
