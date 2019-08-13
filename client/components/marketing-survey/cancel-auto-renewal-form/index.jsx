@@ -39,14 +39,16 @@ class CancelAutoRenewalForm extends Component {
 
 	radioButtons = {};
 
-	getProductString = () => {
+	getProductTypeString = () => {
 		const { purchase, translate } = this.props;
 
 		if ( isDomainRegistration( purchase ) ) {
+			/* translators: as in "domain name"*/
 			return translate( 'domain' );
 		}
 
 		if ( isPlan( purchase ) ) {
+			/* translators: as in "Premium plan" or "Personal plan"*/
 			return translate( 'plan' );
 		}
 
@@ -57,19 +59,21 @@ class CancelAutoRenewalForm extends Component {
 		super( props );
 
 		const { translate } = props;
-		const product = this.getProductString();
+		const productType = this.getProductTypeString();
 
 		this.radioButtons = [
 			[
 				'let-it-expire',
-				translate( "I'm going to let this %(product)s expire.", {
-					args: { product },
+				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
+				translate( "I'm going to let this %(productType)s expire.", {
+					args: { productType },
 				} ),
 			],
 			[
 				'manual-renew',
-				translate( "I'm going to renew the %(product)s, but will do it manually.", {
-					args: { product },
+				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
+				translate( "I'm going to renew the %(productType)s, but will do it manually.", {
+					args: { productType },
 				} ),
 			],
 			[ 'not-sure', translate( "I'm not sure." ) ],
@@ -118,7 +122,7 @@ class CancelAutoRenewalForm extends Component {
 		const { response } = this.state;
 
 		const disableSubmit = ! response;
-		const product = this.getProductString();
+		const productType = this.getProductTypeString();
 
 		return (
 			<Dialog
@@ -133,9 +137,10 @@ class CancelAutoRenewalForm extends Component {
 					<p>
 						{ translate(
 							"Auto-renewal is now off. Before you go, we'd love to know: " +
-								"are you letting this %(product)s expire completely, or do you think you'll renew it manually?",
+								"are you letting this %(productType)s expire completely, or do you think you'll renew it manually?",
 							{
-								args: { product },
+								args: { productType },
+								comment: '%(productType)s will be either "plan", "domain", or "subscription".',
 							}
 						) }
 					</p>
