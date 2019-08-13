@@ -94,7 +94,8 @@ class Home extends Component {
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				<SidebarNavigation />
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ shouldRenderChecklist ? this.renderChecklist() : this.renderCustomerHome() }
+				{ hasChecklistData &&
+					( shouldRenderChecklist ? this.renderChecklist() : this.renderCustomerHome() ) }
 			</Main>
 		);
 	}
