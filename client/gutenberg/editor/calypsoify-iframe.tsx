@@ -595,6 +595,7 @@ const mapStateToProps = (
 		action: postId && 'edit', // If postId is set, open edit view.
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
+		fse_parent_post: fseParentPageId != null && fseParentPageId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
