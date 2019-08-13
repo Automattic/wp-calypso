@@ -41,9 +41,11 @@ class WP_Template {
 
 	/**
 	 * A8C_WP_Template constructor.
+	 *
+	 * @param string $theme_slug The theme slug used to identify theme-specific template data.
 	 */
-	public function __construct() {
-		$this->current_theme_name = get_option( 'stylesheet' );
+	public function __construct( $theme_slug ) {
+		$this->current_theme_name = $theme_slug;
 	}
 
 	/**
