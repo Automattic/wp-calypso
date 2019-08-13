@@ -110,7 +110,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		margin-bottom: 4px;
 	}
 
-	.template-selector-control__label {
+	.template-selector-item__label {
 		display: block;
 		width: 100%;
 		font-size: 14px;
@@ -132,7 +132,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
-	.template-selector-control__preview-wrap {
+	.template-selector-item__preview-wrap {
 		width: 100%;
 		display: block;
 		margin: 0 auto 14px;
@@ -151,7 +151,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 	}
 
-	.template-selector-control__media {
+	.template-selector-item__media {
 		width: 100%;
 		display: block;
 		position: absolute;
