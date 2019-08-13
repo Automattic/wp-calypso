@@ -13,7 +13,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { tourBranching } from '../tour-branching';
-import { childContextTypes } from '../context-types';
+import { contextTypes } from '../context-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -30,7 +30,7 @@ const makeTour = tree => {
 			dispatch: PropTypes.func.isRequired,
 		};
 
-		static childContextTypes = childContextTypes;
+		static childContextTypes = contextTypes;
 
 		static meta = omit( tree.props, 'children' );
 
