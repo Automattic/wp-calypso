@@ -80,7 +80,7 @@ const TemplateSelectorItem = ( props ) => {
 		<img
 			className="template-selector-control__media"
 			src={ preview }
-			alt={ previewAlt || '' }
+			alt={ previewAlt }
 		/>
 	);
 
