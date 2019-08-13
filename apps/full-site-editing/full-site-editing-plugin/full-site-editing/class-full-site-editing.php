@@ -346,7 +346,7 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template         = new WP_Template( $this->theme_slug );
+		$template         = new WP_Template();
 		$template_content = $template->get_page_template_content();
 
 		// Bail if the template has no post content block.
@@ -414,7 +414,7 @@ class Full_Site_Editing {
 	 */
 	public function set_block_template( $editor_settings ) {
 		if ( $this->is_full_site_page() ) {
-			$fse_template    = new WP_Template( $this->theme_slug );
+			$fse_template    = new WP_Template();
 			$template_blocks = $fse_template->get_template_blocks();
 
 			$template = array();
