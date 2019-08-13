@@ -573,7 +573,9 @@ ul.module-header-actions {
 
 .stats-module__availability-warning {
 	padding: 12px 20px 0;
-	margin-bottom: -18px;
+	.stats-module__availability-warning-message {
+		margin-bottom: 0;
+	}
 	display: flex;
 
 	.gridicon {
