@@ -37,6 +37,7 @@ const ActivityLogConfirmDialog = ( {
 	translate,
 	happychatEvent,
 	partial,
+	disableButton,
 } ) => (
 	<div className="activity-log-item activity-log-item__restore-confirm">
 		<div className="activity-log-item__type">
@@ -91,7 +92,7 @@ const ActivityLogConfirmDialog = ( {
 			<div className="activity-log-confirm-dialog__button-wrap">
 				<div className="activity-log-confirm-dialog__primary-actions">
 					<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
-					<Button primary onClick={ onConfirm }>
+					<Button primary disabled={ disableButton } onClick={ onConfirm }>
 						{ confirmTitle }
 					</Button>
 				</div>

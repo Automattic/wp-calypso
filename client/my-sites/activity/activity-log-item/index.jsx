@@ -78,6 +78,8 @@ class ActivityLogItem extends Component {
 			contents: true,
 		},
 		partialSelected: false,
+		disableRestoreButton: false,
+		disableDownloadButton: false,
 	};
 
 	confirmBackup = () =>
@@ -90,15 +92,31 @@ class ActivityLogItem extends Component {
 			this.state.restoreArgs
 		);
 
-	restoreSettingsChange = ( { target: { name, checked } } ) =>
+	restoreSettingsChange = ( { target: { name, checked } } ) => {
 		this.setState( {
 			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
 		} );
 
-	downloadSettingsChange = ( { target: { name, checked } } ) =>
+		this.setState( {
+			disableRestoreButton: Object.keys( this.state.restoreArgs ).every(
+				k => ! this.state.restoreArgs[ k ]
+			),
+			disableDownloadButton: false,
+		} );
+	};
+
+	downloadSettingsChange = ( { target: { name, checked } } ) => {
 		this.setState( {
 			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
 		} );
+
+		this.setState( {
+			disableDownloadButton: Object.keys( this.state.downloadArgs ).every(
+				k => ! this.state.downloadArgs[ k ]
+			),
+			disableRestoreButton: false,
+		} );
+	};
 
 	sizeChanged = () => {
 		this.forceUpdate();
@@ -331,15 +349,18 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
 						confirmTitle={ translate( 'Confirm Rewind' ) }
-						notice={ translate(
-							'This will override and remove all content created after this point.'
-						) }
+						notice={
+							this.state.disableRestoreButton
+								? translate( 'Please select at least one item to rewind.' )
+								: translate( 'This will override and remove all content created after this point.' )
+						}
 						onClose={ dismissRewind }
 						onConfirm={ this.confirmRewind }
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Rewind Site' ) }
 						partial={ this.state.partialSelected }
+						disableButton={ this.state.disableRestoreButton }
 					>
 						{ translate(
 							'This is the selected point for your site Rewind. ' +
@@ -364,6 +385,7 @@ class ActivityLogItem extends Component {
 						type={ 'backup' }
 						icon={ 'cloud-download' }
 						partial={ true }
+						disableButton={ this.state.disableDownloadButton }
 					>
 						{ translate(
 							'We will build a downloadable backup of your site at {{time/}}. ' +
