@@ -180,7 +180,7 @@ class StatsModule extends Component {
 					</SectionHeader>
 				) }
 				<Card compact className={ cardClasses }>
-					<StatsModuleAvailabilityWarning
+					statType === 'statsFileDownloads' && <StatsModuleAvailabilityWarning
 						statType={ statType }
 						startOfPeriod={ period && period.startOf }
 					/>
