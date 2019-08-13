@@ -19,22 +19,18 @@ import { BlockPreview } from '@wordpress/block-editor';
 import replacePlaceholders from '../utils/replace-placeholders';
 
 // Load config passed from backend.
-const {
-	siteInformation = {},
-} = window.starterPageTemplatesConfig;
+const { siteInformation = {} } = window.starterPageTemplatesConfig;
 
 /*
  * It renders the block preview content for the template.
  * It the templates blocks are not ready yet or not exist,
  * it tries to render a static image, or simply return null.
  */
-const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } ) => {
+const TemplateDynamicPreview = ( { value, rawBlocks } ) => {
 	const itemRef = useRef( null );
 	const [ cssClasses, setCssClasses ] = useState( 'is-rendering' );
 
-	const blocks = useMemo( () => ( parseBlocks( rawBlocks ) ).slice( 0, 10 ), [ rawBlocks ] );
-
-	console.time( `tpl-${ value }` );
+	const blocks = useMemo( () => parseBlocks( rawBlocks ).slice( 0, 10 ), [ rawBlocks ] );
 
 	useLayoutEffect( () => {
 		const timerId = setTimeout( () => {
@@ -66,9 +62,38 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 		};
 	}, [ blocks, value ] );
 
-	const itemClasses = classnames(
-		"template-selector-control__preview-wrap",
-		cssClasses,
+	const itemClasses = classnames( 'template-selector-control__preview-wrap', cssClasses );
+
+	return (
+		<div ref={ itemRef } className={ itemClasses }>
+			{ blocks && blocks.length ? <BlockPreview blocks={ blocks } viewportWidth={ 800 } /> : null }
+		</div>
+	);
+};
+
+const TemplateSelectorItem = ( {
+	id,
+	value,
+	help,
+	onSelect,
+	label,
+	rawBlocks,
+	dynamicPreview = false,
+	preview,
+	previewAlt = '',
+} ) => {
+	const innerPreview = dynamicPreview ? (
+		<TemplateDynamicPreview
+			id={ id }
+			value={ value }
+			label={ replacePlaceholders( label, siteInformation ) }
+			help={ help }
+			onSelect={ onSelect }
+			preview={ preview }
+			rawBlocks={ replacePlaceholders( rawBlocks, siteInformation ) }
+		/>
+	) : (
+		<img src={ preview } alt={ previewAlt || '' } />
 	);
 
 	return (
@@ -80,12 +105,7 @@ const TemplateSelectorItem = ( { id, value, help, onSelect, label, rawBlocks } )
 			onClick={ () => onSelect( value, label, parseBlocks( rawBlocks ) ) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
-			<div ref={ itemRef } className={ itemClasses }>
-				{ blocks && blocks.length ? (
-					<BlockPreview blocks={ blocks } viewportWidth={ 800 } />
-				) : null }
-			</div>
-
+			{ innerPreview }
 			{ label }
 		</button>
 	);
@@ -113,15 +133,17 @@ function TemplateSelectorControl( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ templates.map( template => (
-					<li key={ `${ id }-${ template.value }` } className="template-selector-control__template">
+				{ templates.map( ( { slug, title, content, preview, previewAlt, value } ) => (
+					<li key={ `${ id }-${ value }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
-							value={ template.slug }
-							label={ replacePlaceholders( template.title, siteInformation ) }
+							value={ slug }
+							label={ replacePlaceholders( title, siteInformation ) }
 							help={ help }
 							onSelect={ onTemplateSelect }
-							rawBlocks={ replacePlaceholders( template.content, siteInformation ) }
+							preview={ preview }
+							previewAlt={ previewAlt }
+							rawBlocks={ replacePlaceholders( content, siteInformation ) }
 						/>
 					</li>
 				) ) }
