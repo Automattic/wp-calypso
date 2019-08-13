@@ -72,6 +72,15 @@ class Starter_Page_Templates {
 	}
 
 	/**
+	 * Register rest api endpoint for side-loading images.
+	 */
+	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-sideload-image-controller.php';
+
+		( new \WP_REST_Sideload_Image_Controller() )->register_routes();
+	}
+
+	/**
 	 * Pass error message to frontend JavaScript console.
 	 *
 	 * @param string $message Error message.
