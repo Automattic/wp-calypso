@@ -69,29 +69,21 @@ const TemplateDynamicPreview = ( { value, rawBlocks, blocksInPreview = 10 } ) =>
 	);
 };
 
-const TemplateSelectorItem = ( {
-	id,
-	value,
-	help,
-	onSelect,
-	label,
-	rawBlocks,
-	dynamicPreview = false,
-	preview,
-	previewAlt = '',
-	blocksInPreview,
-} ) => {
+const TemplateSelectorItem = ( props ) => {
+	const {
+		id,
+		value,
+		help,
+		onSelect,
+		label,
+		rawBlocks,
+		dynamicPreview = false,
+		preview,
+		previewAlt = '',
+	} = props;
+
 	const innerPreview = dynamicPreview ? (
-		<TemplateDynamicPreview
-			id={ id }
-			value={ value }
-			label={ replacePlaceholders( label, siteInformation ) }
-			help={ help }
-			onSelect={ onSelect }
-			preview={ preview }
-			rawBlocks={ replacePlaceholders( rawBlocks, siteInformation ) }
-			blocksInPreview={ blocksInPreview }
-		/>
+		<TemplateDynamicPreview { ...props } />
 	) : (
 		<img
 			className="template-selector-control__media"
