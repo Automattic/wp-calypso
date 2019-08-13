@@ -20,6 +20,7 @@ export const childContextTypes = Object.freeze( {
 	shouldPause: PropTypes.bool.isRequired,
 	step: PropTypes.string.isRequired,
 	lastAction: PropTypes.object,
+	dispatch: PropTypes.func.isRequired,
 } );
 
 // Shape of context expected by the consumers: in addition to the context from the
