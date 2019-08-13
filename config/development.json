@@ -29,7 +29,6 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"async-payments": true,
-		"account-recovery": true,
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"blogger-plan": true,
