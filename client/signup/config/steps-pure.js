@@ -439,6 +439,19 @@ export function generateSteps( {
 			],
 		},
 
+		/* Import onboarding */
+		'import-url': {
+			stepName: 'import-url',
+			providesDependencies: [
+				'importSiteEngine',
+				'importSiteFavicon',
+				'importSiteUrl',
+				'siteTitle',
+				'suggestedDomain',
+				'themeSlugWithRepo',
+			],
+		},
+
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],

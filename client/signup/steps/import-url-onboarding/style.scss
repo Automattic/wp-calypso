@@ -1,0 +1,48 @@
+
+// The containing element
+.import-url-onboarding__wrapper {
+	padding: 0;
+	@include elevation ( 0 );
+	border-radius: 3px;
+	max-width: 640px;
+	margin: auto;
+}
+
+// Actual form input for typing the URL
+.import-url-onboarding__wrapper .import-url-onboarding__url-input {
+	border: none;
+	border-radius: 3px;
+	padding: 10px 14px;
+
+	@include breakpoint( '<660px' ) {
+		padding: 14px;
+	}
+}
+
+.import-url-onboarding__wrapper .import-url-onboarding__url-input-message {
+	max-width: 640px;
+	margin: 16px auto;
+}
+
+
+.import-url {
+	&__form {
+		position: relative;
+	}
+
+	&__submit-button {
+		position: absolute;
+		top: 2px;
+		right: 2px;
+
+		@include breakpoint( '<660px' ) {
+			top: 1px;
+			right: 1px;
+		}
+	}
+}
+
+.import-url-onboarding__notice-placeholder {
+	height: 47px;
+	margin: 16px auto;
+}
