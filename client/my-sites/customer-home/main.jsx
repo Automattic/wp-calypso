@@ -34,6 +34,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 
 /**
@@ -53,8 +54,6 @@ const ActionBox = ( { href, onClick, iconSrc, label } ) => {
 	);
 };
 
-const isPendingTask = task => false === task.isCompleted;
-
 class Home extends Component {
 	static propTypes = {
 		checklistMode: PropTypes.string,
@@ -65,7 +64,14 @@ class Home extends Component {
 		customizeUrl: PropTypes.string.isRequired,
 		canUserUseCustomerHome: PropTypes.bool.isRequired,
 		hasChecklistData: PropTypes.bool.isRequired,
-		shouldRenderChecklist: PropTypes.bool.isRequired,
+		isChecklistComplete: function( props, propName, componentName ) {
+			const propValue = props[ propName ]; // the actual value of `isChecklistComplete`
+			if ( null !== propValue && 'boolean' !== typeof propValue ) {
+				return new Error(
+					`isChecklistComplete prop of ${ componentName } only accepts null or Boolean.`
+				);
+			}
+		},
 		isJetpackNotAtomic: PropTypes.bool.isRequired,
 	};
 
@@ -86,7 +92,7 @@ class Home extends Component {
 			);
 		}
 
-		const { siteId, hasChecklistData, shouldRenderChecklist } = this.props;
+		const { siteId, hasChecklistData, isChecklistComplete } = this.props;
 
 		return (
 			<Main className="customer-home__main is-wide-layout">
@@ -94,8 +100,11 @@ class Home extends Component {
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				<SidebarNavigation />
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ hasChecklistData &&
-					( shouldRenderChecklist ? this.renderChecklist() : this.renderCustomerHome() ) }
+				{ null !== isChecklistComplete && (
+					<Fragment>
+						{ isChecklistComplete ? this.renderCustomerHome() : this.renderChecklist() }
+					</Fragment>
+				) }
 			</Main>
 		);
 	}
@@ -245,6 +254,7 @@ export default connect( state => {
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
+	const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
@@ -253,7 +263,7 @@ export default connect( state => {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		hasChecklistData,
-		shouldRenderChecklist: hasChecklistData && siteChecklist.tasks.some( isPendingTask ),
+		isChecklistComplete,
 		isJetpackNotAtomic: false === isAutomatedTransfer && isJetpack,
 	};
 } )( localize( Home ) );
