@@ -121,13 +121,13 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should not render fax field by default', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__row.fax' ) ).toHaveLength( 0 );
+			expect( wrapper.find( '.contact-details-form-fields__field.fax' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should render fax field when fax required', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__row.fax' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '.contact-details-form-fields__field.fax' ) ).toHaveLength( 1 );
 		} );
 	} );
 
