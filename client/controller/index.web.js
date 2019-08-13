@@ -50,7 +50,7 @@ const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri }
 	</ReduxProvider>
 );
 
-export const makeForcedLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
+export const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
 
 /**
  * Isomorphic routing helper, client side

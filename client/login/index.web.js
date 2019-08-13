@@ -11,7 +11,7 @@ import {
 	redirectDefaultLocale,
 } from './controller';
 import { setShouldServerSideRenderLogin } from './ssr';
-import { makeForcedLoggedOutLayout } from 'controller';
+import { makeLoggedOutLayout } from 'controller';
 import { setUpLocale } from 'controller/shared';
 import { redirectLoggedIn } from 'controller/web-util';
 
@@ -22,7 +22,7 @@ export default router => {
 			setUpLocale,
 			redirectLoggedIn,
 			magicLoginUse,
-			makeForcedLoggedOutLayout
+			makeLoggedOutLayout
 		);
 
 		router(
@@ -30,7 +30,7 @@ export default router => {
 			setUpLocale,
 			redirectLoggedIn,
 			magicLogin,
-			makeForcedLoggedOutLayout
+			makeLoggedOutLayout
 		);
 	}
 
@@ -48,7 +48,7 @@ export default router => {
 			setUpLocale,
 			login,
 			setShouldServerSideRenderLogin,
-			makeForcedLoggedOutLayout
+			makeLoggedOutLayout
 		);
 	}
 };

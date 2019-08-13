@@ -38,6 +38,11 @@ import AsyncLoad from 'components/async-load';
 import VisitSite from 'blocks/visit-site';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import ContinueAsUser from './continue-as-user';
+import ErrorNotice from './error-notice';
+import LoginForm from './login-form';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 
 /**
  * Style dependencies
