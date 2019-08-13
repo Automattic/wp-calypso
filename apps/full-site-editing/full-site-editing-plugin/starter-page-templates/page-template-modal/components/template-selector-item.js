@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,9 +85,9 @@ const TemplateSelectorItem = props => {
 			onClick={ () =>
 				onSelect( value, label, blocksInPreview ? parseBlocks( rawBlocks ) : blocks )
 			}
-			onMouseEnter={ () =>
+			onMouseEnter={ throttle( () =>
 				onFocus( value, label, dynamicPreview ? blocks : parseBlocks( rawBlocks ) )
-			}
+			, 300) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
