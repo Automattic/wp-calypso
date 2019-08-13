@@ -148,7 +148,7 @@ export const importSite = ( {
 
 	wpcom
 		.undocumented()
-		.importWithSiteImporter( site.ID, toApi( importerStatus ), params, targetSiteUrl )
+		.importWithSiteImporter( siteId, toApi( importerStatus ), params, targetSiteUrl )
 		.then( response => {
 			// At this point we're assuming that an import is going to happen
 			// so we set the user's editor to Gutenberg in order to make sure
