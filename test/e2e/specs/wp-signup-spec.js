@@ -492,7 +492,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			'Can then see the secure payment page with the premium plan in the cart',
 			async function() {
 				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				await securePaymentComponent.toggleCartSummary();
 				const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
 				assert.strictEqual( premiumPlanInCart, true, "The cart doesn't contain the premium plan" );
 				const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
