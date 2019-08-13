@@ -67,7 +67,7 @@ class Full_Site_Editing {
 		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
 		add_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
 
-		$this->theme_slug           = $this->normalize_theme_slug( get_option( 'stylesheet' ) );
+		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
 	}
 
