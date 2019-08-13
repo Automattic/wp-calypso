@@ -53,8 +53,8 @@ class PageTemplateModal extends Component {
 		this.props.insertTemplate( title, blocks );
 	};
 
-	focusTemplate = ( slug, title, blocks ) => {
-		this.setState( { previewBlocks: blocks } );
+	focusTemplate = ( slug, title, previewBlocks ) => {
+		this.setState( { previewBlocks } );
 	};
 
 	closeModal = () => {
