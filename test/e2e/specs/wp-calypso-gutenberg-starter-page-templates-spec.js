@@ -19,6 +19,7 @@ import ThemesPage from '../lib/pages/themes-page.js';
 import ThemeDetailPage from '../lib/pages/theme-detail-page.js';
 import PagesPage from '../lib/pages/pages-page';
 import SidebarComponent from '../lib/components/sidebar-component.js';
+import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -35,7 +36,8 @@ before( async function() {
 describe( 'Starter Templates: @parallel', function() {
 	this.timeout( mochaTimeOut );
 
-	step( 'Can see Template selector overlay', async function() {
+	step( 'Can see Template selector', async function() {
+		const templateSelectorCSSSelector = '.page-template-modal';
 		this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
 
 		if ( host !== 'WPCOM' ) {
@@ -64,13 +66,13 @@ describe( 'Starter Templates: @parallel', function() {
 		const pagesPage = await PagesPage.Expect( driver );
 		await pagesPage.selectAddNewPage();
 
-		// await this.loginFlow.loginAndStartNewPage( null, true );
+		await GutenbergEditorComponent.Expect( driver );
 
 		const isOverlayPresent = await driverHelper.isEventuallyPresentAndDisplayed(
 			driver,
-			By.css( '.page-template-modal' )
+			By.css( templateSelectorCSSSelector )
 		);
 
-		return assert.strictEqual( isOverlayPresent, true );
+		assert.equal( isOverlayPresent, true );
 	} );
 } );
