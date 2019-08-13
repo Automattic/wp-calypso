@@ -12,6 +12,15 @@
 	.editor-post-switch-to-draft {
 		display: none;
 	}
+
+	.editor-block-list__layout {
+		padding-top: 28px;
+	}
+
+	.editor-styles-wrapper [data-block] {
+		margin-top: 15px;
+		margin-bottom: 15px;
+	}
 }
 
 .post-type-page, .post-type-wp_template {

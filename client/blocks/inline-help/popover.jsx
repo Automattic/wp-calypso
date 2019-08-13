@@ -52,7 +52,6 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
-import { isEnabled } from 'config';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
@@ -60,7 +59,7 @@ import QueryActiveTheme from 'components/data/query-active-theme';
 import { getActiveTheme } from 'state/themes/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
-import isVipSite from 'state/selectors/is-vip-site';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -364,7 +363,7 @@ function mapStateToProps( state, { moment } ) {
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const isGutenbergEditor = section.group && section.group === 'gutenberg';
-	const optInEnabled = isEnabled( 'gutenberg/opt-in' ) && ! isVipSite( state, siteId );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );

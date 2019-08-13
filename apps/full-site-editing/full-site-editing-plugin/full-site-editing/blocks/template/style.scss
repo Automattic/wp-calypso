@@ -43,6 +43,11 @@
 
 .block-editor-block-list__layout {
 	.template__block-container {
+		.wp-block {
+			margin-top: 15px;
+			margin-bottom: 15px;
+		}
+
 		&.is-hovered {
 			cursor: pointer;
 		}

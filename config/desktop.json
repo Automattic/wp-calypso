@@ -33,8 +33,6 @@
 		"fluid-width": true,
 		"gdpr-banner": true,
 		"google-my-business": false,
-		"gutenberg/opt-in": true,
-		"gutenberg/redirect": false,
 		"help": true,
 		"help/courses": true,
 		"jetpack/concierge-sessions": false,
