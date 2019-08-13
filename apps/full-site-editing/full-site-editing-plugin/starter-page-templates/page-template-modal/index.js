@@ -9,7 +9,6 @@ import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import '@wordpress/nux';
-import { BlockPreview } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -26,6 +25,7 @@ class PageTemplateModal extends Component {
 	};
 
 	constructor( props ) {
+		// eslint-disable-next-line no-console
 		console.time( 'PageTemplateModal' );
 		super();
 		this.state.isOpen = ! isEmpty( props.templates );
@@ -35,7 +35,7 @@ class PageTemplateModal extends Component {
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
-
+		// eslint-disable-next-line no-console
 		console.timeEnd( 'PageTemplateModal' );
 	}
 
@@ -80,15 +80,17 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
-								onTemplateSelect={ ( slug, title, blocks ) => this.selectTemplate( slug, title, blocks ) }
-								onTemplateFocus={ ( slug, title, blocks ) => this.focusTemplate( slug, title, blocks ) }
+								onTemplateSelect={ ( slug, title, blocks ) =>
+									this.selectTemplate( slug, title, blocks )
+								}
+								onTemplateFocus={ ( slug, title, blocks ) =>
+									this.focusTemplate( slug, title, blocks )
+								}
 								dynamicPreview={ true }
 							/>
 						</fieldset>
 					</form>
-					<TemplateSelectorPreview>
-						<BlockPreview blocks={ this.state.previewBlocks } viewportWidth={ 800 } />
-					</TemplateSelectorPreview>
+					<TemplateSelectorPreview blocks={ this.state.previewBlocks } viewportWidth={ 800 } />
 				</div>
 			</Modal>
 		);
@@ -136,12 +138,7 @@ const PageTemplatesPlugin = compose(
 )( PageTemplateModal );
 
 // Load config passed from backend.
-const {
-	templates = [],
-	vertical,
-	segment,
-	tracksUserData,
-} = window.starterPageTemplatesConfig;
+const { templates = [], vertical, segment, tracksUserData } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
@@ -150,11 +147,7 @@ if ( tracksUserData ) {
 registerPlugin( 'page-templates', {
 	render: () => {
 		return (
-			<PageTemplatesPlugin
-				templates={ templates }
-				vertical={ vertical }
-				segment={ segment }
-			/>
+			<PageTemplatesPlugin templates={ templates } vertical={ vertical } segment={ segment } />
 		);
 	},
 } );
