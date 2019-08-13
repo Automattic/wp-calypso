@@ -43,7 +43,7 @@ class WP_Template {
 	 * A8C_WP_Template constructor.
 	 */
 	public function __construct() {
-		$this->current_theme_name = $this->normalize_theme_slug( get_option( 'stylesheet' ) );
+		$this->current_theme_name = $this->normalize_theme_slug( get_stylesheet() );
 	}
 
 	/**
