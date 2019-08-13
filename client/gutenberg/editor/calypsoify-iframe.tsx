@@ -93,7 +93,7 @@ enum EditorActions {
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
-	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
+	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 }
 
@@ -112,7 +112,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
-	templateParts: [T.PostId, MessagePort][] = [];
+	templatePorts: [T.PostId, MessagePort][] = [];
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -219,8 +219,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			}
 
 			// Update the edit template part links with the ID of the FSE parent page.
-			this.templateParts.forEach( ( [ templatePartId ] ) => {
-				this.sendTemplatePartEditorUrl( templatePartId );
+			this.templatePorts.forEach( ( [ templateId ] ) => {
+				this.sendTemplateEditorUrl( templateId );
 			} );
 		}
 
@@ -256,10 +256,19 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.openCustomizer( autofocus, unsavedChanges );
 		}
 
-		if ( EditorActions.GetTemplatePartEditorUrl === action ) {
-			const { templatePartId } = payload;
-			this.templateParts.push( [ templatePartId, ports[ 0 ] ] );
-			this.sendTemplatePartEditorUrl( templatePartId );
+		if ( EditorActions.GetTemplateEditorUrl === action ) {
+			const { templateId } = payload;
+			if ( ! templateId ) {
+				return;
+			}
+			// Update the port if it already exists, otherwise add it:
+			const existingPort = this.templatePorts.findIndex( template => template[ 0 ] === templateId );
+			if ( existingPort >= 0 ) {
+				this.templatePorts[ existingPort ] = [ templateId, ports[ 0 ] ];
+			} else {
+				this.templatePorts.push( [ templateId, ports[ 0 ] ] );
+			}
+			this.sendTemplateEditorUrl( templateId );
 		}
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
@@ -288,7 +297,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	// ID, we want to do a server nav back to that page.
 	shouldDoServerBackNav = () => {
 		const { fseParentPageId, postType } = this.props;
-		return null != fseParentPageId && 'wp_template_part' === postType;
+		return null != fseParentPageId && 'wp_template' === postType;
 	};
 
 	loadRevision = ( {
@@ -435,26 +444,23 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		this.props.navigate( customizerUrl );
 	};
 
-	getTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
-		const { getTemplatePartEditorUrl, editedPostId } = this.props;
+	getTemplateEditorUrl = ( templateId: T.PostId ) => {
+		const { getTemplateEditorUrl, editedPostId } = this.props;
 
-		let templatePartEditorUrl = getTemplatePartEditorUrl( templatePartId );
+		let templateEditorUrl = getTemplateEditorUrl( templateId );
 		if ( editedPostId ) {
-			templatePartEditorUrl = addQueryArgs(
-				{ fse_parent_post: editedPostId },
-				templatePartEditorUrl
-			);
+			templateEditorUrl = addQueryArgs( { fse_parent_post: editedPostId }, templateEditorUrl );
 		}
 
-		return templatePartEditorUrl;
+		return templateEditorUrl;
 	};
 
-	sendTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
-		const templatePartEditorUrl = this.getTemplatePartEditorUrl( templatePartId );
-		const port = this.templateParts.find(
-			( [ portTemplatePartId ] ) => portTemplatePartId === templatePartId
+	sendTemplateEditorUrl = ( templateId: T.PostId ) => {
+		const templateEditorUrl = this.getTemplateEditorUrl( templateId );
+		const port = this.templatePorts.find(
+			( [ portTemplateId ] ) => portTemplateId === templateId
 		)[ 1 ];
-		port.postMessage( `${ window.location.origin }${ templatePartEditorUrl }` );
+		port.postMessage( `${ window.location.origin }${ templateEditorUrl }` );
 	};
 
 	handleConversionResponse = ( confirmed: boolean ) => {
@@ -609,7 +615,7 @@ const mapStateToProps = (
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
 	let closeUrl = getPostTypeAllPostsUrl( state, postType );
-	if ( 'wp_template_part' === postType ) {
+	if ( 'wp_template' === postType ) {
 		closeUrl = getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
 	}
 
@@ -625,12 +631,12 @@ const mapStateToProps = (
 		siteId,
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getTemplatePartEditorUrl: partial(
+		getTemplateEditorUrl: partial(
 			getGutenbergEditorUrl,
 			state,
 			siteId,
 			partial.placeholder,
-			'wp_template_part'
+			'wp_template'
 		),
 	};
 };
