@@ -611,59 +611,58 @@ function openCustomizer( calypsoPort ) {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-async function openTemplatePartEditor( calypsoPort ) {
+function setupEditTemplateLinks( calypsoPort ) {
 	// We only want this when editing a full site page.
 	if ( ! window.fullSiteEditing || 'page' !== window.fullSiteEditing.editorPostType ) {
 		return;
 	}
 
-	const getTemplatePartLinks = async () =>
-		new Promise( resolve => {
-			const unsubscribe = subscribe( () => {
-				const currentPost = select( 'core/editor' ).getCurrentPost();
-				const initialized = currentPost && currentPost.id;
-
-				if ( ! initialized ) {
-					return;
-				}
-
-				unsubscribe();
-
-				const interval = setInterval( () => {
-					const links = document.querySelectorAll(
-						'[data-type="a8c/template"] .template-block__overlay a'
-					);
-					const blocks = select( 'core/editor' )
-						.getBlocks()
-						.filter( block => block.name === 'a8c/template' );
-
-					if ( links.length !== blocks.length ) {
-						return;
-					}
-
-					clearInterval( interval );
-					resolve( links );
-				} );
-			} );
-		} );
-
-	const editTemplatePartLinks = await getTemplatePartLinks();
-
-	editTemplatePartLinks.forEach( link => {
-		const templatePartId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
+	const handleNewTemplateLinks = link => {
+		const templateId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
 
 		const { port1, port2 } = new MessageChannel();
-		calypsoPort.postMessage(
-			{
-				action: 'getTemplatePartEditorUrl',
-				payload: { templatePartId },
-			},
-			[ port2 ]
-		);
+
 		port1.onmessage = ( { data } ) => {
 			link.setAttribute( 'target', '_parent' );
 			link.setAttribute( 'href', data );
 		};
+
+		// Ask for another URl for the template:
+		calypsoPort.postMessage(
+			{
+				action: 'getTemplateEditorUrl',
+				payload: { templateId },
+			},
+			[ port2 ]
+		);
+	};
+
+	subscribe( () => {
+		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const initialized = currentPost && currentPost.id;
+
+		if ( ! initialized ) {
+			return;
+		}
+
+		// When the template block becomes selected, we want to change
+		// the link of the "edit template" button.
+		const selectedBlock = select( 'core/editor' ).getSelectedBlock();
+
+		if ( selectedBlock && 'a8c/template' === selectedBlock.name ) {
+			const getImpendingLinks = setInterval( () => {
+				const editTemplateLink = document.querySelector(
+					'[data-type="a8c/template"] .template-block__overlay a'
+				);
+
+				// Keep looking for it as the DOM may not have loaded yet:
+				if ( ! editTemplateLink ) {
+					return;
+				}
+				clearInterval( getImpendingLinks );
+				handleNewTemplateLinks( editTemplateLink );
+			} );
+		}
 	} );
 }
 
@@ -768,7 +767,7 @@ function initPort( message ) {
 
 		openCustomizer( calypsoPort );
 
-		openTemplatePartEditor( calypsoPort );
+		setupEditTemplateLinks( calypsoPort );
 
 		getCloseButtonUrl( calypsoPort );
 	}
