@@ -51,12 +51,12 @@ class ImporterAuthorMapping extends React.Component {
 
 		if ( hasSingleAuthor ) {
 			/**
-			 * Using `defer` here is a leftover from using Flux store here.
+			 * Using `defer` here is a leftover from using Flux store in the past.
 			 *
 			 * It's not ideal and should be refactored in the future to read
 			 * the state, instead of automating the UI in this way.
 			 *
-			 * This effort is quite big as it requires refactoring a a few things on more fundamental
+			 * This effort is quite big as it requires refactoring a few things on more fundamental
 			 * level in the imports section.
 			 *
 			 * TODO: Refactor this to not automate the UI but use proper state
