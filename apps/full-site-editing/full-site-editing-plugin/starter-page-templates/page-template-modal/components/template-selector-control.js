@@ -28,7 +28,7 @@ const { siteInformation = {} } = window.starterPageTemplatesConfig;
  */
 const TemplateDynamicPreview = ( { value, rawBlocks } ) => {
 	const itemRef = useRef( null );
-	const [ cssClasses, setCssClasses ] = useState( 'is-rendering' );
+	const [ dynamicCssClasses, setDynamicCssClasses ] = useState( 'is-rendering' );
 
 	const blocks = useMemo( () => parseBlocks( rawBlocks ).slice( 0, 10 ), [ rawBlocks ] );
 
@@ -38,7 +38,7 @@ const TemplateDynamicPreview = ( { value, rawBlocks } ) => {
 
 			if ( ! el ) {
 				console.timeEnd( `tpl-${ value }` );
-				setCssClasses( '' );
+				setDynamicCssClasses( '' );
 				return;
 			}
 
@@ -48,7 +48,7 @@ const TemplateDynamicPreview = ( { value, rawBlocks } ) => {
 				setTimeout( () => {
 					editorStylesWrapperEl.classList.remove( 'editor-styles-wrapper' );
 				}, 0 );
-				setCssClasses( 'editor-styles-wrapper' );
+				setDynamicCssClasses( 'editor-styles-wrapper' );
 			}
 		}, 0 );
 
@@ -62,10 +62,8 @@ const TemplateDynamicPreview = ( { value, rawBlocks } ) => {
 		};
 	}, [ blocks, value ] );
 
-	const itemClasses = classnames( 'template-selector-control__preview-wrap', cssClasses );
-
 	return (
-		<div ref={ itemRef } className={ itemClasses }>
+		<div ref={ itemRef } className={ dynamicCssClasses }>
 			{ blocks && blocks.length ? <BlockPreview blocks={ blocks } viewportWidth={ 800 } /> : null }
 		</div>
 	);
@@ -93,7 +91,11 @@ const TemplateSelectorItem = ( {
 			rawBlocks={ replacePlaceholders( rawBlocks, siteInformation ) }
 		/>
 	) : (
-		<img src={ preview } alt={ previewAlt || '' } />
+		<img
+			className="template-selector-control__media"
+			src={ preview }
+			alt={ previewAlt || '' }
+		/>
 	);
 
 	return (
@@ -105,7 +107,9 @@ const TemplateSelectorItem = ( {
 			onClick={ () => onSelect( value, label, parseBlocks( rawBlocks ) ) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
-			{ innerPreview }
+			<div className="template-selector-control__preview-wrap">
+				{ innerPreview }
+			</div>
 			{ label }
 		</button>
 	);
@@ -118,6 +122,7 @@ function TemplateSelectorControl( {
 	instanceId,
 	onTemplateSelect = noop,
 	templates = [],
+	dynamicPreview = false,
 } ) {
 	if ( isEmpty( templates ) ) {
 		return null;
@@ -144,6 +149,7 @@ function TemplateSelectorControl( {
 							preview={ preview }
 							previewAlt={ previewAlt }
 							rawBlocks={ replacePlaceholders( content, siteInformation ) }
+							dynamicPreview={ dynamicPreview }
 						/>
 					</li>
 				) ) }
