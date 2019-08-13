@@ -8,7 +8,7 @@ import urlParseAmpCompatible from './url-parse-amp-compatible';
 /**
  * Remembers `?coupon` query argument via `localStorage`.
  */
-export function saveCouponQueryArgument() {
+export default function saveCouponQueryArgument() {
 	// Read coupon query argument, return early if there is none.
 	const parsedUrl = urlParseAmpCompatible( location.href );
 	const couponCode = parsedUrl.query.coupon;
