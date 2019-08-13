@@ -43,8 +43,28 @@ class WP_Template {
 	 * A8C_WP_Template constructor.
 	 */
 	public function __construct() {
-		$this->current_theme_name = get_option( 'stylesheet' );
+		$this->current_theme_name = $this->normalize_theme_slug( get_option( 'stylesheet' ) );
 	}
+
+	/**
+	 * Returns normalized theme slug for the current theme.
+	 *
+	 * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
+	 * For example, we will get 'modern-business' when retrieving theme slug on self hosted sites,
+	 * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
+	 *
+	 * @param string $theme_slug Theme slug to check support for.
+	 *
+	 * @return string Normalized theme slug.
+	 */
+	public function normalize_theme_slug( $theme_slug ) {
+		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
+			$theme_slug = str_replace( 'pub/', '', $theme_slug );
+		}
+
+		return $theme_slug;
+	}
+
 
 	/**
 	 * Checks whether the provided template type is supported in FSE.
