@@ -5,11 +5,12 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke } from 'lodash';
+import { flow, get, includes, invoke, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
@@ -23,6 +24,8 @@ import Notice from 'components/notice';
 import wpcom from 'lib/wp';
 import { saveSignupStep } from 'state/signup/progress/actions';
 import { suggestDomainFromImportUrl } from 'lib/importer/utils';
+import { getFileImporters } from 'lib/importer/importer-config';
+import ImporterLogo from 'my-sites/importer/importer-logo';
 
 /**
  * Style dependencies
@@ -31,6 +34,12 @@ import './style.scss';
 
 class ImportURLOnboardingStepComponent extends Component {
 	state = {
+		displayFallbackEngines: false,
+		fallbackSiteDetails: {
+			siteFavion: '',
+			siteTitle: '',
+			siteUrl: '',
+		},
 		isLoading: false,
 		// Url message could be client-side validation or server-side error.
 		urlValidationMessage: '',
@@ -41,6 +50,34 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.setInputValueFromProps();
 		this.focusInput();
 	}
+
+	handleEngineSelect = siteEngine => event => {
+		event.preventDefault();
+
+		const { stepName } = this.props;
+		const { siteFavicon, siteTitle, siteUrl } = this.state.fallbackSiteDetails;
+
+		this.props.setImportOriginSiteDetails( {
+			importerTypes: [ 'file' ],
+			importSiteUrl: siteUrl,
+			siteEngine,
+			siteFavicon,
+			siteTitle,
+		} );
+
+		this.props.submitSignupStep(
+			{ stepName },
+			{
+				importSiteEngine: siteEngine,
+				importSiteFavicon: siteFavicon,
+				importSiteUrl: siteUrl,
+				siteTitle,
+				themeSlugWithRepo: 'pub/modern-business',
+			}
+		);
+
+		this.props.goToNextStep();
+	};
 
 	handleInputChange = event => {
 		this.props.setNuxUrlInputValue( event.target.value );
@@ -85,14 +122,6 @@ class ImportURLOnboardingStepComponent extends Component {
 					site_url: siteUrl,
 					importer_types: importerTypes,
 				} ) => {
-					if ( ! includes( importerTypes, 'url' ) ) {
-						return this.setUrlError(
-							translate(
-								"That doesn't seem to be a Wix or GoDaddy site. Please check the URL and try again."
-							)
-						);
-					}
-
 					if ( 404 === siteStatus ) {
 						return this.setUrlError(
 							translate( 'That site was not found. Please check the URL and try again.' )
@@ -104,6 +133,17 @@ class ImportURLOnboardingStepComponent extends Component {
 						return this.setUrlError(
 							translate( 'That site responded with an error. Please check the URL and try again.' )
 						);
+					}
+
+					if ( 'unknown' === siteEngine || isEmpty( importerTypes ) ) {
+						return this.setState( {
+							displayFallbackEngines: true,
+							fallbackSiteDetails: {
+								siteFavicon,
+								siteTitle,
+								siteUrl,
+							},
+						} );
 					}
 
 					this.props.setImportOriginSiteDetails( {
@@ -193,7 +233,24 @@ class ImportURLOnboardingStepComponent extends Component {
 		return <div className="import-url-onboarding__notice-placeholder" />;
 	};
 
-	renderContent = () => {
+	renderFallbackEngines = () => {
+		const fallbackEngines = getFileImporters();
+
+		return (
+			<div className="import-url-onboarding__fallback">
+				{ fallbackEngines.map( ( { engine, icon, title } ) => (
+					<Card key={ engine } displayAsLink onClick={ this.handleEngineSelect( engine ) }>
+						<ImporterLogo icon={ icon } />
+						<div className="import-url-onboarding__service-info">
+							<h1 className="import-url-onboarding__service-title">{ title }</h1>
+						</div>
+					</Card>
+				) ) }
+			</div>
+		);
+	};
+
+	renderUrlForm = () => {
 		const { urlInputValue, translate } = this.props;
 		const { isLoading, urlValidationMessage } = this.state;
 
@@ -239,11 +296,17 @@ class ImportURLOnboardingStepComponent extends Component {
 
 	render() {
 		const { flowName, positionInFlow, stepName, translate } = this.props;
+		const { displayFallbackEngines } = this.state;
 
-		const headerText = translate( 'Where can we find your old site?' );
-		const subHeaderText = translate(
-			"We'll check your website to see what content we can bring to your new WordPress site."
-		);
+		const headerText = displayFallbackEngines
+			? translate( 'Where did you get your import file?' )
+			: translate( 'Where can we find your old site?' );
+		const subHeaderText =
+			! displayFallbackEngines &&
+			translate(
+				"We'll check your website to see what content we can bring to your new WordPress site."
+			);
+		const content = displayFallbackEngines ? this.renderFallbackEngines() : this.renderUrlForm();
 
 		return (
 			<StepWrapper
@@ -255,7 +318,7 @@ class ImportURLOnboardingStepComponent extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				stepContent={ this.renderContent() }
+				stepContent={ content }
 			/>
 		);
 	}
