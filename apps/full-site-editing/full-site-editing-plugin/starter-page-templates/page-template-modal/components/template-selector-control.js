@@ -21,23 +21,17 @@ import replacePlaceholders from '../utils/replace-placeholders';
 // Load config passed from backend.
 const { siteInformation = {} } = window.starterPageTemplatesConfig;
 
-/*
- * It renders the block preview content for the template.
- * It the templates blocks are not ready yet or not exist,
- * it tries to render a static image, or simply return null.
- */
-const TemplateDynamicPreview = ( { value, rawBlocks, blocksInPreview = 10 } ) => {
+const TemplateDynamicPreview = ( { rawBlocks, blocksInPreview = 10 } ) => {
 	const itemRef = useRef( null );
 	const [ dynamicCssClasses, setDynamicCssClasses ] = useState( 'is-rendering' );
 
-	const blocks = useMemo( () => parseBlocks( rawBlocks ).slice( 0, blocksInPreview ), [ rawBlocks ] );
+	const blocks = useMemo( () => parseBlocks( rawBlocks ).slice( 0, blocksInPreview ), [ rawBlocks, blocksInPreview ] );
 
 	useLayoutEffect( () => {
 		const timerId = setTimeout( () => {
 			const el = itemRef ? itemRef.current : null;
 
 			if ( ! el ) {
-				console.timeEnd( `tpl-${ value }` );
 				setDynamicCssClasses( '' );
 				return;
 			}
@@ -52,15 +46,13 @@ const TemplateDynamicPreview = ( { value, rawBlocks, blocksInPreview = 10 } ) =>
 			}
 		}, 0 );
 
-		console.timeEnd( `tpl-${ value }` );
-
 		// Cleanup
 		return () => {
 			if ( timerId ) {
 				window.clearTimeout( timerId );
 			}
 		};
-	}, [ blocks, value ] );
+	}, [ blocks ] );
 
 	return (
 		<div ref={ itemRef } className={ dynamicCssClasses }>
