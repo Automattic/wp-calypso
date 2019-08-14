@@ -1,5 +1,3 @@
-/** @format */
-
 module.exports = {
 	collectCoverageFrom: [ 'server/**/*.js?(x)' ],
 	coveragePathIgnorePatterns: [ '<rootDir>/server/devdocs/search-index.js' ],
@@ -18,7 +16,7 @@ module.exports = {
 			'@automattic/calypso-build/jest/util/assets/transform.js'
 		),
 	},
-	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form|draft-js)' ],
+	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!draft-js)' ],
 	testMatch: [ '<rootDir>/server/**/test/*.js?(x)', '!**/.eslintrc.*' ],
 	timers: 'fake',
 	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
