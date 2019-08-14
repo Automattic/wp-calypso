@@ -52,10 +52,6 @@ class TemplateSelectorControl extends Component {
 		}
 
 		return blocks[ slug ];
-		// if ( fullParsing || ! this.props.blocksInPreview ) {
-		// }
-		//
-		// return blocks[ slug ].slice( 0, this.props.blocksInPreview );
 	}
 
 	onSelectHandler( slug, title ) {

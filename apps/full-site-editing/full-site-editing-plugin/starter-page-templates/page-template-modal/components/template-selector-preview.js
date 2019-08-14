@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { BlockPreview } from '@wordpress/block-editor';
+import BlockPreview from './block-template-preview';
 
 const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 	return (
 		<div className="template-selector-preview">
-			{ blocks && <BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } /> }
+			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
 		</div>
 	);
 };

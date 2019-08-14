@@ -11,7 +11,7 @@ import { throttle } from 'lodash';
  * WordPress dependencies
  */
 import { useRef, useLayoutEffect, useState } from '@wordpress/element';
-import { BlockPreview } from '@wordpress/block-editor';
+import BlockPreview from './block-template-preview';
 
 const TemplateSelectorItem = props => {
 	const {
@@ -70,13 +70,10 @@ const TemplateSelectorItem = props => {
 
 	const innerPreview = dynamicPreview ? (
 		<div ref={ itemRef } className={ dynamicCssClasses }>
-			{ blocks && blocks.length ?
-				<BlockPreview
-					blocks={ blocksLimit ? blocks.slice( 0, blocksLimit ) : blocks }
-					viewportWidth={ 800 }
-				/> :
-				null
-			}
+			<BlockPreview
+				blocks={ blocksLimit ? blocks.slice( 0, blocksLimit ) : blocks }
+				viewportWidth={ 800 }
+			/>
 		</div>
 	) : (
 		<img className="template-selector-item__media" src={ preview } alt={ previewAlt } />
