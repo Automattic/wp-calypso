@@ -10,8 +10,7 @@ import { throttle } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useMemo, useRef, useLayoutEffect, useState } from '@wordpress/element';
-import { parse as parseBlocks } from '@wordpress/blocks';
+import { useRef, useLayoutEffect, useState } from '@wordpress/element';
 import { BlockPreview } from '@wordpress/block-editor';
 
 const TemplateSelectorItem = props => {
@@ -22,33 +21,14 @@ const TemplateSelectorItem = props => {
 		onFocus,
 		onSelect,
 		label,
-		rawBlocks,
 		dynamicPreview = false,
 		preview,
 		previewAlt = '',
-		blocksInPreview,
+		blocks,
 	} = props;
 
 	const itemRef = useRef( null );
 	const [ dynamicCssClasses, setDynamicCssClasses ] = useState( 'is-rendering' );
-
-	/**
-	 * Memoize parsed blocks.
-	 * Use blocksInPreview property to limit the amount of blocks to memoize.
-	 */
-	const blocks = useMemo( () => {
-		if ( ! dynamicPreview ) {
-			return [];
-		}
-
-		const parsedBlocks = parseBlocks( rawBlocks );
-		if ( blocksInPreview ) {
-			return parsedBlocks.slice( 0, blocksInPreview );
-		}
-
-		return parsedBlocks;
-
-	}, [ rawBlocks, blocksInPreview, dynamicPreview ] );
 
 	useLayoutEffect( () => {
 		const timerId = setTimeout( () => {
@@ -78,35 +58,6 @@ const TemplateSelectorItem = props => {
 		};
 	}, [ blocks ] );
 
-
-	/**
-	 * onClick button handler function.
-	 * It call the onSelect() function property.
-	 *
-	 * If it isn't a dynamic preview,
-	 * or the blocks amount in the preview is defined (blocksInPreview),
-	 * it parses the raw block contents.
-	 *
-	 * @return {null} Null
-	 */
-		const onSelectHandler = () => (
-			( blocksInPreview || ! dynamicPreview ) ?
-				onSelect( value, label, parseBlocks( rawBlocks ) ) :
-				onSelect( value, label, blocks )
-		);
-
-		/**
-		 * onMouseEnter button handler function.
-		 * It call the onFocus() function property.
-		 *
-		 * @return {null} Null
-		 */
-	const onFocusHandler = () => (
-		( blocksInPreview || ! dynamicPreview ) ?
-			onFocus( value, label, parseBlocks( rawBlocks ) ) :
-			onFocus( value, label, blocks )
-	);
-
 	const innerPreview = dynamicPreview ? (
 		<div ref={ itemRef } className={ dynamicCssClasses }>
 			{ blocks && blocks.length ? <BlockPreview blocks={ blocks } viewportWidth={ 800 } /> : null }
@@ -121,8 +72,8 @@ const TemplateSelectorItem = props => {
 			id={ `${ id }-${ value }` }
 			className="template-selector-item__label"
 			value={ value }
-			onClick={ onSelectHandler }
-			onMouseEnter={ throttle( onFocusHandler, 300) }
+			onClick={ () => onSelect( value, label ) }
+			onMouseEnter={ throttle( () => onFocus( value, label ), 300) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
