@@ -111,7 +111,6 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
-		"reader/new-post-notifications": true,
 		"reader/high-watermark": true,
 		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
