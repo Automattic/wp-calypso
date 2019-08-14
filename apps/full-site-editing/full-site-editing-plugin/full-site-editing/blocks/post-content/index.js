@@ -39,8 +39,10 @@ const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
 	};
 }, 'addContentSlotClassname' );
 
+// Must be 9 or this breaks on Simple Sites
 addFilter(
 	'editor.BlockListBlock',
 	'full-site-editing/blocks/post-content',
-	addContentSlotClassname
+	addContentSlotClassname,
+	9
 );
