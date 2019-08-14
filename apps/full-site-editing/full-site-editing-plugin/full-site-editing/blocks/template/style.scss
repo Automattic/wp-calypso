@@ -4,9 +4,12 @@
 }
 
 .template__block-container {
-	cursor: pointer;
-	&.is-selected {
-		cursor: default;
+	&.is-hovered {
+		cursor: pointer;
+	}
+
+	&.is-selected .components-disabled {
+		filter: blur( 2px );
 	}
 
 	// Hide the block toolbar and border
