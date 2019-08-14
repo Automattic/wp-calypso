@@ -215,26 +215,6 @@ export class ThreatAlert extends Component {
 		return infectedPosts;
 	}
 
-	formatGroupedPosts() {
-		const {
-			threat: { rows },
-		} = this.props;
-
-		let indexedRows = {};
-
-		Object.keys( rows ).map( idx => {
-			const row = rows[ idx ];
-
-			if ( ! indexedRows[ row.description ] ) {
-				indexedRows[ row.description ] = [];
-			}
-
-			indexedRows[ row.description ].push( row.url );
-		} );
-
-		return indexedRows;
-	}
-
 	renderCardContent() {
 		const { threat, translate } = this.props;
 
