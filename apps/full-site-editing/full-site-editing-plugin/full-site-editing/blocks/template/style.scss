@@ -3,8 +3,13 @@
 	position: relative;
 }
 
-// Hide the block toolbar and border
 .template__block-container {
+	cursor: pointer;
+	&.is-selected {
+		cursor: default;
+	}
+
+	// Hide the block toolbar and border
 	.block-editor-block-contextual-toolbar,
 	.block-editor-block-list__insertion-point,
 	.block-editor-block-list__block-edit::before {
