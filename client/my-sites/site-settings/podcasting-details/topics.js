@@ -4,9 +4,9 @@
 
 export default {
 	Arts: [ 'Books', 'Design', 'Fashion & Beauty', 'Food', 'Performing Arts', 'Visual Arts' ],
-	Business: [ 'Careers', 'Entrepreneurship', 'Investing', 'Management', 'Marketing', 'Non-profit' ],
-	Comedy: [ 'Comedy Interviews', 'Improv', 'Standup' ],
-	Education: [ 'Courses', 'How to', 'Language Learning', 'Self Improvement' ],
+	Business: [ 'Careers', 'Entrepreneurship', 'Investing', 'Management', 'Marketing', 'Non-Profit' ],
+	Comedy: [ 'Comedy Interviews', 'Improv', 'Stand-Up' ],
+	Education: [ 'Courses', 'How To', 'Language Learning', 'Self-Improvement' ],
 	Fiction: [ 'Comedy Fiction', 'Drama', 'Science Fiction' ],
 	Government: [],
 	History: [],
@@ -83,5 +83,6 @@ export default {
 		'Wrestling',
 	],
 	Technology: [],
+	'True Crime': [],
 	'TV & Film': [ 'After Shows', 'Film History', 'Film Interviews', 'Film Reviews', 'TV Reviews' ],
 };
