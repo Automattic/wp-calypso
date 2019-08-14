@@ -1,3 +1,5 @@
+@import '../../sass/mixins';
+
 .block-editor {
 	.wp-block-a8c-site-title {
 		&,
@@ -19,21 +21,7 @@
 	.wp-block {
 		&.is-selected {
 			.wp-block-a8c-site-title {
-				&::-webkit-input-placeholder {
-					color: transparent;
-				}
-
-				&:-moz-placeholder {
-					color: transparent;
-				}
-
-				&::-moz-placeholder {
-					color: transparent;
-				}
-
-				&:-ms-input-placeholder {
-					color: transparent;
-				}
+				@include hide-input-placeholder;
 			}
 		}
 	}
