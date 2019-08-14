@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getNewSitePublicSetting } from '../get-new-site-public-setting';
+import getNewSitePublicSetting from '../get-new-site-public-setting';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: testName => ( testName === 'privateByDefault' ? 'selected' : '' ),

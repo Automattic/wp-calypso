@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { shouldNewSiteBePrivateByDefault } from '../should-new-site-be-private-by-default';
+import shouldNewSiteBePrivateByDefault from '../should-new-site-be-private-by-default';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: testName => ( testName === 'privateByDefault' ? 'selected' : '' ),

@@ -11,7 +11,7 @@ import { getCurrentFlowName } from 'state/signup/flow/selectors';
  * @param state The current client state
  * @returns `true` for private by default & `false` for not
  */
-export function shouldNewSiteBePrivateByDefault( state: object ): boolean {
+export default function shouldNewSiteBePrivateByDefault( state: object ): boolean {
 	if ( getCurrentFlowName( state ) === 'test-fse' ) {
 		return true;
 	}
