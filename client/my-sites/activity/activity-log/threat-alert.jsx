@@ -130,7 +130,7 @@ export class ThreatAlert extends Component {
 
 			case 'database':
 				return translate(
-					'Jetpack identified $(threatCount)d threat in your database.',
+					'Jetpack identified %(threatCount)d threat in your database.',
 					'Jetpack identified %(threatCount)d threats in your database.',
 					{
 						count: Object.keys( threat.rows ).length,
@@ -182,10 +182,10 @@ export class ThreatAlert extends Component {
 			threat: { rows },
 			siteSlug,
 		} = this.props;
-		let infectedPosts = [];
+		const infectedPosts = [];
 
 		function findObjectIndexInArray( array, attr, value ) {
-			for ( var i = 0; i < array.length; i++ ) {
+			for ( let i = 0; i < array.length; i++ ) {
 				if ( array[ i ][ attr ] === value ) {
 					return i;
 				}
@@ -202,12 +202,14 @@ export class ThreatAlert extends Component {
 					postTitle: row.description,
 					editUrl: `/post/${ siteSlug }/${ row.id }`,
 					ids: [ parseInt( row.id ) ],
+					minId: parseInt( row.id ),
 					links: [ row.url ],
 				} );
 			} else {
 				infectedPosts[ postIndex ].ids.push( parseInt( row.id ) );
 				infectedPosts[ postIndex ].links.push( row.url );
 				const minId = Math.min.apply( null, infectedPosts[ postIndex ].ids );
+				infectedPosts[ postIndex ].minId = minId;
 				infectedPosts[ postIndex ].editUrl = `/post/${ siteSlug }/${ minId }`;
 			}
 		} );
@@ -246,9 +248,21 @@ export class ThreatAlert extends Component {
 												}
 											) }
 										</em>
-										<InfoPopover position="left" className="threat-alert__database-row-info">
-											{ translate( 'Suspicious links flagged by Jetpack Security Scanner' ) }
-										</InfoPopover>
+										<div className="threat-alert__database-row-info">
+											<InfoPopover>
+												{ translate(
+													'This link is included in post ID %(postId)d and %(revCount)d associated revision.',
+													'This link is included in post ID %(postId)d and %(revCount)d associated revisions.',
+													{
+														count: infectedPost.links.length,
+														args: {
+															postId: infectedPost.minId,
+															revCount: infectedPost.links.length,
+														},
+													}
+												) }
+											</InfoPopover>
+										</div>
 									</div>
 									<ol className="threat-alert__database-row-list">
 										{ infectedPost.links.map( ( link, linkKey ) => (
