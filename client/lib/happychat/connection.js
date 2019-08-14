@@ -50,47 +50,45 @@ class Connection {
 
 		this.openSocket = new Promise( ( resolve, reject ) => {
 			auth
-				.then(
-					( {
-						url,
-						user: { authed_user_id: authedUserId, jwt, locale, groups, skills, geoLocation },
-					} ) => {
-						const socket = buildConnection( url, authedUserId, jwt );
+				.then( ( { url, user } ) => {
+					const { authed_user_id: authedUserId, jwt, locale, groups, skills, geoLocation } = user;
+					const socket = buildConnection( url, authedUserId, jwt );
 
-						socket.onOpen( () => dispatch( receiveConnect() ) );
-						socket.onError( () => dispatch( receiveReconnecting() ) );
-						socket.onClose( () => dispatch( receiveDisconnect( 'Connection closed.' ) ) );
+					socket.onOpen( () => dispatch( receiveConnect() ) );
+					socket.onError( () => dispatch( receiveReconnecting() ) );
+					socket.onClose( () => dispatch( receiveDisconnect( 'Connection closed.' ) ) );
 
-						this.channel = socket.channel( `customers:${ authedUserId }` );
+					this.channel = socket.channel( `customers:${ authedUserId }`, user );
 
-						this.channel.on( 'token', handler => {
-							dispatch( receiveToken() );
-							handler( { authedUserId, jwt, locale, groups, skills } );
-						} );
+					this.channel.on( 'token', handler => {
+						dispatch( receiveToken() );
+						handler( { authedUserId, jwt, locale, groups, skills } );
+					} );
 
-						this.channel.on( 'init', () => {
-							dispatch( receiveInit( { authedUserId, locale, groups, skills, geoLocation } ) );
-							dispatch( requestTranscript() );
-							resolve( socket );
-						} );
+					this.channel.on( 'init', () => {
+						dispatch( receiveInit( { authedUserId, locale, groups, skills, geoLocation } ) );
+						dispatch( requestTranscript() );
+						resolve( socket );
+					} );
 
-						this.channel.on( 'unauthorized', () => {
-							socket.close();
-							dispatch( receiveUnauthorized( 'User is not authorized' ) );
-							reject( 'user is not authorized' );
-						} );
+					this.channel.on( 'unauthorized', () => {
+						socket.close();
+						dispatch( receiveUnauthorized( 'User is not authorized' ) );
+						reject( 'user is not authorized' );
+					} );
 
-						this.channel.on( 'status', status => dispatch( receiveStatus( status ) ) );
-						this.channel.on( 'accept', accept => dispatch( receiveAccept( accept ) ) );
-						this.channel.on( 'localized-support', accept =>
-							dispatch( receiveLocalizedSupport( accept ) )
-						);
-						this.channel.on( 'message', message => dispatch( receiveMessage( message ) ) );
+					this.channel.on( 'status', status => dispatch( receiveStatus( status ) ) );
+					this.channel.on( 'accept', ( { can_accept: canAccept } ) =>
+						dispatch( receiveAccept( canAccept ) )
+					);
+					this.channel.on( 'localized-support', accept =>
+						dispatch( receiveLocalizedSupport( accept ) )
+					);
+					this.channel.on( 'message', message => dispatch( receiveMessage( message ) ) );
 
-						socket.connect();
-						this.channel.join();
-					}
-				)
+					socket.connect();
+					this.channel.join();
+				} )
 				.catch( e => reject( e ) );
 		} );
 
