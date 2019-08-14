@@ -10,7 +10,7 @@ import { throttle } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useRef, useLayoutEffect, useState } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import BlockPreview from './block-template-preview';
 
 const TemplateSelectorItem = props => {
@@ -28,37 +28,7 @@ const TemplateSelectorItem = props => {
 		blocksInPreview,
 	} = props;
 
-	const itemRef = useRef( null );
-	const [ dynamicCssClasses, setDynamicCssClasses ] = useState( 'is-rendering' );
 	const [ blocksLimit, setBlockLimit ] = useState( blocksInPreview );
-
-	useLayoutEffect( () => {
-		const timerId = setTimeout( () => {
-			const el = itemRef ? itemRef.current : null;
-
-			if ( ! el ) {
-				setDynamicCssClasses( '' );
-				return;
-			}
-
-			// Try to pick up the editor styles wrapper element,
-			// and move its `.editor-styles-wrapper` class out of the preview.
-			const editorStylesWrapperEl = el.querySelector( '.editor-styles-wrapper' );
-			if ( editorStylesWrapperEl ) {
-				setTimeout( () => {
-					editorStylesWrapperEl.classList.remove( 'editor-styles-wrapper' );
-				}, 0 );
-				setDynamicCssClasses( 'editor-styles-wrapper' );
-			}
-		}, 0 );
-
-		// Cleanup
-		return () => {
-			if ( timerId ) {
-				window.clearTimeout( timerId );
-			}
-		};
-	}, [ blocks ] );
 
 	const onFocusHandler = () => {
 		if ( blocks.length > blocksLimit ) {
@@ -69,12 +39,10 @@ const TemplateSelectorItem = props => {
 	};
 
 	const innerPreview = dynamicPreview ? (
-		<div ref={ itemRef } className={ dynamicCssClasses }>
-			<BlockPreview
-				blocks={ blocksLimit ? blocks.slice( 0, blocksLimit ) : blocks }
-				viewportWidth={ 800 }
-			/>
-		</div>
+		<BlockPreview
+			blocks={ blocksLimit ? blocks.slice( 0, blocksLimit ) : blocks }
+			viewportWidth={ 800 }
+		/>
 	) : (
 		<img className="template-selector-item__media" src={ preview } alt={ previewAlt } />
 	);
