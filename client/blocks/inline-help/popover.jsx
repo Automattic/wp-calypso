@@ -44,6 +44,7 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
 	composeAnalytics,
@@ -381,6 +382,10 @@ function mapStateToProps( state, { moment } ) {
 		].includes( getActiveTheme( state, siteId ) ) &&
 		moment( getSiteOption( state, siteId, 'created_at' ) ).isAfter( '20190314' );
 
+	const isAllowedToUseClassic =
+		! isSiteUsingFullSiteEditing( state, siteId ) && ! isUsingGutenbergPageTemplates;
+	const showOptOut = optInEnabled && isGutenbergEditor && isAllowedToUseClassic;
+
 	return {
 		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
@@ -390,7 +395,7 @@ function mapStateToProps( state, { moment } ) {
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: optInEnabled && isGutenbergEditor && ! isUsingGutenbergPageTemplates,
+		showOptOut,
 		showOptIn: optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 	};
