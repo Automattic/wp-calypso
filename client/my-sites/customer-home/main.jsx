@@ -79,11 +79,6 @@ class Home extends Component {
 			return (
 				<EmptyContent
 					title={ preventWidows( title ) }
-					line={ preventWidows(
-						translate(
-							"Ensure you have selected the right site on the sidebar. If it's correct, you might want to contact the administrator of this site."
-						)
-					) }
 					illustration="/calypso/images/illustrations/error.svg"
 				/>
 			);
