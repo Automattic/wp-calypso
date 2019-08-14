@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, noop, each, filter } from 'lodash';
+import { isEmpty, each } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -35,13 +35,7 @@ class TemplateSelectorControl extends Component {
 			const blocks = {};
 			each( props.templates, ( { content, slug } ) => {
 				if ( content ) {
-					const parsedBlocks = parseBlocks( content );
-					blocks[ slug ] = {
-						parsed: props.blocksInPreview ?
-							parsedBlocks.slice( 0, props.blocksInPreview ) :
-							parsedBlocks,
-						full: ! props.blocksInPreview,
-					}
+					blocks[ slug ] = parseBlocks( content );
 				}
 			} );
 			this.state.blocks = blocks;
@@ -51,33 +45,17 @@ class TemplateSelectorControl extends Component {
 		this.onFocusHandler = this.onFocusHandler.bind( this );
 	}
 
-	getParsedBlocks ( slug, forceFullParsing = false ) {
+	getParsedBlocks ( slug, fullParsing = false ) {
 		const { blocks } = this.state;
-		const alreadyFullParsed = blocks && blocks[ slug ] && blocks[ slug ].full;
-		// Return parsed blocks from the state if it isn't a force-full-parsing,
-		// or if it's already full parsed.
-		if ( ! forceFullParsing || alreadyFullParsed ) {
-			return blocks && blocks[ slug ] ? blocks[ slug ].parsed : null;
-		}
-
-		// Pick up the template from the properties, according to the given slug,
-		// in order to get its content.
-		let template = filter( this.props.templates, { slug } );
-		template = template.length ? template[ 0 ] : null;
-		if ( ! template || ! template.content ) {
+		if ( ! blocks || ! blocks[ slug ] ) {
 			return null;
 		}
 
-		// Always parse the blocks in static preview
-		if ( ! this.props.dynamicPreview && ! forceFullParsing ) {
-			return parseBlocks( template.content );
+		if ( fullParsing || ! this.props.blocksInPreview ) {
+			return blocks[ slug ];
 		}
 
-		// proceed to parse all blocks for this template
-		const allParsed = parseBlocks( template.content );
-		this.setState( { blocks: { ...blocks, [ slug ]: { parsed: allParsed, full: true } } } );
-
-		return allParsed;
+		return blocks[ slug ].slice( 0, this.props.blocksInPreview );
 	}
 
 	onSelectHandler( slug, title ) {
