@@ -42,7 +42,7 @@ class PageTemplateModal extends Component {
 	}
 
 	selectTemplate = () => {
-		// this.setState( { isOpen: false } );
+		this.setState( { isOpen: false } );
 		trackSelection( this.props.segment.id, this.props.vertical.id, this.state.slug );
 
 		this.props.saveTemplateChoice( this.state.slug );
@@ -60,7 +60,7 @@ class PageTemplateModal extends Component {
 	};
 
 	closeModal = () => {
-		// this.setState( { isOpen: false } );
+		this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
@@ -88,7 +88,7 @@ class PageTemplateModal extends Component {
 							/>
 						</fieldset>
 					</form>
-					<TemplateSelectorPreview blocks={ this.state.previewBlocks } viewportWidth={ 800 } />
+					<TemplateSelectorPreview blocks={ this.state.previewBlocks } viewportWidth={ 960 } />
 				</div>
 				<div className="page-template-modal__buttons">
 					<Button isDefault isLarge onClick={ this.closeModal }>

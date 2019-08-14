@@ -142,7 +142,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		background: $template-selector-empty-background;
 		border-radius: 0;
 		overflow: hidden;
-		padding-bottom: 110%;
+		height: 170px;
 		box-sizing: content-box;
 		position: relative;
 		pointer-events: none;
@@ -232,8 +232,29 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 // Preview adjustments.
-.editor-styles-wrapper .block-editor-block-preview__container {
-	.block-editor-block-list__block[data-type='core/cover'] {
-		width: 100%;
+.edit-post-visual-editor .editor-styles-wrapper .block-editor-block-preview__container {
+	.wp-block[data-align='wide'] {
+		max-width: 800px; // same width tha the viewportWidth
+	}
+
+	.block-editor-block-list__block {
+		.block-editor-block-list__block-edit {
+			@media screen and ( min-width: 600px ) {
+				margin: 0;
+			}
+		}
+	}
+
+	.wp-block-columns > .editor-inner-blocks > .editor-block-list__layout > [data-type='core/column'] > .editor-block-list__block-edit > div > .block-core-columns > .editor-inner-blocks {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+}
+.template-selector-preview .edit-post-visual-editor,
+.template-selector-item__preview-wrap .edit-post-visual-editor {
+	height: 100%;
+
+	.editor-styles-wrapper {
+		height: 100%;
 	}
 }

@@ -41,7 +41,7 @@ const TemplateSelectorItem = props => {
 	const innerPreview = dynamicPreview ? (
 		<BlockPreview
 			blocks={ blocksLimit ? blocks.slice( 0, blocksLimit ) : blocks }
-			viewportWidth={ 800 }
+			viewportWidth={ 960 }
 		/>
 	) : (
 		<img className="template-selector-item__media" src={ preview } alt={ previewAlt } />
