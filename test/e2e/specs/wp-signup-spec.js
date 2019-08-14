@@ -1762,6 +1762,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
+		step( 'Can see the plans page and pick the free plan', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			return await pickAPlanPage.selectFreePlan();
+		} );
+
 		step(
 			'Can then see the sign up processing page which will finish automatically move along',
 			async function() {
