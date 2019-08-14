@@ -77,7 +77,13 @@ export function checkoutPending( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+	context.primary = (
+		<CheckoutPendingComponent
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ context.query.redirectTo }
+		/>
+	);
 
 	next();
 }

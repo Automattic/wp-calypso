@@ -145,12 +145,21 @@ export class RedirectPaymentBox extends PureComponent {
 			disabled: true,
 		} );
 
-		let cancelUrl = origin + '/checkout/';
+		let cancelUrl = origin + '/checkout/',
+			successUrl;
+		const redirectTo = this.props.redirectTo();
+		const redirectPath = redirectTo.includes( 'https://' ) ? redirectTo : origin + redirectTo;
 
 		if ( this.props.selectedSite ) {
 			cancelUrl += this.props.selectedSite.slug;
+			successUrl =
+				origin +
+				`/checkout/thank-you/${
+					this.props.selectedSite.slug
+				}/pending?redirectTo=${ redirectPath }`;
 		} else {
 			cancelUrl += 'no-site';
+			successUrl = origin + this.props.redirectTo();
 		}
 
 		// unmask form values
@@ -161,7 +170,7 @@ export class RedirectPaymentBox extends PureComponent {
 		const dataForApi = {
 			payment: Object.assign( {}, paymentDetails, {
 				paymentMethod: this.paymentMethodByType( this.props.paymentType ),
-				successUrl: origin + this.props.redirectTo(),
+				successUrl: successUrl,
 				cancelUrl,
 			} ),
 			cart: this.props.cart,
