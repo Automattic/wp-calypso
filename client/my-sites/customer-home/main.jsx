@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -12,6 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
@@ -69,6 +70,35 @@ class Home extends Component {
 		isSiteEligible: PropTypes.bool.isRequired,
 	};
 
+	state = {
+		renderChecklistCompleteBanner: null,
+	};
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		// If we still don't have checklist data or we don't want to render the banner, probably because
+		// this is a page load, don't change the state.
+		if (
+			null === nextProps.isChecklistComplete ||
+			'norender' === prevState.renderChecklistCompleteBanner
+		) {
+			return null;
+		}
+		// If this state prop doesn't have a value yet
+		if ( null === prevState.renderChecklistCompleteBanner ) {
+			return {
+				// Set to norender because this is the initial state value and the checklist is completed.
+				// Otherwise the banner will always display once the checklist is completed, even on page load.
+				renderChecklistCompleteBanner: nextProps.isChecklistComplete ? 'norender' : 'waiting', // If checklist is not complete, let's flag it and wait until it is.
+			};
+		}
+		// If we're here, this is not a page load, so let's check if the checklist was completed.
+		if ( nextProps.isChecklistComplete ) {
+			return {
+				renderChecklistCompleteBanner: 'render',
+			};
+		}
+	}
+
 	render() {
 		const { translate, canUserUseCustomerHome } = this.props;
 
@@ -84,24 +114,34 @@ class Home extends Component {
 			);
 		}
 
-		const { siteId, hasChecklistData, isChecklistComplete } = this.props;
+		const { siteId, hasChecklistData, isChecklistComplete, checklistMode } = this.props;
+		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
 			<Main className="customer-home__main is-wide-layout">
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				<SidebarNavigation />
-				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ hasChecklistData && (
-					<Fragment>
-						{ isChecklistComplete ? this.renderCustomerHome() : this.renderChecklist() }
-					</Fragment>
+				{ renderChecklistCompleteBanner && (
+					<Banner
+						dismissPreferenceName
+						dismissTemporary={ true }
+						icon="checkmark"
+						disableHref
+						title={ translate( 'Congratulations!' ) }
+						description={ translate( "You've completed each item in your checklist." ) }
+					/>
 				) }
+				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
+				{ hasChecklistData &&
+					( isChecklistComplete ? (
+						this.renderCustomerHome()
+					) : (
+						<ChecklistWpcom displayMode={ checklistMode } />
+					) ) }
 			</Main>
 		);
 	}
-
-	renderChecklist = () => <ChecklistWpcom displayMode={ this.props.checklistMode } />;
 
 	renderCustomerHome = () => {
 		const { translate, customizeUrl, site, siteSlug } = this.props;
