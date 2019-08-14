@@ -78,6 +78,35 @@ const TemplateSelectorItem = props => {
 		};
 	}, [ blocks ] );
 
+
+	/**
+	 * onClick button handler function.
+	 * It call the onSelect() function property.
+	 *
+	 * If it isn't a dynamic preview,
+	 * or the blocks amount in the preview is defined (blocksInPreview),
+	 * it parses the raw block contents.
+	 *
+	 * @return {null} Null
+	 */
+		const onSelectHandler = () => (
+			( blocksInPreview || ! dynamicPreview ) ?
+				onFocus( value, label, parseBlocks( rawBlocks ) ) :
+				onFocus( value, label, blocks )
+		);
+
+		/**
+		 * onMouseEnter button handler function.
+		 * It call the onFocus() function property.
+		 *
+		 * @return {null} Null
+		 */
+	const onFocusHandler = () => (
+		( blocksInPreview || ! dynamicPreview ) ?
+			onFocus( value, label, parseBlocks( rawBlocks ) ) :
+			onFocus( value, label, blocks )
+	);
+
 	const innerPreview = dynamicPreview ? (
 		<div ref={ itemRef } className={ dynamicCssClasses }>
 			{ blocks && blocks.length ? <BlockPreview blocks={ blocks } viewportWidth={ 800 } /> : null }
@@ -92,12 +121,8 @@ const TemplateSelectorItem = props => {
 			id={ `${ id }-${ value }` }
 			className="template-selector-item__label"
 			value={ value }
-			onClick={ () =>
-				onSelect( value, label, ( blocksInPreview || ! dynamicPreview ) ? parseBlocks( rawBlocks ) : blocks )
-			}
-			onMouseEnter={ throttle( () =>
-				onFocus( value, label, dynamicPreview ? blocks : parseBlocks( rawBlocks ) )
-			, 300) }
+			onClick={ onSelectHandler }
+			onMouseEnter={ throttle( onFocusHandler, 300) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
