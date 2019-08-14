@@ -40,6 +40,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
+= 0.6.1=
+* Updates priority of filter so classnames are added properly to the template blocks.
+
 = 0.6 =
 * Fix issues with Edit template and Back to Page functionality.
 
