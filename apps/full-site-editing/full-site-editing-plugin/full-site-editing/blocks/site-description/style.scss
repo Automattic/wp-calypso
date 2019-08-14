@@ -1,6 +1,7 @@
 .block-editor {
 	.wp-block-a8c-site-description {
-		&,&:focus {
+		&,
+		&:focus {
 			display: inline;
 			color: #767676;
 			font-size: 1.125em;
@@ -11,6 +12,29 @@
 			background-color: transparent;
 		}
 	}
+
+	.wp-block {
+		&.is-selected {
+			.wp-block-a8c-site-description {
+				&::-webkit-input-placeholder {
+					color: transparent;
+				}
+
+				&:-moz-placeholder {
+					color: transparent;
+				}
+
+				&::-moz-placeholder {
+					color: transparent;
+				}
+
+				&:-ms-input-placeholder {
+					color: transparent;
+				}
+			}
+		}
+	}
+
 	.site-description__save-button {
 		margin-left: auto;
 		display: block;

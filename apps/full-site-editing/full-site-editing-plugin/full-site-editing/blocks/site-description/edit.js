@@ -52,7 +52,7 @@ function SiteDescriptionEdit( {
 				value={ option }
 				onChange={ value => handleChange( value ) }
 				onKeyDown={ onKeyDown }
-				placeholder={ __( 'Site Description' ) }
+				placeholder={ __( 'Add a Site Description' ) }
 				aria-label={ __( 'Site Description' ) }
 			/>
 		</Fragment>
