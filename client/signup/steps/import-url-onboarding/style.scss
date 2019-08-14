@@ -1,50 +1,30 @@
-
-// The containing element
-.import-url-onboarding__wrapper {
-	padding: 0;
-	@include elevation ( 0 );
+.import-url-onboarding__url-card {
 	border-radius: 3px;
-	max-width: 640px;
-	margin: auto;
+	width: 380px;
+	padding: rem( 24px );
 }
 
-// Actual form input for typing the URL
-.import-url-onboarding__wrapper .import-url-onboarding__url-input {
-	border: none;
-	border-radius: 3px;
-	padding: 10px 14px;
+.import-url-onboarding__have-file-button {
+	text-align: center;
+	margin-top: 20px;
 
-	@include breakpoint( '<660px' ) {
-		padding: 14px;
+	.button.is-borderless {
+		padding: 0;
+		color: var( --color-white );
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: underline;
 	}
 }
 
-.import-url-onboarding__wrapper .import-url-onboarding__url-input-message {
-	max-width: 640px;
-	margin: 16px auto;
-}
-
-
-.import-url {
-	&__form {
-		position: relative;
+.import-url-onboarding__submit-button {
+	&.form-button {
+		float: none;
 	}
 
-	&__submit-button {
-		position: absolute;
-		top: 2px;
-		right: 2px;
-
-		@include breakpoint( '<660px' ) {
-			top: 1px;
-			right: 1px;
-		}
-	}
-}
-
-.import-url-onboarding__notice-placeholder {
-	height: 47px;
-	margin: 16px auto;
+	display: block;
+	min-width: rem( 200px );
+	margin: rem( 16px ) auto 0;
 }
 
 .import-url-onboarding__service-info {
