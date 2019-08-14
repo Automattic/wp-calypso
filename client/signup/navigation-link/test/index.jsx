@@ -12,11 +12,14 @@ import { noop } from 'lodash';
 import { NavigationLink } from '../';
 import EMPTY_COMPONENT from 'components/empty-component';
 
-jest.mock( 'signup/utils', () => ( { getStepUrl: jest.fn() } ) );
+jest.mock( 'signup/utils', () => ( {
+	getStepUrl: jest.fn(),
+	getFilteredSteps: jest.fn(),
+} ) );
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
 const signupUtils = require( 'signup/utils' );
-const { getStepUrl } = signupUtils;
+const { getStepUrl, getFilteredSteps } = signupUtils;
 
 describe( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;
@@ -25,11 +28,11 @@ describe( 'NavigationLink', () => {
 		stepName: 'test:step2',
 		positionInFlow: 1,
 		stepSectionName: 'test:section',
-		signupProgress: [
-			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
-			{ stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
-			{ stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
-		],
+		signupProgress: {
+			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+			'test:step2': { stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
+			'test:step3': { stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
+		},
 		recordTracksEvent: noop,
 		submitSignupStep: noop,
 		goToNextStep: jest.fn(),
@@ -77,6 +80,11 @@ describe( 'NavigationLink', () => {
 	test( 'should set a proper url as href prop when the direction is "back".', () => {
 		expect( getStepUrl ).not.toHaveBeenCalled();
 
+		getFilteredSteps.mockReturnValue( {
+			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+			'test:step2': { stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
+		} );
+
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
 
 		// It should call getStepUrl()
@@ -85,6 +93,9 @@ describe( 'NavigationLink', () => {
 
 		// when it is the first step
 		getStepUrl.mockReset();
+		getFilteredSteps.mockReturnValue( {
+			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+		} );
 		wrapper.setProps( { stepName: 'test:step1' } ); // set the first step
 		expect( getStepUrl ).toHaveBeenCalled();
 		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en' );

@@ -40,6 +40,10 @@ const updateStep = ( state, newStepState ) => {
 	const { stepName, status } = newStepState;
 	const stepState = get( state, stepName );
 
+	if ( ! stepState ) {
+		return state;
+	}
+
 	debug( `Updating step ${ stepName }` );
 
 	if ( status === 'pending' || status === 'completed' ) {
