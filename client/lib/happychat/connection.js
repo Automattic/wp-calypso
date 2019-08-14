@@ -112,7 +112,7 @@ class Connection {
 		} );
 	}
 
-	request( _action, _timeout ) {
+	request() {
 		return;
 	}
 }
