@@ -132,7 +132,6 @@
 		"reader/full-errors": true,
 		"reader/likes-hover": true,
 		"reader/paste-to-link": true,
-		"reader/high-watermark": true,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,
 		"resume-editing": true,
