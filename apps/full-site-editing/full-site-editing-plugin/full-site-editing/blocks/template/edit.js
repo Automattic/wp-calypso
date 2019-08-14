@@ -14,7 +14,7 @@ import { BlockEdit } from '@wordpress/editor';
 import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useState, createRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -97,10 +97,15 @@ const TemplateEdit = compose(
 				</Placeholder>
 			);
 		}
+		const navButton = createRef();
 		const [ navigateToTemplate, setNavigateToTemplate ] = useState( false );
 		useEffect( () => {
 			if ( navigateToTemplate && ! isDirty ) {
-				window.location.href = editTemplateUrl;
+				// Since we cancelled the click event to save the post
+				// we trigger it again here. We do this instead of setting
+				// window.location.href because in WordPress.com, the navigation
+				// scheme is different and not available to us here.
+				navButton.current.click();
 			}
 			receiveTemplateBlocks();
 		} );
@@ -150,7 +155,7 @@ const TemplateEdit = compose(
 						</Disabled>
 						{ isSelected && (
 							<Placeholder className="template-block__overlay">
-								<Button href={ editTemplateUrl } onClick={ save } isDefault>
+								<Button href={ editTemplateUrl } onClick={ save } isDefault ref={ navButton }>
 									{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
 								</Button>
 							</Placeholder>
