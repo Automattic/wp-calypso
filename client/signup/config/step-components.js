@@ -15,7 +15,9 @@ const stepNameToModuleName = {
 	'domain-only': 'domains',
 	'domains-theme-preselected': 'domains',
 	'domains-launch': 'domains',
+	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'from-url': 'import-url',
+	'import-url': 'import-url-onboarding',
 	launch: 'launch-site',
 	plans: 'plans',
 	'plans-business': 'plans',
