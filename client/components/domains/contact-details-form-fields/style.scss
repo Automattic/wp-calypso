@@ -35,7 +35,7 @@
 		.eu-address-fieldset {
 			.postal-code {
 				margin-left: 0;
-				max-width: 150px;
+				max-width: 33%;
 			}
 
 			.city {
@@ -43,9 +43,15 @@
 			}
 		}
 
+		.uk-address-fieldset {
+			.postal-code {
+				max-width: 33%;
+			}
+		}
+
 		.g-apps-fieldset {
 			.postal-code {
-				max-width: 150px;
+				max-width: 33%;
 			}
 		}
 	}
