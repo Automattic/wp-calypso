@@ -20,7 +20,6 @@ import {
 	receiveMessage,
 	receiveReconnecting,
 	receiveStatus,
-	receiveToken,
 	receiveUnauthorized,
 	requestTranscript,
 } from 'state/happychat/connection/actions';
@@ -60,11 +59,6 @@ class Connection {
 
 					this.channel = socket.channel( `customers:${ authedUserId }`, user );
 
-					this.channel.on( 'token', handler => {
-						dispatch( receiveToken() );
-						handler( { authedUserId, jwt, locale, groups, skills } );
-					} );
-
 					this.channel.on( 'init', () => {
 						dispatch( receiveInit( { authedUserId, locale, groups, skills, geoLocation } ) );
 						dispatch( requestTranscript() );
@@ -77,7 +71,7 @@ class Connection {
 						reject( 'user is not authorized' );
 					} );
 
-					this.channel.on( 'status', status => dispatch( receiveStatus( status ) ) );
+					this.channel.on( 'status', ( { status } ) => dispatch( receiveStatus( status ) ) );
 					this.channel.on( 'accept', ( { can_accept: canAccept } ) =>
 						dispatch( receiveAccept( canAccept ) )
 					);
@@ -116,6 +110,10 @@ class Connection {
 			// so we can relay the error message, for testing purposes
 			return Promise.reject( Error( reasons ) );
 		} );
+	}
+
+	request( _action, _timeout ) {
+		return;
 	}
 }
 
