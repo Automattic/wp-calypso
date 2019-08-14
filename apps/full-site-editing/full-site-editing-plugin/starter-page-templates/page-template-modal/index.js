@@ -4,7 +4,7 @@
 import { isEmpty } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Modal } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
@@ -22,6 +22,8 @@ class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		previewBlocks: [],
+		slug: '',
+		title: '',
 	};
 
 	constructor( props ) {
@@ -39,22 +41,22 @@ class PageTemplateModal extends Component {
 		console.timeEnd( 'PageTemplateModal' );
 	}
 
-	selectTemplate = ( slug, title, blocks ) => {
+	selectTemplate = () => {
 		this.setState( { isOpen: false } );
-		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
+		trackSelection( this.props.segment.id, this.props.vertical.id, this.state.slug );
 
-		this.props.saveTemplateChoice( slug );
+		this.props.saveTemplateChoice( this.state.slug );
 
 		// Skip inserting if there's nothing to insert.
-		if ( blocks.length === 0 ) {
+		if ( this.state.previewBlocks.length === 0 ) {
 			return;
 		}
 
-		this.props.insertTemplate( title, blocks );
+		this.props.insertTemplate( this.state.title, this.state.previewBlocks );
 	};
 
 	focusTemplate = ( slug, title, previewBlocks ) => {
-		this.setState( { previewBlocks } );
+		this.setState( { slug, title, previewBlocks } );
 	};
 
 	closeModal = () => {
@@ -80,14 +82,26 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
-								onTemplateSelect={ this.selectTemplate }
-								onTemplateFocus={ this.focusTemplate }
+								onTemplateSelect={ this.focusTemplate }
 								dynamicPreview={ true }
 								blocksInPreview={ 2 }
 							/>
 						</fieldset>
 					</form>
 					<TemplateSelectorPreview blocks={ this.state.previewBlocks } viewportWidth={ 800 } />
+				</div>
+				<div className="page-template-modal__buttons">
+					<Button isDefault isLarge onClick={ this.closeModal }>
+						{ __( 'Cancel', 'full-site-editing' ) }
+					</Button>
+					<Button
+						isPrimary
+						isLarge
+						disabled={ isEmpty( this.state.slug ) }
+						onClick={ this.selectTemplate }
+					>
+						{ __( 'Use this template', 'full-site-editing' ) }
+					</Button>
 				</div>
 			</Modal>
 		);

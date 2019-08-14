@@ -13,6 +13,8 @@
 
 $template-selector-border-color: #a1aab2;
 $template-selector-empty-background: #f6f6f6;
+$template-selector-modal-offset-right: 32px;
+$template-selector-modal-offset-bottom: 25px;
 
 // Modal Overlay
 .page-template-modal-screen-overlay {
@@ -189,6 +191,27 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
+.page-template-modal__buttons {
+	position: fixed;
+	right: $template-selector-modal-offset-right;
+	bottom: $template-selector-modal-offset-bottom;
+
+	@media screen and ( max-width: 659px ) {
+		display: flex;
+		justify-content: flex-end;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		padding: 15px;
+		background: white;
+		border-top: 1px solid $template-selector-border-color;
+	}
+
+	.components-button {
+		margin-left: 10px;
+	}
+}
+
 // Template Selector Preview
 .template-selector-preview {
 	@media screen and ( max-width: 659px ) {
@@ -197,8 +220,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	position: fixed;
 	top: 80px;
-	bottom: 25px;
-	right: 32px;
+	bottom: $template-selector-modal-offset-bottom + 50px;
+	right: $template-selector-modal-offset-right;
 	width: calc( 50% - 50px );
 	background: $template-selector-empty-background;
 	border: 1px solid $template-selector-border-color;
