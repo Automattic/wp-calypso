@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
+import { filter, first, flow, get, includes, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,8 @@ import BloggerImporter from 'my-sites/importer/importer-blogger';
 import WixImporter from 'my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState, startImport } from 'lib/importer/actions';
+import { fetchState } from 'lib/importer/actions';
+import { autoStartSiteImport } from 'state/imports/site-importer/actions';
 import { getImporters, getImporterByKey } from 'lib/importer/importer-config';
 import { appStates } from 'state/imports/constants';
 
@@ -58,10 +59,10 @@ const importerComponents = {
 };
 
 const filterImportsForSite = ( siteID, imports ) => {
-	return filter( imports, importItem => importItem.site.ID === siteID );
+	return filter( imports, importItem => siteID && get( importItem, 'site.ID' ) === siteID );
 };
 
-const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
+const getImporterTypeForEngine = memoize( engine => `importer-type-${engine}` );
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -71,23 +72,39 @@ class SectionImport extends Component {
 	state = getImporterState();
 
 	onceAutoStartImport = once( () => {
-		const { engine, site } = this.props;
+		const { engine, site, fromSite } = this.props;
 		const { importers: imports } = this.state;
 
-		if ( ! engine ) {
+		if ( !engine ) {
 			return;
 		}
 
-		if ( ! isEmpty( imports ) ) {
+		if ( !isEmpty( imports ) ) {
 			// Never clobber an existing import
 			return;
 		}
 
-		if ( ! importerComponents[ engine ] ) {
+		if ( !importerComponents[ engine ] ) {
 			return;
 		}
 
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
+		const importerType = getImporterTypeForEngine( engine );
+
+		this.props.autoStartSiteImport( {
+			importerStatus: {
+				site,
+				siteId: site.ID,
+				type: importerType,
+				importerState: appStates.UPLOAD_SUCCESS,
+			},
+			params: {
+				engine,
+				site_url: fromSite,
+			},
+			site,
+			importerType,
+			targetSiteUrl: fromSite,
+		} );
 	} );
 
 	componentDidMount() {
@@ -98,7 +115,7 @@ class SectionImport extends Component {
 	componentDidUpdate() {
 		const { site } = this.props;
 
-		if ( ! site.ID ) {
+		if ( !site.ID ) {
 			return;
 		}
 
@@ -122,20 +139,20 @@ class SectionImport extends Component {
 			const { engine } = importer;
 			const ImporterComponent = importerComponents[ engine ];
 
-			if ( ! ImporterComponent ) {
+			if ( !ImporterComponent ) {
 				return;
 			}
 
 			return (
 				<ImporterComponent
-					key={ engine }
-					site={ site }
-					siteTitle={ siteTitle }
-					importerStatus={ {
+					key={engine}
+					site={site}
+					siteTitle={siteTitle}
+					importerStatus={{
 						importerState: state,
 						siteTitle,
 						type: getImporterTypeForEngine( engine ),
-					} }
+					}}
 				/>
 			);
 		} );
@@ -148,15 +165,15 @@ class SectionImport extends Component {
 		const otherImportersCard = (
 			<CompactCard
 				key="other-importers-card"
-				href={ adminUrl + 'import.php' }
+				href={adminUrl + 'import.php'}
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ this.props.translate( 'Other importers' ) }
+				{this.props.translate( 'Other importers' )}
 			</CompactCard>
 		);
 
-		return [ ...importerElements, otherImportersCard ];
+		return [...importerElements, otherImportersCard];
 	}
 
 	/**
@@ -169,7 +186,7 @@ class SectionImport extends Component {
 	renderActiveImporters( importsForSite ) {
 		return importsForSite.map( ( importItem, idx ) => {
 			const importer = getImporterByKey( importItem.type );
-			if ( ! importer ) {
+			if ( !importer ) {
 				return;
 			}
 
@@ -178,11 +195,11 @@ class SectionImport extends Component {
 			return (
 				ImporterComponent && (
 					<ImporterComponent
-						key={ importItem.type + idx }
-						site={ importItem.site }
-						siteTitle={ importItem.siteTitle || this.props.siteTitle }
-						fromSite={ this.props.fromSite }
-						importerStatus={ importItem }
+						key={importItem.type + idx}
+						site={importItem.site}
+						siteTitle={importItem.siteTitle || this.props.siteTitle}
+						fromSite={this.props.fromSite}
+						importerStatus={importItem}
 					/>
 				)
 			);
@@ -194,7 +211,7 @@ class SectionImport extends Component {
 	 *
 	 * @returns {Array} Importer react elements
 	 */
-	renderImporters() {
+	renderImportersMain() {
 		const {
 			api: { isHydrated },
 			importers: imports,
@@ -202,15 +219,35 @@ class SectionImport extends Component {
 		const { engine, site, siteTitle } = this.props;
 
 		if ( engine && importerComponents[ engine ] ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			const activeImports = filterImportsForSite( site.ID, imports );
+			const firstImport = first( activeImports );
+			const signupImportStarted =
+				firstImport &&
+				includes(
+					[appStates.IMPORTING, appStates.IMPORT_SUCCESS, appStates.MAP_AUTHORS],
+					firstImport.importerState
+				);
+
+			// If there's no active import started, mock one until we actually
+			// start importing to avoid showing the UI going through each stage.
+			if ( !signupImportStarted ) {
+				return this.renderActiveImporters( [
+					{
+						importerState: appStates.FROM_SIGNUP,
+						type: getImporterTypeForEngine( engine ),
+						engine,
+						site,
+					},
+				] );
+			}
 		}
 
-		if ( ! isHydrated ) {
+		if ( !isHydrated ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
 		const importsForSite = filterImportsForSite( site.ID, imports )
-			// Add in the 'site' and 'siteTitle' properties to the import objects.
+		// Add in the 'site' and 'siteTitle' properties to the import objects.
 			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
 
 		if ( 0 === importsForSite.length ) {
@@ -232,8 +269,8 @@ class SectionImport extends Component {
 	renderImportersList() {
 		return (
 			<>
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				{ this.renderImporters() }
+				<Interval onTick={this.updateFromAPI} period={EVERY_FIVE_SECONDS}/>
+				{this.renderImportersMain()}
 			</>
 		);
 	}
@@ -241,13 +278,13 @@ class SectionImport extends Component {
 	render() {
 		const { site, translate, canImport } = this.props;
 
-		if ( ! canImport ) {
+		if ( !canImport ) {
 			return (
 				<Main>
-					<SidebarNavigation />
+					<SidebarNavigation/>
 					<EmptyContent
-						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						title={this.props.translate( 'You are not authorized to view this page' )}
+						illustration={'/calypso/images/illustrations/illustration-404.svg'}
 					/>
 				</Main>
 			);
@@ -257,25 +294,25 @@ class SectionImport extends Component {
 		const headerText = translate( 'Import your content' );
 		const subHeaderText = translate(
 			'Bring content hosted elsewhere over to WordPress.com. ' +
-				'{{a}}Find out what we currently support.{{/a}}',
+			'{{a}}Find out what we currently support.{{/a}}',
 			{
 				components: {
-					a: <ExternalLink href="https://en.support.wordpress.com/import/" />,
+					a: <ExternalLink href="https://en.support.wordpress.com/import/"/>,
 				},
 			}
 		);
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Import' ) } />
-				<SidebarNavigation />
+				<DocumentHead title={translate( 'Import' )}/>
+				<SidebarNavigation/>
 				<FormattedHeader
 					className="importer__section-header"
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
+					headerText={headerText}
+					subHeaderText={subHeaderText}
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+					{isJetpack ? <JetpackImporter/> : this.renderImportersList()}
 				</EmailVerificationGate>
 			</Main>
 		);
@@ -284,15 +321,17 @@ class SectionImport extends Component {
 
 export default flow(
 	connect( state => {
-		const siteID = getSelectedSiteId( state );
-		return {
-			engine: getSelectedImportEngine( state ),
-			fromSite: getImporterSiteUrl( state ),
-			site: getSelectedSite( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-			siteTitle: getSiteTitle( state, siteID ),
-			canImport: canCurrentUser( state, siteID, 'manage_options' ),
-		};
-	} ),
+			const siteID = getSelectedSiteId( state );
+			return {
+				engine: getSelectedImportEngine( state ),
+				fromSite: getImporterSiteUrl( state ),
+				site: getSelectedSite( state ),
+				siteSlug: getSelectedSiteSlug( state ),
+				siteTitle: getSiteTitle( state, siteID ),
+				canImport: canCurrentUser( state, siteID, 'manage_options' ),
+			}
+		},
+		{ autoStartSiteImport }
+	),
 	localize
 )( SectionImport );

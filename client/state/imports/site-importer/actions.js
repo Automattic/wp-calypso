@@ -16,6 +16,7 @@ import {
 	mapAuthor,
 	startMappingAuthors,
 	startImporting,
+	startImport,
 	createFinishUploadAction,
 } from 'lib/importer/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -33,7 +34,7 @@ import {
 import { getState as getImporterState } from 'lib/importer/store';
 import { prefetchmShotsPreview } from 'lib/mshots';
 
-const sortAndStringify = items =>
+const sortAndStringify = ( items = [] ) =>
 	items
 		.slice( 0 )
 		.sort()
@@ -77,12 +78,12 @@ export const startMappingSiteImporterAuthors = ( {
 	site,
 	targetSiteUrl,
 } ) => dispatch => {
-	const singleAuthorSite = get( site, 'single_user_site', true );
+	const isSingleAuthorSite = get( site, 'single_user_site', true );
 	const siteId = site.ID;
 	const { importerId } = importerStatus;
 
-	// WXR was uploaded, map the authors
-	if ( singleAuthorSite ) {
+	// WXR was uploaded, auto-map the authors, or go to the mapping screen
+	if ( isSingleAuthorSite ) {
 		const currentUserData = user().get();
 		const currentUser = {
 			...currentUserData,
@@ -210,6 +211,53 @@ export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => d
 				} )
 			);
 			dispatch( siteImporterIsSiteImportableSuccessful( response ) );
+		} )
+		.catch( error => {
+			dispatch(
+				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+					blog_id: siteId,
+					site_url: targetSiteUrl,
+				} )
+			);
+			dispatch( siteImporterIsSiteImportableFailed( error ) );
+		} );
+};
+
+export const autoStartSiteImport = ( {
+	importerStatus,
+	params,
+	site,
+	targetSiteUrl,
+	importerType,
+} ) => dispatch => {
+	const siteId = site.ID;
+	// We need to use the same locally generated ID later to update the state
+	// after validation and after triggering the import
+	const { importerId } = startImport( siteId, importerType );
+
+	// Validate the site before starting an import.
+	wpcom.req
+		.get( {
+			path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
+			apiNamespace: 'wpcom/v2',
+		} )
+		.then( response => {
+			dispatch(
+				importSite( {
+					engine: response.engine,
+					importerStatus: {
+						// Add the newly generated importerId to importerStatus.
+						// This will allow importSite to clean up this importer item.
+						importerId,
+						...importerStatus,
+					},
+					params,
+					site,
+					supportedContent: response.supported_content,
+					targetSiteUrl,
+					unsupportedContent: response.unsupported_content,
+				} )
+			);
 		} )
 		.catch( error => {
 			dispatch(
