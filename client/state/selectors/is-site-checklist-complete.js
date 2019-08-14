@@ -29,7 +29,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 	const hasFrontPageSet = !! getSiteFrontPage( state );
 
 	/**
-		If a task is ready, it's because:
+		If a task is completed, it's because:
 		A) the task is marked as complete, its isCompleted prop is true.
 		B) the task front_page_updated is pending but the site doesn't have a page set as front page.
 		This is because updating the front page doesn't apply when the site doesn't have a page set as the front page. 
@@ -38,7 +38,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		@param   {Object}  task The task that we'll check to see if it's completed.
 		@returns {Boolean}      Whether the task is considered to be completed or not.
 	*/
-	const isTaskReady = task => {
+	const isTaskComplete = task => {
 		if ( task.isCompleted ) {
 			return true;
 		}
@@ -50,5 +50,5 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		return false;
 	};
 
-	return siteChecklist.tasks.every( isTaskReady );
+	return siteChecklist.tasks.every( isTaskComplete );
 }
