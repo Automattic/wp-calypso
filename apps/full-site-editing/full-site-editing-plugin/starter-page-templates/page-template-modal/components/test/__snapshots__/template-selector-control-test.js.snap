@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TemplateSelectorControl Basic rendering renders with required props 1`] = `
+<BaseControl
+  className="template-selector-control"
+  id="template-selector-control-1"
+  label="Select a Template..."
+>
+  <ul
+    className="template-selector-control__options"
+  >
+    <li
+      className="template-selector-control__option"
+      key="template-selector-control-1-0"
+    >
+      <button
+        className="template-selector-control__label"
+        id="template-selector-control-1-0"
+        onClick={[Function]}
+        type="button"
+        value="template-1"
+      >
+        <div
+          className="template-selector-control__media-wrap"
+        >
+          <img
+            alt="Testing alt"
+            className="template-selector-control__media"
+            src="https://via.placeholder.com/350x150"
+          />
+        </div>
+      </button>
+    </li>
+    <li
+      className="template-selector-control__option"
+      key="template-selector-control-1-1"
+    >
+      <button
+        className="template-selector-control__label"
+        id="template-selector-control-1-1"
+        onClick={[Function]}
+        type="button"
+        value="template-2"
+      >
+        <div
+          className="template-selector-control__media-wrap"
+        >
+          <img
+            alt="Testing alt 2"
+            className="template-selector-control__media"
+            src="https://via.placeholder.com/300x250"
+          />
+        </div>
+      </button>
+    </li>
+    <li
+      className="template-selector-control__option"
+      key="template-selector-control-1-2"
+    >
+      <button
+        className="template-selector-control__label"
+        id="template-selector-control-1-2"
+        onClick={[Function]}
+        type="button"
+        value="template-3"
+      >
+        <div
+          className="template-selector-control__media-wrap"
+        >
+          <img
+            alt="Testing alt 3"
+            className="template-selector-control__media"
+            src="https://via.placeholder.com/500x200"
+          />
+        </div>
+      </button>
+    </li>
+  </ul>
+</BaseControl>
+`;
