@@ -100,7 +100,7 @@ class Home extends Component {
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				<SidebarNavigation />
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ null !== isChecklistComplete && (
+				{ hasChecklistData && (
 					<Fragment>
 						{ isChecklistComplete ? this.renderCustomerHome() : this.renderChecklist() }
 					</Fragment>
