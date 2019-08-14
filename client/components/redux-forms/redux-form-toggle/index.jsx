@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { Field } from 'redux-form';
+import React from 'react';
+import { Field } from 'react-final-form';
 
 /**
  * Internal dependencies
@@ -19,15 +16,13 @@ const ToggleRenderer = ( { input, meta, text, type, ...otherProps } ) => (
 	</FormToggle>
 );
 
-class ReduxFormToggle extends Component {
-	static propTypes = {
-		name: PropTypes.string.isRequired,
-		text: PropTypes.string,
-	};
+const ReduxFormToggle = props => (
+	<Field component={ ToggleRenderer } type="checkbox" { ...props } />
+);
 
-	render() {
-		return <Field component={ ToggleRenderer } type="checkbox" { ...this.props } />;
-	}
-}
+ReduxFormToggle.propTypes = {
+	name: PropTypes.string.isRequired,
+	text: PropTypes.string,
+};
 
 export default ReduxFormToggle;

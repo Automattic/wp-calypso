@@ -1,9 +1,3 @@
-/** @format */
-/**
- * External dependencies
- */
-import { reducer as form } from 'redux-form';
-
 /**
  * Internal dependencies
  */
@@ -125,7 +119,6 @@ const reducers = {
 	domains,
 	emailForwarding,
 	exporter,
-	form,
 	googleMyBusiness,
 	gsuiteUsers,
 	gutenbergOptIn,

@@ -1,10 +1,9 @@
-/** @format */
 /*
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Field } from 'redux-form';
+import { Field } from 'react-final-form';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 /*
  * Render a `FormFieldset` parametrized by the input field component type.
- * It accepts props that are compatible with what Redux Form `Field` passes down to renderers.
+ * It accepts props that are compatible with what 🏁 React Final Form `Field` passes down to renderers.
  * See the `Field` documentation for info about the props.
  */
 export const FieldsetRenderer = ( {
@@ -40,7 +39,7 @@ export const FieldsetRenderer = ( {
 };
 
 /*
- * Convenience wrapper around Redux Form `Field` to render a `FormFieldset`. Usage:
+ * Convenience wrapper around 🏁 React Final Form `Field` to render a `FormFieldset`. Usage:
  *   <ReduxFormFieldset name="firstName" label="First Name" component={ FormTextInput } />
  */
 const ReduxFormFieldset = ( { component, ...props } ) => (
