@@ -1,5 +1,6 @@
 # [Unreleased]
 
+- Update `@automattic/wordpress-external-dependencies-plugin` references in `README.md` to `@wordpress/dependency-extraction-webpack-plugin`.
 - Added transform-runtime versioning to babel/default.js
   This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
 
