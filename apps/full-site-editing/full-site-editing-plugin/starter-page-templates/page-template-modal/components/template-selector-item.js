@@ -26,17 +26,29 @@ const TemplateSelectorItem = props => {
 		dynamicPreview = false,
 		preview,
 		previewAlt = '',
-		blocksInPreview = 10,
+		blocksInPreview,
 	} = props;
 
 	const itemRef = useRef( null );
 	const [ dynamicCssClasses, setDynamicCssClasses ] = useState( 'is-rendering' );
-	const [ blocksAmount, setBlocksAmount ] = useState( blocksInPreview );
 
-	const blocks = useMemo(
-		() => ( dynamicPreview ? parseBlocks( rawBlocks ).slice( 0, blocksAmount ) : [] ),
-		[ rawBlocks, blocksAmount, dynamicPreview ]
-	);
+	/**
+	 * Memoize parsed blocks.
+	 * Use blocksInPreview property to limit the amount of blocks to memoize.
+	 */
+	const blocks = useMemo( () => {
+		if ( ! dynamicPreview ) {
+			return [];
+		}
+
+		const parsedBlocks = parseBlocks( rawBlocks );
+		if ( blocksInPreview ) {
+			return parsedBlocks.slice( 0, blocksInPreview );
+		}
+
+		return parsedBlocks;
+
+	}, [ rawBlocks, blocksInPreview, dynamicPreview ] );
 
 	useLayoutEffect( () => {
 		const timerId = setTimeout( () => {
@@ -47,7 +59,8 @@ const TemplateSelectorItem = props => {
 				return;
 			}
 
-			// Try to pick up the editor styles wrapper element.
+			// Try to pick up the editor styles wrapper element,
+			// and move its `.editor-styles-wrapper` class out of the preview.
 			const editorStylesWrapperEl = el.querySelector( '.editor-styles-wrapper' );
 			if ( editorStylesWrapperEl ) {
 				setTimeout( () => {
@@ -55,9 +68,6 @@ const TemplateSelectorItem = props => {
 				}, 0 );
 				setDynamicCssClasses( 'editor-styles-wrapper' );
 			}
-
-			// experimental.
-			setBlocksAmount( 100 );
 		}, 0 );
 
 		// Cleanup
