@@ -48,4 +48,10 @@ const addFSETemplateClassname = createHigherOrderComponent( BlockListBlock => {
 	};
 }, 'addFSETemplateClassname' );
 
-addFilter( 'editor.BlockListBlock', 'full-site-editing/blocks/template', addFSETemplateClassname );
+// Must be 9 or this breaks on Simple Sites
+addFilter(
+	'editor.BlockListBlock',
+	'full-site-editing/blocks/template',
+	addFSETemplateClassname,
+	9
+);
