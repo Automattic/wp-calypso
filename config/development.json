@@ -131,7 +131,6 @@
 		"reader/comment-polling": true,
 		"reader/full-errors": true,
 		"reader/likes-hover": true,
-		"reader/list-management": false,
 		"reader/paste-to-link": true,
 		"reader/high-watermark": true,
 		"reader/user-mention-suggestions": true,

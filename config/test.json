@@ -80,7 +80,6 @@
 		"publicize-preview": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/list-management": false,
 		"reader/paste-to-link": true,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
