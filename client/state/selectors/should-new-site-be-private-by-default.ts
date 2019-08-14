@@ -3,20 +3,19 @@
  */
 import { abtest } from 'lib/abtest';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 
 /**
  * Should the site be private by default
  * @param state The current client state
- * @param siteType The selected site type / segment. Corresponds with the `slug` in ./site-type.js
  * @returns `true` for private by default & `false` for not
  */
-export function shouldNewSiteBePrivateByDefault( state, siteType: string = '' ): boolean {
+export function shouldNewSiteBePrivateByDefault( state: object ): boolean {
 	if ( getCurrentFlowName( state ) === 'test-fse' ) {
 		return true;
 	}
-
-	if ( getSiteTypePropertyValue( 'slug', siteType, 'forcePublicSite' ) ) {
+	if ( getSiteTypePropertyValue( 'slug', getSiteType( state ).trim(), 'forcePublicSite' ) ) {
 		return false;
 	}
 
