@@ -31,6 +31,7 @@ import {
 	canCurrentUserUseCustomerHome,
 } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
@@ -73,15 +74,19 @@ class Home extends Component {
 			}
 		},
 		isJetpackNotAtomic: PropTypes.bool.isRequired,
+		isSiteEligible: PropTypes.bool.isRequirod,
 	};
 
 	render() {
 		const { translate, canUserUseCustomerHome } = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
+			const title = this.props.isSiteEligible
+				? translate( 'You are not authorized to view this page.' )
+				: translate( 'This page is not available on this site.' );
 			return (
 				<EmptyContent
-					title={ preventWidows( translate( 'You are not authorized to view this page.' ) ) }
+					title={ preventWidows( title ) }
 					line={ preventWidows(
 						translate(
 							"Ensure you have selected the right site on the sidebar. If it's correct, you might want to contact the administrator of this site."
@@ -265,5 +270,6 @@ export default connect( state => {
 		hasChecklistData,
 		isChecklistComplete,
 		isJetpackNotAtomic: false === isAutomatedTransfer && isJetpack,
+		isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
 	};
 } )( localize( Home ) );
