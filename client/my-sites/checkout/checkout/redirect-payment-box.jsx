@@ -159,7 +159,7 @@ export class RedirectPaymentBox extends PureComponent {
 				}/pending?redirectTo=${ redirectPath }`;
 		} else {
 			cancelUrl += 'no-site';
-			successUrl = origin + this.props.redirectTo();
+			successUrl = origin + `/checkout/thank-you/no-site/pending?redirectTo=${ redirectPath }`;
 		}
 
 		// unmask form values
