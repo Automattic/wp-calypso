@@ -80,12 +80,8 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
-								onTemplateSelect={ ( slug, title, blocks ) =>
-									this.selectTemplate( slug, title, blocks )
-								}
-								onTemplateFocus={ ( slug, title, blocks ) =>
-									this.focusTemplate( slug, title, blocks )
-								}
+								onTemplateSelect={ this.selectTemplate }
+								onTemplateFocus={ this.focusTemplate }
 								dynamicPreview={ true }
 							/>
 						</fieldset>

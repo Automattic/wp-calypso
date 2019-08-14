@@ -7,9 +7,9 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { withInstanceId } from '@wordpress/compose';
+import { withInstanceId, compose } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
-
+import { memo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
@@ -64,4 +64,7 @@ function TemplateSelectorControl( {
 	);
 }
 
-export default withInstanceId( TemplateSelectorControl );
+export default compose(
+	memo,
+	withInstanceId
+)( TemplateSelectorControl );
