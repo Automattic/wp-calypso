@@ -4,7 +4,6 @@
  */
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import Spinner from 'components/spinner';
 import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
@@ -15,6 +14,7 @@ import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 import ActivityIcon from '../activity-log-item/activity-icon';
 import DiffViewer from 'components/diff-viewer';
 import FoldableCard from 'components/foldable-card';
+import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
 import MarkedLines from 'components/marked-lines';
 import TimeSince from 'components/time-since';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -26,11 +26,6 @@ import { requestRewindState } from 'state/rewind/actions';
  * Style dependencies
  */
 import './threat-alert.scss';
-
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:activity-log' );
 
 const detailType = threat => {
 	if ( threat.hasOwnProperty( 'diff' ) ) {
@@ -186,16 +181,10 @@ export class ThreatAlert extends Component {
 										disabled={ inProgress }
 									>
 										<PopoverMenuItem
-											onClick={ () => debug( 'documentation clicked' ) }
-											className="activity-log__threat-menu-item"
-											icon="help"
-										>
-											<span>{ translate( 'Documentation' ) }</span>
-										</PopoverMenuItem>
-										<PopoverMenuItem
-											onClick={ () => debug( 'get help clicked' ) }
+											href={ JETPACK_CONTACT_SUPPORT }
 											className="activity-log__threat-menu-item"
 											icon="chat"
+											isExternalLink
 										>
 											<span>{ translate( 'Get help' ) }</span>
 										</PopoverMenuItem>
