@@ -184,7 +184,7 @@ export class ThreatAlert extends Component {
 											href={ JETPACK_CONTACT_SUPPORT }
 											className="activity-log__threat-menu-item"
 											icon="chat"
-											isExternalLink
+											target="_blank"
 										>
 											<span>{ translate( 'Get help' ) }</span>
 										</PopoverMenuItem>
