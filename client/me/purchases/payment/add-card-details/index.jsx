@@ -33,12 +33,12 @@ function AddCardDetails( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
 
-	if ( isDataLoading && ! isDataValid( props ) ) {
+	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
 		page( purchasesRoot );
 	}
 
-	if ( isDataLoading( props ) ) {
+	if ( isDataLoading ) {
 		return (
 			<Fragment>
 				<QueryUserPurchases userId={ props.userId } />
@@ -49,14 +49,14 @@ function AddCardDetails( props ) {
 	}
 
 	const recordFormSubmitEvent = () =>
-		void this.props.recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-			product_slug: this.props.purchase.productSlug,
+		void props.recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+			product_slug: props.purchase.productSlug,
 		} );
 
 	const successCallback = () => {
-		const { id } = this.props.purchase;
-		this.props.clearPurchases();
-		page( managePurchase( this.props.siteSlug, id ) );
+		const { id } = props.purchase;
+		props.clearPurchases();
+		page( managePurchase( props.siteSlug, id ) );
 	};
 
 	return (
