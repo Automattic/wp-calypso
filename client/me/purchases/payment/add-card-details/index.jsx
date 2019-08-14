@@ -27,6 +27,9 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { withStripe } from 'lib/stripe';
+
+const CreditCardFormWithStripe = withStripe( CreditCardForm, { needs_intent: true } );
 
 function AddCardDetails( props ) {
 	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );
@@ -73,7 +76,7 @@ function AddCardDetails( props ) {
 				{ titles.addCardDetails }
 			</HeaderCake>
 
-			<CreditCardForm
+			<CreditCardFormWithStripe
 				apiParams={ { purchaseId: props.purchase.id } }
 				createCardToken={ createCardUpdateToken }
 				purchase={ props.purchase }
