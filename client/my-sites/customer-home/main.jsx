@@ -17,20 +17,13 @@ import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';
 import ChecklistWpcom from 'my-sites/checklist/main';
-import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	isJetpackSite,
-	getCustomizerUrl,
-	canCurrentUserUseCustomerHome,
-} from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getCustomizerUrl, canCurrentUserUseCustomerHome } from 'state/sites/selectors';
 import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -73,8 +66,7 @@ class Home extends Component {
 				);
 			}
 		},
-		isJetpackNotAtomic: PropTypes.bool.isRequired,
-		isSiteEligible: PropTypes.bool.isRequirod,
+		isSiteEligible: PropTypes.bool.isRequired,
 	};
 
 	render() {
@@ -114,18 +106,7 @@ class Home extends Component {
 		);
 	}
 
-	renderChecklist = () => {
-		const { siteId, checklistMode, isJetpackNotAtomic } = this.props;
-
-		return isJetpackNotAtomic ? (
-			<Fragment>
-				<QueryJetpackPlugins siteIds={ [ siteId ] } />
-				<JetpackChecklist />
-			</Fragment>
-		) : (
-			<ChecklistWpcom displayMode={ checklistMode } />
-		);
-	};
+	renderChecklist = () => <ChecklistWpcom displayMode={ this.props.checklistMode } />;
 
 	renderCustomerHome = () => {
 		const { translate, customizeUrl, site, siteSlug } = this.props;
@@ -255,8 +236,6 @@ class Home extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 	const isChecklistComplete = isSiteChecklistComplete( state, siteId );
@@ -269,7 +248,6 @@ export default connect( state => {
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		hasChecklistData,
 		isChecklistComplete,
-		isJetpackNotAtomic: false === isAutomatedTransfer && isJetpack,
 		isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
 	};
 } )( localize( Home ) );
