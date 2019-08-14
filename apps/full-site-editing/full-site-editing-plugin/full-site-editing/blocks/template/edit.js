@@ -137,21 +137,23 @@ const TemplateEdit = compose(
 
 		return (
 			<div
-				className={ classNames( 'template-block', className, {
+				className={ classNames( 'template-block', {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
 				{ templateBlock && (
 					<Fragment>
 						<Disabled>
-							<BlockEdit
-								attributes={ templateBlock.attributes }
-								block={ templateBlock }
-								clientId={ templateBlock.clientId }
-								isSelected={ false }
-								name={ templateBlock.name }
-								setAttributes={ noop }
-							/>
+							<div className={ className }>
+								<BlockEdit
+									attributes={ templateBlock.attributes }
+									block={ templateBlock }
+									clientId={ templateBlock.clientId }
+									isSelected={ false }
+									name={ templateBlock.name }
+									setAttributes={ noop }
+								/>
+							</div>
 						</Disabled>
 						{ isSelected && (
 							<Placeholder className="template-block__overlay">
