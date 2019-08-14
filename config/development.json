@@ -135,7 +135,6 @@
 		"reader/list-management": false,
 		"reader/paste-to-link": true,
 		"reader/recommendations/posts": true,
-		"reader/related-posts": true,
 		"reader/high-watermark": true,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,
