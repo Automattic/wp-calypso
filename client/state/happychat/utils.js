@@ -21,17 +21,11 @@ const request = ( ...args ) =>
 		} );
 	} );
 
-const sign = payload =>
+const getJwt = payload =>
 	request( {
 		method: 'POST',
 		path: '/jwt/sign',
 		body: { payload: JSON.stringify( payload ) },
-	} );
-
-const startSession = () =>
-	request( {
-		method: 'POST',
-		path: '/happychat/session',
 	} );
 
 export const getHappychatAuth = state => () => {
@@ -57,17 +51,14 @@ export const getHappychatAuth = state => () => {
 	}
 
 	const happychatUser = {
-		signer_user_id: user.ID,
+		authed_user_id: user.ID,
 		locale,
+		geo_location: { city: 'Mos Eisley' },
 		groups,
 		skills,
 	};
 
-	return startSession()
-		.then( ( { session_id, geo_location } ) => {
-			happychatUser.geoLocation = geo_location;
-			return sign( { user, session_id } );
-		} )
+	return getJwt( { user } )
 		.then( ( { jwt } ) => ( { url, user: { jwt, ...happychatUser } } ) )
 		.catch( e => Promise.reject( 'Failed to start an authenticated Happychat session: ' + e ) );
 };

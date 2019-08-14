@@ -136,6 +136,7 @@
 		"page": "1.11.4",
 		"path-browserify": "1.0.0",
 		"percentage-regex": "3.0.0",
+		"phoenix": "1.4.9",
 		"phone": "git+https://github.com/Automattic/node-phone.git#v2.4.0-pre-1",
 		"photon": "file:./packages/photon",
 		"postcss-cli": "6.1.2",
