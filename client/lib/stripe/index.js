@@ -38,6 +38,23 @@ StripeValidationError.prototype = new Error();
 export { StripeValidationError };
 
 /**
+ * An error related to a Setup Intent
+ *
+ * If this error is thrown, the setup intent probably needs to be recreated
+ * before being used again.
+ *
+ * The object will include the original stripe error in the stripeError prop.
+ *
+ * @param {object} stripeError - The original Stripe error object
+ */
+function StripeSetupIntentError( stripeError ) {
+	this.stripeError = stripeError;
+	this.message = stripeError.message;
+}
+StripeSetupIntentError.prototype = new Error();
+export { StripeSetupIntentError };
+
+/**
  * Create a Stripe PaymentMethod using Stripe Elements
  *
  * paymentDetails should include data not gathered by Stripe Elements. For
@@ -95,7 +112,7 @@ export async function createStripeSetupIntent( stripe, stripeConfiguration, paym
 				getValidationErrorsFromStripeError( error ) || {}
 			);
 		}
-		throw new Error( error.message );
+		throw new StripeSetupIntentError( error );
 	}
 	return setupIntent;
 }
@@ -182,7 +199,9 @@ export function useStripeJs( stripeConfiguration ) {
 			if ( window.Stripe ) {
 				debug( 'stripe.js already loaded' );
 				setStripeLoading( false );
-				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+				if ( ! stripeJs ) {
+					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+				}
 				return;
 			}
 			debug( 'loading stripe.js...' );
@@ -202,7 +221,7 @@ export function useStripeJs( stripeConfiguration ) {
 				return;
 			}
 		}
-	}, [ stripeConfiguration ] );
+	}, [ stripeConfiguration, stripeJs ] );
 	return { stripeJs, isStripeLoading };
 }
 
@@ -213,13 +232,14 @@ export function useStripeJs( stripeConfiguration ) {
  * @return {object} Stripe Configuration as returned by the stripe configuration endpoint
  */
 export function useStripeConfiguration( requestArgs = {} ) {
+	const [ stripeError, setStripeError ] = useState();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
 		getStripeConfiguration( requestArgs ).then( configuration =>
 			setStripeConfiguration( configuration )
 		);
-	}, [ requestArgs ] );
-	return stripeConfiguration;
+	}, [ requestArgs, stripeError ] );
+	return { stripeConfiguration, setStripeError };
 }
 
 /**
@@ -238,7 +258,7 @@ export function useStripeConfiguration( requestArgs = {} ) {
 export function withStripe( WrappedComponent, configurationArgs = {} ) {
 	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
 	return props => {
-		const stripeConfiguration = useStripeConfiguration( configurationArgs );
+		const { stripeConfiguration, setStripeError } = useStripeConfiguration( configurationArgs );
 		const { stripeJs, isStripeLoading } = useStripeJs( stripeConfiguration );
 
 		return (
@@ -247,6 +267,7 @@ export function withStripe( WrappedComponent, configurationArgs = {} ) {
 					<StripeInjectedWrappedComponent
 						stripeConfiguration={ stripeConfiguration }
 						isStripeLoading={ isStripeLoading }
+						setStripeError={ setStripeError }
 						{ ...props }
 					/>
 				</Elements>
