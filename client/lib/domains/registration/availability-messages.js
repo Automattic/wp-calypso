@@ -75,6 +75,29 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				}
 			);
 			break;
+		case domainAvailability.IN_REDEMPTION:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is not eligible to register or transfer since it is in {{redemptionLink}}redemption{{/redemptionLink}}. If you own this domain, please contact your current registrar to {{aboutRenewingLink}}redeem the domain{{/aboutRenewingLink}}.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						redemptionLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/resources/pages/grace-2013-05-03-en"
+							/>
+						),
+						aboutRenewingLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/news/blog/do-you-have-a-domain-name-here-s-what-you-need-to-know-part-5"
+							/>
+						),
+					},
+				}
+			);
+			break;
 		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +

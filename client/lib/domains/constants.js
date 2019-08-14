@@ -33,6 +33,7 @@ export const domainAvailability = {
 	EMPTY_RESULTS: 'empty_results',
 	FORBIDDEN: 'forbidden_domain',
 	FORBIDDEN_SUBDOMAIN: 'forbidden_subdomain',
+	IN_REDEMPTION: 'in_redemption',
 	INVALID: 'invalid_domain',
 	INVALID_QUERY: 'invalid_query',
 	INVALID_TLD: 'invalid_tld',
