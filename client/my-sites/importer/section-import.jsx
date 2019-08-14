@@ -186,7 +186,11 @@ class SectionImport extends Component {
 	renderActiveImporters( importsForSite ) {
 		return importsForSite.map( ( importItem, idx ) => {
 			const importer = getImporterByKey( importItem.type );
-			if ( !importer ) {
+			/**
+			 * TODO This fails when the importer is not listed in `getConfig` in client/lib/importer/importer-config.js:15
+			 * 		We should fall back to a "default" importer when this is the case to avoid any stale state
+			 */
+			if ( ! importer ) {
 				return;
 			}
 
@@ -216,6 +220,7 @@ class SectionImport extends Component {
 			api: { isHydrated },
 			importers: imports,
 		} = this.state;
+
 		const { engine, site, siteTitle } = this.props;
 
 		if ( engine && importerComponents[ engine ] ) {
