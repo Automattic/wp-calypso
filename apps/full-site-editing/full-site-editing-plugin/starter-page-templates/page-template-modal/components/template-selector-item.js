@@ -91,8 +91,8 @@ const TemplateSelectorItem = props => {
 	 */
 		const onSelectHandler = () => (
 			( blocksInPreview || ! dynamicPreview ) ?
-				onFocus( value, label, parseBlocks( rawBlocks ) ) :
-				onFocus( value, label, blocks )
+				onSelect( value, label, parseBlocks( rawBlocks ) ) :
+				onSelect( value, label, blocks )
 		);
 
 		/**
