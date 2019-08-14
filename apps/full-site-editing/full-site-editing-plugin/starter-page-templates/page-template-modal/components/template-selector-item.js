@@ -25,10 +25,12 @@ const TemplateSelectorItem = props => {
 		preview,
 		previewAlt = '',
 		blocks,
+		blocksInPreview,
 	} = props;
 
 	const itemRef = useRef( null );
 	const [ dynamicCssClasses, setDynamicCssClasses ] = useState( 'is-rendering' );
+	const [ blocksLimit, setBlockLimit ] = useState( blocksInPreview );
 
 	useLayoutEffect( () => {
 		const timerId = setTimeout( () => {
@@ -58,9 +60,23 @@ const TemplateSelectorItem = props => {
 		};
 	}, [ blocks ] );
 
+	const onFocusHandler = () => {
+		if ( blocks.length > blocksLimit ) {
+			setBlockLimit( null ); // not blocks limit to template preview
+		}
+
+		throttle( () => onFocus( value, label ), 300 );
+	};
+
 	const innerPreview = dynamicPreview ? (
 		<div ref={ itemRef } className={ dynamicCssClasses }>
-			{ blocks && blocks.length ? <BlockPreview blocks={ blocks } viewportWidth={ 800 } /> : null }
+			{ blocks && blocks.length ?
+				<BlockPreview
+					blocks={ blocksLimit ? blocks.slice( 0, blocksLimit ) : blocks }
+					viewportWidth={ 800 }
+				/> :
+				null
+			}
 		</div>
 	) : (
 		<img className="template-selector-item__media" src={ preview } alt={ previewAlt } />
@@ -73,7 +89,7 @@ const TemplateSelectorItem = props => {
 			className="template-selector-item__label"
 			value={ value }
 			onClick={ () => onSelect( value, label ) }
-			onMouseEnter={ throttle( () => onFocus( value, label ), 300) }
+			onMouseEnter={ onFocusHandler }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>

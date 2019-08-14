@@ -45,17 +45,17 @@ class TemplateSelectorControl extends Component {
 		this.onFocusHandler = this.onFocusHandler.bind( this );
 	}
 
-	getParsedBlocks ( slug, fullParsing = false ) {
+	getParsedBlocks ( slug ) {
 		const { blocks } = this.state;
 		if ( ! blocks || ! blocks[ slug ] ) {
-			return null;
+			return [];
 		}
 
-		if ( fullParsing || ! this.props.blocksInPreview ) {
-			return blocks[ slug ];
-		}
-
-		return blocks[ slug ].slice( 0, this.props.blocksInPreview );
+		return blocks[ slug ];
+		// if ( fullParsing || ! this.props.blocksInPreview ) {
+		// }
+		//
+		// return blocks[ slug ].slice( 0, this.props.blocksInPreview );
 	}
 
 	onSelectHandler( slug, title ) {
@@ -74,6 +74,7 @@ class TemplateSelectorControl extends Component {
 			instanceId,
 			templates = [],
 			dynamicPreview = false,
+			blocksInPreview,
 		} = this.props;
 
 		if ( isEmpty( templates ) ) {
@@ -103,6 +104,7 @@ class TemplateSelectorControl extends Component {
 								previewAlt={ previewAlt }
 								blocks={ this.getParsedBlocks( slug ) }
 								dynamicPreview={ dynamicPreview }
+								blocksInPreview={ blocksInPreview }
 							/>
 						</li>
 					) ) }
