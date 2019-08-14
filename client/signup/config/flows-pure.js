@@ -280,7 +280,7 @@ export function generateFlows( {
 		pageTitle: translate( 'Launch your site' ),
 	};
 
-	const importSteps = [ 'from-url', 'domains', 'plans-import' ];
+	const importSteps = [ 'domains', 'plans-import' ];
 
 	const importDestination = ( { importSiteEngine, importSiteUrl, siteSlug } ) =>
 		addQueryArgs(
@@ -293,7 +293,7 @@ export function generateFlows( {
 		);
 
 	flows.import = {
-		steps: [ 'user', ...importSteps ],
+		steps: [ 'user', 'from-url', ...importSteps ],
 		destination: importDestination,
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
@@ -303,7 +303,7 @@ export function generateFlows( {
 	flows[ 'import-onboarding' ] = {
 		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
 		// when switching from the onboarding flow.
-		steps: [ 'user', 'site-type', ...importSteps ],
+		steps: [ 'user', 'site-type', 'import-url', ...importSteps ],
 		destination: importDestination,
 		description: 'Import flow that can be used from the onboarding flow',
 		disallowResume: true,
