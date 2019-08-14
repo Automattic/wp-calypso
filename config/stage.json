@@ -93,7 +93,6 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
-		"reader/following-intro": true,
 		"reader/full-errors": false,
 		"reader/likes-hover": true,
 		"reader/paste-to-link": true,

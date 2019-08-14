@@ -106,7 +106,6 @@
 		"publicize-preview": true,
 		"reader": true,
 		"reader/likes-hover": true,
-		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/paste-to-link": true,
 		"reader/recommendations/posts": true,

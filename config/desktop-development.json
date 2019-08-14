@@ -109,7 +109,6 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
-		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
 		"reader/new-post-notifications": true,

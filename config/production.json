@@ -91,7 +91,6 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
-		"reader/following-intro": true,
 		"reader/full-errors": false,
 		"reader/user-mention-suggestions": false,
 		"resume-editing": true,
