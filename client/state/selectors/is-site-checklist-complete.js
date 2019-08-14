@@ -26,7 +26,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 	}
 
 	// True if a static page has been set as the front page, false otherwise.
-	const hasFrontPageSet = !! getSiteFrontPage( state );
+	const hasFrontPageSet = !! getSiteFrontPage( state, siteId );
 
 	/**
 		If a task is completed, it's because:
