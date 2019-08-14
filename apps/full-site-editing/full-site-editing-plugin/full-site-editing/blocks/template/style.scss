@@ -1,12 +1,8 @@
-/*.template-block {
+.template-block {
 	min-height: 200px;
 	// Prevent blur bleeding
 	overflow: hidden;
 	position: relative;
-
-	.components-button .components-spinner {
-		margin-top: 4px;
-	}
 }
 
 .template__block-container {
@@ -57,4 +53,3 @@
 		}
 	}
 }
-*/
