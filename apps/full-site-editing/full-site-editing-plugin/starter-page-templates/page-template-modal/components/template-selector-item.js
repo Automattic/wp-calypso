@@ -22,31 +22,35 @@ const TemplateSelectorItem = props => {
 		onFocus,
 		onSelect,
 		label,
-		dynamicPreview = false,
-		preview,
-		previewAlt = '',
+		useDynamicPreview = false,
+		staticPreviewImg,
+		staticPreviewImgAlt = '',
 		rawContent,
-		blocksInPreview,
+		numBlocksInPreview,
 	} = props;
 
-	const [ blocksLimit, setBlockLimit ] = useState( blocksInPreview );
-	const blocks = useMemo( () => rawContent ? parseBlocks( rawContent ) : null, [ rawContent ] );
+	const [ blocksLimit, setBlockLimit ] = useState( numBlocksInPreview );
+	const blocks = useMemo( () => ( rawContent ? parseBlocks( rawContent ) : null ), [ rawContent ] );
 
 	const onFocusHandler = () => {
-		if ( blocks.length > blocksLimit ) {
+		if ( blocks && blocks.length > blocksLimit ) {
 			setBlockLimit( null ); // not blocks limit to template preview
 		}
 
 		throttle( () => onFocus( value, label, blocks ), 300 );
 	};
 
-	const innerPreview = dynamicPreview ? (
+	const innerPreview = useDynamicPreview ? (
 		<BlockPreview
 			blocks={ blocksLimit && blocks ? blocks.slice( 0, blocksLimit ) : blocks }
 			viewportWidth={ 960 }
 		/>
 	) : (
-		<img className="template-selector-item__media" src={ preview } alt={ previewAlt } />
+		<img
+			className="template-selector-item__media"
+			src={ staticPreviewImg }
+			alt={ staticPreviewImgAlt }
+		/>
 	);
 
 	return (

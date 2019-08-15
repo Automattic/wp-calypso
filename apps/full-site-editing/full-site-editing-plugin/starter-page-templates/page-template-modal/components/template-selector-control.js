@@ -21,21 +21,21 @@ import replacePlaceholders from '../utils/replace-placeholders';
 const { siteInformation = {} } = window.starterPageTemplatesConfig;
 
 const TemplateSelectorControl = ( {
-	 label,
-	 className,
-	 help,
-	 instanceId,
-	 templates = [],
-	 dynamicPreview = false,
-	 blocksInPreview,
-	 onTemplateSelect = noop,
-	 onTemplateFocus = noop,
- } ) => {
+	label,
+	className,
+	help,
+	instanceId,
+	templates = [],
+	useDynamicPreview = false,
+	numBlocksInPreview,
+	onTemplateSelect = noop,
+	onTemplateFocus = noop,
+} ) => {
 	if ( isEmpty( templates ) ) {
 		return null;
 	}
 
-	const id = `template-selector-control-${instanceId}`;
+	const id = `template-selector-control-${ instanceId }`;
 
 	return (
 		<BaseControl
@@ -46,7 +46,7 @@ const TemplateSelectorControl = ( {
 		>
 			<ul className="template-selector-control__options">
 				{ templates.map( ( { slug, title, content, preview, previewAlt, value } ) => (
-					<li key={ `${id}-${value}` } className="template-selector-control__template">
+					<li key={ `${ id }-${ value }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
@@ -54,11 +54,11 @@ const TemplateSelectorControl = ( {
 							help={ help }
 							onSelect={ onTemplateSelect }
 							onFocus={ onTemplateFocus }
-							preview={ preview }
-							previewAlt={ previewAlt }
+							staticPreviewImg={ preview }
+							staticPreviewImgAlt={ previewAlt }
 							rawContent={ content }
-							dynamicPreview={ dynamicPreview }
-							blocksInPreview={ blocksInPreview }
+							useDynamicPreview={ useDynamicPreview }
+							numBlocksInPreview={ numBlocksInPreview }
 						/>
 					</li>
 				) ) }
