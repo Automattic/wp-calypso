@@ -184,6 +184,10 @@ export class ThreatAlert extends Component {
 		} = this.props;
 		const infectedPosts = [];
 
+		if ( ! rows ) {
+			return [];
+		}
+
 		function findObjectIndexInArray( array, attr, value ) {
 			for ( let i = 0; i < array.length; i++ ) {
 				if ( array[ i ][ attr ] === value ) {
@@ -220,10 +224,10 @@ export class ThreatAlert extends Component {
 	renderCardContent() {
 		const { threat, translate } = this.props;
 
+		const infectedPosts = this.getGroupedThreatRows();
+
 		switch ( this.getDetailType( threat ) ) {
 			case 'database':
-				const infectedPosts = this.getGroupedThreatRows();
-
 				return (
 					<Fragment>
 						{ infectedPosts.map( ( infectedPost, postKey ) => (
@@ -254,10 +258,10 @@ export class ThreatAlert extends Component {
 													'This link is included in post ID %(postId)d and %(revCount)d associated revision.',
 													'This link is included in post ID %(postId)d and %(revCount)d associated revisions.',
 													{
-														count: infectedPost.links.length,
+														count: infectedPost.links.length - 1,
 														args: {
 															postId: infectedPost.minId,
-															revCount: infectedPost.links.length,
+															revCount: infectedPost.links.length - 1,
 														},
 													}
 												) }
