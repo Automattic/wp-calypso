@@ -94,6 +94,7 @@ class PageTemplateModal extends Component {
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
 								onTemplateSelect={ this.focusTemplate }
+								onTemplateFocus={ this.focusTemplate }
 								dynamicPreview={ true }
 								blocksInPreview={ 10 }
 							/>
