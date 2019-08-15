@@ -1,5 +1,7 @@
 .template-block {
 	min-height: 200px;
+	// Prevent blur bleeding
+	overflow: hidden;
 	position: relative;
 }
 

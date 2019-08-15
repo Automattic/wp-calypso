@@ -26,18 +26,16 @@ const EditorTemplateClasses = withSelect( select => {
 	return { templateClasses };
 } )( ( { templateClasses } ) => {
 	const blockListInception = setInterval( () => {
-		const blockList = document.querySelector( '.block-editor-writing-flow.editor-writing-flow' );
+		const blockList = document.querySelector(
+			'.block-editor-writing-flow.editor-writing-flow > div'
+		);
 
 		if ( ! blockList ) {
 			return;
 		}
 		clearInterval( blockListInception );
 
-		blockList.className = classNames(
-			'block-editor-writing-flow',
-			'editor-writing-flow',
-			...templateClasses
-		);
+		blockList.className = classNames( 'a8c-template-editor', ...templateClasses );
 		blockList.style.padding = 0;
 	} );
 
