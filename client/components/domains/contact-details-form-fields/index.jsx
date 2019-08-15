@@ -431,7 +431,7 @@ export class ContactDetailsFormFields extends Component {
 
 				<Input
 					label={ getPostCodeLabelText( countryCode ) }
-					{ ...this.getFieldProps( 'postal-code', true ) }
+					{ ...this.getFieldProps( 'postal-code' ) }
 				/>
 			</div>
 		);
