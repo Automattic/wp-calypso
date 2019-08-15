@@ -78,7 +78,6 @@ class Connection {
 					this.channel.on( 'localized-support', accept =>
 						dispatch( receiveLocalizedSupport( accept ) )
 					);
-					this.channel.on( 'message', message => dispatch( receiveMessage( message ) ) );
 
 					socket.connect();
 					this.channel.join();
@@ -105,11 +104,14 @@ class Connection {
 		if ( ! this.openSocket ) {
 			return;
 		}
-		return this.channel.push( action.event, action.payload ).receive( 'error', reasons => {
-			this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + reasons ) );
-			// so we can relay the error message, for testing purposes
-			return Promise.reject( Error( reasons ) );
-		} );
+		return this.channel
+			.push( action.event, action.payload )
+			.receive( 'ok', message => dispatch( receiveMessage( message ) ) )
+			.receive( 'error', reasons => {
+				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + reasons ) );
+				// so we can relay the error message, for testing purposes
+				return Promise.reject( Error( reasons ) );
+			} );
 	}
 
 	request() {

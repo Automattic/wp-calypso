@@ -116,7 +116,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 	);
 };
 
-const itemTypeIs = type => ( { item: [ firstItem ] } ) => firstItem.type === type;
+const itemTypeIs = type => ( { item: [ firstItem ] } ) => true;
 
 /*
  * Renders a chat bubble with multiple messages grouped by user.
