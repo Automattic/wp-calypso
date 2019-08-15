@@ -29,16 +29,16 @@ class TemplateSelectorControl extends Component {
 	constructor( props ) {
 		super();
 
-		// Populate the state with the parsed blocks,
+		this.blocks = {};
+
+		// Populate this.blocks with the parsed blocks,
 		// only in the dynamic preview mode.
 		if ( props.templates && props.dynamicPreview ) {
-			const blocks = {};
 			each( props.templates, ( { content, slug } ) => {
 				if ( content ) {
-					blocks[ slug ] = parseBlocks( content );
+					this.blocks[ slug ] = parseBlocks( content );
 				}
 			} );
-			this.state.blocks = blocks;
 		}
 
 		this.onSelectHandler = this.onSelectHandler.bind( this );
@@ -46,12 +46,11 @@ class TemplateSelectorControl extends Component {
 	}
 
 	getParsedBlocks ( slug ) {
-		const { blocks } = this.state;
-		if ( ! blocks || ! blocks[ slug ] ) {
+		if ( ! this.blocks || ! this.blocks[ slug ] ) {
 			return [];
 		}
 
-		return blocks[ slug ];
+		return this.blocks[ slug ];
 	}
 
 	onSelectHandler( slug, title ) {
