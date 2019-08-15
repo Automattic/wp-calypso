@@ -530,6 +530,7 @@ function setUpCSP( req, res, next ) {
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',
+			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),

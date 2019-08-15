@@ -1,5 +1,17 @@
 /*rtl:ignore*/
 
+.social-buttons__button {
+	width: 100%;
+
+	svg {
+		margin-top: -2px;
+
+		&.disabled {
+			display: none;
+		}
+	}
+}
+
 .social-buttons__service-name {
 	margin-left: 9px;
 }
@@ -8,20 +20,5 @@
 	.popover__inner {
 		padding: 10px;
 		max-width: 200px;
-	}
-}
-
-.social-buttons__apple-button div {
-	border-style: solid;
-	border-width: 1px 1px 2px;
-	border-color: var( --color-neutral-100 );
-	border-radius: 4px;
-	color: var( --color-neutral-700 );
-	margin-top: 10px;
-	padding: 10px 80px;
-
-	svg {
-		font-weight: 400;
-		padding: 0 75px;
 	}
 }
