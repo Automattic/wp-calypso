@@ -30,20 +30,22 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 		};
 	}, [ blocks, viewportWidth ] );
 
-	return (
-		<div className="template-selector-preview">
-			{ isEmpty( blocks ) ? (
+	if ( isEmpty( blocks ) ) {
+		return (
+			<div className="template-selector-preview">
 				<div className="template-selector-preview__placeholder">
 					{ __( 'Select a page template to preview.', 'full-site-editing' ) }
 				</div>
-			) : (
-				<div>
-					{ isLoading && (
-						<div className="template-selector-preview__loading">Loading preview...</div>
-					) }
-					<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
-				</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className="template-selector-preview">
+			{ isLoading && (
+				<div className="template-selector-preview__loading">Loading preview...</div>
 			) }
+			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
 		</div>
 	);
 };
