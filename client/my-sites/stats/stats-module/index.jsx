@@ -136,6 +136,7 @@ class StatsModule extends Component {
 			query,
 			period,
 			translate,
+			useShortLabel,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -192,7 +193,7 @@ class StatsModule extends Component {
 					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } />
+					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
 					{ this.props.showSummaryLink && displaySummaryLink && (
 						<StatsModuleExpand href={ summaryLink } />
 					) }

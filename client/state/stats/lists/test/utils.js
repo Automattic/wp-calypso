@@ -1823,7 +1823,8 @@ describe( 'utils', () => {
 								'2017-01-12': {
 									files: [
 										{
-											filename: '/2019/01/awesome.mov',
+											filename: 'awesome.mov',
+											relative_url: '/2019/01/awesome.mov',
 											downloads: 3939,
 										},
 									],
@@ -1843,6 +1844,7 @@ describe( 'utils', () => {
 					{
 						value: 3939,
 						label: '/2019/01/awesome.mov',
+						shortLabel: 'awesome.mov',
 						labelIcon: 'external',
 					},
 				] );
