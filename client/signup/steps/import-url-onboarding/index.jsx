@@ -98,6 +98,12 @@ class ImportURLOnboardingStepComponent extends Component {
 
 	handleInputRef = el => ( this.inputRef = el );
 
+	handleNoServiceClick = event => {
+		event.preventDefault();
+
+		this.props.goToNextStep( 'main' );
+	};
+
 	focusInput = () => invoke( this.inputRef, 'focus' );
 
 	setUrlError = urlValidationMessage => this.setState( { urlValidationMessage }, this.focusInput );
@@ -246,19 +252,33 @@ class ImportURLOnboardingStepComponent extends Component {
 	};
 
 	renderFallbackEngines = () => {
+		const { translate } = this.props;
 		const fallbackEngines = getFileImporters();
 
 		return (
-			<div className="import-url-onboarding__fallback">
-				{ fallbackEngines.map( ( { engine, icon, title } ) => (
-					<Card key={ engine } displayAsLink onClick={ this.handleEngineSelect( engine ) }>
-						<ImporterLogo icon={ icon } />
-						<div className="import-url-onboarding__service-info">
-							<h1 className="import-url-onboarding__service-title">{ title }</h1>
-						</div>
-					</Card>
-				) ) }
-			</div>
+			<Fragment>
+				<div className="import-url-onboarding__fallback">
+					{ fallbackEngines.map( ( { engine, icon, title } ) => (
+						<Card
+							key={ engine }
+							className="import-url-onboarding__engine"
+							compact
+							displayAsLink
+							onClick={ this.handleEngineSelect( engine ) }
+						>
+							<ImporterLogo icon={ icon } size={ 48 } />
+							<div className="import-url-onboarding__service-info">
+								<h1 className="import-url-onboarding__service-title">{ title }</h1>
+							</div>
+						</Card>
+					) ) }
+				</div>
+				<div className="import-url-onboarding__secondary-button">
+					<Button borderless onClick={ this.handleNoServiceClick }>
+						{ translate( "Don't see your service?" ) }
+					</Button>
+				</div>
+			</Fragment>
 		);
 	};
 
@@ -303,7 +323,7 @@ class ImportURLOnboardingStepComponent extends Component {
 						</FormButton>
 					</form>
 				</Card>
-				<div className="import-url-onboarding__have-file-button">
+				<div className="import-url-onboarding__secondary-button">
 					<Button borderless onClick={ this.handleDisplayFallbackClick }>
 						{ translate( 'Have an import file?' ) }
 					</Button>

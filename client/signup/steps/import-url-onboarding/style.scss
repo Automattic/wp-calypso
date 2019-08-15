@@ -4,7 +4,7 @@
 	padding: rem( 24px );
 }
 
-.import-url-onboarding__have-file-button {
+.import-url-onboarding__secondary-button {
 	text-align: center;
 	margin-top: 20px;
 
@@ -27,12 +27,25 @@
 	margin: rem( 16px ) auto 0;
 }
 
-.import-url-onboarding__service-info {
-	margin-bottom: 1.5em;
+.import-url-onboarding__fallback {
+	margin: 0 auto;
+	width: 420px;
+}
 
-	@include breakpoint( '>480px' ) {
-		margin-left: 60px;
+.import-url-onboarding__engine {
+	&:first-child {
+		border-radius: 3px 3px 0 0;
 	}
+
+	&:last-child {
+		border-radius: 0 0 3px 3px;
+		border-bottom: none;
+	}
+}
+
+.import-url-onboarding__service-info {
+	margin-bottom: auto;
+	line-height: 48px;
 }
 
 .import-url-onboarding__service-title {
