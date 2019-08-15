@@ -637,7 +637,7 @@ export class SecurePaymentForm extends Component {
 				'variant' === abtest( 'checkoutSealsCopyBundle' ) &&
 				indexOf( [ 'credits', 'free-trial', 'free-cart' ], visiblePaymentBox ) === -1;
 
-		this.props.showGuaranteeSeal( moneyBackGuaranteeSeal );
+		this.props.showGuaranteeSeal( moneyBackGuaranteeSeal, this.props.isJetpackNotAtomic );
 		if ( visiblePaymentBox === null ) {
 			debug( 'empty content' );
 			return (

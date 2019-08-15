@@ -22,6 +22,7 @@ class CheckoutContainer extends React.Component {
 			headerText: '',
 			subHeaderText: '',
 			shouldShowGuaranteeSeal: false,
+			isJetpackNotAtomic: false,
 		};
 	}
 
@@ -41,11 +42,16 @@ class CheckoutContainer extends React.Component {
 	};
 
 	renderCheckoutSeals() {
-		return <CheckoutSeals guaranteeVisible={ this.state.shouldShowGuaranteeSeal } />;
+		return (
+			<CheckoutSeals
+				guaranteeVisible={ this.state.shouldShowGuaranteeSeal }
+				isJetpackNotAtomic={ this.state.isJetpackNotAtomic }
+			/>
+		);
 	}
 
-	showGuaranteeSeal = visible => {
-		this.setState( { shouldShowGuaranteeSeal: visible } );
+	showGuaranteeSeal = ( visible, isJetpackNotAtomic ) => {
+		this.setState( { shouldShowGuaranteeSeal: visible, isJetpackNotAtomic } );
 	};
 
 	render() {
