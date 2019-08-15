@@ -72,6 +72,13 @@ const PaymentMethod = ( {
 	const typeId = typeTitle ? type : 'placeholder';
 	const typeName = typeTitle || type;
 
+	const expiryText = expiry
+		? translate( 'Expires %(date)s', {
+				args: { date: expiry },
+				context: 'date is of the form MM/YY',
+		  } )
+		: '';
+
 	return (
 		<CompactCard className="label-settings__card" onClick={ onSelect }>
 			<FormCheckbox
@@ -84,12 +91,7 @@ const PaymentMethod = ( {
 				<p className="label-settings__card-number">{ typeName }</p>
 				<p className="label-settings__card-name">{ name }</p>
 			</div>
-			<div className="label-settings__card-date">
-				{ translate( 'Expires %(date)s', {
-					args: { date: expiry },
-					context: 'date is of the form MM/YY',
-				} ) }
-			</div>
+			<div className="label-settings__card-date">{ expiryText }</div>
 		</CompactCard>
 	);
 };
