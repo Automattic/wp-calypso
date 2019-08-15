@@ -287,6 +287,7 @@ class ImportURLOnboardingStepComponent extends Component {
 
 		return (
 			<Fragment>
+				{ this.renderNotice() }
 				<Card className="import-url-onboarding__url-card">
 					<form className="import-url-onboarding__form" onSubmit={ this.handleSubmit }>
 						<ScreenReaderText>
@@ -304,8 +305,6 @@ class ImportURLOnboardingStepComponent extends Component {
 							inputRef={ this.handleInputRef }
 							isError={ !! urlValidationMessage }
 						/>
-
-						{ this.renderNotice() }
 
 						<FormButton
 							className="import-url-onboarding__submit-button"

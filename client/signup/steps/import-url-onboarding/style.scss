@@ -1,6 +1,6 @@
 .import-url-onboarding__url-card {
 	border-radius: 3px;
-	width: 380px;
+	max-width: 380px;
 	padding: rem( 24px );
 }
 
@@ -25,6 +25,10 @@
 	display: block;
 	min-width: rem( 200px );
 	margin: rem( 16px ) auto 0;
+
+	@include breakpoint( '<480px' ) {
+		min-width: rem( 160px );
+	}
 }
 
 .import-url-onboarding__fallback {
