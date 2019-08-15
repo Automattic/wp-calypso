@@ -10,9 +10,8 @@ import { getThemeIdFromStylesheet } from 'state/themes/utils';
 /**
  * Module variables
  */
-let REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
-	REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/,
-	PostMetadata;
+const REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
+	REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/;
 
 function getValueByKey( metadata, key ) {
 	const meta = find( metadata, { key: key } );
@@ -36,7 +35,7 @@ function getConnectionIdsByPattern( metadata, pattern ) {
 		} );
 }
 
-PostMetadata = {
+const PostMetadata = {
 	/**
 	 * Given a post object, returns the Publicize custom message assigned to
 	 * that post, or `undefined` if the value cannot be determined.
@@ -139,14 +138,12 @@ PostMetadata = {
 	 * @return {string}      Array of geographic float coordinates
 	 */
 	geoCoordinates: function( post ) {
-		let latitude, longitude;
-
 		if ( ! post ) {
 			return;
 		}
 
-		latitude = parseFloat( getValueByKey( post.metadata, 'geo_latitude' ) );
-		longitude = parseFloat( getValueByKey( post.metadata, 'geo_longitude' ) );
+		const latitude = parseFloat( getValueByKey( post.metadata, 'geo_latitude' ) );
+		const longitude = parseFloat( getValueByKey( post.metadata, 'geo_longitude' ) );
 
 		if ( latitude && longitude ) {
 			return [ latitude, longitude ];

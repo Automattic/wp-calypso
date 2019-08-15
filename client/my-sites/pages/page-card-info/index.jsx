@@ -104,11 +104,11 @@ function PageCardInfo( {
 }
 
 export default connect( ( state, props ) => {
-	const themeTemplate = PostMetadata.homepageTemplate( props.page );
+	const themeId = PostMetadata.homepageTemplate( props.page );
 	return {
 		isFront: isFrontPage( state, props.page.site_ID, props.page.ID ),
 		isPosts: isPostsPage( state, props.page.site_ID, props.page.ID ),
-		theme: getTheme( state, props.page.site_ID, getThemeIdFromStylesheet( themeTemplate ) ),
+		theme: getTheme( state, props.page.site_ID, themeId ),
 		contentLink: getContentLink( state, props.page.site_ID, props.page ),
 	};
 } )( localize( PageCardInfo ) );
