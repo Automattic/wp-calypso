@@ -244,12 +244,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #000;
+    background: $template-selector-empty-background;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
 }
 
 // Preview adjustments.
