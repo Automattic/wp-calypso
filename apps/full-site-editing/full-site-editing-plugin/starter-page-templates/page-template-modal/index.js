@@ -41,22 +41,28 @@ class PageTemplateModal extends Component {
 		console.timeEnd( 'PageTemplateModal' );
 	}
 
-	selectTemplate = () => {
+	setTemplate = ( slug, title, previewBlocks ) => {
 		this.setState( { isOpen: false } );
-		trackSelection( this.props.segment.id, this.props.vertical.id, this.state.slug );
+		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
-		this.props.saveTemplateChoice( this.state.slug );
+		this.props.saveTemplateChoice( slug );
 
 		// Skip inserting if there's nothing to insert.
-		if ( this.state.previewBlocks.length === 0 ) {
+		if ( previewBlocks.length === 0 ) {
 			return;
 		}
 
-		this.props.insertTemplate( this.state.title, this.state.previewBlocks );
+		this.props.insertTemplate( title, previewBlocks );
 	};
+
+	selectTemplate = () =>
+		this.setTemplate( this.state.slug, this.state.title, this.state.previewBlocks );
 
 	focusTemplate = ( slug, title, previewBlocks ) => {
 		this.setState( { slug, title, previewBlocks } );
+		if ( slug === 'blank' ) {
+			this.setTemplate( slug, title, previewBlocks );
+		}
 	};
 
 	closeModal = event => {
