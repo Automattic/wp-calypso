@@ -37,12 +37,12 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 					{ __( 'Select a page template to preview.', 'full-site-editing' ) }
 				</div>
 			) : (
-				<>
+				<div>
 					{ isLoading && (
 						<div className="template-selector-preview__loading">Loading preview...</div>
 					) }
 					<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
-				</>
+				</div>
 			) }
 		</div>
 	);
