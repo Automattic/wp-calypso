@@ -59,7 +59,12 @@ class PageTemplateModal extends Component {
 		this.setState( { slug, title, previewBlocks } );
 	};
 
-	closeModal = () => {
+	closeModal = event => {
+		// Check to see if the Blur event occured on the buttons inside of the Modal.
+		// If it did then we don't want to dismiss the Modal for this type of Blur.
+		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
+			return false;
+		}
 		this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
