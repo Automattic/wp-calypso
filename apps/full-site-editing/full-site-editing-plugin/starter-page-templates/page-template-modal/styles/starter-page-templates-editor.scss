@@ -231,6 +231,13 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow-y: auto;
 }
 
+.template-selector-preview__placeholder {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate3d( -50%, -50%, 0 );
+}
+
 // Preview adjustments.
 .edit-post-visual-editor .editor-styles-wrapper .block-editor-block-preview__container {
 	.wp-block[data-align='wide'] {
