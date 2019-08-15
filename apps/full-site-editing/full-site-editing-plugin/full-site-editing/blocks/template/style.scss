@@ -25,9 +25,9 @@
 // Adjust the block content positioning without borders
 @media only screen and ( min-width: 768px ) {
 	.editor-styles-wrapper .wp-block.template__block-container[data-align='full'] {
-		left: calc( -12.5% - 12px );
-		max-width: calc( 125% + 114px );
-		width: calc( 125% + 114px );
+		left: calc( -12.5% - 13px );
+		max-width: calc( 125% + 116px );
+		width: calc( 125% + 116px );
 	}
 }
 
