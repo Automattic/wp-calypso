@@ -335,7 +335,7 @@ export default {
 			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
 		const date = isValidStartDate
 			? i18n.moment( queryOptions.startDate ).locale( 'en' )
-			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+			: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 		const period = rangeOfPeriod( activeFilter.period, date );
 
 		const extraProps =
