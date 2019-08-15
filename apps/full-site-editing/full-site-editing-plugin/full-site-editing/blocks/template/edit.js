@@ -23,6 +23,35 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import './style.scss';
 
+const stripEmptyBlocks = blocks =>
+	blocks.filter( ( { name, attributes } ) => {
+		switch ( name ) {
+			case 'core/verse':
+			case 'core/preformatted':
+			case 'core/html':
+			case 'core/code':
+			case 'core/heading':
+			case 'core/paragraph':
+				return attributes.content.length > 0;
+			case 'core/image':
+			case 'core/audio':
+			case 'core/file':
+			case 'core/video':
+				return attributes.hasOwnProperty( 'id' );
+			case 'core/pullquote':
+			case 'core/quote':
+				return attributes.value !== '<p></p>';
+			case 'core/list':
+				return attributes.values !== '<li></li>';
+			case 'core/table':
+				return attributes.body.length > 0;
+			case 'core/gallery':
+				return attributes.images.length > 0;
+			default:
+				return true;
+		}
+	} );
+
 const TemplateEdit = compose(
 	withState( { templateClientId: null, shouldCloseSidebarOnSelect: true } ),
 	withSelect( ( select, { attributes, templateClientId } ) => {
@@ -60,7 +89,9 @@ const TemplateEdit = compose(
 					return;
 				}
 
-				const templateBlocks = parse( get( template, [ 'content', 'raw' ], '' ) );
+				const templateBlocks = stripEmptyBlocks(
+					parse( get( template, [ 'content', 'raw' ], '' ) )
+				);
 				const templateBlock =
 					templateBlocks.length === 1
 						? templateBlocks[ 0 ]
