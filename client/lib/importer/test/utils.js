@@ -4,7 +4,7 @@
 import { suggestDomainFromImportUrl } from '../utils';
 
 describe( 'suggestDomainFromImportUrl', () => {
-	it( 'should suggest the path name, if present', () => {
+	it( 'should suggest the path name, for wix sites, if present', () => {
 		const suggestedDomain = suggestDomainFromImportUrl( 'https://user.wixsite.com/mysite' );
 
 		expect( suggestedDomain ).toEqual( 'mysite' );
