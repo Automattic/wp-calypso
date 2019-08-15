@@ -3,17 +3,10 @@
 }
 
 .login__social-buttons {
-	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
 
-	button {
-		width: 100%;
-	}
-
-	svg {
-		margin-top: -2px;
-
-		&.disabled {
-			display: none;
-		}
+	.social-buttons__button:not(:first-of-type) {
+		margin-top: 10px;
 	}
 }

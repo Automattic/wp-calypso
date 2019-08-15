@@ -160,8 +160,9 @@
 }
 
 .login__form-signup-link {
+	clear: both;
 	font-size: 13px;
-	margin-top: 20px;
+	padding-top: 20px;
 
 	&.disabled {
 		a,
