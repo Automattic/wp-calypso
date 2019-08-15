@@ -127,11 +127,11 @@ const TemplateEdit = compose(
 		const { align, className } = attributes;
 
 		const save = event => {
+			setNavigateToTemplate( true );
 			if ( ! isDirty ) {
 				return;
 			}
 			event.preventDefault();
-			setNavigateToTemplate( true );
 			savePost();
 		};
 
@@ -156,7 +156,13 @@ const TemplateEdit = compose(
 						{ isSelected && (
 							<Placeholder className="template-block__overlay">
 								<Button href={ editTemplateUrl } onClick={ save } isDefault ref={ navButton }>
-									{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
+									{ navigateToTemplate ? (
+										<Fragment>
+											<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
+										</Fragment>
+									) : (
+										sprintf( __( 'Edit %s' ), templateTitle )
+									) }
 								</Button>
 							</Placeholder>
 						) }
