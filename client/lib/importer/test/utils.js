@@ -10,6 +10,12 @@ describe( 'suggestDomainFromImportUrl', () => {
 		expect( suggestedDomain ).toEqual( 'mysite' );
 	} );
 
+	it( 'should suggest the path name, for medium sites, if present', () => {
+		const suggestedDomain = suggestDomainFromImportUrl( 'https://medium.com/mysite' );
+
+		expect( suggestedDomain ).toEqual( 'mysite' );
+	} );
+
 	it( 'should suggest the domain for WordPress.com sites', () => {
 		const suggestedDomain = suggestDomainFromImportUrl( 'https://mysite.wordpress.com' );
 
