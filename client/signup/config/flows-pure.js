@@ -181,6 +181,7 @@ export function generateFlows( {
 			disallowResume: true,
 			allowContinue: false,
 			hideFlowProgress: true,
+			forceLogin: true,
 		},
 
 		'rewind-auto-config': {
