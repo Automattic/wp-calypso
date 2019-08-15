@@ -55,6 +55,11 @@ class ImportURLOnboardingStepComponent extends Component {
 	handleHaveFileClick = event => {
 		event.preventDefault();
 
+		this.props.recordTracksEvent( 'calypso_signup_import_have_file_click', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+		} );
+
 		this.setState( { displayFallbackEngines: true } );
 	};
 
