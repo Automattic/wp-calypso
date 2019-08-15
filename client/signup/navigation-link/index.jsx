@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get, findLast } from 'lodash';
+import { get, findLast, findIndex } from 'lodash';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
 
@@ -54,10 +54,9 @@ export class NavigationLink extends Component {
 	getPreviousStep() {
 		const { flowName, signupProgress, stepName } = this.props;
 
-		const previousStep = findLast(
-			getFilteredSteps( flowName, signupProgress ),
-			step => ! step.wasSkipped && step.stepName !== stepName
-		);
+		let steps = getFilteredSteps( flowName, signupProgress );
+		steps = steps.slice( 0, findIndex( steps, step => step.stepName === stepName ) );
+		const previousStep = findLast( steps, step => ! step.wasSkipped && step.stepName !== stepName );
 
 		return previousStep || { stepName: null };
 	}
