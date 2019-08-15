@@ -52,7 +52,7 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.focusInput();
 	}
 
-	handleDisplayFallbackClick = event => {
+	handleHaveFileClick = event => {
 		event.preventDefault();
 
 		this.setState( { displayFallbackEngines: true } );
@@ -97,12 +97,6 @@ class ImportURLOnboardingStepComponent extends Component {
 	};
 
 	handleInputRef = el => ( this.inputRef = el );
-
-	handleNoServiceClick = event => {
-		event.preventDefault();
-
-		this.props.goToNextStep( 'main' );
-	};
 
 	focusInput = () => invoke( this.inputRef, 'focus' );
 
@@ -274,7 +268,7 @@ class ImportURLOnboardingStepComponent extends Component {
 					) ) }
 				</div>
 				<div className="import-url-onboarding__secondary-button">
-					<Button borderless onClick={ this.handleNoServiceClick }>
+					<Button borderless onClick={ this.exitFlow }>
 						{ translate( "Don't see your service?" ) }
 					</Button>
 				</div>
@@ -324,7 +318,7 @@ class ImportURLOnboardingStepComponent extends Component {
 					</form>
 				</Card>
 				<div className="import-url-onboarding__secondary-button">
-					<Button borderless onClick={ this.handleDisplayFallbackClick }>
+					<Button borderless onClick={ this.handleHaveFileClick }>
 						{ translate( 'Have an import file?' ) }
 					</Button>
 				</div>
