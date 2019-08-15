@@ -977,7 +977,8 @@ export const normalizers = {
 
 		return statsData.map( item => {
 			return {
-				label: item.filename,
+				label: item.relative_url,
+				shortLabel: item.filename,
 				page: null,
 				value: item.downloads,
 				link: item.download_url,
