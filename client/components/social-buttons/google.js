@@ -25,15 +25,15 @@ import './style.scss';
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
-		isFormDisabled: PropTypes.bool,
 		clientId: PropTypes.string.isRequired,
-		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
-		uxMode: PropTypes.string,
+		isFormDisabled: PropTypes.bool,
+		onClick: PropTypes.func,
 		recordTracksEvent: PropTypes.func.isRequired,
 		responseHandler: PropTypes.func.isRequired,
+		scope: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		onClick: PropTypes.func,
+		uxMode: PropTypes.string,
 	};
 
 	static defaultProps = {

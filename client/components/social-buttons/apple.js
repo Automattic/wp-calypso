@@ -27,6 +27,16 @@ class AppleLoginButton extends Component {
 		redirectUri: PropTypes.string.isRequired,
 	};
 
+	state = {
+		isDisabled: true,
+	};
+
+	constructor( props ) {
+		super( props );
+
+		this.initialized = null;
+	}
+
 	componentDidMount() {
 		this.initialize();
 	}
@@ -53,13 +63,16 @@ class AppleLoginButton extends Component {
 		this.setState( { error: '' } );
 
 		this.initialized = this.loadDependency()
-			.then( AppleID =>
-				AppleID.auth.init( {
-					clientId: this.props.clientId,
-					scope: 'name email',
-					redirectURI: this.props.redirectUri,
-					state: '1',
-				} )
+			.then( AppleID => {
+					AppleID.auth.init( {
+						clientId: this.props.clientId,
+						scope: 'name email',
+						redirectURI: this.props.redirectUri,
+						state: '1',
+					} );
+
+					this.setState( { isDisabled: false } );
+				}
 			)
 			.catch( error => {
 				this.initialized = null;
@@ -70,8 +83,20 @@ class AppleLoginButton extends Component {
 		return this.initialized;
 	}
 
+	handleClick = ( event ) => {
+		event.preventDefault();
+
+		if ( this.state.isDisabled ) {
+			return;
+		}
+
+		window.AppleID.auth.signIn();
+	};
+
 	render() {
-		const { isFormDisabled } = this.props;
+		const isDisabled = Boolean(
+			this.state.isDisabled || this.props.isFormDisabled
+		);
 
 		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
 			return null;
@@ -79,9 +104,10 @@ class AppleLoginButton extends Component {
 
 		return (
 			<button
-				className={ classNames( 'social-buttons__button button', { disabled: isFormDisabled } ) }
+				className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+				onClick={ this.handleClick }
 			>
-				<AppleIcon isDisabled={ isFormDisabled } />
+				<AppleIcon isDisabled={ isDisabled } />
 
 				<span className="social-buttons__service-name">
 					{ this.props.translate( 'Sign in with %(service)s', {
