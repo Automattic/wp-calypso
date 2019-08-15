@@ -265,3 +265,8 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		height: 100%;
 	}
 }
+
+.page-template-modal .block-editor-block-preview__container {
+	max-width: 80%;
+	margin: 0 auto;
+}
