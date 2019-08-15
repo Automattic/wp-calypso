@@ -97,6 +97,7 @@ class Home extends Component {
 				renderChecklistCompleteBanner: 'render',
 			};
 		}
+		return null;
 	}
 
 	render() {
@@ -124,7 +125,7 @@ class Home extends Component {
 				<SidebarNavigation />
 				{ renderChecklistCompleteBanner && (
 					<Banner
-						dismissPreferenceName
+						dismissPreferenceName="checklist-complete"
 						dismissTemporary={ true }
 						icon="checkmark"
 						disableHref
