@@ -76,6 +76,7 @@ export default {
 		'Hockey',
 		'Rugby',
 		'Running',
+		'Soccer',
 		'Swimming',
 		'Tennis',
 		'Volleyball',
