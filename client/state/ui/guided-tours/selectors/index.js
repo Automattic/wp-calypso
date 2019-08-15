@@ -170,15 +170,24 @@ const shouldBailNewTours = state => hasTourJustBeenVisible( state );
 export const findEligibleTour = createSelector(
 	state => {
 		if ( shouldBailAllTours( state ) ) {
-			return;
+			return null;
 		}
 
-		return (
-			findOngoingTour( state ) ||
-			( ! shouldBailNewTours( state ) &&
-				( findRequestedTour( state ) || findTriggeredTour( state ) ) ) ||
-			undefined
-		);
+		const ongoingTour = findOngoingTour( state );
+		if ( ongoingTour ) {
+			return ongoingTour;
+		}
+
+		if ( shouldBailNewTours( state ) ) {
+			return null;
+		}
+
+		const requestedTour = findRequestedTour( state );
+		if ( requestedTour ) {
+			return requestedTour;
+		}
+
+		return findTriggeredTour( state );
 	},
 	// Though other state selectors are used in `findEligibleTour`'s body,
 	// we're intentionally reducing the list of dependants to the following:
