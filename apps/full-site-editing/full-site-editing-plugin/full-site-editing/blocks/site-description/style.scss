@@ -1,6 +1,9 @@
+@import '../../sass/mixins';
+
 .block-editor {
 	.wp-block-a8c-site-description {
-		&,&:focus {
+		&,
+		&:focus {
 			display: inline;
 			color: #767676;
 			font-size: 1.125em;
@@ -11,6 +14,15 @@
 			background-color: transparent;
 		}
 	}
+
+	.wp-block {
+		&.is-selected {
+			.wp-block-a8c-site-description {
+				@include hide-input-placeholder;
+			}
+		}
+	}
+
 	.site-description__save-button {
 		margin-left: auto;
 		display: block;
