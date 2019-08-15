@@ -341,6 +341,8 @@ const polyfillsSkippedInEvergreen = [
 	/^isomorphic-fetch$/,
 	// All modern browsers support the URL API.
 	/^@webcomponents[/\\]url$/,
+	// All evergreen browsers support the URLSearchParams API.
+	/^@ungap[/\\]url-search-params$/,
 ];
 
 if ( browserslistEnv === 'evergreen' ) {
