@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
@@ -105,7 +105,7 @@ class PageTemplateModal extends Component {
 						disabled={ isEmpty( this.state.slug ) }
 						onClick={ this.selectTemplate }
 					>
-						{ __( 'Use this template', 'full-site-editing' ) }
+						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
 					</Button>
 				</div>
 			</Modal>
