@@ -16,6 +16,14 @@ export default function isEligibleForSignupDestination( state, siteId, cart ) {
 		return false;
 	}
 
+	if ( hasGoogleApps( cart ) ) {
+		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
+
+		if ( ! domainReceiptId ) {
+			return false;
+		}
+	}
+
 	const destination = retrieveSignupDestination();
 
 	if ( ! destination ) {
