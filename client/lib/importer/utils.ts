@@ -14,11 +14,16 @@ export function suggestDomainFromImportUrl( siteUrl: string ): string | null {
 		/squarespace\.com\/?$/,
 		/tumblr\.com\/?$/,
 	];
+	const usePathMatchers = [ /wixsite\.com\/?$/, /medium\.com\/?$/ ];
 
 	// Site name is sometimes the path, as in the case of Wix and Medium sites,
 	// such as `medium.com/my-blog`.
 	if ( pathname ) {
-		return pathname.replace( '/', '-' );
+		for ( const pathMatcher of usePathMatchers ) {
+			if ( parsedUrl.hostname.match( pathMatcher ) ) {
+				return pathname.replace( '/', '-' );
+			}
+		}
 	}
 
 	if ( parsedUrl.hostname ) {
