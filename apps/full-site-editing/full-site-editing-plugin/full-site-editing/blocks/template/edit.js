@@ -61,10 +61,7 @@ const TemplateEdit = compose(
 				}
 
 				const templateBlocks = parse( get( template, [ 'content', 'raw' ], '' ) );
-				const templateBlock =
-					templateBlocks.length === 1
-						? templateBlocks[ 0 ]
-						: createBlock( 'core/template', {}, templateBlocks );
+				const templateBlock = createBlock( 'core/template', {}, templateBlocks );
 
 				receiveBlocks( [ templateBlock ] );
 				setState( { templateClientId: templateBlock.clientId } );
