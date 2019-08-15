@@ -2,6 +2,7 @@ export { default as buildSeoTitle } from './build-seo-title';
 export { default as canCurrentUserUpgradeSite } from './can-current-user-upgrade-site';
 export { default as canCurrentUserUseAds } from './can-current-user-use-ads';
 export { default as canCurrentUserUseEarn } from './can-current-user-use-earn';
+export { default as canCurrentUserUseCustomerHome } from './can-current-user-use-customer-home';
 export { default as canCurrentUserUseStore } from './can-current-user-use-store';
 export { default as canCurrentUserUseChecklistMenu } from './can-current-user-use-checklist-menu';
 export { default as canJetpackSiteAutoUpdateCore } from './can-jetpack-site-auto-update-core';

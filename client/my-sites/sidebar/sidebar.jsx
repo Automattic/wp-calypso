@@ -43,6 +43,7 @@ import {
 	isJetpackSite,
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
+	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
 	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
@@ -157,27 +158,41 @@ export class MySitesSidebar extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
-	trackChecklistClick = () => {
-		this.trackMenuItemClick( 'checklist' );
+	trackCustomerHomeClick = () => {
+		this.trackMenuItemClick( isEnabled( 'customer-home' ) ? 'customer-home' : 'checklist' );
 		this.onNavigate();
 	};
 
-	checklist() {
-		const { canUserUseChecklistMenu, path, siteSuffix, siteId, translate } = this.props;
+	customerHome() {
+		const {
+			canUserUseChecklistMenu,
+			canUserUseCustomerHome,
+			path,
+			siteSuffix,
+			siteId,
+			translate,
+		} = this.props;
 
-		if ( ! siteId || ! canUserUseChecklistMenu ) {
+		// This will be eventually removed when Customer Home is finally live
+		const canUserViewChecklistOrCustomerHome = isEnabled( 'customer-home' )
+			? canUserUseCustomerHome
+			: canUserUseChecklistMenu;
+
+		if ( ! siteId || ! canUserViewChecklistOrCustomerHome ) {
 			return null;
 		}
 
-		const checklistLink = '/checklist' + siteSuffix;
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ translate( 'Checklist' ) }
-				selected={ itemLinkMatches( [ '/checklist' ], path ) }
-				link={ checklistLink }
-				onNavigate={ this.trackChecklistClick }
-				materialIcon="check_circle"
+				label={ isEnabled( 'customer-home' ) ? translate( 'Home' ) : translate( 'Checklist' ) }
+				selected={ itemLinkMatches(
+					isEnabled( 'customer-home' ) ? [ '/home' ] : [ '/checklist' ],
+					path
+				) }
+				link={ isEnabled( 'customer-home' ) ? '/home' + siteSuffix : '/checklist' + siteSuffix }
+				onNavigate={ this.trackCustomerHomeClick }
+				materialIcon={ isEnabled( 'customer-home' ) ? 'home' : 'check_circle' }
 			/>
 		);
 	}
@@ -661,7 +676,7 @@ export class MySitesSidebar extends Component {
 			<div className="sidebar__menu-wrapper">
 				<SidebarMenu>
 					<ul>
-						{ this.checklist() }
+						{ this.customerHome() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
@@ -764,6 +779,7 @@ function mapStateToProps( state ) {
 		canUserUseChecklistMenu: canCurrentUserUseChecklistMenu( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
+		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,

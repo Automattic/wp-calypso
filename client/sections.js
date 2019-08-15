@@ -456,6 +456,13 @@ const sections = [
 		secondary: false,
 		enableLoggedOut: true,
 	},
+	{
+		name: 'home',
+		paths: [ '/home' ],
+		module: 'my-sites/customer-home',
+		secondary: true,
+		group: 'sites',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {
