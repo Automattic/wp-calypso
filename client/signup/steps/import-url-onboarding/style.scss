@@ -33,7 +33,7 @@
 
 .import-url-onboarding__fallback {
 	margin: 0 auto;
-	width: 420px;
+	max-width: 420px;
 }
 
 .import-url-onboarding__engine {
@@ -50,14 +50,15 @@
 .import-url-onboarding__service-info {
 	margin-bottom: auto;
 	line-height: 48px;
+
+	@include breakpoint( '<960px' ) {
+		line-height: 38px;
+	}
 }
 
 .import-url-onboarding__service-title {
 	font-size: 21px;
 	font-weight: 300;
 	color: var( --color-text-subtle );
-
-	@include breakpoint( '>480px' ) {
-		clear: none;
-	}
+	clear: none;
 }
