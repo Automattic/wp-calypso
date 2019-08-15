@@ -10,6 +10,7 @@ import { flow, get, includes, invoke, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import FormButton from 'components/forms/form-button';
@@ -51,6 +52,17 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.focusInput();
 	}
 
+	handleHaveFileClick = event => {
+		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_signup_import_have_file_click', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+		} );
+
+		this.setState( { displayFallbackEngines: true } );
+	};
+
 	handleEngineSelect = siteEngine => event => {
 		event.preventDefault();
 
@@ -72,6 +84,7 @@ class ImportURLOnboardingStepComponent extends Component {
 				importSiteFavicon: siteFavicon,
 				importSiteUrl: siteUrl,
 				siteTitle,
+				suggestedDomain: suggestDomainFromImportUrl( siteUrl ),
 				themeSlugWithRepo: 'pub/modern-business',
 			}
 		);
@@ -106,6 +119,11 @@ class ImportURLOnboardingStepComponent extends Component {
 		const { stepName, translate, urlInputValue } = this.props;
 
 		this.setState( {
+			fallbackSiteDetails: {
+				siteFavion: '',
+				siteTitle: '',
+				siteUrl: '',
+			},
 			isLoading: true,
 			urlValidationMessage: '',
 		} );
@@ -230,23 +248,37 @@ class ImportURLOnboardingStepComponent extends Component {
 			);
 		}
 
-		return <div className="import-url-onboarding__notice-placeholder" />;
+		return null;
 	};
 
 	renderFallbackEngines = () => {
+		const { translate } = this.props;
 		const fallbackEngines = getFileImporters();
 
 		return (
-			<div className="import-url-onboarding__fallback">
-				{ fallbackEngines.map( ( { engine, icon, title } ) => (
-					<Card key={ engine } displayAsLink onClick={ this.handleEngineSelect( engine ) }>
-						<ImporterLogo icon={ icon } />
-						<div className="import-url-onboarding__service-info">
-							<h1 className="import-url-onboarding__service-title">{ title }</h1>
-						</div>
-					</Card>
-				) ) }
-			</div>
+			<Fragment>
+				<div className="import-url-onboarding__fallback">
+					{ fallbackEngines.map( ( { engine, icon, title } ) => (
+						<Card
+							key={ engine }
+							className="import-url-onboarding__engine"
+							compact
+							displayAsLink
+							onClick={ this.handleEngineSelect( engine ) }
+						>
+							<ImporterLogo icon={ icon } size={ 48 } />
+							<div className="import-url-onboarding__service-info">
+								<h1 className="import-url-onboarding__service-title">{ title }</h1>
+							</div>
+						</Card>
+					) ) }
+				</div>
+				<div className="import-url-onboarding__secondary-button">
+					<Button borderless onClick={ this.exitFlow }>
+						{ translate( "Don't see your service?" ) }
+					</Button>
+				</div>
+			</Fragment>
 		);
 	};
 
@@ -256,7 +288,8 @@ class ImportURLOnboardingStepComponent extends Component {
 
 		return (
 			<Fragment>
-				<div className="import-url-onboarding__wrapper">
+				{ this.renderNotice() }
+				<Card className="import-url-onboarding__url-card">
 					<form className="import-url-onboarding__form" onSubmit={ this.handleSubmit }>
 						<ScreenReaderText>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
@@ -288,7 +321,11 @@ class ImportURLOnboardingStepComponent extends Component {
 								: translate( 'Continue' ) }
 						</FormButton>
 					</form>
-					{ this.renderNotice() }
+				</Card>
+				<div className="import-url-onboarding__secondary-button">
+					<Button borderless onClick={ this.handleHaveFileClick }>
+						{ translate( 'Have an import file?' ) }
+					</Button>
 				</div>
 			</Fragment>
 		);
@@ -300,7 +337,7 @@ class ImportURLOnboardingStepComponent extends Component {
 
 		const headerText = displayFallbackEngines
 			? translate( 'Where did you get your import file?' )
-			: translate( 'Where can we find your old site?' );
+			: translate( 'Where can we find your website?' );
 		const subHeaderText =
 			! displayFallbackEngines &&
 			translate(
