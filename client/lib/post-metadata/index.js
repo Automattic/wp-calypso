@@ -5,6 +5,7 @@
  */
 
 import { find } from 'lodash';
+import { getThemeIdFromStylesheet } from 'state/themes/utils';
 
 /**
  * Module variables
@@ -81,6 +82,21 @@ PostMetadata = {
 		}
 
 		return getConnectionIdsByPattern( post.metadata, REGEXP_PUBLICIZE_SERVICE_SKIPPED );
+	},
+
+	/**
+	 * Given a post object, returns the theme id of a template-first theme, or `undefined` if the value
+	 * cannot be determined.
+	 *
+	 * @param  {Object} post Post object
+	 * @return {Array}       Array of Publicize service IDs
+	 */
+	homepageTemplate: function( post ) {
+		if ( ! post ) {
+			return;
+		}
+
+		return getThemeIdFromStylesheet( getValueByKey( post.metadata, '_tft_homepage_template' ) );
 	},
 
 	/**
