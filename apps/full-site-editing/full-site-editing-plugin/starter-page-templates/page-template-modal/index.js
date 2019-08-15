@@ -95,8 +95,8 @@ class PageTemplateModal extends Component {
 								templates={ this.props.templates }
 								onTemplateSelect={ this.focusTemplate }
 								onTemplateFocus={ this.focusTemplate }
-								dynamicPreview={ true }
-								blocksInPreview={ 10 }
+								useDynamicPreview={ true }
+								numBlocksInPreview={ 10 }
 							/>
 						</fieldset>
 					</form>
