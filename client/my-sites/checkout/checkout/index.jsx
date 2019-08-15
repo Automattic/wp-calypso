@@ -553,7 +553,10 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }?d=gsuite`;
 		}
 
-		const redirectPathForGSuiteUpsell = this.maybeRedirectToGSuiteNudge( pendingOrReceiptId );
+		const redirectPathForGSuiteUpsell = this.maybeRedirectToGSuiteNudge(
+			pendingOrReceiptId,
+			stepResult
+		);
 		if ( redirectPathForGSuiteUpsell ) {
 			return redirectPathForGSuiteUpsell;
 		}
