@@ -74,6 +74,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<Card className="magic-login__form">
 					<img
 						src="/calypso/images/login/check-email.svg"
+						alt=""
 						className="magic-login__check-email-image"
 					/>
 					<p>{ line }</p>
