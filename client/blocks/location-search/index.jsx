@@ -41,6 +41,7 @@ class LocationSearch extends Component {
 		types: [ 'establishment' ],
 		hidePredictionsOnClick: false,
 		card: true,
+		placeholder: 'Search for your address by street or city',
 	};
 
 	state = {
@@ -134,6 +135,7 @@ class LocationSearch extends Component {
 			delayTimeout: 500,
 			disableAutocorrect: true,
 			searching: this.props.loading,
+			placeholder: this.props.placeholder,
 		};
 
 		return (
