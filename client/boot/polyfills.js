@@ -1,10 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import '@babel/polyfill';
 import svg4everybody from 'svg4everybody';
 import 'isomorphic-fetch';
+import '@webcomponents/url';
 
 /**
  * Internal dependencies

@@ -339,6 +339,8 @@ const polyfillsSkippedInEvergreen = [
 	/^svg4everybody$/,
 	// The fetch polyfill isn't needed for evergreen browsers, as they all support it.
 	/^isomorphic-fetch$/,
+	// All modern browsers support the URL API.
+	/^@webcomponents[/\\]url$/,
 ];
 
 if ( browserslistEnv === 'evergreen' ) {
