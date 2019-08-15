@@ -255,8 +255,12 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 // Tweak styles which are inside of the preview container.
 .block-editor-block-preview__container {
 	.editor-styles-wrapper {
+		.wp-block {
+			width: 100%;
+		}
+
 		.wp-block[data-align='wide'] {
-			max-width: 960px; // same width tha the viewportWidth
+			//max-width: 800px;
 		}
 
 		// `core/cover`
@@ -264,7 +268,18 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			padding: 0;
 		}
 
-	.block-editor-block-list__block {
+		// `core/columns`
+		.wp-block-columns > .editor-inner-blocks > .editor-block-list__layout > [data-type='core/column'] {
+			//margin-left: -14px;
+			//margin-right: -14px;
+
+			& > .editor-block-list__block-edit > div > .block-core-columns > .editor-inner-blocks {
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+		}
+
+		.block-editor-block-list__block {
 			.block-editor-block-list__block-edit {
 				@media screen and ( min-width: 600px ) {
 					margin: 0;
@@ -272,11 +287,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			}
 		}
 
-		// grid.
-		.wp-block-columns > .editor-inner-blocks > .editor-block-list__layout > [data-type='core/column'] > .editor-block-list__block-edit > div > .block-core-columns > .editor-inner-blocks {
-			margin-top: 0;
-			margin-bottom: 0;
-		}
 	}
 }
 
@@ -291,6 +301,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	// editor-writing-flow
 	.editor-writing-flow {
-		width: 100%;
+		//width: 100%;
 	}
 }
