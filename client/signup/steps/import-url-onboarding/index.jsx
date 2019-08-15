@@ -84,6 +84,7 @@ class ImportURLOnboardingStepComponent extends Component {
 				importSiteFavicon: siteFavicon,
 				importSiteUrl: siteUrl,
 				siteTitle,
+				suggestedDomain: suggestDomainFromImportUrl( siteUrl ),
 				themeSlugWithRepo: 'pub/modern-business',
 			}
 		);
