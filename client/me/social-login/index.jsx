@@ -13,23 +13,26 @@ const debug = debugFactory( 'calypso:me:security:social-login' );
 /**
  * Internal dependencies
  */
-import config from 'config';
+import AppleIcon from 'components/social-icons/apple';
+import AppleLoginButton from 'components/social-buttons/apple';
 import CompactCard from 'components/card/compact';
+import config from 'config';
+import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
 import DocumentHead from 'components/data/document-head';
 import FormButton from 'components/forms/form-button';
+import { getCurrentUser } from 'state/current-user/selectors';
+import GoogleIcon from 'components/social-icons/google';
+import GoogleLoginButton from 'components/social-buttons/google';
+import { isRequesting, getRequestError } from 'state/login/selectors';
+import { login } from 'lib/paths';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
+import Notice from 'components/notice';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
-import { isRequesting, getRequestError } from 'state/login/selectors';
-import GoogleIcon from 'components/social-icons/google';
-import GoogleLoginButton from 'components/social-buttons/google';
 import userFactory from 'lib/user';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
@@ -66,6 +69,10 @@ class SocialLogin extends Component {
 		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
 	}
 
+	disconnectFromApple = () => {
+		this.props.disconnectSocialUser( 'apple' ).then( () => this.refreshUser() );
+	};
+
 	disconnectFromGoogle = () => {
 		this.props.disconnectSocialUser( 'google' ).then( () => this.refreshUser() );
 	};
@@ -101,11 +108,30 @@ class SocialLogin extends Component {
 					) }
 				</CompactCard>
 				{ this.renderGoogleConnection() }
+				{ config.isEnabled( 'sign-in-with-apple' ) && this.renderAppleConnection() }
 			</div>
 		);
 	}
 
-	renderActionButton( onClickAction = null ) {
+	renderAppleActionButton( onClickAction = null ) {
+		const { isUserConnectedToApple, isUpdatingSocialConnection, translate } = this.props;
+		const buttonLabel = isUserConnectedToApple ? translate( 'Disconnect' ) : translate( 'Connect' );
+		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
+
+		return (
+			<FormButton
+				className="social-login__button button"
+				disabled={ disableButton }
+				compact={ true }
+				isPrimary={ ! isUserConnectedToApple }
+				onClick={ onClickAction }
+			>
+				{ buttonLabel }
+			</FormButton>
+		);
+	}
+
+	renderGoogleActionButton( onClickAction = null ) {
 		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
 		const buttonLabel = isUserConnectedToGoogle
 			? translate( 'Disconnect' )
@@ -125,6 +151,43 @@ class SocialLogin extends Component {
 		);
 	}
 
+	renderAppleConnection() {
+		const { isUserConnectedToApple, socialConnectionEmail } = this.props;
+
+		// I have no idea what this should actually be.
+		// const redirectUri = `https://${ typeof window !== 'undefined' &&
+		// 	window.location.host }/me/security/social-login`;
+		const redirectUri = `https://${ ( typeof window !== 'undefined' && window.location.host ) +
+			login( { isNative: true, socialService: 'apple' } ) }`;
+
+		return (
+			<CompactCard>
+				<div className="social-login__header">
+					<div className="social-login__header-info">
+						<div className="social-login__header-icon">
+							<AppleIcon width="30" height="30" />
+						</div>
+						<h3>Apple</h3>
+						{ socialConnectionEmail && <p>{ ' - ' + socialConnectionEmail }</p> }
+					</div>
+
+					<div className="social-login__header-action">
+						{ isUserConnectedToApple ? (
+							this.renderAppleActionButton( this.disconnectFromApple )
+						) : (
+							<AppleLoginButton
+								clientId={ config( 'apple_oauth_client_id' ) }
+								redirectUri={ redirectUri }
+							>
+								{ this.renderAppleActionButton() }
+							</AppleLoginButton>
+						) }
+					</div>
+				</div>
+			</CompactCard>
+		);
+	}
+
 	renderGoogleConnection() {
 		const { isUserConnectedToGoogle, socialConnectionEmail } = this.props;
 
@@ -141,13 +204,13 @@ class SocialLogin extends Component {
 
 					<div className="social-login__header-action">
 						{ isUserConnectedToGoogle ? (
-							this.renderActionButton( this.disconnectFromGoogle )
+							this.renderGoogleActionButton( this.disconnectFromGoogle )
 						) : (
 							<GoogleLoginButton
 								clientId={ config( 'google_oauth_client_id' ) }
 								responseHandler={ this.handleGoogleLoginResponse }
 							>
-								{ this.renderActionButton() }
+								{ this.renderGoogleActionButton() }
 							</GoogleLoginButton>
 						) }
 					</div>
@@ -179,9 +242,11 @@ export default connect(
 	state => {
 		const currentUser = getCurrentUser( state );
 		const connections = currentUser.social_login_connections || [];
+		const appleConnection = find( connections, { service: 'apple' } );
 		const googleConnection = find( connections, { service: 'google' } );
 		return {
 			socialConnectionEmail: get( googleConnection, 'service_user_email', '' ),
+			isUserConnectedToApple: appleConnection,
 			isUserConnectedToGoogle: googleConnection,
 			isUpdatingSocialConnection: isRequesting( state ),
 			errorUpdatingSocialConnection: getRequestError( state ),

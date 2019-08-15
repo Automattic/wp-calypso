@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import classNames from 'classnames';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
@@ -64,16 +64,15 @@ class AppleLoginButton extends Component {
 
 		this.initialized = this.loadDependency()
 			.then( AppleID => {
-					AppleID.auth.init( {
-						clientId: this.props.clientId,
-						scope: 'name email',
-						redirectURI: this.props.redirectUri,
-						state: '1',
-					} );
+				AppleID.auth.init( {
+					clientId: this.props.clientId,
+					scope: 'name email',
+					redirectURI: this.props.redirectUri,
+					state: '1',
+				} );
 
-					this.setState( { isDisabled: false } );
-				}
-			)
+				this.setState( { isDisabled: false } );
+			} )
 			.catch( error => {
 				this.initialized = null;
 
@@ -83,7 +82,7 @@ class AppleLoginButton extends Component {
 		return this.initialized;
 	}
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		event.preventDefault();
 
 		if ( this.state.isDisabled ) {
@@ -94,29 +93,47 @@ class AppleLoginButton extends Component {
 	};
 
 	render() {
-		const isDisabled = Boolean(
-			this.state.isDisabled || this.props.isFormDisabled
-		);
+		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled );
 
 		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
 			return null;
 		}
 
-		return (
-			<button
-				className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-				onClick={ this.handleClick }
-			>
-				<AppleIcon isDisabled={ isDisabled } />
+		const { children } = this.props;
+		let customButton = null;
 
-				<span className="social-buttons__service-name">
-					{ this.props.translate( 'Sign in with %(service)s', {
-						args: { service: 'Apple' },
-						comment:
-							'%(service)s is the name of a third-party provider, e.g. "Google", "Facebook", "Apple" ...',
-					} ) }
-				</span>
-			</button>
+		if ( children ) {
+			const childProps = {
+				className: classNames( { disabled: isDisabled } ),
+				onClick: this.handleClick,
+				onMouseOver: this.showError,
+				onMouseOut: this.hideError,
+			};
+
+			customButton = React.cloneElement( children, childProps );
+		}
+
+		return (
+			<Fragment>
+				{ customButton ? (
+					customButton
+				) : (
+					<button
+						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+						onClick={ this.handleClick }
+					>
+						<AppleIcon isDisabled={ isDisabled } />
+
+						<span className="social-buttons__service-name">
+							{ this.props.translate( 'Sign in with %(service)s', {
+								args: { service: 'Apple' },
+								comment:
+									'%(service)s is the name of a third-party provider, e.g. "Google", "Facebook", "Apple" ...',
+							} ) }
+						</span>
+					</button>
+				) }
+			</Fragment>
 		);
 	}
 }
