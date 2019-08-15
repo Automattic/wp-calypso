@@ -317,8 +317,12 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		// No .blog subdomains for domain only sites
-		return ! this.props.isDomainOnly;
+		// Disable for domain only sites
+		// Enable only if the query includes ".blog"
+		const lastQuery = get( this.props, 'step.domainForm.lastQuery' );
+		return (
+			! this.props.isDomainOnly && typeof lastQuery === 'string' && lastQuery.includes( '.blog' )
+		);
 	}
 
 	domainForm = () => {
