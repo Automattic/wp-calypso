@@ -7,39 +7,67 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { getWhoisData } from 'state/domains/management/selectors';
+import { requestWhois } from 'state/domains/management/actions';
+import { find, isEmpty } from 'lodash';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {
-		contactInformation: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+	};
+
+	componentDidUpdate() {
+		this.fetchWhois();
+	}
+
+	fetchWhois = () => {
+		if ( isEmpty( this.props.whoisData ) && ! isEmpty( this.props.selectedDomainName ) ) {
+			this.props.requestWhois( this.props.selectedDomainName );
+		}
 	};
 
 	render() {
-		const { contactInformation, translate } = this.props;
+		const { translate, whoisData } = this.props;
+		const registrantWhoisData = find( whoisData, { type: 'registrant' } );
+
+		if ( isEmpty( registrantWhoisData ) ) {
+			return null;
+		}
 
 		return (
 			<div className="contact-display">
 				<h2>{ translate( 'Public Record Preview' ) }</h2>
 
-				<div className="contact-display-content">
+				<div className="contact-display__content">
 					<p>
-						{ contactInformation.firstName } { contactInformation.lastName }
+						{ registrantWhoisData.fname } { registrantWhoisData.lname }
 					</p>
-					{ contactInformation.organization && <p>{ contactInformation.organization }</p> }
-					<p>{ contactInformation.email }</p>
-					<p>{ contactInformation.address1 }</p>
-					{ contactInformation.address2 && <p>{ contactInformation.address2 }</p> }
+					{ registrantWhoisData.org && <p>{ registrantWhoisData.org }</p> }
+					<p>{ registrantWhoisData.email }</p>
+					<p>{ registrantWhoisData.sa1 }</p>
+					{ registrantWhoisData.sa2 && <p>{ registrantWhoisData.sa2 }</p> }
 					<p>
-						{ contactInformation.city }
-						{ contactInformation.stateName && <span>, { contactInformation.stateName }</span> }
-						<span> { contactInformation.postalCode }</span>
+						{ registrantWhoisData.city }
+						{ registrantWhoisData.sp && <span>, { registrantWhoisData.sp }</span> }
+						<span> { registrantWhoisData.pc }</span>
 					</p>
-					<p>{ contactInformation.countryName }</p>
-					<p>{ contactInformation.phone }</p>
-					{ contactInformation.fax && <p>{ contactInformation.fax }</p> }
+					<p>{ registrantWhoisData.country_code }</p>
+					<p>{ registrantWhoisData.phone }</p>
+					{ registrantWhoisData.fax && <p>{ registrantWhoisData.fax }</p> }
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( ContactDisplay );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
+		};
+	},
+	{
+		requestWhois,
+	}
+)( localize( ContactDisplay ) );
