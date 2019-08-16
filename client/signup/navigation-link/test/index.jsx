@@ -80,10 +80,10 @@ describe( 'NavigationLink', () => {
 	test( 'should set a proper url as href prop when the direction is "back".', () => {
 		expect( getStepUrl ).not.toHaveBeenCalled();
 
-		getFilteredSteps.mockReturnValue( {
-			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
-			'test:step2': { stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
-		} );
+		getFilteredSteps.mockReturnValue( [
+			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+			{ stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
+		] );
 
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
 
@@ -93,9 +93,9 @@ describe( 'NavigationLink', () => {
 
 		// when it is the first step
 		getStepUrl.mockReset();
-		getFilteredSteps.mockReturnValue( {
-			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
-		} );
+		getFilteredSteps.mockReturnValue( [
+			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+		] );
 		wrapper.setProps( { stepName: 'test:step1' } ); // set the first step
 		expect( getStepUrl ).toHaveBeenCalled();
 		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en' );
