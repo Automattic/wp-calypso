@@ -53,7 +53,6 @@ describe( 'WebPaymentBox', () => {
 		countriesList: [ 'TEST_COUNTRY_CODE' ],
 		onSubmit: jest.fn(),
 		transactionStep: { name: BEFORE_SUBMIT },
-		transaction: {},
 	};
 
 	const context = {
