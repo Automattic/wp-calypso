@@ -47,6 +47,7 @@ export const EligibilityWarnings = ( {
 	siteId,
 	siteSlug,
 	translate,
+	upsell,
 } ) => {
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
@@ -124,34 +125,36 @@ export const EligibilityWarnings = ( {
 				</Card>
 			) }
 
-			<Card className="eligibility-warnings__confirm-box">
-				<div className="eligibility-warnings__confirm-text">
-					{ ! isEligible && translate( 'Please clear all issues above to proceed.' ) }
-					{ isEligible &&
-						warnings.length > 0 &&
-						translate( 'If you proceed you will no longer be able to use these features. ' ) }
-					{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
-						components: {
-							a: (
-								<a
-									href="https://wordpress.com/help/contact"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					} ) }
-				</div>
-				<div className="eligibility-warnings__confirm-buttons">
-					<Button href={ backUrl } onClick={ onCancel }>
-						{ translate( 'Cancel' ) }
-					</Button>
+			{ isEligible && (
+				<Card className="eligibility-warnings__confirm-box">
+					<div className="eligibility-warnings__confirm-text">
+						{ isEligible &&
+							warnings.length > 0 &&
+							translate( 'If you proceed you will no longer be able to use these features. ' ) }
+						{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
+							components: {
+								a: (
+									<a
+										href="https://wordpress.com/help/contact"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
+					</div>
+					<div className="eligibility-warnings__confirm-buttons">
+						<Button href={ backUrl } onClick={ onCancel }>
+							{ translate( 'Cancel' ) }
+						</Button>
 
-					<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
-						{ translate( 'Proceed' ) }
-					</Button>
-				</div>
-			</Card>
+						<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
+							{ translate( 'Proceed' ) }
+						</Button>
+					</div>
+				</Card>
+			) }
+			{ ! isEligible && upsell }
 		</div>
 	);
 };
