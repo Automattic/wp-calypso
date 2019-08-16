@@ -50,8 +50,8 @@ class MeSidebar extends React.Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	onSignOut = () => {
-		const currentUser = this.props.currentUser;
+	onSignOut = async () => {
+		const { currentUser } = this.props;
 
 		// If user is using en locale, redirect to app promo page on sign out
 		const isEnLocale = currentUser && currentUser.localeSlug === 'en';
@@ -63,12 +63,15 @@ class MeSidebar extends React.Component {
 		}
 
 		if ( config.isEnabled( 'login/wp-login' ) ) {
-			this.props.logoutUser( redirectTo ).then(
-				( { redirect_to } ) => user.clear( () => ( location.href = redirect_to || '/' ) ),
+			try {
+				const { redirect_to } = await this.props.logoutUser( redirectTo );
+				await user.clear();
+				window.location.href = redirect_to || '/';
+			} catch {
 				// The logout endpoint might fail if the nonce has expired.
 				// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-				() => userUtilities.logout( redirectTo )
-			);
+				userUtilities.logout( redirectTo );
+			}
 		} else {
 			userUtilities.logout( redirectTo );
 		}

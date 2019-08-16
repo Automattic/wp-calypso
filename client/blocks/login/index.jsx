@@ -142,7 +142,7 @@ class Login extends Component {
 		// Only clear the data if a user is currently set, otherwise keep the
 		// logged out state around so that it can be used in signup.
 		if ( user.get() ) {
-			user.clear( () => {
+			user.clear().then( () => {
 				window.location.href = url;
 			} );
 		} else {
