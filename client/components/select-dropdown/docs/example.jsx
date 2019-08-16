@@ -235,10 +235,12 @@ class SelectDropdownExample extends React.PureComponent {
 			selectedIcon: icon,
 		} );
 
+		// eslint-disable-next-line no-console
 		console.log( 'Select Dropdown Item (selected):', childSelected );
 	};
 
 	onDropdownSelect( option ) {
+		// eslint-disable-next-line no-console
 		console.log( 'Select Dropdown (selected):', option );
 	}
 }
