@@ -224,3 +224,8 @@ export const clearSignupDestinationCookie = () => {
 
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
+
+export const shouldForceLogin = flowName => {
+	const flow = flows.getFlow( flowName );
+	return !! flow && flow.forceLogin;
+};
