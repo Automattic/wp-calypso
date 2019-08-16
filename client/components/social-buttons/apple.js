@@ -125,10 +125,10 @@ class AppleLoginButton extends Component {
 						<AppleIcon isDisabled={ isDisabled } />
 
 						<span className="social-buttons__service-name">
-							{ this.props.translate( 'Sign in with %(service)s', {
+							{ this.props.translate( 'Continue with %(service)s', {
 								args: { service: 'Apple' },
 								comment:
-									'%(service)s is the name of a third-party provider, e.g. "Google", "Facebook", "Apple" ...',
+									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 							} ) }
 						</span>
 					</button>
