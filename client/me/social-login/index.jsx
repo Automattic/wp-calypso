@@ -45,27 +45,19 @@ class SocialLogin extends Component {
 	static displayName = 'SocialLogin';
 
 	static propTypes = {
-		moment: PropTypes.func,
 		path: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		userSettings: PropTypes.object,
 	};
 
 	state = {
 		fetchingUser: false,
 	};
 
-	componentDidMount() {
-		debug( this.constructor.displayName + ' React component has mounted.' );
-	}
-
-	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-	}
-
 	refreshUser() {
 		user.fetch();
+
 		this.setState( { fetchingUser: true } );
+
 		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
 	}
 
@@ -101,13 +93,16 @@ class SocialLogin extends Component {
 						{ errorUpdatingSocialConnection.message }
 					</Notice>
 				) }
+
 				<CompactCard>
 					{ translate(
-						'You’ll be able to log in faster by linking your WordPress.com account with your ' +
-							'social networks. We’ll never post without your permission.'
+						'You’ll be able to log in faster by linking your WordPress.com account with the following ' +
+							'third-party services. We’ll never post without your permission.'
 					) }
 				</CompactCard>
+
 				{ this.renderGoogleConnection() }
+
 				{ config.isEnabled( 'sign-in-with-apple' ) && this.renderAppleConnection() }
 			</div>
 		);
