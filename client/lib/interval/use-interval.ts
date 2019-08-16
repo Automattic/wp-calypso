@@ -16,8 +16,10 @@ import { TimeoutMS } from 'client/types';
  * https://github.com/gaearon/overreacted.io/blob/80c0a314c5d855891220852788f662c2e8ecc7d4/src/pages/making-setinterval-declarative-with-react-hooks/index.md
  */
 
-export function useInterval( callback: () => void, delay: TimeoutMS ) {
-	const savedCallback = useRef< typeof callback >();
+type Callback = () => void;
+
+export function useInterval( callback: Callback, delay: TimeoutMS ) {
+	const savedCallback = useRef< Callback >();
 
 	// Remember the latest callback.
 	useEffect( () => {
@@ -27,7 +29,7 @@ export function useInterval( callback: () => void, delay: TimeoutMS ) {
 	// Set up the interval.
 	useEffect( () => {
 		function tick() {
-			( savedCallback.current as /* savedCallback ref should never be `undefined` */ typeof callback )();
+			( savedCallback.current as /* savedCallback ref should never be `undefined` */ Callback )();
 		}
 		if ( delay !== null ) {
 			const id = setInterval( tick, delay );
