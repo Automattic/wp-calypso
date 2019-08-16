@@ -66,6 +66,7 @@ class Full_Site_Editing {
 		add_filter( 'wp_template_type_row_actions', [ $this, 'remove_delete_row_action_for_template_taxonomy' ], 10, 2 );
 		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
 		add_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
+		add_action( 'transition_post_status', [ $this, 'restrict_template_drafting' ], 10, 3 );
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
@@ -438,6 +439,17 @@ class Full_Site_Editing {
 	}
 
 	/**
+	 * Determines whether given post belongs to FSE template CPTs.
+	 *
+	 * @param WP_Post $post Check if this post belongs to templates.
+	 *
+	 * @return boolean
+	 */
+	public function is_template_post_type( $post ) {
+		return in_array( $post->post_type, $this->template_post_types, true );
+	}
+
+	/**
 	 * Add fse-enabled class to body so we can target css only if plugin enabled.
 	 *
 	 * @param array $classes classes to be applied to body.
@@ -476,7 +488,7 @@ class Full_Site_Editing {
 	 * @return array
 	 */
 	public function remove_trash_row_action_for_template_post_types( $actions, $post ) {
-		if ( in_array( $post->post_type, $this->template_post_types, true ) ) {
+		if ( $this->is_template_post_type( $post ) ) {
 			unset( $actions['trash'] );
 		}
 		return $actions;
@@ -494,15 +506,30 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Prevents posts for the template post types to be deleted
+	 * Prevents posts for the template post types to be deleted.
 	 *
 	 * @param integer $post_id The post id.
 	 */
 	public function restrict_template_deletion( $post_id ) {
-		if ( in_array( get_post_type( $post_id ), $this->template_post_types, true ) ) {
+		if ( $this->is_template_post_type( get_post( $post_id ) ) ) {
 			wp_die( esc_html__( 'Templates cannot be deleted.' ) );
 		}
 	}
+
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+	/**
+	 * Prevents draftinig of template post types.
+	 *
+	 * @param string $new_status New post status.
+	 * @param string $old_status Old post status.
+	 * @param object $post Post object for which the status change is attempted.
+	 */
+	public function restrict_template_drafting( $new_status, $old_status, $post ) {
+		if ( 'draft' === $new_status && $this->is_template_post_type( $post ) ) {
+			wp_die( esc_html__( 'Templates cannot be moved to drafts.' ) );
+		}
+	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 
 	/**
 	 * Removes the Delete action from the quick actions for the template taxonomy.
