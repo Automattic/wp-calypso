@@ -12,16 +12,12 @@
 import { BlockPreview } from '@wordpress/block-editor';
 
 const BlockTemplatePreview = ( { blocks, viewportWidth } ) => {
-	if ( ! blocks ) {
-		return null;
-	}
-
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className="edit-post-visual-editor">
 			<div className="editor-styles-wrapper">
 				<div className="editor-writing-flow">
-					<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+					{ blocks && <BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } /> }
 				</div>
 			</div>
 		</div>
