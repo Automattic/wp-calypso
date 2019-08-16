@@ -35,7 +35,7 @@ const TemplateSelectorItem = props => {
 	const [ blocksLimit, setBlockLimit ] = useState( numBlocksInPreview );
 	const blocks = useMemo( () => ( rawContent ? parseBlocks( rawContent ) : null ), [ rawContent ] );
 
-	const onFocusHandler = debounce(() => {
+	const onFocusHandler = debounce( () => {
 		if ( blocks && blocks.length > blocksLimit ) {
 			setBlockLimit( null ); // not blocks limit to template preview
 		}
