@@ -23,6 +23,7 @@ import EligibilityWarnings from 'blocks/eligibility-warnings';
 import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryEligibility from 'components/data/query-atat-eligibility';
+import { PluginsUpsellComponent } from 'my-sites/feature-upsell/main';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -143,7 +144,11 @@ class PluginUpload extends React.Component {
 	render() {
 		const { translate, isJetpackMultisite, upgradeJetpack, siteId, siteSlug } = this.props;
 		const { showEligibility } = this.state;
-
+		const upsell = (
+			<Card>
+				<PluginsUpsellComponent />
+			</Card>
+		);
 		return (
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
@@ -162,6 +167,7 @@ class PluginUpload extends React.Component {
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
 						onProceed={ this.onProceedClick }
+						upsell={ upsell }
 					/>
 				) }
 				{ ! upgradeJetpack && ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
