@@ -66,6 +66,7 @@ const TemplateSelectorItem = props => {
 			value={ value }
 			// onFocus={ onFocusHandler }
 			onMouseEnter={ onFocusHandler }
+			onMouseLeave={ onFocusHandler.cancel }
 			onClick={ () => onSelect( value, label, blocks ) }
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
