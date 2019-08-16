@@ -131,13 +131,9 @@
 	margin-bottom: 10px;
 	float: left;
 	margin-right: 15px;
-}
 
-@-moz-document url-prefix('') {
-	/* fix the width in Firefox */
-	.packages-step__package-weight {
-		width: 135px;
-		margin-right: 65px;
+	input {
+		min-width: 0;
 	}
 }
 
