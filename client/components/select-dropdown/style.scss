@@ -9,6 +9,11 @@ $compact-header-height: 35;
 
 .select-dropdown {
 	height: #{$header-height}px;
+	overflow: hidden;
+
+	&.is-open {
+		overflow: visible;
+	}
 
 	&.is-compact {
 		height: #{$compact-header-height}px;
