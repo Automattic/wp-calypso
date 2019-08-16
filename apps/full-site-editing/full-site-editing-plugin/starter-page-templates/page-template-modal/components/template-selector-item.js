@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { throttle, noop } from 'lodash';
-import HoverIntent from 'react-hoverintent';
+import { debounce } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -29,16 +29,18 @@ const TemplateSelectorItem = props => {
 		numBlocksInPreview,
 	} = props;
 
+	const ON_FOCUS_DELAY = 500;
+
 	const [ blocksLimit, setBlockLimit ] = useState( numBlocksInPreview );
 	const blocks = useMemo( () => ( rawContent ? parseBlocks( rawContent ) : null ), [ rawContent ] );
 
-	const onFocusHandler = () => {
+	const onFocusHandler = debounce(() => {
 		if ( blocks && blocks.length > blocksLimit ) {
 			setBlockLimit( null ); // not blocks limit to template preview
 		}
 
-		throttle( () => onFocus( value, label, blocks ), 300 );
-	};
+		onFocus( value, label, blocks );
+	}, ON_FOCUS_DELAY );
 
 	const innerPreview = useDynamicPreview ? (
 		<BlockPreview
@@ -53,28 +55,21 @@ const TemplateSelectorItem = props => {
 		/>
 	);
 
-	// We're disabling this rule because `HoverIntent` requires a handler for
-	// onMouseOut but it doesn't actually do anything so there's no need need
-	// to provide a matching keyboard handler for this event
-
-	/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 	return (
-		<HoverIntent onMouseOver={ onFocusHandler } onMouseOut={ noop }>
-			<button
-				type="button"
-				id={ `${ id }-${ value }` }
-				className="template-selector-item__label"
-				value={ value }
-				onFocus={ onFocusHandler }
-				onClick={ () => onSelect( value, label, blocks ) }
-				aria-describedby={ help ? `${ id }__help` : undefined }
-			>
-				<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-				{ label }
-			</button>
-		</HoverIntent>
+		<button
+			type="button"
+			id={ `${ id }-${ value }` }
+			className="template-selector-item__label"
+			value={ value }
+			// onFocus={ onFocusHandler }
+			onMouseEnter={ onFocusHandler }
+			onClick={ () => onSelect( value, label, blocks ) }
+			aria-describedby={ help ? `${ id }__help` : undefined }
+		>
+			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
+			{ label }
+		</button>
 	);
-	/* eslint-enable jsx-a11y/mouse-events-have-key-events */
 };
 
 export default TemplateSelectorItem;
