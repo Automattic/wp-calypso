@@ -55,7 +55,7 @@ const PLUGINS: PluginSlug[] = [ 'akismet', 'vaultpress' ];
 /**
  * Maximum number of attempts to refetch installation status in the event of a recoverable error.
  */
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 6;
 
 const PLUGIN_KEY_REFETCH_INTERVAL: TimeoutMS = 300;
 
