@@ -55,10 +55,10 @@ class PageTemplateModal extends Component {
 		this.props.insertTemplate( title, previewBlocks );
 	};
 
-	selectTemplate = () =>
+	handleConfirmation = () =>
 		this.setTemplate( this.state.slug, this.state.title, this.state.previewBlocks );
 
-	focusTemplate = ( slug, title, previewBlocks ) => {
+	previewTemplate = ( slug, title, previewBlocks ) => {
 		this.setState( { slug, title, previewBlocks } );
 		if ( slug === 'blank' ) {
 			this.setTemplate( slug, title, previewBlocks );
@@ -93,8 +93,7 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
-								onTemplateSelect={ this.focusTemplate }
-								// onTemplateFocus={ this.focusTemplate }
+								onTemplateSelect={ this.previewTemplate }
 								useDynamicPreview={ true }
 								numBlocksInPreview={ 10 }
 							/>
@@ -110,7 +109,7 @@ class PageTemplateModal extends Component {
 						isPrimary
 						isLarge
 						disabled={ isEmpty( this.state.slug ) }
-						onClick={ this.selectTemplate }
+						onClick={ this.handleConfirmation }
 					>
 						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
 					</Button>
