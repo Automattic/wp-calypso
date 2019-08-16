@@ -48,7 +48,7 @@ class PageTemplateModal extends Component {
 		this.props.saveTemplateChoice( slug );
 
 		// Skip inserting if there's nothing to insert.
-		if ( previewBlocks.length === 0 ) {
+		if ( ! previewBlocks || previewBlocks.length === 0 ) {
 			return;
 		}
 
