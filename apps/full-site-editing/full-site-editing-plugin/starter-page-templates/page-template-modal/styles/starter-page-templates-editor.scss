@@ -231,6 +231,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow-y: auto;
 
 	&.is-loaded {
+		background: #fff; // restore white as the default background behind entire preview
 		pointer-events: auto; // reset to allow scrolling loaded previews
 	}
 }
@@ -312,10 +313,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	.editor-styles-wrapper {
 		height: 100%;
-	}
-
-	// editor-writing-flow
-	.editor-writing-flow {
-		//width: 100%;
+		// remove background as it doesn't fill 100% of scrollable preview container
+		background: none;
 	}
 }
