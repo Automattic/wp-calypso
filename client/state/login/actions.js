@@ -18,9 +18,6 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	LOGOUT_REQUEST,
-	LOGOUT_REQUEST_FAILURE,
-	LOGOUT_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -476,10 +473,6 @@ export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
  * @return {Function}            A thunk that can be dispatched
  */
 export const logoutUser = redirectTo => ( dispatch, getState ) => {
-	dispatch( {
-		type: LOGOUT_REQUEST,
-	} );
-
 	const currentUser = getCurrentUser( getState() );
 	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
 	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
@@ -490,26 +483,8 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
 		client_secret: config( 'wpcom_signup_key' ),
 		logout_nonce: logoutNonce,
 	} )
-		.then( response => {
-			const data = get( response, 'body.data', {} );
-
-			dispatch( {
-				type: LOGOUT_REQUEST_SUCCESS,
-				data,
-			} );
-
-			return Promise.resolve( data );
-		} )
-		.catch( httpError => {
-			const error = getErrorFromHTTPError( httpError );
-
-			dispatch( {
-				type: LOGOUT_REQUEST_FAILURE,
-				error,
-			} );
-
-			return Promise.reject( error );
-		} );
+		.then( response => get( response, 'body.data', {} ) )
+		.catch( httpError => Promise.reject( getErrorFromHTTPError( httpError ) ) );
 };
 
 /**
