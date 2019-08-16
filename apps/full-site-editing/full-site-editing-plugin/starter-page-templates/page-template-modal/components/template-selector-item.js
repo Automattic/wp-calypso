@@ -43,6 +43,7 @@ const TemplateSelectorItem = props => {
 		onFocus( value, label, blocks );
 	}, ON_FOCUS_DELAY );
 
+	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
 		<Disabled>
 			<BlockPreview
