@@ -35,8 +35,12 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 		};
 	}, [ blocks, viewportWidth ] );
 
-	const loadingClasses = classnames( 'template-selector-preview__loading', {
+	const loadingElClasses = classnames( 'template-selector-preview__loading', {
 		'is-loading': isLoading,
+	} );
+
+	const previewElClasses = classnames( 'template-selector-preview', {
+		'is-loaded': ! isLoading,
 	} );
 
 	if ( isEmpty( blocks ) ) {
@@ -50,8 +54,8 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 	}
 
 	return (
-		<div className="template-selector-preview">
-			<div aria-hidden={ ! isLoading } className={ loadingClasses }>
+		<div className={ previewElClasses }>
+			<div aria-hidden={ ! isLoading } className={ loadingElClasses }>
 				Loading preview...
 			</div>
 			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />

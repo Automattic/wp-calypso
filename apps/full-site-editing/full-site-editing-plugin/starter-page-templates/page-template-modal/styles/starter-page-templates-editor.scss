@@ -229,6 +229,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	pointer-events: none;
 	overflow-x: hidden;
 	overflow-y: auto;
+
+	&.is-loaded {
+		pointer-events: auto; // reset to allow scrolling loaded previews
+	}
 }
 
 .template-selector-preview__placeholder {
