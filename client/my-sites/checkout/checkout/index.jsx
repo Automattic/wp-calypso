@@ -687,6 +687,7 @@ export class Checkout extends React.Component {
 			setHeaderText,
 			showGuaranteeSeal,
 			userCountryCode,
+			isJetpackNotAtomic,
 		} = this.props;
 
 		if ( this.isLoading() ) {
@@ -717,6 +718,7 @@ export class Checkout extends React.Component {
 				selectedSite={ selectedSite }
 				setHeaderText={ setHeaderText }
 				showGuaranteeSeal={ showGuaranteeSeal }
+				isJetpackNotAtomic={ isJetpackNotAtomic }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }

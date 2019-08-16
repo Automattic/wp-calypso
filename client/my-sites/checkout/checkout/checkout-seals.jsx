@@ -23,17 +23,21 @@ import moneyBackImage from 'assets/images/upgrades/money-back.svg';
  */
 import './style.scss';
 
-function CheckoutSeals( { guaranteeVisible } ) {
+function CheckoutSeals( { guaranteeVisible, isJetpackNotAtomic } ) {
 	const guaranteeClasses = classNames( 'checkout-seals__guarantee-seal', {
 		'checkout-seals__guarantee-seal__hidden': ! guaranteeVisible,
 	} );
+
+	const trustpilotLogoSrc = isJetpackNotAtomic
+		? '/calypso/images/upgrades/trustpilot-brand-white.svg'
+		: '/calypso/images/upgrades/trustpilot-brand.svg';
 
 	return (
 		<>
 			<div className="checkout-seals">
 				<div className="checkout-seals__row">
 					<div className="checkout-seals__trustpilot">
-						<Image src="/calypso/images/upgrades/trustpilot-brand.svg" />
+						<Image src={ trustpilotLogoSrc } />
 						<Image
 							className="checkout-seals__trustpilot-rating"
 							src="/calypso/images/upgrades/trustpilot-rating.svg"
