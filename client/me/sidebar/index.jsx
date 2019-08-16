@@ -30,7 +30,7 @@ import SidebarRegion from 'layout/sidebar/region';
 import userFactory from 'lib/user';
 import userUtilities from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { logoutUser } from 'state/login/actions';
+import { logoutUser } from 'state/logout/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
