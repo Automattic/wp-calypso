@@ -14,6 +14,11 @@ import classnames from 'classnames';
 import Popover from 'components/popover';
 import { useMobileBreakpoint } from 'lib/viewport/react';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function Tooltip( props ) {
 	const isMobile = useMobileBreakpoint();
 
