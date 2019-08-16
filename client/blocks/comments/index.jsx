@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PostCommentsList from './post-comment-list';
-import Interval, { EVERY_MINUTE } from 'lib/interval';
+import { Interval, EVERY_MINUTE } from 'lib/interval';
 import { requestPostComments } from 'state/comments/actions';
 
 class PostComments extends React.Component {
