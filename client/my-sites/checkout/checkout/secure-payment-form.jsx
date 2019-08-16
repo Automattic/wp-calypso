@@ -576,11 +576,9 @@ export class SecurePaymentForm extends Component {
 			>
 				<WebPaymentBox
 					cart={ this.props.cart }
-					transaction={ this.props.transaction }
 					transactionStep={ this.props.transaction.step }
 					countriesList={ this.props.countriesList }
 					onSubmit={ this.handlePaymentBoxSubmit }
-					translate={ this.props.translate }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
 				>
 					{ this.props.children }
