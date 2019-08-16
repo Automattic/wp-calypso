@@ -39,13 +39,6 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 		};
 	}, [ blocks, viewportWidth ] );
 
-	const loadingElClasses = classnames(
-		'template-selector-preview__loading',
-		'editor-styles-wrapper', {
-			'is-loading': isLoading,
-		}
-	);
-
 	const previewElClasses = classnames(
 		'template-selector-preview',
 		'editor-styles-wrapper', {
@@ -65,7 +58,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 
 	return (
 		<div ref={ previewContainerRef } className={ previewElClasses }>
-			<div aria-hidden={ ! isLoading } className={ loadingElClasses }>
+			<div aria-hidden={ ! isLoading } className="template-selector-preview__loading editor-styles-wrapper">
 				{ __( 'Loading preview…', 'full-site-editing' ) }
 			</div>
 			<Disabled>
