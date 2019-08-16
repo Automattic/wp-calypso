@@ -254,9 +254,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     // Retaining the element in the render tree (ie: avoiding display: none)
-    // avoids reflow/repaint cycle which makes UI more responsive when 
+    // avoids reflow/repaint cycle which makes UI more responsive when
     // loading state is toggled rapidly.
     // See: https://www.phpied.com/rendering-repaint-reflowrelayout-restyle/.
     transform: translate( -9999px, -9999px );
@@ -306,14 +306,13 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
+// Set full height to preview container to inherits styles defined for themes.
 .template-selector-preview .edit-post-visual-editor,
+.template-selector-item__preview-wrap .components-disabled,
 .template-selector-item__preview-wrap .edit-post-visual-editor {
-	// Set full height to preview container to inherits styles defined for themes.
 	height: 100%;
 
 	.editor-styles-wrapper {
 		height: 100%;
-		// remove background as it doesn't fill 100% of scrollable preview container
-		background: none;
 	}
 }
