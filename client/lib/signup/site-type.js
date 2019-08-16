@@ -165,7 +165,7 @@ export function getAllSiteTypes( siteTypeIds = allowedSiteTypeIds ) {
 			id: 6, // This value must correspond with its sibling in the /segments API results
 			slug: 'blank-canvas',
 			label: i18n.translate( 'Start from scratch' ),
-			description: i18n.translate( 'Create a blank website.' ),
+			description: i18n.translate( 'Skip setup and start with a blank website.' ),
 			theme: 'pub/refresh-2019',
 		},
 	].filter( siteType => siteTypeIds.indexOf( siteType.id ) >= 0 );
