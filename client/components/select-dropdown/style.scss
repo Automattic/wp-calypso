@@ -9,6 +9,7 @@ $compact-header-height: 35;
 
 .select-dropdown {
 	height: #{$header-height}px;
+	overflow: hidden;
 
 	&.is-open {
 		overflow: visible;
@@ -156,15 +157,13 @@ $compact-header-height: 35;
 	box-sizing: border-box;
 	padding: 0;
 	list-style: none;
-	margin: 0;
+	margin: -1px 0 0;
 	background-color: var( --color-white );
 	border: 1px solid var( --color-neutral-100 );
 	border-top: 0;
 	// var( --color-primary ) for outer (with focus shadow), $gray for border with header
 	border-radius: 0 0 4px 4px;
-	height: 0;
-	overflow: hidden;
-	opacity: 0;
+	visibility: hidden;
 
 	.accessible-focus & {
 		border: solid 1px var( --color-primary );
@@ -172,9 +171,7 @@ $compact-header-height: 35;
 	}
 
 	.select-dropdown.is-open & {
-		margin-top: -1px;
-		height: auto;
-		opacity: 1;
+		visibility: visible;
 	}
 }
 

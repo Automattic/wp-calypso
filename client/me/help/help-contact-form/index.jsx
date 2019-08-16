@@ -21,7 +21,6 @@ import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
@@ -237,7 +236,7 @@ export class HelpContactForm extends React.PureComponent {
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }
 				>
 					{ options.map( option => (
-						<DropdownItem { ...option.props }>{ option.label }</DropdownItem>
+						<SelectDropdown.Item { ...option.props }>{ option.label }</SelectDropdown.Item>
 					) ) }
 				</SelectDropdown>
 			</div>
