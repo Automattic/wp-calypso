@@ -76,11 +76,12 @@ export function WebPaymentBox( {
 
 	const countryCode = getTaxCountryCode( cart );
 	const postalCode = getTaxPostalCode( cart );
+	const postalCodeValue =
+		typeof postalCode === 'undefined' || postalCode === null ? '' : postalCode;
 
 	const updateSelectedPostalCode = event => {
-		const { name: key, value } = event.target;
-		if ( 'postal-code' === key ) {
-			setTaxPostalCode( value );
+		if ( 'postal-code' === event.target.name ) {
+			setTaxPostalCode( event.target.value.toString() );
 		}
 	};
 
@@ -93,15 +94,14 @@ export function WebPaymentBox( {
 		overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 	);
 	const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
-
-	const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
-		moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy,
-		paymentButtonClasses = classNames( 'payment-box__payment-buttons', {
-			'payment-box__payment-buttons-variant': testSealsCopy,
-		} ),
-		secureText = testSealsCopy
-			? translate( 'This is a secure 128-SSL encrypted connection' )
-			: translate( 'Secure Payment' );
+	const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' );
+	const moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy;
+	const paymentButtonClasses = classNames( 'payment-box__payment-buttons', {
+		'payment-box__payment-buttons-variant': testSealsCopy,
+	} );
+	const secureText = testSealsCopy
+		? translate( 'This is a secure 128-SSL encrypted connection' )
+		: translate( 'Secure Payment' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -125,7 +125,7 @@ export function WebPaymentBox( {
 							name="postal-code"
 							label={ translate( 'Postal Code', { textOnly: true } ) }
 							onChange={ updateSelectedPostalCode }
-							value={ postalCode }
+							value={ postalCodeValue }
 							eventFormName="Checkout Form"
 						/>
 					</div>
