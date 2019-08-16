@@ -57,7 +57,6 @@
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
 		"manage/stats": true,
-		"manage/stats/file-downloads": true,
 		"manage/themes-jetpack": true,
 		"manage/themes/details": true,
 		"manage/themes/details/jetpack": true,
