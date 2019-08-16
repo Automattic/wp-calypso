@@ -227,5 +227,5 @@ export const clearSignupDestinationCookie = () => {
 
 export const shouldForceLogin = flowName => {
 	const flow = flows.getFlow( flowName );
-	return !! flow.forceLogin;
+	return !! flow && flow.forceLogin;
 };
