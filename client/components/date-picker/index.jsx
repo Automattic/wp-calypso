@@ -17,6 +17,11 @@ import classNames from 'classnames';
 import DayItem from 'components/date-picker/day';
 import DatePickerNavBar from 'components/date-picker/nav-bar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DatePicker extends PureComponent {
 	static propTypes = {
 		calendarViewDate: PropTypes.object,
