@@ -9,7 +9,7 @@ import { isEmpty } from 'lodash';
  */
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useRef } from '@wordpress/element';
-
+import { Disabled } from '@wordpress/components';
 /**
  * Internal dependencies
  */
@@ -62,7 +62,9 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 			<div aria-hidden={ ! isLoading } className={ loadingElClasses }>
 				Loading preview...
 			</div>
-			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+			<Disabled>
+				<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+			</Disabled>
 		</div>
 	);
 };
