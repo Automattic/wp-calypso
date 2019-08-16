@@ -231,7 +231,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow-y: auto;
 
 	&.is-loaded {
-		background: #fff; // restore white as the default background behind entire preview
 		pointer-events: auto; // reset to allow scrolling loaded previews
 	}
 }
@@ -307,6 +306,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 // Set full height to preview container to inherits styles defined for themes.
+.template-selector-preview .components-disabled,
 .template-selector-preview .edit-post-visual-editor,
 .template-selector-item__preview-wrap .components-disabled,
 .template-selector-item__preview-wrap .edit-post-visual-editor {
