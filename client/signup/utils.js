@@ -178,6 +178,10 @@ export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 export function getFilteredSteps( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
 
+	if ( ! flow ) {
+		return [];
+	}
+
 	return sortBy(
 		// filter steps...
 		filter( progress, step => includes( flow.steps, step.stepName ) ),
