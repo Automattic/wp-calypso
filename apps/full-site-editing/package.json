@@ -46,6 +46,7 @@
 		"@wordpress/plugins": "^2.2.0",
 		"@wordpress/url": "^2.5.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.14"
+		"lodash": "^4.17.14",
+		"react-hoverintent": "0.0.10"
 	}
 }

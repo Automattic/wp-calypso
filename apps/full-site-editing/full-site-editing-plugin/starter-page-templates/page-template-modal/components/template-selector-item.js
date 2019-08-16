@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { throttle } from 'lodash';
-
+import { throttle, noop } from 'lodash';
+import HoverIntent from 'react-hoverintent';
 /**
  * Internal dependencies
  */
@@ -53,20 +53,28 @@ const TemplateSelectorItem = props => {
 		/>
 	);
 
+	// We're disabling this rule because `HoverIntent` requires a handler for
+	// onMouseOut but it doesn't actually do anything so there's no need need
+	// to provide a matching keyboard handler for this event
+
+	/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 	return (
-		<button
-			type="button"
-			id={ `${ id }-${ value }` }
-			className="template-selector-item__label"
-			value={ value }
-			onClick={ () => onSelect( value, label, blocks ) }
-			onMouseEnter={ onFocusHandler }
-			aria-describedby={ help ? `${ id }__help` : undefined }
-		>
-			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			{ label }
-		</button>
+		<HoverIntent onMouseOver={ onFocusHandler } onMouseOut={ noop }>
+			<button
+				type="button"
+				id={ `${ id }-${ value }` }
+				className="template-selector-item__label"
+				value={ value }
+				onFocus={ onFocusHandler }
+				onClick={ () => onSelect( value, label, blocks ) }
+				aria-describedby={ help ? `${ id }__help` : undefined }
+			>
+				<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
+				{ label }
+			</button>
+		</HoverIntent>
 	);
+	/* eslint-enable jsx-a11y/mouse-events-have-key-events */
 };
 
 export default TemplateSelectorItem;
