@@ -186,7 +186,7 @@ class ReaderStream extends React.Component {
 		// only toggle a like on a x-post if we have the appropriate metadata,
 		// and original post is full screen
 		const xPostMetadata = XPostHelper.getXPostMetadata( post );
-		if ( !! xPostMetadata.postURL ) {
+		if ( xPostMetadata.postURL ) {
 			return;
 		}
 
