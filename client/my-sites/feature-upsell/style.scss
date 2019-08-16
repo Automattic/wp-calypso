@@ -529,6 +529,9 @@ $feature-upsell-break-at: '1040px';
 
 .eligibility-warnings {
 	.card {
+		.feature-upsell__main {
+			margin-top: 0;
+		}
 		h1 {
 			font-size: 20px;
 			font-weight: 400;
