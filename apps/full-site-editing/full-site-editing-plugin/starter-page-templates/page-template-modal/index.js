@@ -1,30 +1,34 @@
 /**
  * External dependencies
  */
-import { has, isEmpty, keyBy, map } from 'lodash';
-import { __ } from '@wordpress/i18n';
+import { isEmpty } from 'lodash';
+import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Modal } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { parse as parseBlocks } from '@wordpress/blocks';
 import { Component } from '@wordpress/element';
 import '@wordpress/nux';
 
 /**
  * Internal dependencies
  */
-import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
+import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
 
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
+		previewBlocks: [],
+		slug: '',
+		title: '',
 	};
 
 	constructor( props ) {
+		// eslint-disable-next-line no-console
+		console.time( 'PageTemplateModal' );
 		super();
 		this.state.isOpen = ! isEmpty( props.templates );
 	}
@@ -33,30 +37,40 @@ class PageTemplateModal extends Component {
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
+		// eslint-disable-next-line no-console
+		console.timeEnd( 'PageTemplateModal' );
 	}
 
-	selectTemplate = newTemplate => {
+	setTemplate = ( slug, title, previewBlocks ) => {
 		this.setState( { isOpen: false } );
-		trackSelection( this.props.segment.id, this.props.vertical.id, newTemplate );
+		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
-		const template = this.props.templates[ newTemplate ];
-		this.props.saveTemplateChoice( template );
+		this.props.saveTemplateChoice( slug );
 
 		// Skip inserting if there's nothing to insert.
-		if ( ! has( template, 'content' ) ) {
+		if ( ! previewBlocks || previewBlocks.length === 0 ) {
 			return;
 		}
 
-		const processedTemplate = {
-			...template,
-			title: replacePlaceholders( template.title, this.props.siteInformation ),
-			content: replacePlaceholders( template.content, this.props.siteInformation ),
-		};
-
-		this.props.insertTemplate( processedTemplate );
+		this.props.insertTemplate( title, previewBlocks );
 	};
 
-	closeModal = () => {
+	selectTemplate = () =>
+		this.setTemplate( this.state.slug, this.state.title, this.state.previewBlocks );
+
+	focusTemplate = ( slug, title, previewBlocks ) => {
+		this.setState( { slug, title, previewBlocks } );
+		if ( slug === 'blank' ) {
+			this.setTemplate( slug, title, previewBlocks );
+		}
+	};
+
+	closeModal = event => {
+		// Check to see if the Blur event occured on the buttons inside of the Modal.
+		// If it did then we don't want to dismiss the Modal for this type of Blur.
+		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
+			return false;
+		}
 		this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
@@ -78,16 +92,28 @@ class PageTemplateModal extends Component {
 						<fieldset className="page-template-modal__list">
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
-								templates={ map( this.props.templates, template => ( {
-									label: template.title,
-									value: template.slug,
-									preview: template.preview,
-									previewAlt: template.description,
-								} ) ) }
-								onClick={ newTemplate => this.selectTemplate( newTemplate ) }
+								templates={ this.props.templates }
+								onTemplateSelect={ this.focusTemplate }
+								// onTemplateFocus={ this.focusTemplate }
+								useDynamicPreview={ true }
+								numBlocksInPreview={ 10 }
 							/>
 						</fieldset>
 					</form>
+					<TemplateSelectorPreview blocks={ this.state.previewBlocks } viewportWidth={ 960 } />
+				</div>
+				<div className="page-template-modal__buttons">
+					<Button isDefault isLarge onClick={ this.closeModal }>
+						{ __( 'Cancel', 'full-site-editing' ) }
+					</Button>
+					<Button
+						isPrimary
+						isLarge
+						disabled={ isEmpty( this.state.slug ) }
+						onClick={ this.selectTemplate }
+					>
+						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
+					</Button>
 				</div>
 			</Modal>
 		);
@@ -107,25 +133,22 @@ const PageTemplatesPlugin = compose(
 
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
-			saveTemplateChoice: template => {
+			saveTemplateChoice: slug => {
 				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();
 				editorDispatcher.editPost( {
 					meta: {
 						...currentMeta,
-						_starter_page_template: template.slug,
+						_starter_page_template: slug,
 					},
 				} );
 			},
-			insertTemplate: template => {
+			insertTemplate: ( title, blocks ) => {
 				// Set post title.
-				editorDispatcher.editPost( {
-					title: template.title,
-				} );
+				editorDispatcher.editPost( { title } );
 
 				// Insert blocks.
 				const postContentBlock = ownProps.postContentBlock;
-				const blocks = parseBlocks( template.content );
 				editorDispatcher.insertBlocks(
 					blocks,
 					0,
@@ -138,27 +161,16 @@ const PageTemplatesPlugin = compose(
 )( PageTemplateModal );
 
 // Load config passed from backend.
-const {
-	siteInformation = {},
-	templates = [],
-	vertical,
-	segment,
-	tracksUserData,
-} = window.starterPageTemplatesConfig;
+const { templates = [], vertical, segment, tracksUserData } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
 registerPlugin( 'page-templates', {
-	render: function() {
+	render: () => {
 		return (
-			<PageTemplatesPlugin
-				templates={ keyBy( templates, 'slug' ) }
-				vertical={ vertical }
-				segment={ segment }
-				siteInformation={ siteInformation }
-			/>
+			<PageTemplatesPlugin templates={ templates } vertical={ vertical } segment={ segment } />
 		);
 	},
 } );
