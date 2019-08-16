@@ -19,6 +19,9 @@ import CreditCardForm from 'blocks/credit-card-form';
 import { addStoredCard } from 'state/stored-cards/actions';
 import { createCardToken } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
+import { withStripe } from 'lib/stripe';
+
+const CreditCardFormWithStripe = withStripe( CreditCardForm, { needs_intent: true } );
 
 function AddCardDialog( {
 	siteId,
@@ -38,7 +41,7 @@ function AddCardDialog( {
 			isVisible={ isVisible }
 			onClose={ onClose }
 		>
-			<CreditCardForm
+			<CreditCardFormWithStripe
 				createCardToken={ createCardAddToken }
 				recordFormSubmitEvent={ recordFormSubmitEvent }
 				saveStoredCard={ saveStoredCard }
