@@ -53,7 +53,7 @@ class JetpackPlansGrid extends Component {
 
 	render() {
 		const { interval } = this.props;
-		const defaultInterval = 'monthly';
+		const defaultInterval = 'yearly';
 
 		return (
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
