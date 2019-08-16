@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { isEmpty } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 
@@ -30,6 +35,10 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 		};
 	}, [ blocks, viewportWidth ] );
 
+	const loadingClasses = classnames( 'template-selector-preview__loading', {
+		'is-loading': isLoading,
+	} );
+
 	if ( isEmpty( blocks ) ) {
 		return (
 			<div className="template-selector-preview">
@@ -42,9 +51,9 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 
 	return (
 		<div className="template-selector-preview">
-			{ isLoading && (
-				<div className="template-selector-preview__loading">Loading preview...</div>
-			) }
+			<div aria-hidden={ ! isLoading } className={ loadingClasses }>
+				Loading preview...
+			</div>
 			<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
 		</div>
 	);
