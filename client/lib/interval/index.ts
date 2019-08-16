@@ -1,52 +1,13 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-import { Component } from 'react';
-import PropTypes from 'prop-types';
+import { TimeoutMS } from 'client/types';
 
-export const EVERY_SECOND = 1000;
-export const EVERY_FIVE_SECONDS = 5 * 1000;
-export const EVERY_TEN_SECONDS = 10 * 1000;
-export const EVERY_THIRTY_SECONDS = 30 * 1000;
-export const EVERY_MINUTE = 60 * 1000;
+export { Interval } from './interval';
+export { useInterval } from './use-interval';
 
-/**
- * Calls a given function on a given interval
- */
-export default class Interval extends Component {
-	static propTypes = {
-		onTick: PropTypes.func.isRequired,
-		period: PropTypes.number.isRequired,
-	};
-
-	tick = () => {
-		this.props.onTick();
-	};
-
-	start = ( props = this.props ) => {
-		this.interval = setInterval( this.tick, props.period );
-	};
-
-	stop = () => {
-		this.interval = clearInterval( this.interval );
-	};
-
-	componentDidMount() {
-		this.start();
-	}
-
-	componentWillUnmount() {
-		this.stop();
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.period !== this.props.period ) {
-			this.stop();
-			this.start( nextProps );
-		}
-	}
-
-	render() {
-		return null;
-	}
-}
+export const EVERY_SECOND: TimeoutMS = 1000;
+export const EVERY_FIVE_SECONDS: TimeoutMS = 5 * 1000;
+export const EVERY_TEN_SECONDS: TimeoutMS = 10 * 1000;
+export const EVERY_THIRTY_SECONDS: TimeoutMS = 30 * 1000;
+export const EVERY_MINUTE: TimeoutMS = 60 * 1000;
