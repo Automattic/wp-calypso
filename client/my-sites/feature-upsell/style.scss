@@ -526,3 +526,29 @@ $feature-upsell-break-at: '1040px';
 		margin-left: 0;
 	}
 }
+
+.eligibility-warnings {
+	.card {
+		h1 {
+			font-size: 20px;
+			font-weight: 400;
+		}
+		h2 {
+			font-size: 18px;
+			font-weight: 300;
+		}
+		h3 {
+			font-size: 15px;
+		}
+		.feature-upsell__feature-icon {
+			transform: scale( 0.6 );
+		}
+		.feature-upsell__feature-content {
+			padding-top: 10px;
+			padding-bottom: 25px;
+		}
+		.feature-upsell__cta-button {
+			font-size: 16px;
+		}
+	}
+}
