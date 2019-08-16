@@ -47,6 +47,7 @@ import {
 import { getCanonicalTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
+import { ThemesUpsellComponent } from 'my-sites/feature-upsell/main';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -260,7 +261,11 @@ class Upload extends React.Component {
 		if ( isMultisite ) {
 			return this.renderNotAvailableForMultisite();
 		}
-
+		const upsell = (
+			<Card>
+				<ThemesUpsellComponent />
+			</Card>
+		);
 		return (
 			<Main>
 				<QueryEligibility siteId={ siteId } />
@@ -277,7 +282,11 @@ class Upload extends React.Component {
 					/>
 				) }
 				{ showEligibility && (
-					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
+					<EligibilityWarnings
+						backUrl={ backPath }
+						onProceed={ this.onProceedClick }
+						upsell={ upsell }
+					/>
 				) }
 				{ ! upgradeJetpack && ! showEligibility && this.renderUploadCard() }
 			</Main>
