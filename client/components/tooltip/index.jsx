@@ -27,7 +27,6 @@ function Tooltip( props ) {
 	}
 
 	const classes = classnames(
-		'popover',
 		'tooltip',
 		`is-${ props.status }`,
 		`is-${ props.position }`,
