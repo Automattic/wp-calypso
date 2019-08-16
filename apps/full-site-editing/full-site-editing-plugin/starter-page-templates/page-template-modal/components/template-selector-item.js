@@ -13,6 +13,7 @@ import HoverIntent from 'react-hoverintent';
 import { useState, useMemo } from '@wordpress/element';
 import BlockPreview from './block-template-preview';
 import { parse as parseBlocks } from '@wordpress/blocks';
+import { Disabled } from '@wordpress/components';
 
 const TemplateSelectorItem = props => {
 	const {
@@ -41,10 +42,12 @@ const TemplateSelectorItem = props => {
 	};
 
 	const innerPreview = useDynamicPreview ? (
-		<BlockPreview
-			blocks={ blocksLimit && blocks ? blocks.slice( 0, blocksLimit ) : blocks }
-			viewportWidth={ 960 }
-		/>
+		<Disabled>
+			<BlockPreview
+				blocks={ blocksLimit && blocks ? blocks.slice( 0, blocksLimit ) : blocks }
+				viewportWidth={ 960 }
+			/>
+		</Disabled>
 	) : (
 		<img
 			className="template-selector-item__media"
