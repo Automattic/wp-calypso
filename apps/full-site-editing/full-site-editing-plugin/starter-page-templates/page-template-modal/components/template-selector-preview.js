@@ -39,17 +39,23 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 		};
 	}, [ blocks, viewportWidth ] );
 
-	const loadingElClasses = classnames( 'template-selector-preview__loading', {
-		'is-loading': isLoading,
-	} );
+	const loadingElClasses = classnames(
+		'template-selector-preview__loading',
+		'editor-styles-wrapper', {
+			'is-loading': isLoading,
+		}
+	);
 
-	const previewElClasses = classnames( 'template-selector-preview', {
-		'is-loaded': ! isLoading,
-	} );
+	const previewElClasses = classnames(
+		'template-selector-preview',
+		'editor-styles-wrapper', {
+			'is-loaded': ! isLoading,
+		}
+	);
 
 	if ( isEmpty( blocks ) ) {
 		return (
-			<div ref={ previewContainerRef } className="template-selector-preview">
+			<div ref={ previewContainerRef } className={ previewElClasses }>
 				<div className="template-selector-preview__placeholder">
 					{ __( 'Select a page template to preview.', 'full-site-editing' ) }
 				</div>
@@ -60,7 +66,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 	return (
 		<div ref={ previewContainerRef } className={ previewElClasses }>
 			<div aria-hidden={ ! isLoading } className={ loadingElClasses }>
-				Loading preview...
+				{ __( 'Loading preview…', 'full-site-editing' ) }
 			</div>
 			<Disabled>
 				<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
