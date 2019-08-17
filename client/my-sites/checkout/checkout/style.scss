@@ -1180,6 +1180,10 @@
 	.formatted-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
+	
+	.formatted-header__subtitle {
+		color: var( --color-primary-100 );
+	}
 
 	.card {
 		box-shadow: none;
