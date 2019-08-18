@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import filesize from 'filesize';
@@ -16,6 +14,8 @@ import filesize from 'filesize';
 import ProgressBar from 'components/progress-bar';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
@@ -33,7 +33,7 @@ export class PlanStorageBar extends Component {
 	};
 
 	render() {
-		const { className, mediaStorage, sitePlanSlug, siteSlug, translate } = this.props;
+		const { canUserUpgrade, className, mediaStorage, sitePlanSlug, siteSlug, translate } = this.props;
 
 		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
@@ -69,9 +69,10 @@ export class PlanStorageBar extends Component {
 					} ) }
 				</span>
 
-				<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
+				{ canUserUpgrade && ( <a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
 					{ translate( 'Upgrade' ) }
 				</a>
+				) }
 
 				{ this.props.children }
 			</div>
@@ -79,4 +80,8 @@ export class PlanStorageBar extends Component {
 	}
 }
 
-export default localize( PlanStorageBar );
+export default connect( ( state ) => {
+	return {
+		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+	};
+} )( localize( PlanStorageBar ) );
