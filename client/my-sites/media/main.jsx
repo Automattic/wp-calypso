@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -15,12 +13,14 @@ import { localize } from 'i18n-calypso';
  */
 import MediaLibrary from 'my-sites/media-library';
 import QueryMedia from 'components/data/query-media';
+import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import getMediaItem from 'state/selectors/get-media-item';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+import canCurrentUser from 'state/selectors/can-current-user';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
@@ -363,69 +363,80 @@ class Media extends Component {
 	};
 
 	render() {
-		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
+		const { selectedSite: site, mediaId, previousRoute, canAccessMedia, translate } = this.props;
+
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />
-				{ this.showDialog() && (
-					<EditorMediaModalDialog
-						isVisible
-						additionalClassNames="media__item-dialog"
-						buttons={ this.getModalButtons() }
-						onClose={ this.closeDetailsModal }
-					>
-						{ this.showDialog( 'detail' ) && (
-							<EditorMediaModalDetail
-								site={ site }
-								items={ this.getSelectedItems() }
-								selectedIndex={ this.getSelectedIndex() }
-								onReturnToList={ this.closeDetailsModal }
-								backButtonText={
-									previousRoute ? translate( 'Back' ) : translate( 'Media Library' )
-								}
-								onEditImageItem={ this.editImage }
-								onEditVideoItem={ this.editVideo }
-								onRestoreItem={ this.restoreOriginalMedia }
-								onSelectedIndexChange={ this.setDetailSelectedIndex }
-							/>
-						) }
-						{ this.state.editedImageItem !== null && (
-							<ImageEditor
-								siteId={ site && site.ID }
-								media={ this.getSelectedItem( this.state.editedImageItem ) }
-								onDone={ this.onImageEditorDone }
-								onCancel={ this.onImageEditorCancel }
-							/>
-						) }
-						{ this.state.editedVideoItem !== null && (
-							<VideoEditor
-								media={ this.getSelectedItem( this.state.editedVideoItem ) }
-								onCancel={ this.onVideoEditorCancel }
-								onUpdatePoster={ this.onVideoEditorUpdatePoster }
-							/>
-						) }
-					</EditorMediaModalDialog>
+				{ ! canAccessMedia && (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/illustration-404.svg"
+						title={ translate( 'You are not authorized to view this page' ) }
+					/>
 				) }
-				{ site && site.ID && (
-					<MediaLibrarySelectedData siteId={ site.ID }>
-						<MediaLibrary
-							{ ...this.props }
-							className="media__main-section"
-							onFilterChange={ this.onFilterChange }
-							site={ site }
-							single={ false }
-							filter={ this.props.filter }
-							source={ this.state.source }
-							onEditItem={ this.openDetailsModalForASingleImage }
-							onViewDetails={ this.openDetailsModalForAllSelected }
-							onDeleteItem={ this.handleDeleteMediaEvent }
-							onSourceChange={ this.handleSourceChange }
-							modal={ false }
-							containerWidth={ this.state.containerWidth }
-						/>
-					</MediaLibrarySelectedData>
+				{ canAccessMedia && (
+					<Fragment>
+						{ this.showDialog() && (
+							<EditorMediaModalDialog
+								isVisible
+								additionalClassNames="media__item-dialog"
+								buttons={ this.getModalButtons() }
+								onClose={ this.closeDetailsModal }
+							>
+								{ this.showDialog( 'detail' ) && (
+									<EditorMediaModalDetail
+										site={ site }
+										items={ this.getSelectedItems() }
+										selectedIndex={ this.getSelectedIndex() }
+										onReturnToList={ this.closeDetailsModal }
+										backButtonText={
+											previousRoute ? translate( 'Back' ) : translate( 'Media Library' )
+										}
+										onEditImageItem={ this.editImage }
+										onEditVideoItem={ this.editVideo }
+										onRestoreItem={ this.restoreOriginalMedia }
+										onSelectedIndexChange={ this.setDetailSelectedIndex }
+									/>
+								) }
+								{ this.state.editedImageItem !== null && (
+									<ImageEditor
+										siteId={ site && site.ID }
+										media={ this.getSelectedItem( this.state.editedImageItem ) }
+										onDone={ this.onImageEditorDone }
+										onCancel={ this.onImageEditorCancel }
+									/>
+								) }
+								{ this.state.editedVideoItem !== null && (
+									<VideoEditor
+										media={ this.getSelectedItem( this.state.editedVideoItem ) }
+										onCancel={ this.onVideoEditorCancel }
+										onUpdatePoster={ this.onVideoEditorUpdatePoster }
+									/>
+								) }
+							</EditorMediaModalDialog>
+						) }
+						{ site && site.ID && (
+							<MediaLibrarySelectedData siteId={ site.ID }>
+								<MediaLibrary
+									{ ...this.props }
+									className="media__main-section"
+									onFilterChange={ this.onFilterChange }
+									site={ site }
+									single={ false }
+									filter={ this.props.filter }
+									source={ this.state.source }
+									onEditItem={ this.openDetailsModalForASingleImage }
+									onViewDetails={ this.openDetailsModalForAllSelected }
+									onDeleteItem={ this.handleDeleteMediaEvent }
+									onSourceChange={ this.handleSourceChange }
+									modal={ false }
+									containerWidth={ this.state.containerWidth }
+								/>
+							</MediaLibrarySelectedData>
+						) }
+					</Fragment>
 				) }
 			</div>
 		);
@@ -436,6 +447,7 @@ const mapStateToProps = ( state, { mediaId } ) => ( {
 	selectedSite: getSelectedSite( state ),
 	previousRoute: getPreviousRoute( state ),
 	media: getMediaItem( state, getSelectedSiteId( state ), mediaId ),
+	canAccessMedia: canCurrentUser( state, getSelectedSiteId( state ), 'publish_posts' ),
 } );
 
 export default connect( mapStateToProps )( localize( Media ) );
