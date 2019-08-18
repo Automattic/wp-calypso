@@ -39,6 +39,10 @@ describe( 'NavigationLink', () => {
 		translate: str => `translated:${ str }`,
 	};
 
+	beforeEach( () => {
+		getFilteredSteps.mockReturnValue( Object.values( props.signupProgress ) );
+	} );
+
 	afterEach( () => {
 		getStepUrl.mockReset();
 		props.goToNextStep.mockReset();
@@ -79,11 +83,6 @@ describe( 'NavigationLink', () => {
 
 	test( 'should set a proper url as href prop when the direction is "back".', () => {
 		expect( getStepUrl ).not.toHaveBeenCalled();
-
-		getFilteredSteps.mockReturnValue( [
-			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
-			{ stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
-		] );
 
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
 
