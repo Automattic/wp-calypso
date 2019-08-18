@@ -33,7 +33,14 @@ export class PlanStorageBar extends Component {
 	};
 
 	render() {
-		const { canUserUpgrade, className, mediaStorage, sitePlanSlug, siteSlug, translate } = this.props;
+		const {
+			canUserUpgrade,
+			className,
+			mediaStorage,
+			sitePlanSlug,
+			siteSlug,
+			translate,
+		} = this.props;
 
 		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
@@ -69,9 +76,10 @@ export class PlanStorageBar extends Component {
 					} ) }
 				</span>
 
-				{ canUserUpgrade && ( <a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
-					{ translate( 'Upgrade' ) }
-				</a>
+				{ canUserUpgrade && (
+					<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
+						{ translate( 'Upgrade' ) }
+					</a>
 				) }
 
 				{ this.props.children }
@@ -80,7 +88,7 @@ export class PlanStorageBar extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	return {
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};
