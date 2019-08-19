@@ -39,6 +39,16 @@
 	align-items: center;
 	background: rgba( #f5f5f5, 0.8 );
 	z-index: 2;
+
+	.components-button.hidden {
+		display: none;
+	}
+}
+
+.template-block__loading {
+	display: flex;
+	align-items: center;
+	color: #191e23;
 }
 
 .block-editor-block-list__layout {
