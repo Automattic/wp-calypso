@@ -135,12 +135,12 @@ export default {
 		//localeTargets: 'any',
 	},
 	showImportFlowInSiteTypeStep: {
-		datestamp: '20991231',
+		datestamp: '20190820',
 		variations: {
 			show: 50,
 			hide: 50,
 		},
-		defaultVariation: 'show',
+		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
 	removeBlogFlow: {
