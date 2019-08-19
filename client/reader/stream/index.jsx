@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -45,7 +44,7 @@ import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { viewStream } from 'state/reader/watermarks/actions';
-import Interval, { EVERY_MINUTE } from 'lib/interval';
+import { Interval, EVERY_MINUTE } from 'lib/interval';
 import { PER_FETCH, INITIAL_FETCH } from 'state/data-layer/wpcom/read/streams';
 
 /**
@@ -187,7 +186,7 @@ class ReaderStream extends React.Component {
 		// only toggle a like on a x-post if we have the appropriate metadata,
 		// and original post is full screen
 		const xPostMetadata = XPostHelper.getXPostMetadata( post );
-		if ( !! xPostMetadata.postURL ) {
+		if ( xPostMetadata.postURL ) {
 			return;
 		}
 

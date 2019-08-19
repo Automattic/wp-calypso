@@ -1,7 +1,5 @@
-/** @format */
-
 module.exports = {
-	collectCoverageFrom: [ 'server/**/*.js?(x)' ],
+	collectCoverageFrom: [ 'server/**/*.[jt]s?(x)' ],
 	coveragePathIgnorePatterns: [ '<rootDir>/server/devdocs/search-index.js' ],
 	modulePaths: [
 		'<rootDir>/test/',
@@ -19,7 +17,7 @@ module.exports = {
 		),
 	},
 	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form|draft-js)' ],
-	testMatch: [ '<rootDir>/server/**/test/*.js?(x)', '!**/.eslintrc.*' ],
+	testMatch: [ '<rootDir>/server/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	timers: 'fake',
 	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
 	setupFilesAfterEnv: [ '<rootDir>/test/server/setup-test-framework.js' ],

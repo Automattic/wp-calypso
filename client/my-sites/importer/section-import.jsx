@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,7 +14,7 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';

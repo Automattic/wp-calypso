@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Spinner from 'components/spinner';
-import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
+import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import classNames from 'classnames';
 
 /**
