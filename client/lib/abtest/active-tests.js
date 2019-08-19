@@ -98,7 +98,7 @@ export default {
 		defaultVariation: 'siteType',
 	},
 	skippableDomainStep: {
-		datestamp: '20190717',
+		datestamp: '20290717',
 		variations: {
 			skippable: 0,
 			notSkippable: 100,
