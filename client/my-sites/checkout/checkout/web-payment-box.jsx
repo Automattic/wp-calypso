@@ -227,7 +227,7 @@ function WebPayButton( {
 										translate( 'Please specify a country and postal code.' ),
 										event
 								  )
-								: submitButton( {
+								: submitForm( {
 										paymentMethod,
 										event,
 										processorCountry,
@@ -258,7 +258,7 @@ function WebPayButton( {
 					type="submit"
 					className="button is-primary button-pay pay-button__button" // eslint-disable-line wpcalypso/jsx-classname-namespace
 					onClick={ event =>
-						submitButton( { paymentMethod, event, processorCountry, cart, onSubmit, translate } )
+						submitForm( { paymentMethod, event, processorCountry, cart, onSubmit, translate } )
 					}
 					busy={ buttonState.disabled }
 					disabled={ buttonState.disabled }
@@ -372,97 +372,77 @@ function getPaymentTypeFromPaymentMethod( paymentMethod ) {
 	}
 }
 
-function submitButton( { paymentMethod, event, processorCountry, cart, onSubmit, translate } ) {
+async function submitForm( { paymentMethod, event, processorCountry, cart, onSubmit, translate } ) {
 	event.persist();
 	event.preventDefault();
 
-	switch ( paymentMethod ) {
-		case WEB_PAYMENT_APPLE_PAY_METHOD:
-			{
-				const is_renewal = hasRenewalItem( cart );
-				analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
-					is_renewal,
-				} );
-
-				const paymentRequest = getPaymentRequestForApplePay( {
-					processorCountry,
-					cart,
-					translate,
-				} );
-
-				try {
-					paymentRequest
-						.show()
-						.then( paymentResponse => {
-							analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
-								is_renewal,
-							} );
-
-							const { payerName, details } = paymentResponse;
-							const { token } = details;
-
-							if ( 'EC_v1' !== token.paymentData.version ) {
-								return; // Not supported yet.
-							}
-
-							const cardRawDetails = {
-								tokenized_payment_data: token.paymentData,
-								name: payerName,
-								country: getTaxCountryCode( cart ),
-								'postal-code': getTaxPostalCode( cart ),
-								card_brand: token.paymentMethod.network,
-								card_display_name: token.paymentMethod.displayName,
-							};
-
-							setPayment( newCardPayment( cardRawDetails ) );
-							onSubmit( event );
-							paymentResponse.complete( 'success' );
-						} )
-						.catch( error => {
-							debug( 'Error while showing the payment request', error );
-						} );
-				} catch ( error ) {
-					debug( 'Error while running the payment request', error );
-				}
-			}
-			break;
-
-		case WEB_PAYMENT_BASIC_CARD_METHOD:
-			{
-				const paymentRequest = getPaymentRequestForBasicCard( cart, translate );
-
-				try {
-					paymentRequest
-						.show()
-						.then( paymentResponse => {
-							const { details } = paymentResponse;
-							const { billingAddress } = details;
-
-							const cardRawDetails = {
-								number: details.cardNumber,
-								cvv: details.cardSecurityCode,
-								'expiration-date': details.expiryMonth + '/' + details.expiryYear.substr( 2 ),
-								name: details.cardholderName,
-								country: billingAddress.country,
-								'postal-code': billingAddress.postalCode,
-							};
-
-							setPayment( newCardPayment( cardRawDetails ) );
-							onSubmit( event );
-							paymentResponse.complete();
-						} )
-						.catch( error => {
-							debug( 'Error while showing the payment request', error );
-						} );
-				} catch ( error ) {
-					debug( 'Error while running the payment request', error );
-				}
-			}
-			break;
-
-		default:
-			debug( `Unknown or unhandled payment method ${ paymentMethod }.` );
+	try {
+		switch ( paymentMethod ) {
+			case WEB_PAYMENT_APPLE_PAY_METHOD:
+				return submitFormWithApplePayMethod( { cart, processorCountry, translate, onSubmit } );
+			case WEB_PAYMENT_BASIC_CARD_METHOD:
+				return submitFormWithBasicCardMethod( { cart, translate, onSubmit } );
+			default:
+				debug( `Unknown or unhandled payment method ${ paymentMethod }.` );
+		}
+	} catch ( error ) {
+		debug( 'Error while running the payment request', error );
 	}
+}
+
+async function submitFormWithApplePayMethod( { cart, processorCountry, translate, onSubmit } ) {
+	const is_renewal = hasRenewalItem( cart );
+	analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
+		is_renewal,
+	} );
+
+	const paymentResponse = await getPaymentRequestForApplePay( {
+		processorCountry,
+		cart,
+		translate,
+	} ).show();
+	analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
+		is_renewal,
+	} );
+
+	const { payerName, details } = paymentResponse;
+	const { token } = details;
+
+	if ( 'EC_v1' !== token.paymentData.version ) {
+		return; // Not supported yet.
+	}
+
+	const cardRawDetails = {
+		tokenized_payment_data: token.paymentData,
+		name: payerName,
+		country: getTaxCountryCode( cart ),
+		'postal-code': getTaxPostalCode( cart ),
+		card_brand: token.paymentMethod.network,
+		card_display_name: token.paymentMethod.displayName,
+	};
+
+	setPayment( newCardPayment( cardRawDetails ) );
+	onSubmit( event );
+	paymentResponse.complete( 'success' );
+}
+
+async function submitFormWithBasicCardMethod( { cart, translate, onSubmit } ) {
+	const paymentResponse = await getPaymentRequestForBasicCard( cart, translate ).show();
+	const { details } = paymentResponse;
+	const { billingAddress } = details;
+
+	const cardRawDetails = {
+		number: details.cardNumber,
+		cvv: details.cardSecurityCode,
+		'expiration-date': details.expiryMonth + '/' + details.expiryYear.substr( 2 ),
+		name: details.cardholderName,
+		country: billingAddress.country,
+		'postal-code': billingAddress.postalCode,
+	};
+
+	setPayment( newCardPayment( cardRawDetails ) );
+	onSubmit( event );
+	paymentResponse.complete();
 }
 
 function updateSelectedCountry( { selectedCountryCode, setProcessorCountry } ) {
@@ -502,9 +482,6 @@ function updateSelectedCountry( { selectedCountryCode, setProcessorCountry } ) {
 	);
 }
 
-/**
- * @return {PaymentRequest} A configured payment request object.
- */
 function getPaymentRequestForApplePay( { processorCountry, cart, translate } ) {
 	const supportedPaymentMethods = [
 		{
