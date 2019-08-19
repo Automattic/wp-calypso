@@ -350,9 +350,10 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	}
 
-	handleAddressPredictionClick = ( { place_id: placeId }, sessionToken ) => {
+	handleAddressPredictionClick = ( { place_id: placeId }, sessionToken, query ) => {
 		if ( placeId === CREATE_NEW_PLACE_ID ) {
 			this.setState( { locationSelected: true } );
+			analytics.tracks.recordEvent( 'calypso_contact_information_manual_address_click', { query } );
 			return;
 		}
 

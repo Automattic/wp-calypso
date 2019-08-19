@@ -105,7 +105,7 @@ class LocationSearch extends Component {
 			this.setState( { predictions: [] } );
 		}
 
-		this.props.onPredictionClick( prediction, sessionToken );
+		this.props.onPredictionClick( prediction, sessionToken, this.state.query );
 		sessionToken = null;
 	};
 
