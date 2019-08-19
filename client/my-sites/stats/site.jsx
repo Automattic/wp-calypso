@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,6 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
@@ -226,6 +223,7 @@ class StatsSite extends Component {
 								statType="statsSearchTerms"
 								showSummaryLink
 							/>
+							{ fileDownloadList }
 							{ videoList }
 						</div>
 						<div className="stats__module-column">
@@ -262,7 +260,6 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink
 							/>
-							{ fileDownloadList }
 						</div>
 					</div>
 				</div>
