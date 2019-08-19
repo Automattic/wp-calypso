@@ -56,7 +56,7 @@ const TemplateSelectorControl = ( {
 							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							rawContent={ content }
+							rawContent={ replacePlaceholders( content, siteInformation ) }
 							useDynamicPreview={ useDynamicPreview }
 							numBlocksInPreview={ numBlocksInPreview }
 						/>
