@@ -7,6 +7,8 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
 import url from 'url';
+import { compose } from '@wordpress/compose';
+// import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -43,6 +45,7 @@ import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 
 /**
  * Types
@@ -61,6 +64,7 @@ interface Props {
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
+	isSiteUsingFSE: boolean;
 }
 
 interface State {
@@ -312,10 +316,13 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( ! this.iframePort ) {
 			return;
 		}
-
+		if ( this.props.isSiteUsingFSE ) {
+			content = `<!-- wp:a8c/template {"templateId":15,"className":"site-header site-branding"} /-->
+						${ content }
+			            <!-- wp:a8c/template {"templateId":16,"className":"site-footer"} /-->`;
+		}
 		if ( this.revisionsPort ) {
 			this.revisionsPort.postMessage( { title, excerpt, content } );
-
 			// this is a once-only port
 			// after sending our message we want to close it out
 			// and prevent sending more messages (which will be ignored)
@@ -589,6 +596,7 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
+	const isSiteUsingFSE = isSiteUsingFullSiteEditing( state, siteId );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -639,6 +647,7 @@ const mapStateToProps = (
 			partial.placeholder,
 			'wp_template'
 		),
+		isSiteUsingFSE,
 	};
 };
 
@@ -653,7 +662,16 @@ const mapDispatchToProps = {
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+export default compose(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)
+	// withSelect( select => {
+	// 	const { getEntityRecord } = select( 'core' );
+	// 	const templates = getEntityRecord( 'postType', 'wp_template' );
+	// 	return {
+	// 		templates,
+	// 	};
+	// } )
 )( protectForm( CalypsoifyIframe ) );
