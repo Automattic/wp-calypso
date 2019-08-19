@@ -60,6 +60,7 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
  */
 // goofy import for environment badge, which is SSR'd
 import 'components/environment-badge/style.scss';
+import './style.scss';
 
 class Layout extends Component {
 	static displayName = 'Layout';
