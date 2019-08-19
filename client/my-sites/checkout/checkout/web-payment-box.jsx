@@ -210,11 +210,6 @@ function WebPayButton( {
 	translate,
 } ) {
 	const buttonState = getButtonStateFromTransactionStep( { transactionStep, translate } );
-	const displaySubmissionError = ( errorMessage, event ) => {
-		event.preventDefault();
-		notices.error( errorMessage );
-	};
-
 	switch ( paymentMethod ) {
 		case WEB_PAYMENT_APPLE_PAY_METHOD:
 			if ( buttonState.default ) {
@@ -222,19 +217,16 @@ function WebPayButton( {
 					<button
 						type="submit"
 						onClick={ event =>
-							! countryCode || ! postalCode
-								? displaySubmissionError(
-										translate( 'Please specify a country and postal code.' ),
-										event
-								  )
-								: submitForm( {
-										paymentMethod,
-										event,
-										processorCountry,
-										cart,
-										onSubmit,
-										translate,
-								  } )
+							submitForm( {
+								event,
+								paymentMethod,
+								countryCode,
+								postalCode,
+								processorCountry,
+								cart,
+								onSubmit,
+								translate,
+							} )
 						}
 						disabled={ buttonState.disabled }
 						className="web-payment-box__apple-pay-button"
@@ -372,13 +364,26 @@ function getPaymentTypeFromPaymentMethod( paymentMethod ) {
 	}
 }
 
-async function submitForm( { paymentMethod, event, processorCountry, cart, onSubmit, translate } ) {
+async function submitForm( {
+	paymentMethod,
+	postalCode,
+	countryCode,
+	event,
+	processorCountry,
+	cart,
+	onSubmit,
+	translate,
+} ) {
 	event.persist();
 	event.preventDefault();
 
 	try {
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
+				if ( ! countryCode || ! postalCode ) {
+					notices.error( translate( 'Please specify a country and postal code.' ) );
+					return;
+				}
 				return submitFormWithApplePayMethod( { cart, processorCountry, translate, onSubmit } );
 			case WEB_PAYMENT_BASIC_CARD_METHOD:
 				return submitFormWithBasicCardMethod( { cart, translate, onSubmit } );
