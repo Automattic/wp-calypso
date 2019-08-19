@@ -306,8 +306,9 @@ export class SecurePaymentForm extends Component {
 			case RECEIVED_AUTHORIZATION_RESPONSE:
 			case RECEIVED_WPCOM_RESPONSE:
 				if ( step.error ) {
+					debug( 'authorization error', step.error );
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.error,
+						error_code: step.error.code || step.error.error,
 						reason: this.formatError( step.error ),
 					} );
 
@@ -394,6 +395,14 @@ export class SecurePaymentForm extends Component {
 
 		if ( error.error ) {
 			formatedMessage = error.error + ': ' + formatedMessage;
+		}
+
+		if ( error.decline_code ) {
+			formatedMessage = error.decline_code + ': ' + formatedMessage;
+		}
+
+		if ( error.code ) {
+			formatedMessage = error.code + ': ' + formatedMessage;
 		}
 
 		return formatedMessage;
