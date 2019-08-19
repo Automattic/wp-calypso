@@ -229,8 +229,8 @@ class ImportURLOnboardingStepComponent extends Component {
 			target,
 		} );
 
-		// Exit to main signup flow.
-		this.props.goToNextStep( 'main' );
+		// Exit to main signup flow. Skip to the about step.
+		this.props.goToStep( 'about', '', 'main' );
 	};
 
 	renderNotice = () => {
