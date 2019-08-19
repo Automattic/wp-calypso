@@ -25,7 +25,11 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCustomizerUrl, canCurrentUserUseCustomerHome } from 'state/sites/selectors';
+import {
+	getCustomizerUrl,
+	canCurrentUserUseCustomerHome,
+	getSiteOption,
+} from 'state/sites/selectors';
 import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -33,6 +37,7 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -70,6 +75,7 @@ class Home extends Component {
 			}
 		},
 		isSiteEligible: PropTypes.bool.isRequired,
+		trackAction: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -147,7 +153,7 @@ class Home extends Component {
 	}
 
 	renderCustomerHome = () => {
-		const { translate, customizeUrl, site, siteSlug } = this.props;
+		const { translate, customizeUrl, site, siteSlug, trackAction } = this.props;
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col">
@@ -157,51 +163,76 @@ class Home extends Component {
 							{ translate( 'Review and update my site' ) }
 						</h6>
 						<div className="customer-home__card-button-pair">
-							<Button href={ site.URL } primary>
+							<Button
+								href={ site.URL }
+								primary
+								onClick={ () => trackAction( 'my_site', 'view_site' ) }
+							>
 								{ translate( 'View Site' ) }
 							</Button>
-							<Button href={ customizeUrl }>{ translate( 'Edit Homepage' ) }</Button>
+							<Button
+								href={ customizeUrl }
+								onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
+							>
+								{ translate( 'Edit Homepage' ) }
+							</Button>
 						</div>
 					</Card>
 					<Card className="customer-home__card-boxes">
 						<div className="customer-home__boxes">
 							<ActionBox
-								onClick={ () => page( `/page/${ siteSlug }` ) }
+								onClick={ () => {
+									trackAction( 'my_site', 'add_page' );
+									page( `/page/${ siteSlug }` );
+								} }
 								label={ translate( 'Add a page' ) }
 								iconSrc="/calypso/images/customer-home/page.svg"
 							/>
 							<ActionBox
-								onClick={ () => page( `/post/${ siteSlug }` ) }
+								onClick={ () => {
+									trackAction( 'my_site', 'write_post' );
+									page( `/post/${ siteSlug }` );
+								} }
 								label={ translate( 'Write blog post' ) }
 								iconSrc="/calypso/images/customer-home/post.svg"
 							/>
 							<ActionBox
 								href={ customizeUrl }
+								onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
 								label={ translate( 'Customize theme' ) }
 								iconSrc="/calypso/images/customer-home/customize.svg"
 							/>
 							<ActionBox
-								onClick={ () => page( `/themes/${ siteSlug }` ) }
+								onClick={ () => {
+									trackAction( 'my_site', 'change_theme' );
+									page( `/themes/${ siteSlug }` );
+								} }
 								label={ translate( 'Change theme' ) }
 								iconSrc="/calypso/images/customer-home/theme.svg"
 							/>
 							<ActionBox
 								href={ customizeUrl }
+								onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
 								label={ translate( 'Edit menus' ) }
 								iconSrc="/calypso/images/customer-home/menus.svg"
 							/>
 							<ActionBox
 								href="https://support.wordpress.com/images/"
+								onClick={ () => trackAction( 'my_site', 'change_images' ) }
 								label={ translate( 'Change images' ) }
 								iconSrc="/calypso/images/customer-home/images.svg"
 							/>
 							<ActionBox
 								href="https://logojoy.grsm.io/looka"
+								onClick={ () => trackAction( 'my_site', 'design_logo' ) }
 								label={ translate( 'Design a logo' ) }
 								iconSrc="/calypso/images/customer-home/logo.svg"
 							/>
 							<ActionBox
-								onClick={ () => page( `/email/${ siteSlug }` ) }
+								onClick={ () => {
+									trackAction( 'my_site', 'add_gsuite' );
+									page( `/email/${ siteSlug }` );
+								} }
 								label={ translate( 'Add G Suite' ) }
 								iconSrc="/calypso/images/customer-home/gsuite.svg"
 							/>
@@ -215,13 +246,22 @@ class Home extends Component {
 							{ translate( 'Grow my audience and earn money' ) }
 						</h6>
 						<VerticalNav className="customer-home__card-links">
-							<VerticalNavItem path={ `/marketing/connections/${ siteSlug }` }>
+							<VerticalNavItem
+								path={ `/marketing/connections/${ siteSlug }` }
+								onClick={ () => trackAction( 'earn', 'share_site' ) }
+							>
 								{ translate( 'Share my site' ) }
 							</VerticalNavItem>
-							<VerticalNavItem path={ `/marketing/tools/${ siteSlug }` }>
+							<VerticalNavItem
+								path={ `/marketing/tools/${ siteSlug }` }
+								onClick={ () => trackAction( 'earn', 'grow_audience' ) }
+							>
 								{ translate( 'Grow my audience' ) }
 							</VerticalNavItem>
-							<VerticalNavItem path={ `/earn/${ siteSlug }` }>
+							<VerticalNavItem
+								path={ `/earn/${ siteSlug }` }
+								onClick={ () => trackAction( 'earn', 'money' ) }
+							>
 								{ translate( 'Earn money' ) }
 							</VerticalNavItem>
 						</VerticalNav>
@@ -237,10 +277,18 @@ class Home extends Component {
 								alt={ translate( 'Support' ) }
 							/>
 							<VerticalNav className="customer-home__card-links">
-								<VerticalNavItem path="https://en.support.wordpress.com/" external>
+								<VerticalNavItem
+									path="https://en.support.wordpress.com/"
+									external
+									onClick={ () => trackAction( 'support', 'docs' ) }
+								>
 									{ translate( 'Support docs' ) }
 								</VerticalNavItem>
-								<VerticalNavItem path="/help/contact" external>
+								<VerticalNavItem
+									path="/help/contact"
+									external
+									onClick={ () => trackAction( 'support', 'contact' ) }
+								>
 									{ translate( 'Contact us' ) }
 								</VerticalNavItem>
 							</VerticalNav>
@@ -255,12 +303,14 @@ class Home extends Component {
 							<Button
 								href="https://play.google.com/store/apps/details?id=org.wordpress.android"
 								aria-label={ translate( 'Google Play' ) }
+								onClick={ () => trackAction( 'mobile', 'google_play' ) }
 							>
 								<img src="/calypso/images/customer-home/google-play.png" alt="" />
 							</Button>
 							<Button
 								href="https://apps.apple.com/us/app/wordpress/id335703880"
 								aria-label={ translate( 'App Store' ) }
+								onClick={ () => trackAction( 'mobile', 'app_store' ) }
 							>
 								<img src="/calypso/images/customer-home/apple-store.png" alt="" />
 							</Button>
@@ -272,23 +322,43 @@ class Home extends Component {
 	};
 }
 
-const connectHome = connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteChecklist = getSiteChecklist( state, siteId );
-	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-	const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+const connectHome = connect( 
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const siteChecklist = getSiteChecklist( state, siteId );
+		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
+		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 
-	return {
-		site: getSelectedSite( state ),
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		customizeUrl: getCustomizerUrl( state, siteId ),
-		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		hasChecklistData,
-		isChecklistComplete,
-		isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
-	};
-} );
+		return {
+			site: getSelectedSite( state ),
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			customizeUrl: getCustomizerUrl( state, siteId ),
+			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
+			hasChecklistData,
+			isChecklistComplete,
+			isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
+			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		};
+	},
+	dispatch => ( {
+		trackAction: ( section, action, isStaticHomePage ) =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( `calypso_customer_home_${ section }_${ action }_click`, {
+						isStaticHomePage,
+					} ),
+					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
+				)
+			),
+	} ),
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...stateProps,
+		...ownProps,
+		trackAction: ( section, action ) =>
+			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
+	} )
+);
 
 export default flowRight(
 	connectHome,
