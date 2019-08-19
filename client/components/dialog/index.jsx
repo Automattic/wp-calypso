@@ -11,6 +11,11 @@ import classnames from 'classnames';
  */
 import RootChild from 'components/root-child';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Dialog extends Component {
 	static propTypes = {
 		additionalClassNames: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
