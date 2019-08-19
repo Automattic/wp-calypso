@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
@@ -78,7 +78,7 @@ export function WebPaymentBox( {
 	children,
 } ) {
 	const [ processorCountry, setProcessorCountry ] = useState( 'US' );
-	const paymentMethod = useDetectedPaymentMethod();
+	const paymentMethod = useMemo( () => detectWebPaymentMethod(), [] );
 
 	const countryCode = getTaxCountryCode( cart );
 	const postalCode = getTaxPostalCode( cart );
@@ -295,14 +295,6 @@ WebPayButton.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 };
-
-function useDetectedPaymentMethod() {
-	const [ detectedPaymentMethod, setDetectedPaymentMethod ] = useState();
-	useEffect( () => {
-		setDetectedPaymentMethod( detectWebPaymentMethod() );
-	}, [] );
-	return detectedPaymentMethod;
-}
 
 const getDefaultButtonState = translate => {
 	return {
