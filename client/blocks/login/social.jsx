@@ -116,7 +116,7 @@ class SocialLoginForm extends Component {
 		const socialInfo = {
 			service: 'apple',
 			id_token: response.id_token,
-			//keyring_id: response.keyring_id,
+			keyring_id: response.keyring_id,
 		};
 
 		this.props.loginSocialUser( socialInfo, redirectTo ).then(
