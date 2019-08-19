@@ -143,15 +143,6 @@ export default {
 		defaultVariation: 'show',
 		allowExistingUsers: true,
 	},
-	moveUserStepPosition: {
-		datestamp: '20190719',
-		variations: {
-			first: 50,
-			last: 50,
-		},
-		defaultVariation: 'first',
-		allowExistingUsers: true,
-	},
 	removeBlogFlow: {
 		datestamp: '20190813',
 		variations: {
