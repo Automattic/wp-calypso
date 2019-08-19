@@ -18,7 +18,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import PostMetadata from 'lib/post-metadata';
 import { getTheme } from 'state/themes/selectors';
-import QueryThemes from 'components/data/query-themes';
+import QueryTheme from 'components/data/query-theme';
 
 /**
  * Style dependencies
@@ -51,6 +51,7 @@ function PageCardInfo( {
 	siteUrl,
 	contentLink,
 	theme,
+	themeId,
 } ) {
 	const renderTimestamp = function() {
 		if ( page.status === 'future' ) {
@@ -74,7 +75,7 @@ function PageCardInfo( {
 
 	return (
 		<div className="page-card-info">
-			<QueryThemes siteId="wpcom" />
+			{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 			{ siteUrl && <div className="page-card-info__site-url">{ siteUrl }</div> }
 			<div>
 				{ showTimestamp && renderTimestamp() }
@@ -94,7 +95,7 @@ function PageCardInfo( {
 					<span className="page-card-info__item">
 						<Gridicon icon="themes" size={ ICON_SIZE } className="page-card-info__item-icon" />
 						<span className="page-card-info__item-text">
-							{ translate( '%(title)s Theme Homepage', { args: { title: theme.name } } ) }
+							{ translate( '%(title)s Theme', { args: { title: theme.name } } ) }
 						</span>
 					</span>
 				) }
@@ -105,10 +106,12 @@ function PageCardInfo( {
 
 export default connect( ( state, props ) => {
 	const themeId = PostMetadata.homepageTemplate( props.page );
+
 	return {
 		isFront: isFrontPage( state, props.page.site_ID, props.page.ID ),
 		isPosts: isPostsPage( state, props.page.site_ID, props.page.ID ),
-		theme: getTheme( state, props.page.site_ID, themeId ),
+		theme: themeId && getTheme( state, 'wpcom', themeId ),
+		themeId,
 		contentLink: getContentLink( state, props.page.site_ID, props.page ),
 	};
 } )( localize( PageCardInfo ) );
