@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
@@ -13,11 +10,11 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { guidedTransferStatusSchema } from './schema';
 
 // Stores the status of guided transfers per site
-export const status = createReducer(
+export const status = createReducerWithValidation(
 	{},
 	{
 		[ GUIDED_TRANSFER_STATUS_RECEIVE ]: ( state, action ) => ( {

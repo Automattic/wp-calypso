@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,
@@ -39,7 +36,7 @@ const requesting = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated status
  */
-const items = createReducer(
+const items = createReducerWithValidation(
 	{},
 	{
 		[ WP_SUPER_CACHE_RECEIVE_STATUS ]: ( state, action ) => ( {

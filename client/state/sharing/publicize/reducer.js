@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { keyBy, omit, omitBy } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -24,7 +22,7 @@ import {
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { connectionsSchema } from './schema';
 import sharePostActions from './publicize-actions/reducer';
 
@@ -115,7 +113,7 @@ export const fetchedConnections = createReducer(
 );
 
 // Tracks all known connection objects, indexed by connection ID.
-export const connections = createReducer(
+export const connections = createReducerWithValidation(
 	{},
 	{
 		[ PUBLICIZE_CONNECTIONS_RECEIVE ]: ( state, action ) => ( {

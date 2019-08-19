@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_PLUGINS,
@@ -78,7 +76,7 @@ export const toggling = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated plugins
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ WP_SUPER_CACHE_RECEIVE_PLUGINS ]: ( state, { siteId, plugins } ) => ( {

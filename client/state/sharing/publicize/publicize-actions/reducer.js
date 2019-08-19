@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { omit, get } from 'lodash';
 
 /**
@@ -27,7 +24,7 @@ import {
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { publicizeActionsSchema } from './schema';
 
 /**
@@ -55,7 +52,7 @@ export function updateDataForPost( newValue, state, siteId, postId, actionId ) {
 	};
 }
 
-export const scheduled = createReducer(
+export const scheduled = createReducerWithValidation(
 	{},
 	{
 		[ PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS ]: ( state, { siteId, postId, actions } ) =>
@@ -79,7 +76,7 @@ export const scheduled = createReducer(
 	publicizeActionsSchema
 );
 
-export const published = createReducer(
+export const published = createReducerWithValidation(
 	{},
 	{
 		[ PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS ]: ( state, { siteId, postId, actions } ) =>

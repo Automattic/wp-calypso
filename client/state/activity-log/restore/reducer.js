@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -10,7 +9,7 @@ import {
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 } from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+import { createReducer, keyedReducer, withSchemaValidation } from 'state/utils';
 
 const stubNull = () => null;
 
@@ -39,19 +38,21 @@ const updateProgress = (
 	context,
 } );
 
-export const restoreProgress = keyedReducer(
-	'siteId',
-	createReducer(
-		{},
-		{
-			[ REWIND_RESTORE ]: startProgress,
-			[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
-			[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
-			[ REWIND_RESTORE_DISMISS ]: stubNull,
-		}
+export const restoreProgress = withSchemaValidation(
+	restoreProgressSchema,
+	keyedReducer(
+		'siteId',
+		createReducer(
+			{},
+			{
+				[ REWIND_RESTORE ]: startProgress,
+				[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
+				[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
+				[ REWIND_RESTORE_DISMISS ]: stubNull,
+			}
+		)
 	)
 );
-restoreProgress.schema = restoreProgressSchema;
 
 export const restoreRequest = keyedReducer(
 	'siteId',
