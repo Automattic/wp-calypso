@@ -224,7 +224,6 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 							{ fileDownloadList }
-							{ videoList }
 						</div>
 						<div className="stats__module-column">
 							<Countries
@@ -260,6 +259,7 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink
 							/>
+							{ videoList }
 						</div>
 					</div>
 				</div>
