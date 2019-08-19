@@ -13,12 +13,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isFormDisabled } from 'state/login/selectors';
+import requestExternalAccess from 'lib/sharing';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 import AppleIcon from 'components/social-icons/apple';
+
+const connectUrl =
+	'https://public-api.wordpress.com/connect/?magic=keyring&service=apple&action=request&for=connect';
 
 class AppleLoginButton extends Component {
 	static propTypes = {
@@ -63,17 +67,9 @@ class AppleLoginButton extends Component {
 		this.setState( { error: '' } );
 
 		this.initialized = this.loadDependency()
-			.then( AppleID => {
-					AppleID.auth.init( {
-						clientId: this.props.clientId,
-						scope: 'name email',
-						redirectURI: this.props.redirectUri,
-						state: '1',
-					} );
-
-					this.setState( { isDisabled: false } );
-				}
-			)
+			.then( () => {
+				this.setState( { isDisabled: false } );
+			} )
 			.catch( error => {
 				this.initialized = null;
 
@@ -83,20 +79,18 @@ class AppleLoginButton extends Component {
 		return this.initialized;
 	}
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		event.preventDefault();
 
 		if ( this.state.isDisabled ) {
 			return;
 		}
 
-		window.AppleID.auth.signIn();
+		requestExternalAccess( connectUrl, this.props.responseHandler );
 	};
 
 	render() {
-		const isDisabled = Boolean(
-			this.state.isDisabled || this.props.isFormDisabled
-		);
+		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled );
 
 		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
 			return null;

@@ -106,6 +106,47 @@ class SocialLoginForm extends Component {
 		);
 	};
 
+	handleAppleResponse = response => {
+		const { onSuccess, redirectTo } = this.props;
+
+		if ( ! response.id_token ) {
+			return;
+		}
+
+		const socialInfo = {
+			service: 'apple',
+			id_token: response.id_token,
+			//keyring_id: response.keyring_id,
+		};
+
+		this.props.loginSocialUser( socialInfo, redirectTo ).then(
+			() => {
+				this.recordEvent( 'calypso_login_social_login_success', 'apple' );
+
+				onSuccess();
+			},
+			error => {
+				if ( error.code === 'unknown_user' ) {
+					return this.props.createSocialUser( socialInfo, 'login' ).then(
+						() => this.recordEvent( 'calypso_login_social_signup_success', 'apple' ),
+						createAccountError =>
+							this.recordEvent( 'calypso_login_social_signup_failure', 'apple', {
+								error_code: createAccountError.code,
+								error_message: createAccountError.message,
+							} )
+					);
+				} else if ( error.code === 'user_exists' ) {
+					this.props.createSocialUserFailed( 'apple', response.id_token, error );
+				}
+
+				this.recordEvent( 'calypso_login_social_login_failure', 'apple', {
+					error_code: error.code,
+					error_message: error.message,
+				} );
+			}
+		);
+	};
+
 	recordEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
 			social_account_type: service,
@@ -141,6 +182,7 @@ class SocialLoginForm extends Component {
 					/>
 					<AppleLoginButton
 						clientId={ config( 'apple_oauth_client_id' ) }
+						responseHandler={ this.handleAppleResponse }
 						redirectUri={ this.getRedirectUrl( uxMode, 'apple' ) }
 						onClick={ this.trackLogin.bind( null, 'apple' ) }
 					/>
