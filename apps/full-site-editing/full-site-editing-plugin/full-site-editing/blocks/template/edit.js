@@ -155,14 +155,19 @@ const TemplateEdit = compose(
 						</Disabled>
 						{ isSelected && (
 							<Placeholder className="template-block__overlay">
-								<Button href={ editTemplateUrl } onClick={ save } isDefault ref={ navButton }>
-									{ navigateToTemplate ? (
-										<Fragment>
-											<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
-										</Fragment>
-									) : (
-										sprintf( __( 'Edit %s' ), templateTitle )
-									) }
+								{ navigateToTemplate && (
+									<div className="template-block__loading">
+										<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
+									</div>
+								) }
+								<Button
+									className={ navigateToTemplate ? 'hidden' : null }
+									href={ editTemplateUrl }
+									onClick={ save }
+									isDefault
+									ref={ navButton }
+								>
+									{ sprintf( __( 'Edit %s' ), templateTitle ) }
 								</Button>
 							</Placeholder>
 						) }
