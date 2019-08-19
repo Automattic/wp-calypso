@@ -29,6 +29,11 @@ import {
 import WebPreview from 'components/web-preview';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:my-sites:preview' );
 
 class PreviewMain extends React.Component {
