@@ -21,8 +21,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 export class DowngradeStep extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		refundAmount: PropTypes.string.isRequired,
-		planCost: PropTypes.string.isRequired,
+		refundAmount: PropTypes.string,
+		planCost: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 

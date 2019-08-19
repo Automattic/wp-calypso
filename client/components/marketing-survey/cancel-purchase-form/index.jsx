@@ -524,21 +524,13 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getRefundAmount = () => {
-		const { purchase, downgradePlanPrice, includedDomainPurchase } = this.props;
-		const { precision } = getCurrencyDefaults( purchase.currencyCode );
-
-		if ( ! isRefundable( purchase ) ) {
-			return 0;
-		}
-
+		const { purchase } = this.props;
+		const { refundOptions, currencyCode } = purchase;
+		const { precision } = getCurrencyDefaults( currencyCode );
 		const refundAmount =
-			purchase.refundAmount +
-			( includedDomainPurchase ? includedDomainPurchase.costToUnbundle : 0 ) -
-			downgradePlanPrice;
-
-		if ( refundAmount < 0 ) {
-			return 0;
-		}
+			isRefundable( purchase ) && refundOptions[ 0 ] && refundOptions[ 0 ].refund_amount
+				? refundOptions[ 0 ].refund_amount
+				: 0;
 
 		return parseFloat( refundAmount ).toFixed( precision );
 	};
