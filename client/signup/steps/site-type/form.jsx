@@ -34,7 +34,8 @@ class SiteTypeForm extends Component {
 	static defaultProps = {
 		showDescriptions: true,
 		showPurchaseRequired: true,
-		siteTypeDefinitions: getAllSiteTypes(),
+		// Specify which site types we'd like to render in the UI
+		siteTypeDefinitions: getAllSiteTypes( [ 1, 2, 3, 4 ] ),
 	};
 
 	handleSubmit = type => {

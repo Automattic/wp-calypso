@@ -9,8 +9,9 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
-// This ensures we don't return site type definitions for segments we don't wish to render in the UI, e.g., when rendering the list on the site type step.
-const allowedSiteTypeIds = [ 1, 2, 3, 4 ];
+// Default value for `siteTypeIds` argument in `getAllSiteTypes()`.
+// Allows for overriding to ensurs we don't return site type definitions for segments we don't wish to render in the UI, e.g., when rendering the list on the site type step.
+const allowedSiteTypeIds = [ 1, 2, 3, 4, 6 ];
 
 const getSiteTypePropertyDefaults = propertyKey =>
 	get(
