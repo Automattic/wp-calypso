@@ -422,7 +422,7 @@ async function submitFormWithApplePayMethod( { cart, processorCountry, translate
 	};
 
 	setPayment( newCardPayment( cardRawDetails ) );
-	onSubmit( event );
+	onSubmit();
 	paymentResponse.complete( 'success' );
 }
 
@@ -441,7 +441,7 @@ async function submitFormWithBasicCardMethod( { cart, translate, onSubmit } ) {
 	};
 
 	setPayment( newCardPayment( cardRawDetails ) );
-	onSubmit( event );
+	onSubmit();
 	paymentResponse.complete();
 }
 
