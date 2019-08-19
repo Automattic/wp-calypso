@@ -30,6 +30,12 @@ export function currentPlan( context, next ) {
 
 	const requestThankYou = context.query.hasOwnProperty( 'thank-you' );
 
+	// On plans grid page we might've scrolled down.
+	// Ensure we're scrolled to top when "thank you" modal is shown.
+	if ( requestThankYou ) {
+		window.scrollTo( 0, 0 );
+	}
+
 	context.primary = <CurrentPlan path={ context.path } requestThankYou={ requestThankYou } />;
 
 	next();
