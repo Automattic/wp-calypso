@@ -71,6 +71,8 @@ const CONTACT_DETAILS_FORM_FIELDS = [
 	'fax',
 ];
 
+const CREATE_NEW_PLACE_ID = 'create_new_place_id';
+
 export class ContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
@@ -348,12 +350,17 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	}
 
-	handleAddressPredictionClick = ( prediction, sessionToken ) => {
+	handleAddressPredictionClick = ( { place_id: placeId }, sessionToken ) => {
+		if ( placeId === CREATE_NEW_PLACE_ID ) {
+			this.setState( { locationSelected: true } );
+			return;
+		}
+
 		// eslint-disable-next-line no-undef
 		const placesService = new google.maps.places.PlacesService( document.createElement( 'div' ) );
 		placesService.getDetails(
 			{
-				placeId: prediction.place_id,
+				placeId: placeId,
 				fields: [ 'address_component' ],
 				sessionToken,
 			},
@@ -384,6 +391,36 @@ export class ContactDetailsFormFields extends Component {
 				this.setState( { locationSelected: true } );
 			}
 		);
+	};
+
+	handleLocationSearch = query => {
+		if ( query.length === 0 ) {
+			this.setState( { locationSelected: false } );
+			[ 'postalCode', 'countryCode', 'city', 'address1', 'address2', 'state' ].forEach( field => {
+				this.formStateController.handleFieldChange( {
+					name: field,
+					value: '',
+				} );
+			} );
+		}
+	};
+
+	addressPredictionTransformer = ( predictions, query ) => {
+		if ( ! query ) {
+			return predictions;
+		}
+
+		const { translate } = this.props;
+		return [
+			...( predictions || [] ),
+			{
+				place_id: CREATE_NEW_PLACE_ID,
+				structured_formatting: {
+					main_text: translate( "Can't find your address?" ),
+					secondary_text: translate( 'Fill out the form manually' ),
+				},
+			},
+		];
 	};
 
 	getFieldProps = ( name, needsChildRef = false ) => {
@@ -439,41 +476,12 @@ export class ContactDetailsFormFields extends Component {
 					types={ [ 'address' ] }
 					onSearch={ this.handleLocationSearch }
 					onPredictionClick={ this.handleAddressPredictionClick }
+					predictionsTransformation={ this.addressPredictionTransformer }
 					hidePredictionsOnClick={ true }
 				/>
 			</div>
 		);
 	}
-
-	handleLocationSearch = query => {
-		if ( query.length === 0 ) {
-			this.setState( { locationSelected: false } );
-			this.formStateController.handleFieldChange( {
-				name: 'postalCode',
-				value: '',
-			} );
-			this.formStateController.handleFieldChange( {
-				name: 'countryCode',
-				value: '',
-			} );
-			this.formStateController.handleFieldChange( {
-				name: 'city',
-				value: '',
-			} );
-			this.formStateController.handleFieldChange( {
-				name: 'address1',
-				value: '',
-			} );
-			this.formStateController.handleFieldChange( {
-				name: 'address2',
-				value: '',
-			} );
-			this.formStateController.handleFieldChange( {
-				name: 'state',
-				value: '',
-			} );
-		}
-	};
 
 	renderContactDetailsFields() {
 		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
