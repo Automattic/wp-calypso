@@ -8,13 +8,9 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 
+// This ensures we don't return site type definitions for segments we don't wish to render in the UI, e.g., when rendering the list on the site type step.
 const allowedSiteTypeIds = [ 1, 2, 3, 4 ];
-
-if ( 'variant' === abtest( 'signupEscapeHatch' ) ) {
-	allowedSiteTypeIds.push( 6 );
-}
 
 const getSiteTypePropertyDefaults = propertyKey =>
 	get(
