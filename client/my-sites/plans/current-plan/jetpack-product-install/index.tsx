@@ -235,8 +235,15 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * or by a retry if we discover we have a recoverable error.
 	 */
 	requestInstallationStatus = (): void => {
-		const { siteId } = this.props;
+		const { requestedInstalls, siteId } = this.props;
+
+		// We require a siteId to get install status
 		if ( ! siteId ) {
+			return;
+		}
+
+		// Don't do anything if we haven't requested any installs
+		if ( ! requestedInstalls.length ) {
 			return;
 		}
 
