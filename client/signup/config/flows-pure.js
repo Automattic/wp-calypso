@@ -304,7 +304,7 @@ export function generateFlows( {
 	flows[ 'import-onboarding' ] = {
 		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
 		// when switching from the onboarding flow.
-		steps: [ 'user', 'site-type', 'import-url', ...importSteps ],
+		steps: [ 'user', 'site-type', 'import-url', 'import-preview', ...importSteps ],
 		destination: importDestination,
 		description: 'Import flow that can be used from the onboarding flow',
 		disallowResume: true,
