@@ -66,21 +66,18 @@ class CalendarPopover extends Component {
 	};
 
 	renderScheduler() {
-		const schedulerProps = Object.assign(
-			{},
-			pick( this.props, [
-				'events',
-				'posts',
-				'site',
-				'disabledDays',
-				'showOutsideDays',
-				'modifiers',
-				'onDateChange',
-				'onMonthChange',
-				'onDayMouseEnter',
-				'onDayMouseLeave',
-			] )
-		);
+		const schedulerProps = pick( this.props, [
+			'events',
+			'posts',
+			'site',
+			'disabledDays',
+			'showOutsideDays',
+			'modifiers',
+			'onDateChange',
+			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
+		] );
 
 		return (
 			<PostSchedule
@@ -95,21 +92,18 @@ class CalendarPopover extends Component {
 	}
 
 	render() {
-		const popoverProps = Object.assign(
-			{},
-			pick( this.props, [
-				'autoPosition',
-				'closeOnEsc',
-				'context',
-				'ignoreContext',
-				'isVisible',
-				'position',
-				'rootClassName',
-				'showDelay',
-				'onClose',
-				'onShow',
-			] )
-		);
+		const popoverProps = pick( this.props, [
+			'autoPosition',
+			'closeOnEsc',
+			'context',
+			'ignoreContext',
+			'isVisible',
+			'position',
+			'rootClassName',
+			'showDelay',
+			'onClose',
+			'onShow',
+		] );
 
 		return (
 			<div className="calendar-popover">

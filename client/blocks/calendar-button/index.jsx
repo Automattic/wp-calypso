@@ -80,29 +80,26 @@ class CalendarButton extends Component {
 			return null;
 		}
 
-		const calendarProperties = Object.assign(
-			{},
-			pick( this.props, [
-				'autoPosition',
-				'closeOnEsc',
-				'disabledDays',
-				'events',
-				'showOutsideDays',
-				'ignoreContext',
-				'isVisible',
-				'modifiers',
-				'rootClassName',
-				'selectedDay',
-				'showDelay',
-				'siteId',
-				'onDateChange',
-				'onMonthChange',
-				'onDayMouseEnter',
-				'onDayMouseLeave',
-				'onShow',
-				'onClose',
-			] )
-		);
+		const calendarProperties = pick( this.props, [
+			'autoPosition',
+			'closeOnEsc',
+			'disabledDays',
+			'events',
+			'showOutsideDays',
+			'ignoreContext',
+			'isVisible',
+			'modifiers',
+			'rootClassName',
+			'selectedDay',
+			'showDelay',
+			'siteId',
+			'onDateChange',
+			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
+			'onShow',
+			'onClose',
+		] );
 
 		return (
 			<AsyncLoad
@@ -122,20 +119,17 @@ class CalendarButton extends Component {
 	}
 
 	render() {
-		const buttonsProperties = Object.assign(
-			{},
-			pick( this.props, [
-				'compact',
-				'disabled',
-				'primary',
-				'scary',
-				'busy',
-				'href',
-				'borderless',
-				'target',
-				'rel',
-			] )
-		);
+		const buttonsProperties = pick( this.props, [
+			'compact',
+			'disabled',
+			'primary',
+			'scary',
+			'busy',
+			'href',
+			'borderless',
+			'target',
+			'rel',
+		] );
 
 		return (
 			<Button
