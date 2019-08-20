@@ -160,7 +160,7 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 
 		// Foreach request specified in the requests param, run the endpoint.
 		foreach ( $request['resources'] as $resource ) {
-			$request = new \WP_REST_Request( 'POST', "/{$this->namespace}/{$this->rest_base}" );
+			$request = new \WP_REST_Request( 'POST', $this->get_item_route() );
 
 			// Add specified request parameters into the request.
 			foreach ( $resource as $param_name => $param_value ) {
@@ -282,5 +282,14 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 				'default'     => 0,
 			],
 		];
+	}
+
+	/**
+	 * Returns the route to sideload a single image.
+	 *
+	 * @return string
+	 */
+	public function get_item_route() {
+		return "/{$this->namespace}/{$this->rest_base}";
 	}
 }
