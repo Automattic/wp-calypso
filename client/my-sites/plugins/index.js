@@ -24,14 +24,22 @@ export default function() {
 			clientRender
 		);
 
-		page(
-			'/plugins/setup/:site',
-			pluginsController.scrollTopIfNoHash,
-			siteSelection,
-			pluginsController.setupPlugins,
-			makeLayout,
-			clientRender
-		);
+		page( '/plugins/setup/:site', context => {
+			let install = 'all';
+			if ( context.query.only ) {
+				if ( context.query.only === 'akismet' ) {
+					install = 'akismet';
+				}
+				if (
+					context.query.only === 'vaultpress' ||
+					context.query.only === 'backups' ||
+					context.query.only === 'scan'
+				) {
+					install = 'vaultpress';
+				}
+			}
+			page.redirect( `/plans/my-plan/${ context.params.site }?install=${ install }` );
+		} );
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
