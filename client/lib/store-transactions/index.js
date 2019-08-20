@@ -240,6 +240,41 @@ TransactionFlow.prototype._paymentHandlers = {
 			} );
 		}
 	},
+
+	WPCOM_Billing_Web_Payment: async function() {
+		const { newCardDetails } = this._initialData.payment;
+		const { successUrl, cancelUrl, stripeConfiguration } = this._initialData;
+		const { name, country, 'postal-code': zip, payment_key } = newCardDetails;
+		debug( 'submitting transaction with new stripe elements web payment', this._initialData );
+
+		try {
+			if ( ! payment_key ) {
+				throw new Error( 'Payment failed. Please try again.' );
+			}
+			const response = await this._submitWithPayment( {
+				// This is functionally the same as a stripe card at this point so we use this payment method
+				payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+				payment_key,
+				payment_partner: stripeConfiguration.processor_id,
+				name,
+				zip,
+				country,
+				successUrl,
+				cancelUrl,
+			} );
+			debug( 'received web payment transaction response', response );
+
+			if ( response && response.message && response.message.payment_intent_client_secret ) {
+				await this.stripeModalAuth( stripeConfiguration, response );
+			}
+		} catch ( error ) {
+			this._pushStep( {
+				name: RECEIVED_PAYMENT_KEY_RESPONSE,
+				error,
+				last: true,
+			} );
+		}
+	},
 };
 
 TransactionFlow.prototype._createCardToken = function( callback ) {
