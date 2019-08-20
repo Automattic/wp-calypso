@@ -51,6 +51,7 @@ class SocialSignupForm extends Component {
 		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
 		// let's use the redirect flow instead in that case
 		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+
 		return isPopup;
 	}
 
@@ -63,7 +64,7 @@ class SocialSignupForm extends Component {
 				{ ! this.props.compact && (
 					<p>
 						{ preventWidows(
-							this.props.translate( 'Or create an account with your Google profile.' )
+							this.props.translate( 'Or create an account using:' )
 						) }
 					</p>
 				) }
@@ -76,6 +77,7 @@ class SocialSignupForm extends Component {
 						uxMode={ uxMode }
 						onClick={ this.trackSocialLogin.bind( null, 'google' ) }
 					/>
+
 					<AppleLoginButton
 						clientId={ config( 'apple_oauth_client_id' ) }
 						redirectUri={ `https://${ window.location.host }/start` }
