@@ -71,7 +71,7 @@ class CalendarButton extends Component {
 		this.setState( { showPopover: ! this.state.showPopover } );
 	};
 
-	setPopoverReference = calendarButtonRef => ( this.reference = calendarButtonRef );
+	buttonRef = React.createRef();
 
 	renderCalendarPopover() {
 		const { showPopover } = this.state;
@@ -105,7 +105,7 @@ class CalendarButton extends Component {
 			<AsyncLoad
 				{ ...calendarProperties }
 				require="blocks/calendar-popover"
-				context={ this.reference }
+				context={ this.buttonRef.current }
 				isVisible={ showPopover }
 				position={ this.props.popoverPosition }
 				onClose={ this.closePopover }
@@ -135,7 +135,7 @@ class CalendarButton extends Component {
 			<Button
 				{ ...buttonsProperties }
 				className={ classNames( 'calendar-button', this.props.className ) }
-				ref={ this.setPopoverReference }
+				ref={ this.buttonRef }
 				onClick={ this.togglePopover }
 			>
 				{ this.renderCalendarContent() }
