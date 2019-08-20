@@ -63,7 +63,6 @@ const TemplateSelectorItem = props => {
 			id={ `${ id }-${ value }` }
 			className="template-selector-item__label"
 			value={ value }
-			// onFocus={ onFocusHandler }
 			onMouseEnter={ onFocusHandler }
 			onMouseLeave={ onFocusHandler.cancel }
 			onClick={ () => onSelect( value, label, blocks ) }

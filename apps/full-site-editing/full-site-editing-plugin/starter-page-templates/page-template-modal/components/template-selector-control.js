@@ -15,7 +15,6 @@ import { memo } from '@wordpress/element';
  * Internal dependencies
  */
 import TemplateSelectorItem from './template-selector-item';
-import replacePlaceholders from '../utils/replace-placeholders';
 
 // Load config passed from backend.
 const { siteInformation = {} } = window.starterPageTemplatesConfig;
@@ -26,6 +25,7 @@ const TemplateSelectorControl = ( {
 	help,
 	instanceId,
 	templates = {},
+	blocksByTemplates = {},
 	useDynamicPreview = false,
 	numBlocksInPreview,
 	onTemplateSelect = noop,
@@ -45,18 +45,18 @@ const TemplateSelectorControl = ( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ map( templates, ( { slug, title, blocks, preview, previewAlt, value } ) => (
+				{ map( templates, ( { slug, title, preview, previewAlt, value } ) => (
 					<li key={ `${ id }-${ value }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
-							label={ replacePlaceholders( title, siteInformation ) }
+							label={ title }
 							help={ help }
 							onSelect={ onTemplateSelect }
 							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							blocks={ blocks }
+							blocks={ blocksByTemplates[ slug ] }
 							useDynamicPreview={ useDynamicPreview }
 							numBlocksInPreview={ numBlocksInPreview }
 						/>

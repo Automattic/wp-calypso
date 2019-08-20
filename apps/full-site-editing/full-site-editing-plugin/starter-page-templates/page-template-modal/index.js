@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce } from 'lodash';
+import { isEmpty, reduce, each } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal } from '@wordpress/components';
@@ -29,6 +29,7 @@ class PageTemplateModal extends Component {
 		previewBlocks: [],
 		slug: '',
 		title: '',
+		blocks: {},
 	};
 
 	constructor( props ) {
@@ -42,6 +43,16 @@ class PageTemplateModal extends Component {
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
+
+		// Populate blocks state parsing the raw content for each template.
+		const blocks = {};
+		for( const slug in this.props.templates ) {
+			const template = this.props.templates[ slug ];
+			blocks[ slug ] = template.content ? parseBlocks( template.content ) : [];
+		}
+
+		this.setState( { blocks } );
+
 		// eslint-disable-next-line no-console
 		console.timeEnd( 'PageTemplateModal' );
 	}
@@ -98,6 +109,7 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorControl
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
+								blocksByTemplates={ this.state.blocks }
 								onTemplateSelect={ this.focusTemplate }
 								useDynamicPreview={ true }
 								numBlocksInPreview={ 10 }
@@ -174,13 +186,14 @@ if ( tracksUserData ) {
 // Enhance templates with their parsed blocks and processed titles. Key by their slug.
 const prepareTemplatesForPlugin = ( templatesBySlug, template ) => {
 	const content = replacePlaceholders( template.content, siteInformation );
+	const title = replacePlaceholders( template.title, siteInformation );
+
 	return {
 		...templatesBySlug,
 		[ template.slug ]: {
 			...template,
-			title: replacePlaceholders( template.title, siteInformation ),
+			title,
 			content,
-			blocks: parseBlocks( content ),
 		},
 	};
 };
