@@ -22,6 +22,7 @@ registerBlockType( 'a8c/post-content', {
 		anchor: false,
 		customClassName: false,
 		html: false,
+		inserter: false,
 		multiple: false,
 		reusable: false,
 	},
