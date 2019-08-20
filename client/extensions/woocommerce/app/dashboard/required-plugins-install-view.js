@@ -147,8 +147,6 @@ class RequiredPluginsInstallView extends Component {
 			waitingForPluginListFromSite = true;
 		} else if ( ! Array.isArray( sitePlugins ) ) {
 			waitingForPluginListFromSite = true;
-		} else if ( 0 === sitePlugins.length && site ) {
-			waitingForPluginListFromSite = false;
 		}
 
 		if ( waitingForPluginListFromSite ) {
@@ -250,7 +248,12 @@ class RequiredPluginsInstallView extends Component {
 			const thisPlugin = getPlugin( wporg, workingOn );
 			// Set a default ID if needed.
 			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
-			this.props.installPlugin( site.ID, thisPlugin );
+			this.props.installPlugin( site.ID, thisPlugin ).catch( () => {
+				this.setState( {
+					engineState: 'DONEFAILURE',
+				} );
+				return;
+			} );
 
 			this.setState( {
 				toInstall,
@@ -418,15 +421,12 @@ class RequiredPluginsInstallView extends Component {
 
 		let subtitle, cta;
 
-		if ( plugin.name === 'WooCommerce' && sitePlugins.length === 0 ) {
+		if ( sitePlugins.length === 0 ) {
 			subtitle = [
 				<p key="line-1">
-					{ translate(
-						'To set up a store, the {{b}}WooCommerce{{/b}} plugin must be installed first.',
-						{
-							components: { b: <strong /> },
-						}
-					) }
+					{ translate( 'To set up a store, please install the {{b}}WooCommerce{{/b}} plugin.', {
+						components: { b: <strong /> },
+					} ) }
 				</p>,
 			];
 			cta = (
