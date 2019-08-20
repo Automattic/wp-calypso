@@ -68,13 +68,17 @@ class ImportURLStepComponent extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const isValid = this.validateUrl();
+		const { flowName, stepName, translate, urlInputValue } = this.props;
 
+		this.props.recordTracksEvent( 'calypso_signup_import_url', {
+			flow: flowName,
+			url: urlInputValue,
+		} );
+
+		const isValid = this.validateUrl();
 		if ( ! isValid ) {
 			return;
 		}
-
-		const { stepName, translate, urlInputValue } = this.props;
 
 		this.setState( {
 			isLoading: true,
