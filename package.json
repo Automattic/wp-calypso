@@ -291,7 +291,7 @@
 		"chai-enzyme": "1.0.0-beta.1",
 		"check-node-version": "3.3.0",
 		"color-studio": "1.0.5",
-		"concurrently": "4.1.1",
+		"concurrently": "4.1.2",
 		"enzyme": "3.10.0",
 		"enzyme-adapter-react-16": "1.14.0",
 		"enzyme-to-json": "3.4.0",
