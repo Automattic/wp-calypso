@@ -1,14 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 import { noop, pick } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -74,9 +72,7 @@ class CalendarButton extends Component {
 	buttonRef = React.createRef();
 
 	renderCalendarPopover() {
-		const { showPopover } = this.state;
-
-		if ( ! showPopover ) {
+		if ( ! this.state.showPopover ) {
 			return null;
 		}
 
@@ -105,11 +101,11 @@ class CalendarButton extends Component {
 			<AsyncLoad
 				{ ...calendarProperties }
 				require="blocks/calendar-popover"
+				placeholder={ null }
+				isVisible
 				context={ this.buttonRef.current }
-				isVisible={ showPopover }
 				position={ this.props.popoverPosition }
 				onClose={ this.closePopover }
-				placeholder={ null }
 			/>
 		);
 	}
@@ -132,15 +128,17 @@ class CalendarButton extends Component {
 		] );
 
 		return (
-			<Button
-				{ ...buttonsProperties }
-				className={ classNames( 'calendar-button', this.props.className ) }
-				ref={ this.buttonRef }
-				onClick={ this.togglePopover }
-			>
-				{ this.renderCalendarContent() }
+			<Fragment>
+				<Button
+					{ ...buttonsProperties }
+					className={ classNames( 'calendar-button', this.props.className ) }
+					ref={ this.buttonRef }
+					onClick={ this.togglePopover }
+				>
+					{ this.renderCalendarContent() }
+				</Button>
 				{ this.renderCalendarPopover() }
-			</Button>
+			</Fragment>
 		);
 	}
 }
