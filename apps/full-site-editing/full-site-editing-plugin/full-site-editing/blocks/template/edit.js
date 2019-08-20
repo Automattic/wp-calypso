@@ -47,7 +47,7 @@ const TemplateEdit = compose(
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
 			isDirty: isEditedPostDirty(),
 			isEditorSidebarOpened: !! isEditorSidebarOpened(),
-			isTemplateBlockSelected: selectedBlock && 'a8c/template' === selectedBlock.name,
+			isAnyTemplateBlockSelected: selectedBlock && 'a8c/template' === selectedBlock.name,
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
@@ -83,7 +83,7 @@ const TemplateEdit = compose(
 		isSelected,
 		isEditorSidebarOpened,
 		openGeneralSidebar,
-		isTemplateBlockSelected,
+		isAnyTemplateBlockSelected,
 	} ) => {
 		if ( ! template ) {
 			return (
@@ -112,13 +112,12 @@ const TemplateEdit = compose(
 				'.edit-post-sidebar__panel-tabs ul li:last-child'
 			);
 			if ( isEditorSidebarOpened && blockSidebarButton ) {
-				if ( isTemplateBlockSelected ) {
+				if ( isAnyTemplateBlockSelected ) {
 					openGeneralSidebar( 'edit-post/document' );
 					blockSidebarButton.classList.add( 'hidden' );
+					return;
 				}
-				if ( ! isTemplateBlockSelected ) {
-					blockSidebarButton.classList.remove( 'hidden' );
-				}
+				blockSidebarButton.classList.remove( 'hidden' );
 			}
 		} );
 
