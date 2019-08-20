@@ -116,25 +116,6 @@ export const sharingButtons = ( context, next ) => {
 };
 
 export const traffic = ( context, next ) => {
-	const { store } = context;
-	const state = store.getState();
-	const siteId = getSelectedSiteId( state );
-
-	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-
-	if (
-		siteId &&
-		isJetpackSite( state, siteId ) &&
-		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) ||
-			versionCompare( siteJetpackVersion, '3.4-dev', '<' ) )
-	) {
-		notices.error(
-			translate(
-				'This page is only available to Jetpack sites running version 3.4 or higher with the Sharing module activated.'
-			)
-		);
-	}
-
 	context.contentComponent = createElement( Traffic );
 
 	next();
