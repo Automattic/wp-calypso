@@ -323,6 +323,30 @@ class DomainsStep extends React.Component {
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
+	getInitialQuery = () => {
+		const fromQueryObject = get( this.props, 'queryObject.new', '' );
+
+		if ( fromQueryObject ) {
+			return fromQueryObject;
+		}
+
+		const initialQuery =
+			get( this.props, 'queryObject.new', '' ) ||
+			get( this.props, 'signupDependencies.suggestedDomain' );
+
+		`We want to favour the above ^
+		But how do we really track the effectiveness of the split?
+		If they never make it down below here then thats no good - though most are likely to fall through here
+		`
+
+		if ( abtest( 'thingy' ) ===  ) {}
+			const siteTitle = get( this.props, 'signupDependencies.siteTitle', '' );
+
+			return siteTitle;
+
+		return;
+	};
+
 	domainForm = () => {
 		let initialState = {};
 		if ( this.state ) {
@@ -332,10 +356,7 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
-		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
-		const initialQuery =
-			get( this.props, 'queryObject.new', '' ) ||
-			get( this.props, 'signupDependencies.suggestedDomain' );
+		const initialQuery = this.getInitialQuery();
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
