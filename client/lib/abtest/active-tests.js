@@ -161,4 +161,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	customerHomePage: {
+		datestamp: '20190820',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		assignmentMethod: 'userId',
+	},
 };
