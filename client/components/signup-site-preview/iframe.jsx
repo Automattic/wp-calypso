@@ -128,6 +128,9 @@ export default class SignupSitePreviewIframe extends Component {
 		}
 		const elements = this.iframe.current.contentWindow.document.querySelectorAll( selector );
 
+		// Using `_.forEach` instead of a for-of loop to fix environments that need
+		// polyfilled. This is probably required because the node list is being
+		// pulled out of the iframe environment which hasn't been polyfilled.
 		forEach( elements, element => {
 			element.textContent = content;
 		} );
