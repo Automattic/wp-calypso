@@ -13,7 +13,6 @@ import { noop, pick } from 'lodash';
  * Internal dependencies
  */
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
@@ -57,13 +56,9 @@ class CalendarPopover extends Component {
 		onDayMouseLeave: noop,
 	};
 
-	state = { date: null };
-
-	componentWillMount() {
-		if ( this.props.selectedDay ) {
-			this.setState( { date: this.props.selectedDay } );
-		}
-	}
+	state = {
+		date: this.props.selectedDay || null,
+	};
 
 	setDate = date => {
 		this.setState( { date } );
