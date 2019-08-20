@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, noop } from 'lodash';
+import { isEmpty, noop, map } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -25,7 +25,7 @@ const TemplateSelectorControl = ( {
 	className,
 	help,
 	instanceId,
-	templates = [],
+	templates = {},
 	useDynamicPreview = false,
 	numBlocksInPreview,
 	onTemplateSelect = noop,
@@ -45,7 +45,7 @@ const TemplateSelectorControl = ( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ templates.map( ( { slug, title, content, preview, previewAlt, value } ) => (
+				{ map( templates, ( { slug, title, blocks, preview, previewAlt, value } ) => (
 					<li key={ `${ id }-${ value }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
@@ -56,7 +56,7 @@ const TemplateSelectorControl = ( {
 							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							rawContent={ replacePlaceholders( content, siteInformation ) }
+							blocks={ blocks }
 							useDynamicPreview={ useDynamicPreview }
 							numBlocksInPreview={ numBlocksInPreview }
 						/>

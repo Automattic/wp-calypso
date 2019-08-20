@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
+import { isEmpty, reduce } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal } from '@wordpress/components';
@@ -17,6 +17,11 @@ import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
+import { parse as parseBlocks } from '@wordpress/blocks';
+import replacePlaceholders from './utils/replace-placeholders';
+
+// Load config passed from backend.
+const { siteInformation = {} } = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
 	state = {
@@ -71,7 +76,7 @@ class PageTemplateModal extends Component {
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
 		}
-		this.setState( { isOpen: false } );
+		// this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
@@ -94,7 +99,6 @@ class PageTemplateModal extends Component {
 								label={ __( 'Template', 'full-site-editing' ) }
 								templates={ this.props.templates }
 								onTemplateSelect={ this.focusTemplate }
-								// onTemplateFocus={ this.focusTemplate }
 								useDynamicPreview={ true }
 								numBlocksInPreview={ 10 }
 							/>
@@ -167,10 +171,28 @@ if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
+// Enhance templates with their parsed blocks and processed titles. Key by their slug.
+const prepareTemplatesForPlugin = ( templatesBySlug, template ) => {
+	const content = replacePlaceholders( template.content, siteInformation );
+	return {
+		...templatesBySlug,
+		[ template.slug ]: {
+			...template,
+			title: replacePlaceholders( template.title, siteInformation ),
+			content,
+			blocks: parseBlocks( content ),
+		},
+	};
+};
+
 registerPlugin( 'page-templates', {
 	render: () => {
 		return (
-			<PageTemplatesPlugin templates={ templates } vertical={ vertical } segment={ segment } />
+			<PageTemplatesPlugin
+				templates={ reduce( templates, prepareTemplatesForPlugin, {} ) }
+				vertical={ vertical }
+				segment={ segment }
+			/>
 		);
 	},
 } );

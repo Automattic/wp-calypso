@@ -10,9 +10,8 @@ import { debounce } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useState, useMemo } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import BlockPreview from './block-template-preview';
-import { parse as parseBlocks } from '@wordpress/blocks';
 import { Disabled } from '@wordpress/components';
 
 const TemplateSelectorItem = props => {
@@ -26,14 +25,13 @@ const TemplateSelectorItem = props => {
 		useDynamicPreview = false,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
-		rawContent,
 		numBlocksInPreview,
+		blocks = [],
 	} = props;
 
 	const ON_FOCUS_DELAY = 500;
 
 	const [ blocksLimit, setBlockLimit ] = useState( numBlocksInPreview );
-	const blocks = useMemo( () => ( rawContent ? parseBlocks( rawContent ) : null ), [ rawContent ] );
 
 	const onFocusHandler = debounce( () => {
 		if ( blocks && blocks.length > blocksLimit ) {
