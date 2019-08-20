@@ -144,8 +144,11 @@ export class PasswordlessSignupForm extends Component {
 	}
 
 	render() {
-		const { translate, submitButtonText } = this.props;
+		const { translate } = this.props;
 		const { email, errorMessages, isSubmitting } = this.state;
+		const submitButtonText = isSubmitting
+			? translate( 'Creating Your Account…' )
+			: translate( 'Create your account' );
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>

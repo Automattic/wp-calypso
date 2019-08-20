@@ -918,7 +918,6 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						userCreationComplete={ this.userCreationComplete() }
-						submitButtonText={ this.props.submitButtonText }
 						renderTerms={ this.termsOfServiceLink }
 						getloginUrl={ this.getloginUrl }
 					/>
