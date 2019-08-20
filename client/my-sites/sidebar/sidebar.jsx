@@ -184,18 +184,22 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const itemProps = isCustomerHomeEnabled
+			? {
+					label: translate( 'Home' ),
+					selected: itemLinkMatches( [ '/home' ], path ),
+					link: '/home' + siteSuffix,
+					materialIcon: 'home',
+			  }
+			: {
+					label: translate( 'Checklist' ),
+					selected: itemLinkMatches( [ '/checklist' ], path ),
+					link: '/checklist' + siteSuffix,
+					materialIcon: 'check_circle',
+			  };
+
 		return (
-			<SidebarItem
-				tipTarget="menus"
-				label={ isCustomerHomeEnabled ? translate( 'Home' ) : translate( 'Checklist' ) }
-				selected={ itemLinkMatches(
-					isEnabled( 'customer-home' ) ? [ '/home' ] : [ '/checklist' ],
-					path
-				) }
-				link={ isCustomerHomeEnabled ? '/home' + siteSuffix : '/checklist' + siteSuffix }
-				onNavigate={ this.trackCustomerHomeClick }
-				materialIcon={ isCustomerHomeEnabled ? 'home' : 'check_circle' }
-			/>
+			<SidebarItem tipTarget="menus" onNavigate={ this.trackCustomerHomeClick } { ...itemProps } />
 		);
 	}
 
