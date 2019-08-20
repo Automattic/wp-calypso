@@ -106,11 +106,9 @@ class CalendarPopover extends Component {
 		] );
 
 		return (
-			<div className="calendar-popover">
-				<Popover { ...popoverProps } className="calendar-popover__popover">
-					{ this.renderScheduler() }
-				</Popover>
-			</div>
+			<Popover { ...popoverProps } className="calendar-popover__popover">
+				{ this.renderScheduler() }
+			</Popover>
 		);
 	}
 }
