@@ -322,7 +322,7 @@ class Home extends Component {
 	};
 }
 
-const connectHome = connect( 
+const connectHome = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
@@ -346,7 +346,7 @@ const connectHome = connect(
 			dispatch(
 				composeAnalytics(
 					recordTracksEvent( `calypso_customer_home_${ section }_${ action }_click`, {
-						isStaticHomePage,
+						is_static_home_page: isStaticHomePage,
 					} ),
 					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
 				)
