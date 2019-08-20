@@ -115,3 +115,32 @@ function populate_wp_template_data() {
 	$fse->insert_default_data();
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
+
+/**
+ * Add front-end CoBlocks gallery block scripts.
+ *
+ * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,
+ * but for our FSE header and footer content. `frontend_scripts` uses `has_block` to determine
+ * if gallery blocks are present, and `has_block` is not aware of content sections outside of
+ * post_content yet.
+ */
+function enqueue_coblocks_gallery_scripts() {
+	if ( ! is_plugin_active( 'coblocks' ) ) {
+		return;
+	}
+
+	$template = new WP_Template();
+	$header   = $template->get_template_content( 'header' );
+	$footer   = $template->get_template_content( 'footer' );
+
+	if ( has_block( 'coblocks/gallery-masonry', $header . $footer ) ) {
+		wp_enqueue_script(
+			'coblocks-masonry',
+			WP_PLUGINS_DIR . 'coblocks/dist/js/coblocks-masonry.min.js',
+			array( 'jquery', 'masonry', 'imagesloaded' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'full-site-editing-plugin.php' ),
+			true
+		);
+	}
+}
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts' );
