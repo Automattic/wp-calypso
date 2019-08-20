@@ -29,6 +29,14 @@ class SocialSignupForm extends Component {
 		compact: false,
 	};
 
+	handleAppleResponse = response => {
+		if ( ! response.id_token ) {
+			return;
+		}
+
+		this.props.handleResponse( 'apple', null, response.id_token );
+	};
+
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
@@ -80,7 +88,8 @@ class SocialSignupForm extends Component {
 
 					<AppleLoginButton
 						clientId={ config( 'apple_oauth_client_id' ) }
-						redirectUri={ `https://${ window.location.host }/start` }
+						responseHandler={ this.handleAppleResponse }
+						redirectUri={ null }
 						onClick={ this.trackSocialLogin.bind( null, 'apple' ) }
 					/>
 				</div>
