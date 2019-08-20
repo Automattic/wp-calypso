@@ -65,10 +65,10 @@ class CalendarButton extends Component {
 
 	togglePopover = () => {
 		if ( this.props.disabled ) {
-			return null;
+			return;
 		}
 
-		return this.setState( { showPopover: ! this.state.showPopover } );
+		this.setState( { showPopover: ! this.state.showPopover } );
 	};
 
 	setPopoverReference = calendarButtonRef => ( this.reference = calendarButtonRef );
