@@ -153,7 +153,7 @@ class Home extends Component {
 	}
 
 	renderCustomerHome = () => {
-		const { translate, customizeUrl, site, siteSlug, trackAction } = this.props;
+		const { translate, customizeUrl, site, siteSlug, trackAction, isStaticHomePage } = this.props;
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col">
@@ -170,12 +170,23 @@ class Home extends Component {
 							>
 								{ translate( 'View Site' ) }
 							</Button>
-							<Button
-								href={ customizeUrl }
-								onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
-							>
-								{ translate( 'Edit Homepage' ) }
-							</Button>
+							{ isStaticHomePage ? (
+								<Button
+									href={ customizeUrl }
+									onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
+								>
+									{ translate( 'Edit Homepage' ) }
+								</Button>
+							) : (
+								<Button
+									onClick={ () => {
+										trackAction( 'my_site', 'write_post' );
+										page( `/post/${ siteSlug }` );
+									} }
+								>
+									{ translate( 'Write Blog Post' ) }
+								</Button>
+							) }
 						</div>
 					</Card>
 					<Card className="customer-home__card-boxes">
@@ -188,14 +199,25 @@ class Home extends Component {
 								label={ translate( 'Add a page' ) }
 								iconSrc="/calypso/images/customer-home/page.svg"
 							/>
-							<ActionBox
-								onClick={ () => {
-									trackAction( 'my_site', 'write_post' );
-									page( `/post/${ siteSlug }` );
-								} }
-								label={ translate( 'Write blog post' ) }
-								iconSrc="/calypso/images/customer-home/post.svg"
-							/>
+							{ isStaticHomePage ? (
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'write_post' );
+										page( `/post/${ siteSlug }` );
+									} }
+									label={ translate( 'Write blog post' ) }
+									iconSrc="/calypso/images/customer-home/post.svg"
+								/>
+							) : (
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'manage_comments' );
+										page( `/comments/${ siteSlug }` );
+									} }
+									label={ translate( 'Manage comments' ) }
+									iconSrc="/calypso/images/customer-home/comment.svg"
+								/>
+							) }
 							<ActionBox
 								href={ customizeUrl }
 								onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
