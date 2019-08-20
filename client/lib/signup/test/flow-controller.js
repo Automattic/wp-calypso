@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, size } from 'lodash';
+import { size } from 'lodash';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
@@ -67,7 +67,7 @@ describe( 'flow-controller', () => {
 				reduxStore: store,
 			} );
 
-			expect( isEmpty( getSignupProgress( store.getState() ) ) ).toBe( true );
+			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
 		} );
 
 		test( 'should reset stores if user is logged in and there is a user step in the saved progress', () => {
@@ -83,7 +83,7 @@ describe( 'flow-controller', () => {
 				reduxStore: store,
 			} );
 
-			expect( isEmpty( getSignupProgress( store.getState() ) ) ).toBe( true );
+			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
 		} );
 	} );
 
