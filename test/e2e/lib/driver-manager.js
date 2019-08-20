@@ -158,11 +158,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 					options.addArguments( `--display=:${global.displayNum}` );
 				}
 
-				//Disabling for now as this mode doesn't support multiple windows anymore.
-				//f ( process.env.CI === 'true' ) {
-				//	options.addArguments( '--kiosk' );
-				//	options.addArguments( '--app=https://www.wordpress.com' );
-				//}
+				options.addArguments( '--app=https://www.wordpress.com' );
 
 				const service = new chrome.ServiceBuilder( chromedriver.path ).build(); // eslint-disable-line no-case-declarations
 				chrome.setDefaultService( service );
