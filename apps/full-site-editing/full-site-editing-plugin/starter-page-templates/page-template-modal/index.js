@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce, each } from 'lodash';
+import { isEmpty, reduce } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal } from '@wordpress/components';
@@ -43,13 +43,14 @@ class PageTemplateModal extends Component {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 
-		// Populate blocks state parsing the raw content for each template.
+		// Populate blocks state field, parsing the raw content for each template.
 		const blocks = {};
-		for( const slug in this.props.templates ) {
+		for ( const slug in this.props.templates ) {
 			const template = this.props.templates[ slug ];
 			blocks[ slug ] = template.content ? parseBlocks( template.content ) : [];
 		}
 
+		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { blocks } );
 
 		// eslint-disable-next-line no-console
@@ -62,7 +63,7 @@ class PageTemplateModal extends Component {
 
 		this.props.saveTemplateChoice( slug );
 
-		const previewBlocks = this.state.blocks [ slug ];
+		const previewBlocks = this.state.blocks[ slug ];
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! previewBlocks || previewBlocks.length === 0 ) {
@@ -72,8 +73,7 @@ class PageTemplateModal extends Component {
 		this.props.insertTemplate( title, previewBlocks );
 	};
 
-	selectTemplate = () =>
-		this.setTemplate( this.state.slug, this.state.title );
+	selectTemplate = () => this.setTemplate( this.state.slug, this.state.title );
 
 	focusTemplate = ( slug, title ) => {
 		this.setState( { slug, title } );
@@ -83,7 +83,7 @@ class PageTemplateModal extends Component {
 	};
 
 	closeModal = event => {
-		// Check to see if the Blur event occured on the buttons inside of the Modal.
+		// Check to see if the Blur event occurred on the buttons inside of the Modal.
 		// If it did then we don't want to dismiss the Modal for this type of Blur.
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
@@ -117,7 +117,10 @@ class PageTemplateModal extends Component {
 							/>
 						</fieldset>
 					</form>
-					<TemplateSelectorPreview blocks={ this.state.blocks[ this.state.slug ] } viewportWidth={ 960 } />
+					<TemplateSelectorPreview
+						blocks={ this.state.blocks[ this.state.slug ] }
+						viewportWidth={ 960 }
+					/>
 				</div>
 				<div className="page-template-modal__buttons">
 					<Button isDefault isLarge onClick={ this.closeModal }>
@@ -191,11 +194,7 @@ const prepareTemplatesForPlugin = ( templatesBySlug, template ) => {
 
 	return {
 		...templatesBySlug,
-		[ template.slug ]: {
-			...template,
-			title,
-			content,
-		},
+		[ template.slug ]: { ...template, title, content },
 	};
 };
 
