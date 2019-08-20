@@ -26,7 +26,6 @@ const { siteInformation = {} } = window.starterPageTemplatesConfig;
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
-		previewBlocks: [],
 		slug: '',
 		title: '',
 		blocks: {},
@@ -57,11 +56,13 @@ class PageTemplateModal extends Component {
 		console.timeEnd( 'PageTemplateModal' );
 	}
 
-	setTemplate = ( slug, title, previewBlocks ) => {
+	setTemplate = ( slug, title ) => {
 		this.setState( { isOpen: false } );
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
 		this.props.saveTemplateChoice( slug );
+
+		const previewBlocks = this.state.blocks [ slug ];
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! previewBlocks || previewBlocks.length === 0 ) {
@@ -72,12 +73,12 @@ class PageTemplateModal extends Component {
 	};
 
 	selectTemplate = () =>
-		this.setTemplate( this.state.slug, this.state.title, this.state.previewBlocks );
+		this.setTemplate( this.state.slug, this.state.title );
 
-	focusTemplate = ( slug, title, previewBlocks ) => {
-		this.setState( { slug, title, previewBlocks } );
+	focusTemplate = ( slug, title ) => {
+		this.setState( { slug, title } );
 		if ( slug === 'blank' ) {
-			this.setTemplate( slug, title, previewBlocks );
+			this.setTemplate( slug, title );
 		}
 	};
 
@@ -116,7 +117,7 @@ class PageTemplateModal extends Component {
 							/>
 						</fieldset>
 					</form>
-					<TemplateSelectorPreview blocks={ this.state.previewBlocks } viewportWidth={ 960 } />
+					<TemplateSelectorPreview blocks={ this.state.blocks[ this.state.slug ] } viewportWidth={ 960 } />
 				</div>
 				<div className="page-template-modal__buttons">
 					<Button isDefault isLarge onClick={ this.closeModal }>
