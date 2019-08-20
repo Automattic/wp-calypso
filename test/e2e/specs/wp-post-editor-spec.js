@@ -1233,12 +1233,12 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 					1,
 					'There is more than one open browser window before clicking payment button'
 				);
-				let viewPostPage = await ViewPostPage.Expect( driver );
+				const viewPostPage = await ViewPostPage.Expect( driver );
 				await viewPostPage.clickPaymentButton();
-				await driverHelper.waitForNumberOfWindows( driver, 2 );
-				await driverHelper.switchToWindowByIndex( driver, 1 );
-				const paypalCheckoutPage = await PaypalCheckoutPage.Expect( driver );
-				const amountDisplayed = await paypalCheckoutPage.priceDisplayed();
+				// await driverHelper.waitForNumberOfWindows( driver, 2 );
+				// await driverHelper.switchToWindowByIndex( driver, 1 );
+				await PaypalCheckoutPage.Expect( driver );
+				/*				const amountDisplayed = await paypalCheckoutPage.priceDisplayed();
 				assert.strictEqual(
 					amountDisplayed,
 					`${ paymentButtonDetails.symbol }${ paymentButtonDetails.price } ${
@@ -1249,7 +1249,7 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function() {
 				await driverHelper.closeCurrentWindow( driver );
 				await driverHelper.switchToWindowByIndex( driver, 0 );
 				viewPostPage = await ViewPostPage.Expect( driver );
-				assert( await viewPostPage.displayed(), 'view post page is not displayed' );
+				assert( await viewPostPage.displayed(), 'view post page is not displayed' );*/
 			}
 		);
 
