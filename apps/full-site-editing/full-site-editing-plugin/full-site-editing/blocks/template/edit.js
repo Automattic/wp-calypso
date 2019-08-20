@@ -119,7 +119,7 @@ const TemplateEdit = compose(
 				}
 				blockSidebarButton.classList.remove( 'hidden' );
 			}
-		} );
+		}, [ isAnyTemplateBlockSelected, isEditorSidebarOpened, openGeneralSidebar ] );
 
 		const { align, className } = attributes;
 
