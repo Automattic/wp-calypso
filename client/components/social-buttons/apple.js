@@ -28,7 +28,7 @@ class AppleLoginButton extends Component {
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,
 		clientId: PropTypes.string.isRequired,
-		redirectUri: PropTypes.string.isRequired,
+		responseHandler: PropTypes.func.isRequired,
 	};
 
 	state = {

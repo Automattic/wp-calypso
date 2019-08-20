@@ -5,10 +5,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
 import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:me:security:social-login' );
 
 /**
  * Internal dependencies
@@ -24,7 +22,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import GoogleIcon from 'components/social-icons/google';
 import GoogleLoginButton from 'components/social-buttons/google';
 import { isRequesting, getRequestError } from 'state/login/selectors';
-import { login } from 'lib/paths';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Notice from 'components/notice';
@@ -78,6 +75,20 @@ class SocialLogin extends Component {
 			service: 'google',
 			access_token: response.Zi.access_token,
 			id_token: response.Zi.id_token,
+		};
+
+		return this.props.connectSocialUser( socialInfo ).then( () => this.refreshUser() );
+	};
+
+	handleAppleLoginResponse = response => {
+		// just bail on errors for now
+		if ( ! response.id_token ) {
+			return;
+		}
+
+		const socialInfo = {
+			service: 'apple',
+			id_token: response.id_token,
 		};
 
 		return this.props.connectSocialUser( socialInfo ).then( () => this.refreshUser() );
@@ -149,12 +160,6 @@ class SocialLogin extends Component {
 	renderAppleConnection() {
 		const { isUserConnectedToApple, socialConnectionEmail } = this.props;
 
-		// I have no idea what this should actually be.
-		// const redirectUri = `https://${ typeof window !== 'undefined' &&
-		// 	window.location.host }/me/security/social-login`;
-		const redirectUri = `https://${ ( typeof window !== 'undefined' && window.location.host ) +
-			login( { isNative: true, socialService: 'apple' } ) }`;
-
 		return (
 			<CompactCard>
 				<div className="social-login__header">
@@ -172,7 +177,7 @@ class SocialLogin extends Component {
 						) : (
 							<AppleLoginButton
 								clientId={ config( 'apple_oauth_client_id' ) }
-								redirectUri={ redirectUri }
+								responseHandler={ this.handleAppleLoginResponse }
 							>
 								{ this.renderAppleActionButton() }
 							</AppleLoginButton>
