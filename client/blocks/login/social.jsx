@@ -113,10 +113,13 @@ class SocialLoginForm extends Component {
 			return;
 		}
 
+		const user = response.user || {};
+
 		const socialInfo = {
 			service: 'apple',
 			id_token: response.id_token,
-			keyring_id: response.keyring_id,
+			user_name: user.name,
+			user_email: user.email,
 		};
 
 		this.props.loginSocialUser( socialInfo, redirectTo ).then(
