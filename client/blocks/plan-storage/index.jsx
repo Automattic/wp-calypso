@@ -36,7 +36,6 @@ export class PlanStorage extends Component {
 			canUserUpgrade,
 			canViewBar,
 			className,
-			displayUpgradeLink,
 			jetpackSite,
 			siteId,
 			sitePlanSlug,
