@@ -95,9 +95,7 @@ describe( 'utils', () => {
 					} );
 
 					test( 'it should return only the step objects that match the flow', () => {
-						expect( result ).toContain( userStep );
-						expect( result ).toContain( siteTypeStep );
-						expect( result ).not.toContain( someOtherStep );
+						expect( result ).toEqual( [ userStep, siteTypeStep ] );
 					} );
 				} );
 
