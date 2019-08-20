@@ -5,9 +5,8 @@
 * Refactor i18n-calypso to Calypso standards.
 * Add TypeScript type definitions to package.
 * Add support for extracting strings from TypeScript.
-* Update lodash to ^4.17.11
-* Update xgettext-js to ^3.0.0
-
+* Update dependency `lodash` to `^4.17.11`
+* Update `xgettext-js` to `^3.0.0`
 
 3.0.0
 ------
