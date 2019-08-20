@@ -5,6 +5,7 @@ import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { withoutPersistence } from './without-persistence';
 import { createBaseReducer } from './create-base-reducer';
 
+// eslint-disable-next-line valid-jsdoc
 /**
  * Returns a reducer function with state calculation determined by the result
  * of invoking the handler key corresponding with the dispatched action type,
@@ -14,8 +15,8 @@ import { createBaseReducer } from './create-base-reducer';
  * @param  {Object}   handlers       Object mapping action types to state action handlers
  * @return {Function}                Reducer function
  */
-export function createReducer( initialState, handlers, ...args ) {
-	if ( args && args.length > 0 ) {
+export function createReducer( initialState, handlers, __deprecatedArg__ ) {
+	if ( __deprecatedArg__ !== undefined ) {
 		throw new Error(
 			'Schema support in createReducer is no longer available. Please use createReducerWithValidation instead.'
 		);
