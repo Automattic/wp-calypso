@@ -14,8 +14,6 @@ import filesize from 'filesize';
 import ProgressBar from 'components/progress-bar';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
@@ -24,6 +22,7 @@ export class PlanStorageBar extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
+		displayUpgradeLink: PropTypes.bool,
 		siteSlug: PropTypes.string.isRequired,
 		sitePlanSlug: PropTypes.string.isRequired,
 	};
@@ -34,8 +33,8 @@ export class PlanStorageBar extends Component {
 
 	render() {
 		const {
-			canUserUpgrade,
 			className,
+			displayUpgradeLink,
 			mediaStorage,
 			sitePlanSlug,
 			siteSlug,
@@ -76,7 +75,7 @@ export class PlanStorageBar extends Component {
 					} ) }
 				</span>
 
-				{ canUserUpgrade && (
+				{ displayUpgradeLink && (
 					<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
 						{ translate( 'Upgrade' ) }
 					</a>
@@ -88,8 +87,4 @@ export class PlanStorageBar extends Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-	};
-} )( localize( PlanStorageBar ) );
+export default localize( PlanStorageBar );
