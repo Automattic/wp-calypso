@@ -21,6 +21,7 @@ const requestExternalAccess = ( url, cb ) => {
 		if ( lastMessage && lastMessage.keyring_id ) {
 			result.keyring_id = Number( lastMessage.keyring_id );
 			result.id_token = lastMessage.id_token;
+			result.user = lastMessage.user;
 		}
 		cb( result );
 	} );
