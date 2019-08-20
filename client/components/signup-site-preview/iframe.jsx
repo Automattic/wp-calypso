@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+import { debounce, forEach } from 'lodash';
 import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
@@ -128,9 +128,9 @@ export default class SignupSitePreviewIframe extends Component {
 		}
 		const elements = this.iframe.current.contentWindow.document.querySelectorAll( selector );
 
-		for ( const element of elements ) {
+		forEach( elements, element => {
 			element.textContent = content;
-		}
+		} );
 	}
 
 	setOnPreviewClick = () => {
