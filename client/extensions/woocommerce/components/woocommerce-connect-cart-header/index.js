@@ -69,7 +69,7 @@ const WooCommercConnectCartHeader = ( { translate } ) => {
 						</div>
 						<div className="woocommerce-connect-cart-header__stepper-step-text">
 							<span className="woocommerce-connect-cart-header__stepper-step-label">
-								{ translate( 'Installation' ) }
+								{ ( translate( 'Installation' ), { context: 'Navigation item' } ) }
 							</span>
 						</div>
 					</div>
