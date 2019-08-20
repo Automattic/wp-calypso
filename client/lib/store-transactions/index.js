@@ -333,9 +333,10 @@ TransactionFlow.prototype.stripeModalAuth = async function( stripeConfiguration,
 			} );
 		}
 	} catch ( error ) {
+		debug( 'error during stripeModalAuth', error );
 		this._pushStep( {
 			name: RECEIVED_AUTHORIZATION_RESPONSE,
-			error: error.message,
+			error: error.stripeError ? error.stripeError : error.message,
 			last: true,
 		} );
 	}

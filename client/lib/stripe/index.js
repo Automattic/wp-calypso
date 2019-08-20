@@ -55,6 +55,20 @@ StripeSetupIntentError.prototype = new Error();
 export { StripeSetupIntentError };
 
 /**
+ * An error related to a Stripe PaymentMethod
+ *
+ * The object will include the original stripe error in the stripeError prop.
+ *
+ * @param {object} stripeError - The original Stripe error object
+ */
+function StripePaymentMethodError( stripeError ) {
+	this.stripeError = stripeError;
+	this.message = stripeError.message;
+}
+StripePaymentMethodError.prototype = new Error();
+export { StripePaymentMethodError };
+
+/**
  * Create a Stripe PaymentMethod using Stripe Elements
  *
  * paymentDetails should include data not gathered by Stripe Elements. For
@@ -141,8 +155,9 @@ export async function confirmStripePaymentIntent( stripeConfiguration, paymentIn
 		{}
 	);
 	if ( error ) {
+		debug( 'Confirming paymentIntent failed', error );
 		// Note that this is a promise rejection
-		throw new Error( error );
+		throw new StripePaymentMethodError( error );
 	}
 
 	return paymentIntent;
