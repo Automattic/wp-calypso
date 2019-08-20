@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +32,7 @@ import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 /**
  * Style dependencies
@@ -270,7 +272,7 @@ class Home extends Component {
 	};
 }
 
-export default connect( state => {
+const connectHome = connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
@@ -286,4 +288,10 @@ export default connect( state => {
 		isChecklistComplete,
 		isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
 	};
-} )( localize( Home ) );
+} );
+
+export default flowRight(
+	connectHome,
+	localize,
+	withTrackingTool( 'HotJar' )
+)( Home );
