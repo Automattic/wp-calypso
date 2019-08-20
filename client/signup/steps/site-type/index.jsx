@@ -58,7 +58,7 @@ class SiteType extends Component {
 		return (
 			<div className="site-type__import-button">
 				<Button borderless onClick={ this.handleImportFlowClick }>
-					{ this.props.translate( 'Already have a website?' ) }
+					{ this.props.translate( 'Already have a website? Import your content here.' ) }
 				</Button>
 			</div>
 		);
