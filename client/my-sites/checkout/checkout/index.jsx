@@ -358,6 +358,21 @@ export class Checkout extends React.Component {
 		return flatten( Object.values( purchases ) );
 	}
 
+	getUrlWithQueryParam( url, queryParams ) {
+		const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
+
+		return formatUrl( {
+			protocol,
+			hostname,
+			port,
+			pathname,
+			query: {
+				...query,
+				...queryParams,
+			},
+		} );
+	}
+
 	getEligibleDomainFromCart() {
 		const domainRegistrations = getDomainRegistrations( this.props.cart );
 		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
@@ -462,7 +477,8 @@ export class Checkout extends React.Component {
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the G Suite / Concierge / Checklist logic.
 
-		let renewalItem, displayModeParam;
+		let renewalItem,
+			displayModeParam = {};
 		const {
 			cart,
 			redirectTo,
@@ -567,18 +583,19 @@ export class Checkout extends React.Component {
 		}
 
 		if ( hasConciergeSession( cart ) ) {
-			displayModeParam = 'd=concierge';
+			displayModeParam = { d: 'concierge' };
 		}
-
-		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
 		// pendingOrReceiptId takes a value of ':receiptId' if a redirect payment has been selected,
 		// in which case we want to go to a thank you page.
 		if ( ':receiptId' !== pendingOrReceiptId && this.props.isEligibleForSignupDestination ) {
-			return `${ signupDestination }${ queryParam }`;
+			return this.getUrlWithQueryParam( signupDestination, displayModeParam );
 		}
 
-		return `${ this.getFallbackDestination( pendingOrReceiptId ) }${ queryParam }`;
+		return this.getUrlWithQueryParam(
+			this.getFallbackDestination( pendingOrReceiptId ),
+			displayModeParam
+		);
 	};
 
 	handleCheckoutExternalRedirect( redirectUrl ) {
