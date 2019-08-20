@@ -221,14 +221,11 @@ export default connect( ( state, props ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
-	let currentThemeId,
-		currentTheme,
-		detailsUrl,
-		themeInfo = {};
+	let themeInfo = {};
 	if ( props.displayMode && 'theme' === props.displayMode ) {
-		currentThemeId = getActiveTheme( state, siteId );
-		currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
-		detailsUrl = getThemeDetailsUrl( state, currentThemeId, siteId );
+		const currentThemeId = getActiveTheme( state, siteId );
+		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
+		const detailsUrl = getThemeDetailsUrl( state, currentThemeId, siteId );
 		themeInfo = { currentTheme, detailsUrl, currentThemeId };
 	}
 
