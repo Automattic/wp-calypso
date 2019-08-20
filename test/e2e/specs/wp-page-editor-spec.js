@@ -635,6 +635,7 @@ describe( `[${ host }] Editor: Pages (${ screenSize })`, function() {
 				);
 				const viewPagePage = await ViewPagePage.Expect( driver );
 				await viewPagePage.clickPaymentButton();
+				// Skip some lines and checks until Chrome can handle multiple windows in app mode
 				//await driverHelper.waitForNumberOfWindows( driver, 2 );
 				//await driverHelper.switchToWindowByIndex( driver, 1 );
 				await PaypalCheckoutPage.Expect( driver );
