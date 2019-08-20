@@ -9,6 +9,7 @@ import { By, until } from 'selenium-webdriver';
  * Internal dependencies
  */
 import * as driverHelper from '../driver-helper';
+import { getJetpackHost } from '../data-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
@@ -82,15 +83,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		if ( visit ) {
+			await this.waitForSuccessViewPostNotice();
+			await this.driver.sleep( 1000 );
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( '.components-notice.is-success a' )
+				By.css( '.components-snackbar__content a' )
 			);
 		}
 	}
 
 	async enterTitle( title ) {
-		const titleFieldSelector = By.css( '#post-title-0' );
+		const titleFieldSelector = By.css( '.editor-post-title__input' );
 		await driverHelper.clearTextArea( this.driver, titleFieldSelector );
 		return await this.driver.findElement( titleFieldSelector ).sendKeys( title );
 	}
@@ -166,6 +169,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				prefix = 'jetpack-contact-';
 				break;
 			case 'Simple Payments':
+			case 'Markdown':
 				prefix = 'jetpack-';
 				break;
 		}
@@ -186,13 +190,19 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, inserterToggleSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterMenuSelector );
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputSelector, name );
-		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
+		// Using a JS click here since the Webdriver click wasn't working
+		const button = await this.driver.findElement( inserterBlockItemSelector );
+		await this.driver
+			.actions( { bridge: true } )
+			.move( { origin: button } )
+			.perform();
+		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
 
 	async titleShown() {
-		const titleSelector = By.css( '#post-title-0' );
+		const titleSelector = By.css( '.editor-post-title__input' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, titleSelector );
 		const element = await this.driver.findElement( titleSelector );
 		return await element.getAttribute( 'value' );
@@ -262,18 +272,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async waitForSuccessViewPostNotice() {
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.components-notice.is-success' )
-		);
+		// FIXME: Temporary hack to make sure it works with both 6.1 and core's Gutenberg (WP 5.2)
+		const noticeSelector =
+			getJetpackHost() === 'WPCOM' ? '.components-snackbar' : '.components-notice.is-success';
+		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( noticeSelector ) );
 	}
 
 	async dismissSuccessNotice() {
 		await this.waitForSuccessViewPostNotice();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.components-notice__dismiss' )
-		);
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.components-snackbar' ) );
 	}
 
 	async launchPreview() {
@@ -304,7 +311,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async viewPublishedPostOrPage() {
-		const viewPostSelector = By.css( '.components-notice__content a' );
+		const viewPostSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, viewPostSelector );
 	}
 
@@ -344,5 +351,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.edit-post-fullscreen-mode-close__toolbar, .edit-post-header-toolbar__back' )
 		);
+	}
+
+	async dismissPageTemplateSelector() {
+		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.page-template-modal .components-modal__header button' )
+			);
+		}
 	}
 }

@@ -22,7 +22,6 @@ import {
 } from 'my-sites/site-settings/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { reasonComponents as reasons } from './disconnect-site';
 import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 
 export default function() {
@@ -68,16 +67,8 @@ export default function() {
 		clientRender
 	);
 
-	const reasonSlugs = Object.keys( reasons );
 	page(
-		`/settings/disconnect-site/:step(${ [ ...reasonSlugs, 'confirm' ].join( '|' ) })?`,
-		sites,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		`/settings/disconnect-site/:reason(${ reasonSlugs.join( '|' ) })?/:site_id`,
+		`/settings/disconnect-site/:site_id`,
 		siteSelection,
 		setScroll,
 		disconnectSite,

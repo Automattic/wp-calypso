@@ -1,7 +1,17 @@
 # [Unreleased]
 
+- Update `@automattic/wordpress-external-dependencies-plugin` references in `README.md` to `@wordpress/dependency-extraction-webpack-plugin`.
+- Added transform-runtime versioning to babel/default.js
+  This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
+
+# 3.0.0
+
+- Switch to `@wordpress/dependency-extraction-webpack-plugin` from
+  `@automattic/wordpress-external-dependencies-plugin` for WordPress webpack externals.
+- Update `@wordpress/babel-plugin-import-jsx-pragma` dependency and correctly handle `<></>` via `@wordpress/element`.
 - Update Jest config to be able to handle `import`s otherwise handled by Webpack's `file-loader` and `sass-loader`.
 - Update Jest setup to properly initialize Enzyme's adapter.
+- Fix typo that prevented the `output-library-target` argument from being passed to Webpack.
 
 # 2.0.0
 

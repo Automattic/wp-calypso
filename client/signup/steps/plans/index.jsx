@@ -142,6 +142,7 @@ export class PlansStep extends Component {
 			isLaunchPage,
 			selectedSite,
 			planTypes,
+			flowName,
 		} = this.props;
 
 		return (
@@ -161,21 +162,14 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ true }
 					planTypes={ planTypes }
+					flowName={ flowName }
 				/>
 			</div>
 		);
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			selectedSite,
-			siteSlug,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 
@@ -196,7 +190,6 @@ export class PlansStep extends Component {
 				headerText={ headerText }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 				allowBackFirstStep={ !! selectedSite }

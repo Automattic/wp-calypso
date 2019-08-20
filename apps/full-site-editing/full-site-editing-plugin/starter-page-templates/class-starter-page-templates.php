@@ -2,8 +2,10 @@
 /**
  * Starter page templates file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Class Starter_Page_Templates
@@ -23,13 +25,15 @@ class Starter_Page_Templates {
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_scripts' ] );
 		add_action( 'init', [ $this, 'register_meta_field' ] );
+		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
+		add_action( 'delete_attachment', [ $this, 'clear_sideloaded_image_cache' ] );
 	}
 
 	/**
 	 * Creates instance.
 	 *
-	 * @return \Starter_Page_Templates
+	 * @return \A8C\FSE\Starter_Page_Templates
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -67,6 +71,15 @@ class Starter_Page_Templates {
 			},
 		];
 		register_meta( 'post', '_starter_page_template', $args );
+	}
+
+	/**
+	 * Register rest api endpoint for side-loading images.
+	 */
+	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-sideload-image-controller.php';
+
+		( new WP_REST_Sideload_Image_Controller() )->register_routes();
 	}
 
 	/**
@@ -169,7 +182,7 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_id        = get_option( 'site_vertical', 'default' );
-		$transient_key      = implode( '_', [ 'starter_page_templates', A8C_FSE_VERSION, $vertical_id, get_locale() ] );
+		$transient_key      = implode( '_', [ 'starter_page_templates', PLUGIN_VERSION, $vertical_id, get_locale() ] );
 		$vertical_templates = get_transient( $transient_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
@@ -189,6 +202,18 @@ class Starter_Page_Templates {
 		}
 
 		return $vertical_templates;
+	}
+
+	/**
+	 * Deletes cached attachment data when attachment gets deleted.
+	 *
+	 * @param int $id Attachment ID of the attachment to be deleted.
+	 */
+	public function clear_sideloaded_image_cache( $id ) {
+		$url = get_post_meta( $id, '_sideloaded_url', true );
+		if ( ! empty( $url ) ) {
+			delete_transient( 'fse_sideloaded_image_' . md5( $url ) );
+		}
 	}
 
 	/**

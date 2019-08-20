@@ -32,6 +32,7 @@ import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
+import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import {
@@ -46,7 +47,6 @@ import {
 } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -157,10 +157,7 @@ export class PlansFeaturesMain extends Component {
 
 		const currentPlan = getPlan( selectedPlan );
 
-		const hideBloggerPlan =
-			! isBloggerPlan( selectedPlan ) &&
-			! isBloggerPlan( sitePlanSlug ) &&
-			abtest( 'hideBloggerPlan2' ) === 'hide';
+		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -274,12 +271,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	constructPath( plansUrl, intervalType, customerType = '' ) {
-		const { selectedFeature, selectedPlan, siteSlug } = this.props;
+		const { selectedFeature, selectedPlan, siteSlug, withDiscount } = this.props;
+
 		return addQueryArgs(
 			{
 				customerType,
 				feature: selectedFeature,
 				plan: selectedPlan,
+				discount: withDiscount,
 			},
 			plansLink( plansUrl, siteSlug, intervalType, true )
 		);
@@ -297,42 +296,45 @@ export class PlansFeaturesMain extends Component {
 
 		return (
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
 					path={ this.constructPath( plansUrl, 'monthly' ) }
 				>
 					{ translate( 'Monthly billing' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ intervalType === 'yearly' }
 					path={ this.constructPath( plansUrl, 'yearly' ) }
 				>
 					{ translate( 'Yearly billing' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
 
 	getCustomerTypeToggle() {
-		const { customerType, translate } = this.props;
+		const { customerType, translate, withDiscount } = this.props;
 		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
+		const queryArgs = {
+			discount: withDiscount,
+		};
 
 		return (
 			<SegmentedControl className={ segmentClasses } primary={ true }>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ customerType === 'personal' }
-					path={ '?customerType=personal' }
+					path={ addQueryArgs( { ...queryArgs, customerType: 'personal' }, '' ) }
 				>
 					{ translate( 'Blogs and Personal Sites' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ customerType === 'business' }
-					path={ '?customerType=business' }
+					path={ addQueryArgs( { ...queryArgs, customerType: 'business' }, '' ) }
 				>
 					{ translate( 'Business Sites and Online Stores' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
@@ -343,8 +345,13 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, translate } = this.props;
+		const { hideFreePlan, translate, flowName, isInSignup } = this.props;
 		const className = 'is-free-plan';
+		const callToAction =
+			isInSignup && flowName === 'launch-site'
+				? translate( 'Continue with your free site' )
+				: translate( 'Start with a free site' );
+
 		if ( hideFreePlan ) {
 			return null;
 		}
@@ -354,7 +361,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__banner-content">
 					{ translate( 'Not sure yet?' ) }
 					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
-						{ translate( 'Start with a free site' ) }
+						{ callToAction }
 					</Button>
 				</div>
 			</div>
@@ -387,6 +394,7 @@ export class PlansFeaturesMain extends Component {
 				{ ! plansWithScroll && this.renderToggle() }
 				{ plansWithScroll && this.renderFreePlanBanner() }
 				<QueryPlans />
+				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
 				<CartData>
@@ -415,6 +423,7 @@ PlansFeaturesMain.propTypes = {
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
 	customerType: PropTypes.string,
+	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,

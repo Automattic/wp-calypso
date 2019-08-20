@@ -40,7 +40,7 @@ See [Development Workflow](../docs/development-workflow.md) for more.
 
 ### Limited builds
 
-Calypso is [broken up into sections](https://github.com/Automattic/wp-calypso/blob/master/client/wordpress-com.js) and by default, every section is built when the development server starts.
+Calypso is [broken up into sections](https://github.com/Automattic/wp-calypso/blob/master/client/sections.js) and by default, every section is built when the development server starts.
 This can take a long time and slow down incremental builds as your work. To speed things up,
 you can choose to build and run specific sections of Calypso using the `SECTION_LIMIT` enviroment variable.
 

@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { head, uniqueId } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -23,9 +24,14 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { userCan } from 'lib/site/utils';
 
 class FeaturedImageDropZone extends Component {
 	onFilesDrop = files => {
+		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
+			return false;
+		}
+
 		/**
 		 * Filter files for `image` media prefix and return the first image.
 		 *
@@ -79,12 +85,18 @@ class FeaturedImageDropZone extends Component {
 	};
 
 	render() {
+		const { site, translate } = this.props;
+		const canUploadFiles = userCan( 'upload_files', site );
+		const textLabel = canUploadFiles
+			? translate( 'Set as Featured Image' )
+			: translate( 'You are not authorized to upload files to this site' );
+		const icon = canUploadFiles ? <FeaturedImageDropZoneIcon /> : <Gridicon icon="cross" />;
 		return (
 			<DropZone
 				className="editor-featured-image__dropzone"
 				dropZoneName="featuredImage"
-				icon={ <FeaturedImageDropZoneIcon /> }
-				textLabel={ this.props.translate( 'Set as Featured Image' ) }
+				icon={ icon }
+				textLabel={ textLabel }
 				onFilesDrop={ this.onFilesDrop }
 			/>
 		);

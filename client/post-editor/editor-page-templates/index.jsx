@@ -16,7 +16,6 @@ import { localize } from 'i18n-calypso';
 import QueryPageTemplates from 'components/data/query-page-templates';
 import AccordionSection from 'components/accordion/section';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -99,13 +98,13 @@ class EditorPageTemplates extends Component {
 									// to extract this out into a separate component
 									// with its own click handler, that would severely
 									// harm the readability of this component.
-									<DropdownItem
+									<SelectDropdown.Item
 										key={ file }
 										selected={ file === template }
 										onClick={ () => this.selectTemplate( file ) }
 									>
 										{ label }
-									</DropdownItem>
+									</SelectDropdown.Item>
 								) ) }
 							</SelectDropdown>
 						</EditorDrawerLabel>

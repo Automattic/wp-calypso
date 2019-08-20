@@ -70,6 +70,7 @@ export function transformApi( data ) {
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
 		data.downloads && { downloads: data.downloads.map( transformDownload ) },
 		data.reason && { reason: data.reason },
-		data.rewind && { rewind: transformRewind( data.rewind ) }
+		data.rewind && { rewind: transformRewind( data.rewind ) },
+		data.alerts && { alerts: data.alerts }
 	);
 }

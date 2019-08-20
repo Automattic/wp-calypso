@@ -216,7 +216,20 @@ export class Translatable extends Component {
 								<Gridicon icon="external" size={ 12 } />
 							</a>
 						) }
+						<a
+							title={ translate( 'Settings' ) }
+							href={ '/me/account' }
+							className="community-translator__settings-link"
+						>
+							<Gridicon icon="cog" size={ 12 } onClick={ this.closeDialog } />
+						</a>
 						<Gridicon icon="help" className="community-translator__nav-link" size={ 12 } />
+						<Gridicon
+							icon="cross-circle"
+							className="community-translator__close-icon"
+							size={ 12 }
+							onClick={ this.closeDialog }
+						/>
 					</nav>
 				</header>
 				<section className="community-translator__dialog-body">

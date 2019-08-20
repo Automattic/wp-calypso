@@ -18,14 +18,15 @@ import configMock from 'config';
 jest.mock( 'config', () => {
 	const { stub } = require( 'sinon' );
 
-	const configMock = stub();
-	configMock.isEnabled = stub();
+	const mock = stub();
+	mock.isEnabled = stub();
 
-	return configMock;
+	return mock;
 } );
+
 jest.mock( 'lib/wp', () => ( {
 	me: () => ( {
-		get: () => {},
+		get: async () => ( {} ),
 	} ),
 } ) );
 

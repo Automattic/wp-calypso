@@ -132,7 +132,7 @@ export default connect( state => {
 	return {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
 		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
-		showTraffic: !! siteId,
+		showTraffic: canManageOptions && !! siteId,
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};

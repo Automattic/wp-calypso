@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,7 +50,19 @@ class ImporterAuthorMapping extends React.Component {
 		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
 
 		if ( hasSingleAuthor ) {
-			selectAuthor( this.props.currentUser );
+			/**
+			 * Using `defer` here is a leftover from using Flux store in the past.
+			 *
+			 * It's not ideal and should be refactored in the future to read
+			 * the state, instead of automating the UI in this way.
+			 *
+			 * This effort is quite big as it requires refactoring a few things on more fundamental
+			 * level in the imports section.
+			 *
+			 * TODO: Refactor this to not automate the UI but use proper state
+			 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
+			 */
+			defer( () => selectAuthor( this.props.currentUser ) );
 		}
 	}
 

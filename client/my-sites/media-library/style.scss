@@ -198,10 +198,10 @@
 	}
 }
 
-.media-library__scale-toggle {
+.media-library__scale-toggle.segmented-control {
 	position: absolute;
 	right: 16px;
-	&.segmented-control.is-compact .segmented-control__link {
+	&.is-compact .segmented-control__link {
 		padding: 2px 4px;
 	}
 
@@ -252,6 +252,11 @@
 	position: absolute;
 	top: 50px;
 	bottom: 72px;
+	
+	.empty-content__line {
+		margin-right: 20px;
+		margin-left: 20px;
+	}
 }
 
 .empty-content .media-library__videopress-nudge-regular.card.upgrade-nudge {

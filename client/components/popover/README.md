@@ -54,6 +54,10 @@ cases this is not needed but if you want to also have a label
 that can trigger the opening and closing of the Popover then you need to pass
 in the label component as a reference.
 
+#### `isFocusOnShow { bool } - default: false`
+
+Focuses the Popover when it shows. Useful for controlling/improving keyboard navigation.
+
 #### `isVisible { bool } default - false`
 
 By controlling the popover's visibility through the `isVisible` property, the

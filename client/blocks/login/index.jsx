@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { includes, capitalize, get } from 'lodash';
+import { capitalize, findLast, get, includes, isArray } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
@@ -29,6 +29,8 @@ import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/s
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+import { setResumeAfterLogin } from 'state/signup/progress/actions';
+import { getSignupProgress } from 'state/signup/progress/selectors';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
@@ -38,6 +40,7 @@ import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import AsyncLoad from 'components/async-load';
+import VisitSite from 'blocks/visit-site';
 
 /**
  * Style dependencies
@@ -135,10 +138,22 @@ class Login extends Component {
 		// Redirects to / if no redirect url is available
 		const url = redirectTo ? redirectTo : window.location.origin;
 
-		// user data is persisted in localstorage at `lib/user/user` line 157
-		// therefor we need to reset it before we redirect, otherwise we'll get
-		// mixed data from old and new user
-		user.clear( () => ( window.location.href = url ) );
+		// User data is persisted in localstorage at `lib/user/user` line 157.
+		// Only clear the data if a user is currently set, otherwise keep the
+		// logged out state around so that it can be used in signup.
+		if ( user.get() ) {
+			user.clear().then( () => {
+				window.location.href = url;
+			} );
+		} else {
+			if ( isArray( this.props.signupProgress ) ) {
+				const lastStep = findLast( this.props.signupProgress, step => step.stepName !== 'user' );
+				if ( lastStep ) {
+					this.props.setResumeAfterLogin( lastStep );
+				}
+			}
+			window.location.href = url;
+		}
 	};
 
 	renderHeader() {
@@ -152,28 +167,27 @@ class Login extends Component {
 			socialConnect,
 			translate,
 			twoStepNonce,
+			fromSite,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account.' );
+		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
-			headerText = translate(
-				'Log in to update your payment details and renew your subscription.'
-			);
+			headerText = translate( 'Log in to update your payment details and renew your subscription' );
 		}
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
 		} else if ( socialConnect ) {
-			headerText = translate( 'Connect your %(service)s account.', {
+			headerText = translate( 'Connect your %(service)s account', {
 				args: {
 					service: capitalize( linkingSocialService ),
 				},
 			} );
 		} else if ( privateSite ) {
-			headerText = translate( 'This is a private WordPress.com site.' );
+			headerText = translate( 'This is a private WordPress.com site' );
 		} else if ( oauth2Client ) {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
@@ -238,7 +252,7 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
+			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
@@ -249,6 +263,9 @@ class Login extends Component {
 					/>
 				</div>
 			);
+		} else if ( fromSite ) {
+			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
+			postHeader = <VisitSite siteSlug={ fromSite } />;
 		}
 
 		return (
@@ -363,8 +380,10 @@ export default connect(
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+		signupProgress: getSignupProgress( state ),
 	} ),
 	{
 		recordTracksEvent,
+		setResumeAfterLogin,
 	}
 )( localize( Login ) );

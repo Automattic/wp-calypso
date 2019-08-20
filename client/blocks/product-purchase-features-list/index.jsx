@@ -36,9 +36,6 @@ import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
 import JetpackPublicize from './jetpack-publicize';
-import JetpackVideo from './jetpack-video';
-import JetpackSearch from './jetpack-search';
-import JetpackSiteAccelerator from './jetpack-site-accelerator';
 import MobileApps from './mobile-apps';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
@@ -47,8 +44,8 @@ import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 
 /**
  * Style dependencies
@@ -67,7 +64,13 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	// TODO: Define feature list.
 	getEcommerceFeatures() {
-		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			isPlaceholder,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+			showCustomizerFeature,
+		} = this.props;
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -76,14 +79,11 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
-					<JetpackSearch selectedSite={ selectedSite } />
-				) }
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
+				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
@@ -94,7 +94,13 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getBusinessFeatures() {
-		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			isPlaceholder,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+			showCustomizerFeature,
+		} = this.props;
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -111,14 +117,11 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
-					<JetpackSearch selectedSite={ selectedSite } />
-				) }
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
+				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
@@ -130,7 +133,13 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPremiumFeatures() {
-		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			isPlaceholder,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+			showCustomizerFeature,
+		} = this.props;
 
 		return (
 			<Fragment>
@@ -138,7 +147,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
 				<GoogleVouchers selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
+				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
@@ -183,17 +192,9 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackFreeFeatures() {
-		const {
-			isAutomatedTransfer,
-			isPlaceholder,
-			selectedSite,
-			supportsJetpackSiteAccelerator,
-		} = this.props;
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 		return (
 			<Fragment>
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
-					<JetpackSiteAccelerator selectedSite={ selectedSite } />
-				) }
 				<SiteActivity />
 				<MobileApps />
 				<HappinessSupportCard
@@ -206,20 +207,9 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackPremiumFeatures() {
-		const {
-			isAutomatedTransfer,
-			isPlaceholder,
-			selectedSite,
-			supportsJetpackSiteAccelerator,
-		} = this.props;
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 		return (
 			<Fragment>
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
-					<JetpackSiteAccelerator selectedSite={ selectedSite } />
-				) }
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
-					<JetpackVideo selectedSite={ selectedSite } />
-				) }
 				<MonetizeSite selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackPublicize selectedSite={ selectedSite } />
@@ -240,18 +230,10 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackPersonalFeatures() {
-		const {
-			isAutomatedTransfer,
-			isPlaceholder,
-			selectedSite,
-			supportsJetpackSiteAccelerator,
-		} = this.props;
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 
 		return (
 			<Fragment>
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
-					<JetpackSiteAccelerator selectedSite={ selectedSite } />
-				) }
 				<SiteActivity />
 				<MobileApps />
 				<HappinessSupportCard
@@ -263,24 +245,10 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackBusinessFeatures() {
-		const {
-			isAutomatedTransfer,
-			isPlaceholder,
-			selectedSite,
-			supportsJetpackSiteAccelerator,
-		} = this.props;
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 		return (
 			<Fragment>
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && supportsJetpackSiteAccelerator && (
-					<JetpackSiteAccelerator selectedSite={ selectedSite } />
-				) }
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
-					<JetpackSearch selectedSite={ selectedSite } />
-				) }
 				<SiteActivity />
-				{ ! isEnabled( 'jetpack/checklist/performance' ) && (
-					<JetpackVideo selectedSite={ selectedSite } />
-				) }
 				<MonetizeSite selectedSite={ selectedSite } />
 				<MobileApps />
 				<JetpackPublicize selectedSite={ selectedSite } />
@@ -349,9 +317,7 @@ export default connect(
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
-			supportsJetpackSiteAccelerator:
-				isJetpackSite( state, selectedSiteId ) &&
-				isJetpackMinimumVersion( state, selectedSiteId, '6.7' ),
+			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		};
 	},
 	{

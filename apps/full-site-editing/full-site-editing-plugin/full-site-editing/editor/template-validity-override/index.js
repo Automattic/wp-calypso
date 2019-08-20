@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import domReady from '@wordpress/dom-ready';
-import { dispatch } from '@wordpress/data';
+import { select, dispatch, subscribe } from '@wordpress/data';
 
 /**
  * Forces the template validity.
@@ -14,12 +13,11 @@ import { dispatch } from '@wordpress/data';
  *
  * @see https://github.com/WordPress/gutenberg/issues/11681
  */
-function resetTemplateValidity() {
+const unsubscribe = subscribe( () => {
 	if ( 'page' !== fullSiteEditing.editorPostType ) {
-		return;
+		return unsubscribe();
 	}
-
-	dispatch( 'core/editor' ).setTemplateValidity( true );
-}
-
-domReady( () => resetTemplateValidity() );
+	if ( select( 'core/editor' ).isValidTemplate() === false ) {
+		dispatch( 'core/editor' ).setTemplateValidity( true );
+	}
+} );

@@ -61,20 +61,9 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
  * @return {array} An array of purchases
  */
 function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
-	return existingPurchases.filter( purchase => {
-		if ( matches( predicate )( purchase ) && find( newPurchases, { ID: purchase.ID } ) ) {
-			// this purchase is present in the new array
-			return true;
-		}
-
-		if ( ! matches( predicate )( purchase ) ) {
-			// only overwrite remove purchases that match the predicate
-			return true;
-		}
-
-		// the purchase doesn't match the predicate or is missing from the array of new purchases
-		return false;
-	} );
+	return existingPurchases.filter(
+		purchase => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
+	);
 }
 
 function updatePurchases( existingPurchases, action ) {

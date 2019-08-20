@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -77,59 +75,32 @@ export class UpgradeNudge extends React.Component {
 		onClick();
 	};
 
-	shouldDisplay() {
-		const { feature, jetpack, planHasFeature, shouldDisplay, site, canManageSite } = this.props;
-
-		if ( shouldDisplay === true ) {
-			return true;
-		}
-
-		if ( shouldDisplay ) {
-			return shouldDisplay();
-		}
-
-		if ( ! canManageSite ) {
-			return false;
-		}
-
-		if ( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) {
-			return false;
-		}
-
-		if ( feature && planHasFeature ) {
-			return false;
-		}
-
-		if ( ! feature && ! isFreePlan( site.plan ) ) {
-			return false;
-		}
-
-		if ( feature === FEATURE_NO_ADS && site.options.wordads ) {
-			return false;
-		}
-
-		if ( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	render() {
 		const {
+			canManageSite,
 			className,
 			compact,
 			event,
 			plan,
+			planHasFeature,
 			feature,
 			icon,
+			jetpack,
 			message,
 			site,
 			title,
 			translate,
 		} = this.props;
+		
+		const shouldNotDisplay = 
+			  ! canManageSite || 
+			  ( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) ||
+			  ( feature && planHasFeature ) ||
+			  ( ! feature && ! isFreePlan( site.plan ) ) ||
+			  ( feature === FEATURE_NO_ADS && site.options.wordads ) ||
+			  ( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) );
 
-		if ( ! this.shouldDisplay() ) {
+		if ( shouldNotDisplay ) {
 			return null;
 		}
 

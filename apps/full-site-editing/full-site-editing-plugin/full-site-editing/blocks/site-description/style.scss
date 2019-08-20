@@ -1,22 +1,12 @@
+@import '../../sass/mixins';
+
 .block-editor {
-	.wp-block-a8c-site-description {
-		&,&:focus {
-			display: inline;
-			color: #767676;
-			font-size: 1.125em;
-			font-weight: normal;
-			letter-spacing: -0.01em;
-			margin: 0;
-			box-shadow: none;
-			background-color: transparent;
-		}
+	.wp-block-a8c-site-description:focus {
+		box-shadow: none;
+		background-color: transparent;
 	}
-	.site-description__save-button {
-		margin-left: auto;
-		display: block;
-	}
-	.site-title:not( :empty ) + .site-description:not( :empty )::before {
-		content: '\2014';
-		margin: 0 0.2em;
+
+	.wp-block.is-selected .wp-block-a8c-site-description {
+		@include hide-input-placeholder;
 	}
 }

@@ -12,6 +12,7 @@ import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverManager from '../driver-manager';
 import * as SlackNotifier from '../slack-notifier';
+import GutenbergEditorComponent from './gutenberg-editor-component';
 
 export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -189,6 +190,8 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async chooseDocumentSettings() {
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		await gEditorComponent.openSidebar();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '[aria-label^="Document settings"], [data-label^="Document"]' )

@@ -120,12 +120,6 @@ export const traffic = ( context, next ) => {
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
-		notices.error(
-			translate( 'You are not authorized to manage sharing settings for this site.' )
-		);
-	}
-
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
 
 	if (

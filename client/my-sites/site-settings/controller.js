@@ -104,7 +104,7 @@ export function manageConnection( context, next ) {
 }
 
 export function legacyRedirects( context, next ) {
-	const section = context.params.section;
+	const { section } = context.params;
 	const redirectMap = {
 		account: '/me/account',
 		password: '/me/security',
@@ -116,12 +116,11 @@ export function legacyRedirects( context, next ) {
 		'billing-history-v2': billingHistory,
 		'connected-apps': '/me/security/connected-applications',
 	};
-	if ( ! context ) {
-		return page( '/me/public-profile' );
-	}
+
 	if ( redirectMap[ section ] ) {
 		return page.redirect( redirectMap[ section ] );
 	}
+
 	next();
 }
 

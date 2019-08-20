@@ -208,7 +208,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 		} );
 	} );
 
-	describe( 'Transfer a domain to an existing site (partial) @parallel', function() {
+	describe.skip( 'Transfer a domain to an existing site (partial) @parallel', function() {
 		const domain = 'automattic.com';
 
 		before( async function() {

@@ -1,15 +1,5 @@
 /** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -107,32 +97,68 @@ export default {
 		},
 		defaultVariation: 'siteType',
 	},
-	hideBloggerPlan2: {
-		datestamp: '20190627',
+	skippableDomainStep: {
+		datestamp: '20290717',
 		variations: {
-			hide: 50,
-			control: 50,
+			skippable: 0,
+			notSkippable: 100,
 		},
-		defaultVariation: 'control',
-		localeTargets: 'any',
+		defaultVariation: 'notSkippable',
+		allowExistingUsers: true,
 	},
-	proratedCreditsBanner: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20190626',
+	showPlanUpsellNudge: {
+		datestamp: '20190712',
 		variations: {
-			control: 50,
-			variant: 50,
+			variantShowNudge: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	skippableDomainStep: {
-		datestamp: '20190702',
+	privateByDefault: {
+		datestamp: '20190730',
 		variations: {
-			skippable: 50,
-			notSkippable: 50,
+			selected: 90,
+			control: 10,
 		},
-		defaultVariation: 'notSkippable',
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	checkoutSealsCopyBundle: {
+		datestamp: '20190613',
+		variations: {
+			variant: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		//localeTargets: 'any',
+	},
+	showImportFlowInSiteTypeStep: {
+		datestamp: '20190820',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	removeBlogFlow: {
+		datestamp: '20190813',
+		variations: {
+			remove: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	removeWebsiteFlow: {
+		datestamp: '20190813',
+		variations: {
+			remove: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 };

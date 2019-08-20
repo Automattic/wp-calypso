@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
@@ -15,6 +12,23 @@ import { parse as parseUrl, format as formatUrl } from 'url';
 import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
+
+const getPromises = {};
+
+/**
+ * De-duplicates repeated GET fetches of the same URL while one is taking place.
+ * Once it's finished, it'll allow for the same request to be done again.
+ * @param {string} url The URL to fetch
+ *
+ * @returns {Promise} The fetch promise.
+ */
+function dedupedGet( url ) {
+	if ( ! ( url in getPromises ) ) {
+		getPromises[ url ] = fetch( url ).finally( () => delete getPromises[ url ] );
+	}
+
+	return getPromises[ url ];
+}
 
 /**
  * Get the protocol, domain, and path part of the language file URL.
@@ -63,6 +77,24 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 	switchWebpackCSS( isRTL );
 }
 
+async function getLanguageFile( targetLocaleSlug ) {
+	const url = getLanguageFileUrl( targetLocaleSlug );
+
+	const response = await dedupedGet( url );
+	if ( response.ok ) {
+		if ( response.bodyUsed ) {
+			// If the body was already used, we assume that we already parsed the
+			// response and set the locale in the DOM, so we don't need to do anything
+			// else here.
+			return;
+		}
+		return await response.json();
+	}
+
+	// Invalid response.
+	throw new Error();
+}
+
 let lastRequestedLocale = null;
 export default function switchLocale( localeSlug ) {
 	// check if the language exists in config.languages
@@ -89,28 +121,30 @@ export default function switchLocale( localeSlug ) {
 		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
 		setLocaleInDOM( domLocaleSlug, !! language.rtl );
 	} else {
-		request.get( getLanguageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
-			if ( error ) {
+		getLanguageFile( targetLocaleSlug ).then(
+			// Success.
+			body => {
+				if ( body ) {
+					// Handle race condition when we're requested to switch to a different
+					// locale while we're in the middle of request, we should abandon result
+					if ( targetLocaleSlug !== lastRequestedLocale ) {
+						return;
+					}
+
+					i18n.setLocale( body );
+
+					setLocaleInDOM( domLocaleSlug, !! language.rtl );
+
+					loadUserUndeployedTranslations( targetLocaleSlug );
+				}
+			},
+			// Failure.
+			() => {
 				debug(
-					'Encountered an error loading locale file for ' +
-						localeSlug +
-						'. Falling back to English.'
+					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
 				);
-				return;
 			}
-
-			// Handle race condition when we're requested to switch to a different
-			// locale while we're in the middle of request, we should abondon result
-			if ( targetLocaleSlug !== lastRequestedLocale ) {
-				return;
-			}
-
-			i18n.setLocale( response.body );
-
-			setLocaleInDOM( domLocaleSlug, !! language.rtl );
-
-			loadUserUndeployedTranslations( targetLocaleSlug );
-		} );
+		);
 	}
 }
 
@@ -164,14 +198,12 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		query,
 	} );
 
-	return request
-		.get( requestUrl )
-		.set( 'Accept', 'application/json' )
-		.withCredentials()
-		.then( res => {
-			const translations = JSON.parse( res.text );
-			i18n.addTranslations( translations );
-		} );
+	return fetch( requestUrl, {
+		headers: { Accept: 'application/json' },
+		credentials: 'include',
+	} )
+		.then( res => res.json() )
+		.then( translations => i18n.addTranslations( translations ) );
 }
 
 const bundles = {};

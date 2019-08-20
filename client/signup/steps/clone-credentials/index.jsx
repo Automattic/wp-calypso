@@ -29,7 +29,6 @@ class CloneCredentialsStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -80,14 +79,7 @@ class CloneCredentialsStep extends Component {
 	}
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			destinationSiteName,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, destinationSiteName } = this.props;
 
 		const headerText = translate( 'Enter your server credentials' );
 		const subHeaderText = translate(
@@ -105,7 +97,6 @@ class CloneCredentialsStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

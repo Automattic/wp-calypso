@@ -20,9 +20,6 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	LOGOUT_REQUEST,
-	LOGOUT_REQUEST_FAILURE,
-	LOGOUT_REQUEST_SUCCESS,
 	ROUTE_SET,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
@@ -86,9 +83,6 @@ export const redirectTo = combineReducers( {
 		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: () => null,
 		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) =>
 			get( action, 'redirect_to', null ),
-		[ LOGOUT_REQUEST ]: () => null,
-		[ LOGOUT_REQUEST_FAILURE ]: () => null,
-		[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
 	} ),
 } );
 

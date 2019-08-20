@@ -32,7 +32,8 @@ export function canAccessWordads( site ) {
 }
 
 export function canAccessAds( site ) {
-	return canAccessWordads( site ) || canUpgradeToUseWordAds( site );
+	return ( canAccessWordads( site ) || canUpgradeToUseWordAds( site ) ) 
+	&& userCan( 'manage_options', site )
 }
 
 export function isWordadsInstantActivationEligible( site ) {

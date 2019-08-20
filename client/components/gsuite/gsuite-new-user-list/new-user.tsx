@@ -20,6 +20,7 @@ interface Props {
 	domains: any[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
+	onReturnKeyPress: ( event: Event ) => void;
 	user: NewUser;
 }
 
@@ -27,6 +28,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	domains,
 	onUserRemove,
 	onUserValueChange,
+	onReturnKeyPress,
 	user: {
 		firstName: { value: firstName, error: firstNameError },
 		lastName: { value: lastName, error: lastNameError },
@@ -67,6 +69,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				onBlur={ () => {
 					setMailBoxFieldTouched( wasValidated );
 				} }
+				onKeyUp={ onReturnKeyPress }
 				suffix={ `@${ domain }` }
 			/>
 		);
@@ -85,6 +88,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					onBlur={ () => {
 						setMailBoxFieldTouched( wasValidated );
 					} }
+					onKeyUp={ onReturnKeyPress }
 				/>
 				<GSuiteDomainsSelect
 					domains={ domains }
@@ -120,6 +124,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onBlur={ () => {
 								setFirstNameFieldTouched( wasValidated );
 							} }
+							onKeyUp={ onReturnKeyPress }
 						/>
 						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
 					</div>
@@ -135,6 +140,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 							onBlur={ () => {
 								setLastNameFieldTouched( wasValidated );
 							} }
+							onKeyUp={ onReturnKeyPress }
 						/>
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>

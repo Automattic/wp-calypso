@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
+import VisitSite from 'blocks/visit-site';
 
 /**
  * Style dependencies
@@ -91,7 +92,7 @@ class Sites extends Component {
 				break;
 		}
 
-		return translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
+		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: { path },
 			components: {
 				strong: <strong />,
@@ -102,7 +103,10 @@ class Sites extends Component {
 	render() {
 		return (
 			<Main className="sites">
-				<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
+				<div className="sites__select-header">
+					<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
+					{ this.props.fromSite && <VisitSite siteSlug={ this.props.fromSite } /> }
+				</div>
 				<Card className="sites__select-wrapper">
 					<SiteSelector
 						filter={ this.filterSites }

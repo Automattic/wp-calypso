@@ -50,19 +50,17 @@ export class CurrentPlanHeader extends Component {
 									args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
 							  } )
 							: translate( 'Expires on %s.', {
-									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
+									args: invoke( currentPlan, 'expiryMoment.format', 'LL' ),
 							  } ) }
 					</span>
 					{ currentPlan.userIsOwner && Boolean( currentPlan.id ) && siteSlug && (
 						<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
 							{ hasAutoRenew && translate( 'Manage Payment' ) }
 							{ ! hasAutoRenew &&
-								! shouldAddPaymentSourceInsteadOfRenewingNow(
-									currentPlan.userFacingExpiryMoment
-								) &&
+								! shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.expiryMoment ) &&
 								translate( 'Renew Now' ) }
 							{ ! hasAutoRenew &&
-								shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.userFacingExpiryMoment ) &&
+								shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.expiryMoment ) &&
 								translate( 'Manage Payment' ) }
 						</Button>
 					) }

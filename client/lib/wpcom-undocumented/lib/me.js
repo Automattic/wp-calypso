@@ -135,13 +135,13 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
  * Get a list of the user's stored cards
  *
  * @param {object} [cardToken] Payment key
- * @param {Function} [callback] The callback function
+ * @param {object} [additionalData] Any additional data to send in the request
  *
  * @return {Promise} A promise for the request
  * @api public
  */
-UndocumentedMe.prototype.storedCardAdd = function( cardToken, callback ) {
-	debug( '/me/stored-cards' );
+UndocumentedMe.prototype.storedCardAdd = function( cardToken, additionalData = {} ) {
+	debug( '/me/stored-cards', cardToken, additionalData );
 
 	return this.wpcom.req.post(
 		{
@@ -150,8 +150,8 @@ UndocumentedMe.prototype.storedCardAdd = function( cardToken, callback ) {
 		{
 			payment_key: cardToken,
 			use_for_existing: true,
-		},
-		callback
+			...additionalData,
+		}
 	);
 };
 

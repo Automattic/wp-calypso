@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -35,7 +34,7 @@ import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer'
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
-import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
@@ -326,8 +325,6 @@ export class PluginMeta extends Component {
 			'wp-staging',
 
 			// misc
-			'anywhere-elementor',
-			'anywhere-elementor-pro',
 			'ari-adminer',
 			'automatic-video-posts',
 			'bwp-minify',
@@ -589,14 +586,9 @@ export class PluginMeta extends Component {
 		);
 	};
 
-	handleUpgradeNudgeClick = () => {
-		const { slug } = this.props;
-		const href = `/plans/${ slug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
-		page.redirect( href );
-	};
-
 	renderUpsell() {
-		const { translate } = this.props;
+		const { translate, slug } = this.props;
+		const bannerURL = `/checkout/${ slug }/business`;
 		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
@@ -607,8 +599,7 @@ export class PluginMeta extends Component {
 			<div className="plugin-meta__upgrade_nudge">
 				<Banner
 					event="calypso_plugin_detail_page_upgrade_nudge"
-					disableHref={ true }
-					onClick={ this.handleUpgradeNudgeClick }
+					href={ bannerURL }
 					plan={ plan }
 					title={ title }
 				/>

@@ -12,7 +12,7 @@ import {
 	TYPE_BUSINESS,
 } from 'lib/plans/constants';
 import { findPlansKeys } from 'lib/plans';
-import { includesProduct } from 'lib/products-values';
+import { isPlan, includesProduct } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
 import * as steps from './steps';
 
@@ -58,5 +58,9 @@ export default function stepsForProductAndSurvey(
 		return steps.DEFAULT_STEPS_WITH_HAPPYCHAT;
 	}
 
-	return [ steps.INITIAL_STEP, steps.FINAL_STEP ];
+	if ( product && isPlan( product ) ) {
+		return [ steps.INITIAL_STEP, steps.FINAL_STEP ];
+	}
+
+	return [ steps.FINAL_STEP ];
 }

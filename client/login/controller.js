@@ -37,6 +37,7 @@ const enhanceContextWithLogin = context => {
 			socialConnect={ flow === 'social-connect' }
 			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
+			fromSite={ ( query && query.site ) || null }
 		/>
 	);
 };

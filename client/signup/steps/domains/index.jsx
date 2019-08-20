@@ -26,7 +26,6 @@ import {
 	domainTransfer,
 } from 'lib/cart-values/cart-items';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -49,6 +48,7 @@ import { getVerticalForDomainSuggestions } from 'state/signup/steps/site-vertica
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { isDomainStepSkippable } from 'signup/config/steps';
+import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 
 /**
  * Style dependencies
@@ -66,16 +66,11 @@ class DomainsStep extends React.Component {
 		path: PropTypes.string.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
 		queryObject: PropTypes.object,
-		signupProgress: PropTypes.array.isRequired,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		vertical: PropTypes.string,
-	};
-
-	static contextTypes = {
-		store: PropTypes.object,
 	};
 
 	getDefaultState = () => ( {
@@ -89,27 +84,13 @@ class DomainsStep extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		const { flowName, signupDependencies } = props;
-		const importSiteUrl = get( signupDependencies, 'importSiteUrl' );
-
-		if ( flowName === 'import' && importSiteUrl ) {
-			this.skipRender = true;
-
-			props.submitSignupStep( {
-				flowName,
-				siteUrl: importSiteUrl,
-				stepName: props.stepName,
-				stepSectionName: props.stepSectionName,
-			} );
-			props.goToNextStep();
-			return;
-		}
-
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
+		const suggestedDomain = get( props, 'signupDependencies.suggestedDomain' );
 
-		// If we landed anew from `/domains` and it's the `new-flow` variation, always rerun the search
-		if ( search && props.path.indexOf( '?' ) !== -1 ) {
+		// If we landed anew from `/domains` and it's the `new-flow` variation
+		// or there's a suggestedDomain from previous steps, always rerun the search.
+		if ( ( search && props.path.indexOf( '?' ) !== -1 ) || suggestedDomain ) {
 			this.searchOnInitialRender = true;
 		}
 
@@ -258,7 +239,7 @@ class DomainsStep extends React.Component {
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
-		getUsernameSuggestion( siteUrl.split( '.' )[ 0 ], this.context.store );
+		this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
 	handleAddMapping = ( sectionName, domain, state ) => {
@@ -372,10 +353,13 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
-		// If it's the first load, rerun the search with whatever we get from the query param
-		const initialQuery = get( this.props, 'queryObject.new', '' );
+		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
+		const initialQuery =
+			get( this.props, 'queryObject.new', '' ) ||
+			get( this.props, 'signupDependencies.suggestedDomain' );
+
 		if (
-			// If we landed here from /domains Search
+			// If we landed here from /domains Search or with a suggested domain.
 			( initialQuery && this.searchOnInitialRender ) ||
 			// If the subdomain type has changed, rerun the search
 			( initialState &&
@@ -535,7 +519,7 @@ class DomainsStep extends React.Component {
 		const { flowName, siteType, translate } = this.props;
 		const onboardingSubHeaderCopy =
 			siteType &&
-			includes( [ 'onboarding-blog', 'onboarding' ], flowName ) &&
+			includes( [ 'onboarding' ], flowName ) &&
 			getSiteTypePropertyValue( 'slug', siteType, 'domainsStepSubheader' );
 
 		if ( onboardingSubHeaderCopy ) {
@@ -629,7 +613,6 @@ class DomainsStep extends React.Component {
 				stepName={ this.props.stepName }
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				headerText={ headerText }
 				subHeaderText={ fallbackSubHeaderText }
 				fallbackHeaderText={ headerText }
@@ -713,5 +696,6 @@ export default connect(
 		setDesignType,
 		saveSignupStep,
 		submitSignupStep,
+		fetchUsernameSuggestion,
 	}
 )( localize( DomainsStep ) );

@@ -36,6 +36,7 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
+	SITE_FRONT_PAGE_UPDATE,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
@@ -52,7 +53,7 @@ export function items( state = null, action ) {
 		return null;
 	}
 	switch ( action.type ) {
-		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS: {
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
 				return Object.assign( {}, state, {
@@ -60,14 +61,17 @@ export function items( state = null, action ) {
 				} );
 			}
 			return state;
+		}
 
 		case SITE_RECEIVE:
-		case SITES_RECEIVE:
+		case SITES_RECEIVE: {
 			// Normalize incoming site(s) to array
+
 			const sites = action.site ? [ action.site ] : action.sites;
 
 			// SITES_RECEIVE occurs when we receive the entire set of user
 			// sites (replace existing state). Otherwise merge into state.
+
 			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
 
 			return reduce(
@@ -88,6 +92,7 @@ export function items( state = null, action ) {
 				},
 				initialNextState || {}
 			);
+		}
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
@@ -131,7 +136,7 @@ export function items( state = null, action ) {
 					}
 
 					switch ( key ) {
-						case 'blog_public':
+						case 'blog_public': {
 							const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
 
 							if ( site.is_private === isPrivate ) {
@@ -143,7 +148,8 @@ export function items( state = null, action ) {
 								is_private: isPrivate,
 							};
 							break;
-						case 'site_icon':
+						}
+						case 'site_icon': {
 							const mediaId = settings.site_icon;
 							// Return unchanged if next icon matches current value,
 							// accounting for the fact that a non-existent icon property is
@@ -169,6 +175,7 @@ export function items( state = null, action ) {
 								};
 							}
 							break;
+						}
 					}
 
 					if ( memo === state ) {
@@ -212,6 +219,23 @@ export function items( state = null, action ) {
 						total: siteUpdates.total - 1,
 					},
 				},
+			};
+		}
+
+		case SITE_FRONT_PAGE_UPDATE: {
+			const { siteId, frontPageOptions } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				break;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					options: {
+						...frontPageOptions,
+					},
+				} ),
 			};
 		}
 	}

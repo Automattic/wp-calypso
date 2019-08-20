@@ -43,7 +43,7 @@ import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { setCurrentUser } from 'state/current-user/actions';
 import { login } from 'lib/paths';
-import { logSectionResponseTime } from './analytics';
+import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 
@@ -323,6 +323,7 @@ function getDefaultContext( request ) {
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
+		target: target || 'fallback',
 	} );
 
 	context.app = {
@@ -529,6 +530,7 @@ function setUpCSP( req, res, next ) {
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',
+			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
@@ -646,7 +648,7 @@ module.exports = function() {
 
 	app.set( 'views', __dirname );
 
-	app.use( logSectionResponseTime );
+	app.use( logSectionResponse );
 	app.use( cookieParser() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );

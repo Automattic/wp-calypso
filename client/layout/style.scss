@@ -370,13 +370,13 @@ div.checkout__container {
 		align-items: flex-start;
 
 		& .main {
+			margin-top: 0;
 			margin-right: 0;
 			width: 100%;
 		}
 
 		& .secondary-cart {
 			margin: 0 auto;
-			margin-left: 20px;
 			margin-bottom: 16px;
 			width: 272px;
 			box-shadow: 0 1px 0 var( --color-border-subtle );
@@ -385,7 +385,8 @@ div.checkout__container {
 }
 
 @include breakpoint( '<660px' ) {
-   	.layout__primary .secondary-cart {
+   	.layout__primary .secondary-cart,
+	.layout__primary .checkout__secondary-cart-container {
 		margin-left: 0;
 	}
 }

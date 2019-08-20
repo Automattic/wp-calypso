@@ -406,6 +406,16 @@ export function hasDomainRegistration( cart ) {
 	return some( getAllCartItems( cart ), isDomainRegistration );
 }
 
+/**
+ * Determines whether there is at least one domain registration item in the specified shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one domain registration item, false otherwise
+ */
+export function hasOnlyDomainProducts( cart ) {
+	return every( getAllCartItems( cart ), isDomainProduct );
+}
+
 export function hasOnlyDomainProductsWithPrivacySupport( cart ) {
 	return every(
 		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),

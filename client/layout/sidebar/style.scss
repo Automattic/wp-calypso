@@ -83,7 +83,9 @@
 			content: '';
 			text-align: right;
 			position: absolute;
-			top: 0;
+			// 1px adjustment fixes visual glitch in menu item's active ring.
+			// Shouldn't impact the fade because text doesn't appear 1px from the top of the item.
+			top: 1px;
 			right: 0;
 			bottom: 0;
 			width: 15%;
@@ -522,7 +524,7 @@ form.sidebar__button input {
 	font-size: 11px;
 	font-weight: 600;
 	padding: 8px;
-	color: var( --sidebar-footer-button-color );
+	color: var( --sidebar-heading-color );
 	line-height: 2.1;
 	margin-right: auto;
 
@@ -535,7 +537,7 @@ form.sidebar__button input {
 	}
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --sidebar-text-color );
 	}
 
 	@include breakpoint( '<660px' ) {

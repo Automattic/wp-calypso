@@ -252,8 +252,8 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
-	loadSectionsMiddleware();
 	loggedOutMiddleware( currentUser );
+	loadSectionsMiddleware();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();

@@ -1,3 +1,5 @@
+/* eslint-disable no-case-declarations */
+
 /** @format */
 
 /**
@@ -67,6 +69,29 @@ function getAvailabilityNotice( domain, error, errorData ) {
 							<a
 								rel="noopener noreferrer"
 								href={ domainManagementTransferToOtherSite( site, domain ) }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.IN_REDEMPTION:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is not eligible to register or transfer since it is in {{redemptionLink}}redemption{{/redemptionLink}}. If you own this domain, please contact your current registrar to {{aboutRenewingLink}}redeem the domain{{/aboutRenewingLink}}.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						redemptionLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/resources/pages/grace-2013-05-03-en"
+							/>
+						),
+						aboutRenewingLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/news/blog/do-you-have-a-domain-name-here-s-what-you-need-to-know-part-5"
 							/>
 						),
 					},
@@ -196,6 +221,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.MAPPABLE:
 		case domainAvailability.AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED:
+		case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 		case domainAvailability.UNKNOWN:
 			// unavailable domains are displayed in the search results, not as a notice OR

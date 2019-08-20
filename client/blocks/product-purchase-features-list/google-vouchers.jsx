@@ -14,6 +14,11 @@ import GoogleVoucherDetails from 'my-sites/checkout/checkout-thank-you/google-vo
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
+/**
+ * Image dependencies
+ */
+import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
+
 export default ( { selectedSite } ) => {
 	const translate = useTranslate();
 	return (
@@ -22,10 +27,7 @@ export default ( { selectedSite } ) => {
 			<PurchaseDetail
 				id="google-credits"
 				icon={
-					<img
-						alt={ translate( 'Google AdWords Illustration' ) }
-						src="/calypso/images/illustrations/google-adwords.svg"
-					/>
+					<img alt={ translate( 'Google AdWords Illustration' ) } src={ googleAdwordsImage } />
 				}
 				title={ translate( 'Google Ads credit' ) }
 				description={ translate(

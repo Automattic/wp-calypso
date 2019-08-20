@@ -58,6 +58,7 @@ const GSuiteNewUserListExample = () => {
 				selectedDomainName={ domainOne.name }
 				onUsersChange={ changedUsers => setUsers( changedUsers ) }
 				users={ users }
+				onReturnKeyPress={ () => void 0 }
 			>
 				{ areAllUsersValid( users ) ? (
 					<span>

@@ -56,6 +56,10 @@ class CommunityTranslator extends Component {
 
 	setLanguage() {
 		this.languageJson = i18n.getLocale() || { '': {} };
+		// The '' here is a Jed convention used for storing configuration data
+		// alongside translations in the same dictionary (because '' will never
+		// be a legitimately translatable string)
+		// See https://messageformat.github.io/Jed/
 		const { localeSlug, localeVariant } = this.languageJson[ '' ];
 		this.localeCode = localeVariant || localeSlug;
 		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );

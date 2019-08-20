@@ -1,9 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
 import { compact } from 'lodash';
-import config from 'config';
+
+/**
+ * !! Note !!
+ *
+ * Every _value_ present in this list should appear in the colorScheme enum array in
+ * `client/state/preferences/schema.js` or preferences state persistence may be invalidated.
+ */
 
 export default function( translate ) {
 	return compact( [
@@ -42,28 +47,28 @@ export default function( translate ) {
 				cssClass: 'is-sakura',
 			},
 		},
-		config.isEnabled( 'me/account/color-schemes/ocean' ) && {
+		{
 			label: translate( 'Ocean' ),
 			value: 'ocean',
 			thumbnail: {
 				cssClass: 'is-ocean',
 			},
 		},
-		config.isEnabled( 'me/account/color-schemes/sunset' ) && {
+		{
 			label: translate( 'Sunset' ),
 			value: 'sunset',
 			thumbnail: {
 				cssClass: 'is-sunset',
 			},
 		},
-		config.isEnabled( 'me/account/color-schemes/midnight' ) && {
+		{
 			label: translate( 'Midnight' ),
 			value: 'midnight',
 			thumbnail: {
 				cssClass: 'is-midnight',
 			},
 		},
-		config.isEnabled( 'me/account/color-schemes/contrast' ) && {
+		{
 			label: translate( 'Contrast' ),
 			value: 'contrast',
 			thumbnail: {

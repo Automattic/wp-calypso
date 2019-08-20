@@ -1,96 +1,66 @@
 <?php
 /**
- * Render navigation menus.
+ * Render navigation menu block file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
 
-/**
- * Determines necessary wp_nav_menu() parameters by given theme location.
- *
- * @param string $location Theme location.
- * @return array
- */
-function get_menu_params_by_theme_location( $location ) {
-	switch ( $location ) {
-		case 'footer':
-			$params = [
-				'theme_location' => 'footer',
-				'menu_class'     => 'footer-menu',
-				'depth'          => 1,
-			];
-			break;
-		case 'social':
-			$params = [
-				'theme_location' => 'social',
-				'menu_class'     => 'social-links-menu',
-				'link_before'    => '<span class="screen-reader-text">',
-				'link_after'     => '</span>' . twentynineteen_get_icon_svg( 'link' ),
-				'depth'          => 1,
-			];
-			break;
-		case 'main-1':
-		default:
-			$params = [
-				'theme_location' => 'menu-1',
-				'menu_class'     => 'main-menu',
-				'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-				'depth'          => 1,
-			];
-			break;
-	}
-	return $params;
-}
+namespace A8C\FSE;
 
 /**
- * Determines necessary attributes for the wrapping `nav` element.
+ * Render the navigation menu.
  *
- * @param string $location Theme location.
- * @return array
- */
-function get_wrapper_attributes_by_theme_location( $location ) {
-	switch ( $location ) {
-		case 'footer':
-			$attributes = [
-				'class' => 'footer-navigation',
-				'label' => 'Footer Menu',
-			];
-			break;
-		case 'social':
-			$attributes = [
-				'class' => 'social-navigation',
-				'label' => 'Social Links Menu',
-			];
-			break;
-		case 'main-1':
-		default:
-			$attributes = [
-				'class' => 'main-navigation',
-				'label' => 'Top Menu',
-			];
-			break;
-	}
-	return $attributes;
-}
-
-/**
- * Renders post content.
- *
- * @param array $attributes Block attributes.
  * @return string
  */
-function render_navigation_menu_block( $attributes ) {
-	$location     = ! empty( $attributes['themeLocation'] ) ? $attributes['themeLocation'] : null;
-	$wrapper_attr = get_wrapper_attributes_by_theme_location( $location );
+function render_navigation_menu_block() {
+	$menu = wp_nav_menu(
+		[
+			'echo'           => false,
+			'menu_class'     => 'main-menu',
+			'fallback_cb'    => 'a8c_fse_get_fallback_navigation_menu',
+			'theme_location' => 'menu-1',
+		]
+	);
+
 	ob_start();
-	// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	?>
-	<nav class="<?php echo esc_attr( $wrapper_attr['class'] . ' wp-block-a8c-navigation-menu' ); ?>" aria-label="<?php esc_attr_e( $wrapper_attr['label'], 'twentynineteen' ); ?>">
-		<?php
-			wp_nav_menu( get_menu_params_by_theme_location( $location ) );
-		?>
+	<nav class="main-navigation wp-block-a8c-navigation-menu">
+		<div class="menu-nav-container">
+			<?php echo $menu ? $menu : get_fallback_navigation_menu(); ?>
+		</div>
 	</nav>
 	<!-- #site-navigation -->
 	<?php
+	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	return ob_get_clean();
+}
+
+/**
+ * Render a list of all site pages as a fallback
+ * for when a menu does not exist.
+ *
+ * @return string
+ */
+function get_fallback_navigation_menu() {
+	$menu = wp_page_menu(
+		[
+			'after'       => false,
+			'before'      => false,
+			'container'   => 'ul',
+			'echo'        => false,
+			'menu_class'  => 'main-menu default-menu',
+			'sort_column' => 'post_date',
+		]
+	);
+
+	/**
+	 * Filter the fallback page menu to use the same
+	 * CSS class structure as a regularly built menu
+	 * so we don't have to duplicate CSS selectors everywhere.
+	 */
+	$original_classes    = [ 'children', 'page_item_has_sub-menu' ];
+	$replacement_classes = [ 'sub-menu', 'menu-item-has-children' ];
+
+	return str_replace( $original_classes, $replacement_classes, $menu );
 }

@@ -44,6 +44,12 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import themesImage from 'assets/images/illustrations/themes.svg';
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
+
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
@@ -335,7 +341,7 @@ class UseYourDomainStep extends React.Component {
 	renderSelectTransfer = () => {
 		const { translate } = this.props;
 
-		const image = '/calypso/images/illustrations/migrating-host-diy.svg';
+		const image = migratingHostImage;
 		const title = translate( 'Transfer your domain away from your current registrar.' );
 		const reasons = [
 			translate(
@@ -367,7 +373,7 @@ class UseYourDomainStep extends React.Component {
 
 	renderSelectMapping = () => {
 		const { translate } = this.props;
-		const image = '/calypso/images/illustrations/themes.svg';
+		const image = themesImage;
 		const title = translate( 'Map your domain without moving it from your current registrar.' );
 		const reasons = [
 			translate( 'Domain registration and billing will remain at your current provider' ),

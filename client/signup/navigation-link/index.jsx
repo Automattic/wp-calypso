@@ -17,6 +17,7 @@ import Button from 'components/button';
 import { getStepUrl } from 'signup/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';
+import { getSignupProgress } from 'state/signup/progress/selectors';
 
 /**
  * Style dependencies
@@ -161,6 +162,8 @@ export class NavigationLink extends Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		signupProgress: getSignupProgress( state ),
+	} ),
 	{ recordTracksEvent, submitSignupStep }
 )( localize( NavigationLink ) );

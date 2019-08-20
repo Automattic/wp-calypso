@@ -235,7 +235,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso() ||
 			( 'woocommerce-services-auto-authorize' === from ||
 				( ! config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-					'woocommerce-setup-wizard' === ' from' ) ) ||
+					'woocommerce-setup-wizard' === from ) ) ||
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -592,7 +592,10 @@ export class JetpackAuthorize extends Component {
 
 		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
 		const nextRoute =
-			isJetpackVersionSupported && canManageOptions && ! isAtomic
+			config.isEnabled( 'jetpack/connect/site-questions' ) &&
+			isJetpackVersionSupported &&
+			canManageOptions &&
+			! isAtomic
 				? JPC_PATH_SITE_TYPE
 				: JPC_PATH_PLANS;
 

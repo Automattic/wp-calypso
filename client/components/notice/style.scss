@@ -140,10 +140,10 @@
 
 // "X" for dismissing a notice
 .notice__dismiss {
+	display: flex;
 	flex-shrink: 0;
 	padding: 12px;
 	cursor: pointer;
-	padding-bottom: 0;
 
 	.gridicon {
 		width: 18px;
@@ -152,7 +152,6 @@
 
 	@include breakpoint( '>480px' ) {
 		padding: 11px;
-		padding-bottom: 0;
 
 		.gridicon {
 			width: 24px;
@@ -240,10 +239,6 @@ a.notice__action {
 			width: 18px;
 			height: 18px;
 			margin: 0;
-		}
-
-		.gridicon {
-			margin-top: 6px;
 		}
 	}
 

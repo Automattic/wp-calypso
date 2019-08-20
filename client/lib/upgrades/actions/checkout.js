@@ -13,6 +13,7 @@ import {
 	TRANSACTION_PAYMENT_SET,
 	TRANSACTION_RESET,
 	TRANSACTION_STEP_SET,
+	TRANSACTION_STRIPE_SET,
 } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import { submit } from 'lib/store-transactions';
@@ -28,6 +29,14 @@ export function setPayment( payment ) {
 	Dispatcher.handleViewAction( {
 		type: TRANSACTION_PAYMENT_SET,
 		payment,
+	} );
+}
+
+export function setStripeObject( stripe, stripeConfiguration ) {
+	Dispatcher.handleViewAction( {
+		type: TRANSACTION_STRIPE_SET,
+		stripe,
+		stripeConfiguration,
 	} );
 }
 
@@ -49,6 +58,8 @@ export function submitTransaction( { cart, transaction, successUrl, cancelUrl },
 			domainDetails: transaction.domainDetails,
 			successUrl,
 			cancelUrl,
+			stripe: transaction.stripe,
+			stripeConfiguration: transaction.stripeConfiguration,
 		},
 		// Execute every step handler in its own event loop tick, so that a complete React
 		// rendering cycle happens on each step and `componentWillReceiveProps` of objects

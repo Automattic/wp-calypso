@@ -76,7 +76,7 @@ function PageCardInfo( {
 				{ isFront && (
 					<span className="page-card-info__item">
 						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__item-icon" />
-						<span className="page-card-info__item-text">{ translate( 'Front page' ) }</span>
+						<span className="page-card-info__item-text">{ translate( 'Homepage' ) }</span>
 					</span>
 				) }
 				{ isPosts && (

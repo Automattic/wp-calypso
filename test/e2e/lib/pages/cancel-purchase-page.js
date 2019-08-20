@@ -36,7 +36,7 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 
 	async completeCancellationSurvey() {
 		const e2eReason = 'e2e testing';
-		const dialogClass = '.cancel-purchase__button-warning-dialog';
+		const dialogClass = '.cancel-purchase-form__dialog';
 		const buttonDialogClass = '.dialog__action-buttons';
 		const nextButtonSelector = by.css( `${ buttonDialogClass } button[data-e2e-button="next"]` );
 		await driverHelper.clickWhenClickable(

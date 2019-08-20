@@ -46,7 +46,6 @@ const actionMap = {
 			query: {
 				text: post.title,
 				url: post.URL,
-				via: 'wordpressdotcom',
 			},
 		};
 

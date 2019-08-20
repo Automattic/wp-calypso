@@ -73,6 +73,10 @@
 
 	select {
 		width: 100%;
+
+		option, optgroup {
+			color: initial;
+		}
 	}
 
 	.foldable-card__header {

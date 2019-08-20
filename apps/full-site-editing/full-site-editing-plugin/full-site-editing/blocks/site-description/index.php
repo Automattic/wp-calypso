@@ -2,8 +2,10 @@
 /**
  * Render site description file.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Renders the site description (tagline) block.

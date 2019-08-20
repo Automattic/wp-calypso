@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -228,9 +225,11 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-						<UpworkBanner location={ 'theme-banner' } />
-					) }
+					{ showBanners &&
+						abtest &&
+						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+							<UpworkBanner location={ 'theme-banner' } />
+						) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }

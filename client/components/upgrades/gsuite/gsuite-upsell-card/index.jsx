@@ -71,6 +71,13 @@ const GSuiteUpsellCard = ( {
 		onSkipClick();
 	};
 
+	const handleReturnKeyPress = event => {
+		// Simulate an implicit submission for the add user form :)
+		if ( event.key === 'Enter' ) {
+			handleAddEmailClick();
+		}
+	};
+
 	const handleUsersChange = changedUsers => {
 		recordUsersChangedEvent( users, changedUsers );
 		setUsers( changedUsers );
@@ -110,6 +117,7 @@ const GSuiteUpsellCard = ( {
 					selectedDomainName={ domain }
 					onUsersChange={ handleUsersChange }
 					users={ users }
+					onReturnKeyPress={ handleReturnKeyPress }
 				>
 					<div className="gsuite-upsell-card__buttons">
 						<Button className="gsuite-upsell-card__skip-button" onClick={ handleSkipClick }>

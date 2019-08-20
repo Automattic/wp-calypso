@@ -12,7 +12,6 @@ import moment from 'moment';
 import getSiteOptions from 'state/selectors/get-site-options';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import config from 'config';
 
 /**
  * @param {Object} state Global state tree
@@ -24,10 +23,6 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );
 	const designType = get( siteOptions, 'design_type' );
 	const createdAt = get( siteOptions, 'created_at', '' );
-
-	if ( ! config.isEnabled( 'onboarding-checklist' ) ) {
-		return false;
-	}
 
 	// Checklist should not show up if the site is created before the feature was launched.
 	if (

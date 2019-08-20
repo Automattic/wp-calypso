@@ -71,12 +71,16 @@
 	ul {
 		margin-bottom: 16px;
 	}
+	.form-fieldset {
+		margin-left: 40px;
+	}
 }
 
 .stripe__method-edit-header {
 	font-size: 18px;
 	justify-content: space-between;
 	padding: 0 0 16px;
+	font-weight: 600;
 
 	&.placeholder {
 		margin-bottom: 16px;

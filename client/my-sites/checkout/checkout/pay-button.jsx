@@ -18,9 +18,13 @@ import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
+	RECEIVED_AUTHORIZATION_RESPONSE,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
+	REDIRECTING_FOR_AUTHORIZATION,
+	MODAL_AUTHORIZATION,
 } from 'lib/store-transactions/step-types';
+import { abtest } from 'lib/abtest';
 
 export class PayButton extends React.Component {
 	buttonState = () => {
@@ -47,6 +51,7 @@ export class PayButton extends React.Component {
 				state = this.sending();
 				break;
 
+			case REDIRECTING_FOR_AUTHORIZATION:
 			case RECEIVED_PAYMENT_KEY_RESPONSE:
 				if ( this.props.transactionStep.error ) {
 					state = this.beforeSubmit();
@@ -56,9 +61,11 @@ export class PayButton extends React.Component {
 				break;
 
 			case SUBMITTING_WPCOM_REQUEST:
+			case MODAL_AUTHORIZATION:
 				state = this.completing();
 				break;
 
+			case RECEIVED_AUTHORIZATION_RESPONSE:
 			case RECEIVED_WPCOM_RESPONSE:
 				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
 					state = this.beforeSubmit();
@@ -118,11 +125,54 @@ export class PayButton extends React.Component {
 
 		return this.props.translate( 'Pay now', { context: 'Pay button on /checkout' } );
 	};
+	beforeSubmitTextVariant = () => {
+		const cart = this.props.cart;
+
+		if ( this.props.beforeSubmitTextVariant ) {
+			return this.props.beforeSubmitTextVariant;
+		}
+
+		if ( hasOnlyFreeTrial( cart ) ) {
+			return this.props.translate( 'Start %(days)s Day Free Trial', {
+				args: { days: '14' },
+				context: 'Pay button for free trials on /checkout',
+			} );
+		}
+
+		if ( cart.total_cost_display ) {
+			if ( isPaidForFullyInCredits( cart ) ) {
+				if ( hasRenewalItem( this.props.cart ) ) {
+					return this.props.translate( 'Complete subscription purchase with Credits', {
+						context: 'Renew button on /checkout',
+					} );
+				}
+
+				return this.props.translate( 'Complete purchase with Credits', {
+					context: 'Pay button on /checkout',
+				} );
+			}
+
+			if ( hasRenewalItem( this.props.cart ) ) {
+				return this.props.translate( 'Renew subscription now', {
+					context: 'Renew button on /checkout',
+				} );
+			}
+
+			return this.props.translate( 'Complete purchase', {
+				context: 'Pay button on /checkout',
+			} );
+		}
+
+		return this.props.translate( 'Complete purchase', { context: 'Pay button on /checkout' } );
+	};
 
 	beforeSubmit = () => {
 		return {
 			disabled: false,
-			text: this.beforeSubmitText(),
+			text:
+				'variant' === abtest( 'checkoutSealsCopyBundle' )
+					? this.beforeSubmitTextVariant()
+					: this.beforeSubmitText(),
 		};
 	};
 

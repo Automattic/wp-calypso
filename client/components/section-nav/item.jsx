@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,8 +14,10 @@ import Count from 'components/count';
 import { preload } from 'sections-helper';
 
 /**
- * Main
+ * Style dependencies
  */
+import './item.scss';
+
 class NavItem extends PureComponent {
 	static propTypes = {
 		itemType: PropTypes.string,
@@ -70,7 +70,7 @@ class NavItem extends PureComponent {
 					onClick={ onClick }
 					onMouseEnter={ this.preload }
 					tabIndex={ this.props.tabIndex || 0 }
-					aria-selected={ this.props.selected }
+					aria-current={ this.props.selected }
 					disabled={ this.props.disabled }
 					role="menuitem"
 					rel={ this.props.isExternalLink ? 'external' : null }

@@ -29,6 +29,11 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { isSupportSession as hasEnteredSupportSession } from 'state/support/selectors';
 
+/**
+ * Image dependencies
+ */
+import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
+
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
 		authCodeValid: PropTypes.bool,
@@ -346,11 +351,7 @@ class TransferDomainPrecheck extends React.Component {
 						'Log into your current domain provider to complete a few preliminary steps.'
 					) }
 				/>
-				<img
-					className="transfer-domain-step__illustration"
-					src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
-					alt=""
-				/>
+				<img className="transfer-domain-step__illustration" src={ migratingHostImage } alt="" />
 			</Card>
 		);
 	}
