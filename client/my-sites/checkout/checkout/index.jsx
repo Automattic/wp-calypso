@@ -420,8 +420,9 @@ export class Checkout extends React.Component {
 					port,
 					pathname,
 					query: {
-						post: parseInt( get( query, [ 'post' ] ), 10 ),
+						post: parseInt( query.post, 10 ),
 						action: 'edit',
+						plan_upgraded: 1,
 					},
 				} );
 				return sanitizedRedirectTo;
