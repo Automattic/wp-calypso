@@ -177,6 +177,7 @@ class WP_Template {
 		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo do_blocks( $this->get_template_content( $template_type ) );
+		$content = do_blocks( $this->get_template_content( $template_type ) );
+		echo apply_filters( 'the_content', $content );
 	}
 }
