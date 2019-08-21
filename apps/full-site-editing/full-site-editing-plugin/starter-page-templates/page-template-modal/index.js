@@ -7,7 +7,7 @@ import { compose } from '@wordpress/compose';
 import { Button, Modal } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { Component } from '@wordpress/element';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import '@wordpress/nux';
 
 /**
@@ -26,137 +26,123 @@ const {
 	vertical,
 	segment,
 	tracksUserData,
-	siteInformation = {},
+	siteInformation = {}
 } = window.starterPageTemplatesConfig;
 
-class PageTemplateModal extends Component {
-	state = {
-		isLoading: false,
-		slug: '',
-		title: '',
-		blocks: {},
-	};
+const PageTemplateModal = ( {
+	templates,
+	segment,
+	vertical,
+	saveTemplateChoice,
+	insertTemplate,
+} ) => {
+	const [ isOpen, setIsOpen ] = useState( ! isEmpty( templates ) );
+	const [ slug, setSlug ] = useState( '' );
+	const [ title, setTitle ] = useState( '' );
 
-	constructor( props ) {
-		super();
-		this.state.isOpen = ! isEmpty( props.templates );
-	}
+	const blocks = useMemo( () => reduce(
+		templates,
+		( prev, { slug, content } ) => {
+			prev[ slug ] = content
+				? parseBlocks( replacePlaceholders( content, siteInformation ) )
+				: [];
+			return prev;
+		},
+		{}
+	), [ templates ] );
 
-	componentDidMount() {
-		if ( this.state.isOpen ) {
-			trackView( this.props.segment.id, this.props.vertical.id );
+	useEffect( () => {
+		if ( isOpen ) {
+			trackView( segment.id, vertical.id );
+		}
+	}, [ isOpen, segment.id, vertical.id ] );
+
+
+	const getBlocksByTemplateSlug = ( templateSlug = slug ) => {
+		if ( ! templateSlug ) {
+			return [];
 		}
 
-		// Parse templates blocks and store them into the state.
-		const blocks = reduce(
-			templates,
-			( prev, { slug, content } ) => {
-				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, siteInformation ) )
-					: [];
-				return prev;
-			},
-			{}
-		);
+		if ( ! blocks.hasOwnProperty( templateSlug ) ) {
+			return [];
+		}
 
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocks } );
-	}
+		return blocks[ templateSlug ];
+	};
 
-	setTemplate = ( slug, title ) => {
-		this.setState( { isOpen: false } );
-		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
+	const setTemplate = ( templateSlug, templateTitle ) => {
+		setIsOpen( false );
+		trackSelection( segment.id, vertical.id, templateSlug );
 
-		this.props.saveTemplateChoice( slug );
+		saveTemplateChoice( templateSlug );
 
-		const previewBlocks = this.state.blocks[ slug ];
+		const previewBlocks = getBlocksByTemplateSlug( templateSlug );
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! previewBlocks || ! previewBlocks.length ) {
 			return;
 		}
 
-		this.props.insertTemplate( title, previewBlocks );
+		insertTemplate( templateTitle, previewBlocks );
 	};
 
-	handleConfirmation = () => this.setTemplate( this.state.slug, this.state.title );
+	const handleConfirmation = () => setTemplate( slug, title );
 
-	previewTemplate = ( slug, title ) => {
-		this.setState( { slug, title } );
-		if ( slug === 'blank' ) {
-			this.setTemplate( slug, title );
+	const previewTemplate = ( templateSlug, templateTitle ) => {
+		setSlug( templateSlug );
+		setTitle( templateTitle );
+
+		if ( templateSlug === 'blank' ) {
+			setTemplate( templateSlug, templateTitle );
 		}
 	};
 
-	closeModal = event => {
+	const closeModal = event => {
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
 		// If it did then we don't want to dismiss the Modal for this type of Blur.
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
 		}
-		this.setState( { isOpen: false } );
-		trackDismiss( this.props.segment.id, this.props.vertical.id );
+		setIsOpen( false );
+		trackDismiss( segment.id, vertical.id );
 	};
 
-	getBlocksByTemplateSlug( slug = this.state.slug ) {
-		if ( ! slug ) {
-			return [];
-		}
-
-		if ( ! this.state.blocks.hasOwnProperty( slug ) ) {
-			return [];
-		}
-
-		return this.state.blocks[ slug ];
+	if ( ! isOpen ) {
+		return null;
 	}
 
-	render() {
-		if ( ! this.state.isOpen ) {
-			return null;
-		}
-
-		return (
-			<Modal
-				title={ __( 'Select Page Template', 'full-site-editing' ) }
-				onRequestClose={ this.closeModal }
-				className="page-template-modal"
-				overlayClassName="page-template-modal-screen-overlay"
-			>
-				<div className="page-template-modal__inner">
-					<form className="page-template-modal__form">
-						<fieldset className="page-template-modal__list">
-							<TemplateSelectorControl
-								label={ __( 'Template', 'full-site-editing' ) }
-								templates={ this.props.templates }
-								blocksByTemplates={ this.state.blocks }
-								onTemplateSelect={ this.previewTemplate }
-								useDynamicPreview={ true }
-								siteInformation={ siteInformation }
-							/>
-						</fieldset>
-					</form>
-					<TemplateSelectorPreview
-						blocks={ this.getBlocksByTemplateSlug() }
-						viewportWidth={ 960 }
-					/>
-				</div>
-				<div className="page-template-modal__buttons">
-					<Button isDefault isLarge onClick={ this.closeModal }>
-						{ __( 'Cancel', 'full-site-editing' ) }
-					</Button>
-					<Button
-						isPrimary
-						isLarge
-						disabled={ isEmpty( this.state.slug ) }
-						onClick={ this.handleConfirmation }
-					>
-						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
-					</Button>
-				</div>
-			</Modal>
-		);
-	}
-}
+	return (
+		<Modal
+			title={ __( 'Select Page Template', 'full-site-editing' ) }
+			onRequestClose={ closeModal }
+			className="page-template-modal"
+			overlayClassName="page-template-modal-screen-overlay"
+		>
+			<div className="page-template-modal__inner">
+				<form className="page-template-modal__form">
+					<fieldset className="page-template-modal__list">
+						<TemplateSelectorControl
+							label={ __( 'Template', 'full-site-editing' ) }
+							templates={ templates }
+							blocksByTemplates={ blocks }
+							onTemplateSelect={ previewTemplate }
+							useDynamicPreview={ true }
+						/>
+					</fieldset>
+				</form>
+				<TemplateSelectorPreview blocks={ getBlocksByTemplateSlug( slug ) } viewportWidth={ 960 } />
+			</div>
+			<div className="page-template-modal__buttons">
+				<Button isDefault isLarge onClick={ closeModal }>
+					{ __( 'Cancel', 'full-site-editing' ) }
+				</Button>
+				<Button isPrimary isLarge disabled={ isEmpty( slug ) } onClick={ handleConfirmation }>
+					{ sprintf( __( 'Use %s template', 'full-site-editing' ), title ) }
+				</Button>
+			</div>
+		</Modal>
+	);
+};
 
 const PageTemplatesPlugin = compose(
 	withSelect( select => ( {
