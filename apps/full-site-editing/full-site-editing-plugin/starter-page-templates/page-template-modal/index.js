@@ -52,7 +52,9 @@ class PageTemplateModal extends Component {
 		const blocks = reduce(
 			templates,
 			( prev, { slug, content } ) => {
-				prev[ slug ] = content ? parseBlocks( content ) : [];
+				prev[ slug ] = content
+					? parseBlocks( replacePlaceholders( content, siteInformation ) )
+					: [];
 				return prev;
 			},
 			{}
@@ -204,13 +206,8 @@ if ( tracksUserData ) {
 const getTemplatesBySlug = reduce(
 	templates,
 	( templatesBySlug, template ) => {
-		const content = replacePlaceholders( template.content, siteInformation );
 		const title = replacePlaceholders( template.title, siteInformation );
-
-		return {
-			...templatesBySlug,
-			[ template.slug ]: { ...template, title, content },
-		};
+		return { ...templatesBySlug, [ template.slug ]: { ...template, title } };
 	},
 	{}
 );
