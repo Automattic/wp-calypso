@@ -57,7 +57,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { removeUnneededSteps, submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -452,7 +452,6 @@ class Signup extends React.Component {
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
-			this.props.removeUnneededSteps( nextFlowName );
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
@@ -634,6 +633,5 @@ export default connect(
 		submitSiteVertical,
 		submitSignupStep,
 		loadTrackingTool,
-		removeUnneededSteps,
 	}
 )( Signup );
