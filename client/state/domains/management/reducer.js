@@ -25,6 +25,7 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'state/action-types';
+import { whoisType } from '../../../lib/domains/whois/constants';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
@@ -75,6 +76,25 @@ export const isSaving = createReducer(
 	}
 );
 
+function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
+	return isArray( domainState )
+		? domainState.map( item => {
+				if ( item.type === whoisType.REGISTRANT ) {
+					return {
+						...item,
+						...registrantContactDetails,
+					};
+				}
+				return item;
+		  } )
+		: [
+				{
+					...registrantContactDetails,
+					type: whoisType.REGISTRANT,
+				},
+		  ];
+}
+
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps domain to the domain's whoisData object.
@@ -98,7 +118,10 @@ export const items = createReducer(
 			[ domain ]: whoisData,
 		} ),
 		[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => {
-			return merge( {}, state, { [ domain ]: { ...state[ domain ], ...whoisData } } );
+			const domainState = get( state, [ `${ domain }` ], {} );
+			return merge( {}, state, {
+				[ domain ]: mergeDomainRegistrantContactDetails( domainState, whoisData ),
+			} );
 		},
 	},
 	domainWhoisSchema
