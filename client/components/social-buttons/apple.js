@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -31,80 +30,24 @@ class AppleLoginButton extends Component {
 		responseHandler: PropTypes.func.isRequired,
 	};
 
-	state = {
-		isDisabled: true,
-	};
-
-	constructor( props ) {
-		super( props );
-
-		this.initialized = null;
-	}
-
-	componentDidMount() {
-		this.initialize();
-	}
-
-	async loadDependency() {
-		if ( ! window.AppleID ) {
-			await loadScript(
-				'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'
-			);
-		}
-
-		return window.AppleID;
-	}
-
-	initialize() {
-		if ( this.initialized ) {
-			return this.initialized;
-		}
-
-		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
-			return;
-		}
-
-		this.setState( { error: '' } );
-
-		this.initialized = this.loadDependency()
-			.then( () => {
-				this.setState( { isDisabled: false } );
-			} )
-			.catch( error => {
-				this.initialized = null;
-
-				return Promise.reject( error );
-			} );
-
-		return this.initialized;
-	}
-
 	handleClick = event => {
 		event.preventDefault();
-
-		if ( this.state.isDisabled ) {
-			return;
-		}
 
 		requestExternalAccess( connectUrl, this.props.responseHandler );
 	};
 
 	render() {
-		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled );
-
 		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
 			return null;
 		}
 
-		const { children } = this.props;
+		const { children, isFormDisabled: isDisabled } = this.props;
 		let customButton = null;
 
 		if ( children ) {
 			const childProps = {
 				className: classNames( { disabled: isDisabled } ),
 				onClick: this.handleClick,
-				onMouseOver: this.showError,
-				onMouseOut: this.hideError,
 			};
 
 			customButton = React.cloneElement( children, childProps );
