@@ -25,6 +25,7 @@ export const registrar = {
 
 export const domainAvailability = {
 	AVAILABLE: 'available',
+	AVAILABLE_PREMIUM: 'available_premium',
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
 	BLACKLISTED: 'blacklisted_domain',
 	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
@@ -58,6 +59,7 @@ export const domainAvailability = {
 	TRANSFER_PENDING: 'transfer_pending',
 	TRANSFER_PENDING_SAME_USER: 'transfer_pending_same_user',
 	TRANSFERRABLE: 'transferrable',
+	TRANSFERRABLE_PREMIUM: 'transferrable_premium',
 	UNKNOWN: 'unknown',
 	UNKOWN_ACTIVE: 'unknown_active_domain_with_wpcom',
 	WPCOM_STAGING_DOMAIN: 'wpcom_staging_domain',
