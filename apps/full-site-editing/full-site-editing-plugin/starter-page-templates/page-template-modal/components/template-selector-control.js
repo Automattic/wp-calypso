@@ -15,6 +15,8 @@ import { memo } from '@wordpress/element';
  * Internal dependencies
  */
 import TemplateSelectorItem from './template-selector-item';
+import replacePlaceholders from '../utils/replace-placeholders';
+const { siteInformation = {} } = window.starterPageTemplatesConfig;
 
 const TemplateSelectorControl = ( {
 	label,
@@ -46,7 +48,7 @@ const TemplateSelectorControl = ( {
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
-							label={ title }
+							label={ replacePlaceholders( title, siteInformation ) }
 							help={ help }
 							onSelect={ onTemplateSelect }
 							onFocus={ onTemplateFocus }

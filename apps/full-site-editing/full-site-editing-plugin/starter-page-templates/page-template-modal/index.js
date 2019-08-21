@@ -21,7 +21,6 @@ import { parse as parseBlocks } from '@wordpress/blocks';
 import replacePlaceholders from './utils/replace-placeholders';
 
 // Load config passed from backend.
-// Load config passed from backend.
 const {
 	templates = [],
 	vertical,
@@ -202,24 +201,10 @@ if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
-// Reorganizing templates as an object, processing title and content on the fly.
-const getTemplatesBySlug = reduce(
-	templates,
-	( templatesBySlug, template ) => {
-		const title = replacePlaceholders( template.title, siteInformation );
-		return { ...templatesBySlug, [ template.slug ]: { ...template, title } };
-	},
-	{}
-);
-
 registerPlugin( 'page-templates', {
 	render: () => {
 		return (
-			<PageTemplatesPlugin
-				templates={ getTemplatesBySlug }
-				vertical={ vertical }
-				segment={ segment }
-			/>
+			<PageTemplatesPlugin templates={ templates } vertical={ vertical } segment={ segment } />
 		);
 	},
 } );
