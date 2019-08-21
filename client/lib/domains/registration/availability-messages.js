@@ -363,7 +363,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 		case domainAvailability.TRANSFERRABLE_PREMIUM:
 			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you already own this domain, you can {{a}}map it to your site{{/a}}.",
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
 				{
 					args: { domain },
 					components: {
