@@ -71,7 +71,7 @@ class PageTemplateModal extends Component {
 		const previewBlocks = this.state.blocks[ slug ];
 
 		// Skip inserting if there's nothing to insert.
-		if ( ! previewBlocks || previewBlocks.length === 0 ) {
+		if ( ! previewBlocks || ! previewBlocks.length ) {
 			return;
 		}
 
