@@ -48,27 +48,22 @@ exports[`Card should render children 1`] = `
 </div>
 `;
 
-exports[`CompactCard should have \`is-compact\` class 1`] = `
+exports[`CompactCard should have \`compact\` prop 1`] = `
 <Card
-  className="is-compact"
-  highlight={false}
-  tagName="div"
+  compact={true}
 />
 `;
 
 exports[`CompactCard should have custom class of \`test__ace\` 1`] = `
 <Card
-  className="test__ace is-compact"
-  highlight={false}
-  tagName="div"
+  className="test__ace"
+  compact={true}
 />
 `;
 
 exports[`CompactCard should render children 1`] = `
 <Card
-  className="is-compact"
-  highlight={false}
-  tagName="div"
+  compact={true}
 >
   This is a compact card
 </Card>
@@ -76,8 +71,6 @@ exports[`CompactCard should render children 1`] = `
 
 exports[`CompactCard should use the card component 1`] = `
 <Card
-  className="is-compact"
-  highlight={false}
-  tagName="div"
+  compact={true}
 />
 `;
