@@ -58,6 +58,7 @@ export function getIframeSource(
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<link rel="dns-prefetch" href="//s0.wp.com">
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
+			<script src="https://polyfill.io/v3/polyfill.js?features=es2018%2Ces2017%2Ces2016%2Ces2015%2Cdefault%2Cblissfuljs"></script>
 			<title></title>
 			${ getCSSLinkHtml( gutenbergStylesUrl ) }
 			${ getCSSLinkHtml( cssUrl ) }

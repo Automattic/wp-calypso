@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, forEach } from 'lodash';
+import { debounce } from 'lodash';
 import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
@@ -128,12 +128,9 @@ export default class SignupSitePreviewIframe extends Component {
 		}
 		const elements = this.iframe.current.contentWindow.document.querySelectorAll( selector );
 
-		// Using `_.forEach` instead of a for-of loop to fix environments that need
-		// polyfilled. This is probably required because the node list is being
-		// pulled out of the iframe environment which hasn't been polyfilled.
-		forEach( elements, element => {
+		for ( const element of elements ) {
 			element.textContent = content;
-		} );
+		}
 	}
 
 	setOnPreviewClick = () => {
