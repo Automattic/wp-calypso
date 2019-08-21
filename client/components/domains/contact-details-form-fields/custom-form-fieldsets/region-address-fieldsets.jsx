@@ -20,6 +20,7 @@ import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
 import { Input, HiddenInput } from 'my-sites/domains/components/form';
+import { abtest } from 'lib/abtest';
 
 export class RegionAddressFieldsets extends Component {
 	static propTypes = {
@@ -60,23 +61,28 @@ export class RegionAddressFieldsets extends Component {
 
 	render() {
 		const { getFieldProps, translate, shouldAutoFocusAddressField } = this.props;
+		const usePlacesApi = abtest( 'placesApiInCheckout' ) === 'placesApi';
 
 		return (
 			<div>
 				<div>
-					<Input
-						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
-						label={ translate( 'Address' ) }
-						maxLength={ 40 }
-						{ ...getFieldProps( 'address-1' ) }
-					/>
+					{ ! usePlacesApi && (
+						<Input
+							ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
+							label={ translate( 'Address' ) }
+							maxLength={ 40 }
+							{ ...getFieldProps( 'address-1' ) }
+						/>
+					) }
 
-					<HiddenInput
-						label={ translate( 'Address Line 2' ) }
-						text={ translate( '+ Add Address Line 2' ) }
-						maxLength={ 40 }
-						{ ...getFieldProps( 'address-2', true ) }
-					/>
+					{ ! usePlacesApi && (
+						<HiddenInput
+							label={ translate( 'Address Line 2' ) }
+							text={ translate( '+ Add Address Line 2' ) }
+							maxLength={ 40 }
+							{ ...getFieldProps( 'address-2', true ) }
+						/>
+					) }
 				</div>
 				{ this.getRegionAddressFieldset() }
 			</div>

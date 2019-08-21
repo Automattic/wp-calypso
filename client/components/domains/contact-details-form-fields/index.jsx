@@ -31,7 +31,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormButton from 'components/forms/form-button';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import FormLabel from 'components/forms/form-label';
 import { countries } from 'components/phone-input/data';
 import formState from 'lib/form-state';
 import analytics from 'lib/analytics';
@@ -466,14 +465,18 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	renderLocationSearch() {
+		const { translate } = this.props;
+		const inputProps = {
+			label: translate( 'Address' ),
+			maxLength: 40,
+			...this.getFieldProps( 'address-1' ),
+		};
+
 		return (
 			<div className="contact-details-form-fields__field location-search">
-				<FormLabel htmlFor="location-search">
-					{ this.props.translate( 'Address search' ) }
-				</FormLabel>
 				<LocationSearch
-					name="location-search"
-					card={ false }
+					inputType="input"
+					inputProps={ inputProps }
 					types={ [ 'address' ] }
 					onSearch={ this.handleLocationSearch }
 					onPredictionClick={ this.handleAddressPredictionClick }

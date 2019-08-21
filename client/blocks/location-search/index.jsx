@@ -16,6 +16,7 @@ import { identity, noop } from 'lodash';
 import SearchCard from 'components/search-card';
 import Search from 'components/search';
 import Prediction from './prediction';
+import { Input } from 'my-sites/domains/components/form';
 
 /**
  * Style dependencies
@@ -32,7 +33,8 @@ class LocationSearch extends Component {
 		predictionsTransformation: PropTypes.func,
 		types: PropTypes.arrayOf( PropTypes.string ),
 		hidePredictionsOnClick: PropTypes.bool,
-		card: PropTypes.bool,
+		inputType: PropTypes.string,
+		inputProps: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -40,7 +42,8 @@ class LocationSearch extends Component {
 		predictionsTransformation: identity,
 		types: [ 'establishment' ],
 		hidePredictionsOnClick: false,
-		card: true,
+		inputType: 'search-card',
+		inputProps: {},
 		placeholder: 'Search for your address by street or city',
 	};
 
@@ -100,6 +103,15 @@ class LocationSearch extends Component {
 		} );
 	};
 
+	handleInputChange( onInputChange ) {
+		return event => {
+			onInputChange( event );
+
+			const { value } = event.target;
+			this.handleSearch( value );
+		};
+	}
+
 	handlePredictionClick = prediction => {
 		if ( this.props.hidePredictionsOnClick ) {
 			this.setState( { predictions: [] } );
@@ -119,16 +131,7 @@ class LocationSearch extends Component {
 		);
 	};
 
-	renderSearchCard( searchProps ) {
-		return <SearchCard { ...searchProps } className="location-search__search-card is-compact" />;
-	}
-
-	renderSearch( searchProps ) {
-		return <Search { ...searchProps } />;
-	}
-
-	render() {
-		const { predictions } = this.state;
+	renderInput() {
 		const searchProps = {
 			onSearch: this.handleSearch,
 			delaySearch: true,
@@ -137,14 +140,38 @@ class LocationSearch extends Component {
 			searching: this.props.loading,
 			placeholder: this.props.placeholder,
 		};
+		const onInputChange = this.props.inputProps.onChange ? this.props.inputProps.onChange : noop;
+
+		switch ( this.props.inputType ) {
+			case 'card':
+				return <Search { ...searchProps } />;
+
+			case 'input':
+				return (
+					<Input
+						{ ...this.props.inputProps }
+						onChange={ this.handleInputChange( onInputChange ) }
+						placeholder={ this.props.placeholder }
+					/>
+				);
+
+			case 'search-card':
+			default:
+				return (
+					<SearchCard { ...searchProps } className="location-search__search-card is-compact" />
+				);
+		}
+	}
+
+	render() {
+		const { predictions } = this.state;
 
 		return (
 			<Fragment>
-				{ this.props.card
-					? this.renderSearchCard( searchProps )
-					: this.renderSearch( searchProps ) }
-
-				{ predictions && predictions.map( this.renderPrediction ) }
+				{ this.renderInput() }
+				<div className="location-search__predictions">
+					{ predictions && predictions.map( this.renderPrediction ) }
+				</div>
 			</Fragment>
 		);
 	}
