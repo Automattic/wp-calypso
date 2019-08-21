@@ -29,8 +29,10 @@ export function maybeRedirect( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const slug = getSelectedSiteSlug( state );
+	const queryString = context.querystring ? `?${ context.querystring }` : '';
+
 	if ( isEnabled( 'customer-home' ) && canCurrentUserUseCustomerHome( state, siteId ) ) {
-		page.redirect( `/home/${ slug }` );
+		page.redirect( `/home/${ slug }${ queryString }` );
 		return;
 	}
 
