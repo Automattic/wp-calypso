@@ -189,21 +189,25 @@ if ( tracksUserData ) {
 }
 
 // Reorganizing templates as an object, processing title and content on the fly.
-const prepareTemplatesForPlugin = ( templatesBySlug, template ) => {
-	const content = replacePlaceholders( template.content, siteInformation );
-	const title = replacePlaceholders( template.title, siteInformation );
+const getTemplatesBySlug = reduce(
+	templates,
+	( templatesBySlug, template ) => {
+		const content = replacePlaceholders( template.content, siteInformation );
+		const title = replacePlaceholders( template.title, siteInformation );
 
-	return {
-		...templatesBySlug,
-		[ template.slug ]: { ...template, title, content },
-	};
-};
+		return {
+			...templatesBySlug,
+			[ template.slug ]: { ...template, title, content },
+		};
+	},
+	{}
+);
 
 registerPlugin( 'page-templates', {
 	render: () => {
 		return (
 			<PageTemplatesPlugin
-				templates={ reduce( templates, prepareTemplatesForPlugin, {} ) }
+				templates={ getTemplatesBySlug }
 				vertical={ vertical }
 				segment={ segment }
 			/>
