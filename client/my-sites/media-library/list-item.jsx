@@ -37,6 +37,8 @@ class MediaLibraryListItem extends React.Component {
 		thumbnailType: PropTypes.string,
 		showGalleryHelp: PropTypes.bool,
 		selectedIndex: PropTypes.number,
+		isMediaLibrary: PropTypes.bool,
+		isContributor: PropTypes.bool,
 		onToggle: PropTypes.func,
 		onEditItem: PropTypes.func,
 		style: PropTypes.object,
@@ -103,9 +105,10 @@ class MediaLibraryListItem extends React.Component {
 
 	render() {
 		let title, selectedNumber;
-		
-		const selectMedia = ! this.props.isMediaLibrary || ( this.props.isMediaLibrary && ! this.props.isContributor );
-		
+
+		const selectMedia =
+			! this.props.isMediaLibrary || ( this.props.isMediaLibrary && ! this.props.isContributor );
+
 		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
 			'is-selected': -1 !== this.props.selectedIndex && selectMedia,
@@ -148,9 +151,14 @@ class MediaLibraryListItem extends React.Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		isContributor: ! canCurrentUser( state, getSelectedSiteId( state ), 'publish_posts' ),
-		isMediaLibrary: getSectionName( state ) === 'media',
-	};
-} )( MediaLibraryListItem );
+const mapStateToProps = state => ( {
+	isContributor: ! canCurrentUser( state, getSelectedSiteId( state ), 'publish_posts' ),
+	isMediaLibrary: getSectionName( state ) === 'media',
+} );
+
+const mapDispatchToProps = {};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( MediaLibraryListItem );
