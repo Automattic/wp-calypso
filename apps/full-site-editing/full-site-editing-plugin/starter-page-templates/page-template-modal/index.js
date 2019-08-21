@@ -97,6 +97,18 @@ class PageTemplateModal extends Component {
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
+	getBlocksByTemplateSlug( slug = this.state.slug ) {
+		if ( ! slug ) {
+			return [];
+		}
+
+		if ( ! this.state.blocks.hasOwnProperty( slug ) ) {
+			return [];
+		}
+
+		return this.state.blocks[ slug ];
+	}
+
 	render() {
 		if ( ! this.state.isOpen ) {
 			return null;
@@ -122,7 +134,7 @@ class PageTemplateModal extends Component {
 						</fieldset>
 					</form>
 					<TemplateSelectorPreview
-						blocks={ this.state.blocks[ this.state.slug ] }
+						blocks={ this.getBlocksByTemplateSlug() }
 						viewportWidth={ 960 }
 					/>
 				</div>
