@@ -1,33 +1,33 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import React, { Component, CSSProperties } from 'react';
 
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { noop, omit } from 'lodash';
+interface Props {
+	onDrag: ( x: number, y: number ) => void;
+	onStop: () => void;
+	width?: number;
+	height?: number;
+	x: number;
+	y: number;
+	controlled: boolean;
+	bounds: {
+		top: number;
+		left: number;
+		bottom: number;
+		right: number;
+	} | null;
+}
 
-export default class Draggable extends Component {
-	static propTypes = {
-		onDrag: PropTypes.func,
-		onStop: PropTypes.func,
-		width: PropTypes.number,
-		height: PropTypes.number,
-		x: PropTypes.number,
-		y: PropTypes.number,
-		controlled: PropTypes.bool,
-		bounds: PropTypes.shape( {
-			top: PropTypes.number,
-			left: PropTypes.number,
-			bottom: PropTypes.number,
-			right: PropTypes.number,
-		} ),
-	};
+interface State {
+	x: number;
+	y: number;
+}
 
-	static defaultProps = {
-		onDrag: noop,
-		onStop: noop,
+export default class Draggable extends Component< Props, State > {
+	static defaultProps: Props = {
+		onDrag: () => {},
+		onStop: () => {},
 		width: 0,
 		height: 0,
 		x: 0,
@@ -36,7 +36,7 @@ export default class Draggable extends Component {
 		bounds: null,
 	};
 
-	constructor( props ) {
+	constructor( props: Props ) {
 		super( props );
 
 		this.state = {
@@ -53,7 +53,7 @@ export default class Draggable extends Component {
 		this.update = this.update.bind( this );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( newProps: Props ) {
 		if ( this.state.x !== newProps.x || this.state.y !== newProps.y ) {
 			this.setState( {
 				x: newProps.x,
@@ -161,16 +161,15 @@ export default class Draggable extends Component {
 	removeListeners() {
 		document.removeEventListener( 'mousemove', this.draggingHandler );
 		document.removeEventListener( 'mouseup', this.draggingEndedHandler );
-
 		document.removeEventListener( 'touchmove', this.draggingHandler );
 		document.removeEventListener( 'touchend', this.draggingEndedHandler );
 	}
 
 	render() {
-		const elementProps = omit( this.props, Object.keys( this.constructor.propTypes ) ),
-			style = {
-				transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)',
-			};
+		const { onDrag, onStop, width, height, x, y, controlled, bounds, ...elementProps } = this.props;
+		const style: CSSProperties = {
+			transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)',
+		};
 
 		if ( this.props.width || this.props.height ) {
 			style.width = this.props.width + 'px';
