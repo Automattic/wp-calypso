@@ -95,7 +95,7 @@ class SocialLoginForm extends Component {
 							} )
 					);
 				} else if ( error.code === 'user_exists' ) {
-					this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
+					this.props.createSocialUserFailed( socialInfo, error );
 				}
 
 				this.recordEvent( 'calypso_login_social_login_failure', 'google', {
@@ -139,7 +139,7 @@ class SocialLoginForm extends Component {
 							} )
 					);
 				} else if ( error.code === 'user_exists' ) {
-					this.props.createSocialUserFailed( 'apple', response.id_token, error );
+					this.props.createSocialUserFailed( socialInfo, error );
 				}
 
 				this.recordEvent( 'calypso_login_social_login_failure', 'apple', {
