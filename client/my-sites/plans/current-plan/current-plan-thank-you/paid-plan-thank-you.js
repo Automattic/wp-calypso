@@ -20,6 +20,8 @@ import Button from 'components/button';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import ProgressBar from 'components/progress-bar';
 import ThankYou from './thank-you';
+import { Interval, EVERY_SECOND } from 'lib/interval';
+import { requestJetpackProductInstallStatus } from 'state/jetpack-product-install/actions';
 
 const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_INCOMPLETE = 2;
@@ -37,6 +39,17 @@ export class PaidPlanThankYou extends Component {
 			} );
 		}
 	}
+
+	requestInstallationStatus = () => {
+		const { siteId } = this.props;
+
+		// We require a siteId to get install status
+		if ( ! siteId ) {
+			return;
+		}
+
+		this.props.requestJetpackProductInstallStatus( siteId );
+	};
 
 	componentDidUpdate( prevProps ) {
 		const { installState, site } = this.props;
@@ -176,6 +189,7 @@ export class PaidPlanThankYou extends Component {
 							) }
 						</p>
 
+						<Interval period={ EVERY_SECOND } onTick={ this.requestInstallationStatus } />
 						<ProgressBar isPulsing total={ 100 } value={ installProgress || 0 } />
 					</ThankYou>
 				) }
@@ -223,5 +237,8 @@ export default connect(
 			site,
 		};
 	},
-	{ recordTracksEvent }
+	{
+		recordTracksEvent,
+		requestJetpackProductInstallStatus,
+	}
 )( localize( PaidPlanThankYou ) );
