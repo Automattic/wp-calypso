@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,6 +5,7 @@
 import { assign, isEqual, noop, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
@@ -20,12 +19,15 @@ import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedSite, getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+
 /**
  * Style dependencies
  */
 import './list-item.scss';
 
-export default class extends React.Component {
+class MediaLibraryListItem extends React.Component {
 	static displayName = 'MediaLibraryListItem';
 
 	static propTypes = {
@@ -101,10 +103,12 @@ export default class extends React.Component {
 
 	render() {
 		let title, selectedNumber;
-
+		
+		const selectMedia = ! this.props.isMediaLibrary || ( this.props.isMediaLibrary && ! this.props.isContributor );
+		
 		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
-			'is-selected': -1 !== this.props.selectedIndex,
+			'is-selected': -1 !== this.props.selectedIndex && selectMedia,
 			'is-transient': this.props.media && this.props.media.transient,
 			'is-small': this.props.scale <= 0.125,
 		} );
@@ -143,3 +147,10 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect( state => {
+	return {
+		isContributor: ! canCurrentUser( state, getSelectedSiteId( state ), 'publish_posts' ),
+		isMediaLibrary: getSectionName( state ) === 'media',
+	};
+} )( MediaLibraryListItem );
