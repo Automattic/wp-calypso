@@ -27,8 +27,7 @@ export default function( context, next ) {
 }
 
 export function maybeRedirect( context, next ) {
-	const state = context.store.getState();
-	const slug = getSelectedSiteSlug( state );
+	const slug = getSelectedSiteSlug( context.store.getState() );
 	if ( ! isEnabled( 'customer-home' ) || 'hide' === abtest( 'customerHomePage' ) ) {
 		page.redirect( `/stats/day/${ slug }` );
 		return;
