@@ -53,6 +53,8 @@ jest.mock( 'state/help/courses/selectors', () => ( {
 	getHelpCourses: jest.fn( () => [] ),
 } ) );
 
+jest.mock( 'state/selectors/is-site-eligible-for-customer-home', () => jest.fn( () => false ) );
+
 jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
 		<Comp
