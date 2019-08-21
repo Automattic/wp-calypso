@@ -4,6 +4,12 @@
 		display: none;
 	}
 
+	// @TODO: Remove this when Gutenberg support is added for
+	// removing the PostStatus panel:
+	.edit-post-post-status {
+		display: none;
+	}
+
 	.edit-post-visual-editor {
 		margin-top: 20px;
 		padding-top: 0;
