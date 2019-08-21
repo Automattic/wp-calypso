@@ -27,6 +27,7 @@ import { appStates } from 'state/imports/constants';
 
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
@@ -129,6 +130,7 @@ class SectionImport extends Component {
 				<ImporterComponent
 					key={ engine }
 					site={ site }
+					siteTitle={ siteTitle }
 					importerStatus={ {
 						importerState: state,
 						siteTitle,
@@ -178,6 +180,7 @@ class SectionImport extends Component {
 					<ImporterComponent
 						key={ importItem.type + idx }
 						site={ importItem.site }
+						siteTitle={ importItem.siteTitle || this.props.siteTitle }
 						fromSite={ this.props.fromSite }
 						importerStatus={ importItem }
 					/>
@@ -196,9 +199,7 @@ class SectionImport extends Component {
 			api: { isHydrated },
 			importers: imports,
 		} = this.state;
-		const { engine, site } = this.props;
-		const { slug, title } = site;
-		const siteTitle = title.length ? title : slug;
+		const { engine, site, siteTitle } = this.props;
 
 		if ( engine && importerComponents[ engine ] ) {
 			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
@@ -282,12 +283,16 @@ class SectionImport extends Component {
 }
 
 export default flow(
-	connect( state => ( {
-		engine: getSelectedImportEngine( state ),
-		fromSite: getImporterSiteUrl( state ),
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-		canImport: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-	} ) ),
+	connect( state => {
+		const siteID = getSelectedSiteId( state );
+		return {
+			engine: getSelectedImportEngine( state ),
+			fromSite: getImporterSiteUrl( state ),
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+			siteTitle: getSiteTitle( state, siteID ),
+			canImport: canCurrentUser( state, siteID, 'manage_options' ),
+		};
+	} ),
 	localize
 )( SectionImport );

@@ -31,7 +31,7 @@ class ImporterWordPress extends React.PureComponent {
 
 	render() {
 		const importerData = importerConfig( {
-			siteTitle: this.props.site.title,
+			siteTitle: this.props.siteTitle,
 		} ).wordpress;
 
 		return <FileImporter importerData={ importerData } { ...this.props } />;
