@@ -175,10 +175,7 @@ class SocialLogin extends Component {
 						{ isUserConnectedToApple ? (
 							this.renderAppleActionButton( this.disconnectFromApple )
 						) : (
-							<AppleLoginButton
-								clientId={ config( 'apple_oauth_client_id' ) }
-								responseHandler={ this.handleAppleLoginResponse }
-							>
+							<AppleLoginButton responseHandler={ this.handleAppleLoginResponse }>
 								{ this.renderAppleActionButton() }
 							</AppleLoginButton>
 						) }
