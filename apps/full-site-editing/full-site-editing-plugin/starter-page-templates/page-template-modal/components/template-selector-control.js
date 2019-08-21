@@ -52,7 +52,9 @@ const TemplateSelectorControl = ( {
 							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							blocks={ blocksByTemplates[ slug ] }
+							blocks={
+								slug && blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : []
+							}
 							useDynamicPreview={ useDynamicPreview }
 						/>
 					</li>
