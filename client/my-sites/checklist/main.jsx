@@ -20,7 +20,6 @@ import ChecklistShowShare from './share';
 import GetAppsBlock from 'blocks/get-apps';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import { trackClick } from '../themes/helpers';
 
 /**
  * State dependencies
@@ -30,7 +29,7 @@ import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isNewSite } from 'state/sites/selectors';
-import { getActiveTheme, getCanonicalTheme, getThemeDetailsUrl } from 'state/themes/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 
 /**
  * Style dependencies
@@ -41,10 +40,6 @@ class ChecklistMain extends PureComponent {
 	state = { complete: false };
 
 	handleCompletionUpdate = ( { complete } ) => void this.setState( { complete } );
-
-	trackClick = ( eventName, verb ) => {
-		trackClick( 'current theme', eventName, verb );
-	};
 
 	/**
 	 * Redirect Jetpack checklists to /plans/my-plan/:siteSlug
@@ -107,21 +102,13 @@ class ChecklistMain extends PureComponent {
 
 			case 'theme':
 				return translate(
-					'Your theme {{a}}%(themeName)s{{/a}} by %(themeAuthor)s is now active on your site. ' +
+					'Your theme %(themeName)s by %(themeAuthor)s is now active on your site. ' +
 						"Now that your site has been created, it's time to get it ready for you to share. " +
 						"We've prepared a list of things that will help you get there quickly.",
 					{
 						args: {
 							themeName: currentTheme && currentTheme.name,
 							themeAuthor: currentTheme && currentTheme.author,
-						},
-						components: {
-							a: (
-								<a
-									href={ this.props.detailsUrl }
-									onClick={ () => this.trackClick( 'theme info', 'click' ) }
-								/>
-							),
 						},
 					}
 				);
@@ -225,8 +212,7 @@ export default connect( ( state, props ) => {
 	if ( props.displayMode && 'theme' === props.displayMode ) {
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
-		const detailsUrl = getThemeDetailsUrl( state, currentThemeId, siteId );
-		themeInfo = { currentTheme, detailsUrl, currentThemeId };
+		themeInfo = { currentTheme, currentThemeId };
 	}
 
 	return {
