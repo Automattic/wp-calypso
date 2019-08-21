@@ -62,6 +62,7 @@ class Document extends React.Component {
 			feedbackURL,
 			inlineScriptNonce,
 			isSupportSession,
+			isWCComConnect,
 			addEvergreenCheck,
 			requestFrom,
 		} = this.props;
@@ -145,6 +146,7 @@ class Document extends React.Component {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
+									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
 								<div className="masterbar" />

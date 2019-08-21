@@ -1,4 +1,4 @@
-.layout:not( .is-jetpack-woocommerce-flow ) {
+.layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
 		.button.is-primary {
 			background-color: var( --color-jetpack );
@@ -7,8 +7,24 @@
 	}
 }
 
-.layout.is-jetpack-woocommerce-flow {
-	.login__jetpack-logo {
+.layout.is-wccom-oauth-flow {
+	.layout__content {
+		padding-top: 48px;
+	}
+
+	.masterbar {
+		display: none;
+	}
+
+	.wp-login__footer-links {
+		display: none;
+	}
+}
+
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
+	.login__jetpack-logo,
+	.login__woocommerce-logo {
 		text-align: center;
 		border-bottom: 1px solid var( --color-gray-50 );
 		position: absolute;
@@ -22,7 +38,14 @@
 		}
 	}
 
-	.jetpack-header {
+	.login__woocommerce-logo {
+		svg > g {
+			transform: translateX( 50% );
+		}
+	}
+
+	.jetpack-header,
+	.connect-header {
 		margin: 0;
 		text-align: center;
 		margin-right: auto;
