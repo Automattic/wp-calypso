@@ -131,6 +131,7 @@ class PageTemplateModal extends Component {
 								blocksByTemplates={ this.state.blocks }
 								onTemplateSelect={ this.focusTemplate }
 								useDynamicPreview={ true }
+								siteInformation={ siteInformation }
 							/>
 						</fieldset>
 					</form>

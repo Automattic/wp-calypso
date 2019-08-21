@@ -16,7 +16,6 @@ import { memo } from '@wordpress/element';
  */
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
-const { siteInformation = {} } = window.starterPageTemplatesConfig;
 
 const TemplateSelectorControl = ( {
 	label,
@@ -28,6 +27,7 @@ const TemplateSelectorControl = ( {
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
 	onTemplateFocus = noop,
+	siteInformation = {},
 } ) => {
 	if ( isEmpty( templates ) ) {
 		return null;
@@ -54,9 +54,7 @@ const TemplateSelectorControl = ( {
 							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							blocks={
-								slug && blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : []
-							}
+							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
 							useDynamicPreview={ useDynamicPreview }
 						/>
 					</li>
