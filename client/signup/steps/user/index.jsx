@@ -218,12 +218,14 @@ export class UserStep extends Component {
 	 * @param {String} access_token An OAuth2 acccess token
 	 * @param {String} id_token     (Optional) a JWT id_token which contains the signed user info
 	 *                              So our server doesn't have to request the user profile on its end.
+	 * @param {Object} userData     (Optional) extra user information that can be used to create a new account
 	 */
-	handleSocialResponse = ( service, access_token, id_token = null ) => {
+	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
 		this.submit( {
 			service,
 			access_token,
 			id_token,
+			userData,
 			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
 		} );
 	};

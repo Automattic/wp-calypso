@@ -34,7 +34,12 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		this.props.handleResponse( 'apple', null, response.id_token );
+		const extraUserData = response.user && {
+			user_name: response.user.name,
+			user_email: response.user.email,
+		};
+
+		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
@@ -70,11 +75,7 @@ class SocialSignupForm extends Component {
 		return (
 			<div className="signup-form__social">
 				{ ! this.props.compact && (
-					<p>
-						{ preventWidows(
-							this.props.translate( 'Or create an account using:' )
-						) }
-					</p>
+					<p>{ preventWidows( this.props.translate( 'Or create an account using:' ) ) }</p>
 				) }
 
 				<div className="signup-form__social-buttons">
