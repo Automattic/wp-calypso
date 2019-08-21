@@ -117,7 +117,7 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_import_url_submit', {
 			flow: flowName,
 			url: urlInputValue,
-			isValid: isValid,
+			isvalid: isValid,
 		} );
 
 		if ( ! isValid ) {
