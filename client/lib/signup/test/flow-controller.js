@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { size } from 'lodash';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
@@ -50,6 +49,25 @@ describe( 'flow-controller', () => {
 			expect( signupFlowController._reduxStore ).toBe( store );
 		} );
 
+		test( 'should remove steps not needed by the current flow on init', () => {
+			const store = createSignupStore( {
+				signup: {
+					progress: [ { stepName: 'stepA' }, { stepName: 'stepB' }, { stepName: 'stepC' } ],
+				},
+			} );
+			expect( getSignupProgress( store.getState() ) ).toHaveLength( 3 );
+
+			signupFlowController = new SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+
+			const progress = getSignupProgress( store.getState() );
+			expect( progress ).toHaveLength( 2 );
+			expect( progress.map( step => step.stepName ) ).toEqual( [ 'stepA', 'stepB' ] );
+		} );
+
 		test( 'should reset stores if there are processing steps in the state upon instantitaion', () => {
 			const store = createSignupStore( {
 				signup: {
@@ -67,7 +85,7 @@ describe( 'flow-controller', () => {
 				reduxStore: store,
 			} );
 
-			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
+			expect( getSignupProgress( store.getState() ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should reset stores if user is logged in and there is a user step in the saved progress', () => {
@@ -83,7 +101,7 @@ describe( 'flow-controller', () => {
 				reduxStore: store,
 			} );
 
-			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
+			expect( getSignupProgress( store.getState() ) ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -183,7 +201,7 @@ describe( 'flow-controller', () => {
 					stepName: 'delayedStep',
 					stepCallback: function() {
 						const progress = getSignupProgress( store.getState() );
-						expect( size( progress ) ).toBe( 2 );
+						expect( progress ).toHaveLength( 2 );
 					},
 				} )
 			);
@@ -204,8 +222,7 @@ describe( 'flow-controller', () => {
 					stepName: 'delayedStep',
 					stepCallback: function() {
 						const progress = getSignupProgress( store.getState() );
-						const step = progress.stepA;
-						expect( step.status ).toBe( 'completed' );
+						expect( progress[ 1 ].status ).toBe( 'completed' );
 					},
 				} )
 			);

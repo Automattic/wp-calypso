@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get, findLast, findIndex } from 'lodash';
+import { find, findIndex, get } from 'lodash';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
 
@@ -18,7 +18,6 @@ import { getStepUrl } from 'signup/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getFilteredSteps } from '../utils';
 
 /**
  * Style dependencies
@@ -34,7 +33,7 @@ export class NavigationLink extends Component {
 		cssClass: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		previousPath: PropTypes.string,
-		signupProgress: PropTypes.object,
+		signupProgress: PropTypes.array,
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
@@ -52,11 +51,14 @@ export class NavigationLink extends Component {
 	 * @return {Object} The previous step object
 	 */
 	getPreviousStep() {
-		const { flowName, signupProgress, stepName } = this.props;
+		const { stepName, signupProgress } = this.props;
 
-		let steps = getFilteredSteps( flowName, signupProgress );
-		steps = steps.slice( 0, findIndex( steps, step => step.stepName === stepName ) );
-		const previousStep = findLast( steps, step => ! step.wasSkipped );
+		const currentStepIndex = findIndex( signupProgress, { stepName } );
+
+		const previousStep = find(
+			signupProgress.slice( 0, currentStepIndex ).reverse(),
+			step => ! step.wasSkipped
+		);
 
 		return previousStep || { stepName: null };
 	}
@@ -73,8 +75,8 @@ export class NavigationLink extends Component {
 		const previousStep = this.getPreviousStep();
 
 		const stepSectionName = get(
-			this.props.signupProgress,
-			[ previousStep.stepName, 'stepSectionName' ],
+			find( this.props.signupProgress, { stepName: previousStep.stepName } ),
+			'stepSectionName',
 			''
 		);
 

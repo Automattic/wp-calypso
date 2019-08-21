@@ -16,7 +16,6 @@ import {
 	keys,
 	pick,
 	reject,
-	reduce,
 } from 'lodash';
 import page from 'page';
 
@@ -291,8 +290,7 @@ assign( SignupFlowController.prototype, {
 			get( steps, [ stepName, 'providesDependencies' ], [] )
 		);
 
-		return reduce(
-			getSignupProgress( this._reduxStore.getState() ),
+		return getSignupProgress( this._reduxStore.getState() ).reduce(
 			( current, step ) => ( {
 				...current,
 				...pick( step.providedDependencies, requiredDependencies ),
