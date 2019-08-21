@@ -235,6 +235,7 @@ export default connect(
 			installProgress,
 			installState,
 			site,
+			siteId,
 		};
 	},
 	{
