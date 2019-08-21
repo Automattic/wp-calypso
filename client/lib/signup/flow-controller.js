@@ -11,6 +11,7 @@ import {
 	flatMap,
 	forEach,
 	get,
+	includes,
 	isEmpty,
 	keys,
 	pick,
@@ -26,7 +27,7 @@ import analytics from 'lib/analytics';
 import flows from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import wpcom from 'lib/wp';
-import { getStepUrl, getFilteredSteps } from 'signup/utils';
+import { getStepUrl } from 'signup/utils';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
@@ -100,8 +101,6 @@ assign( SignupFlowController.prototype, {
 
 	_resetStoresIfUserHasLoggedIn: function() {
 		if (
-			// TODO: Address this properly if we move forward with the user step being last
-			this._flowName !== 'onboarding-user-last' &&
 			isUserLoggedIn( this._reduxStore.getState() ) &&
 			find( getSignupProgress( this._reduxStore.getState() ), { stepName: 'user' } )
 		) {
@@ -195,9 +194,8 @@ assign( SignupFlowController.prototype, {
 
 	_process: function() {
 		const currentSteps = this._flow.steps;
-		const signupProgress = getFilteredSteps(
-			this._flowName,
-			getSignupProgress( this._reduxStore.getState() )
+		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), step =>
+			includes( currentSteps, step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
 		const completedSteps = filter( signupProgress, { status: 'completed' } );
@@ -228,9 +226,9 @@ assign( SignupFlowController.prototype, {
 		);
 		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
 		const currentSteps = this._flow.steps;
-		const signupProgress = getFilteredSteps(
-			this._flowName,
-			getSignupProgress( this._reduxStore.getState() )
+		const signupProgress = filter(
+			getSignupProgress( this._reduxStore.getState() ),
+			( { stepName } ) => includes( currentSteps, stepName )
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
