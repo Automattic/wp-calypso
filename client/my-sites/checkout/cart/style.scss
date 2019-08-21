@@ -420,6 +420,7 @@ div.popover-cart__popover {
 
 	@include breakpoint( '<660px' ) {
 		left: 0;
+		margin-left: 0;
 	}
 }
 
@@ -428,6 +429,7 @@ div.popover-cart__popover {
 
 	@include breakpoint( '<660px' ) {
 		left: 0;
+		margin-left: 0;
 		margin-top: 10px;
 		// Create space for the inline help button
 		margin-bottom: 65px;

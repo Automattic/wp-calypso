@@ -15,16 +15,18 @@ import CheckoutData from 'components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
 import { abtest } from 'lib/abtest';
 
+/**
+ * Style dependencies
+ */
+import './checkout-container.scss';
+
 class CheckoutContainer extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			headerText: '',
-			subHeaderText: '',
-			shouldShowGuaranteeSeal: false,
-			isJetpackNotAtomic: false,
-		};
-	}
+	state = {
+		headerText: '',
+		subHeaderText: '',
+		shouldShowGuaranteeSeal: false,
+		isJetpackNotAtomic: false,
+	};
 
 	renderCheckoutHeader() {
 		return (
