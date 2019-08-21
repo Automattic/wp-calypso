@@ -50,7 +50,10 @@ class ContactsPrivacyCard extends React.PureComponent {
 
 				<CompactCard className="contacts-privacy__card">
 					<p>{ privacyText }</p>
-					<ContactDisplay selectedDomainName={ selectedDomainName } />
+					<ContactDisplay
+						selectedDomainName={ selectedDomainName }
+						privateDomain={ privateDomain }
+					/>
 					<p className="contacts-privacy__settings-explanation">
 						{ translate(
 							'Domain owners are required to provide correct contact information. ' +

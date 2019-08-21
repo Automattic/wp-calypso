@@ -10,16 +10,13 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { getWhoisData } from 'state/domains/management/selectors';
 import { requestWhois } from 'state/domains/management/actions';
-import { find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
+import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {
 		selectedDomainName: PropTypes.string.isRequired,
 	};
-
-	componentDidUpdate() {
-		this.fetchWhois();
-	}
 
 	fetchWhois = () => {
 		if ( isEmpty( this.props.whoisData ) && ! isEmpty( this.props.selectedDomainName ) ) {
@@ -28,10 +25,14 @@ class ContactDisplay extends React.PureComponent {
 	};
 
 	render() {
-		const { translate, whoisData } = this.props;
-		const registrantWhoisData = find( whoisData, { type: 'registrant' } );
+		const { privateDomain, translate, whoisData } = this.props;
 
-		if ( isEmpty( registrantWhoisData ) ) {
+		const contactInformation = privateDomain
+			? findPrivacyServiceWhois( whoisData )
+			: findRegistrantWhois( whoisData );
+
+		if ( isEmpty( contactInformation ) ) {
+			this.fetchWhois();
 			return null;
 		}
 
@@ -41,20 +42,20 @@ class ContactDisplay extends React.PureComponent {
 
 				<div className="contact-display__content">
 					<p>
-						{ registrantWhoisData.fname } { registrantWhoisData.lname }
+						{ contactInformation.fname } { contactInformation.lname }
 					</p>
-					{ registrantWhoisData.org && <p>{ registrantWhoisData.org }</p> }
-					<p>{ registrantWhoisData.email }</p>
-					<p>{ registrantWhoisData.sa1 }</p>
-					{ registrantWhoisData.sa2 && <p>{ registrantWhoisData.sa2 }</p> }
+					{ contactInformation.org && <p>{ contactInformation.org }</p> }
+					<p>{ contactInformation.email }</p>
+					<p>{ contactInformation.sa1 }</p>
+					{ contactInformation.sa2 && <p>{ contactInformation.sa2 }</p> }
 					<p>
-						{ registrantWhoisData.city }
-						{ registrantWhoisData.sp && <span>, { registrantWhoisData.sp }</span> }
-						<span> { registrantWhoisData.pc }</span>
+						{ contactInformation.city }
+						{ contactInformation.sp && <span>, { contactInformation.sp }</span> }
+						<span> { contactInformation.pc }</span>
 					</p>
-					<p>{ registrantWhoisData.country_code }</p>
-					<p>{ registrantWhoisData.phone }</p>
-					{ registrantWhoisData.fax && <p>{ registrantWhoisData.fax }</p> }
+					<p>{ contactInformation.country_code }</p>
+					<p>{ contactInformation.phone }</p>
+					{ contactInformation.fax && <p>{ contactInformation.fax }</p> }
 				</div>
 			</div>
 		);

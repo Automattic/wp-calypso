@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
-import { endsWith, find, get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import { endsWith, get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -33,6 +33,7 @@ import {
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
 } from 'state/domains/management/selectors';
+import { findRegistrantWhois } from 'lib/domains/whois/utils';
 
 const wpcom = wp.undocumented();
 
@@ -91,7 +92,7 @@ class EditContactInfoFormCard extends React.Component {
 	};
 
 	getContactFormFieldValues() {
-		const registrantWhoisData = find( this.props.whoisData, { type: 'registrant' } );
+		const registrantWhoisData = findRegistrantWhois( this.props.whoisData );
 
 		return {
 			firstName: get( registrantWhoisData, 'fname' ),
