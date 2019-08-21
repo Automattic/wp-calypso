@@ -9614,6 +9614,12 @@
 				}
 			}
 		},
+		"eslint-plugin-no-for-of-loops": {
+			"version": "1.0.1",
+			"resolved": "https://registry.npmjs.org/eslint-plugin-no-for-of-loops/-/eslint-plugin-no-for-of-loops-1.0.1.tgz",
+			"integrity": "sha512-uCotzBHt2W+HbLw2srRmqDJHOPbJGzeVLstKh8YyxS3ppduq2P50qdpJfHKoD+UGbnqA/zhy8NRgPH6p0y8bnA==",
+			"dev": true
+		},
 		"eslint-plugin-react": {
 			"version": "7.12.4",
 			"resolved": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.12.4.tgz",

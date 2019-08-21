@@ -87,7 +87,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'jest', 'jsx-a11y', 'import' ],
+	plugins: [ 'jest', 'jsx-a11y', 'import', 'no-for-of-loops' ],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -134,5 +134,8 @@ module.exports = {
 		// Disallow importing or requiring packages that are not listed in package.json
 		// This prevents us from depending on transitive dependencies, which could break in unexpected ways.
 		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
+
+		// We only want to prevent for-of loops in specific situations
+		'no-for-of-loops/no-for-of-loops': 0,
 	},
 };

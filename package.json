@@ -301,6 +301,7 @@
 		"eslint-plugin-import": "2.17.2",
 		"eslint-plugin-jest": "22.6.4",
 		"eslint-plugin-jsx-a11y": "6.2.3",
+		"eslint-plugin-no-for-of-loops": "1.0.1",
 		"eslint-plugin-react": "7.12.4",
 		"eslint-plugin-wpcalypso": "file:./packages/eslint-plugin-wpcalypso",
 		"glob": "7.1.3",
