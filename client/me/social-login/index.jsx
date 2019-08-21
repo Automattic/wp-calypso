@@ -119,42 +119,43 @@ class SocialLogin extends Component {
 		);
 	}
 
-	renderAppleActionButton( onClickAction = null ) {
-		const { isUserConnectedToApple, isUpdatingSocialConnection, translate } = this.props;
-		const buttonLabel = isUserConnectedToApple ? translate( 'Disconnect' ) : translate( 'Connect' );
+	renderActionButton( { service, isConnected, onConnect, onDisconnect } ) {
+		const { isUpdatingSocialConnection, translate } = this.props;
+		const buttonLabel = isConnected ? translate( 'Disconnect' ) : translate( 'Connect' );
 		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
 
-		return (
+		const actionButton = (
 			<FormButton
 				className="social-login__button button"
 				disabled={ disableButton }
 				compact={ true }
-				isPrimary={ ! isUserConnectedToApple }
-				onClick={ onClickAction }
+				isPrimary={ ! isConnected }
+				onClick={ isConnected && onDisconnect }
 			>
 				{ buttonLabel }
 			</FormButton>
 		);
-	}
 
-	renderGoogleActionButton( onClickAction = null ) {
-		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
-		const buttonLabel = isUserConnectedToGoogle
-			? translate( 'Disconnect' )
-			: translate( 'Connect' );
-		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
+		if ( isConnected ) {
+			return actionButton;
+		}
 
-		return (
-			<FormButton
-				className="social-login__button button"
-				disabled={ disableButton }
-				compact={ true }
-				isPrimary={ ! isUserConnectedToGoogle }
-				onClick={ onClickAction }
-			>
-				{ buttonLabel }
-			</FormButton>
-		);
+		if ( service === 'google' ) {
+			return (
+				<GoogleLoginButton
+					clientId={ config( 'google_oauth_client_id' ) }
+					responseHandler={ onConnect }
+				>
+					{ actionButton }
+				</GoogleLoginButton>
+			);
+		}
+
+		if ( service === 'apple' ) {
+			return <AppleLoginButton responseHandler={ onConnect }>{ actionButton }</AppleLoginButton>;
+		}
+
+		return null;
 	}
 
 	renderAppleConnection() {
@@ -172,13 +173,12 @@ class SocialLogin extends Component {
 					</div>
 
 					<div className="social-login__header-action">
-						{ isUserConnectedToApple ? (
-							this.renderAppleActionButton( this.disconnectFromApple )
-						) : (
-							<AppleLoginButton responseHandler={ this.handleAppleLoginResponse }>
-								{ this.renderAppleActionButton() }
-							</AppleLoginButton>
-						) }
+						{ this.renderActionButton( {
+							service: 'apple',
+							isConnected: isUserConnectedToApple,
+							onConnect: this.handleAppleLoginResponse,
+							onDisconnect: this.disconnectFromApple,
+						} ) }
 					</div>
 				</div>
 			</CompactCard>
@@ -200,16 +200,12 @@ class SocialLogin extends Component {
 					</div>
 
 					<div className="social-login__header-action">
-						{ isUserConnectedToGoogle ? (
-							this.renderGoogleActionButton( this.disconnectFromGoogle )
-						) : (
-							<GoogleLoginButton
-								clientId={ config( 'google_oauth_client_id' ) }
-								responseHandler={ this.handleGoogleLoginResponse }
-							>
-								{ this.renderGoogleActionButton() }
-							</GoogleLoginButton>
-						) }
+						{ this.renderActionButton( {
+							service: 'google',
+							isConnected: isUserConnectedToGoogle,
+							onConnect: this.handleGoogleLoginResponse,
+							onDisconnect: this.disconnectFromGoogle,
+						} ) }
 					</div>
 				</div>
 			</CompactCard>
