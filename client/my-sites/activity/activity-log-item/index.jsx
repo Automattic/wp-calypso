@@ -351,7 +351,7 @@ class ActivityLogItem extends Component {
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Rewind Site' ) }
-						disableButton={ this.satet.disableRestoreButton }
+						disableButton={ this.state.disableRestoreButton }
 					>
 						{ translate( '{{time/}} is the selected point for your site Rewind.', {
 							components: {
