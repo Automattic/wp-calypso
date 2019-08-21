@@ -6,6 +6,11 @@ import { shallow } from 'enzyme';
 import { TemplateSelectorControl } from '../template-selector-control';
 
 describe( 'TemplateSelectorControl', () => {
+	const siteInformation = {
+		title: 'gutenberg-training',
+		vertical: 'Business',
+	};
+
 	const templates = [
 		{
 			value: 'template-1',
@@ -31,6 +36,7 @@ describe( 'TemplateSelectorControl', () => {
 					label="Select a Template..."
 					instanceId={ uniqueId() }
 					templates={ templates }
+					siteInformation={ siteInformation }
 				/>
 			);
 
@@ -56,31 +62,5 @@ describe( 'TemplateSelectorControl', () => {
 
 			expect( wrapper.isEmptyRender() ).toBe( true );
 		} );
-	} );
-
-	it( 'calls onClick prop on button click with correct button value', () => {
-		const onClickSpy = jest.fn();
-
-		const wrapper = shallow(
-			<TemplateSelectorControl
-				label="Select a Template..."
-				instanceId={ uniqueId() }
-				templates={ templates }
-				onClick={ onClickSpy }
-			/>
-		);
-
-		const firstButton = wrapper.find( '.template-selector-control__option button' ).first();
-		const firstButtonValue = firstButton.prop( 'value' );
-
-		// We are required to provide a mock event.
-		// see https://airbnb.io/enzyme/docs/api/ShallowWrapper/simulate.html.
-		firstButton.simulate( 'click', {
-			target: {
-				value: firstButtonValue,
-			},
-		} );
-
-		expect( onClickSpy ).toHaveBeenCalledWith( firstButtonValue );
 	} );
 } );

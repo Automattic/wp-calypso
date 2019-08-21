@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TemplateSelectorItem Basic rendering renders with required props 1`] = `
+<button
+  className="template-selector-item__label"
+  id="1-test-slug"
+  onClick={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  type="button"
+  value="test-slug"
+>
+  <div
+    className="template-selector-item__preview-wrap"
+  >
+    <img
+      alt=""
+      className="template-selector-item__media"
+      src="https://somepreviewimage.jpg"
+    />
+  </div>
+</button>
+`;
