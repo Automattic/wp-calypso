@@ -20,7 +20,7 @@ import ListItemDocument from './list-item-document';
 import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSite, getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 
 /**
  * Style dependencies
