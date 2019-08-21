@@ -48,12 +48,15 @@ class PageTemplateModal extends Component {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 
-		// Populate blocks state field, parsing the raw content for each template.
-		const blocks = {};
-		for ( const slug in this.props.templates ) {
-			const template = this.props.templates[ slug ];
-			blocks[ slug ] = template.content ? parseBlocks( template.content ) : [];
-		}
+		// Parse templates blocks and store them into the state.
+		const blocks = reduce(
+			templates,
+			( prev, { slug, content } ) => {
+				prev[ slug ] = content ? parseBlocks( content ) : [];
+				return prev;
+			},
+			{}
+		);
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { blocks } );
@@ -185,7 +188,7 @@ if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
-// Enhance templates with their parsed blocks and processed titles. Key by their slug.
+// Reorganizing templates as an object, processing title and content on the fly.
 const prepareTemplatesForPlugin = ( templatesBySlug, template ) => {
 	const content = replacePlaceholders( template.content, siteInformation );
 	const title = replacePlaceholders( template.title, siteInformation );
