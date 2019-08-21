@@ -39,8 +39,6 @@ class PageTemplateModal extends Component {
 	};
 
 	constructor( props ) {
-		// eslint-disable-next-line no-console
-		console.time( 'PageTemplateModal' );
 		super();
 		this.state.isOpen = ! isEmpty( props.templates );
 	}
@@ -59,9 +57,6 @@ class PageTemplateModal extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { blocks } );
-
-		// eslint-disable-next-line no-console
-		console.timeEnd( 'PageTemplateModal' );
 	}
 
 	setTemplate = ( slug, title ) => {
