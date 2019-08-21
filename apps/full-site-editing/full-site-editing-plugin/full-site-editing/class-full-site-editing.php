@@ -94,6 +94,7 @@ class Full_Site_Editing {
 	 * @return bool True if passed theme supports FSE, false otherwise.
 	 */
 	public function is_supported_theme( $theme_slug ) {
+		$theme_slug = $this->normalize_theme_slug( $theme_slug );
 		return in_array( $theme_slug, self::SUPPORTED_THEMES, true );
 	}
 
@@ -132,6 +133,9 @@ class Full_Site_Editing {
 	public function normalize_theme_slug( $theme_slug ) {
 		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
 			$theme_slug = str_replace( 'pub/', '', $theme_slug );
+		}
+		if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
+			$theme_slug = preg_replace( '#-wpcom$#', '', $theme_slug );
 		}
 
 		return $theme_slug;
