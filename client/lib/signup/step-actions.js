@@ -185,6 +185,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
+		// If `siteTitle` wasn't inferred by the site detection api, use
+		// the `siteUrl` until an import replaces it with an actual title.
+		newSiteParams.blog_title = siteTitle || siteUrl;
 		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
 		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
