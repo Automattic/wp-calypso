@@ -18,6 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
 import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
+import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from 'lib/importer/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -76,6 +77,8 @@ class ImportURLOnboardingStepComponent extends Component {
 			siteFavicon,
 			siteTitle,
 		} );
+
+		this.props.setSiteTitle( siteTitle );
 
 		this.props.submitSignupStep(
 			{ stepName },
@@ -177,6 +180,8 @@ class ImportURLOnboardingStepComponent extends Component {
 						siteFavicon,
 						siteTitle,
 					} );
+
+					this.props.setSiteTitle( siteTitle );
 
 					this.props.submitSignupStep(
 						{ stepName },
@@ -377,6 +382,7 @@ export default flow(
 			saveSignupStep,
 			setImportOriginSiteDetails,
 			setNuxUrlInputValue,
+			setSiteTitle,
 		}
 	),
 	localize
