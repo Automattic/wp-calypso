@@ -16,9 +16,6 @@ import { memo } from '@wordpress/element';
  */
 import TemplateSelectorItem from './template-selector-item';
 
-// Load config passed from backend.
-const { siteInformation = {} } = window.starterPageTemplatesConfig;
-
 const TemplateSelectorControl = ( {
 	label,
 	className,
@@ -27,7 +24,6 @@ const TemplateSelectorControl = ( {
 	templates = {},
 	blocksByTemplates = {},
 	useDynamicPreview = false,
-	numBlocksInPreview,
 	onTemplateSelect = noop,
 	onTemplateFocus = noop,
 } ) => {
@@ -58,7 +54,6 @@ const TemplateSelectorControl = ( {
 							staticPreviewImgAlt={ previewAlt }
 							blocks={ blocksByTemplates[ slug ] }
 							useDynamicPreview={ useDynamicPreview }
-							numBlocksInPreview={ numBlocksInPreview }
 						/>
 					</li>
 				) ) }

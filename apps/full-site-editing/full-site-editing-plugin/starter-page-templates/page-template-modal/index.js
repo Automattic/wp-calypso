@@ -21,7 +21,14 @@ import { parse as parseBlocks } from '@wordpress/blocks';
 import replacePlaceholders from './utils/replace-placeholders';
 
 // Load config passed from backend.
-const { siteInformation = {} } = window.starterPageTemplatesConfig;
+// Load config passed from backend.
+const {
+	templates = [],
+	vertical,
+	segment,
+	tracksUserData,
+	siteInformation = {},
+} = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
 	state = {
@@ -113,7 +120,6 @@ class PageTemplateModal extends Component {
 								blocksByTemplates={ this.state.blocks }
 								onTemplateSelect={ this.focusTemplate }
 								useDynamicPreview={ true }
-								numBlocksInPreview={ 10 }
 							/>
 						</fieldset>
 					</form>
@@ -179,9 +185,6 @@ const PageTemplatesPlugin = compose(
 		};
 	} )
 )( PageTemplateModal );
-
-// Load config passed from backend.
-const { templates = [], vertical, segment, tracksUserData } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
