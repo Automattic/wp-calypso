@@ -56,6 +56,8 @@ import {
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_ADVANCED_CUSTOMIZATION } from 'lib/plans/constants';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import {
@@ -284,8 +286,15 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const { path, site, translate, canUserEditThemeOptions, showCustomizerLink } = this.props,
-			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
+		const {
+			path,
+			site,
+			translate,
+			canUserEditThemeOptions,
+			showDefaultCustomizerLink,
+			canCustomizeCSS,
+		} = this.props;
+		const jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
@@ -300,19 +309,26 @@ export class MySitesSidebar extends Component {
 			themesLink = '/themes';
 		}
 
+		// Here, we want to set the obtrusive "Customize" item before the theme link if FSE is not enabled.
+		// If FSE is enabled, we want a less obtrusive "Edit CSS" link to show underneath the theme item.
+		const customizerLabel = showDefaultCustomizerLink
+			? translate( 'Customize' )
+			: translate( 'Edit CSS' );
+		const customizerItem = (
+			<SidebarItem
+				label={ customizerLabel }
+				selected={ itemLinkMatches( '/customize', path ) }
+				link={ this.props.customizeUrl }
+				onNavigate={ this.trackCustomizeClick }
+				preloadSectionName="customize"
+				forceInternalLink
+				expandSection={ this.expandDesignSection }
+			/>
+		);
+
 		return (
 			<ul>
-				{ showCustomizerLink && (
-					<SidebarItem
-						label={ translate( 'Customize' ) }
-						selected={ itemLinkMatches( '/customize', path ) }
-						link={ this.props.customizeUrl }
-						onNavigate={ this.trackCustomizeClick }
-						preloadSectionName="customize"
-						forceInternalLink
-						expandSection={ this.expandDesignSection }
-					/>
-				) }
+				{ showDefaultCustomizerLink && customizerItem }
 				<SidebarItem
 					label={ translate( 'Themes' ) }
 					selected={ itemLinkMatches( themesLink, path ) }
@@ -322,6 +338,7 @@ export class MySitesSidebar extends Component {
 					forceInternalLink
 					expandSection={ this.expandDesignSection }
 				/>
+				{ canCustomizeCSS && ! showDefaultCustomizerLink && customizerItem }
 			</ul>
 		);
 	}
@@ -761,6 +778,16 @@ function mapStateToProps( state ) {
 	const isCustomerHomeEnabled =
 		'show' === abtest( 'customerHomePage' ) && isEnabled( 'customer-home' );
 
+	const showDefaultCustomizerLink = ! isSiteUsingFullSiteEditing( state, selectedSiteId );
+
+	// Get path to custom CSS if not showing the default customizer path:
+	const customizeUrl = getCustomizerUrl(
+		state,
+		selectedSiteId,
+		showDefaultCustomizerLink ? null : 'custom-css'
+	);
+	const canCustomizeCSS = hasFeature( state, siteId, FEATURE_ADVANCED_CUSTOMIZATION );
+
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
@@ -777,7 +804,7 @@ function mapStateToProps( state ) {
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
-		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
+		customizeUrl,
 		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
@@ -787,7 +814,8 @@ function mapStateToProps( state ) {
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+		showDefaultCustomizerLink,
+		canCustomizeCSS,
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
