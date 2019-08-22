@@ -50,7 +50,8 @@
 }
 
 .template-block__overlay {
-	background: rgba( #f5f5f5, 0.8 );
+	background: rgba( #ffffff, 0.8 );
+	border: 0 solid rgba( #7b86a2, 0.3 ); // Gutenberg $dark-opacity-light-600
 	bottom: 0;
 	left: 0;
 	margin: 0;
@@ -61,6 +62,21 @@
 	transition: opacity 0.2s linear 0s;
 	top: 0;
 	z-index: 2;
+
+	.is-selected & {
+		border-color: rgba( #425863, 0.4 ); // Gutenberg $dark-opacity-light-800
+	}
+
+	.editor-block-list__block:first-child & {
+		border-bottom-width: 1px;
+	}
+	.editor-block-list__block:last-child & {
+		border-top-width: 1px;
+	}
+
+	@media only screen and ( min-width: 768px ) {
+		border-width: 1px;
+	}
 
 	.components-button {
 		opacity: 0;
