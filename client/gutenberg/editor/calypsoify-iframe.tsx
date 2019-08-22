@@ -28,6 +28,7 @@ import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
@@ -581,8 +582,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	}
 }
 
-import { parse as parseUrl } from 'url';
-
 const mapStateToProps = (
 	state,
 	{ postId, postType, duplicatePostId, fseParentPageId }: Props
@@ -591,18 +590,10 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
-
-	let plan_upgraded;
-	if ( undefined !== typeof window && window.location ) {
-		const { query } = parseUrl( window.location.href, true );
-
-		if ( query.plan_upgraded ) {
-			plan_upgraded = query.plan_upgraded;
-		}
-	}
+	const initialQueryArguments = getInitialQueryArguments( state );
 
 	let queryArgs = pickBy( {
-		plan_upgraded,
+		plan_upgraded: initialQueryArguments && initialQueryArguments.plan_upgraded,
 		post: postId,
 		action: postId && 'edit', // If postId is set, open edit view.
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
