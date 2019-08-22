@@ -128,8 +128,7 @@ export const EligibilityWarnings = ( {
 			{ isEligible && (
 				<Card className="eligibility-warnings__confirm-box">
 					<div className="eligibility-warnings__confirm-text">
-						{ isEligible &&
-							warnings.length > 0 &&
+						{ warnings.length > 0 &&
 							translate( 'If you proceed you will no longer be able to use these features. ' ) }
 						{ translate( 'Questions? {{a}}Contact support{{/a}} for help.', {
 							components: {
@@ -148,7 +147,7 @@ export const EligibilityWarnings = ( {
 							{ translate( 'Cancel' ) }
 						</Button>
 
-						<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
+						<Button primary={ true } onClick={ onProceed }>
 							{ translate( 'Proceed' ) }
 						</Button>
 					</div>
