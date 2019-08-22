@@ -143,22 +143,4 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	removeBlogFlow: {
-		datestamp: '20190813',
-		variations: {
-			remove: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	removeWebsiteFlow: {
-		datestamp: '20190813',
-		variations: {
-			remove: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };
