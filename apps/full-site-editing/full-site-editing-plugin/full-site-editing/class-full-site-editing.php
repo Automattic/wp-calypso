@@ -44,7 +44,11 @@ class Full_Site_Editing {
 	 *
 	 * @var array
 	 */
-	const SUPPORTED_THEMES = [ 'modern-business' ];
+	const SUPPORTED_THEMES = [
+		'maywood',
+		'modern-business',
+		'varia',
+	];
 
 	/**
 	 * Full_Site_Editing constructor.
