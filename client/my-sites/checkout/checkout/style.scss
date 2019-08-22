@@ -529,6 +529,8 @@
 			-apple-pay-button-style: black;
 			vertical-align: middle;
 			cursor: pointer;
+			width: 100%;
+			height: 40px;
 
 			&[disabled] {
 				opacity: 0.4;
