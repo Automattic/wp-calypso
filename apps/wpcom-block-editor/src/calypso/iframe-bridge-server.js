@@ -465,21 +465,37 @@ function handlePreview( calypsoPort ) {
 		// Request an autosave before generating the preview.
 		const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
 		const isDraft = [ 'draft', 'auto-draft' ].indexOf( postStatus ) !== -1;
-		if ( isDraft ) {
-			dispatch( 'core/editor' ).savePost( { isPreview: true } );
-		} else {
-			dispatch( 'core/editor' ).autosave( { isPreview: true } );
-		}
-		const unsubscribe = subscribe( () => {
-			const isSavingPost = select( 'core/editor' ).isSavingPost();
-			if ( ! isSavingPost ) {
-				unsubscribe();
-				sendPreviewData();
+
+		// We need to retry the autosave in instances where autosave already exists
+		// as the first call results in a 400 from API. The second call will succeed
+		// due to https://core.trac.wordpress.org/browser/trunk/src/wp-includes/rest-api/endpoints/class-wp-rest-autosaves-controller.php#L357
+		let retryCount = 0;
+
+		savePost();
+
+		function savePost() {
+			if ( isDraft ) {
+				dispatch( 'core/editor' ).savePost( { isPreview: true } );
+			} else {
+				dispatch( 'core/editor' ).autosave( { isPreview: true } );
 			}
-		} );
+			const unsubscribe = subscribe( () => {
+				const isSavingPost = select( 'core/editor' ).isSavingPost();
+				if ( ! isSavingPost ) {
+					unsubscribe();
+					sendPreviewData();
+				}
+			} );
+		}
 
 		function sendPreviewData() {
 			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+
+			if ( ! previewUrl && retryCount < 3 ) {
+				retryCount++;
+				savePost();
+				return;
+			}
 
 			const featuredImageId = select( 'core/editor' ).getEditedPostAttribute( 'featured_media' );
 			const featuredImage = featuredImageId
