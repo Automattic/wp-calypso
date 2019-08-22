@@ -229,32 +229,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	pointer-events: none;
 	overflow-x: hidden;
 	overflow-y: auto;
-
-	.template-selector-preview__loading {
-		top: 0;
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 10;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		// Retaining the element in the render tree (ie: avoiding display: none)
-		// avoids reflow/repaint cycle which makes UI more responsive when
-		// loading state is toggled rapidly.
-		// See: https://www.phpied.com/rendering-repaint-reflowrelayout-restyle/.
-		will-change: transform; // tell the browser to expect a change here
-		transform: translate( 0, 0 );
-	}
-
-	&.is-loaded {
-		pointer-events: auto; // reset to allow scrolling loaded previews
-		.template-selector-preview__loading {
-			transform: translate( -9999px, -9999px );
-		}
-	}
 }
 
 .template-selector-preview__placeholder {
