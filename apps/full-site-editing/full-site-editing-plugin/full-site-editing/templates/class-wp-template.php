@@ -154,6 +154,12 @@ class WP_Template {
 		$header_id = $this->get_template_id( self::HEADER );
 		$footer_id = $this->get_template_id( self::FOOTER );
 
+		if ( false === strpos( $post_content, '<!-- wp:a8c/post-content /-->' ) ) {
+			$post_content = '<!-- wp:a8c/post-content -->' .
+							$post_content .
+							'<!-- /wp:a8c/post-content -->';
+		}
+
 		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"className\":\"site-header site-branding\"} /-->" .
 				$post_content .
 				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"className\":\"site-footer\"} /-->";
