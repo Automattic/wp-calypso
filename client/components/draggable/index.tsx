@@ -72,7 +72,7 @@ export default class Draggable extends Component< Props, State > {
 
 	dragging: boolean = false;
 	frameRequestId: ReturnType< typeof requestAnimationFrame > | null = null;
-	relativePos?: { x: number; y: number };
+	relativePos: { x: number; y: number } | null = null;
 	mousePos: { x: number; y: number } | null = null;
 
 	componentWillReceiveProps( newProps: Props ) {
@@ -115,8 +115,9 @@ export default class Draggable extends Component< Props, State > {
 	draggingHandler = ( event: TouchEvent | MouseEvent ) => {
 		const coords = isEventWithTouches( event ) ? event.touches[ 0 ] : event;
 
-		const x = coords.pageX - this.relativePos.x;
-		const y = coords.pageY - this.relativePos.y;
+		// draggingStartedHandler populates `relativePos` and it should not be undefined.
+		const x = coords.pageX - ( this.relativePos as NonNullable< Draggable['relativePos'] > ).x;
+		const y = coords.pageY - ( this.relativePos as NonNullable< Draggable['relativePos'] > ).y;
 
 		this.mousePos = { x, y };
 	};
@@ -124,6 +125,7 @@ export default class Draggable extends Component< Props, State > {
 	draggingEndedHandler = () => {
 		this.dragging = false;
 		this.mousePos = null;
+		this.relativePos = null;
 
 		this.cancelRaf();
 		this.removeListeners();
@@ -133,19 +135,19 @@ export default class Draggable extends Component< Props, State > {
 	onTouchStartHandler: TouchEventHandler< HTMLDivElement > = event => {
 		event.preventDefault();
 
+		// Call draggingStartedHandler first
+		this.draggingStartedHandler( event );
 		document.addEventListener( 'touchmove', this.draggingHandler );
 		document.addEventListener( 'touchend', this.draggingEndedHandler );
-
-		this.draggingStartedHandler( event );
 	};
 
 	onMouseDownHandler: MouseEventHandler< HTMLDivElement > = event => {
 		event.preventDefault();
 
+		// Call draggingStartedHandler first
+		this.draggingStartedHandler( event );
 		document.addEventListener( 'mousemove', this.draggingHandler );
 		document.addEventListener( 'mouseup', this.draggingEndedHandler );
-
-		this.draggingStartedHandler( event );
 	};
 
 	update = () => {
