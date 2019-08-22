@@ -195,6 +195,7 @@ export default class Draggable extends Component< Props, State > {
 		}
 
 		return (
+			// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 			<div
 				{ ...elementProps }
 				style={ style }
