@@ -17,7 +17,7 @@ const SocialLoginService = ( { service, icon, isConnected, socialConnectionEmail
 		<div className="social-login__header">
 			<div className="social-login__header-info">
 				<div className="social-login__header-icon">{ icon }</div>
-				<h3 style={ { textTransform: 'capitalize' } }>{ service }</h3>
+				<h3>{ service }</h3>
 				{ socialConnectionEmail && <p>{ ' - ' + socialConnectionEmail }</p> }
 			</div>
 

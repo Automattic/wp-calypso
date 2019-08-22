@@ -25,6 +25,8 @@ class SocialLoginActionButton extends Component {
 		isConnected: PropTypes.bool.isRequired,
 		isUpdatingSocialConnection: PropTypes.bool.isRequired,
 		translate: PropTypes.func.isRequired,
+		connectSocialUser: PropTypes.func.isRequired,
+		disconnectSocialUser: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -59,14 +61,17 @@ class SocialLoginActionButton extends Component {
 		}
 
 		if ( service === 'apple' ) {
-			// just bail on errors for now
 			if ( ! response.id_token ) {
 				return;
 			}
 
+			const userData = response.user || {};
+
 			socialInfo = {
 				...socialInfo,
 				id_token: response.id_token,
+				user_name: userData.name,
+				user_email: userData.email,
 			};
 		}
 
