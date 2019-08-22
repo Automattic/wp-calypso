@@ -30,7 +30,7 @@ before( async function() {
 } );
 
 // Sauce Breakpoint
-afterEach( function() {
+afterEach( async function() {
 	const driver = global.__BROWSER__;
 
 	if (
@@ -39,13 +39,13 @@ afterEach( function() {
 		config.has( 'sauce' ) &&
 		config.get( 'sauce' )
 	) {
-		driver.executeScript( 'sauce: break' );
+		await driver.executeScript( 'sauce: break' );
 	}
 } );
 
 // Take Screenshot
 afterEach( async function() {
-	this.timeout( afterHookTimeoutMS );
+	await this.timeout( afterHookTimeoutMS );
 	if ( ! this.currentTest ) {
 		return;
 	}
@@ -116,7 +116,7 @@ afterEach( async function() {
 
 // Check for console errors
 afterEach( async function() {
-	this.timeout( afterHookTimeoutMS );
+	await this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 	await driverHelper.logPerformance( driver );
 	return await driverHelper.checkForConsoleErrors( driver );
@@ -149,8 +149,8 @@ after( async function() {
 } );
 
 // Quit browser
-after( function() {
-	this.timeout( afterHookTimeoutMS );
+after( async function() {
+	await this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 
 	if (
@@ -158,7 +158,7 @@ after( function() {
 		config.get( 'closeBrowserOnComplete' ) === true ||
 		global.isHeadless === true
 	) {
-		return driverManager.quitBrowser( driver );
+		return await driverManager.quitBrowser( driver );
 	}
 } );
 
