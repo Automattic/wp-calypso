@@ -14,7 +14,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import { getAllTests, setABTestVariation } from 'lib/abtest';
+import { getAllTests, saveABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -79,7 +79,7 @@ export default function injectTestHelper( element ) {
 			tests: getAllTests(),
 			onChangeVariant: function( test, variation ) {
 				debug( 'Switching test variant', test.experimentId, variation );
-				setABTestVariation( test.name, variation );
+				saveABTestVariation( test.name, variation );
 				window.location.reload();
 			},
 		} ),
