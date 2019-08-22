@@ -296,7 +296,7 @@ export function generateFlows( {
 				engine: importSiteEngine || null,
 				'from-site': importSiteUrl ? encodeURIComponent( importSiteUrl ) : null,
 				signup: 1,
-				autoStartSiteImport: 1,
+				autoStartSiteImport: 0,
 			},
 			`/import/${ siteSlug }`
 		);
