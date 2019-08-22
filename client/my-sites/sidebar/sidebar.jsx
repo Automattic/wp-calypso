@@ -189,17 +189,20 @@ export class MySitesSidebar extends Component {
 					label: translate( 'Home' ),
 					selected: itemLinkMatches( [ '/home' ], path ),
 					link: '/home' + siteSuffix,
-					materialIcon: 'home',
 			  }
 			: {
 					label: translate( 'Checklist' ),
 					selected: itemLinkMatches( [ '/checklist' ], path ),
 					link: '/checklist' + siteSuffix,
-					materialIcon: 'check_circle',
 			  };
 
 		return (
-			<SidebarItem tipTarget="menus" onNavigate={ this.trackCustomerHomeClick } { ...itemProps } />
+			<SidebarItem
+				materialIcon="home"
+				tipTarget="menus"
+				onNavigate={ this.trackCustomerHomeClick }
+				{ ...itemProps }
+			/>
 		);
 	}
 
