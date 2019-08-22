@@ -70,4 +70,12 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 			by.css( `${ buttonDialogClass } button[data-e2e-button="cancel"]` )
 		);
 	}
+
+	async completeThemeCancellation() {
+		const buttonDialogClass = '.dialog__action-buttons';
+		const cancelButtonSelector = by.css(
+			`${ buttonDialogClass } button[data-e2e-button="cancel"]`
+		);
+		return await driverHelper.clickWhenClickable( this.driver, cancelButtonSelector );
+	}
 }
