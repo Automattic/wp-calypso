@@ -143,7 +143,7 @@ class VerificationCodeForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm }>
-				<Card compact>
+				<Card compact className="two-factor-authentication__verification-code-form">
 					<p>{ helpText }</p>
 
 					<FormFieldset>
@@ -164,7 +164,7 @@ class VerificationCodeForm extends Component {
 						) }
 					</FormFieldset>
 
-					<FormButton block primary disabled={ this.state.isDisabled }>
+					<FormButton primary disabled={ this.state.isDisabled }>
 						{ translate( 'Continue' ) }
 					</FormButton>
 
