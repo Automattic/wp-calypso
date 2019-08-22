@@ -16,6 +16,9 @@ import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
+import { getPost } from 'state/posts/selectors';
+import { userCan } from 'state/posts/utils';
+import getEditorUrl from 'state/selectors/get-editor-url';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
@@ -41,6 +44,7 @@ class PreviewMain extends React.Component {
 
 	state = {
 		previewUrl: null,
+		editUrl: null,
 		externalUrl: null,
 		showingClose: false,
 		// Set to one of the possible default values in client/components/web-preview/toolbar.jsx
@@ -95,6 +99,7 @@ class PreviewMain extends React.Component {
 				this.setState( {
 					previewUrl: null,
 					externalUrl: null,
+					editUrl: null,
 				} );
 			}
 			return;
@@ -116,12 +121,34 @@ class PreviewMain extends React.Component {
 			this.setState( {
 				previewUrl: newUrl,
 				externalUrl: this.props.site.URL,
+				editUrl: this.getEditButtonURL(),
 			} );
 		}
 	}
 
 	getBasePreviewUrl() {
 		return this.props.site.options.unmapped_url;
+	}
+
+	showEditButton = () => {
+		if ( 'posts' === this.props.site.options.show_on_front ) {
+			return false;
+		}
+
+		// TODO: Need to check if the user can edit this post
+		// if ( !userCan( 'edit_post', this.props.pageOnFront ) ) {
+		// 	return false;
+		// }
+
+		return true;
+	};
+
+	getEditButtonURL() {
+		if ( this.showEditButton() ) {
+			return this.props.editorURL;
+		}
+
+		return null;
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -180,6 +207,8 @@ class PreviewMain extends React.Component {
 					showUrl={ !! this.state.externalUrl }
 					showClose={ this.state.showingClose }
 					onClose={ this.focusSidebar }
+					showEdit={ this.showEditButton() }
+					editUrl={ this.state.editUrl }
 					previewUrl={ this.state.previewUrl }
 					externalUrl={ this.state.externalUrl }
 					loadingMessage={ this.props.translate(
@@ -195,11 +224,17 @@ class PreviewMain extends React.Component {
 
 const mapState = state => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+
 	return {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
-		site: getSelectedSite( state ),
+		site: site,
 		siteId: selectedSiteId,
+
+		// TODO: This is not working correctly
+		pageOnFront: getPost( state, site.options.page_on_front ),
+		editorURL: getEditorUrl( state, site.ID, site.options.page_on_front, 'page' ),
 	};
 };
 
