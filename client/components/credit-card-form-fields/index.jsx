@@ -21,6 +21,7 @@ import InfoPopover from 'components/info-popover';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
@@ -406,6 +407,13 @@ export class CreditCardFormFields extends React.Component {
 							placeholder: ' ',
 						} )
 					) }
+
+					{ this.createField( 'phone-number', FormPhoneMediaInput, {
+						onChange: this.updateFieldValues,
+						countriesList,
+						countryCode: this.getFieldValue( 'country' ),
+						label: translate( 'Phone' ),
+					} ) }
 				</div>
 			</div>
 		);
