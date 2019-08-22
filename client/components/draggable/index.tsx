@@ -83,13 +83,14 @@ export default class Draggable extends Component< Props & DivProps, State > {
 	relativePos: { x: number; y: number } | null = null;
 	mousePos: { x: number; y: number } | null = null;
 
-	componentWillReceiveProps( newProps: Draggable['props'] ) {
-		if ( this.state.x !== newProps.x || this.state.y !== newProps.y ) {
-			this.setState( {
-				x: newProps.x,
-				y: newProps.y,
-			} );
+	static getDerivedStateFromProps( props: Draggable['props'], state: State ) {
+		if ( state.x !== props.x || state.y !== props.y ) {
+			return {
+				x: props.x,
+				y: props.y,
+			};
 		}
+		return null;
 	}
 
 	componentWillUnmount() {
