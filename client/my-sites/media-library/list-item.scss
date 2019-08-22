@@ -25,7 +25,8 @@
 	}
 	
 	.media__main-section .media-library__content.has-no-upload-button & {
-		cursor: default;
+		// In the Media Library, don't allow contributors to click images.
+		pointer-events: none;
 	}
 }
 
@@ -64,10 +65,6 @@
 
 .media-library__list-item:hover .media-library__list-item-figure {
 	box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
-	
-	.media__main-section .media-library__content.has-no-upload-button & {
-		box-shadow: none;
-	}
 }
 
 .media-library__list-item.is-selected .media-library__list-item-figure {
