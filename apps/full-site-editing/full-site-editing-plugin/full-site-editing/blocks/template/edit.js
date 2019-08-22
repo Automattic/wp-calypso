@@ -80,7 +80,6 @@ const TemplateEdit = compose(
 		templateTitle,
 		isDirty,
 		savePost,
-		isSelected,
 		isEditorSidebarOpened,
 		openGeneralSidebar,
 		isAnyTemplateBlockSelected,
@@ -136,6 +135,7 @@ const TemplateEdit = compose(
 			<div
 				className={ classNames( 'template-block', {
 					[ `align${ align }` ]: align,
+					'is-navigating-to-template': navigateToTemplate,
 				} ) }
 			>
 				{ templateBlock && (
@@ -152,24 +152,23 @@ const TemplateEdit = compose(
 								/>
 							</div>
 						</Disabled>
-						{ isSelected && (
-							<Placeholder className="template-block__overlay">
-								{ navigateToTemplate && (
-									<div className="template-block__loading">
-										<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
-									</div>
-								) }
-								<Button
-									className={ navigateToTemplate ? 'hidden' : null }
-									href={ editTemplateUrl }
-									onClick={ save }
-									isDefault
-									ref={ navButton }
-								>
-									{ sprintf( __( 'Edit %s' ), templateTitle ) }
-								</Button>
-							</Placeholder>
-						) }
+						<Placeholder className="template-block__overlay">
+							{ navigateToTemplate && (
+								<div className="template-block__loading">
+									<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
+								</div>
+							) }
+							<Button
+								className={ navigateToTemplate ? 'hidden' : null }
+								href={ editTemplateUrl }
+								onClick={ save }
+								isDefault
+								isLarge
+								ref={ navButton }
+							>
+								{ sprintf( __( 'Edit %s' ), templateTitle ) }
+							</Button>
+						</Placeholder>
 					</Fragment>
 				) }
 			</div>
