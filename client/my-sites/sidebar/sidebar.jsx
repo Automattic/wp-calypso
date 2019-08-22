@@ -192,7 +192,7 @@ export class MySitesSidebar extends Component {
 				) }
 				link={ isEnabled( 'customer-home' ) ? '/home' + siteSuffix : '/checklist' + siteSuffix }
 				onNavigate={ this.trackCustomerHomeClick }
-				materialIcon={ isEnabled( 'customer-home' ) ? 'home' : 'check_circle' }
+				materialIcon={ 'home' }
 			/>
 		);
 	}
