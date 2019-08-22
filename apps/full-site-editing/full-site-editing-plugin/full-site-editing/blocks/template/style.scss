@@ -10,8 +10,24 @@
 		cursor: pointer;
 	}
 
-	&.is-selected .components-disabled {
-		filter: blur( 2px );
+	&.is-hovered, &.is-selected, .is-navigating-to-template {
+		.components-disabled {
+			filter: blur( 2px );
+			transition: filter 0.2s linear 0.7s;
+		}
+		.template-block__overlay {
+			opacity: 1;
+			transition: opacity 0.2s linear;
+			.components-button {
+				opacity: 1;
+				transition: opacity 0.2s linear 0.7s;
+			}
+		}
+	}
+
+	.components-disabled {
+		filter: blur( 0 );
+		transition: filter 0.2s linear 0s;
 	}
 
 	// Hide the block toolbar and border
@@ -34,18 +50,40 @@
 }
 
 .template-block__overlay {
-	background: rgba( #f5f5f5, 0.8 );
+	background: rgba( #ffffff, 0.8 );
+	border: 0 solid rgba( #7b86a2, 0.3 ); // Gutenberg $dark-opacity-light-600
 	bottom: 0;
 	left: 0;
 	margin: 0;
+	opacity: 0;
 	padding: 0;
 	position: absolute;
 	right: 0;
+	transition: opacity 0.2s linear 0s;
 	top: 0;
 	z-index: 2;
 
-	.components-button.hidden {
-		display: none;
+	.is-selected & {
+		border-color: rgba( #425863, 0.4 ); // Gutenberg $dark-opacity-light-800
+	}
+
+	.editor-block-list__block:first-child & {
+		border-bottom-width: 1px;
+	}
+	.editor-block-list__block:last-child & {
+		border-top-width: 1px;
+	}
+
+	@media only screen and ( min-width: 768px ) {
+		border-width: 1px;
+	}
+
+	.components-button {
+		opacity: 0;
+		transition: opacity 0.2s linear 0s;
+		&.hidden {
+			display: none;
+		}
 	}
 }
 
