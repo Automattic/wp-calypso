@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,18 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getClassName = ( { className, compact, displayAsLink, highlight, href, onClick } ) =>
 	classNames(
 		'card',
 		className,
 		{
-			'is-card-link': displayAsLink || !! href,
-			'is-clickable': !! onClick,
+			'is-card-link': displayAsLink || href,
+			'is-clickable': onClick,
 			'is-compact': compact,
 			'is-highlight': highlight,
 		},
@@ -26,15 +29,10 @@ class Card extends PureComponent {
 		className: PropTypes.string,
 		displayAsLink: PropTypes.bool,
 		href: PropTypes.string,
-		tagName: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ).isRequired,
+		tagName: PropTypes.elementType,
 		target: PropTypes.string,
 		compact: PropTypes.bool,
-		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
-	};
-
-	static defaultProps = {
-		tagName: 'div',
-		highlight: false,
+		highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
 	};
 
 	render() {
@@ -43,7 +41,7 @@ class Card extends PureComponent {
 			compact,
 			displayAsLink,
 			highlight,
-			tagName: TagName,
+			tagName: TagName = 'div',
 			href,
 			target,
 			...props
