@@ -27,7 +27,8 @@ import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, canCurrentUserUseCustomerHome } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
 
