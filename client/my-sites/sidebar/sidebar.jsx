@@ -44,10 +44,10 @@ import {
 	isJetpackSite,
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
-	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
 	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
