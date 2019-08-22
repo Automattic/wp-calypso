@@ -581,6 +581,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	}
 }
 
+import { parse as parseUrl } from 'url';
+
 const mapStateToProps = (
 	state,
 	{ postId, postType, duplicatePostId, fseParentPageId }: Props
@@ -590,7 +592,17 @@ const mapStateToProps = (
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
 
+	let plan_upgraded;
+	if ( undefined !== typeof window && window.location ) {
+		const { query } = parseUrl( window.location.href, true );
+
+		if ( query.plan_upgraded ) {
+			plan_upgraded = query.plan_upgraded;
+		}
+	}
+
 	let queryArgs = pickBy( {
+		plan_upgraded,
 		post: postId,
 		action: postId && 'edit', // If postId is set, open edit view.
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
