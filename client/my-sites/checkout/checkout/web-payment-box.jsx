@@ -100,7 +100,7 @@ export function WebPaymentBox( {
 							name="postal-code"
 							label={ translate( 'Postal Code', { textOnly: true } ) }
 							onChange={ event => setTaxPostalCode( event.target.value.toString() ) }
-							value={ typeof postalCode === 'undefined' || postalCode === null ? '' : postalCode }
+							value={ getPostalCodeStringFromPostalCode( postalCode ) }
 							eventFormName="Checkout Form"
 						/>
 					</div>
@@ -209,8 +209,8 @@ function WebPayButton( {
 	if ( ! stripe && ! isStripeLoading ) {
 		throw new Error( 'Stripe is required but not available' );
 	}
-	if ( isStripeLoading || ! canMakePayment ) {
-		return <LoadingPaymentRequestButton translate={ translate } />;
+	if ( isStripeLoading || ! canMakePayment || ! postalCode || ! countryCode ) {
+		return <LoadingPaymentRequestButton />;
 	}
 	return <PaymentRequestButton paymentRequest={ paymentRequest } />;
 }
@@ -238,6 +238,10 @@ function PaymentRequestButton( { paymentRequest } ) {
 		paymentRequest.show();
 	};
 	return <button className="web-payment-box__apple-pay-button" onClick={ onClick } />;
+}
+
+function getPostalCodeStringFromPostalCode( postalCode ) {
+	return typeof postalCode === 'undefined' || postalCode === null ? '' : postalCode;
 }
 
 function usePaymentRequestOptions( {
@@ -283,12 +287,8 @@ function useStripePaymentRequest( stripe, paymentRequestOptions, callback ) {
 	return { paymentRequest, canMakePayment };
 }
 
-function LoadingPaymentRequestButton( { translate } ) {
-	return (
-		<button className="web-payment-box__apple-pay-button" disabled>
-			{ translate( 'Loading' ) }
-		</button>
-	);
+function LoadingPaymentRequestButton() {
+	return <button className="web-payment-box__apple-pay-button" disabled />;
 }
 
 function completePaymentMethodTransaction( {
