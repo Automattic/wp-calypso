@@ -314,7 +314,7 @@ export async function acceptAllAlerts( driver ) {
 	} );
 }
 
-export function quitBrowser( driver ) {
+export async function quitBrowser( driver ) {
 	global.__BROWSER__ = null;
-	return driver.quit();
+	return await driver.quit();
 }
