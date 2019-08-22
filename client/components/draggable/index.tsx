@@ -24,6 +24,35 @@ interface State {
 	y: number;
 }
 
+/**
+ * Some minimal interfaces that allow handling of synthetic React events and native DOM events.
+ */
+
+interface MinimalTouchList {
+	readonly length: number;
+	[index: number]: HasPageCoords;
+}
+interface HasTouches {
+	readonly touches: MinimalTouchList;
+}
+interface HasPageCoords {
+	readonly pageX: number;
+	readonly pageY: number;
+}
+
+/**
+ * Discriminate between Mouse and Touch types of events.
+ *
+ * @param event Event (Mouse or Touch)
+ * @return      True if the event has touches
+ */
+function isEventWithTouches( event: HasTouches | HasPageCoords ): event is HasTouches {
+	return (
+		( ! ( event as HasPageCoords ).pageX || ! ( event as HasPageCoords ).pageY ) &&
+		!! ( ( event as HasTouches ).touches && ( event as HasTouches ).touches.length )
+	);
+}
+
 export default class Draggable extends Component< Props, State > {
 	static defaultProps: Props = {
 		onDrag: () => {},
@@ -72,7 +101,7 @@ export default class Draggable extends Component< Props, State > {
 	) => {
 		this.dragging = true;
 
-		const coords = this.isTouchEvent( event ) ? event.touches[ 0 ] : event;
+		const coords = isEventWithTouches( event ) ? event.touches[ 0 ] : event;
 
 		this.relativePos = {
 			x: coords.pageX - this.state.x,
@@ -83,21 +112,11 @@ export default class Draggable extends Component< Props, State > {
 		this.frameRequestId = requestAnimationFrame( this.update );
 	};
 
-	isTouchEvent( event: React.TouchEvent | React.MouseEvent ): event is React.TouchEvent {
-		return (
-			( ! ( event as React.MouseEvent ).pageX || ! ( event as React.MouseEvent ).pageY ) &&
-			!! (
-				( event as React.TouchEvent ).targetTouches &&
-				( event as React.TouchEvent ).targetTouches.length
-			)
-		);
-	}
-
 	draggingHandler = ( event: TouchEvent | MouseEvent ) => {
-		const coords = this.isTouchEvent( event ) ? event.touches[ 0 ] : event;
+		const coords = isEventWithTouches( event ) ? event.touches[ 0 ] : event;
 
-		const x = coords.pageX - this.relativePos.x,
-			y = coords.pageY - this.relativePos.y;
+		const x = coords.pageX - this.relativePos.x;
+		const y = coords.pageY - this.relativePos.y;
 
 		this.mousePos = { x, y };
 	};
@@ -107,9 +126,7 @@ export default class Draggable extends Component< Props, State > {
 		this.mousePos = null;
 
 		this.cancelRaf();
-
 		this.removeListeners();
-
 		this.props.onStop();
 	};
 
@@ -118,6 +135,8 @@ export default class Draggable extends Component< Props, State > {
 
 		document.addEventListener( 'touchmove', this.draggingHandler );
 		document.addEventListener( 'touchend', this.draggingEndedHandler );
+
+		this.draggingStartedHandler( event );
 	};
 
 	onMouseDownHandler: MouseEventHandler< HTMLDivElement > = event => {
