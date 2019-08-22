@@ -253,8 +253,8 @@ export const autoStartSiteImport = ( {
 					},
 					params,
 					site,
-					supportedContent: response.supported_content,
 					targetSiteUrl,
+					supportedContent: response.supported_content,
 					unsupportedContent: response.unsupported_content,
 				} )
 			);

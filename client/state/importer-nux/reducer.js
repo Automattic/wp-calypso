@@ -9,6 +9,7 @@ import {
 	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
 	IMPORTER_NUX_FROM_SIGNUP_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
+	IMPORTER_NUX_FROM_SIGNUP_AUTO_START_SET,
 } from 'state/action-types';
 
 import { registerActionForward } from 'lib/redux-bridge';
@@ -23,6 +24,10 @@ export const urlInputValue = createReducer( '', {
 export const isFromSignupFlow = createReducer( false, {
 	[ IMPORTER_NUX_FROM_SIGNUP_SET ]: () => true,
 	[ IMPORTER_NUX_FROM_SIGNUP_CLEAR ]: () => false,
+} );
+
+export const isFromSignupFlowAutoStart = createReducer( false, {
+	[ IMPORTER_NUX_FROM_SIGNUP_AUTO_START_SET ]: () => true,
 } );
 
 export const siteDetails = createReducer( null, {
@@ -41,6 +46,7 @@ export const siteDetails = createReducer( null, {
 
 export default combineReducers( {
 	isFromSignupFlow,
+	isFromSignupFlowAutoStart,
 	siteDetails,
 	urlInputValue,
 } );

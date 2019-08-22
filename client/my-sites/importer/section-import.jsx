@@ -29,7 +29,11 @@ import { appStates } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
-import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
+import {
+	getSelectedImportEngine,
+	getImporterSiteUrl,
+	shouldImportAutoStart,
+} from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import JetpackImporter from 'my-sites/importer/jetpack-importer';
@@ -72,7 +76,7 @@ class SectionImport extends Component {
 	state = getImporterState();
 
 	onceAutoStartImport = once( () => {
-		const { engine, site, fromSite } = this.props;
+		const { engine, site, fromSite, fromSignupAutoStartImport } = this.props;
 		const { importers: imports } = this.state;
 
 		if ( !engine ) {
@@ -85,6 +89,10 @@ class SectionImport extends Component {
 		}
 
 		if ( !importerComponents[ engine ] ) {
+			return;
+		}
+
+		if ( ! fromSignupAutoStartImport ) {
 			return;
 		}
 
@@ -334,6 +342,7 @@ export default flow(
 				siteSlug: getSelectedSiteSlug( state ),
 				siteTitle: getSiteTitle( state, siteID ),
 				canImport: canCurrentUser( state, siteID, 'manage_options' ),
+				fromSignupAutoStartImport: shouldImportAutoStart( state ),
 			}
 		},
 		{ autoStartSiteImport }
