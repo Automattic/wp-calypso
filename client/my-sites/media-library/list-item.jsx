@@ -5,7 +5,6 @@
 import { assign, isEqual, noop, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
@@ -19,15 +18,12 @@ import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-
 /**
  * Style dependencies
  */
 import './list-item.scss';
 
-class MediaLibraryListItem extends React.Component {
+export default class extends React.Component {
 	static displayName = 'MediaLibraryListItem';
 
 	static propTypes = {
@@ -37,8 +33,6 @@ class MediaLibraryListItem extends React.Component {
 		thumbnailType: PropTypes.string,
 		showGalleryHelp: PropTypes.bool,
 		selectedIndex: PropTypes.number,
-		isMediaLibrary: PropTypes.bool,
-		isContributor: PropTypes.bool,
 		onToggle: PropTypes.func,
 		onEditItem: PropTypes.func,
 		style: PropTypes.object,
@@ -106,12 +100,9 @@ class MediaLibraryListItem extends React.Component {
 	render() {
 		let title, selectedNumber;
 
-		const selectMedia =
-			! this.props.isMediaLibrary || ( this.props.isMediaLibrary && ! this.props.isContributor );
-
 		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
-			'is-selected': -1 !== this.props.selectedIndex && selectMedia,
+			'is-selected': -1 !== this.props.selectedIndex,
 			'is-transient': this.props.media && this.props.media.transient,
 			'is-small': this.props.scale <= 0.125,
 		} );
@@ -150,15 +141,3 @@ class MediaLibraryListItem extends React.Component {
 		);
 	}
 }
-
-const mapStateToProps = state => ( {
-	isContributor: ! canCurrentUser( state, getSelectedSiteId( state ), 'publish_posts' ),
-	isMediaLibrary: getSectionName( state ) === 'media',
-} );
-
-const mapDispatchToProps = {};
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( MediaLibraryListItem );
