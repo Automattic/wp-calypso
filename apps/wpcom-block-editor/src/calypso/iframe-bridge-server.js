@@ -90,11 +90,14 @@ function transmitDraftId( calypsoPort ) {
 }
 
 /**
- * Sends a message to the parent frame when the "Move to trash" button is clicked.
+ * Overrides Core Gutenberg store actions and selectors
+ *
+ * Overrides trashPost action to send a message to the parent frame when the "Move to trash" button is clicked.
+ * Overrides isEditedPostAutosavable to better reflect Full-Site Editing Dirty State
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function handlePostTrash( calypsoPort ) {
+function overrideGutenbergReduxStores( calypsoPort ) {
 	use( registry => {
 		return {
 			dispatch: namespace => {
@@ -106,6 +109,19 @@ function handlePostTrash( calypsoPort ) {
 					};
 				}
 				return actions;
+			},
+			select: reducerKey => {
+				const selectors = { ...registry.select( reducerKey ) };
+				if ( reducerKey === 'core/editor' && selectors.isEditedPostAutosaveable ) {
+					const originalSelector = selectors.isEditedPostAutosavable;
+					selectors.isEditedPostAutosavable = () => {
+						debug(
+							'override isEditedPostAutosaveable to correctly reflect dirty state in FSE flows'
+						);
+						return originalSelector();
+					};
+				}
+				return selectors;
 			},
 		};
 	} );
@@ -743,7 +759,7 @@ function initPort( message ) {
 		// Check if the "Convert to Blocks" prompt should be opened for this content.
 		triggerConversionPrompt( calypsoPort );
 
-		handlePostTrash( calypsoPort );
+		overrideGutenbergReduxStores( calypsoPort );
 
 		overrideRevisions( calypsoPort );
 
