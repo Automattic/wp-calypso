@@ -4,13 +4,12 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { debounce, get, noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { parse, createBlock } from '@wordpress/blocks';
-import domReady from '@wordpress/dom-ready';
 import { BlockEdit } from '@wordpress/editor';
 import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
@@ -24,33 +23,12 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import './style.scss';
 
-// Hide the Block Sidebar when the Template block is selected
-domReady( () => {
-	const debouncedFunction = debounce( () => {
-		const templateBlock = document.querySelector( '.template__block-container' );
-		const blockSidebarButton = document.querySelector(
-			'.edit-post-sidebar__panel-tabs ul li:last-child'
-		);
-
-		if ( ! templateBlock || ! blockSidebarButton ) {
-			return;
-		}
-
-		if ( templateBlock.classList.contains( 'is-selected' ) ) {
-			blockSidebarButton.classList.add( 'hidden' );
-		} else {
-			blockSidebarButton.classList.remove( 'hidden' );
-		}
-	}, 50 );
-	setInterval( debouncedFunction, 100 );
-} );
-
 const TemplateEdit = compose(
 	withState( { templateClientId: null } ),
 	withSelect( ( select, { attributes, templateClientId } ) => {
 		const { getEntityRecord } = select( 'core' );
 		const { getCurrentPostId, isEditedPostDirty } = select( 'core/editor' );
-		const { getBlock } = select( 'core/block-editor' );
+		const { getBlock, getSelectedBlock } = select( 'core/block-editor' );
 		const { isEditorSidebarOpened } = select( 'core/edit-post' );
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
@@ -59,6 +37,7 @@ const TemplateEdit = compose(
 			post: templateId,
 			fse_parent_post: currentPostId,
 		} );
+		const selectedBlock = getSelectedBlock();
 
 		return {
 			currentPostId,
@@ -68,6 +47,7 @@ const TemplateEdit = compose(
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
 			isDirty: isEditedPostDirty(),
 			isEditorSidebarOpened: !! isEditorSidebarOpened(),
+			isAnyTemplateBlockSelected: selectedBlock && 'a8c/template' === selectedBlock.name,
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
@@ -103,6 +83,7 @@ const TemplateEdit = compose(
 		isSelected,
 		isEditorSidebarOpened,
 		openGeneralSidebar,
+		isAnyTemplateBlockSelected,
 	} ) => {
 		if ( ! template ) {
 			return (
@@ -126,11 +107,19 @@ const TemplateEdit = compose(
 
 		useEffect( () => {
 			// Since the Block Sidebar (`edit-post/block`) is not available for the Template block,
-			// if the sidebar is open, we force toggle to the Document Sidebar.
-			if ( isSelected && isEditorSidebarOpened ) {
-				openGeneralSidebar( 'edit-post/document' );
+			// if the sidebar is open, we force toggle to the Document Sidebar, and hide the Block button.
+			const blockSidebarButton = document.querySelector(
+				'.edit-post-sidebar__panel-tabs ul li:last-child'
+			);
+			if ( isEditorSidebarOpened && blockSidebarButton ) {
+				if ( isAnyTemplateBlockSelected ) {
+					openGeneralSidebar( 'edit-post/document' );
+					blockSidebarButton.classList.add( 'hidden' );
+					return;
+				}
+				blockSidebarButton.classList.remove( 'hidden' );
 			}
-		} );
+		}, [ isAnyTemplateBlockSelected, isEditorSidebarOpened, openGeneralSidebar ] );
 
 		const { align, className } = attributes;
 
