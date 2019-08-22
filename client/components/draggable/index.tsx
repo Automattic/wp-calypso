@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component, CSSProperties } from 'react';
+import React, { Component, CSSProperties, TouchEventHandler, MouseEventHandler } from 'react';
 
 interface Props {
 	onDrag: ( x: number, y: number ) => void;
 	onStop: () => void;
-	width?: number;
-	height?: number;
+	width: number;
+	height: number;
 	x: number;
 	y: number;
 	controlled: boolean;
@@ -36,22 +36,15 @@ export default class Draggable extends Component< Props, State > {
 		bounds: null,
 	};
 
-	constructor( props: Props ) {
-		super( props );
+	state: State = {
+		x: this.props.x,
+		y: this.props.y,
+	};
 
-		this.state = {
-			x: this.props.x,
-			y: this.props.y,
-		};
-
-		this.onTouchStartHandler = this.onTouchStartHandler.bind( this );
-		this.onMouseDownHandler = this.onMouseDownHandler.bind( this );
-
-		this.draggingHandler = this.draggingHandler.bind( this );
-		this.draggingEndedHandler = this.draggingEndedHandler.bind( this );
-
-		this.update = this.update.bind( this );
-	}
+	dragging: boolean = false;
+	frameRequestId: ReturnType< typeof requestAnimationFrame > | null = null;
+	relativePos?: { x: number; y: number };
+	mousePos: { x: number; y: number } | null = null;
 
 	componentWillReceiveProps( newProps: Props ) {
 		if ( this.state.x !== newProps.x || this.state.y !== newProps.y ) {
@@ -63,82 +56,86 @@ export default class Draggable extends Component< Props, State > {
 	}
 
 	componentWillUnmount() {
+		this.cancelRaf();
 		this.removeListeners();
 	}
 
-	draggingStartedHandler( event ) {
+	cancelRaf() {
+		if ( this.frameRequestId ) {
+			cancelAnimationFrame( this.frameRequestId );
+			this.frameRequestId = null;
+		}
+	}
+
+	draggingStartedHandler = (
+		event: React.TouchEvent< HTMLDivElement > | React.MouseEvent< HTMLDivElement >
+	) => {
 		this.dragging = true;
 
-		let coords = event;
-
-		if ( this.isTouchEvent( event ) ) {
-			coords = event.touches[ 0 ];
-		}
+		const coords = this.isTouchEvent( event ) ? event.touches[ 0 ] : event;
 
 		this.relativePos = {
 			x: coords.pageX - this.state.x,
 			y: coords.pageY - this.state.y,
 		};
 
-		cancelAnimationFrame( this.frameRequestId );
+		this.cancelRaf();
 		this.frameRequestId = requestAnimationFrame( this.update );
-	}
+	};
 
-	isTouchEvent( event ) {
+	isTouchEvent( event: React.TouchEvent | React.MouseEvent ): event is React.TouchEvent {
 		return (
-			( ! event.pageX || ! event.pageY ) && ( event.targetTouches && event.targetTouches.length )
+			( ! ( event as React.MouseEvent ).pageX || ! ( event as React.MouseEvent ).pageY ) &&
+			!! (
+				( event as React.TouchEvent ).targetTouches &&
+				( event as React.TouchEvent ).targetTouches.length
+			)
 		);
 	}
 
-	draggingHandler( event ) {
-		let coords = event;
-
-		if ( this.isTouchEvent( event ) ) {
-			coords = event.touches[ 0 ];
-		}
+	draggingHandler = ( event: TouchEvent | MouseEvent ) => {
+		const coords = this.isTouchEvent( event ) ? event.touches[ 0 ] : event;
 
 		const x = coords.pageX - this.relativePos.x,
 			y = coords.pageY - this.relativePos.y;
 
 		this.mousePos = { x, y };
-	}
+	};
 
-	draggingEndedHandler() {
+	draggingEndedHandler = () => {
 		this.dragging = false;
 		this.mousePos = null;
 
-		cancelAnimationFrame( this.frameRequestId );
+		this.cancelRaf();
 
 		this.removeListeners();
 
 		this.props.onStop();
-	}
+	};
 
-	onTouchStartHandler( event ) {
+	onTouchStartHandler: TouchEventHandler< HTMLDivElement > = event => {
 		event.preventDefault();
 
 		document.addEventListener( 'touchmove', this.draggingHandler );
 		document.addEventListener( 'touchend', this.draggingEndedHandler );
+	};
 
-		this.draggingStartedHandler( event );
-	}
-
-	onMouseDownHandler( event ) {
+	onMouseDownHandler: MouseEventHandler< HTMLDivElement > = event => {
 		event.preventDefault();
 
 		document.addEventListener( 'mousemove', this.draggingHandler );
 		document.addEventListener( 'mouseup', this.draggingEndedHandler );
 
 		this.draggingStartedHandler( event );
-	}
+	};
 
-	update() {
+	update = () => {
 		if ( ! this.mousePos ) {
 			this.frameRequestId = requestAnimationFrame( this.update );
 			return;
 		}
 
-		const bounds = this.props.bounds;
+		const { bounds } = this.props;
 		let { x, y } = this.mousePos;
 		if ( bounds ) {
 			x = Math.max( bounds.left, Math.min( bounds.right - this.props.width, x ) );
@@ -156,7 +153,7 @@ export default class Draggable extends Component< Props, State > {
 		}
 
 		this.setState( { x, y } );
-	}
+	};
 
 	removeListeners() {
 		document.removeEventListener( 'mousemove', this.draggingHandler );
