@@ -43,8 +43,8 @@ const TemplateSelectorControl = ( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ map( templates, ( { slug, title, preview, previewAlt, value } ) => (
-					<li key={ `${ id }-${ value }` } className="template-selector-control__template">
+				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
+					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
