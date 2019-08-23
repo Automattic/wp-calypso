@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import moment from 'moment';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +25,10 @@ class CheckoutContainer extends React.Component {
 		headerText: '',
 	};
 
+	componentDidMount() {
+		this.setSiteCreatedNotice();
+	}
+
 	renderCheckoutHeader() {
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
@@ -30,6 +36,27 @@ class CheckoutContainer extends React.Component {
 	setHeaderText = newHeaderText => {
 		this.setState( { headerText: newHeaderText } );
 	};
+
+	setSiteCreatedNotice() {
+		// TODO:
+		// Add this as a child of TransactionData so we can grab the cart details
+		// Once we have the cart details we can tweak the copy depending on what's the in the cart,
+		// e.g., once you've purchased xyz.com, your new site address will be xyz.com
+		// or
+		// once you've upgraded to the X plan you'll be able to add a domain
+		// Do we need to set data in the signup state to validate that this site has been created via the onboarding flow?
+		// Probably, as the root cause is users  clicking back in the onboarding flow, not knowing that a site has already been created.
+		const createdAt = get( this.props.selectedSite, 'options.created_at', '' );
+		const isSelectedSiteNew = moment( createdAt ).isAfter( moment().subtract( 10, 'minutes' ) );
+		if ( ! isSelectedSiteNew ) {
+			return;
+		}
+
+		this.setHeaderText(
+			`Your site, ${ this.props.selectedSite.slug }, is created and ready to upgrade!`,
+			'Continue with your purchase to access your upgrade benefits.'
+		);
+	}
 
 	render() {
 		const {
