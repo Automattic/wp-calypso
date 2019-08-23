@@ -125,7 +125,7 @@ register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data'
  * post_content yet.
  */
 function enqueue_coblocks_gallery_scripts() {
-	if ( ! is_plugin_active( 'coblocks' ) ) {
+	if ( ! function_exists( 'CoBlocks' ) ) {
 		return;
 	}
 
@@ -133,12 +133,30 @@ function enqueue_coblocks_gallery_scripts() {
 	$header   = $template->get_template_content( 'header' );
 	$footer   = $template->get_template_content( 'footer' );
 
+	// Define where the asset is loaded from.
+	$dir = CoBlocks()->asset_source( 'js' );
+
+	// Define where the vendor asset is loaded from.
+	$vendors_dir = CoBlocks()->asset_source( 'js', 'vendors' );
+
+	// Masonry block.
 	if ( has_block( 'coblocks/gallery-masonry', $header . $footer ) ) {
 		wp_enqueue_script(
 			'coblocks-masonry',
-			WP_PLUGINS_DIR . 'coblocks/dist/js/coblocks-masonry.min.js',
+			$dir . 'coblocks-masonry' . COBLOCKS_ASSET_SUFFIX . '.js',
 			array( 'jquery', 'masonry', 'imagesloaded' ),
-			filemtime( plugin_dir_path( __FILE__ ) . 'full-site-editing-plugin.php' ),
+			COBLOCKS_VERSION,
+			true
+		);
+	}
+
+	// Carousel block.
+	if ( has_block( 'coblocks/gallery-carousel', $header . $footer ) ) {
+		wp_enqueue_script(
+			'coblocks-flickity',
+			$vendors_dir . '/flickity' . COBLOCKS_ASSET_SUFFIX . '.js',
+			array( 'jquery' ),
+			COBLOCKS_VERSION,
 			true
 		);
 	}
