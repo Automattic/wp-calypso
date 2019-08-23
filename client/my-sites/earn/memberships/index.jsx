@@ -96,13 +96,22 @@ class MembershipsSection extends Component {
 					</div>
 					<div className="memberships__earnings-breakdown-notes">
 						{ translate(
-							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
+							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
 							{
 								args: {
 									commission: '' + parseFloat( this.props.commission ) * 100 + '%',
 									stripe: '2.9%+30c',
 								},
-								components: { em: <em />, br: <br /> },
+								components: {
+									em: <em />,
+									br: <br />,
+									a: (
+										<ExternalLink
+											href="https://en.support.wordpress.com/recurring-payments-button/#related-fees"
+											icon={ true }
+										/>
+									),
+								},
 							}
 						) }
 					</div>
