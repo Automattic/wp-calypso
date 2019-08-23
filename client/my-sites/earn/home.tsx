@@ -167,7 +167,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						onClick: () => trackCtaButton( 'referral-jetpack' ),
 				  }
 				: {
-						url: 'https://refer.wordpress.com/',
+						url:
+							'https://refer.wordpress.com/?utm_source=calypso&utm_campaign=calypso_earn&utm_medium=automattic_referred&atk=341b381c971a0631a88f080f598faafb25c344db',
 						onClick: () => trackCtaButton( 'referral-wpcom' ),
 				  },
 		};
