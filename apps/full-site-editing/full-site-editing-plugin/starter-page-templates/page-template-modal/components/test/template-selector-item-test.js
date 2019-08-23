@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import { uniqueId, omit, range } from 'lodash';
+import { uniqueId, omit } from 'lodash';
 import { shallow } from 'enzyme';
 import TemplateSelectorItem from '../template-selector-item';
+import { blocksByTemplatesFixture } from './helpers/templates-blocks-helpers';
 
 describe( 'TemplateSelectorItem', () => {
 	const requiredProps = {
@@ -12,52 +13,6 @@ describe( 'TemplateSelectorItem', () => {
 		value: 'test-template',
 		staticPreviewImg: 'https://somepreviewimage.jpg',
 	};
-
-	const templates = [
-		{
-			slug: 'template-1',
-			title: 'Template 1',
-			preview: 'https://via.placeholder.com/350x150',
-			previewAlt: 'Testing alt',
-		},
-		{
-			slug: 'template-2',
-			title: 'Template 2',
-			preview: 'https://via.placeholder.com/300x250',
-			previewAlt: 'Testing alt 2',
-		},
-		{
-			slug: 'template-3',
-			title: 'Template 3',
-			preview: 'https://via.placeholder.com/500x200',
-			previewAlt: 'Testing alt 3',
-		},
-	];
-
-	const blocksByTemplates = templates.reduce( ( acc, curr ) => {
-		acc[ curr.slug ] = range( 4 ).map( () => {
-			return {
-				clientId: uniqueId(),
-				name: 'core/paragraph',
-				isValid: true,
-				attributes: {
-					align: 'left',
-					content:
-						'Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.',
-					dropCap: false,
-					fontWeight: '',
-					textTransform: '',
-					noBottomSpacing: false,
-					noTopSpacing: false,
-					coblocks: [],
-				},
-				innerBlocks: [],
-				originalContent:
-					'<p style="text-align:left;">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>',
-			};
-		} );
-		return acc;
-	}, {} );
 
 	describe( 'Basic rendering', () => {
 		it( 'renders with required props', () => {
@@ -158,7 +113,7 @@ describe( 'TemplateSelectorItem', () => {
 				<TemplateSelectorItem
 					{ ...requiredProps }
 					useDynamicPreview={ true }
-					blocks={ blocksByTemplates }
+					blocks={ blocksByTemplatesFixture }
 				/>
 			);
 

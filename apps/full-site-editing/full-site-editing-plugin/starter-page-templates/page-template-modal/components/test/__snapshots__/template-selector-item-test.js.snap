@@ -3,7 +3,7 @@
 exports[`TemplateSelectorItem Basic rendering renders with required props 1`] = `
 <button
   className="template-selector-item__label"
-  id="1-test-template"
+  id="13-test-template"
   onClick={[Function]}
   onMouseEnter={[Function]}
   type="button"
@@ -29,7 +29,7 @@ exports[`TemplateSelectorItem Basic rendering renders with required props 1`] = 
 exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1`] = `
 <button
   className="template-selector-item__label"
-  id="1-test-template"
+  id="13-test-template"
   onClick={[Function]}
   onMouseEnter={[Function]}
   type="button"
@@ -43,6 +43,23 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
         blocks={
           Object {
             "template-1": Array [
+              Object {
+                "attributes": Object {
+                  "align": "left",
+                  "coblocks": Array [],
+                  "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                  "dropCap": false,
+                  "fontWeight": "",
+                  "noBottomSpacing": false,
+                  "noTopSpacing": false,
+                  "textTransform": "",
+                },
+                "clientId": "1",
+                "innerBlocks": Array [],
+                "isValid": true,
+                "name": "core/paragraph",
+                "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+              },
               Object {
                 "attributes": Object {
                   "align": "left",
@@ -94,6 +111,8 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
                 "name": "core/paragraph",
                 "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
               },
+            ],
+            "template-2": Array [
               Object {
                 "attributes": Object {
                   "align": "left",
@@ -111,8 +130,6 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
                 "name": "core/paragraph",
                 "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
               },
-            ],
-            "template-2": Array [
               Object {
                 "attributes": Object {
                   "align": "left",
@@ -164,6 +181,8 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
                 "name": "core/paragraph",
                 "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
               },
+            ],
+            "template-3": Array [
               Object {
                 "attributes": Object {
                   "align": "left",
@@ -181,8 +200,6 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
                 "name": "core/paragraph",
                 "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
               },
-            ],
-            "template-3": Array [
               Object {
                 "attributes": Object {
                   "align": "left",
@@ -234,23 +251,6 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
                 "name": "core/paragraph",
                 "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
               },
-              Object {
-                "attributes": Object {
-                  "align": "left",
-                  "coblocks": Array [],
-                  "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
-                  "dropCap": false,
-                  "fontWeight": "",
-                  "noBottomSpacing": false,
-                  "noTopSpacing": false,
-                  "textTransform": "",
-                },
-                "clientId": "13",
-                "innerBlocks": Array [],
-                "isValid": true,
-                "name": "core/paragraph",
-                "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
-              },
             ],
           }
         }
@@ -269,7 +269,7 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
 exports[`TemplateSelectorItem Static previews renders in static preview mode by default  1`] = `
 <button
   className="template-selector-item__label"
-  id="1-test-template"
+  id="13-test-template"
   onClick={[Function]}
   onMouseEnter={[Function]}
   type="button"
