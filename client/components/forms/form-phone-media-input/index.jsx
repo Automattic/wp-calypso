@@ -15,35 +15,30 @@ import PhoneInput from 'components/phone-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 
-export default class extends React.Component {
-	static displayName = 'FormPhoneMediaInput';
+export default function FormPhoneMediaInput( props ) {
+	const {
+		additionalClasses,
+		label,
+		countryCode,
+		className,
+		disabled,
+		errorMessage,
+		isError = 'false',
+	} = props;
 
-	static defaultProps = {
-		isError: false,
-	};
-
-	focus = () => this.phoneInput.numberInput.focus();
-
-	setPhoneInput = ref => ( this.phoneInput = ref );
-
-	render() {
-		return (
-			<div className={ classnames( this.props.additionalClasses, 'phone' ) }>
-				<div>
-					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
-					<PhoneInput
-						{ ...omit( this.props, [ 'className', 'countryCode' ] ) }
-						setComponentReference={ this.setPhoneInput }
-						countryCode={ this.props.countryCode.toUpperCase() }
-						className={ this.props.className }
-						isError={ this.props.isError }
-						disabled={ this.props.disabled }
-					/>
-				</div>
-				{ this.props.errorMessage && (
-					<FormInputValidation text={ this.props.errorMessage } isError />
-				) }
+	return (
+		<div className={ classnames( additionalClasses, 'phone' ) }>
+			<div>
+				<FormLabel htmlFor={ name }>{ label }</FormLabel>
+				<PhoneInput
+					{ ...omit( props, [ 'className', 'countryCode' ] ) }
+					countryCode={ countryCode.toUpperCase() }
+					className={ className }
+					isError={ isError }
+					disabled={ disabled }
+				/>
 			</div>
-		);
-	}
+			{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
+		</div>
+	);
 }
