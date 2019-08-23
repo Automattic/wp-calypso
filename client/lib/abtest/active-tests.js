@@ -171,7 +171,7 @@ export default {
 		assignmentMethod: 'userId',
 	},
 	signupEscapeHatch: {
-		datestamp: '20190812',
+		datestamp: '20190821',
 		variations: {
 			variant: 50,
 			control: 50,
