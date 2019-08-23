@@ -17,8 +17,13 @@ import { overSome, some } from 'lodash';
 import PaymentCountrySelect from 'components/payment-country-select';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
+import analytics from 'lib/analytics';
 import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
-import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
+import {
+	hasRenewalItem,
+	hasDomainRegistration,
+	hasOnlyDomainProducts,
+} from 'lib/cart-values/cart-items';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import {
 	detectWebPaymentMethod,
@@ -174,6 +179,7 @@ function WebPayButton( {
 	translate,
 } ) {
 	const { currency, total_cost_integer, sub_total_integer, total_tax_integer } = cart;
+	const isRenewal = hasRenewalItem( cart );
 	const shouldDisplayItems = shouldShowTax( cart );
 	useEffect( () => {
 		stripe && setStripeObject( stripe, stripeConfiguration );
@@ -182,14 +188,18 @@ function WebPayButton( {
 
 	// We have to memoize these to prevent re-creating the paymentRequest
 	const callback = useMemo(
-		() => paymentMethodResponse =>
+		() => paymentMethodResponse => {
+			analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
+				is_renewal: isRenewal,
+			} );
 			completePaymentMethodTransaction( {
 				countryCode,
 				postalCode,
 				onSubmit,
 				...paymentMethodResponse,
-			} ),
-		[ countryCode, postalCode, onSubmit ]
+			} );
+		},
+		[ countryCode, postalCode, onSubmit, isRenewal ]
 	);
 	const paymentRequestOptions = usePaymentRequestOptions( {
 		translate,
@@ -212,7 +222,7 @@ function WebPayButton( {
 	if ( isStripeLoading || ! canMakePayment || ! postalCode || ! countryCode ) {
 		return <LoadingPaymentRequestButton />;
 	}
-	return <PaymentRequestButton paymentRequest={ paymentRequest } />;
+	return <PaymentRequestButton paymentRequest={ paymentRequest } isRenewal={ isRenewal } />;
 }
 
 WebPayButton.propTypes = {
@@ -231,10 +241,13 @@ WebPayButton.propTypes = {
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
 // See: https://github.com/stripe/react-stripe-elements/issues/284
-function PaymentRequestButton( { paymentRequest } ) {
+function PaymentRequestButton( { paymentRequest, isRenewal } ) {
 	const onClick = event => {
 		event.persist();
 		event.preventDefault();
+		analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
+			is_renewal: isRenewal,
+		} );
 		paymentRequest.show();
 	};
 	return <button className="web-payment-box__apple-pay-button" onClick={ onClick } />;
