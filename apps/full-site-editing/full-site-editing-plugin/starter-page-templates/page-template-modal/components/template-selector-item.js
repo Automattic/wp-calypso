@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isNil } from 'lodash';
+import { isNil, isEmpty } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -19,7 +19,7 @@ const TemplateSelectorItem = props => {
 		useDynamicPreview = false,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
-		blocks = [],
+		blocks,
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
@@ -27,6 +27,10 @@ const TemplateSelectorItem = props => {
 	}
 
 	if ( ! useDynamicPreview && isNil( staticPreviewImg ) ) {
+		return null;
+	}
+
+	if ( useDynamicPreview && ( isNil( blocks ) || isEmpty( blocks ) ) ) {
 		return null;
 	}
 

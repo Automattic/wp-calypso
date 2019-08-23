@@ -11,7 +11,7 @@
  */
 import { BlockPreview } from '@wordpress/block-editor';
 
-const BlockTemplatePreview = ( { blocks, viewportWidth } ) => {
+const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 	if ( ! blocks || ! blocks.length ) {
 		return null;
 	}
