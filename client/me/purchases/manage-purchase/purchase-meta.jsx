@@ -23,6 +23,7 @@ import {
 	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
+	isRechargeable,
 	isRenewing,
 	isSubscription,
 	paymentLogoType,
@@ -299,8 +300,7 @@ class PurchaseMeta extends Component {
 
 		if (
 			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
-			hasPaymentMethod( purchase ) &&
-			! isPaidWithCredits( purchase ) &&
+			isRechargeable( purchase ) &&
 			! isExpired( purchase )
 		) {
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;
