@@ -351,6 +351,13 @@ class Full_Site_Editing {
 		if ( ! $this->should_merge_template_and_post( $post ) ) {
 			return;
 		}
+        
+        $this->theme_slug = $this->normalize_theme_slug( get_stylesheet() );
+        // Bail if theme doesn't support FSE.
+        if ( ! $this->is_supported_theme( $this->theme_slug ) ) {
+            return;
+        }
+        
 
 		$template         = new WP_Template();
 		$template_content = $template->get_page_template_content();
