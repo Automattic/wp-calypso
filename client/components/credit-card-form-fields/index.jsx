@@ -279,6 +279,11 @@ export class CreditCardFormFields extends React.Component {
 		isNewTransaction: false,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = { userSelectedPhoneCountryCode: '' };
+	}
+
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		return React.createElement(
@@ -329,6 +334,11 @@ export class CreditCardFormFields extends React.Component {
 
 	handleFieldChange = event => {
 		this.updateFieldValues( event.target.name, event.target.value );
+	};
+
+	handlePhoneFieldChange = ( { value, countryCode } ) => {
+		this.updateFieldValues( 'phone-number', value );
+		this.setState( { userSelectedPhoneCountryCode: countryCode } );
 	};
 
 	shouldRenderCountrySpecificFields() {
@@ -409,10 +419,12 @@ export class CreditCardFormFields extends React.Component {
 					) }
 
 					{ this.createField( 'phone-number', FormPhoneMediaInput, {
-						onChange: this.updateFieldValues,
+						onChange: this.handlePhoneFieldChange,
 						countriesList,
-						countryCode: this.getFieldValue( 'country' ),
-						label: translate( 'Phone' ),
+						countryCode: this.state.userSelectedPhoneCountryCode || this.getFieldValue( 'country' ),
+						label: translate( 'Phone Number {{span}}(Optional){{/span}}', {
+							components: { span: <span className="credit-card-form-fields__explainer" /> },
+						} ),
 					} ) }
 				</div>
 			</div>
