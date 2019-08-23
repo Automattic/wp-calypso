@@ -558,7 +558,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() && ! this.props.isAtomicSite ) {
+		if ( ! this.useWPAdminFlows() ) {
 			return null;
 		}
 
@@ -573,24 +573,28 @@ export class MySitesSidebar extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className="wp-admin">
-				<ExternalLink
-					className="sidebar__menu-link"
-					href={ adminUrl }
-					icon
-					onClick={ this.trackWpadminClick }
-				>
-					<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
-					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
-				</ExternalLink>
-			</li>
+			<SidebarMenu className="sidebar__wp-admin">
+				<ul>
+					<li>
+						<ExternalLink
+							className="sidebar__menu-link"
+							href={ adminUrl }
+							icon
+							onClick={ this.trackWpadminClick }
+						>
+							<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
+							<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+						</ExternalLink>
+					</li>
+				</ul>
+			</SidebarMenu>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
 	useWPAdminFlows() {
-		const { isAtomicSite, isJetpack, isVip } = this.props;
+		const { isJetpack, isVip } = this.props;
 		const currentUser = this.props.currentUser;
 		const userRegisteredDate = new Date( currentUser.date );
 		const cutOffDate = new Date( '2015-09-07' );
@@ -600,8 +604,8 @@ export class MySitesSidebar extends Component {
 			return true;
 		}
 
-		// Jetpack (not Atomic) sites should always show a WP Admin
-		if ( isJetpack && ! isAtomicSite ) {
+		// Jetpack (including Atomic) sites should always show a WP Admin
+		if ( isJetpack ) {
 			return true;
 		}
 
@@ -631,7 +635,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Add new site' ) }
@@ -640,7 +643,6 @@ export class MySitesSidebar extends Component {
 				icon="add-outline"
 			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackDomainSettingsClick = () => {
@@ -728,11 +730,7 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) }
 
-				{ this.wpAdmin() ? (
-					<SidebarMenu className="sidebar__wp-admin">
-						<ul>{ this.wpAdmin() }</ul>
-					</SidebarMenu>
-				) : null }
+				{ this.wpAdmin() }
 			</div>
 		);
 	}
