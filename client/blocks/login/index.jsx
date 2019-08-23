@@ -9,6 +9,7 @@ import { capitalize, findLast, get, includes, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
+import { parse as qsParse } from 'qs';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
 import userFactory from 'lib/user';
+import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import AsyncLoad from 'components/async-load';
 import VisitSite from 'blocks/visit-site';
@@ -74,16 +76,47 @@ class Login extends Component {
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
 
+	state = { validatedRedirectToQueryParam: null };
+
+	async validateRedirectUrl() {
+		// TODO (sgomes): Replace with URLSearchParams when polyfilled (see #35408).
+		// const query = new URLSearchParams( window.location.search );
+		// const redirectUrl = query.get( 'redirect_to' );
+		const query = qsParse( window.location.search, { ignoreQueryPrefix: true } );
+		const redirectUrl = query.redirect_to;
+		if ( ! redirectUrl ) {
+			return;
+		}
+
+		try {
+			const response = await wpcom.req.get( `/me/validate-redirect?redirect_url=${ redirectUrl }` );
+			if ( response ) {
+				this.setState( { validatedRedirectToQueryParam: response.redirect_to || '/' } );
+			}
+		} catch {
+			// Ignore error, set the redirect link as a default `/`.
+			this.setState( { validatedRedirectToQueryParam: '/' } );
+		}
+	}
+
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true } ) );
 		}
 
+		if ( this.props.currentUser ) {
+			this.validateRedirectUrl();
+		}
+
 		window.scrollTo( 0, 0 );
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.props.currentUser && ! prevProps.currentUser ) {
+			this.validateRedirectUrl();
+		}
+
 		const hasNotice = this.props.requestNotice !== prevProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== prevProps.twoFactorAuthType;
 
@@ -172,15 +205,22 @@ class Login extends Component {
 			twoStepNonce,
 			fromSite,
 			currentUser,
-			redirectTo,
 		} = this.props;
+
+		const { validatedRedirectToQueryParam } = this.state;
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
 
 		if ( currentUser ) {
-			postHeader = <ContinueAsUser user={ currentUser } redirectUrl={ redirectTo || '/' } />;
+			// Render ContinueAsUser straight away, even before validation.
+			// This helps avoid jarring layout shifts. It's not ideal that the link URL changes transparently
+			// like that, but it is better than the alternative, and in practice it should happen quicker than
+			// the user can notice.
+			postHeader = (
+				<ContinueAsUser user={ currentUser } redirectUrl={ validatedRedirectToQueryParam || '/' } />
+			);
 		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
