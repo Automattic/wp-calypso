@@ -147,7 +147,6 @@ export class MySitesSidebar extends Component {
 				) }
 				link={ statsLink }
 				onNavigate={ this.trackStatsClick }
-				icon="stats-alt"
 				materialIcon="bar_chart"
 			>
 				<a href={ statsLink }>
