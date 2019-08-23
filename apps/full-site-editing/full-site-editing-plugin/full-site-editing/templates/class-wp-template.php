@@ -50,7 +50,7 @@ class WP_Template {
 	 * Returns normalized theme slug for the current theme.
 	 *
 	 * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
-	 * For example, we will get 'modern-business' when retrieving theme slug on self hosted sites,
+	 * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
 	 * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
 	 *
 	 * @param string $theme_slug Theme slug to check support for.
@@ -59,7 +59,11 @@ class WP_Template {
 	 */
 	public function normalize_theme_slug( $theme_slug ) {
 		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
-			$theme_slug = str_replace( 'pub/', '', $theme_slug );
+			$theme_slug = substr( $theme_slug, 4 );
+		}
+
+		if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
+			$theme_slug = substr( $theme_slug, 0, -6 );
 		}
 
 		return $theme_slug;
