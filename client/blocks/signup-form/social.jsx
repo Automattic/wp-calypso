@@ -84,14 +84,12 @@ class SocialSignupForm extends Component {
 						responseHandler={ this.handleGoogleResponse }
 						redirectUri={ redirectUri }
 						uxMode={ uxMode }
-						onClick={ this.trackSocialLogin.bind( null, 'google' ) }
+						onClick={ () => this.trackSocialLogin( 'google' ) }
 					/>
 
 					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						redirectUri={ null }
-						onClick={ this.trackSocialLogin.bind( null, 'apple' ) }
+						onClick={ () => this.trackSocialLogin( 'apple' ) }
 					/>
 				</div>
 			</div>
