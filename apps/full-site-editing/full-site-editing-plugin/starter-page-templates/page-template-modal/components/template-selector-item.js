@@ -13,7 +13,6 @@ const TemplateSelectorItem = props => {
 	const {
 		id,
 		value,
-		help,
 		onFocus,
 		onSelect,
 		label,
@@ -52,7 +51,6 @@ const TemplateSelectorItem = props => {
 			value={ value }
 			onMouseEnter={ () => onFocus( value, label ) }
 			onClick={ () => onSelect( value, label ) }
-			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
 			<span data-test-id="template-selector-item-label">{ label }</span>
