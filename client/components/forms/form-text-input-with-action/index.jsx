@@ -22,6 +22,7 @@ import './style.scss';
 
 export default class FormTextInputWithAction extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		action: PropTypes.node,
 		inputRef: PropTypes.func,
 		onFocus: PropTypes.func,
@@ -99,7 +100,7 @@ export default class FormTextInputWithAction extends Component {
 	render() {
 		return (
 			<div
-				className={ classNames( 'form-text-input-with-action', {
+				className={ classNames( 'form-text-input-with-action', this.props.className, {
 					'is-focused': this.state.focused,
 					'is-disabled': this.props.disabled,
 					'is-error': this.props.isError,
