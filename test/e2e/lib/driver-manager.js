@@ -316,5 +316,7 @@ export async function acceptAllAlerts( driver ) {
 
 export async function quitBrowser( driver ) {
 	global.__BROWSER__ = null;
-	return await driver.quit();
+	return await setTimeout( () => {
+		driver.quit();
+	}, 100 );
 }
