@@ -3,12 +3,11 @@
 exports[`TemplateSelectorItem Basic rendering renders with required props 1`] = `
 <button
   className="template-selector-item__label"
-  id="1-test-slug"
+  id="1-test-template"
   onClick={[Function]}
   onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
   type="button"
-  value="test-slug"
+  value="test-template"
 >
   <div
     className="template-selector-item__preview-wrap"
@@ -19,5 +18,10 @@ exports[`TemplateSelectorItem Basic rendering renders with required props 1`] = 
       src="https://somepreviewimage.jpg"
     />
   </div>
+  <span
+    data-test-id="template-selector-item-label"
+  >
+    Test Template
+  </span>
 </button>
 `;

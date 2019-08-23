@@ -8,7 +8,8 @@ import TemplateSelectorItem from '../template-selector-item';
 describe( 'TemplateSelectorItem', () => {
 	const requiredProps = {
 		id: uniqueId(),
-		value: 'test-slug',
+		label: 'Test Template',
+		value: 'test-template',
 		staticPreviewImg: 'https://somepreviewimage.jpg',
 	};
 
@@ -17,6 +18,14 @@ describe( 'TemplateSelectorItem', () => {
 			const wrapper = shallow( <TemplateSelectorItem { ...requiredProps } /> );
 
 			expect( wrapper.isEmptyRender() ).toBe( false );
+
+			// Explicitly assert these elements exist
+			expect( wrapper.find( '[data-test-id="template-selector-item-label"]' ).exists() ).toBe(
+				true
+			);
+			expect( wrapper.find( 'img.template-selector-item__media' ).exists() ).toBe( true );
+
+			// Catch all Snapshot
 			expect( wrapper ).toMatchSnapshot();
 		} );
 
@@ -45,19 +54,4 @@ describe( 'TemplateSelectorItem', () => {
 			expect( wrapper.isEmptyRender() ).toBe( true );
 		} );
 	} );
-
-	// describe('Static previews', () => {
-	// 	it.only('renders static img preview by default', () => {
-	// 		const wrapper = shallow(
-	// 			<TemplateSelectorItem
-	// 				id={uniqueId()}
-	// 				value="test-slug"
-	// 			/>
-	// 		);
-
-	// 		console.log(wrapper.debug());
-	// 		expect(wrapper.exists('img.template-selector-item__media')).toBe(true);
-
-	// 	})
-	// })
 } );

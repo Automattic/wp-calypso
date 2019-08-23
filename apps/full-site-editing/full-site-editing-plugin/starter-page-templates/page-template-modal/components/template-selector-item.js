@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-
-/**
- * Internal dependencies
- */
+import { isNil } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -25,6 +22,14 @@ const TemplateSelectorItem = props => {
 		staticPreviewImgAlt = '',
 		blocks = [],
 	} = props;
+
+	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
+		return null;
+	}
+
+	if ( ! useDynamicPreview && isNil( staticPreviewImg ) ) {
+		return null;
+	}
 
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
@@ -50,7 +55,7 @@ const TemplateSelectorItem = props => {
 			aria-describedby={ help ? `${ id }__help` : undefined }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			{ label }
+			<span data-test-id="template-selector-item-label">{ label }</span>
 		</button>
 	);
 };
