@@ -514,7 +514,8 @@ class TransferDomainStep extends React.Component {
 							break;
 						case domainAvailability.MAPPABLE:
 						case domainAvailability.TLD_NOT_SUPPORTED:
-						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY: {
+						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
+						case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: {
 							const tld = getTld( domain );
 
 							this.setState( {
