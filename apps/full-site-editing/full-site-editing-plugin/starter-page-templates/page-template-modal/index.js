@@ -78,15 +78,15 @@ class PageTemplateModal extends Component {
 					const blocks = content
 						? parseBlocks( replacePlaceholders( content, siteInformation ) )
 						: [];
+
 					this.setState( {
 						blocksByTemplateSlug: {
 							...this.state.blocksByTemplateSlug,
 							[ slug ]: { blocks, isParsing: false }
 						}
 					} );
-
 				} ).bind( null, templates[ i ] ),
-				50 * i
+				100 * i
 			);
 		}
 	}
