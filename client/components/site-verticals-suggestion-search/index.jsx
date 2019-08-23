@@ -94,7 +94,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 */
 	setSearchResults = results => {
 		if ( results && results.length ) {
-			this.setState( { candidateVerticals: results }, () =>
+			const candidateVerticals = this.getSuggestionsWithCategories( results );
+			this.setState( { candidateVerticals }, () =>
 				this.updateVerticalData(
 					this.searchForVerticalMatches( this.state.inputValue ),
 					this.state.inputValue
@@ -168,13 +169,23 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * We use the `this.state.candidateVerticals` array instead of `this.props.verticals`
 	 * so `<SuggestionSearch />` has a list to filter in between requests.
 	 *
+	 * @param {Array} verticals verticals to be categorized
 	 * @returns {Array} The array of vertical values.
 	 */
-	getSuggestions = () => this.state.candidateVerticals.map( vertical => vertical.verticalName );
+	getSuggestionsWithCategories( verticals ) {
+		const normalizedInput = this.state.inputValue.toLowerCase();
+
+		return verticals.map( vertical => ( {
+			label: vertical.verticalName,
+			category: vertical.verticalName.toLowerCase().includes( normalizedInput )
+				? undefined
+				: this.props.translate( 'Related' ),
+		} ) );
+	}
 
 	render() {
 		const { autoFocus, defaultVerticalSearchTerm, placeholder, siteType, translate } = this.props;
-		const { inputValue, railcar } = this.state;
+		const { candidateVerticals, inputValue, railcar } = this.state;
 		const shouldShowPopularTopics = this.shouldShowPopularTopics();
 		const placeholderText = shouldShowPopularTopics
 			? translate( 'Enter a topic or select from below.', {
@@ -185,6 +196,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					comment:
 						'Text input field placeholder. Should be fewer than 35 chars to fit mobile width.',
 			  } );
+
 		return (
 			<>
 				<QueryVerticals
@@ -197,7 +209,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					id="siteTopic"
 					placeholder={ placeholder || placeholderText }
 					onChange={ this.onSiteTopicChange }
-					suggestions={ this.getSuggestions() }
+					suggestions={ candidateVerticals }
 					value={ inputValue }
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					isSearching={ this.isVerticalSearchPending() }

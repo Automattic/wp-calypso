@@ -156,4 +156,19 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( { deal: 'nodeal' } );
 		} );
 	} );
+
+	test( "show verticals that don't match searchValue in the Related category", () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue="dog" />
+		);
+		wrapper.setProps( {
+			verticals: [ { verticalName: 'Dogs' }, { verticalName: 'Doggo' }, { verticalName: 'Cats' } ],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+			{ category: 'Related', label: 'Cats' },
+		] );
+	} );
 } );
