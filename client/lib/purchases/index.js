@@ -217,6 +217,10 @@ function maybeWithinRefundPeriod( purchase ) {
 	);
 }
 
+function isRechargeable( purchase ) {
+	return purchase.isRechargeable;
+}
+
 /**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
  * Purchases usually can be refunded up to 30 days after purchase.
@@ -427,6 +431,7 @@ export {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isRechargeable,
 	isRefundable,
 	isRemovable,
 	isRenewable,
