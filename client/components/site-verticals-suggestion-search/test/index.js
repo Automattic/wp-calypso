@@ -72,6 +72,24 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( wrapper.find( PopularTopics ) ).toHaveLength( 1 );
 	} );
 
+	test( 'should hide popular topics if showPopular is false', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ false } />
+		);
+		expect( wrapper.find( PopularTopics ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should hide popular topics if user has typed a query', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch
+				{ ...defaultProps }
+				searchValue={ 'Dogs' }
+				showPopular={ true }
+			/>
+		);
+		expect( wrapper.find( PopularTopics ) ).toHaveLength( 0 );
+	} );
+
 	test( 'should pass default vertical search term to <QueryVerticals />', () => {
 		const wrapper = shallow(
 			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
