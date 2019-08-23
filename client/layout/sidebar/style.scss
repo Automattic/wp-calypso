@@ -3,13 +3,13 @@
 	// margins and paddings.
 	margin: 0;
 	padding: 0;
-	
+
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	
+
 	display: flex;
 	flex-direction: column;
 
@@ -61,25 +61,6 @@
 	padding: 16px 8px 6px 16px;
 }
 
-// The anchor tag for sidebar menu items.
-.sidebar__menu-link {
-	//font-weight: 600;
-	font-size: 15px;
-	line-height: 1;
-	position: relative;
-	padding: 11px 16px 11px 20px;
-	color: var( --sidebar-text-color );
-	box-sizing: border-box;
-	white-space: nowrap;
-	overflow: hidden;
-	display: flex;
-	align-items: center;
-
-	// I think this is some voodoo to change the color
-	// of a link when tapped on iOS.
-	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
-}
-
 // Sidebar menu icons for main sections
 .sidebar__menu-icon {
 	fill: var( --sidebar-gridicon-fill );
@@ -102,10 +83,16 @@
 	line-height: 1;
 	position: relative;
 	padding: 10px 16px 10px 20px;
-	color: var( --sidebar-text-color );
 	box-sizing: border-box;
 	white-space: nowrap;
 	overflow: hidden;
+	display: flex;
+	align-items: center;
+
+	&,
+	&:visited {
+		color: var( --sidebar-text-color );
+	}
 
 	// I think this is some voodoo to change the color
 	// of a link when tapped on iOS.
@@ -135,15 +122,15 @@
 }
 
 .sidebar__menu-link-secondary-text {
-    margin-right: 8px;
-    align-self: center;
-    font-weight: 600;
-    font-size: 12px;
-    position: absolute;
-    right: 0;
-    z-index: 1;
-    color: var( --sidebar-menu-link-secondary-text-color );
-    padding: 4px 8px;
+	margin-right: 8px;
+	align-self: center;
+	font-weight: 600;
+	font-size: 12px;
+	position: absolute;
+	right: 0;
+	z-index: 1;
+	color: var( --sidebar-menu-link-secondary-text-color );
+	padding: 4px 8px;
 }
 
 // Expandables: Some sidebar menus act like accordions where
