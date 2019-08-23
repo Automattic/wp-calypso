@@ -217,6 +217,13 @@ function maybeWithinRefundPeriod( purchase ) {
 	);
 }
 
+/**
+ * Checks if a purchase have a bound payment method that we can recharge.
+ * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} if the purchase can be recharged by us through the bound payment method.
+ */
 function isRechargeable( purchase ) {
 	return purchase.isRechargeable;
 }
