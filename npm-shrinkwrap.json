@@ -41,7 +41,7 @@
 				"enzyme": "3.10.0",
 				"enzyme-adapter-react-16": "1.14.0",
 				"file-loader": "3.0.1",
-				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
+				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300d",
 				"node-sass": "4.11.0",
 				"postcss-custom-properties": "8.0.9",
 				"postcss-loader": "3.0.0",
@@ -14902,7 +14902,7 @@
 		},
 		"mini-css-extract-plugin-with-rtl": {
 			"version": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
-			"from": "github:Automattic/mini-css-extract-plugin-with-rtl",
+			"from": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300d",
 			"dev": true,
 			"requires": {
 				"loader-utils": "^1.1.0",
