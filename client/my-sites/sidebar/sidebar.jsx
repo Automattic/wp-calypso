@@ -14,6 +14,7 @@ import { memoize } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
@@ -43,10 +44,10 @@ import {
 	isJetpackSite,
 	canCurrentUserUseAds,
 	canCurrentUserUseEarn,
-	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
 	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
@@ -159,7 +160,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackCustomerHomeClick = () => {
-		this.trackMenuItemClick( isEnabled( 'customer-home' ) ? 'customer-home' : 'checklist' );
+		this.trackMenuItemClick( this.props.isCustomerHomeEnabled ? 'customer-home' : 'checklist' );
 		this.onNavigate();
 	};
 
@@ -171,10 +172,11 @@ export class MySitesSidebar extends Component {
 			siteSuffix,
 			siteId,
 			translate,
+			isCustomerHomeEnabled,
 		} = this.props;
 
 		// This will be eventually removed when Customer Home is finally live
-		const canUserViewChecklistOrCustomerHome = isEnabled( 'customer-home' )
+		const canUserViewChecklistOrCustomerHome = isCustomerHomeEnabled
 			? canUserUseCustomerHome
 			: canUserUseChecklistMenu;
 
@@ -182,17 +184,24 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const itemProps = isCustomerHomeEnabled
+			? {
+					label: translate( 'Home' ),
+					selected: itemLinkMatches( [ '/home' ], path ),
+					link: '/home' + siteSuffix,
+			  }
+			: {
+					label: translate( 'Checklist' ),
+					selected: itemLinkMatches( [ '/checklist' ], path ),
+					link: '/checklist' + siteSuffix,
+			  };
+
 		return (
 			<SidebarItem
+				materialIcon="home"
 				tipTarget="menus"
-				label={ isEnabled( 'customer-home' ) ? translate( 'Home' ) : translate( 'Checklist' ) }
-				selected={ itemLinkMatches(
-					isEnabled( 'customer-home' ) ? [ '/home' ] : [ '/checklist' ],
-					path
-				) }
-				link={ isEnabled( 'customer-home' ) ? '/home' + siteSuffix : '/checklist' + siteSuffix }
 				onNavigate={ this.trackCustomerHomeClick }
-				materialIcon={ isEnabled( 'customer-home' ) ? 'home' : 'check_circle' }
+				{ ...itemProps }
 			/>
 		);
 	}
@@ -767,6 +776,8 @@ function mapStateToProps( state ) {
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
+	const isCustomerHomeEnabled =
+		'show' === abtest( 'customerHomePage' ) && isEnabled( 'customer-home' );
 
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -780,6 +791,7 @@ function mapStateToProps( state ) {
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
+		isCustomerHomeEnabled,
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,

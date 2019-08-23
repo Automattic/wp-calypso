@@ -14,10 +14,8 @@ import { isEnabled } from 'config';
 
 import ChecklistMain from './main';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	canCurrentUserUseCustomerHome,
-	canCurrentUserUseChecklistMenu,
-} from 'state/sites/selectors';
+import { canCurrentUserUseChecklistMenu } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 
 export function show( context, next ) {
 	const displayMode = get( context, 'query.d' );
