@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { noop } from 'lodash';
@@ -20,121 +20,111 @@ import FormButton from 'components/forms/form-button';
  */
 import './style.scss';
 
-export default class FormTextInputWithAction extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		action: PropTypes.node,
-		inputRef: PropTypes.func,
-		onFocus: PropTypes.func,
-		onBlur: PropTypes.func,
-		onKeyDown: PropTypes.func,
-		onChange: PropTypes.func,
-		onAction: PropTypes.func,
-		defaultValue: PropTypes.string,
-		disabled: PropTypes.bool,
-		isError: PropTypes.bool,
-		isValid: PropTypes.bool,
-	};
+function FormTextInputWithAction( {
+	className,
+	action,
+	inputRef,
+	onFocus = noop,
+	onBlur = noop,
+	onKeyDown = noop,
+	onChange = noop,
+	onAction = noop,
+	defaultValue = '',
+	disabled,
+	isError,
+	isValid,
+	...props
+} ) {
+	const [ focused, setFocused ] = useState( false );
+	const [ value, setValue ] = useState( defaultValue );
 
-	static defaultProps = {
-		defaultValue: '',
-		onFocus: noop,
-		onBlur: noop,
-		onKeyDown: noop,
-		onChange: noop,
-		onAction: noop,
-		isError: false,
-		isValid: false,
-	};
+	const handleFocus = useCallback(
+		e => {
+			setFocused( true );
+			onFocus( e );
+		},
+		[ onFocus ]
+	);
 
-	state = {
-		focused: false,
-		value: String( this.props.defaultValue ),
-	};
+	const handleBlur = useCallback(
+		e => {
+			setFocused( false );
+			onBlur( e );
+		},
+		[ onBlur ]
+	);
 
-	handleFocus = e => {
-		this.setState( {
-			focused: true,
-		} );
+	const handleChange = useCallback(
+		e => {
+			setValue( e.target.value );
+			onChange( e.target.value, e );
+		},
+		[ onChange ]
+	);
 
-		this.props.onFocus( e );
-	};
+	const handleAction = useCallback(
+		e => {
+			onAction( value, e );
+		},
+		[ onAction, value ]
+	);
 
-	handleBlur = e => {
-		this.setState( {
-			focused: false,
-		} );
+	const handleKeyDown = useCallback(
+		e => {
+			onKeyDown( e );
+			if ( e.which === 13 && value ) {
+				handleAction( e );
+			}
+		},
+		[ handleAction, onKeyDown, value ]
+	);
 
-		this.props.onBlur( e );
-	};
-
-	handleKeyDown = e => {
-		this.props.onKeyDown( e );
-		if ( e.which === 13 && this.state.value ) {
-			this.handleAction( e );
-		}
-	};
-
-	handleChange = e => {
-		this.setState( {
-			value: e.target.value,
-		} );
-
-		this.props.onChange( e.target.value, e );
-	};
-
-	handleAction = e => {
-		this.props.onAction( this.state.value, e );
-	};
-
-	render() {
-		const {
-			className,
-			action,
-			inputRef,
-			onFocus,
-			onBlur,
-			onKeyDown,
-			onChange,
-			onAction,
-			defaultValue,
-			disabled,
-			isError,
-			isValid,
-			...props
-		} = this.props;
-		const { focused, value } = this.state;
-
-		return (
-			<div
-				className={ classNames( 'form-text-input-with-action', className, {
-					'is-focused': focused,
-					'is-disabled': disabled,
-					'is-error': isError,
-					'is-valid': isValid,
-				} ) }
-				role="group"
+	return (
+		<div
+			className={ classNames( 'form-text-input-with-action', className, {
+				'is-focused': focused,
+				'is-disabled': disabled,
+				'is-error': isError,
+				'is-valid': isValid,
+			} ) }
+			role="group"
+		>
+			<FormTextInput
+				{ ...props }
+				className="form-text-input-with-action__input"
+				ref={ inputRef }
+				disabled={ disabled }
+				value={ value }
+				defaultValue={ defaultValue }
+				onChange={ handleChange }
+				onFocus={ handleFocus }
+				onBlur={ handleBlur }
+				onKeyDown={ handleKeyDown }
+			/>
+			<FormButton
+				className="form-text-input-with-action__button is-compact"
+				disabled={ disabled || ! value }
+				onClick={ handleAction }
 			>
-				<FormTextInput
-					{ ...props }
-					className="form-text-input-with-action__input"
-					ref={ inputRef }
-					disabled={ disabled }
-					value={ value }
-					defaultValue={ defaultValue }
-					onChange={ this.handleChange }
-					onFocus={ this.handleFocus }
-					onBlur={ this.handleBlur }
-					onKeyDown={ this.handleKeyDown }
-				/>
-				<FormButton
-					className="form-text-input-with-action__button is-compact"
-					disabled={ disabled || ! value }
-					onClick={ this.handleAction }
-				>
-					{ action }
-				</FormButton>
-			</div>
-		);
-	}
+				{ action }
+			</FormButton>
+		</div>
+	);
 }
+
+FormTextInputWithAction.propTypes = {
+	className: PropTypes.string,
+	action: PropTypes.node,
+	inputRef: PropTypes.func,
+	onFocus: PropTypes.func,
+	onBlur: PropTypes.func,
+	onKeyDown: PropTypes.func,
+	onChange: PropTypes.func,
+	onAction: PropTypes.func,
+	defaultValue: PropTypes.string,
+	disabled: PropTypes.bool,
+	isError: PropTypes.bool,
+	isValid: PropTypes.bool,
+};
+
+export default FormTextInputWithAction;
