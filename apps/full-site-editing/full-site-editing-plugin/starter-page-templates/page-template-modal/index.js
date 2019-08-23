@@ -60,20 +60,28 @@ class PageTemplateModal extends Component {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 
-		// Parse templates blocks and store them into the state.
-		const blocksByTemplateSlug = reduce(
-			templates,
-			( prev, { slug, content } ) => {
-				prev[ slug ] = content
-					? parseBlocks( replacePlaceholders( content, siteInformation ) )
-					: [];
-				return prev;
-			},
-			{}
-		);
+		// Populate the state with parsed blocks
+		// immediately after the modal has been rendered.
+		// Wrapping it in a setTimeout() call,
+		// allows showing the modal with empty thumbnails
+		// before to start to parser and render them
+		// into their preview spots. It reduces the time considerably.
+		setTimeout( () => {
+			// Parse templates blocks and store them into the state.
+			const blocksByTemplateSlug = reduce(
+				templates,
+				( prev, { slug, content } ) => {
+					prev[ slug ] = content
+						? parseBlocks( replacePlaceholders( content, siteInformation ) )
+						: [];
+					return prev;
+				},
+				{}
+			);
 
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocksByTemplateSlug } );
+			// eslint-disable-next-line react/no-did-mount-set-state
+			this.setState( { blocksByTemplateSlug } );
+		}, 0 );
 	}
 
 	setTemplate = slug => {
