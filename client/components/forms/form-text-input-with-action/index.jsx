@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { keys, omit, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -88,34 +88,51 @@ export default class FormTextInputWithAction extends Component {
 	};
 
 	render() {
+		const {
+			className,
+			action,
+			inputRef,
+			onFocus,
+			onBlur,
+			onKeyDown,
+			onChange,
+			onAction,
+			defaultValue,
+			disabled,
+			isError,
+			isValid,
+			...props
+		} = this.props;
+		const { focused, value } = this.state;
+
 		return (
 			<div
-				className={ classNames( 'form-text-input-with-action', this.props.className, {
-					'is-focused': this.state.focused,
-					'is-disabled': this.props.disabled,
-					'is-error': this.props.isError,
-					'is-valid': this.props.isValid,
+				className={ classNames( 'form-text-input-with-action', className, {
+					'is-focused': focused,
+					'is-disabled': disabled,
+					'is-error': isError,
+					'is-valid': isValid,
 				} ) }
 				role="group"
 			>
 				<FormTextInput
+					{ ...props }
 					className="form-text-input-with-action__input"
-					ref={ this.props.inputRef }
-					disabled={ this.props.disabled }
-					defaultValue={ this.props.defaultValue }
-					value={ this.state.value }
+					ref={ inputRef }
+					disabled={ disabled }
+					value={ value }
+					defaultValue={ defaultValue }
 					onChange={ this.handleChange }
 					onFocus={ this.handleFocus }
 					onBlur={ this.handleBlur }
 					onKeyDown={ this.handleKeyDown }
-					{ ...omit( this.props, keys( this.constructor.propTypes ) ) }
 				/>
 				<FormButton
 					className="form-text-input-with-action__button is-compact"
-					disabled={ this.props.disabled || ! this.state.value }
+					disabled={ disabled || ! value }
 					onClick={ this.handleAction }
 				>
-					{ this.props.action }
+					{ action }
 				</FormButton>
 			</div>
 		);
