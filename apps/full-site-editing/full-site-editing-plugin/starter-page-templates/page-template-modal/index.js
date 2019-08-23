@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce, get, keyBy, mapValues } from 'lodash';
+import { isEmpty, get, keyBy, mapValues } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -66,31 +66,29 @@ class PageTemplateModal extends Component {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 
-		// Populate the state with parsed blocks
+		// Populate the state with parsed blocks, template by template,
 		// immediately after the modal has been rendered.
 		// Wrapping it in a setTimeout() call,
 		// allows showing the modal with empty thumbnails
 		// before to start to parser and render them
 		// into their preview spots. It reduces the time considerably.
-		setTimeout( () => {
-			// Parse templates blocks and store them into the state.
-			const blocksByTemplateSlug = reduce(
-				templates,
-				( prev, { slug, content } ) => {
-					prev[ slug ] = content
-						? ( {
-							blocks: parseBlocks( replacePlaceholders( content, siteInformation ) ),
-							isParsing: false,
-						} )
-						: ( { blocks: [], isParsing: false } );
-					return prev;
-				},
-				{}
-			);
+		for ( const i in templates ) {
+			setTimeout(
+				( ( { slug, content } ) => {
+					const blocks = content
+						? parseBlocks( replacePlaceholders( content, siteInformation ) )
+						: [];
+					this.setState( {
+						blocksByTemplateSlug: {
+							...this.state.blocksByTemplateSlug,
+							[ slug ]: { blocks, isParsing: false }
+						}
+					} );
 
-			// eslint-disable-next-line react/no-did-mount-set-state
-			this.setState( { blocksByTemplateSlug } );
-		}, 0 );
+				} ).bind( null, templates[ i ] ),
+				50 * i
+			);
+		}
 	}
 
 	setTemplate = slug => {
