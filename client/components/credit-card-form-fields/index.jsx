@@ -423,7 +423,7 @@ export class CreditCardFormFields extends React.Component {
 							onChange: this.handlePhoneFieldChange,
 							countriesList,
 							countryCode:
-								this.state.userSelectedPhoneCountryCode || this.getFieldValue( 'country' ),
+								this.state.userSelectedPhoneCountryCode || this.getFieldValue( 'country' ) || 'US',
 							label: translate( 'Phone Number {{span}}(Optional){{/span}}', {
 								components: { span: <span className="credit-card-form-fields__explainer" /> },
 							} ),
