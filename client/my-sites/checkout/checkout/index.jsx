@@ -652,7 +652,6 @@ export class Checkout extends React.Component {
 		}
 
 		this.props.setHeaderText( '' );
-		this.props.showGuaranteeSeal( false );
 
 		if (
 			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
@@ -686,7 +685,6 @@ export class Checkout extends React.Component {
 			cards,
 			productsList,
 			setHeaderText,
-			showGuaranteeSeal,
 			userCountryCode,
 			isJetpackNotAtomic,
 		} = this.props;
@@ -718,7 +716,6 @@ export class Checkout extends React.Component {
 				products={ productsList }
 				selectedSite={ selectedSite }
 				setHeaderText={ setHeaderText }
-				showGuaranteeSeal={ showGuaranteeSeal }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }

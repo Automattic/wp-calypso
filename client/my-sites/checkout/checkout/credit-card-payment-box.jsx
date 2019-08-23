@@ -33,9 +33,6 @@ import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import { injectStripe } from 'react-stripe-elements';
 import { setStripeObject } from 'lib/upgrades/actions';
-import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
-import { abtest } from 'lib/abtest';
-import classNames from 'classnames';
 
 function isFormSubmitting( transactionStep ) {
 	if ( ! transactionStep ) {
@@ -149,34 +146,16 @@ class CreditCardPaymentBox extends React.Component {
 				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			),
 			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
-			testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
-			paymentButtonClasses = classNames( 'payment-box__payment-buttons', {
-				'payment-box__payment-buttons-variant': testSealsCopy,
-			} ),
-			moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy,
-			secureText = testSealsCopy
-				? translate( 'This is a secure 128-SSL encrypted connection' )
-				: translate( 'Secure Payment' );
+			paymentButtonClasses = 'payment-box__payment-buttons';
 
 		return (
 			<div className={ paymentButtonClasses }>
 				<PayButton cart={ cart } transactionStep={ transactionStep } />
 
 				<div className="checkout__secure-payment">
-					{ moneyBackGuarantee && (
-						<div className="checkout__secure-payment-content">
-							<Gridicon icon="refresh" />
-							<div className="checkout__money-back-guarantee">
-								<div>{ translate( '30-day Money Back Guarantee' ) }</div>
-								{ hasDomainRegistration( cart ) && (
-									<div>{ translate( '(96 hrs for domains)' ) }</div>
-								) }
-							</div>
-						</div>
-					) }
 					<div className="checkout__secure-payment-content">
 						<Gridicon icon="lock" />
-						{ secureText }
+						{ translate( 'Secure Payment' ) }
 					</div>
 				</div>
 
