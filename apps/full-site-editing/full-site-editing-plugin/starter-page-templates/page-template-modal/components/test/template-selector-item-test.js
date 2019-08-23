@@ -40,6 +40,46 @@ describe( 'TemplateSelectorItem', () => {
 
 			expect( wrapper.isEmptyRender() ).toBe( true );
 		} );
+	} );
+
+	describe( 'Event handlers', () => {
+		it( 'calls onFocus prop on MouseEnter over template element', () => {
+			const onFocusSpy = jest.fn();
+
+			const templateElSelector = 'button';
+
+			const wrapper = shallow(
+				<TemplateSelectorItem { ...requiredProps } onFocus={ onFocusSpy } />
+			);
+
+			wrapper.find( templateElSelector ).simulate( 'mouseenter' );
+
+			expect( onFocusSpy ).toHaveBeenCalled();
+		} );
+
+		it( 'calls onSelect prop on button click ', () => {
+			const onSelectSpy = jest.fn();
+
+			const templateElSelector = 'button';
+
+			const wrapper = shallow(
+				<TemplateSelectorItem { ...requiredProps } onSelect={ onSelectSpy } />
+			);
+
+			wrapper.find( templateElSelector ).simulate( 'click' );
+
+			expect( onSelectSpy ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'Static previews', () => {
+		it( 'renders in static preview mode by default ', () => {
+			const wrapper = shallow( <TemplateSelectorItem { ...requiredProps } /> );
+
+			expect( wrapper.find( 'img.template-selector-item__media' ).exists() ).toBe( true );
+
+			expect( wrapper.isEmptyRender() ).toBe( false );
+		} );
 
 		it( 'does not render without a staticPreviewImg prop when in non-dynamic mode', () => {
 			const wrapper = shallow(
@@ -49,9 +89,19 @@ describe( 'TemplateSelectorItem', () => {
 				/>
 			);
 
-			// console.log(wrapper.debug());
-
 			expect( wrapper.isEmptyRender() ).toBe( true );
+		} );
+
+		it( 'renders with img alt text when provided ', () => {
+			const expectedAlt = 'This is an alt attribute';
+
+			const wrapper = shallow(
+				<TemplateSelectorItem { ...requiredProps } staticPreviewImgAlt={ expectedAlt } />
+			);
+
+			expect( wrapper.find( 'img.template-selector-item__media' ).prop( 'alt' ) ).toEqual(
+				expectedAlt
+			);
 		} );
 	} );
 } );
