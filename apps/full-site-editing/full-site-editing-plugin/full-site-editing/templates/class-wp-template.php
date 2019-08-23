@@ -146,22 +146,14 @@ class WP_Template {
 	 *
 	 * We only support one page template for now with header at the top and footer at the bottom.
 	 *
-	 * @param string $post_content String representing the post content that needs to be wrapped.
-	 *
 	 * @return null|string
 	 */
-	public function get_page_template_content( $post_content = '<!-- wp:a8c/post-content /-->' ) {
+	public function get_page_template_content() {
 		$header_id = $this->get_template_id( self::HEADER );
 		$footer_id = $this->get_template_id( self::FOOTER );
 
-		if ( false === strpos( $post_content, '<!-- wp:a8c/post-content /-->' ) ) {
-			$post_content = '<!-- wp:a8c/post-content -->' .
-							$post_content .
-							'<!-- /wp:a8c/post-content -->';
-		}
-
 		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"className\":\"site-header site-branding\"} /-->" .
-				$post_content .
+				'<!-- wp:a8c/post-content /-->' .
 				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"className\":\"site-footer\"} /-->";
 	}
 

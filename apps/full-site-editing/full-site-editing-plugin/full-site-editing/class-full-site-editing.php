@@ -348,7 +348,7 @@ class Full_Site_Editing {
 	 */
 	public function merge_template_and_post( $post ) {
 		// Bail if not a REST API Request and not in the editor.
-		if ( ! $this->should_merge_template_and_post() ) {
+		if ( ! $this->should_merge_template_and_post( $post ) ) {
 			return;
 		}
 
@@ -371,9 +371,10 @@ class Full_Site_Editing {
 	 * 2. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
 	 * 3. AND editing a post_type that supports full site editing
 	 *
+     * @param WP_Post post object for the check
 	 * @return bool
 	 */
-	private function should_merge_template_and_post() {
+	private function should_merge_template_and_post( $post ) {
 		$is_rest_api_wpcom = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
 		$is_rest_api_core = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
 		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
@@ -381,7 +382,7 @@ class Full_Site_Editing {
 		if ( ! ( $is_block_editor_screen || $is_rest_api_core || $is_rest_api_wpcom ) ) {
 			return false;
 		}
-		return $this->is_full_site_page();
+		return $this->is_full_site_page( $post );
 	}
 
 	/**
@@ -458,10 +459,12 @@ class Full_Site_Editing {
 	 * Determine if the current edited post is a full site page.
 	 * So far we only support static pages.
 	 *
+	 * @param object $post optional post object, if not passed in then current post is checked.
 	 * @return boolean
 	 */
-	public function is_full_site_page() {
-		return 'page' === get_post_type();
+	public function is_full_site_page( $post = null ) {
+		$post_type = get_post_type( $post );
+		return 'page' === $post_type || ( 'revision' === $post_type && 'page' === get_post_type( $post->post_parent ) );
 	}
 
 	/**
