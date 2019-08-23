@@ -14,7 +14,7 @@ import { isEnabled } from 'config';
 
 import ChecklistMain from './main';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { canCurrentUserUseChecklistMenu } from 'state/sites/selectors';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 
 export function show( context, next ) {
@@ -34,7 +34,7 @@ export function maybeRedirect( context, next ) {
 		return;
 	}
 
-	if ( ! canCurrentUserUseChecklistMenu( state, siteId ) ) {
+	if ( ! isEligibleForDotcomChecklist( state, siteId ) ) {
 		page.redirect( `/plans/my-plan/${ slug }` );
 		return;
 	}
