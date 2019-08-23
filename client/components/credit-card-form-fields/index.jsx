@@ -418,20 +418,38 @@ export class CreditCardFormFields extends React.Component {
 						} )
 					) }
 
-					{ countryDetailsRequired ||
-						this.createField( 'phone-number', FormPhoneMediaInput, {
-							onChange: this.handlePhoneFieldChange,
-							countriesList,
-							countryCode:
-								this.state.userSelectedPhoneCountryCode || this.getFieldValue( 'country' ) || 'US',
-							label: translate( 'Phone Number {{span}}(Optional){{/span}}', {
-								components: { span: <span className="credit-card-form-fields__explainer" /> },
-							} ),
-						} ) }
+					{ countryDetailsRequired || (
+						<PhoneNumberField
+							countriesList={ countriesList }
+							onChange={ this.handlePhoneFieldChange }
+							createField={ this.createField }
+							countryCode={
+								this.state.userSelectedPhoneCountryCode || this.getFieldValue( 'country' )
+							}
+							translate={ translate }
+						/>
+					) }
 				</div>
 			</div>
 		);
 	}
+}
+
+function PhoneNumberField( { countriesList, translate, createField, onChange, countryCode } ) {
+	return (
+		<React.Fragment>
+			{ createField( 'phone-number', FormPhoneMediaInput, {
+				onChange,
+				countriesList,
+				countryCode: countryCode || 'US',
+				label: translate( 'Phone Number {{span}}(Optional){{/span}}', {
+					components: {
+						span: <span className="credit-card-form-fields__explainer" />,
+					},
+				} ),
+			} ) }
+		</React.Fragment>
+	);
 }
 
 export default localize( CreditCardFormFields );
