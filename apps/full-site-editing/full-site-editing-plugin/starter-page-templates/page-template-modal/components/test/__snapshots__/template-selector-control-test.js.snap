@@ -3,7 +3,7 @@
 exports[`TemplateSelectorControl Basic rendering renders with required props 1`] = `
 <BaseControl
   className="template-selector-control"
-  id="template-selector-control-1"
+  id="template-selector-control-13"
   label="Select a Template..."
 >
   <ul
@@ -11,47 +11,263 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
   >
     <li
       className="template-selector-control__template"
-      key="template-selector-control-1-template-1"
+      key="template-selector-control-13-undefined"
     >
       <TemplateSelectorItem
-        id="template-selector-control-1"
-        label=""
+        blocks={
+          Array [
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "1",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "2",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "3",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "4",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+          ]
+        }
+        id="template-selector-control-13"
+        label="Template 1"
         onFocus={[Function]}
         onSelect={[Function]}
-        rawContent=""
         staticPreviewImg="https://via.placeholder.com/350x150"
         staticPreviewImgAlt="Testing alt"
         useDynamicPreview={false}
+        value="template-1"
       />
     </li>
     <li
       className="template-selector-control__template"
-      key="template-selector-control-1-template-2"
+      key="template-selector-control-13-undefined"
     >
       <TemplateSelectorItem
-        id="template-selector-control-1"
-        label=""
+        blocks={
+          Array [
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "5",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "6",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "7",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "8",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+          ]
+        }
+        id="template-selector-control-13"
+        label="Template 2"
         onFocus={[Function]}
         onSelect={[Function]}
-        rawContent=""
         staticPreviewImg="https://via.placeholder.com/300x250"
         staticPreviewImgAlt="Testing alt 2"
         useDynamicPreview={false}
+        value="template-2"
       />
     </li>
     <li
       className="template-selector-control__template"
-      key="template-selector-control-1-template-3"
+      key="template-selector-control-13-undefined"
     >
       <TemplateSelectorItem
-        id="template-selector-control-1"
-        label=""
+        blocks={
+          Array [
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "9",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "10",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "11",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+            Object {
+              "attributes": Object {
+                "align": "left",
+                "coblocks": Array [],
+                "content": "Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.",
+                "dropCap": false,
+                "fontWeight": "",
+                "noBottomSpacing": false,
+                "noTopSpacing": false,
+                "textTransform": "",
+              },
+              "clientId": "12",
+              "innerBlocks": Array [],
+              "isValid": true,
+              "name": "core/paragraph",
+              "originalContent": "<p style=\\"text-align:left;\\">Visitors will want to know who is on the other side of the page. Use this space to write about yourself, your site, your business, or anything you want. Use the testimonials below to quote others, talking about the same thing – in their own words.</p>",
+            },
+          ]
+        }
+        id="template-selector-control-13"
+        label="Template 3"
         onFocus={[Function]}
         onSelect={[Function]}
-        rawContent=""
         staticPreviewImg="https://via.placeholder.com/500x200"
         staticPreviewImgAlt="Testing alt 3"
         useDynamicPreview={false}
+        value="template-3"
       />
     </li>
   </ul>
