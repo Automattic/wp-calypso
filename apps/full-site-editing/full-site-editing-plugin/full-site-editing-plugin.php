@@ -115,3 +115,50 @@ function populate_wp_template_data() {
 	$fse->insert_default_data();
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
+
+/**
+ * Add front-end CoBlocks gallery block scripts.
+ *
+ * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,
+ * but for our FSE header and footer content. `frontend_scripts` uses `has_block` to determine
+ * if gallery blocks are present, and `has_block` is not aware of content sections outside of
+ * post_content yet.
+ */
+function enqueue_coblocks_gallery_scripts() {
+	if ( ! function_exists( 'CoBlocks' ) ) {
+		return;
+	}
+
+	$template = new WP_Template();
+	$header   = $template->get_template_content( 'header' );
+	$footer   = $template->get_template_content( 'footer' );
+
+	// Define where the asset is loaded from.
+	$dir = CoBlocks()->asset_source( 'js' );
+
+	// Define where the vendor asset is loaded from.
+	$vendors_dir = CoBlocks()->asset_source( 'js', 'vendors' );
+
+	// Masonry block.
+	if ( has_block( 'coblocks/gallery-masonry', $header . $footer ) ) {
+		wp_enqueue_script(
+			'coblocks-masonry',
+			$dir . 'coblocks-masonry' . COBLOCKS_ASSET_SUFFIX . '.js',
+			array( 'jquery', 'masonry', 'imagesloaded' ),
+			COBLOCKS_VERSION,
+			true
+		);
+	}
+
+	// Carousel block.
+	if ( has_block( 'coblocks/gallery-carousel', $header . $footer ) ) {
+		wp_enqueue_script(
+			'coblocks-flickity',
+			$vendors_dir . '/flickity' . COBLOCKS_ASSET_SUFFIX . '.js',
+			array( 'jquery' ),
+			COBLOCKS_VERSION,
+			true
+		);
+	}
+}
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts' );
