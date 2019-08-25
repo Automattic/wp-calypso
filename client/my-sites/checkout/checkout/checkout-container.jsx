@@ -14,49 +14,47 @@ import Checkout from '../checkout';
 import CartData from 'components/data/cart';
 import CheckoutData from 'components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
+import SignupSiteCreatedNotice from 'my-sites/checkout/checkout/signup-site-created-notice';
 
 /**
  * Style dependencies
  */
 import './checkout-container.scss';
 
+/**
+ * Returns whether given site has been created in the last `n` minutes
+ *
+ * @param  {String}  createdAt               The site creation date stamp
+ * @param  {Number}  creationWindowInMinutes A site is considered 'new' if it's been created in this time window (in minutes)
+ * @return {Boolean}                         If the site is 'new'. Default `false`
+ */
+function isSelectedSiteNew( createdAt, creationWindowInMinutes = 5 ) {
+	return moment( createdAt ).isAfter( moment().subtract( creationWindowInMinutes, 'minutes' ) );
+}
+
 class CheckoutContainer extends React.Component {
-	state = {
-		headerText: '',
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			headerText: '',
+			shouldDisplaySiteCreatedNotice:
+				props.isComingFromSignup && isSelectedSiteNew( get( props.selectedSite, 'options.created_at', '' ) ),
+		};
+	}
 
 	componentDidMount() {
-		this.setSiteCreatedNotice();
+		if ( this.state.shouldDisplaySiteCreatedNotice ) {
+			this.setHeaderText(
+				this.props.translate( 'Your WordPress.com site is ready! Finalize your upgrade to get the most out of it.' )
+			);
+		}
 	}
 
 	renderCheckoutHeader() {
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
-	setHeaderText = newHeaderText => {
-		this.setState( { headerText: newHeaderText } );
-	};
-
-	setSiteCreatedNotice() {
-		// TODO:
-		// Add this as a child of TransactionData so we can grab the cart details
-		// Once we have the cart details we can tweak the copy depending on what's the in the cart,
-		// e.g., once you've purchased xyz.com, your new site address will be xyz.com
-		// or
-		// once you've upgraded to the X plan you'll be able to add a domain
-		// Do we need to set data in the signup state to validate that this site has been created via the onboarding flow?
-		// Probably, as the root cause is users  clicking back in the onboarding flow, not knowing that a site has already been created.
-		const createdAt = get( this.props.selectedSite, 'options.created_at', '' );
-		const isSelectedSiteNew = moment( createdAt ).isAfter( moment().subtract( 10, 'minutes' ) );
-		if ( ! isSelectedSiteNew ) {
-			return;
-		}
-
-		this.setHeaderText(
-			`Your site, ${ this.props.selectedSite.slug }, is created and ready to upgrade!`,
-			'Continue with your purchase to access your upgrade benefits.'
-		);
-	}
+	setHeaderText = headerText => this.setState( { headerText } );
 
 	render() {
 		const {
@@ -76,6 +74,11 @@ class CheckoutContainer extends React.Component {
 		return (
 			<>
 				{ this.renderCheckoutHeader() }
+				{ this.state.shouldDisplaySiteCreatedNotice && (
+					<TransactionData>
+						<SignupSiteCreatedNotice selectedSite={ this.props.selectedSite } />
+					</TransactionData>
+				) }
 				<div className="checkout__container">
 					<TransactionData>
 						<Checkout

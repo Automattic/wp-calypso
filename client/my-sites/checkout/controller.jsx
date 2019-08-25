@@ -58,6 +58,8 @@ export function checkout( context, next ) {
 			selectedFeature={ feature }
 			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
+			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+			isComingFromSignup={ !! context.query.signup }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
