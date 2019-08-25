@@ -455,6 +455,12 @@ function handlePreview( calypsoPort ) {
 
 		const isAutosaveable = select( 'core/editor' ).isEditedPostAutosaveable();
 
+		// We need to retry the save/autosave in some instances:
+		// * In simple sites a post may be not autosaveable but a preview link may not have been generated yet
+		// * In Atomic sites where an autosave already exists the call to autosave to generate preview link will
+		//   result in a 400 from due to https://core.trac.wordpress.org/browser/trunk/src/wp-includes/rest-api/endpoints/class-wp-rest-autosaves-controller.php#L357
+		let retryCount = 0;
+
 		// If we don't need to autosave the post before previewing, then we simply
 		// generate the preview.
 		if ( ! isAutosaveable ) {
@@ -465,11 +471,6 @@ function handlePreview( calypsoPort ) {
 		// Request an autosave before generating the preview.
 		const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
 		const isDraft = [ 'draft', 'auto-draft' ].indexOf( postStatus ) !== -1;
-
-		// We need to retry the autosave in instances where autosave already exists
-		// as the first call results in a 400 from API. The second call will succeed
-		// due to https://core.trac.wordpress.org/browser/trunk/src/wp-includes/rest-api/endpoints/class-wp-rest-autosaves-controller.php#L357
-		let retryCount = 0;
 
 		savePost();
 
@@ -490,7 +491,6 @@ function handlePreview( calypsoPort ) {
 
 		function sendPreviewData() {
 			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
-
 			if ( ! previewUrl && retryCount < 3 ) {
 				retryCount++;
 				savePost();
