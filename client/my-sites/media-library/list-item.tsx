@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEqual, noop } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -10,31 +9,43 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+
 /**
  * Style dependencies
  */
 import './list-item.scss';
 
-export default class MediaLibraryListItem extends React.Component {
-	static propTypes = {
-		media: PropTypes.object,
-		scale: PropTypes.number.isRequired,
-		maxImageWidth: PropTypes.number,
-		thumbnailType: PropTypes.string,
-		showGalleryHelp: PropTypes.bool,
-		selectedIndex: PropTypes.number,
-		onToggle: PropTypes.func,
-		onEditItem: PropTypes.func,
-		style: PropTypes.object,
-	};
+// TODO: move to lib/media/utils once it gets typed.
+interface MediaObject {
+	transient?: boolean;
+	file?: string;
+	[propName: string]: any;
+}
+type Media = string | MediaObject;
+// END TODO
 
+interface Props {
+	media?: Media;
+	scale: number;
+	maxImageWidth?: number;
+	thumbnailType?: string;
+	showGalleryHelp?: boolean;
+	selectedIndex?: number;
+	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => any;
+	onEditItem?: any; // Unused. Appears to have been left here for compatibility reasons.
+	style?: React.CSSProperties;
+}
+
+type DivProps = Omit< React.ComponentProps< 'div' >, 'style' | 'onClick' >;
+
+export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
 	static defaultProps = {
 		maxImageWidth: 450,
 		selectedIndex: -1,
@@ -42,7 +53,7 @@ export default class MediaLibraryListItem extends React.Component {
 		onEditItem: noop,
 	};
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate( nextProps: Props ) {
 		return ! (
 			nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
@@ -53,8 +64,10 @@ export default class MediaLibraryListItem extends React.Component {
 		);
 	}
 
-	clickItem = event => {
-		this.props.onToggle( this.props.media, event.shiftKey );
+	clickItem = ( event: React.MouseEvent ) => {
+		if ( this.props.onToggle ) {
+			this.props.onToggle( this.props.media, event.shiftKey );
+		}
 	};
 
 	renderItem = () => {
@@ -64,7 +77,7 @@ export default class MediaLibraryListItem extends React.Component {
 			return;
 		}
 
-		switch ( getMimePrefix( this.props.media ) ) {
+		switch ( getMimePrefix( this.props.media ) as string ) {
 			case 'image':
 				component = ListItemImage;
 				break;
@@ -83,7 +96,11 @@ export default class MediaLibraryListItem extends React.Component {
 	};
 
 	renderSpinner = () => {
-		if ( ! this.props.media || ! this.props.media.transient ) {
+		if ( ! this.props.media ) {
+			return;
+		}
+
+		if ( ! ( this.props.media as MediaObject ).transient ) {
 			return;
 		}
 
@@ -110,22 +127,24 @@ export default class MediaLibraryListItem extends React.Component {
 			...otherProps
 		} = this.props;
 
+		let dataAttributes = null;
+
 		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! media,
 			'is-selected': -1 !== selectedIndex,
-			'is-transient': media && media.transient,
+			'is-transient': media && ( media as MediaObject ).transient,
 			'is-small': scale <= 0.125,
 		} );
 
 		const styleWithDefaults = { width: scale * 100 + '%', ...style };
 
-		if ( media ) {
-			title = media.file;
+		if ( media && ( media as MediaObject ).file ) {
+			title = ( media as MediaObject ).file;
 		}
 
-		if ( -1 !== selectedIndex ) {
+		if ( selectedIndex !== -1 && selectedIndex !== undefined ) {
 			selectedNumber = selectedIndex + 1;
-			otherProps[ 'data-selected-number' ] = selectedNumber > 99 ? '99+' : selectedNumber;
+			dataAttributes = { 'data-selected-number': selectedNumber > 99 ? '99+' : selectedNumber };
 		}
 
 		return (
@@ -135,6 +154,7 @@ export default class MediaLibraryListItem extends React.Component {
 				style={ styleWithDefaults }
 				onClick={ this.clickItem }
 				{ ...otherProps }
+				{ ...dataAttributes }
 			>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 18 } />
