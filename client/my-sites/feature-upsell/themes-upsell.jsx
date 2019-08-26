@@ -253,7 +253,7 @@ class ThemesUpsellComponent extends Component {
 
 						<p>
 							If you accept our offer for a free domain, and you later decide that the Business plan
-							isn’t for you, the domain is yours to keep. All we ask is that you to cover the domain
+							isn’t for you, the domain is yours to keep. All we ask is that you cover the domain
 							registration fees.
 						</p>
 					</div>
@@ -272,7 +272,6 @@ class ThemesUpsellComponent extends Component {
 			</div>
 		);
 	}
-
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 

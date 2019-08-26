@@ -6,9 +6,9 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
@@ -208,7 +208,7 @@ class PluginsUpsellComponent extends Component {
 							<li className="feature-upsell__checklist-item">
 								<Gridicon icon="checkmark-circle" className="feature-upsell__checklist-item-icon" />
 								<span className="feature-upsell__checklist-item-text">
-									$100 advertising credit to Google AdWords.
+									$100 advertising credit to Google Ads.
 								</span>
 							</li>
 							<li className="feature-upsell__checklist-item">
