@@ -24,6 +24,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCustomizerUrl, getSiteOption } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
@@ -35,6 +36,7 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 
 /**
  * Style dependencies
@@ -73,6 +75,7 @@ class Home extends Component {
 			}
 		},
 		isSiteEligible: PropTypes.bool.isRequired,
+		expandToolsAndTrack: PropTypes.func.isRequired,
 		trackAction: PropTypes.func.isRequired,
 	};
 
@@ -158,6 +161,7 @@ class Home extends Component {
 			site,
 			siteSlug,
 			trackAction,
+			expandToolsAndTrack,
 			isStaticHomePage,
 		} = this.props;
 		return (
@@ -276,19 +280,19 @@ class Home extends Component {
 						<VerticalNav className="customer-home__card-links">
 							<VerticalNavItem
 								path={ `/marketing/connections/${ siteSlug }` }
-								onClick={ () => trackAction( 'earn', 'share_site' ) }
+								onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
 							>
 								{ translate( 'Share my site' ) }
 							</VerticalNavItem>
 							<VerticalNavItem
 								path={ `/marketing/tools/${ siteSlug }` }
-								onClick={ () => trackAction( 'earn', 'grow_audience' ) }
+								onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
 							>
 								{ translate( 'Grow my audience' ) }
 							</VerticalNavItem>
 							<VerticalNavItem
 								path={ `/earn/${ siteSlug }` }
-								onClick={ () => trackAction( 'earn', 'money' ) }
+								onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
 							>
 								{ translate( 'Earn money' ) }
 							</VerticalNavItem>
@@ -380,10 +384,15 @@ const connectHome = connect(
 					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
 				)
 			),
+		expandToolsSection: () => dispatch( expandSection( SIDEBAR_SECTION_TOOLS ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...stateProps,
 		...ownProps,
+		expandToolsAndTrack: ( section, action ) => {
+			dispatchProps.expandToolsSection();
+			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage );
+		},
 		trackAction: ( section, action ) =>
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
 	} )
