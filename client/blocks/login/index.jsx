@@ -131,6 +131,11 @@ class Login extends Component {
 	rebootAfterLogin = () => {
 		const { redirectTo } = this.props;
 
+		// TODO make it properly with a new prop
+		if ( redirectTo === 'close' ) {
+			window.close();
+		}
+
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
 			social_service_connected: this.props.socialConnect,
