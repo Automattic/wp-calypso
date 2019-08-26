@@ -5,7 +5,7 @@ UpgradeNudge is a visual "nudge" which encourages users to upgrade their plan fo
 ## Usage
 
 ```jsx
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'blocks/upgrade-nudge';
 
 export default function ShowUpgradeNudge() {
 	return (
