@@ -95,7 +95,7 @@ import PromoSection from 'components/promo-section/docs/example';
 import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
-import Ribbon from 'components/ribbon/docs/example';
+import Ribbon from '@automattic/calypso-ui/src/ribbon/docs/example';
 import ScreenReaderTextExample from '@automattic/calypso-ui/src/screen-reader-text/docs/example';
 import SearchDemo from 'components/search/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
