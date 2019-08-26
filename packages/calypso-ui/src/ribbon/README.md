@@ -11,7 +11,7 @@ place in our hearts.
 
 ```js
 import Card from 'components/card';
-import Ribbom from 'components/ribbon';
+import Ribbon from 'components/ribbon';
 
 function MyCard() {
 	return (
