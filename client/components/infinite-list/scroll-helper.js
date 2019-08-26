@@ -69,7 +69,7 @@ class ScrollHelper {
 			index,
 			function( item ) {
 				const itemKey = this.props.getItemRef( item );
-				const	itemBounds = this.boundsForRef( itemKey );
+				const itemBounds = this.boundsForRef( itemKey );
 				let height;
 
 				if ( itemBounds ) {
