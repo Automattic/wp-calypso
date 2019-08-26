@@ -8,11 +8,12 @@ import PropTypes from 'prop-types';
 import { loadScript } from '@automattic/load-script';
 import config from 'config';
 import { getLocaleSlug } from 'i18n-calypso';
-import { identity, noop } from 'lodash';
+import { identity, isEmpty, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import CompactCard from 'components/card/compact';
 import SearchCard from 'components/search-card';
 import Search from 'components/search';
 import Prediction from './prediction';
@@ -163,14 +164,28 @@ class LocationSearch extends Component {
 		}
 	}
 
-	render() {
+	renderPredictions() {
 		const { predictions } = this.state;
 
 		return (
 			<Fragment>
+				{ predictions.map( this.renderPrediction ) }
+				<CompactCard className="location-search__attribution">
+					<img
+						src="https://s1.wp.com/i/powered-by-google-on-white-hdpi.png"
+						alt="Powered by Google"
+					/>
+				</CompactCard>
+			</Fragment>
+		);
+	}
+
+	render() {
+		return (
+			<Fragment>
 				{ this.renderInput() }
 				<div className="location-search__predictions">
-					{ predictions && predictions.map( this.renderPrediction ) }
+					{ ! isEmpty( this.state.predictions ) && this.renderPredictions() }
 				</div>
 			</Fragment>
 		);
