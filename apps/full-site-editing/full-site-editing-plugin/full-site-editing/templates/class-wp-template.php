@@ -179,9 +179,22 @@ class WP_Template {
 		if ( ! $this->is_supported_template_type( $template_type ) ) {
 			return null;
 		}
+		/*
+		things that follow are from wp-includes/default-filters.php
+		not everything is appropriate for template content as opposed to post content
+		*/
+
+		// 9 priority
+		$content = do_blocks( $this->get_template_content( $template_type ) );
+
+		// 10 priority
+		$content = wptexturize( $content );
+		// @todo maybe look at WPCOM_Responsive_Images for WPCom responsive image handling
+
+		// 11 priority
+		$content = do_shortcode( $content );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		$content = do_blocks( $this->get_template_content( $template_type ) );
-		echo apply_filters( 'the_content', $content );
+		echo $content;
 	}
 }
