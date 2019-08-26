@@ -50,6 +50,8 @@ export default class InfiniteList extends React.Component {
 	isScrolling = false;
 	_isMounted = false;
 	smartSetState = smartSetState;
+	topPlaceholderRef = React.createRef();
+	bottomPlaceholderRef = React.createRef();
 
 	componentWillMount() {
 		const url = page.current;
@@ -65,7 +67,11 @@ export default class InfiniteList extends React.Component {
 			newState.scrollTop = scrollTop;
 		}
 
-		this.scrollHelper = new ScrollHelper( this.boundsForRef );
+		this.scrollHelper = new ScrollHelper(
+			this.boundsForRef,
+			this.getTopPlaceholderBounds,
+			this.getBottomPlaceholderBounds
+		);
 		this.scrollHelper.props = this.props;
 		if ( this._contextLoaded() ) {
 			this._scrollContainer = this.props.context || window;
@@ -163,7 +169,11 @@ export default class InfiniteList extends React.Component {
 	reset() {
 		this.cancelAnimationFrame();
 
-		this.scrollHelper = new ScrollHelper( this.boundsForRef );
+		this.scrollHelper = new ScrollHelper(
+			this.boundsForRef,
+			this.getTopPlaceholderBounds,
+			this.getBottomPlaceholderBounds
+		);
 		this.scrollHelper.props = this.props;
 		if ( this._contextLoaded() ) {
 			this._scrollContainer = this.props.context || window;
@@ -298,6 +308,12 @@ export default class InfiniteList extends React.Component {
 		return null;
 	};
 
+	getTopPlaceholderBounds = () =>
+		this.topPlaceholderRef.current && this.topPlaceholderRef.current.getBoundingClientRect();
+
+	getBottomPlaceholderBounds = () =>
+		this.bottomPlaceholderRef.current && this.bottomPlaceholderRef.current.getBoundingClientRect();
+
 	/**
 	 * Returns a list of visible item indexes. This includes any items that are
 	 * partially visible in the viewport. Instance method that is called externally
@@ -388,14 +404,14 @@ export default class InfiniteList extends React.Component {
 		return (
 			<div { ...propsToTransfer }>
 				<div
-					ref="topPlaceholder"
+					ref={ this.topPlaceholderRef }
 					className={ spacerClassName }
 					style={ { height: this.state.topPlaceholderHeight } }
 				/>
 				{ itemsToRender }
 				{ renderTrailingItems() }
 				<div
-					ref="bottomPlaceholder"
+					ref={ this.bottomPlaceholderRef }
 					className={ spacerClassName }
 					style={ { height: this.state.bottomPlaceholderHeight } }
 				/>
