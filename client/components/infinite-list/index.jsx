@@ -1,3 +1,5 @@
+/* eslint-disable react/no-string-refs */
+// TODO: remove string ref usage.
 /**
  * External dependencies
  */
