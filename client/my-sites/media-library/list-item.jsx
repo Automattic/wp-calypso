@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { assign, isEqual, noop, omit } from 'lodash';
+import { isEqual, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -25,9 +22,7 @@ import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
  */
 import './list-item.scss';
 
-export default class extends React.Component {
-	static displayName = 'MediaLibraryListItem';
-
+export default class MediaLibraryListItem extends React.Component {
 	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number.isRequired,
@@ -102,41 +97,52 @@ export default class extends React.Component {
 	render() {
 		let title, selectedNumber;
 
+		const {
+			media,
+			scale,
+			maxImageWidth,
+			thumbnailType,
+			showGalleryHelp,
+			selectedIndex,
+			onToggle,
+			onEditItem,
+			style,
+			...otherProps
+		} = this.props;
+
 		const classes = classNames( 'media-library__list-item', {
-			'is-placeholder': ! this.props.media,
-			'is-selected': -1 !== this.props.selectedIndex,
-			'is-transient': this.props.media && this.props.media.transient,
-			'is-small': this.props.scale <= 0.125,
+			'is-placeholder': ! media,
+			'is-selected': -1 !== selectedIndex,
+			'is-transient': media && media.transient,
+			'is-small': scale <= 0.125,
 		} );
 
-		const props = omit( this.props, Object.keys( this.constructor.propTypes ) );
+		const styleWithDefaults = { width: scale * 100 + '%', ...style };
 
-		const style = assign(
-			{
-				width: this.props.scale * 100 + '%',
-			},
-			this.props.style
-		);
-
-		if ( this.props.media ) {
-			title = this.props.media.file;
+		if ( media ) {
+			title = media.file;
 		}
 
-		if ( -1 !== this.props.selectedIndex ) {
-			selectedNumber = this.props.selectedIndex + 1;
-			props[ 'data-selected-number' ] = selectedNumber > 99 ? '99+' : selectedNumber;
+		if ( -1 !== selectedIndex ) {
+			selectedNumber = selectedIndex + 1;
+			otherProps[ 'data-selected-number' ] = selectedNumber > 99 ? '99+' : selectedNumber;
 		}
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
+			<div
+				className={ classes }
+				style={ styleWithDefaults }
+				onClick={ this.clickItem }
+				{ ...otherProps }
+			>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 18 } />
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
 					{ this.renderSpinner() }
-					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
+					{ showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
 			</div>
 			/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
