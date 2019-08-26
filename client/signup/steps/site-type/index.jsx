@@ -108,7 +108,7 @@ class SiteType extends Component {
 
 		const headerText = translate( 'What kind of site are you building?' );
 		const subHeaderText = translate(
-			"Choose a site type, answer a few questions, and we'll start you off with a fresh site and customized content."
+			'This is just a starting point. You can add or change features later.'
 		);
 
 		return (
