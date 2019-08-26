@@ -15,10 +15,10 @@ export class SignupSiteCreatedNotice extends PureComponent {
 		const { cart, translate } = this.props;
 		const hasPlanInCart = hasPlan( cart );
 		const bundledDomain = cart && cart.bundled_domain;
-		let hintText = 'Continue with your purchase to access your upgrade benefits.';
+		let hintText = 'Complete your purchase to access your upgrade benefits.';
 
 		if ( hasPlanInCart ) {
-			hintText = translate( 'Continue with your plan purchase to upgrade.' );
+			hintText = translate( 'Complete your plan purchase to upgrade.' );
 		}
 		if ( hasPlanInCart && bundledDomain ) {
 			hintText = translate(
@@ -35,7 +35,7 @@ export class SignupSiteCreatedNotice extends PureComponent {
 	}
 
 	render() {
-		const { selectedSite } = this.props;
+		const { selectedSite, translate } = this.props;
 
 		return (
 			<div className="checkout__site-created-notice-wrapper">
@@ -47,7 +47,14 @@ export class SignupSiteCreatedNotice extends PureComponent {
 				/>
 				<div className="checkout__site-created-copy">
 					<div>
-						<em>{ selectedSite.slug }</em> has been created!
+						{ translate(
+							"{{em}}%(siteSlug)s{{/em}} is up and running!",
+							{
+								components: { em: <em /> },
+								args: { siteSlug: selectedSite.slug },
+								comment: '`siteSlug` is the WordPress.com site, e.g., testsite.wordpress.com',
+							} )
+						}
 					</div>
 					<div>{ this.getUpgradeText() }</div>
 				</div>

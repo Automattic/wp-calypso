@@ -45,7 +45,7 @@ class CheckoutContainer extends React.Component {
 	componentDidMount() {
 		if ( this.state.shouldDisplaySiteCreatedNotice ) {
 			this.setHeaderText(
-				this.props.translate( 'Your WordPress.com site is ready! Finalize your upgrade to get the most out of it.' )
+				this.props.translate( 'Your WordPress.com site is ready! Finish your purchase to get the most out of it.' )
 			);
 		}
 	}
