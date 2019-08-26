@@ -171,4 +171,31 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 			{ category: 'Related', label: 'Cats' },
 		] );
 	} );
+
+	test( "don't show any related topics if query length is less than 3", () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue="do" />
+		);
+		wrapper.setProps( {
+			verticals: [ { verticalName: 'Dogs' }, { verticalName: 'Doggo' }, { verticalName: 'Cats' } ],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+		] );
+
+		wrapper.instance().onSiteTopicChange( 'dog' );
+		// Need to re-set the verticals prop again because `cDU` does reference equality
+		// check before updating candidateVerticals
+		wrapper.setProps( {
+			verticals: [ { verticalName: 'Dogs' }, { verticalName: 'Doggo' }, { verticalName: 'Cats' } ],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+			{ label: 'Cats', category: 'Related' },
+		] );
+	} );
 } );

@@ -174,13 +174,16 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 */
 	getSuggestionsWithCategories( verticals ) {
 		const normalizedInput = this.state.inputValue.toLowerCase();
+		const includeRelated = normalizedInput.length > 2;
 
-		return verticals.map( vertical => ( {
-			label: vertical.verticalName,
-			category: vertical.verticalName.toLowerCase().includes( normalizedInput )
-				? undefined
-				: this.props.translate( 'Related' ),
-		} ) );
+		return verticals
+			.map( vertical => ( {
+				label: vertical.verticalName,
+				category: vertical.verticalName.toLowerCase().includes( normalizedInput )
+					? undefined
+					: this.props.translate( 'Related' ),
+			} ) )
+			.filter( suggestion => includeRelated || ! suggestion.category );
 	}
 
 	render() {
