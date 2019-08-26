@@ -122,6 +122,11 @@ if ( config.isEnabled( 'hello-world' ) ) {
 
 This checks for our feature in the current environment to figure out whether it needs to register a new section. The section is defined by a name, an array with the relevant paths, and the main module.
 
+You might need to import the `config` module at the top of the `sections.js` file if it's not already there:
+```js
+import config from 'config';
+```
+
 ### Run the server!
 
 Restart the server doing:
@@ -219,10 +224,13 @@ export default class HelloWorld extends React.Component {
 }
 ```
 
-We need to do one more step to include the component's style file in the main application style file. It's done by importing `style.scss` in `assets/stylesheets/_components.scss`, add following line at the end of `_components.scss`:
+We need to do one more step to import the component's style file in the component's JavaScript source file. It's done by adding an import statement block to the `main.jsx` file:
 
-```scss
-@import 'my-sites/hello-world/style';
+```jsx
+/**
+ * Style dependencies
+ */
+import './style.scss';
 ```
 
 That's it. Please check out the [CSS/Sass Coding Guidelines](../coding-guidelines/css.md) to learn more about working with stylesheets in the project.
