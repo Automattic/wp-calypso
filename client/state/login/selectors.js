@@ -179,10 +179,10 @@ export const getRedirectToSanitized = state => {
  * Retrieves the last known value of `close_window_after_login` from the query params of a `/login` page.
  *
  * @param  {Object}   state  Global state tree
- * @return {?bool}           True if the window should be closed after login.
+ * @return {Boolean}           True if the window should be closed after login.
  */
 export const getCloseWindowAfterLogin = state => {
-	return get( state, 'login.closeWindowAfterLogin', null );
+	return get( state, 'login.closeWindowAfterLogin', false );
 };
 
 /***
