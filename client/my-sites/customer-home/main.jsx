@@ -26,6 +26,7 @@ import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCustomizerUrl, getSiteOption } from 'state/sites/selectors';
+import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -74,6 +75,7 @@ class Home extends Component {
 		},
 		isSiteEligible: PropTypes.bool.isRequired,
 		trackAction: PropTypes.func.isRequired,
+		staticHomePageId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -159,7 +161,10 @@ class Home extends Component {
 			siteSlug,
 			trackAction,
 			isStaticHomePage,
+			staticHomePageId,
 		} = this.props;
+		const editHomePageUrl =
+			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col">
@@ -178,7 +183,7 @@ class Home extends Component {
 							</Button>
 							{ isStaticHomePage ? (
 								<Button
-									href={ customizeUrl }
+									href={ editHomePageUrl }
 									onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
 								>
 									{ translate( 'Edit Homepage' ) }
@@ -356,6 +361,7 @@ const connectHome = connect(
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+		const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 
 		return {
 			site: getSelectedSite( state ),
@@ -367,7 +373,8 @@ const connectHome = connect(
 			hasChecklistData,
 			isChecklistComplete,
 			isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
-			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			isStaticHomePage,
+			staticHomePageId: isStaticHomePage ? getSiteFrontPage( state, siteId ) : -Infinity,
 		};
 	},
 	dispatch => ( {
