@@ -25,10 +25,7 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getCustomizerUrl,
-	getSiteOption,
-} from 'state/sites/selectors';
+import { getCustomizerUrl, getSiteOption } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -64,6 +61,7 @@ class Home extends Component {
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		customizeUrl: PropTypes.string.isRequired,
+		menusUrl: PropTypes.string.isRequired,
 		canUserUseCustomerHome: PropTypes.bool.isRequired,
 		hasChecklistData: PropTypes.bool.isRequired,
 		isChecklistComplete: function( props, propName, componentName ) {
@@ -153,7 +151,15 @@ class Home extends Component {
 	}
 
 	renderCustomerHome = () => {
-		const { translate, customizeUrl, site, siteSlug, trackAction, isStaticHomePage } = this.props;
+		const {
+			translate,
+			customizeUrl,
+			menusUrl,
+			site,
+			siteSlug,
+			trackAction,
+			isStaticHomePage,
+		} = this.props;
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col">
@@ -233,7 +239,7 @@ class Home extends Component {
 								iconSrc="/calypso/images/customer-home/theme.svg"
 							/>
 							<ActionBox
-								href={ customizeUrl }
+								href={ menusUrl }
 								onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
 								label={ translate( 'Edit menus' ) }
 								iconSrc="/calypso/images/customer-home/menus.svg"
@@ -356,6 +362,7 @@ const connectHome = connect(
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
 			customizeUrl: getCustomizerUrl( state, siteId ),
+			menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 			hasChecklistData,
 			isChecklistComplete,
