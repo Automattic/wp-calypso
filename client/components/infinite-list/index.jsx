@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
-import { noop, omit } from 'lodash';
+import { noop } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -344,21 +343,34 @@ export default class InfiniteList extends React.Component {
 	}
 
 	render() {
-		const propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
-			spacerClassName = 'infinite-list__spacer';
+		const {
+			items,
+			fetchingNextPage,
+			lastPage,
+			guessedItemHeight,
+			itemsPerRow,
+			fetchNextPage,
+			getItemRef,
+			renderItem,
+			renderLoadingPlaceholders,
+			renderTrailingItems,
+			context,
+			...propsToTransfer
+		} = this.props;
+		const spacerClassName = 'infinite-list__spacer';
 		let i,
 			lastRenderedIndex = this.state.lastRenderedIndex,
 			itemsToRender = [];
 
-		if ( lastRenderedIndex === -1 || lastRenderedIndex > this.props.items.length - 1 ) {
+		if ( lastRenderedIndex === -1 || lastRenderedIndex > items.length - 1 ) {
 			debug(
 				'resetting lastRenderedIndex, currently at %s, %d items',
 				lastRenderedIndex,
-				this.props.items.length
+				items.length
 			);
 			lastRenderedIndex = Math.min(
 				this.state.firstRenderedIndex + this.scrollHelper.initialLastRenderedIndex(),
-				this.props.items.length - 1
+				items.length - 1
 			);
 			debug( 'reset lastRenderedIndex to %s', lastRenderedIndex );
 		}
@@ -366,11 +378,11 @@ export default class InfiniteList extends React.Component {
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
-			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );
+			itemsToRender.push( renderItem( items[ i ], i ) );
 		}
 
-		if ( this.props.fetchingNextPage ) {
-			itemsToRender = itemsToRender.concat( this.props.renderLoadingPlaceholders() );
+		if ( fetchingNextPage ) {
+			itemsToRender = itemsToRender.concat( renderLoadingPlaceholders() );
 		}
 
 		return (
@@ -381,7 +393,7 @@ export default class InfiniteList extends React.Component {
 					style={ { height: this.state.topPlaceholderHeight } }
 				/>
 				{ itemsToRender }
-				{ this.props.renderTrailingItems() }
+				{ renderTrailingItems() }
 				<div
 					ref="bottomPlaceholder"
 					className={ spacerClassName }
