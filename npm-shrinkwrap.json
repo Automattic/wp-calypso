@@ -11518,18 +11518,19 @@
 			}
 		},
 		"husky": {
-			"version": "3.0.0",
-			"resolved": "https://registry.npmjs.org/husky/-/husky-3.0.0.tgz",
-			"integrity": "sha512-lKMEn7bRK+7f5eWPNGclDVciYNQt0GIkAQmhKl+uHP1qFzoN0h92kmH9HZ8PCwyVA2EQPD8KHf0FYWqnTxau+Q==",
+			"version": "3.0.4",
+			"resolved": "https://registry.npmjs.org/husky/-/husky-3.0.4.tgz",
+			"integrity": "sha512-7Rnt8aJfy+MlV28snmYK7O7vWwtOfeVxV6KhLpUFXlmx5ukQ1nQmNUB7QsAwSgdySB5X+bm7q7JIRgazqBUzKA==",
 			"dev": true,
 			"requires": {
+				"chalk": "^2.4.2",
 				"cosmiconfig": "^5.2.1",
 				"execa": "^1.0.0",
 				"get-stdin": "^7.0.0",
 				"is-ci": "^2.0.0",
 				"opencollective-postinstall": "^2.0.2",
 				"pkg-dir": "^4.2.0",
-				"please-upgrade-node": "^3.1.1",
+				"please-upgrade-node": "^3.2.0",
 				"read-pkg": "^5.1.1",
 				"run-node": "^1.0.0",
 				"slash": "^3.0.0"
@@ -20047,9 +20048,9 @@
 			}
 		},
 		"regexp-tree": {
-			"version": "0.1.11",
-			"resolved": "https://registry.npmjs.org/regexp-tree/-/regexp-tree-0.1.11.tgz",
-			"integrity": "sha512-7/l/DgapVVDzZobwMCCgMlqiqyLFJ0cduo/j+3BcDJIB+yJdsYCfKuI3l/04NV+H/rfNRdPIDbXNZHM9XvQatg==",
+			"version": "0.1.12",
+			"resolved": "https://registry.npmjs.org/regexp-tree/-/regexp-tree-0.1.12.tgz",
+			"integrity": "sha512-TsXZ8+cv2uxMEkLfgwO0E068gsNMLfuYwMMhiUxf0Kw2Vcgzq93vgl6wIlIYuPmfMqMjfQ9zAporiozqCnwLuQ==",
 			"dev": true
 		},
 		"regexpp": {
