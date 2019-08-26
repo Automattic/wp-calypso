@@ -172,17 +172,17 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
-		border-color: var( --color-gray-200 );
+		border-color: #a7aaad; // $studio-gray-20;
 
 		.text-control__label,
 		.components-base-control__label {
-			color: var( --color-gray-500 );
+			color: #646970; // $studio-gray-50;
 			font-size: 12px;
 			font-weight: normal;
 		}
 
 		&.active {
-			box-shadow: 0 0 0 2px var( --color-hot-purple-600 );
+			box-shadow: 0 0 0 2px #674399; // $studio-woocommerce-purple-60
 			border-color: transparent;
 		}
 	}
@@ -213,7 +213,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 	.login__woocommerce-logo {
 		text-align: center;
-		border-bottom: 1px solid var( --color-gray-50 );
+		border-bottom: 1px solid #646970; // $studio-gray-50;
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -285,8 +285,8 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		}
 
 		.social-buttons__button {
-			border: 1px solid $muriel-woo-purple-500;
-			color: $muriel-woo-purple-500;
+			border: 1px solid #c9356e; // $studio-pink;
+			color: #c9356e; // $studio-pink
 			box-shadow: none;
 			max-width: 250px;
 			height: 48px;
