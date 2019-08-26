@@ -41,7 +41,6 @@ export class UpgradeNudge extends React.Component {
 		compact: PropTypes.bool,
 		plan: PropTypes.string,
 		feature: PropTypes.string,
-		shouldDisplay: PropTypes.oneOfType( [ PropTypes.func, PropTypes.bool ] ),
 		site: PropTypes.object,
 		translate: PropTypes.func,
 	};
@@ -55,7 +54,6 @@ export class UpgradeNudge extends React.Component {
 		plan: null,
 		feature: null,
 		compact: false,
-		shouldDisplay: null,
 		site: null,
 		translate: identity,
 	};

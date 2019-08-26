@@ -19,25 +19,6 @@ export default function ShowUpgradeNudge() {
 }
 ```
 
-To set the UpgradeNudge to be always visibly displayed (mostly for debugging use), `shouldDisplay` can be used:
-
-```jsx
-import { stubTrue } from 'lodash';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
-
-export default function ShowUpgradeNudgeAlways() {
-	return (
-		<div>
-			<UpgradeNudge
-				title="This is a title"
-				message="This is a custom message"
-				shouldDisplay={ stubTrue }
-			/>
-		</div>
-	);
-}
-```
-
 ## Props
 
 Name | Type | Default | Description
@@ -52,13 +33,11 @@ Name | Type | Default | Description
 `message` | `string` | `'And you get your own domain address.'` | The displayed message on the UpgradeNudge.
 `onClick` | `func` | `noop` | The function to run when the UpgradeNudge is clicked.
 `plan` | `string` from `PLANS_LIST` keys | `null` | The slug of the plan that the proposed upgrade would provide.
-`shouldDisplay` | `func` or `bool` | `null` | A `bool` (or `func` that returns a `bool`) that indicates whether the UpgradeNudge should be displayed.
 `site` | `object` | `null` | The site that is proposed to be upgraded.
 `title` | `string` | `'Upgrade to Premium'` | The displayed title on the UpgradeNudge.
 `translate` | `func` | `identity` | The translation function to use for translatable strings visible on the UpgradeNudge.
 
 # Additional usage information
 
-* **shouldDisplay**: If `shouldDisplay` is left unspecified, the `shouldDisplay()` function in `index.jsx` will be used to determine whether the UpgradeNudge should display in certain conditions.
 * **feature**: See `client/lib/plans/constants.js` for `FEATURES_LIST`.
 * **plan**: See `client/lib/plans/constants.js` for `PLANS_LIST`.
