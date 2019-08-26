@@ -171,13 +171,12 @@ export default {
 		assignmentMethod: 'userId',
 	},
 	signupEscapeHatch: {
-		datestamp: '20190821',
+		datestamp: '20190826',
 		variations: {
 			variant: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 };
