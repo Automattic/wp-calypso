@@ -21,23 +21,14 @@ import './checkout-container.scss';
 class CheckoutContainer extends React.Component {
 	state = {
 		headerText: '',
-		subHeaderText: '',
-		isJetpackNotAtomic: false,
 	};
 
 	renderCheckoutHeader() {
-		return (
-			this.state.headerText && (
-				<FormattedHeader
-					headerText={ this.state.headerText }
-					subHeaderText={ this.state.subHeaderText }
-				/>
-			)
-		);
+		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
-	setHeaderText = ( newHeaderText, newSubHeaderText ) => {
-		this.setState( { headerText: newHeaderText, subHeaderText: newSubHeaderText } );
+	setHeaderText = newHeaderText => {
+		this.setState( { headerText: newHeaderText } );
 	};
 
 	render() {
