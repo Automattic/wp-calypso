@@ -54,7 +54,7 @@ export class SignupProcessingScreen extends Component {
 
 	getTitle() {
 		return this.props.translate(
-			'{{strong}}Awesome!{{/strong}} Give us one minute to {{br/}}to create your site.',
+			"{{strong}}Hooray!{{/strong}} We're creating your site.{{br/}}It'll be ready shortly...",
 			{
 				components: { strong: <strong />, br: <br /> },
 				comment:
