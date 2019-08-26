@@ -16,7 +16,12 @@ import { intersection } from 'lodash';
  * @param {function} next     Next middleware in the running sequence
  */
 export function setShouldServerSideRenderLogin( context, next ) {
-	const whitelistedQueryKeys = [ 'client_id', 'signup_flow', 'redirect_to' ];
+	const whitelistedQueryKeys = [
+		'client_id',
+		'signup_flow',
+		'redirect_to',
+		'close_window_after_login',
+	];
 	const queryKeys = Object.keys( context.query );
 
 	// if there are any parameters, they must be ONLY the ones in the whitelist

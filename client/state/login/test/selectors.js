@@ -397,4 +397,6 @@ describe( 'selectors', () => {
 			).to.eql( 'google' );
 		} );
 	} );
+
+	describe( 'getCloseWindowAfterLogin', function() {} );
 } );

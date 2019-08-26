@@ -18,6 +18,7 @@ import config from 'config';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import {
+	getCloseWindowAfterLogin,
 	getRedirectToSanitized,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
@@ -129,10 +130,9 @@ class Login extends Component {
 	};
 
 	rebootAfterLogin = () => {
-		const { redirectTo } = this.props;
+		const { redirectTo, closeWindowAfterLogin } = this.props;
 
-		// TODO make it properly with a new prop
-		if ( redirectTo === 'close' ) {
+		if ( closeWindowAfterLogin ) {
 			window.close();
 		}
 
@@ -394,6 +394,7 @@ class Login extends Component {
 
 	render() {
 		const { isJetpack } = this.props;
+
 		return (
 			<div className={ classNames( 'login', { 'is-jetpack': isJetpack } ) }>
 				{ this.renderHeader() }
@@ -410,6 +411,7 @@ class Login extends Component {
 
 export default connect(
 	state => ( {
+		closeWindowAfterLogin: getCloseWindowAfterLogin( state ),
 		redirectTo: getRedirectToSanitized( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),

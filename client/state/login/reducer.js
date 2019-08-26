@@ -62,6 +62,16 @@ export const isRequesting = createReducer( false, {
 	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => false,
 } );
 
+export const closeWindowAfterLogin = createReducer( null, {
+	[ ROUTE_SET ]: ( state, { path, query } ) => {
+		if ( startsWith( path, '/log-in' ) ) {
+			return query.close_window_after_login || state;
+		}
+
+		return state;
+	},
+} );
+
 export const redirectTo = combineReducers( {
 	original: createReducer( null, {
 		[ ROUTE_SET ]: ( state, { path, query } ) => {
@@ -297,6 +307,7 @@ export const authAccountType = createReducer( null, {
 
 export default combineReducers( {
 	authAccountType,
+	closeWindowAfterLogin,
 	isFormDisabled,
 	isRequesting,
 	isRequestingTwoFactorAuth,
