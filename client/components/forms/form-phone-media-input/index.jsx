@@ -24,6 +24,7 @@ export default function FormPhoneMediaInput( props ) {
 		disabled,
 		errorMessage,
 		isError = 'false',
+		children,
 	} = props;
 
 	return (
@@ -31,12 +32,13 @@ export default function FormPhoneMediaInput( props ) {
 			<div>
 				<FormLabel htmlFor={ name }>{ label }</FormLabel>
 				<PhoneInput
-					{ ...omit( props, [ 'className', 'countryCode' ] ) }
+					{ ...omit( props, [ 'className', 'countryCode', 'children' ] ) }
 					countryCode={ countryCode.toUpperCase() }
 					className={ className }
 					isError={ isError }
 					disabled={ disabled }
 				/>
+				{ children }
 			</div>
 			{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
 		</div>
