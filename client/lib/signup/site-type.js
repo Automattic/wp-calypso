@@ -9,6 +9,10 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
+// Default value for `siteTypeIds` argument in `getAllSiteTypes()`.
+// Allows for overriding to ensure we don't return site type definitions for segments we don't wish to render in the UI, e.g., when rendering the list on the site type step.
+const allowedSiteTypeIds = [ 1, 2, 3, 4, 6 ];
+
 const getSiteTypePropertyDefaults = propertyKey =>
 	get(
 		{
@@ -72,9 +76,10 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
- * @return {array} current list of site types
+ * @param  {Array} siteTypeIds Optional array of segment ids so that we can return all, some or no site type definitions.
+ * @return {Array}             current list of site types
  */
-export function getAllSiteTypes() {
+export function getAllSiteTypes( siteTypeIds = allowedSiteTypeIds ) {
 	return [
 		{
 			id: 2, // This value must correspond with its sibling in the /segments API results
@@ -153,5 +158,12 @@ export function getAllSiteTypes() {
 			purchaseRequired: true,
 			forcePublicSite: true,
 		},
-	];
+		{
+			id: 6, // This value must correspond with its sibling in the /segments API results
+			slug: 'blank-canvas',
+			label: i18n.translate( 'Start from scratch' ),
+			description: i18n.translate( 'Skip setup and start with a blank website.' ),
+			theme: 'pub/refresh-2019',
+		},
+	].filter( siteType => siteTypeIds.indexOf( siteType.id ) >= 0 );
 }

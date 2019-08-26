@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
+	'blank-canvas': 'blank-canvas',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -35,6 +36,8 @@ class SiteType extends Component {
 		} );
 		this.submitStep( 'import' );
 	};
+
+	handleBlankCanvasButtonClick = () => this.submitStep( 'blank-canvas' );
 
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
@@ -64,6 +67,20 @@ class SiteType extends Component {
 		);
 	}
 
+	renderStartWithBlankCanvasButton() {
+		if ( 'variant' !== abtest( 'signupEscapeHatch' ) ) {
+			return null;
+		}
+
+		return (
+			<div className="site-type__blank-canvas">
+				<Button borderless onClick={ this.handleBlankCanvasButtonClick }>
+					{ this.props.translate( 'Skip setup and start with a blank website.' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	renderStepContent() {
 		const { siteType } = this.props;
 
@@ -74,6 +91,7 @@ class SiteType extends Component {
 					submitForm={ this.submitStep }
 					siteType={ siteType }
 				/>
+				{ this.renderStartWithBlankCanvasButton() }
 				{ this.renderImportButton() }
 			</Fragment>
 		);
