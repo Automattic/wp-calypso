@@ -593,6 +593,7 @@ const mapStateToProps = (
 	const initialQueryArguments = getInitialQueryArguments( state );
 
 	let queryArgs = pickBy( {
+		// plan_upgraded required by a JP premium blocks extension (currently known as upgrade nudge).
 		plan_upgraded: initialQueryArguments && initialQueryArguments.plan_upgraded,
 		post: postId,
 		action: postId && 'edit', // If postId is set, open edit view.
