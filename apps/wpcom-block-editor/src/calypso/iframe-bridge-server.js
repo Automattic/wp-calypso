@@ -455,11 +455,11 @@ function handlePreview( calypsoPort ) {
 
 		const isAutosaveable = select( 'core/editor' ).isEditedPostAutosaveable();
 
-		// We need to retry the save/autosave in some instances:
-		// * In simple sites a post may be not autosaveable but a preview link may not have been generated yet
+		// In specific instances we will need to  need to force an autosave if previewUrl is null:
+		// * In simple sites if autosave exists then autosave is not called on first preview load
 		// * In Atomic sites where an autosave already exists the call to autosave to generate preview link will
-		//   result in a 400 from due to https://core.trac.wordpress.org/browser/trunk/src/wp-includes/rest-api/endpoints/class-wp-rest-autosaves-controller.php#L357
-		let retryCount = 0;
+		//   result in a 400 due to https://core.trac.wordpress.org/browser/trunk/src/wp-includes/rest-api/endpoints/class-wp-rest-autosaves-controller.php#L357
+		let autosaveForced = false;
 
 		// If we don't need to autosave the post before previewing, then we simply
 		// generate the preview.
@@ -491,8 +491,8 @@ function handlePreview( calypsoPort ) {
 
 		function sendPreviewData() {
 			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
-			if ( ! previewUrl && retryCount < 3 ) {
-				retryCount++;
+			if ( ! previewUrl && ! autosaveForced ) {
+				autosaveForced = true;
 				savePost();
 				return;
 			}
