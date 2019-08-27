@@ -1,8 +1,6 @@
-/** @format */
 /**
  * External dependencies
  */
-
 import express from 'express';
 import fs from 'fs';
 import fspath from 'path';
