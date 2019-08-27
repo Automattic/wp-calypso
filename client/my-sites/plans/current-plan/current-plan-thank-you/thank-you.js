@@ -73,7 +73,11 @@ export class ThankYouCard extends Component {
 					) }
 					{ showHideMessage && (
 						<p>
-							<a href={ dismissUrl } onClick={ this.startChecklistTour }>
+							<a
+								href={ dismissUrl }
+								className="current-plan-thank-you__link"
+								onClick={ this.startChecklistTour }
+							>
 								{ translate( 'Hide message' ) }
 							</a>
 						</p>
