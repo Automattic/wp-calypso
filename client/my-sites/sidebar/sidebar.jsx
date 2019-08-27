@@ -445,7 +445,6 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Store' ) }
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
-				icon="cart"
 				materialIcon="shopping_cart"
 				forceInternalLink
 			/>
