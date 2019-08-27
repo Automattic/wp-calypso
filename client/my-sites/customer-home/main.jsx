@@ -75,7 +75,8 @@ class Home extends Component {
 		},
 		isSiteEligible: PropTypes.bool.isRequired,
 		trackAction: PropTypes.func.isRequired,
-		staticHomePageId: PropTypes.number.isRequired,
+		isStaticHomePage: PropTypes.bool.isRequired,
+		staticHomePageId: PropTypes.number, // this is unused if isStaticHomePage is false. In such case, it's null.
 	};
 
 	state = {
@@ -361,7 +362,6 @@ const connectHome = connect(
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
-		const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 
 		return {
 			site: getSelectedSite( state ),
@@ -373,8 +373,8 @@ const connectHome = connect(
 			hasChecklistData,
 			isChecklistComplete,
 			isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
-			isStaticHomePage,
-			staticHomePageId: isStaticHomePage ? getSiteFrontPage( state, siteId ) : -Infinity,
+			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			staticHomePageId: getSiteFrontPage( state, siteId ),
 		};
 	},
 	dispatch => ( {
