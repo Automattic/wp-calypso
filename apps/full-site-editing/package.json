@@ -27,9 +27,9 @@
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
 		"dev": "rimraf dist && npm-run-all --parallel dev:*",
 		"build": "rimraf dist && npm-run-all --parallel build:*",
-		"test:unit": "wp-scripts test-unit-js",
-		"test:unit:help": "wp-scripts test-unit-js --help",
-		"test:unit:watch": "wp-scripts test-unit-js --watch"
+		"test:unit": "npx --package @wordpress/scripts wp-scripts test-unit-js",
+		"test:unit:help": "npx --package @wordpress/scripts wp-scripts test-unit-js --help",
+		"test:unit:watch": "npx --package @wordpress/scripts wp-scripts test-unit-js --watch"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
@@ -37,6 +37,16 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "file:../../packages/calypso-build",
+		"@wordpress/data": "^4.7.0",
+		"@wordpress/dom-ready": "^2.5.0",
+		"@wordpress/edit-post": "^3.6.0",
+		"@wordpress/editor": "^9.5.0",
+		"@wordpress/element": "^2.6.0",
+		"@wordpress/hooks": "^2.5.0",
+		"@wordpress/html-entities": "^2.5.0",
+		"@wordpress/i18n": "^3.6.0",
+		"@wordpress/keycodes": "^2.5.0",
+		"@wordpress/nux": "^3.5.0",
         "@wordpress/scripts": "^3.4.0",
 		"enzyme": "^3.10.0",
 		"eslint": "^6.2.1",
