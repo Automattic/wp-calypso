@@ -46,6 +46,7 @@
 	position: relative;
 	width: 100%;
 	margin-bottom: 24px;
+	margin-left: -4px;
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
 
@@ -73,17 +74,14 @@
 }
 
 .activity-log-confirm-dialog__notice-content {
-	color: var( --color-error );
 	display: flex;
 	-webkit-box-flex: 1;
 	-ms-flex-positive: 1;
 	flex-grow: 1;
 	padding-left: 24px;
-	font-size: 12px;
 
 	@include breakpoint( '>480px' ) {
-		padding-left: 8px;
-		font-size: 14px;
+		padding-left: 4px;
 	}
 }
 
