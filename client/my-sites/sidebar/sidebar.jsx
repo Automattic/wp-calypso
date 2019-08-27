@@ -149,9 +149,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackStatsClick }
 				materialIcon="bar_chart"
 			>
-				<a href={ statsLink }>
-					<StatsSparkline className="sidebar__sparkline" siteId={ siteId } />
-				</a>
+				<StatsSparkline className="sidebar__sparkline" siteId={ siteId } />
 			</SidebarItem>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
