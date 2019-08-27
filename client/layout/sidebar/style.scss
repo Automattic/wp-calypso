@@ -154,6 +154,7 @@
 
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
+		fill: var( --sidebar-gridicon-fill );
 	}
 
 	.sidebar__menu-link {
