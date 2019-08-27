@@ -4,7 +4,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
 
@@ -17,7 +17,7 @@ import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
 import { getPost } from 'state/posts/selectors';
-import { userCan } from 'state/posts/utils';
+import canCurrentUser from 'state/selectors/can-current-user';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
@@ -135,10 +135,9 @@ class PreviewMain extends React.Component {
 			return false;
 		}
 
-		// TODO: Need to check if the user can edit this post
-		// if ( !userCan( 'edit_post', this.props.pageOnFront ) ) {
-		// 	return false;
-		// }
+		if ( ! this.props.canEditPages ) {
+			return false;
+		}
 
 		return true;
 	};
@@ -225,6 +224,7 @@ class PreviewMain extends React.Component {
 const mapState = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
+	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
 
 	return {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
@@ -233,8 +233,9 @@ const mapState = state => {
 		siteId: selectedSiteId,
 
 		// TODO: This is not working correctly
-		pageOnFront: getPost( state, site.options.page_on_front ),
-		editorURL: getEditorUrl( state, site.ID, site.options.page_on_front, 'page' ),
+		canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
+		pageOnFront: getPost( state, homePagePostId ),
+		editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
 	};
 };
 
