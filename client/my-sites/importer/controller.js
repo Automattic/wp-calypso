@@ -47,7 +47,11 @@ export function importSite( context, next ) {
 		context.store.dispatch( setImportingFromSignupFlow() );
 	}
 
-	if ( get( context, 'state.autoStartImport' ) ) {
+	/**
+	 * parseInt is used here, because the flag can be present, but 0. Using a "0" (string zero) in
+	 * an `if` statement results truthy behavior.
+	 */
+	if ( parseInt( get( context, 'state.autoStartImport' ), 10 ) ) {
 		context.store.dispatch( setImportingFromSignupFlowAutoStart() );
 	}
 
