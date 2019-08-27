@@ -88,8 +88,8 @@ export default class SidebarItem extends React.Component {
 						{ this.props.label }
 					</span>
 					{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
+					{ this.props.children }
 				</a>
-				{ this.props.children }
 			</li>
 		);
 	}
