@@ -206,6 +206,7 @@ function getValidationErrorsFromStripeError( error ) {
 export function useStripeJs( stripeConfiguration ) {
 	const [ stripeJs, setStripeJs ] = useState( null );
 	const [ isStripeLoading, setStripeLoading ] = useState( true );
+	const [ stripeLoadingError, setStripeLoadingError ] = useState();
 	useEffect( () => {
 		let isSubscribed = true;
 		if ( ! stripeConfiguration ) {
@@ -216,6 +217,7 @@ export function useStripeJs( stripeConfiguration ) {
 				debug( 'stripe.js already loaded' );
 				setStripeLoading( false );
 				if ( ! stripeJs ) {
+					setStripeLoadingError();
 					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 				}
 				return;
@@ -231,22 +233,28 @@ export function useStripeJs( stripeConfiguration ) {
 					return;
 				}
 				setStripeLoading( false );
+				setStripeLoadingError();
 				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 			} );
 		} catch ( error ) {
 			if ( error ) {
 				debug( 'error while loading stripeJs', error );
 				isSubscribed && setStripeLoading( false );
+				isSubscribed && setStripeLoadingError( error );
 				return;
 			}
 		}
 		return () => ( isSubscribed = false );
 	}, [ stripeConfiguration, stripeJs ] );
-	return { stripeJs, isStripeLoading };
+	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
 /**
  * React custom Hook for loading the Stripe Configuration
+ *
+ * If there is a stripe error, it may be necessary to reload the configuration
+ * since (for example) a Setup Intent may need to be recreated. You can force
+ * the configuration to reload by setting a value with `setStripeError()`.
  *
  * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
  * @return {object} Stripe Configuration as returned by the stripe configuration endpoint
@@ -281,7 +289,7 @@ export function withStripe( WrappedComponent, configurationArgs = {} ) {
 	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
 	return props => {
 		const { stripeConfiguration, setStripeError } = useStripeConfiguration( configurationArgs );
-		const { stripeJs, isStripeLoading } = useStripeJs( stripeConfiguration );
+		const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
 
 		return (
 			<StripeProvider stripe={ stripeJs }>
@@ -290,6 +298,7 @@ export function withStripe( WrappedComponent, configurationArgs = {} ) {
 						stripeConfiguration={ stripeConfiguration }
 						isStripeLoading={ isStripeLoading }
 						setStripeError={ setStripeError }
+						stripeLoadingError={ stripeLoadingError }
 						{ ...props }
 					/>
 				</Elements>
