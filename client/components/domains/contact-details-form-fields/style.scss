@@ -98,3 +98,17 @@
 	margin-top: 0;
 }
 
+.contact-details-form-fields__field.location-search {
+	.address-1 {
+		position: relative;
+		z-index: 1;
+	}
+
+	.location-search__predictions {
+		margin: 0 1px;
+		z-index: 0;
+		position: relative;
+	}
+
+}
+
