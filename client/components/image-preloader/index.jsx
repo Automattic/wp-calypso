@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { noop } from 'lodash';
 
 /**
@@ -15,101 +15,92 @@ const LoadStatus = {
 	FAILED: 'FAILED',
 };
 
-export default class ImagePreloader extends React.Component {
-	static propTypes = {
-		src: PropTypes.string,
-		placeholder: PropTypes.element.isRequired,
-		onLoad: PropTypes.func,
-		onError: PropTypes.func,
-	};
+export default function ImagePreloader( props ) {
+	const { children, src, placeholder, onLoad, onError, ...imageProps } = props;
 
-	state = {
-		status: LoadStatus.PENDING,
-	};
+	const [ status, setStatus ] = useState( LoadStatus.PENDING );
+	const image = useRef( null );
+	const latestOnLoad = useRef( onLoad );
+	const latestOnError = useRef( onError );
 
-	componentDidMount() {
-		this.createLoader();
-	}
+	// Update callback refs when one of the callbacks changes.
+	// We always want to use the latest version of these callbacks, rather than the ones
+	// that were there when the image started loading.
+	useEffect( () => {
+		latestOnLoad.current = onLoad;
+		latestOnError.current = onError;
+	}, [ onError, onLoad ] );
 
-	componentDidUpdate( prevPropsProps ) {
-		if ( prevPropsProps.src !== this.props.src ) {
-			this.createLoader( this.props );
-		}
-	}
-
-	componentWillUnmount() {
-		this.destroyLoader();
-	}
-
-	createLoader = props => {
-		const src = ( props || this.props ).src;
-
-		this.destroyLoader();
-		this.setState( {
-			status: LoadStatus.LOADING,
-		} );
+	// Load image at start and whenever the `src` prop changes.
+	useEffect( () => {
+		setStatus( LoadStatus.LOADING );
 
 		if ( ! src ) {
 			return;
 		}
 
-		this.image = new Image();
-		this.image.src = src;
-		this.image.onload = this.onLoadComplete;
-		this.image.onerror = this.onLoadComplete;
-	};
-
-	destroyLoader = () => {
-		if ( ! this.image ) {
-			return;
-		}
-
-		this.image.onload = noop;
-		this.image.onerror = noop;
-		delete this.image;
-	};
-
-	onLoadComplete = event => {
-		this.destroyLoader();
-
-		if ( event.type !== 'load' ) {
-			return this.setState( { status: LoadStatus.FAILED }, () => {
-				if ( this.props.onError ) {
-					this.props.onError( event );
-				}
-			} );
-		}
-
-		this.setState( { status: LoadStatus.LOADED }, () => {
-			if ( this.props.onLoad ) {
-				this.props.onLoad( event );
+		function destroyLoader() {
+			if ( ! image.current ) {
+				return;
 			}
-		} );
-	};
 
-	render() {
-		const { src, placeholder, onLoad, onError, ...imageProps } = this.props;
-		let children;
-
-		switch ( this.state.status ) {
-			case LoadStatus.LOADING:
-				children = this.props.placeholder;
-				break;
-
-			case LoadStatus.LOADED:
-				// Assume image props always include alt text.
-				// eslint-disable-next-line jsx-a11y/alt-text
-				children = <img src={ this.props.src } { ...imageProps } />;
-				break;
-
-			case LoadStatus.FAILED:
-				children = this.props.children;
-				break;
-
-			default:
-				break;
+			image.current.onload = noop;
+			image.current.onerror = noop;
+			image.current = null;
 		}
 
-		return <div className="image-preloader">{ children }</div>;
+		function onLoadComplete( event ) {
+			destroyLoader();
+
+			if ( ! event || event.type !== 'load' ) {
+				setStatus( LoadStatus.FAILED );
+				if ( latestOnError.current ) {
+					latestOnError.current( event );
+				}
+				return;
+			}
+
+			setStatus( LoadStatus.LOADED );
+			if ( latestOnLoad.current ) {
+				latestOnLoad.current( event );
+			}
+		}
+
+		image.current = new Image();
+		image.current.src = src;
+		image.current.onload = onLoadComplete;
+		image.current.onerror = onLoadComplete;
+
+		return destroyLoader;
+	}, [ src ] );
+
+	let childrenToRender;
+
+	switch ( status ) {
+		case LoadStatus.LOADING:
+			childrenToRender = placeholder;
+			break;
+
+		case LoadStatus.LOADED:
+			// Assume image props always include alt text.
+			// eslint-disable-next-line jsx-a11y/alt-text
+			childrenToRender = <img src={ src } { ...imageProps } />;
+			break;
+
+		case LoadStatus.FAILED:
+			childrenToRender = children;
+			break;
+
+		default:
+			break;
 	}
+
+	return <div className="image-preloader">{ childrenToRender }</div>;
 }
+
+ImagePreloader.propTypes = {
+	src: PropTypes.string,
+	placeholder: PropTypes.element.isRequired,
+	onLoad: PropTypes.func,
+	onError: PropTypes.func,
+};
