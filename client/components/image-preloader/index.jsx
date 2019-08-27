@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, omit } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Constants
@@ -30,13 +27,13 @@ export default class ImagePreloader extends React.Component {
 		status: LoadStatus.PENDING,
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.createLoader();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.src !== this.props.src ) {
-			this.createLoader( nextProps );
+	componentDidUpdate( prevPropsProps ) {
+		if ( prevPropsProps.src !== this.props.src ) {
+			this.createLoader( this.props );
 		}
 	}
 
@@ -44,8 +41,8 @@ export default class ImagePreloader extends React.Component {
 		this.destroyLoader();
 	}
 
-	createLoader = nextProps => {
-		const src = ( nextProps || this.props ).src;
+	createLoader = props => {
+		const src = ( props || this.props ).src;
 
 		this.destroyLoader();
 		this.setState( {
@@ -91,7 +88,8 @@ export default class ImagePreloader extends React.Component {
 	};
 
 	render() {
-		let children, imageProps;
+		const { src, placeholder, onLoad, onError, ...imageProps } = this.props;
+		let children;
 
 		switch ( this.state.status ) {
 			case LoadStatus.LOADING:
@@ -99,7 +97,8 @@ export default class ImagePreloader extends React.Component {
 				break;
 
 			case LoadStatus.LOADED:
-				imageProps = omit( this.props, Object.keys( this.constructor.propTypes ) );
+				// Assume image props always include alt text.
+				// eslint-disable-next-line jsx-a11y/alt-text
 				children = <img src={ this.props.src } { ...imageProps } />;
 				break;
 
