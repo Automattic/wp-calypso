@@ -472,7 +472,7 @@ function handlePreview( calypsoPort ) {
 		}
 		const unsubscribe = subscribe( () => {
 			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
-			if ( ! previewUrl ) {
+			if ( previewUrl ) {
 				unsubscribe();
 				sendPreviewData();
 			}
