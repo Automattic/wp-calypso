@@ -310,7 +310,7 @@ class Home extends Component {
 									external
 									onClick={ () => trackAction( 'support', 'docs' ) }
 								>
-									{ translate( 'Support docs' ) }
+									{ translate( 'Support articles' ) }
 								</VerticalNavItem>
 								<VerticalNavItem
 									path="/help/contact"
