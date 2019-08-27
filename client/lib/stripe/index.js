@@ -209,10 +209,10 @@ export function useStripeJs( stripeConfiguration ) {
 	const [ stripeLoadingError, setStripeLoadingError ] = useState();
 	useEffect( () => {
 		let isSubscribed = true;
-		if ( ! stripeConfiguration ) {
-			return;
-		}
-		try {
+		async function loadAndInitStripe() {
+			if ( ! stripeConfiguration ) {
+				return;
+			}
 			if ( window.Stripe ) {
 				debug( 'stripe.js already loaded' );
 				setStripeLoading( false );
@@ -223,30 +223,28 @@ export function useStripeJs( stripeConfiguration ) {
 				return;
 			}
 			debug( 'loading stripe.js...' );
-			loadScript( stripeConfiguration.js_url, function( error ) {
-				if ( error ) {
-					debug( 'stripe.js script ' + error.src + ' failed to load.' );
-					return;
-				}
-				debug( 'stripe.js loaded!' );
-				if ( ! isSubscribed ) {
-					return;
-				}
-				setStripeLoading( false );
-				setStripeLoadingError();
-				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
-			} );
-		} catch ( error ) {
-			if ( error ) {
-				debug( 'error while loading stripeJs', error );
-				isSubscribed && setStripeLoading( false );
-				isSubscribed && setStripeLoadingError( error );
-				return;
-			}
+			await loadScriptAsync( stripeConfiguration.js_url );
+			debug( 'stripe.js loaded!' );
+			isSubscribed && setStripeLoading( false );
+			isSubscribed && setStripeLoadingError();
+			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 		}
+
+		loadAndInitStripe().catch( error => {
+			debug( 'error while loading stripeJs', error );
+			isSubscribed && setStripeLoading( false );
+			isSubscribed && setStripeLoadingError( error );
+		} );
+
 		return () => ( isSubscribed = false );
 	}, [ stripeConfiguration, stripeJs ] );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
+}
+
+function loadScriptAsync( url ) {
+	return new Promise( ( resolve, reject ) => {
+		loadScript( url, loadError => ( loadError ? reject( loadError ) : resolve() ) );
+	} );
 }
 
 /**
