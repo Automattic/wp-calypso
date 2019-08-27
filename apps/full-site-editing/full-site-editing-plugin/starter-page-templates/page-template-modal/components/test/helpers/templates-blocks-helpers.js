@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { uniqueId, range } from 'lodash';
+import { uniqueId, range, toArray } from 'lodash';
 
 export const templatesFixture = [
 	{
@@ -48,3 +48,5 @@ export const blocksByTemplatesFixture = templatesFixture.reduce( ( acc, curr ) =
 	} );
 	return acc;
 }, {} );
+
+export const blocksFixture = toArray( blocksByTemplatesFixture );

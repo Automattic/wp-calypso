@@ -4,7 +4,7 @@
 import { uniqueId, omit } from 'lodash';
 import { shallow } from 'enzyme';
 import TemplateSelectorItem from '../template-selector-item';
-import { blocksByTemplatesFixture } from './helpers/templates-blocks-helpers';
+import { blocksFixture } from './helpers/templates-blocks-helpers';
 
 describe( 'TemplateSelectorItem', () => {
 	const requiredProps = {
@@ -113,7 +113,7 @@ describe( 'TemplateSelectorItem', () => {
 				<TemplateSelectorItem
 					{ ...requiredProps }
 					useDynamicPreview={ true }
-					blocks={ blocksByTemplatesFixture }
+					blocks={ blocksFixture }
 				/>
 			);
 

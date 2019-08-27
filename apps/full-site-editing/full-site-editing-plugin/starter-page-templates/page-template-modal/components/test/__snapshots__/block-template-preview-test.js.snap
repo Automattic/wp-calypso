@@ -1,45 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TemplateSelectorItem Basic rendering renders with required props 1`] = `
-<button
-  className="template-selector-item__label"
-  id="13-test-template"
-  onClick={[Function]}
-  onMouseEnter={[Function]}
-  type="button"
-  value="test-template"
+exports[`BlockTemplatePreview Basic rendering renders preview when blocks are provided 1`] = `
+<div
+  className="edit-post-visual-editor"
 >
   <div
-    className="template-selector-item__preview-wrap"
+    className="editor-styles-wrapper"
   >
-    <img
-      alt=""
-      className="template-selector-item__media"
-      src="https://somepreviewimage.jpg"
-    />
-  </div>
-  <span
-    data-test-id="template-selector-item-label"
-  >
-    Test Template
-  </span>
-</button>
-`;
-
-exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1`] = `
-<button
-  className="template-selector-item__label"
-  id="13-test-template"
-  onClick={[Function]}
-  onMouseEnter={[Function]}
-  type="button"
-  value="test-template"
->
-  <div
-    className="template-selector-item__preview-wrap"
-  >
-    <Disabled>
-      <BlockTemplatePreview
+    <div
+      className="editor-writing-flow"
+    >
+      <Component
         blocks={
           Array [
             Array [
@@ -254,40 +225,8 @@ exports[`TemplateSelectorItem Dynamic previews renders in dynamic preview mode 1
             ],
           ]
         }
-        viewportWidth={960}
       />
-    </Disabled>
+    </div>
   </div>
-  <span
-    data-test-id="template-selector-item-label"
-  >
-    Test Template
-  </span>
-</button>
-`;
-
-exports[`TemplateSelectorItem Static previews renders in static preview mode by default  1`] = `
-<button
-  className="template-selector-item__label"
-  id="13-test-template"
-  onClick={[Function]}
-  onMouseEnter={[Function]}
-  type="button"
-  value="test-template"
->
-  <div
-    className="template-selector-item__preview-wrap"
-  >
-    <img
-      alt=""
-      className="template-selector-item__media"
-      src="https://somepreviewimage.jpg"
-    />
-  </div>
-  <span
-    data-test-id="template-selector-item-label"
-  >
-    Test Template
-  </span>
-</button>
+</div>
 `;
