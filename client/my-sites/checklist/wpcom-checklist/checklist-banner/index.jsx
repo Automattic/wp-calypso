@@ -31,11 +31,25 @@ import './style.scss';
 export class ChecklistBanner extends Component {
 	static propTypes = {
 		isEligibleForDotcomChecklist: PropTypes.bool,
+		isLoading: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = { closed: false };
+	static defaultProps = {
+		taskList: [],
+		isLoading: true,
+	};
+
+	state = { closed: false, hasLoaded: false };
+
+	componentDidUpdate() {
+		if ( ! this.state.hasLoaded && ! this.props.isLoading ) {
+			this.setLoaded( true );
+		}
+	}
+
+	setLoaded = hasLoaded => this.setState( { hasLoaded } );
 
 	handleClose = () => {
 		const { siteId } = this.props;
@@ -49,15 +63,16 @@ export class ChecklistBanner extends Component {
 	};
 
 	render() {
-		if ( this.state.closed || this.props.isLoading ) {
+		const { translate, taskList } = this.props;
+
+		if ( this.state.closed || ! this.state.hasLoaded ) {
 			return null;
 		}
 
-		const { translate, taskList } = this.props;
-		const childrenArray = Children.toArray( this.props.children );
-		const { total, completed, percentage } = taskList.getCompletionStatus();
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
+		const { total, completed, percentage } = taskList.getCompletionStatus();
+		const childrenArray = Children.toArray( this.props.children );
 
 		return (
 			<Card className="checklist-banner">
