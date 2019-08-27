@@ -19,11 +19,7 @@ import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
 import analytics from 'lib/analytics';
 import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
-import {
-	hasRenewalItem,
-	hasDomainRegistration,
-	hasOnlyDomainProducts,
-} from 'lib/cart-values/cart-items';
+import { hasRenewalItem } from 'lib/cart-values/cart-items';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import {
 	detectWebPaymentMethod,
@@ -38,7 +34,6 @@ import CheckoutTerms from './checkout-terms';
 import PaymentChatButton from './payment-chat-button';
 import RecentRenewals from './recent-renewals';
 import SubscriptionText from './subscription-text';
-import classNames from 'classnames';
 import { withStripe } from 'lib/stripe';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
@@ -74,14 +69,6 @@ export function WebPaymentBox( {
 		overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 	);
 	const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
-	const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' );
-	const moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy;
-	const paymentButtonClasses = classNames( 'payment-box__payment-buttons', {
-		'payment-box__payment-buttons-variant': testSealsCopy,
-	} );
-	const secureText = testSealsCopy
-		? translate( 'This is a secure 128-SSL encrypted connection' )
-		: translate( 'Secure Payment' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -113,7 +100,7 @@ export function WebPaymentBox( {
 				{ children }
 				<RecentRenewals cart={ cart } />
 				<CheckoutTerms cart={ cart } />
-				<span className={ paymentButtonClasses }>
+				<span className={ 'payment-box__payment-buttons' }>
 					<span className="pay-button">
 						<span className="payment-request-button">
 							<WebPayButtonWithStripe
@@ -126,21 +113,10 @@ export function WebPaymentBox( {
 						</span>
 						<SubscriptionText cart={ cart } />
 					</span>
-					{ moneyBackGuarantee && (
-						<div className="checkout__secure-payment-content">
-							<Gridicon icon="refresh" />
-							<div className="checkout__money-back-guarantee">
-								<div>{ translate( '30-day Money Back Guarantee' ) }</div>
-								{ hasDomainRegistration( cart ) && (
-									<div>{ translate( '(96 hrs for domains)' ) }</div>
-								) }
-							</div>
-						</div>
-					) }
 					<div className="checkout__secure-payment">
 						<div className="checkout__secure-payment-content">
 							<Gridicon icon="lock" />
-							{ secureText }
+							{ translate( 'Secure Payment' ) }
 						</div>
 					</div>
 
