@@ -1,9 +1,4 @@
 /* Overide very specific css on an attribute */
-.sidebar .sidebar__tags-list {
+.sidebar ul.reader-sidebar-tags__list {
 	margin-bottom: 20px;
-}
-
-.sidebar__tags-input {
-	margin: 0 16px 10px 55px;
-	width: auto;
 }

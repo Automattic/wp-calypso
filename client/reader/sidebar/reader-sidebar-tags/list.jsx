@@ -24,24 +24,20 @@ export class ReaderSidebarTagsList extends Component {
 		translate: identity,
 	};
 
-	renderItems = () => {
+	renderItems() {
 		const { path, currentTag, tags } = this.props;
-		return map( tags, function( tag ) {
-			return (
-				<ReaderSidebarTagsListItem
-					key={ tag.id }
-					tag={ tag }
-					path={ path }
-					currentTag={ currentTag }
-				/>
-			);
-		} );
-	};
+		return map( tags, tag => (
+			<ReaderSidebarTagsListItem
+				key={ tag.id }
+				tag={ tag }
+				path={ path }
+				currentTag={ currentTag }
+			/>
+		) );
+	}
 
 	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return <ul className="sidebar__tags-list">{ this.renderItems() }</ul>;
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		return <ul className="reader-sidebar-tags__list">{ this.renderItems() }</ul>;
 	}
 }
 

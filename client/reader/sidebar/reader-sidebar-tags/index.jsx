@@ -68,7 +68,6 @@ export class ReaderSidebarTags extends Component {
 
 					<FormTextInputWithAction
 						key={ this.state.addTagCounter }
-						className="sidebar__tags-input"
 						action={ translate( 'Add' ) }
 						placeholder={ translate( 'Add a tag' ) }
 						onAction={ this.followTag }
