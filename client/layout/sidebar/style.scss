@@ -71,7 +71,8 @@
 		fill: var( --sidebar-menu-hover-color );
 	}
 
-	.selected & {
+	.selected &,
+	.selected .sidebar__menu-link:hover & {
 		fill: var( --sidebar-menu-selected-a-color );
 	}
 }
@@ -136,6 +137,10 @@
 	z-index: 1;
 	color: var( --sidebar-menu-link-secondary-text-color );
 	padding: 4px 8px;
+
+	.selected & {
+		color: inherit;
+	}
 }
 
 // Expandables: Some sidebar menus act like accordions where
