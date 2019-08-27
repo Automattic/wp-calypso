@@ -1114,9 +1114,7 @@ class RegisterDomainStep extends React.Component {
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
 						} );
-					}
-
-					if ( trademarkClaimsNoticeInfo ) {
+					} else if ( trademarkClaimsNoticeInfo ) {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,
