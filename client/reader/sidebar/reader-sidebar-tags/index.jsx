@@ -34,6 +34,10 @@ export class ReaderSidebarTags extends Component {
 		translate: identity,
 	};
 
+	state = {
+		addTagCounter: 0,
+	};
+
 	followTag = tag => {
 		if ( startsWith( tag, '#' ) ) {
 			tag = tag.substring( 1 );
@@ -42,10 +46,11 @@ export class ReaderSidebarTags extends Component {
 		this.props.followTag( decodeURIComponent( tag ) );
 		recordAction( 'followed_topic' );
 		recordGaEvent( 'Clicked Follow Topic', tag );
-		recordTrack( 'calypso_reader_reader_tag_followed', {
-			tag: tag,
-		} );
+		recordTrack( 'calypso_reader_reader_tag_followed', { tag } );
 		this.props.onFollowTag( tag );
+
+		// reset the FormTextInputWithAction field to empty by rerendering it with a new `key`
+		this.setState( state => ( { addTagCounter: state.addTagCounter + 1 } ) );
 	};
 
 	render() {
@@ -62,6 +67,7 @@ export class ReaderSidebarTags extends Component {
 					<ReaderSidebarTagsList { ...this.props } />
 
 					<FormTextInputWithAction
+						key={ this.state.addTagCounter }
 						className="sidebar__tags-input"
 						action={ translate( 'Add' ) }
 						placeholder={ translate( 'Add a tag' ) }
