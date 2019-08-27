@@ -207,6 +207,7 @@ export function useStripeJs( stripeConfiguration ) {
 	const [ stripeJs, setStripeJs ] = useState( null );
 	const [ isStripeLoading, setStripeLoading ] = useState( true );
 	useEffect( () => {
+		let isSubscribed = true;
 		if ( ! stripeConfiguration ) {
 			return;
 		}
@@ -226,16 +227,20 @@ export function useStripeJs( stripeConfiguration ) {
 					return;
 				}
 				debug( 'stripe.js loaded!' );
+				if ( ! isSubscribed ) {
+					return;
+				}
 				setStripeLoading( false );
 				setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
 			} );
 		} catch ( error ) {
 			if ( error ) {
 				debug( 'error while loading stripeJs', error );
-				setStripeLoading( false );
+				isSubscribed && setStripeLoading( false );
 				return;
 			}
 		}
+		return () => ( isSubscribed = false );
 	}, [ stripeConfiguration, stripeJs ] );
 	return { stripeJs, isStripeLoading };
 }
@@ -250,9 +255,11 @@ export function useStripeConfiguration( requestArgs = {} ) {
 	const [ stripeError, setStripeError ] = useState();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
-		getStripeConfiguration( requestArgs ).then( configuration =>
-			setStripeConfiguration( configuration )
+		let isSubscribed = true;
+		getStripeConfiguration( requestArgs ).then(
+			configuration => isSubscribed && setStripeConfiguration( configuration )
 		);
+		return () => ( isSubscribed = false );
 	}, [ requestArgs, stripeError ] );
 	return { stripeConfiguration, setStripeError };
 }
