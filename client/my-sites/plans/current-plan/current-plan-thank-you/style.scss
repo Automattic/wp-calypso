@@ -1,4 +1,8 @@
+@import 'jetpack-connect/colors.scss';
+
 .current-plan-thank-you {
+	@include jetpack-connect-colors();
+	
 	display: flex;
 	flex-direction: row;
 	max-width: 720px;
@@ -18,16 +22,21 @@
 
 	&__link {
 		font-size: 14px;
-
-		@include breakpoint( '<660px' ) {
-			text-align: center;
-			width: 100%;
-		}
-	}
+	}	
 
 	.progress-bar {
 		@include breakpoint( '>660px' ) {
 			max-width: 80%;
+		}
+	}
+	
+	.button {
+		padding-right: 80px;
+		padding-left: 80px;
+		
+		@include breakpoint( '<660px' ) {
+			text-align: center;
+			width: 100%;
 		}
 	}
 }
