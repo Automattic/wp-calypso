@@ -394,7 +394,7 @@ export class Checkout extends React.Component {
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
 			if ( isJetpackNotAtomic ) {
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 			}
 			return selectedFeature && isValidFeatureKey( selectedFeature )
 				? `/checkout/thank-you/features/${ selectedFeature }/${ selectedSiteSlug }/${ pendingOrReceiptId }`
