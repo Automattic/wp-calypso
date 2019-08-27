@@ -66,7 +66,7 @@ const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => siteID && get( importItem, 'site.ID' ) === siteID );
 };
 
-const getImporterTypeForEngine = memoize( engine => `importer-type-${engine}` );
+const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -79,16 +79,16 @@ class SectionImport extends Component {
 		const { engine, site, fromSite, fromSignupAutoStartImport } = this.props;
 		const { importers: imports } = this.state;
 
-		if ( !engine ) {
+		if ( ! engine ) {
 			return;
 		}
 
-		if ( !isEmpty( imports ) ) {
+		if ( ! isEmpty( imports ) ) {
 			// Never clobber an existing import
 			return;
 		}
 
-		if ( !importerComponents[ engine ] ) {
+		if ( ! importerComponents[ engine ] ) {
 			return;
 		}
 
@@ -123,7 +123,7 @@ class SectionImport extends Component {
 	componentDidUpdate() {
 		const { site } = this.props;
 
-		if ( !site.ID ) {
+		if ( ! site.ID ) {
 			return;
 		}
 
@@ -147,20 +147,20 @@ class SectionImport extends Component {
 			const { engine } = importer;
 			const ImporterComponent = importerComponents[ engine ];
 
-			if ( !ImporterComponent ) {
+			if ( ! ImporterComponent ) {
 				return;
 			}
 
 			return (
 				<ImporterComponent
-					key={engine}
-					site={site}
-					siteTitle={siteTitle}
-					importerStatus={{
+					key={ engine }
+					site={ site }
+					siteTitle={ siteTitle }
+					importerStatus={ {
 						importerState: state,
 						siteTitle,
 						type: getImporterTypeForEngine( engine ),
-					}}
+					} }
 				/>
 			);
 		} );
@@ -173,15 +173,15 @@ class SectionImport extends Component {
 		const otherImportersCard = (
 			<CompactCard
 				key="other-importers-card"
-				href={adminUrl + 'import.php'}
+				href={ adminUrl + 'import.php' }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{this.props.translate( 'Other importers' )}
+				{ this.props.translate( 'Other importers' ) }
 			</CompactCard>
 		);
 
-		return [...importerElements, otherImportersCard];
+		return [ ...importerElements, otherImportersCard ];
 	}
 
 	/**
@@ -207,11 +207,11 @@ class SectionImport extends Component {
 			return (
 				ImporterComponent && (
 					<ImporterComponent
-						key={importItem.type + idx}
-						site={importItem.site}
-						siteTitle={importItem.siteTitle || this.props.siteTitle}
-						fromSite={this.props.fromSite}
-						importerStatus={importItem}
+						key={ importItem.type + idx }
+						site={ importItem.site }
+						siteTitle={ importItem.siteTitle || this.props.siteTitle }
+						fromSite={ this.props.fromSite }
+						importerStatus={ importItem }
 					/>
 				)
 			);
@@ -237,16 +237,16 @@ class SectionImport extends Component {
 			const signupImportStarted =
 				firstImport &&
 				includes(
-					[appStates.IMPORTING, appStates.IMPORT_SUCCESS, appStates.MAP_AUTHORS],
+					[ appStates.IMPORTING, appStates.IMPORT_SUCCESS, appStates.MAP_AUTHORS ],
 					firstImport.importerState
 				);
 
 			// If there's no active import started, mock one until we actually
 			// start importing to avoid showing the UI going through each stage.
-			if ( !signupImportStarted ) {
+			if ( ! signupImportStarted ) {
 				return this.renderActiveImporters( [
 					{
-						importerState: appStates.FROM_SIGNUP,
+						importerState: appStates.READY_FOR_UPLOAD,
 						type: getImporterTypeForEngine( engine ),
 						engine,
 						site,
@@ -255,12 +255,12 @@ class SectionImport extends Component {
 			}
 		}
 
-		if ( !isHydrated ) {
+		if ( ! isHydrated ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
 		const importsForSite = filterImportsForSite( site.ID, imports )
-		// Add in the 'site' and 'siteTitle' properties to the import objects.
+			// Add in the 'site' and 'siteTitle' properties to the import objects.
 			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
 
 		if ( 0 === importsForSite.length ) {
@@ -282,8 +282,8 @@ class SectionImport extends Component {
 	renderImportersList() {
 		return (
 			<>
-				<Interval onTick={this.updateFromAPI} period={EVERY_FIVE_SECONDS}/>
-				{this.renderImportersMain()}
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				{ this.renderImportersMain() }
 			</>
 		);
 	}
@@ -291,13 +291,13 @@ class SectionImport extends Component {
 	render() {
 		const { site, translate, canImport } = this.props;
 
-		if ( !canImport ) {
+		if ( ! canImport ) {
 			return (
 				<Main>
-					<SidebarNavigation/>
+					<SidebarNavigation />
 					<EmptyContent
-						title={this.props.translate( 'You are not authorized to view this page' )}
-						illustration={'/calypso/images/illustrations/illustration-404.svg'}
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					/>
 				</Main>
 			);
@@ -307,25 +307,25 @@ class SectionImport extends Component {
 		const headerText = translate( 'Import your content' );
 		const subHeaderText = translate(
 			'Bring content hosted elsewhere over to WordPress.com. ' +
-			'{{a}}Find out what we currently support.{{/a}}',
+				'{{a}}Find out what we currently support.{{/a}}',
 			{
 				components: {
-					a: <ExternalLink href="https://en.support.wordpress.com/import/"/>,
+					a: <ExternalLink href="https://en.support.wordpress.com/import/" />,
 				},
 			}
 		);
 
 		return (
 			<Main>
-				<DocumentHead title={translate( 'Import' )}/>
-				<SidebarNavigation/>
+				<DocumentHead title={ translate( 'Import' ) } />
+				<SidebarNavigation />
 				<FormattedHeader
 					className="importer__section-header"
-					headerText={headerText}
-					subHeaderText={subHeaderText}
+					headerText={ headerText }
+					subHeaderText={ subHeaderText }
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{isJetpack ? <JetpackImporter/> : this.renderImportersList()}
+					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
 			</Main>
 		);
@@ -333,7 +333,8 @@ class SectionImport extends Component {
 }
 
 export default flow(
-	connect( state => {
+	connect(
+		state => {
 			const siteID = getSelectedSiteId( state );
 			return {
 				engine: getSelectedImportEngine( state ),
@@ -343,7 +344,7 @@ export default flow(
 				siteTitle: getSiteTitle( state, siteID ),
 				canImport: canCurrentUser( state, siteID, 'manage_options' ),
 				fromSignupAutoStartImport: shouldImportAutoStart( state ),
-			}
+			};
 		},
 		{ autoStartSiteImport }
 	),
