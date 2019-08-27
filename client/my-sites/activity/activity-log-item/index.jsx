@@ -342,9 +342,7 @@ class ActivityLogItem extends Component {
 						notice={
 							this.state.disableRestoreButton
 								? translate( 'Please select at least one item to rewind.' )
-								: translate(
-										'This will remove all content and options created or changed since then.'
-								  )
+								: translate( 'This will override and remove all content created after this point.' )
 						}
 						onClose={ this.cancelRewindIntent }
 						onConfirm={ this.confirmRewind }
