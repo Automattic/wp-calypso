@@ -287,15 +287,19 @@ function useStripePaymentRequest( stripe, paymentRequestOptions, callback ) {
 	const [ canMakePayment, setCanMakePayment ] = useState( false );
 	const [ paymentRequest, setPaymentRequest ] = useState();
 	useEffect( () => {
+		let isSubscribed = true;
 		if ( ! stripe ) {
 			return;
 		}
 		debug( 'creating paymentRequest', paymentRequestOptions );
 		setCanMakePayment( false );
 		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => setCanMakePayment( !! result ) );
+		request.canMakePayment().then( result => {
+			isSubscribed && setCanMakePayment( !! result );
+		} );
 		request.on( 'paymentmethod', callback );
 		setPaymentRequest( request );
+		return () => ( isSubscribed = false );
 	}, [ stripe, paymentRequestOptions, callback ] );
 	return { paymentRequest, canMakePayment };
 }
