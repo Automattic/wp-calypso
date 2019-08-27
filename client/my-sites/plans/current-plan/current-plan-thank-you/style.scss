@@ -8,13 +8,15 @@
 		padding: 20px 0;
 	}
 
-	h1 {
+	&__title {
+		font-size: 24px;
+		
 		@include breakpoint( '<660px' ) {
 			text-align: center;
 		}
 	}
 
-	a {
+	&__link {
 		font-size: 14px;
 
 		@include breakpoint( '<660px' ) {
@@ -37,8 +39,4 @@
 	@include breakpoint( '<660px' ) {
 		display: none;
 	}
-}
-
-.current-plan-thank-you__title {
-	font-size: 24px;
 }
