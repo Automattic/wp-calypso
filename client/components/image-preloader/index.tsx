@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from 'react';
 import { noop } from 'lodash';
 
@@ -15,17 +14,29 @@ const LoadStatus = {
 	FAILED: 'FAILED',
 };
 
-export default function ImagePreloader( props ) {
+type ImageEventHandler = ( event: string | Event ) => any;
+
+interface Props {
+	src?: string;
+	placeholder: React.ReactNode;
+	onLoad?: ImageEventHandler;
+	onError?: ImageEventHandler;
+}
+
+type ImgProps = Omit< React.ComponentProps< 'img' >, 'src' >;
+
+export default function ImagePreloader( props: Props & ImgProps ) {
 	const { children, src, placeholder, onLoad, onError, ...imageProps } = props;
 
 	const [ status, setStatus ] = useState( LoadStatus.PENDING );
-	const image = useRef( null );
+	const image = useRef< HTMLImageElement | null >( null );
 	const latestOnLoad = useRef( onLoad );
 	const latestOnError = useRef( onError );
 
 	// Update callback refs when one of the callbacks changes.
 	// We always want to use the latest version of these callbacks, rather than the ones
-	// that were there when the image started loading.
+	// that were there when the image started loading. We don't want to trigger the image
+	// loading again, though, so we save them as refs.
 	useEffect( () => {
 		latestOnLoad.current = onLoad;
 		latestOnError.current = onError;
@@ -49,10 +60,10 @@ export default function ImagePreloader( props ) {
 			image.current = null;
 		}
 
-		function onLoadComplete( event ) {
+		function onLoadComplete( event: string | Event ) {
 			destroyLoader();
 
-			if ( ! event || event.type !== 'load' ) {
+			if ( ! event || ( event as Event ).type !== 'load' ) {
 				setStatus( LoadStatus.FAILED );
 				if ( latestOnError.current ) {
 					latestOnError.current( event );
@@ -97,10 +108,3 @@ export default function ImagePreloader( props ) {
 
 	return <div className="image-preloader">{ childrenToRender }</div>;
 }
-
-ImagePreloader.propTypes = {
-	src: PropTypes.string,
-	placeholder: PropTypes.element.isRequired,
-	onLoad: PropTypes.func,
-	onError: PropTypes.func,
-};
