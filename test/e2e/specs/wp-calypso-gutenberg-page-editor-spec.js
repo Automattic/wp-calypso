@@ -187,7 +187,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 	} );
 
-	// Skip until https://github.com/Wo rdPress/gutenberg/issues/17209 is fixed
+	// Skip until https://github.com/WordPress/gutenberg/issues/17209 is fixed
 	describe.skip( 'Private Pages: @parallel', function() {
 		const pageTitle = dataHelper.randomPhrase();
 		const pageQuote =

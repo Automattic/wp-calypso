@@ -402,8 +402,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	// Skip until https://github.com/Wo rdPress/gutenberg/issues/17209 is fixed
-	describe( 'Private Posts: @parallel', function() {
+	// Skip until https://github.com/WordPress/gutenberg/issues/17209 is fixed
+	describe.skip( 'Private Posts: @parallel', function() {
 		describe( 'Publish a Private Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
