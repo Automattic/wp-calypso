@@ -231,8 +231,6 @@ const mapState = state => {
 		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
 		site: site,
 		siteId: selectedSiteId,
-
-		// TODO: This is not working correctly
 		canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
 		pageOnFront: getPost( state, homePagePostId ),
 		editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
