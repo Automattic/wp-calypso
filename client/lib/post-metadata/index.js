@@ -88,7 +88,7 @@ const PostMetadata = {
 	 * cannot be determined.
 	 *
 	 * @param  {Object} post Post object
-	 * @return {Array}       Array of Publicize service IDs
+	 * @return {String|undefined} ThemeId on success.
 	 */
 	homepageTemplate: function( post ) {
 		if ( ! post ) {
