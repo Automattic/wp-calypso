@@ -11,7 +11,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
   >
     <li
       className="template-selector-control__template"
-      key="template-selector-control-13-undefined"
+      key="template-selector-control-13-template-1"
     >
       <TemplateSelectorItem
         blocks={
@@ -98,7 +98,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
     </li>
     <li
       className="template-selector-control__template"
-      key="template-selector-control-13-undefined"
+      key="template-selector-control-13-template-2"
     >
       <TemplateSelectorItem
         blocks={
@@ -185,7 +185,7 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
     </li>
     <li
       className="template-selector-control__template"
-      key="template-selector-control-13-undefined"
+      key="template-selector-control-13-template-3"
     >
       <TemplateSelectorItem
         blocks={
