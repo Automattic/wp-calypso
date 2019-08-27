@@ -122,10 +122,11 @@ if ( config.isEnabled( 'hello-world' ) ) {
 
 This checks for our feature in the current environment to figure out whether it needs to register a new section. The section is defined by a name, an array with the relevant paths, and the main module.
 
-You might need to import the `config` module at the top of the `sections.js` file if it's not already there:
+You might need to `require` the `config` module at the top of the `sections.js` file if your code uses it and if it's not already imported there:
 ```js
-import config from 'config';
+const config = require( 'config' );
 ```
+The `sections.js` module needs to be a CommonJS module that uses `require` calls, because it's run by Node.js. ESM imports won't work there at this moment.
 
 ### Run the server!
 
