@@ -184,8 +184,15 @@ class WP_Template {
 		not everything is appropriate for template content as opposed to post content
 		*/
 
+		global $wp_embed;
+		$content = $this->get_template_content( $template_type );
+
+		// 8 priority
+		$content = $wp_embed->run_shortcode( $content );
+		$content = $wp_embed->autoembed( $content );
+
 		// 9 priority
-		$content = do_blocks( $this->get_template_content( $template_type ) );
+		$content = do_blocks( $content );
 
 		// 10 priority
 		$content = wptexturize( $content );
