@@ -8,7 +8,7 @@ import fs from 'fs';
 import fspath from 'path';
 import marked from 'marked';
 import lunr from 'lunr';
-import { find, escape as escapeHTML } from 'lodash';
+import { escape as escapeHTML } from 'lodash';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
@@ -59,31 +59,6 @@ function queryDocs( query ) {
 			path: doc.path,
 			title: doc.title,
 			snippet: snippet,
-		};
-	} );
-}
-
-/**
- * Return an array of results based on the provided filenames
- * @param {array} filePaths An array of file paths
- * @returns {array} The results from the docs
- */
-function listDocs( filePaths ) {
-	return filePaths.map( path => {
-		const doc = find( documents, entry => entry.path === path );
-
-		if ( doc ) {
-			return {
-				path: path,
-				title: doc.title,
-				snippet: defaultSnippet( doc ),
-			};
-		}
-
-		return {
-			path: path,
-			title: 'Not found: ' + path,
-			snippet: '',
 		};
 	} );
 }
@@ -193,20 +168,6 @@ module.exports = function() {
 		}
 
 		response.json( queryDocs( query ) );
-	} );
-
-	// return a listing of documents from filenames supplied in the "files" parameter
-	app.get( '/devdocs/service/list', ( request, response ) => {
-		const files = request.query.files;
-
-		if ( ! files ) {
-			response.status( 400 ).json( {
-				message: 'Missing required "files" parameter',
-			} );
-			return;
-		}
-
-		response.json( listDocs( files.split( ',' ) ) );
 	} );
 
 	// return the content of a document in the given format (assumes that the document is in
