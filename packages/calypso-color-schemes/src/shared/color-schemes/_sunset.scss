@@ -94,37 +94,30 @@
 	--color-button-primary-background-hover: #{$muriel-hot-orange-800};
 	--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
-	--masterbar-color: #{$muriel-white};
-	--masterbar-border-color: #{$muriel-red-700};
-	--masterbar-item-new-editor-background: #{$muriel-gray-500};
-	--masterbar-item-new-editor-hover-background: #{$muriel-gray-600};
-	--masterbar-toggle-drafts-editor-background: #{$muriel-gray-600};
-	--masterbar-toggle-drafts-editor-border-color: #{$muriel-gray-100};
-	--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
+	--color-masterbar: #{$muriel-white};
+	--color-masterbar-border: #{$muriel-red-700};
+	--color-masterbar-item-new-editor-background: #{$muriel-gray-500};
+	--color-masterbar-item-new-editor-hover-background: #{$muriel-gray-600};
+	--color-masterbar-toggle-drafts-editor-background: #{$muriel-gray-600};
+	--color-masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
+	--color-masterbar-toggle-drafts-editor-border: #{$muriel-gray-100};
 
-	--sidebar-background: #{$muriel-red-600};
-	--sidebar-background-gradient: #{hex-to-rgb( $muriel-red-600 )};
-	--sidebar-secondary-background: #{$muriel-white};
-	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
-	--sidebar-border-color: #{$muriel-red-700};
-	--sidebar-text-color: #{$muriel-white};
-	--sidebar-gridicon-fill: #{$muriel-white};
-	--sidebar-heading-color: #{$muriel-red-50};
-	--sidebar-footer-button-color: #{$muriel-white};
-	--sidebar-menu-link-secondary-text-color: #{$muriel-red-50};
-	--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-red-600 )};
-	--sidebar-menu-selected-background-color: #{$muriel-hot-yellow-500};
-	--sidebar-menu-selected-a-color: #{$muriel-gray-800};
-	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-hot-yellow-500 )};
-	--sidebar-menu-hover-background: #{$muriel-red-700};
-	--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-red-700 )};
-	--sidebar-menu-hover-color: #{$muriel-white};
-
-	// TODO:
-	// Once we replace the current default theme with Classic Bright, we can
-	// remove these and increase consistency by using the sidebar colors instead
-	--button-is-borderless-color: #{$muriel-gray-500};
-	--count-border-color: #{$muriel-white};
-	--count-color: #{$muriel-white};
-	--profile-gravatar-user-secondary-info-color: #{$muriel-red-50};
+	--color-sidebar-background: #{$muriel-red-600};
+	--color-sidebar-background-gradient: #{hex-to-rgb( $muriel-red-600 )};
+	--color-sidebar-secondary-background: #{$muriel-white};
+	--color-sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
+	--color-sidebar-border: #{$muriel-red-700};
+	--color-sidebar-text: #{$muriel-white};
+	--color-sidebar-text-light: #{$muriel-red-50};
+	--color-sidebar-gridicon-fill: #{$muriel-white};
+	--color-sidebar-heading: #{$muriel-red-50};
+	--color-sidebar-footer-button-color: #{$muriel-white};
+	--color-sidebar-menu-link-secondary-text: #{$muriel-red-50};
+	--color-sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-red-600 )};
+	--color-sidebar-menu-selected-background: #{$muriel-hot-yellow-500};
+	--color-sidebar-menu-selected-a: #{$muriel-gray-800};
+	--color-sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-hot-yellow-500 )};
+	--color-sidebar-menu-hover-background: #{$muriel-red-700};
+	--color-sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-red-700 )};
+	--color-sidebar-menu-hover: #{$muriel-white};
 }

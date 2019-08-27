@@ -30,20 +30,16 @@
 
 	--color-button-primary-background-hover: #{$muriel-orange-400};
 
-	--sidebar-background: #{$muriel-gray-50};
-	--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
-	--sidebar-heading-color: #{$muriel-gray-600};
-	--sidebar-border-color: #{$muriel-gray-100};
-	--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-50 )};
-	--sidebar-menu-selected-background-color: #{$muriel-gray-500};
-	--sidebar-menu-selected-a-color: #{$muriel-white};
-	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-500 )};
-	--sidebar-menu-hover-background: #{$muriel-white};
-	--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-white )};
-	--sidebar-menu-hover-color: #{$muriel-blue-500};
-
-	// TODO:
-	// Once we replace the current default theme with Classic Bright, we can
-	// remove these and increase consistency by using the sidebar colors instead
-	--profile-gravatar-user-secondary-info-color: #{$muriel-gray-500};
+	--color-sidebar-background: #{$muriel-gray-50};
+	--color-sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
+	--color-sidebar-heading: #{$muriel-gray-600};
+	--color-sidebar-border: #{$muriel-gray-100};
+	--color-sidebar-text-light: #{$muriel-gray-500};
+	--color-sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-50 )};
+	--color-sidebar-menu-selected-background: #{$muriel-gray-500};
+	--color-sidebar-menu-selected-a: #{$muriel-white};
+	--color-sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-500 )};
+	--color-sidebar-menu-hover-background: #{$muriel-white};
+	--color-sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-white )};
+	--color-sidebar-menu-hover: #{$muriel-blue-500};
 }

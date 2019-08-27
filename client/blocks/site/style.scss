@@ -124,7 +124,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	&::after {
-		@include long-content-fade( $color: var( --sidebar-secondary-background-gradient ) );
+		@include long-content-fade( $color: var( --color-sidebar-secondary-background-gradient ) );
 	}
 }
 

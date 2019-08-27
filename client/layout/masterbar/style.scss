@@ -4,8 +4,8 @@ $autobar-height: 20px;
 // The WordPress.com Masterbar
 .masterbar {
 	background: var( --color-primary );
-	border-bottom: 1px solid var( --masterbar-border-color );
-	color: var( --masterbar-color );
+	border-bottom: 1px solid var( --color-masterbar-border );
+	color: var( --color-masterbar );
 	font-size: 16px;
 	display: flex;
 	height: $masterbar-height;
@@ -73,7 +73,7 @@ $autobar-height: 20px;
 	display: flex;
 	align-items: center;
 	position: relative;
-	color: var( --masterbar-color );
+	color: var( --color-masterbar );
 	font-size: 14px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
@@ -83,7 +83,7 @@ $autobar-height: 20px;
 	transition: all 0.2s ease-in-out;
 
 	&:visited {
-		color: var( --masterbar-color );
+		color: var( --color-masterbar );
 	}
 
 	&[href] {
@@ -91,11 +91,11 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
-		color: var( --masterbar-color );
+		color: var( --color-masterbar );
 	}
 
 	.gridicon {
-		fill: var( --masterbar-color ); // only because safari gets currentColor wrong
+		fill: var( --color-masterbar ); // only because safari gets currentColor wrong
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -104,7 +104,7 @@ $autobar-height: 20px;
 
 	&:hover {
 		background: var( --color-primary-400 );
-		color: var( --masterbar-color );
+		color: var( --color-masterbar );
 	}
 
 	&:focus {
@@ -112,7 +112,7 @@ $autobar-height: 20px;
 
 		.accessible-focus & {
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-			color: var( --masterbar-color );
+			color: var( --color-masterbar );
 		}
 	}
 
@@ -261,7 +261,7 @@ $autobar-height: 20px;
 
 	// active state when editing
 	.is-group-editor & {
-		background: var( --masterbar-item-new-editor-background );
+		background: var( --color-masterbar-item-new-editor-background );
 		color: var( --color-white );
 	}
 
@@ -271,7 +271,7 @@ $autobar-height: 20px;
 	}
 
 	.is-group-editor &:hover {
-		background: var( --masterbar-item-new-editor-hover-background );
+		background: var( --color-masterbar-item-new-editor-hover-background );
 	}
 }
 

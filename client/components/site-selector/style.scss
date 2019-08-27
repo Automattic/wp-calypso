@@ -40,29 +40,29 @@
 
 	// Highlight selected site
 	&.is-selected {
-		background-color: var( --sidebar-menu-selected-background-color );
+		background-color: var( --color-sidebar-menu-selected-background );
 
 		.site__badge {
-			color: var( --sidebar-menu-selected-a-color );
+			color: var( --color-sidebar-menu-selected-a );
 		}
 
 		.site__title,
 		.site__domain {
-			color: var( --sidebar-menu-selected-a-color );
+			color: var( --color-sidebar-menu-selected-a );
 			&::after {
 				@include long-content-fade(
-					$color: var( --sidebar-menu-selected-background-color-gradient )
+					$color: var( --color-sidebar-menu-selected-background-gradient )
 				);
 			}
 		}
 
 		.count {
-			border-color: var( --sidebar-menu-selected-a-color );
-			color: var( --sidebar-menu-selected-a-color );
+			border-color: var( --color-sidebar-menu-selected-a );
+			color: var( --color-sidebar-menu-selected-a );
 		}
 
 		&.is-private .site__title::before {
-			color: var( --sidebar-menu-selected-a-color );
+			color: var( --color-sidebar-menu-selected-a );
 		}
 	}
 }
@@ -72,28 +72,28 @@
 .site-selector .all-sites.is-highlighted,
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover {
-	background: var( --sidebar-menu-hover-background );
+	background: var( --color-sidebar-menu-hover-background );
 	cursor: pointer;
 
 	.site__badge {
-		color: var( --sidebar-menu-hover-color );
+		color: var( --color-sidebar-menu-hover );
 	}
 
 	.site__title,
 	.site__domain {
-		color: var( --sidebar-menu-hover-color );
+		color: var( --color-sidebar-menu-hover );
 		&::after {
-			@include long-content-fade( $color: var( --sidebar-menu-hover-background-gradient ) );
+			@include long-content-fade( $color: var( --color-sidebar-menu-hover-background-gradient ) );
 		}
 	}
 
 	.site__title::before {
-		color: var( --sidebar-menu-hover-color );
+		color: var( --color-sidebar-menu-hover );
 	}
 
 	.count {
-		border-color: var( --sidebar-menu-hover-color );
-		color: var( --sidebar-menu-hover-color );
+		border-color: var( --color-sidebar-menu-hover );
+		color: var( --color-sidebar-menu-hover );
 	}
 }
 
@@ -134,7 +134,7 @@
 .site-selector__sites {
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
-	background: var( --sidebar-secondary-background );
+	background: var( --color-sidebar-secondary-background );
 
 	@include breakpoint( '<660px' ) {
 		max-height: calc( 100% - 109px );

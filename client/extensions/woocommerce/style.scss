@@ -177,7 +177,7 @@
 		margin-top: 0;
 
 		@include breakpoint( '<660px' ) {
-			border-top: 1px solid var( --sidebar-border-color );
+			border-top: 1px solid var( --color-sidebar-border );
 		}
 
 		@include breakpoint( '>660px' ) {

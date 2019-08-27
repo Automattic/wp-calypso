@@ -55,7 +55,7 @@
 // Sidebar Headings, used for both static headings
 // like in Reader, and for the expandable menus.
 .sidebar__heading {
-	color: var( --sidebar-heading-color );
+	color: var( --color-sidebar-heading );
 	font-size: 15px;
 	font-weight: 600;
 	padding: 16px 8px 6px 16px;
@@ -63,7 +63,7 @@
 
 // Sidebar menu icons for main sections
 .sidebar__menu-icon {
-	fill: var( --sidebar-gridicon-fill );
+	fill: var( --color-sidebar-gridicon-fill );
 	margin-right: 11px;
 }
 
@@ -82,7 +82,7 @@
 
 	&,
 	&:visited {
-		color: var( --sidebar-text-color );
+		color: var( --color-sidebar-text );
 	}
 
 	// I think this is some voodoo to change the color
@@ -90,21 +90,21 @@
 	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
 
 	&:hover {
-		background-color: var( --sidebar-menu-hover-background );
-		color: var( --sidebar-menu-hover-color );
+		background-color: var( --color-sidebar-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover );
 
 		.sidebar__menu-icon {
-			fill: var( --sidebar-menu-hover-color );
+			fill: var( --color-sidebar-menu-hover );
 		}
 	}
 
 	.selected &,
 	.selected &:hover {
-		color: var( --sidebar-menu-selected-a-color );
-		background-color: var( --sidebar-menu-selected-background-color );
+		color: var( --color-sidebar-menu-selected-a );
+		background-color: var( --color-sidebar-menu-selected-background );
 
 		.sidebar__menu-icon {
-			fill: var( --sidebar-menu-selected-a-color );
+			fill: var( --color-sidebar-menu-selected-a );
 		}
 	}
 
@@ -133,7 +133,7 @@
 	position: absolute;
 	right: 0;
 	z-index: 1;
-	color: var( --sidebar-menu-link-secondary-text-color );
+	color: var( --color-sidebar-text-light );
 	padding: 4px 8px;
 
 	.selected &,
@@ -152,12 +152,12 @@
 		cursor: pointer;
 
 		&:hover {
-			background-color: var( --sidebar-menu-hover-background );
-			color: var( --sidebar-menu-hover-color );
+			background-color: var( --color-sidebar-sidebar-menu-hover-background );
+			color: var( --color-sidebar-menu-hover );
 
 			.sidebar__menu-icon,
 			.sidebar__expandable-arrow {
-				fill: var( --sidebar-menu-hover-color );
+				fill: var( --color-sidebar-menu-hover );
 			}
 		}
 	}
@@ -168,7 +168,7 @@
 
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
-		fill: var( --sidebar-gridicon-fill );
+		fill: var( --color-sidebar-gridicon-fill );
 	}
 
 	.sidebar__menu-link {
