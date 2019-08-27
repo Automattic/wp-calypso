@@ -27,13 +27,13 @@
 	}
 
 	.thank-you-card {
-		background: var( --color-white );
-		color: var( --color-neutral-700 );
+		background: var( --studio-white );
+		color: var( --color-neutral-70 );
 	}
 
 	.thank-you-card__header {
 		background: var( --color-accent );
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	.thank-you-card__price {
@@ -45,8 +45,8 @@
 	}
 
 	.thank-you-card__button {
-		background: var( --color-neutral-700 );
-		color: var( --color-white );
+		background: var( --color-neutral-70 );
+		color: var( --studio-white );
 		border: 0;
 	}
 }

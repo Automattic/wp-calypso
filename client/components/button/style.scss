@@ -57,25 +57,25 @@ button {
 		border-width: 2px 1px 1px;
 	}
 
-	background-color: var( --color-white );
-	color: var( --color-neutral-700 );
-	border-color: var( --color-neutral-100 );
+	background-color: var( --studio-white );
+	color: var( --color-neutral-70 );
+	border-color: var( --color-neutral-10 );
 
 	&:hover {
-		border-color: var( --color-neutral-200 );
-		color: var( --color-neutral-700 );
+		border-color: var( --color-neutral-20 );
+		color: var( --color-neutral-70 );
 	}
 
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-200 );
-		background-color: var( --color-white );
-		border-color: var( --color-neutral-50 );
+		color: var( --color-neutral-20 );
+		background-color: var( --studio-white );
+		border-color: var( --color-neutral-5 );
 		cursor: default;
 
 		&:active,
@@ -96,7 +96,7 @@ button {
 		line-height: 1;
 
 		&:disabled {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 		}
 		.gridicon {
 			top: 5px;
@@ -133,13 +133,13 @@ button {
 .button.is-primary {
 	background-color: var( --color-accent );
 	border-color: var( --color-accent-dark );
-	color: var( --color-white );
+	color: var( --studio-white );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-button-primary-background-hover );
 		border-color: var( --color-accent-dark );
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	.accessible-focus &:focus {
@@ -147,23 +147,23 @@ button {
 	}
 
 	&.is-compact {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-200 );
-		background-color: var( --color-white );
-		border-color: var( --color-neutral-50 );
+		color: var( --color-neutral-20 );
+		background-color: var( --studio-white );
+		border-color: var( --color-neutral-5 );
 	}
 
 	&.is-busy {
 		background-image: linear-gradient(
 			-45deg,
 			var( --color-accent ) 28%,
-			var( --color-accent-600 ) 28%,
-			var( --color-accent-600 ) 72%,
+			var( --color-accent-60 ) 28%,
+			var( --color-accent-60 ) 72%,
 			var( --color-accent ) 72%
 		);
 	}
@@ -184,16 +184,16 @@ button {
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-200 );
-		background-color: var( --color-white );
-		border-color: var( --color-neutral-50 );
+		color: var( --color-neutral-20 );
+		background-color: var( --studio-white );
+		border-color: var( --color-neutral-5 );
 	}
 }
 
 .button.is-primary.is-scary {
 	background-color: var( --color-error );
 	border-color: var( --color-error-dark );
-	color: var( --color-white );
+	color: var( --studio-white );
 
 	&:hover,
 	&:focus {
@@ -202,17 +202,17 @@ button {
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-200 );
-		background-color: var( --color-white );
-		border-color: var( --color-neutral-50 );
+		color: var( --color-neutral-20 );
+		background-color: var( --studio-white );
+		border-color: var( --color-neutral-5 );
 	}
 
 	&.is-busy {
 		background-image: linear-gradient(
 			-45deg,
 			var( --color-error ) 28%,
-			var( --color-error-600 ) 28%,
-			var( --color-error-600 ) 72%,
+			var( --color-error-60 ) 28%,
+			var( --color-error-60 ) 72%,
 			var( --color-error ) 72%
 		);
 	}
@@ -228,7 +228,7 @@ button {
 	&:hover,
 	&:focus {
 		background: none;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.gridicon {
@@ -239,7 +239,7 @@ button {
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		cursor: default;
 
 		&:active,
@@ -252,11 +252,11 @@ button {
 
 		&:hover,
 		&:focus {
-			color: var( --color-error-600 );
+			color: var( --color-error-60 );
 		}
 
 		&[disabled] {
-			color: var( --color-error-200 );
+			color: var( --color-error-20 );
 		}
 	}
 
@@ -275,7 +275,7 @@ button {
 		}
 
 		&[disabled] {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 		}
 	}
 

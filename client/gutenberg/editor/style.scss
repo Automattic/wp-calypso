@@ -12,7 +12,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: var( --color-white );
+	background-color: var( --studio-white );
 	pointer-events: none;
 	z-index: z-index( 'root', '.is-group-gutenberg::before' );
 }

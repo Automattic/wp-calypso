@@ -47,7 +47,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__item {
-		border-bottom: solid 1px var( --color-neutral-50 );
+		border-bottom: solid 1px var( --color-neutral-5 );
 		font-size: 14px;
 	}
 
@@ -77,8 +77,8 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__mobile-plan {
 	font-size: 14px;
-	border: solid 1px var( --color-neutral-50 );
-	background-color: var( --color-white );
+	border: solid 1px var( --color-neutral-5 );
+	background-color: var( --studio-white );
 	margin-bottom: 24px;
 }
 
@@ -109,9 +109,9 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item {
-	border-right: solid 1px var( --color-neutral-50 );
-	border-left: solid 1px var( --color-neutral-50 );
-	background-color: var( --color-white );
+	border-right: solid 1px var( --color-neutral-5 );
+	border-left: solid 1px var( --color-neutral-5 );
+	background-color: var( --studio-white );
 	position: relative;
 
 	&.is-highlighted {
@@ -140,7 +140,7 @@ $plan-features-sidebar-width: 272px;
 		display: block;
 		height: 1px;
 		width: calc( 100% - 48px );
-		border-bottom: 1px solid var( --color-neutral-50 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		position: absolute;
 		bottom: 0;
 		margin: 0 24px;
@@ -153,11 +153,11 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item.has-border-bottom {
-	border-bottom: solid 1px var( --color-neutral-50 );
+	border-bottom: solid 1px var( --color-neutral-5 );
 }
 
 .plan-features__table-item.has-border-top {
-	border-top: solid 1px var( --color-neutral-50 );
+	border-top: solid 1px var( --color-neutral-5 );
 }
 
 .plan-features__table-item.is-placeholder {
@@ -182,8 +182,8 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	align-items: flex-start;
 	padding: 12px 24px 0 15px;
-	border-bottom: solid 2px var( --color-neutral-100 );
-	background-color: var( --color-white );
+	border-bottom: solid 2px var( --color-neutral-10 );
+	background-color: var( --studio-white );
 
 	@include breakpoint( '<960px' ) {
 		padding: 12px 12px 0;
@@ -304,7 +304,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: 20px;
 	height: 20px;
 	border-radius: 10px;
-	color: var( --color-white );
+	color: var( --studio-white );
 	background: var( --color-success );
 	font-weight: normal;
 	vertical-align: middle;
@@ -328,7 +328,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: normal;
 
 	&.is-placeholder {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 		width: 140px;
 		height: 12px;
 		margin-bottom: 15px;
@@ -364,7 +364,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__price {
 	&.is-placeholder {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 			width: 45px;
 			height: 25px;
 			margin-top: 9px;
@@ -373,7 +373,7 @@ $plan-features-sidebar-width: 272px;
 }
 .plan-features__price-jetpack {
 	&.is-placeholder {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 			width: 140px;
 			height: 32px;
 			margin-top: 5px;
@@ -405,12 +405,12 @@ $plan-features-sidebar-width: 272px;
 	top: 0;
 	transform: translateY( -21px );
 	padding: 0 8px;
-	background: var( --color-neutral-700 );
+	background: var( --color-neutral-70 );
 	font-size: 10px;
 	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
-	color: var( --color-white );
+	color: var( --studio-white );
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -432,7 +432,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__targeted-description-heading {
 	display: block;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .plan-features__item {
@@ -440,7 +440,7 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 24px;
 	padding: 12px 0;
 	font-size: 14px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	@include breakpoint( '<960px' ) {
 		font-size: 12px;
@@ -558,7 +558,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 				height: 0;
 				border-left: 10px solid transparent;
 				border-right: 10px solid transparent;
-				border-top: 10px solid var( --color-primary-700 );
+				border-top: 10px solid var( --color-primary-70 );
 				position: absolute;
 				bottom: -10px;
 				left: calc( 50% - 10px );
@@ -573,7 +573,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			}
 			cursor: default;
 			text-decoration: none;
-			background-color: var( --color-primary-700 );
+			background-color: var( --color-primary-70 );
 		}
 	}
 }
@@ -630,7 +630,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__header-title {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		margin-bottom: 5px;
 	}
 
@@ -659,7 +659,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__pricing,
 	.plan-price.is-discounted {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.plan-features__pricing {
@@ -717,7 +717,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__row:last-of-type .plan-features__table-item {
-		border-bottom: solid 1px var( --color-neutral-50 );
+		border-bottom: solid 1px var( --color-neutral-5 );
 	}
 
 	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
@@ -866,7 +866,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__pricing {
 		padding: 8px 16px;
 		margin: 0;
-		border-top: solid 1px var( --color-neutral-100 );
+		border-top: solid 1px var( --color-neutral-10 );
 
 		.plan-price {
 			font-weight: bold;
@@ -886,7 +886,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__table-item {
-		border-top: solid 1px var( --color-neutral-50 );
+		border-top: solid 1px var( --color-neutral-5 );
 		vertical-align: middle;
 		padding: 7px 0;
 
@@ -915,7 +915,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 
 		&.is-last-feature {
-			border-bottom: solid 1px var( --color-neutral-50 );
+			border-bottom: solid 1px var( --color-neutral-5 );
 		}
 	}
 
@@ -954,7 +954,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__row:last-child .plan-features__table-item {
-		border-bottom: solid 1px var( --color-neutral-50 );
+		border-bottom: solid 1px var( --color-neutral-5 );
 	}
 }
 
@@ -997,11 +997,11 @@ button.plan-features__scroll-button {
 	background-color: var( --color-neutral );
 	border: 0;
 	border-radius: 15px;
-	color: var( --color-white );
+	color: var( --studio-white );
 	cursor: pointer;
 
 	&:hover, &:active, &:focus {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	.gridicon {
@@ -1010,18 +1010,18 @@ button.plan-features__scroll-button {
 	}
 
 	:root body.is-section-signup .plan-features__scroller-container & {
-		background-color: var( --color-white );
+		background-color: var( --studio-white );
 		color: var( --color-primary );
 		padding: 0;
 	}
 
 	&:disabled, &[disabled] {
 		background-color: rgba( var( --color-neutral-rgb ), 0.5 );
-		color: var( --color-neutral-50 );
+		color: var( --color-neutral-5 );
 	}
 
 	:root body.is-section-signup &:disabled, .is-section-signup &[disabled] {
-		background-color: rgba( var( --color-white-rgb ), 0.5 );
+		background-color: rgba( var( --studio-white-rgb ), 0.5 );
 		color: var( --color-primary );
 	}
 
@@ -1065,7 +1065,7 @@ button.plan-features__scroll-button {
 	border-radius: 4px;
 
 	.is-section-signup & {
-		background: var( --color-white );
+		background: var( --studio-white );
 		opacity: 0.5;
 	}
 

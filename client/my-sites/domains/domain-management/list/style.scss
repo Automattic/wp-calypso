@@ -8,7 +8,7 @@
 
 		.domain-management-list-item__title,
 		.domain-management-list-item__meta {
-			color: var( --color-neutral-100 );
+			color: var( --color-neutral-10 );
 		}
 	}
 }
@@ -26,7 +26,7 @@
 
 .domain-management-list-item__title {
 	display: block;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 	font-weight: 600;
 	text-overflow: ellipsis;
@@ -69,12 +69,12 @@
 	}
 
 	.domain-management-list-item__title {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 		width: 60%;
 	}
 
 	.domain-management-list-item__type {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 		display: inline-block;
 		width: 40%;
 	}
@@ -93,7 +93,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-management-list-item__busy-message {
 	text-transform: uppercase;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-weight: 600;
 	font-size: 12px;
 	text-overflow: ellipsis;

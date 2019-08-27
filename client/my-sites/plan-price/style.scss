@@ -2,10 +2,10 @@
 	margin: 0;
 	font-size: 28px;
 	line-height: 1.5;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	&.is-placeholder {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 		width: 60px;
 		margin: 10px 0;
 		height: 21px;

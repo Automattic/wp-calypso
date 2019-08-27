@@ -44,7 +44,7 @@
 			padding-right: 0;
 
 			&:hover {
-				fill: var( --color-white );
+				fill: var( --studio-white );
 			}
 		}
 
@@ -54,12 +54,12 @@
 			color: white;
 
 			.gridicon {
-				fill: var( --color-white );
+				fill: var( --studio-white );
 			}
 
 			.follow-button__label,
 			.conversation-follow-button__label {
-				color: var( --color-white );
+				color: var( --studio-white );
 			}
 		}
 
@@ -89,11 +89,11 @@
 
 		&:hover,
 		&:focus {
-			color: var( --color-white );
+			color: var( --studio-white );
 			background: var( --color-error );
 
 			.gridicon {
-				fill: var( --color-white );
+				fill: var( --studio-white );
 			}
 		}
 	}

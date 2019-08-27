@@ -3,7 +3,7 @@
 	height: 800px;
 	max-width: 1200px;
 	margin: 0 auto;
-	background: var( --color-white );
+	background: var( --studio-white );
 	position: relative;
 	transition: all 200ms cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
@@ -80,7 +80,7 @@
 	}
 
 	.is-phone & {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 		border-radius: 12px 12px 0 0;
 	}
 
@@ -104,7 +104,7 @@
 .signup-site-preview__chrome-desktop,
 .signup-site-preview__chrome-mobile {
 	height: 28px;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .signup-site-preview__chrome-desktop {
@@ -130,7 +130,7 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		display: block;
 		width: 70%;
 		background: var( --color-neutral-0 );
@@ -156,7 +156,7 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		display: block;
 		width: 65%;
 		white-space: nowrap;

@@ -74,8 +74,9 @@
 	right: 0;
 	padding: 0 24px;
 	box-sizing: border-box;
-	background: var( --color-white );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	background: var( --studio-white );
+	box-shadow:
+		0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 }
 
@@ -94,8 +95,8 @@
 	flex: auto;
 }
 
-.editor-confirmation-sidebar__display-preference {
-	background-color: var( --color-neutral-50 );
+.editor-confirmation-sidebar__sidebar .editor-confirmation-sidebar__display-preference {
+	background-color: var( --color-neutral-5 );
 	padding: 12px;
 
 	@include breakpoint( '<660px' ) {
@@ -108,7 +109,7 @@
 }
 
 .editor-confirmation-sidebar__header {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 15px;
 	padding-bottom: 24px;
 }

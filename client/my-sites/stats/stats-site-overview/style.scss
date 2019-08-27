@@ -22,12 +22,12 @@
 	.module-header__right-icon {
 		position: relative;
 		float: right;
-		background: var( --color-white );
+		background: var( --studio-white );
 		padding-right: 15px;
 
 		// Fade out value if text is very long
 		&::before {
-			@include stats-fade-text( rgba( var( --color-white-rgb ), 0 ), var( --color-white ) );
+			@include stats-fade-text( rgba( var( --studio-white-rgb ), 0 ), var( --studio-white ) );
 		}
 
 		.gridicon {

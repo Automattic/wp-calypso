@@ -85,8 +85,8 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 
 	@include breakpoint( '>660px' ) {
-		background-color: var( --color-white );
-	    box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+		background-color: var( --studio-white );
+	    box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 		display: block;
 		margin: 0 auto;
 		padding: 35px 55px;
@@ -187,7 +187,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .button.signup-form__crowdsignal-show-form {
 	background-color: var( --color-crowdsignal );
-	color: var( --color-white );
+	color: var( --studio-white );
 	text-align: center;
 	margin-bottom: 0;
 
@@ -282,7 +282,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal-tos {
 	text-align: center;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	margin-top: 20px;
 	padding: 0 20px;
 

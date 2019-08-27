@@ -54,8 +54,8 @@ textarea {
 // Main button
 .btn {
 	background: var( --color-primary );
-	border: 1px solid var( --color-primary-400 );
-	color: var( --color-white );
+	border: 1px solid var( --color-primary-40 );
+	color: var( --studio-white );
 	border-width: 1px 1px 2px;
 	cursor: pointer;
 	font-size: 14px;
@@ -75,7 +75,7 @@ textarea {
 		outline: 0;
 		border-width: 2px 1px 1px;
 		padding: 7px 14px 9px;
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 	&:focus {
 		border-color: var( --color-primary-dark );
@@ -107,9 +107,9 @@ textarea {
 	background: #f2f6f8;
 }
 .minimized-view {
-	background: var( --color-white );
+	background: var( --studio-white );
 	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
-	border: 1px solid var( --color-neutral-50 );
+	border: 1px solid var( --color-neutral-5 );
 }
 .maximized-view.is-ask-view {
 	top: 0;
@@ -143,7 +143,7 @@ textarea {
 		&.disabled {
 			background: transparent;
 			.svg-icon {
-				color: var( --color-neutral-50 );
+				color: var( --color-neutral-5 );
 			}
 		}
 	}
@@ -179,7 +179,7 @@ textarea {
 
 .chat-list-view-item-container {
 	background: var( --color-neutral-0 );
-	border-bottom: 1px solid var( --color-neutral-50 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 	color: var( --color-text );
 	padding: 18px 10px 18px 24px;
 	.chat-list-item-title {
@@ -287,7 +287,7 @@ textarea {
 			height: 0;
 			border-style: solid;
 			border-width: 0 10px 10px 0;
-			border-color: transparent var( --color-white ) transparent transparent;
+			border-color: transparent var( --studio-white ) transparent transparent;
 		}
 		.author img {
 			// Need to override inline styles with !importants
@@ -304,21 +304,21 @@ textarea {
 		font-weight: 500;
 	}
 	.profile .reputation {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 	}
 }
 .avatar {
-	background: var( --color-neutral-50 );
+	background: var( --color-neutral-5 );
 }
 
 .system-message {
-	border: 1px solid var( --color-neutral-50 );
+	border: 1px solid var( --color-neutral-5 );
 	background: var( --color-neutral-0 );
 	font-size: 14px;
 	margin-right: 0;
 	border-radius: 8px;
 	&.has-sibling + .system-message {
-		border-top: 1px solid var( --color-neutral-50 );
+		border-top: 1px solid var( --color-neutral-5 );
 	}
 
 	// Green border for success messages
@@ -331,9 +331,9 @@ textarea {
 	&.success.inverted {
 		border-color: transparent;
 		background: var( --color-success );
-		color: var( --color-white );
+		color: var( --studio-white );
 		a {
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 
@@ -341,27 +341,27 @@ textarea {
 	&.warning {
 		background: var( --color-warning );
 		border-color: transparent;
-		color: var( --color-white );
+		color: var( --studio-white );
 		a {
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 
 	// Placeholder displayed when the experts info is loading
 	&.alerting-experts {
 		.expert-name:empty {
-			background: var( --color-neutral-50 );
+			background: var( --color-neutral-5 );
 		}
 		.expert-last-active-date {
 			color: var( --color-neutral-light );
 			&:empty {
-				background: var( --color-neutral-50 );
+				background: var( --color-neutral-5 );
 			}
 		}
 	}
 
 	.icon-avatar {
-		background: var( --color-neutral-50 );
+		background: var( --color-neutral-5 );
 	}
 
 	// Icons inside system messages
@@ -371,16 +371,16 @@ textarea {
 			background-color: #14abdd;
 		}
 		&.icon-success {
-			background-color: var( --color-white );
+			background-color: var( --studio-white );
 			color: var( --color-success );
 		}
 		&.icon-warning {
-			background-color: var( --color-white );
+			background-color: var( --studio-white );
 			color: var( --color-warning );
 		}
 	}
 	&.inverted .icon.icon-success {
-		background-color: var( --color-white );
+		background-color: var( --studio-white );
 		color: var( --color-success );
 	}
 }
@@ -394,7 +394,7 @@ textarea {
 .thread-view-footer {
 	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
-	background: var( --color-white );
+	background: var( --studio-white );
 }
 
 // Bubble when the thread view is minimized
@@ -437,7 +437,7 @@ textarea {
 		box-shadow: none;
 	}
 	.submit-btn[disabled] {
-		background-color: var( --color-neutral-50 );
+		background-color: var( --color-neutral-5 );
 		border: none;
 	}
 }
@@ -476,7 +476,7 @@ textarea {
 
 // Displays when the user wants to accept the answer
 .ActionBar {
-	background: var( --color-white );
+	background: var( --studio-white );
 }
 .ActionBar__button {
 	box-shadow: none;

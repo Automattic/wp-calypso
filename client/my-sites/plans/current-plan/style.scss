@@ -18,8 +18,8 @@
 .current-plan__header-content {
 	width: 100%;
 	padding: 32px;
-	background-color: var( --color-white );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	background-color: var( --studio-white );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 
 	.is-jetpack-free & {
@@ -77,7 +77,7 @@
 
 	.current-plan__header-heading,
 	.current-plan__header-text {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 
 		display: block;
 

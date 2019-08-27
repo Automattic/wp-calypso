@@ -6,12 +6,12 @@
 	padding: 2px;
 	margin-right: 16px;
 
-	background-color: var( --color-neutral-700 );
-	fill: var( --color-white );
+	background-color: var( --color-neutral-70 );
+	fill: var( --studio-white );
 	border-radius: 4px;
 
 	&.wordpress {
-		background-color: var( --color-wpcom );
+		background-color: var( --studio-wordpress-blue );
 	}
 
 	&.medium-logo {

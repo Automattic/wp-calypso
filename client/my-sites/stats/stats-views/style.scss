@@ -20,7 +20,7 @@
 
 	th {
 		font-size: 11px;
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 	}
 }
 
@@ -32,7 +32,7 @@
 		background: none;
 		text-align: left;
 		font-size: 11px;
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 	}
 
 	&.level-0 {
@@ -40,26 +40,26 @@
 	}
 
 	&.level-1 {
-		background-color: var( --color-primary-50 );
+		background-color: var( --color-primary-5 );
 	}
 
 	&.level-2 {
-		background-color: var( --color-primary-100 );
+		background-color: var( --color-primary-10 );
 	}
 
 	&.level-3 {
 		background-color: var( --color-primary-light );
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	&.level-4 {
 		background-color: var( --color-primary );
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	&.level-5 {
 		background-color: var( --color-primary-dark );
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 }
 

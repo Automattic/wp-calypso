@@ -1,14 +1,15 @@
 :root {
-	--color-wpcom: #{$muriel-blue-500};
+	--studio-wordpress-blue: #{$muriel-blue-500};
 
-	--color-jetpack-light: #{$muriel-jetpack-green-200};
-	--color-jetpack: #{$muriel-jetpack-green-300};
-	--color-jetpack-400: #{$muriel-jetpack-green-400};
-	--color-jetpack-dark: #{$muriel-jetpack-green-500};
+	--studio-jetpack-green-20: #{$muriel-jetpack-green-200};
+	--studio-jetpack-green-30: #{$muriel-jetpack-green-300};
+	--studio-jetpack-green-40: #{$muriel-jetpack-green-400};
+	--studio-jetpack-green-50: #{$muriel-jetpack-green-500};
+
 	--color-jetpack-onboarding-text: #{$muriel-white};
 	--color-jetpack-onboarding-background: #1d232f;
 
-	--color-woocommerce: #{$muriel-woo-purple-500};
+	--studio-woocommerce-purple: #{$muriel-hot-purple-500};
 
 	--color-email: #f8f8f8;
 	--color-eventbrite: #ff8000;

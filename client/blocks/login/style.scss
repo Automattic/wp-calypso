@@ -1,8 +1,8 @@
 .layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
 		.button.is-primary {
-			background-color: var( --color-jetpack );
-			border-color: var( --color-jetpack-dark );
+			background-color: var( --studio-jetpack-green-30 );
+			border-color: var( --studio-jetpack-green-50 );
 		}
 	}
 }
@@ -26,7 +26,7 @@
 	.login__jetpack-logo,
 	.login__woocommerce-logo {
 		text-align: center;
-		border-bottom: 1px solid var( --color-gray-50 );
+		border-bottom: 1px solid var( --studio-gray-5 );
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -66,7 +66,7 @@
 	}
 
 	.login__header-subtitle {
-		color: var( --color-primary-100 );
+		color: var( --color-primary-10 );
 		margin-top: 1em;
 		font-size: 16px;
 		line-height: 24px;
@@ -74,11 +74,11 @@
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: var( --color-gray-800 );
+		fill: var( --studio-gray-80 );
 	}
 
 	.jetpack-logo__icon-triangle {
-		fill: var( --color-gray-0 );
+		fill: var( --studio-gray-0 );
 	}
 
 	.login__form-action .form-button {
@@ -87,11 +87,11 @@
 	}
 
 	.jetpack-header__partner-logo-plus svg {
-		stroke: var( --color-gray-800 );
+		stroke: var( --studio-gray-80 );
 	}
 
 	.jetpack-header__partner-logo-plus .gridicon {
-		color: var( --color-gray-800 );
+		color: var( --studio-gray-80 );
 	}
 }
 
@@ -101,7 +101,7 @@
 
 .login__form .login__form-userdata {
 	label {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		display: block;
 		font-size: 14px;
 		line-height: 1.5;
@@ -168,7 +168,7 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 }
 

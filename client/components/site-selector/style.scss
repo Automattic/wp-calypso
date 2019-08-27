@@ -21,7 +21,7 @@
 	}
 
 	&.is-large .site-selector__sites {
-		border-top: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
 	}
 
 	.site.is-loading {
@@ -100,7 +100,7 @@
 .site-selector .search {
 	margin: 8px;
 	height: 33px;
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	display: block;
 	opacity: 0;
 	position: absolute;
@@ -111,10 +111,10 @@
 	}
 
 	&.has-focus {
-		box-shadow: 0 0 0 2px var( --color-primary-100 );
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
 
 		&:hover {
-			box-shadow: 0 0 0 2px var( --color-primary-200 );
+			box-shadow: 0 0 0 2px var( --color-primary-20 );
 		}
 	}
 
@@ -163,11 +163,11 @@
 	font-size: 11px;
 	font-weight: 600;
 	padding: 8px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	line-height: 2.1;
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -189,7 +189,7 @@
 }
 
 .site-selector .all-sites {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .site-selector__recent {

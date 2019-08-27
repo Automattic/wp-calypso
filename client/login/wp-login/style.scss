@@ -31,13 +31,13 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	font-size: 16px;
 	margin-bottom: 16px;
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 }
 
@@ -45,11 +45,11 @@ $image-height: 47px;
 .wp-login__footer {
 	a,
 	button {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		text-decoration: none;
 
 		body.is-section-signup & {
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 }
@@ -57,7 +57,7 @@ $image-height: 47px;
 .wp-login__links {
 	a,
 	button {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
@@ -78,7 +78,7 @@ $image-height: 47px;
 		}
 
 		body.is-section-signup & {
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 
@@ -104,8 +104,8 @@ $image-height: 47px;
 }
 
 .wp-login__footer--jetpack {
-	background: var( --color-white );
-	border-top: solid 1px var( --color-neutral-50 );
+	background: var( --studio-white );
+	border-top: solid 1px var( --color-neutral-5 );
 	text-align: center;
 
 	img {
@@ -192,12 +192,12 @@ $image-height: 47px;
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
 	.translator-invite__content a {
-		color: var( --color-neutral-200 );
-		border-bottom-color: var( --color-neutral-700 );
+		color: var( --color-neutral-20 );
+		border-bottom-color: var( --color-neutral-70 );
 
 		&:hover,
 		&:focus {
-			color: var( --color-primary-200 );
+			color: var( --color-primary-20 );
 		}
 	}
 
@@ -206,7 +206,7 @@ $image-height: 47px;
 	}
 
 	.translator-invite__content {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.wp-login__site-return-link::after {
@@ -229,14 +229,14 @@ $image-height: 47px;
 	.wp-login__links a {
 		border-bottom: none;
 		line-height: 3.4em;
-		color: #50575e; // $studio-gray-60;
+		color: var( --studio-gray-60 );
 		font-size: 14px;
 		text-decoration: underline;
 		font-weight: normal;
 	}
 
 	.login__form-header {
-		color: #2c3338; // $studio-gray-80;
+		color: var( --studio-gray-80 );
 	}
 
 	.wp-login__main.main {
@@ -256,14 +256,14 @@ $image-height: 47px;
 	}
 
 	.login__form-change-username {
-		color: #50575e; // $studio-gray-60;
+		color: var( --studio-gray-60 );
 	}
 
 	.login__form-terms,
 	.login__form-terms a,
 	.login__form-terms a:hover {
 		text-align: left;
-		color: #50575e; // $studio-gray-60;
+		color: var( --studio-gray-60 );
 		font-size: 12px;
 	}
 
@@ -294,17 +294,17 @@ $image-height: 47px;
 
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
-		border-color:  #a7aaad; // $studio-gray-20;
+		border-color: var( --studio-gray-20 );
 
 		.text-control__label,
 		.components-base-control__label {
-			color: #646970; // $studio-gray-50;
+			color: var( --studio-gray-50 );
 			font-size: 12px;
 			font-weight: normal;
 		}
 
 		&.active {
-			box-shadow: 0 0 0 2px #674399; // $studio-woocommerce-purple-60
+			box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
 			border-color: transparent;
 		}
 	}

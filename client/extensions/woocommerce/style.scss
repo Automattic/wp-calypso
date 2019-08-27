@@ -122,7 +122,7 @@
 
 	.store-sidebar__ground-control {
 		align-items: center;
-		background-color: var( --color-white );
+		background-color: var( --studio-white );
 		display: flex;
 		width: 100%;
 	}
@@ -159,8 +159,8 @@
 			left: 0;
 			min-height: 46px;
 			z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-			background: var( --color-white );
-			border-bottom: 1px solid var( --color-neutral-100 );
+			background: var( --studio-white );
+			border-bottom: 1px solid var( --color-neutral-10 );
 		}
 	}
 
@@ -196,21 +196,21 @@
 			line-height: 18px;
 			border: 0;
 			background-color: var( --color-primary );
-			color: var( --color-white );
+			color: var( --studio-white );
 			min-width: 20px;
 		}
 
 		&.selected {
 			.count,
 			&:hover .count {
-				color: var( --color-neutral-700 );
-				background-color: var( --color-white );
+				color: var( --color-neutral-70 );
+				background-color: var( --studio-white );
 			}
 		}
 
 		&:hover .count {
 			background-color: var( --color-primary );
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 }

@@ -130,7 +130,7 @@
 
 .site__home {
 	background: var( --color-accent );
-	color: var( --color-white );
+	color: var( --studio-white );
 	display: block;
 	width: 32px;
 	height: 32px;
@@ -155,7 +155,7 @@
 	}
 
 	&:hover {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	@include breakpoint( '<660px' ) {

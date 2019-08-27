@@ -21,7 +21,7 @@
 
 	.domain-connect__is-placeholder {
 		span {
-			@include placeholder( --color-neutral-100 );
+			@include placeholder( --color-neutral-10 );
 
 			display: block;
 			margin: 0.8em 0;

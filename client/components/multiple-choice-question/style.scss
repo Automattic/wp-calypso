@@ -4,8 +4,8 @@
 }
 
 .form-text-input.multiple-choice-question__answer-item-text-input::placeholder {
-	color: var( --color-white );
+	color: var( --studio-white );
 	@include breakpoint( '>480px' ) {
-		color: var( --color-gray );
+		color: var( --studio-gray );
 	}
 }

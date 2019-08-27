@@ -39,15 +39,15 @@
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
-			@include banner-color( var( --color-jetpack-plan-personal ) );
+			@include banner-color( var( --studio-jetpack-green-plan-personal ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( var( --color-jetpack-plan-premium ) );
+			@include banner-color( var( --studio-jetpack-green-plan-premium ) );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( var( --color-jetpack-plan-professional ) );
+			@include banner-color( var( --studio-jetpack-green-plan-professional ) );
 		}
 	}
 
@@ -61,7 +61,7 @@
 		transition: all 100ms ease-in-out;
 
 		&.is-card-link {
-			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
 		}
 		.card__link-indicator {
 			color: var( --color-primary-dark );
@@ -97,7 +97,7 @@
 
 	.banner__icon {
 		align-self: center;
-		color: var( --color-white );
+		color: var( --studio-white );
 		display: flex;
 	}
 
@@ -152,7 +152,7 @@
 	.banner__title,
 	.banner__description,
 	.banner__list {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.banner__title {
@@ -206,7 +206,7 @@
 
 		.plan-price.is-discounted,
 		.plan-price.is-discounted .plan-price__currency-symbol {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		.has-call-to-action & .plan-price {

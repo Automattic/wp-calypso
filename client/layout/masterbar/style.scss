@@ -19,9 +19,9 @@ $autobar-height: 20px;
 	transition: transform 0.2s ease-out;
 
 	.is-support-session & {
-		// DO NOT style these with theme colors. We want them to override whatever theme colors the user has picked.
-		background: var( --color-hot-orange );
-		border-bottom: 1px solid var( --color-hot-orange-light );
+		// Use generic colors so that they override whatever theme colors the user has picked.
+		background: var( --studio-orange );
+		border-bottom: 1px solid var( --studio-orange-30 );
 	}
 
 	.is-section-theme &,
@@ -103,7 +103,7 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		background: var( --color-primary-400 );
+		background: var( --color-primary-40 );
 		color: var( --color-masterbar );
 	}
 
@@ -121,7 +121,7 @@ $autobar-height: 20px;
 	}
 
 	.is-support-session &.is-active {
-		background: var( --color-hot-orange-dark );
+		background: var( --studio-orange-70 );
 	}
 
 	@include breakpoint( '<480px' ) {
@@ -169,7 +169,7 @@ $autobar-height: 20px;
 			height: 24px;
 			width: 24px;
 			margin-left: 5px;
-			fill: var( --color-white );
+			fill: var( --studio-white );
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -203,7 +203,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-new {
-	background: var( --color-white );
+	background: var( --studio-white );
 	border-radius: 3px;
 	color: var( --color-primary );
 	height: 36px;
@@ -215,7 +215,7 @@ $autobar-height: 20px;
 	}
 
 	&.is-active {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	&:hover {
@@ -227,7 +227,7 @@ $autobar-height: 20px;
 		outline: none;
 
 		.accessible-focus & {
-			background: var( --color-white );
+			background: var( --studio-white );
 			color: var( --color-primary );
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
@@ -252,22 +252,22 @@ $autobar-height: 20px;
 	.is-support-session &:focus,
 	.is-support-session &:hover,
 	.is-support-session &:visited {
-		color: var( --color-hot-orange );
+		color: var( --studio-orange );
 	}
 
 	.is-support-session &.is-active {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	// active state when editing
 	.is-group-editor & {
 		background: var( --color-masterbar-item-new-editor-background );
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	.is-group-editor &:visited,
 	.is-group-editor & .masterbar__item-content {
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	.is-group-editor &:hover {
@@ -283,7 +283,7 @@ $autobar-height: 20px;
 		width: 18px;
 		height: 18px;
 
-		border: 2px solid var( --color-white );
+		border: 2px solid var( --studio-white );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -303,7 +303,7 @@ $autobar-height: 20px;
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --studio-white );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -350,7 +350,7 @@ $autobar-height: 20px;
 
 	&.has-unread .masterbar__notifications-bubble {
 		display: block;
-		background: var( --color-accent-300 );
+		background: var( --color-accent-30 );
 	}
 
 	&.is-initial-load .masterbar__notifications-bubble {
@@ -399,7 +399,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__toggle-drafts.button.is-borderless {
-	background: var( --color-white );
+	background: var( --studio-white );
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;
@@ -446,7 +446,7 @@ $autobar-height: 20px;
 	left: 0;
 	height: 46px;
 	line-height: 45px;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	box-shadow: 0 1px 1px rgba( var( --color-neutral-light-rgb ), 0.1 );
 }
 
@@ -459,7 +459,7 @@ $autobar-height: 20px;
 .masterbar__recent-drafts-see-all.button.is-compact {
 	display: block;
 	padding: 8px 16px;
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	background: var( --color-neutral-0 );
 	text-align: center;
 	position: absolute;
@@ -475,11 +475,11 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 
 		.count {
-			color: var( --color-neutral-700 );
-			border-color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
+			border-color: var( --color-neutral-70 );
 		}
 	}
 }

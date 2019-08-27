@@ -55,7 +55,7 @@
 
 .checkout-thank-you__domain-mapping-details-nameservers,
 .checkout-thank-you__failed-purchases-details-list {
-	border-left: solid 5px var( --color-neutral-50 );
+	border-left: solid 5px var( --color-neutral-5 );
 	list-style: none;
 	margin-left: 0;
 	padding-left: 15px;
@@ -63,7 +63,7 @@
 }
 
 .checkout-thank-you__features-header {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 24px;
 	font-weight: 300;
 	line-height: 32px;
@@ -75,7 +75,7 @@
 	}
 
 	&.is-placeholder {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 
 		margin-left: auto;
 		margin-right: auto;
@@ -164,7 +164,7 @@
 
 	.checkout-thank-you__header-heading,
 	.checkout-thank-you__header-text {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 
 		display: block;
 
@@ -287,20 +287,20 @@
 		&.is-business-plan {
 			.thank-you-card {
 				color: var( --color-text );
-				background-color: var( --color-white );
-				box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+				background-color: var( --studio-white );
+				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 			}
 		}
 	}
 
 	.thank-you-card__header {
 		color: var( --color-text );
-		background-color: var( --color-white );
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 );
+		background-color: var( --studio-white );
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 );
 	}
 
 	.thank-you-card__price {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 	}
 
 	.thank-you-card__description {

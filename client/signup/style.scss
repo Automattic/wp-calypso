@@ -48,7 +48,7 @@ body.is-section-signup .layout.gravatar {
 	// on the primary colored background.
 	.empty-content {
 		.empty-content__illustration {
-			background: var( --color-white );
+			background: var( --studio-white );
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
@@ -56,7 +56,7 @@ body.is-section-signup .layout.gravatar {
 		}
 
 		.empty-content__title {
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 
@@ -135,13 +135,13 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	.formatted-header__title {
 		margin: 0;
 		font-weight: 400;
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 
 	a {
@@ -149,7 +149,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		text-decoration: underline;
 
 		&:hover {
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 }

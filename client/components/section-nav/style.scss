@@ -5,7 +5,7 @@
 	margin: 0 0 17px;
 	background: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
@@ -13,7 +13,7 @@
 
 	@include breakpoint( '<480px' ) {
 		&.is-open {
-			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		}
 	}
 
@@ -42,12 +42,12 @@
 	line-height: 16px;
 	height: 46px;
 	box-sizing: border-box;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 		flex: none;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
@@ -95,8 +95,8 @@
 	@include breakpoint( '<480px' ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
-			border-top: solid 1px var( --color-neutral-100 );
-			background: linear-gradient( to bottom, var( --color-neutral-0 ) 0%, var( --color-white ) 4px );
+			border-top: solid 1px var( --color-neutral-10 );
+			background: linear-gradient( to bottom, var( --color-neutral-0 ) 0%, var( --studio-white ) 4px );
 		}
 	}
 
@@ -115,7 +115,7 @@
 	position: relative;
 	margin-top: 16px;
 	padding-top: 16px;
-	border-top: solid 1px var( --color-neutral-100 );
+	border-top: solid 1px var( --color-neutral-10 );
 
 	&:first-child {
 		padding-top: 0;

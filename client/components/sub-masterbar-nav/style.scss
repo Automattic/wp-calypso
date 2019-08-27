@@ -42,7 +42,7 @@
 	width: 100%;
 
 	.sub-masterbar-nav__dropdown:not( .is-collapsed ) & {
-		border-top: 1px solid var( --color-primary-600 );
+		border-top: 1px solid var( --color-primary-60 );
 	}
 }
 
@@ -82,7 +82,7 @@
 	background-color: transparent;
 	border: 0;
 	outline: 0;
-	color: var( --color-white );
+	color: var( --studio-white );
 	font-size: 14px;
 	cursor: pointer;
 	transition: all 200ms ease-in;
@@ -90,7 +90,7 @@
 	&:hover,
  	&:focus {
 		background: lighten( $masterbar-color, 5% );
-		color: var( --color-white );
+		color: var( --studio-white );
 		outline: 0;
 		transition: all 200ms ease-out;
 
@@ -100,12 +100,12 @@
 	}
 
 	&:visited {
-		color: var( --color-white ); /* Safari fix */
+		color: var( --studio-white ); /* Safari fix */
 	}
 
 	&.is-selected {
 			background-color: var( --color-primary-dark );
-			color: var( --color-white );
+			color: var( --studio-white );
 			border-radius: 5px;
 	}
 

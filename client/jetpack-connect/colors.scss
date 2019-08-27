@@ -1,24 +1,24 @@
 @mixin jetpack-connect-colors() {
 	// Override accent variables with Jetpack colors
-	--color-accent:       var( --color-jetpack );
-	--color-accent-light: var( --color-jetpack-light );
-	--color-accent-dark:  var( --color-jetpack-dark );
+	--color-accent:       var( --studio-jetpack-green-30 );
+	--color-accent-light: var( --studio-jetpack-green-20 );
+	--color-accent-dark:  var( --studio-jetpack-green-50 );
 
 	// Override global colors with accent variables
 	--color-primary:                         var( --color-accent-dark );
 	--color-primary-light:                   var( --color-accent-light );
 	--color-button-primary-background-hover: var( --color-accent-light );
-	--color-accent-600:                      var( --color-accent-dark );
+	--color-accent-60:                       var( --color-accent-dark );
 
 	::selection {
-		color: var( --color-white );
+		color: var( --studio-white );
 		background: var( --color-accent );
 	}
 }
 
 @mixin woocommerce-colors() {
 	// Override accent variables with Jetpack colors
-	--color-accent:       var( --color-hot-pink-500 );
+	--color-accent:       var( --studio-pink-50 );
 	--color-accent-light: #beabce;
 	--color-accent-dark:  #6d3e64;
 
@@ -27,33 +27,15 @@
 
 	// Override global colors with accent variables
 	--color-primary:                         var( --color-accent-dark );
-	--color-primary-100:					 #50575e;
-	--color-neutral-200:				  	 #50575e;
-	--color-primary-200:					 #50575e;
+	--color-primary-10:                      var( --studio-gray-60 );
+	--color-neutral-20:                      var( --studio-gray-60 );
+	--color-primary-20:                      var( --studio-gray-60 );
 	--color-primary-light:                   var( --color-accent-light );
 	--color-button-primary-background-hover: #ca2a7c;
-	--color-accent-600:                      var( --color-accent-dark );
+	--color-accent-60:                       var( --color-accent-dark );
 
 	::selection {
-		color: var( --color-white );
+		color: var( --studio-white );
 		background: var( --color-accent );
-	}
-
-	// @todo Once Calypso has updated to color-studio v2, WooCommerce Onboarding's Connection flow can switch to using studio variables.
-	button.is-primary {
-		background-color: #c9356e; // $studio-pink;
-		border-color: #8c1749; // $studio-pink-70;
-
-		&:hover,
-		&:focus:enabled {
-			background: #bf3269; // shadded 50%
-			border-color: #651b37;
-			color: var( --color-white );
-		}
-
-		&:hover {
-			background: #bf3269;
-			border-color: #651b37;
-		}
 	}
 }

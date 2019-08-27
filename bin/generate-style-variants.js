@@ -1,21 +1,51 @@
 const argv = require( 'yargs' ).argv;
 const _ = require( 'lodash' );
 
-const [ basename, murielname ] = argv._;
+const [ baseName, murielName ] = argv._;
 
-const steps = [ 0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900 ];
-const variants = _.flatMap( steps, variant => {
+const steps = [
+	'',
+	'dark',
+	'light',
+	'0',
+	'5',
+	'10',
+	'20',
+	'30',
+	'40',
+	'50',
+	'60',
+	'70',
+	'80',
+	'90',
+	'100',
+];
+const stepValues = [
+	'500',
+	'700',
+	'300',
+	'0',
+	'50',
+	'100',
+	'200',
+	'300',
+	'400',
+	'500',
+	'600',
+	'700',
+	'700',
+	'800',
+	'900',
+];
+
+const variants = _.flatMap( steps, ( step, stepIndex ) => {
+	const propertyName = _.compact( [ '--color', baseName, step ] ).join( '-' );
+	const variableName = _.compact( [ '$muriel', murielName, stepValues[ stepIndex ] ] ).join( '-' );
+
 	return [
-		`--${ basename }-${ variant }: #{ \$muriel-${ murielname }-${ variant } };`,
-		`--${ basename }-${ variant }-rgb: #{ hex-to-rgb( \$muriel-${ murielname }-${ variant } ) };`,
+		`${ propertyName }: #{${ variableName }};`,
+		`${ propertyName }-rgb: #{hex-to-rgb( ${ variableName } )};`,
 	];
 } );
-
-variants.unshift( `--${ basename }-light-rgb: #{ hex-to-rgb( \$muriel-${ murielname }-300 ) };` );
-variants.unshift( `--${ basename }-light: #{ \$muriel-${ murielname }-300 };` );
-variants.unshift( `--${ basename }-dark-rgb: #{ hex-to-rgb( \$muriel-${ murielname }-700 ) };` );
-variants.unshift( `--${ basename }-dark: #{ \$muriel-${ murielname }-700 };` );
-variants.unshift( `--${ basename }-rgb: #{ hex-to-rgb( \$muriel-${ murielname }-500 ) };` );
-variants.unshift( `--${ basename }: #{ \$muriel-${ murielname }-500 };` );
 
 variants.forEach( n => console.log( n ) );

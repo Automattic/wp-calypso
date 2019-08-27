@@ -10,7 +10,7 @@
 	// Mimic a card
 	.form-fieldset {
 		border-radius: 4px;
-		background: var( --color-white );
+		background: var( --studio-white );
 		@include elevation ( 2dp );
 	}
 
@@ -61,7 +61,7 @@
 
 	.gridicon {
 		margin-bottom: -3px;
-		color: var( --color-white );
+		color: var( --studio-white );
 	}
 }
 

@@ -155,7 +155,7 @@
 	.sharing-service-tip {
 		margin-top: 16px;
 		font-size: 14px;
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 
 		.gridicons-info {
 			margin-right: 3px;
@@ -170,7 +170,7 @@
 	.sharing-service {
 		position: relative;
 		overflow: hidden;
-		background: var( --color-white );
+		background: var( --studio-white );
 
 		&.not-connected .sharing-service-examples {
 			display: block;
@@ -193,7 +193,7 @@
 
 		.new-account {
 			padding-bottom: 0.48em;
-			background: var( --color-white );
+			background: var( --studio-white );
 			// stylelint-disable-next-line selector-max-id
 			#content & {
 				font-size: 0.9em;
@@ -226,7 +226,7 @@
 		right: 16px;
 		bottom: 16px;
 		left: 16px;
-		background-color: var( --color-neutral-100 );
+		background-color: var( --color-neutral-10 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -290,7 +290,7 @@
 
 .sharing-service__description {
 	margin: 0;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 14px;
 
 	@include breakpoint( '<480px' ) {
@@ -520,7 +520,7 @@
 	padding: 10px 0 2px 8px;
 	border: 1px solid #ccc;
 	border-radius: 2px;
-	background-color: var( --color-white );
+	background-color: var( --studio-white );
 	box-shadow: 0 5px 20px rgba( 0, 0, 0, 0.2 );
 }
 
@@ -539,7 +539,7 @@
 	width: 8px;
 	height: 8px;
 	transform: rotate( 45deg );
-	background-color: var( --color-white );
+	background-color: var( --studio-white );
 	border-top: 1px solid #ccc;
 	border-left: 1px solid #ccc #{'/*rtl:ignore*/'};
 }
@@ -549,8 +549,8 @@
 	position: relative;
 	margin-bottom: 20px;
 	padding: 20px 24px;
-	background: var( --color-white );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	background: var( --studio-white );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .sharing-buttons__fieldset-group {
@@ -644,7 +644,7 @@
 }
 
 .sharing-buttons-preview__fake-user {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	display: inline-block;
 	height: 24px;
 	width: 24px;
@@ -653,7 +653,7 @@
 }
 
 .sharing-buttons-preview__fake-like {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	font-size: 11px;
 	font-weight: 300;
 }
@@ -669,10 +669,10 @@
 	align-items: center;
 	padding: 8px;
 	cursor: pointer;
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 4px;
-	box-shadow: 0 0 8px rgba( var( --color-neutral-700-rgb ), 0.04 );
-	background-color: var( --color-white );
+	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
+	background-color: var( --studio-white );
 	color: var( --color-primary );
 
 	@include breakpoint( '<480px' ) {
@@ -700,8 +700,8 @@
 		display: block;
 		width: 12px;
 		height: 12px;
-		border: 1px solid var( --color-neutral-100 );
-		background-color: var( --color-white );
+		border: 1px solid var( --color-neutral-10 );
+		background-color: var( --studio-white );
 		transform: rotate( 45deg );
 	}
 
@@ -895,7 +895,7 @@
 
 .sharing-buttons-preview-button.style-icon .social-logo {
 	top: 0;
-	color: var( --color-white );
+	color: var( --studio-white );
 }
 
 .sharing-buttons-preview-button.style-icon.share-email .social-logo,
@@ -925,7 +925,7 @@
 
 @include sharing-button-service( 'facebook', var( --color-facebook ));
 @include sharing-button-service( 'twitter', var( --color-twitter ));
-@include sharing-button-service( 'press-this', var( --color-wpcom ));
+@include sharing-button-service( 'press-this', var( --studio-wordpress-blue ));
 @include sharing-button-service( 'google-plus-1', var( --color-gplus ));
 @include sharing-button-service( 'instagram', var( --color-instagram ));
 @include sharing-button-service( 'eventbrite', var( --color-eventbrite ));
@@ -944,18 +944,18 @@
 .sharing-buttons-preview__panel {
 	position: relative;
 	display: none;
-	background: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	background: var( --studio-white );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 4px;
-	box-shadow: 0 0 8px rgba( var( --color-neutral-700-rgb ), 0.04 );
+	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
 
 	&::before {
 		content: '';
 		position: absolute;
-		border: 1px solid var( --color-neutral-100 );
+		border: 1px solid var( --color-neutral-10 );
 		border-right-width: 0 #{'/*rtl:ignore*/'};
 		border-bottom-width: 0;
-		background: var( --color-white );
+		background: var( --studio-white );
 		display: block;
 		width: 12px;
 		height: 12px;
@@ -984,12 +984,12 @@
 			border-radius: 4px;
 			padding: 7px;
 			float: left;
-			color: var( --color-neutral-50 );
-			background-color: var( --color-white );
-			border-color: var( --color-neutral-50 );
+			color: var( --color-neutral-5 );
+			background-color: var( --studio-white );
+			border-color: var( --color-neutral-5 );
 			&:hover {
-				border-color: var( --color-neutral-100 );
-				color: var( --color-neutral-100 );
+				border-color: var( --color-neutral-10 );
+				color: var( --color-neutral-10 );
 			}
 			&:active {
 				border-width: 2px 1px 1px;
@@ -997,11 +997,11 @@
 
 			&.is-enabled {
 				color: var( --color-text-subtle );
-				background-color: var( --color-white );
-				border-color: var( --color-neutral-100 );
+				background-color: var( --studio-white );
+				border-color: var( --color-neutral-10 );
 				&:hover {
-					border-color: var( --color-neutral-200 );
-					color: var( --color-neutral-700 );
+					border-color: var( --color-neutral-20 );
+					color: var( --color-neutral-70 );
 				}
 			}
 
@@ -1037,7 +1037,7 @@
 .sharing-buttons-preview__panel-heading {
 	font-size: 20px;
 	font-weight: normal;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .sharing-buttons-preview__panel-instructions,

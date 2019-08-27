@@ -1,11 +1,11 @@
 .loading-placeholder {
 	button, input, select {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 		cursor: default;
 		pointer-events: none;
 	}
 }
 
 .loading-placeholder__content {
-	@include placeholder( --color-neutral-100 );
+	@include placeholder( --color-neutral-10 );
 }

@@ -64,19 +64,19 @@ $compact-header-height: 35;
 	align-items: center;
 
 	border-style: solid;
-	border-color: var( --color-neutral-100 );
+	border-color: var( --color-neutral-10 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
-	background-color: var( --color-white );
+	background-color: var( --studio-white );
 
 	font-size: 14px;
 	font-weight: 600;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	transition: background-color 0.2s ease;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 		margin: 0;
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
@@ -101,7 +101,7 @@ $compact-header-height: 35;
 
 	.is-disabled & {
 		color: var( --color-neutral-0 );
-		background: var( --color-white );
+		background: var( --studio-white );
 		border-color: var( --color-neutral-0 );
 		cursor: default;
 
@@ -158,15 +158,15 @@ $compact-header-height: 35;
 	padding: 0;
 	list-style: none;
 	margin: -1px 0 0;
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --studio-white );
+	border: 1px solid var( --color-neutral-10 );
 	border-top: 0;
 	border-radius: 0 0 4px 4px;
 	visibility: hidden;
 
 	.accessible-focus & {
 		border: solid 1px var( --color-primary );
-		border-top-color: var( --color-neutral-100 );
+		border-top-color: var( --color-neutral-10 );
 	}
 
 	.select-dropdown.is-open & {
@@ -189,7 +189,7 @@ $compact-header-height: 35;
 	line-height: #{$option-height}px;
 	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 	font-weight: 400;
 	white-space: nowrap;
@@ -205,21 +205,21 @@ $compact-header-height: 35;
 	}
 
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&.is-selected {
 		background-color: var( --color-accent );
-		color: var( --color-white );
+		color: var( --studio-white );
 
 		.count {
-			border-color: var( --color-white );
-			color: var( --color-white );
+			border-color: var( --studio-white );
+			color: var( --studio-white );
 		}
 	}
 
 	&.is-disabled {
-		background-color: var( --color-white );
+		background-color: var( --studio-white );
 		color: var( --color-neutral-light );
 		cursor: default;
 		opacity: 0.5;
@@ -232,7 +232,7 @@ $compact-header-height: 35;
 		}
 
 		&.is-selected:hover {
-			color: var( --color-white );
+			color: var( --studio-white );
 		}
 	}
 
@@ -268,7 +268,7 @@ $compact-header-height: 35;
 }
 
 .select-dropdown__separator {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	display: block;
 	margin: 8px 0;
 }

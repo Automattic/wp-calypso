@@ -31,7 +31,7 @@
 		}
 
 		.product-name {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 			display: block;
 			font-size: 14px;
 			padding-right: 30px;
@@ -104,7 +104,7 @@
 
 	.cart-item__loading-placeholder {
 		.cart__remove-item {
-			@include placeholder( --color-neutral-100 );
+			@include placeholder( --color-neutral-10 );
 			border-radius: 0;
 			width: 25px;
 		}
@@ -241,7 +241,7 @@
 	cursor: pointer; // Needed for Safari
 
 	.gridicon {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		cursor: pointer;
 		position: absolute;
 		top: 12px;
@@ -343,8 +343,8 @@ div.popover-cart__popover {
 }
 
 .popover-cart__mobile-cart {
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --studio-white );
+	border: 1px solid var( --color-neutral-10 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
 	position: relative;
@@ -415,7 +415,7 @@ div.popover-cart__popover {
 
 
 .secondary-cart {
-	background: var( --color-white );
+	background: var( --studio-white );
 
 	@include breakpoint( '<660px' ) {
 		left: 0;
@@ -443,7 +443,7 @@ div.popover-cart__popover {
 
 .cart-item__loading-placeholder {
 	span {
-		@include placeholder( --color-neutral-100 );
+		@include placeholder( --color-neutral-10 );
 		margin-bottom: 1px;
 	}
 

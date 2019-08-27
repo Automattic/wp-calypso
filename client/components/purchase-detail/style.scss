@@ -1,5 +1,5 @@
 .purchase-detail {
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
@@ -24,7 +24,7 @@
 		.purchase-detail__button,
 		.purchase-detail__description,
 		.purchase-detail__title {
-			@include placeholder( --color-neutral-100 );
+			@include placeholder( --color-neutral-10 );
 
 			display: block;
 		}
@@ -75,9 +75,9 @@
 }
 
 .purchase-detail__icon {
-	background: var( --color-neutral-500 );
+	background: var( --color-neutral-50 );
 	border-radius: 50%;
-	color: var( --color-white );
+	color: var( --studio-white );
 	margin-bottom: 10px;
 	padding: 16px;
 	width: 100%;
@@ -130,7 +130,7 @@
 
 .purchase-detail__title {
 	clear: none;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	font-size: 21px;
 }
 
