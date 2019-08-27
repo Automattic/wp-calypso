@@ -28,8 +28,9 @@
 	],
 	"dependencies": {
 		"classnames": "2.2.6",
-		"react": "^16.8.3",
-		"prop-types": "^15.7.2"
+		"gridicons": "^3.3.1",
+		"prop-types": "^15.7.2",
+		"react": "^16.8.3"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
