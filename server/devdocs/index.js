@@ -5,8 +5,6 @@ import express from 'express';
 import fs from 'fs';
 import fspath from 'path';
 import marked from 'marked';
-import lunr from 'lunr';
-import { escape as escapeHTML } from 'lodash';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
@@ -16,19 +14,10 @@ import 'prismjs/components/prism-scss';
  * Internal dependencies
  */
 import config from 'config';
-import searchIndex from 'devdocs/search-index';
 import componentsUsageStats from 'devdocs/components-usage-stats.json';
 
-const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
-	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents,
-	selectors = require( './selectors' );
-
-/**
- * Constants
- */
-const SNIPPET_PAD_LENGTH = 40;
-const DEFAULT_SNIPPET_LENGTH = 100;
+const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) );
+const selectors = require( './selectors' );
 
 // Alias `javascript` language to `es6`
 Prism.languages.es6 = Prism.languages.javascript;
@@ -40,84 +29,6 @@ marked.setOptions( {
 		return syntax ? Prism.highlight( code, syntax ) : code;
 	},
 } );
-
-/**
- * Query the index using lunr.
- * We store the documents and index in memory for speed,
- * and also because lunr.js is designed to be memory resident
- * @param {object} query The search query for lunr
- * @returns {array} The results from the query
- */
-function queryDocs( query ) {
-	return docsIndex.search( query ).map( result => {
-		const doc = documents[ result.ref ],
-			snippet = makeSnippet( doc, query );
-
-		return {
-			path: doc.path,
-			title: doc.title,
-			snippet: snippet,
-		};
-	} );
-}
-
-/**
- * Extract a snippet from a document, capturing text either side of
- * any term(s) featured in a whitespace-delimited search query.
- * We look for up to 3 matches in a document and concatenate them.
- * @param {object} doc The document to extract the snippet from
- * @param {object} query The query to be searched for
- * @returns {string} A snippet from the document
- */
-function makeSnippet( doc, query ) {
-	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
-	const termRegexMatchers = lunr.tokenizer( query ).map( term => escapeRegexString( term ) );
-	const termRegexString = '[^a-zA-Z](' + termRegexMatchers.join( '|' ) + ')';
-	const termRegex = new RegExp( termRegexString, 'gi' );
-	const snippets = [];
-	let match;
-
-	// find up to 4 matches in the document and extract snippets to be joined together
-	// TODO: detect when snippets overlap and merge them.
-	while ( ( match = termRegex.exec( doc.body ) ) !== null && snippets.length < 4 ) {
-		const matchStr = match[ 1 ],
-			index = match.index + 1,
-			before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index ),
-			after = doc.body.substring(
-				index + matchStr.length,
-				index + matchStr.length + SNIPPET_PAD_LENGTH
-			);
-
-		snippets.push( before + '<mark>' + matchStr + '</mark>' + after );
-	}
-
-	if ( snippets.length ) {
-		return '…' + snippets.join( ' … ' ) + '…';
-	}
-
-	return defaultSnippet( doc );
-}
-
-/**
- * Escapes a string
- * @param {lunr.Token} token The string to escape
- * @returns {lunr.Token} An escaped string
- */
-function escapeRegexString( token ) {
-	// taken from: https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
-	const matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
-	return token.update( str => str.replace( matchOperatorsRe, '\\$&' ) );
-}
-
-/**
- * Generate a standardized snippet
- * @param {object} doc The document from which to generate the snippet
- * @returns {string} The snippet
- */
-function defaultSnippet( doc ) {
-	const content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
-	return escapeHTML( content ) + '…';
-}
 
 /**
  * Given an object of { module: dependenciesArray }
@@ -152,20 +63,6 @@ module.exports = function() {
 		} else {
 			next();
 		}
-	} );
-
-	// search the documents using a search phrase "q"
-	app.get( '/devdocs/service/search', ( request, response ) => {
-		const query = request.query.q;
-
-		if ( ! query ) {
-			response.status( 400 ).json( {
-				message: 'Missing required "q" parameter',
-			} );
-			return;
-		}
-
-		response.json( queryDocs( query ) );
 	} );
 
 	// return the content of a document in the given format (assumes that the document is in

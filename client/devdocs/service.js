@@ -26,10 +26,6 @@ async function fetchDocsEndpoint( endpoint, params, callback ) {
  * query term or filename(s), and also to separately retrieve the document body by path.
  */
 export default {
-	search: function( term, callback ) {
-		fetchDocsEndpoint( 'search', { q: term }, callback );
-	},
-
 	fetch: function( path, callback ) {
 		fetchDocsEndpoint( 'content', { path: path }, callback );
 	},
