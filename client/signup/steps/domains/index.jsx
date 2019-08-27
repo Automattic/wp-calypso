@@ -323,12 +323,8 @@ class DomainsStep extends React.Component {
 		}
 
 		// Enable if the query includes ".blog"
-		// Enable if the user chooses `blog` as their site type
 		const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
-		return (
-			( typeof lastQuery === 'string' && lastQuery.includes( '.blog' ) ) ||
-			'blog' === get( this.props, 'signupDependencies.siteType' )
-		);
+		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
 	domainForm = () => {
