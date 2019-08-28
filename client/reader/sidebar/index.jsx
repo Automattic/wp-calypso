@@ -146,7 +146,7 @@ export class ReaderSidebar extends React.Component {
 		const { path, teams, translate } = this.props;
 
 		return (
-			<Sidebar className="sidebar__streamlined-nav-drawer" onClick={ this.handleClick }>
+			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
