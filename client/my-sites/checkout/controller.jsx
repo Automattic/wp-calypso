@@ -36,7 +36,7 @@ export function checkout( context, next ) {
 	}
 
 	let product;
-	if ( selectedSite && selectedSite.slug !== domainOrProduct ) {
+	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
 		product = domainOrProduct;
 	} else {
 		product = context.params.product;
