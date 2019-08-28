@@ -65,16 +65,6 @@
 .sidebar__menu-icon {
 	fill: var( --sidebar-gridicon-fill );
 	margin-right: 11px;
-
-	.sidebar__menu-link:hover &,
-	.sidebar__heading:hover & {
-		fill: var( --sidebar-menu-hover-color );
-	}
-
-	.selected &,
-	.selected .sidebar__menu-link:hover & {
-		fill: var( --sidebar-menu-selected-a-color );
-	}
 }
 
 // Menu links: The actual anchor tags that contain links to
@@ -102,12 +92,20 @@
 	&:hover {
 		background-color: var( --sidebar-menu-hover-background );
 		color: var( --sidebar-menu-hover-color );
+
+		.sidebar__menu-icon {
+			fill: var( --sidebar-menu-hover-color );
+		}
 	}
 
 	.selected &,
 	.selected &:hover {
 		color: var( --sidebar-menu-selected-a-color );
 		background-color: var( --sidebar-menu-selected-background-color );
+
+		.sidebar__menu-icon {
+			fill: var( --sidebar-menu-selected-a-color );
+		}
 	}
 
 	// Some links are marked as "external" and show
@@ -138,7 +136,8 @@
 	color: var( --sidebar-menu-link-secondary-text-color );
 	padding: 4px 8px;
 
-	.selected & {
+	.selected &,
+	.sidebar__menu-link:hover & {
 		color: inherit;
 	}
 }
@@ -154,6 +153,12 @@
 
 		&:hover {
 			background-color: var( --sidebar-menu-hover-background );
+			color: var( --sidebar-menu-hover-color );
+
+			.sidebar__menu-icon,
+			.sidebar__expandable-arrow {
+				fill: var( --sidebar-menu-hover-color );
+			}
 		}
 	}
 
