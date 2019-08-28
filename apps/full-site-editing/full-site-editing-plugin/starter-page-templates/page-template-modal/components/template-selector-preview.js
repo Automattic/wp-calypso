@@ -8,7 +8,6 @@ import { isEmpty } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useRef } from '@wordpress/element';
 import { Disabled } from '@wordpress/components';
 /**
  * Internal dependencies
@@ -16,10 +15,7 @@ import { Disabled } from '@wordpress/components';
 import BlockPreview from './block-template-preview';
 
 const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
-	const previewElClasses = classnames(
-		'template-selector-preview',
-		'editor-styles-wrapper',
-	);
+	const previewElClasses = classnames( 'template-selector-preview', 'editor-styles-wrapper' );
 
 	if ( isEmpty( blocks ) ) {
 		return (
