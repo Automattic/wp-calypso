@@ -95,7 +95,6 @@ function FormTextInputWithAction( {
 				ref={ inputRef }
 				disabled={ disabled }
 				value={ value }
-				defaultValue={ defaultValue }
 				onChange={ handleChange }
 				onFocus={ handleFocus }
 				onBlur={ handleBlur }
