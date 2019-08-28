@@ -26,9 +26,9 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
 	useEffect( () => {
 		async function validateUrl( redirectUrl ) {
 			try {
-				const response = await wpcom.req.get(
-					`/me/validate-redirect?redirect_url=${ redirectUrl }`
-				);
+				const response = await wpcom.req.get( '/me/validate-redirect', {
+					redirect_url: redirectUrl,
+				} );
 				if ( response ) {
 					setValidatedRedirectUrl( response.redirect_to || '/' );
 				}
