@@ -317,31 +317,14 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteGoals, signupDependencies } = this.props;
-		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
-
-		// 'subdomain' flow coming from .blog landing pages
-		if ( flowName === 'subdomain' ) {
-			return true;
-		}
-
-		// 'blog' flow, starting with blog themes
-		if ( flowName === 'blog' ) {
-			return true;
-		}
-
-		// No .blog subdomains for domain only sites
-		if ( isDomainOnly ) {
+		// Disable for domain only sites
+		if ( this.props.isDomainOnly ) {
 			return false;
 		}
 
-		// If we detect a 'blog' site type from Signup data
-		return (
-			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
-			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
-			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' )
-		);
+		// Enable if the query includes ".blog"
+		const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
+		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
 	domainForm = () => {
