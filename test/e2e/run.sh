@@ -226,6 +226,21 @@ if [ $PARALLEL == 1 ]; then
       eval $CMD
       RETURN+=$?
   fi
+elif [ $CIRCLE_NODE_TOTAL > 1 ]; then
+	IFS=, read -r -a SCREENSIZE_ARRAY <<< "$SCREENSIZES"
+    IFS=, read -r -a LOCALE_ARRAY <<< "$LOCALES"
+    for size in ${SCREENSIZE_ARRAY[@]}; do
+      for locale in ${LOCALE_ARRAY[@]}; do
+        for config in "${MAGELLAN_CONFIGS[@]}"; do
+          if [ "$config" != "" ]; then
+            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST"
+
+            eval $CMD
+            RETURN+=$?
+          fi
+        done
+      done
+    done
 else # Not using multiple CircleCI containers, just queue up the tests in sequence
   if [ "$CI" != "true" ] || [ $CIRCLE_NODE_INDEX == 0 ]; then
     IFS=, read -r -a SCREENSIZE_ARRAY <<< "$SCREENSIZES"
