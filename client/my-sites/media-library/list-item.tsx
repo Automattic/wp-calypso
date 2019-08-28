@@ -43,7 +43,7 @@ interface Props {
 	style?: React.CSSProperties;
 }
 
-type DivProps = Omit< React.ComponentProps< 'div' >, 'style' | 'onClick' >;
+type DivProps = Omit< React.ComponentProps< 'button' >, 'style' | 'onClick' >;
 
 export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
 	static defaultProps = {
@@ -132,8 +132,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		}
 
 		return (
-			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-			<div
+			<button
 				className={ classes }
 				style={ styleWithDefaults }
 				onClick={ this.clickItem }
@@ -152,8 +151,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 					) }
 					{ showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
-			</div>
-			/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+			</button>
 		);
 	}
 }
