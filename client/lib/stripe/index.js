@@ -250,12 +250,20 @@ function loadScriptAsync( url ) {
 /**
  * React custom Hook for loading the Stripe Configuration
  *
+ * Returns an object with two properties: `stripeConfiguration`, and
+ * `setStripeError`.
+ *
+ * `stripeConfiguration` is an object as returned by the stripe configuration
+ * endpoint, possibly including a Setup Intent if one was requested (via
+ * `needs_intent`).
+ *
  * If there is a stripe error, it may be necessary to reload the configuration
  * since (for example) a Setup Intent may need to be recreated. You can force
- * the configuration to reload by setting a value with `setStripeError()`.
+ * the configuration to reload by setting a value by calling `setStripeError()`
+ * with a value for that error.
  *
  * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
- * @return {object} Stripe Configuration as returned by the stripe configuration endpoint
+ * @return {object} See above
  */
 export function useStripeConfiguration( requestArgs = {} ) {
 	const [ stripeError, setStripeError ] = useState();
