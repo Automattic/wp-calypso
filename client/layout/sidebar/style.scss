@@ -188,19 +188,4 @@
 .sidebar__wp-admin,
 .sidebar__footer {
 	margin-top: 16px;
-	padding-top: 16px;
-	border-top: 1px solid var( --sidebar-border-color );
-}
-
-// This seems to add a border to the bottom of every
-// .sidebar__menu (whatever that is). I guess to make
-// the menu look better on phones?
-@include breakpoint( '<660px' ) {
-	li.sidebar__menu {
-		border-bottom: 1px solid var( --sidebar-border-color );
-
-		&:first-child {
-			border-top: 1px solid var( --sidebar-border-color );
-		}
-	}
 }
