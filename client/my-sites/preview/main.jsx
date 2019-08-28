@@ -16,7 +16,6 @@ import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
-import { getPost } from 'state/posts/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import Button from 'components/button';
@@ -131,7 +130,7 @@ class PreviewMain extends React.Component {
 	}
 
 	showEditButton = () => {
-		if ( 'posts' === this.props.site.options.show_on_front ) {
+		if ( 'posts' === get( this.props.site, [ 'options', 'show_on_front' ] ) ) {
 			return false;
 		}
 
@@ -232,7 +231,6 @@ const mapState = state => {
 		site: site,
 		siteId: selectedSiteId,
 		canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
-		pageOnFront: getPost( state, homePagePostId ),
 		editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
 	};
 };
