@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ import {
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { createReducerWithValidation } from 'state/utils';
 import { schema } from './schema';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
@@ -110,7 +108,7 @@ const submitStep = ( state, { step } ) => {
 		: addStep( state, { ...step, status } );
 };
 
-export default createReducer(
+export default createReducerWithValidation(
 	{},
 	{
 		[ SIGNUP_COMPLETE_RESET ]: overwriteSteps,

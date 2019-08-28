@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
@@ -117,7 +114,7 @@ export const restoring = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated settings
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => ( {

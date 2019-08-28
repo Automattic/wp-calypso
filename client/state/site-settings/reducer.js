@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	MEDIA_DELETE,
@@ -74,7 +71,7 @@ export const saveRequests = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ SITE_SETTINGS_RECEIVE ]: ( state, { siteId, settings } ) => ( {

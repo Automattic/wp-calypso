@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,12 @@ import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers, keyedReducer } from 'state/utils';
+import {
+	createReducer,
+	createReducerWithValidation,
+	combineReducers,
+	keyedReducer,
+} from 'state/utils';
 import { validationSchemas } from './validation-schemas/reducer';
 import { domainWhoisSchema } from './schema';
 import {
@@ -103,7 +107,7 @@ function mergeDomainRegistrantContactDetails( domainState, registrantContactDeta
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { data } ) => ( {

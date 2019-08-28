@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { mapValues, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers, keyedReducer } from 'state/utils';
+import { createReducerWithValidation, combineReducers, keyedReducer } from 'state/utils';
 import { jetpackSettingsSchema } from './schema';
 import { normalizeSettings } from './utils';
 import {
@@ -21,7 +19,7 @@ import {
 
 export const settingsReducer = keyedReducer(
 	'siteId',
-	createReducer(
+	createReducerWithValidation(
 		{},
 		{
 			[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: ( state, { moduleSlug } ) => ( {
