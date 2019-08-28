@@ -46,7 +46,9 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
 const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
-		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+		<MomentProvider>
+			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+		</MomentProvider>
 	</ReduxProvider>
 );
 
