@@ -2,7 +2,7 @@
  * External dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { isNil, isEmpty } from 'lodash';
+import { isNil } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
@@ -22,7 +22,7 @@ const TemplateSelectorItem = props => {
 		value,
 		onSelect,
 		label,
-		useDynamicPreview = false,
+		useDynamicPreview,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
 		blocks = [],
@@ -38,8 +38,12 @@ const TemplateSelectorItem = props => {
 	const renderInnerPreview = () => {
 		if ( isParsing ) {
 			return (
-				<div className="template-selector-item__preview-wrap is-parsing">
-					<Spinner />;
+				<div className="edit-post-visual-editor">
+					<div className="editor-styles-wrapper">
+						<div className="template-selector-item__preview-wrap is-parsing">
+							<Spinner />;
+						</div>
+					</div>
 				</div>
 			);
 		}
@@ -61,6 +65,7 @@ const TemplateSelectorItem = props => {
 				/>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
 	const labelId = `label-${ id }-${ value }`;
