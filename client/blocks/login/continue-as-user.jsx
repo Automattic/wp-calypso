@@ -38,16 +38,12 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
 			}
 		}
 
-		if ( ! currentUser || ! redirectUrlFromQuery ) {
+		if ( ! redirectUrlFromQuery ) {
 			return;
 		}
 
 		validateUrl( redirectUrlFromQuery );
-	}, [ currentUser, redirectUrlFromQuery ] );
-
-	if ( ! currentUser ) {
-		return null;
-	}
+	}, [ redirectUrlFromQuery ] );
 
 	const userName = currentUser.display_name || currentUser.username;
 
