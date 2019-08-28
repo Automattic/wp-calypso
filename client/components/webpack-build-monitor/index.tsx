@@ -173,7 +173,7 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 		}
 	}, [] );
 
-	const isConnected = isHmrConnected || ! isCssConnected;
+	const isConnected = isHmrConnected && isCssConnected;
 	const isBuilding = isCssBuilding || isWebpackBuilding;
 	const hasErrors = hasCssErrors || hasWebpackErrors;
 
