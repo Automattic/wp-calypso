@@ -342,8 +342,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	// Skip until https://github.com/WordPress/gutenberg/issues/17042 is fixed
-	describe.skip( 'Schedule Basic Public Post @parallel', function() {
+	describe( 'Schedule Basic Public Post @parallel', function() {
 		describe( 'Schedule (and remove) a New Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote = '“Worries shared are worries halved.”\n- Unknown';
@@ -402,8 +401,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	// Skip until https://github.com/WordPress/gutenberg/issues/17209 is fixed
-	describe.skip( 'Private Posts: @parallel', function() {
+	describe( 'Private Posts: @parallel', function() {
 		describe( 'Publish a Private Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
