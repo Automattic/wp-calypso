@@ -255,7 +255,7 @@ class Home extends Component {
 								iconSrc="/calypso/images/customer-home/menus.svg"
 							/>
 							<ActionBox
-								href="https://support.wordpress.com/images/"
+								href={ `/media/${ siteSlug }` }
 								onClick={ () => trackAction( 'my_site', 'change_images' ) }
 								label={ translate( 'Change images' ) }
 								iconSrc="/calypso/images/customer-home/images.svg"
