@@ -7,14 +7,14 @@ import { noop } from 'lodash';
 /**
  * Constants
  */
-const LoadStatus = {
-	PENDING: 'PENDING',
-	LOADING: 'LOADING',
-	LOADED: 'LOADED',
-	FAILED: 'FAILED',
-};
+enum LoadStatus {
+	PENDING,
+	LOADING,
+	LOADED,
+	FAILED,
+}
 
-type ImageEventHandler = ( event: string | Event ) => any;
+type ImageEventHandler = ( event: string | Event ) => void;
 
 interface Props {
 	src?: string;
