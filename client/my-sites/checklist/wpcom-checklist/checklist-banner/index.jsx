@@ -111,12 +111,7 @@ export class ChecklistBanner extends Component {
 						<ChecklistBannerTask
 							bannerImageSrc="/calypso/images/stats/tasks/ready-to-share.svg"
 							description={ translate(
-								'We did it! You have completed {{a}}all the tasks{{/a}} on our checklist.',
-								{
-									components: {
-										a: <a href={ `/checklist/${ this.props.siteSlug }` } />,
-									},
-								}
+								'You did it! You have completed all the tasks on your checklist.'
 							) }
 							title={ translate( 'Your site is ready to share' ) }
 						>
