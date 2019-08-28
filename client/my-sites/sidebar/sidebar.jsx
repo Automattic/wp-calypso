@@ -734,7 +734,7 @@ export class MySitesSidebar extends Component {
 
 	render() {
 		return (
-			<Sidebar className="sidebar__streamlined-nav-drawer">
+			<Sidebar>
 				<SidebarRegion>
 					<CurrentSite />
 					{ this.renderSidebarMenus() }
