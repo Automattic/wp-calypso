@@ -82,7 +82,7 @@ class PageTemplateModal extends Component {
 		}
 
 		// Make sure all blocks use local assets before inserting.
-		ensureAssets( blocks )
+		this.maybePrefetchAssets( blocks )
 			.then( blocksWithAssets => {
 				// Don't insert anything if the user clicked Cancel/Close
 				// before we loaded everything.
@@ -99,6 +99,10 @@ class PageTemplateModal extends Component {
 					error,
 				} );
 			} );
+	};
+
+	maybePrefetchAssets = blocks => {
+		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
 	handleConfirmation = () => this.setTemplate( this.state.slug, this.state.title );
@@ -236,7 +240,12 @@ if ( tracksUserData ) {
 registerPlugin( 'page-templates', {
 	render: () => {
 		return (
-			<PageTemplatesPlugin templates={ templates } vertical={ vertical } segment={ segment } />
+			<PageTemplatesPlugin
+				shouldPrefetchAssets={ false }
+				templates={ templates }
+				vertical={ vertical }
+				segment={ segment }
+			/>
 		);
 	},
 } );
