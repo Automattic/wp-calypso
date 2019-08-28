@@ -129,7 +129,7 @@ class StatsSite extends Component {
 
 		const query = memoizedQuery( period, endOf );
 
-		// Video plays and file downloads are not yet supported in Jetpack Stats
+		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
 			fileDownloadList = (
 				<StatsModule
