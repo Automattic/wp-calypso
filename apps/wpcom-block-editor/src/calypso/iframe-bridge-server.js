@@ -471,8 +471,8 @@ function handlePreview( calypsoPort ) {
 			dispatch( 'core/editor' ).autosave( { isPreview: true } );
 		}
 		const unsubscribe = subscribe( () => {
-			const isSavingPost = select( 'core/editor' ).isSavingPost();
-			if ( ! isSavingPost ) {
+			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+			if ( previewUrl ) {
 				unsubscribe();
 				sendPreviewData();
 			}
