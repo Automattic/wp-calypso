@@ -4,13 +4,13 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { parse as qsParse } from 'qs';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentQueryArguments } from 'state/selectors/get-current-query-arguments';
 import Gravatar from 'components/gravatar';
 
 /**
@@ -18,25 +18,12 @@ import Gravatar from 'components/gravatar';
  */
 import './continue-as-user.scss';
 
-function ContinueAsUser( { currentUser } ) {
+function ContinueAsUser( { currentUser, currentQuery } ) {
 	const translate = useTranslate();
-	const [ validated, setValidated ] = useState( null );
+	const [ validated, setValidated ] = useState( '/' );
 
 	useEffect( () => {
-		async function runEffect() {
-			if ( ! currentUser ) {
-				return null;
-			}
-
-			// TODO (sgomes): Replace with URLSearchParams when polyfilled (see #35408).
-			// const query = new URLSearchParams( window.location.search );
-			// const redirectUrl = query.get( 'redirect_to' );
-			const query = qsParse( window.location.search, { ignoreQueryPrefix: true } );
-			const redirectUrl = query.redirect_to;
-			if ( ! redirectUrl ) {
-				return;
-			}
-
+		async function validateUrl( redirectUrl ) {
 			try {
 				const response = await wpcom.req.get(
 					`/me/validate-redirect?redirect_url=${ redirectUrl }`
@@ -50,8 +37,12 @@ function ContinueAsUser( { currentUser } ) {
 			}
 		}
 
-		runEffect();
-	}, [ currentUser ] );
+		const redirectUrl = currentQuery && currentQuery.redirect_to;
+		if ( ! currentUser || ! redirectUrl ) {
+			return;
+		}
+		validateUrl( redirectUrl );
+	}, [ currentUser, currentQuery ] );
 
 	if ( ! currentUser ) {
 		return null;
@@ -82,4 +73,5 @@ function ContinueAsUser( { currentUser } ) {
 
 export default connect( state => ( {
 	currentUser: getCurrentUser( state ),
+	currentQuery: getCurrentQueryArguments( state ),
 } ) )( ContinueAsUser );
