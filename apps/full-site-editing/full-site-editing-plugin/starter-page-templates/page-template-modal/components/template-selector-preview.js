@@ -8,13 +8,16 @@ import { isEmpty } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { BlockPreview } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
-import BlockPreview from './block-template-preview';
 
-const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
+import PreviewTemplateTitle from './preview-template-title';
+
+const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const previewElClasses = classnames( 'template-selector-preview', 'editor-styles-wrapper' );
 
 	if ( isEmpty( blocks ) ) {
@@ -28,11 +31,20 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth } ) => {
 	}
 
 	return (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className={ previewElClasses }>
 			<Disabled>
-				<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+				<div className="edit-post-visual-editor">
+					<div className="editor-styles-wrapper">
+						<div className="editor-writing-flow">
+							<PreviewTemplateTitle title={ title } />
+							<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+						</div>
+					</div>
+				</div>
 			</Disabled>
 		</div>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 };
 

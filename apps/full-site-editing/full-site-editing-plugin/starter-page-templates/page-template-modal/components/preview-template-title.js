@@ -7,6 +7,7 @@
  * @return {*} Component
  */
 export default ( { title } ) => (
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	<div className="editor-post-content">
 		<div className="editor-post-title">
 			<div className="editor-post-title__block">
@@ -14,4 +15,5 @@ export default ( { title } ) => (
 			</div>
 		</div>
 	</div>
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 );
