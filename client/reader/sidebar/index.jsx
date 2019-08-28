@@ -143,107 +143,97 @@ export class ReaderSidebar extends React.Component {
 	};
 
 	render() {
-		const teams = this.props.teams;
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const { path, teams, translate } = this.props;
+
 		return (
 			<Sidebar className="sidebar__streamlined-nav-drawer" onClick={ this.handleClick }>
 				<SidebarRegion>
 					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
+						<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 						<ul>
 							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, {
+								className={ ReaderSidebarHelper.itemLinkClass( '/', path, {
 									'sidebar-streams__following': true,
 								} ) }
-								label={ this.props.translate( 'Followed Sites' ) }
+								label={ translate( 'Followed Sites' ) }
 								onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 								materialIcon="check_circle"
-								link={ '/' }
+								link="/"
 							/>
 
 							<SidebarItem
-								className={ ReaderSidebarHelper.itemLinkClass(
-									'/read/conversations',
-									this.props.path,
-									{
-										'sidebar-streams__conversations': true,
-									}
-								) }
-								label={ this.props.translate( 'Conversations' ) }
+								className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
+									'sidebar-streams__conversations': true,
+								} ) }
+								label={ translate( 'Conversations' ) }
 								onNavigate={ this.handleReaderSidebarConversationsClicked }
 								materialIcon="question_answer"
-								link={ '/read/conversations' }
+								link="/read/conversations"
 							/>
 
-							<ReaderSidebarTeams teams={ teams } path={ this.props.path } />
+							<ReaderSidebarTeams teams={ teams } path={ path } />
 
 							{ isAutomatticTeamMember( teams ) && (
 								<SidebarItem
-									className={ ReaderSidebarHelper.itemLinkClass(
-										'/read/conversations/a8c',
-										this.props.path,
-										{
-											'sidebar-streams__conversations': true,
-										}
-									) }
+									className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
+										'sidebar-streams__conversations': true,
+									} ) }
 									label="A8C Conversations"
 									onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
-									link={ '/read/conversations/a8c' }
+									link="/read/conversations/a8c"
 									customIcon={ this.renderA8CConversationsIcon() }
 								/>
 							) }
 
-							{ isDiscoverEnabled() ? (
+							{ isDiscoverEnabled() && (
 								<SidebarItem
-									className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
+									className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
 										'sidebar-streams__discover': true,
 									} ) }
-									label={ this.props.translate( 'Discover' ) }
+									label={ translate( 'Discover' ) }
 									onNavigate={ this.handleReaderSidebarDiscoverClicked }
 									icon="my-sites"
-									link={ '/discover' }
+									link="/discover"
 								/>
-							) : null }
+							) }
 
 							<SidebarItem
-								label={ this.props.translate( 'Search' ) }
+								label={ translate( 'Search' ) }
 								onNavigate={ this.handleReaderSidebarSearchClicked }
 								materialIcon="search"
-								link={ '/read/search' }
-								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
+								link="/read/search"
+								className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
 									'sidebar-streams__search': true,
 								} ) }
 							/>
 
 							<SidebarItem
-								label={ this.props.translate( 'My likes' ) }
+								label={ translate( 'My Likes' ) }
 								onNavigate={ this.handleReaderSidebarLikeActivityClicked }
 								materialIcon="star_border"
-								link={ '/activities/likes' }
-								className={ ReaderSidebarHelper.itemLinkClass(
-									'/activities/likes',
-									this.props.path,
-									{ 'sidebar-activity__likes': true }
-								) }
+								link="/activities/likes"
+								className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+									'sidebar-activity__likes': true,
+								} ) }
 							/>
 						</ul>
 					</SidebarMenu>
 
 					<QueryReaderLists />
 					<QueryReaderTeams />
-					{ this.props.subscribedLists && this.props.subscribedLists.length ? (
+					{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
 						<ReaderSidebarLists
 							lists={ this.props.subscribedLists }
-							path={ this.props.path }
+							path={ path }
 							isOpen={ this.props.isListsOpen }
 							onClick={ this.props.toggleListsVisibility }
 							currentListOwner={ this.state.currentListOwner }
 							currentListSlug={ this.state.currentListSlug }
 						/>
-					) : null }
+					) }
 					<ReaderSidebarTags
 						tags={ this.props.followedTags }
-						path={ this.props.path }
+						path={ path }
 						isOpen={ this.props.isTagsOpen }
 						onClick={ this.props.toggleTagsVisibility }
 						onFollowTag={ this.highlightNewTag }
@@ -256,7 +246,6 @@ export class ReaderSidebar extends React.Component {
 				<SidebarFooter />
 			</Sidebar>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
