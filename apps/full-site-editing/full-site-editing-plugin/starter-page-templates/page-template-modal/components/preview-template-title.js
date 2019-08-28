@@ -6,14 +6,23 @@
  * @param {string} title Template title
  * @return {*} Component
  */
-export default ( { title } ) => (
+
+const PreviewTemplateTitle = ( { title, scale } ) => (
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	<div className="editor-post-content">
 		<div className="editor-post-title">
 			<div className="editor-post-title__block">
-				<textarea className="editor-post-title__input" value={ title } />
+				<textarea
+					style={ {
+						transform: `scale( ${ scale } )`,
+					} }
+					className="editor-post-title__input"
+					value={ title }
+				/>
 			</div>
 		</div>
 	</div>
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 );
+
+export default PreviewTemplateTitle;

@@ -10,15 +10,17 @@ import { isEmpty } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { BlockPreview } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-
 import PreviewTemplateTitle from './preview-template-title';
 
 const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const previewElClasses = classnames( 'template-selector-preview', 'editor-styles-wrapper' );
+	const [ previewScale, setPreviewScale ] = useState( 1 );
+	const [ visibility, setVisibility ] = useState( 'hidden' );
 
 	if ( isEmpty( blocks ) ) {
 		return (
@@ -36,9 +38,16 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 			<Disabled>
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper">
-						<div className="editor-writing-flow">
-							<PreviewTemplateTitle title={ title } />
-							<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+						<div style={ { visibility } } className="editor-writing-flow">
+							<PreviewTemplateTitle title={ title } scale={ previewScale } />
+							<BlockPreview
+								blocks={ blocks }
+								viewportWidth={ viewportWidth }
+								onReady={ ( { scale } ) => {
+									setPreviewScale( scale );
+									setVisibility( 'visible' );
+								} }
+							/>
 						</div>
 					</div>
 				</div>

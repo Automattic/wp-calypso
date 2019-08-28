@@ -243,12 +243,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		margin-top: 20px;
 	}
 
-	.editor-post-title .editor-post-title__block .editor-post-title__input {
-		transform: scale( 0.361458 ); // it's copied from the current computing of the BlockPreview.
-	}
-
 	.editor-post-title {
 		display: block;
+		padding: 0;
+		margin: 0;
 	}
 }
 
