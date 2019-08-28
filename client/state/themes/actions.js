@@ -71,6 +71,7 @@ import {
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
+import { requestSitePosts } from 'state/posts/actions';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
@@ -435,6 +436,9 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			search_taxonomies,
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
+
+		// Update pages in case the front page was updated on theme switch.
+		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
 }
