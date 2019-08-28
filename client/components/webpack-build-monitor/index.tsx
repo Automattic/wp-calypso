@@ -46,7 +46,10 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 
 		const connect = () => {
 			debug( 'Hot CSS connecting' );
-			socket = io.connect( namespace );
+			socket = io.connect( namespace, {
+				reconnectionDelay: CONNECTION_TIMEOUT,
+				transports: [ 'websocket' ],
+			} );
 			socket.on( 'connect', () => {
 				debug( 'Hot CSS connected' );
 				setIsCssConnected( true );
@@ -55,7 +58,6 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 			socket.on( 'disconnect', () => {
 				debug( 'Hot CSS disconnected. Reconnecting…' );
 				setIsCssConnected( false );
-				setTimeout( connect, CONNECTION_TIMEOUT );
 			} );
 
 			socket.on(
