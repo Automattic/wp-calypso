@@ -29,7 +29,7 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 	const [ lastHash, setLastHash ] = useState( __webpack_hash__ );
 
 	// Webpack
-	const [ isHmrConnected, setIsHmrConnected ] = useState( false );
+	const [ isWebpackConnected, setIsWebpackConnected ] = useState( false );
 	const [ hasWebpackErrors, setHasWebpackErrors ] = useState( false );
 	const [ hasWebpackWarnings, setHasWebpackWarnings ] = useState( false );
 	const [ isWebpackBuilding, setWebpackBuilding ] = useState( false );
@@ -107,12 +107,12 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 
 				source.onopen = () => {
 					debug( 'Webpack HMR connected' );
-					setIsHmrConnected( true );
+					setIsWebpackConnected( true );
 					lastActivity = Date.now();
 					connectionTimer = setInterval( () => {
 						if ( Date.now() - lastActivity > CONNECTION_TIMEOUT ) {
 							debug( 'Webpack HMR connection timeout. Reconnecting in %o…', CONNECTION_TIMEOUT );
-							setIsHmrConnected( false );
+							setIsWebpackConnected( false );
 							clearInterval( connectionTimer );
 							source.close();
 							setTimeout( connect, CONNECTION_TIMEOUT );
@@ -172,37 +172,41 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 		}
 	}, [] );
 
-	const isConnected = isHmrConnected && isCssConnected;
 	const isBuilding = isCssBuilding || isWebpackBuilding;
 	const hasErrors = hasCssErrors || hasWebpackErrors;
 
 	const needsReload = lastHash !== __webpack_hash__;
 
 	/* eslint-disable no-nested-ternary */
-	const msg = ! isConnected
-		? 'Not connected'
-		: isWebpackBuilding && isCssBuilding
-		? 'Webpack and CSS Building…'
-		: isWebpackBuilding
-		? 'Webpack building…'
-		: isCssBuilding
-		? 'CSS Building…'
-		: needsReload
-		? 'Need to refresh'
-		: hasWebpackErrors && hasCssErrors
-		? 'Webpack & CSS error'
-		: hasWebpackErrors
-		? 'Webpack error'
-		: hasCssErrors
-		? 'CSS error'
-		: null;
+	const msg =
+		! isWebpackConnected && ! isCssConnected
+			? 'Webpack and CSS disconnected'
+			: ! isWebpackConnected
+			? 'Webpack disconnected'
+			: ! isCssConnected
+			? 'CSS disconnected'
+			: isWebpackBuilding && isCssBuilding
+			? 'Webpack and CSS Building…'
+			: isWebpackBuilding
+			? 'Webpack building…'
+			: isCssBuilding
+			? 'CSS Building…'
+			: needsReload
+			? 'Need to refresh'
+			: hasWebpackErrors && hasCssErrors
+			? 'Webpack & CSS error'
+			: hasWebpackErrors
+			? 'Webpack error'
+			: hasCssErrors
+			? 'CSS error'
+			: null;
 	/* eslint-enable no-nested-ternary */
 
 	return (
 		msg && (
 			<div
 				className={ classNames( 'webpack-build-monitor', {
-					'is-error': hasErrors,
+					'is-error': hasErrors || ! isWebpackConnected || ! isCssConnected,
 					'is-warning': hasWebpackWarnings || needsReload,
 				} ) }
 			>
