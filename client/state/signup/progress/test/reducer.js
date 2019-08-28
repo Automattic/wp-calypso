@@ -14,7 +14,7 @@ import {
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
 
-// Mock necessary for testing removeUnneededSteps
+// Mock necessary for testing certain utils
 jest.mock( 'signup/config/flows-pure', () => ( {
 	'new-flow': {
 		steps: [ 'something', 'everything' ],
