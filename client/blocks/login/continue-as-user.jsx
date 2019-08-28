@@ -3,6 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -18,9 +19,9 @@ import Gravatar from 'components/gravatar';
  */
 import './continue-as-user.scss';
 
-function ContinueAsUser( { currentUser, currentQuery } ) {
+function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
 	const translate = useTranslate();
-	const [ validated, setValidated ] = useState( '/' );
+	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( '/' );
 
 	useEffect( () => {
 		async function validateUrl( redirectUrl ) {
@@ -29,20 +30,20 @@ function ContinueAsUser( { currentUser, currentQuery } ) {
 					`/me/validate-redirect?redirect_url=${ redirectUrl }`
 				);
 				if ( response ) {
-					setValidated( response.redirect_to || '/' );
+					setValidatedRedirectUrl( response.redirect_to || '/' );
 				}
 			} catch {
 				// Ignore error, set the redirect link as a default `/`.
-				setValidated( '/' );
+				setValidatedRedirectUrl( '/' );
 			}
 		}
 
-		const redirectUrl = currentQuery && currentQuery.redirect_to;
-		if ( ! currentUser || ! redirectUrl ) {
+		if ( ! currentUser || ! redirectUrlFromQuery ) {
 			return;
 		}
-		validateUrl( redirectUrl );
-	}, [ currentUser, currentQuery ] );
+
+		validateUrl( redirectUrlFromQuery );
+	}, [ currentUser, redirectUrlFromQuery ] );
 
 	if ( ! currentUser ) {
 		return null;
@@ -55,7 +56,7 @@ function ContinueAsUser( { currentUser, currentQuery } ) {
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
 	const redirectLink = (
-		<a href={ validated || '/' }>
+		<a href={ validatedRedirectUrl || '/' }>
 			<Gravatar user={ currentUser } size={ 16 } />
 			{ userName }
 		</a>
@@ -73,5 +74,5 @@ function ContinueAsUser( { currentUser, currentQuery } ) {
 
 export default connect( state => ( {
 	currentUser: getCurrentUser( state ),
-	currentQuery: getCurrentQueryArguments( state ),
+	redirectUrlFromQuery: get( getCurrentQueryArguments( state ), 'redirect_to', null ),
 } ) )( ContinueAsUser );
