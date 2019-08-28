@@ -348,7 +348,7 @@ class Full_Site_Editing {
 	 */
 	public function merge_template_and_post( $post ) {
 		// Bail if not a REST API Request.
-		if ( defined( 'REST_REQUEST' ) && ! REST_REQUEST ) {
+		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 			return;
 		}
 
