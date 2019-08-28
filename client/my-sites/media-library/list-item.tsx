@@ -38,7 +38,7 @@ interface Props {
 	thumbnailType?: string;
 	showGalleryHelp?: boolean;
 	selectedIndex?: number;
-	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => any;
+	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => void;
 	onEditItem?: any; // Unused. Appears to have been left here for compatibility reasons.
 	style?: React.CSSProperties;
 }
