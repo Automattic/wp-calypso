@@ -172,15 +172,12 @@ class Login extends Component {
 			twoStepNonce,
 			fromSite,
 			currentUser,
+			twoFactorEnabled,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
-
-		if ( currentUser ) {
-			postHeader = <ContinueAsUser />;
-		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
 			headerText = translate( 'Log in to update your payment details and renew your subscription' );
@@ -308,6 +305,9 @@ class Login extends Component {
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
+		} else if ( currentUser && ! twoFactorEnabled ) {
+			// someone is already logged in, offer to proceed to the app without a new login
+			postHeader = <ContinueAsUser />;
 		}
 
 		return (
