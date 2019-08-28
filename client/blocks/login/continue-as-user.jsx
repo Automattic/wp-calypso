@@ -19,30 +19,33 @@ import Gravatar from 'components/gravatar';
  */
 import './continue-as-user.scss';
 
+// Validate redirect URL using the REST endpoint.
+// Return validated URL in case of success, `null` in case of failure.
+async function validateUrl( redirectUrl ) {
+	if ( ! redirectUrl ) {
+		return null;
+	}
+
+	try {
+		const response = await wpcom.req.get( '/me/validate-redirect', { redirect_url: redirectUrl } );
+
+		if ( ! response || ! response.redirect_to ) {
+			return null;
+		}
+
+		return response.redirect_to;
+	} catch {
+		// Ignore error, let the redirect link default to `/`.
+		return null;
+	}
+}
+
 function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
 	const translate = useTranslate();
-	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( '/' );
+	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
 
 	useEffect( () => {
-		async function validateUrl( redirectUrl ) {
-			try {
-				const response = await wpcom.req.get( '/me/validate-redirect', {
-					redirect_url: redirectUrl,
-				} );
-				if ( response ) {
-					setValidatedRedirectUrl( response.redirect_to || '/' );
-				}
-			} catch {
-				// Ignore error, set the redirect link as a default `/`.
-				setValidatedRedirectUrl( '/' );
-			}
-		}
-
-		if ( ! redirectUrlFromQuery ) {
-			return;
-		}
-
-		validateUrl( redirectUrlFromQuery );
+		validateUrl( redirectUrlFromQuery ).then( setValidatedRedirectUrl );
 	}, [ redirectUrlFromQuery ] );
 
 	const userName = currentUser.display_name || currentUser.username;
