@@ -60,7 +60,7 @@
 		"spec-xunit-reporter": "./lib/reporter",
 		"testarmada-magellan": "11.0.1",
 		"testarmada-magellan-local-executor": "^2.0.0",
-		"testarmada-magellan-mocha-plugin": "github:Automattic/magellan-mocha-plugin#371cc05",
+		"testarmada-magellan-mocha-plugin": "github:Automattic/magellan-mocha-plugin#fa17dd9",
 		"xml2json-command": "^0.0.3",
 		"xmpp.js": "^0.3.0",
 		"xunit-viewer": "^5.1.8"
