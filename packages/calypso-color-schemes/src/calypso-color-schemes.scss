@@ -2,9 +2,7 @@
 @import 'shared/colors';
 
 // Default color scheme
-@import 'shared/color-schemes/defaults/generic';
-@import 'shared/color-schemes/defaults/scheme';
-@import 'shared/color-schemes/defaults/brands';
+@import 'shared/color-schemes/default';
 
 // Color schemes that override default properties
 @import 'shared/color-schemes/classic-blue';

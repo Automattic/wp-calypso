@@ -1,9 +1,9 @@
 const argv = require( 'yargs' ).argv;
 const _ = require( 'lodash' );
 
-const [ baseName, murielName ] = argv._;
+const [ baseName, colorName ] = argv._;
 
-const steps = [
+const suffixes = [
 	'',
 	'dark',
 	'light',
@@ -20,32 +20,30 @@ const steps = [
 	'90',
 	'100',
 ];
-const stepValues = [
-	'500',
-	'700',
-	'300',
-	'0',
-	'50',
-	'100',
-	'200',
-	'300',
-	'400',
-	'500',
-	'600',
-	'700',
-	'700',
-	'800',
-	'900',
-];
 
-const variants = _.flatMap( steps, ( step, stepIndex ) => {
-	const propertyName = _.compact( [ '--color', baseName, step ] ).join( '-' );
-	const variableName = _.compact( [ '$muriel', murielName, stepValues[ stepIndex ] ] ).join( '-' );
+suffixes.forEach( suffix => {
+	const propertyName = _.compact( [ '--color', baseName, suffix ] ).join( '-' );
+	const variableName = _.compact( [ '--studio', colorName, determineShadeIndex( suffix ) ] ).join(
+		'-'
+	);
 
-	return [
-		`${ propertyName }: #{${ variableName }};`,
-		`${ propertyName }-rgb: #{hex-to-rgb( ${ variableName } )};`,
-	];
+	printEntry( propertyName, variableName );
+	printEntry( propertyName + '-rgb', variableName + '-rgb' );
 } );
 
-variants.forEach( n => console.log( n ) );
+function determineShadeIndex( suffix ) {
+	switch ( suffix ) {
+		case '':
+			return '50';
+		case 'dark':
+			return '70';
+		case 'light':
+			return '30';
+		default:
+			return String( suffix );
+	}
+}
+
+function printEntry( propertyName, variableName ) {
+	console.log( `${ propertyName }: var( ${ variableName } );` );
+}

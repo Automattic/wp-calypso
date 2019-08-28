@@ -1,6 +1,8 @@
-// The Muriel Color Palette
+// Color Studio
 @import '../__color-studio/color-variables';
+@import '../__color-studio/color-properties';
+@import '../__color-studio/color-properties-rgb';
 
 // Layout
-$masterbar-color: $muriel-blue-500;
-$sidebar-bg-color: $muriel-gray-0;
+$masterbar-color: $studio-wordpress-blue-50;
+$sidebar-bg-color: $studio-gray-0;
