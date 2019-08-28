@@ -95,22 +95,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		return React.createElement( component, this.props );
 	};
 
-	renderSpinner = () => {
-		if ( ! this.props.media ) {
-			return;
-		}
-
-		if ( ! ( this.props.media as MediaObject ).transient ) {
-			return;
-		}
-
-		return (
-			<div className="media-library__list-item-spinner">
-				<Spinner />
-			</div>
-		);
-	};
-
 	render() {
 		let title, selectedNumber;
 
@@ -161,7 +145,11 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
-					{ this.renderSpinner() }
+					{ media && ( media as MediaObject ).transient && (
+						<div className="media-library__list-item-spinner">
+							<Spinner />
+						</div>
+					) }
 					{ showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
 			</div>
