@@ -93,13 +93,6 @@ export function generateFlows( {
 			lastModified: '2017-09-01',
 		},
 
-		website: {
-			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with website themes',
-			lastModified: '2017-09-01',
-		},
-
 		'rebrand-cities': {
 			steps: [ 'rebrand-cities-welcome', 'user' ],
 			destination: function( dependencies ) {

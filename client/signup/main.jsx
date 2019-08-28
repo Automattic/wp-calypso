@@ -169,12 +169,6 @@ class Signup extends React.Component {
 			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
 		}
 
-		if ( 'remove' === abtest( 'removeWebsiteFlow' ) && 'website' === this.props.flowName ) {
-			const destinationStep = flows.getFlow( 'onboarding' ).steps[ 0 ];
-			this.setState( { resumingStep: destinationStep } );
-			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
-		}
-
 		this.recordStep();
 	}
 
