@@ -35,6 +35,7 @@ import PaymentChatButton from './payment-chat-button';
 import RecentRenewals from './recent-renewals';
 import SubscriptionText from './subscription-text';
 import { withStripe } from 'lib/stripe';
+import { useDebounce } from 'blocks/credit-card-form/helpers';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
@@ -59,6 +60,12 @@ export function WebPaymentBox( {
 
 	const countryCode = getTaxCountryCode( cart );
 	const postalCode = getTaxPostalCode( cart );
+
+	const [ postalCodeInputValue, setPostalCodeInputValue ] = useState( postalCode );
+	const [ debouncedPostalCode ] = useDebounce( postalCodeInputValue, 400 );
+	useEffect( () => {
+		setTaxPostalCode( debouncedPostalCode );
+	}, [ debouncedPostalCode ] );
 
 	if ( ! paymentMethod ) {
 		return null;
@@ -91,8 +98,8 @@ export function WebPaymentBox( {
 							additionalClasses="checkout-field"
 							name="postal-code"
 							label={ translate( 'Postal Code', { textOnly: true } ) }
-							onChange={ event => setTaxPostalCode( event.target.value.toString() ) }
-							value={ getPostalCodeStringFromPostalCode( postalCode ) }
+							onChange={ event => setPostalCodeInputValue( event.target.value.toString() ) }
+							value={ getPostalCodeStringFromPostalCode( postalCodeInputValue ) }
 							eventFormName="Checkout Form"
 						/>
 					</div>
@@ -105,7 +112,7 @@ export function WebPaymentBox( {
 						<span className="payment-request-button">
 							<WebPayButtonWithStripe
 								countryCode={ countryCode }
-								postalCode={ postalCode }
+								postalCode={ debouncedPostalCode }
 								cart={ cart }
 								onSubmit={ onSubmit }
 								translate={ translate }
