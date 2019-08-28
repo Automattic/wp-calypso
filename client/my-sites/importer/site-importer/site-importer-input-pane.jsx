@@ -76,7 +76,7 @@ class SiteImporterInputPane extends React.Component {
 			site: { ID: siteId } = {},
 		} = this.props;
 
-		if ( ! includes( [ appStates.UPLOAD_SUCCESS ], importerState ) ) {
+		if ( ! includes( [ appStates.UPLOAD_SUCCESS, appStates.READY_FOR_UPLOAD ], importerState ) ) {
 			cancelImport( siteId, importerId );
 			this.resetImport();
 		}
