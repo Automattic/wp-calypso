@@ -5,6 +5,11 @@
 	&:hover {
 		color: var( --color-primary-light );
 	}
+
+	&:focus {
+		box-shadow:	0 0 0 2px var( --color-primary );
+		z-index: 1;
+	}
 }
 
 .location-search__prediction-icon {

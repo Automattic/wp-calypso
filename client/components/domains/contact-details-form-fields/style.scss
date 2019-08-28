@@ -101,7 +101,10 @@
 .contact-details-form-fields__field.location-search {
 	.address-1 {
 		position: relative;
-		z-index: 1;
+
+		&:focus {
+			z-index: 1;
+		}
 	}
 
 	.location-search__predictions {
@@ -109,6 +112,5 @@
 		z-index: 0;
 		position: relative;
 	}
-
 }
 

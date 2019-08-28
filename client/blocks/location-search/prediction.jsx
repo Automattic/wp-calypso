@@ -31,11 +31,22 @@ export default class Prediction extends Component {
 		}
 	};
 
+	handlePredictionKeyDown = event => {
+		if ( event.key === 'Enter' ) {
+			this.handlePredictionClick();
+		}
+	};
+
 	render() {
 		const { prediction } = this.props;
 
 		return (
-			<CompactCard className="location-search__prediction" onClick={ this.handlePredictionClick }>
+			<CompactCard
+				tabindex="0"
+				className="location-search__prediction"
+				onClick={ this.handlePredictionClick }
+				onKeyDown={ this.handlePredictionKeyDown }
+			>
 				<strong>{ prediction.structured_formatting.main_text }</strong>
 				<br />
 				{ prediction.structured_formatting.secondary_text }
