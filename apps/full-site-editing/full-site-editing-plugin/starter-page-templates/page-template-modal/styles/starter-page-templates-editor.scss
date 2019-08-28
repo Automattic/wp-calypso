@@ -230,6 +230,24 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow-y: auto;
 }
 
+.show-post-title-before-content .template-selector-preview .editor-styles-wrapper {
+	.editor-post-title .editor-post-title__block,
+	.editor-post-title .editor-post-title__block .editor-post-title__input {
+		height: 48px;
+		line-height: 48px;
+		margin: 0;
+		padding: 0;
+	}
+
+	.editor-post-title .editor-post-title__block .editor-post-title__input {
+		font-size: 1em;
+	}
+
+	.editor-post-title {
+		display: block;
+	}
+}
+
 .template-selector-preview__placeholder {
 	position: absolute;
 	top: 50%;
