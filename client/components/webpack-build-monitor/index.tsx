@@ -1,4 +1,3 @@
-/* global __webpack_hash__ */
 /**
  * @see https://webpack.js.org/api/module-variables/#__webpack_hash__-webpack-specific
  */
