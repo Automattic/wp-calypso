@@ -535,7 +535,6 @@ class Signup extends React.Component {
 								hideFreePlan={ hideFreePlan }
 								{ ...propsFromConfig }
 							/>
-							{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
 						</>
 					) }
 				</div>
@@ -592,6 +591,9 @@ class Signup extends React.Component {
 					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 				/>
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				{ ! this.state.shouldShowLoadingScreen && this.props.shouldShowMockups && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
