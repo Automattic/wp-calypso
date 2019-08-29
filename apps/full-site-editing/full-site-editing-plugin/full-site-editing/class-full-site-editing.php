@@ -40,17 +40,6 @@ class Full_Site_Editing {
 	public $wp_template_inserter;
 
 	/**
-	 * List of FSE supported themes.
-	 *
-	 * @var array
-	 */
-	const SUPPORTED_THEMES = [
-		'maywood',
-		'modern-business',
-		'varia',
-	];
-
-	/**
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
@@ -99,7 +88,7 @@ class Full_Site_Editing {
 	 */
 	public function is_supported_theme( $theme_slug ) {
 		$theme_slug = $this->normalize_theme_slug( $theme_slug );
-		return in_array( $theme_slug, self::SUPPORTED_THEMES, true );
+		return get_theme_support( 'full-site-editing' );
 	}
 
 	/**
