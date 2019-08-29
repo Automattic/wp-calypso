@@ -1,8 +1,4 @@
-@import 'jetpack-connect/colors.scss';
-
-.current-plan-thank-you {
-	@include jetpack-connect-colors();
-	
+.current-plan-thank-you {	
 	display: flex;
 	flex-direction: row;
 	max-width: 720px;
@@ -31,6 +27,8 @@
 	}
 	
 	.button {
+		background-color: var( --color-primary );
+		border-color: var( --color-primary-dark );
 		padding-right: 80px;
 		padding-left: 80px;
 		
@@ -38,6 +36,12 @@
 			text-align: center;
 			width: 100%;
 		}
+		
+		&:hover,
+		&:focus {
+			background-color: var( --color-primary-400 );
+			border-color: var( --color-primary-dark );
+		}	
 	}
 }
 
