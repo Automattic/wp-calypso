@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import 'moment-timezone'; // monkey patches the existing moment.js
@@ -150,14 +150,9 @@ const GMClosureNotice = ( {
 				{ mainMessage }
 				<br />
 				<br />
-				{ reason }
-				{ isNonPlan && (
-					<Fragment>
-						<br />
-						<br />
-						{ FORUMS_NOTE }
-					</Fragment>
-				) }
+				{ translate( '{{contactLink}}Read more{{/contactLink}}', {
+					components: { contactLink: <a href="/help/contact" /> },
+				} ) }
 			</FoldableCard>
 		);
 	}
