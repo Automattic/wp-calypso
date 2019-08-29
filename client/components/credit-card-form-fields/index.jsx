@@ -22,6 +22,7 @@ import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import { abtest } from 'lib/abtest';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
@@ -358,6 +359,7 @@ export class CreditCardFormFields extends React.Component {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': countryDetailsRequired,
 		} );
+		const shouldShowPhoneField = ! countryDetailsRequired && abtest( 'checkoutCollectPhoneNumber' ) === 'show';
 
 		return (
 			<div className="credit-card-form-fields">
@@ -418,7 +420,7 @@ export class CreditCardFormFields extends React.Component {
 						} )
 					) }
 
-					{ countryDetailsRequired || (
+					{ shouldShowPhoneField && (
 						<PhoneNumberField
 							countriesList={ countriesList }
 							onChange={ this.handlePhoneFieldChange }
