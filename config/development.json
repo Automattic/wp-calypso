@@ -146,6 +146,7 @@
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": true,
 		"signup/full-site-editing": true,
+		"signup/import": true,
 		"signup/onboarding-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,
