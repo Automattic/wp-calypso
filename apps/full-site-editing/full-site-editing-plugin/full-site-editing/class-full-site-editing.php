@@ -351,13 +351,6 @@ class Full_Site_Editing {
 		if ( ! $this->should_merge_template_and_post( $post ) ) {
 			return;
 		}
-        
-        $this->theme_slug = $this->normalize_theme_slug( get_stylesheet() );
-        // Bail if theme doesn't support FSE.
-        if ( ! $this->is_supported_theme( $this->theme_slug ) ) {
-            return;
-        }
-        
 
 		$template         = new WP_Template();
 		$template_content = $template->get_page_template_content();
@@ -374,14 +367,20 @@ class Full_Site_Editing {
 	 * Detects if we are in a context where the template and post should be merged.
 	 *
 	 * Conditions:
-	 * 1. in a REST API request (either flavour)
-	 * 2. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
-	 * 3. AND editing a post_type that supports full site editing
+	 * 1. Current theme supports it
+	 * 2. AND in a REST API request (either flavour)
+	 * 3. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
+	 * 4. AND editing a post_type that supports full site editing
 	 *
-     * @param WP_Post post object for the check
+   * @param \WP_Post post object for the check
 	 * @return bool
 	 */
 	private function should_merge_template_and_post( $post ) {
+		$current_theme = $this->normalize_theme_slug( get_stylesheet() );
+		if ( ! $this->is_supported_theme( $current_theme ) ) {
+			return false;
+		}
+
 		$is_rest_api_wpcom = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
 		$is_rest_api_core = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
 		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
