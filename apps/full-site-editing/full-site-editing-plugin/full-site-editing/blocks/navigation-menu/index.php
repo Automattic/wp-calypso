@@ -16,8 +16,9 @@ function render_navigation_menu_block() {
 	$menu = wp_nav_menu(
 		[
 			'echo'           => false,
-			'menu_class'     => 'main-menu',
-			'fallback_cb'    => 'a8c_fse_get_fallback_navigation_menu',
+			'fallback_cb'    => 'get_fallback_navigation_menu',
+			'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-label="submenu">%3$s</ul>',
+			'menu_class'     => 'main-menu footer-menu',
 			'theme_location' => 'menu-1',
 		]
 	);
@@ -26,7 +27,15 @@ function render_navigation_menu_block() {
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	?>
 	<nav class="main-navigation wp-block-a8c-navigation-menu">
-		<div class="menu-nav-container">
+		<input type="checkbox" role="button" aria-haspopup="true" id="toggle" class="hide-visually">
+		<label for="toggle" id="toggle-menu" class="button">
+			<?php esc_html_e( 'Menu', 'full-site-editing' ); ?>
+			<span class="dropdown-icon open">+</span>
+			<span class="dropdown-icon close">&times;</span>
+			<span class="hide-visually expanded-text"><?php esc_html_e( 'expanded', 'full-site-editing' ); ?></span>
+			<span class="hide-visually collapsed-text"><?php esc_html_e( 'collapsed', 'full-site-editing' ); ?></span>
+		</label>
+		<div class="menu-primary-container">
 			<?php echo $menu ? $menu : get_fallback_navigation_menu(); ?>
 		</div>
 	</nav>
@@ -49,7 +58,7 @@ function get_fallback_navigation_menu() {
 			'before'      => false,
 			'container'   => 'ul',
 			'echo'        => false,
-			'menu_class'  => 'main-menu default-menu',
+			'menu_class'  => 'main-menu footer-menu',
 			'sort_column' => 'post_date',
 		]
 	);
