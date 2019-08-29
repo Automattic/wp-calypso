@@ -113,6 +113,14 @@ export function getIframeSource(
 				   height: auto;
 				}
 
+				/*
+					Styling override for post list items
+				*/
+				.a8c-posts-list__item article > * {
+					margin-top: 16px;
+					margin-bottom: 16px;
+				}
+
 				.is-loading .wp-block-cover,
 				.is-loading img {
 					animation: loading-animation 1.5s infinite;
