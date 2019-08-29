@@ -231,7 +231,7 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 	 * @return object|bool Attachment object on success, false on failure.
 	 */
 	public function get_attachment( $url ) {
-		$cache_key  = 'fse_sideloaded_image_' . md5( $url );
+		$cache_key  = 'fse_sideloaded_image_' . hash( 'crc32b', $url );
 		$attachment = get_transient( $cache_key );
 
 		if ( false === $attachment ) {
@@ -252,8 +252,7 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 			);
 
 			if ( $attachments->have_posts() ) {
-				$attachment = $attachments->post;
-				set_transient( $cache_key, $attachment );
+				set_transient( $cache_key, $attachments->post );
 			}
 		}
 

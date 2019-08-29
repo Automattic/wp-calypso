@@ -32,12 +32,7 @@ import { ProgressState } from 'state/signup/progress/schema';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { resetSignup, updateDependencies } from 'state/signup/actions';
-import {
-	completeSignupStep,
-	invalidateStep,
-	processStep,
-	removeUnneededSteps,
-} from 'state/signup/progress/actions';
+import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
 
 interface Dependencies {
 	[other: string]: any;
@@ -359,6 +354,5 @@ export default class SignupFlowController {
 		flows.resetExcludedSteps();
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName );
-		this._reduxStore.dispatch( removeUnneededSteps( this._flowName ) );
 	}
 }

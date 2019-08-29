@@ -59,6 +59,12 @@ class CurrentPlan extends Component {
 		showThankYou: PropTypes.bool,
 	};
 
+	componentDidMount() {
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+	}
+
 	isLoading() {
 		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
 

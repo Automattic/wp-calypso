@@ -1,9 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, createReducer } from 'state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	createReducer,
+	createReducerWithValidation,
+} from 'state/utils';
 import { atomicTransfer as schema } from './schema';
 import {
 	ATOMIC_TRANSFER_REQUEST,
@@ -12,7 +15,7 @@ import {
 	ATOMIC_TRANSFER_COMPLETE,
 } from 'state/action-types';
 
-export const atomicTransfer = createReducer(
+export const atomicTransfer = createReducerWithValidation(
 	{},
 	{
 		[ ATOMIC_TRANSFER_SET ]: ( state, { transfer } ) => ( { ...state, ...transfer } ),

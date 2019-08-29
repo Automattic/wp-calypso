@@ -124,16 +124,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	checkoutSealsCopyBundle: {
-		datestamp: '20190613',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		//localeTargets: 'any',
-	},
 	showImportFlowInSiteTypeStep: {
 		datestamp: '20190820',
 		variations: {
@@ -144,15 +134,6 @@ export default {
 		allowExistingUsers: true,
 	},
 	removeBlogFlow: {
-		datestamp: '20190813',
-		variations: {
-			remove: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	removeWebsiteFlow: {
 		datestamp: '20190813',
 		variations: {
 			remove: 50,

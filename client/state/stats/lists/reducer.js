@@ -1,15 +1,13 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
-
 import { merge, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, withSchemaValidation } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {
@@ -70,7 +68,7 @@ export const requests = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_STATS_RECEIVE:
 			const { siteId, statType, query, data } = action;
@@ -91,8 +89,7 @@ export function items( state = {}, action ) {
 	}
 
 	return state;
-}
-items.schema = itemSchema;
+} );
 
 export default combineReducers( {
 	requests,

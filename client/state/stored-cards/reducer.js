@@ -1,9 +1,7 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * Internal dependencies
  */
-
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
@@ -13,7 +11,7 @@ import {
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { storedCardsSchema } from './schema';
 
 /**
@@ -24,7 +22,7 @@ import { storedCardsSchema } from './schema';
  * @param  {Object} action storeCard action
  * @return {Array}         Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	[],
 	{
 		[ STORED_CARDS_ADD_COMPLETED ]: ( state, { item } ) => [ ...state, item ],

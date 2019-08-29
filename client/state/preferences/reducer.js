@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
 
 /**
@@ -17,7 +14,7 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { remoteValuesSchema } from './schema';
 
 /**
@@ -55,7 +52,7 @@ export const localValues = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const remoteValues = createReducer(
+export const remoteValues = createReducerWithValidation(
 	null,
 	{
 		[ PREFERENCES_RECEIVE ]: ( state, { values } ) => values,

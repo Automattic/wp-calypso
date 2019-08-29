@@ -18,7 +18,6 @@ import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import config from 'config';
-import PulsingDot from 'components/pulsing-dot';
 import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
 import QuerySites from 'components/data/query-sites';
@@ -30,7 +29,6 @@ import {
 	masterbarIsVisible,
 	getSectionGroup,
 	getSectionName,
-	isSectionLoading,
 } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
@@ -54,22 +52,22 @@ import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import LayoutLoader from './loader';
 
 /**
  * Style dependencies
  */
 // goofy import for environment badge, which is SSR'd
 import 'components/environment-badge/style.scss';
+import './style.scss';
 
 class Layout extends Component {
-	static displayName = 'Layout';
 	static propTypes = {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
-		isLoading: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
 		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
@@ -108,34 +106,27 @@ class Layout extends Component {
 
 	render() {
 		const sectionClass = classnames(
-				'layout',
-				`is-group-${ this.props.sectionGroup }`,
-				`is-section-${ this.props.sectionName }`,
-				`focus-${ this.props.currentLayoutFocus }`,
-				{ 'is-add-site-page': this.props.currentRoute === '/jetpack/new' },
-				{ 'is-support-session': this.props.isSupportSession },
-				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'has-chat': this.props.chatIsOpen },
-				{ 'has-no-masterbar': this.props.masterbarIsHidden },
-				{ 'is-jetpack-login': this.props.isJetpackLogin },
-				{ 'is-jetpack-site': this.props.isJetpack },
-				{ 'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow },
-				{
-					'is-jetpack-woocommerce-flow':
-						config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-						this.props.isJetpackWooCommerceFlow,
-				},
-				{
-					'is-wccom-oauth-flow':
-						config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-						isWooOAuth2Client( this.props.oauth2Client ) &&
-						this.props.wccomFrom,
-				}
-			),
-			loadingClass = classnames( {
-				layout__loader: true,
-				'is-active': this.props.isLoading,
-			} );
+			'layout',
+			`is-group-${ this.props.sectionGroup }`,
+			`is-section-${ this.props.sectionName }`,
+			`focus-${ this.props.currentLayoutFocus }`,
+			{
+				'is-add-site-page': this.props.currentRoute === '/jetpack/new',
+				'is-support-session': this.props.isSupportSession,
+				'has-no-sidebar': ! this.props.hasSidebar,
+				'has-chat': this.props.chatIsOpen,
+				'has-no-masterbar': this.props.masterbarIsHidden,
+				'is-jetpack-login': this.props.isJetpackLogin,
+				'is-jetpack-site': this.props.isJetpack,
+				'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
+				'is-jetpack-woocommerce-flow':
+					config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+				'is-wccom-oauth-flow':
+					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+					isWooOAuth2Client( this.props.oauth2Client ) &&
+					this.props.wccomFrom,
+			}
+		);
 
 		return (
 			<div className={ sectionClass }>
@@ -153,9 +144,7 @@ class Layout extends Component {
 					compact={ this.props.sectionName === 'checkout' }
 				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
-				<div className={ loadingClass }>
-					{ this.props.isLoading && <PulsingDot delay={ 400 } active /> }
-				</div>
+				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && <JITM /> }
@@ -219,7 +208,6 @@ export default connect( state => {
 		isJetpackMobileFlow,
 		oauth2Client,
 		wccomFrom,
-		isLoading: isSectionLoading( state ),
 		isSupportSession: isSupportSession( state ),
 		sectionGroup,
 		sectionName,

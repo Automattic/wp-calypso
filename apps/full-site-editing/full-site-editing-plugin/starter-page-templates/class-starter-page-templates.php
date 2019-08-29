@@ -212,7 +212,7 @@ class Starter_Page_Templates {
 	public function clear_sideloaded_image_cache( $id ) {
 		$url = get_post_meta( $id, '_sideloaded_url', true );
 		if ( ! empty( $url ) ) {
-			delete_transient( 'fse_sideloaded_image_' . md5( $url ) );
+			delete_transient( 'fse_sideloaded_image_' . hash( 'crc32b', $url ) );
 		}
 	}
 

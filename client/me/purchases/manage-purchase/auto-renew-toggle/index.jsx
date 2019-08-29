@@ -31,7 +31,6 @@ class AutoRenewToggle extends Component {
 		isAtomicSite: PropTypes.bool.isRequired,
 		fetchingUserPurchases: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
-		errorNotice: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {

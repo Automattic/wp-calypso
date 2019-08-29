@@ -347,13 +347,8 @@ class Full_Site_Editing {
 	 * @param \WP_Post $post Post instance.
 	 */
 	public function merge_template_and_post( $post ) {
-		// Bail if not a REST API Request.
-		if ( defined( 'REST_REQUEST' ) && ! REST_REQUEST ) {
-			return;
-		}
-
-		// Bail if the post is not a full site page.
-		if ( ! $this->is_full_site_page() ) {
+		// Bail if not a REST API Request and not in the editor.
+		if ( ! $this->should_merge_template_and_post() ) {
 			return;
 		}
 
@@ -366,6 +361,27 @@ class Full_Site_Editing {
 		}
 
 		$post->post_content = preg_replace( '@(<!-- wp:a8c/post-content)(.*?)(/-->)@', "$1$2-->$post->post_content<!-- /wp:a8c/post-content -->", $template_content );
+	}
+
+	/**
+	 * Detects if we are in a context where the template and post should be merged.
+	 *
+	 * Conditions:
+	 * 1. in a REST API request (either flavour)
+	 * 2. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
+	 * 3. AND editing a post_type that supports full site editing
+	 *
+	 * @return bool
+	 */
+	private function should_merge_template_and_post() {
+		$is_rest_api_wpcom = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
+		$is_rest_api_core = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
+
+		if ( ! ( $is_block_editor_screen || $is_rest_api_core || $is_rest_api_wpcom ) ) {
+			return false;
+		}
+		return $this->is_full_site_page();
 	}
 
 	/**

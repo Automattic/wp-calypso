@@ -125,24 +125,12 @@ class StatsSite extends Component {
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let videoList;
 		let fileDownloadList;
 
 		const query = memoizedQuery( period, endOf );
 
-		// Video plays and file downloads are not yet supported in Jetpack Stats
+		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
-			videoList = (
-				<StatsModule
-					path="videoplays"
-					moduleStrings={ moduleStrings.videoplays }
-					period={ this.props.period }
-					query={ query }
-					statType="statsVideoPlays"
-					showSummaryLink
-				/>
-			);
-
 			fileDownloadList = (
 				<StatsModule
 					path="filedownloads"
@@ -256,7 +244,14 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink
 							/>
-							{ videoList }
+							<StatsModule
+								path="videoplays"
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								statType="statsVideoPlays"
+								showSummaryLink
+							/>
 						</div>
 					</div>
 				</div>

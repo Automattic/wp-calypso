@@ -7,7 +7,7 @@ import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-
+import '../style.scss';
 /**
  * Internal dependencies
  */
@@ -17,7 +17,6 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {
 		tag: PropTypes.object.isRequired,
-		onUnfollow: PropTypes.func.isRequired,
 		path: PropTypes.string.isRequired,
 		currentTag: PropTypes.string,
 		translate: PropTypes.func,
@@ -44,7 +43,7 @@ export class ReaderSidebarTagsListItem extends Component {
 	};
 
 	render() {
-		const { tag, path, onUnfollow, translate } = this.props;
+		const { tag, path, translate } = this.props;
 		const tagName = tag.displayName || tag.slug;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -56,7 +55,7 @@ export class ReaderSidebarTagsListItem extends Component {
 				} ) }
 			>
 				<a
-					className="sidebar__menu-item-label"
+					className="sidebar__menu-link"
 					href={ tag.url }
 					onClick={ this.handleTagSidebarClick }
 					title={ translate( "View tag '%(currentTagName)s'", {
@@ -67,18 +66,6 @@ export class ReaderSidebarTagsListItem extends Component {
 				>
 					<div className="sidebar__menu-item-tagname">{ tagName }</div>
 				</a>
-				{ tag.id !== 'pending' && (
-					<button
-						className="sidebar__menu-action"
-						data-tag-slug={ tag.slug }
-						onClick={ onUnfollow }
-						title={ translate( "Unfollow tag '%(currentTagName)s'", {
-							args: {
-								currentTagName: tagName,
-							},
-						} ) }
-					/>
-				) }
 			</li>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

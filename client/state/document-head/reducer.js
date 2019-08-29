@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
@@ -19,7 +16,7 @@ import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema
  */
 export const DEFAULT_META_STATE = [ { property: 'og:site_name', content: 'WordPress.com' } ];
 
-export const title = createReducer(
+export const title = createReducerWithValidation(
 	'',
 	{
 		[ DOCUMENT_HEAD_TITLE_SET ]: ( state, action ) => action.title,
@@ -27,7 +24,7 @@ export const title = createReducer(
 	titleSchema
 );
 
-export const unreadCount = createReducer(
+export const unreadCount = createReducerWithValidation(
 	0,
 	{
 		[ DOCUMENT_HEAD_UNREAD_COUNT_SET ]: ( state, action ) => action.count,
@@ -36,7 +33,7 @@ export const unreadCount = createReducer(
 	unreadCountSchema
 );
 
-export const meta = createReducer(
+export const meta = createReducerWithValidation(
 	DEFAULT_META_STATE,
 	{
 		[ DOCUMENT_HEAD_META_SET ]: ( state, action ) => action.meta,
@@ -44,7 +41,7 @@ export const meta = createReducer(
 	metaSchema
 );
 
-export const link = createReducer(
+export const link = createReducerWithValidation(
 	[],
 	{
 		[ DOCUMENT_HEAD_LINK_SET ]: ( state, action ) => action.link,

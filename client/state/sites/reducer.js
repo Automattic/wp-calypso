@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -39,7 +38,13 @@ import {
 	SITE_FRONT_PAGE_UPDATE,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import {
+	combineReducers,
+	createReducer,
+	createReducerWithValidation,
+	keyedReducer,
+	withSchemaValidation,
+} from 'state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -48,7 +53,7 @@ import { combineReducers, createReducer, keyedReducer } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = null, action ) {
+export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
 	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
 		return null;
 	}
@@ -241,8 +246,7 @@ export function items( state = null, action ) {
 	}
 
 	return state;
-}
-items.schema = sitesSchema;
+} );
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -309,7 +313,7 @@ export const deleting = keyedReducer(
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const hasAllSitesList = createReducer(
+export const hasAllSitesList = createReducerWithValidation(
 	false,
 	{
 		[ SITES_RECEIVE ]: () => true,

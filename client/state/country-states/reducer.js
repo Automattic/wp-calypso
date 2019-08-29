@@ -1,20 +1,17 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemSchema } from './schema';
 
 // Stores the complete list of states, indexed by locale key
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ COUNTRY_STATES_RECEIVE ]: ( state, action ) => ( {

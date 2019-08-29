@@ -4,7 +4,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
 
@@ -16,6 +16,8 @@ import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getEditorUrl from 'state/selectors/get-editor-url';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
@@ -41,6 +43,7 @@ class PreviewMain extends React.Component {
 
 	state = {
 		previewUrl: null,
+		editUrl: null,
 		externalUrl: null,
 		showingClose: false,
 		// Set to one of the possible default values in client/components/web-preview/toolbar.jsx
@@ -95,6 +98,7 @@ class PreviewMain extends React.Component {
 				this.setState( {
 					previewUrl: null,
 					externalUrl: null,
+					editUrl: null,
 				} );
 			}
 			return;
@@ -116,12 +120,33 @@ class PreviewMain extends React.Component {
 			this.setState( {
 				previewUrl: newUrl,
 				externalUrl: this.props.site.URL,
+				editUrl: this.getEditButtonURL(),
 			} );
 		}
 	}
 
 	getBasePreviewUrl() {
 		return this.props.site.options.unmapped_url;
+	}
+
+	showEditButton = () => {
+		if ( 'posts' === get( this.props.site, [ 'options', 'show_on_front' ] ) ) {
+			return false;
+		}
+
+		if ( ! this.props.canEditPages ) {
+			return false;
+		}
+
+		return true;
+	};
+
+	getEditButtonURL() {
+		if ( this.showEditButton() ) {
+			return this.props.editorURL;
+		}
+
+		return null;
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -180,6 +205,8 @@ class PreviewMain extends React.Component {
 					showUrl={ !! this.state.externalUrl }
 					showClose={ this.state.showingClose }
 					onClose={ this.focusSidebar }
+					showEdit={ this.showEditButton() }
+					editUrl={ this.state.editUrl }
 					previewUrl={ this.state.previewUrl }
 					externalUrl={ this.state.externalUrl }
 					loadingMessage={ this.props.translate(
@@ -195,11 +222,16 @@ class PreviewMain extends React.Component {
 
 const mapState = state => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
+
 	return {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
-		site: getSelectedSite( state ),
+		site: site,
 		siteId: selectedSiteId,
+		canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
+		editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
 	};
 };
 

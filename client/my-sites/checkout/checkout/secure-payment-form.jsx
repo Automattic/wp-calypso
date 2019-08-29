@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, defer, pick, isEqual, indexOf } from 'lodash';
+import { get, defer, pick, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -40,11 +40,7 @@ import {
 	getLocationOrigin,
 	isPaymentMethodEnabled,
 } from 'lib/cart-values';
-import {
-	hasFreeTrial,
-	getDomainRegistrations,
-	hasOnlyDomainProducts,
-} from 'lib/cart-values/cart-items';
+import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
@@ -59,7 +55,6 @@ import {
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
-import { abtest } from 'lib/abtest';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
@@ -667,28 +662,14 @@ export class SecurePaymentForm extends Component {
 
 	renderGreatChoiceHeader() {
 		const { translate } = this.props;
+		const headerText = translate( 'Great choice! How would you like to pay?' );
 
-		if ( 'variant' === abtest( 'checkoutSealsCopyBundle' ) ) {
-			const headerText = translate( 'Confirm your order' );
-			const subHeaderText = translate(
-				'Review your order and proceed with a payment method to finish'
-			);
-
-			this.props.setHeaderText( headerText, subHeaderText );
-		} else {
-			const headerText = translate( 'Great choice! How would you like to pay?' );
-			this.props.setHeaderText( headerText );
-		}
+		this.props.setHeaderText( headerText );
 	}
 
 	render() {
-		const visiblePaymentBox = this.getVisiblePaymentBox( this.props ),
-			moneyBackGuaranteeSeal =
-				! hasOnlyDomainProducts( this.props.cart ) &&
-				'variant' === abtest( 'checkoutSealsCopyBundle' ) &&
-				indexOf( [ 'credits', 'free-trial', 'free-cart' ], visiblePaymentBox ) === -1;
+		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
 
-		this.props.showGuaranteeSeal( moneyBackGuaranteeSeal, this.props.isJetpackNotAtomic );
 		if ( visiblePaymentBox === null ) {
 			debug( 'empty content' );
 			return (

@@ -226,7 +226,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	background: $template-selector-empty-background;
 	border: 1px solid $template-selector-border-color;
 	border-radius: 6px;
-	pointer-events: none;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -296,4 +295,17 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.editor-styles-wrapper {
 		height: 100%;
 	}
+}
+
+.page-template-modal__loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+	transform: translate( -50%, -50% );
+	display: flex;
+    align-items: flex-end;
+}
+
+.page-template-modal__loading .components-spinner {
+	float: none;
 }

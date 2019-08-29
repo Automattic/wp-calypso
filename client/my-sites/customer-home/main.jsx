@@ -24,11 +24,10 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getCustomizerUrl,
-	getSiteOption,
-} from 'state/sites/selectors';
+import { getCustomizerUrl, getSiteOption } from 'state/sites/selectors';
+import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -38,6 +37,7 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 
 /**
  * Style dependencies
@@ -64,6 +64,7 @@ class Home extends Component {
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		customizeUrl: PropTypes.string.isRequired,
+		menusUrl: PropTypes.string.isRequired,
 		canUserUseCustomerHome: PropTypes.bool.isRequired,
 		hasChecklistData: PropTypes.bool.isRequired,
 		isChecklistComplete: function( props, propName, componentName ) {
@@ -75,7 +76,10 @@ class Home extends Component {
 			}
 		},
 		isSiteEligible: PropTypes.bool.isRequired,
+		expandToolsAndTrack: PropTypes.func.isRequired,
 		trackAction: PropTypes.func.isRequired,
+		isStaticHomePage: PropTypes.bool.isRequired,
+		staticHomePageId: PropTypes.number, // this is unused if isStaticHomePage is false. In such case, it's null.
 	};
 
 	state = {
@@ -153,7 +157,19 @@ class Home extends Component {
 	}
 
 	renderCustomerHome = () => {
-		const { translate, customizeUrl, site, siteSlug, trackAction, isStaticHomePage } = this.props;
+		const {
+			translate,
+			customizeUrl,
+			menusUrl,
+			site,
+			siteSlug,
+			trackAction,
+			expandToolsAndTrack,
+			isStaticHomePage,
+			staticHomePageId,
+		} = this.props;
+		const editHomePageUrl =
+			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col">
@@ -172,7 +188,7 @@ class Home extends Component {
 							</Button>
 							{ isStaticHomePage ? (
 								<Button
-									href={ customizeUrl }
+									href={ editHomePageUrl }
 									onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
 								>
 									{ translate( 'Edit Homepage' ) }
@@ -233,13 +249,13 @@ class Home extends Component {
 								iconSrc="/calypso/images/customer-home/theme.svg"
 							/>
 							<ActionBox
-								href={ customizeUrl }
+								href={ menusUrl }
 								onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
 								label={ translate( 'Edit menus' ) }
 								iconSrc="/calypso/images/customer-home/menus.svg"
 							/>
 							<ActionBox
-								href="https://support.wordpress.com/images/"
+								href={ `/media/${ siteSlug }` }
 								onClick={ () => trackAction( 'my_site', 'change_images' ) }
 								label={ translate( 'Change images' ) }
 								iconSrc="/calypso/images/customer-home/images.svg"
@@ -270,19 +286,19 @@ class Home extends Component {
 						<VerticalNav className="customer-home__card-links">
 							<VerticalNavItem
 								path={ `/marketing/connections/${ siteSlug }` }
-								onClick={ () => trackAction( 'earn', 'share_site' ) }
+								onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
 							>
 								{ translate( 'Share my site' ) }
 							</VerticalNavItem>
 							<VerticalNavItem
 								path={ `/marketing/tools/${ siteSlug }` }
-								onClick={ () => trackAction( 'earn', 'grow_audience' ) }
+								onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
 							>
 								{ translate( 'Grow my audience' ) }
 							</VerticalNavItem>
 							<VerticalNavItem
 								path={ `/earn/${ siteSlug }` }
-								onClick={ () => trackAction( 'earn', 'money' ) }
+								onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
 							>
 								{ translate( 'Earn money' ) }
 							</VerticalNavItem>
@@ -304,7 +320,7 @@ class Home extends Component {
 									external
 									onClick={ () => trackAction( 'support', 'docs' ) }
 								>
-									{ translate( 'Support docs' ) }
+									{ translate( 'Support articles' ) }
 								</VerticalNavItem>
 								<VerticalNavItem
 									path="/help/contact"
@@ -356,11 +372,13 @@ const connectHome = connect(
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
 			customizeUrl: getCustomizerUrl( state, siteId ),
+			menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 			hasChecklistData,
 			isChecklistComplete,
 			isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			staticHomePageId: getSiteFrontPage( state, siteId ),
 		};
 	},
 	dispatch => ( {
@@ -373,10 +391,15 @@ const connectHome = connect(
 					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
 				)
 			),
+		expandToolsSection: () => dispatch( expandSection( SIDEBAR_SECTION_TOOLS ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...stateProps,
 		...ownProps,
+		expandToolsAndTrack: ( section, action ) => {
+			dispatchProps.expandToolsSection();
+			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage );
+		},
 		trackAction: ( section, action ) =>
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
 	} )

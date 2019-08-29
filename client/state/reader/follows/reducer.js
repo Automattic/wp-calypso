@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +25,7 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 
@@ -107,7 +106,7 @@ function updateNotificationSubscription( state, { payload, type } ) {
 	};
 }
 
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ READER_RECORD_FOLLOW ]: ( state, action ) => {
@@ -257,7 +256,7 @@ export const items = createReducer(
 
 export const itemsCount = createReducer( 0, {
 	[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
-		return !! action.payload.totalCount ? action.payload.totalCount : state;
+		return action.payload.totalCount ? action.payload.totalCount : state;
 	},
 } );
 
