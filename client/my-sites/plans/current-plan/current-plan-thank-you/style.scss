@@ -1,4 +1,4 @@
-.current-plan-thank-you {	
+.current-plan-thank-you {
 	display: flex;
 	flex-direction: row;
 	max-width: 720px;
@@ -10,7 +10,7 @@
 
 	&__title {
 		font-size: 24px;
-		
+
 		@include breakpoint( '<660px' ) {
 			text-align: center;
 		}
@@ -18,30 +18,30 @@
 
 	&__link {
 		font-size: 14px;
-	}	
+	}
 
 	.progress-bar {
 		@include breakpoint( '>660px' ) {
 			max-width: 80%;
 		}
 	}
-	
+
 	.button {
 		background-color: var( --color-primary );
 		border-color: var( --color-primary-dark );
 		padding-right: 80px;
 		padding-left: 80px;
-		
+
 		@include breakpoint( '<660px' ) {
 			text-align: center;
 			width: 100%;
 		}
-		
+
 		&:hover,
 		&:focus {
 			background-color: var( --color-primary-400 );
 			border-color: var( --color-primary-dark );
-		}	
+		}
 	}
 }
 
