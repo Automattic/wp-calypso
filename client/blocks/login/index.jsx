@@ -18,7 +18,6 @@ import config from 'config';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import {
-	getCloseWindowAfterLogin,
 	getRedirectToSanitized,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
@@ -43,6 +42,7 @@ import userFactory from 'lib/user';
 import AsyncLoad from 'components/async-load';
 import VisitSite from 'blocks/visit-site';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 
 /**
  * Style dependencies
@@ -130,10 +130,11 @@ class Login extends Component {
 	};
 
 	rebootAfterLogin = () => {
-		const { redirectTo, closeWindowAfterLogin } = this.props;
+		const { redirectTo, initialQuery } = this.props;
 
-		if ( closeWindowAfterLogin ) {
-			window.close();
+		if ( initialQuery.close_window_after_login ) {
+			typeof window !== 'undefined' && window.close();
+			return;
 		}
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
@@ -411,7 +412,7 @@ class Login extends Component {
 
 export default connect(
 	state => ( {
-		closeWindowAfterLogin: getCloseWindowAfterLogin( state ),
+		initialQuery: getInitialQueryArguments( state ),
 		redirectTo: getRedirectToSanitized( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
