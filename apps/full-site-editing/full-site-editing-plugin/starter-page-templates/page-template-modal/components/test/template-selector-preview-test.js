@@ -1,32 +1,51 @@
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme';
+import './config/setup';
+import { render } from '@testing-library/react';
 import { blocksFixture } from './helpers/templates-blocks-helpers';
 import TemplateSelectorPreview from '../template-selector-preview';
 
+// Mock out this component until @wordpress/block-editor
+// `BlockPreview` component is available as default export.
+// Once available, swap this mock to mocking out `BlockPreview`
+// directly as it causes too many knock on effects when rendering
+jest.mock( '../block-template-preview', () => () => {
+	return <div data-testid="block-template-preview">MockedBlockPreview</div>;
+} );
+
+// Required to handle `BlockPreview` usage of Mutation Observer
+beforeAll(
+	( global.MutationObserver = jest.fn( () => {
+		return {
+			observe: jest.fn(),
+			disconnect: jest.fn(),
+		};
+	} ) )
+);
+
+afterAll( () => {
+	global.MutationObserver.mockRestore();
+} );
+
 describe( 'TemplateSelectorPreview', () => {
 	describe( 'Basic rendering', () => {
-		it( 'renders preview when blocks are provided', () => {
-			const wrapper = shallow(
+		it( 'renders the preview when blocks are provided', () => {
+			const { queryByTestId, container } = render(
 				<TemplateSelectorPreview blocks={ blocksFixture } viewportWidth={ 960 } />
 			);
 
-			expect( wrapper.isEmptyRender() ).toBe( false );
-
-			expect( wrapper.find( 'BlockTemplatePreview' ).exists() ).toBe( true );
-			expect( wrapper.find( 'Disabled' ).exists() ).toBe( true );
-			expect( wrapper.find( '.template-selector-preview__placeholder' ).exists() ).toBe( false );
-			expect( wrapper ).toMatchSnapshot();
+			expect( queryByTestId( 'block-template-preview' ) ).toBeInTheDocument();
+			expect( container ).toMatchSnapshot();
 		} );
 
 		it( 'renders placeholder when no blocks are provided', () => {
-			const wrapper = shallow( <TemplateSelectorPreview viewportWidth={ 960 } /> );
+			const { getByText, queryByTestId } = render(
+				<TemplateSelectorPreview viewportWidth={ 960 } />
+			);
 
-			expect( wrapper.isEmptyRender() ).toBe( false );
-			expect( wrapper.find( '.template-selector-preview__placeholder' ).exists() ).toBe( true );
-			expect( wrapper.find( 'BlockTemplatePreview' ).exists() ).toBe( false );
-			expect( wrapper ).toMatchSnapshot();
+			expect( getByText( 'Select a page template to preview.' ) ).toBeInTheDocument();
+			expect( queryByTestId( 'block-template-preview' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'renders placeholder when blocks is not an array', () => {
@@ -38,14 +57,12 @@ describe( 'TemplateSelectorPreview', () => {
 					block: 'bar',
 				},
 			};
-
-			const wrapper = shallow(
+			const { getByText, queryByTestId } = render(
 				<TemplateSelectorPreview blocks={ invalidBlocksProp } viewportWidth={ 960 } />
 			);
 
-			expect( wrapper.isEmptyRender() ).toBe( false );
-			expect( wrapper.find( '.template-selector-preview__placeholder' ).exists() ).toBe( true );
-			expect( wrapper.find( 'BlockTemplatePreview' ).exists() ).toBe( false );
+			expect( getByText( 'Select a page template to preview.' ) ).toBeInTheDocument();
+			expect( queryByTestId( 'block-template-preview' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
