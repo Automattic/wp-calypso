@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { get, mapValues, reduce, reduceRight } from 'lodash';
-import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
+import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
