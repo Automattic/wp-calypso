@@ -20,6 +20,7 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
 import LiveChatClosureNotice from 'me/help/live-chat-closure-notice';
+import GMClosureNotice from 'me/help/gm-closure-notice';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -538,6 +539,14 @@ class HelpContact extends React.Component {
 							displayAt="2019-04-18 00:00Z"
 							closesAt="2019-04-21 06:00Z"
 							reopensAt="2019-04-22 06:00Z"
+						/>
+						<GMClosureNotice
+							compact={ compact }
+							displayAt="2019-08-31 00:00Z"
+							defaultClosesAt="2019-09-07 06:00Z"
+							defaultReopensAt="2019-09-23 06:00Z"
+							businessAndEcommerceClosesAt="2019-09-10 06:00Z"
+							businessAndEcommerceReopensAt="2019-09-19 06:00Z"
 						/>
 					</Fragment>
 				) }
