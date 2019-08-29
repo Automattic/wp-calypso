@@ -33,6 +33,10 @@ export const TemplateSelectorControl = ( {
 		return null;
 	}
 
+	if ( true === useDynamicPreview && isEmpty( blocksByTemplates ) ) {
+		return null;
+	}
+
 	const id = `template-selector-control-${ instanceId }`;
 
 	return (
@@ -42,7 +46,10 @@ export const TemplateSelectorControl = ( {
 			help={ help }
 			className={ classnames( className, 'template-selector-control' ) }
 		>
-			<ul className="template-selector-control__options">
+			<ul
+				className="template-selector-control__options"
+				data-testid="template-selector-control-options"
+			>
 				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
 					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
 						<TemplateSelectorItem

@@ -47,17 +47,19 @@ const TemplateSelectorItem = props => {
 		/>
 	);
 
+	const labelId = `label-${ id }-${ value }`;
+
 	return (
 		<button
 			type="button"
-			id={ `${ id }-${ value }` }
 			className="template-selector-item__label"
 			value={ value }
 			onMouseEnter={ () => onFocus( value, label ) }
 			onClick={ () => onSelect( value, label ) }
+			aria-labelledby={ `${ id } ${ labelId }` }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			<span data-test-id="template-selector-item-label">{ label }</span>
+			<span id={ labelId }>{ label }</span>
 		</button>
 	);
 };

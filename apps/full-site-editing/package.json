@@ -52,7 +52,9 @@
 		"eslint": "^6.2.1",
 	},
 	"devDependencies": {
-		"eslint-plugin-jest": "^22.15.2",
+        "@testing-library/jest-dom": "^4.1.0",
+        "eslint-plugin-jest": "^22.15.2",
+		"@testing-library/react": "^9.1.3",
         "@wordpress/scripts": "^3.4.0"
 	}
 }
