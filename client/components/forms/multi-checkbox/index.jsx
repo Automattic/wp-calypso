@@ -1,12 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { includes, omit } from 'lodash';
 
 export default class MultiCheckbox extends Component {
 	static propTypes = {
@@ -44,20 +40,25 @@ export default class MultiCheckbox extends Component {
 	};
 
 	render() {
-		const { disabled, name, options } = this.props;
-		const checked = this.props.checked || this.state.initialChecked;
+		const {
+			checked,
+			defaultChecked,
+			disabled,
+			onChange,
+			name,
+			options,
+			...otherProps
+		} = this.props;
+		const checkedItems = checked || this.state.initialChecked;
 		return (
-			<div
-				className="multi-checkbox"
-				{ ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }
-			>
+			<div className="multi-checkbox" { ...otherProps }>
 				{ options.map( option => (
 					<label key={ option.value }>
 						<input
 							name={ name + '[]' }
 							type="checkbox"
 							value={ option.value }
-							checked={ includes( checked, option.value ) }
+							checked={ checkedItems.includes( option.value ) }
 							onChange={ this.handleChange }
 							disabled={ disabled }
 						/>
