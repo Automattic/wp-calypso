@@ -4,7 +4,7 @@
 import { uniqueId } from 'lodash';
 import './config/setup';
 
-import { render, queryByText, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
 import { templatesFixture, blocksByTemplatesFixture } from './helpers/templates-blocks-helpers';
 import { TemplateSelectorControl } from '../template-selector-control';
@@ -57,7 +57,7 @@ describe( 'TemplateSelectorControl', () => {
 		} );
 
 		it( 'does not render when missing templates prop', () => {
-			const { container, queryByTestId } = render(
+			const { queryByText, queryByTestId } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
 					instanceId={ uniqueId() }
@@ -66,12 +66,12 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			// use `queryBy` to avoid throwing an error with `getBy`
-			expect( queryByText( container, 'Select a Template...' ) ).not.toBeInTheDocument();
+			expect( queryByText( 'Select a Template...' ) ).not.toBeInTheDocument();
 			expect( queryByTestId( 'template-selector-control-options' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'does not render when templates prop is not an Array', () => {
-			const { container, queryByTestId } = render(
+			const { queryByText, queryByTestId } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
 					instanceId={ uniqueId() }
@@ -80,7 +80,7 @@ describe( 'TemplateSelectorControl', () => {
 				/>
 			);
 
-			expect( queryByText( container, 'Select a Template...' ) ).not.toBeInTheDocument();
+			expect( queryByText( 'Select a Template...' ) ).not.toBeInTheDocument();
 			expect( queryByTestId( 'template-selector-control-options' ) ).not.toBeInTheDocument();
 		} );
 	} );
