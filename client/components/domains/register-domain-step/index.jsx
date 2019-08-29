@@ -93,6 +93,7 @@ import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 
 /**
@@ -323,9 +324,10 @@ class RegisterDomainStep extends React.Component {
 		}
 		this._isMounted = true;
 		this.props.recordSearchFormView( this.props.analyticsSection );
+		this.toggleShowSignupSitePreview();
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps ) {
 		this.checkForBloggerPlan();
 
 		if (
@@ -336,9 +338,33 @@ class RegisterDomainStep extends React.Component {
 			this.focusSearchCard();
 		}
 
-		if ( this.state.trademarkClaimsNoticeInfo !== prevState.trademarkClaimsNoticeInfo ) {
-			if ( this.state.trademarkClaimsNoticeInfo ) {
-				this.props.hideSitePreview();
+		this.toggleShowSignupSitePreview();
+	}
+
+	/*
+		The following unsightly nest of conditionals attempts
+		to cover all states for which the signup site preview will
+		hide or show.
+ 	*/
+	toggleShowSignupSitePreview() {
+		if ( this.props.isSignupStep ) {
+			if ( this.props.isSitePreviewVisible ) {
+				if (
+					this.state.loadingResults ||
+					this.state.trademarkClaimsNoticeInfo ||
+					( this.state.searchResults && this.state.searchResults.length )
+				) {
+					return this.props.hideSitePreview();
+				}
+			}
+			if ( ! this.props.isSitePreviewVisible ) {
+				if (
+					! this.state.trademarkClaimsNoticeInfo &&
+					! this.state.loadingResults &&
+					( ! this.state.searchResults || ! this.state.searchResults.length )
+				) {
+					return this.props.showSitePreview();
+				}
 			}
 		}
 	}
@@ -1327,6 +1353,7 @@ export default connect(
 	( state, props ) => {
 		const queryObject = getQueryObject( props );
 		return {
+			isSitePreviewVisible: isSitePreviewVisible( state ),
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),

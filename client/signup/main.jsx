@@ -67,7 +67,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
-import { showSitePreview } from 'state/signup/preview/actions';
+import { showSitePreview, hideSitePreview } from 'state/signup/preview/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -205,7 +205,7 @@ class Signup extends React.Component {
 		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
 		this.preloadNextStep();
-		this.props.showSitePreview();
+		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -236,7 +236,16 @@ class Signup extends React.Component {
 		}
 
 		if ( this.props.stepName !== prevProps.stepName ) {
+			this.maybeShowSitePreview();
 			this.preloadNextStep();
+		}
+	}
+
+	maybeShowSitePreview() {
+		if ( get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) ) {
+			this.props.showSitePreview();
+		} else {
+			this.props.hideSitePreview();
 		}
 	}
 
@@ -608,7 +617,7 @@ class Signup extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	state => {
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
@@ -627,9 +636,7 @@ export default connect(
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
-			shouldShowMockups:
-				get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ) &&
-				isSitePreviewVisible( state ),
+			shouldShowMockups: isSitePreviewVisible( state ),
 		};
 	},
 	{
@@ -639,5 +646,6 @@ export default connect(
 		submitSignupStep,
 		loadTrackingTool,
 		showSitePreview,
+		hideSitePreview,
 	}
 )( Signup );
