@@ -3,17 +3,17 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import GoogleLoginButton from 'components/social-buttons/google';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import AppleLoginButton from 'components/social-buttons/apple';
 import config from 'config';
+import GoogleLoginButton from 'components/social-buttons/google';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -30,6 +30,19 @@ class SocialSignupForm extends Component {
 		compact: false,
 	};
 
+	handleAppleResponse = response => {
+		if ( ! response.id_token ) {
+			return;
+		}
+
+		const extraUserData = response.user && {
+			user_name: response.user.name,
+			user_email: response.user.email,
+		};
+
+		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
+	};
+
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
@@ -42,9 +55,9 @@ class SocialSignupForm extends Component {
 		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
 	};
 
-	trackGoogleLogin = () => {
+	trackSocialLogin = service => {
 		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
-			social_account_type: 'google',
+			social_account_type: service,
 		} );
 	};
 
@@ -52,6 +65,7 @@ class SocialSignupForm extends Component {
 		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
 		// let's use the redirect flow instead in that case
 		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+
 		return isPopup;
 	}
 
@@ -62,11 +76,7 @@ class SocialSignupForm extends Component {
 		return (
 			<div className="signup-form__social">
 				{ ! this.props.compact && (
-					<p>
-						{ preventWidows(
-							this.props.translate( 'Or create an account with your Google profile.' )
-						) }
-					</p>
+					<p>{ preventWidows( this.props.translate( 'Or create an account using:' ) ) }</p>
 				) }
 
 				<div className="signup-form__social-buttons">
@@ -75,7 +85,12 @@ class SocialSignupForm extends Component {
 						responseHandler={ this.handleGoogleResponse }
 						redirectUri={ redirectUri }
 						uxMode={ uxMode }
-						onClick={ this.trackGoogleLogin }
+						onClick={ () => this.trackSocialLogin( 'google' ) }
+					/>
+
+					<AppleLoginButton
+						responseHandler={ this.handleAppleResponse }
+						onClick={ () => this.trackSocialLogin( 'apple' ) }
 					/>
 				</div>
 			</div>
