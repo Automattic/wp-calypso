@@ -758,8 +758,7 @@ function mapStateToProps( state ) {
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
-	const isCustomerHomeEnabled =
-		'show' === abtest( 'customerHomePage' ) && isEnabled( 'customer-home' );
+	const isCustomerHomeEnabled = 'show' === abtest( 'customerHomePage' );
 
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),

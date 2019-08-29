@@ -25,7 +25,6 @@
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
-		"customer-home": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": false,
