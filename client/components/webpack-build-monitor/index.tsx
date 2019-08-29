@@ -117,9 +117,7 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 				if ( source ) {
 					source.close();
 				}
-				if ( connectionTimer ) {
-					clearInterval( connectionTimer );
-				}
+				clearInterval( connectionTimer );
 			};
 		}
 	}, [] );
