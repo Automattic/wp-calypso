@@ -27,9 +27,9 @@
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
 		"dev": "rimraf dist && npm-run-all --parallel dev:*",
 		"build": "rimraf dist && npm-run-all --parallel build:*",
-		"test:unit": "npx --package @wordpress/scripts wp-scripts test-unit-js",
-		"test:unit:help": "npx --package @wordpress/scripts wp-scripts test-unit-js --help",
-		"test:unit:watch": "npx --package @wordpress/scripts wp-scripts test-unit-js --watch"
+		"test:unit": "wp-scripts test-unit-js",
+		"test:unit:help": "wp-scripts test-unit-js --help",
+		"test:unit:watch": "wp-scripts test-unit-js --watch"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
@@ -50,6 +50,9 @@
         "@wordpress/scripts": "^3.4.0",
 		"enzyme": "^3.10.0",
 		"eslint": "^6.2.1",
-		"eslint-plugin-jest": "^22.15.2"
+	},
+	"devDependencies": {
+		"eslint-plugin-jest": "^22.15.2",
+        "@wordpress/scripts": "^3.4.0"
 	}
 }
