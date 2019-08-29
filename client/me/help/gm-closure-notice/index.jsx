@@ -109,28 +109,28 @@ const GMClosureNotice = ( {
 
 	const REASON_MESSAGES = {
 		hasPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{a}}https://wordpress.com/help/contact{{/a}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}https://wordpress.com/help/contact{{/contactLink}}',
 			{
 				components: {
-					a: <a href="/help/contact" />,
+					contactLink: <a href="/help/contact" />,
 				},
 			}
 		),
 		nonPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{a}}https://en.support.wordpress.com{{/a}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}https://en.support.wordpress.com{{/supportLink}}',
 			{
 				components: {
-					a: <a href="https://en.support.wordpress.com" />,
+					supportLink: <a href="https://en.support.wordpress.com" />,
 				},
 			}
 		),
 	};
 
 	const FORUMS_NOTE = translate(
-		'Our staff will be keeping an eye on the {{a}}Forums{{/a}} for urgent matters.',
+		'Our staff will be keeping an eye on the {{forumLink}}Forums{{/forumLink}} for urgent matters.',
 		{
 			components: {
-				a: <a href="https://en.forums.wordpress.com/forum/support/" />,
+				forumLink: <a href="https://en.forums.wordpress.com/forum/support/" />,
 			},
 		}
 	);
