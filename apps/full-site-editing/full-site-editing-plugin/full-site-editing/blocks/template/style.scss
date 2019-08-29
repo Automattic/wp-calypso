@@ -40,15 +40,6 @@
 	}
 }
 
-// Adjust the block content positioning without borders
-@media only screen and ( min-width: 768px ) {
-	.editor-styles-wrapper .wp-block.template__block-container[data-align='full'] {
-		left: calc( -12.5% - 13px );
-		max-width: calc( 125% + 116px );
-		width: calc( 125% + 116px );
-	}
-}
-
 .template-block__overlay {
 	background: rgba( #ffffff, 0.8 );
 	border: 0 solid rgba( #7b86a2, 0.3 ); // Gutenberg $dark-opacity-light-600
