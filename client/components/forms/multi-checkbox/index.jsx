@@ -1,71 +1,65 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-export default class MultiCheckbox extends Component {
-	static propTypes = {
-		checked: PropTypes.array,
-		defaultChecked: PropTypes.array,
-		disabled: PropTypes.bool,
-		onChange: PropTypes.func,
-		options: PropTypes.array.isRequired,
-		name: PropTypes.string,
-	};
+export default function MultiCheckbox( props ) {
+	const { checked, defaultChecked, disabled, onChange, name, options, ...otherProps } = props;
 
-	static defaultProps = {
-		defaultChecked: Object.freeze( [] ),
-		disabled: false,
-		onChange: () => {},
-		name: 'multiCheckbox',
-	};
+	// Used to store the initial value of the `defaultChecked` prop. Never updated.
+	// This is done to avoid changing the active items if the defaults change after the initial render.
+	const defaultCheckedOnStart = useRef( defaultChecked );
 
-	state = {
-		initialChecked: this.props.defaultChecked,
-	};
+	const handleChange = useCallback(
+		event => {
+			const target = event.target;
+			let checkedEventValue = checked || defaultCheckedOnStart.current;
+			checkedEventValue = checkedEventValue.concat( [ target.value ] ).filter( currentValue => {
+				return currentValue !== target.value || target.checked;
+			} );
 
-	handleChange = event => {
-		const target = event.target;
-		let checked = this.props.checked || this.state.initialChecked;
-		checked = checked.concat( [ target.value ] ).filter( currentValue => {
-			return currentValue !== target.value || target.checked;
-		} );
+			onChange( {
+				value: checkedEventValue,
+			} );
 
-		this.props.onChange( {
-			value: checked,
-		} );
+			event.stopPropagation();
+		},
+		[ checked, onChange ]
+	);
 
-		event.stopPropagation();
-	};
-
-	render() {
-		const {
-			checked,
-			defaultChecked,
-			disabled,
-			onChange,
-			name,
-			options,
-			...otherProps
-		} = this.props;
-		const checkedItems = checked || this.state.initialChecked;
-		return (
-			<div className="multi-checkbox" { ...otherProps }>
-				{ options.map( option => (
-					<label key={ option.value }>
-						<input
-							name={ name + '[]' }
-							type="checkbox"
-							value={ option.value }
-							checked={ checkedItems.includes( option.value ) }
-							onChange={ this.handleChange }
-							disabled={ disabled }
-						/>
-						<span>{ option.label }</span>
-					</label>
-				) ) }
-			</div>
-		);
-	}
+	const checkedItems = checked || defaultCheckedOnStart.current;
+	return (
+		<div className="multi-checkbox" { ...otherProps }>
+			{ options.map( option => (
+				<label key={ option.value }>
+					<input
+						name={ name + '[]' }
+						type="checkbox"
+						value={ option.value }
+						checked={ checkedItems.includes( option.value ) }
+						onChange={ handleChange }
+						disabled={ disabled }
+					/>
+					<span>{ option.label }</span>
+				</label>
+			) ) }
+		</div>
+	);
 }
+
+MultiCheckbox.propTypes = {
+	checked: PropTypes.array,
+	defaultChecked: PropTypes.array,
+	disabled: PropTypes.bool,
+	onChange: PropTypes.func,
+	options: PropTypes.array.isRequired,
+	name: PropTypes.string,
+};
+
+MultiCheckbox.defaultProps = {
+	defaultChecked: Object.freeze( [] ),
+	disabled: false,
+	onChange: () => {},
+	name: 'multiCheckbox',
+};
