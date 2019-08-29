@@ -10,7 +10,7 @@
 //
 // Usage:
 // @include long-content-fade();
-// @include long-content-fade( $color: var( --color-sidebar-secondary-background-gradient ) );
+// @include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
 // ==========================================================================
 
 @mixin long-content-fade(

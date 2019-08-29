@@ -30,8 +30,8 @@
 	--color-primary-100: var( --studio-gray-100 );
 	--color-primary-100-rgb: var( --studio-gray-100-rgb );
 
-	--color-accent: var( --studio-blue-40 );
-	--color-accent-rgb: var( --studio-blue-40-rgb );
+	--color-accent: var( --studio-blue-50 );
+	--color-accent-rgb: var( --studio-blue-50-rgb );
 	--color-accent-dark: var( --studio-blue-70 );
 	--color-accent-dark-rgb: var( --studio-blue-70-rgb );
 	--color-accent-light: var( --studio-blue-30 );
@@ -60,11 +60,6 @@
 	--color-accent-90-rgb: var( --studio-blue-90-rgb );
 	--color-accent-100: var( --studio-blue-100 );
 	--color-accent-100-rgb: var( --studio-blue-100-rgb );
-
-	--color-text: var( --studio-gray-90 );
-	--color-text-subtle: var( --studio-gray-60 );
-	--color-surface: var( --studio-white );
-	--color-surface-backdrop: var( --studio-gray-0 );
 
 	--color-link: var( --studio-red-60 );
 	--color-link-rgb: var( --studio-red-60-rgb );
@@ -97,12 +92,9 @@
 	--color-link-100: var( --studio-red-100 );
 	--color-link-100-rgb: var( --studio-red-100-rgb );
 
-	--color-button-primary-background-hover: var( --studio-blue-50 );
-	--color-button-primary-scary-background-hover: var( --studio-red-40 );
-
-	--color-masterbar: var( --studio-white );
 	--color-masterbar-background: var( --studio-gray-70 );
-	--color-masterbar-border: var( --studio-gray-80 );
+	--color-masterbar-border: var( --studio-gray-70 );
+	--color-masterbar-text: var( --studio-white );
 	--color-masterbar-item-hover-background: var( --studio-gray-80 );
 	--color-masterbar-item-active-background: var( --studio-gray-90 );
 	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
@@ -111,21 +103,16 @@
 	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
 	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
 
-	--color-sidebar-background: var( --studio-gray-80 );
-	--color-sidebar-background-gradient: var( --studio-gray-80-rgb );
-	--color-sidebar-secondary-background: var( --studio-white );
-	--color-sidebar-secondary-background-gradient: var( --studio-white-rgb );
-	--color-sidebar-border: var( --studio-gray-70 );
+	--color-sidebar-background: var( --studio-gray-90 );
+	--color-sidebar-background-rgb: var( --studio-gray-90-rgb );
+	--color-sidebar-border: var( --studio-gray-80 );
 	--color-sidebar-text: var( --studio-white );
-	--color-sidebar-text-light: var( --studio-gray-10 );
-	--color-sidebar-gridicon-fill: var( --studio-white );
-	--color-sidebar-heading: var( --studio-gray-10 );
-	--color-sidebar-menu-link-secondary-text: var( --studio-gray-30 );
-	--color-sidebar-menu-a-first-child-after-background: var( --studio-gray-80-rgb );
-	--color-sidebar-menu-selected-background: var( --studio-red-60 );
-	--color-sidebar-menu-selected-a: var( --studio-white );
-	--color-sidebar-menu-selected-a-first-child-after-background: var( --studio-red-60-rgb );
-	--color-sidebar-menu-hover-background: var( --studio-gray-70 );
-	--color-sidebar-menu-hover-background-gradient: var( --studio-gray-70-rgb );
-	--color-sidebar-menu-hover: var( --studio-white );
+	--color-sidebar-text-alternative: var( --studio-gray-20 );
+	--color-sidebar-gridicon-fill: var( --studio-gray-10 );
+	--color-sidebar-menu-selected-background: var( --studio-red-50 );
+	--color-sidebar-menu-selected-background-rgb: var( --studio-red-50-rgb );
+	--color-sidebar-menu-selected-text: var( --studio-white );
+	--color-sidebar-menu-hover-background: var( --studio-gray-80 );
+	--color-sidebar-menu-hover-background-rgb: var( --studio-gray-80-rgb );
+	--color-sidebar-menu-hover-text: var( --studio-white );
 }

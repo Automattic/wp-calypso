@@ -5,7 +5,7 @@ $autobar-height: 20px;
 .masterbar {
 	background: var( --color-masterbar-background );
 	border-bottom: 1px solid var( --color-masterbar-border );
-	color: var( --color-masterbar );
+	color: var( --color-masterbar-text );
 	font-size: 16px;
 	display: flex;
 	height: $masterbar-height;
@@ -73,7 +73,7 @@ $autobar-height: 20px;
 	display: flex;
 	align-items: center;
 	position: relative;
-	color: var( --color-masterbar );
+	color: var( --color-masterbar-text );
 	font-size: 14px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
@@ -83,7 +83,7 @@ $autobar-height: 20px;
 	transition: all 0.2s ease-in-out;
 
 	&:visited {
-		color: var( --color-masterbar );
+		color: var( --color-masterbar-text );
 	}
 
 	&[href] {
@@ -91,11 +91,11 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
-		color: var( --color-masterbar );
+		color: var( --color-masterbar-text );
 	}
 
 	.gridicon {
-		fill: var( --color-masterbar ); // only because safari gets currentColor wrong
+		fill: var( --color-masterbar-text ); // only because safari gets currentColor wrong
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -104,7 +104,7 @@ $autobar-height: 20px;
 
 	&:hover {
 		background: var( --color-masterbar-item-hover-background );
-		color: var( --color-masterbar );
+		color: var( --color-masterbar-text );
 	}
 
 	&:focus {
@@ -112,7 +112,7 @@ $autobar-height: 20px;
 
 		.accessible-focus & {
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-			color: var( --color-masterbar );
+			color: var( --color-masterbar-text );
 		}
 	}
 

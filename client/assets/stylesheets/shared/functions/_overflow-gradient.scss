@@ -10,7 +10,7 @@
 // function which doesn't allow for CSS custom properties as input values.
 //
 // Usage:
-// background: overflow-gradient( var( --color-sidebar-rgba-test ) );
+// background: overflow-gradient( var( --color-sidebar-background-rgb ) );
 // border-image: overflow-gradient( var( --color-neutral-light-rgb ) ), to left );
 // ==========================================================================
 @function overflow-gradient( $color, $stop: 90%, $direction: to right ) {

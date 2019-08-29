@@ -61,11 +61,6 @@
 	--color-accent-100: var( --studio-blue-100 );
 	--color-accent-100-rgb: var( --studio-blue-100-rgb );
 
-	--color-text: var( --studio-gray-90 );
-	--color-text-subtle: var( --studio-gray-60 );
-	--color-surface: var( --studio-white );
-	--color-surface-backdrop: var( --studio-gray-0 );
-
 	--color-link: var( --studio-blue-50 );
 	--color-link-rgb: var( --studio-blue-50-rgb );
 	--color-link-dark: var( --studio-blue-70 );
@@ -97,12 +92,9 @@
 	--color-link-100: var( --studio-blue-100 );
 	--color-link-100-rgb: var( --studio-blue-100-rgb );
 
-	--color-button-primary-background-hover: var( --studio-blue-40 );
-	--color-button-primary-scary-background-hover: var( --studio-red-40 );
-
-	--color-masterbar: var( --studio-white );
 	--color-masterbar-background: var( --studio-gray-100 );
 	--color-masterbar-border: var( --studio-gray-90 );
+	--color-masterbar-text: var( --studio-white );
 	--color-masterbar-item-hover-background: var( --studio-gray-80 );
 	--color-masterbar-item-active-background: var( --studio-gray-70 );
 	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
@@ -112,18 +104,15 @@
 	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
 
 	--color-sidebar-background: var( --studio-gray-5 );
-	--color-sidebar-background-gradient: var( --studio-gray-5-rgb );
-	--color-sidebar-secondary-background: var( --studio-white );
-	--color-sidebar-secondary-background-gradient: var( --studio-white-rgb );
+	--color-sidebar-background-rgb: var( --studio-gray-5-rgb );
 	--color-sidebar-border: var( --studio-gray-10 );
+	--color-sidebar-text: var( --studio-gray-80 );
+	--color-sidebar-text-alternative: var( --studio-gray-60 );
 	--color-sidebar-gridicon-fill: var( --studio-gray-50 );
-	--color-sidebar-heading: var( --studio-gray-90 );
-	--color-sidebar-menu-link-secondary-text: var( --studio-gray-50 );
-	--color-sidebar-menu-a-first-child-after-background: var( --studio-gray-5-rgb );
 	--color-sidebar-menu-selected-background: var( --studio-gray-60 );
-	--color-sidebar-menu-selected-a: var( --studio-white );
-	--color-sidebar-menu-selected-a-first-child-after-background: var( --studio-gray-60-rgb );
-	--color-sidebar-menu-hover-background: var( --studio-blue-10 );
-	--color-sidebar-menu-hover-background-gradient: var( --studio-blue-10-rgb );
-	--color-sidebar-menu-hover: var( --studio-blue-60 );
+	--color-sidebar-menu-selected-background-rgb: var( --studio-gray-60-rgb );
+	--color-sidebar-menu-selected-text: var( --studio-white );
+	--color-sidebar-menu-hover-background: var( --studio-white );
+	--color-sidebar-menu-hover-background-rgb: var( --studio-white-rgb );
+	--color-sidebar-menu-hover-text: var( --studio-blue-60 );
 }

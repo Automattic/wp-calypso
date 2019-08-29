@@ -81,10 +81,10 @@
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
 			background-color: var( --color-sidebar-menu-hover-background );
-			color: var( --color-sidebar-menu-hover );
+			color: var( --color-sidebar-menu-hover-text );
 
 			.gridicon {
-				fill: var( --color-sidebar-menu-hover );
+				fill: var( --color-sidebar-menu-hover-text );
 			}
 		}
 	}

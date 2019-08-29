@@ -55,7 +55,7 @@
 // Sidebar Headings, used for both static headings
 // like in Reader, and for the expandable menus.
 .sidebar__heading {
-	color: var( --color-sidebar-heading );
+	color: var( --color-sidebar-text-alternative );
 	font-size: 15px;
 	font-weight: 600;
 	padding: 16px 8px 6px 16px;
@@ -90,21 +90,21 @@
 	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
 
 	&:hover {
-		background-color: var( --color-sidebar-sidebar-menu-hover-background );
-		color: var( --color-sidebar-menu-hover );
+		background-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
 
 		.sidebar__menu-icon {
-			fill: var( --color-sidebar-menu-hover );
+			fill: var( --color-sidebar-menu-hover-text );
 		}
 	}
 
 	.selected &,
 	.selected &:hover {
-		color: var( --color-sidebar-menu-selected-a );
+		color: var( --color-sidebar-menu-selected-text );
 		background-color: var( --color-sidebar-menu-selected-background );
 
 		.sidebar__menu-icon {
-			fill: var( --color-sidebar-menu-selected-a );
+			fill: var( --color-sidebar-menu-selected-text );
 		}
 	}
 
@@ -133,7 +133,7 @@
 	position: absolute;
 	right: 0;
 	z-index: 1;
-	color: var( --color-sidebar-text-light );
+	color: var( --color-sidebar-text-alternative );
 	padding: 4px 8px;
 
 	.selected &,
@@ -152,12 +152,12 @@
 		cursor: pointer;
 
 		&:hover {
-			background-color: var( --color-sidebar-sidebar-menu-hover-background );
-			color: var( --color-sidebar-menu-hover );
+			background-color: var( --color-sidebar-menu-hover-background );
+			color: var( --color-sidebar-menu-hover-text );
 
 			.sidebar__menu-icon,
 			.sidebar__expandable-arrow {
-				fill: var( --color-sidebar-menu-hover );
+				fill: var( --color-sidebar-menu-hover-text );
 			}
 		}
 	}

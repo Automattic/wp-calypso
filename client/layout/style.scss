@@ -153,12 +153,12 @@
 	}
 	
 	.site__domain {
-		color: var( --color-sidebar-heading );
+		color: var( --color-sidebar-text-alternative );
 	}
 	
 	.site__title::after,
 	.site__domain::after {
-		@include long-content-fade( $color: var( --color-sidebar-background-gradient ) );
+		@include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
 	}
 	
 	.site__badge {
@@ -178,7 +178,7 @@
 			border-color: var( --color-sidebar-border );
 		
 			.button {
-				color: var( --color-sidebar-heading );
+				color: var( --color-sidebar-text-alternative );
 				&:hover {
 					color: var( --color-sidebar-text );
 				}
@@ -190,7 +190,7 @@
 		}
 		
 		&__no-results {
-			color: var( --color-sidebar-heading );
+			color: var( --color-sidebar-text-alternative );
 		}
 		
 		&__hidden-sites-message,

@@ -43,26 +43,26 @@
 		background-color: var( --color-sidebar-menu-selected-background );
 
 		.site__badge {
-			color: var( --color-sidebar-menu-selected-a );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 
 		.site__title,
 		.site__domain {
-			color: var( --color-sidebar-menu-selected-a );
+			color: var( --color-sidebar-menu-selected-text );
 			&::after {
 				@include long-content-fade(
-					$color: var( --color-sidebar-menu-selected-background-gradient )
+					$color: var( --color-sidebar-menu-selected-background-rgb )
 				);
 			}
 		}
 
 		.count {
-			border-color: var( --color-sidebar-menu-selected-a );
-			color: var( --color-sidebar-menu-selected-a );
+			border-color: var( --color-sidebar-menu-selected-text );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 
 		&.is-private .site__title::before {
-			color: var( --color-sidebar-menu-selected-a );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 	}
 }
@@ -76,24 +76,24 @@
 	cursor: pointer;
 
 	.site__badge {
-		color: var( --color-sidebar-menu-hover );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 
 	.site__title,
 	.site__domain {
-		color: var( --color-sidebar-menu-hover );
+		color: var( --color-sidebar-menu-hover-text );
 		&::after {
-			@include long-content-fade( $color: var( --color-sidebar-menu-hover-background-gradient ) );
+			@include long-content-fade( $color: var( --color-sidebar-menu-hover-background-rgb ) );
 		}
 	}
 
 	.site__title::before {
-		color: var( --color-sidebar-menu-hover );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 
 	.count {
-		border-color: var( --color-sidebar-menu-hover );
-		color: var( --color-sidebar-menu-hover );
+		border-color: var( --color-sidebar-menu-hover-text );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 }
 
@@ -134,7 +134,7 @@
 .site-selector__sites {
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
-	background: var( --color-sidebar-secondary-background );
+	background: var( --color-surface );
 
 	@include breakpoint( '<660px' ) {
 		max-height: calc( 100% - 109px );

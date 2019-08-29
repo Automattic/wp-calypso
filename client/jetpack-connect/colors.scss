@@ -7,7 +7,6 @@
 	// Override global colors with accent variables
 	--color-primary:                         var( --color-accent-dark );
 	--color-primary-light:                   var( --color-accent-light );
-	--color-button-primary-background-hover: var( --color-accent-light );
 	--color-accent-60:                       var( --color-accent-dark );
 
 	::selection {
@@ -31,7 +30,6 @@
 	--color-neutral-20:                      var( --studio-gray-60 );
 	--color-primary-20:                      var( --studio-gray-60 );
 	--color-primary-light:                   var( --color-accent-light );
-	--color-button-primary-background-hover: #ca2a7c;
 	--color-accent-60:                       var( --color-accent-dark );
 
 	::selection {
