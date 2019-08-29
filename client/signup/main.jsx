@@ -66,6 +66,8 @@ import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { showSitePreview } from 'state/signup/preview/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -203,6 +205,7 @@ class Signup extends React.Component {
 		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
 		this.preloadNextStep();
+		this.props.showSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -624,7 +627,9 @@ export default connect(
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
-			shouldShowMockups: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
+			shouldShowMockups:
+				get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ) &&
+				isSitePreviewVisible( state ),
 		};
 	},
 	{
@@ -633,5 +638,6 @@ export default connect(
 		submitSiteVertical,
 		submitSignupStep,
 		loadTrackingTool,
+		showSitePreview,
 	}
 )( Signup );

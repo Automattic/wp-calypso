@@ -93,6 +93,7 @@ import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 
 /**
  * Style dependencies
@@ -324,7 +325,7 @@ class RegisterDomainStep extends React.Component {
 		this.props.recordSearchFormView( this.props.analyticsSection );
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps, prevState ) {
 		this.checkForBloggerPlan();
 
 		if (
@@ -333,6 +334,12 @@ class RegisterDomainStep extends React.Component {
 			this.props.selectedSite.domain !== prevProps.selectedSite.domain
 		) {
 			this.focusSearchCard();
+		}
+
+		if ( this.state.trademarkClaimsNoticeInfo !== prevState.trademarkClaimsNoticeInfo ) {
+			if ( this.state.trademarkClaimsNoticeInfo ) {
+				this.props.hideSitePreview();
+			}
 		}
 	}
 
@@ -470,14 +477,18 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	rejectTrademarkClaim = () => {
-		this.setState( {
-			selectedSuggestion: null,
-			trademarkClaimsNoticeInfo: null,
-		} );
+		this.setState(
+			{
+				selectedSuggestion: null,
+				trademarkClaimsNoticeInfo: null,
+			},
+			() => this.props.showSitePreview()
+		);
 	};
 
 	acceptTrademarkClaim = () => {
 		this.props.onAddDomain( this.state.selectedSuggestion );
+		this.props.showSitePreview();
 	};
 
 	renderTrademarkClaimsNotice() {
@@ -1333,5 +1344,7 @@ export default connect(
 		recordShowMoreResults,
 		recordTransferDomainButtonClick,
 		recordUseYourDomainButtonClick,
+		hideSitePreview,
+		showSitePreview,
 	}
 )( localize( RegisterDomainStep ) );
