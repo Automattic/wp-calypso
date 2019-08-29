@@ -16,8 +16,8 @@ import { isEcommercePlan, isBusinessPlan, isPremiumPlan, isPersonalPlan } from '
 import FoldableCard from 'components/foldable-card';
 import FormSectionHeading from 'components/forms/form-section-HEADING';
 import { useLocalizedMoment } from 'components/localized-moment';
-import { getSitePlanSlug } from 'state/sites/selectors';
-import { getHelpSelectedSiteId } from 'state/help/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getUserPurchases } from 'state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -34,33 +34,35 @@ const GMClosureNotice = ( {
 	defaultClosesAt,
 	defaultReopensAt,
 	displayAt,
-	selectedSitePlanSlug,
+	purchases,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const isBusinessOrEcommercePlan =
-		isBusinessPlan( selectedSitePlanSlug ) || isEcommercePlan( selectedSitePlanSlug );
-	const isPersonalOrPremiumPlan =
-		isPersonalPlan( selectedSitePlanSlug ) || isPremiumPlan( selectedSitePlanSlug );
-	const isNonPlan = ! isBusinessOrEcommercePlan && ! isPersonalOrPremiumPlan;
+	const hasBusinessOrEcommercePlan = purchases.some(
+		( { productSlug } ) => isBusinessPlan( productSlug ) || isEcommercePlan( productSlug )
+	);
+	const hasPersonalOrPremiumPlan = purchases.some(
+		( { productSlug } ) => isPersonalPlan( productSlug ) || isPremiumPlan( productSlug )
+	);
+	const hasNoPlan = ! hasBusinessOrEcommercePlan && ! hasPersonalOrPremiumPlan;
 
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
 
 	const [ closesAt, closedUntil, reopensAt ] = [
 		moment.tz(
-			isBusinessOrEcommercePlan ? businessAndEcommerceClosesAt : defaultClosesAt,
+			hasBusinessOrEcommercePlan ? businessAndEcommerceClosesAt : defaultClosesAt,
 			guessedTimezone
 		),
 		moment
 			.tz(
-				isBusinessOrEcommercePlan ? businessAndEcommerceReopensAt : defaultReopensAt,
+				hasBusinessOrEcommercePlan ? businessAndEcommerceReopensAt : defaultReopensAt,
 				guessedTimezone
 			)
 			.subtract( 1, 'days' ),
 		moment.tz(
-			isBusinessOrEcommercePlan ? businessAndEcommerceReopensAt : defaultReopensAt,
+			hasBusinessOrEcommercePlan ? businessAndEcommerceReopensAt : defaultReopensAt,
 			guessedTimezone
 		),
 	];
@@ -136,8 +138,8 @@ const GMClosureNotice = ( {
 	);
 
 	const period = currentDate.isBefore( closesAt ) ? 'before' : 'during';
-	const mainMessage = isNonPlan ? MAIN_MESSAGES[ period ].nonPlan : MAIN_MESSAGES[ period ].hasPlan;
-	const reason = isNonPlan ? REASON_MESSAGES.nonPlan : REASON_MESSAGES.hasPlan;
+	const mainMessage = hasNoPlan ? MAIN_MESSAGES[ period ].nonPlan : MAIN_MESSAGES[ period ].hasPlan;
+	const reason = hasNoPlan ? REASON_MESSAGES.nonPlan : REASON_MESSAGES.hasPlan;
 
 	if ( compact ) {
 		return (
@@ -163,7 +165,7 @@ const GMClosureNotice = ( {
 			<div>
 				<p>{ mainMessage }</p>
 				<p>{ reason }</p>
-				{ isNonPlan && <p>{ FORUMS_NOTE }</p> }
+				{ hasNoPlan && <p>{ FORUMS_NOTE }</p> }
 			</div>
 			<hr />
 		</div>
@@ -171,6 +173,6 @@ const GMClosureNotice = ( {
 };
 
 export default connect( state => {
-	const selectedSiteId = getHelpSelectedSiteId( state );
-	return { selectedSitePlanSlug: getSitePlanSlug( state, selectedSiteId ) };
+	const userId = getCurrentUserId( state );
+	return { purchases: getUserPurchases( state, userId ) };
 } )( GMClosureNotice );
