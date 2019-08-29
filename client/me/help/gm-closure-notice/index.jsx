@@ -8,13 +8,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import 'moment-timezone'; // monkey patches the existing moment.js
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isEcommercePlan, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
 import FoldableCard from 'components/foldable-card';
-import FormSectionHeading from 'components/forms/form-section-HEADING';
+import FormSectionHeading from 'components/forms/form-section-heading';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUserPurchases } from 'state/purchases/selectors';
@@ -39,10 +40,12 @@ const GMClosureNotice = ( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const hasBusinessOrEcommercePlan = purchases.some(
+	const hasBusinessOrEcommercePlan = some(
+		purchases,
 		( { productSlug } ) => isBusinessPlan( productSlug ) || isEcommercePlan( productSlug )
 	);
-	const hasPersonalOrPremiumPlan = purchases.some(
+	const hasPersonalOrPremiumPlan = some(
+		purchases,
 		( { productSlug } ) => isPersonalPlan( productSlug ) || isPremiumPlan( productSlug )
 	);
 	const hasNoPlan = ! hasBusinessOrEcommercePlan && ! hasPersonalOrPremiumPlan;
