@@ -598,7 +598,7 @@ jobs:
           echo "export CI_PULL_REQUEST=https://github.com/Automattic/wp-calypso/pull/<< parameters.live-branches >>" >> $BASH_ENV
           echo "export CI_PULL_REQUESTS=https://github.com/Automattic/wp-calypso/pull/<< parameters.live-branches >>" >> $BASH_ENV
       - run: echo running test command "./run.sh -R << parameters.test-flag >> -f ${TESTFILES} << parameters.run-args >>"
-      - run: cd wp-calypso/test/e2e && ./run.sh -R << parameters.test-flag >> -f ${TESTFILES} << parameters.run-args >>
+      - run: ./run.sh -R << parameters.test-flag >> -f ${TESTFILES} << parameters.run-args >>
       - store-artifacts-and-test-results
       - slack/status:
           webhook: $SLACK_E2E
@@ -808,13 +808,21 @@ workflows:
   e2e-full-suite-triggered:
     when: << pipeline.parameters.e2e-only >>
     jobs:
-      - setup
+      - setup:
+          name: setup-e2e
       - wait-calypso-live:
           requires:
-            - setup
+            - setup-e2e
       - test-e2e-full:
+          name: test-e2e-full-desktop
           requires:
             - wait-calypso-live
+          test-flag: '-g -s desktop'
+      - test-e2e-full:
+          name: test-e2e-full-mobile
+          requires:
+            - wait-calypso-live
+          test-flag: '-g -s mobile'
 
   e2e-canary-scheduled:
     jobs:
