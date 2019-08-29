@@ -81,29 +81,29 @@ const GMClosureNotice = ( {
 	} );
 
 	const mainMessageArgs = {
-		closesAt: closesAt.format( DATE_FORMAT_LONG ),
-		closedUntil: closedUntil.format( DATE_FORMAT_LONG ),
-		reopensAt: reopensAt.format( DATE_FORMAT_LONG ),
+		closed_start_date: closesAt.format( DATE_FORMAT_LONG ),
+		closed_end_date: closedUntil.format( DATE_FORMAT_LONG ),
+		support_resume_date: reopensAt.format( DATE_FORMAT_LONG ),
 	};
 
 	const MAIN_MESSAGES = {
 		before: {
 			hasPlan: translate(
-				'Live chat support will be closed %(closesAt)s through %(closedUntil)s, included. Email support will be open during that time, and we will reopen live chat on %(reopensAt)s.',
+				'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
 				{ args: mainMessageArgs }
 			),
 			nonPlan: translate(
-				'Private support will be closed %(closesAt)s through %(closedUntil)s, included. We will reopen private support on %(reopensAt)s.',
+				'Private support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. We will reopen private support on %(support_resume_date)s.',
 				{ args: mainMessageArgs }
 			),
 		},
 		during: {
 			hasPlan: translate(
-				'Live chat support will be closed through %(closedUntil)s, included. Email support will be open during that time, and we will reopen live chat on %(reopensAt)s.',
+				'Live chat support will be closed through %(closed_end_date)s, included. Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
 				{ args: mainMessageArgs }
 			),
 			nonPlan: translate(
-				'Private support will be closed through %(closedUntil)s, included. We will reopen private support on %(reopensAt)s.',
+				'Private support will be closed through %(closed_end_date)s, included. We will reopen private support on %(support_resume_date)s.',
 				{ args: mainMessageArgs }
 			),
 		},
@@ -129,10 +129,10 @@ const GMClosureNotice = ( {
 	};
 
 	const FORUMS_NOTE = translate(
-		'Our staff will be keeping an eye on the {{forumLink}}Forums{{/forumLink}} for urgent matters.',
+		'Our staff will be keeping an eye on the {{link}}Forums{{/link}} for urgent matters.',
 		{
 			components: {
-				forumLink: <a href="https://en.forums.wordpress.com/forum/support/" />,
+				link: <a href="https://en.forums.wordpress.com/forum/support/" />,
 			},
 		}
 	);
@@ -152,7 +152,7 @@ const GMClosureNotice = ( {
 				{ mainMessage }
 				<br />
 				<br />
-				{ translate( '{{contactLink}}Read more{{/contactLink}}', {
+				{ translate( '{{contactLink}}Read more.{{/contactLink}}', {
 					components: { contactLink: <a href="/help/contact" /> },
 				} ) }
 			</FoldableCard>
