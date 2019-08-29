@@ -809,7 +809,9 @@ workflows:
     when: << pipeline.parameters.e2e-only >>
     jobs:
       - setup
-      - wait-calypso-live
+      - wait-calypso-live:
+          requires:
+            - setup
       - test-e2e-full:
           requires:
             - wait-calypso-live
