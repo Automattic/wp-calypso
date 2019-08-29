@@ -13,13 +13,11 @@ import Gridicon from 'gridicons';
  */
 import ExternalLink from 'components/external-link';
 import Head from '../components/head';
+import { cssChunkLink } from './utils';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
-const cssChunkLink = asset => (
-	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
-);
 class Desktop extends React.Component {
 	render() {
 		const {

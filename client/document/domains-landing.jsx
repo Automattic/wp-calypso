@@ -11,12 +11,9 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Head from 'components/head';
+import { cssChunkLink } from './utils';
 import getStylesheet from './utils/stylesheet';
 import { jsonStringifyForHtml } from '../../server/sanitize';
-
-const cssChunkLink = asset => (
-	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
-);
 
 function DomainsLanding( {
 	branchName,
