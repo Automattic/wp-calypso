@@ -133,7 +133,9 @@ export function getIframeSource(
 				<header id="masthead" class="site-header">
 					<div class="site-branding-container">
 						<div class="site-branding">
-							<p class="site-title signup-site-preview__title"></p>
+							<p class="site-title">
+								<a href="#" class="signup-site-preview__title"></a>
+							</p>
 						</div>
 					</div>
 				</header>
