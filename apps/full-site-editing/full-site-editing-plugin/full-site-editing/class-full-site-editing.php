@@ -347,8 +347,9 @@ class Full_Site_Editing {
 	 * @param \WP_Post $post Post instance.
 	 */
 	public function merge_template_and_post( $post ) {
-		// Bail if not a REST API Request.
-		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		// Bail if not a REST API Request and not in the editor.
+		global $pagenow;
+		if ( 'post.php' !== $pagenow && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 			return;
 		}
 
