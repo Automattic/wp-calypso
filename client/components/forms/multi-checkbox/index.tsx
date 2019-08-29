@@ -2,10 +2,39 @@
  * External dependencies
  */
 import React, { useCallback, useRef } from 'react';
-import PropTypes from 'prop-types';
 
-export default function MultiCheckbox( props ) {
-	const { checked, defaultChecked, disabled, onChange, name, options, ...otherProps } = props;
+type OptionValue = number | string;
+
+interface Option {
+	value: OptionValue;
+	label: string;
+}
+
+interface ChangeList {
+	value: OptionValue[];
+}
+
+interface Props {
+	options: Option[];
+	checked?: OptionValue[];
+	defaultChecked?: OptionValue[];
+	onChange?: ( list: ChangeList ) => void;
+	disabled?: boolean;
+	name?: string;
+}
+
+type DivProps = React.ComponentProps< 'div' >;
+
+export default function MultiCheckbox( props: Props & DivProps ) {
+	const {
+		checked,
+		defaultChecked = [] as OptionValue[],
+		disabled = false,
+		onChange = () => {},
+		name = 'multiCheckbox',
+		options,
+		...otherProps
+	} = props;
 
 	// Used to store the initial value of the `defaultChecked` prop. Never updated.
 	// This is done to avoid changing the active items if the defaults change after the initial render.
@@ -14,14 +43,14 @@ export default function MultiCheckbox( props ) {
 	const handleChange = useCallback(
 		event => {
 			const target = event.target;
-			let checkedEventValue = checked || defaultCheckedOnStart.current;
-			checkedEventValue = checkedEventValue.concat( [ target.value ] ).filter( currentValue => {
+			let changeEventValue = checked || defaultCheckedOnStart.current;
+			changeEventValue = changeEventValue.concat( [ target.value ] ).filter( currentValue => {
 				return currentValue !== target.value || target.checked;
 			} );
 
-			onChange( {
-				value: checkedEventValue,
-			} );
+			if ( onChange ) {
+				onChange( { value: changeEventValue } );
+			}
 
 			event.stopPropagation();
 		},
@@ -47,19 +76,3 @@ export default function MultiCheckbox( props ) {
 		</div>
 	);
 }
-
-MultiCheckbox.propTypes = {
-	checked: PropTypes.array,
-	defaultChecked: PropTypes.array,
-	disabled: PropTypes.bool,
-	onChange: PropTypes.func,
-	options: PropTypes.array.isRequired,
-	name: PropTypes.string,
-};
-
-MultiCheckbox.defaultProps = {
-	defaultChecked: Object.freeze( [] ),
-	disabled: false,
-	onChange: () => {},
-	name: 'multiCheckbox',
-};
