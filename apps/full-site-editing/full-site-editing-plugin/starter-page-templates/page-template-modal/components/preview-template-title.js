@@ -3,22 +3,16 @@
  * applying the css classes needed to follow ths styles
  * inherited from the theme.
  *
- * @param {string} title Template title
+ * @param {string} title Template title - transform css rule.
  * @return {*} Component
  */
 
-const PreviewTemplateTitle = ( { title, scale } ) => (
+const PreviewTemplateTitle = ( { title, transform } ) => (
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	<div className="editor-post-content">
 		<div className="editor-post-title">
 			<div className="editor-post-title__block">
-				<textarea
-					style={ {
-						transform: `scale( ${ scale } )`,
-					} }
-					className="editor-post-title__input"
-					value={ title }
-				/>
+				<textarea style={ { transform } } className="editor-post-title__input" value={ title } />
 			</div>
 		</div>
 	</div>
