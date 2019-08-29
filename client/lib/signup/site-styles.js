@@ -16,7 +16,7 @@ export const siteStyleOptions = {
 			} ),
 			id: 'modern',
 			label: 'Modern',
-			theme: 'pub/modern-business',
+			theme: 'pub/maywood',
 			fontUrl: 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,500,700',
 			buttonSvg: (
 				<svg width="62" height="32" xmlns="http://www.w3.org/2000/svg">
@@ -104,6 +104,13 @@ export const siteStyleOptions = {
  */
 export const getThemeCssUri = ( themeSlug, isRtl ) =>
 	`https://s0.wp.com/wp-content/themes/${ themeSlug }/style${ isRtl ? '-rtl' : '' }.css`;
+
+/**
+ * Returns a default font URI
+ *
+ * @return {String}            The default font URI
+ */
+export const getFontUrl = () => 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,500,700';
 
 /**
  * Returns a style definition object
