@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty, noop } from 'lodash';
+import notices from 'notices';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
@@ -167,6 +168,10 @@ function CreditCardExpiryAndCvvFields( {
 	getErrorMessage,
 	card,
 } ) {
+	if ( stripeLoadingError && ! shouldRenderAdditionalCountryFields( card.country ) ) {
+		notices.error( stripeLoadingError.message || 'Error loading Stripe' );
+	}
+
 	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
 		components: {
 			span: <span className="credit-card-form-fields__explainer" />,
