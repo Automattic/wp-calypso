@@ -9,7 +9,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer, {
-	closeWindowAfterLogin,
 	isRequesting,
 	isFormDisabled,
 	isRequestingTwoFactorAuth,
@@ -50,7 +49,6 @@ describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'authAccountType',
-			'closeWindowAfterLogin',
 			'isFormDisabled',
 			'isRequesting',
 			'isRequestingTwoFactorAuth',
@@ -709,47 +707,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( newState ).to.to.eql( { isLinking: false } );
-		} );
-	} );
-
-	describe( 'closeWindowAfterLogin', () => {
-		test( 'should be null on a non log-in route', () => {
-			const state = closeWindowAfterLogin(
-				{},
-				{
-					type: ROUTE_SET,
-					path: '/non-log-in/route',
-					query: { close_window_after_login: true },
-				}
-			);
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		test( 'should be empty on a log-in route when param does not exist in query', () => {
-			const state = closeWindowAfterLogin(
-				{},
-				{
-					type: ROUTE_SET,
-					path: '/log-in/jetpack',
-					query: { redirect_to: 'redirect' },
-				}
-			);
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		test( 'should be true on a log-in route', () => {
-			const state = closeWindowAfterLogin(
-				{},
-				{
-					type: ROUTE_SET,
-					path: '/log-in/jetpack',
-					query: { close_window_after_login: true },
-				}
-			);
-
-			expect( state ).to.be.true;
 		} );
 	} );
 } );

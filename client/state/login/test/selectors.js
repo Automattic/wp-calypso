@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	getCloseWindowAfterLogin,
 	getRequestError,
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
@@ -396,28 +395,6 @@ describe( 'selectors', () => {
 					},
 				} )
 			).to.eql( 'google' );
-		} );
-	} );
-
-	describe( 'getCloseWindowAfterLogin', function() {
-		test( 'getCloseWindowAfterLogin is true', () => {
-			expect(
-				getCloseWindowAfterLogin( {
-					login: {
-						closeWindowAfterLogin: true,
-					},
-				} )
-			).to.be.true;
-		} );
-
-		test( 'getCloseWindowAfterLogin is false', () => {
-			expect(
-				getCloseWindowAfterLogin( {
-					login: {
-						closeWindowAfterLogin: false,
-					},
-				} )
-			).to.be.false;
 		} );
 	} );
 } );
