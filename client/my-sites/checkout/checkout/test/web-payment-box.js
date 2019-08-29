@@ -48,6 +48,7 @@ describe( 'WebPaymentBox', () => {
 
 	const defaultProps = {
 		cart: defaultCart,
+		disablePostalCodeDebounce: true,
 		translate: identity,
 		countriesList: [ 'TEST_COUNTRY_CODE' ],
 		onSubmit: jest.fn(),
