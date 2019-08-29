@@ -13,6 +13,11 @@
 	.edit-post-visual-editor {
 		margin-top: 20px;
 		padding-top: 0;
+
+		.block-editor-writing-flow__click-redirect {
+			// override core for FSE header and footer editing
+			height: 50px;
+		}
 	}
 
 	.editor-post-switch-to-draft {
