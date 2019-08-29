@@ -11,7 +11,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Head from 'components/head';
-import { cssChunkLink } from './utils';
+import { chunkCssLinks } from './utils';
 import getStylesheet from './utils/stylesheet';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
@@ -32,8 +32,6 @@ function DomainsLanding( {
 	faviconURL,
 	addEvergreenCheck,
 } ) {
-	const csskey = isRTL ? 'css.rtl' : 'css.ltr';
-
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 			<Head
@@ -58,7 +56,7 @@ function DomainsLanding( {
 					}
 					type="text/css"
 				/>
-				{ entrypoint[ csskey ].map( cssChunkLink ) }
+				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
 			<body
 				className={ classnames( {

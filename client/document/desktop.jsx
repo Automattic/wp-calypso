@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  */
 import ExternalLink from 'components/external-link';
 import Head from '../components/head';
-import { cssChunkLink } from './utils';
+import { chunkCssLinks } from './utils';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
@@ -41,7 +41,7 @@ class Desktop extends React.Component {
 			devDocsURL,
 			feedbackURL,
 		} = this.props;
-		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
+
 		return (
 			<html
 				lang={ lang }
@@ -57,7 +57,7 @@ class Desktop extends React.Component {
 						}
 						type="text/css"
 					/>
-					{ entrypoint[ csskey ].map( cssChunkLink ) }
+					{ chunkCssLinks( entrypoint, isRTL ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
 				<body className={ classNames( { rtl: isRTL } ) }>

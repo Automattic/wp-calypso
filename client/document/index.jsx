@@ -18,7 +18,7 @@ import EnvironmentBadge, {
 	DevDocsLink,
 	PreferencesHelper,
 } from '../components/environment-badge';
-import { cssChunkLink } from './utils';
+import { chunkCssLinks } from './utils';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
@@ -63,8 +63,6 @@ class Document extends React.Component {
 			addEvergreenCheck,
 			requestFrom,
 		} = this.props;
-
-		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
@@ -116,8 +114,8 @@ class Document extends React.Component {
 						}
 						type="text/css"
 					/>
-					{ entrypoint[ csskey ].map( cssChunkLink ) }
-					{ chunkFiles[ csskey ].map( cssChunkLink ) }
+					{ chunkCssLinks( entrypoint, isRTL ) }
+					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>
 				<body
 					className={ classNames( {
