@@ -16,7 +16,7 @@ export const siteStyleOptions = {
 			} ),
 			id: 'modern',
 			label: 'Modern',
-			theme: 'pub/maywood',
+			theme: 'pub/modern-business',
 			fontUrl: 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,500,700',
 			buttonSvg: (
 				<svg width="62" height="32" xmlns="http://www.w3.org/2000/svg">
