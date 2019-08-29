@@ -9,7 +9,6 @@ declare const __webpack_hash__: string;
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import io from 'socket.io-client';
 
 /**
  * Internal dependencies
@@ -25,73 +24,18 @@ import './style.scss';
 const CONNECTION_TIMEOUT = 20 * 1000;
 const debug = debugFactory( 'calypso:webpack-build-monitor' );
 
+enum BuildState {
+	UNKNOWN,
+	IDLE,
+	BUILDING,
+	BUILT_WITH_WARNINGS,
+	ERROR,
+}
+
 const WebpackBuildMonitor: FunctionComponent = () => {
 	const [ lastHash, setLastHash ] = useState( __webpack_hash__ );
-
-	// Webpack
-	const [ isWebpackConnected, setIsWebpackConnected ] = useState( false );
-	const [ hasWebpackErrors, setHasWebpackErrors ] = useState( false );
-	const [ hasWebpackWarnings, setHasWebpackWarnings ] = useState( false );
-	const [ isWebpackBuilding, setWebpackBuilding ] = useState( false );
-
-	// CSS
-	const [ isCssConnected, setIsCssConnected ] = useState( false );
-	const [ hasCssErrors, setHasCssErrors ] = useState( false );
-	const [ isCssBuilding, setCssBuilding ] = useState( false );
-
-	useEffect( () => {
-		const namespace = location.protocol + '//' + location.host + '/css-hot-reload';
-
-		let socket;
-
-		const connect = () => {
-			debug( 'Hot CSS connecting' );
-			socket = io.connect( namespace, {
-				reconnectionDelay: CONNECTION_TIMEOUT,
-				transports: [ 'websocket' ],
-			} );
-			socket.on( 'connect', () => {
-				debug( 'Hot CSS connected' );
-				setIsCssConnected( true );
-			} );
-
-			socket.on( 'disconnect', () => {
-				debug( 'Hot CSS disconnected. Reconnecting…' );
-				setIsCssConnected( false );
-			} );
-
-			socket.on(
-				'css-hot-reload',
-				( { status }: { status: 'building' | 'build-failed' | 'reload' | 'up-to-date' } ) => {
-					debug( 'Hot CSS status update: %o', status );
-					switch ( status ) {
-						case 'building':
-							setCssBuilding( true );
-							break;
-
-						case 'build-failed':
-							setHasCssErrors( true );
-							setCssBuilding( false );
-							break;
-
-						case 'reload':
-						case 'up-to-date':
-							setHasCssErrors( false );
-							setCssBuilding( false );
-							break;
-					}
-				}
-			);
-		};
-
-		connect();
-
-		return () => {
-			if ( socket && ! socket.disconnected ) {
-				socket.close();
-			}
-		};
-	}, [] );
+	const [ isConnected, setIsConnected ] = useState( false );
+	const [ buildState, setBuildState ] = useState( BuildState.UNKNOWN );
 
 	useEffect( () => {
 		if ( typeof EventSource === 'undefined' ) {
@@ -109,12 +53,12 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 
 				source.onopen = () => {
 					debug( 'Webpack HMR connected' );
-					setIsWebpackConnected( true );
+					setIsConnected( true );
 					lastActivity = Date.now();
 					connectionTimer = setInterval( () => {
 						if ( Date.now() - lastActivity > CONNECTION_TIMEOUT ) {
 							debug( 'Webpack HMR connection timeout. Reconnecting in %o…', CONNECTION_TIMEOUT );
-							setIsWebpackConnected( false );
+							setIsConnected( false );
 							clearInterval( connectionTimer );
 							source.close();
 							setTimeout( connect, CONNECTION_TIMEOUT );
@@ -128,7 +72,6 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 						let action: string | undefined;
 						let nextErrors;
 						let nextWarnings;
-						let nextHash;
 
 						try {
 							const parsedData = JSON.parse( m.data );
@@ -136,25 +79,32 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 							action = parsedData.action;
 							nextErrors = parsedData.errors;
 							nextWarnings = parsedData.warnings;
-							nextHash = parsedData.hash;
+							if ( parsedData.hash ) {
+								setLastHash( parsedData.hash );
+							}
 						} catch ( err ) {
 							debug( 'Could not parse HMR message.data %o', m.data );
 						}
 
 						switch ( action ) {
 							case 'building':
-								setWebpackBuilding( true );
-								setHasWebpackErrors( false );
-								setHasWebpackWarnings( false );
+								setBuildState( BuildState.BUILDING );
 								break;
 
 							case 'built':
-								setWebpackBuilding( false );
-							// fall through
+								if ( nextErrors.length ) {
+									setBuildState( BuildState.ERROR );
+								} else if ( nextWarnings.length ) {
+									setBuildState( BuildState.BUILT_WITH_WARNINGS );
+								} else {
+									setBuildState( BuildState.IDLE );
+								}
+								break;
+
 							case 'sync':
-								setHasWebpackErrors( !! nextErrors.length );
-								setHasWebpackWarnings( !! nextWarnings.length );
-								setLastHash( nextHash );
+								if ( nextErrors.length ) {
+									setBuildState( BuildState.ERROR );
+								}
 								break;
 						}
 					}
@@ -174,49 +124,32 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 		}
 	}, [] );
 
-	const isBuilding = isCssBuilding || isWebpackBuilding;
-	const hasErrors = hasCssErrors || hasWebpackErrors;
-
 	const needsReload = lastHash !== __webpack_hash__;
 
-	/* eslint-disable no-nested-ternary */
-	const msg =
-		! isWebpackConnected && ! isCssConnected
-			? 'Webpack and CSS disconnected'
-			: ! isWebpackConnected
-			? 'Webpack disconnected'
-			: ! isCssConnected
-			? 'CSS disconnected'
-			: isWebpackBuilding && isCssBuilding
-			? 'Webpack and CSS Building…'
-			: isWebpackBuilding
-			? 'Webpack building…'
-			: isCssBuilding
-			? 'CSS Building…'
-			: needsReload
-			? 'Need to refresh'
-			: hasWebpackErrors && hasCssErrors
-			? 'Webpack & CSS error'
-			: hasWebpackErrors
-			? 'Webpack error'
-			: hasCssErrors
-			? 'CSS error'
-			: null;
-	/* eslint-enable no-nested-ternary */
+	let msg: string | null = null;
+	if ( ! isConnected ) {
+		msg = 'Webpack disconnected';
+	} else if ( buildState === BuildState.BUILDING ) {
+		msg = 'Webpack building…';
+	} else if ( needsReload ) {
+		msg = 'Need to refresh';
+	} else if ( buildState === BuildState.ERROR ) {
+		msg = 'Webpack error';
+	}
 
-	return (
-		msg && (
-			<div
-				className={ classNames( 'webpack-build-monitor', {
-					'is-error': hasErrors || ! isWebpackConnected || ! isCssConnected,
-					'is-warning': hasWebpackWarnings || needsReload,
-				} ) }
-			>
-				{ isBuilding && <Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
-				{ msg }
-			</div>
-		)
-	);
+	return msg ? (
+		<div
+			className={ classNames( 'webpack-build-monitor', {
+				'is-error': buildState === BuildState.ERROR || ! isConnected,
+				'is-warning': buildState === BuildState.BUILT_WITH_WARNINGS || needsReload,
+			} ) }
+		>
+			{ buildState === BuildState.BUILDING && (
+				<Spinner size={ 11 } className="webpack-build-monitor__spinner" />
+			) }
+			{ msg }
+		</div>
+	) : null;
 };
 
 export default WebpackBuildMonitor;
