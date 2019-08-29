@@ -124,15 +124,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	showImportFlowInSiteTypeStep: {
-		datestamp: '20190820',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	removeBlogFlow: {
 		datestamp: '20190813',
 		variations: {
