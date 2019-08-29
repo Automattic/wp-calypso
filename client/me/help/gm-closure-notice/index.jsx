@@ -112,7 +112,7 @@ const GMClosureNotice = ( {
 			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{a}}https://wordpress.com/help/contact{{/a}}',
 			{
 				components: {
-					a: <a href="https://wordpress.com/help/contact" />,
+					a: <a href="/help/contact" />,
 				},
 			}
 		),
