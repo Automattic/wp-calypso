@@ -13,7 +13,6 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import MapDomainStep from 'components/domains/map-domain-step';
-import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -158,16 +157,6 @@ class DomainsStep extends React.Component {
 		};
 
 		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
-
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
-		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
-			this.setState( {
-				suggestion,
-				showTrademarkClaimsNotice: true,
-			} );
-			return;
-		}
-
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
@@ -470,34 +459,6 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	rejectTrademarkClaim = () => {
-		this.setState( { showTrademarkClaimsNotice: false } );
-	};
-
-	acceptTrademarkClaim = () => {
-		const { suggestion } = this.state;
-
-		suggestion.trademark_claims_notice_info = null;
-		this.handleAddDomain( suggestion );
-	};
-
-	trademarkClaimsNotice = () => {
-		const { suggestion } = this.state;
-		const domain = get( suggestion, 'domain_name' );
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
-
-		return (
-			<TrademarkClaimsNotice
-				basePath={ this.props.path }
-				domain={ domain }
-				isSignupStep
-				onAccept={ this.acceptTrademarkClaim }
-				onReject={ this.rejectTrademarkClaim }
-				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
-			/>
-		);
-	};
-
 	getSubHeaderText() {
 		const { flowName, siteType, translate } = this.props;
 		const onboardingSubHeaderCopy =
@@ -540,10 +501,6 @@ class DomainsStep extends React.Component {
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
 			content = this.domainForm();
-		}
-
-		if ( this.state.showTrademarkClaimsNotice ) {
-			content = this.trademarkClaimsNotice();
 		}
 
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
