@@ -106,15 +106,6 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	defaultMonthlyJetpackPlan: {
-		datestamp: '20190722',
-		variations: {
-			monthlyPlan: 50,
-			yearlyPlan: 50,
-		},
-		defaultVariation: 'yearlyPlan',
-		allowExistingUsers: true,
-	},
 	showPlanUpsellGSuite: {
 		datestamp: '20190805',
 		variations: {
