@@ -1,11 +1,7 @@
 /**
- * @format
- */
-
-/**
  * External dependencies
  */
-// eslint-disable-next-line wpcalypso/import-no-redux-combine-reducers
+// eslint-disable-next-line no-restricted-imports
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import nock from 'nock';
