@@ -673,6 +673,21 @@ parameters:
   e2e-only:
     type: boolean
     default: false
+  live-branches:
+    type: string
+    default: "false"
+  pull-request-num:
+    type: string
+    default: ""
+  run-args:
+    type: string
+    default: ""
+  calypso-sha:
+    type: string
+    default: ""
+  test-flag:
+    type: string
+    default: ""
 
 workflows:
   version: 2
