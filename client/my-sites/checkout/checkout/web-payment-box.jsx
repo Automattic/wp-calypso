@@ -54,6 +54,7 @@ export function WebPaymentBox( {
 	onSubmit,
 	presaleChatAvailable,
 	translate,
+	disablePostalCodeDebounce,
 	children,
 } ) {
 	const paymentMethod = useMemo( () => detectWebPaymentMethod(), [] );
@@ -66,6 +67,13 @@ export function WebPaymentBox( {
 	useEffect( () => {
 		setTaxPostalCode( debouncedPostalCode );
 	}, [ debouncedPostalCode ] );
+	const updatePostalCode = event => {
+		const value = event.target.value;
+		if ( disablePostalCodeDebounce ) {
+			setTaxPostalCode( value );
+		}
+		setPostalCodeInputValue( value );
+	};
 
 	if ( ! paymentMethod ) {
 		return null;
@@ -98,7 +106,7 @@ export function WebPaymentBox( {
 							additionalClasses="checkout-field"
 							name="postal-code"
 							label={ translate( 'Postal Code', { textOnly: true } ) }
-							onChange={ event => setPostalCodeInputValue( event.target.value.toString() ) }
+							onChange={ updatePostalCode }
 							value={ getPostalCodeStringFromPostalCode( postalCodeInputValue ) }
 							eventFormName="Checkout Form"
 						/>
@@ -112,7 +120,7 @@ export function WebPaymentBox( {
 						<span className="payment-request-button">
 							<WebPayButtonWithStripe
 								countryCode={ countryCode }
-								postalCode={ debouncedPostalCode }
+								postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
 								cart={ cart }
 								onSubmit={ onSubmit }
 								translate={ translate }
@@ -149,6 +157,7 @@ WebPaymentBox.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	presaleChatAvailable: PropTypes.bool,
 	translate: PropTypes.func.isRequired,
+	disablePostalCodeDebounce: PropTypes.bool,
 };
 
 function WebPayButton( {
