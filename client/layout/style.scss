@@ -160,11 +160,7 @@
 	.site__domain::after {
 		@include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
 	}
-	
-	.site__badge {
-		color: var( --color-sidebar-gridicon-fill );
-	}
-	
+
 	.site-selector {
 		&.is-large .site-selector__sites {
 			border-color: var( --color-sidebar-border );
