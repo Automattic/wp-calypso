@@ -376,11 +376,6 @@ class Full_Site_Editing {
 	 * @return bool
 	 */
 	private function should_merge_template_and_post( $post ) {
-		$current_theme = $this->normalize_theme_slug( get_stylesheet() );
-		if ( ! $this->is_supported_theme( $current_theme ) ) {
-			return false;
-		}
-
 		$is_rest_api_wpcom = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
 		$is_rest_api_core = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
 		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
