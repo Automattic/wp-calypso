@@ -19,7 +19,6 @@ import Main from 'components/main';
 import Card from 'components/card';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
-import LiveChatClosureNotice from 'me/help/live-chat-closure-notice';
 import GMClosureNotice from 'me/help/gm-closure-notice';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
@@ -533,13 +532,6 @@ class HelpContact extends React.Component {
 			<div>
 				{ isUserAffectedByLiveChatClosure && (
 					<Fragment>
-						<LiveChatClosureNotice
-							holidayName="Easter"
-							compact={ compact }
-							displayAt="2019-04-18 00:00Z"
-							closesAt="2019-04-21 06:00Z"
-							reopensAt="2019-04-22 06:00Z"
-						/>
 						<GMClosureNotice
 							compact={ compact }
 							displayAt="2019-08-31 00:00Z"
