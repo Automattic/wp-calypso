@@ -11,6 +11,8 @@ import nock from 'nock';
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
 
+const savedFetch = fetch;
+
 /**
  * Internal dependencies
  */
@@ -18,6 +20,17 @@ import { AuthCodeButton } from '../auth-code-button';
 import Notice from 'components/notice';
 
 describe( 'AuthCodeButton', () => {
+	beforeAll( () => {
+		// Transform relative URLs to absolute URLs with a `http://localhost` base URL.
+		// This is needed since the server-side fetch polyfill only accepts absolute URLs.
+		self.fetch = ( resource, init ) => savedFetch( new URL( resource, 'http://localhost' ), init );
+	} );
+
+	afterAll( () => {
+		// Restore 'fetch'.
+		self.fetch = savedFetch;
+	} );
+
 	test( 'button renders in ready state', () => {
 		const button = shallow( <AuthCodeButton username="usr" password="pwd" /> );
 		const notice = button.find( Notice );

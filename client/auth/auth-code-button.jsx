@@ -12,8 +12,7 @@ import Notice from 'components/notice';
 
 const initialState = { status: 'ready', errorLevel: false, errorMessage: false };
 
-// The tests need an absolute URL, so we need to detect if Jest is running.
-const SMS_URL = process.env.JEST_WORKER_ID !== undefined ? 'http://localhost/sms' : '/sms';
+const SMS_URL = '/sms';
 
 export class AuthCodeButton extends React.Component {
 	static defaultProps = {
