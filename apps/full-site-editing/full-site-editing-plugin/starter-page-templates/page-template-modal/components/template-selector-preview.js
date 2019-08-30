@@ -30,8 +30,9 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	// once the PR ships (finger-crossed)
 	// https://github.com/WordPress/gutenberg/pull/17242
 	useLayoutEffect( () => {
+		setVisibility( 'hidden' );
+
 		setTimeout( () => {
-			setVisibility( 'hidden' );
 			// Get DOM reference.
 			if ( ! ref || ! ref.current ) {
 				return;
@@ -69,10 +70,14 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		<div className={ previewElClasses }>
 			<Disabled>
 				<div ref={ ref } className="edit-post-visual-editor">
-					<div className="editor-styles-wrapper">
-						<div style={ { visibility } } className="editor-writing-flow">
-							<PreviewTemplateTitle title={ title } transform={ transform } />
-							<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+					<div className="editor-styles-wrapper" style={ { visibility } }>
+						<div className="editor-writing-flow">
+							<div className="editor-block-list__layout">
+								<div className="block-editor-block-list__block-edit">
+									<PreviewTemplateTitle title={ title } transform={ transform } />
+									<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
