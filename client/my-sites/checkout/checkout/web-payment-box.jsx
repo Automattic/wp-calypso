@@ -201,15 +201,14 @@ function WebPayButton( {
 	if ( ! stripe && ! isStripeLoading ) {
 		throw new Error( 'Stripe is required but not available' );
 	}
-	if ( isStripeLoading || ! canMakePayment || ! postalCode || ! countryCode ) {
-		return <LoadingPaymentRequestButton paymentType={ paymentType } translate={ translate } />;
-	}
+	const disabled = isStripeLoading || ! canMakePayment || ! postalCode || ! countryCode;
 	return (
 		<PaymentRequestButton
 			paymentRequest={ paymentRequest }
 			isRenewal={ isRenewal }
 			paymentType={ paymentType }
 			translate={ translate }
+			disabled={ disabled }
 		/>
 	);
 }
@@ -230,7 +229,7 @@ WebPayButton.propTypes = {
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
 // See: https://github.com/stripe/react-stripe-elements/issues/284
-function PaymentRequestButton( { paymentRequest, isRenewal, paymentType, translate } ) {
+function PaymentRequestButton( { paymentRequest, isRenewal, paymentType, translate, disabled } ) {
 	const onClick = event => {
 		event.persist();
 		event.preventDefault();
@@ -240,14 +239,21 @@ function PaymentRequestButton( { paymentRequest, isRenewal, paymentType, transla
 		paymentRequest.show();
 	};
 	if ( paymentType === 'apple-pay' ) {
-		return <button className="web-payment-box__apple-pay-button" onClick={ onClick } />;
+		return (
+			<button
+				className="web-payment-box__apple-pay-button"
+				onClick={ onClick }
+				disabled={ disabled }
+			/>
+		);
 	}
 	return (
 		<button
 			className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
 			onClick={ onClick }
+			disabled={ disabled }
 		>
-			{ translate( 'Select a payment card' ) }
+			{ translate( 'Select a payment card', { context: 'Loading state on /checkout' } ) }
 		</button>
 	);
 }
@@ -326,20 +332,6 @@ function useStripePaymentRequest( {
 	}, [ stripe, paymentRequestOptions, callback ] );
 
 	return { paymentRequest, canMakePayment };
-}
-
-function LoadingPaymentRequestButton( { paymentType, translate } ) {
-	if ( paymentType === 'apple-pay' ) {
-		return <button className="web-payment-box__apple-pay-button" disabled />;
-	}
-	return (
-		<button
-			className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
-			disabled
-		>
-			{ translate( 'Select a payment card' ) }
-		</button>
-	);
 }
 
 function completePaymentMethodTransaction( {
