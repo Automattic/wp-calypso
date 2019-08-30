@@ -27,9 +27,9 @@
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
 		"dev": "rimraf dist && npm-run-all --parallel dev:*",
 		"build": "rimraf dist && npm-run-all --parallel build:*",
-		"test:unit": "wp-scripts test-unit-js",
-		"test:unit:help": "wp-scripts test-unit-js --help",
-		"test:unit:watch": "wp-scripts test-unit-js --watch"
+		"test:unit": "wp-scripts test-unit-js --config='jest.config.js'",
+		"test:unit:help": "wp-scripts test-unit-js --config='jest.config.js' --help",
+		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
@@ -47,6 +47,7 @@
 		"@wordpress/i18n": "^3.6.0",
 		"@wordpress/keycodes": "^2.5.0",
 		"@wordpress/nux": "^3.5.0",
+		"@wordpress/plugins": "^2.5.0",
         "@wordpress/scripts": "^3.4.0",
 		"enzyme": "^3.10.0",
 		"eslint": "^6.2.1",
@@ -55,6 +56,8 @@
         "@testing-library/jest-dom": "^4.1.0",
         "eslint-plugin-jest": "^22.15.2",
 		"@testing-library/react": "^9.1.3",
-        "@wordpress/scripts": "^3.4.0"
+		"@wordpress/jest-preset-default": "^5.0.0",
+		"@wordpress/scripts": "^3.4.0",
+		"babel-jest": "^24.9.0"
 	}
 }
