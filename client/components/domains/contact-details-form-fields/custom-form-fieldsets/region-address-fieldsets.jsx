@@ -29,6 +29,7 @@ export class RegionAddressFieldsets extends Component {
 		countryCode: PropTypes.string,
 		shouldAutoFocusAddressField: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
+		manualLocationInput: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,6 +38,7 @@ export class RegionAddressFieldsets extends Component {
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
 		hasCountryStates: false,
+		manualLocationInput: false,
 	};
 
 	inputRefCallback( input ) {
@@ -60,13 +62,19 @@ export class RegionAddressFieldsets extends Component {
 	}
 
 	render() {
-		const { getFieldProps, translate, shouldAutoFocusAddressField } = this.props;
+		const {
+			getFieldProps,
+			translate,
+			shouldAutoFocusAddressField,
+			manualLocationInput,
+		} = this.props;
 		const usePlacesApi = abtest( 'placesApiInCheckout' ) === 'placesApi';
+		const showAddressFields = ! usePlacesApi || manualLocationInput;
 
 		return (
 			<div>
 				<div>
-					{ ! usePlacesApi && (
+					{ showAddressFields && (
 						<Input
 							ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
 							label={ translate( 'Address' ) }
@@ -75,7 +83,7 @@ export class RegionAddressFieldsets extends Component {
 						/>
 					) }
 
-					{ ! usePlacesApi && (
+					{ showAddressFields && (
 						<HiddenInput
 							label={ translate( 'Address Line 2' ) }
 							text={ translate( '+ Add Address Line 2' ) }

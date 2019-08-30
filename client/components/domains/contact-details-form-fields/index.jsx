@@ -125,6 +125,7 @@ export class ContactDetailsFormFields extends Component {
 			form: null,
 			submissionCount: 0,
 			locationSelected: false,
+			manualLocationInput: false,
 		};
 
 		this.inputRefs = {};
@@ -139,6 +140,7 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			( nextProps.isSubmitting === false && this.props.isSubmitting === true ) ||
 			nextState.locationSelected !== this.state.locationSelected ||
+			nextState.manualLocationInput !== this.state.manualLocationInput ||
 			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
 			! isEqual( nextProps.contactDetails, this.props.contactDetails ) ||
 			! isEqual( nextState.form, this.state.form ) ||
@@ -351,7 +353,7 @@ export class ContactDetailsFormFields extends Component {
 
 	handleAddressPredictionClick = ( { place_id: placeId }, sessionToken, query ) => {
 		if ( placeId === CREATE_NEW_PLACE_ID ) {
-			this.setState( { locationSelected: true } );
+			this.setState( { locationSelected: true, manualLocationInput: true } );
 			analytics.tracks.recordEvent( 'calypso_contact_information_manual_address_click', { query } );
 			return;
 		}
@@ -395,11 +397,12 @@ export class ContactDetailsFormFields extends Component {
 
 	handleLocationSearch = query => {
 		if ( query.length === 0 ) {
-			this.setState( { locationSelected: false } );
+			this.setState( { locationSelected: false, manualLocationInput: false } );
 			[ 'postalCode', 'countryCode', 'city', 'address1', 'address2', 'state' ].forEach( field => {
 				this.formStateController.handleFieldChange( {
 					name: field,
 					value: '',
+					hideError: true,
 				} );
 			} );
 		}
@@ -489,10 +492,12 @@ export class ContactDetailsFormFields extends Component {
 
 	renderContactDetailsFields() {
 		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
+		const { manualLocationInput } = this.state;
 		const countryCode = this.getCountryCode();
 		const usePlacesApi = abtest( 'placesApiInCheckout' ) === 'placesApi';
-		const hasAddress = ! isEmpty( get( this.state.form, 'address1.value', '' ) );
-		const showAddressFields = ! usePlacesApi || this.state.locationSelected || hasAddress;
+		const hasCountry = ! isEmpty( get( this.state.form, 'countryCode.value', '' ) );
+		const showAddressFields =
+			! usePlacesApi || this.state.locationSelected || manualLocationInput || hasCountry;
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -529,7 +534,7 @@ export class ContactDetailsFormFields extends Component {
 						} ) }
 				</div>
 
-				{ usePlacesApi && (
+				{ usePlacesApi && ! manualLocationInput && (
 					<div className="contact-details-form-fields__row">{ this.renderLocationSearch() }</div>
 				) }
 
@@ -551,6 +556,7 @@ export class ContactDetailsFormFields extends Component {
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
+						manualLocationInput={ manualLocationInput }
 						shouldAutoFocusAddressField={ this.shouldAutoFocusAddressField }
 					/>
 				) }
