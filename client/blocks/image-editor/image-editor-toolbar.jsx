@@ -117,7 +117,7 @@ export class ImageEditorToolbar extends Component {
 		const items = [
 			{
 				action: AspectRatios.FREE,
-				label: translate( 'Free' ),
+				label: translate( 'Free', {context: 'Crop option in image editor'} ),
 			},
 			{
 				action: AspectRatios.ORIGINAL,
