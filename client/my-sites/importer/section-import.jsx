@@ -35,6 +35,8 @@ import JetpackImporter from 'my-sites/importer/jetpack-importer';
 import ExternalLink from 'components/external-link';
 import canCurrentUser from 'state/selectors/can-current-user';
 import EmptyContent from 'components/empty-content';
+import memoizeLast from 'lib/memoize-last';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -90,6 +92,34 @@ class SectionImport extends Component {
 		startImport( site.ID, getImporterTypeForEngine( engine ) );
 	} );
 
+	handleStateChanges = () => {
+		const { site } = this.props;
+		const { importers: imports } = this.state;
+
+		filterImportsForSite( site.ID, imports ).map( importItem => {
+			const { importerState, type: importerId } = importItem;
+			this.trackImporterStateChange( importerState, importerId );
+		} );
+	};
+
+	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
+		const stateToEventNameMap = {
+			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
+			[ appStates.UPLOAD_PROCESSING ]: 'calypso_importer_upload_start',
+			[ appStates.UPLOAD_SUCCESS ]: 'calypso_importer_upload_success',
+			[ appStates.UPLOAD_FAILURE ]: 'calypso_importer_upload_fail',
+			[ appStates.MAP_AUTHORS ]: 'calypso_importer_map_authors_view',
+			[ appStates.IMPORTING ]: 'calypso_importer_import_start',
+			[ appStates.IMPORT_SUCCESS ]: 'calypso_importer_import_success',
+			[ appStates.IMPORT_FAILURE ]: 'calypso_importer_import_fail',
+		};
+		if ( stateToEventNameMap[ importerState ] ) {
+			this.props.recordTracksEvent( stateToEventNameMap[ importerState ], {
+				importer_id: importerId,
+			} );
+		}
+	} );
+
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
 		this.updateFromAPI();
@@ -103,6 +133,7 @@ class SectionImport extends Component {
 		}
 
 		this.onceAutoStartImport();
+		this.handleStateChanges();
 	}
 
 	componentWillUnmount() {
@@ -283,16 +314,19 @@ class SectionImport extends Component {
 }
 
 export default flow(
-	connect( state => {
-		const siteID = getSelectedSiteId( state );
-		return {
-			engine: getSelectedImportEngine( state ),
-			fromSite: getImporterSiteUrl( state ),
-			site: getSelectedSite( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-			siteTitle: getSiteTitle( state, siteID ),
-			canImport: canCurrentUser( state, siteID, 'manage_options' ),
-		};
-	} ),
+	connect(
+		state => {
+			const siteID = getSelectedSiteId( state );
+			return {
+				engine: getSelectedImportEngine( state ),
+				fromSite: getImporterSiteUrl( state ),
+				site: getSelectedSite( state ),
+				siteSlug: getSelectedSiteSlug( state ),
+				siteTitle: getSiteTitle( state, siteID ),
+				canImport: canCurrentUser( state, siteID, 'manage_options' ),
+			};
+		},
+		{ recordTracksEvent }
+	),
 	localize
 )( SectionImport );
