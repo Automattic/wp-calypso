@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 
 /**
  * Internal dependencies
@@ -21,23 +21,53 @@ export default function PaymentRequestButton( {
 	paymentType,
 	translate,
 	disabled,
+	disabledReason,
 } ) {
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const onClick = event => {
 		event.persist();
 		event.preventDefault();
 		analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
 			is_renewal: isRenewal,
 		} );
+		setIsSubmitting( true );
+		paymentRequest.on( 'cancel', () => setIsSubmitting( false ) );
 		paymentRequest.show();
 	};
+	if ( ! paymentRequest ) {
+		disabled = true;
+	}
+
+	if ( isSubmitting ) {
+		return (
+			<button
+				className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
+				disabled
+			>
+				{ translate( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }
+			</button>
+		);
+	}
+	if ( disabled ) {
+		return (
+			<React.Fragment>
+				<button
+					className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
+					disabled
+				>
+					{ disabledReason }
+				</button>
+			</React.Fragment>
+		);
+	}
+
 	if ( paymentType === 'apple-pay' ) {
-		return <button className="payment-request-button" onClick={ onClick } disabled={ disabled } />;
+		return <button className="payment-request-button" onClick={ onClick } />;
 	}
 	return (
 		<button
 			className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
 			onClick={ onClick }
-			disabled={ disabled }
 		>
 			{ translate( 'Select a payment card', { context: 'Loading state on /checkout' } ) }
 		</button>
@@ -45,7 +75,7 @@ export default function PaymentRequestButton( {
 }
 
 PaymentRequestButton.propTypes = {
-	paymentRequest: PropTypes.object.isRequired,
+	paymentRequest: PropTypes.object,
 	isRenewal: PropTypes.bool.isRequired,
 	paymentType: PropTypes.string.isRequired,
 	translate: PropTypes.func.isRequired,

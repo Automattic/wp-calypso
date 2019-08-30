@@ -179,7 +179,6 @@ function WebPayButton( {
 	useEffect( () => {
 		stripe && setStripeObject( stripe, stripeConfiguration );
 	}, [ stripe, stripeConfiguration ] );
-	debug( 'rendering WebPayButton with postalCode', postalCode, 'and countryCode', countryCode );
 
 	const paymentRequestOptions = usePaymentRequestOptions( {
 		translate,
@@ -202,14 +201,21 @@ function WebPayButton( {
 	if ( ! stripe && ! isStripeLoading ) {
 		throw new Error( 'Stripe is required but not available' );
 	}
-	const disabled = isStripeLoading || ! canMakePayment || ! postalCode || ! countryCode;
+	const disabledReason = getDisabledReason( {
+		isStripeLoading,
+		canMakePayment,
+		postalCode,
+		countryCode,
+		translate,
+	} );
 	return (
 		<PaymentRequestButton
 			paymentRequest={ paymentRequest }
 			isRenewal={ isRenewal }
 			paymentType={ paymentType }
 			translate={ translate }
-			disabled={ disabled }
+			disabled={ !! disabledReason }
+			disabledReason={ disabledReason }
 		/>
 	);
 }
@@ -226,6 +232,25 @@ WebPayButton.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 };
+
+function getDisabledReason( {
+	isStripeLoading,
+	canMakePayment,
+	postalCode,
+	countryCode,
+	translate,
+} ) {
+	if ( isStripeLoading ) {
+		return translate( 'Loading…' );
+	}
+	if ( ! canMakePayment ) {
+		return translate( 'This payment method is unavailable' );
+	}
+	if ( ! postalCode || ! countryCode ) {
+		return translate( 'Please specify a country and postal code' );
+	}
+	return null;
+}
 
 function getPostalCodeStringFromPostalCode( postalCode ) {
 	return typeof postalCode === 'undefined' || postalCode === null ? '' : postalCode;
