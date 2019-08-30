@@ -590,9 +590,14 @@ function setUpRoute( req, res, next ) {
 	);
 }
 
-function render404( request, response ) {
-	const ctx = getDefaultContext( request );
-	response.status( 404 ).send( renderJsx( '404', ctx ) );
+function render404( req, res ) {
+	const ctx = {
+		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
+	};
+
+	res.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
 /* We don't use `next` but need to add it for express.js to
@@ -604,14 +609,13 @@ function renderServerError( err, req, res, next ) {
 		console.error( err );
 	}
 
-	const target = getBuildTargetFromRequest( req );
-
-	res.status( err.status || 500 );
 	const ctx = {
-		urls: generateStaticUrls( target ),
 		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
 	};
-	res.send( renderJsx( '500', ctx ) );
+
+	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
 }
 
 /**

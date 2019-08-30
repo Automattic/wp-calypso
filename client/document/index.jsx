@@ -19,7 +19,6 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 } from '../components/environment-badge';
 import { chunkCssLinks } from './utils';
-import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
@@ -41,14 +40,12 @@ class Document extends React.Component {
 			languageRevisions,
 			renderedLayout,
 			user,
-			urls,
 			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
 			isFluidWidth,
 			env,
-			isDebug,
 			badge,
 			abTestHelper,
 			preferencesHelper,
@@ -105,15 +102,6 @@ class Document extends React.Component {
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
-
-					<link
-						rel="stylesheet"
-						id="main-css"
-						href={
-							urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-						}
-						type="text/css"
-					/>
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>

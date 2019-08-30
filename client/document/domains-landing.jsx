@@ -12,7 +12,6 @@ import classnames from 'classnames';
  */
 import Head from 'components/head';
 import { chunkCssLinks } from './utils';
-import getStylesheet from './utils/stylesheet';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
 function DomainsLanding( {
@@ -20,7 +19,6 @@ function DomainsLanding( {
 	clientData,
 	domainsLandingData,
 	inlineScriptNonce,
-	isDebug,
 	env,
 	entrypoint,
 	head,
@@ -28,7 +26,6 @@ function DomainsLanding( {
 	isRTL,
 	lang,
 	manifest,
-	urls,
 	faviconURL,
 	addEvergreenCheck,
 } ) {
@@ -47,15 +44,6 @@ function DomainsLanding( {
 				{ head.links.map( ( props, index ) => (
 					<link { ...props } key={ index } />
 				) ) }
-
-				<link
-					rel="stylesheet"
-					id="main-css"
-					href={
-						urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-					}
-					type="text/css"
-				/>
 				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
 			<body

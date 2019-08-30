@@ -14,7 +14,6 @@ import Gridicon from 'gridicons';
 import ExternalLink from 'components/external-link';
 import Head from '../components/head';
 import { chunkCssLinks } from './utils';
-import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
@@ -27,12 +26,9 @@ class Desktop extends React.Component {
 			i18nLocaleScript,
 			isRTL,
 			lang,
-			urls,
 			hasSecondary,
 			clientData,
 			isFluidWidth,
-			env,
-			isDebug,
 			badge,
 			abTestHelper,
 			branchName,
@@ -49,14 +45,6 @@ class Desktop extends React.Component {
 				className={ classNames( 'is-desktop', { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title="WordPress.com" faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					<link
-						rel="stylesheet"
-						id="main-css"
-						href={
-							urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-						}
-						type="text/css"
-					/>
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
