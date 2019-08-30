@@ -123,6 +123,11 @@ module.exports = {
 						importNames: [ 'combineReducers' ],
 						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
 					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
 				],
 			},
 		],
@@ -136,6 +141,11 @@ module.exports = {
 					{
 						name: 'gridicons',
 						message: "Please use 'components/gridicon' instead.",
+					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
 					},
 				],
 			},
