@@ -38,6 +38,7 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 
 /**
  * Style dependencies
@@ -167,6 +168,7 @@ class Home extends Component {
 			expandToolsAndTrack,
 			isStaticHomePage,
 			staticHomePageId,
+			showCustomizer,
 		} = this.props;
 		const editHomePageUrl =
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
@@ -234,12 +236,14 @@ class Home extends Component {
 									iconSrc="/calypso/images/customer-home/comment.svg"
 								/>
 							) }
-							<ActionBox
-								href={ customizeUrl }
-								onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
-								label={ translate( 'Customize theme' ) }
-								iconSrc="/calypso/images/customer-home/customize.svg"
-							/>
+							{ showCustomizer && (
+								<ActionBox
+									href={ customizeUrl }
+									onClick={ () => trackAction( 'my_site', 'customize_theme' ) }
+									label={ translate( 'Customize theme' ) }
+									iconSrc="/calypso/images/customer-home/customize.svg"
+								/>
+							) }
 							<ActionBox
 								onClick={ () => {
 									trackAction( 'my_site', 'change_theme' );
@@ -248,12 +252,14 @@ class Home extends Component {
 								label={ translate( 'Change theme' ) }
 								iconSrc="/calypso/images/customer-home/theme.svg"
 							/>
-							<ActionBox
-								href={ menusUrl }
-								onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
-								label={ translate( 'Edit menus' ) }
-								iconSrc="/calypso/images/customer-home/menus.svg"
-							/>
+							{ showCustomizer && (
+								<ActionBox
+									href={ menusUrl }
+									onClick={ () => trackAction( 'my_site', 'edit_menus' ) }
+									label={ translate( 'Edit menus' ) }
+									iconSrc="/calypso/images/customer-home/menus.svg"
+								/>
+							) }
 							<ActionBox
 								href={ `/media/${ siteSlug }` }
 								onClick={ () => trackAction( 'my_site', 'change_images' ) }
@@ -379,6 +385,7 @@ const connectHome = connect(
 			isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
+			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 		};
 	},
 	dispatch => ( {
