@@ -308,7 +308,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
 		await driverHelper.clickWhenClickable( this.driver, revertDraftSelector );
 		const revertAlert = await this.driver.switchTo().alert();
-		return await revertAlert.accept();
+		await revertAlert.accept();
+		await this.waitForSuccessViewPostNotice();
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( 'button.editor-post-publish-panel__toggle' )
+		);
+		return await driverHelper.waitTillNotPresent(
+			this.driver,
+			By.css( 'button.editor-post-switch-to-draft' )
+		);
 	}
 
 	async isDraft() {
