@@ -154,6 +154,8 @@ class Suggestions extends Component {
 									<div className="suggestions__category-heading">{ category }</div>
 								) }
 								{ suggestions.map( ( { index, label, originalIndex } ) => (
+									// The parent component should handle key events and forward them to
+									// this component. See ./README.md for details.
 									// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 									<Item
 										key={ originalIndex }
