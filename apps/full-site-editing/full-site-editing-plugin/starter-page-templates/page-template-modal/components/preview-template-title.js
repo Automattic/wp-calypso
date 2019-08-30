@@ -1,7 +1,7 @@
 /**
  * Return a component which acts as a PostTitle,
- * applying the css classes needed to follow ths styles
- * inherited from the theme.
+ * applying the css classes needed to follow the styles
+ * inherited from the Editor.
  *
  * @param {string} title Template title - transform css rule.
  * @return {*} Component

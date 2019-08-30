@@ -72,12 +72,8 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 				<div ref={ ref } className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper" style={ { visibility } }>
 						<div className="editor-writing-flow">
-							<div className="editor-block-list__layout">
-								<div className="block-editor-block-list__block-edit">
-									<PreviewTemplateTitle title={ title } transform={ transform } />
-									<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
-								</div>
-							</div>
+							<PreviewTemplateTitle title={ title } transform={ transform } />
+							<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
 						</div>
 					</div>
 				</div>
