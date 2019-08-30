@@ -1,7 +1,5 @@
-@import '~@automattic/calypso-color-schemes/src/shared/colors';
+@import 'shared/utils';
 @import '~@automattic/calypso-color-schemes/src/shared/color-schemes';
-@import 'shared/typography';
-@import 'shared/mixins/breakpoints';
 
 @import 'components/tinymce/iframe';
 @import 'components/tinymce/plugins/media/style';
