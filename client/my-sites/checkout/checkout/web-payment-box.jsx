@@ -178,21 +178,6 @@ function WebPayButton( {
 	}, [ stripe, stripeConfiguration ] );
 	debug( 'rendering WebPayButton with postalCode', postalCode, 'and countryCode', countryCode );
 
-	// We have to memoize these to prevent re-creating the paymentRequest
-	const callback = useMemo(
-		() => paymentMethodResponse => {
-			analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
-				is_renewal: isRenewal,
-			} );
-			completePaymentMethodTransaction( {
-				countryCode,
-				postalCode,
-				onSubmit,
-				...paymentMethodResponse,
-			} );
-		},
-		[ countryCode, postalCode, onSubmit, isRenewal ]
-	);
 	const paymentRequestOptions = usePaymentRequestOptions( {
 		translate,
 		sub_total_integer,
@@ -202,11 +187,14 @@ function WebPayButton( {
 		currency,
 		shouldDisplayItems,
 	} );
-	const { paymentRequest, canMakePayment } = useStripePaymentRequest(
+	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
 		stripe,
 		paymentRequestOptions,
-		callback
-	);
+		countryCode,
+		postalCode,
+		onSubmit,
+		isRenewal,
+	} );
 
 	if ( ! stripe && ! isStripeLoading ) {
 		throw new Error( 'Stripe is required but not available' );
@@ -275,9 +263,33 @@ function usePaymentRequestOptions( {
 	return paymentRequestOptions;
 }
 
-function useStripePaymentRequest( stripe, paymentRequestOptions, callback ) {
+function useStripePaymentRequest( {
+	stripe,
+	paymentRequestOptions,
+	countryCode,
+	postalCode,
+	onSubmit,
+	isRenewal,
+} ) {
 	const [ canMakePayment, setCanMakePayment ] = useState( false );
 	const [ paymentRequest, setPaymentRequest ] = useState();
+
+	// We have to memoize this to prevent re-creating the paymentRequest
+	const callback = useMemo(
+		() => paymentMethodResponse => {
+			analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
+				is_renewal: isRenewal,
+			} );
+			completePaymentMethodTransaction( {
+				countryCode,
+				postalCode,
+				onSubmit,
+				...paymentMethodResponse,
+			} );
+		},
+		[ countryCode, postalCode, onSubmit, isRenewal ]
+	);
+
 	useEffect( () => {
 		let isSubscribed = true;
 		if ( ! stripe ) {
@@ -293,6 +305,7 @@ function useStripePaymentRequest( stripe, paymentRequestOptions, callback ) {
 		setPaymentRequest( request );
 		return () => ( isSubscribed = false );
 	}, [ stripe, paymentRequestOptions, callback ] );
+
 	return { paymentRequest, canMakePayment };
 }
 
@@ -308,8 +321,6 @@ function completePaymentMethodTransaction( {
 	paymentMethod,
 	payerName,
 } ) {
-	debug( 'received stripe paymentMethod', paymentMethod );
-	debug( 'received stripe payerName', payerName );
 	const { card, id } = paymentMethod;
 
 	const newCardDetails = {
