@@ -58,6 +58,7 @@ import EmailClient from '../lib/email-client.js';
 import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-domain-registration-unavailable-component';
 import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
+import ThemeDialogComponent from '../lib/components/theme-dialog-component';
 import SignUpStep from '../lib/flows/sign-up-step';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
@@ -1383,7 +1384,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		step( 'Can see the theme thanks dialog', async function() {
+			const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
+			await themeDialogComponent.goToThemeDetail();
+		} );
 
 		step( 'Can delete the plan', async function() {
 			return await new DeletePlanFlow( driver ).deletePlan( 'theme' );

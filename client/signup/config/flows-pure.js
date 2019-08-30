@@ -17,7 +17,6 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getThankYouNoSiteDestination = noop,
-	getChecklistThemeDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -105,9 +104,9 @@ export function generateFlows( {
 
 		'with-theme': {
 			steps: [ 'domains-theme-preselected', 'plans', 'user' ],
-			destination: getChecklistThemeDestination,
+			destination: getSiteDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2019-08-20',
+			lastModified: '2016-01-27',
 		},
 
 		main: {

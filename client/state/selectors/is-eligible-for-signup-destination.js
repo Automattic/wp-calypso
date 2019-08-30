@@ -1,8 +1,22 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { isEmpty } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import { hasEcommercePlan } from 'lib/cart-values/cart-items';
+import { isNewSite } from 'state/sites/selectors';
+import {
+	getAllCartItems,
+	hasDomainMapping,
+	hasDomainRegistration,
+	hasTransferProduct,
+	hasPlan,
+	hasConciergeSession,
+	hasEcommercePlan,
+} from 'lib/cart-values/cart-items';
 import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
 import { retrieveSignupDestination } from 'signup/utils';
 
@@ -13,19 +27,23 @@ import { retrieveSignupDestination } from 'signup/utils';
  * @return {Boolean} True if current user is able to see the checklist after checkout
  */
 export default function isEligibleForSignupDestination( state, siteId, cart ) {
-	if ( hasEcommercePlan( cart ) ) {
-		return false;
+	if ( ! isEmpty( getAllCartItems( cart ) ) ) {
+		if (
+			hasDomainMapping( cart ) ||
+			hasDomainRegistration( cart ) ||
+			hasTransferProduct( cart ) ||
+			( ! hasPlan( cart ) && ! hasConciergeSession( cart ) ) ||
+			hasEcommercePlan( cart )
+		) {
+			return false;
+		}
 	}
 
 	const destination = retrieveSignupDestination();
 
-	if ( ! destination ) {
-		return false;
+	if ( destination && destination.includes( '/checklist/' ) ) {
+		return isNewSite( state, siteId ) && isEligibleForDotcomChecklist( state, siteId );
 	}
 
-	if ( destination.includes( '/checklist/' ) ) {
-		return isEligibleForDotcomChecklist( state, siteId );
-	}
-
-	return true;
+	return '/' === destination ? false : isNewSite( state, siteId );
 }

@@ -18,8 +18,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import WpcomChecklist from './wpcom-checklist';
 import ChecklistShowShare from './share';
 import GetAppsBlock from 'blocks/get-apps';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 
 /**
  * State dependencies
@@ -29,7 +27,6 @@ import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isNewSite } from 'state/sites/selectors';
-import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 
 /**
  * Style dependencies
@@ -73,7 +70,7 @@ class ChecklistMain extends PureComponent {
 	 * @return {String} The translated string
 	 */
 	getSubHeaderText() {
-		const { displayMode, currentTheme, translate } = this.props;
+		const { displayMode, translate } = this.props;
 
 		switch ( displayMode ) {
 			case 'gsuite':
@@ -96,19 +93,6 @@ class ChecklistMain extends PureComponent {
 					{
 						args: {
 							email: this.props.user.email,
-						},
-					}
-				);
-
-			case 'theme':
-				return translate(
-					'Your theme %(themeName)s by %(themeAuthor)s is now active on your site. ' +
-						"Now that your site has been created, it's time to get it ready for you to share. " +
-						"We've prepared a list of things that will help you get there quickly.",
-					{
-						args: {
-							themeName: currentTheme && currentTheme.name,
-							themeAuthor: currentTheme && currentTheme.author,
 						},
 					}
 				);
@@ -178,7 +162,7 @@ class ChecklistMain extends PureComponent {
 	}
 
 	render() {
-		const { displayMode, siteId, currentThemeId, translate } = this.props;
+		const { displayMode, siteId, translate } = this.props;
 
 		let translatedTitle = translate( 'Site Checklist' );
 		let title = 'Site Checklist';
@@ -195,8 +179,6 @@ class ChecklistMain extends PureComponent {
 				<SidebarNavigation />
 				<DocumentHead title={ translatedTitle } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ siteId && 'theme' === displayMode && <QueryActiveTheme siteId={ siteId } /> }
-				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 				{ this.renderHeader() }
 				<WpcomChecklist updateCompletion={ this.handleCompletionUpdate } viewMode="checklist" />
 			</Main>
@@ -204,16 +186,10 @@ class ChecklistMain extends PureComponent {
 	}
 }
 
-export default connect( ( state, props ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
-	let themeInfo = {};
-	if ( props.displayMode && 'theme' === props.displayMode ) {
-		const currentThemeId = getActiveTheme( state, siteId );
-		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
-		themeInfo = { currentTheme, currentThemeId };
-	}
 
 	return {
 		isAtomic,
@@ -223,6 +199,5 @@ export default connect( ( state, props ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		user: getCurrentUser( state ),
-		...themeInfo,
 	};
 } )( localize( ChecklistMain ) );
