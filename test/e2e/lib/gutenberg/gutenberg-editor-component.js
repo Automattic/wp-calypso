@@ -31,7 +31,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
 		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
 
-		// Temp fix: revert to these selectors once https://github.com/WordPress/gutenberg/issues/17264 is fixed
+		// Temp fix: Because of https://github.com/WordPress/gutenberg/issues/17264, the post publish sidebar is
+		// automatically hidden, so we need to retrieve the post links from the snackbar notices.
 		// this.publishPostTitleLink = By.css( '.post-publish-panel__postpublish-header a' );
 		// this.publishViewPostLink = By.css( '.post-publish-panel__postpublish-buttons a' );
 		this.publishPostTitleLink = By.css( '.components-snackbar a' );
@@ -67,25 +68,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 
-		// Temp fix: remove the four lines below once https://github.com/WordPress/gutenberg/issues/17264 is fixed
-		if (
-			await driverHelper.isElementPresent(
-				this.driver,
-				By.css(
-					'.editor-post-publish-panel__header button.components-button.components-icon-button'
-				)
-			)
-		) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.closePublishedPanel();
-		}
+		// Temp fix: Because of https://github.com/WordPress/gutenberg/issues/17264, we retrieve the post links from
+		// the snackbar notices, so we need to ensure they are visible by hiding the publish sidebar if present.
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		await gEditorComponent.closePublishedPanel();
 
 		await this.waitForSuccessViewPostNotice();
 		const url = await this.driver.findElement( this.publishPostTitleLink ).getAttribute( 'href' );
 
 		if ( visit ) {
 			await driverHelper.clickWhenClickable( this.driver, this.publishViewPostLink );
-			// Temp fix: remove the line below once https://github.com/WordPress/gutenberg/issues/17264 is fixed
+			// Temp fix: Because of https://github.com/WordPress/gutenberg/issues/17264, the editor believes there are
+			// unsaved changes when there are none, so we dismiss the unsaved changes warning if present.
 			await driverHelper.acceptAlertIfPresent( this.driver );
 		}
 
@@ -275,10 +269,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closePublishedPanel() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.editor-post-publish-panel__header button.components-button.components-icon-button' )
+		const closePublishSidebarSelector = By.css(
+			'.editor-post-publish-panel__header button.components-button.components-icon-button'
 		);
+		if ( await driverHelper.isElementPresent( this.driver, closePublishSidebarSelector ) ) {
+			return await driverHelper.clickWhenClickable( this.driver, closePublishSidebarSelector );
+		}
 	}
 
 	async ensureSaved() {
