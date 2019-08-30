@@ -21,6 +21,18 @@ export function getCSSLinkHtml( url ) {
 }
 
 /**
+ * Returns Gutenberg theme.css URL based on a style.css URL
+ *
+ * @param  {String}  url	The css file path of Gutenberg's style.css
+ * @param  {Boolean} isRtl	If the current locale is a right-to-left language
+ * @return {String}			The Gutenberg theme.css URL
+ */
+export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
+	const themeCss = 'theme' + ( isRtl ? '-rtl.css' : '.css' );
+	return url.replace( 'style.css', themeCss );
+};
+
+/**
  * Releases an existing object URL to let the browser know not to keep the reference to the file any longer.
  * For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
  *
@@ -60,6 +72,7 @@ export function getIframeSource(
 			<link rel="dns-prefetch" href="//fonts.googleapis.com">
 			<title></title>
 			${ getCSSLinkHtml( gutenbergStylesUrl ) }
+			${ getCSSLinkHtml( getGutenbergThemeCssUrl( gutenbergStylesUrl, isRtl ) ) }
 			${ getCSSLinkHtml( cssUrl ) }
 			${ getCSSLinkHtml( fontUrl ) }
 			<style type="text/css">
@@ -114,11 +127,17 @@ export function getIframeSource(
 				}
 
 				/*
-					Styling override for post list items
+					Override for post list items
 				*/
 				.a8c-posts-list__item article > * {
 					margin-top: 16px;
 					margin-bottom: 16px;
+				}
+				/*
+					Override for subscribe button
+				*/
+				.wp-block-jetpack-subscriptions span.button {
+					display: inline-block;
 				}
 
 				.is-loading .wp-block-cover,
