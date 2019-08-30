@@ -57,11 +57,16 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
+function getChecklistThemeDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getThankYouNoSiteDestination,
+	getChecklistThemeDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
