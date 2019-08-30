@@ -7079,6 +7079,16 @@
 				"mkdirp": "^0.5.1",
 				"rimraf": "^2.5.4",
 				"run-queue": "^1.0.0"
+			},
+			"dependencies": {
+				"rimraf": {
+					"version": "2.7.1",
+					"resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz",
+					"integrity": "sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==",
+					"requires": {
+						"glob": "^7.1.3"
+					}
+				}
 			}
 		},
 		"copy-descriptor": {
@@ -14971,6 +14981,16 @@
 				"mkdirp": "^0.5.1",
 				"rimraf": "^2.5.4",
 				"run-queue": "^1.0.3"
+			},
+			"dependencies": {
+				"rimraf": {
+					"version": "2.7.1",
+					"resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz",
+					"integrity": "sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==",
+					"requires": {
+						"glob": "^7.1.3"
+					}
+				}
 			}
 		},
 		"ms": {
@@ -19629,9 +19649,9 @@
 			}
 		},
 		"readline-sync": {
-			"version": "1.4.9",
-			"resolved": "https://registry.npmjs.org/readline-sync/-/readline-sync-1.4.9.tgz",
-			"integrity": "sha1-PtqOZfI80qF+YTAbHwADOWr17No=",
+			"version": "1.4.10",
+			"resolved": "https://registry.npmjs.org/readline-sync/-/readline-sync-1.4.10.tgz",
+			"integrity": "sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==",
 			"dev": true
 		},
 		"realpath-native": {
