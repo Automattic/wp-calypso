@@ -33,6 +33,7 @@ import CartToggle from './cart-toggle';
 import CheckoutTerms from './checkout-terms';
 import PaymentChatButton from './payment-chat-button';
 import RecentRenewals from './recent-renewals';
+import PaymentRequestButton from './payment-request-button';
 import SubscriptionText from './subscription-text';
 import { withStripe } from 'lib/stripe';
 import { useDebounce } from 'blocks/credit-card-form/helpers';
@@ -225,38 +226,6 @@ WebPayButton.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 };
-
-// The react-stripe-elements PaymentRequestButtonElement cannot have its
-// paymentRequest updated once it has been rendered, so this is a custom one.
-// See: https://github.com/stripe/react-stripe-elements/issues/284
-function PaymentRequestButton( { paymentRequest, isRenewal, paymentType, translate, disabled } ) {
-	const onClick = event => {
-		event.persist();
-		event.preventDefault();
-		analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_open_payment_sheet', {
-			is_renewal: isRenewal,
-		} );
-		paymentRequest.show();
-	};
-	if ( paymentType === 'apple-pay' ) {
-		return (
-			<button
-				className="web-payment-box__apple-pay-button"
-				onClick={ onClick }
-				disabled={ disabled }
-			/>
-		);
-	}
-	return (
-		<button
-			className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
-			onClick={ onClick }
-			disabled={ disabled }
-		>
-			{ translate( 'Select a payment card', { context: 'Loading state on /checkout' } ) }
-		</button>
-	);
-}
 
 function getPostalCodeStringFromPostalCode( postalCode ) {
 	return typeof postalCode === 'undefined' || postalCode === null ? '' : postalCode;
