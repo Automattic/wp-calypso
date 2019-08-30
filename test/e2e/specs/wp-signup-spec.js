@@ -1452,11 +1452,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results',
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedDomainName,
-					blogName
-				);
+				await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
+				// More details: https://github.com/Automattic/wp-calypso/pull/35347
+				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+				// 	expectedDomainName,
+				// 	blogName
+				// );
 				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedDomainName.indexOf( actualAddress ) > -1,
