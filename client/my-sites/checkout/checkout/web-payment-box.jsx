@@ -58,7 +58,7 @@ export function WebPaymentBox( {
 	disablePostalCodeDebounce,
 	children,
 } ) {
-	const paymentMethod = useMemo( () => detectWebPaymentMethod(), [] );
+	const paymentMethod = detectWebPaymentMethod();
 
 	const countryCode = getTaxCountryCode( cart );
 	const postalCode = getTaxPostalCode( cart );
