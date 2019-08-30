@@ -30,6 +30,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		this.prePublishButtonSelector = By.css( '.editor-post-publish-panel__toggle' );
 		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
 		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
+
+		// Temp fix: revert to these selectors once https://github.com/WordPress/gutenberg/issues/17264 is fixed
+		// this.publishPostTitleLink = By.css( '.post-publish-panel__postpublish-header a' );
+		// this.publishViewPostLink = By.css( '.post-publish-panel__postpublish-buttons a' );
+		this.publishPostTitleLink = By.css( '.components-snackbar a' );
+		this.publishViewPostLink = By.css( '.components-snackbar a' );
 	}
 
 	static async Expect( driver, editorType ) {
@@ -60,16 +66,27 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+
+		// Temp fix: remove the four lines below once https://github.com/WordPress/gutenberg/issues/17264 is fixed
+		if (
+			await driverHelper.isElementPresent(
+				this.driver,
+				By.css(
+					'.editor-post-publish-panel__header button.components-button.components-icon-button'
+				)
+			)
+		) {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+			await gEditorComponent.closePublishedPanel();
+		}
+
 		await this.waitForSuccessViewPostNotice();
-		const url = await this.driver
-			.findElement( By.css( '.post-publish-panel__postpublish-header a' ) )
-			.getAttribute( 'href' );
+		const url = await this.driver.findElement( this.publishPostTitleLink ).getAttribute( 'href' );
 
 		if ( visit ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.post-publish-panel__postpublish-buttons a' )
-			);
+			await driverHelper.clickWhenClickable( this.driver, this.publishViewPostLink );
+			// Temp fix: remove the line below once https://github.com/WordPress/gutenberg/issues/17264 is fixed
+			await driverHelper.acceptAlertIfPresent( this.driver );
 		}
 
 		return url;
