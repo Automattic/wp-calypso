@@ -99,12 +99,9 @@
 }
 
 .contact-details-form-fields__field.location-search {
-	.address-1 {
+	.address-1:focus {
 		position: relative;
-
-		&:focus {
-			z-index: 1;
-		}
+		z-index: 1;
 	}
 
 	.location-search__predictions {
