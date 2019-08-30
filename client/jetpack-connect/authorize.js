@@ -116,12 +116,17 @@ export class JetpackAuthorize extends Component {
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
-		const { from, clientId } = this.props.authQuery;
+		const { from, clientId, closeWindowAfterLogin } = this.props.authQuery;
 		const tracksProperties = {
 			from,
 			is_mobile_app_flow: isMobileAppFlow,
 			site: clientId,
 		};
+
+		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
+			debug( 'Closing window after login' );
+			window.close();
+		}
 
 		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
 		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
