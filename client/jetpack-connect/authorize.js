@@ -5,7 +5,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import debugModule from 'debug';
-import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, get, includes, startsWith } from 'lodash';
@@ -23,6 +22,7 @@ import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
 import HelpButton from './help-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
