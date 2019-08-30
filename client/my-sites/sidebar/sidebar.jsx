@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
 
@@ -182,7 +182,7 @@ export class MySitesSidebar extends Component {
 
 		const itemProps = isCustomerHomeEnabled
 			? {
-					label: translate( 'Home' ),
+					label: translate( 'My Home' ),
 					selected: itemLinkMatches( [ '/home' ], path ),
 					link: '/home' + siteSuffix,
 			  }
