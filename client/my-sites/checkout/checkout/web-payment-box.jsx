@@ -37,7 +37,7 @@ import SubscriptionText from './subscription-text';
 import { withStripe } from 'lib/stripe';
 import { useDebounce } from 'blocks/credit-card-form/helpers';
 
-const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
+const debug = debugFactory( 'calypso:checkout:payment:web-payment-box' );
 
 const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerName: true,
@@ -123,6 +123,7 @@ export function WebPaymentBox( {
 								postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
 								cart={ cart }
 								onSubmit={ onSubmit }
+								paymentType={ paymentType }
 								translate={ translate }
 							/>
 						</span>
@@ -168,6 +169,7 @@ function WebPayButton( {
 	postalCode,
 	cart,
 	onSubmit,
+	paymentType,
 	translate,
 } ) {
 	const { currency, total_cost_integer, sub_total_integer, total_tax_integer } = cart;
@@ -200,9 +202,16 @@ function WebPayButton( {
 		throw new Error( 'Stripe is required but not available' );
 	}
 	if ( isStripeLoading || ! canMakePayment || ! postalCode || ! countryCode ) {
-		return <LoadingPaymentRequestButton />;
+		return <LoadingPaymentRequestButton paymentType={ paymentType } translate={ translate } />;
 	}
-	return <PaymentRequestButton paymentRequest={ paymentRequest } isRenewal={ isRenewal } />;
+	return (
+		<PaymentRequestButton
+			paymentRequest={ paymentRequest }
+			isRenewal={ isRenewal }
+			paymentType={ paymentType }
+			translate={ translate }
+		/>
+	);
 }
 
 WebPayButton.propTypes = {
@@ -221,7 +230,7 @@ WebPayButton.propTypes = {
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
 // See: https://github.com/stripe/react-stripe-elements/issues/284
-function PaymentRequestButton( { paymentRequest, isRenewal } ) {
+function PaymentRequestButton( { paymentRequest, isRenewal, paymentType, translate } ) {
 	const onClick = event => {
 		event.persist();
 		event.preventDefault();
@@ -230,7 +239,17 @@ function PaymentRequestButton( { paymentRequest, isRenewal } ) {
 		} );
 		paymentRequest.show();
 	};
-	return <button className="web-payment-box__apple-pay-button" onClick={ onClick } />;
+	if ( paymentType === 'apple-pay' ) {
+		return <button className="web-payment-box__apple-pay-button" onClick={ onClick } />;
+	}
+	return (
+		<button
+			className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
+			onClick={ onClick }
+		>
+			{ translate( 'Select a payment card' ) }
+		</button>
+	);
 }
 
 function getPostalCodeStringFromPostalCode( postalCode ) {
@@ -309,8 +328,18 @@ function useStripePaymentRequest( {
 	return { paymentRequest, canMakePayment };
 }
 
-function LoadingPaymentRequestButton() {
-	return <button className="web-payment-box__apple-pay-button" disabled />;
+function LoadingPaymentRequestButton( { paymentType, translate } ) {
+	if ( paymentType === 'apple-pay' ) {
+		return <button className="web-payment-box__apple-pay-button" disabled />;
+	}
+	return (
+		<button
+			className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
+			disabled
+		>
+			{ translate( 'Select a payment card' ) }
+		</button>
+	);
 }
 
 function completePaymentMethodTransaction( {
