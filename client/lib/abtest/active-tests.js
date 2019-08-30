@@ -121,6 +121,8 @@ export default {
 			variantShowPlanBump: 50,
 			control: 50,
 		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 	privateByDefault: {
 		datestamp: '20190730',
