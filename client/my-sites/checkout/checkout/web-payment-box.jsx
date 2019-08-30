@@ -185,7 +185,7 @@ function WebPayButton( {
 		sub_total_integer,
 		total_tax_integer,
 		total_cost_integer,
-		countryCode,
+		countryCode: getProcessorCountryFromStripeConfiguration( stripeConfiguration ),
 		currency,
 		shouldDisplayItems,
 	} );
@@ -232,6 +232,10 @@ WebPayButton.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 };
+
+function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
+	return stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+}
 
 function getDisabledReason( {
 	isStripeLoading,
