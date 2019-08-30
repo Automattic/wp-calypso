@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -42,7 +42,7 @@ export default class Prediction extends Component {
 
 		return (
 			<CompactCard
-				tabindex="0"
+				tabIndex="0"
 				className="location-search__prediction"
 				onClick={ this.handlePredictionClick }
 				onKeyDown={ this.handlePredictionKeyDown }
