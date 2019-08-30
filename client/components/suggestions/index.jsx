@@ -36,17 +36,21 @@ class Suggestions extends Component {
 	};
 
 	state = {
+		lastSuggestions: null,
 		suggestionPosition: 0,
 	};
 
 	refsCollection = {};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEqual( nextProps.suggestions, this.props.suggestions ) ) {
-			return;
+	static getDerivedStateFromProps( props, state ) {
+		if ( isEqual( props.suggestions, state.lastSuggestions ) ) {
+			return null;
 		}
 
-		this.setState( { suggestionPosition: 0 } );
+		return {
+			lastSuggestions: props.suggestions,
+			suggestionPosition: 0,
+		};
 	}
 
 	getSuggestionsCount = () => this.props.suggestions.length;
