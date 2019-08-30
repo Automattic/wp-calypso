@@ -58,7 +58,6 @@ import EmailClient from '../lib/email-client.js';
 import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-domain-registration-unavailable-component';
 import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
-import ThemeDialogComponent from '../lib/components/theme-dialog-component';
 import SignUpStep from '../lib/flows/sign-up-step';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
@@ -1384,10 +1383,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		step( 'Can see the theme thanks dialog', async function() {
-			const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
-			await themeDialogComponent.goToThemeDetail();
-		} );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete the plan', async function() {
 			return await new DeletePlanFlow( driver ).deletePlan( 'theme' );
@@ -1456,11 +1452,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results',
 			async function() {
 				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedDomainName,
-					blogName
-				);
+				await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
+				// More details: https://github.com/Automattic/wp-calypso/pull/35347
+				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+				// 	expectedDomainName,
+				// 	blogName
+				// );
 				const actualAddress = await findADomainComponent.freeBlogAddress();
 				assert(
 					expectedDomainName.indexOf( actualAddress ) > -1,

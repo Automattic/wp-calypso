@@ -183,6 +183,7 @@ class SocialLoginForm extends Component {
 						redirectUri={ this.getRedirectUrl( uxMode, 'google' ) }
 						onClick={ this.trackLogin.bind( null, 'google' ) }
 					/>
+
 					<AppleLoginButton
 						responseHandler={ this.handleAppleResponse }
 						onClick={ this.trackLogin.bind( null, 'apple' ) }

@@ -443,9 +443,6 @@ export class CheckoutThankYou extends React.Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasJetpackPlanPurchased ) {
-			page( `/plans/my-plan/${ this.props.siteId }?thank-you&install=all` );
-			return null;
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {

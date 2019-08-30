@@ -106,11 +106,20 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellNudge: {
-		datestamp: '20190712',
+	showPlanUpsellGSuite: {
+		datestamp: '20190805',
 		variations: {
-			variantShowNudge: 0,
-			control: 100,
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20190805',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -122,15 +131,6 @@ export default {
 			control: 10,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	showImportFlowInSiteTypeStep: {
-		datestamp: '20190820',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
 	removeBlogFlow: {

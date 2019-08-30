@@ -36,7 +36,6 @@ const EditorTemplateClasses = withSelect( select => {
 		clearInterval( blockListInception );
 
 		blockList.className = classNames( 'a8c-template-editor', ...templateClasses );
-		blockList.style.padding = 0;
 	} );
 
 	return null;
