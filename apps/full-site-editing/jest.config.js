@@ -4,10 +4,8 @@ const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
 
 module.exports = {
 	...defaults,
-	moduleDirectories: [
-		...( defaults.moduleDirectories || [] ), // extend if present
-		'<rootDir>/test/client',
-		'<rootDir>',
-		'node_modules',
+	setupFilesAfterEnv: [
+		...( defaults.setupFilesAfterEnv || [] ), // extend if present
+		'<rootDir>/test/client/test-setup',
 	],
 };

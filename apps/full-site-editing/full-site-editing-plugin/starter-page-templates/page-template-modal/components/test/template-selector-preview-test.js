@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import 'test-setup';
 import { render } from '@testing-library/react';
 import { blocksFixture } from './helpers/templates-blocks-helpers';
 import TemplateSelectorPreview from '../template-selector-preview';

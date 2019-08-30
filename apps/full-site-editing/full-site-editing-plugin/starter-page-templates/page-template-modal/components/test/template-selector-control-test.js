@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { uniqueId } from 'lodash';
-import 'test-setup';
 
 import { render, fireEvent } from '@testing-library/react';
 
