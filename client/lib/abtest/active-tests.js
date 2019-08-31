@@ -152,7 +152,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	placesApiInCheckout: {
-		datestamp: '20190909',
+		datestamp: '20190923',
 		variations: {
 			original: 50,
 			placesApi: 50,
