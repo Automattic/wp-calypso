@@ -28,6 +28,7 @@ import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
 import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
+import CustomCSS from './custom-css';
 import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
 import BusinessOnboarding from './business-onboarding';
@@ -84,6 +85,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
+				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
@@ -122,6 +124,8 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
+				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
@@ -148,6 +152,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
 				<GoogleVouchers selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
+				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
