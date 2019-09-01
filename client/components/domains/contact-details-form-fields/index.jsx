@@ -57,6 +57,7 @@ const CONTACT_DETAILS_FORM_FIELDS = [
 	'lastName',
 	'organization',
 	'email',
+	'alternateEmail',
 	'phone',
 	'address1',
 	'address2',
@@ -445,6 +446,17 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
+	renderAlternateEmailFieldForGSuite() {
+		return (
+			<div className="contact-details-form-fields__row g-suite-alternate-mail">
+				<Input
+					label={ this.props.translate( 'Alternate Email' ) }
+					{ ...this.getFieldProps( 'alternate-email' ) }
+				/>
+			</div>
+		);
+	}
+
 	render() {
 		const { translate, onCancel, disableSubmitButton, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
@@ -460,6 +472,7 @@ export class ContactDetailsFormFields extends Component {
 						label: translate( 'Last Name' ),
 					} ) }
 				</div>
+				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
 				{ this.props.needsOnlyGoogleAppsDetails
 					? this.renderGAppsFieldset()

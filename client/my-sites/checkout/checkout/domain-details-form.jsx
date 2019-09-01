@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { first, includes, indexOf, intersection, isEqual, last, map } from 'lodash';
+import { first, includes, indexOf, intersection, isEqual, last, map, merge } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -35,6 +36,8 @@ import {
 	getDomainTransfers,
 	hasGoogleApps,
 	hasDomainRegistration,
+	hasInvalidAlternateEmailDomain,
+	needsExplicitAlternateEmailForGSuite,
 	hasTransferProduct,
 	getTlds,
 	hasTld,
@@ -84,6 +87,26 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( newState );
 	}
 
+	mergedValidationHandlerIntegratingAlternateMail = ( fieldValues, validationHandler ) => (
+		error,
+		data
+	) => {
+		if ( this.needsAlternateEmailForGSuite() ) {
+			let message = null;
+			if ( ! emailValidator.validate( fieldValues.alternateEmail ) ) {
+				message = this.props.translate( 'Invalid email address' );
+			} else if ( hasInvalidAlternateEmailDomain( this.props.cart, this.props.contactDetails ) ) {
+				message = this.props.translate(
+					'Email domain cannot be the same as prospective G Suite Domain'
+				);
+			}
+			if ( null != message ) {
+				data = merge( data, { success: false, messages: { alternateEmail: [ message ] } } );
+			}
+		}
+		validationHandler( null, data );
+	};
+
 	validate = ( fieldValues, onComplete ) => {
 		const validationHandler = ( error, data ) => {
 			const messages = ( data && data.messages ) || {};
@@ -91,7 +114,10 @@ export class DomainDetailsForm extends PureComponent {
 		};
 
 		if ( this.needsOnlyGoogleAppsDetails() ) {
-			wpcom.validateGoogleAppsContactInformation( fieldValues, validationHandler );
+			wpcom.validateGoogleAppsContactInformation(
+				fieldValues,
+				this.mergedValidationHandlerIntegratingAlternateMail( fieldValues, validationHandler )
+			);
 			return;
 		}
 
@@ -113,6 +139,13 @@ export class DomainDetailsForm extends PureComponent {
 			[ ...getDomainRegistrations( this.props.cart ), ...getDomainTransfers( this.props.cart ) ],
 			'meta'
 		);
+
+	needsAlternateEmailForGSuite() {
+		return (
+			this.needsOnlyGoogleAppsDetails() &&
+			needsExplicitAlternateEmailForGSuite( this.props.cart, this.props.contactDetails )
+		);
+	}
 
 	needsOnlyGoogleAppsDetails() {
 		return (
@@ -193,6 +226,7 @@ export class DomainDetailsForm extends PureComponent {
 				contactDetails={ contactDetails }
 				needsFax={ this.needsFax() }
 				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }
+				needsAlternateEmailForGSuite={ this.needsAlternateEmailForGSuite() }
 				onContactDetailsChange={ this.handleContactDetailsChange }
 				onSubmit={ this.handleSubmitButtonClick }
 				eventFormName="Checkout Form"

@@ -683,6 +683,19 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	);
 }
 
+const getDomainPartFromEmail = emailAddress => {
+	emailAddress = emailAddress || '';
+	return emailAddress.replace( /.*@([^@]+)$/, '$1' );
+};
+
+export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
+	return some( cart.products, [ 'meta', getDomainPartFromEmail( contactDetails.email ) ] );
+}
+
+export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
+	return some( cart.products, [ 'meta', getDomainPartFromEmail( contactDetails.alternateEmail ) ] );
+}
+
 export function hasGoogleApps( cart ) {
 	return some( getAllCartItems( cart ), isGoogleApps );
 }
