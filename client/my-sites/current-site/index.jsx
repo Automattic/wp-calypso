@@ -14,7 +14,7 @@ import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
 import Card from 'components/card';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
