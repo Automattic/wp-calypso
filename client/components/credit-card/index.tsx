@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent, useCallback, ComponentProps } from 'react';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -17,41 +14,51 @@ import StoredCard from './stored-card';
  */
 import './style.scss';
 
-class CreditCard extends React.Component {
-	static propTypes = {
-		card: PropTypes.shape( StoredCard.propTypes ),
-		selected: PropTypes.bool,
-		onSelect: PropTypes.func,
-		className: PropTypes.string,
-	};
+type SelectHandler = React.EventHandler<
+	React.MouseEvent< HTMLDivElement > | React.KeyboardEvent< HTMLDivElement >
+>;
 
-	handleKeyPress = event => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			this.props.onSelect( event );
-		}
-	};
-
-	render() {
-		const { card, selected, onSelect, className, children } = this.props;
-		const classes = classNames( 'credit-card', className, {
-			'is-selected': selected,
-			'is-selectable': onSelect,
-		} );
-
-		const selectionProps = onSelect && {
-			tabIndex: -1,
-			role: 'radio',
-			'aria-checked': selected,
-			onClick: onSelect,
-			onKeyPress: this.handleKeyPress,
-		};
-
-		return (
-			<div className={ classes } { ...selectionProps }>
-				{ card ? <StoredCard { ...card } selected={ selected } /> : children }
-			</div>
-		);
-	}
+interface Props {
+	card: ComponentProps< typeof StoredCard >;
+	selected: boolean;
+	onSelect?: SelectHandler;
+	className?: string;
 }
+
+const CreditCard: FunctionComponent< Props > = ( {
+	card,
+	selected,
+	onSelect,
+	className,
+	children,
+} ) => {
+	const handleKeyPress: React.KeyboardEventHandler< HTMLDivElement > = useCallback(
+		event => {
+			if ( event.key === 'Enter' || event.key === ' ' ) {
+				( onSelect as SelectHandler )( event );
+			}
+		},
+		[ onSelect ]
+	);
+
+	const classes = classNames( 'credit-card', className, {
+		'is-selected': selected,
+		'is-selectable': onSelect,
+	} );
+
+	const selectionProps = onSelect && {
+		tabIndex: -1,
+		role: 'radio',
+		'aria-checked': selected,
+		onClick: onSelect,
+		onKeyPress: handleKeyPress,
+	};
+
+	return (
+		<div className={ classes } { ...selectionProps }>
+			{ card ? <StoredCard { ...card } selected={ selected } /> : children }
+		</div>
+	);
+};
 
 export default CreditCard;
