@@ -26,3 +26,12 @@
 		font-weight: bold;
 	}
 }
+
+.suggestions__category-heading {
+	font-size: 10px;
+	font-weight: 500;
+	text-transform: uppercase;
+	padding: 12px 24px 8px 42px;
+	color: var( --color-neutral-400 );
+	border-bottom: 1px solid var( --color-neutral-50 );
+}

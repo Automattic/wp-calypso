@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { findIndex, isEqual, map } from 'lodash';
+import { find, groupBy, isEqual, property } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,9 +51,15 @@ class Suggestions extends Component {
 
 	getSuggestionsCount = () => this.props.suggestions.length;
 
-	getPositionForSuggestion = label => findIndex( this.props.suggestions, { label } );
+	getOriginalIndexFromPosition = index =>
+		this.getCategories().reduce( ( foundIndex, category ) => {
+			if ( foundIndex !== -1 ) return foundIndex;
 
-	suggest = position => this.props.suggest( this.props.suggestions[ position ] );
+			const suggestion = find( category.suggestions, { index } );
+			return suggestion ? suggestion.originalIndex : -1;
+		}, -1 );
+
+	suggest = originalIndex => this.props.suggest( this.props.suggestions[ originalIndex ] );
 
 	moveSelectionDown = () => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
@@ -97,17 +103,42 @@ class Suggestions extends Component {
 				break;
 
 			case 'Enter':
-				this.state.suggestionPosition >= 0 && this.suggest( this.state.suggestionPosition );
+				this.state.suggestionPosition >= 0 &&
+					this.suggest( this.getOriginalIndexFromPosition( this.state.suggestionPosition ) );
 				break;
 		}
 	};
 
-	handleMouseDown = label => this.suggest( this.getPositionForSuggestion( label ) );
+	handleMouseDown = originalIndex => this.suggest( originalIndex );
 
-	handleMouseOver = label =>
-		this.setState( {
-			suggestionPosition: this.getPositionForSuggestion( label ),
-		} );
+	handleMouseOver = suggestionPosition => this.setState( { suggestionPosition } );
+
+	getCategories() {
+		// We need to remember the original index of the suggestion according to the
+		// `suggestions` prop for tracks and firing callbacks.
+		const withOriginalIndex = this.props.suggestions.map( ( suggestion, originalIndex ) => ( {
+			...suggestion,
+			originalIndex,
+		} ) );
+
+		// For all intents and purposes `groupBy` keeps the order stable
+		// https://github.com/lodash/lodash/issues/2212
+		const byCategory = groupBy( withOriginalIndex, property( 'category' ) );
+
+		const categories = Object.entries( byCategory ).map( ( [ category, suggestions ] ) => ( {
+			category,
+			suggestions,
+		} ) );
+
+		let order = 0;
+		for ( const category of categories ) {
+			for ( const suggestion of category.suggestions ) {
+				suggestion.index = order++;
+			}
+		}
+
+		return categories;
+	}
 
 	render() {
 		const { query, railcar } = this.props;
@@ -117,26 +148,33 @@ class Suggestions extends Component {
 			<div>
 				{ showSuggestions && (
 					<div className="suggestions__wrapper">
-						{ map( this.props.suggestions, ( { label }, index ) => (
-							// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-							<Item
-								key={ index }
-								hasHighlight={ index === this.state.suggestionPosition }
-								query={ query }
-								onMouseDown={ this.handleMouseDown }
-								onMouseOver={ this.handleMouseOver }
-								label={ label }
-								railcar={
-									railcar && {
-										...railcar,
-										railcar: `${ railcar.id }-${ index }`,
-										fetch_position: index,
-									}
-								}
-								ref={ suggestion => {
-									this.refsCollection[ 'suggestion_' + index ] = suggestion;
-								} }
-							/>
+						{ this.getCategories().map( ( { category, suggestions }, categoryIndex ) => (
+							<>
+								{ ! categoryIndex ? null : (
+									<div className="suggestions__category-heading">{ category }</div>
+								) }
+								{ suggestions.map( ( { index, label, originalIndex } ) => (
+									// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+									<Item
+										key={ originalIndex }
+										hasHighlight={ index === this.state.suggestionPosition }
+										query={ query }
+										onMouseDown={ () => this.handleMouseDown( originalIndex ) }
+										onMouseOver={ () => this.handleMouseOver( index ) }
+										label={ label }
+										railcar={
+											railcar && {
+												...railcar,
+												railcar: `${ railcar.id }-${ originalIndex }`,
+												fetch_position: originalIndex,
+											}
+										}
+										ref={ suggestion => {
+											this.refsCollection[ 'suggestion_' + index ] = suggestion;
+										} }
+									/>
+								) ) }
+							</>
 						) ) }
 					</div>
 				) }

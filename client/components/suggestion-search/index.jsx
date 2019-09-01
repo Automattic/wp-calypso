@@ -26,7 +26,12 @@ class SuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
 		onSelect: PropTypes.func,
-		suggestions: PropTypes.array,
+		suggestions: PropTypes.arrayOf(
+			PropTypes.shape( {
+				label: PropTypes.string.isRequired,
+				category: PropTypes.string,
+			} )
+		),
 		value: PropTypes.string,
 		autoFocus: PropTypes.bool,
 		railcar: PropTypes.object,
@@ -87,7 +92,7 @@ class SuggestionSearch extends Component {
 			return [];
 		}
 
-		return this.props.suggestions.map( hint => ( { label: hint } ) );
+		return this.props.suggestions;
 	}
 
 	getSuggestionLabel( suggestionPosition ) {
