@@ -75,7 +75,6 @@ class DomainsStep extends React.Component {
 	getDefaultState = () => ( {
 		previousStepSectionName: this.props.stepSectionName,
 		suggestion: null,
-		showTrademarkClaimsNotice: false,
 	} );
 
 	state = this.getDefaultState();
@@ -120,16 +119,9 @@ class DomainsStep extends React.Component {
 		}
 	}
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		let showTrademarkClaimsNotice = prevState.showTrademarkClaimsNotice;
-
-		if ( nextProps.stepSectionName !== prevState.previousStepSectionName ) {
-			showTrademarkClaimsNotice = false;
-		}
-
+	static getDerivedStateFromProps( nextProps ) {
 		return {
 			previousStepSectionName: nextProps.stepSectionName,
-			showTrademarkClaimsNotice,
 		};
 	}
 
