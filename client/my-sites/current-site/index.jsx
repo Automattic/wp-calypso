@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import Gridicon from 'gridicons';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
+import { getCurrentUserSiteCount } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
 
@@ -101,7 +99,7 @@ export default connect(
 	state => ( {
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getVisibleSites( state ).length,
+		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
 	} ),
 	{ recordGoogleEvent, setLayoutFocus }
