@@ -28,6 +28,7 @@ import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
@@ -120,7 +121,7 @@ class StatsSite extends Component {
 	};
 
 	render() {
-		const { date, isJetpack, siteId, slug } = this.props;
+		const { date, isJetpack, siteId, slug, isCustomerHomeEnabled } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -162,7 +163,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<StatsBanners siteId={ siteId } slug={ slug } />
+					{ ! isCustomerHomeEnabled && <StatsBanners siteId={ siteId } slug={ slug } /> }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -271,6 +272,7 @@ export default connect(
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
+			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }
