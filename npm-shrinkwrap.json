@@ -3150,6 +3150,11 @@
 				}
 			}
 		},
+		"@ungap/url-search-params": {
+			"version": "0.1.2",
+			"resolved": "https://registry.npmjs.org/@ungap/url-search-params/-/url-search-params-0.1.2.tgz",
+			"integrity": "sha512-WVk5+lJ+AoNLh2sIDMhnEAgLsVQuI067hWLJCzirErH1GYiy1gs09q4+XZxYWSvdAsslKsaO4q1iXXMx2c72dA=="
+		},
 		"@webassemblyjs/ast": {
 			"version": "1.8.5",
 			"resolved": "https://registry.npmjs.org/@webassemblyjs/ast/-/ast-1.8.5.tgz",
@@ -3325,6 +3330,11 @@
 				"@webassemblyjs/wast-parser": "1.8.5",
 				"@xtuc/long": "4.2.2"
 			}
+		},
+		"@webcomponents/url": {
+			"version": "0.7.3",
+			"resolved": "https://registry.npmjs.org/@webcomponents/url/-/url-0.7.3.tgz",
+			"integrity": "sha512-lGyV8yEbVGiQHr7MT+Xi04piZ5b80dj5HaAiL2KFuEHxi6w0l/zQ9hUJffBhg/0ZaQ2IikIp0LDxx4QqJkKfIQ=="
 		},
 		"@wordpress/a11y": {
 			"version": "2.5.0",
