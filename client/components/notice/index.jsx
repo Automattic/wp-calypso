@@ -16,6 +16,21 @@ import Gridicon from 'gridicons';
  */
 import './style.scss';
 
+/**
+ * Module constants
+ */
+const GRIDICONS_WITH_DROP = [
+	'add',
+	'cross-circle',
+	'ellipsis-circle',
+	'help',
+	'info',
+	'notice',
+	'pause',
+	'play',
+	'spam',
+];
+
 export class Notice extends Component {
 	static defaultProps = {
 		className: '',
@@ -109,10 +124,14 @@ export class Notice extends Component {
 			'is-dismissable': showDismiss,
 		} );
 
+		const iconName = icon || this.getIcon();
+		const iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
+
 		return (
 			<div className={ classes }>
 				<span className="notice__icon-wrapper">
-					<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
+					{ iconNeedsDrop && <span class="notice__icon-wrapper-drop" /> }
+					<Gridicon className="notice__icon" icon={ iconName } size={ 24 } />
 				</span>
 				<span className="notice__content">
 					<span className="notice__text">{ text ? text : children }</span>

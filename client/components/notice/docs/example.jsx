@@ -80,7 +80,7 @@ class Notices extends React.PureComponent {
 				<div>
 					<Notice
 						status="is-warning"
-						icon="mention"
+						icon="ellipsis-circle"
 						text="I'm an `is-warning` notice with custom icon."
 						isCompact={ this.state.compactNotices ? true : null }
 					/>
