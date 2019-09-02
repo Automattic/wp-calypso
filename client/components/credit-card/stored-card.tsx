@@ -62,7 +62,7 @@ const getCreditCardImageURL = ( type, selected ) => {
 	return `url(${ imagePath })`;
 };
 
-export const getCreditCardSummary = (
+const getCreditCardSummary = (
 	translate: ReturnType< typeof useTranslate >,
 	type: string,
 	digits?: Props[ 'lastDigits' ]
