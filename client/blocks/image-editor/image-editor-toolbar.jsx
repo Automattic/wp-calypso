@@ -117,7 +117,7 @@ export class ImageEditorToolbar extends Component {
 		const items = [
 			{
 				action: AspectRatios.FREE,
-				label: translate( 'Free', {context: 'Crop option in image editor'} ),
+				label: translate( 'Freeform', {context: 'Crop option in image editor for freeform aspect ratio tool'} ),
 			},
 			{
 				action: AspectRatios.ORIGINAL,
