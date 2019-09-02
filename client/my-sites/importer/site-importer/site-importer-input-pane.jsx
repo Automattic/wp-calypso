@@ -26,6 +26,7 @@ import {
 	validateSiteIsImportable,
 	resetSiteImporterImport,
 	setValidationError,
+	clearSiteImporterImport,
 } from 'state/imports/site-importer/actions';
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
@@ -63,6 +64,12 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	componentDidMount() {
+		const { importStage } = this.props;
+		if ( 'importable' === importStage ) {
+			// Clear any leftover state from previous imports
+			this.props.clearSiteImporterImport();
+		}
+
 		this.validateSite();
 
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
@@ -338,6 +345,7 @@ export default flowRight(
 			importSite,
 			validateSiteIsImportable,
 			resetSiteImporterImport,
+			clearSiteImporterImport,
 			setValidationError,
 		}
 	),
