@@ -64,7 +64,7 @@ const getCreditCardImageURL = ( type, selected ) => {
 
 export const getCreditCardSummary = ( translate, type, digits ) => {
 	const supportedTypes = {
-		[ 'american express' ]: translate( 'American Express' ),
+		'american express': translate( 'American Express' ),
 		amex: translate( 'American Express' ),
 		diners: translate( 'Diners Club' ),
 		discover: translate( 'Discover' ),
