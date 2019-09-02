@@ -28,14 +28,11 @@ class SiteTypeForm extends Component {
 
 		// from localize() HoC
 		translate: PropTypes.func.isRequired,
-		siteTypeDefinitions: PropTypes.array,
 	};
 
 	static defaultProps = {
 		showDescriptions: true,
 		showPurchaseRequired: true,
-		// Specify which site types we'd like to render in the UI
-		siteTypeDefinitions: getAllSiteTypes( [ 1, 2, 3, 4 ] ),
 	};
 
 	handleSubmit = type => {
@@ -46,8 +43,9 @@ class SiteTypeForm extends Component {
 	};
 
 	render() {
-		const { showDescriptions, showPurchaseRequired, siteTypeDefinitions, translate } = this.props;
-
+		const { showDescriptions, showPurchaseRequired, translate } = this.props;
+		// Specify which site types we'd like to render in the UI
+		const siteTypeDefinitions = getAllSiteTypes( [ 1, 2, 3, 4 ] );
 		return (
 			<>
 				<Card className="site-type__wrapper">
