@@ -22,14 +22,14 @@
 	--color-accent-light: #beabce;
 	--color-accent-dark:  #6d3e64;
 
-	--color-woocommerce-onboarding-background:  #f6f6f6;
-	--color-woocommerce-header-border: #e1e2e2;
+	--color-woocommerce-onboarding-background:  #f6f7f7;
+	--color-woocommerce-header-border: #dcdcde;
 
 	// Override global colors with accent variables
 	--color-primary:                         var( --color-accent-dark );
-	--color-primary-100:					 var( --color-gray-600 );
-	--color-neutral-200:				  	 var( --color-gray-600 );
-	--color-primary-200:					 var( --color-gray-600 );
+	--color-primary-100:					 #50575e;
+	--color-neutral-200:				  	 #50575e;
+	--color-primary-200:					 #50575e;
 	--color-primary-light:                   var( --color-accent-light );
 	--color-button-primary-background-hover: #ca2a7c;
 	--color-accent-600:                      var( --color-accent-dark );
@@ -37,5 +37,23 @@
 	::selection {
 		color: var( --color-white );
 		background: var( --color-accent );
+	}
+
+	// @todo Once Calypso has updated to color-studio v2, WooCommerce Onboarding's Connection flow can switch to using studio variables.
+	button.is-primary {
+		background-color: #c9356e; // $studio-pink;
+		border-color: #8c1749; // $studio-pink-70;
+
+		&:hover,
+		&:focus:enabled {
+			background: #bf3269; // shadded 50%
+			border-color: #651b37;
+			color: var( --color-white );
+		}
+
+		&:hover {
+			background: #bf3269;
+			border-color: #651b37;
+		}
 	}
 }
