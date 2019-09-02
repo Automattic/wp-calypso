@@ -373,14 +373,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'login',
-		paths: [ '/log-in' ],
-		module: 'login',
-		enableLoggedOut: true,
-		secondary: false,
-		isomorphic: true,
-	},
-	{
 		name: 'auth',
 		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
