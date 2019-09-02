@@ -20,9 +20,7 @@ var start = Date.now(),
 	port = process.env.PORT || config( 'port' ),
 	host = process.env.HOST || config( 'hostname' ),
 	app = boot(),
-	server,
-	compiler,
-	hotReloader;
+	server;
 
 function sendBootStatus( status ) {
 	// don't send anything if we're not running in a fork
@@ -84,23 +82,3 @@ server.listen( { port, host }, function() {
 	// Tell the parent process that Calypso has booted.
 	sendBootStatus( 'ready' );
 } );
-
-// Enable hot reloader in development
-if ( process.env.NODE_ENV === 'development' ) {
-	console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
-
-	hotReloader = require( 'bundler/hot-reloader' );
-	compiler = app.get( 'compiler' );
-
-	compiler.plugin( 'compile', function() {
-		sendBootStatus( 'compiler compiling' );
-	} );
-	compiler.plugin( 'invalid', function() {
-		sendBootStatus( 'compiler invalid' );
-	} );
-	compiler.plugin( 'done', function() {
-		sendBootStatus( 'compiler done' );
-	} );
-
-	hotReloader.listen( server, compiler );
-}
