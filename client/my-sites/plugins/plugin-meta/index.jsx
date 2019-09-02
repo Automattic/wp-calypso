@@ -247,7 +247,6 @@ export class PluginMeta extends Component {
 			'database-browser',
 			'duplicator',
 			'extended-wp-reset',
-			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'plugins-garbage-collector',
