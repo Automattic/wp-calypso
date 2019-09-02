@@ -331,6 +331,7 @@ export class PluginMeta extends Component {
 
 			// misc
 			'adult-mass-photos-downloader',
+			'adult-mass-videos-embedder',
 			'ari-adminer',
 			'automatic-video-posts',
 			'bwp-minify',
