@@ -6,13 +6,12 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import Head from '../components/head';
+import EnvironmentBadge, { Branch, DevDocsLink, TestHelper } from 'components/environment-badge';
+import Head from 'components/head';
 import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
@@ -65,30 +64,13 @@ class Desktop extends React.Component {
 						</div>
 					</div>
 					{ badge && (
-						<div className="environment-badge">
-							{ abTestHelper && <div className="environment is-tests" /> }
-							{ branchName && branchName !== 'master' && (
-								<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
-									{ branchName }
-								</span>
+						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
+							{ abTestHelper && <TestHelper /> }
+							{ branchName && (
+								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && (
-								<span className="environment is-docs">
-									<a href={ devDocsURL } title="DevDocs">
-										docs
-									</a>
-								</span>
-							) }
-							<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-							<ExternalLink
-								className="bug-report"
-								href={ feedbackURL }
-								target="_blank"
-								title="Report an issue"
-							>
-								<Gridicon icon="bug" size={ 18 } />
-							</ExternalLink>
-						</div>
+							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
+						</EnvironmentBadge>
 					) }
 
 					{ app && (

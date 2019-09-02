@@ -11,13 +11,13 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import config from 'config';
-import Head from '../components/head';
+import Head from 'components/head';
 import EnvironmentBadge, {
 	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
-} from '../components/environment-badge';
+} from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
