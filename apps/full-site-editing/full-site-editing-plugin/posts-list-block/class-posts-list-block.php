@@ -20,6 +20,13 @@ class Posts_List_Block {
 	private static $instance = null;
 
 	/**
+ 	 * Whether we are in the process of rendering the block.
+ 	 *
+ 	 * @var bool
+ 	 */
+	private $rendering_block = false;
+
+	/**
 	 * A8C_Post_List constructor.
 	 */
 	private function __construct() {
@@ -103,6 +110,7 @@ class Posts_List_Block {
 	 * @return string
 	 */
 	public function render_a8c_post_list_block( $attributes, $content ) {
+
 		$posts_list = new \WP_Query(
 			array(
 				'post_type'        => 'post',
@@ -114,12 +122,19 @@ class Posts_List_Block {
 
 		add_filter( 'excerpt_more', array( $this, 'custom_excerpt_read_more' ) );
 
-		$content = render_template(
-			'posts-list',
-			array(
-				'posts_list' => $posts_list,
-			)
-		);
+		// Prevent situations when the block attempts rendering another a8c/posts-list block.
+		if ( $this->rendering_block !== true ) {
+			$this->rendering_block = true;
+
+			$content = render_template(
+				'posts-list',
+				array(
+					'posts_list' => $posts_list,
+				)
+			);
+
+			$this->rendering_block = false;
+		}
 
 		remove_filter( 'excerpt_more', array( $this, 'custom_excerpt_read_more' ) );
 
