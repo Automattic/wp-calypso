@@ -917,9 +917,8 @@ class SignupForm extends Component {
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
-						userCreationComplete={ this.userCreationComplete() }
-						renderTerms={ this.termsOfServiceLink() }
-						getloginUrl={ this.getloginUrl() }
+						renderTerms={ this.termsOfServiceLink }
+						getloginUrl={ this.getloginUrl }
 					/>
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm

@@ -422,7 +422,7 @@ export function createAccount(
 					nux_q_question_primary: siteVertical,
 					nux_q_question_experience: userExperience || undefined,
 					// url sent in the confirmation email
-					jetpack_redirect: queryArgs.jetpack_redirect,
+					jetpack_redirect: get( queryArgs, 'jetpack_redirect' ),
 				},
 				oauth2Signup
 					? {
