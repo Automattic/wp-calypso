@@ -564,17 +564,6 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		// Handle the redirect path after a purchase of GSuite
-		// The onboarding checklist currently supports the blog type only.
-		if ( hasGoogleApps( cart ) && domainReceiptId && 'store' !== siteDesignType ) {
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: selectedSiteSlug,
-				plan: 'paid',
-			} );
-
-			return `${ signupDestination }?d=gsuite`;
-		}
-
 		const redirectPathForGSuiteUpsell = this.maybeRedirectToGSuiteNudge(
 			pendingOrReceiptId,
 			stepResult
