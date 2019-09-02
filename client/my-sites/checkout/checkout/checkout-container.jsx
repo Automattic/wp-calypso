@@ -22,30 +22,30 @@ import SignupSiteCreatedNotice from 'my-sites/checkout/checkout/signup-site-crea
 import './checkout-container.scss';
 
 /**
- * Returns whether given site has been created in the last `n` minutes
+ * Returns whether a given site creation date is "new", that is whether the date falls in the last `n` minutes
  *
  * @param  {String}  createdAt               The site creation date stamp
- * @param  {Number}  creationWindowInMinutes A site is considered 'new' if it's been created in this time window (in minutes)
- * @return {Boolean}                         If the site is 'new'. Default `false`
+ * @param  {Number}  creationWindowInMinutes A site creation date is considered 'new' if it's been created in this time window (in minutes)
+ * @return {Boolean}                         If the creation date is 'new'. Default `false`
  */
-function isSelectedSiteNew( createdAt, creationWindowInMinutes = 5 ) {
+function isSiteCreatedDateNew( createdAt, creationWindowInMinutes = 5 ) {
 	return moment( createdAt ).isAfter( moment().subtract( creationWindowInMinutes, 'minutes' ) );
 }
 
 class CheckoutContainer extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			headerText: '',
-			shouldDisplaySiteCreatedNotice:
-				props.isComingFromSignup && isSelectedSiteNew( get( props.selectedSite, 'options.created_at', '' ) ),
-		};
-	}
+	state = {
+		headerText: '',
+		shouldDisplaySiteCreatedNotice:
+			this.props.isComingFromSignup &&
+			isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) ),
+	};
 
 	componentDidMount() {
 		if ( this.state.shouldDisplaySiteCreatedNotice ) {
 			this.setHeaderText(
-				this.props.translate( 'Your WordPress.com site is ready! Finish your purchase to get the most out of it.' )
+				this.props.translate(
+					'Your WordPress.com site is ready! Finish your purchase to get the most out of it.'
+				)
 			);
 		}
 	}
