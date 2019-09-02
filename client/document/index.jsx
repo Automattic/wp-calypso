@@ -11,20 +11,16 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import config from 'config';
-import Head from '../components/head';
+import Head from 'components/head';
 import EnvironmentBadge, {
 	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
-} from '../components/environment-badge';
-import getStylesheet from './utils/stylesheet';
+} from 'components/environment-badge';
+import { chunkCssLinks } from './utils';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
-
-const cssChunkLink = asset => (
-	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
-);
 
 class Document extends React.Component {
 	render() {
@@ -44,14 +40,12 @@ class Document extends React.Component {
 			languageRevisions,
 			renderedLayout,
 			user,
-			urls,
 			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
 			isFluidWidth,
 			env,
-			isDebug,
 			badge,
 			abTestHelper,
 			preferencesHelper,
@@ -66,8 +60,6 @@ class Document extends React.Component {
 			addEvergreenCheck,
 			requestFrom,
 		} = this.props;
-
-		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
@@ -110,17 +102,8 @@ class Document extends React.Component {
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
-
-					<link
-						rel="stylesheet"
-						id="main-css"
-						href={
-							urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-						}
-						type="text/css"
-					/>
-					{ entrypoint[ csskey ].map( cssChunkLink ) }
-					{ chunkFiles[ csskey ].map( cssChunkLink ) }
+					{ chunkCssLinks( entrypoint, isRTL ) }
+					{ chunkCssLinks( chunkFiles, isRTL ) }
 				</Head>
 				<body
 					className={ classNames( {

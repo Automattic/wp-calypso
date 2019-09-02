@@ -212,7 +212,10 @@ const webpackConfig = {
 			SassConfig.loader( {
 				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
-				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				prelude: `@import '${ path.join(
+					__dirname,
+					'client/assets/stylesheets/shared/_utils.scss'
+				) }';`,
 			} ),
 			{
 				include: path.join( __dirname, 'client/sections.js' ),

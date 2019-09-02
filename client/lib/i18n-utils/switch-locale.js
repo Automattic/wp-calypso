@@ -69,11 +69,6 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 	document.body.classList[ isRTL ? 'add' : 'remove' ]( 'rtl' );
 
-	const directionFlag = isRTL ? '-rtl' : '';
-	const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
-	const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
-
-	switchCSS( 'main-css', cssUrl );
 	switchWebpackCSS( isRTL );
 }
 
@@ -204,30 +199,6 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 	} )
 		.then( res => res.json() )
 		.then( translations => i18n.addTranslations( translations ) );
-}
-
-const bundles = {};
-
-async function switchCSS( elementId, cssUrl ) {
-	if ( bundles.hasOwnProperty( elementId ) && bundles[ elementId ] === cssUrl ) {
-		return;
-	}
-
-	bundles[ elementId ] = cssUrl;
-
-	const currentLink = document.getElementById( elementId );
-
-	if ( currentLink && currentLink.getAttribute( 'href' ) === cssUrl ) {
-		return;
-	}
-
-	const newLink = await loadCSS( cssUrl, currentLink );
-
-	if ( currentLink && currentLink.parentElement ) {
-		currentLink.parentElement.removeChild( currentLink );
-	}
-
-	newLink.id = elementId;
 }
 
 /*
