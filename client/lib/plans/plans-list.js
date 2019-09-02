@@ -293,7 +293,7 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, unlimited' +
+				' Google Analytics support, 200 GB' +
 				' storage, and the ability to remove WordPress.com branding.',
 			{
 				components: {
@@ -306,7 +306,7 @@ const getPlanBusinessDetails = () => ( {
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, unlimited' +
+				' Google Analytics support, 200 GB' +
 				' storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
