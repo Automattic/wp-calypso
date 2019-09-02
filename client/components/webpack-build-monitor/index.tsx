@@ -25,7 +25,7 @@ const CONNECTION_TIMEOUT = 20 * 1000;
 const debug = debugFactory( 'calypso:webpack-build-monitor' );
 
 enum BuildState {
-	UNKNOWN,
+	INITIAL, // not yet connected
 	IDLE,
 	BUILDING,
 	BUILT_WITH_WARNINGS,
@@ -135,14 +135,16 @@ function connectToHotServer( {
 const WebpackBuildMonitor: FunctionComponent = () => {
 	const [ lastHash, setLastHash ] = useState( __webpack_hash__ );
 	const [ isConnected, setIsConnected ] = useState( false );
-	const [ buildState, setBuildState ] = useState( BuildState.UNKNOWN );
+	const [ buildState, setBuildState ] = useState( BuildState.INITIAL );
 
 	useEffect( () => connectToHotServer( { setIsConnected, setBuildState, setLastHash } ), [] );
 
 	const needsReload = lastHash !== __webpack_hash__;
 
 	let msg: string | null = null;
-	if ( ! isConnected ) {
+	if ( buildState === BuildState.INITIAL ) {
+		msg = null; // don't show anything until connected for the first time
+	} else if ( ! isConnected ) {
 		msg = 'Webpack disconnected';
 	} else if ( buildState === BuildState.BUILDING ) {
 		msg = 'Webpack building…';
@@ -152,7 +154,11 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 		msg = 'Webpack error';
 	}
 
-	return msg ? (
+	if ( ! msg ) {
+		return null;
+	}
+
+	return (
 		<div
 			className={ classNames( 'webpack-build-monitor', {
 				'is-error': buildState === BuildState.ERROR || ! isConnected,
@@ -164,7 +170,7 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 			) }
 			{ msg }
 		</div>
-	) : null;
+	);
 };
 
 export default WebpackBuildMonitor;
