@@ -15,11 +15,12 @@ export class SignupSiteCreatedNotice extends PureComponent {
 		const { cart, translate } = this.props;
 		const hasPlanInCart = hasPlan( cart );
 		const bundledDomain = cart && cart.bundled_domain;
-		let hintText = 'Complete your purchase to access your upgrade benefits.';
+		let hintText = translate( 'Complete your purchase to access your upgrade benefits.' );
 
 		if ( hasPlanInCart ) {
 			hintText = translate( 'Complete your plan purchase to upgrade.' );
 		}
+		
 		if ( hasPlanInCart && bundledDomain ) {
 			hintText = translate(
 				"Once you've upgraded, your new site address will be {{strong}}%(bundledDomain)s{{/strong}}",
