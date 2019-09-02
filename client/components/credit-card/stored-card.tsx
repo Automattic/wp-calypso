@@ -89,7 +89,7 @@ const StoredCard = ( { lastDigits, cardType, name, expiry, selected } ) => {
 	const moment = useLocalizedMoment();
 
 	// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
-	const expirationDate = expiry ? moment( expiry ).format( 'MM/YY' ) : null;
+	const expirationDate = expiry ? moment( expiry, moment.ISO_8601, true ).format( 'MM/YY' ) : null;
 
 	const type = cardType && cardType.toLocaleLowerCase();
 	const typeStyle = { backgroundImage: getCreditCardImageURL( type, selected ) };
