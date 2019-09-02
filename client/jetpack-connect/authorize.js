@@ -124,6 +124,9 @@ export class JetpackAuthorize extends Component {
 		};
 
 		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the login step within a popup window.
+			// In these cases, we'll want to automatically close the window when the login
+			// step is complete, and continue authorization in the parent window.
 			debug( 'Closing window after login' );
 			window.close();
 		}
