@@ -14,14 +14,12 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import { IntervalHandle, TimestampMS } from 'client/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const CONNECTION_TIMEOUT = 20 * 1000;
 const debug = debugFactory( 'calypso:webpack-build-monitor' );
 
 enum BuildState {
@@ -51,84 +49,61 @@ function connectToHotServer( {
 		return;
 	}
 
-	let lastActivity: TimestampMS;
-	let connectionTimer: IntervalHandle;
-	let source: EventSource;
+	debug( 'Webpack HMR connecting' );
+	const source = new EventSource( '/__webpack_hmr' );
 
-	const connect = () => {
-		debug( 'Webpack HMR connecting' );
-		source = new EventSource( '/__webpack_hmr' );
-
-		source.onopen = () => {
-			debug( 'Webpack HMR connected' );
-			setIsConnected( true );
-			lastActivity = Date.now();
-			connectionTimer = setInterval( () => {
-				if ( Date.now() - lastActivity > CONNECTION_TIMEOUT ) {
-					debug( 'Webpack HMR connection timeout. Reconnecting in %o…', CONNECTION_TIMEOUT );
-					setIsConnected( false );
-					clearInterval( connectionTimer );
-					source.close();
-					setTimeout( connect, CONNECTION_TIMEOUT );
-				}
-			}, CONNECTION_TIMEOUT / 2 );
-		};
-
-		source.onmessage = ( m: MessageEvent ) => {
-			lastActivity = Date.now();
-
-			if ( m.data === '💓' ) {
-				return;
-			}
-
-			let action: string | undefined;
-			let nextErrors;
-			let nextWarnings;
-
-			try {
-				const parsedData = JSON.parse( m.data );
-				debug( 'Webpack HMR message: %o', parsedData );
-				action = parsedData.action;
-				nextErrors = parsedData.errors;
-				nextWarnings = parsedData.warnings;
-				if ( parsedData.hash ) {
-					setLastHash( parsedData.hash );
-				}
-			} catch ( err ) {
-				debug( 'Could not parse HMR message.data %o', m.data );
-			}
-
-			switch ( action ) {
-				case 'building':
-					setBuildState( BuildState.BUILDING );
-					break;
-
-				case 'built':
-					if ( nextErrors.length ) {
-						setBuildState( BuildState.ERROR );
-					} else if ( nextWarnings.length ) {
-						setBuildState( BuildState.BUILT_WITH_WARNINGS );
-					} else {
-						setBuildState( BuildState.IDLE );
-					}
-					break;
-
-				case 'sync':
-					if ( nextErrors.length ) {
-						setBuildState( BuildState.ERROR );
-					}
-					break;
-			}
-		};
+	source.onopen = () => {
+		debug( 'Webpack HMR connected' );
+		setIsConnected( true );
 	};
 
-	connect();
+	source.onmessage = ( m: MessageEvent ) => {
+		if ( m.data === '💓' ) {
+			return;
+		}
+
+		let action: string | undefined;
+		let nextErrors;
+		let nextWarnings;
+
+		try {
+			const parsedData = JSON.parse( m.data );
+			debug( 'Webpack HMR message: %o', parsedData );
+			action = parsedData.action;
+			nextErrors = parsedData.errors;
+			nextWarnings = parsedData.warnings;
+			if ( parsedData.hash ) {
+				setLastHash( parsedData.hash );
+			}
+		} catch ( err ) {
+			debug( 'Could not parse HMR message.data %o', m.data );
+		}
+
+		switch ( action ) {
+			case 'building':
+				setBuildState( BuildState.BUILDING );
+				break;
+
+			case 'built':
+				if ( nextErrors.length ) {
+					setBuildState( BuildState.ERROR );
+				} else if ( nextWarnings.length ) {
+					setBuildState( BuildState.BUILT_WITH_WARNINGS );
+				} else {
+					setBuildState( BuildState.IDLE );
+				}
+				break;
+
+			case 'sync':
+				if ( nextErrors.length ) {
+					setBuildState( BuildState.ERROR );
+				}
+				break;
+		}
+	};
 
 	return () => {
-		if ( source ) {
-			source.close();
-		}
-		clearInterval( connectionTimer );
+		source.close();
 	};
 }
 
