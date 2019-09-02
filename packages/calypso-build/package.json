@@ -55,7 +55,7 @@
 		"enzyme": "3.10.0",
 		"enzyme-adapter-react-16": "1.14.0",
 		"file-loader": "3.0.1",
-		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300d",
+		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 		"node-sass": "4.11.0",
 		"postcss-custom-properties": "8.0.9",
 		"postcss-loader": "3.0.0",
