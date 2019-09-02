@@ -8,12 +8,12 @@
 	&.is-dismissible {
 		padding-right: 48px;
 	}
-	
+
 	&[href] {
 		cursor: pointer;
 	}
 
-	@include banner-color( var( --color-primary ) );
+	@include banner-color( var( --color-primary-40 ) );
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
@@ -39,21 +39,21 @@
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
-			@include banner-color( var( --studio-jetpack-green-plan-personal ) );
+			@include banner-color( var( --color-jetpack-plan-personal ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( var( --studio-jetpack-green-plan-premium ) );
+			@include banner-color( var( --color-jetpack-plan-premium ) );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( var( --studio-jetpack-green-plan-professional ) );
+			@include banner-color( var( --color-jetpack-plan-professional ) );
 		}
 	}
 
 	.card__link-indicator {
 		align-items: center;
-		color: var( --color-primary );
+		color: var( --color-neutral );
 		display: flex;
 	}
 
@@ -64,7 +64,7 @@
 			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
 		}
 		.card__link-indicator {
-			color: var( --color-primary-dark );
+			color: var( --color-neutral-dark );
 		}
 	}
 
