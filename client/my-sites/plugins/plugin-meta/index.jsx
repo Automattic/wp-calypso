@@ -282,6 +282,7 @@ export class PluginMeta extends Component {
 			'comet-cache',
 			'hyper-cache',
 			'powered-cache',
+			'jch-optimize',
 			'quick-cache',
 			'sg-cachepress',
 			'w3-total-cache',
