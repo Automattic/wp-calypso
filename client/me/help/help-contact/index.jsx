@@ -534,10 +534,10 @@ class HelpContact extends React.Component {
 					<GMClosureNotice
 						compact={ compact }
 						displayAt="2019-08-31 00:00Z"
-						defaultClosesAt="2019-09-07 06:00Z"
-						defaultReopensAt="2019-09-23 06:00Z"
-						businessAndEcommerceClosesAt="2019-09-10 06:00Z"
-						businessAndEcommerceReopensAt="2019-09-19 06:00Z"
+						defaultClosesAt="2019-09-06 23:00Z"
+						defaultReopensAt="2019-09-23 04:00Z"
+						businessAndEcommerceClosesAt="2019-09-09 23:00Z"
+						businessAndEcommerceReopensAt="2019-09-19 04:00Z"
 					/>
 				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (

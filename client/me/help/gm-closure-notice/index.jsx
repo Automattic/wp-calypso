@@ -26,7 +26,7 @@ import { getUserPurchases } from 'state/purchases/selectors';
 import './style.scss';
 
 const DATE_FORMAT_SHORT = 'MMMM D';
-const DATE_FORMAT_LONG = 'dddd, MMMM Do';
+const DATE_FORMAT_LONG = 'dddd, MMMM Do LT';
 
 const GMClosureNotice = ( {
 	businessAndEcommerceClosesAt,
@@ -53,17 +53,11 @@ const GMClosureNotice = ( {
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
 
-	const [ closesAt, closedUntil, reopensAt ] = [
+	const [ closesAt, reopensAt ] = [
 		moment.tz(
 			hasBusinessOrEcommercePlan ? businessAndEcommerceClosesAt : defaultClosesAt,
 			guessedTimezone
 		),
-		moment
-			.tz(
-				hasBusinessOrEcommercePlan ? businessAndEcommerceReopensAt : defaultReopensAt,
-				guessedTimezone
-			)
-			.subtract( 1, 'days' ),
 		moment.tz(
 			hasBusinessOrEcommercePlan ? businessAndEcommerceReopensAt : defaultReopensAt,
 			guessedTimezone
@@ -74,41 +68,39 @@ const GMClosureNotice = ( {
 		return null;
 	}
 
-	const HEADING = translate( 'Limited Support %(closesAt)s – %(closedUntil)s', {
+	const HEADING = translate( 'Limited Support %(closesAt)s – %(reopensAt)s', {
 		args: {
 			closesAt: closesAt.format( DATE_FORMAT_SHORT ),
-			closedUntil: closedUntil.format(
-				closedUntil.isSame( closesAt, 'month' ) ? 'D' : DATE_FORMAT_SHORT
+			reopensAt: reopensAt.format(
+				reopensAt.isSame( closesAt, 'month' ) ? 'D' : DATE_FORMAT_SHORT
 			),
 		},
 	} );
 
 	const mainMessageArgs = {
-		closed_start_date: closesAt.format( DATE_FORMAT_LONG ),
-		closed_end_date: closedUntil.format( DATE_FORMAT_LONG ),
-		support_resume_date: reopensAt.format( DATE_FORMAT_LONG ),
+		closes_at: closesAt.format( DATE_FORMAT_LONG ),
+		reopens_at: reopensAt.format( DATE_FORMAT_LONG ),
 	};
 
 	const MAIN_MESSAGES = {
 		before: {
 			hasPlan: translate(
-				'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
+				'Live chat support will be closed from %(closes_at)s until %(reopens_at)s. Email support will remain open.',
 				{ args: mainMessageArgs }
 			),
 			nonPlan: translate(
-				'Private support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. We will reopen private support on %(support_resume_date)s.',
+				'Private support will be closed from %(closes_at)s until %(reopens_at)s.',
 				{ args: mainMessageArgs }
 			),
 		},
 		during: {
 			hasPlan: translate(
-				'Live chat support will be closed through %(closed_end_date)s, included. Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
+				'Live chat support is closed until %(reopens_at)s. In the meantime you can still reach us by email.',
 				{ args: mainMessageArgs }
 			),
-			nonPlan: translate(
-				'Private support will be closed through %(closed_end_date)s, included. We will reopen private support on %(support_resume_date)s.',
-				{ args: mainMessageArgs }
-			),
+			nonPlan: translate( 'Private support is closed until %(reopens_at)s.', {
+				args: mainMessageArgs,
+			} ),
 		},
 	};
 
