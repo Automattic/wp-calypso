@@ -29,11 +29,11 @@ const DATE_FORMAT_SHORT = 'MMMM D';
 const DATE_FORMAT_LONG = 'dddd, MMMM Do LT';
 
 const GMClosureNotice = ( {
-	businessAndEcommerceClosesAt,
-	businessAndEcommerceReopensAt,
+	priorityChatClosesAt,
+	priorityChatReopensAt,
 	compact,
-	defaultClosesAt,
-	defaultReopensAt,
+	basicChatClosesAt,
+	basicChatReopensAt,
 	displayAt,
 	purchases,
 } ) => {
@@ -55,11 +55,11 @@ const GMClosureNotice = ( {
 
 	const [ closesAt, reopensAt ] = [
 		moment.tz(
-			hasBusinessOrEcommercePlan ? businessAndEcommerceClosesAt : defaultClosesAt,
+			hasBusinessOrEcommercePlan ? priorityChatClosesAt : basicChatClosesAt,
 			guessedTimezone
 		),
 		moment.tz(
-			hasBusinessOrEcommercePlan ? businessAndEcommerceReopensAt : defaultReopensAt,
+			hasBusinessOrEcommercePlan ? priorityChatReopensAt : basicChatReopensAt,
 			guessedTimezone
 		),
 	];
