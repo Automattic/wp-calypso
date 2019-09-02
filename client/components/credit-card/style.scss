@@ -15,8 +15,9 @@ div.credit-card {
 
 	&.is-selected {
 		cursor: default;
-		border-left: 3px solid var( --color-success );
-		background-color: #fafdf6;
+		border-color: var( --color-primary-5 );
+		border-left: 3px solid var( --color-primary-10 );
+		background-color: var( --color-primary-0 );
 		padding-left: 0;
 	}
 }

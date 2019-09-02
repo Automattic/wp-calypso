@@ -55,13 +55,16 @@
 			}
 		}
 		&.is-staging {
-			background-color: var( --color-warning );
+			background-color: var( --color-warning-20 );
+			color: var( --color-warning-80 );
 		}
 		&.is-wpcalypso {
-			background-color: #b1eed0;
+			background-color: var( --color-green-5 );
+			color: var( --color-green-80 );
 		}
 		&.is-dev {
 			background-color: var( --color-error );
+			color: var( --studio-white );
 		}
 		&.is-horizon,
 		&.is-feedback {

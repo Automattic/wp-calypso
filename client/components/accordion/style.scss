@@ -177,14 +177,14 @@ $accordion-background-expanded: var( --studio-white );
 	}
 
 	&.is-warning {
-		color: var( --color-warning );
+		color: var( --color-warning-40 );
 	}
 
 	&.is-error {
-		color: var( --color-error );
+		color: var( --color-error-40 );
 	}
 
 	&.is-info {
-		color: var( --color-primary );
+		color: var( --color-neutral-40 );
 	}
 }

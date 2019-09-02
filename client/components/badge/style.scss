@@ -7,8 +7,8 @@
 }
 
 .badge--warning {
-	color: var( --color-neutral-70 );
-	background-color: var( --color-warning );
+	color: var( --color-warning-80 );
+	background-color: var( --color-warning-20 );
 }
 
 .badge--success {
@@ -17,6 +17,6 @@
 }
 
 .badge--info {
-	color: var( --color-neutral-90 );
+	color: var( --color-neutral-70 );
 	background-color: var( --color-neutral-5 );
 }

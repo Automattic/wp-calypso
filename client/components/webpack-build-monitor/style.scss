@@ -15,7 +15,8 @@
 	line-height: 11px;
 
 	&.is-warning {
-		background: var( --color-warning );
+		background: var( --color-warning-20 );
+		color: var( --color-warning-80 );
 	}
 
 	&.is-error {
