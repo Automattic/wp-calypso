@@ -4,7 +4,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, isEmpty } from 'lodash';
