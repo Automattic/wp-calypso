@@ -62,43 +62,39 @@ function connectToHotServer( {
 			return;
 		}
 
-		let action: string | undefined;
-		let nextErrors;
-		let nextWarnings;
+		let message;
 
 		try {
-			const parsedData = JSON.parse( m.data );
-			debug( 'Webpack HMR message: %o', parsedData );
-			action = parsedData.action;
-			nextErrors = parsedData.errors;
-			nextWarnings = parsedData.warnings;
-			if ( parsedData.hash ) {
-				setLastHash( parsedData.hash );
-			}
+			message = JSON.parse( m.data );
+			debug( 'Webpack HMR message: %o', message );
 		} catch ( err ) {
 			debug( 'Could not parse HMR message.data %o', m.data );
+			return;
 		}
 
-		switch ( action ) {
+		switch ( message.action ) {
 			case 'building':
 				setBuildState( BuildState.BUILDING );
 				break;
 
 			case 'built':
-				if ( nextErrors.length ) {
+			case 'sync': {
+				const { errors, warnings, hash } = message;
+
+				if ( errors.length ) {
 					setBuildState( BuildState.ERROR );
-				} else if ( nextWarnings.length ) {
+				} else if ( warnings.length ) {
 					setBuildState( BuildState.BUILT_WITH_WARNINGS );
 				} else {
 					setBuildState( BuildState.IDLE );
 				}
-				break;
 
-			case 'sync':
-				if ( nextErrors.length ) {
-					setBuildState( BuildState.ERROR );
+				if ( hash ) {
+					setLastHash( hash );
 				}
+
 				break;
+			}
 		}
 	};
 
