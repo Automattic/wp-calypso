@@ -21,8 +21,6 @@ jobs:
     needs: wait-for-calypso-live
     steps:
       - uses: actions/checkout@v1
-      - name: install deps
-        run: sudo apt-get install xvfb
       - name: Install npm deps
         run: cd test/e2e && npm ci
       - name: Decrypt Config
@@ -36,6 +34,7 @@ jobs:
           BRANCHNAME: $GITHUB_REF
         run: cd test/e2e && ./run.sh -R -g -s desktop -S ${GITHUB_SHA}
       - uses: actions/upload-artifact@master
+        if: always()
         with:
           name: screenshots
           path: ./test/e2e/screenshots
@@ -45,8 +44,6 @@ jobs:
     needs: wait-for-calypso-live
     steps:
       - uses: actions/checkout@v1
-      - name: Install deps
-        run: sudo apt-get install xvfb
       - name: Install npm deps
         run: cd test/e2e && npm ci
       - name: Decrypt Config
@@ -60,6 +57,7 @@ jobs:
           BRANCHNAME: $GITHUB_REF
         run: cd test/e2e && ./run.sh -R -g -s mobile -S ${GITHUB_SHA}
       - uses: actions/upload-artifact@master
+        if: always()
         with:
           name: screenshots
           path: ./test/e2e/screenshots
