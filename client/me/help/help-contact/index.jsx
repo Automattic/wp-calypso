@@ -55,6 +55,8 @@ import getLocalizedLanguageNames from 'state/selectors/get-localized-language-na
 import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
 import isDirectlyReady from 'state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
+import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { isDefaultLocale } from 'lib/i18n-utils';
@@ -109,7 +111,13 @@ class HelpContact extends React.Component {
 	}
 
 	backToHelp = () => {
-		page( '/help' );
+		if ( ! this.props.hasJetpackSites && ! this.props.hasAtomicSites ) {
+			page( '/help' );
+		}
+		
+		if ( this.props.hasJetpackSites || this.props.hasAtomicSites ) {
+			page( '/help/contact' );
+		}
 	};
 
 	clearSavedContactForm = () => {
@@ -587,6 +595,8 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			getUserInfo: getHappychatUserInfo( state ),
 			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
+			hasJetpackSites: hasJetpackSites( state ),
+			hasAtomicSites: userHasAnyAtomicSites( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
