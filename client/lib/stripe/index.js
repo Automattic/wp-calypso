@@ -284,23 +284,20 @@ function useStripeConfiguration( requestArgs = {} ) {
 	return { stripeConfiguration, setStripeError };
 }
 
-/**
- * HOC to render a component with StripeJs
- *
- * The wrapped component will be able to access the `useStripe` custom hook.
- *
- * @param {object} WrappedComponent The component to wrap
- * @param {object} configurationArgs (optional) Options for configuration endpoint request. Can include `country` or `needs_intent`
- * @return {object} WrappedComponent
- */
-export function withStripe( WrappedComponent, configurationArgs = {} ) {
-	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
-	return props => {
+export function StripeHookProvider( { children, configurationArgs = {} } ) {
+	const InnerWrapper = ( { stripe, stripeData, children: innerChildren } ) => {
+		const updatedStripeData = { ...stripeData, stripe };
+		return (
+			<StripeContext.Provider value={ updatedStripeData }>{ innerChildren }</StripeContext.Provider>
+		);
+	};
+	const StripeInjectedWrapper = injectStripe( InnerWrapper );
+	const OuterWrapper = () => {
 		const { stripeConfiguration, setStripeError } = useStripeConfiguration( configurationArgs );
 		const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
 
 		const stripeData = {
-			stripe: stripeJs,
+			stripe: null, // This must be set inside the injected component
 			stripeConfiguration,
 			isStripeLoading,
 			stripeLoadingError,
@@ -308,21 +305,20 @@ export function withStripe( WrappedComponent, configurationArgs = {} ) {
 		};
 
 		return (
-			<StripeContext.Provider value={ stripeData }>
-				<StripeProvider stripe={ stripeJs }>
-					<Elements>
-						<StripeInjectedWrappedComponent { ...props } />
-					</Elements>
-				</StripeProvider>
-			</StripeContext.Provider>
+			<StripeProvider stripe={ stripeJs }>
+				<Elements>
+					<StripeInjectedWrapper stripeData={ stripeData }>{ children }</StripeInjectedWrapper>
+				</Elements>
+			</StripeProvider>
 		);
 	};
+	return <OuterWrapper />;
 }
 
 /**
  * Custom hook to access Stripe.js
  *
- * First you must wrap a parent component in the `withStripe` HOC. Then you can
+ * First you must wrap a parent component in `StripeHookProvider`. Then you can
  * call this hook in any sub-component to get access to the stripe variables
  * and functions.
  *
@@ -338,12 +334,15 @@ export function withStripe( WrappedComponent, configurationArgs = {} ) {
  */
 export function useStripe() {
 	const stripeData = useContext( StripeContext );
-	if ( ! stripeData ) {
-		throw new Error(
-			'No stripe context found. Did you forget to wrap this component inside StripeHookProvider?'
-		);
-	}
-	return stripeData;
+	return (
+		stripeData || {
+			stripe: null,
+			stripeConfiguration: null,
+			isStripeLoading: false,
+			stripeLoadingError: null,
+			setStripeError: () => {},
+		}
+	);
 }
 
 /**
@@ -359,6 +358,9 @@ export function withStripeProps( WrappedComponent ) {
 	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
 	return props => {
 		const stripeData = useStripe();
+		if ( ! stripeData.stripe ) {
+			return <WrappedComponent { ...props } />;
+		}
 		const newProps = { ...props, ...stripeData };
 		return <StripeInjectedWrappedComponent { ...newProps } />;
 	};
