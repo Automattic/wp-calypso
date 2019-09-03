@@ -53,6 +53,27 @@ function load_full_site_editing() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
 
 /**
+ * Whether or not FSE is active.
+ * If false, FSE functionality can be disabled.
+ *
+ * @returns bool True if FSE is active, false otherwise.
+ */
+function is_full_site_editing_active() {
+	return is_site_eligible_for_full_site_editing() && current_theme_supports( 'full-site-editing' );
+}
+
+/**
+ * Whether or not the site is eligible for FSE.
+ * This is essentially a feature gate to disable FSE
+ * on some sites which could theoretically otherwise use it.
+ *
+ * @returns bool True if current site is eligible for FSE, false otherwise.
+ */
+function is_site_eligible_for_full_site_editing() {
+	return ! apply_filters( 'a8c_disable_full_site_editing', false );
+}
+
+/**
  * Load Posts List Block.
  */
 function load_posts_list_block() {
