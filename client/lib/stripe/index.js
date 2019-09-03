@@ -345,3 +345,21 @@ export function useStripe() {
 	}
 	return stripeData;
 }
+
+/**
+ * HOC to use for components that cannot use useStripe
+ *
+ * Adds several props to the wrapped component. See docs of useStripe for
+ * details of the properties it provides.
+ *
+ * @param {object} WrappedComponent The component to wrap
+ * @return {object} WrappedComponent
+ */
+export function withStripeProps( WrappedComponent ) {
+	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
+	return props => {
+		const stripeData = useStripe();
+		const newProps = { ...props, ...stripeData };
+		return <StripeInjectedWrappedComponent { ...newProps } />;
+	};
+}
