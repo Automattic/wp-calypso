@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,9 +12,10 @@ import { login } from 'lib/paths';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';
 import HelpComponent from './main';
+import HelpFlow from './help-flow';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
-import { CONTACT, SUPPORT_ROOT } from 'lib/url/support';
+import { CONTACT, CONTACTFORM, SUPPORT_ROOT } from 'lib/url/support';
 import userUtils from 'lib/user/utils';
 
 export function loggedOut( context, next ) {
@@ -31,6 +30,9 @@ export function loggedOut( context, next ) {
 			break;
 		case '/help/contact':
 			url = CONTACT;
+			break;
+		case '/help/contact/form':
+			url = CONTACTFORM;
 			break;
 		default:
 			url = login( { redirectTo: window.location.href } );
@@ -54,6 +56,11 @@ export function courses( context, next ) {
 }
 
 export function contact( context, next ) {
+	context.primary = <HelpFlow />;
+	next();
+}
+
+export function contactForm( context, next ) {
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );

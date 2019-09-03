@@ -22,6 +22,7 @@ export const COMPLETING_GOOGLE_APPS_SIGNUP = `${ root }/adding-g-suite-to-your-s
 export const CONCIERGE_SUPPORT = `${ root }/concierge-support`;
 export const CONNECT = `${ root }/connect`;
 export const CONTACT = `${ root }/contact`;
+export const CONTACTFORM = `${ root }/contact/form`;
 export const CALYPSO_CONTACT = '/help/contact';
 export const CALYPSO_COURSES = '/help/courses';
 export const CREATE = `${ root }/create`;

@@ -1,0 +1,110 @@
+.help-flow__wrapper {
+	display: flex;
+}
+
+.help-flow__heading {
+	font-size: 20px;
+	font-weight: 500;
+	margin-bottom: 12px;
+}
+
+.help-flow-description {
+	margin: auto;
+}
+
+.help-flow__illustration {
+	display: none;
+	width: 40%;
+
+	@include breakpoint( '>480px' ) {
+		display: block;
+	}
+}
+
+.help-flow__button-wrapper {
+	text-align: center;
+}
+
+.help-flow__button {
+	margin: 8px 18px;
+}
+
+// Dialog
+.help-flow__dialog .dialog__content {
+	max-width: 700px;
+
+	.help-flow__dialog-heading {
+		font-size: 18px;
+		text-align: center;
+
+		@include breakpoint( '>660px' ) {
+			font-size: 22px;
+		}
+	}
+
+	.help-flow__dialog-text {
+		margin-bottom: 12px;
+	}
+
+	.help-flow__dialog-buttons {
+		display: flex;
+		flex-direction: column-reverse;
+		text-align: center;
+
+		@include breakpoint( '>660px' ) {
+			display: block;
+			float: right;
+		}
+
+		.is-primary {
+			margin-bottom: 8px;
+		}
+
+		.button {
+			@include breakpoint( '>660px' ) {
+				margin: 0 12px 8px 0;
+			}
+		}
+	}
+
+	.help-flow__not-listed-button {
+		display: block;
+		margin-top: 12px;
+		order: 2;
+		text-align: center;
+		width: 100%;
+	}
+
+	.site-selector {
+		margin-top: 8px;
+
+		@include breakpoint( '>660px' ) {
+			margin: 0;
+			width: 40%;
+		}
+
+		.site {
+			pointer-events: none;
+		}
+	}
+}
+
+// Dialog when Site Selector appears
+.help-flow__dialog.has-site-selector {
+	.help-flow__dialog-text {
+		@include breakpoint( '>660px' ) {
+			float: right;
+			margin-left: 20px;
+			width: 60%;
+		}
+	}
+
+	.help-flow__dialog-buttons {
+		flex-direction: column;
+	}
+
+	.help-flow__close-dialog {
+		margin-top: 12px;
+		order: 1;
+	}
+}

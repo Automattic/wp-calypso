@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -24,6 +22,14 @@ export default function() {
 			helpController.loggedOut,
 			sidebar,
 			helpController.contact,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/help/contact/form',
+			helpController.loggedOut,
+			sidebar,
+			helpController.contactForm,
 			makeLayout,
 			clientRender
 		);

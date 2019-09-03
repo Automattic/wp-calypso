@@ -46,6 +46,7 @@ class SiteSelector extends Component {
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		showAddNewSite: PropTypes.bool,
 		showAllSites: PropTypes.bool,
+		displaySearch: PropTypes.bool,
 		indicator: PropTypes.bool,
 		autoFocus: PropTypes.bool,
 		onClose: PropTypes.func,
@@ -64,6 +65,7 @@ class SiteSelector extends Component {
 
 	static defaultProps = {
 		sites: {},
+		displaySearch: true,
 		showAddNewSite: false,
 		showAllSites: false,
 		siteBasePath: false,
@@ -413,15 +415,17 @@ class SiteSelector extends Component {
 				onMouseMove={ this.onMouseMove }
 				onMouseLeave={ this.onMouseLeave }
 			>
-				<Search
-					onSearch={ this.onSearch }
-					delaySearch={ true }
-					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus={ this.props.autoFocus }
-					disabled={ ! this.props.hasLoadedSites }
-					onSearchClose={ this.props.onClose }
-					onKeyDown={ this.onKeyDown }
-				/>
+				{ this.props.displaySearch && (
+					<Search
+						onSearch={ this.onSearch }
+						delaySearch={ true }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus={ this.props.autoFocus }
+						disabled={ ! this.props.hasLoadedSites }
+						onSearchClose={ this.props.onClose }
+						onKeyDown={ this.onKeyDown }
+					/>
+				) }
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderRecentSites( sites ) }
