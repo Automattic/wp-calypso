@@ -29,9 +29,8 @@ import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } fr
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
-import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import getPreviousPath from 'state/selectors/get-previous-path';
+import getEditorCloseUrl from 'state/selectors/get-editor-close-url';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
@@ -582,24 +581,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	}
 }
 
-const getCloseUrl = ( state, postType: T.PostType, fseParentPageId: T.PostId ) => {
-	const previousPath = getPreviousPath( state );
-	const siteId = getSelectedSiteId( state );
-
-	// Handle returning to parent editor for full site editing templates
-	if ( 'wp_template' === postType ) {
-		return getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
-	}
-
-	// Handle checklist referrals to block editor
-	if ( previousPath.includes( '/checklist/' ) ) {
-		return previousPath;
-	}
-
-	// Otherwise, just return to post type listings
-	return getPostTypeAllPostsUrl( state, postType );
-};
-
 const mapStateToProps = (
 	state,
 	{ postId, postType, duplicatePostId, fseParentPageId }: Props
@@ -635,7 +616,7 @@ const mapStateToProps = (
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
 	return {
-		closeUrl: getCloseUrl( state, postType, fseParentPageId ),
+		closeUrl: getEditorCloseUrl( state, siteId, postType, fseParentPageId ),
 		currentRoute,
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',

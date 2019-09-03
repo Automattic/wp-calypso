@@ -7,3 +7,4 @@ import './switch-to-classic';
 import './style.scss';
 import './unregister-experimental-blocks';
 import './tracking';
+import './override-close-btn';
