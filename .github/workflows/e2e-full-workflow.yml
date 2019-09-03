@@ -30,7 +30,7 @@ jobs:
     - name: Run Tests
       run: cd wp-calypso/test/e2e && ./run.sh -R -g -s desktop -S ${GITHUB_SHA}
   e2e-full-suite-mobile:
-    name: e2e Full Suite - Desktop
+    name: e2e Full Suite - Mobile
     runs-on: ubuntu-latest
     needs: wait-for-calypso-live
     steps:
