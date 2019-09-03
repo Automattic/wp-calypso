@@ -146,7 +146,7 @@ class WP_Template_Inserter {
 				<p>' .
 				__(
 					'The theme did not activate correctly so it may not look identical to the demo site. 
-				You are however able to edit the header and footer content to make it suit your needs.',
+					You are still able to edit the header and footer content to suit your needs.',
 					'full-site-editing'
 				)
 				.
