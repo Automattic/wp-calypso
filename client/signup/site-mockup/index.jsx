@@ -23,7 +23,7 @@ import {
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getThemeCssUri, getFontUrl } from 'lib/signup/site-styles';
+import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
@@ -216,7 +216,7 @@ export default connect(
 				'site-topic-with-preview' === ownProps.stepName ||
 				'site-title-with-preview' === ownProps.stepName,
 			themeSlug: themeSlug,
-			fontUrl: getFontUrl(),
+			fontUrl: defaultFontUri,
 			shouldFetchVerticalData,
 		};
 	},
