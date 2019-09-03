@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { find, groupBy, isEqual, property } from 'lodash';
+import { find, groupBy, isEqual, partition, property } from 'lodash';
 
 /**
  * Internal dependencies
@@ -125,14 +125,27 @@ class Suggestions extends Component {
 			originalIndex,
 		} ) );
 
+		const [ withCategory, withoutCategory ] = partition(
+			withOriginalIndex,
+			suggestion => !! suggestion.category
+		);
+
 		// For all intents and purposes `groupBy` keeps the order stable
 		// https://github.com/lodash/lodash/issues/2212
-		const byCategory = groupBy( withOriginalIndex, property( 'category' ) );
+		const byCategory = groupBy( withCategory, property( 'category' ) );
 
 		const categories = Object.entries( byCategory ).map( ( [ category, suggestions ] ) => ( {
 			category,
+			categoryKey: category,
 			suggestions,
 		} ) );
+
+		// Add uncategorised suggestions to the front, they always appear at
+		// the top of the list.
+		categories.unshift( {
+			categoryKey: '## Uncategorized ##',
+			suggestions: withoutCategory,
+		} );
 
 		let order = 0;
 		for ( const category of categories ) {
@@ -152,36 +165,39 @@ class Suggestions extends Component {
 			<div>
 				{ showSuggestions && (
 					<div className="suggestions__wrapper">
-						{ this.getCategories().map( ( { category, suggestions }, categoryIndex ) => (
-							<React.Fragment key={ category }>
-								{ ! categoryIndex ? null : (
-									<div className="suggestions__category-heading">{ category }</div>
-								) }
-								{ suggestions.map( ( { index, label, originalIndex } ) => (
-									// The parent component should handle key events and forward them to
-									// this component. See ./README.md for details.
-									// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-									<Item
-										key={ originalIndex }
-										hasHighlight={ index === this.state.suggestionPosition }
-										query={ query }
-										onMouseDown={ () => this.handleMouseDown( originalIndex ) }
-										onMouseOver={ () => this.handleMouseOver( index ) }
-										label={ label }
-										railcar={
-											railcar && {
-												...railcar,
-												railcar: `${ railcar.id }-${ originalIndex }`,
-												fetch_position: originalIndex,
+						{ this.getCategories().map(
+							( { category, categoryKey, suggestions }, categoryIndex ) => (
+								<React.Fragment key={ categoryKey }>
+									{ ! categoryIndex ? null : (
+										<div className="suggestions__category-heading">{ category }</div>
+									) }
+									{ suggestions.map( ( { index, label, originalIndex } ) => (
+										// The parent component should handle key events and forward them to
+										// this component. See ./README.md for details.
+										// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+										<Item
+											key={ originalIndex }
+											hasHighlight={ index === this.state.suggestionPosition }
+											query={ query }
+											onMouseDown={ () => this.handleMouseDown( originalIndex ) }
+											onMouseOver={ () => this.handleMouseOver( index ) }
+											label={ label }
+											railcar={
+												railcar && {
+													...railcar,
+													railcar: `${ railcar.id }-${ originalIndex }`,
+													fetch_position: originalIndex,
+													ui_position: index,
+												}
 											}
-										}
-										ref={ suggestion => {
-											this.refsCollection[ 'suggestion_' + index ] = suggestion;
-										} }
-									/>
-								) ) }
-							</React.Fragment>
-						) ) }
+											ref={ suggestion => {
+												this.refsCollection[ 'suggestion_' + index ] = suggestion;
+											} }
+										/>
+									) ) }
+								</React.Fragment>
+							)
+						) }
 					</div>
 				) }
 			</div>

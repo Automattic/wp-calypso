@@ -33,7 +33,7 @@ class Item extends PureComponent {
 		if ( railcar ) {
 			tracks.recordEvent(
 				'calypso_traintracks_render',
-				pick( railcar, [ 'railcar', 'fetch_algo', 'fetch_position' ] )
+				pick( railcar, [ 'railcar', 'fetch_algo', 'fetch_position', 'ui_algo', 'ui_position' ] )
 			);
 		}
 	}

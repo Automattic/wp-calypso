@@ -108,6 +108,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		id: `${ uuid().replace( /-/g, '' ) }-site-vertical-suggestion`,
 		fetch_algo: '/verticals',
 		action: 'site_vertical_selected',
+		ui_algo: 'signup/site-topic/related_1',
 	} );
 
 	/**

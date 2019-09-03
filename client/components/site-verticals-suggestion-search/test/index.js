@@ -1,9 +1,4 @@
 /**
- * @format
- * @jest-environment jsdom
- */
-
-/**
  * External dependencies
  */
 import React from 'react';
@@ -197,5 +192,14 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 			{ label: 'Doggo' },
 			{ label: 'Cats', category: 'Related' },
 		] );
+	} );
+
+	test( 'specifies which fetch_algo and ui_algo are being used for traintracks events', () => {
+		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'railcar' ) ).toMatchObject( {
+			fetch_algo: expect.any( String ),
+			ui_algo: expect.any( String ),
+		} );
 	} );
 } );
