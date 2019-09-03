@@ -4,7 +4,7 @@ jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
     runs-on: ubuntu-latest
-    #if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' | github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels, '[Status] Needs e2e Testing')
+    if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' | github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels, '[Status] Needs e2e Testing')
     steps:
       - uses: actions/checkout@v1
       - name: Check external author
@@ -23,6 +23,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Checkout
         run: cd test/e2e && npm ci
+      - name: Decrypt Config
+        run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
@@ -36,6 +38,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Checkout
         run: cd test/e2e && npm ci
+      - name: Decrypt Config
+        run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
