@@ -3,10 +3,10 @@ on: push
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
-    if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronized' )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+        if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels, '[Status] Needs e2e Testing')
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
