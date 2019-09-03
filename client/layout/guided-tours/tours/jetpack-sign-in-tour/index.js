@@ -70,7 +70,7 @@ export const JetpackSignInTour = makeTour(
 						<SiteLink isButton href="/plans/my-plan/:site">
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
-						<Quit>{ translate( 'No thanks.' ) }</Quit>
+						<Quit>{ translate( 'No, thanks.' ) }</Quit>
 					</ButtonRow>
 				</Fragment>
 			) }
