@@ -1,0 +1,42 @@
+name: e2e full suite
+# This workflow is triggered on pushes to the repository.
+on: [pull_request]
+  branches:
+    - '!master'
+    - '!/pull\/[0-9]+/'
+jobs:
+  wait-for-calypso-live:
+    name: Wait for Calypso.live
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' | github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels, '[Status] Needs e2e Testing')
+    steps:
+      - uses: actions/checkout@v1
+      - name: Check external author
+        run: |
+              if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
+                echo 'PRs from external authors cannot run on calypso.live'
+                exit 1
+              fi
+      - name: Wait for calypso.live build
+        run: ./test/e2e/scripts/wait-for-running-branch.sh
+  e2e-full-suite-desktop:
+    name: e2e Full Suite - Desktop
+    runs-on: ubuntu-latest
+    needs: wait-for-calypso-live
+    steps:
+    - uses: actions/checkout@v1
+    - name: Checkout
+      run: cd wp-calypso/test/e2e && npm ci
+    - name: Run Tests
+      run: cd wp-calypso/test/e2e && ./run.sh -R -g -s desktop -S ${GITHUB_SHA}
+  e2e-full-suite-mobile:
+    name: e2e Full Suite - Desktop
+    runs-on: ubuntu-latest
+    needs: wait-for-calypso-live
+    steps:
+    - uses: actions/checkout@v1
+    - name: Checkout
+      run: cd wp-calypso/test/e2e && npm ci
+    - name: Run Tests
+      run: cd wp-calypso/test/e2e && ./run.sh -R -g -s mobile -S ${GITHUB_SHA}
+
