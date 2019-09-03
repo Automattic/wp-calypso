@@ -25,9 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Checkout
-        run: cd wp-calypso/test/e2e && npm ci
+        run: cd test/e2e && npm ci
       - name: Run Tests
-        run: cd wp-calypso/test/e2e && ./run.sh -R -g -s desktop -S ${GITHUB_SHA}
+        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${GITHUB_SHA}
   e2e-full-suite-mobile:
     name: e2e Full Suite - Mobile
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Checkout
-        run: cd wp-calypso/test/e2e && npm ci
+        run: cd test/e2e && npm ci
       - name: Run Tests
-        run: cd wp-calypso/test/e2e && ./run.sh -R -g -s mobile -S ${GITHUB_SHA}
+        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${GITHUB_SHA}
 
