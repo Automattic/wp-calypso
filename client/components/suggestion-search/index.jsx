@@ -6,12 +6,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { escapeRegExp, noop } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
+import Gridicon from 'components/gridicon';
 import Suggestions from 'components/suggestions';
 import Spinner from 'components/spinner';
 
