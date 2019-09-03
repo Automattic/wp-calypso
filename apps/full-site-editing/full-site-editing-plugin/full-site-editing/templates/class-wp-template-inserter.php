@@ -82,6 +82,9 @@ class WP_Template_Inserter {
 		$response = $this->fetch_retry( $request_url, $request_args );
 
 		if ( ! $response ) {
+			$this->log_template_error();
+			$this->header_content = $this->get_default_header();
+			$this->footer_content = $this->get_default_footer();
 			return;
 		}
 
@@ -90,11 +93,17 @@ class WP_Template_Inserter {
 		// Default to first returned header for now. Support for multiple headers will be added in future iterations.
 		if ( ! empty( $api_response['headers'] ) ) {
 			$this->header_content = $api_response['headers'][0];
+		} else {
+			$this->log_template_error( 'header' );
+			$this->header_content = $this->get_default_header();
 		}
 
 		// Default to first returned footer for now. Support for multiple footers will be added in future iterations.
 		if ( ! empty( $api_response['footers'] ) ) {
 			$this->footer_content = $api_response['footers'][0];
+		} else {
+			$this->log_template_error( 'footer' );
+			$this->footer_content = $this->get_default_footer();
 		}
 	}
 
@@ -122,6 +131,59 @@ class WP_Template_Inserter {
 		sleep( pow( 2, $attempt ) );
 		$attempt++;
 		$this->fetch_retry( $request_url, $request_args, $attempt );
+	}
+
+	/**
+	 * Returns a default header if call to template api fails for some reason.
+	 *
+	 * @return string Content of a default header
+	 */
+	public function get_default_header() {
+		return '<!-- wp:a8c/site-description /-->
+			<!-- wp:a8c/site-title /-->
+			<!-- wp:a8c/navigation-menu /-->
+			<!-- wp:paragraph -->
+				<p>' .
+				__(
+					'The theme did not activate correctly so it may not look identical to the demo site. 
+				You are however able to edit the header and footer content to make it suit your needs.',
+					'full-site-editing'
+				)
+				.
+				'</p><!-- /wp:paragraph -->';
+	}
+
+	/**
+	 * Returns a default footer if call to template api fails for some reason.
+	 *
+	 * @return string Content of a default footer
+	 */
+	public function get_default_footer() {
+		return '<!-- wp:a8c/navigation-menu /--><!-- wp:paragraph -->
+				<!-- /wp:paragraph -->';
+	}
+
+	/**
+	 * Logs an error if the header and footer templates were not populated.
+	 *
+	 * @param string $templates Description of templates that failed.
+	 */
+	public function log_template_error( $templates = 'header and footer' ) {
+		$message = sprintf( 'The FSE %s templates failed to populate at point of activation', $templates );
+
+		if ( is_file( ABSPATH . 'wp-content/lib/log2logstash/log2logstash.php' ) ) {
+			require_once ABSPATH . 'wp-content/lib/log2logstash/log2logstash.php';
+
+			log2logstash(
+				array(
+					'feature'    => 'fse_template_population_failure',
+					'message'    => $message,
+					'blog_id'    => get_current_blog_id(),
+					'theme_slug' => get_stylesheet(),
+				)
+			);
+			return;
+		}
 	}
 
 	/**
