@@ -30,6 +30,9 @@ jobs:
       - name: Checkout
         run: cd test/e2e && npm ci
       - name: Decrypt Config
+        env:
+          NODE_CONFIG_ENV: test
+          CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
         env:
@@ -49,6 +52,9 @@ jobs:
       - name: Checkout
         run: cd test/e2e && npm ci
       - name: Decrypt Config
+        env:
+          NODE_CONFIG_ENV: test
+          CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
         env:
