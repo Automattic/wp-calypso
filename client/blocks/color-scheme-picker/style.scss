@@ -1,38 +1,11 @@
 
 .color-scheme-picker .form-radio-with-thumbnail__thumbnail {
 	height: 80px;
-	background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-default.svg' );
 
-	&.is-classic-bright {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-light.svg' );
+	@each $name in classic-blue classic-bright contrast nightfall midnight ocean sakura powder-snow sunset {
+		&.is-#{$name} {
+			// stylelint-disable-next-line string-quotes
+			background-image: url( "/calypso/images/color-schemes/color-scheme-thumbnail-#{$name}.svg" );
+		}
 	}
-
-	&.is-powder-snow {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-snow.svg' );
-	}
-
-	&.is-nightfall {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-nightfall.svg' );
-	}
-
-	&.is-sakura {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-sakura.svg' );
-	}
-
-	&.is-ocean {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-ocean.svg' );
-	}
-
-	&.is-sunset {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-sunset.svg' );
-	}
-
-	&.is-midnight {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-midnight.svg' );
-	}
-
-	&.is-contrast {
-		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-contrast.svg' );
-	}
-
 }
