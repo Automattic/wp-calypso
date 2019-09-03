@@ -82,7 +82,7 @@ class WP_Template_Inserter {
 		$response = $this->fetch_retry( $request_url, $request_args );
 
 		if ( ! $response ) {
-			do_action( 'fse_log_template_error' );
+			do_action( 'fse_log_template_population_error' );
 			$this->header_content = $this->get_default_header();
 			$this->footer_content = $this->get_default_footer();
 			return;
@@ -93,17 +93,11 @@ class WP_Template_Inserter {
 		// Default to first returned header for now. Support for multiple headers will be added in future iterations.
 		if ( ! empty( $api_response['headers'] ) ) {
 			$this->header_content = $api_response['headers'][0];
-		} else {
-			do_action( 'fse_log_template_error', 'header' );
-			$this->header_content = $this->get_default_header();
 		}
 
 		// Default to first returned footer for now. Support for multiple footers will be added in future iterations.
 		if ( ! empty( $api_response['footers'] ) ) {
 			$this->footer_content = $api_response['footers'][0];
-		} else {
-			do_action( 'fse_log_template_error', 'footer' );
-			$this->footer_content = $this->get_default_footer();
 		}
 	}
 
@@ -119,7 +113,6 @@ class WP_Template_Inserter {
 		$max_retries = 3;
 
 		$response = wp_remote_get( $request_url, $request_args );
-
 		if ( ! is_wp_error( $response ) ) {
 			return $response;
 		}
