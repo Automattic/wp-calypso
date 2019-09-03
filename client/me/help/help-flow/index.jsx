@@ -18,7 +18,6 @@ import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SiteSelector from 'components/site-selector';
-import SegmentedControl from 'components/segmented-control';
 import DocumentHead from 'components/data/document-head';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
@@ -37,7 +36,7 @@ class HelpFlow extends Component {
 		displayDialog: false,
 	};
 
-	handleDialogClosure = event => {
+	handleDialogClosure = () => {
 		this.setState( {
 			displayDialog: false,
 			blogIssueDialog: false,
@@ -46,15 +45,15 @@ class HelpFlow extends Component {
 		} );
 	};
 
-	handleJetpackButtonClick = event => {
+	handleJetpackButtonClick = () => {
 		this.setState( { displayDialog: true, jetpackDialog: true } );
 	};
 
-	handleWooCommerceButtonClick = event => {
+	handleWooCommerceButtonClick = () => {
 		this.setState( { displayDialog: true, wooDialog: true } );
 	};
 
-	handleBlogIssueButtonClick = event => {
+	handleBlogIssueButtonClick = () => {
 		this.setState( { displayDialog: true, blogIssueDialog: true } );
 	};
 
@@ -73,7 +72,6 @@ class HelpFlow extends Component {
 			siteCount,
 			jetpackSiteCount,
 			hasAtomicSites,
-			hasJetpackSites,
 			hasPaidPlans,
 			translate,
 		} = this.props;
@@ -189,7 +187,7 @@ class HelpFlow extends Component {
 							<h1 className="help-flow__dialog-heading">
 								{ blogIssueDialog && hasWpComSites
 									? translate( 'Which blog are you having issues with?' )
-									: translate( 'We wish we could help more...' ) }
+									: translate( 'We wish we could help more…' ) }
 							</h1>
 							<p>{ dialogText }</p>
 						</div>
