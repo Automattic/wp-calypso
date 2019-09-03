@@ -6,15 +6,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-        if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels, '[Status] Needs e2e Testing')
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
                 echo 'PRs from external authors cannot run on calypso.live'
                 exit 1
               fi
-      - name: Wait for calypso.live build
-        run: ./test/e2e/scripts/wait-for-running-branch.sh
+      - uses: ./.github/workflows/actions/wait-for-calypso-live
+        if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing')
   e2e-full-suite-desktop:
     name: e2e Full Suite - Desktop
     runs-on: ubuntu-latest
@@ -30,6 +29,10 @@ jobs:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
         run: cd test/e2e && ./run.sh -R -g -s desktop -S ${GITHUB_SHA}
+      - uses: actions/upload-artifact@master
+        with:
+          name: screenshots
+          path: ./test/e2e/screenshots
   e2e-full-suite-mobile:
     name: e2e Full Suite - Mobile
     runs-on: ubuntu-latest
@@ -45,4 +48,8 @@ jobs:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
         run: cd test/e2e && ./run.sh -R -g -s mobile -S ${GITHUB_SHA}
+      - uses: actions/upload-artifact@master
+        with:
+          name: screenshots
+          path: ./test/e2e/screenshots
 

@@ -1,0 +1,3 @@
+action "wait-for-calypso-live" {
+runs = "./test/e2e/scripts/wait-for-running-branch.sh"
+  }
