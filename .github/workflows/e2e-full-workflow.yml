@@ -1,9 +1,8 @@
 name: e2e full suite
 on:
-  pull_request:
+  push:
     branches:
       - '!master'
-      - '!/pull\/[0-9]+/'
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
