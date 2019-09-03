@@ -174,7 +174,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * @returns {Array} The array of vertical values.
 	 */
 	getSuggestionsWithCategories( verticals ) {
-		const normalizedInput = this.state.inputValue.toLowerCase();
+		const normalizedInput = this.state.inputValue.toLowerCase().trim();
 		const includeRelated = normalizedInput.length > 2;
 
 		return verticals
