@@ -233,34 +233,33 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	border-radius: 6px;
 	overflow-x: hidden;
 	overflow-y: auto;
-}
 
-.show-post-title-before-content .template-selector-preview .edit-post-visual-editor {
-	margin-top: 20px;
-}
-
-$template-large-preview-title-height: 115px;
-.show-post-title-before-content .template-selector-preview .editor-styles-wrapper {
-	// Set the
-	.editor-post-title {
-		transform-origin: top left;
-		width: 960px;
-		display: block;
-		position: absolute;
-		top: 0;
+	.edit-post-visual-editor {
+		margin-top: 20px;
 	}
 
-	.editor-post-title,
-	.editor-post-title, .editor-post-title__block {
-		height: $template-large-preview-title-height;
-		margin-top: 0;
-		margin-bottom: 0;
-		padding-top: 0;
-		padding-bottom: 0;
-	}
+	$template-large-preview-title-height: 115px;
+	.editor-styles-wrapper {
+		.editor-post-title {
+			transform-origin: top left;
+			width: 960px;
+			display: block;
+			position: absolute;
+			top: 0;
+		}
 
-	.block-editor-block-preview__content > .block-editor-block-list__layout {
-		margin-top: $template-large-preview-title-height;
+		.editor-post-title,
+		.editor-post-title__block {
+			height: $template-large-preview-title-height;
+			margin-top: 0;
+			margin-bottom: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		body.show-post-title-before-content & .block-editor-block-preview__content > .block-editor-block-list__layout {
+			margin-top: $template-large-preview-title-height;
+		}
 	}
 }
 
