@@ -3,8 +3,8 @@ on: push
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
+    if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels, '[Status] Needs e2e Testing')
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' | github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels, '[Status] Needs e2e Testing')
     steps:
       - uses: actions/checkout@v1
       - name: Check external author
