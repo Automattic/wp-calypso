@@ -171,6 +171,7 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksByTemplateSlug() }
 								viewportWidth={ 960 }
+								title={ this.state.title }
 							/>
 						</>
 					) }
