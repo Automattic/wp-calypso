@@ -33,6 +33,21 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	// The following approach can be easily replace calling this callback
 	// once the PR ships (finger-crossed)
 	// https://github.com/WordPress/gutenberg/pull/17242
+
+	const updateTemplateTitle = () => {
+		// Try to get the preview content element.
+		const previewContainerEl = ref.current.querySelector( '.block-editor-block-preview__content' );
+		if ( ! previewContainerEl ) {
+			return;
+		}
+
+		// Try to get the `transform` css rule from the preview container element.
+		const elStyles = window.getComputedStyle( previewContainerEl );
+		if ( elStyles && elStyles.transform ) {
+			setTransform( elStyles.transform ); // apply the same transform css rule to template title.
+		}
+	};
+
 	useLayoutEffect( () => {
 		setVisibility( 'hidden' );
 
@@ -42,19 +57,8 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 				return;
 			}
 
-			// Try to get the preview content element.
-			const previewContainerEl = ref.current.querySelector(
-				'.block-editor-block-preview__content'
-			);
-			if ( ! previewContainerEl ) {
-				return;
-			}
+			updateTemplateTitle();
 
-			// Try to get the `transform` css rule from the preview container element.
-			const elStyles = window.getComputedStyle( previewContainerEl );
-			if ( elStyles && elStyles.transform ) {
-				setTransform( elStyles.transform ); // apply the same transform css rule to template title.
-			}
 			setVisibility( 'visible' );
 		}, 300 );
 	}, [ blocks ] );
