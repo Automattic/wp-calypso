@@ -4,7 +4,6 @@ const { copyFileSync, existsSync, mkdirSync } = require( 'fs' );
 
 copyAsset( '@automattic/color-studio/dist/color-properties.css' );
 copyAsset( '@automattic/color-studio/dist/color-properties-rgb.css' );
-copyAsset( '@automattic/color-studio/dist/color-variables.scss' );
 
 function copyAsset( assetPath, targetName ) {
 	if ( ! targetName ) {

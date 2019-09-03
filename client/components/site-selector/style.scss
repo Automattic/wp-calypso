@@ -149,7 +149,7 @@
 
 .site-selector__add-new-site {
 	padding: 0;
-	border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	border-top: 1px solid var( --color-neutral-5 );
 	margin: auto 0 0;
 	display: flex;
 	flex-direction: row;

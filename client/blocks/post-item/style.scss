@@ -1,9 +1,7 @@
 /** @format */
 
 $post-item-background-color: var( --studio-white );
-
-$post-item-border-color: darken( $sidebar-bg-color, 5% );
-
+$post-item-border-color: var( --color-neutral-5 );
 $post-item-border: solid 1px $post-item-border-color;
 $expanded-post-item-border: 1px solid var( --color-neutral );
 $expanded-post-item-outline: 4px solid $post-item-border-color;

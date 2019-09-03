@@ -55,7 +55,7 @@ $autobar-height: 20px;
 		}
 
 		&:hover {
-			background: lighten( $masterbar-color, 5% );
+			background: var( --color-primary );
 		}
 
 		&:focus {

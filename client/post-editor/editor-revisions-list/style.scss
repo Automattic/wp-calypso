@@ -6,7 +6,7 @@
 	flex-shrink: 0;
 
 	@include breakpoint( '>660px' ) {
-		border-left: 1px solid darken( $sidebar-bg-color, 5% );
+		border-left: 1px solid var( --color-neutral-5 );
 		z-index: 1; // Put the list above the action-buttons::before overlay gradient. -shaun
 		flex-basis: 230px;
 	}
@@ -39,7 +39,7 @@
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
 	background: var( --studio-white );
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	@include breakpoint( '>1040px' ) {
 		height: 40px;
@@ -99,7 +99,7 @@
 	height: 40px;
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid var( --color-neutral-5 );
 	.button:first-child,
 	.button:last-child {
 		border-radius: 0;
@@ -124,7 +124,7 @@
 	&.button.disabled {
 		background: transparent;
 		color: var( --color-neutral-10 );
-		border-color: darken( $sidebar-bg-color, 5% );
+		border-color: var( --color-neutral-5 );
 	}
 	.gridicon {
 		transform: rotate( -90deg );
@@ -163,18 +163,18 @@
 	.editor-revisions-list__next-button,
 	.editor-revisions-list__next-button:hover,
 	.editor-revisions-list__next-button:active {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
+		border-right: 1px solid var( --color-neutral-5 );
 	}
 }
 
 @include breakpoint( '>660px' ) {
 	.editor-revisions-list__prev-button,
 	.editor-revisions-list__prev-button:hover {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
+		border-right: 1px solid var( --color-neutral-5 );
 	}
 	.button-group {
 		.editor-revisions-list__prev-button:first-child:active {
-			border-right: 1px solid darken( $sidebar-bg-color, 5% );
+			border-right: 1px solid var( --color-neutral-5 );
 		}
 	}
 }
@@ -227,8 +227,8 @@
 // Individual Revision List Item
 .editor-revisions-list.is-loading .editor-revisions-list__list::before,
 .editor-revisions-list__button {
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
-	border-right: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid var( --color-neutral-5 );
+	border-right: 1px solid var( --color-neutral-5 );
 	border-radius: 0;
 	color: var( --color-neutral-70 );
 	cursor: pointer;
