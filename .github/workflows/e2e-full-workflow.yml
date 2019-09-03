@@ -16,9 +16,9 @@ jobs:
       - name: debug
         run: |
           echo ${{github.event_name}}
-          echo ${{github.event.action}}
-          echo ${{github.event}}
-          echo ${{github}}
+          echo ${{toJson(github.event.action)}}
+          echo ${{toJson(github.event)}}
+          echo ${{toJson(github)}}
       - name: Wait for calypso.live build
         run: ./test/e2e/scripts/wait-for-running-branch.sh
   e2e-full-suite-desktop:
@@ -27,7 +27,9 @@ jobs:
     needs: wait-for-calypso-live
     steps:
       - uses: actions/checkout@v1
-      - name: Checkout
+      - name: install deps
+        run: sudo apt-get install xvfb
+      - name: Install npm deps
         run: cd test/e2e && npm ci
       - name: Decrypt Config
         env:
@@ -49,7 +51,9 @@ jobs:
     needs: wait-for-calypso-live
     steps:
       - uses: actions/checkout@v1
-      - name: Checkout
+      - name: Install deps
+        run: sudo apt-get install xvfb
+      - name: Install npm deps
         run: cd test/e2e && npm ci
       - name: Decrypt Config
         env:
