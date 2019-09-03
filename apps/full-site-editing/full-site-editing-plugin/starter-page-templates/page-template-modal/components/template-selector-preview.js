@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { isEmpty } from 'lodash';
+import { isEmpty, debounce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { BlockPreview } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
-import { useState, useLayoutEffect, useRef } from '@wordpress/element';
+import { useState, useEffect, useLayoutEffect, useRef, useReducer } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -18,10 +18,14 @@ import { useState, useLayoutEffect, useRef } from '@wordpress/element';
 import PreviewTemplateTitle from './preview-template-title';
 
 const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
+	const THRESHOLD_RESIZE = 300;
+
 	const previewElClasses = classnames( 'template-selector-preview', 'editor-styles-wrapper' );
 	const [ transform, setTransform ] = useState( 'none' );
 	const [ visibility, setVisibility ] = useState( 'hidden' );
 	const ref = useRef( null );
+
+	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
 
 	// TODO: we should remove this approach and use the onReady callback.
 	// There is Gutenberg PR which adds the onReady callback
@@ -55,6 +59,19 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		}, 300 );
 	}, [ blocks ] );
 
+	useEffect( () => {
+		if ( ! blocks.length ) {
+			return;
+		}
+
+		const refreshPreview = debounce( triggerRecompute, THRESHOLD_RESIZE );
+		window.addEventListener( 'resize', refreshPreview );
+
+		return () => {
+			window.removeEventListener( 'resize', refreshPreview );
+		};
+	}, [ blocks ] );
+
 	if ( isEmpty( blocks ) ) {
 		return (
 			<div className={ previewElClasses }>
@@ -73,7 +90,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 					<div className="editor-styles-wrapper" style={ { visibility } }>
 						<div className="editor-writing-flow">
 							<PreviewTemplateTitle title={ title } transform={ transform } />
-							<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+							<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
 						</div>
 					</div>
 				</div>
