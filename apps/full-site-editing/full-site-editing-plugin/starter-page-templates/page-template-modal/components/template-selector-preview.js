@@ -43,8 +43,6 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 
 			// Try to get the preview content element.
 			const previewContainerEl = ref.current.querySelector( '.block-editor-block-preview__content' );
-			console.log( { previewContainerEl } );
-
 			if ( ! previewContainerEl ) {
 				return;
 			}
