@@ -35,32 +35,33 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	// https://github.com/WordPress/gutenberg/pull/17242
 
 	const updateTemplateTitle = () => {
-		// Try to get the preview content element.
-		const previewContainerEl = ref.current.querySelector( '.block-editor-block-preview__content' );
-		if ( ! previewContainerEl ) {
-			return;
-		}
-
-		// Try to get the `transform` css rule from the preview container element.
-		const elStyles = window.getComputedStyle( previewContainerEl );
-		if ( elStyles && elStyles.transform ) {
-			setTransform( elStyles.transform ); // apply the same transform css rule to template title.
-		}
-	};
-
-	useLayoutEffect( () => {
-		setVisibility( 'hidden' );
-
+		// Get DOM reference.
 		setTimeout( () => {
-			// Get DOM reference.
 			if ( ! ref || ! ref.current ) {
 				return;
 			}
 
-			updateTemplateTitle();
+			// Try to get the preview content element.
+			const previewContainerEl = ref.current.querySelector( '.block-editor-block-preview__content' );
+			console.log( { previewContainerEl } );
+
+			if ( ! previewContainerEl ) {
+				return;
+			}
+
+			// Try to get the `transform` css rule from the preview container element.
+			const elStyles = window.getComputedStyle( previewContainerEl );
+			if ( elStyles && elStyles.transform ) {
+				setTransform( elStyles.transform ); // apply the same transform css rule to template title.
+			}
 
 			setVisibility( 'visible' );
 		}, 300 );
+	};
+
+	useLayoutEffect( () => {
+		setVisibility( 'hidden' );
+		updateTemplateTitle();
 	}, [ blocks ] );
 
 	useEffect( () => {
@@ -68,7 +69,12 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 			return;
 		}
 
-		const refreshPreview = debounce( triggerRecompute, THRESHOLD_RESIZE );
+		const rePreviewTemplate = () => {
+			updateTemplateTitle();
+			triggerRecompute();
+		};
+
+		const refreshPreview = debounce( rePreviewTemplate, THRESHOLD_RESIZE );
 		window.addEventListener( 'resize', refreshPreview );
 
 		return () => {
