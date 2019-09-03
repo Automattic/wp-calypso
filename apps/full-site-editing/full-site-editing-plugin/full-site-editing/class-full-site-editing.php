@@ -43,6 +43,11 @@ class Full_Site_Editing {
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
+		// Bail if FSE should not be active on the site. We do not
+		// want to load FSE functionality on non-supported sites!
+		if ( ! self::is_active() ) {
+			return;
+		}
 		add_action( 'init', [ $this, 'register_blocks' ], 100 );
 		add_action( 'init', [ $this, 'register_template_post_types' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
@@ -77,6 +82,28 @@ class Full_Site_Editing {
 		}
 
 		return self::$instance;
+	}
+
+
+	/**
+	 * Whether or not FSE is active.
+	 * If false, FSE functionality is disabled in the constructor.
+	 *
+	 * @returns bool True if FSE is active, false otherwise.
+	 */
+	public static function is_active() {
+		return self::is_eligible() && current_theme_supports( 'full-site-editing' );
+	}
+
+	/**
+	 * Whether or not the site is eligible for FSE.
+	 * This is essentially a feature gate to disable FSE
+	 * on some sites which could theoretically otherwise use it.
+	 *
+	 * @returns bool True if current site is eligible for FSE, false otherwise.
+	 */
+	public static function is_eligible() {
+		return ! apply_filters( 'a8c_disable_full_site_editing', false );
 	}
 
 	/**
