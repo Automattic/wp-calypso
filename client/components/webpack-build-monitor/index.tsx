@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * @see https://webpack.js.org/api/module-variables/#__webpack_hash__-webpack-specific
  */
@@ -20,31 +22,100 @@ import Spinner from 'components/spinner';
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:webpack-build-monitor' );
-
 enum BuildState {
 	INITIAL, // not yet connected
 	IDLE,
 	BUILDING,
-	BUILT_WITH_WARNINGS,
+	UPDATING,
+	NEEDS_RELOAD,
+	DISCONNECTED,
 	ERROR,
 }
 
-interface HotServerConnectParams {
-	setIsConnected: ( isConnected: boolean ) => void;
-	setBuildState: ( buildState: BuildState ) => void;
-	setLastHash: ( lastHash: string ) => void;
+type BuildStateSetter = ( buildState: BuildState ) => void;
+
+interface UpdateMessage {
+	errors: string[];
+	warnings: string[];
+	hash: string;
 }
 
-function connectToHotServer( {
-	setIsConnected,
-	setBuildState,
-	setLastHash,
-}: HotServerConnectParams ) {
+const debug = debugFactory( 'calypso:webpack-build-monitor' );
+
+// avoid reporting the same errors/warnings over and over
+const previousProblems = new Map< string, string >();
+function alreadyReported( type: string, problems: string[] ) {
+	const key = problems.join( '\n' );
+	if ( previousProblems.get( type ) === key ) {
+		return true;
+	}
+
+	previousProblems.set( type, key );
+	return false;
+}
+
+function reportProblems( type: string, problems: string[] ) {
+	if ( alreadyReported( type, problems ) ) {
+		return;
+	}
+
+	const log = type === 'errors' ? console.error : console.warn;
+	log( `[webpack] build finished with ${ problems.length } ${ type }:` );
+	for ( const problem of problems ) {
+		log( problem );
+	}
+}
+
+function processUpdate( message: UpdateMessage, setBuildState: BuildStateSetter ) {
+	const { errors, warnings, hash } = message;
+
+	if ( errors.length ) {
+		setBuildState( BuildState.ERROR );
+		reportProblems( 'errors', errors );
+		return;
+	}
+
+	if ( warnings.length ) {
+		reportProblems( 'warnings', warnings );
+	}
+
+	if ( hash === __webpack_hash__ ) {
+		setBuildState( BuildState.IDLE );
+		return;
+	}
+
+	// if the webpack runtime doesn't have the hot reload plugin, reload is always needed
+	if ( ! module.hot ) {
+		setBuildState( BuildState.NEEDS_RELOAD );
+		return;
+	}
+
+	// hot update already in progress, triggered by another message handler
+	if ( module.hot.status() !== 'idle' ) {
+		return;
+	}
+
+	setBuildState( BuildState.UPDATING );
+
+	module.hot
+		.check( true )
+		.then( updatedModules => {
+			setBuildState( BuildState.IDLE );
+			console.log( `[webpack] hot updated ${ updatedModules.length } modules:` );
+			for ( const updatedModuleId of updatedModules ) {
+				console.log( updatedModuleId );
+			}
+		} )
+		.catch( error => {
+			setBuildState( BuildState.NEEDS_RELOAD );
+			console.error( '[webpack] hot update failed:', error );
+		} );
+}
+
+function connectToHotServer( setBuildState: BuildStateSetter ) {
 	if ( typeof EventSource === 'undefined' ) {
 		if ( process.env.NODE_ENV !== 'production' ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Webpack build monitor disabled. No `EventSource`.' );
+			console.warn( '[webpack] build monitor disabled. No `EventSource`.' );
 		}
 		return;
 	}
@@ -54,7 +125,12 @@ function connectToHotServer( {
 
 	source.onopen = () => {
 		debug( 'Webpack HMR connected' );
-		setIsConnected( true );
+		setBuildState( BuildState.IDLE );
+	};
+
+	source.onerror = error => {
+		debug( 'Webpack HMR disconnected:', error );
+		setBuildState( BuildState.DISCONNECTED );
 	};
 
 	source.onmessage = ( m: MessageEvent ) => {
@@ -62,15 +138,8 @@ function connectToHotServer( {
 			return;
 		}
 
-		let message;
-
-		try {
-			message = JSON.parse( m.data );
-			debug( 'Webpack HMR message: %o', message );
-		} catch ( err ) {
-			debug( 'Could not parse HMR message.data %o', m.data );
-			return;
-		}
+		const message = JSON.parse( m.data );
+		debug( 'Webpack HMR message: %o', message );
 
 		switch ( message.action ) {
 			case 'building':
@@ -78,23 +147,9 @@ function connectToHotServer( {
 				break;
 
 			case 'built':
-			case 'sync': {
-				const { errors, warnings, hash } = message;
-
-				if ( errors.length ) {
-					setBuildState( BuildState.ERROR );
-				} else if ( warnings.length ) {
-					setBuildState( BuildState.BUILT_WITH_WARNINGS );
-				} else {
-					setBuildState( BuildState.IDLE );
-				}
-
-				if ( hash ) {
-					setLastHash( hash );
-				}
-
+			case 'sync':
+				processUpdate( message, setBuildState );
 				break;
-			}
 		}
 	};
 
@@ -104,25 +159,23 @@ function connectToHotServer( {
 }
 
 const WebpackBuildMonitor: FunctionComponent = () => {
-	const [ lastHash, setLastHash ] = useState( __webpack_hash__ );
-	const [ isConnected, setIsConnected ] = useState( false );
 	const [ buildState, setBuildState ] = useState( BuildState.INITIAL );
 
-	useEffect( () => connectToHotServer( { setIsConnected, setBuildState, setLastHash } ), [] );
-
-	const needsReload = lastHash !== __webpack_hash__;
+	useEffect( () => connectToHotServer( setBuildState ), [] );
 
 	let msg: string | null = null;
 	if ( buildState === BuildState.INITIAL ) {
 		msg = null; // don't show anything until connected for the first time
-	} else if ( ! isConnected ) {
-		msg = 'Webpack disconnected';
+	} else if ( buildState === BuildState.DISCONNECTED ) {
+		msg = 'Disconnected';
 	} else if ( buildState === BuildState.BUILDING ) {
-		msg = 'Webpack building…';
-	} else if ( needsReload ) {
+		msg = 'Building…';
+	} else if ( buildState === BuildState.UPDATING ) {
+		msg = 'Hot updating…';
+	} else if ( buildState === BuildState.NEEDS_RELOAD ) {
 		msg = 'Need to refresh';
 	} else if ( buildState === BuildState.ERROR ) {
-		msg = 'Webpack error';
+		msg = 'Build failed';
 	}
 
 	if ( ! msg ) {
@@ -132,8 +185,8 @@ const WebpackBuildMonitor: FunctionComponent = () => {
 	return (
 		<div
 			className={ classNames( 'webpack-build-monitor', {
-				'is-error': buildState === BuildState.ERROR || ! isConnected,
-				'is-warning': buildState === BuildState.BUILT_WITH_WARNINGS || needsReload,
+				'is-error': buildState === BuildState.ERROR || buildState === BuildState.DISCONNECTED,
+				'is-warning': buildState === BuildState.NEEDS_RELOAD,
 			} ) }
 		>
 			{ buildState === BuildState.BUILDING && (
