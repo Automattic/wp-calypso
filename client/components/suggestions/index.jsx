@@ -153,7 +153,7 @@ class Suggestions extends Component {
 				{ showSuggestions && (
 					<div className="suggestions__wrapper">
 						{ this.getCategories().map( ( { category, suggestions }, categoryIndex ) => (
-							<>
+							<React.Fragment key={ category }>
 								{ ! categoryIndex ? null : (
 									<div className="suggestions__category-heading">{ category }</div>
 								) }
@@ -180,7 +180,7 @@ class Suggestions extends Component {
 										} }
 									/>
 								) ) }
-							</>
+							</React.Fragment>
 						) ) }
 					</div>
 				) }
