@@ -1,9 +1,9 @@
 name: e2e full suite
-# This workflow is triggered on pushes to the repository.
-on: [pull_request]
-  branches:
-    - '!master'
-    - '!/pull\/[0-9]+/'
+on:
+  pull_request:
+    branches:
+      - '!master'
+      - '!/pull\/[0-9]+/'
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
