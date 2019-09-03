@@ -1,8 +1,17 @@
 .layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
 		.button.is-primary {
-			background-color: var( --studio-jetpack-green-30 );
-			border-color: var( --studio-jetpack-green-50 );
+			background-color: var( --studio-jetpack-green-50 );
+			border-color: var( --studio-jetpack-green-70 );
+
+			&:hover,
+			&:focus {
+				background-color: var( --studio-jetpack-green-60 );
+			}
+
+			.accessible-focus &:focus {
+				box-shadow: 0 0 0 2px var( --studio-jetpack-green-30 );
+			}
 		}
 	}
 }

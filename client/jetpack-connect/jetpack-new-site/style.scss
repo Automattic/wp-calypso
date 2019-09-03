@@ -127,20 +127,18 @@
 	}
 
 	.button {
-		background-color: var( --studio-jetpack-green-30 );
-		border-color: var( --studio-jetpack-green-50 );
+		background-color: var( --studio-jetpack-green-50 );
+		border-color: var( --studio-jetpack-green-70 );
 		margin-top: 16px;
 		width: 100%;
 
 		&:hover,
 		&:focus {
-			background-color: var( --studio-jetpack-green-40 );
-			border-color: var( --studio-jetpack-green-50 );
+			background-color: var( --studio-jetpack-green-60 );
 		}
 
 		.accessible-focus &:focus {
-			box-shadow: 0 0 0 2px var( --studio-jetpack-green-20 );
-			border-color: var( --studio-jetpack-green-50 );
+			box-shadow: 0 0 0 2px var( --studio-jetpack-green-30 );
 		}
 
 		&[disabled],
