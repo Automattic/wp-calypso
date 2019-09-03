@@ -1,8 +1,5 @@
 name: e2e full suite
-on:
-  push:
-    branches:
-      - '!master'
+on: push
 jobs:
   wait-for-calypso-live:
     name: Wait for Calypso.live
