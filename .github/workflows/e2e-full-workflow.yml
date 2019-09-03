@@ -6,20 +6,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-        #if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronized' ) && contains(github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing')
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
                 echo 'PRs from external authors cannot run on calypso.live'
                 exit 1
               fi
-      - name: debug
-        run: |
-          echo ${{github.event_name}}
-          echo ${{toJson(github.event.action)}}
-          echo ${{toJson(github.event)}}
-          echo ${{toJson(github)}}
       - name: Wait for calypso.live build
+        if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronize' ) && contains( github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing' )
         run: ./test/e2e/scripts/wait-for-running-branch.sh
   e2e-full-suite-desktop:
     name: e2e Full Suite - Desktop
