@@ -340,14 +340,13 @@ function completePaymentMethodTransaction( {
 	paymentMethod,
 	payerName,
 } ) {
-	const { card, id } = paymentMethod;
+	const { id } = paymentMethod;
 
 	const newCardDetails = {
 		payment_key: id,
 		name: payerName,
 		country: countryCode,
 		'postal-code': postalCode,
-		card_brand: card.brand,
 	};
 	debug( 'setting newCardDetails', newCardDetails );
 	setPayment( webPayment( newCardDetails ) );
