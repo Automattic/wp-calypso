@@ -46,8 +46,6 @@ class Full_Site_Editing {
 	 */
 	const SUPPORTED_THEMES = [
 		'maywood',
-		'modern-business',
-		'varia',
 	];
 
 	/**
@@ -372,12 +370,12 @@ class Full_Site_Editing {
 	 * 3. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
 	 * 4. AND editing a post_type that supports full site editing
 	 *
-   * @param \WP_Post post object for the check
+	 * @param \WP_Post $post object for the check.
 	 * @return bool
 	 */
 	private function should_merge_template_and_post( $post ) {
-		$is_rest_api_wpcom = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
-		$is_rest_api_core = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+		$is_rest_api_wpcom      = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
+		$is_rest_api_core       = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
 		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
 
 		if ( ! ( $is_block_editor_screen || $is_rest_api_core || $is_rest_api_wpcom ) ) {
