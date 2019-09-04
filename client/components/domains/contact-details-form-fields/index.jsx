@@ -165,7 +165,7 @@ export class ContactDetailsFormFields extends Component {
 
 	getMainFieldValues() {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
-		const { countryCode, hasCountryStates } = this.props;
+		const { countryCode, hasCountryStates, needsFax } = this.props;
 		let state = mainFieldValues.state;
 
 		// domains registered according to ancient validation rules may have state set even though not required
@@ -177,8 +177,14 @@ export class ContactDetailsFormFields extends Component {
 			state = '';
 		}
 
+		let fax = mainFieldValues.fax;
+		if ( ! needsFax ) {
+			fax = '';
+		}
+
 		return {
 			...mainFieldValues,
+			fax,
 			state,
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
 		};
