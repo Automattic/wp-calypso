@@ -8,13 +8,12 @@ module.exports = {
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.js?(x)', '!**/.eslintrc.*' ],
 	transform: {
-		'^.+\\.[jt]sx?$': 'babel-jest',
+		'\\.[jt]sx?$': path.join( __dirname, 'jest', 'transform', 'babel.js' ),
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': path.join(
 			__dirname,
 			'jest',
-			'util',
-			'assets',
-			'transform.js'
+			'transform',
+			'asset.js'
 		),
 	},
 	verbose: false,
