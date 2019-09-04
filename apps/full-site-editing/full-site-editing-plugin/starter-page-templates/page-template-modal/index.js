@@ -33,6 +33,8 @@ const {
 	siteInformation = {},
 } = window.starterPageTemplatesConfig;
 
+const PARSING_TEMPLATE_DELAY = 50;
+
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
@@ -86,7 +88,7 @@ class PageTemplateModal extends Component {
 						}
 					} );
 				} ).bind( null, templates[ i ] ),
-				100 * i
+				PARSING_TEMPLATE_DELAY * i
 			);
 		}
 	}
