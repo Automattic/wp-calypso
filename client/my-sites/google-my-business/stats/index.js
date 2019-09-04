@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,6 +18,7 @@ import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
+import Gridicon from 'compnents/gridicon';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -130,8 +131,8 @@ class GoogleMyBusinessStats extends Component {
 		}
 
 		return (
-			<div className="gmb-stats__metrics">
-				<div className="gmb-stats__metric">
+			<div className="stats__metrics">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'How customers search for your business' ) }
 						statType="queries"
@@ -154,7 +155,7 @@ class GoogleMyBusinessStats extends Component {
 					/>
 				</div>
 
-				<div className="gmb-stats__metric">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'Where your customers view your business on Google' ) }
 						description={ translate(
@@ -174,7 +175,7 @@ class GoogleMyBusinessStats extends Component {
 					/>
 				</div>
 
-				<div className="gmb-stats__metric">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'Customer Actions' ) }
 						description={ translate(
