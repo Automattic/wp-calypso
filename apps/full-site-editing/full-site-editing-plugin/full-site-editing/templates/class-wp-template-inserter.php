@@ -153,8 +153,7 @@ class WP_Template_Inserter {
 	 * @return string Content of a default footer
 	 */
 	public function get_default_footer() {
-		return '<!-- wp:a8c/navigation-menu /--><!-- wp:paragraph -->
-				<!-- /wp:paragraph -->';
+		return '<!-- wp:a8c/navigation-menu /-->';
 	}
 
 	/**
