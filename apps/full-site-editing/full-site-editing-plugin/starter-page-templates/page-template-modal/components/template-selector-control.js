@@ -1,39 +1,29 @@
 /**
  * External dependencies
  */
-import { isEmpty, noop, map } from 'lodash';
+import { isEmpty } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
-import { withInstanceId, compose } from '@wordpress/compose';
+import { withInstanceId } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
-import { memo } from '@wordpress/element';
 
-/**
- * Internal dependencies
- */
-import TemplateSelectorItem from './template-selector-item';
-import replacePlaceholders from '../utils/replace-placeholders';
-
-const TemplateSelectorControl = ( {
+function TemplateSelectorControl( {
 	label,
 	className,
 	help,
 	instanceId,
-	templates = {},
-	blocksByTemplates = {},
-	useDynamicPreview = false,
-	onTemplateSelect = noop,
-	onTemplateFocus = noop,
-	siteInformation = {},
-} ) => {
+	onClick,
+	templates = [],
+} ) {
+	const id = `template-selector-control-${ instanceId }`;
+	const handleButtonClick = event => onClick( event.target.value );
+
 	if ( isEmpty( templates ) ) {
 		return null;
 	}
-
-	const id = `template-selector-control-${ instanceId }`;
 
 	return (
 		<BaseControl
@@ -43,28 +33,32 @@ const TemplateSelectorControl = ( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
-					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
-						<TemplateSelectorItem
-							id={ id }
-							value={ slug }
-							label={ replacePlaceholders( title, siteInformation ) }
-							help={ help }
-							onSelect={ onTemplateSelect }
-							onFocus={ onTemplateFocus }
-							staticPreviewImg={ preview }
-							staticPreviewImgAlt={ previewAlt }
-							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
-							useDynamicPreview={ useDynamicPreview }
-						/>
+				{ templates.map( ( option, index ) => (
+					<li key={ `${ id }-${ index }` } className="template-selector-control__option">
+						<button
+							type="button"
+							id={ `${ id }-${ index }` }
+							className="template-selector-control__label"
+							value={ option.value }
+							onClick={ handleButtonClick }
+							aria-describedby={ help ? `${ id }__help` : undefined }
+						>
+							<div className="template-selector-control__media-wrap">
+								{ option.preview && (
+									<img
+										className="template-selector-control__media"
+										src={ option.preview }
+										alt={ option.previewAlt || '' }
+									/>
+								) }
+							</div>
+							{ option.label }
+						</button>
 					</li>
 				) ) }
 			</ul>
 		</BaseControl>
 	);
-};
+}
 
-export default compose(
-	memo,
-	withInstanceId
-)( TemplateSelectorControl );
+export default withInstanceId( TemplateSelectorControl );
