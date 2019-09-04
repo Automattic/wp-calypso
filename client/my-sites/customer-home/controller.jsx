@@ -10,7 +10,6 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { isEnabled } from 'config';
 import { abtest } from 'lib/abtest';
 import CustomerHome from './main';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -28,7 +27,7 @@ export default function( context, next ) {
 
 export function maybeRedirect( context, next ) {
 	const slug = getSelectedSiteSlug( context.store.getState() );
-	if ( ! isEnabled( 'customer-home' ) || 'hide' === abtest( 'customerHomePage' ) ) {
+	if ( 'hide' === abtest( 'customerHomePage' ) ) {
 		page.redirect( `/stats/day/${ slug }` );
 		return;
 	}

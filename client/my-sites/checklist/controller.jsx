@@ -6,7 +6,6 @@
 import React from 'react';
 import { get } from 'lodash';
 import page from 'page';
-import { isEnabled } from 'config';
 
 /**
  * Internal Dependencies
@@ -29,7 +28,7 @@ export function maybeRedirect( context, next ) {
 	const slug = getSelectedSiteSlug( state );
 	const queryString = context.querystring ? `?${ context.querystring }` : '';
 
-	if ( isEnabled( 'customer-home' ) && canCurrentUserUseCustomerHome( state, siteId ) ) {
+	if ( canCurrentUserUseCustomerHome( state, siteId ) ) {
 		page.redirect( `/home/${ slug }${ queryString }` );
 		return;
 	}

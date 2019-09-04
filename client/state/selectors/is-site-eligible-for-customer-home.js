@@ -4,7 +4,6 @@
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { abtest } from 'lib/abtest';
 import { canCurrentUserUseChecklistMenu } from 'state/sites/selectors';
-import { isEnabled } from 'config';
 
 /**
  * Returns true if the current should be able to use the customer home screen
@@ -17,9 +16,5 @@ export default function isSiteEligibleForCustomerHome( state, siteId = null ) {
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
-	return (
-		isEnabled( 'customer-home' ) &&
-		'show' === abtest( 'customerHomePage' ) &&
-		canCurrentUserUseChecklistMenu( state, siteId )
-	);
+	return 'show' === abtest( 'customerHomePage' ) && canCurrentUserUseChecklistMenu( state, siteId );
 }

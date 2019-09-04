@@ -143,7 +143,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	customerHomePage: {
-		datestamp: '20190820',
+		datestamp: '20190903',
 		variations: {
 			show: 50,
 			hide: 50,
