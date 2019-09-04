@@ -242,7 +242,7 @@ class Signup extends React.Component {
 	}
 
 	maybeShowSitePreview() {
-		if ( get( steps[ this.props.stepName ], 'props.showSiteMockups', false ) ) {
+		if ( this.props.shouldStepShowSitePreview ) {
 			this.props.showSitePreview();
 		} else {
 			this.props.hideSitePreview();
@@ -601,7 +601,7 @@ class Signup extends React.Component {
 					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 				/>
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
-				{ ! this.state.shouldShowLoadingScreen && this.props.shouldShowMockups && (
+				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
 					<SiteMockups stepName={ this.props.stepName } />
 				) }
 				{ this.state.bearerToken && (
@@ -617,10 +617,15 @@ class Signup extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const shouldStepShowSitePreview = get(
+			steps[ ownProps.stepName ],
+			'props.showSiteMockups',
+			false
+		);
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
@@ -636,7 +641,8 @@ export default connect(
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
-			shouldShowMockups: isSitePreviewVisible( state ),
+			shouldStepShowSitePreview,
+			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 		};
 	},
 	{

@@ -324,7 +324,6 @@ class RegisterDomainStep extends React.Component {
 		}
 		this._isMounted = true;
 		this.props.recordSearchFormView( this.props.analyticsSection );
-		this.toggleShowSignupSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -338,34 +337,9 @@ class RegisterDomainStep extends React.Component {
 			this.focusSearchCard();
 		}
 
-		this.toggleShowSignupSitePreview();
-	}
-
-	/*
-		The following unsightly nest of conditionals attempts
-		to cover all states for which the signup site preview will
-		hide or show.
- 	*/
-	toggleShowSignupSitePreview() {
-		if ( this.props.isSignupStep ) {
-			if ( this.props.isSitePreviewVisible ) {
-				if (
-					this.state.loadingResults ||
-					this.state.trademarkClaimsNoticeInfo ||
-					( this.state.searchResults && this.state.searchResults.length )
-				) {
-					return this.props.hideSitePreview();
-				}
-			}
-			if ( ! this.props.isSitePreviewVisible ) {
-				if (
-					! this.state.trademarkClaimsNoticeInfo &&
-					! this.state.loadingResults &&
-					( ! this.state.searchResults || ! this.state.searchResults.length )
-				) {
-					return this.props.showSitePreview();
-				}
-			}
+		// Hide the signup site preview when we're loading results
+		if ( this.props.isSignupStep && this.state.loadingResults && this.props.isSitePreviewVisible ) {
+			this.props.hideSitePreview();
 		}
 	}
 
@@ -502,13 +476,16 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
-	rejectTrademarkClaim = () =>
+	rejectTrademarkClaim = () => {
 		this.setState( {
 			selectedSuggestion: null,
 			trademarkClaimsNoticeInfo: null,
 		} );
+	};
 
-	acceptTrademarkClaim = () => this.props.onAddDomain( this.state.selectedSuggestion );
+	acceptTrademarkClaim = () => {
+		this.props.onAddDomain( this.state.selectedSuggestion );
+	};
 
 	renderTrademarkClaimsNotice() {
 		const { isSignupStep } = this.props;
@@ -686,6 +663,11 @@ class RegisterDomainStep extends React.Component {
 	onSearchChange = ( searchQuery, callback = noop ) => {
 		if ( ! this._isMounted ) {
 			return;
+		}
+
+		// Reshow the signup site preview if there is no search query
+		if ( ! searchQuery && this.props.isSignupStep && ! this.props.isSitePreviewVisible ) {
+			this.props.showSitePreview();
 		}
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
