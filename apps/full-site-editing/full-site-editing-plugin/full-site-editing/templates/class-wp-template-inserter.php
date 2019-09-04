@@ -113,6 +113,7 @@ class WP_Template_Inserter {
 		$max_retries = 3;
 
 		$response = wp_remote_get( $request_url, $request_args );
+		
 		if ( ! is_wp_error( $response ) ) {
 			return $response;
 		}
