@@ -17,7 +17,7 @@ import Gridicon from 'gridicons';
 import Card from 'components/card';
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
+import { getPreference } from 'state/preferences/selectors';
 
 /**
  * Style dependencies
@@ -41,9 +41,9 @@ class DismissibleCard extends Component {
 	};
 
 	render() {
-		const { className, isDismissed, onClick, dismissCard, hasReceivedPreferences } = this.props;
+		const { className, isDismissed, onClick, dismissCard } = this.props;
 
-		if ( isDismissed || ! hasReceivedPreferences ) {
+		if ( isDismissed ) {
 			return null;
 		}
 
@@ -67,10 +67,8 @@ class DismissibleCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
-
 		return {
 			isDismissed: getPreference( state, preference ),
-			hasReceivedPreferences: hasReceivedRemotePreferences( state ),
 		};
 	},
 	( dispatch, ownProps ) =>
