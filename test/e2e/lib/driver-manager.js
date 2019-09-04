@@ -137,8 +137,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 					intl: { accept_languages: locale },
 				} );
 				options.setProxy( getProxyType() );
-				options.addArguments( '--no-sandbox' );
-				options.addArguments( '--disable-dev-shm-usage' );
 				options.addArguments( '--no-first-run' );
 
 				if ( useCustomUA ) {
