@@ -80,7 +80,7 @@
 	.list-item.is-placeholder {
 		@include placeholder();
 		pointer-events: none;
-		background: var( --studio-white );
+		background: var( --color-surface );
 
 		.shipping-zone__placeholder-flag, .gridicon, p, a, span, button {
 			animation: loading-fade 1.6s ease-in-out infinite;

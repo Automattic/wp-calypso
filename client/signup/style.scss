@@ -1,8 +1,6 @@
 body.is-section-signup {
-	// Use the primary color for our background. I wonder how we
-	// should deal with different color schemes?
-	background: var( --color-primary );
-
+	// Use WordPress.com’s brand color for the signup background
+	background: var( --studio-wordpress-blue );
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
@@ -48,7 +46,7 @@ body.is-section-signup .layout.gravatar {
 	// on the primary colored background.
 	.empty-content {
 		.empty-content__illustration {
-			background: var( --studio-white );
+			background: var( --color-surface );
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
@@ -172,17 +170,17 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
-		border-color: #a7aaad; // $studio-gray-20;
+		border-color: var( --color-neutral-20 );
 
 		.text-control__label,
 		.components-base-control__label {
-			color: #646970; // $studio-gray-50;
+			color: var( --color-neutral-50 );
 			font-size: 12px;
 			font-weight: normal;
 		}
 
 		&.active {
-			box-shadow: 0 0 0 2px #674399; // $studio-woocommerce-purple-60
+			box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
 			border-color: transparent;
 		}
 	}
@@ -213,7 +211,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 	.login__woocommerce-logo {
 		text-align: center;
-		border-bottom: 1px solid #646970; // $studio-gray-50;
+		border-bottom: 1px solid var( --color-neutral-50 );
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -285,14 +283,14 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		}
 
 		.social-buttons__button {
-			border: 1px solid #c9356e; // $studio-pink;
-			color: #c9356e; // $studio-pink
+			border: 1px solid var( --studio-pink-50 );
+			color: var( --studio-pink-50 );
 			box-shadow: none;
 			max-width: 250px;
 			height: 48px;
 		}
 	}
-	
+
 
 	.logged-out-form__footer {
 		text-align: center;

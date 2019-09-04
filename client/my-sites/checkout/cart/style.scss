@@ -343,7 +343,7 @@ div.popover-cart__popover {
 }
 
 .popover-cart__mobile-cart {
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	border: 1px solid var( --color-neutral-10 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
@@ -415,7 +415,7 @@ div.popover-cart__popover {
 
 
 .secondary-cart {
-	background: var( --studio-white );
+	background: var( --color-surface );
 
 	@include breakpoint( '<660px' ) {
 		left: 0;

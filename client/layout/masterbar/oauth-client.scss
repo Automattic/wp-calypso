@@ -1,5 +1,5 @@
 .masterbar__oauth-client {
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 
 	nav {
 		display: flex;
@@ -160,7 +160,7 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --studio-white );
+				background-color: var( --color-surface );
 				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				padding: 35px 55px 20px;
@@ -296,7 +296,7 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --studio-white );
+				background-color: var( --color-surface );
 				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				max-width: 550px;

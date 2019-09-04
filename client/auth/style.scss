@@ -217,7 +217,7 @@
 	ol li::before {
 		margin-right: 2em;
 		content: counter( item );
-		background: var( --studio-white );
+		background: var( --color-surface );
 		border-radius: 100%;
 		color: var( --color-primary-dark );
 		width: 24px;

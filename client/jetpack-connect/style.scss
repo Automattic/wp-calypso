@@ -345,7 +345,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
 		padding: 10px 10px 12px;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 	}
 
 	.example-components__content-wp-admin-connect-button {
@@ -386,7 +386,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .example-components__content-wp-admin-plugin-card {
 	margin: 10px;
 	padding: 12px 10px;
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 }
 
 .example-components__content-wp-admin-plugin-name {
@@ -865,7 +865,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.payment-logo.is-paypal {
 		width: 64px;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		background-size: 84%;
 		background-position: 50% 45%;
 		border-radius: 1px;
@@ -880,7 +880,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.jetpack-connect__main-error .empty-content {
 		padding-bottom: 24px;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-radius: 3px;
 	}
 
@@ -894,7 +894,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.jetpack-connect__main-logo {
 			text-align: center;
-			border-bottom: 1px solid var( --studio-gray-50 );
+			border-bottom: 1px solid var( --color-neutral-50 );
 			position: absolute;
 			width: 100%;
 			left: 0;
@@ -915,7 +915,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			display: block;
 			height: 56px;
 			border-bottom: 1px solid var( --color-woocommerce-header-border );
-			background: var( --studio-white );
+			background: var( --color-surface );
 
 			svg {
 				margin-top: 15px;
@@ -934,19 +934,19 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.jetpack-logo__icon-circle {
-			fill: var( --studio-gray-80 );
+			fill: var( --color-neutral-80 );
 		}
 
 		.jetpack-logo__icon-triangle {
-			fill: var( --studio-gray-0 );
+			fill: var( --color-neutral-0 );
 		}
 
 		.signup-form__social p {
-			color: var( --studio-gray-60 );
+			color: var( --color-neutral-60 );
 		}
 
 		.formatted-header__title {
-			color: var( --studio-gray-80 );
+			color: var( --color-neutral-80 );
 		}
 
 		.signup-form__submit {
@@ -955,11 +955,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.jetpack-header__partner-logo-plus svg {
-			stroke: var( --studio-gray-80 );
+			stroke: var( --color-neutral-80 );
 		}
 
 		.jetpack-header__partner-logo-plus .gridicon {
-			color: var( --studio-gray-80 );
+			color: var( --color-neutral-80 );
 		}
 
 		.jetpack-connect__main,
@@ -982,13 +982,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		.signup-form__terms-of-service-link,
 		.signup-form__terms-of-service-link a {
 			text-align: left;
-			color: var( --studio-gray-60 );
+			color: var( --color-neutral-60 );
 		}
 
 		.logged-out-form__link-item {
 			text-align: center;
 			text-decoration: underline;
-			color: var( --studio-gray-60 );
+			color: var( --color-neutral-60 );
 			font-size: 14px;
 		}
 
@@ -1000,8 +1000,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			}
 
 			.social-buttons__button {
-				border: 1px solid #c9356e; // $studio-pink;
-				color: #c9356e; // $studio-pink
+				border: 1px solid var( --studio-pink-50 );
+				color: var( --studio-pink-50 );
 				box-shadow: none;
 			}
 		}
@@ -1032,7 +1032,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			.jetpack-connect__tos-link,
 			.jetpack-connect__tos-link a {
 				text-align: left;
-				color: var( --studio-gray-60 );
+				color: var( --color-neutral-60 );
 				font-size: 12px;
 			}
 		}
@@ -1049,11 +1049,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.woocommerce-muriel-text-control,
 		.muriel-input-text {
-			border-color: var( --studio-gray-20 );
+			border-color: var( --color-neutral-20 );
 
 			.components-base-control__label,
 			.text-control__label {
-				color: var( --studio-gray-50 );
+				color: var( --color-neutral-50 );
 			}
 
 			&.active {

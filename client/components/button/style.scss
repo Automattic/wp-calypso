@@ -57,7 +57,7 @@ button {
 		border-width: 2px 1px 1px;
 	}
 
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	color: var( --color-neutral-70 );
 	border-color: var( --color-neutral-10 );
 
@@ -74,7 +74,7 @@ button {
 	&:disabled,
 	&.disabled {
 		color: var( --color-neutral-20 );
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-color: var( --color-neutral-5 );
 		cursor: default;
 
@@ -154,7 +154,7 @@ button {
 	&:disabled,
 	&.disabled {
 		color: var( --color-neutral-20 );
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-color: var( --color-neutral-5 );
 	}
 
@@ -185,7 +185,7 @@ button {
 	&[disabled],
 	&:disabled {
 		color: var( --color-neutral-20 );
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-color: var( --color-neutral-5 );
 	}
 }
@@ -203,7 +203,7 @@ button {
 	&[disabled],
 	&:disabled {
 		color: var( --color-neutral-20 );
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-color: var( --color-neutral-5 );
 	}
 

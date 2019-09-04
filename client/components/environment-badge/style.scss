@@ -14,7 +14,7 @@
 		display: inline-block;
 		width: 26px;
 		height: 26px;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border: solid 1px var( --color-neutral-70 );
 		border-radius: 50%;
 		color: var( --color-neutral-70 );
@@ -39,7 +39,7 @@
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		box-shadow: 0 0 0 1px var( --color-neutral-70 );
 
 		&.is-env {

@@ -20,7 +20,7 @@ $accordion-background-expanded: var( --studio-white );
 	padding: $accordion-padding;
 	padding-right: ( $accordion-padding + 22px );
 	color: var( --color-neutral-70 );
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	text-align: left;
 	transition: all 150ms ease-in;
 
@@ -56,7 +56,7 @@ $accordion-background-expanded: var( --studio-white );
 
 .accordion.is-expanded {
 	.accordion__toggle {
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 
 		.accordion__arrow {
 			.gridicon {
@@ -131,7 +131,7 @@ $accordion-background-expanded: var( --studio-white );
 .accordion__content {
 	overflow: hidden;
 	height: 0;
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 }
 
 .accordion.is-expanded .accordion__content {
@@ -164,7 +164,7 @@ $accordion-background-expanded: var( --studio-white );
 		left: 4px;
 		width: 14px;
 		height: 14px;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-radius: 50%;
 	}
 

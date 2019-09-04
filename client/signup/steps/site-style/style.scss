@@ -8,7 +8,7 @@
 .site-style__form {
 	margin: auto;
 	max-width: 480px;
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 
 	@include breakpoint( '<660px' ) {
 		// On small screens the form
@@ -40,7 +40,7 @@
 
 	// Default to a white background, but
 	// some styles override it below.
-	background: var( --studio-white );
+	background: var( --color-surface );
 
 	// Transition all the things!
 	transition: all 0.15s ease-in-out;

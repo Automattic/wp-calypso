@@ -85,7 +85,7 @@ $devdocs-max-width: 720px;
 
 .design__instance-link {
 	display: inline-block;
-	background: var( --studio-white );
+	background: var( --color-surface );
 	text-decoration: underline;
 	border-radius: 3px;
 	padding: 3px 6px;
@@ -97,7 +97,7 @@ $devdocs-max-width: 720px;
 // The wrapper containing the actual examples
 .docs-example__wrapper {
 	box-sizing: border-box;
-	background: var( --studio-white );
+	background: var( --color-surface );
 	box-shadow: 0 1px 2px var( --color-neutral-0 );
 	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 	margin: 0 auto 24px;
@@ -312,7 +312,7 @@ $devdocs-max-width: 720px;
 
 		.docs-selectors__result-arguments-name strong {
 			color: var( --color-neutral-70 );
-			background: var( --studio-white );
+			background: var( --color-surface );
 			border-radius: 3px;
 			display: inline-block;
 			padding: 2px 8px;
@@ -399,13 +399,13 @@ $devdocs-max-width: 720px;
 
 	pre {
 		padding: 8px;
-		background: var( --studio-white );
-		background-color: var( --studio-white );
+		background: var( --color-surface );
+		background-color: var( --color-surface );
 		color: var( --color-primary-dark );
 	}
 
 	code {
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-radius: 3px;
 		color: var( --color-primary-dark );
 		font-size: 15px;

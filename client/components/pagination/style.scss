@@ -35,7 +35,7 @@
 	&.pagination__ellipsis span {
 		@extend %mobile-link-element;
 		padding: 8px 12px;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border: solid 1px var( --color-neutral-10 );
 		border-right: none;
 		font-size: 14px;

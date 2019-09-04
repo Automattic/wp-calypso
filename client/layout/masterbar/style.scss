@@ -203,7 +203,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-new {
-	background: var( --studio-white );
+	background: var( --color-surface );
 	border-radius: 3px;
 	color: var( --color-primary );
 	height: 36px;
@@ -227,7 +227,7 @@ $autobar-height: 20px;
 		outline: none;
 
 		.accessible-focus & {
-			background: var( --studio-white );
+			background: var( --color-surface );
 			color: var( --color-primary );
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
@@ -399,7 +399,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__toggle-drafts.button.is-borderless {
-	background: var( --studio-white );
+	background: var( --color-surface );
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;

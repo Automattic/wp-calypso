@@ -16,7 +16,7 @@
 	}
 
 	.wpnc__button {
-		background: var( --studio-white );
+		background: var( --color-surface );
 		border-color: var( --color-neutral-10 );
 		border-style: solid;
 		border-width: 1px 1px 2px;
@@ -51,7 +51,7 @@
 		&[disabled],
 		&:disabled {
 			color: var( --color-neutral-0 );
-			background: var( --studio-white );
+			background: var( --color-surface );
 			border-color: var( --color-neutral-0 );
 			cursor: default;
 
@@ -169,7 +169,7 @@
 		&[disabled],
 		&:disabled {
 			color: var( --color-neutral-0 );
-			background: var( --studio-white );
+			background: var( --color-surface );
 			cursor: default;
 
 			&:active {

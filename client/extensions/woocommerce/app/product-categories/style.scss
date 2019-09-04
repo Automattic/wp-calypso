@@ -1,6 +1,6 @@
 .product-categories__list-placeholder {
 	@include placeholder();
-	background: var( --studio-white );
+	background: var( --color-surface );
 	height: 525px;
 }
 
@@ -60,7 +60,7 @@
 .product-categories__form {
 	&.is-placeholder div {
 		@include placeholder();
-		background: var( --studio-white );
+		background: var( --color-surface );
 		margin-bottom: 8px;
 
 		&:first-child {

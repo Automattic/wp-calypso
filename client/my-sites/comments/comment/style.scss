@@ -652,7 +652,7 @@
 .card.comment.is-placeholder {
 	@include placeholder();
 
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 
 	.comment__bulk-select {
 		display: none;

@@ -5,7 +5,7 @@
 .products__form {
 	&.is-placeholder div {
 		@include placeholder();
-		background: var( --studio-white );
+		background: var( --color-surface );
 		width: 720px;
 		margin-bottom: 8px;
 

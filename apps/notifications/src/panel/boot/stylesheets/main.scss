@@ -3,7 +3,7 @@
 }
 
 .wpnc__main {
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 
 	font: {
 		family: $sans;
@@ -18,7 +18,7 @@
 		background-color: var( --color-neutral-0 );
 	}
 	@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 	}
 
 	// Text elements
@@ -58,7 +58,7 @@
 	header {
 		border-bottom: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		font-size: $wpnc__capital-font-size;
 		height: $wpnc__title-bar-height + 1px;
 		line-height: $wpnc__title-bar-height;
@@ -165,7 +165,7 @@
 
 	.wpnc__filter {
 		width: 100%;
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		color: var( --color-text-subtle );
 		border-bottom: 1px solid var( --color-neutral-0 );
 		border-left: 1px solid var( --studio-white );
@@ -191,7 +191,7 @@
 	}
 
 	.wpnc__filter__segmented-control-item {
-		background: var( --studio-white );
+		background: var( --color-surface );
 		border: 1px solid var( --color-neutral-light );
 		border-right: none;
 		font-size: 13px;
@@ -242,7 +242,7 @@
 
 	.wpnc__list-view .wpnc__notes,
 	.error {
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 	}
 
 	.wpnc__note {
@@ -602,7 +602,7 @@
 		}
 
 		.wpnc__note {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			border: none;
 		}
 
@@ -871,7 +871,7 @@
 			background-color: var( --color-neutral-0 );
 		}
 		to {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 		}
 	}
 }

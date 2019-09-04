@@ -10,7 +10,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 
 	.notice {
 		margin-bottom: 0;
@@ -162,7 +162,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	overflow: hidden;
 
 	&::before {
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border-radius: 3px;
 		content: '';
 		display: block;
@@ -284,7 +284,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	margin: 0 auto 1px;
 	padding: 16px;
 
-	background: var( --studio-white );
+	background: var( --color-surface );
 
 	border-top: $section-border;
 

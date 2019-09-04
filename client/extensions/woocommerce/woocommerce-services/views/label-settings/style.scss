@@ -70,7 +70,7 @@
 .label-settings__placeholder {
 	@include placeholder();
 	pointer-events: none;
-	background: var( --studio-white );
+	background: var( --color-surface );
 
 	&::after {
 		content: none;

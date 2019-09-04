@@ -104,7 +104,7 @@ $image-height: 47px;
 }
 
 .wp-login__footer--jetpack {
-	background: var( --studio-white );
+	background: var( --color-surface );
 	border-top: solid 1px var( --color-neutral-5 );
 	text-align: center;
 
@@ -229,14 +229,14 @@ $image-height: 47px;
 	.wp-login__links a {
 		border-bottom: none;
 		line-height: 3.4em;
-		color: var( --studio-gray-60 );
+		color: var( --color-neutral-60 );
 		font-size: 14px;
 		text-decoration: underline;
 		font-weight: normal;
 	}
 
 	.login__form-header {
-		color: var( --studio-gray-80 );
+		color: var( --color-neutral-80 );
 	}
 
 	.wp-login__main.main {
@@ -256,14 +256,14 @@ $image-height: 47px;
 	}
 
 	.login__form-change-username {
-		color: var( --studio-gray-60 );
+		color: var( --color-neutral-60 );
 	}
 
 	.login__form-terms,
 	.login__form-terms a,
 	.login__form-terms a:hover {
 		text-align: left;
-		color: var( --studio-gray-60 );
+		color: var( --color-neutral-60 );
 		font-size: 12px;
 	}
 
@@ -286,19 +286,19 @@ $image-height: 47px;
 
 	.login__social-buttons {
 		.social-buttons__button {
-			border: 1px solid #c9356e; // $studio-pink;
-			color: #c9356e; // $studio-pink
+			border: 1px solid var( --studio-pink-50 );
+			color: var( --studio-pink-50 );
 			box-shadow: none;
 		}
 	}
 
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
-		border-color: var( --studio-gray-20 );
+		border-color: var( --color-neutral-20 );
 
 		.text-control__label,
 		.components-base-control__label {
-			color: var( --studio-gray-50 );
+			color: var( --color-neutral-50 );
 			font-size: 12px;
 			font-weight: normal;
 		}

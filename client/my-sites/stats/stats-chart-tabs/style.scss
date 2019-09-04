@@ -5,7 +5,7 @@ ul.module-tabs {
 	@include clear-fix;
 	border-top: 1px solid var( --color-neutral-0 );
 	list-style: none;
-	background: var( --studio-white );
+	background: var( --color-surface );
 	margin: 0;
 
 	.module-tab {
@@ -51,7 +51,7 @@ ul.module-tabs {
 			@include clear-fix;
 			padding: 5px 0 10px;
 			display: block;
-			background: var( --studio-white );
+			background: var( --color-surface );
 
 			@include breakpoint( '<480px' ) {
 				line-height: 24px;
@@ -133,7 +133,7 @@ ul.module-tabs {
 
 		// Selected state
 		.stats-module &.is-selected a {
-			background: var( --studio-white );
+			background: var( --color-surface );
 			border-top: 1px solid var( --studio-white );
 			margin-top: -1px;
 			cursor: default;

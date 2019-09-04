@@ -107,7 +107,7 @@ textarea {
 	background: #f2f6f8;
 }
 .minimized-view {
-	background: var( --studio-white );
+	background: var( --color-surface );
 	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
 	border: 1px solid var( --color-neutral-5 );
 }
@@ -371,16 +371,16 @@ textarea {
 			background-color: #14abdd;
 		}
 		&.icon-success {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			color: var( --color-success );
 		}
 		&.icon-warning {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			color: var( --color-warning );
 		}
 	}
 	&.inverted .icon.icon-success {
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		color: var( --color-success );
 	}
 }
@@ -394,7 +394,7 @@ textarea {
 .thread-view-footer {
 	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
-	background: var( --studio-white );
+	background: var( --color-surface );
 }
 
 // Bubble when the thread view is minimized
@@ -476,7 +476,7 @@ textarea {
 
 // Displays when the user wants to accept the answer
 .ActionBar {
-	background: var( --studio-white );
+	background: var( --color-surface );
 }
 .ActionBar__button {
 	box-shadow: none;

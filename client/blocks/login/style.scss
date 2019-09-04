@@ -35,7 +35,7 @@
 	.login__jetpack-logo,
 	.login__woocommerce-logo {
 		text-align: center;
-		border-bottom: 1px solid var( --studio-gray-5 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -83,11 +83,11 @@
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: var( --studio-gray-80 );
+		fill: var( --color-neutral-80 );
 	}
 
 	.jetpack-logo__icon-triangle {
-		fill: var( --studio-gray-0 );
+		fill: var( --color-neutral-0 );
 	}
 
 	.login__form-action .form-button {
@@ -96,11 +96,11 @@
 	}
 
 	.jetpack-header__partner-logo-plus svg {
-		stroke: var( --studio-gray-80 );
+		stroke: var( --color-neutral-80 );
 	}
 
 	.jetpack-header__partner-logo-plus .gridicon {
-		color: var( --studio-gray-80 );
+		color: var( --color-neutral-80 );
 	}
 }
 

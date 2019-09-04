@@ -56,7 +56,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		height: 16px;
 		border: 2px solid var( --color-neutral-10 );
 		border-radius: 16px;
-		background: var( --studio-white );
+		background: var( --color-surface );
 		cursor: pointer;
 		z-index: 2;
 
@@ -88,7 +88,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		&.is-disabled:hover,
 		&.is-disabled:active {
 			border: 2px solid var( --color-neutral-10 );
-			background: var( --studio-white );
+			background: var( --color-surface );
 			cursor: default;
 		}
 	}
@@ -108,7 +108,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		width: 18px;
 		height: 18px;
 		border-radius: 16px;
-		background: var( --studio-white );
+		background: var( --color-surface );
 		cursor: pointer;
 	}
 

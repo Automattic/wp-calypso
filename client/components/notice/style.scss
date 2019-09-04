@@ -101,11 +101,11 @@
 // to emphasize the glyph inside
 .notice__icon-wrapper-drop {
 	position: absolute;
-  top: 14px;
-  left: 15px;
-  width: 18px;
-  height: 18px;
-  border-radius: 9px;
+	top: 14px;
+	left: 15px;
+	width: 18px;
+	height: 18px;
+	border-radius: 9px;
 	background: var( --color-neutral );
 
 	& + .notice__icon {

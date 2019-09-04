@@ -170,7 +170,7 @@
 	.sharing-service {
 		position: relative;
 		overflow: hidden;
-		background: var( --studio-white );
+		background: var( --color-surface );
 
 		&.not-connected .sharing-service-examples {
 			display: block;
@@ -193,7 +193,7 @@
 
 		.new-account {
 			padding-bottom: 0.48em;
-			background: var( --studio-white );
+			background: var( --color-surface );
 			// stylelint-disable-next-line selector-max-id
 			#content & {
 				font-size: 0.9em;
@@ -520,7 +520,7 @@
 	padding: 10px 0 2px 8px;
 	border: 1px solid #ccc;
 	border-radius: 2px;
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	box-shadow: 0 5px 20px rgba( 0, 0, 0, 0.2 );
 }
 
@@ -539,7 +539,7 @@
 	width: 8px;
 	height: 8px;
 	transform: rotate( 45deg );
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	border-top: 1px solid #ccc;
 	border-left: 1px solid #ccc #{'/*rtl:ignore*/'};
 }
@@ -549,7 +549,7 @@
 	position: relative;
 	margin-bottom: 20px;
 	padding: 20px 24px;
-	background: var( --studio-white );
+	background: var( --color-surface );
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
@@ -672,7 +672,7 @@
 	border: 1px solid var( --color-neutral-10 );
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	color: var( --color-primary );
 
 	@include breakpoint( '<480px' ) {
@@ -701,7 +701,7 @@
 		width: 12px;
 		height: 12px;
 		border: 1px solid var( --color-neutral-10 );
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		transform: rotate( 45deg );
 	}
 
@@ -944,7 +944,7 @@
 .sharing-buttons-preview__panel {
 	position: relative;
 	display: none;
-	background: var( --studio-white );
+	background: var( --color-surface );
 	border: 1px solid var( --color-neutral-10 );
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
@@ -955,7 +955,7 @@
 		border: 1px solid var( --color-neutral-10 );
 		border-right-width: 0 #{'/*rtl:ignore*/'};
 		border-bottom-width: 0;
-		background: var( --studio-white );
+		background: var( --color-surface );
 		display: block;
 		width: 12px;
 		height: 12px;
@@ -985,7 +985,7 @@
 			padding: 7px;
 			float: left;
 			color: var( --color-neutral-5 );
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			border-color: var( --color-neutral-5 );
 			&:hover {
 				border-color: var( --color-neutral-10 );
@@ -997,7 +997,7 @@
 
 			&.is-enabled {
 				color: var( --color-text-subtle );
-				background-color: var( --studio-white );
+				background-color: var( --color-surface );
 				border-color: var( --color-neutral-10 );
 				&:hover {
 					border-color: var( --color-neutral-20 );

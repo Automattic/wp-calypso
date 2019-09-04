@@ -39,7 +39,7 @@
 				display: flex;
 				flex-flow: row wrap;
 				justify-content: space-around;
-				background-color: var( --studio-white );
+				background-color: var( --color-surface );
 				padding: 10px;
 			}
 
@@ -296,7 +296,7 @@
 
 	.credit-card-payment-box {
 		.payment-box-sections {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
@@ -324,7 +324,7 @@
 		}
 
 		.checkout__payment-box-section .checkout__new-card-fields {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			max-height: 0;
 			overflow: hidden;
 			padding: 0 15px 0 12px;
@@ -395,7 +395,7 @@
 	.web-payment-box {
 		.payment-box-section:not( .checkout__free-cart-payment-box ),
 		.checkout__payment-box-section {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
@@ -611,7 +611,7 @@
 	}
 
 	label {
-		background-color: var( --studio-white );
+		background-color: var( --color-surface );
 		border: 3px solid var( --studio-white );
 		border-radius: 3px;
 		display: block;

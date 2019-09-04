@@ -143,7 +143,7 @@
 
 		&[disabled],
 		&:disabled {
-			background-color: var( --studio-white );
+			background-color: var( --color-surface );
 			border-color: var( --color-neutral-5 );
 			color: var( --color-neutral-5 );
 		}
@@ -195,7 +195,7 @@
 		z-index: 2;
 		padding: 8px;
 		color: var( --color-neutral-light );
-		background: var( --studio-white );
+		background: var( --color-surface );
 	}
 
 	@include breakpoint( '<660px' ) {

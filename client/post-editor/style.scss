@@ -12,7 +12,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	pointer-events: none;
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
@@ -219,7 +219,7 @@
 .post-editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
 	border-color: var( --color-neutral-10 );
 	border-bottom-color: var( --studio-white );
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 }
 
 .post-editor__header-divider {

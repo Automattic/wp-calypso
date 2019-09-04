@@ -6,6 +6,6 @@
 .form-text-input.multiple-choice-question__answer-item-text-input::placeholder {
 	color: var( --studio-white );
 	@include breakpoint( '>480px' ) {
-		color: var( --studio-gray );
+		color: var( --color-neutral );
 	}
 }

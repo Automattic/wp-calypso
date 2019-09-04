@@ -27,7 +27,7 @@
 
 .post-share__sharing-preview-modal-header {
 	height: 48px;
-	background: var( --studio-white );
+	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-10 );
 	border-radius: 4px 4px 0 0;
 	display: flex;
@@ -57,7 +57,7 @@
 }
 
 .sharing-preview-pane__sidebar {
-	background-color: var( --studio-white );
+	background-color: var( --color-surface );
 	display: flex;
 	flex: 0 0 auto;
 	flex-direction: column;

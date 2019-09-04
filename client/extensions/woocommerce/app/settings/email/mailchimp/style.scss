@@ -172,7 +172,7 @@
 .mailchimp__getting-started-loading-placeholder {
 	@include placeholder();
 	pointer-events: none;
-	background: var( --studio-white );
+	background: var( --color-surface );
 
 	p {
 		height: 14px;
@@ -236,7 +236,7 @@
 	flex-grow: 0;
 	width: 255px;
 	font-size: 12px;
-	background: var( --studio-white );
+	background: var( --color-surface );
 
 	@include breakpoint( '<960px' ) {
 		width: auto;
