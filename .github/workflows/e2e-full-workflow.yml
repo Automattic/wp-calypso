@@ -8,7 +8,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: debug
         run: mkdir /tmp/.X11-unix &&
-          sudo chmod 777 /tmp/.X11-unix &&
+          sudo chmod 1777 /tmp/.X11-unix &&
           sudo chown root /tmp/.X11-unix/ &&
           Xvfb
       - name: Check external author
@@ -32,7 +32,7 @@ jobs:
         run: cd test/e2e && npm ci
       - name: Create screen sharing
         run: mkdir /tmp/.X11-unix &&
-          sudo chmod 777 /tmp/.X11-unix &&
+          sudo chmod 1777 /tmp/.X11-unix &&
           sudo chown root /tmp/.X11-unix/
       - name: Decrypt Config
         env:
@@ -59,7 +59,7 @@ jobs:
         run: cd test/e2e && npm ci
       - name: Create screen sharing
         run: mkdir /tmp/.X11-unix &&
-          sudo chmod 777 /tmp/.X11-unix &&
+          sudo chmod 1777 /tmp/.X11-unix &&
           sudo chown root /tmp/.X11-unix/
       - name: Decrypt Config
         env:
