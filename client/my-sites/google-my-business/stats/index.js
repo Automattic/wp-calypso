@@ -221,7 +221,22 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringConnections forceRefresh />
 				<QueryKeyringServices />
 
-				{ ! isLocationVerified && (
+				{ ! locationData && (
+					<Notice
+						status="is-error"
+						text={ translate(
+							'There is an error with your Google My Business Connection. ' +
+								'Please {{a}}contact support{{/a}}',
+							{
+								components: {
+									a: <a href="/help/contact" target="_blank" rel="noopener noreferrer" />,
+								},
+							}
+						) }
+					/>
+				) }
+
+				{ !! locationData && ! isLocationVerified && (
 					<Notice
 						status="is-error"
 						text={ translate(
