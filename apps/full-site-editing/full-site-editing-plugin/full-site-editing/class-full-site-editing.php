@@ -40,6 +40,17 @@ class Full_Site_Editing {
 	public $wp_template_inserter;
 
 	/**
+	 * List of FSE supported themes.
+	 *
+	 * @var array
+	 */
+	const SUPPORTED_THEMES = [
+		'maywood',
+		'modern-business',
+		'varia',
+	];
+
+	/**
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
@@ -82,16 +93,13 @@ class Full_Site_Editing {
 	/**
 	 * Determines whether provided theme supports FSE.
 	 *
-	 * @deprecated being replaced soon by an is_active static method - don't add new usages
 	 * @param string $theme_slug Theme slug to check support for.
 	 *
 	 * @return bool True if passed theme supports FSE, false otherwise.
 	 */
-	// phpcs:disable
-	public function is_supported_theme( $theme_slug = null ) {
-		// phpcs:enable
-		// now in reality is_current_theme_supported.
-		return current_theme_supports( 'full-site-editing' );
+	public function is_supported_theme( $theme_slug ) {
+		$theme_slug = $this->normalize_theme_slug( $theme_slug );
+		return in_array( $theme_slug, self::SUPPORTED_THEMES, true );
 	}
 
 	/**
@@ -101,8 +109,8 @@ class Full_Site_Editing {
 	 * It is hooked into after_switch_theme action.
 	 */
 	public function insert_default_data() {
-		// Bail if current theme doesn't support FSE.
-		if ( ! $this->is_supported_theme() ) {
+		// Bail if theme doesn't support FSE.
+		if ( ! $this->is_supported_theme( $this->theme_slug ) ) {
 			return;
 		}
 
@@ -364,12 +372,12 @@ class Full_Site_Editing {
 	 * 3. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
 	 * 4. AND editing a post_type that supports full site editing
 	 *
-	 * @param \WP_Post $post object for the check.
+   * @param \WP_Post post object for the check
 	 * @return bool
 	 */
 	private function should_merge_template_and_post( $post ) {
-		$is_rest_api_wpcom      = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
-		$is_rest_api_core       = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+		$is_rest_api_wpcom = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
+		$is_rest_api_core = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
 		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
 
 		if ( ! ( $is_block_editor_screen || $is_rest_api_core || $is_rest_api_wpcom ) ) {
