@@ -59,7 +59,30 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	return is_site_eligible_for_full_site_editing() && current_theme_supports( 'full-site-editing' );
+	$supported_themes = [ 'maywood' ];
+	return is_site_eligible_for_full_site_editing() && in_array( get_theme_slug(), $supported_themes, true );
+}
+
+/**
+ * Returns normalized theme slug for the current theme.
+ *
+ * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
+ * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
+ * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
+ *
+ * @return string Normalized theme slug.
+ */
+function get_theme_slug() {
+	$theme_slug = get_stylesheet();
+	if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
+		$theme_slug = substr( $theme_slug, 4 );
+	}
+
+	if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
+		$theme_slug = substr( $theme_slug, 0, -6 );
+	}
+
+	return $theme_slug;
 }
 
 /**
@@ -70,7 +93,8 @@ function is_full_site_editing_active() {
  * @returns bool True if current site is eligible for FSE, false otherwise.
  */
 function is_site_eligible_for_full_site_editing() {
-	return ! apply_filters( 'a8c_disable_full_site_editing', false );
+	// By default, sites are not eligible for FSE.
+	return ! apply_filters( 'a8c_disable_full_site_editing', true );
 }
 
 /**
