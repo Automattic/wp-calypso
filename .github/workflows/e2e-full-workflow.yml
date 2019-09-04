@@ -7,7 +7,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: debug
-        run: Xvfb
+        run: mkdir /tmp/.X11-unix &&
+          sudo chmod 1777/tmp/.X11-unix &&
+          sudo chown root /tmp/.X11-unix/ &&
+          Xvfb
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
@@ -27,6 +30,10 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install npm deps
         run: cd test/e2e && npm ci
+      - name: Create screen sharing
+        run: mkdir /tmp/.X11-unix &&
+          sudo chmod 1777/tmp/.X11-unix &&
+          sudo chown root /tmp/.X11-unix/
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
@@ -50,6 +57,10 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install npm deps
         run: cd test/e2e && npm ci
+      - name: Create screen sharing
+        run: mkdir /tmp/.X11-unix &&
+          sudo chmod 1777/tmp/.X11-unix &&
+          sudo chown root /tmp/.X11-unix/
       - name: Decrypt Config
         env:
           NODE_CONFIG_ENV: test
