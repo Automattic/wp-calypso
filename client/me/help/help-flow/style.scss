@@ -1,5 +1,8 @@
+@import 'jetpack-connect/colors.scss';
+
 .help-flow__wrapper {
 	display: flex;
+	margin-bottom: 8px;
 }
 
 .help-flow__heading {
@@ -27,6 +30,54 @@
 
 .help-flow__button {
 	margin: 8px 18px;
+
+	&.is-wpcom {
+		background-color: var( --color-wpcom );
+		border-color: var( --color-blue-700 );
+		color: var( --color-white );
+
+		&:hover {
+			background-color: var( --color-blue-400 );
+		}
+	}
+
+	&.is-jetpack {
+		@include jetpack-connect-colors();
+	}
+}
+
+.help-flow.has-site-selector {
+	.help-flow__button-wrapper {
+		float: right;
+		margin-right: 32px;
+		width: calc( 40% - 32px );
+	}
+
+	.help-flow__button {
+		width: 100%;
+	}
+
+	.help-flow__site-selector-subtitle {
+		border-bottom: 1px solid var( --color-border-subtle );
+		color: var( --color-text-subtle );
+		display: inline-block;
+		font-size: 12px;
+		margin-bottom: 4px;
+		margin-left: 16px;
+	}
+
+	.site-selector {
+		float: left;
+		width: 60%;
+
+		&__sites {
+			border: 0;
+		}
+
+		.site {
+			pointer-events: none;
+		}
+	}
 }
 
 // Dialog
@@ -46,65 +97,45 @@
 		margin-bottom: 12px;
 	}
 
+	.accordion__content-wrap {
+		font-size: 13px;
+	}
+
 	.help-flow__dialog-buttons {
 		display: flex;
 		flex-direction: column-reverse;
-		text-align: center;
 
 		@include breakpoint( '>660px' ) {
-			display: block;
-			float: right;
+			flex-direction: row;
 		}
 
 		.is-primary {
 			margin-bottom: 8px;
-		}
 
-		.button {
 			@include breakpoint( '>660px' ) {
-				margin: 0 12px 8px 0;
+				margin-bottom: 0;
 			}
 		}
-	}
 
-	.help-flow__not-listed-button {
-		display: block;
-		margin-top: 12px;
-		order: 2;
-		text-align: center;
-		width: 100%;
-	}
+		.is-link {
+			margin-top: 24px;
+			font-size: 11px;
+			text-align: center;
 
-	.site-selector {
-		margin-top: 8px;
-
-		@include breakpoint( '>660px' ) {
-			margin: 0;
-			width: 40%;
+			@include breakpoint( '>660px' ) {
+				margin: auto 0;
+				margin-right: 24px;
+				text-align: left;
+			}
 		}
 
-		.site {
-			pointer-events: none;
+		.help-flow__close-dialog {
+			margin: 0 12px auto auto;
+			width: 100%;
+
+			@include breakpoint( '>660px' ) {
+				width: auto;
+			}
 		}
-	}
-}
-
-// Dialog when Site Selector appears
-.help-flow__dialog.has-site-selector {
-	.help-flow__dialog-text {
-		@include breakpoint( '>660px' ) {
-			float: right;
-			margin-left: 20px;
-			width: 60%;
-		}
-	}
-
-	.help-flow__dialog-buttons {
-		flex-direction: column;
-	}
-
-	.help-flow__close-dialog {
-		margin-top: 12px;
-		order: 1;
 	}
 }
