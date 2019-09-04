@@ -20,7 +20,11 @@ const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 			<div className="editor-styles-wrapper">
 				<div className="editor-writing-flow">
 					<div className="template-selector-item__preview-wrap">
-						<BlockPreview blocks={ blocks } viewportWidth={ viewportWidth } />
+						<BlockPreview
+							blocks={ blocks }
+							viewportWidth={ viewportWidth }
+							__experimentalScalingDelay={ 0 }
+						/>
 					</div>
 				</div>
 			</div>

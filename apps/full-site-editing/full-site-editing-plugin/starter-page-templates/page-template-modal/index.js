@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, get, keyBy, mapValues } from 'lodash';
+import { isEmpty, reduce, get, keyBy, mapValues } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -33,8 +33,6 @@ const {
 	siteInformation = {},
 } = window.starterPageTemplatesConfig;
 
-const PARSING_TEMPLATE_DELAY = 50;
-
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
@@ -53,13 +51,16 @@ class PageTemplateModal extends Component {
 		if ( hasTemplates ) {
 			// Select the first template automatically.
 			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
+
+			// Organize templates in an object, by slug key.
+			const templatesBySlug = keyBy( props.templates, 'slug' );
 			// Extract titles for faster lookup.
-			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
+			this.state.titlesByTemplateSlug = mapValues( templatesBySlug, 'title' );
 			// Set initially parsing by slug to `false`.
-			this.state.blocksByTemplateSlug = mapValues(
-				this.state.titlesByTemplateSlug,
-				() => ( { blocks: [], isParsing: true } )
-			);
+			this.state.blocksByTemplateSlug = mapValues( templatesBySlug, ( { content } ) => ( {
+				blocks: [],
+				isParsing: !! content,
+			} ) );
 		}
 	}
 
@@ -68,29 +69,30 @@ class PageTemplateModal extends Component {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
 
-		// Populate the state with parsed blocks, template by template,
+		// Populate the state with parsed blocks,
 		// immediately after the modal has been rendered.
 		// Wrapping it in a setTimeout() call,
-		// allows showing the modal with empty thumbnails
-		// before to start to parser and render them
-		// into their preview spots. It reduces the time considerably.
-		for ( const i in templates ) {
-			setTimeout(
-				( ( { slug, content } ) => {
-					const blocks = content
-						? parseBlocks( replacePlaceholders( content, siteInformation ) )
-						: [];
+		// allows showing the templates selector with empty thumbnails
+		// before to start to parser and render them.
+		setTimeout( () => {
+			// Parse templates blocks and store them into the state.
+			const blocksByTemplateSlug = reduce(
+				templates,
+				( prev, { slug, content } ) => {
+					prev[ slug ] = content
+						? {
+								blocks: parseBlocks( replacePlaceholders( content, siteInformation ) ),
+								isParsing: false,
+						  }
+						: { blocks: [], isParsing: false };
 
-					this.setState( {
-						blocksByTemplateSlug: {
-							...this.state.blocksByTemplateSlug,
-							[ slug ]: { blocks, isParsing: false }
-						}
-					} );
-				} ).bind( null, templates[ i ] ),
-				PARSING_TEMPLATE_DELAY * i
+					return prev;
+				},
+				{}
 			);
-		}
+
+			this.setState( { blocksByTemplateSlug } );
+		}, 0 );
 	}
 
 	setTemplate = slug => {

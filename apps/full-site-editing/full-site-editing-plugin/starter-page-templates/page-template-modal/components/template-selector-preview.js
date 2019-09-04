@@ -104,7 +104,12 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 					<div className="editor-styles-wrapper" style={ { visibility } }>
 						<div className="editor-writing-flow">
 							<PreviewTemplateTitle title={ title } transform={ transform } />
-							<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
+							<BlockPreview
+								key={ recompute }
+								blocks={ blocks }
+								viewportWidth={ viewportWidth }
+								__experimentalScalingDelay={ 0 }
+							/>
 						</div>
 					</div>
 				</div>

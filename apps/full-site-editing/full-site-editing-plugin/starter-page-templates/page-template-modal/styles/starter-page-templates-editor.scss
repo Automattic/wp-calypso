@@ -21,6 +21,8 @@ $template-large-preview-title-height: 117px;
 $wp-org-sidebar-reduced: 36px;
 $wp-org-sidebar-full: 160px;
 
+$spinner-width: 18px;
+
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	animation: none;
@@ -197,8 +199,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			margin: -9px 0 0 -9px;
-			padding: 0;
+			margin: -#{$spinner-width / 2} 0 0 -#{$spinner-width / 2}; // Center the spinner.
 		}
 
         .block-editor-block-list__layout,
