@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sha=$GITHUB_SHA
+sha=$COMMIT_SHA
 
 COUNT=0
 RESETCOUNT=60 # 5sec retry = Reset the branch after 5 minutes
