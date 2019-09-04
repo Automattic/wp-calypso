@@ -167,6 +167,25 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		] );
 	} );
 
+	test( 'user input vertical is never shown in Related category', () => {
+		const wrapper = shallow(
+			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue="dog" />
+		);
+		wrapper.setProps( {
+			verticals: [
+				{ verticalName: 'Dogs' },
+				{ verticalName: 'Doggo' },
+				{ verticalName: 'Cats', isUserInputVertical: true },
+			],
+		} );
+
+		expect( wrapper.find( SuggestionSearch ).prop( 'suggestions' ) ).toEqual( [
+			{ label: 'Dogs' },
+			{ label: 'Doggo' },
+			{ label: 'Cats' },
+		] );
+	} );
+
 	test( "don't show any related topics if query length is less than 3", () => {
 		const wrapper = shallow(
 			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue="do" />

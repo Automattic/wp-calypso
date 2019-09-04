@@ -180,9 +180,9 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		return verticals
 			.map( vertical => ( {
 				label: vertical.verticalName,
-				category: vertical.verticalName.toLowerCase().includes( normalizedInput )
-					? undefined
-					: this.props.translate( 'Related' ),
+				category: isRelatedVertical( vertical, normalizedInput )
+					? this.props.translate( 'Related' )
+					: undefined,
 			} ) )
 			.filter( suggestion => includeRelated || ! suggestion.category );
 	}
@@ -224,6 +224,13 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			</>
 		);
 	}
+}
+
+function isRelatedVertical( vertical, normalizedInput ) {
+	return (
+		! vertical.isUserInputVertical &&
+		! vertical.verticalName.toLowerCase().includes( normalizedInput )
+	);
 }
 
 export default localize(
