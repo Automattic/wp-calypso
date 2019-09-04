@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: debug
+        run: whereis google-chrome
       - name: Check external author
         run: |
               if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
