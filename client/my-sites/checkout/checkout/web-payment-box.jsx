@@ -7,13 +7,13 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useMemo } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 import debugFactory from 'debug';
 import { overSome, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import PaymentCountrySelect from 'components/payment-country-select';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
@@ -348,7 +348,6 @@ function completePaymentMethodTransaction( {
 		country: countryCode,
 		'postal-code': postalCode,
 		card_brand: card.brand,
-		card_display_name: `${ card.brand } ${ card.last4 }`,
 	};
 	debug( 'setting newCardDetails', newCardDetails );
 	setPayment( webPayment( newCardDetails ) );
