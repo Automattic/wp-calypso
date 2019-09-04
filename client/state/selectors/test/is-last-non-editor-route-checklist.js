@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isLastNonEditorRouteChecklist from 'state/selectors/is-last-none-editor-route-checklist';
+import isLastNonEditorRouteChecklist from 'state/selectors/is-last-non-editor-route-checklist';
 import { ROUTE_SET } from 'state/action-types';
 
 const blockEditorAction = { type: ROUTE_SET, path: '/block-editor/page/1' };
