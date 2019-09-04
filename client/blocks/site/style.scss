@@ -130,8 +130,8 @@
 }
 
 .site__home {
-	background: var( --color-sidebar-menu-hover-background );
-	color: var( --studio-white );
+	background: var( --color-sidebar-menu-selected-background );
+	color: var( --color-sidebar-menu-selected-text );
 	display: block;
 	width: 32px;
 	height: 32px;
@@ -153,10 +153,6 @@
 	.site.is-compact & {
 		width: 24px;
 		height: 24px;
-	}
-
-	&:hover {
-		color: var( --studio-white );
 	}
 
 	@include breakpoint( '<660px' ) {
