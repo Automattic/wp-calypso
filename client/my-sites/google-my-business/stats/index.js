@@ -18,7 +18,7 @@ import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
-import Gridicon from 'compnents/gridicon';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
