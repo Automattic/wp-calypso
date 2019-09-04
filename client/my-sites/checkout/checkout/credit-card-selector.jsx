@@ -83,6 +83,7 @@ class CreditCardSelector extends React.Component {
 					selected={ selected }
 					stripe={ this.props.stripe }
 					isStripeLoading={ this.props.isStripeLoading }
+					stripeLoadingError={ this.props.stripeLoadingError }
 				/>
 			</CreditCard>
 		);

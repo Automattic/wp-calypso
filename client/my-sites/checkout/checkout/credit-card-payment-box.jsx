@@ -84,6 +84,7 @@ class CreditCardPaymentBox extends React.Component {
 		translate: PropTypes.func.isRequired,
 		stripe: PropTypes.object,
 		isStripeLoading: PropTypes.bool,
+		stripeLoadingError: PropTypes.object,
 		stripeConfiguration: PropTypes.object,
 	};
 
@@ -195,6 +196,7 @@ class CreditCardPaymentBox extends React.Component {
 			transaction,
 			stripe,
 			isStripeLoading,
+			stripeLoadingError,
 			translate,
 		} = this.props;
 
@@ -208,6 +210,7 @@ class CreditCardPaymentBox extends React.Component {
 						transaction={ transaction }
 						stripe={ stripe }
 						isStripeLoading={ isStripeLoading }
+						stripeLoadingError={ stripeLoadingError }
 						translate={ translate }
 					/>
 

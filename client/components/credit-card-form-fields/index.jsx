@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty, noop } from 'lodash';
+import notices from 'notices';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
@@ -106,6 +107,7 @@ function CreditCardNumberField( {
 	translate,
 	stripe,
 	isStripeLoading,
+	stripeLoadingError,
 	createField,
 	getErrorMessage,
 	card,
@@ -134,11 +136,16 @@ function CreditCardNumberField( {
 		);
 	}
 
+	const disabled =
+		isStripeLoading || stripeLoadingError
+			? ! shouldRenderAdditionalCountryFields( card.country )
+			: false;
+
 	return createField( 'number', CreditCardNumberInput, {
 		inputMode: 'numeric',
 		label: cardNumberLabel,
 		placeholder: '•••• •••• •••• ••••',
-		disabled: !! isStripeLoading, // isStripeLoading might be undefined
+		disabled,
 	} );
 }
 
@@ -149,16 +156,22 @@ CreditCardNumberField.propTypes = {
 	stripe: PropTypes.object,
 	card: PropTypes.object.isRequired,
 	isStripeLoading: PropTypes.bool,
+	stripeLoadingError: PropTypes.object,
 };
 
 function CreditCardExpiryAndCvvFields( {
 	translate,
 	stripe,
 	isStripeLoading,
+	stripeLoadingError,
 	createField,
 	getErrorMessage,
 	card,
 } ) {
+	if ( stripeLoadingError && ! shouldRenderAdditionalCountryFields( card.country ) ) {
+		notices.error( stripeLoadingError.message || 'Error loading Stripe' );
+	}
+
 	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
 		components: {
 			span: <span className="credit-card-form-fields__explainer" />,
@@ -202,12 +215,17 @@ function CreditCardExpiryAndCvvFields( {
 		);
 	}
 
+	const disabled =
+		isStripeLoading || stripeLoadingError
+			? ! shouldRenderAdditionalCountryFields( card.country )
+			: false;
+
 	return (
 		<React.Fragment>
 			{ createField( 'expiration-date', Input, {
 				inputMode: 'numeric',
 				label: expiryLabel,
-				disabled: !! isStripeLoading, // isStripeLoading might be undefined
+				disabled,
 				placeholder: translate( 'MM/YY', {
 					comment: 'Expiry placeholder for Expiry date on credit card form',
 				} ),
@@ -215,7 +233,7 @@ function CreditCardExpiryAndCvvFields( {
 
 			{ createField( 'cvv', Input, {
 				inputMode: 'numeric',
-				disabled: !! isStripeLoading, // isStripeLoading might be undefined
+				disabled,
 				placeholder: ' ',
 				label: translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
 					components: {
@@ -235,6 +253,7 @@ CreditCardExpiryAndCvvFields.propTypes = {
 	card: PropTypes.object.isRequired,
 	stripe: PropTypes.object,
 	isStripeLoading: PropTypes.bool,
+	stripeLoadingError: PropTypes.object,
 };
 
 export class CreditCardFormFields extends React.Component {
@@ -248,6 +267,7 @@ export class CreditCardFormFields extends React.Component {
 		isNewTransaction: PropTypes.bool,
 		stripe: PropTypes.object,
 		isStripeLoading: PropTypes.bool,
+		stripeLoadingError: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -345,6 +365,7 @@ export class CreditCardFormFields extends React.Component {
 						translate={ this.props.translate }
 						stripe={ this.props.stripe }
 						isStripeLoading={ this.props.isStripeLoading }
+						stripeLoadingError={ this.props.stripeLoadingError }
 						createField={ this.createField }
 						getErrorMessage={ this.props.getErrorMessage }
 						card={ this.props.card }
@@ -356,6 +377,7 @@ export class CreditCardFormFields extends React.Component {
 						translate={ this.props.translate }
 						stripe={ this.props.stripe }
 						isStripeLoading={ this.props.isStripeLoading }
+						stripeLoadingError={ this.props.stripeLoadingError }
 						createField={ this.createField }
 						getErrorMessage={ this.props.getErrorMessage }
 						card={ this.props.card }
