@@ -234,7 +234,7 @@ WebPayButton.propTypes = {
 };
 
 function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
-	return stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+	return stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
 }
 
 function getDisabledReason( {
