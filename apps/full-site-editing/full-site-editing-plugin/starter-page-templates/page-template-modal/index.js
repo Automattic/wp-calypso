@@ -66,6 +66,12 @@ class PageTemplateModal extends Component {
 		this.setState( { blocks } );
 	}
 
+	setBeforeInsertTemplate = ( slug, title, blocks ) => {
+		this.props.saveTemplateChoice( slug );
+		this.props.insertTemplate( title, blocks );
+		this.setState( { isOpen: false } );
+	};
+
 	setTemplate = ( slug, title ) => {
 		this.setState( {
 			error: null,
@@ -75,6 +81,11 @@ class PageTemplateModal extends Component {
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 
 		const blocks = this.state.blocks[ slug ];
+
+		// Do not prefetch for `blank` template.
+		if ( 'blank' === slug ) {
+			return this.setBeforeInsertTemplate( slug, title, blocks );
+		}
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
@@ -89,9 +100,8 @@ class PageTemplateModal extends Component {
 				if ( ! this.state.isOpen ) {
 					return;
 				}
-				this.props.saveTemplateChoice( slug );
-				this.props.insertTemplate( title, blocksWithAssets );
-				this.setState( { isOpen: false } );
+
+				this.setBeforeInsertTemplate( slug, title, blocksWithAssets );
 			} )
 			.catch( error => {
 				this.setState( {
