@@ -1,3 +1,7 @@
+# 4.0.1
+
+- Replace esm import/export with `require`.
+
 # 4.0.0
 
 - Move `jest.config.js` to `jest-preset.js` so it can be used as a jest preset.
