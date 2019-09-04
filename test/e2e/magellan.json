@@ -3,7 +3,7 @@
 	"mocha_opts": "test/mocha.opts",
 	"mocha_args": "-R spec-xunit-reporter",
 	"max_test_attempts": 3,
-	"max_workers": 7,
+	"max_workers": 8,
 	"suiteTag": "parallel",
 	"sauce": false,
 	"framework": "testarmada-magellan-mocha-plugin",
