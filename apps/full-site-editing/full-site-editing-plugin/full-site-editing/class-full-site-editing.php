@@ -33,6 +33,13 @@ class Full_Site_Editing {
 	private $theme_slug = '';
 
 	/**
+	 * Instance of WP_Template class.
+	 *
+	 * @var WP_Template
+	 */
+	public $wp_template;
+
+	/**
 	 * Instance of WP_Template_Inserter class.
 	 *
 	 * @var WP_Template_Inserter
@@ -64,6 +71,7 @@ class Full_Site_Editing {
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
+		$this->wp_template          = new WP_Template();
 	}
 
 	/**
@@ -158,6 +166,10 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
+		if ( ! $this->wp_template->has_page_template_parts() ) {
+			return;
+		}
+
 		$script_dependencies = json_decode(
 			file_get_contents(
 				plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.deps.json'
@@ -198,6 +210,10 @@ class Full_Site_Editing {
 	 * Register blocks.
 	 */
 	public function register_blocks() {
+		if ( ! $this->wp_template->has_page_template_parts() ) {
+			return;
+		}
+
 		register_block_type(
 			'a8c/navigation-menu',
 			array(
@@ -344,8 +360,11 @@ class Full_Site_Editing {
 			return;
 		}
 
-		$template         = new WP_Template();
-		$template_content = $template->get_page_template_content();
+		if ( ! $this->wp_template->has_page_template_parts() ) {
+			return;
+		}
+
+		$template_content = $this->wp_template->get_page_template_content();
 
 		// Bail if the template has no post content block.
 		if ( ! has_block( 'a8c/post-content', $template_content ) ) {

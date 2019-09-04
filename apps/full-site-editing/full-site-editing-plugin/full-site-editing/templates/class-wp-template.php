@@ -142,6 +142,22 @@ class WP_Template {
 	}
 
 	/**
+	 * Checks whether header and footer have been populated for current theme.
+	 *
+	 * @return bool
+	 */
+	public function has_page_template_parts() {
+		$header_id = $this->get_template_id( self::HEADER );
+		$footer_id = $this->get_template_id( self::FOOTER );
+
+		if ( $header_id && $footer_id ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns full page template content.
 	 *
 	 * We only support one page template for now with header at the top and footer at the bottom.
@@ -149,14 +165,18 @@ class WP_Template {
 	 * @return null|string
 	 */
 	public function get_page_template_content() {
-		$header_id = $this->get_template_id( self::HEADER );
-		$footer_id = $this->get_template_id( self::FOOTER );
-
 		/*
 		 * Bail if we are missing header or footer. Otherwise this would cause us to
 		 * always return some page template content and show template parts (with empty IDs),
 		 * even for themes that don't support FSE.
 		 */
+		if ( ! $this->has_page_template_parts() ) {
+			return null;
+		}
+
+		$header_id = $this->get_template_id( self::HEADER );
+		$footer_id = $this->get_template_id( self::FOOTER );
+
 		if ( ! $header_id || ! $footer_id ) {
 			return null;
 		}
