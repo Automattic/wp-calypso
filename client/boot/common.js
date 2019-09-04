@@ -201,10 +201,6 @@ export const locales = ( currentUser, reduxStore ) => {
 export const utils = () => {
 	debug( 'Executing Calypso utils.' );
 
-	if ( process.env.NODE_ENV === 'development' ) {
-		require( './dev-modules' ).default();
-	}
-
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
 	if ( hasTouch() ) {

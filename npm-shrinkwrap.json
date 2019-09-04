@@ -41,7 +41,7 @@
 				"enzyme": "3.10.0",
 				"enzyme-adapter-react-16": "1.14.0",
 				"file-loader": "3.0.1",
-				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300d",
+				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 				"node-sass": "4.11.0",
 				"postcss-custom-properties": "8.0.9",
 				"postcss-loader": "3.0.0",
@@ -13969,13 +13969,37 @@
 			"integrity": "sha512-jf84uxzwiuiIVKiOLpfYk7N46TSy8ubTonmneY9vrpHNAnp0QBt2BxWV9dO3/j+BoVAb+a5G6YDPW3M5HOdMWQ=="
 		},
 		"mini-css-extract-plugin-with-rtl": {
-			"version": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300db7027af8caa9a3015f54a34aec545cc54",
-			"from": "github:Automattic/mini-css-extract-plugin-with-rtl#af1300d",
+			"version": "github:Automattic/mini-css-extract-plugin-with-rtl#f48ce03f385390257bdacbfec4759d38df983361",
+			"from": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 			"dev": true,
 			"requires": {
 				"loader-utils": "^1.1.0",
+				"normalize-url": "1.9.1",
 				"schema-utils": "^1.0.0",
 				"webpack-sources": "^1.1.0"
+			},
+			"dependencies": {
+				"normalize-url": {
+					"version": "1.9.1",
+					"resolved": "https://registry.npmjs.org/normalize-url/-/normalize-url-1.9.1.tgz",
+					"integrity": "sha1-LMDWazHqIwNkWENuNiDYWVTGbDw=",
+					"dev": true,
+					"requires": {
+						"object-assign": "^4.0.1",
+						"prepend-http": "^1.0.0",
+						"query-string": "^4.1.0",
+						"sort-keys": "^1.0.0"
+					}
+				},
+				"sort-keys": {
+					"version": "1.1.2",
+					"resolved": "https://registry.npmjs.org/sort-keys/-/sort-keys-1.1.2.tgz",
+					"integrity": "sha1-RBttTTRnmPG05J6JIK37oOVD+a0=",
+					"dev": true,
+					"requires": {
+						"is-plain-obj": "^1.0.0"
+					}
+				}
 			}
 		},
 		"minimalistic-assert": {
@@ -18136,6 +18160,12 @@
 			"integrity": "sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=",
 			"dev": true
 		},
+		"prepend-http": {
+			"version": "1.0.4",
+			"resolved": "https://registry.npmjs.org/prepend-http/-/prepend-http-1.0.4.tgz",
+			"integrity": "sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=",
+			"dev": true
+		},
 		"prettier": {
 			"version": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.17.0/wp-prettier-1.17.0.tgz",
 			"integrity": "sha512-T6Ya21PFyCgcrTDvMe8pNx9kMpg6nm5KG6ohAx7UzDdcTClsH0X83pNjdQ3AuVJwStz6fhIBW8Wo9P3BEHqFLQ==",
@@ -18396,6 +18426,16 @@
 			"version": "6.7.0",
 			"resolved": "https://registry.npmjs.org/qs/-/qs-6.7.0.tgz",
 			"integrity": "sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ=="
+		},
+		"query-string": {
+			"version": "4.3.4",
+			"resolved": "https://registry.npmjs.org/query-string/-/query-string-4.3.4.tgz",
+			"integrity": "sha1-u7aTucqRXCMlFbIosaArYJBD2+s=",
+			"dev": true,
+			"requires": {
+				"object-assign": "^4.1.0",
+				"strict-uri-encode": "^1.0.0"
+			}
 		},
 		"querystring": {
 			"version": "0.2.0",
@@ -20897,6 +20937,12 @@
 			"version": "1.0.0",
 			"resolved": "https://registry.npmjs.org/stream-shift/-/stream-shift-1.0.0.tgz",
 			"integrity": "sha1-1cdSgl5TZ+eG944Y5EXqIjoVWVI="
+		},
+		"strict-uri-encode": {
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz",
+			"integrity": "sha1-J5siXfHVgrH1TmWt3UNS4Y+qBxM=",
+			"dev": true
 		},
 		"string-length": {
 			"version": "2.0.0",
