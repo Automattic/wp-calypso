@@ -417,6 +417,7 @@
 
 .reader-post-card__title {
 	line-height: 1.4;
+	overflow-wrap: break-word;
 }
 
 // Needs to overwrite .reader__content a
