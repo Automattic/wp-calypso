@@ -25,7 +25,7 @@ define( 'PLUGIN_VERSION', '0.6.1' );
 // Themes which are supported by Full Site Editing (not the same as the SPT themes).
 // We includ public API since API requests have that as their stylesheet and we need
 // theme to work for Gutenberg.
-const SUPPORTED_THEMES = [ 'maywood', 'a8c/public-api' ];
+const SUPPORTED_THEMES = [ 'maywood' ];
 
 /**
  * Load Full Site Editing.
@@ -59,7 +59,8 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	return is_site_eligible_for_full_site_editing() && in_array( get_theme_slug(), SUPPORTED_THEMES, true );
+	return is_site_eligible_for_full_site_editing() &&
+			( is_theme_supported() || in_array( get_theme_slug(), SUPPORTED_THEMES, true ) );
 }
 
 /**
@@ -100,6 +101,24 @@ function is_site_eligible_for_full_site_editing() {
 	 * @param bool true if Full Site Editing should be disabled, false otherwise.
 	 */
 	return ! apply_filters( 'a8c_disable_full_site_editing', false );
+}
+
+/**
+ * Whether or not the site is eligible for FSE.
+ * This is essentially a feature gate to disable FSE
+ * on some sites which could theoretically otherwise use it.
+ *
+ * @return bool True if current site is eligible for FSE, false otherwise.
+ */
+function is_theme_supported() {
+	/**
+	 * Can be used to enable Full Site Editing theme support in certian contexts.
+	 *
+	 * @since 0.7
+	 *
+	 * @param bool true if Full Site Editing is available for current theme, false otherwise.
+	 */
+	return apply_filters( 'a8c_fse_enable_theme_support', false );
 }
 
 /**
