@@ -26,6 +26,11 @@
 
 .help-flow__button-wrapper {
 	text-align: center;
+
+	.has-no-site-selector & {
+		display: flex;
+		justify-content: center;
+	}
 }
 
 .help-flow__button {
@@ -48,9 +53,12 @@
 
 .help-flow.has-site-selector {
 	.help-flow__button-wrapper {
-		float: right;
 		margin-right: 32px;
-		width: calc( 40% - 32px );
+
+		@include breakpoint( '>480px' ) {
+			float: right;
+			width: calc( 40% - 32px );
+		}
 	}
 
 	.help-flow__button {
@@ -67,8 +75,10 @@
 	}
 
 	.site-selector {
-		float: left;
-		width: 60%;
+		@include breakpoint( '>480px' ) {
+			float: left;
+			width: 60%;
+		}
 
 		&__sites {
 			border: 0;
@@ -81,61 +91,73 @@
 }
 
 // Dialog
-.help-flow__dialog .dialog__content {
-	max-width: 700px;
+.help-flow__dialog {
+	.dialog__content {
+		max-width: 700px;
 
-	.help-flow__dialog-heading {
-		font-size: 18px;
-		text-align: center;
-
-		@include breakpoint( '>660px' ) {
-			font-size: 22px;
-		}
-	}
-
-	.help-flow__dialog-text {
-		margin-bottom: 12px;
-	}
-
-	.accordion__content-wrap {
-		font-size: 13px;
-	}
-
-	.help-flow__dialog-buttons {
-		display: flex;
-		flex-direction: column-reverse;
-
-		@include breakpoint( '>660px' ) {
-			flex-direction: row;
-		}
-
-		.is-primary {
-			margin-bottom: 8px;
-
-			@include breakpoint( '>660px' ) {
-				margin-bottom: 0;
-			}
-		}
-
-		.is-link {
-			margin-top: 24px;
-			font-size: 11px;
+		.help-flow__dialog-heading {
+			font-size: 18px;
 			text-align: center;
 
 			@include breakpoint( '>660px' ) {
-				margin: auto 0;
-				margin-right: 24px;
-				text-align: left;
+				font-size: 22px;
 			}
 		}
 
-		.help-flow__close-dialog {
-			margin: 0 12px auto auto;
-			width: 100%;
+		.help-flow__dialog-text {
+			margin-bottom: 12px;
+		}
+
+		.accordion__content-wrap {
+			font-size: 13px;
+		}
+
+		.help-flow__dialog-buttons {
+			display: flex;
+			flex-direction: column-reverse;
 
 			@include breakpoint( '>660px' ) {
-				width: auto;
+				flex-direction: row;
 			}
+
+			.is-primary {
+				margin-bottom: 8px;
+
+				@include breakpoint( '>660px' ) {
+					margin-bottom: 0;
+				}
+			}
+
+			.is-link {
+				margin-top: 24px;
+				font-size: 11px;
+				text-align: center;
+
+				@include breakpoint( '>660px' ) {
+					margin: auto 0;
+					text-align: left;
+				}
+			}
+
+			.help-flow__close-dialog {
+				margin: 0 12px auto auto;
+				width: 100%;
+
+				@include breakpoint( '>660px' ) {
+					width: auto;
+				}
+			}
+		}
+	}
+	&.is-other-screen .help-flow__something-else-link {
+		@include breakpoint( '>660px' ) {
+			max-width: 75%;
+		}
+	}
+
+	&.is-jetpack-screen .help-flow__something-else-link {
+		@include breakpoint( '>660px' ) {
+			max-width: 50%;
 		}
 	}
 }
