@@ -14,6 +14,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import DocumentHead from 'components/data/document-head';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
@@ -21,6 +22,7 @@ import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart'
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QueryKeyringServices from 'components/data/query-keyring-services';
@@ -224,16 +226,11 @@ class GoogleMyBusinessStats extends Component {
 				{ ! locationData && (
 					<Notice
 						status="is-error"
-						text={ translate(
-							'There is an error with your Google My Business Connection. ' +
-								'Please {{a}}contact support{{/a}}',
-							{
-								components: {
-									a: <a href="/help/contact" target="_blank" rel="noopener noreferrer" />,
-								},
-							}
-						) }
-					/>
+						showDismiss={ false }
+						text={ translate( 'There is an error with your Google My Business account.' ) }
+					>
+						<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Contact Support' ) }</NoticeAction>
+					</Notice>
 				) }
 
 				{ !! locationData && ! isLocationVerified && (
