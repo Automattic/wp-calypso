@@ -21,7 +21,7 @@
 		font-size: 14px;
 		line-height: 28px;
 		text-align: center;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -37,7 +37,7 @@
 		'.media-library__list-item',
 		'.media-library__list-item-selected-icon .gridicon'
 	);
-	fill: var( --studio-white );
+	fill: var( --color-text-inverted );
 }
 
 .media-library.is-single .media-library__list-item.is-selected::after {
@@ -78,7 +78,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-	background-color: rgba( var( --studio-white-rgb ), 0.75 );
+	background-color: rgba( var( --color-surface-rgb ), 0.75 );
 	border-radius: 0;
 	z-index: z-index(
 		'.media-library__list-item',

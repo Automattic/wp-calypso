@@ -64,7 +64,7 @@
 		}
 		&.is-dev {
 			background-color: var( --color-error );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 		&.is-horizon,
 		&.is-feedback {
@@ -73,7 +73,7 @@
 		&.branch-name {
 			text-transform: inherit;
 			background-color: var( --color-neutral-70 );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

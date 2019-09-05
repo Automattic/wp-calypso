@@ -159,12 +159,12 @@
 	&:focus {
 		.reader-import-button__icon,
 		.reader-export-button__icon {
-			fill: var( --studio-white );
+			fill: var( --color-text-inverted );
 		}
 
 		.reader-import-button__label,
 		.reader-export-button__label {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }

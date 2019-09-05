@@ -66,7 +66,7 @@
 			}
 
 			.reader-post-card__title {
-				color: var( --studio-white );
+				color: var( --color-text-inverted );
 				font-family: $sans;
 				position: relative;
 				bottom: 30px;
@@ -82,7 +82,7 @@
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
-				color: var( --studio-white );
+				color: var( --color-text-inverted );
 				display: inline;
 				font-size: 12px;
 				letter-spacing: 0.01em;

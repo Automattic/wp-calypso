@@ -16,14 +16,14 @@
 
 .community-translator__button {
 	align-items: center;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	text-decoration: none;
 	outline: 0;
 	display: flex;
 	cursor: pointer;
 
 	&:hover {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		.community-translator__text {
 			transition: all 0.15s ease-in-out;

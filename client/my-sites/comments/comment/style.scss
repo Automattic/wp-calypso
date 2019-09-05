@@ -65,7 +65,7 @@
 	.gridicon {
 		background-color: var( --color-neutral-light );
 		border-radius: 50%;
-		fill: var( --studio-white );
+		fill: var( --color-text-inverted );
 		padding: 4px;
 	}
 }
@@ -251,7 +251,7 @@
 	position: relative;
 
 	&::after {
-		background: linear-gradient( to right, rgba( var( --studio-white-rgb ), 0 ), rgba( var( --studio-white-rgb ), 1 ) 50% );
+		background: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ), rgba( var( --color-surface-rgb ), 1 ) 50% );
 		content: '';
 		height: 20px;
 		position: absolute;

@@ -25,7 +25,7 @@
 	}
 
 	&::before {
-		background: linear-gradient( -135deg, var( --color-neutral-0 ) 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, var( --color-neutral-0 ) 8px, transparent 0 ) 0 8px;
+		background: linear-gradient( -135deg, var( --color-neutral-0 ) 8px, rgba( var( --color-neutral-0-rgb ), 0 ) 0 ) 0 8px, linear-gradient( 135deg, var( --color-neutral-0 ) 8px, rgba( var( --color-neutral-0-rgb ), 0 ) 0 ) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -34,7 +34,7 @@
 	}
 
 	&::after {
-		background: linear-gradient( -135deg, var( --studio-white ) 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, var( --studio-white ) 8px, transparent 0 ) 0 8px;
+		background: linear-gradient( -135deg, var( --color-surface ) 8px, rgba( var( --color-surface-rgb ), 0 ) 0 ) 0 8px, linear-gradient( 135deg, var( --color-surface ) 8px, rgba( var( --color-surface-rgb ), 0 ) 0 ) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -46,11 +46,11 @@
 .reader-list-gap__button {
 	border: none;
 	background: var( --color-neutral-light );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	position: relative;
 	z-index: z-index( 'root', '.reader-list-gap__button' );
 
 	&:hover {
-		color: rgba( var( --studio-white-rgb ), 0.8 );
+		color: rgba( var( --color-surface-rgb ), 0.8 );
 	}
 }

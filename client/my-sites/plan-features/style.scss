@@ -304,7 +304,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: 20px;
 	height: 20px;
 	border-radius: 10px;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	background: var( --color-success );
 	font-weight: normal;
 	vertical-align: middle;
@@ -410,7 +410,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -997,11 +997,11 @@ button.plan-features__scroll-button {
 	background-color: var( --color-neutral );
 	border: 0;
 	border-radius: 15px;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	cursor: pointer;
 
 	&:hover, &:active, &:focus {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.gridicon {
@@ -1021,7 +1021,7 @@ button.plan-features__scroll-button {
 	}
 
 	:root body.is-section-signup &:disabled, .is-section-signup &[disabled] {
-		background-color: rgba( var( --studio-white-rgb ), 0.5 );
+		background-color: rgba( var( --color-surface-rgb ), 0.5 );
 		color: var( --color-primary );
 	}
 

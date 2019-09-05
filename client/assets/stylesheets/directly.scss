@@ -55,7 +55,7 @@ textarea {
 .btn {
 	background: var( --color-primary );
 	border: 1px solid var( --color-primary-40 );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	border-width: 1px 1px 2px;
 	cursor: pointer;
 	font-size: 14px;
@@ -75,7 +75,7 @@ textarea {
 		outline: 0;
 		border-width: 2px 1px 1px;
 		padding: 7px 14px 9px;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 	&:focus {
 		border-color: var( --color-primary-dark );
@@ -287,7 +287,7 @@ textarea {
 			height: 0;
 			border-style: solid;
 			border-width: 0 10px 10px 0;
-			border-color: transparent var( --studio-white ) transparent transparent;
+			border-color: transparent var( --color-border-inverted ) transparent transparent;
 		}
 		.author img {
 			// Need to override inline styles with !importants
@@ -331,9 +331,9 @@ textarea {
 	&.success.inverted {
 		border-color: transparent;
 		background: var( --color-success );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		a {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -341,9 +341,9 @@ textarea {
 	&.warning {
 		background: var( --color-warning );
 		border-color: transparent;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		a {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

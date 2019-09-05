@@ -81,7 +81,7 @@
 .post-editor,
 .mce-inline-toolbar-grp {
 	div.mce-toolbar-grp {
-		background-color: rgba( var( --studio-white-rgb ), 0.92 );
+		background-color: rgba( var( --color-surface-rgb ), 0.92 );
 		border-color: var( --color-neutral-5 );
 		border-style: solid;
 		border-left-width: 1px;
@@ -124,8 +124,8 @@
 		height: 36px;
 
 		@include breakpoint( '<660px' ) {
-			border-right-color: var( --studio-white );
-			border-left-color: var( --studio-white );
+			border-right-color: var( --color-border-inverted );
+			border-left-color: var( --color-border-inverted );
 			padding: 2px 0;
 		}
 	}
@@ -214,7 +214,7 @@
 .mce-tooltip-inner {
 	box-shadow: none !important;
 	background: var( --color-neutral-70 ) !important;
-	color: var( --studio-white ) !important;
+	color: var( --color-text-inverted ) !important;
 	font-family: $sans !important;
 	padding: 4px 8px 5px !important;
 }
@@ -487,14 +487,14 @@ div.mce-inline-toolbar-grp.mce-arrow-down::before {
 
 div.mce-inline-toolbar-grp.mce-arrow-up::after {
 	top: -16px;
-	border-bottom-color: var( --studio-white );
+	border-bottom-color: var( --color-border-inverted );
 	border-width: 8px;
 	margin-left: -8px;
 }
 
 div.mce-inline-toolbar-grp.mce-arrow-down::after {
 	bottom: -16px;
-	border-top-color: var( --studio-white );
+	border-top-color: var( --color-border-inverted );
 	border-width: 8px;
 	margin-left: -8px;
 }
@@ -658,7 +658,7 @@ div.mce-path {
 #wp-fullscreen-buttons .mce-btn.mce-disabled:focus {
 	color: var( --color-neutral-light );
 	background: none;
-	border-color: var( --studio-white );
+	border-color: var( --color-border-inverted );
 	text-shadow: none;
 	box-shadow: none;
 
@@ -716,7 +716,7 @@ div.mce-path {
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox.mce-active {
-	border-color: var( --studio-white );
+	border-color: var( --color-border-inverted );
 	border-right: 1px solid var( --color-neutral-0 );
 }
 
@@ -751,8 +751,8 @@ div.mce-path {
 	border-right-color: var( --color-neutral-0 );
 
 	@include breakpoint( '<660px' ) {
-		border-right-color: var( --studio-white );
-		border-left-color: var( --studio-white );
+		border-right-color: var( --color-border-inverted );
+		border-left-color: var( --color-border-inverted );
 	}
 
 	i.mce-caret {
@@ -815,11 +815,11 @@ div.mce-path {
 
 .mce-menu .mce-menu-item-normal.mce-active {
 	background-color: var( --color-accent );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	filter: none;
 }
 .mce-menu .mce-menu-item-normal.mce-active .mce-text {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .mce-container.mce-menu .mce-menu-item:hover,
@@ -845,7 +845,7 @@ div.mce-path {
 }
 
 .mce-container.mce-menu .mce-menu-item.mce-active:hover .mce-text {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 /* Menubar */

@@ -27,7 +27,7 @@
 
 		// Fade out value if text is very long
 		&::before {
-			@include stats-fade-text( rgba( var( --studio-white-rgb ), 0 ), var( --studio-white ) );
+			@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface) );
 		}
 
 		.gridicon {

@@ -1,6 +1,6 @@
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
-	background: var( --studio-wordpress-blue );
+	background: var( --color-wordpress-com );
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
@@ -54,7 +54,7 @@ body.is-section-signup .layout.gravatar {
 		}
 
 		.empty-content__title {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -133,13 +133,13 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	.formatted-header__title {
 		margin: 0;
 		font-weight: 400;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	a {
@@ -147,7 +147,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		text-decoration: underline;
 
 		&:hover {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -232,7 +232,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		display: block;
 		height: 56px;
 		border-bottom: 1px solid var( --color-woocommerce-header-border );
-		background: var( --color-white );
+		background: var( --color-text-inverted );
 
 		svg {
 			margin-top: 15px;

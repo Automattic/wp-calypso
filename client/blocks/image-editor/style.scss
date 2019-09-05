@@ -31,9 +31,9 @@
 }
 
 .image-editor__toolbar-button {
-	background: rgba( var( --studio-white-rgb ), 0 );
+	background: rgba( var( --color-surface-rgb ), 0 );
 	border: none;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	margin: 0 10px;
 	cursor: pointer;
 	&.is-disabled {
@@ -69,7 +69,7 @@
 
 .image-editor__crop {
 	position: absolute;
-	border: 1px solid var( --studio-white );
+	border: 1px solid var( --color-border-inverted );
 	cursor: move;
 	box-sizing: border-box;
 }
@@ -87,7 +87,7 @@
 	margin-top: -4px;
 	margin-left: -4px;
 	border-radius: 50%;
-	border: 2px solid var( --studio-white );
+	border: 2px solid var( --color-border-inverted );
 	background: var( --color-neutral-90 );
 
 	&::before {

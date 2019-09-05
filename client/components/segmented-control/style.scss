@@ -82,7 +82,7 @@
 			.segmented-control__link {
 				border-color: var( --color-primary );
 				background-color: var( --color-primary );
-				color: var( --studio-white );
+				color: var( --color-text-inverted );
 
 				&:focus {
 					background-color: var( --color-primary-light );

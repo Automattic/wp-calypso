@@ -50,13 +50,13 @@
 	}
 
 	.is-selected & {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		background-color: var( --color-primary );
 
 		@include breakpoint( '<480px' ) {
 			.count {
-				color: var( --studio-white );
-				border-color: var( --studio-white );
+				color: var( --color-text-inverted );
+				border-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -85,7 +85,7 @@
 
 	.notouch .is-selected & {
 		&:hover {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

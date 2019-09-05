@@ -67,7 +67,7 @@
 
 			&::before {
 				#{$opposite-side}: 2px #{'/*rtl:ignore*/'};
-				border: 10px solid var( --studio-white );
+				border: 10px solid var( --color-border-inverted );
 				content: ' ';
 				position: absolute;
 				#{$cross-side}: 50% #{'/*rtl:ignore*/'};
@@ -174,7 +174,7 @@
 		color: white;
 
 		.gridicon {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

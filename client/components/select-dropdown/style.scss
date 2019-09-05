@@ -210,11 +210,11 @@ $compact-header-height: 35;
 
 	&.is-selected {
 		background-color: var( --color-accent );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		.count {
-			border-color: var( --studio-white );
-			color: var( --studio-white );
+			border-color: var( --color-border-inverted );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -232,7 +232,7 @@ $compact-header-height: 35;
 		}
 
 		&.is-selected:hover {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

@@ -301,7 +301,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	font-size: 12px;
 	padding: 7px 14px;
 	line-height: 1;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	background-color: #008ec2; // wp-admin button blue
 	border: 1px solid #006799;
 	border-radius: 3px;
@@ -353,7 +353,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		font-size: 12px;
 		padding: 7px 14px;
 		line-height: 1;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		border-radius: 3px;
 		background-color: #00be28;
 		border: 2px #00a523 solid;
@@ -375,7 +375,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		font-size: 12px;
 		line-height: 1;
 		padding: 11px 10px;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		background-color: #518d2a;
 		border-color: #518d2a;
 		border-radius: 4px;
@@ -407,7 +407,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	display: inline-block;
 	padding: 7px 14px;
 	line-height: 1;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	background-color: #008ec2; // wp-admin button blue
 	border: 1px solid #006799;
 	border-radius: 3px;

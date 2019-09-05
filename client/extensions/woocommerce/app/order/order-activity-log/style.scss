@@ -58,7 +58,7 @@
 			display: inline-block;
 			padding: 4px;
 			background: var( --color-primary );
-			fill: var( --studio-white );
+			fill: var( --color-text-inverted );
 			border-radius: 50%;
 			border: 4px solid white;
 		}
@@ -106,7 +106,7 @@
 
 	.form-textarea {
 		padding: 16px;
-		border-color: var( --studio-white );
+		border-color: var( --color-border-inverted );
 		resize: vertical;
 		display: block;
 		font-size: 14px;

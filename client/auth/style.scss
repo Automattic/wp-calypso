@@ -148,7 +148,7 @@
 	position: absolute;
 	top: 16px;
 	right: 16px;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .auth__links {
@@ -160,7 +160,7 @@
 	a,
 	button {
 		text-decoration: none;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		margin: 0 16px;
 		padding: 10px 0;
 		cursor: pointer;
@@ -248,7 +248,7 @@
 		top: 10px;
 		text-decoration: none;
 		cursor: pointer;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.auth__self-hosted-instructions-close:hover {
@@ -257,7 +257,7 @@
 }
 
 .auth__welcome {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .auth__connect-intro {
@@ -269,7 +269,7 @@
 .auth__connect .button:visited {
 	background: #00a8db;
 	border: #00a8db;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .auth .pulsing-dot {

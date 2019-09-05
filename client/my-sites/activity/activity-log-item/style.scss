@@ -94,7 +94,7 @@
 .activity-log-item__activity-icon {
 	// General notice
 	background: var( --color-neutral-20 );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	display: flex;
 	border-radius: 50%;
 	padding: 12px;
@@ -218,7 +218,7 @@
 	}
 
 	.social-logo {
-		fill: var( --studio-white );
+		fill: var( --color-text-inverted );
 		background: var( --color-wordpress-org );
 		border-radius: 50%;
 	}
@@ -231,13 +231,13 @@
 		width: 24px;
 		height: 24px;
 		background: var( --color-neutral-20 );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		display: flex;
 		padding: 8px;
 		border-radius: 50%;
 		margin-right: 14px;
 		margin-top: 2px;
-		fill: var( --studio-white );
+		fill: var( --color-text-inverted );
 
 		@include breakpoint( '<480px' ) {
 			padding: 7px;
@@ -374,7 +374,7 @@
 
 .activity-log-item__activity-media {
 	margin-right: 16px;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .activity-log-item__activity-media .gridicon {

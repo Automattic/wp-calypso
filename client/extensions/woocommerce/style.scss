@@ -196,7 +196,7 @@
 			line-height: 18px;
 			border: 0;
 			background-color: var( --color-primary );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 			min-width: 20px;
 		}
 
@@ -210,7 +210,7 @@
 
 		&:hover .count {
 			background-color: var( --color-primary );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }

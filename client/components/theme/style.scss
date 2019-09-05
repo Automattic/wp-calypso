@@ -15,7 +15,7 @@ $theme-info-height: 54px;
 		}
 
 		.theme__info-title {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 
 			&::before {
 				@include long-content-fade( $color: var( --color-primary-rgb ) );
@@ -23,7 +23,7 @@ $theme-info-height: 54px;
 		}
 
 		button {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 
 			&:hover {
 				color: var( --color-primary-light );
@@ -31,7 +31,7 @@ $theme-info-height: 54px;
 		}
 
 		.price {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -240,7 +240,7 @@ $theme-info-height: 54px;
 		font-weight: bold;
 
 		.is-active & {
-			color: rgba( var( --studio-white-rgb ), 0.2 );
+			color: rgba( var( --color-surface-rgb ), 0.2 );
 		}
 
 		.accessible-focus &:focus {
@@ -265,7 +265,7 @@ $theme-info-height: 54px;
 		}
 
 		&.is-active .gridicon {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

@@ -59,7 +59,7 @@
 	}
 
 	&__example-urls {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		list-style: none;
 		margin: 1em 0 1.5em;
 	}
@@ -67,7 +67,7 @@
 	&__example-url {
 		font-family: monospace;
 		font-size: 14px;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		&:first-of-type {
 			padding-top: 8px;
@@ -75,12 +75,12 @@
 	}
 
 	&__escape {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		padding: 0 15px 24px;
 		text-align: center;
 
 		a {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 			text-decoration: underline;
 
 			&:hover {

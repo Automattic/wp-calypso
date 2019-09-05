@@ -48,22 +48,22 @@
 
 	.is-update & {
 		background: var( --color-warning );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-warning & {
 		background: var( --color-warning );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-error & {
 		background: var( --color-error );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-expanded & {
 		.accessible-focus &:focus {
-			border: 1px dotted var( --studio-white );
+			border: 1px dotted var( --color-surface );
 			&::before {
 				top: 6px;
 				left: 6px;
@@ -84,7 +84,7 @@
 
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	font-size: 12px;
 	line-height: 1.4;
 	padding: 5px 16px;
@@ -116,7 +116,7 @@
 	.site-indicator__action-button {
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
 		border-radius: 0;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		text-decoration: none;
 	}
 

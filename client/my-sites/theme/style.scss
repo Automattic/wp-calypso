@@ -22,7 +22,7 @@
 .theme__sheet-bar-tag {
 	max-width: none;
 	display: block;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
@@ -394,7 +394,7 @@
 		}
 
 		&:hover {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 			background-color: var( --color-primary-dark );
 
 			&::after {

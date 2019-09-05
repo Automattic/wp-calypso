@@ -15,7 +15,7 @@
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
 	background: var( --color-neutral-80 );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	border-radius: 3px;
 	line-height: 1.5;
 
@@ -86,7 +86,7 @@
 .notice__icon-wrapper {
 	position: relative;
 	background: var( --color-neutral-40 );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	display: flex;
 	align-items: center;
 	width: 47px;
@@ -122,10 +122,10 @@
 		a:visited,
 		button.is-link {
 			text-decoration: underline;
-			color: var( --color-inverted );
+			color: var( --color-text-inverted );
 
 			&:hover {
-				color: var( --color-inverted );
+				color: var( --color-text-inverted );
 				text-decoration: none;
 			}
 		}
@@ -186,7 +186,7 @@
 
 		&:hover,
 		&:focus {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -223,7 +223,7 @@ a.notice__action {
 	}
 
 	&:hover {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.gridicon {

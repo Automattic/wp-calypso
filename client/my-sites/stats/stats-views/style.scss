@@ -49,17 +49,17 @@
 
 	&.level-3 {
 		background-color: var( --color-primary-light );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.level-4 {
 		background-color: var( --color-primary );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.level-5 {
 		background-color: var( --color-primary-dark );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 }
 

@@ -16,7 +16,7 @@
 @mixin long-content-fade(
 	$direction: right,
 	$size: 20%,
-	$color: var( --studio-white-rgb ),
+	$color: var( --color-surface-rgb ),
 	$edge: 0,
 	$z-index: false
 ) {

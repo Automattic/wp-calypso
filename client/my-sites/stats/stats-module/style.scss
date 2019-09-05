@@ -94,14 +94,14 @@
 		@include breakpoint( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
-				border-top-color: var( --studio-white );
+				border-top-color: var( --color-border-inverted );
 			}
 		}
 
 		// Focus state
 		&:focus {
 			background: var( --color-neutral-0 );
-			border-top-color: var( --studio-white );
+			border-top-color: var( --color-border-inverted );
 		}
 
 		@include breakpoint( '>960px' ) {
@@ -167,7 +167,7 @@ ul.module-header-actions {
 
 	// Fade really long module titles
 	&::before {
-		@include stats-fade-text( rgba( var( --studio-white-rgb ), 0 ), var( --studio-white ) );
+		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
 	}
 
 	.module-header-action {

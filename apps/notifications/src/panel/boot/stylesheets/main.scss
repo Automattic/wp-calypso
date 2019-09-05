@@ -168,7 +168,7 @@
 		background-color: var( --color-surface );
 		color: var( --color-text-subtle );
 		border-bottom: 1px solid var( --color-neutral-0 );
-		border-left: 1px solid var( --studio-white );
+		border-left: 1px solid var( --color-border-inverted );
 		text-align: center; // Center filter in IE 9
 		height: $wpnc__filter-height;
 		box-sizing: border-box;
@@ -230,7 +230,7 @@
 		&.selected {
 			background: var( --color-primary );
 			border-color: var( --color-primary );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 
 			+ .segmented-control-item {
 				border-left-color: var(
@@ -365,7 +365,7 @@
 			bottom: -5px;
 			right: -8px;
 			background-color: var( --color-neutral-20 );
-			border-color: var( --studio-white );
+			border-color: var( --color-border-inverted );
 		}
 
 		.wpnc__note .wpnc__note-icon img {
@@ -466,7 +466,7 @@
 
 	.wpnc__undo-item {
 		background: var( --color-error );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		p {
 			padding-top: 1em;
@@ -476,7 +476,7 @@
 		.wpnc__undo-link {
 			margin-left: 1em;
 			text-transform: uppercase;
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 
 		.wpnc__undo-message {
@@ -485,7 +485,7 @@
 	}
 
 	.wpnc__close-link {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		position: absolute;
 		right: 10px;
 		cursor: pointer;

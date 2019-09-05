@@ -94,21 +94,21 @@
 	.wpnc__button.is-primary {
 		background: var( --color-primary );
 		border-color: var( --color-primary );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		&:hover,
 		&:focus {
 			border-color: var( --color-primary-dark );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 		&[disabled],
 		&:disabled {
 			background: var( --color-primary-5 );
 			border-color: var( --color-primary-20 );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 		&.is-compact {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -133,7 +133,7 @@
 	.wpnc__button.is-primary.is-scary {
 		background: var( --color-error );
 		border-color: var( --color-error-60 );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		&:hover,
 		&:focus {

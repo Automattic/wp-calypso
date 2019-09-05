@@ -108,11 +108,11 @@
 .pagination__list-item.is-selected .button {
 	border-color: var( --color-primary );
 	background-color: var( --color-primary );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .pagination__list-item.is-selected .button:hover {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .pagination__list-item.is-selected + .pagination__list-item .button {

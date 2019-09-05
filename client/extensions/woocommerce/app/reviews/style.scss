@@ -330,7 +330,7 @@
 		min-height: 68px;
 
 		&:not( :focus ) {
-			border-color: var( --studio-white );
+			border-color: var( --color-border-inverted );
 			padding-left: 48px;
 			padding-right: 16px;
 			resize: none;

@@ -133,13 +133,13 @@ button {
 .button.is-primary {
 	background-color: var( --color-accent );
 	border-color: var( --color-accent-dark );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-accent-60 );
 		border-color: var( --color-accent-dark );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.accessible-focus &:focus {
@@ -147,7 +147,7 @@ button {
 	}
 
 	&.is-compact {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&[disabled],
@@ -193,7 +193,7 @@ button {
 .button.is-primary.is-scary {
 	background-color: var( --color-error );
 	border-color: var( --color-error-dark );
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 
 	&:hover,
 	&:focus {

@@ -74,7 +74,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 // For forcing the width of y-axis to the width of the label
 .chart__y-axis-width-fix {
-	color: rgba( var( --studio-white-rgb ), 0 );
+	color: rgba( var( --color-surface-rgb ), 0 );
 }
 
 // X-axis
@@ -112,7 +112,7 @@ $y-axis-padding: 0 20px 0 10px;
 }
 
 .chart__x-axis-width-spacer {
-	color: rgba( var( --studio-white-rgb ), 0 );
+	color: rgba( var( --color-surface-rgb ), 0 );
 	padding: $y-axis-padding;
 	right: 0;
 
@@ -188,7 +188,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 	&.is-spacer {
 		z-index: z-index( 'root', '.chart__bar-section.is-spacer' );
-		background-color: rgba( var( --studio-white-rgb ), 0 );
+		background-color: rgba( var( --color-surface-rgb ), 0 );
 	}
 
 	&.is-ghost::after {
@@ -203,7 +203,7 @@ $y-axis-padding: 0 20px 0 10px;
 		height: 40px;
 		background-image: linear-gradient(
 			to bottom,
-			rgba( var( --studio-white-rgb ), 0 ),
+			rgba( var( --color-surface-rgb ), 0 ),
 			rgba( var( --color-neutral-0-rgb ), 0.5 )
 		); // TODO: needs to use default color for gradient
 

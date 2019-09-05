@@ -31,7 +31,7 @@
 		}
 	}
 
-	border-top: 1px solid rgba( var( --studio-white-rgb ), 0 );
+	border-top: 1px solid rgba( var( --color-surface-rgb ), 0 );
 
 	// Increase touch targets on mobile
 	@include breakpoint( '<480px' ) {
@@ -39,7 +39,7 @@
 		border-top: 1px solid var( --color-neutral-0 );
 
 		&:first-child {
-			border-top-color: rgba( var( --studio-white-rgb ), 0 );
+			border-top-color: rgba( var( --color-surface-rgb ), 0 );
 		}
 
 		// Darken color for sublists
@@ -317,7 +317,7 @@
 
 	// Fade out value if long
 	&::before {
-		@include stats-fade-text( rgba( var( --studio-white-rgb ), 0 ), var( --studio-white ) );
+		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
 	}
 }
 
@@ -374,7 +374,7 @@ ul.module-content-list-item-actions {
 			background-color: var( --color-surface );
 
 			&::after {
-				border-bottom-color: var( --studio-white );
+				border-bottom-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -411,7 +411,7 @@ ul.module-content-list-item-actions {
 			background-color: var( --color-surface );
 
 			&::after {
-				border-bottom-color: var( --studio-white );
+				border-bottom-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -758,7 +758,7 @@ ul.module-content-list-legend {
 
 	// Hide the top border of an active sub-list
 	> .module-content-list-item {
-		border-top-color: rgba( var( --studio-white-rgb ), 0 );
+		border-top-color: rgba( var( --color-surface-rgb ), 0 );
 	}
 
 	// Hover changes
@@ -771,7 +771,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, rgba( var( --studio-white-rgb ), 0 ) 0%, var( --studio-white ) 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 			}
 		}
 	}
@@ -812,7 +812,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, rgba( var( --studio-white-rgb ), 0 ) 0%, var( --studio-white ) 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 			}
 		}
 	}

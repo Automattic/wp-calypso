@@ -37,7 +37,7 @@ $image-height: 47px;
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -49,7 +49,7 @@ $image-height: 47px;
 		text-decoration: none;
 
 		body.is-section-signup & {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -78,7 +78,7 @@ $image-height: 47px;
 		}
 
 		body.is-section-signup & {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

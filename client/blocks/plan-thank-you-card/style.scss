@@ -15,7 +15,7 @@
 
 	.thank-you-card__header {
 		background: var( --color-accent );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.thank-you-card__price {
@@ -28,7 +28,7 @@
 
 	.thank-you-card__button {
 		background: var( --color-neutral-70 );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		border: 0;
 	}
 }

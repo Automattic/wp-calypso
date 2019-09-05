@@ -83,7 +83,7 @@
 	&:focus {
 		.gridicon,
 		.social-logo {
-			fill: var( --studio-white );
+			fill: var( --color-text-inverted );
 		}
 	}
 }
@@ -109,7 +109,7 @@
 .reader-share__site-selector .site__title,
 .reader-share__site-selector .site__domain {
 	&::after {
-		@include long-content-fade( $color: var( --studio-white-rgb ) );
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
 		border-radius: 50%;
 	}
 }

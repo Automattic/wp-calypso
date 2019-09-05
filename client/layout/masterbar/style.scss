@@ -169,7 +169,7 @@ $autobar-height: 20px;
 			height: 24px;
 			width: 24px;
 			margin-left: 5px;
-			fill: var( --studio-white );
+			fill: var( --color-text-inverted );
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -215,7 +215,7 @@ $autobar-height: 20px;
 	}
 
 	&.is-active {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&:hover {
@@ -256,18 +256,18 @@ $autobar-height: 20px;
 	}
 
 	.is-support-session &.is-active {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	// active state when editing
 	.is-group-editor & {
 		background: var( --color-masterbar-item-new-editor-background );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-group-editor &:visited,
 	.is-group-editor & .masterbar__item-content {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-group-editor &:hover {
@@ -283,7 +283,7 @@ $autobar-height: 20px;
 		width: 18px;
 		height: 18px;
 
-		border: 2px solid var( --studio-white );
+		border: 2px solid var( --color-border-inverted );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -303,7 +303,7 @@ $autobar-height: 20px;
 	}
 
 	.gridicon {
-		fill: var( --studio-white );
+		fill: var( --color-text-inverted );
 	}
 
 	.gridicon + .masterbar__item-content {

@@ -204,7 +204,7 @@ $date-picker_nav_button_size: 20px;
 	line-height: 24px;
 	border-radius: 50%;
 	cursor: pointer;
-	border: 1px solid rgba( var( --studio-white-rgb ), 0 );
+	border: 1px solid rgba( var( --color-surface-rgb ), 0 );
 	color: var( --color-neutral-70 );
 	text-align: center;
 	margin: 0 auto;
@@ -217,7 +217,7 @@ $date-picker_nav_button_size: 20px;
 
 // `today` day
 .DayPicker-Day--today .date-picker__day {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	background-color: var( --color-neutral-70 );
 
 	&:hover {
@@ -240,7 +240,7 @@ $date-picker_nav_button_size: 20px;
 // `is-selected` day (not today -> adds animation)
 .DayPicker-Day.DayPicker-Day--is-selected:not( .DayPicker-Day--today ):not( .DayPicker-Day--events )
 	.date-picker__day {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	animation: isSelectedDay 125ms ease-out;
 	background-color: var( --color-accent );
 }
@@ -248,7 +248,7 @@ $date-picker_nav_button_size: 20px;
 // `is-selected` day (today -> no animation)
 .DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--today .date-picker__day,
 .DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--events .date-picker__day {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	background-color: var( --color-accent );
 }
 

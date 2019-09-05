@@ -19,7 +19,7 @@
 
 	&::after {
 		border: 6px solid transparent;
-		border-bottom-color: var( --studio-white );
+		border-bottom-color: var( --color-border-inverted );
 		content: ' ';
 		height: 0;
 		position: absolute;

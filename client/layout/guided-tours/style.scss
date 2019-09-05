@@ -16,7 +16,7 @@
 	animation-timing-function: ease-in-out;
 
 	a {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		text-decoration: underline;
 
 		&:hover {
@@ -29,7 +29,7 @@
 		margin-bottom: 16px;
 
 		strong {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 
 		&:last-child {
@@ -52,7 +52,7 @@
 	    font-weight: 300;
 	    display: flex;
 	    align-items: center;
-	    color: var( --studio-white );
+	    color: var( --color-text-inverted );
 	    margin-bottom: 10px;
 	}
 
@@ -128,7 +128,7 @@
 	a.button {
 		color: var( --color-neutral-10 );
 		background: none;
-		border: 1px rgba( var( --studio-white-rgb ), 0.2 ) solid;
+		border: 1px rgba( var( --color-surface-rgb ), 0.2 ) solid;
 	}
 
 	a.button {
@@ -137,7 +137,7 @@
 
 		&:hover,
 		&:focus {
-			border-color: rgba( var( --studio-white-rgb ), 0.3 );
+			border-color: rgba( var( --color-surface-rgb ), 0.3 );
 		}
 
 		.gridicon {
@@ -149,14 +149,14 @@
 
 a.config-elements__text-link,
 .config-elements__text-link {
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 
 	&:hover {
 		text-decoration: none;
 	}
 
 	&:visited {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -170,7 +170,7 @@ a.config-elements__text-link,
 
 	.external-link {
 		font-style: normal;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 		border-top: 1px solid var( --color-neutral-70 );
 		display: block;
 		padding-top: 12px;

@@ -100,27 +100,27 @@
 	&.role-super-admin {
 		background: var( --color-error );
 		border: none;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.role-administrator,
 	&.role-admin-owner {
 		background: var( --color-neutral-70 );
 		border: none;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.role-editor {
 		background: var( --color-primary-dark );
 		border: none;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.role-author,
 	&.role-contributor {
 		background: var( --color-primary );
 		border: none;
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.role-contractor {

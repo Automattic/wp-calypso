@@ -58,7 +58,7 @@ input[type='text'].token-field__input {
 	font-size: 14px;
 	display: flex;
 	margin: 2px 0 2px 8px;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	overflow: hidden;
 
 	&.is-success {
@@ -180,7 +180,7 @@ input[type='text'].token-field__input {
 
 	&.is-selected {
 		background: var( --color-accent );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 	}
 }
 

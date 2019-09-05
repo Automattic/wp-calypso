@@ -150,10 +150,10 @@
 		&:hover,
 		&:focus {
 			background: var( --color-error );
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 
 			.gridicon {
-				color: var( --studio-white );
+				color: var( --color-text-inverted );
 			}
 		}
 	}

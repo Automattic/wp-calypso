@@ -48,7 +48,7 @@
 		top: 0;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient( to right, var( --studio-white ), rgba( var( --studio-white-rgb ), 0.92 ), rgba( var( --studio-white-rgb ), 0 ) );
+	background: linear-gradient( to right, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
@@ -86,7 +86,7 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient( to left, var( --studio-white ), rgba( var( --studio-white-rgb ), 0.92 ), rgba( var( --studio-white-rgb ), 0 ) );
+	background: linear-gradient( to left, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
 	text-align: right;
 }
 
@@ -129,7 +129,7 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
-	border: 1px solid var( --studio-white );
+	border: 1px solid var( --color-border-inverted );
 	background-color: var( --color-neutral-5 );
 	margin: 0;
 }
@@ -138,7 +138,7 @@
 .post-trends__key-day {
 	&.is-outside-month {
 		background-color: transparent;
-		border-color: var( --studio-white );
+		border-color: var( --color-border-inverted );
 	}
 
 	&.is-today {

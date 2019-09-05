@@ -414,7 +414,7 @@ $devdocs-max-width: 720px;
 	}
 
 	pre > code {
-		background-color: rgba( var( --studio-white-rgb ), 0 );
+		background-color: rgba( var( --color-surface-rgb ), 0 );
 		padding: 2px 0;
 	}
 
@@ -423,7 +423,6 @@ $devdocs-max-width: 720px;
 	}
 
 	.label {
-		$invert: var( --studio-white );
 		font-weight: bold;
 		font-size: 15px;
 		padding: 1px 5px 2px;
@@ -443,7 +442,7 @@ $devdocs-max-width: 720px;
 
 		&.status-in-progress {
 			background: #2880e2;
-			color: $invert;
+			color: var( --color-text-inverted );
 		}
 	}
 

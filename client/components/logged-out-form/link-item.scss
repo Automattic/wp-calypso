@@ -9,7 +9,7 @@
 
 	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ):not( .is-wccom-oauth-flow ) &,
 	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout.gravatar & {
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		&:hover {
 			color: var( --color-neutral-10 );

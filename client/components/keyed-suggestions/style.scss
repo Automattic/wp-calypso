@@ -41,10 +41,10 @@
 
 	&.has-highlight {
 		background-color: var( --color-primary );
-		color: var( --studio-white );
+		color: var( --color-text-inverted );
 
 		.keyed-suggestions__value-description {
-			color: var( --studio-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }

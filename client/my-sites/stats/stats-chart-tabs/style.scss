@@ -134,7 +134,7 @@ ul.module-tabs {
 		// Selected state
 		.stats-module &.is-selected a {
 			background: var( --color-surface );
-			border-top: 1px solid var( --studio-white );
+			border-top: 1px solid var( --color-border-inverted );
 			margin-top: -1px;
 			cursor: default;
 		}

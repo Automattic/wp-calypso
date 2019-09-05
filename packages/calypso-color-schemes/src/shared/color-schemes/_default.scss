@@ -192,10 +192,12 @@
 
 	--color-text: var( --studio-gray-80 );
 	--color-text-subtle: var( --studio-gray-50 );
+	--color-text-inverted: var( --studio-white );
 
 	--color-border: var( --color-neutral-20 );
 	--color-border-subtle: var( --color-neutral-5 );
 	--color-border-shadow: var( --color-neutral-0 );
+	--color-border-inverted: var( --studio-white );
 
 	--color-link: var( --studio-blue-50 );
 	--color-link-rgb: var( --studio-blue-50-rgb );
@@ -272,23 +274,34 @@
 	--color-jetpack-onboarding-text: var( --studio-white );
 	--color-jetpack-onboarding-background: var( --studio-blue-100 );
 
-	--color-email: #f8f8f8;
+	--color-automattic: var( --studio-blue-40 );
+	--color-jetpack: var( --studio-jetpack-green );
+	--color-simplenote:var( --studio-blue-30 );
+	--color-woocommerce: var( --studio-woocommerce-purple );
+	--color-wordpress-com: var( --studio-wordpress-blue );
+	--color-wordpress-org: #585c60;
+
+	--color-blogger: #ff5722;
 	--color-eventbrite: #ff8000;
 	--color-facebook: #39579a;
-	--color-gplus: #df4a32;
+	--color-godaddy: #5ea95a;
+	--color-google-plus: #df4a32;
 	--color-instagram: #d93174;
 	--color-linkedin: #0976b4;
+	--color-medium: #12100e;
 	--color-pinterest: #cc2127;
 	--color-pocket: #ee4256;
 	--color-print: #f8f8f8;
 	--color-reddit: #5f99cf;
 	--color-skype: #00aff0;
 	--color-stumbleupon: #eb4924;
+	--color-squarespace: #222;
 	--color-telegram: #0088cc;
 	--color-tumblr: #35465c;
 	--color-twitter: #55acee;
 	--color-whatsapp: #43d854;
-	--color-wordpress-org: #585c60;
+	--color-wix: #faad4d;
 
+	--color-email: var( --studio-gray-0 );
 	--color-podcasting: #9b4dd5;
 }

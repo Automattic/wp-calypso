@@ -46,7 +46,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: rgba( var( --studio-white-rgb ), 0.75 );
+	background-color: rgba( var( --color-surface-rgb ), 0.75 );
 	z-index: z-index( 'root', '.image-selector__item.is-transient::after' );
 }
 
@@ -127,7 +127,7 @@
 	bottom: 8px;
 	right: 8px;
 	padding: 0;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 	opacity: 0.9;
 	background: #cccccc;
 	border-radius: 50%;

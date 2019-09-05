@@ -21,7 +21,7 @@
 	&.google_plus {
 		h2,
 		.sharing-service__logo {
-			color: var( --color-gplus );
+			color: var( --color-google-plus );
 		}
 	}
 
@@ -278,7 +278,7 @@
 
 @include sharing-service( 'facebook', var( --color-facebook ));
 @include sharing-service( 'twitter', var( --color-twitter ));
-@include sharing-service( 'google_plus', var( --color-gplus ));
+@include sharing-service( 'google_plus', var( --color-google-plus ));
 @include sharing-service( 'tumblr', var( --color-tumblr ));
 @include sharing-service( 'linkedin', var( --color-linkedin ));
 @include sharing-service( 'instagram', var( --color-instagram ));
@@ -895,7 +895,7 @@
 
 .sharing-buttons-preview-button.style-icon .social-logo {
 	top: 0;
-	color: var( --studio-white );
+	color: var( --color-text-inverted );
 }
 
 .sharing-buttons-preview-button.style-icon.share-email .social-logo,
@@ -925,8 +925,8 @@
 
 @include sharing-button-service( 'facebook', var( --color-facebook ));
 @include sharing-button-service( 'twitter', var( --color-twitter ));
-@include sharing-button-service( 'press-this', var( --studio-wordpress-blue ));
-@include sharing-button-service( 'google-plus-1', var( --color-gplus ));
+@include sharing-button-service( 'press-this', var( --color-wordpress-com ));
+@include sharing-button-service( 'google-plus-1', var( --color-google-plus ));
 @include sharing-button-service( 'instagram', var( --color-instagram ));
 @include sharing-button-service( 'eventbrite', var( --color-eventbrite ));
 @include sharing-button-service( 'linkedin', var( --color-linkedin ));
