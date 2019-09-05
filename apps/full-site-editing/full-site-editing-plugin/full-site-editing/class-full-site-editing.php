@@ -63,15 +63,21 @@ class Full_Site_Editing {
 		require_once __DIR__ . '/serialize-block-fallback.php';
 	}
 
+	/**
+	 * Initialize the plugin
+	 */
 	public function init() {
 		// put this late so it fires after `after_theme_switch`
-		add_action( 'init', [ $this, 'maybe_load_or_unload' ], 100 );
-		add_action( 'after_switch_theme', [ $this, 'check_and_set_theme_support' ] );
+		add_action( 'init', [ $this, 'maybe_load_or_unload' ] );
 		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ], 11 );
 		add_action( 'admin_init', [ $this, 'add_admin_hooks' ] );
 		add_action( 'switch_blog', [ $this, 'maybe_load_or_unload' ] );
+		add_action( 'restapi_theme_init', [ $this, 'maybe_load_or_unload'] );
 	}
 
+	/**
+	 * Adds hooks to wp-admin screens
+	 */
 	public function add_admin_hooks() {
 		if ( ! self::is_active() ) {
 			return;
@@ -83,6 +89,9 @@ class Full_Site_Editing {
 		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
 	}
 
+	/**
+	 * Loads or unloads plugin functionality as needed
+	 */
 	public function maybe_load_or_unload() {
 		if ( self::is_active() ) {
 			$this->load();
@@ -91,6 +100,9 @@ class Full_Site_Editing {
 		}
 	}
 
+	/**
+	 * Loads plugin functionality
+	 */
 	public function load() {
 		// already loaded
 		if ( $this->is_loaded ) {
@@ -114,6 +126,10 @@ class Full_Site_Editing {
 		$this->is_loaded = true;
 	}
 
+	/**
+	 * Unloads plugin functionality. Needed in Multisite environments where
+	 * `switch_to_blog` gets called.
+	 */
 	public function unload() {
 		if ( ! $this->is_loaded ) {
 			return;
@@ -138,14 +154,12 @@ class Full_Site_Editing {
 		$this->is_loaded = false;
 	}
 
-	public function check_and_set_theme_support() {
-		if ( current_theme_supports( 'full-site-editing' ) ) {
-			update_option( 'current_theme_supports_fse', true );
-		} else {
-			delete_option( 'current_theme_supports_fse' );
-		}
-	}
-
+	/**
+	 * Checks if the plugin is in an active state, which generally means that
+	 * the theme has declared support for `full-site-editing`.
+	 *
+	 * @return boolean
+	 */
 	public static function is_active() {
 		/**
 	 * Can be used to disable Full Site Editing functionality.
@@ -157,6 +171,7 @@ class Full_Site_Editing {
 		if ( true === apply_filters( 'a8c_disable_full_site_editing', false ) ) {
 			return false;
 		}
+		return current_theme_supports( 'full-site-editing' );
 		return (bool) get_option( 'current_theme_supports_fse', false );
 	}
 
@@ -188,6 +203,11 @@ class Full_Site_Editing {
 		return self::is_active();
 	}
 
+	/**
+	 * Fetches an instance of `WP_Template_Inserter` as needed
+	 *
+	 * @return \A8C\FSE\WP_Template_Inserter instance
+	 */
 	public function get_inserter() {
 		if ( ! $this->wp_template_inserter ) {
 			$theme_slug = $this->normalize_theme_slug( get_stylesheet() );
