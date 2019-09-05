@@ -28,14 +28,9 @@ const SUPPORTED_THEMES = [ 'maywood', 'a8c/public-api' ];
  * Load Full Site Editing.
  */
 function load_full_site_editing() {
-	/**
-	 * Can be used to disable Full Site Editing functionality.
-	 *
-	 * @since 0.2
-	 *
-	 * @param bool true if Full Site Editing should be disabled, false otherwise.
-	 */
-	if ( apply_filters( 'a8c_disable_full_site_editing', false ) ) {
+	// Bail if FSE should not be active on the site. We do not
+	// want to load FSE functionality on non-supported sites!
+	if ( ! is_full_site_editing_active() ) {
 		return;
 	}
 
@@ -95,6 +90,13 @@ function get_theme_slug() {
  */
 function is_site_eligible_for_full_site_editing() {
 	// By default, sites are not eligible for FSE.
+		/**
+	 * Can be used to disable Full Site Editing functionality.
+	 *
+	 * @since 0.2
+	 *
+	 * @param bool true if Full Site Editing should be disabled, false otherwise.
+	 */
 	return ! apply_filters( 'a8c_disable_full_site_editing', true );
 }
 
@@ -171,7 +173,7 @@ register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data'
  * post_content yet.
  */
 function enqueue_coblocks_gallery_scripts() {
-	if ( ! function_exists( 'CoBlocks' ) ) {
+	if ( ! function_exists( 'CoBlocks' ) || ! is_full_site_editing_active() ) {
 		return;
 	}
 

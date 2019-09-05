@@ -43,11 +43,7 @@ class Full_Site_Editing {
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
-		// Bail if FSE should not be active on the site. We do not
-		// want to load FSE functionality on non-supported sites!
-		if ( ! is_full_site_editing_active() ) {
-			return;
-		}
+
 		add_action( 'init', [ $this, 'register_blocks' ], 100 );
 		add_action( 'init', [ $this, 'register_template_post_types' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
