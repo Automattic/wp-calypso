@@ -35,9 +35,7 @@ function render_navigation_menu_block() {
 			<span class="hide-visually expanded-text"><?php esc_html_e( 'expanded', 'full-site-editing' ); ?></span>
 			<span class="hide-visually collapsed-text"><?php esc_html_e( 'collapsed', 'full-site-editing' ); ?></span>
 		</label>
-		<div class="menu-primary-container">
-			<?php echo $menu ? $menu : get_fallback_navigation_menu(); ?>
-		</div>
+		<?php echo $menu ? $menu : get_fallback_navigation_menu(); ?>
 	</nav>
 	<!-- #site-navigation -->
 	<?php
@@ -71,5 +69,7 @@ function get_fallback_navigation_menu() {
 	$original_classes    = [ 'children', 'page_item_has_sub-menu' ];
 	$replacement_classes = [ 'sub-menu', 'menu-item-has-children' ];
 
-	return str_replace( $original_classes, $replacement_classes, $menu );
+	return '<div class="menu-primary-container">'
+		. str_replace( $original_classes, $replacement_classes, $menu )
+		. '</div>';
 }
