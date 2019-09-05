@@ -95,14 +95,11 @@ function is_site_eligible_for_full_site_editing() {
 	/**
 	 * Can be used to disable Full Site Editing functionality.
 	 *
-	 * By default, we should disable FSE for sites which don't
-	 * specifically allow support.
-	 *
 	 * @since 0.2
 	 *
 	 * @param bool true if Full Site Editing should be disabled, false otherwise.
 	 */
-	return ! apply_filters( 'a8c_disable_full_site_editing', true );
+	return ! apply_filters( 'a8c_disable_full_site_editing', false );
 }
 
 /**
