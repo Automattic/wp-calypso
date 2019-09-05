@@ -104,11 +104,11 @@ function is_site_eligible_for_full_site_editing() {
 }
 
 /**
- * Whether or not the site is eligible for FSE.
- * This is essentially a feature gate to disable FSE
- * on some sites which could theoretically otherwise use it.
+ * Whether or not current theme is FSE enabled.
+ * This is to allow the checking of theme support to be abstracted
+ * to the context in which the plugin is running.
  *
- * @return bool True if current site is eligible for FSE, false otherwise.
+ * @return bool True if current theme supports FSE, false otherwise.
  */
 function is_theme_supported() {
 	/**
