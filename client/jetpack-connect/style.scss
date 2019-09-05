@@ -225,10 +225,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	@include breakpoint( '>660px' ) {
 		margin: 0 8px 16px;
 	}
-
-	&.jetpack-connect__creds-form {
-		margin-left: 20px;
-	}
 }
 
 .jetpack-connect__install-step-title {
