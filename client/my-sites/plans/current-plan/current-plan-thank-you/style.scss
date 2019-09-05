@@ -27,20 +27,12 @@
 	}
 
 	.button {
-		background-color: var( --color-primary );
-		border-color: var( --color-primary-dark );
 		padding-right: 80px;
 		padding-left: 80px;
 
 		@include breakpoint( '<660px' ) {
 			text-align: center;
 			width: 100%;
-		}
-
-		&:hover,
-		&:focus {
-			background-color: var( --color-primary-400 );
-			border-color: var( --color-primary-dark );
 		}
 	}
 }
