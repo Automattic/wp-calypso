@@ -39,7 +39,7 @@ class HelpFlow extends Component {
 	handleDialogClosure = () => {
 		this.setState( {
 			displayDialog: false,
-			blogIssueDialog: false,
+			otherDialog: false,
 			jetpackDialog: false,
 		} );
 	};
@@ -75,6 +75,12 @@ class HelpFlow extends Component {
 
 		const helpFlowClassNames = classnames( 'help-flow', {
 			'has-site-selector': hasJetpackSites && hasWpComSites,
+			'has-no-site-selector': ! hasWpComSites,
+		} );
+
+		const dialogClassNames = classnames( 'help-flow__dialog', {
+			'is-other-screen': otherDialog,
+			'is-jetpack-screen': jetpackDialog,
 		} );
 
 		let dialogContent;
@@ -126,12 +132,36 @@ class HelpFlow extends Component {
 						} ) }
 					</Accordion>
 
+					<Accordion title={ translate( 'I have a billing issue' ) }>
+						{ translate(
+							'For billing issues, including investigating an unknown charge, visit our {{a}}billing site{{/a}}.',
+							{
+								components: {
+									a: <a href="https://wpchrg.wordpress.com/" />,
+								},
+							}
+						) }
+					</Accordion>
+
 					<Accordion title={ translate( 'I have an issue with my dashboard on WordPress.com' ) }>
 						{ translate(
 							'For issues with your WordPress.com dashboard, contact us {{a}}here{{/a}}.',
 							{
 								components: {
 									a: <a href="/help/contact/form" />,
+								},
+							}
+						) }
+					</Accordion>
+
+					<Accordion
+						title={ translate( 'I have an issue with a WordPress site hosted somewhere else' ) }
+					>
+						{ translate(
+							'For help with the open source WordPress software, explore {{a}}self-hosted support{{/a}}, or contact your hosting provider directly.',
+							{
+								components: {
+									a: <a href="https://wordpress.org/support//" />,
 								},
 							}
 						) }
@@ -185,7 +215,7 @@ class HelpFlow extends Component {
 								primary
 								onClick={ this.handleJetpackButtonClick }
 							>
-								{ translate( 'My Jetpack-connected site' ) }
+								{ translate( 'The Jetpack Plugin' ) }
 							</Button>
 						) }
 						<Button className="help-flow__button is-link" onClick={ this.handleOtherClick }>
@@ -203,7 +233,7 @@ class HelpFlow extends Component {
 				</Card>
 
 				{ displayDialog && (
-					<Dialog isVisible additionalClassNames="help-flow__dialog">
+					<Dialog isVisible additionalClassNames={ dialogClassNames }>
 						<div className="help-flow__dialog-text">
 							<h1 className="help-flow__dialog-heading">
 								{ ! jetpackDialog
@@ -213,10 +243,16 @@ class HelpFlow extends Component {
 							{ dialogContent }
 						</div>
 						<div className="help-flow__dialog-buttons">
-							<Button className="is-link" href="/help/contact/form">
+							<Button className="help-flow__something-else-link is-link" href="/help/contact/form">
 								{ ! jetpackDialog
-									? translate( "I'd like to discuss something else and speak to a human" )
-									: translate( "I'd like to speak with a human anyway" ) }
+									? translate(
+											'Something else? Open a support request with WordPress.com, ' +
+												"and if we can't help, we'll point you in the right direction for support."
+									  )
+									: translate(
+											'Open a support request with WordPress.com anyway, ' +
+												"and if we can't help, we'll point you in the right direction for support."
+									  ) }
 							</Button>
 							<Button className="help-flow__close-dialog" onClick={ this.handleDialogClosure }>
 								{ translate( 'Close' ) }
