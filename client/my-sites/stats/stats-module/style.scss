@@ -553,7 +553,7 @@ ul.module-header-actions {
 	justify-content: center;
 	align-items: center;
 
-	.button.download-csv {
+	.button.stats-download-csv {
 		color: var( --color-text-subtle );
 
 		&[disabled],
@@ -569,4 +569,24 @@ ul.module-header-actions {
 
 .stats-module__header.is-refreshing {
 	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.stats-module__availability-warning {
+	padding: 12px 20px 0;
+	display: flex;
+
+	.gridicon {
+		fill: var( --color-text-subtle );
+	}
+}
+
+.stats-module__availability-warning-message {
+	font-size: 14px;
+	margin-left: 8px;
+	margin-bottom: 0;
+	color: var( --color-text-subtle );
+}
+
+.stats__module-list .stats-module__availability-warning-message {
+	font-size: 12px;
 }

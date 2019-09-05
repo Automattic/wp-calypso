@@ -414,11 +414,13 @@ div.popover-cart__popover {
 	}
 }
 
+
 .secondary-cart {
 	background: var( --color-white );
 
 	@include breakpoint( '<660px' ) {
 		left: 0;
+		margin-left: 0;
 		margin-top: 10px;
 		// Create space for the inline help button
 		margin-bottom: 65px;
@@ -430,7 +432,9 @@ div.popover-cart__popover {
 	.jetpack-logo {
 		margin: 32px 0;
 	}
+
 }
+
 
 @include breakpoint( '<660px' ) {
 	.secondary-cart__hidden {

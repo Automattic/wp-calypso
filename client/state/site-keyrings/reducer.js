@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { siteKeyrings as siteKeyringsSchema } from './schema';
 import {
 	SITE_KEYRINGS_REQUEST,
@@ -67,7 +65,7 @@ export const saveRequests = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-const items = createReducer(
+const items = createReducerWithValidation(
 	{},
 	{
 		[ SITE_KEYRINGS_REQUEST_SUCCESS ]: ( state, { siteId, keyrings } ) => ( {

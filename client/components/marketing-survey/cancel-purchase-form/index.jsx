@@ -13,6 +13,7 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import { submitSurvey } from 'lib/upgrades/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -31,6 +32,7 @@ import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
+import PrecancellationChatButton from './precancellation-chat-button';
 import { getName } from 'lib/purchases';
 import { isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
@@ -62,7 +64,6 @@ class CancelPurchaseForm extends React.Component {
 		onClickFinalConfirm: PropTypes.func.isRequired,
 		flowType: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
-		extraPrependedButtons: PropTypes.array,
 		translate: PropTypes.func,
 	};
 
@@ -71,7 +72,6 @@ class CancelPurchaseForm extends React.Component {
 		onInputChange: () => {},
 		showSurvey: true,
 		isVisible: false,
-		extraPrependedButtons: [],
 	};
 
 	getAllSurveySteps = () => {
@@ -197,8 +197,6 @@ class CancelPurchaseForm extends React.Component {
 				return 'refund';
 			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
 				return 'cancel-autorenew';
-			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY:
-				return 'cancel-autorenew-survey-only';
 			default:
 				// Although we shouldn't allow it to reach here, we still include this default in case we forgot to add proper mappings.
 				return 'general';
@@ -208,7 +206,7 @@ class CancelPurchaseForm extends React.Component {
 	onSubmit = () => {
 		const { purchase, selectedSite } = this.props;
 
-		if ( ! isGoogleApps( purchase ) ) {
+		if ( ! isGoogleApps( purchase ) && selectedSite ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -544,17 +542,22 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getStepButtons = () => {
-		const { flowType, translate, disableButtons } = this.props;
+		const { flowType, translate, disableButtons, purchase } = this.props;
+		const { surveyStep } = this.state;
 		const disabled = disableButtons || this.state.isSubmitting;
 
 		const close = {
 				action: 'close',
 				disabled,
-				label:
-					flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY
-						? translate( 'Skip' )
-						: translate( "I'll Keep It" ),
+				label: translate( "I'll Keep It" ),
 			},
+			chat = (
+				<PrecancellationChatButton
+					purchase={ purchase }
+					onClick={ this.closeDialog }
+					surveyStep={ surveyStep }
+				/>
+			),
 			next = {
 				action: 'next',
 				disabled: disabled || ! isSurveyFilledIn( this.state ),
@@ -580,26 +583,20 @@ class CancelPurchaseForm extends React.Component {
 				label: translate( 'Remove Now' ),
 				onClick: this.onSubmit,
 				isPrimary: true,
-			},
-			submit = {
-				action: 'submit',
-				disabled: this.state.isSubmitting,
-				label: translate( 'Submit' ),
-				onClick: this.onSubmit,
-				isPrimary: true,
 			};
 
-		const firstButtons = [ ...this.props.extraPrependedButtons, close ];
+		const firstButtons =
+			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
+				? [ chat, close ]
+				: [ close ];
 
-		if ( this.state.surveyStep === steps.FINAL_STEP ) {
+		if ( surveyStep === steps.FINAL_STEP ) {
 			const stepsCount = this.getAllSurveySteps().length;
 			const prevButton = stepsCount > 1 ? [ prev ] : [];
 
 			switch ( flowType ) {
 				case CANCEL_FLOW_TYPE.REMOVE:
 					return firstButtons.concat( [ ...prevButton, remove ] );
-				case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW_SURVEY_ONLY:
-					return firstButtons.concat( [ ...prevButton, submit ] );
 				default:
 					return firstButtons.concat( [ ...prevButton, cancel ] );
 			}

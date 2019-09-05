@@ -13,11 +13,16 @@ import { noop } from 'lodash';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
+/**
+ * Image dependencies
+ */
+import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
+
 export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-concierge.svg" /> }
+				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ translate( 'Concierge orientation' ) }
 				description={ translate(
 					'Schedule a one-on-one orientation session to set up your site ' +

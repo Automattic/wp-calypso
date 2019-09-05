@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -139,7 +138,7 @@ export function getFileExtension( media ) {
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image'
  *
- * @param  {string} media Media object or mime type string
+ * @param  {(string|File|Object)} media Media object or mime type string
  * @return {string}       The MIME type prefix
  */
 export function getMimePrefix( media ) {
@@ -149,7 +148,7 @@ export function getMimePrefix( media ) {
 		return;
 	}
 
-	const mimePrefixMatch = mimeType.match( /^([^\/]+)\// );
+	const mimePrefixMatch = mimeType.match( /^([^/]+)\// );
 
 	if ( mimePrefixMatch ) {
 		return mimePrefixMatch[ 1 ];

@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
+import Notice from 'components/notice';
 import ScreenReaderText from 'components/screen-reader-text';
 import Spinner from 'components/spinner';
 
@@ -29,7 +30,9 @@ class Task extends PureComponent {
 		duration: PropTypes.string,
 		href: PropTypes.string,
 		inProgress: PropTypes.bool,
+		isButtonDisabled: PropTypes.bool,
 		isWarning: PropTypes.bool,
+		noticeText: PropTypes.string,
 		onClick: PropTypes.func,
 		onTaskClick: PropTypes.func,
 		onDismiss: PropTypes.func,
@@ -132,8 +135,10 @@ class Task extends PureComponent {
 			description,
 			duration,
 			href,
+			isButtonDisabled,
 			inProgress,
 			isWarning,
+			noticeText,
 			onClick,
 			target,
 			title,
@@ -192,6 +197,7 @@ class Task extends PureComponent {
 								<div className="checklist__task-action-wrapper">
 									<Button
 										className="checklist__task-action"
+										disabled={ isButtonDisabled }
 										href={ href }
 										onClick={ onClick }
 										primary={ ! collapsed }
@@ -203,6 +209,11 @@ class Task extends PureComponent {
 										<Button className="checklist__task-skip" onClick={ onDismiss }>
 											{ translate( 'Skip' ) }
 										</Button>
+									) }
+									{ !! noticeText && (
+										<Notice className="checklist__task-notice" showDismiss={ false }>
+											{ noticeText }
+										</Notice>
 									) }
 								</div>
 							</div>

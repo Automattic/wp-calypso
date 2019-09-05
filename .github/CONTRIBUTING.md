@@ -78,6 +78,7 @@ Once you know what the first small piece of your feature will be, follow this ge
     - Write a detailed description of the problem you are solving, the part of Calypso it affects, and how you plan on going about solving it.
     - If you have write access, add the **<span class="label status-in-progress">[Status] In Progress</span>** label or wait until somebody adds it. This indicates that the pull request isn’t ready for a review and may still be incomplete. On the other hand, it welcomes early feedback and encourages collaboration during the development process.
 3. Start developing and pushing out commits to your new branch.
+    - You can use a branch prefix like `add/`, `update/`, `try/` or `fix/` that represents the type of work you're doing. Avoid using the `renovate/` prefix in your branch name (it is used by the [Renovate Bot](https://renovatebot.com/) that automatically updates our NPM dependencies and your `renovate/*` branch will confuse the bot).
     - Push your changes out frequently and try to avoid getting stuck in a long-running branch or a merge nightmare. Smaller changes are much easier to review and to deal with potential conflicts.
     - Follow the [merge checklist](../docs/merge-checklist.md) before pushing. This ensures that your code follows the style guidelines and doesn’t accidentally introduce any errors or regressions.
     - Note that you can automate some of these tasks by setting up [githooks](../docs/coding-guidelines/javascript.md#setting-up-githooks) and they will run whenever you `git commit`.

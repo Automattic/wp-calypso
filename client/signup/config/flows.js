@@ -11,7 +11,6 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
 import { generateFlows } from 'signup/config/flows-pure';
 
 const user = userFactory();
@@ -58,11 +57,16 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
+function getChecklistThemeDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getThankYouNoSiteDestination,
+	getChecklistThemeDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -83,12 +87,14 @@ function filterDestination( destination, dependencies ) {
 	return destination;
 }
 
+function getDefaultFlowName() {
+	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+}
+
 const Flows = {
 	filterDestination,
 
-	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
-		? abtest( 'improvedOnboarding' )
-		: 'main',
+	defaultFlowName: getDefaultFlowName(),
 	excludedSteps: [],
 
 	/**
@@ -152,6 +158,10 @@ const Flows = {
 		return assign( {}, flow, {
 			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
 		} );
+	},
+
+	resetExcludedSteps() {
+		Flows.excludedSteps = [];
 	},
 
 	getFlows() {

@@ -1,3 +1,13 @@
+.current-plan__dialog.dialog__backdrop {
+	background-color: rgba( var( --color-neutral-dark-rgb ), 0.85 );
+	box-shadow: none;
+	margin: 0;
+	
+	.dialog__backdrop__content {
+		background-color: var( --color-surface );
+	}
+}
+
 .current-plan__header {
 	display: flex;
 	flex-flow: row wrap;

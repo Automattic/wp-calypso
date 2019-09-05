@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -59,7 +57,10 @@ class SecondaryCart extends Component {
 	componentDidUpdate( prevProps, prevState ) {
 		if ( ! prevState.cartVisible && this.state.cartVisible ) {
 			const node = ReactDom.findDOMNode( this.cartBodyRef );
-			scrollIntoViewport( node );
+			scrollIntoViewport( node, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
 		}
 	}
 

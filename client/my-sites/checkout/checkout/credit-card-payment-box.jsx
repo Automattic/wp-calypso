@@ -83,6 +83,8 @@ class CreditCardPaymentBox extends React.Component {
 		onSubmit: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 		stripe: PropTypes.object,
+		isStripeLoading: PropTypes.bool,
+		stripeLoadingError: PropTypes.object,
 		stripeConfiguration: PropTypes.object,
 	};
 
@@ -186,7 +188,17 @@ class CreditCardPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart, cards, countriesList, initialCard, transaction, stripe, translate } = this.props;
+		const {
+			cart,
+			cards,
+			countriesList,
+			initialCard,
+			transaction,
+			stripe,
+			isStripeLoading,
+			stripeLoadingError,
+			translate,
+		} = this.props;
 
 		return (
 			<React.Fragment>
@@ -197,6 +209,8 @@ class CreditCardPaymentBox extends React.Component {
 						initialCard={ initialCard }
 						transaction={ transaction }
 						stripe={ stripe }
+						isStripeLoading={ isStripeLoading }
+						stripeLoadingError={ stripeLoadingError }
 						translate={ translate }
 					/>
 

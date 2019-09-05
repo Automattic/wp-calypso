@@ -67,6 +67,29 @@
 		}
 	}
 
+	.get-apps__magic-link-subpanel {
+
+		margin-top: 64px;
+
+		.get-apps__link-button-wrapper {
+
+			@include breakpoint('>480px') {
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				align-items: center;
+			}
+
+			@include breakpoint('<480px') {
+
+				.get-apps__magic-link-button {
+					width: 100%;
+				}
+			}
+		}
+
+	}
+
 	.get-apps__sms-subpanel {
 
 		// This is a hack to allow us to use a feature flag to hide this subpanel

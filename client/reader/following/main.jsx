@@ -19,7 +19,6 @@ import { recordTrack } from 'reader/stats';
 import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
-import config from 'config';
 import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
@@ -60,9 +59,7 @@ const FollowingStream = props => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ config.isEnabled( 'reader/following-intro' ) && ! showRegistrationMsg && (
-				<FollowingIntro />
-			) }
+			{ ! showRegistrationMsg && <FollowingIntro /> }
 			{ showRegistrationMsg && (
 				<Banner
 					className="following__reader-vote"

@@ -19,11 +19,14 @@
 .action-panel__body {
 	font-size: 14px;
 	line-height: 20px;
-	color: var( --color-neutral-400 );
+	color: var( --color-text-subtle );
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 
 	p {
 		margin-bottom: 20px;
+		flex-grow: 1;
 	}
 }
 

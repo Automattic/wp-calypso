@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import productListSchema from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
@@ -43,7 +40,7 @@ function addOrEditProduct( list = [], newProduct ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ SIMPLE_PAYMENTS_PRODUCT_RECEIVE ]: ( state, { siteId, product } ) => ( {

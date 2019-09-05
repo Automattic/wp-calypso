@@ -293,15 +293,6 @@ const sections = [
 		group: 'editor',
 		secondary: true,
 	},
-
-	{
-		name: 'account-recovery',
-		paths: [ '/account-recovery' ],
-		module: 'account-recovery',
-		secondary: false,
-		enableLoggedOut: true,
-	},
-
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
@@ -464,6 +455,13 @@ const sections = [
 		module: 'devdocs',
 		secondary: false,
 		enableLoggedOut: true,
+	},
+	{
+		name: 'home',
+		paths: [ '/home' ],
+		module: 'my-sites/customer-home',
+		secondary: true,
+		group: 'sites',
 	},
 ];
 

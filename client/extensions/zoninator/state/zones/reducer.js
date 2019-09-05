@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	ZONINATOR_REQUEST_ERROR,
@@ -22,7 +19,7 @@ export const requesting = createReducer(
 	}
 );
 
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ ZONINATOR_UPDATE_ZONES ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),

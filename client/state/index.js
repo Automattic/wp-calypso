@@ -80,7 +80,7 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
-		isBrowser && window.devToolsExtension && window.devToolsExtension(),
+		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 	].filter( Boolean );
 
 	return createStore( reducer, initialState, compose( ...enhancers ) );

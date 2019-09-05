@@ -205,6 +205,9 @@ class RegisterDomainStep extends React.Component {
 				this.state.railcarId = this.getNewRailcarId();
 			}
 		}
+
+		this.state.filters = this.getInitialFiltersState();
+		this.state.lastFilters = this.getInitialFiltersState();
 	}
 
 	getState() {
@@ -730,8 +733,10 @@ class RegisterDomainStep extends React.Component {
 
 					const {
 						AVAILABLE,
+						AVAILABLE_PREMIUM,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
 						TRANSFERRABLE,
+						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 					} = domainAvailability;
 					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
@@ -750,7 +755,12 @@ class RegisterDomainStep extends React.Component {
 						} );
 					} else {
 						let site = get( result, 'other_site_domain', null );
-						if ( MAPPED_SAME_SITE_TRANSFERRABLE === status ) {
+						if (
+							includes(
+								[ MAPPED_SAME_SITE_TRANSFERRABLE, AVAILABLE_PREMIUM, TRANSFERRABLE_PREMIUM ],
+								status
+							)
+						) {
 							site = get( this.props, 'selectedSite.slug', null );
 						}
 						this.showAvailabilityErrorMessage( domain, status, {
@@ -1104,9 +1114,7 @@ class RegisterDomainStep extends React.Component {
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
 						} );
-					}
-
-					if ( trademarkClaimsNoticeInfo ) {
+					} else if ( trademarkClaimsNoticeInfo ) {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,

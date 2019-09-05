@@ -201,7 +201,7 @@
 		}
 
 		.login__divider {
-			margin: 30px auto;
+			margin: 10px auto;
 			text-transform: lowercase;
 
 			span {
@@ -248,6 +248,7 @@
 				@include breakpoint( '>660px' ) {
 					display: block;
 					position: initial;
+					margin-bottom: 30px;
 				}
 			}
 
@@ -315,7 +316,10 @@
 		.social-buttons__button {
 			border: 1px solid #cecfd1;
 			border-radius: 0;
-			margin-bottom: 40px;
+
+			&:last-of-type {
+				margin-bottom: 40px;
+			}
 		}
 
 		.translator-invite {
@@ -530,9 +534,20 @@
 	}
 
 	.login__form-action,
-	.login__social-buttons,
 	.magic-login__form-action {
 		text-align: center;
+	}
+
+	.login__social-buttons {
+		margin-top: 0;
+
+		@include breakpoint( '>660px' ) {
+			flex-direction: row;
+
+			button:not(:first-of-type) {
+				margin-top: 0;
+			}
+		}
 	}
 
 	.wp-login__main.main,

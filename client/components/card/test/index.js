@@ -57,10 +57,10 @@ describe( 'Card', () => {
 } );
 
 describe( 'CompactCard', () => {
-	// it should have a class of `is-compact`
-	test( 'should have `is-compact` class', () => {
+	// the inner `Card` should have a `compact` prop
+	test( 'should have `compact` prop', () => {
 		const compactCard = shallow( <CompactCard /> );
-		expect( compactCard.find( '.is-compact' ) ).toHaveLength( 1 );
+		expect( compactCard.prop( 'compact' ) ).toBe( true );
 		expect( compactCard ).toMatchSnapshot();
 	} );
 

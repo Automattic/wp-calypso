@@ -158,9 +158,13 @@
 		font-weight: 600;
 		color: var( --color-neutral-500 );
 		display: block;
-		width: 50%;
+		width: 65%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		background: var( --color-neutral-0 );
 		border-radius: 16px;
 		cursor: default;
+		padding: 0 6px;
 	}
 }

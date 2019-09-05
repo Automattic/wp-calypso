@@ -518,7 +518,7 @@ $plan-features-sidebar-width: 272px;
 
 // This is used for the monthly/yearly billing
 // which is currently us in the Jetpack flow.
-.price-toggle {
+.segmented-control.price-toggle {
 	width: 250px;
 	margin: 0 auto 20px;
 
@@ -1071,5 +1071,11 @@ button.plan-features__scroll-button {
 
 	&.is-highlighted {
 		opacity: 1;
+	}
+}
+
+@include breakpoint( '<480px' ) {
+	.plan-features__upgrade-launch-dialog .dialog__content p {
+		padding: 0 20px;
 	}
 }

@@ -16,6 +16,10 @@ import Gridicon from 'gridicons';
  */
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
+import wpcom from 'lib/wp';
+import Dialog from 'components/dialog'
+import { fetchUserSettings } from 'state/user-settings/actions';
+import getUserSettings from 'state/selectors/get-user-settings';
 
 /**
  * Style dependencies
@@ -74,6 +78,7 @@ export class AppPromo extends React.Component {
 		this.state = {
 			promoItem,
 			showPromo: true,
+			showDialog: false,
 		};
 	}
 
@@ -100,13 +105,31 @@ export class AppPromo extends React.Component {
 		} );
 	};
 
-	render() {
-		if ( ! this.state.showPromo ) {
-			return null;
-		}
+	sendMagicLink = () => {
+		this.recordClickEvent()
 
+		const email = this.props.userSettings.user_email;
+		wpcom.undocumented().requestMagicLoginEmail( {
+			email,
+			'infer': true,
+			'scheme': 'wordpress',
+		} )
+		
+		this.onShowDialog();
+
+		return false;
+	};
+
+	onShowDialog = () => {
+		this.setState( { showDialog: true } );
+	};
+
+	onCloseDialog = () => {
+		this.setState( { showDialog: false } );
+	};
+	
+	desktopPromo = ( promoItem ) => {
 		const { location, translate } = this.props;
-		const { promoItem } = this.state;
 
 		return (
 			<div className="app-promo">
@@ -136,7 +159,53 @@ export class AppPromo extends React.Component {
 					{ promoItem.message }
 				</a>
 			</div>
-		);
+		)
+	}
+	
+	mobilePromo = () => {
+		const { translate } = this.props;
+		const buttons = [
+			{ action: 'cancel', label: translate( 'OK' ) },
+		];
+
+		return (
+			<div className="app-promo">
+				<button
+					tabIndex="0"
+					className="app-promo__dismiss"
+					onClick={ this.dismiss }
+					aria-label={ translate( 'Dismiss' ) }
+				>
+					<Gridicon icon="cross" size={ 24 } />
+				</button>
+				<button
+					onClick={ this.sendMagicLink }
+					className="app-promo__link"
+					title="Try the mobile app!"
+				>
+					<img
+						className="app-promo__icon"
+						src="/calypso/images/reader/promo-app-icon.png"
+						width="32"
+						height="32"
+						alt="WordPress Desktop Icon"
+					/>
+					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
+				</button>
+				<Dialog className="app-promo__dialog" isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
+					<h1>{ translate( 'Check your mail!' ) }</h1>
+					<p>{ translate( "We've sent you an email with links to download and effortlessly log in to the mobile app. Be sure to use them from your mobile device!" ) }</p>
+				</Dialog>
+			</div>
+		)
+	}
+
+	render() {
+		if ( ! this.state.showPromo ) {
+			return null;
+		}
+		const { promoItem } = this.state;
+		return ( promoItem.type === 'mobile' ) ? this.mobilePromo() : this.desktopPromo( promoItem );
 	}
 }
 
@@ -148,6 +217,8 @@ AppPromo.defaultProps = {
 };
 
 export default connect(
-	null,
-	{ recordTracksEvent }
+	state => ( {
+		userSettings: getUserSettings( state ),
+	} ),
+	{ fetchUserSettings, recordTracksEvent }
 )( localize( AppPromo ) );

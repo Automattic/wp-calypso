@@ -391,8 +391,8 @@ PlanFeaturesHeader.defaultProps = {
 	siteSlug: '',
 };
 
-export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) => {
-	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
+	const selectedSiteId = getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! relatedMonthlyPlan;
 

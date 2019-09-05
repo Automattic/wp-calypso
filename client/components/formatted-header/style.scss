@@ -33,6 +33,6 @@
 
 	@include breakpoint( '<480px' ) {
 		margin: 0;
-		padding: 0 20px 24px 0;
+		padding: 0 20px 24px;
 	}
 }

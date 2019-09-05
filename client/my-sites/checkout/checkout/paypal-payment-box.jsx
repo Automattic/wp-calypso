@@ -137,7 +137,7 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart } = this.props;
+		const { cart, translate } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
@@ -151,7 +151,7 @@ export class PaypalPaymentBox extends React.Component {
 							<PaymentCountrySelect
 								additionalClasses="checkout-field"
 								name="country"
-								label={ this.props.translate( 'Country', { textOnly: true } ) }
+								label={ translate( 'Country', { textOnly: true } ) }
 								countriesList={ this.props.countriesList }
 								onCountrySelected={ this.updateLocalStateWithFieldValue }
 								disabled={ this.state.formDisabled }
@@ -160,7 +160,7 @@ export class PaypalPaymentBox extends React.Component {
 							<Input
 								additionalClasses="checkout-field"
 								name="postal-code"
-								label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
+								label={ translate( 'Postal Code', { textOnly: true } ) }
 								value={ getTaxPostalCode( cart ) || '' }
 								onChange={ this.handlePostalCodeChange }
 								disabled={ this.state.formDisabled }
@@ -191,7 +191,7 @@ export class PaypalPaymentBox extends React.Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ this.props.translate( 'Secure Payment' ) }
+									{ translate( 'Secure Payment' ) }
 								</div>
 							</div>
 

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,6 @@ import {
 	indexOf,
 	isEqual,
 	kebabCase,
-	last,
 	map,
 	pick,
 	startsWith,
@@ -40,6 +38,7 @@ import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 // Libraries
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
@@ -58,7 +57,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { removeUnneededSteps, submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -76,7 +75,6 @@ import {
 	canResumeFlow,
 	getCompletedSteps,
 	getDestination,
-	getFilteredSteps,
 	getFirstInvalidStep,
 	getStepUrl,
 	persistSignupDestination,
@@ -97,13 +95,8 @@ function dependenciesContainCartItem( dependencies ) {
 }
 
 class Signup extends React.Component {
-	static displayName = 'Signup';
-
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	static propTypes = {
+		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
@@ -122,16 +115,12 @@ class Signup extends React.Component {
 		shouldShowMockups: PropTypes.bool,
 	};
 
-	constructor( props, context ) {
-		super( props, context );
-
-		this.state = {
-			controllerHasReset: false,
-			shouldShowLoadingScreen: false,
-			resumingStep: undefined,
-			previousFlowName: null,
-		};
-	}
+	state = {
+		controllerHasReset: false,
+		shouldShowLoadingScreen: false,
+		resumingStep: undefined,
+		previousFlowName: null,
+	};
 
 	UNSAFE_componentWillMount() {
 		// Signup updates the cart through `SignupCart`. To prevent
@@ -153,7 +142,7 @@ class Signup extends React.Component {
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
-			reduxStore: this.context.store,
+			reduxStore: this.props.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
@@ -162,19 +151,22 @@ class Signup extends React.Component {
 		this.updateShouldShowLoadingScreen();
 
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
-			// Resume progress if possible
-			return this.resumeProgress();
+			// Resume from the current window location
+			return;
 		}
 
 		if ( this.getPositionInFlow() !== 0 ) {
-			// Flow is not resumable; redirect to the beginning of the flow
-			return page.redirect(
-				getStepUrl(
-					this.props.flowName,
-					flows.getFlow( this.props.flowName ).steps[ 0 ],
-					this.props.locale
-				)
-			);
+			// Flow is not resumable; redirect to the beginning of the flow.
+			// Set `resumingStep` to prevent flash of incorrect step before the redirect.
+			const destinationStep = flows.getFlow( this.props.flowName ).steps[ 0 ];
+			this.setState( { resumingStep: destinationStep } );
+			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
+		}
+
+		if ( 'remove' === abtest( 'removeBlogFlow' ) && 'blog' === this.props.flowName ) {
+			const destinationStep = flows.getFlow( 'onboarding' ).steps[ 0 ];
+			this.setState( { resumingStep: destinationStep } );
+			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
 		}
 
 		this.recordStep();
@@ -214,6 +206,25 @@ class Signup extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const { flowName, stepName } = this.props;
+		const positionInFlowPrev = indexOf( flows.getFlow( flowName ).steps, prevProps.stepName );
+
+		// TODO: Here we're tracking the impact of a bug that renders a blank screen. Remove when this bug is fixed.
+		if (
+			prevProps.flowName &&
+			prevProps.flowName !== flowName && // Specifically tracking flow forking bug.
+			! ( positionInFlowPrev > 0 && prevProps.progress.length === 0 ) &&
+			this.getPositionInFlow() > 0 &&
+			this.props.progress.length === 0
+		) {
+			analytics.tracks.recordEvent( 'calypso_signup_error_forked_flow_null_render', {
+				flow: flowName,
+				step: stepName,
+				previous_flow: prevProps.flowName,
+				previous_step: prevProps.stepName,
+			} );
+		}
+
 		if (
 			get( this.props.signupDependencies, 'siteType' ) !==
 			get( prevProps.signupDependencies, 'siteType' )
@@ -400,28 +411,6 @@ class Signup extends React.Component {
 		return redirectTo + path;
 	};
 
-	firstUnsubmittedStepName = () => {
-		const currentSteps = flows.getFlow( this.props.flowName ).steps,
-			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
-			nextStepName = currentSteps[ signupProgress.length ],
-			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
-			firstInProgressStepName = firstInProgressStep.stepName;
-
-		return firstInProgressStepName || nextStepName || last( currentSteps );
-	};
-
-	resumeProgress() {
-		const firstUnsubmittedStep = this.firstUnsubmittedStepName();
-		const stepSectionName = firstUnsubmittedStep.stepSectionName;
-
-		// set `resumingStep` so we don't render/animate anything until we have mounted this step
-		this.setState( { firstUnsubmittedStep } );
-
-		return page.redirect(
-			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
-		);
-	}
-
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
@@ -456,14 +445,13 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName ).steps,
-			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
-			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
-			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
+		const flowSteps = flows.getFlow( nextFlowName ).steps;
+		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const nextStepName = flowSteps[ currentStepIndex + 1 ];
+		const nextProgressItem = get( this.props.progress, nextStepName );
+		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
-			this.props.removeUnneededSteps( nextFlowName );
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
@@ -541,7 +529,6 @@ class Signup extends React.Component {
 								goToStep={ this.goToStep }
 								previousFlowName={ this.state.previousFlowName }
 								flowName={ this.props.flowName }
-								signupProgress={ this.props.progress }
 								signupDependencies={ this.props.signupDependencies }
 								stepSectionName={ this.props.stepSectionName }
 								positionInFlow={ this.getPositionInFlow() }
@@ -577,6 +564,7 @@ class Signup extends React.Component {
 	}
 
 	render() {
+		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
 			! this.props.stepName ||
 			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
@@ -645,6 +633,5 @@ export default connect(
 		submitSiteVertical,
 		submitSignupStep,
 		loadTrackingTool,
-		removeUnneededSteps,
 	}
 )( Signup );

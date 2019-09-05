@@ -1,27 +1,43 @@
 /**
  * External dependencies
  */
-import { has, isEmpty, keyBy, map } from 'lodash';
-import { __ } from '@wordpress/i18n';
+import { isEmpty, reduce } from 'lodash';
+import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Modal } from '@wordpress/components';
+import { Button, Modal, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { parse as parseBlocks } from '@wordpress/blocks';
 import { Component } from '@wordpress/element';
+import ensureAssets from './utils/ensure-assets';
 import '@wordpress/nux';
 
 /**
  * Internal dependencies
  */
-import replacePlaceholders from './utils/replace-placeholders';
 import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
+import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
+import { parse as parseBlocks } from '@wordpress/blocks';
+import replacePlaceholders from './utils/replace-placeholders';
+
+// Load config passed from backend.
+const {
+	templates = [],
+	vertical,
+	segment,
+	tracksUserData,
+	siteInformation = {},
+} = window.starterPageTemplatesConfig;
 
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
+		slug: '',
+		title: '',
+		blocks: {},
+		error: null,
+		isOpen: false,
 	};
 
 	constructor( props ) {
@@ -33,33 +49,102 @@ class PageTemplateModal extends Component {
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
+
+		// Parse templates blocks and store them into the state.
+		const blocks = reduce(
+			templates,
+			( prev, { slug, content } ) => {
+				prev[ slug ] = content
+					? parseBlocks( replacePlaceholders( content, siteInformation ) )
+					: [];
+				return prev;
+			},
+			{}
+		);
+
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { blocks } );
 	}
 
-	selectTemplate = newTemplate => {
+	setBeforeInsertTemplate = ( slug, title, blocks ) => {
+		this.props.saveTemplateChoice( slug );
+		this.props.insertTemplate( title, blocks );
 		this.setState( { isOpen: false } );
-		trackSelection( this.props.segment.id, this.props.vertical.id, newTemplate );
+	};
 
-		const template = this.props.templates[ newTemplate ];
-		this.props.saveTemplateChoice( template );
+	setTemplate = ( slug, title ) => {
+		this.setState( {
+			error: null,
+			isLoading: true,
+		} );
+
+		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
+
+		const blocks = this.state.blocks[ slug ];
+
+		// Do not prefetch for `blank` template.
+		if ( 'blank' === slug ) {
+			return this.setBeforeInsertTemplate( slug, title, blocks );
+		}
 
 		// Skip inserting if there's nothing to insert.
-		if ( ! has( template, 'content' ) ) {
+		if ( ! blocks || ! blocks.length ) {
 			return;
 		}
 
-		const processedTemplate = {
-			...template,
-			title: replacePlaceholders( template.title, this.props.siteInformation ),
-			content: replacePlaceholders( template.content, this.props.siteInformation ),
-		};
+		// Make sure all blocks use local assets before inserting.
+		this.maybePrefetchAssets( blocks )
+			.then( blocksWithAssets => {
+				// Don't insert anything if the user clicked Cancel/Close
+				// before we loaded everything.
+				if ( ! this.state.isOpen ) {
+					return;
+				}
 
-		this.props.insertTemplate( processedTemplate );
+				this.setBeforeInsertTemplate( slug, title, blocksWithAssets );
+			} )
+			.catch( error => {
+				this.setState( {
+					isLoading: false,
+					error,
+				} );
+			} );
 	};
 
-	closeModal = () => {
+	maybePrefetchAssets = blocks => {
+		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
+	};
+
+	handleConfirmation = () => this.setTemplate( this.state.slug, this.state.title );
+
+	previewTemplate = ( slug, title ) => {
+		this.setState( { slug, title } );
+		if ( slug === 'blank' ) {
+			this.setTemplate( slug, title );
+		}
+	};
+
+	closeModal = event => {
+		// Check to see if the Blur event occurred on the buttons inside of the Modal.
+		// If it did then we don't want to dismiss the Modal for this type of Blur.
+		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
+			return false;
+		}
 		this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
+
+	getBlocksByTemplateSlug( slug = this.state.slug ) {
+		if ( ! slug ) {
+			return [];
+		}
+
+		if ( ! this.state.blocks.hasOwnProperty( slug ) ) {
+			return [];
+		}
+
+		return this.state.blocks[ slug ];
+	}
 
 	render() {
 		if ( ! this.state.isOpen ) {
@@ -74,20 +159,45 @@ class PageTemplateModal extends Component {
 				overlayClassName="page-template-modal-screen-overlay"
 			>
 				<div className="page-template-modal__inner">
-					<form className="page-template-modal__form">
-						<fieldset className="page-template-modal__list">
-							<TemplateSelectorControl
-								label={ __( 'Template', 'full-site-editing' ) }
-								templates={ map( this.props.templates, template => ( {
-									label: template.title,
-									value: template.slug,
-									preview: template.preview,
-									previewAlt: template.description,
-								} ) ) }
-								onClick={ newTemplate => this.selectTemplate( newTemplate ) }
+					{ this.state.isLoading ? (
+						<div className="page-template-modal__loading">
+							<Spinner />
+							{ __( 'Inserting template…', 'full-site-editing' ) }
+						</div>
+					) : (
+						<>
+							<form className="page-template-modal__form">
+								<fieldset className="page-template-modal__list">
+									<TemplateSelectorControl
+										label={ __( 'Template', 'full-site-editing' ) }
+										templates={ this.props.templates }
+										blocksByTemplates={ this.state.blocks }
+										onTemplateSelect={ this.previewTemplate }
+										useDynamicPreview={ false }
+										siteInformation={ siteInformation }
+									/>
+								</fieldset>
+							</form>
+							<TemplateSelectorPreview
+								blocks={ this.getBlocksByTemplateSlug() }
+								viewportWidth={ 960 }
+								title={ this.state.title }
 							/>
-						</fieldset>
-					</form>
+						</>
+					) }
+				</div>
+				<div className="page-template-modal__buttons">
+					<Button isDefault isLarge onClick={ this.closeModal }>
+						{ __( 'Cancel', 'full-site-editing' ) }
+					</Button>
+					<Button
+						isPrimary
+						isLarge
+						disabled={ isEmpty( this.state.slug ) || this.state.isLoading }
+						onClick={ this.handleConfirmation }
+					>
+						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
+					</Button>
 				</div>
 			</Modal>
 		);
@@ -107,25 +217,22 @@ const PageTemplatesPlugin = compose(
 
 		const editorDispatcher = dispatch( 'core/editor' );
 		return {
-			saveTemplateChoice: template => {
+			saveTemplateChoice: slug => {
 				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();
 				editorDispatcher.editPost( {
 					meta: {
 						...currentMeta,
-						_starter_page_template: template.slug,
+						_starter_page_template: slug,
 					},
 				} );
 			},
-			insertTemplate: template => {
+			insertTemplate: ( title, blocks ) => {
 				// Set post title.
-				editorDispatcher.editPost( {
-					title: template.title,
-				} );
+				editorDispatcher.editPost( { title } );
 
 				// Insert blocks.
 				const postContentBlock = ownProps.postContentBlock;
-				const blocks = parseBlocks( template.content );
 				editorDispatcher.insertBlocks(
 					blocks,
 					0,
@@ -137,27 +244,18 @@ const PageTemplatesPlugin = compose(
 	} )
 )( PageTemplateModal );
 
-// Load config passed from backend.
-const {
-	siteInformation = {},
-	templates = [],
-	vertical,
-	segment,
-	tracksUserData,
-} = window.starterPageTemplatesConfig;
-
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
 registerPlugin( 'page-templates', {
-	render: function() {
+	render: () => {
 		return (
 			<PageTemplatesPlugin
-				templates={ keyBy( templates, 'slug' ) }
+				shouldPrefetchAssets={ false }
+				templates={ templates }
 				vertical={ vertical }
 				segment={ segment }
-				siteInformation={ siteInformation }
 			/>
 		);
 	},

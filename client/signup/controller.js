@@ -23,12 +23,14 @@ import {
 	getStepSectionName,
 	getValidPath,
 	getFlowPageTitle,
+	shouldForceLogin,
 } from './utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
 import { setCurrentFlowName } from 'state/signup/flow/actions';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
+import { login } from 'lib/paths';
 
 /**
  * Constants
@@ -85,6 +87,10 @@ export default {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const signupProgress = getSignupProgress( context.store.getState() );
 
+		if ( ! userLoggedIn && shouldForceLogin( flowName ) ) {
+			return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
+		}
+
 		// if flow can be resumed, use saved locale
 		if (
 			! userLoggedIn &&
@@ -136,6 +142,7 @@ export default {
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
 		context.primary = React.createElement( SignupComponent, {
+			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: getLocale( context.params ),

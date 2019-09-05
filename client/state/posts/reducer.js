@@ -1,5 +1,4 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
@@ -21,7 +20,7 @@ import {
  * Internal dependencies
  */
 import PostQueryManager from 'lib/query-manager/post';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import {
 	EDITOR_SAVE,
 	EDITOR_START,
@@ -69,7 +68,7 @@ import { getFeaturedImageId } from 'state/posts/utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ POSTS_RECEIVE ]: ( state, action ) => {
@@ -192,7 +191,7 @@ export const queries = ( () => {
 		};
 	}
 
-	return createReducer(
+	return createReducerWithValidation(
 		{},
 		{
 			[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
@@ -323,7 +322,7 @@ export const allSitesQueries = ( () => {
 		);
 	}
 
-	return createReducer(
+	return createReducerWithValidation(
 		new PostQueryManager( {}, { itemKey: 'global_ID' } ),
 		{
 			[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {

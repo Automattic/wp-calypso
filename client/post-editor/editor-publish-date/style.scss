@@ -1,4 +1,6 @@
-@import 'components/select-dropdown/style';
+// copied from select-dropdown styles
+$option-height: 40;
+$side-margin: 16;
 
 .editor-publish-date {
 	height: 43px;

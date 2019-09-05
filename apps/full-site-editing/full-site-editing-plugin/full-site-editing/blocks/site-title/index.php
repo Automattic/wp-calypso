@@ -2,8 +2,10 @@
 /**
  * Render site title block.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Renders the site title and allows for editing in the full site editor.

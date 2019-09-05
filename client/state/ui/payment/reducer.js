@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { find, get, has } from 'lodash';
  * Internal dependencies
  */
 import { PAYMENT_COUNTRY_CODE_SET, PAYMENT_POSTAL_CODE_SET } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { paymentCountryCodeSchema, paymentPostalCodeSchema } from './schema';
 
 /**
@@ -32,7 +30,7 @@ export const extractStoredCardMetaValue = ( action, meta_key ) =>
  * @param  {Object} action - The action object containing the new country code.
  * @return {Object} - The updated global state.
  */
-export const countryCode = createReducer(
+export const countryCode = createReducerWithValidation(
 	null,
 	{
 		[ PAYMENT_COUNTRY_CODE_SET ]: ( state, action ) => action.countryCode,
@@ -59,7 +57,7 @@ export const countryCode = createReducer(
  * @param  {Object} action - The action object containing the new postalCode.
  * @return {Object} - The updated global state.
  */
-export const postalCode = createReducer(
+export const postalCode = createReducerWithValidation(
 	null,
 	{
 		[ PAYMENT_POSTAL_CODE_SET ]: ( state, action ) => action.postalCode,

@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
@@ -512,20 +512,36 @@ class TransferDomainStep extends React.Component {
 								supportsPrivacy: get( result, 'supports_privacy', false ),
 							} );
 							break;
-						case domainAvailability.MAPPABLE:
-						case domainAvailability.TLD_NOT_SUPPORTED:
-						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY: {
+						case domainAvailability.TLD_NOT_SUPPORTED: {
 							const tld = getTld( domain );
 
 							this.setState( {
 								notice: this.props.translate(
-									'Domain transfers are temporarily disabled until %(transferEnableDate)s, ' +
-										'but you can {{a}}map your domain{{/a}} instead.',
+									"This domain is available to be registered, but we don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. " +
+										'If you register it elsewhere, you can {{a}}map it{{/a}} instead.',
 									{
-										args: {
-											tld: tld,
-											transferEnableDate: moment( '2019-07-30T08:00:00' ).format( 'LL' ),
+										args: { tld },
+										components: {
+											strong: <strong />,
+											a: <a href="#" onClick={ this.goToMapDomainStep } />, // eslint-disable-line jsx-a11y/anchor-is-valid
 										},
+									}
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
+						}
+						case domainAvailability.MAPPABLE:
+						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
+						case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: {
+							const tld = getTld( domain );
+
+							this.setState( {
+								notice: this.props.translate(
+									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+										'but you can {{a}}map it{{/a}} instead.',
+									{
+										args: { tld },
 										components: {
 											strong: <strong />,
 											a: <a href="#" onClick={ this.goToMapDomainStep } />, // eslint-disable-line jsx-a11y/anchor-is-valid

@@ -30,6 +30,10 @@ import {
 } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import { setPayment, submitTransaction } from 'lib/upgrades/actions';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
+import isPrivateSite from 'state/selectors/is-private-site';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isPaidForFullyInCredits,
 	isFree,
@@ -51,7 +55,9 @@ import {
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
-import { isE2ETest } from 'lib/e2e';
+import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -94,8 +100,7 @@ export class SecurePaymentForm extends Component {
 
 		if (
 			this.props.cart &&
-			this.props.cart.allowed_payment_methods.includes( 'WPCOM_Billing_Stripe_Payment_Method' ) &&
-			! isE2ETest()
+			this.props.cart.allowed_payment_methods.includes( 'WPCOM_Billing_Stripe_Payment_Method' )
 		) {
 			this.shouldUseStripeElements = true;
 		}
@@ -183,7 +188,7 @@ export class SecurePaymentForm extends Component {
 		} );
 	};
 
-	submitTransaction( event ) {
+	async submitTransaction( event ) {
 		event && event.preventDefault();
 
 		const params = pick( this.props, [ 'cart', 'transaction' ] );
@@ -198,7 +203,48 @@ export class SecurePaymentForm extends Component {
 			params.cancelUrl += 'no-site';
 		}
 
+		const cardDetailsCountry = get( params.transaction, 'payment.newCardDetails.country', null );
+		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
+			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
+		}
+
+		try {
+			await this.maybeSetSiteToPublic( { cart: params.cart } );
+		} catch ( e ) {
+			debug( 'Error setting site to public', e );
+			displayError();
+			return;
+		}
+
 		submitTransaction( params );
+	}
+
+	async maybeSetSiteToPublic( { cart } ) {
+		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
+
+		if ( isJetpack || ! siteIsPrivate ) {
+			return;
+		}
+
+		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
+			return (
+				planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
+				planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
+			);
+		} );
+
+		if ( ! forcedAtomicProducts.length ) {
+			return;
+		}
+
+		// Until Atomic sites support being private / unlaunched, set them to public on upgrade
+		debug( 'Setting site to public because it is an Atomic plan' );
+		const response = await this.props.saveSiteSettings( selectedSiteId, {
+			blog_public: 1,
+		} );
+		if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
+			throw 'Invalid response';
+		}
 	}
 
 	handleTransactionStep( { cart, selectedSite, transaction } ) {
@@ -255,8 +301,9 @@ export class SecurePaymentForm extends Component {
 			case RECEIVED_AUTHORIZATION_RESPONSE:
 			case RECEIVED_WPCOM_RESPONSE:
 				if ( step.error ) {
+					debug( 'authorization error', step.error );
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.error,
+						error_code: step.error.code || step.error.error,
 						reason: this.formatError( step.error ),
 					} );
 
@@ -343,6 +390,14 @@ export class SecurePaymentForm extends Component {
 
 		if ( error.error ) {
 			formatedMessage = error.error + ': ' + formatedMessage;
+		}
+
+		if ( error.decline_code ) {
+			formatedMessage = error.decline_code + ': ' + formatedMessage;
+		}
+
+		if ( error.code ) {
+			formatedMessage = error.code + ': ' + formatedMessage;
 		}
 
 		return formatedMessage;
@@ -614,6 +669,7 @@ export class SecurePaymentForm extends Component {
 
 	render() {
 		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
+
 		if ( visiblePaymentBox === null ) {
 			debug( 'empty content' );
 			return (
@@ -639,10 +695,15 @@ export class SecurePaymentForm extends Component {
 
 export default connect(
 	state => {
+		const selectedSiteId = getSelectedSiteId( state );
+
 		return {
 			countriesList: getCountries( state, 'payments' ),
+			isJetpack: isJetpackSite( state, selectedSiteId ),
 			presaleChatAvailable: isPresalesChatAvailable( state ),
+			selectedSiteId,
+			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
 		};
 	},
-	null
+	{ saveSiteSettings }
 )( localize( SecurePaymentForm ) );

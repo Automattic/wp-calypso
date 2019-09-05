@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import React, { Component } from 'react';
@@ -14,7 +11,7 @@ import { connect } from 'react-redux';
  */
 import SpinnerButton from 'components/spinner-button';
 import FoldableCard from 'components/foldable-card';
-import Interval, { EVERY_SECOND } from 'lib/interval';
+import { Interval, EVERY_SECOND } from 'lib/interval';
 import AdvancedSettings from './advanced-settings';
 import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import {

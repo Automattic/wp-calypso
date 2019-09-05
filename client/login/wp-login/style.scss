@@ -153,11 +153,11 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ) {
+.layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow {
+.layout.is-jetpack-woocommerce-flow, .layout.is-wccom-oauth-flow {
 	@include woocommerce-colors();
 }
 
@@ -220,7 +220,8 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-woocommerce-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
 	background-color: var( --color-woocommerce-onboarding-background );
 
 	.wp-login__links {
@@ -230,14 +231,14 @@ $image-height: 47px;
 	.wp-login__links a {
 		border-bottom: none;
 		line-height: 3.4em;
-		color: var( --color-gray-600 );
+		color: #50575e; // $studio-gray-60;
 		font-size: 14px;
 		text-decoration: underline;
 		font-weight: normal;
 	}
 
 	.login__form-header {
-		color: var( --color-gray-800 );
+		color: #2c3338; // $studio-gray-80;
 	}
 
 	.wp-login__main.main {
@@ -246,6 +247,8 @@ $image-height: 47px;
 
 	.login__form {
 		@include elevation ( 2dp );
+		padding-bottom: 0;
+		padding-top: 8px;
 	}
 
 	.login__form input:focus,
@@ -255,14 +258,14 @@ $image-height: 47px;
 	}
 
 	.login__form-change-username {
-		color: var( --color-gray-600 );
+		color: #50575e; // $studio-gray-60;
 	}
 
 	.login__form-terms,
 	.login__form-terms a,
 	.login__form-terms a:hover {
 		text-align: left;
-		color: var( --color-gray-600 );
+		color: #50575e; // $studio-gray-60;
 		font-size: 12px;
 	}
 
@@ -278,29 +281,32 @@ $image-height: 47px;
 	.login__social {
 		box-shadow: none;
 		padding-top: 0;
+		margin-right: auto;
+		margin-left: auto;
+		width: 300px;
 	}
 
 	.login__social-buttons {
 		.social-buttons__button {
-			border: 1px solid $muriel-woo-purple-500;
-			color: $muriel-woo-purple-500;
+			border: 1px solid #c9356e; // $studio-pink;
+			color: #c9356e; // $studio-pink
 			box-shadow: none;
 		}
 	}
 
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
-		border-color: var( --color-gray-200 );
+		border-color:  #a7aaad; // $studio-gray-20;
 
 		.text-control__label,
 		.components-base-control__label {
-			color: var( --color-gray-500 );
+			color: #646970; // $studio-gray-50;
 			font-size: 12px;
 			font-weight: normal;
 		}
 
 		&.active {
-			box-shadow: 0 0 0 2px var( --color-hot-purple-600 );
+			box-shadow: 0 0 0 2px #674399; // $studio-woocommerce-purple-60
 			border-color: transparent;
 		}
 	}

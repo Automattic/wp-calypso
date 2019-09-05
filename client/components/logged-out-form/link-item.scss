@@ -7,7 +7,7 @@
 	cursor: pointer;
 	text-decoration: underline;
 
-	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ) &,
+	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ):not( .is-wccom-oauth-flow ) &,
 	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout.gravatar & {
 		color: var( --color-white );
 

@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { includes, capitalize, get } from 'lodash';
+import { capitalize, findLast, get, includes, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
@@ -15,8 +14,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import config from 'config';
-import ErrorNotice from './error-notice';
-import LoginForm from './login-form';
 import {
 	getRedirectToSanitized,
 	getRequestNotice,
@@ -25,20 +22,27 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import { setResumeAfterLogin } from 'state/signup/progress/actions';
+import { getSignupProgress } from 'state/signup/progress/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import VerificationCodeForm from './two-factor-authentication/verification-code-form';
-import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
-import Notice from 'components/notice';
-import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
+import Notice from 'components/notice';
 import AsyncLoad from 'components/async-load';
 import VisitSite from 'blocks/visit-site';
+import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
+import ContinueAsUser from './continue-as-user';
+import ErrorNotice from './error-notice';
+import LoginForm from './login-form';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 
 /**
  * Style dependencies
@@ -136,16 +140,29 @@ class Login extends Component {
 		// Redirects to / if no redirect url is available
 		const url = redirectTo ? redirectTo : window.location.origin;
 
-		// user data is persisted in localstorage at `lib/user/user` line 157
-		// therefor we need to reset it before we redirect, otherwise we'll get
-		// mixed data from old and new user
-		user.clear( () => ( window.location.href = url ) );
+		// User data is persisted in localstorage at `lib/user/user` line 157.
+		// Only clear the data if a user is currently set, otherwise keep the
+		// logged out state around so that it can be used in signup.
+		if ( user.get() ) {
+			user.clear().then( () => {
+				window.location.href = url;
+			} );
+		} else {
+			if ( ! isEmpty( this.props.signupProgress ) ) {
+				const lastStep = findLast( this.props.signupProgress, step => step.stepName !== 'user' );
+				if ( lastStep ) {
+					this.props.setResumeAfterLogin( lastStep );
+				}
+			}
+			window.location.href = url;
+		}
 	};
 
 	renderHeader() {
 		const {
 			isJetpack,
 			isJetpackWooCommerceFlow,
+			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
 			oauth2Client,
@@ -154,6 +171,8 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
+			currentUser,
+			twoFactorEnabled,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -173,7 +192,7 @@ class Login extends Component {
 				},
 			} );
 		} else if ( privateSite ) {
-			headerText = translate( 'This is a private WordPress.com site.' );
+			headerText = translate( 'This is a private WordPress.com site' );
 		} else if ( oauth2Client ) {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
@@ -183,7 +202,7 @@ class Login extends Component {
 					"'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')",
 			} );
 
-			if ( isWooOAuth2Client( oauth2Client ) ) {
+			if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
 				postHeader = (
 					<p>
@@ -201,6 +220,40 @@ class Login extends Component {
 									br: <br />,
 								},
 							}
+						) }
+					</p>
+				);
+			}
+
+			if (
+				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+				isWooOAuth2Client( oauth2Client ) &&
+				wccomFrom
+			) {
+				preHeader = (
+					<Fragment>
+						{ 'cart' === wccomFrom ? (
+							<WooCommerceConnectCartHeader />
+						) : (
+							<div className="login__woocommerce-logo">
+								<div className={ classNames( 'connect-header' ) }>
+									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
+										<AsyncLoad
+											require="components/jetpack-header/woocommerce"
+											darkColorScheme={ false }
+											placeholder={ null }
+										/>
+									</svg>
+								</div>
+							</div>
+						) }
+					</Fragment>
+				);
+				headerText = translate( 'Log in with a WordPress.com account' );
+				postHeader = (
+					<p className="login__header-subtitle">
+						{ translate(
+							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
 						) }
 					</p>
 				);
@@ -252,6 +305,9 @@ class Login extends Component {
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
+		} else if ( currentUser && ! twoFactorEnabled ) {
+			// someone is already logged in, offer to proceed to the app without a new login
+			postHeader = <ContinueAsUser />;
 		}
 
 		return (
@@ -355,6 +411,7 @@ class Login extends Component {
 
 export default connect(
 	state => ( {
+		currentUser: getCurrentUser( state ),
 		redirectTo: getRedirectToSanitized( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
@@ -366,8 +423,11 @@ export default connect(
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+		signupProgress: getSignupProgress( state ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
 		recordTracksEvent,
+		setResumeAfterLogin,
 	}
 )( localize( Login ) );

@@ -32,6 +32,7 @@ import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
+import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
 import {
@@ -40,12 +41,12 @@ import {
 	getPlan,
 	getPopularPlanSpec,
 	isFreePlan,
+	isBloggerPlan,
 	planMatches,
 	plansLink,
 } from 'lib/plans';
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -146,9 +147,17 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+		const {
+			displayJetpackPlans,
+			intervalType,
+			selectedPlan,
+			hideFreePlan,
+			sitePlanSlug,
+		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
+
+		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
 
 		let term;
 		if ( intervalType === 'monthly' ) {
@@ -187,12 +196,12 @@ export class PlansFeaturesMain extends Component {
 		} else {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
+				hideBloggerPlan ? null : findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			];
+			].filter( el => el !== null );
 		}
 
 		if ( hideFreePlan ) {
@@ -287,19 +296,19 @@ export class PlansFeaturesMain extends Component {
 
 		return (
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
 					path={ this.constructPath( plansUrl, 'monthly' ) }
 				>
 					{ translate( 'Monthly billing' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ intervalType === 'yearly' }
 					path={ this.constructPath( plansUrl, 'yearly' ) }
 				>
 					{ translate( 'Yearly billing' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
@@ -313,19 +322,19 @@ export class PlansFeaturesMain extends Component {
 
 		return (
 			<SegmentedControl className={ segmentClasses } primary={ true }>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ customerType === 'personal' }
 					path={ addQueryArgs( { ...queryArgs, customerType: 'personal' }, '' ) }
 				>
 					{ translate( 'Blogs and Personal Sites' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ customerType === 'business' }
 					path={ addQueryArgs( { ...queryArgs, customerType: 'business' }, '' ) }
 				>
 					{ translate( 'Business Sites and Online Stores' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
@@ -385,6 +394,7 @@ export class PlansFeaturesMain extends Component {
 				{ ! plansWithScroll && this.renderToggle() }
 				{ plansWithScroll && this.renderFreePlanBanner() }
 				<QueryPlans />
+				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
 				<CartData>
@@ -471,6 +481,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+			sitePlanSlug: currentPlan && currentPlan.product_slug,
 			siteType,
 		};
 	},

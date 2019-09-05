@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { memoize } from 'lodash';
 
@@ -14,7 +14,7 @@ import { memoize } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import Button from 'components/button';
+import { abtest } from 'lib/abtest';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
@@ -42,8 +42,11 @@ import {
 	getSite,
 	isJetpackSite,
 	canCurrentUserUseAds,
+	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
+	canCurrentUserUseChecklistMenu,
 } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { getStatsPathForTab } from 'lib/route';
 import { itemLinkMatches } from './utils';
@@ -54,6 +57,7 @@ import {
 } from 'state/my-sites/sidebar/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import {
 	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
@@ -143,15 +147,59 @@ export class MySitesSidebar extends Component {
 				) }
 				link={ statsLink }
 				onNavigate={ this.trackStatsClick }
-				icon="stats-alt"
 				materialIcon="bar_chart"
 			>
-				<a href={ statsLink }>
-					<StatsSparkline className="sidebar__sparkline" siteId={ siteId } />
-				</a>
+				<StatsSparkline className="sidebar__sparkline" siteId={ siteId } />
 			</SidebarItem>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
+	trackCustomerHomeClick = () => {
+		this.trackMenuItemClick( this.props.isCustomerHomeEnabled ? 'customer-home' : 'checklist' );
+		this.onNavigate();
+	};
+
+	customerHome() {
+		const {
+			canUserUseChecklistMenu,
+			canUserUseCustomerHome,
+			path,
+			siteSuffix,
+			siteId,
+			translate,
+			isCustomerHomeEnabled,
+		} = this.props;
+
+		// This will be eventually removed when Customer Home is finally live
+		const canUserViewChecklistOrCustomerHome = isCustomerHomeEnabled
+			? canUserUseCustomerHome
+			: canUserUseChecklistMenu;
+
+		if ( ! siteId || ! canUserViewChecklistOrCustomerHome ) {
+			return null;
+		}
+
+		const itemProps = isCustomerHomeEnabled
+			? {
+					label: translate( 'My Home' ),
+					selected: itemLinkMatches( [ '/home' ], path ),
+					link: '/home' + siteSuffix,
+			  }
+			: {
+					label: translate( 'Checklist' ),
+					selected: itemLinkMatches( [ '/checklist' ], path ),
+					link: '/checklist' + siteSuffix,
+			  };
+
+		return (
+			<SidebarItem
+				materialIcon="home"
+				tipTarget="menus"
+				onNavigate={ this.trackCustomerHomeClick }
+				{ ...itemProps }
+			/>
+		);
 	}
 
 	trackActivityClick = () => {
@@ -178,7 +226,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
-				icon="history"
 				expandSection={ this.expandToolsSection }
 			/>
 		);
@@ -190,6 +237,12 @@ export class MySitesSidebar extends Component {
 	};
 
 	earn() {
+		const { site, canUserUseEarn } = this.props;
+
+		if ( site && ! canUserUseEarn ) {
+			return null;
+		}
+
 		const { path, translate } = this.props;
 
 		return (
@@ -198,7 +251,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/earn', path ) }
 				link={ '/earn' + this.props.siteSuffix }
 				onNavigate={ this.trackEarnClick }
-				icon="money"
 				tipTarget="earn"
 				expandSection={ this.expandToolsSection }
 			/>
@@ -224,7 +276,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/customize', path ) }
 				link={ this.props.customizeUrl }
 				onNavigate={ this.trackCustomizeClick }
-				icon="customize"
 				preloadSectionName="customize"
 				forceInternalLink
 				expandSection={ this.expandDesignSection }
@@ -233,7 +284,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const { path, site, translate, canUserEditThemeOptions } = this.props,
+		const { path, site, translate, canUserEditThemeOptions, showCustomizerLink } = this.props,
 			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -251,22 +302,22 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<ul>
-				<SidebarItem
-					label={ translate( 'Customize' ) }
-					selected={ itemLinkMatches( '/customize', path ) }
-					link={ this.props.customizeUrl }
-					onNavigate={ this.trackCustomizeClick }
-					icon="customize"
-					preloadSectionName="customize"
-					forceInternalLink
-					expandSection={ this.expandDesignSection }
-				/>
+				{ showCustomizerLink && (
+					<SidebarItem
+						label={ translate( 'Customize' ) }
+						selected={ itemLinkMatches( '/customize', path ) }
+						link={ this.props.customizeUrl }
+						onNavigate={ this.trackCustomizeClick }
+						preloadSectionName="customize"
+						forceInternalLink
+						expandSection={ this.expandDesignSection }
+					/>
+				) }
 				<SidebarItem
 					label={ translate( 'Themes' ) }
 					selected={ itemLinkMatches( themesLink, path ) }
 					link={ themesLink }
 					onNavigate={ this.trackCustomizeClick }
-					icon="customize"
 					preloadSectionName="themes"
 					forceInternalLink
 					expandSection={ this.expandDesignSection }
@@ -299,10 +350,9 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ translate( 'Domains' ) }
-				selected={ itemLinkMatches( [ '/domains' ], path ) }
+				selected={ itemLinkMatches( [ '/domains', '/email' ], path ) }
 				link={ domainsLink }
 				onNavigate={ this.trackDomainsClick }
-				icon="domains"
 				preloadSectionName="domains"
 				tipTarget="domains"
 				expandSection={ this.expandManageSection }
@@ -350,9 +400,9 @@ export class MySitesSidebar extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
-				<a onClick={ this.trackPlanClick } href={ planLink }>
-					<JetpackLogo size={ 24 } />
-					<span className="menu-link-text" data-e2e-sidebar={ 'Plan' }>
+				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
+					<JetpackLogo className="sidebar__menu-icon" size={ 24 } />
+					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
 					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
@@ -393,14 +443,9 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Store' ) }
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
-				icon="cart"
 				materialIcon="shopping_cart"
 				forceInternalLink
-			>
-				<div className="sidebar__chevron-right">
-					<Gridicon icon="chevron-right" />
-				</div>
-			</SidebarItem>
+			/>
 		);
 	}
 
@@ -441,7 +486,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/marketing', path ) }
 				link={ marketingLink }
 				onNavigate={ this.trackMarketingClick }
-				icon="speaker"
 				preloadSectionName="marketing"
 				tipTarget="marketing"
 				expandSection={ this.expandToolsSection }
@@ -467,7 +511,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/people', path ) }
 				link={ '/people/team' + this.props.siteSuffix }
 				onNavigate={ this.trackPeopleClick }
-				icon="user"
 				preloadSectionName="people"
 				tipTarget="people"
 				expandSection={ this.expandManageSection }
@@ -498,7 +541,6 @@ export class MySitesSidebar extends Component {
 				selected={ itemLinkMatches( '/settings', path ) }
 				link={ siteSettingsLink }
 				onNavigate={ this.trackSettingsClick }
-				icon="cog"
 				preloadSectionName="settings"
 				tipTarget="settings"
 				expandSection={ this.expandManageSection }
@@ -513,7 +555,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() && ! this.props.isAtomicSite ) {
+		if ( ! this.useWPAdminFlows() ) {
 			return null;
 		}
 
@@ -528,19 +570,28 @@ export class MySitesSidebar extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className="wp-admin">
-				<ExternalLink href={ adminUrl } icon onClick={ this.trackWpadminClick }>
-					<Gridicon icon="my-sites" size={ 24 } />
-					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
-				</ExternalLink>
-			</li>
+			<SidebarMenu className="sidebar__wp-admin">
+				<ul>
+					<li>
+						<ExternalLink
+							className="sidebar__menu-link"
+							href={ adminUrl }
+							icon
+							onClick={ this.trackWpadminClick }
+						>
+							<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
+							<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+						</ExternalLink>
+					</li>
+				</ul>
+			</SidebarMenu>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
 	useWPAdminFlows() {
-		const { isAtomicSite, isJetpack, isVip } = this.props;
+		const { isJetpack, isVip } = this.props;
 		const currentUser = this.props.currentUser;
 		const userRegisteredDate = new Date( currentUser.date );
 		const cutOffDate = new Date( '2015-09-07' );
@@ -550,8 +601,8 @@ export class MySitesSidebar extends Component {
 			return true;
 		}
 
-		// Jetpack (not Atomic) sites should always show a WP Admin
-		if ( isJetpack && ! isAtomicSite ) {
+		// Jetpack (including Atomic) sites should always show a WP Admin
+		if ( isJetpack ) {
 			return true;
 		}
 
@@ -581,18 +632,14 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Button
-				borderless
-				className="my-sites-sidebar__add-new-site"
-				href={ this.getAddNewSiteUrl() }
-				onClick={ this.focusContent }
-			>
-				<Gridicon icon="add-outline" /> { this.props.translate( 'Add New Site' ) }
-			</Button>
+			<SidebarItem
+				label={ this.props.translate( 'Add new site' ) }
+				link={ this.getAddNewSiteUrl() }
+				onNavigate={ this.focusContent }
+				icon="add-outline"
+			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackDomainSettingsClick = () => {
@@ -607,7 +654,6 @@ export class MySitesSidebar extends Component {
 					<ul>
 						<SidebarItem
 							selected={ itemLinkMatches( '/domains', this.props.path ) }
-							icon="cog"
 							label={ this.props.translate( 'Settings' ) }
 							link={ '/domains/manage' + this.props.siteSuffix }
 							onNavigate={ this.trackDomainSettingsClick }
@@ -625,6 +671,7 @@ export class MySitesSidebar extends Component {
 			<div className="sidebar__menu-wrapper">
 				<SidebarMenu>
 					<ul>
+						{ this.customerHome() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }
@@ -680,18 +727,14 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) }
 
-				{ this.wpAdmin() ? (
-					<SidebarMenu className="sidebar__wp-admin">
-						<ul>{ this.wpAdmin() }</ul>
-					</SidebarMenu>
-				) : null }
+				{ this.wpAdmin() }
 			</div>
 		);
 	}
 
 	render() {
 		return (
-			<Sidebar className="sidebar__streamlined-nav-drawer">
+			<Sidebar>
 				<SidebarRegion>
 					<CurrentSite />
 					{ this.renderSidebarMenus() }
@@ -715,6 +758,7 @@ function mapStateToProps( state ) {
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
+	const isCustomerHomeEnabled = 'show' === abtest( 'customerHomePage' );
 
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -724,7 +768,11 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
+		canUserUseChecklistMenu: canCurrentUserUseChecklistMenu( state, siteId ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
+		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
+		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
+		isCustomerHomeEnabled,
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
@@ -738,6 +786,7 @@ function mapStateToProps( state ) {
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isVip: isVipSite( state, selectedSiteId ),
+		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
