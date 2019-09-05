@@ -5,7 +5,7 @@
 import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import config from 'config';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, includes } from 'lodash';
@@ -146,11 +146,7 @@ export class OrgCredentialsForm extends Component {
 				'for this site. Your credentials will not be stored and are used for the purpose ' +
 				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 		);
-		return (
-			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
-				{ subheader }
-			</span>
-		);
+		return <span className="jetpack-connect__creds-form">{ subheader }</span>;
 	}
 
 	getError( installError ) {
@@ -350,7 +346,7 @@ export class OrgCredentialsForm extends Component {
 					</div>
 				) }
 				{ ( this.isInvalidCreds() || ! installError ) && (
-					<div>
+					<div className="jetpack-connect__site-url-entry-container">
 						{ this.renderHeadersText() }
 						<Card className="jetpack-connect__site-url-input-container">
 							{ this.isInvalidCreds() && (
