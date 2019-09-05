@@ -5,7 +5,6 @@
 import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import config from 'config';
-import Gridicon from 'components/gridicon';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, includes } from 'lodash';
@@ -21,6 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
+import Gridicon from 'components/gridicon';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
