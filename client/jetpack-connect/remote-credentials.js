@@ -146,7 +146,7 @@ export class OrgCredentialsForm extends Component {
 				'for this site. Your credentials will not be stored and are used for the purpose ' +
 				'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 		);
-		return <span className="jetpack-connect__creds-form">{ subheader }</span>;
+		return <span>{ subheader }</span>;
 	}
 
 	getError( installError ) {
