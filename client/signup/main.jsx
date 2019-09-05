@@ -242,7 +242,8 @@ class Signup extends React.Component {
 	}
 
 	maybeShowSitePreview() {
-		if ( this.props.shouldStepShowSitePreview ) {
+		// Only show the site preview on main step pages, not sub step section screens
+		if ( this.props.shouldStepShowSitePreview && ! this.props.stepSectionName ) {
 			this.props.showSitePreview();
 		} else {
 			this.props.hideSitePreview();
