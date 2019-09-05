@@ -10,9 +10,10 @@ namespace A8C\FSE;
 /**
  * Render the navigation menu.
  *
+ * @param array $attributes Block attributes.
  * @return string
  */
-function render_navigation_menu_block() {
+function render_navigation_menu_block( $attributes ) {
 	$menu = wp_nav_menu(
 		[
 			'echo'           => false,
@@ -23,10 +24,15 @@ function render_navigation_menu_block() {
 		]
 	);
 
+	$align = ' alignwide';
+	if ( isset( $attributes['align'] ) ) {
+		$align = empty( $attributes['align'] ) ? '' : ' align' . $attributes['align'];
+	}
+
 	ob_start();
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	?>
-	<nav class="main-navigation wp-block-a8c-navigation-menu">
+	<nav class="main-navigation wp-block-a8c-navigation-menu<?php echo esc_attr( $align ); ?>">
 		<input type="checkbox" role="button" aria-haspopup="true" id="toggle" class="hide-visually">
 		<label for="toggle" id="toggle-menu" class="button">
 			<?php esc_html_e( 'Menu', 'full-site-editing' ); ?>
