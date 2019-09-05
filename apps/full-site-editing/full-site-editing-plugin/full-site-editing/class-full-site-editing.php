@@ -40,30 +40,124 @@ class Full_Site_Editing {
 	public $wp_template_inserter;
 
 	/**
+	 * Whether the plugin is actively loaded.
+	 * This means that hooks have been added to the appropriate places.
+	 *
+	 * @var boolean
+	 */
+	private $is_loaded = false;
+
+
+	/**
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', [ $this, 'register_blocks' ], 100 );
-		add_action( 'init', [ $this, 'register_template_post_types' ] );
+		require_once __DIR__ . '/blocks/navigation-menu/index.php';
+		require_once __DIR__ . '/blocks/post-content/index.php';
+		require_once __DIR__ . '/blocks/site-description/index.php';
+		require_once __DIR__ . '/blocks/site-title/index.php';
+		require_once __DIR__ . '/blocks/template/index.php';
+		require_once __DIR__ . '/templates/class-rest-templates-controller.php';
+		require_once __DIR__ . '/templates/class-wp-template.php';
+		require_once __DIR__ . '/templates/class-wp-template-inserter.php';
+		require_once __DIR__ . '/serialize-block-fallback.php';
+	}
+
+	public function init() {
+		// put this late so it fires after `after_theme_switch`
+		add_action( 'init', [ $this, 'maybe_load_or_unload' ], 100 );
+		add_action( 'after_switch_theme', [ $this, 'check_and_set_theme_support' ] );
+		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ], 11 );
+		add_action( 'admin_init', [ $this, 'add_admin_hooks' ] );
+		add_action( 'switch_blog', [ $this, 'maybe_load_or_unload' ] );
+	}
+
+	public function add_admin_hooks() {
+		if ( ! self::is_active() ) {
+			return;
+		}
+		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
+		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
+		add_filter( 'bulk_actions-edit-wp_template', [ $this, 'remove_trash_bulk_action_for_template_post_type' ] );
+		add_filter( 'wp_template_type_row_actions', [ $this, 'remove_delete_row_action_for_template_taxonomy' ], 10, 2 );
+		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
+	}
+
+	public function maybe_load_or_unload() {
+		if ( self::is_active() ) {
+			$this->load();
+		} else {
+			$this->unload();
+		}
+	}
+
+	public function load() {
+		// already loaded
+		if ( $this->is_loaded ) {
+			return;
+		}
+
+		$this->register_template_post_types();
+		$this->register_blocks();
+
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
 		add_action( 'the_post', [ $this, 'merge_template_and_post' ] );
 		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
-		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
 		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
-		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 
-		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
-		add_filter( 'bulk_actions-edit-wp_template', [ $this, 'remove_trash_bulk_action_for_template_post_type' ] );
 		add_action( 'wp_trash_post', [ $this, 'restrict_template_deletion' ] );
 		add_action( 'before_delete_post', [ $this, 'restrict_template_deletion' ] );
-		add_filter( 'wp_template_type_row_actions', [ $this, 'remove_delete_row_action_for_template_taxonomy' ], 10, 2 );
-		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
 		add_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
 		add_action( 'transition_post_status', [ $this, 'restrict_template_drafting' ], 10, 3 );
 
-		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
-		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
+		$this->is_loaded = true;
+	}
+
+	public function unload() {
+		if ( ! $this->is_loaded ) {
+			return;
+		}
+
+		$this->unregister_template_post_types();
+		$this->unregister_blocks();
+
+		remove_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
+		remove_action( 'the_post', [ $this, 'merge_template_and_post' ] );
+		remove_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
+		remove_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
+		remove_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
+		remove_filter( 'body_class', array( $this, 'remove_fse_body_class' ) );
+
+		remove_action( 'wp_trash_post', [ $this, 'restrict_template_deletion' ] );
+		remove_action( 'before_delete_post', [ $this, 'restrict_template_deletion' ] );
+		remove_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
+		remove_action( 'transition_post_status', [ $this, 'restrict_template_drafting' ], 10, 3 );
+
+		$this->wp_template_inserter = null;
+		$this->is_loaded = false;
+	}
+
+	public function check_and_set_theme_support() {
+		if ( current_theme_supports( 'full-site-editing' ) ) {
+			update_option( 'current_theme_supports_fse', true );
+		} else {
+			delete_option( 'current_theme_supports_fse' );
+		}
+	}
+
+	public static function is_active() {
+		/**
+	 * Can be used to disable Full Site Editing functionality.
+	 *
+	 * @since 0.2
+	 *
+	 * @param bool true if Full Site Editing should be disabled, false otherwise.
+	 */
+		if ( true === apply_filters( 'a8c_disable_full_site_editing', false ) ) {
+			return false;
+		}
+		return (bool) get_option( 'current_theme_supports_fse', false );
 	}
 
 	/**
@@ -91,7 +185,15 @@ class Full_Site_Editing {
 	public function is_supported_theme( $theme_slug = null ) {
 		// phpcs:enable
 		// now in reality is_current_theme_supported.
-		return current_theme_supports( 'full-site-editing' );
+		return self::is_active();
+	}
+
+	public function get_inserter() {
+		if ( ! $this->wp_template_inserter ) {
+			$theme_slug = $this->normalize_theme_slug( get_stylesheet() );
+			$this->wp_template_inserter = new WP_Template_Inserter( $theme_slug );
+		}
+		return $this->wp_template_inserter;
 	}
 
 	/**
@@ -106,12 +208,12 @@ class Full_Site_Editing {
 			return;
 		}
 
-		if ( ! $this->wp_template_inserter->is_template_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_template_data();
+		if ( ! $this->get_inserter()->is_template_data_inserted() ) {
+			$this->get_inserter()->insert_default_template_data();
 		}
 
-		if ( ! $this->wp_template_inserter->is_pages_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_pages();
+		if ( ! $this->get_inserter()->is_pages_data_inserted() ) {
+			$this->get_inserter()->insert_default_pages();
 		}
 	}
 
@@ -142,7 +244,14 @@ class Full_Site_Editing {
 	 * Register post types.
 	 */
 	public function register_template_post_types() {
-		$this->wp_template_inserter->register_template_post_types();
+		$this->get_inserter()->register_template_post_types();
+	}
+
+	/**
+	 * Unregister post types.
+	 */
+	public function unregister_template_post_types() {
+		$this->get_inserter()->unregister_template_post_types();
 	}
 
 	/**
@@ -238,6 +347,17 @@ class Full_Site_Editing {
 				'render_callback' => __NAMESPACE__ . '\render_site_title_block',
 			)
 		);
+	}
+
+	/**
+	 * Unregister blocks.
+	 */
+	public function unregister_blocks() {
+		unregister_block_type( 'a8c/navigation-menu' );
+		unregister_block_type( 'a8c/post-content'	);
+		unregister_block_type( 'a8c/site-description'	);
+		unregister_block_type( 'a8c/template'	);
+		unregister_block_type( 'a8c/site-title'	);
 	}
 
 	/**
@@ -368,6 +488,9 @@ class Full_Site_Editing {
 	 * @return bool
 	 */
 	private function should_merge_template_and_post( $post ) {
+		if ( ! self::is_active() ) {
+			return false;
+		}
 		$is_rest_api_wpcom      = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
 		$is_rest_api_core       = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
 		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );

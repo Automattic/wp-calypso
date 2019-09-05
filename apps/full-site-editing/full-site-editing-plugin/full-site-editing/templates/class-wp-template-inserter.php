@@ -385,4 +385,12 @@ class WP_Template_Inserter {
 			)
 		);
 	}
+
+	/**
+	 * Unregister post types.
+	 */
+	public function unregister_template_post_types() {
+		unregister_taxonomy_for_object_type( 'wp_template_type', 'wp_template' );
+		unregister_post_type( 'wp_template' );
+	}
 }

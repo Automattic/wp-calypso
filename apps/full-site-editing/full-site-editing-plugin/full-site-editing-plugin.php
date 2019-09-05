@@ -26,31 +26,20 @@ define( 'PLUGIN_VERSION', '0.6.1' );
  * Load Full Site Editing.
  */
 function load_full_site_editing() {
-	/**
-	 * Can be used to disable Full Site Editing functionality.
-	 *
-	 * @since 0.2
-	 *
-	 * @param bool true if Full Site Editing should be disabled, false otherwise.
-	 */
-	if ( apply_filters( 'a8c_disable_full_site_editing', false ) ) {
-		return;
-	}
-
-	require_once __DIR__ . '/full-site-editing/blocks/navigation-menu/index.php';
-	require_once __DIR__ . '/full-site-editing/blocks/post-content/index.php';
-	require_once __DIR__ . '/full-site-editing/blocks/site-description/index.php';
-	require_once __DIR__ . '/full-site-editing/blocks/site-title/index.php';
-	require_once __DIR__ . '/full-site-editing/blocks/template/index.php';
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
-	require_once __DIR__ . '/full-site-editing/templates/class-rest-templates-controller.php';
-	require_once __DIR__ . '/full-site-editing/templates/class-wp-template.php';
-	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
-	require_once __DIR__ . '/full-site-editing/serialize-block-fallback.php';
-
-	Full_Site_Editing::get_instance();
+	Full_Site_Editing::get_instance()->init();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing', 5 );
+
+/**
+ * Activate the plugin
+ */
+function on_activate() {
+	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	Full_Site_Editing::get_instance()->check_and_set_theme_support();
+}
+register_activation_hook( __FILE__, __NAMESPACE__ . '\on_activate' );
+
 
 /**
  * Load Posts List Block.
