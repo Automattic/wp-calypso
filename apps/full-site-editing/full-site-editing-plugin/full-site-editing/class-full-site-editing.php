@@ -26,6 +26,13 @@ class Full_Site_Editing {
 	private $template_post_types = [ 'wp_template' ];
 
 	/**
+	 * Array of supported themes.
+	 *
+	 * @var array
+	 */
+	private $supported_themes = [ 'modern-business', 'maywood' ];
+
+	/**
 	 * Current theme slug.
 	 *
 	 * @var string
@@ -43,6 +50,10 @@ class Full_Site_Editing {
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
+		if ( ! $this->is_supported_theme() ) {
+			return;
+		}
+
 		add_action( 'init', [ $this, 'register_blocks' ], 100 );
 		add_action( 'init', [ $this, 'register_template_post_types' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
@@ -91,7 +102,7 @@ class Full_Site_Editing {
 	public function is_supported_theme( $theme_slug = null ) {
 		// phpcs:enable
 		// now in reality is_current_theme_supported.
-		return current_theme_supports( 'full-site-editing' );
+		return in_array( $this->normalize_theme_slug( get_stylesheet() ), $this->supported_themes, true );
 	}
 
 	/**
