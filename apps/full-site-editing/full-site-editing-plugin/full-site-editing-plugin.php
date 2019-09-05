@@ -22,6 +22,8 @@ namespace A8C\FSE;
  */
 define( 'PLUGIN_VERSION', '0.6.1' );
 
+const SUPPORTED_THEMES = [ 'maywood', 'a8c/public-api' ];
+
 /**
  * Load Full Site Editing.
  */
@@ -59,8 +61,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	$supported_themes = [ 'maywood' ];
-	return is_site_eligible_for_full_site_editing() && in_array( get_theme_slug(), $supported_themes, true );
+	return is_site_eligible_for_full_site_editing() && in_array( get_theme_slug(), SUPPORTED_THEMES, true );
 }
 
 /**
