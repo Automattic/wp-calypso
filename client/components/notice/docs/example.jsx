@@ -20,16 +20,17 @@ class Notices extends React.PureComponent {
 	};
 
 	render() {
-		var toggleNoticesText = this.state.compactNotices ? 'Normal Notices' : 'Compact Notices';
+		const toggleNoticesText = this.state.compactNotices ? 'Normal Notices' : 'Compact Notices';
 
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleNotices }>
+				<button className="docs__design-toggle button" onClick={ this.toggleNotices }>
 					{ toggleNoticesText }
-				</a>
+				</button>
+
 				<div>
 					<Notice showDismiss={ false } isCompact={ this.state.compactNotices ? true : null }>
-						I'm a notice with no status and <a>a link</a>.
+						I'm a notice with no status and <a href="#link">a link</a>.
 					</Notice>
 				</div>
 				<div>
@@ -81,19 +82,19 @@ class Notices extends React.PureComponent {
 					<Notice
 						status="is-warning"
 						icon="ellipsis-circle"
-						text="I'm an `is-warning` notice with custom icon."
+						text="I'm an `is-warning` notice with custom icon and an action."
 						isCompact={ this.state.compactNotices ? true : null }
-					/>
+					>
+						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+					</Notice>
 				</div>
 				<div>
 					<Notice
 						status="is-warning"
 						isCompact={ this.state.compactNotices ? true : null }
 						showDismiss={ false }
-						text={ "I'm an `is-warning` notice with an action." }
-					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
-					</Notice>
+						text={ "I'm an `is-warning` notice." }
+					/>
 				</div>
 				<div>
 					<Notice

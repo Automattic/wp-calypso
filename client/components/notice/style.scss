@@ -1,7 +1,6 @@
 @keyframes notice-loading-pulse {
-	0%,
-	100% {
-		opacity: 0.8;
+	0, 100% {
+		opacity: 0.75;
 	}
 	50% {
 		opacity: 1;
@@ -101,11 +100,11 @@
 // to emphasize the glyph inside
 .notice__icon-wrapper-drop {
 	position: absolute;
-	top: 14px;
-	left: 15px;
-	width: 18px;
-	height: 18px;
-	border-radius: 9px;
+	top: calc( 50% - 8px );
+	left: calc( 50% - 8px );
+	width: 16px;
+	height: 16px;
+	border-radius: 8px;
 	background: var( --color-neutral );
 
 	& + .notice__icon {
@@ -263,6 +262,13 @@ a.notice__action {
 			height: 18px;
 			margin: 0;
 		}
+	}
+
+	.notice__icon-wrapper-drop {
+		top: calc( 50% - 6px );
+		left: calc( 50% - 6px );
+		width: 12px;
+		height: 12px;
 	}
 
 	.notice__dismiss {
