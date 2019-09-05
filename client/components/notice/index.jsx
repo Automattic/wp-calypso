@@ -135,7 +135,7 @@ export class Notice extends Component {
 		return (
 			<div className={ classes }>
 				<span className="notice__icon-wrapper">
-					{ iconNeedsDrop && <span class="notice__icon-wrapper-drop" /> }
+					{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
 					<Gridicon className="notice__icon" icon={ iconName } size={ 24 } />
 				</span>
 				<span className="notice__content">
