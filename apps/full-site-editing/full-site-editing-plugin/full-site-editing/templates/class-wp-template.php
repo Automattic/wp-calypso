@@ -152,6 +152,15 @@ class WP_Template {
 		$header_id = $this->get_template_id( self::HEADER );
 		$footer_id = $this->get_template_id( self::FOOTER );
 
+		/*
+		 * Bail if we are missing header or footer. Otherwise this would cause us to
+		 * always return some page template content and show template parts (with empty IDs),
+		 * even for themes that don't support FSE.
+		 */
+		if ( ! $header_id || ! $footer_id ) {
+			return null;
+		}
+
 		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"className\":\"site-header site-branding\"} /-->" .
 				'<!-- wp:a8c/post-content /-->' .
 				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"className\":\"site-footer\"} /-->";
@@ -179,11 +188,9 @@ class WP_Template {
 		if ( ! $this->is_supported_template_type( $template_type ) ) {
 			return null;
 		}
-		/*
-		things that follow are from wp-includes/default-filters.php
-		not everything is appropriate for template content as opposed to post content
-		*/
 
+		// Things that follow are from wp-includes/default-filters.php
+		// not everything is appropriate for template content as opposed to post content.
 		global $wp_embed;
 		$content = $this->get_template_content( $template_type );
 
