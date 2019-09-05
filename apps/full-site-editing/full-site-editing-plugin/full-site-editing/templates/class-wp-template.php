@@ -115,6 +115,20 @@ class WP_Template {
 	}
 
 	/**
+	 * Checks whether header and footer have been populated for current theme.
+	 *
+	 * @return bool
+	 */
+	public function has_page_template_parts() {
+		$header_id = $this->get_template_id( self::HEADER );
+		$footer_id = $this->get_template_id( self::FOOTER );
+		if ( $header_id && $footer_id ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Returns template content for given template type.
 	 *
 	 * @param string $template_type String representing the template type.
@@ -149,6 +163,10 @@ class WP_Template {
 	 * @return null|string
 	 */
 	public function get_page_template_content() {
+		if ( ! $this->has_page_template_parts() ) {
+			return;
+		}
+
 		$header_id = $this->get_template_id( self::HEADER );
 		$footer_id = $this->get_template_id( self::FOOTER );
 
@@ -179,9 +197,10 @@ class WP_Template {
 		if ( ! $this->is_supported_template_type( $template_type ) ) {
 			return null;
 		}
+
 		/*
-		things that follow are from wp-includes/default-filters.php
-		not everything is appropriate for template content as opposed to post content
+		* Things that follow are from wp-includes/default-filters.php
+		* not everything is appropriate for template content as opposed to post content
 		*/
 
 		global $wp_embed;
