@@ -23,8 +23,6 @@ namespace A8C\FSE;
 define( 'PLUGIN_VERSION', '0.6.1' );
 
 // Themes which are supported by Full Site Editing (not the same as the SPT themes).
-// We includ public API since API requests have that as their stylesheet and we need
-// theme to work for Gutenberg.
 const SUPPORTED_THEMES = [ 'maywood' ];
 
 /**
@@ -59,8 +57,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	return is_site_eligible_for_full_site_editing() &&
-			( is_theme_supported() || in_array( get_theme_slug(), SUPPORTED_THEMES, true ) );
+	return is_site_eligible_for_full_site_editing() && is_theme_supported();
 }
 
 /**
@@ -73,7 +70,19 @@ function is_full_site_editing_active() {
  * @return string Normalized theme slug.
  */
 function get_theme_slug() {
-	$theme_slug = get_stylesheet();
+	/**
+	 * Used to get the correct theme in certain contexts.
+	 *
+	 * For example, in the wpcom API context, the theme slug is a8c/public-api, so we need
+	 * to grab the correct one with the filter.
+	 *
+	 * @since 0.7
+	 *
+	 * @param string current theme slug is the default if nothing overrides it.
+	 */
+	$theme_slug = apply_filters( 'a8c_fse_get_theme_slug', get_stylesheet() );
+
+	// Normalize the theme slug.
 	if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
 		$theme_slug = substr( $theme_slug, 4 );
 	}
@@ -104,21 +113,12 @@ function is_site_eligible_for_full_site_editing() {
 }
 
 /**
- * Whether or not current theme is FSE enabled.
- * This is to allow the checking of theme support to be abstracted
- * to the context in which the plugin is running.
+ * Whether or not current theme is enabled for FSE.
  *
  * @return bool True if current theme supports FSE, false otherwise.
  */
 function is_theme_supported() {
-	/**
-	 * Can be used to enable Full Site Editing theme support in certian contexts.
-	 *
-	 * @since 0.7
-	 *
-	 * @param bool true if Full Site Editing is available for current theme, false otherwise.
-	 */
-	return apply_filters( 'a8c_fse_enable_theme_support', false );
+	return in_array( get_theme_slug(), SUPPORTED_THEMES, true );
 }
 
 /**
