@@ -27,8 +27,6 @@
 	}
 
 	.button {
-		background-color: var( --color-primary );
-		border-color: var( --color-primary-dark );
 		padding-right: 80px;
 		padding-left: 80px;
 
@@ -36,18 +34,11 @@
 			text-align: center;
 			width: 100%;
 		}
-
-		&:hover,
-		&:focus {
-			background-color: var( --color-primary-400 );
-			border-color: var( --color-primary-dark );
-		}
 	}
 }
 
 .current-plan-thank-you__illustration {
 	margin-right: 32px;
-	width: 35%;
 
 	@include breakpoint( '<660px' ) {
 		display: none;
