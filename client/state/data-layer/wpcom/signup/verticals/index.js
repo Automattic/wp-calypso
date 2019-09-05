@@ -31,6 +31,7 @@ export const requestVerticals = action =>
 				...( action.siteTypeId && { site_type: action.siteTypeId } ),
 				limit: action.limit,
 				include_preview: true,
+				synonyms: true,
 			},
 		},
 		action
