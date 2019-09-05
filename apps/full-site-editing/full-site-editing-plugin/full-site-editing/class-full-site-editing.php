@@ -43,7 +43,6 @@ class Full_Site_Editing {
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
-
 		add_action( 'init', [ $this, 'register_blocks' ], 100 );
 		add_action( 'init', [ $this, 'register_template_post_types' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_script_and_style' ], 100 );
