@@ -1,5 +1,5 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl
+Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.2
@@ -39,6 +39,15 @@ It adds an excerpt! And meta information! It really is much more useful, especia
 This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
 == Changelog ==
+
+= 0.7 =
+* Change theme support to Maywood instead of Modern Business.
+* Improve style support and UX issues.
+* Remove featured image support for pages.
+* No longer load FSE editor if theme is unsupported.
+* Improve autosave support.
+* Add embed/shortcode support to header and footer.
+* Several other high priority fixes for the FSE editor.
 
 = 0.6.1 =
 * Updates priority of filter so classnames are added properly to the template blocks.
