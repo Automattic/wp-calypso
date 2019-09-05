@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { identity } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -127,7 +127,7 @@ class TransferPending extends PureComponent {
 				/>
 				<WordPressLogo size={ 180 } className="checkout-thank-you__wordpress-logo is-large" />
 				<EmptyContent
-					illustration={ false }
+					illustration={ '' }
 					title={ translate( 'Processing…' ) }
 					line={ translate( "Almost there – we're currently finalizing your order." ) }
 				/>
