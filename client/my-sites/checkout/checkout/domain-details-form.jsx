@@ -87,24 +87,21 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( newState );
 	}
 
-	mergedValidationHandlerIntegratingAlternateMail = ( fieldValues, validationHandler ) => (
-		error,
-		data
-	) => {
+	addAlternateEmailToValidationHandler = ( fieldValues, validationHandler ) => ( error, data ) => {
 		if ( this.needsAlternateEmailForGSuite() ) {
 			let message = null;
 			if ( ! emailValidator.validate( fieldValues.alternateEmail ) ) {
-				message = this.props.translate( 'Invalid email address' );
+				message = this.props.translate( 'Please provide a valid email address.' );
 			} else if ( hasInvalidAlternateEmailDomain( this.props.cart, this.props.contactDetails ) ) {
 				message = this.props.translate(
-					'Email domain cannot be the same as prospective G Suite Domain'
+					'Please provide an email address that does not use the same domain than the G Suite account being purchased.'
 				);
 			}
-			if ( null != message ) {
+			if ( null !== message ) {
 				data = merge( data, { success: false, messages: { alternateEmail: [ message ] } } );
 			}
 		}
-		validationHandler( null, data );
+		validationHandler( error, data );
 	};
 
 	validate = ( fieldValues, onComplete ) => {
@@ -116,7 +113,7 @@ export class DomainDetailsForm extends PureComponent {
 		if ( this.needsOnlyGoogleAppsDetails() ) {
 			wpcom.validateGoogleAppsContactInformation(
 				fieldValues,
-				this.mergedValidationHandlerIntegratingAlternateMail( fieldValues, validationHandler )
+				this.addAlternateEmailToValidationHandler( fieldValues, validationHandler )
 			);
 			return;
 		}

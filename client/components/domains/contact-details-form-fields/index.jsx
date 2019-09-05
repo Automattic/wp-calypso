@@ -90,6 +90,7 @@ export class ContactDetailsFormFields extends Component {
 		className: PropTypes.string,
 		userCountryCode: PropTypes.string,
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
+		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 	};
 
@@ -109,6 +110,7 @@ export class ContactDetailsFormFields extends Component {
 		disableSubmitButton: false,
 		className: '',
 		needsOnlyGoogleAppsDetails: false,
+		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
 		translate: identity,
 		userCountryCode: 'US',
@@ -448,9 +450,9 @@ export class ContactDetailsFormFields extends Component {
 
 	renderAlternateEmailFieldForGSuite() {
 		return (
-			<div className="contact-details-form-fields__row g-suite-alternate-mail">
+			<div className="contact-details-form-fields__row">
 				<Input
-					label={ this.props.translate( 'Alternate Email' ) }
+					label={ this.props.translate( 'Alternate Email Address' ) }
 					{ ...this.getFieldProps( 'alternate-email' ) }
 				/>
 			</div>

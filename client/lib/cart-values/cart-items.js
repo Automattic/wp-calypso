@@ -21,6 +21,7 @@ import {
 	toLower,
 	uniq,
 } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -684,12 +685,15 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 }
 
 const getDomainPartFromEmail = emailAddress => {
-	emailAddress = emailAddress || '';
+	emailAddress = ( `${ emailAddress }` || '' ).toLowerCase().trim();
 	return emailAddress.replace( /.*@([^@]+)$/, '$1' );
 };
 
 export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
-	return some( cart.products, [ 'meta', getDomainPartFromEmail( contactDetails.email ) ] );
+	return (
+		! emailValidator.validate( contactDetails.email ) ||
+		some( cart.products, [ 'meta', getDomainPartFromEmail( contactDetails.email ) ] )
+	);
 }
 
 export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
