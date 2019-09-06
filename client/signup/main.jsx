@@ -66,6 +66,8 @@ import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { showSitePreview, hideSitePreview } from 'state/signup/preview/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -203,6 +205,7 @@ class Signup extends React.Component {
 		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
 		this.preloadNextStep();
+		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -233,7 +236,17 @@ class Signup extends React.Component {
 		}
 
 		if ( this.props.stepName !== prevProps.stepName ) {
+			this.maybeShowSitePreview();
 			this.preloadNextStep();
+		}
+	}
+
+	maybeShowSitePreview() {
+		// Only show the site preview on main step pages, not sub step section screens
+		if ( this.props.shouldStepShowSitePreview && ! this.props.stepSectionName ) {
+			this.props.showSitePreview();
+		} else {
+			this.props.hideSitePreview();
 		}
 	}
 
@@ -517,26 +530,23 @@ class Signup extends React.Component {
 					{ this.state.shouldShowLoadingScreen ? (
 						<SignupProcessingScreen />
 					) : (
-						<>
-							<CurrentComponent
-								path={ this.props.path }
-								step={ currentStepProgress }
-								initialContext={ this.props.initialContext }
-								steps={ flow.steps }
-								stepName={ this.props.stepName }
-								meta={ flow.meta || {} }
-								goToNextStep={ this.goToNextStep }
-								goToStep={ this.goToStep }
-								previousFlowName={ this.state.previousFlowName }
-								flowName={ this.props.flowName }
-								signupDependencies={ this.props.signupDependencies }
-								stepSectionName={ this.props.stepSectionName }
-								positionInFlow={ this.getPositionInFlow() }
-								hideFreePlan={ hideFreePlan }
-								{ ...propsFromConfig }
-							/>
-							{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
-						</>
+						<CurrentComponent
+							path={ this.props.path }
+							step={ currentStepProgress }
+							initialContext={ this.props.initialContext }
+							steps={ flow.steps }
+							stepName={ this.props.stepName }
+							meta={ flow.meta || {} }
+							goToNextStep={ this.goToNextStep }
+							goToStep={ this.goToStep }
+							previousFlowName={ this.state.previousFlowName }
+							flowName={ this.props.flowName }
+							signupDependencies={ this.props.signupDependencies }
+							stepSectionName={ this.props.stepSectionName }
+							positionInFlow={ this.getPositionInFlow() }
+							hideFreePlan={ hideFreePlan }
+							{ ...propsFromConfig }
+						/>
 					) }
 				</div>
 			</div>
@@ -592,6 +602,9 @@ class Signup extends React.Component {
 					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 				/>
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -609,6 +622,11 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const shouldStepShowSitePreview = get(
+			steps[ ownProps.stepName ],
+			'props.showSiteMockups',
+			false
+		);
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
@@ -624,7 +642,8 @@ export default connect(
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
-			shouldShowMockups: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
+			shouldStepShowSitePreview,
+			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 		};
 	},
 	{
@@ -633,5 +652,7 @@ export default connect(
 		submitSiteVertical,
 		submitSignupStep,
 		loadTrackingTool,
+		showSitePreview,
+		hideSitePreview,
 	}
 )( Signup );
