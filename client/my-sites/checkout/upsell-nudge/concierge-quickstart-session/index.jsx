@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'gridicon';
+import Gridicon from 'gridicons';
 import formatCurrency from '@automattic/format-currency';
 
 /**
