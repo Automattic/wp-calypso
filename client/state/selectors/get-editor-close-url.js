@@ -18,8 +18,6 @@ import isLastNonEditorRouteChecklist from 'state/selectors/is-last-non-editor-ro
  */
 
 export default function getEditorCloseUrl( state, siteId, postType, fseParentPageId ) {
-	const checklistRoute = `/checklist/${ getSiteSlug( state, siteId ) }`;
-
 	// Handle returning to parent editor for full site editing templates
 	if ( 'wp_template' === postType ) {
 		return getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
@@ -27,7 +25,7 @@ export default function getEditorCloseUrl( state, siteId, postType, fseParentPag
 
 	// Checking if we should navigate back to the checklist
 	if ( isLastNonEditorRouteChecklist( state ) ) {
-		return checklistRoute;
+		return `/checklist/${ getSiteSlug( state, siteId ) }`;
 	}
 
 	// Otherwise, just return to post type listings
