@@ -685,8 +685,11 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 }
 
 const getDomainPartFromEmail = emailAddress => {
-	emailAddress = ( `${ emailAddress }` || '' ).toLowerCase().trim();
-	return emailAddress.replace( /.*@([^@]+)$/, '$1' );
+	emailAddress = emailAddress || '';
+	return emailAddress
+		.toLowerCase()
+		.trim()
+		.replace( /.*@([^@]+)$/, '$1' );
 };
 
 export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
