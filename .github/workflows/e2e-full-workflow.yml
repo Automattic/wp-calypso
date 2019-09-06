@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: cd test/e2e && npm i --no-package-lock
+        run: sudo chown /github/home/.npm && cd test/e2e && npm i --no-package-lock
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: cd test/e2e && npm i --no-package-lock
+        run: sudo chown /github/home/.npm && cd test/e2e && npm i --no-package-lock
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
