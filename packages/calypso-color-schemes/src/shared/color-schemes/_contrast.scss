@@ -1,4 +1,5 @@
 .color-scheme.is-contrast {
+	/* Theme Properties */
 	--color-primary: var( --studio-gray-80 );
 	--color-primary-rgb: var( --studio-gray-80-rgb );
 	--color-primary-dark: var( --studio-gray-100 );
@@ -65,7 +66,9 @@
 	--color-surface-backdrop-rgb: var( --studio-white-rgb );
 
 	--color-text: var( --studio-gray-100 );
+	--color-text-rgb: var( --studio-gray-100-rgb );
 	--color-text-subtle: var( --studio-gray-70 );
+	--color-text-subtle-rgb: var( --studio-gray-70-rgb );
 
 	--color-link: var( --studio-blue-70 );
 	--color-link-rgb: var( --studio-blue-70-rgb );
@@ -98,6 +101,7 @@
 	--color-link-100: var( --studio-blue-100 );
 	--color-link-100-rgb: var( --studio-blue-100-rgb );
 
+	/* Component Properties */
 	--color-masterbar-background: var( --studio-gray-100 );
 	--color-masterbar-border: var( --studio-gray-90 );
 	--color-masterbar-text: var( --studio-white );

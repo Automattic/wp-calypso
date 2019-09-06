@@ -1,4 +1,5 @@
 .color-scheme.is-midnight {
+	/* Theme Properties */
 	--color-primary: var( --studio-gray-70 );
 	--color-primary-rgb: var( --studio-gray-70-rgb );
 	--color-primary-dark: var( --studio-gray-80 );
@@ -92,6 +93,7 @@
 	--color-link-100: var( --studio-red-100 );
 	--color-link-100-rgb: var( --studio-red-100-rgb );
 
+	/* Component Properties */
 	--color-masterbar-background: var( --studio-gray-70 );
 	--color-masterbar-border: var( --studio-gray-70 );
 	--color-masterbar-text: var( --studio-white );

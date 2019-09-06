@@ -1,4 +1,5 @@
 .color-scheme.is-sakura {
+	/* Theme Properties */
 	--color-primary: var( --studio-celadon-50 );
 	--color-primary-rgb: var( --studio-celadon-50-rgb );
 	--color-primary-dark: var( --studio-celadon-70 );
@@ -92,6 +93,7 @@
 	--color-link-100: var( --studio-celadon-100 );
 	--color-link-100-rgb: var( --studio-celadon-100-rgb );
 
+	/* Component Properties */
 	--color-masterbar-background: var( --studio-celadon-70 );
 	--color-masterbar-border: var( --studio-celadon-80 );
 	--color-masterbar-text: var( --studio-white );
