@@ -395,7 +395,7 @@ export class SiteSettingsFormGeneral extends Component {
 								'This September, millions of us will walk out of our workplaces and homes to join ' +
 									'young climate strikers on the streets and {{climateStrikeLink}}demand an end to the age ' +
 									'of fossil fuels{{/climateStrikeLink}}. Show your solidarity with a {{digitalClimateStrikeLink}}digital ' +
-									'climate strike banner{{/digitalClimateStrikeLink}} that will appear on your website on September 20th.',
+									'climate strike banner{{/digitalClimateStrikeLink}}. On September 20th the banner will expand to a dissmissable overlay.',
 								{
 									components: {
 										climateStrikeLink: (
