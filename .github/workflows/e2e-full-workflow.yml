@@ -57,7 +57,6 @@ jobs:
       image: circleci/node:10.16.3-browsers
       env:
         NODE_CONFIG_ENV: test
-        CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
     steps:
