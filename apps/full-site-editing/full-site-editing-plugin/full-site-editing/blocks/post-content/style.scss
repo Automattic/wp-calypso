@@ -37,9 +37,16 @@
 // Fix the size and positioning full-width blocks inside the Post Content block
 // TODO: Replace the magic numbers!
 .post-content-block .block-editor-block-list__layout .block-editor-block-list__block[data-align=full] {
-	max-width: calc( 100vw - 81px );
-	margin-left: 3px;
-	margin-right: 3px;
+	@media ( max-width: 768px ) {
+		.block-editor-block-mover {
+			left: 60px;
+		}
+	}
+	@media ( min-width: 768px ) {
+		max-width: calc( 100vw - 81px );
+		margin-left: 3px;
+		margin-right: 3px;
+	}
 }
 
 /* Hide the content slot block UI */
