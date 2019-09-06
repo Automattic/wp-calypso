@@ -25,7 +25,6 @@ jobs:
       image: circleci/node:10.16.3-browsers
       env:
         NODE_CONFIG_ENV: test
-        CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
     steps:
@@ -39,6 +38,8 @@ jobs:
           sudo chown root /tmp/.X11-unix/
       - name: Decrypt Config
         working-directory: test/e2e
+        env:
+          CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: npm run decryptconfig
       - name: Run Tests
         working-directory: test/e2e
@@ -70,6 +71,8 @@ jobs:
           sudo chown root /tmp/.X11-unix/
       - name: Decrypt Config
         working-directory: test/e2e
+        env:
+          CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: npm run decryptconfig
       - name: Run Tests
         working-directory: test/e2e
