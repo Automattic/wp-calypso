@@ -12,7 +12,7 @@ jobs:
                 echo 'PRs from external authors cannot run on calypso.live'
                 exit 1
               fi
-      npm -v- name: Wait for calypso.live build
+      - name: Wait for calypso.live build
         if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronize' ) && contains( github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing' )
         env:
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
