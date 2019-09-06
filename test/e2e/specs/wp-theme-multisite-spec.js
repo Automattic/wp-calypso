@@ -14,7 +14,6 @@ import * as dataHelper from '../lib/data-helper';
 
 import ThemeDetailPage from '../lib/pages/theme-detail-page.js';
 import ThemesPage from '../lib/pages/themes-page.js';
-import CustomizerPage from '../lib/pages/customizer-page.js';
 
 import SidebarComponent from '../lib/components/sidebar-component';
 import SiteSelectorComponent from '../lib/components/site-selector-component';
