@@ -183,7 +183,6 @@ const ALL_THEME_OPTIONS = {
 	purchase,
 	upgradePlan,
 	activate,
-	tryandcustomize,
 	deleteTheme,
 	signup,
 	separator,

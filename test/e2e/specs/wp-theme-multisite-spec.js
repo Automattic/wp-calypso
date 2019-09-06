@@ -68,36 +68,6 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function() {
 				const displayed = await this.themesPage.popOverMenuDisplayed();
 				assert( displayed, 'Popover menu not displayed' );
 			} );
-
-			describe( 'when "Try & Customize" is clicked', function() {
-				step( 'click try and customize popover', async function() {
-					await this.themesPage.clickPopoverItem( 'Try & Customize' );
-					this.siteSelector = await SiteSelectorComponent.Expect( driver );
-				} );
-
-				step( 'should show the site selector', async function() {
-					const siteSelectorShown = await this.siteSelector.displayed();
-					return assert( siteSelectorShown, 'The site selector was not shown' );
-				} );
-
-				describe( 'when a site is selected, and Customize is clicked', function() {
-					step( 'select first site', async function() {
-						await this.siteSelector.selectFirstSite();
-						await this.siteSelector.ok();
-					} );
-
-					step( 'should open the customizer with the selected site and theme', async function() {
-						this.customizerPage = await CustomizerPage.Expect( driver );
-						const url = await driver.getCurrentUrl();
-						assert( url.indexOf( this.siteSelector.selectedSiteDomain ) > -1, 'Wrong site domain' );
-						assert( url.indexOf( this.themeSearchName ) > -1, 'Wrong theme' );
-					} );
-
-					after( async function() {
-						await this.customizerPage.close();
-					} );
-				} );
-			} );
 		} );
 	} );
 
