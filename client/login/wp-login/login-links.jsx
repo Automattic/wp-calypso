@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,7 +17,6 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import config, { isEnabled } from 'config';
-import Gridicon from 'components/gridicons';
 import ExternalLink from 'components/external-link';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
