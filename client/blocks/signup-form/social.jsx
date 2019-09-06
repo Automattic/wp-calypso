@@ -77,7 +77,8 @@ class SocialSignupForm extends Component {
 
 		// For the Jetpack Connect-in-place flow - see p1HpG7-7nj-p2 for more information.
 		if ( window && window.opener && '/jetpack/connect/authorize' === currentRoute ) {
-			redirectUri = window.location.href;
+			// We mask the client ID to allow usage of Jetpack Connect authorization URLs as Google oAuth2 redirect URI.
+			redirectUri = window.location.href.replace( 'client_id=', 'jetpack_client_id=' );
 		}
 
 		return (
