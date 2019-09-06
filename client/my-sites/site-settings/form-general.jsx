@@ -44,6 +44,7 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -353,6 +354,74 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	climateStrikeOption() {
+		const {
+			fields,
+			isRequestingSettings,
+			translate,
+			handleToggle,
+			handleSubmitForm,
+			isSavingSettings,
+		} = this.props;
+
+		const today = moment(),
+			lastDay = moment( { year: 2019, month: 9, day: 21 } );
+
+		if ( today.isAfter( lastDay, 'day' ) ) {
+			return null;
+		}
+
+		return (
+			<div>
+				<SettingsSectionHeader title={ translate( 'Climate Strike 2019' ) }>
+					<Button
+						compact={ true }
+						onClick={ handleSubmitForm }
+						primary={ true }
+						type="submit"
+						disabled={ isRequestingSettings || isSavingSettings }
+					>
+						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				</SettingsSectionHeader>
+				<Card>
+					<FormFieldset>
+						<CompactFormToggle
+							checked={ !! fields.climatestrike }
+							disabled={ isRequestingSettings }
+							onChange={ handleToggle( 'climatestrike' ) }
+						>
+							{ translate(
+								'This September, millions of us will walk out of our workplaces and homes to join ' +
+									'young climate strikers on the streets and {{climateStrikeLink}}demand an end to the age ' +
+									'of fossil fuels{{/climateStrikeLink}}. Show your solidarity with a {{digitalClimateStrikeLink}}digital ' +
+									'climate strike banner{{/digitalClimateStrikeLink}} that will appear on your website on September 20th.',
+								{
+									components: {
+										climateStrikeLink: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												href={ 'https://globalclimatestrike.net' }
+											/>
+										),
+										digitalClimateStrikeLink: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												href={ 'https://digital.globalclimatestrike.net' }
+											/>
+										),
+									},
+								}
+							) }
+						</CompactFormToggle>
+					</FormFieldset>
+				</Card>
+			</div>
+		);
+	}
+
 	Timezone() {
 		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = moment.tz.guess();
@@ -506,6 +575,8 @@ export class SiteSettingsFormGeneral extends Component {
 		return (
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+
+				{ ! siteIsJetpack && this.climateStrikeOption() }
 
 				<SettingsSectionHeader
 					data-tip-target="settings-site-profile-save"
