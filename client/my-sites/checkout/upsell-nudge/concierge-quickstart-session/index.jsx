@@ -214,13 +214,6 @@ export class ConciergeQuickstartSession extends PureComponent {
 								) }
 							</em>
 						</p>
-						<p>
-							<em>
-								{ translate(
-									'You have 30 days from the date of purchase to cancel an unused Quick Start session and receive a refund. Please note, if you miss a scheduled session twice, the purchase will be cancelled without a refund.'
-								) }
-							</em>
-						</p>
 					</div>
 					<div className="concierge-quickstart-session__column-doodle">
 						<img
