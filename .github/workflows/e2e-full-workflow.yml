@@ -27,11 +27,10 @@ jobs:
         NODE_CONFIG_ENV: test
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
-        NODE_PATH: /__w/wp-calypso/wp-calypso/test/e2e/node_modules
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: cd test/e2e && npm ci
+        run: cd test/e2e && npm i --no-package-lock
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
@@ -56,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: cd test/e2e && npm i
+        run: cd test/e2e && npm i --no-package-lock
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
