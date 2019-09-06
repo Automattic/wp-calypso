@@ -420,9 +420,13 @@ export class Checkout extends React.Component {
 		const { cart, selectedSiteSlug } = this.props;
 
 		if ( hasPersonalPlan( cart ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
+			// The plan bump vs concierge test is having some discrepancies,
+			// we will comment this out till a fix is found. Check pa1C6h-z7-p2.
+			/*if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
 				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-			}
+			}*/
+			// Showing the plan bump to all users, for the GM week.
+			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 		}
 
 		return;
