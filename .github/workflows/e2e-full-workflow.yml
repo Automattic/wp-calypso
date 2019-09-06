@@ -24,7 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: cd test/e2e && npm ci
+        working-directory: test/e2e
+        run: npm ci
       - name: Create screen sharing
         run: mkdir /tmp/.X11-unix &&
           sudo chmod 1777 /tmp/.X11-unix &&
@@ -33,13 +34,15 @@ jobs:
         env:
           NODE_CONFIG_ENV: test
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
-        run: cd test/e2e && npm run decryptconfig
+        working-directory: test/e2e
+        run: npm run decryptconfig
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
+        working-directory: test/e2e
+        run: ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
       - uses: actions/upload-artifact@master
         if: always()
         with:
@@ -52,7 +55,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: cd test/e2e && npm ci
+        working-directory: test/e2e
+        run: npm ci
       - name: Create screen sharing
         run: mkdir /tmp/.X11-unix &&
           sudo chmod 1777 /tmp/.X11-unix &&
@@ -61,13 +65,15 @@ jobs:
         env:
           NODE_CONFIG_ENV: test
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
-        run: cd test/e2e && npm run decryptconfig
+        working-directory: test/e2e
+        run: npm run decryptconfig
       - name: Run Tests
         env:
           NODE_CONFIG_ENV: test
           BRANCHNAME: $GITHUB_REF
           TEST_VIDEO: true
-        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }}
+        working-directory: test/e2e
+        run: ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }}
       - uses: actions/upload-artifact@master
         if: always()
         with:
