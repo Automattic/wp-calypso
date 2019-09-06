@@ -27,18 +27,17 @@ jobs:
         NODE_CONFIG_ENV: test
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
-      options: --workdir /__w/wp-calypso/wp-calypso/test/e2e
+        NODE_PATH: /__w/wp-calypso/wp-calypso/test/e2e/node_modules
     steps:
       - uses: actions/checkout@v1
-        working-directory: /__w/wp-calypso/wp-calypso
       - name: Install npm deps
-        run: npm ci
+        run: cd test/e2e && npm ci
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
-        run: npm run decryptconfig
+        run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
-        run: ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
+        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
       - uses: actions/upload-artifact@master
         if: always()
         with:
