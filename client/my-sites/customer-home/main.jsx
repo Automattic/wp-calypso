@@ -27,6 +27,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCustomizerUrl, getSiteOption } from 'state/sites/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
@@ -169,6 +170,7 @@ class Home extends Component {
 			isStaticHomePage,
 			staticHomePageId,
 			showCustomizer,
+			hasCustomDomain,
 		} = this.props;
 		const editHomePageUrl =
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
@@ -272,14 +274,25 @@ class Home extends Component {
 								label={ translate( 'Design a logo' ) }
 								iconSrc="/calypso/images/customer-home/logo.svg"
 							/>
-							<ActionBox
-								onClick={ () => {
-									trackAction( 'my_site', 'add_gsuite' );
-									page( `/email/${ siteSlug }` );
-								} }
-								label={ translate( 'Add G Suite' ) }
-								iconSrc="/calypso/images/customer-home/gsuite.svg"
-							/>
+							{ hasCustomDomain ? (
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'add_gsuite' );
+										page( `/email/${ siteSlug }` );
+									} }
+									label={ translate( 'Add email' ) }
+									iconSrc="/calypso/images/customer-home/gsuite.svg"
+								/>
+							) : (
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'add_domain' );
+										page( `/domains/add/${ siteSlug }` );
+									} }
+									label={ translate( 'Add a domain' ) }
+									iconSrc="/calypso/images/customer-home/custom-domain.svg"
+								/>
+							) }
 						</div>
 					</Card>
 				</div>
@@ -386,6 +399,7 @@ const connectHome = connect(
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
+			hasCustomDomain: getDomainsBySiteId( state, siteId ).length > 1,
 		};
 	},
 	dispatch => ( {
