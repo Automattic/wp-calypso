@@ -33,7 +33,7 @@ import Main from 'components/main';
 import JetpackHeader from 'components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
-import Gridicon from 'components/gridicons';
+import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
