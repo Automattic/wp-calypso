@@ -534,9 +534,9 @@ class HelpContact extends React.Component {
 					<GMClosureNotice
 						compact={ compact }
 						displayAt="2019-08-31 00:00Z"
-						basicChatClosesAt="2019-09-06 23:00Z"
+						basicChatClosesAt="2019-09-07 00:00Z"
 						basicChatReopensAt="2019-09-23 04:00Z"
-						priorityChatClosesAt="2019-09-09 23:00Z"
+						priorityChatClosesAt="2019-09-10 00:00Z"
 						priorityChatReopensAt="2019-09-19 04:00Z"
 					/>
 				) }
