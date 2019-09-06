@@ -29,6 +29,7 @@ jobs:
         TEST_VIDEO: true
       volumes:
       - /workspace:/github/workspace
+      options: --workdir /github/workflow
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
@@ -56,6 +57,7 @@ jobs:
         TEST_VIDEO: true
       volumes:
       - /workspace:/github/workspace
+      options: --workdir /github/workspace
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
