@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import AppleLoginButton from 'components/social-buttons/apple';
 import config from 'config';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import GoogleLoginButton from 'components/social-buttons/google';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -70,8 +71,15 @@ class SocialSignupForm extends Component {
 	}
 
 	render() {
+		const { currentRoute } = this.props;
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
-		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
+		let redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
+
+		// For the Jetpack Connect-in-place flow - see p1HpG7-7nj-p2 for more information.
+		if ( window && window.opener && '/jetpack/connect/authorize' === currentRoute ) {
+			// We mask the client ID to allow usage of Jetpack Connect authorization URLs as Google oAuth2 redirect URI.
+			redirectUri = window.location.href.replace( 'client_id=', 'jetpack_client_id=' );
+		}
 
 		return (
 			<div className="signup-form__social">
@@ -99,6 +107,8 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

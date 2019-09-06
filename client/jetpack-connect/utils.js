@@ -16,7 +16,7 @@ import { addQueryArgs, untrailingslashit } from 'lib/route';
 export function authQueryTransformer( queryObject ) {
 	return {
 		// Required
-		clientId: parseInt( queryObject.client_id, 10 ),
+		clientId: parseInt( queryObject.client_id || queryObject.jetpack_client_id, 10 ),
 		closeWindowAfterLogin: !! queryObject.close_window_after_login,
 		homeUrl: queryObject.home_url,
 		nonce: queryObject._wp_nonce,
