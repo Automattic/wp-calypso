@@ -4,7 +4,6 @@ export const authorizeQueryDataSchema = {
 	required: [
 		'_wp_nonce',
 		'blogname',
-		'client_id',
 		'home_url',
 		'redirect_uri',
 		'scope',
@@ -12,6 +11,14 @@ export const authorizeQueryDataSchema = {
 		'site',
 		'site_url',
 		'state',
+	],
+	oneOf: [
+		{
+			required: [ 'client_id' ],
+		},
+		{
+			required: [ 'jetpack_client_id' ],
+		},
 	],
 	properties: {
 		_ui: { type: 'string' },
@@ -21,6 +28,7 @@ export const authorizeQueryDataSchema = {
 		auth_approved: { type: 'string' },
 		blogname: { type: 'string' },
 		client_id: { pattern: '^\\d+$', type: 'string' },
+		jetpack_client_id: { pattern: '^\\d+$', type: 'string' },
 		close_window_after_login: { type: 'string' },
 		from: { type: 'string' },
 		home_url: { type: 'string' },
