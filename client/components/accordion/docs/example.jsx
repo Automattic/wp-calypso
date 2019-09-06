@@ -7,16 +7,15 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
-
-Gridicon.displayName = 'Gridicon';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
+import Gridicon from 'components/gridicon';
 
 Accordion.displayName = 'Accordion';
+Gridicon.displayName = 'Gridicon';
 
 function AccordionExample( props ) {
 	return props.exampleCode;
