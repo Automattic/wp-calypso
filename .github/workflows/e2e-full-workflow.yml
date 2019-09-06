@@ -30,8 +30,9 @@ jobs:
       options: --workdir /__w/wp-calypso/wp-calypso/test/e2e
     steps:
       - uses: actions/checkout@v1
+        working-directory: /__w/wp-calypso/wp-calypso
       - name: Install npm deps
-        run: node -v && npm -v && npm ci
+        run: npm ci
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
