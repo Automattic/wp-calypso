@@ -27,23 +27,18 @@ jobs:
         NODE_CONFIG_ENV: test
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
+      volumes:
+      - /workspace:/github/workspace
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        working-directory: test/e2e
-        run: npm ci
-      - name: Create screen sharing
-        run: mkdir /tmp/.X11-unix &&
-          sudo chmod 1777 /tmp/.X11-unix &&
-          sudo chown root /tmp/.X11-unix/
+        run: cd test/e2e && npm ci
       - name: Decrypt Config
-        working-directory: test/e2e
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
-        run: npm run decryptconfig
+        run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
-        working-directory: test/e2e
-        run: ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
+        run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
       - uses: actions/upload-artifact@master
         if: always()
         with:
@@ -59,23 +54,18 @@ jobs:
         NODE_CONFIG_ENV: test
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
+      volumes:
+      - /workspace:/github/workspace
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        working-directory: test/e2e
-        run: npm ci
-      - name: Create screen sharing
-        run: mkdir /tmp/.X11-unix &&
-          sudo chmod 1777 /tmp/.X11-unix &&
-          sudo chown root /tmp/.X11-unix/
+        run: cd test/e2e && npm ci
       - name: Decrypt Config
-        working-directory: test/e2e
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
-        run: npm run decryptconfig
+        run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
-        working-directory: test/e2e
-        run: ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }}
+        run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }}
       - uses: actions/upload-artifact@master
         if: always()
         with:
