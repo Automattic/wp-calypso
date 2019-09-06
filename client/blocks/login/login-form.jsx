@@ -11,7 +11,7 @@ import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { stringify } from 'qs';
 
 /**
@@ -118,9 +118,8 @@ export class LoginForm extends Component {
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
 			nextProps.socialAccountIsLinking
 		) {
-			if ( ! this.state.usernameOrEmail ) {
-				this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
-			}
+			this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
+			this.props.getAuthAccountType( nextProps.socialAccountLinkEmail );
 		}
 
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
