@@ -693,6 +693,7 @@ const getFormSettings = settings => {
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
+		climatestrike: false,
 	};
 
 	if ( ! settings ) {
@@ -706,6 +707,7 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
+		climatestrike: settings.climatestrike
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
