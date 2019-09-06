@@ -12,11 +12,11 @@ jobs:
                 echo 'PRs from external authors cannot run on calypso.live'
                 exit 1
               fi
-      - name: Wait for calypso.live build
-        if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronize' ) && contains( github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing' )
-        env:
-          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-        run: ./test/e2e/scripts/wait-for-running-branch.sh
+      #- name: Wait for calypso.live build
+        #if: github.event_name == 'pull_request' && ( github.event.action == 'labeled' || github.event.action == 'synchronize' ) && contains( github.event.pull_request.labels.*.name, '[Status] Needs e2e Testing' )
+        #env:
+        #  COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+        #run: ./test/e2e/scripts/wait-for-running-branch.sh
   e2e-full-suite-desktop:
     name: e2e Full Suite - Desktop
     runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: cd test/e2e && npm i
+        run: cd test/e2e && node -v && npm -v && npm ci
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
