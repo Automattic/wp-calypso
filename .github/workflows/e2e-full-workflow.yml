@@ -27,10 +27,11 @@ jobs:
         NODE_CONFIG_ENV: test
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
+      options: --user root
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: sudo mkdir /github/home/.npm && sudo chown -R `whoami` /github/home/.npm && cd test/e2e && npm i --no-package-lock
+        run: cd test/e2e && npm i --no-package-lock
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
@@ -52,10 +53,11 @@ jobs:
         NODE_CONFIG_ENV: test
         BRANCHNAME: $GITHUB_REF
         TEST_VIDEO: true
+      options: --user root
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
-        run: sudo mkdir /github/home/.npm && sudo chown -R `whoami` /github/home/.npm && cd test/e2e && npm i --no-package-lock
+        run: cd test/e2e && npm i --no-package-lock
       - name: Decrypt Config
         env:
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
