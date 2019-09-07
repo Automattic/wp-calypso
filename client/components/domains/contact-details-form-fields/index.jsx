@@ -60,6 +60,7 @@ const CONTACT_DETAILS_FORM_FIELDS = [
 	'lastName',
 	'organization',
 	'email',
+	'alternateEmail',
 	'phone',
 	'address1',
 	'address2',
@@ -94,6 +95,7 @@ export class ContactDetailsFormFields extends Component {
 		className: PropTypes.string,
 		userCountryCode: PropTypes.string,
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
+		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 	};
 
@@ -113,6 +115,7 @@ export class ContactDetailsFormFields extends Component {
 		disableSubmitButton: false,
 		className: '',
 		needsOnlyGoogleAppsDetails: false,
+		needsAlternateEmailForGSuite: false,
 		hasCountryStates: false,
 		translate: identity,
 		userCountryCode: 'US',
@@ -588,6 +591,17 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
+	renderAlternateEmailFieldForGSuite() {
+		return (
+			<div className="contact-details-form-fields__row">
+				<Input
+					label={ this.props.translate( 'Alternate Email Address' ) }
+					{ ...this.getFieldProps( 'alternate-email' ) }
+				/>
+			</div>
+		);
+	}
+
 	render() {
 		const { translate, onCancel, disableSubmitButton, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
@@ -603,6 +617,7 @@ export class ContactDetailsFormFields extends Component {
 						label: translate( 'Last Name' ),
 					} ) }
 				</div>
+				{ this.props.needsAlternateEmailForGSuite && this.renderAlternateEmailFieldForGSuite() }
 
 				{ this.props.needsOnlyGoogleAppsDetails
 					? this.renderGAppsFieldset()
