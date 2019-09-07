@@ -691,6 +691,7 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
  * @returns {String} the domain
  */
 const getDomainPartFromEmail = emailAddress =>
+	// Domain is any string after `@` character
 	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
 		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
 		: null;
