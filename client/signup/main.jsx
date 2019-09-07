@@ -360,6 +360,10 @@ class Signup extends React.Component {
 			isNew7DUserSite,
 		} );
 
+		if ( 'launch-site' === this.props.flowName ) {
+			this.signupFlowController.reset();
+		}
+
 		this.handleLogin( dependencies, destination );
 	};
 
