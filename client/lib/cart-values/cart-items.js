@@ -684,23 +684,45 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	);
 }
 
-const getDomainPartFromEmail = emailAddress => {
-	emailAddress = emailAddress || '';
-	return emailAddress
-		.toLowerCase()
-		.trim()
-		.replace( /.*@([^@]+)$/, '$1' );
-};
+/**
+ * Returns the domain part of an email address.
+ *
+ * @param {String} emailAddress - a valid email address
+ * @returns {String} the domain
+ */
+const getDomainPartFromEmail = emailAddress =>
+	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
+		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
+		: null;
+
+/**
+ * Returns a predicate that determines if a domain matches a product meta.
+ *
+ * @param {String} domain domain to compare.
+ * @returns {function(*=): (boolean)} true if the domain matches.
+ */
+const isSameDomainAsProductMeta = domain => product =>
+	product &&
+	product.meta &&
+	'string' === typeof domain &&
+	'string' === typeof product.meta &&
+	product.meta.trim().toUpperCase() === domain.trim().toUpperCase();
 
 export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
 	return (
 		! emailValidator.validate( contactDetails.email ) ||
-		some( cart.products, [ 'meta', getDomainPartFromEmail( contactDetails.email ) ] )
+		some(
+			cart.products,
+			isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
+		)
 	);
 }
 
 export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
-	return some( cart.products, [ 'meta', getDomainPartFromEmail( contactDetails.alternateEmail ) ] );
+	return some(
+		cart.products,
+		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
+	);
 }
 
 export function hasGoogleApps( cart ) {
