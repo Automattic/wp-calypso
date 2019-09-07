@@ -1,4 +1,3 @@
-
 .site-address-changer__dialog {
 	text-align: left;
 	max-width: 400px;
@@ -72,6 +71,7 @@
 
 	.gridicon {
 		float: left;
+		margin-top: 2.5px;
 
 		@include breakpoint( '<660px' ) {
 			display: none;
@@ -131,6 +131,11 @@
 }
 
 .site-address-changer__confirmation-detail {
+	
+	&.is-former-address {
+		margin-bottom: 8px;
+	}
+	
 	.gridicon {
 		float: left;
 
@@ -146,4 +151,8 @@
 			margin-left: 24px;
 		}
 	}
+}
+
+.site-address-changer__confirmation-heading {
+	margin-top: 28px;
 }
