@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,12 +5,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import Dialog from 'components/dialog';
+import Gridicon from 'components/gridicon';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -101,7 +100,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 							'this site address will no longer be available for future use.'
 					) }
 				</p>
-				<div className="site-address-changer__confirmation-detail">
+				<div className="site-address-changer__confirmation-detail is-former-address">
 					<Gridicon
 						icon="cross-circle"
 						size={ 18 }
@@ -114,7 +113,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 						{ translate( 'Will be removed and unavailable for use.' ) }
 					</p>
 				</div>
-				<div className="site-address-changer__confirmation-detail">
+				<div className="site-address-changer__confirmation-detail is-new-address">
 					<Gridicon
 						icon="checkmark-circle"
 						size={ 18 }
@@ -127,7 +126,9 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 						{ translate( 'Will be your new site address.' ) }
 					</p>
 				</div>
-				<h1>{ translate( 'Check the box to confirm' ) }</h1>
+				<h1 className="site-address-changer__confirmation-heading">
+					{ translate( 'Check the box to confirm' ) }
+				</h1>
 				<FormLabel>
 					<FormInputCheckbox
 						checked={ this.state.isConfirmationChecked }
