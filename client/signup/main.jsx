@@ -360,10 +360,6 @@ class Signup extends React.Component {
 			isNew7DUserSite,
 		} );
 
-		if ( 'launch-site' === this.props.flowName ) {
-			this.signupFlowController.reset();
-		}
-
 		this.handleLogin( dependencies, destination );
 	};
 
@@ -379,6 +375,7 @@ class Signup extends React.Component {
 		if ( userIsLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
+				this.signupFlowController.reset();
 				return ( window.location.href = destination );
 			}
 
