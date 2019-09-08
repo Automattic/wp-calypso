@@ -425,7 +425,7 @@ export class Checkout extends React.Component {
 			/*if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
 				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 			}*/
-			// Showing the plan bump to all users, for the GM week.
+			// Temporarily showing the plan bump to all users
 			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
 		}
 
@@ -480,9 +480,11 @@ export class Checkout extends React.Component {
 
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
-			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+
+			//We are commenting out this code to temporaritly not show the concierge upsell to any user
+			/*if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
 				return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
-			}
+			}*/
 		}
 
 		return;

@@ -83,8 +83,8 @@ export default {
 		//this test is used to dial down the upsell offer
 		datestamp: '20190429',
 		variations: {
-			offer: 0,
-			noOffer: 100,
+			offer: 100,
+			noOffer: 0,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
