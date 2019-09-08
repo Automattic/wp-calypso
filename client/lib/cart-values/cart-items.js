@@ -722,7 +722,7 @@ export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
 export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
 	return some(
 		cart.products,
-		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
+		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.alternateEmail ) )
 	);
 }
 
