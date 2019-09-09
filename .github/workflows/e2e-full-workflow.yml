@@ -21,22 +21,20 @@ jobs:
     name: e2e Full Suite - Desktop
     runs-on: ubuntu-latest
     needs: wait-for-calypso-live
-    container:
-      image: circleci/node:10.16.3-browsers
-      env:
-        NODE_CONFIG_ENV: test
-        BRANCHNAME: $GITHUB_REF
-        TEST_VIDEO: true
-      options: --user root
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
         run: cd test/e2e && npm ci
       - name: Decrypt Config
         env:
+          NODE_CONFIG_ENV: test
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
+        env:
+          NODE_CONFIG_ENV: test
+          BRANCHNAME: $GITHUB_REF
+          TEST_VIDEO: true
         run: cd test/e2e && ./run.sh -R -g -s desktop -S ${{ github.event.pull_request.head.sha }}
       - uses: actions/upload-artifact@master
         if: always()
@@ -47,22 +45,20 @@ jobs:
     name: e2e Full Suite - Mobile
     runs-on: ubuntu-latest
     needs: wait-for-calypso-live
-    container:
-      image: circleci/node:10.16.3-browsers
-      env:
-        NODE_CONFIG_ENV: test
-        BRANCHNAME: $GITHUB_REF
-        TEST_VIDEO: true
-      options: --user root
     steps:
       - uses: actions/checkout@v1
       - name: Install npm deps
         run: cd test/e2e && npm ci
       - name: Decrypt Config
         env:
+          NODE_CONFIG_ENV: test
           CONFIG_KEY: ${{ secrets.CONFIG_KEY }}
         run: cd test/e2e && npm run decryptconfig
       - name: Run Tests
+        env:
+          NODE_CONFIG_ENV: test
+          BRANCHNAME: $GITHUB_REF
+          TEST_VIDEO: true
         run: cd test/e2e && ./run.sh -R -g -s mobile -S ${{ github.event.pull_request.head.sha }}
       - uses: actions/upload-artifact@master
         if: always()
