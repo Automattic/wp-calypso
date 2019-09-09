@@ -188,6 +188,12 @@ class SocialLoginForm extends Component {
 						responseHandler={ this.handleAppleResponse }
 						onClick={ this.trackLogin.bind( null, 'apple' ) }
 					/>
+
+					<p className="login__social-tos">
+						If you continue with Google or Apple and don't already have a WordPress.com account, you
+						are creating an account and you agree to our{' '}
+						<a href="https://wordpress.com/tos">Terms of Service</a>.
+					</p>
 				</div>
 
 				{ this.props.isSocialAccountCreating && (
