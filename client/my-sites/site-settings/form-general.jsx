@@ -354,14 +354,23 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	handleClimateToggle = () => {
+		const { fields, submitForm, trackEvent, updateFields } = this.props;
+		const climatestrike = ! fields.climatestrike;
+		this.props.recordTracksEvent( 'calypso_general_settings_climatestrike_updated', {
+			climatestrike: climatestrike,
+		} );
+		updateFields( { climatestrike: climatestrike }, () => {
+			submitForm();
+			trackEvent( 'Toggled Climate Strike Toggle' );
+		} );
+	};
+
 	climateStrikeOption() {
 		const {
 			fields,
 			isRequestingSettings,
 			translate,
-			handleToggle,
-			handleSubmitForm,
-			isSavingSettings,
 		} = this.props;
 
 		const today = moment(),
@@ -373,23 +382,13 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<div>
-				<SettingsSectionHeader title={ translate( 'Climate Strike 2019' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SettingsSectionHeader>
+				<SettingsSectionHeader title={ translate( 'Climate Strike 2019' ) } />
 				<Card>
 					<FormFieldset>
 						<CompactFormToggle
 							checked={ !! fields.climatestrike }
 							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'climatestrike' ) }
+							onChange={ this.handleClimateToggle }
 						>
 							{ translate(
 								'This September, millions of us will walk out of our workplaces and homes to join ' +
