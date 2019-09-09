@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, get, has } from 'lodash';
 import moment from 'moment-timezone';
 
@@ -367,11 +367,7 @@ export class SiteSettingsFormGeneral extends Component {
 	};
 
 	climateStrikeOption() {
-		const {
-			fields,
-			isRequestingSettings,
-			translate,
-		} = this.props;
+		const { fields, isRequestingSettings, translate } = this.props;
 
 		const today = moment(),
 			lastDay = moment( { year: 2019, month: 9, day: 21 } );
@@ -706,7 +702,7 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-		climatestrike: settings.climatestrike
+		climatestrike: settings.climatestrike,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
