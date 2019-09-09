@@ -94,9 +94,16 @@ class SocialSignupForm extends Component {
 					/>
 
 					<p>
-						If you continue with Google or Apple and don't already have a WordPress.com account, you
-						are creating an account and you agree to our{' '}
-						<a href="https://wordpress.com/tos">Terms of Service</a>.
+						{ this.props.translate(
+							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
+								'are creating an account and you agree to our' +
+								' {{a}}Terms of Service{{/a}}.',
+							{
+								components: {
+									a: <a href="https://wordpress.com/tos" />,
+								},
+							}
+						) }
 					</p>
 				</div>
 			</div>
