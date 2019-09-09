@@ -381,7 +381,7 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 
 		return (
-			<div>
+			<>
 				<SettingsSectionHeader title={ translate( 'Climate Strike 2019' ) } />
 				<Card>
 					<FormFieldset>
@@ -417,7 +417,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</CompactFormToggle>
 					</FormFieldset>
 				</Card>
-			</div>
+			</>
 		);
 	}
 
