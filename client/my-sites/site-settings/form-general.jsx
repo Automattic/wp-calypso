@@ -387,10 +387,11 @@ export class SiteSettingsFormGeneral extends Component {
 							onChange={ this.handleClimateToggle }
 						>
 							{ translate(
-								'This September, millions of us will walk out of our workplaces and homes to join ' +
-									'young climate strikers on the streets and {{climateStrikeLink}}demand an end to the age ' +
-									'of fossil fuels{{/climateStrikeLink}}. Show your solidarity with a {{digitalClimateStrikeLink}}digital ' +
-									'climate strike banner{{/digitalClimateStrikeLink}}. On September 20th the banner will expand to a dismissible overlay.',
+								'This September, millions of us will take to the streets to {{climateStrikeLink}}demand an end to the age ' +
+									'of fossil fuels{{/climateStrikeLink}}. Show your solidarity on your site by displaying a ' +
+									'{{digitalClimateStrikeLink}}digital climate strike banner{{/digitalClimateStrikeLink}} for the month. ' +
+									'On September 20th, the day of the Global Climate Strike, the banner will expand to a full-screen overlay ' +
+									'that site visitors can dismiss.',
 								{
 									components: {
 										climateStrikeLink: (
