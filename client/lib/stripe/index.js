@@ -271,12 +271,13 @@ function loadScriptAsync( url ) {
  * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
  * @return {object} See above
  */
-function useStripeConfiguration( requestArgs = {} ) {
+function useStripeConfiguration( requestArgs ) {
 	const [ stripeError, setStripeError ] = useState();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
+		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
-		getStripeConfiguration( requestArgs ).then(
+		getStripeConfiguration( requestArgs || {} ).then(
 			configuration => isSubscribed && setStripeConfiguration( configuration )
 		);
 		return () => ( isSubscribed = false );
@@ -284,35 +285,32 @@ function useStripeConfiguration( requestArgs = {} ) {
 	return { stripeConfiguration, setStripeError };
 }
 
-export function StripeHookProvider( { children, configurationArgs = {} } ) {
-	const InnerWrapper = ( { stripe, stripeData, children: innerChildren } ) => {
-		const updatedStripeData = { ...stripeData, stripe };
-		return (
-			<StripeContext.Provider value={ updatedStripeData }>{ innerChildren }</StripeContext.Provider>
-		);
-	};
-	const StripeInjectedWrapper = injectStripe( InnerWrapper );
-	const OuterWrapper = () => {
-		const { stripeConfiguration, setStripeError } = useStripeConfiguration( configurationArgs );
-		const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
+function StripeHookProviderInnerWrapper( { stripe, stripeData, children } ) {
+	const updatedStripeData = { ...stripeData, stripe };
+	return <StripeContext.Provider value={ updatedStripeData }>{ children }</StripeContext.Provider>;
+}
+const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
 
-		const stripeData = {
-			stripe: null, // This must be set inside the injected component
-			stripeConfiguration,
-			isStripeLoading,
-			stripeLoadingError,
-			setStripeError,
-		};
+export function StripeHookProvider( { children, configurationArgs } ) {
+	debug( 'rendering StripeHookProvider' );
+	const { stripeConfiguration, setStripeError } = useStripeConfiguration( configurationArgs );
+	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
 
-		return (
-			<StripeProvider stripe={ stripeJs }>
-				<Elements>
-					<StripeInjectedWrapper stripeData={ stripeData }>{ children }</StripeInjectedWrapper>
-				</Elements>
-			</StripeProvider>
-		);
+	const stripeData = {
+		stripe: null, // This must be set inside the injected component
+		stripeConfiguration,
+		isStripeLoading,
+		stripeLoadingError,
+		setStripeError,
 	};
-	return <OuterWrapper />;
+
+	return (
+		<StripeProvider stripe={ stripeJs }>
+			<Elements>
+				<StripeInjectedWrapper stripeData={ stripeData }>{ children }</StripeInjectedWrapper>
+			</Elements>
+		</StripeProvider>
+	);
 }
 
 /**
