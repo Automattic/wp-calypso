@@ -1,3 +1,7 @@
+[UNRELEASED]
+
+- Add `enzyme-to-json` serializer to `jest-preset.js`.
+
 # 4.0.1
 
 - Replace esm import/export with `require`.

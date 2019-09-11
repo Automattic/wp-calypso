@@ -5,6 +5,7 @@ const path = require( 'path' );
 
 module.exports = {
 	setupFilesAfterEnv: [ path.join( __dirname, 'jest', 'setup.js' ) ],
+	snapshotSerializers: [ 'enzyme-to-json/serializer' ],
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	transform: {
