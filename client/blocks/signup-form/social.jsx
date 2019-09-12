@@ -93,7 +93,7 @@ class SocialSignupForm extends Component {
 						onClick={ () => this.trackSocialLogin( 'apple' ) }
 					/>
 
-					<p>
+					<p className="signup-form__social-buttons-tos">
 						{ this.props.translate(
 							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
 								'are creating an account and you agree to our' +
