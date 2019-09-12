@@ -53,12 +53,9 @@ export class TransferToOtherSite extends React.Component {
 	}
 
 	isSiteEligible = site => {
-		// check if it's an Atomic site from the site options
-		const isAtomic = get( site, 'options.is_automated_transfer', false );
-
 		return (
 			site.capabilities.manage_options &&
-			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
+			! site.jetpack && // Simple and Atomic sites. Not Jetpack sites.
 			! get( site, 'options.is_domain_only', false ) &&
 			! (
 				this.props.domainsWithPlansOnly && isWpComFreePlan( get( site, 'plan.product_slug' ) )
