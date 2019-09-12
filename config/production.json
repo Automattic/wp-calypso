@@ -108,7 +108,6 @@
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
 		"u2f/keys-support": false,
-		"ui/first-view": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
