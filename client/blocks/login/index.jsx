@@ -31,9 +31,6 @@ import { setResumeAfterLogin } from 'state/signup/progress/actions';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import VerificationCodeForm from './two-factor-authentication/verification-code-form';
-import WebAuthnVerificationForm from './two-factor-authentication/webauthn-verification-form';
-import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
 import userFactory from 'lib/user';
 import Notice from 'components/notice';
@@ -43,9 +40,12 @@ import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/wooc
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import VerificationCodeForm from './two-factor-authentication/verification-code-form';
-import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
-import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import {
+	PushNotificationApprovalPoller,
+	VerificationCodeForm,
+	WaitingTwoFactorNotificationApproval,
+	WebAuthnVerificationForm,
+} from './two-factor-authentication/verification-code-form';
 
 /**
  * Style dependencies
