@@ -1,6 +1,5 @@
 module.exports = {
-	preset: '@automattic/calypso-build',
+	rootDir: './../../',
 	// run tests for all packages that have a Jest config file
 	projects: [ '<rootDir>/packages/*/jest.config.js' ],
-	rootDir: './../../',
 };
