@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import { capitalize, findLast, get, includes, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -40,12 +40,10 @@ import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/wooc
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import {
-	PushNotificationApprovalPoller,
-	VerificationCodeForm,
-	WaitingTwoFactorNotificationApproval,
-	WebAuthnVerificationForm,
-} from './two-factor-authentication/verification-code-form';
+import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import WebAuthnVerificationForm from './two-factor-authentication/webauthn-verification-form';
 
 /**
  * Style dependencies
