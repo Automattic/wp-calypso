@@ -62,19 +62,7 @@ class SecurityU2fKey extends React.Component {
 	};
 
 	addKeyRegister = keyData => {
-		console.log( keyData.clientData ); //eslint-disable-line
-		const body = {
-			client_data: keyData.clientData,
-			key_handle: Math.random()
-				.toString( 36 )
-				.substring( 7 ),
-			signature_data: keyData.registrationData,
-		};
-		wpcom.req.post(
-			'/me/two-step/security-key/registration_validate',
-			body,
-			this.getKeysFromServer
-		);
+		this.getKeysFromServer();
 	};
 
 	deleteKeyRegister = keyData => {
@@ -91,7 +79,7 @@ class SecurityU2fKey extends React.Component {
 	};
 
 	keysFromServer = ( err, data ) => {
-		this.setState( { u2fKeys: data.registrations } );
+		this.setState( { addingKey: false, u2fKeys: data.registrations } );
 	};
 
 	getChallenge = () => {
@@ -109,7 +97,6 @@ class SecurityU2fKey extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const { addingKey, isBrowserSupported, errorMessage, u2fKeys } = this.state;
-		console.log( u2fKeys );
 		//		const u2fKeys = [];
 		return (
 			<Fragment>
@@ -127,34 +114,31 @@ class SecurityU2fKey extends React.Component {
 						</Button>
 					) }
 				</SectionHeader>
-				{ addingKey &&
-					this.state.u2fChallenge && (
-						<SecurityU2fKeyAdd
-							onRegister={ this.addKeyRegister }
-							onCancel={ this.addKeyCancel }
-							registerRequests={ this.state.u2fChallenge }
-						/>
-					) }
+				{ addingKey && this.state.u2fChallenge && (
+					<SecurityU2fKeyAdd
+						onRegister={ this.addKeyRegister }
+						onCancel={ this.addKeyCancel }
+						registerRequests={ this.state.u2fChallenge }
+					/>
+				) }
 				{ errorMessage && <SecurityKeyErrorNotice text={ errorMessage } /> }
-				{ ! addingKey &&
-					! u2fKeys.length && (
-						<Card>
-							<p>Use a Universal 2nd Factor security key to sign in.</p>
-							{ ! isBrowserSupported && (
-								<p>
-									Looks like you browser doesn't support the FIDO U2F standard yet. Read more about
-									the requirements for adding a key to your account.
-								</p>
-							) }
-						</Card>
-					) }
-				{ ! addingKey &&
-					!! u2fKeys.length && (
-						<SecurityU2fKeyList
-							securityKeys={ this.state.u2fKeys }
-							onDelete={ this.deleteKeyRegister }
-						/>
-					) }
+				{ ! addingKey && ! u2fKeys.length && (
+					<Card>
+						<p>Use a Universal 2nd Factor security key to sign in.</p>
+						{ ! isBrowserSupported && (
+							<p>
+								Looks like you browser doesn't support the FIDO U2F standard yet. Read more about
+								the requirements for adding a key to your account.
+							</p>
+						) }
+					</Card>
+				) }
+				{ ! addingKey && !! u2fKeys.length && (
+					<SecurityU2fKeyList
+						securityKeys={ this.state.u2fKeys }
+						onDelete={ this.deleteKeyRegister }
+					/>
+				) }
 			</Fragment>
 		);
 	}

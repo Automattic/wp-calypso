@@ -28,20 +28,18 @@ class SecurityU2fKeyAdd extends React.Component {
 	};
 
 	registerKey = () => {
-		let self = this;
 		webauthn
 			.register()
 			.then( data => {
-				self.keyRegistered();
+				this.keyRegistered();
 			} )
 			.catch( err => {
-				console.log( err );
-				self.props.onCancel( err );
+				this.props.onCancel( err );
 			} );
 	};
 
-	keyRegistered = data => {
-		this.props.onRegister( data );
+	keyRegistered = () => {
+		this.props.onRegister();
 	};
 
 	createChallenge() {
