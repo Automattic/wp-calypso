@@ -2947,11 +2947,6 @@
 			"integrity": "sha512-OCutwjDZ4aFS6PB1UZ988C4YgwlBHJd6wCeQqaLdmadZ/7e+w79+hbMUFC1QXDNCmdyoRfAFdm0RypzwR+Qpag==",
 			"dev": true
 		},
-		"@types/estree": {
-			"version": "0.0.39",
-			"resolved": "https://registry.npmjs.org/@types/estree/-/estree-0.0.39.tgz",
-			"integrity": "sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw=="
-		},
 		"@types/events": {
 			"version": "3.0.0",
 			"resolved": "https://registry.npmjs.org/@types/events/-/events-3.0.0.tgz",
@@ -19693,15 +19688,6 @@
 				"inherits": "^2.0.1"
 			}
 		},
-		"rollup": {
-			"version": "0.61.2",
-			"resolved": "https://registry.npmjs.org/rollup/-/rollup-0.61.2.tgz",
-			"integrity": "sha512-NN7GaX3c9I3oz+CjEex7+JbnSxrLMTBXNRThI4qdN2Tq0K/7RiedlEzOHyuVAHPZKvQeoPiRioTWL3xhmN+oCg==",
-			"requires": {
-				"@types/estree": "0.0.39",
-				"@types/node": "*"
-			}
-		},
 		"rst-selector-parser": {
 			"version": "2.2.3",
 			"resolved": "https://registry.npmjs.org/rst-selector-parser/-/rst-selector-parser-2.2.3.tgz",
@@ -22280,11 +22266,6 @@
 			"integrity": "sha512-FFgHdPt4T/duxx6Ndf7hwgMZZjZpB+U0nMNGVCYPq0rEzWKjEDobm4J6yb3CS7naZ0yURFqdw9Gwc7UOh/P9oQ==",
 			"dev": true
 		},
-		"u2f-api": {
-			"version": "1.0.6",
-			"resolved": "https://registry.npmjs.org/u2f-api/-/u2f-api-1.0.6.tgz",
-			"integrity": "sha512-CDvSoiHLdB4I7ArzAngsSattj7lIRBmih/NAD9VUKVuMBoQHuhDdIkEM80Fu2vAMUQO9WQc/kjF8Akp5JvVfQw=="
-		},
 		"ua-parser-js": {
 			"version": "0.7.20",
 			"resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.20.tgz",
@@ -22788,14 +22769,6 @@
 			"integrity": "sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=",
 			"requires": {
 				"defaults": "^1.0.3"
-			}
-		},
-		"webauthn-simple-app": {
-			"version": "2.0.0",
-			"resolved": "https://registry.npmjs.org/webauthn-simple-app/-/webauthn-simple-app-2.0.0.tgz",
-			"integrity": "sha512-oZ59SYX4iqX+2y+/A3kCI3OhhiaQ33QMr8HTR/hAcpfpR2/xUWUA2wYftSB4W8MRTgpLGuHUVna4gJhUwNvNfQ==",
-			"requires": {
-				"rollup": "^0.61.2"
 			}
 		},
 		"webidl-conversions": {
