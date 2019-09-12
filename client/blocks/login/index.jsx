@@ -43,7 +43,6 @@ import LoginForm from './login-form';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
-import WebAuthnVerificationForm from './two-factor-authentication/webauthn-verification-form';
 
 /**
  * Style dependencies
@@ -352,17 +351,10 @@ class Login extends Component {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
 		}
 
-		if (
-			twoFactorEnabled &&
-			includes( [ 'authenticator', 'u2f', 'sms', 'backup' ], twoFactorAuthType )
-		) {
+		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
 				<div>
 					{ poller }
-					<WebAuthnVerificationForm
-						onSuccess={ this.handleValid2FACode }
-						twoFactorAuthType={ twoFactorAuthType }
-					/>
 					<VerificationCodeForm
 						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType }
