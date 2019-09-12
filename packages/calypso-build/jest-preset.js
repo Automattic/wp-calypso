@@ -2,6 +2,7 @@
  * External dependencies
  */
 const path = require( 'path' );
+const { defaults } = require( 'jest-config' );
 
 module.exports = {
 	setupFilesAfterEnv: [ path.join( __dirname, 'jest', 'setup.js' ) ],
@@ -17,5 +18,6 @@ module.exports = {
 			'asset.js'
 		),
 	},
+	testPathIgnorePatterns: [ ...defaults.testPathIgnorePatterns, '/dist/' ],
 	verbose: false,
 };
