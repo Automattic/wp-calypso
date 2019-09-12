@@ -46,7 +46,9 @@ class U2FKeyDeleteButton extends Component {
 
 	onDeleteKey = ( closeDialog ) => {
 		// Actually delete the key
-		//console.log(this.props);
+		if ( this.props.onDelete ) {
+			this.props.onDelete(this.props.securityKey);
+		}
 		// Close the dialog
 		closeDialog();
 	};

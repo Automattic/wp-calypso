@@ -79,9 +79,9 @@ class SecurityU2fKey extends React.Component {
 
 	deleteKeyRegister = keyData => {
 		console.log( 'Register key: ', keyData ); //eslint-disable-line
-		wpcom.req.post(
+		wpcom.req.get(
 			'/me/two-step/security-key/delete',
-			{ handle: keyData.handle },
+			{ credential_id: keyData.id },
 			this.getKeysFromServer
 		);
 	};
@@ -109,6 +109,7 @@ class SecurityU2fKey extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const { addingKey, isBrowserSupported, errorMessage, u2fKeys } = this.state;
+		console.log( u2fKeys );
 		//		const u2fKeys = [];
 		return (
 			<Fragment>
