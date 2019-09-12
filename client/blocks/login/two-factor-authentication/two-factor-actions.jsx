@@ -28,6 +28,7 @@ import './two-factor-actions.scss';
 
 class TwoFactorActions extends Component {
 	static propTypes = {
+		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -54,19 +55,38 @@ class TwoFactorActions extends Component {
 		page( login( { isNative: true, twoFactorAuthType: 'authenticator' } ) );
 	};
 
+	recordSecurityKeyLinkClick = event => {
+		event.preventDefault();
+		// tracks
+		page( login( { isNative: true, twoFactorAuthType: 'security-key' } ) );
+	};
+
 	render() {
-		const { isAuthenticatorSupported, isSmsSupported, translate, twoFactorAuthType } = this.props;
+		const {
+			isSecurityKeySupported,
+			isAuthenticatorSupported,
+			isSmsSupported,
+			translate,
+			twoFactorAuthType,
+		} = this.props;
 
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
 		const isAuthenticatorAvailable =
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
+		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'security-key';
 
-		if ( ! isSmsAvailable && ! isAuthenticatorAvailable ) {
+		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
 			return null;
 		}
 
 		return (
 			<Card className="two-factor-authentication__actions">
+				{ isSecurityKeyAvailable && (
+					<button data-e2e-link="2fa-webauthn-link" onClick={ this.recordSecurityKeyLinkClick }>
+						{ translate( 'Your security key' ) }
+					</button>
+				) }
+
 				{ isSmsAvailable && (
 					<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
 						{ translate( 'Send code via\u00A0text\u00A0message' ) }
@@ -87,6 +107,7 @@ export default connect(
 	state => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'security-key' ),
 	} ),
 	{
 		recordTracksEvent,

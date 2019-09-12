@@ -85,6 +85,8 @@
 		"signup/social": false,
 		"signup/social-management": true,
 		"signup/wpcc": true,
+		"u2f/keys-support": false,
+		"ui/first-view": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
