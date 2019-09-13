@@ -95,41 +95,41 @@
 	font-size: 12px;
 	flex-grow: 1;
 
+	.notice__text {
+		a,
+		a:visited,
+		button.is-link {
+			text-decoration: underline;
+			color: var( --color-white );
+
+			&:hover {
+				color: var( --color-white );
+				text-decoration: none;
+			}
+		}
+
+		ul {
+			margin-bottom: 0;
+			margin-left: 0;
+		}
+
+		li {
+			margin-left: 2em;
+			margin-top: 0.5em;
+		}
+
+		p {
+			margin-bottom: 0;
+			margin-top: 0.5em;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+
 	@include breakpoint( '>480px' ) {
 		font-size: 14px;
-	}
-}
-
-.notice__text {
-	a,
-	a:visited,
-	button.is-link {
-		text-decoration: underline;
-		color: var( --color-white );
-
-		&:hover {
-			color: var( --color-white );
-			text-decoration: none;
-		}
-	}
-
-	ul {
-		margin-bottom: 0;
-		margin-left: 0;
-	}
-
-	li {
-		margin-left: 2em;
-		margin-top: 0.5em;
-	}
-
-	p {
-		margin-bottom: 0;
-		margin-top: 0.5em;
-
-		&:first-child {
-			margin-top: 0;
-		}
 	}
 }
 
