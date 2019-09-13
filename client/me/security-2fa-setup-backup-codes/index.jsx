@@ -94,7 +94,7 @@ class Security2faSetupBackupCodes extends React.Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 3 } />
+				<Security2faProgress step={ 4 } />
 				<p>
 					{ this.props.translate(
 						'Backup codes let you access your account if your phone is ' +

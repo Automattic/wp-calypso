@@ -16,6 +16,7 @@ import Security2faEnable from 'me/security-2fa-enable';
 import Security2faSetupBackupCodes from 'me/security-2fa-setup-backup-codes';
 import Security2faSMSSettings from 'me/security-2fa-sms-settings';
 import Security2faInitialSetup from 'me/security-2fa-initial-setup';
+import Security2faChooseMethod from 'me/security-2fa-choose-method';
 import { successNotice } from 'state/notices/actions';
 
 class Security2faSetup extends Component {
@@ -63,6 +64,10 @@ class Security2faSetup extends Component {
 		this.setState( { step: 'sms-based' } );
 	};
 
+	onChooseMethod = () => {
+		this.setState( { step: 'choose-method' } );
+	};
+
 	render() {
 		return (
 			<div className="security-2fa-setup__steps-container">
@@ -73,6 +78,13 @@ class Security2faSetup extends Component {
 				{ 'sms-settings' === this.state.step ? (
 					<Security2faSMSSettings
 						userSettings={ this.props.userSettings }
+						onCancel={ this.onCancelSetup }
+						onChooseMethod={ this.onChooseMethod }
+					/>
+				) : null }
+
+				{ 'choose-method' === this.state.step ? (
+					<Security2faChooseMethod
 						onCancel={ this.onCancelSetup }
 						onVerifyByApp={ this.onVerifyByApp }
 						onVerifyBySMS={ this.onVerifyBySMS }

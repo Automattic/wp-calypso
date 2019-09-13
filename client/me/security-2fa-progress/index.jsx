@@ -46,15 +46,21 @@ class Security2faProgress extends React.Component {
 					/>
 
 					<ProgressItem
+						label={ this.props.translate( 'Choose Verification Method' ) }
+						icon="menu"
+						step={ this.stepClass( 2 ) }
+					/>
+
+					<ProgressItem
 						label={ this.props.translate( 'Verify Code' ) }
 						icon="lock"
-						step={ this.stepClass( 2 ) }
+						step={ this.stepClass( 3 ) }
 					/>
 
 					<ProgressItem
 						label={ this.props.translate( 'Generate Backup Codes' ) }
 						icon="sync"
-						step={ this.stepClass( 3 ) }
+						step={ this.stepClass( 4 ) }
 					/>
 				</div>
 			</div>

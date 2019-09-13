@@ -50,8 +50,7 @@ const Security2faSMSSettings = createReactClass( {
 	propTypes: {
 		countriesList: PropTypes.array.isRequired,
 		onCancel: PropTypes.func.isRequired,
-		onVerifyByApp: PropTypes.func.isRequired,
-		onVerifyBySMS: PropTypes.func.isRequired,
+		onChooseMethod: PropTypes.func.isRequired,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
 	},
@@ -93,15 +92,8 @@ const Security2faSMSSettings = createReactClass( {
 		return false;
 	},
 
-	onVerifyByApp: function( event ) {
+	onChooseMethod: function( event ) {
 		event.preventDefault();
-		this.verifyByApp = true;
-		this.submitSMSSettings();
-	},
-
-	onVerifyBySMS: function( event ) {
-		event.preventDefault();
-		this.verifyByApp = false;
 		this.submitSMSSettings();
 	},
 
@@ -147,11 +139,7 @@ const Security2faSMSSettings = createReactClass( {
 			return;
 		}
 
-		if ( this.verifyByApp ) {
-			this.props.onVerifyByApp();
-		} else {
-			this.props.onVerifyBySMS();
-		}
+		this.props.onChooseMethod();
 	},
 
 	clearLastError: function() {
@@ -223,22 +211,11 @@ const Security2faSMSSettings = createReactClass( {
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
 							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Use App Button' );
-								this.onVerifyByApp( event );
+								analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Choose Method Button' );
+								this.onChooseMethod( event );
 							}.bind( this ) }
 						>
-							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Verify via App' ) }
-						</FormButton>
-
-						<FormButton
-							disabled={ this.getSubmitDisabled() }
-							isPrimary={ false }
-							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Use SMS Button' );
-								this.onVerifyBySMS( event );
-							}.bind( this ) }
-						>
-							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Verify via SMS' ) }
+							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Choose Verification Method' ) }
 						</FormButton>
 
 						<FormButton

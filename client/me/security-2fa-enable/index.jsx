@@ -435,7 +435,7 @@ class Security2faEnable extends React.Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 2 } />
+				<Security2faProgress step={ 3 } />
 				<form className="security-2fa-enable" onSubmit={ this.onCodeSubmit }>
 					<div className="security-2fa-enable__inner">
 						{ this.renderCodeBlock() }
