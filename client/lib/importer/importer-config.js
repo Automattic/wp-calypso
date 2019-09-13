@@ -10,6 +10,7 @@ import { filter, head, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
 import InlineSupportLink from 'components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
@@ -66,7 +67,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
 				'A %(importerName)s export file is an XML file ' +
 				'containing your page and post content. ' +
-				'Need help {{inlineSupportLink/}}?',
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
 				args: {
 					importerName: 'Blogger',
@@ -74,13 +75,8 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
-					inlineSupportLink: (
-						<InlineSupportLink
-							supportPostId={ 66764 }
-							supportLink={ 'https://en.support.wordpress.com/import/coming-from-blogger/#import' }
-							text={ translate( 'exporting your content' ) }
-							showIcon={ false }
-						/>
+					ExternalLink: (
+						<ExternalLink href="https://en.support.wordpress.com/import/import-from-blogger/" />
 					),
 				},
 			}
