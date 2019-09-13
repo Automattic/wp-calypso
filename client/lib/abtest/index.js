@@ -94,8 +94,6 @@ ABTest.prototype.init = function( name, geoLocation ) {
 	}
 
 	const variationDetails = testConfig.variations;
-	const assignmentMethod =
-		typeof testConfig.assignmentMethod !== 'undefined' ? testConfig.assignmentMethod : 'default';
 	const variationNames = keys( variationDetails );
 	if ( ! variationDetails || variationNames.length === 0 ) {
 		throw new Error( 'No A/B test variations found for ' + name );
@@ -147,7 +145,6 @@ ABTest.prototype.init = function( name, geoLocation ) {
 	this.variationDetails = variationDetails;
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
-	this.assignmentMethod = assignmentMethod;
 	this.experimentId = name + '_' + variationDatestamp;
 
 	if ( testConfig.countryCodeTargets ) {
@@ -314,11 +311,7 @@ ABTest.prototype.assignVariation = function() {
 		0
 	);
 
-	if ( this.assignmentMethod === 'userId' && ! isNaN( +userId ) ) {
-		randomAllocationAmount = Number( user.data.ID ) % allocationsTotal;
-	} else {
-		randomAllocationAmount = Math.random() * allocationsTotal;
-	}
+	randomAllocationAmount = Math.random() * allocationsTotal;
 
 	for ( variationName in this.variationDetails ) {
 		sum += this.variationDetails[ variationName ];
