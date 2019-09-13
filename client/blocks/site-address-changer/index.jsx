@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { debounce, get, flow, inRange, isEmpty } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -338,7 +338,7 @@ export class SiteAddressChanger extends Component {
 											args: { currentDomainName },
 										}
 									) }{' '}
-									<a href={ ADDRESS_CHANGE_SUPPORT_URL }>
+									<a href={ ADDRESS_CHANGE_SUPPORT_URL } target="_blank" rel="noopener noreferrer">
 										{ translate(
 											'Before you confirm the change, please read this important information.'
 										) }
