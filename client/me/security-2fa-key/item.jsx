@@ -13,9 +13,9 @@ import PropTypes from 'prop-types';
  */
 import CompactCard from 'components/card/compact';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import U2FDeleteButton from './delete-item-button';
+import Security2faDeleteButton from './delete-item-button';
 
-class SecurityU2fKeyItem extends Component {
+class Security2faKeyItem extends Component {
 	static propTypes = {
 		onDelete: PropTypes.func.isRequired,
 		securityKey: PropTypes.object.isRequired,
@@ -24,13 +24,13 @@ class SecurityU2fKeyItem extends Component {
 	render() {
 		return (
 			<CompactCard>
-				<div className="security-u2f-key__item">
-					<div className="security-u2f-key__item-information">
-						<h2 className="security-u2f-key__item-title">
+				<div className="security-2fa-key__item">
+					<div className="security-2fa-key__item-information">
+						<h2 className="security-2fa-key__item-title">
 							{ this.props.securityKey.registered } Key
 						</h2>
 					</div>
-					<U2FDeleteButton
+					<Security2faDeleteButton
 						securityKey={ this.props.securityKey }
 						onDelete={ this.props.onDelete }
 					/>
@@ -45,4 +45,4 @@ export default connect(
 	{
 		recordGoogleEvent,
 	}
-)( localize( SecurityU2fKeyItem ) );
+)( localize( Security2faKeyItem ) );

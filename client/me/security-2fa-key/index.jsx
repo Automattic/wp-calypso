@@ -15,8 +15,8 @@ import webauthn from 'lib/webauthn';
 import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import SecurityU2fKeyAdd from './add';
-import SecurityU2fKeyList from './list';
+import Security2faKeyAdd from './add';
+import Security2faKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
@@ -26,13 +26,13 @@ function SecurityKeyErrorNotice( text ) {
 	return <Notice status="is-error" icon="notice" />;
 }
 
-class SecurityU2fKey extends React.Component {
+class Security2faKey extends React.Component {
 	static initialState = Object.freeze( {
 		addingKey: false,
 		isBrowserSupported: true,
 		errorMessage: false,
-		u2fChallenge: {},
-		u2fKeys: [],
+		security2faChallenge: {},
+		security2faKeys: [],
 	} );
 
 	state = this.constructor.initialState;
@@ -79,7 +79,7 @@ class SecurityU2fKey extends React.Component {
 	};
 
 	keysFromServer = ( err, data ) => {
-		this.setState( { addingKey: false, u2fKeys: data.registrations } );
+		this.setState( { addingKey: false, security2faKeys: data.registrations } );
 	};
 
 	getChallenge = () => {
@@ -87,7 +87,7 @@ class SecurityU2fKey extends React.Component {
 	};
 
 	setChallenge = ( error, data ) => {
-		this.setState( { u2fChallenge: data } );
+		this.setState( { security2faChallenge: data } );
 	};
 
 	getKeysFromServer = () => {
@@ -96,13 +96,11 @@ class SecurityU2fKey extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const { addingKey, isBrowserSupported, errorMessage, u2fKeys } = this.state;
-		//		const u2fKeys = [];
+		const { addingKey, isBrowserSupported, errorMessage, security2faKeys } = this.state;
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Security Key' ) }>
 					{ ! addingKey && (
-						//! u2fKeys.length &&
 						<Button
 							compact
 							onClick={ this.getClickHandler( 'Register New Key Button', this.addKeyStart ) }
@@ -114,28 +112,28 @@ class SecurityU2fKey extends React.Component {
 						</Button>
 					) }
 				</SectionHeader>
-				{ addingKey && this.state.u2fChallenge && (
-					<SecurityU2fKeyAdd
+				{ addingKey && this.state.security2faChallenge && (
+					<Security2faKeyAdd
 						onRegister={ this.addKeyRegister }
 						onCancel={ this.addKeyCancel }
-						registerRequests={ this.state.u2fChallenge }
+						registerRequests={ this.state.security2faChallenge }
 					/>
 				) }
 				{ errorMessage && <SecurityKeyErrorNotice text={ errorMessage } /> }
-				{ ! addingKey && ! u2fKeys.length && (
+				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
-						<p>Use a Universal 2nd Factor security key to sign in.</p>
+						<p>Use a 2nd factor security key to sign in.</p>
 						{ ! isBrowserSupported && (
 							<p>
-								Looks like you browser doesn't support the FIDO U2F standard yet. Read more about
+								Looks like you browser doesn't support the FIDO2 standard yet. Read more about
 								the requirements for adding a key to your account.
 							</p>
 						) }
 					</Card>
 				) }
-				{ ! addingKey && !! u2fKeys.length && (
-					<SecurityU2fKeyList
-						securityKeys={ this.state.u2fKeys }
+				{ ! addingKey && !! security2faKeys.length && (
+					<Security2faKeyList
+						securityKeys={ this.state.security2faKeys }
 						onDelete={ this.deleteKeyRegister }
 					/>
 				) }
@@ -149,4 +147,4 @@ export default connect(
 	{
 		recordGoogleEvent,
 	}
-)( localize( SecurityU2fKey ) );
+)( localize( Security2faKey ) );

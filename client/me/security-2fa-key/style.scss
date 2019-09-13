@@ -1,6 +1,6 @@
 /** @format */
 
-.security-u2f-key__add-wait-for-key {
+.security-2fa-key__add-wait-for-key {
 	text-align: center;
 
 	.spinner {
@@ -12,33 +12,33 @@
 	}
 }
 
-.security-u2f-key__add-button-container {
+.security-2fa-key__add-button-container {
 	display: flex;
 	justify-content: flex-end;
 	margin-top: 2em;
 }
 
-.security-u2f-key__list {
+.security-2fa-key__list {
 	list-style-type: none;
 	margin: 0;
 }
 
-.security-u2f-key__item {
+.security-2fa-key__item {
 	display: flex;
 	align-items: center;
 
-	.security-u2f-key__item-information {
+	.security-2fa-key__item-information {
 		flex-grow: 1;
 		flex-shrink: 0;
 
-		.security-u2f-key__item-subtitle {
+		.security-2fa-key__item-subtitle {
 			color: var( --muriel-gray-400 );
 			font-size: 0.9em;
 			margin-bottom: 0;
 		}
 	}
 
-	.security-u2f-key__delete-key {
+	.security-2fa-key__delete-key {
 		flex-grow: 0;
 		flex-shrink: 0;
 	}

@@ -15,7 +15,7 @@ import Card from 'components/card';
 import webauthn from 'lib/webauthn';
 import Spinner from 'components/spinner';
 
-class SecurityU2fKeyAdd extends React.Component {
+class Security2faKeyAdd extends React.Component {
 	static propTypes = {
 		onRegister: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
@@ -45,14 +45,14 @@ class SecurityU2fKeyAdd extends React.Component {
 		return (
 			<Card>
 				<Fragment>
-					<div className="security-u2f-key__add-wait-for-key">
+					<div className="security-2fa-key__add-wait-for-key">
 						<Spinner />
 						<p>{ this.props.translate( 'Insert your USB key into your USB port.' ) }</p>
 						<p>
 							{ this.props.translate( 'Then tap the button or gold disk on the security device' ) }
 						</p>
 					</div>
-					<div className="security-u2f-key__add-button-container">
+					<div className="security-2fa-key__add-button-container">
 						<Button onClick={ this.props.onCancel }>Cancel</Button>
 					</div>
 				</Fragment>
@@ -61,4 +61,4 @@ class SecurityU2fKeyAdd extends React.Component {
 	}
 }
 
-export default localize( SecurityU2fKeyAdd );
+export default localize( Security2faKeyAdd );

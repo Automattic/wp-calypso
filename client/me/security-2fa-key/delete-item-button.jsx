@@ -16,7 +16,7 @@ import { recordGoogleEvent } from "../../state/analytics/actions";
 import Dialog from 'components/dialog'
 
 
-class U2FKeyDeleteButton extends Component {
+class Security2faKeyDeleteButton extends Component {
 	static propTypes = {
 		securityKey: PropTypes.object.isRequired,
 	};
@@ -59,7 +59,7 @@ class U2FKeyDeleteButton extends Component {
 			<Fragment>
 				<Button
 					compact
-					className="security-u2f-key__delete-key"
+					className="security-2fa-key__delete-key"
 					onClick={this.handleRemoveKeyButtonClick}
 
 				>
@@ -87,5 +87,4 @@ export default connect(
 		recordGoogleEvent,
 	},
 	null,
-)( localize( U2FKeyDeleteButton ) );
-
+)( localize( Security2faKeyDeleteButton ) );
