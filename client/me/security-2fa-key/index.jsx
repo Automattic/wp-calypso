@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -20,11 +18,6 @@ import Security2faKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
-import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
-
-function SecurityKeyErrorNotice( text ) {
-	return <Notice status="is-error" icon="notice" />;
-}
 
 class Security2faKey extends React.Component {
 	static initialState = Object.freeze( {
@@ -61,7 +54,7 @@ class Security2faKey extends React.Component {
 		this.setState( { addingKey: true } );
 	};
 
-	addKeyRegister = keyData => {
+	addKeyRegister = () => {
 		this.getKeysFromServer();
 	};
 
@@ -74,7 +67,7 @@ class Security2faKey extends React.Component {
 		);
 	};
 
-	addKeyCancel = err => {
+	addKeyCancel = () => {
 		this.setState( { addingKey: false } );
 	};
 
@@ -119,14 +112,14 @@ class Security2faKey extends React.Component {
 						registerRequests={ this.state.security2faChallenge }
 					/>
 				) }
-				{ errorMessage && <SecurityKeyErrorNotice text={ errorMessage } /> }
+				{ errorMessage && <Notice status="is-error" icon="notice" text={ errorMessage } /> }
 				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
 						<p>Use a 2nd factor security key to sign in.</p>
 						{ ! isBrowserSupported && (
 							<p>
-								Looks like you browser doesn't support the FIDO2 standard yet. Read more about
-								the requirements for adding a key to your account.
+								Looks like you browser doesn't support the FIDO2 standard yet. Read more about the
+								requirements for adding a key to your account.
 							</p>
 						) }
 					</Card>
