@@ -9,7 +9,7 @@
 		border-bottom: none;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( '>480px' ) {
 		border-radius: 3px;
 		max-width: 700px;
 		margin: 16px auto;
@@ -69,7 +69,7 @@
 }
 
 .purchase-detail__button {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint( '<480px' ) {
 		display: block;
 	}
 }
