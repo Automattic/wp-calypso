@@ -168,7 +168,7 @@ export default {
 		},
 		defaultVariation: 'manualdisplay',
 		allowExistingUsers: true,
-  },
+  	},
 	placesApiInCheckout: {
 		datestamp: '20190923',
 		variations: {
