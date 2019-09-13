@@ -12,7 +12,6 @@ import { filter, head, orderBy, values } from 'lodash';
  */
 import ExternalLink from 'components/external-link';
 import InlineSupportLink from 'components/inline-support-link';
-import ExternalLink from 'components/external-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -106,7 +105,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 			'Upload your {{b}}%(importerName)s export file{{/b}} to start importing into ' +
 				'{{b}}%(siteTitle)s{{/b}}. A %(importerName)s export file is a ZIP ' +
 				'file containing several HTML files with your stories. ' +
-				'Need help {{inlineSupportLink/}}?',
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
 				args: {
 					importerName: 'Medium',
@@ -114,13 +113,8 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
-					inlineSupportLink: (
-						<InlineSupportLink
-							supportPostId={ 93180 }
-							supportLink={ 'https://en.support.wordpress.com/import/import-from-medium/' }
-							text={ translate( 'exporting your content' ) }
-							showIcon={ false }
-						/>
+					ExternalLink: (
+						<ExternalLink href={ 'https://en.support.wordpress.com/import/import-from-medium/' } />
 					),
 				},
 			}
