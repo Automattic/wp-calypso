@@ -159,6 +159,11 @@ export class PostTypeFilter extends Component {
 		const isSingleSite = !! siteId;
 
 		const navItems = this.getNavItems();
+		const sortOrder = [ 'filter-publish', 'filter-draft', 'filter-trash' ];
+		navItems.sort( ( a, b ) =>
+			sortOrder.indexOf( a.key ) > sortOrder.indexOf( b.key ) ? 1 : -1
+		);
+
 		const selectedItem = find( navItems, 'selected' ) || {};
 
 		const scopes = {
