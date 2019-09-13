@@ -4,6 +4,7 @@
 import Gridicon from 'components/gridicon';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import webauthn from 'lib/webauthn';
 
@@ -72,7 +73,7 @@ class Security2faKey extends React.Component {
 	};
 
 	keysFromServer = ( err, data ) => {
-		this.setState( { addingKey: false, security2faKeys: data.registrations } );
+		this.setState( { addingKey: false, security2faKeys: get( data, 'registrations', [] ) } );
 	};
 
 	getChallenge = () => {
