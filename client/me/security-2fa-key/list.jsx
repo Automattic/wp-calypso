@@ -12,11 +12,11 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import U2FItem from './item';
+import Security2faKeyItem from './item';
 
 import './style.scss';
 
-class SecurityU2fKeyList extends React.Component {
+class Security2faKeyList extends React.Component {
 	static propTypes = {
 		securityKeys: PropTypes.array.isRequired,
 		onDelete: PropTypes.func.isRequired,
@@ -24,11 +24,11 @@ class SecurityU2fKeyList extends React.Component {
 
 	render() {
 		return (
-			<div className="security-u2f-key__active-keys">
-				<ul className="security-u2f-key__list">
+			<div className="security-2fa-key__active-keys">
+				<ul className="security-2fa-key__list">
 					{ this.props.securityKeys.map( securityKey => (
-						<li key={ securityKey.id } className="security-u2f-key__list-item">
-							<U2FItem securityKey={ securityKey } onDelete={ this.props.onDelete } />
+						<li key={ securityKey.id } className="security-2fa-key__list-item">
+							<Security2faKeyItem securityKey={ securityKey } onDelete={ this.props.onDelete } />
 						</li>
 					) ) }
 				</ul>
@@ -42,4 +42,4 @@ export default connect(
 	{
 		recordGoogleEvent,
 	}
-)( localize( SecurityU2fKeyList ) );
+)( localize( Security2faKeyList ) );
