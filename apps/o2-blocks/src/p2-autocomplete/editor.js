@@ -45,8 +45,7 @@ const p2Completer = {
 };
 
 // Register autocompleter for all blocks
-addFilter(
-	'editor.Autocomplete.completers',
-	'a8c/autocompleters/p2s',
-	( completers, blockName ) => [ ...completers, p2Completer ]
-);
+addFilter( 'editor.Autocomplete.completers', 'a8c/autocompleters/p2s', completers => [
+	...completers,
+	p2Completer,
+] );
