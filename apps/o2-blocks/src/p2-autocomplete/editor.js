@@ -16,7 +16,7 @@ const p2Completer = {
 	triggerPrefix: '+',
 	options: search =>
 		apiFetch( {
-			path: addQueryArgs( '/rest/v1.1/internal/P2s', { search } ),
+			path: addQueryArgs( 'rest/v1.1/internal/P2s', { search } ),
 		} ),
 	getOptionKeywords: site => [ site.subdomain, site.title ],
 	getOptionLabel: site => (
