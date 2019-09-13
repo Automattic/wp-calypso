@@ -208,7 +208,7 @@ class PostItem extends React.Component {
 							<span className="post-item__meta-time-status">
 								<a href={ enabledPostLink } className="post-item__time-status-link">
 									<PostTime globalId={ globalId } />
-									<PostStatus globalId={ globalId } />
+									<PostStatus globalId={ globalId } showAll={ true } />
 								</a>
 							</span>
 							<PostActionCounts globalId={ globalId } />

@@ -15,6 +15,7 @@ import PostTypeList from 'my-sites/post-type-list';
 import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import titlecase from 'to-title-case';
 import Main from 'components/main';
+import { POST_STATUSES } from 'state/posts/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { mapPostStatus } from 'lib/route';
 
@@ -63,7 +64,11 @@ class PostsMain extends React.Component {
 			order: status === 'future' ? 'ASC' : 'DESC',
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
-			status,
+			// Search across all statuses so the user can always find what they
+			// are looking for, regardless of what tab they are on. (The API
+			// accepts "any" but this would exclude trashed posts, so use
+			// POST_STATUSES instead.)
+			status: search ? POST_STATUSES.join( ',' ) : status,
 			tag,
 			type: 'post',
 		};

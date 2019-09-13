@@ -247,6 +247,7 @@ class PostTypeList extends Component {
 		const { query, siteId, isRequestingPosts, translate } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
+		const postStatuses = query.status.split( ',' );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
@@ -256,7 +257,7 @@ class PostTypeList extends Component {
 			posts.length > 10 &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
-			query.status === 'publish,private';
+			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
 
 		return (
 			<div className={ classes }>
