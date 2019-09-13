@@ -70,7 +70,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					b: <strong />,
 					ExternalLink: (
-						<ExternalLink href="https://en.support.wordpress.com/import/import-from-blogger/" />
+						<ExternalLink href="https://en.support.wordpress.com/import/coming-from-blogger/" />
 					),
 				},
 			}
