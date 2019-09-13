@@ -64,7 +64,8 @@ class PlansNavigation extends React.Component {
 		const sectionTitle = this.getSectionTitle( path );
 		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
 		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
-		const hadPinnedItems = isMobile() && path !== '/plans/my-plan'; // My Plan doesn't show the cart icon.
+		const pathsWithoutCartIcon = [ '/plans/my-plan', '/email' ];
+		const hadPinnedItems = isMobile() && ! pathsWithoutCartIcon.includes( path );
 
 		return (
 			site && (
