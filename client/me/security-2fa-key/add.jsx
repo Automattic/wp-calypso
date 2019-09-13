@@ -1,11 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -14,6 +13,8 @@ import Button from 'components/button';
 import Card from 'components/card';
 import webauthn from 'lib/webauthn';
 import Spinner from 'components/spinner';
+
+const debug = debugFactory( 'calypso:me:security-2fa-key' );
 
 class Security2faKeyAdd extends React.Component {
 	static propTypes = {
@@ -30,6 +31,7 @@ class Security2faKeyAdd extends React.Component {
 		webauthn
 			.register()
 			.then( data => {
+				debug( 'registered key with data', data );
 				this.keyRegistered();
 			} )
 			.catch( err => {
