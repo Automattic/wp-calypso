@@ -19,6 +19,7 @@ import QueryPosts from 'components/data/query-posts';
 import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
@@ -48,6 +49,7 @@ class PostTypeList extends Component {
 		// Props
 		query: PropTypes.object,
 		scrollContainer: PropTypes.object,
+		isVipSite: PropTypes.bool,
 
 		// Connected props
 		siteId: PropTypes.number,
@@ -253,6 +255,7 @@ class PostTypeList extends Component {
 		} );
 		const showUpgradeNudge =
 			siteId &&
+			! this.props.isVipSite &&
 			posts.length > 10 &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
@@ -299,6 +302,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		isVipSite: isVipSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
