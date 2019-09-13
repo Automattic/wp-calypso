@@ -149,7 +149,6 @@ export default {
 			hide: 50,
 		},
 		defaultVariation: 'hide',
-		assignmentMethod: 'userId',
 	},
 	signupEscapeHatch: {
 		datestamp: '20190826',
