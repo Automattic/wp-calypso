@@ -61,11 +61,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to move it to this site? ' +
-					'{{a}}Yes, move it to this site.{{/a}}',
+					'{{u}}{{a}}Yes, move it to this site.{{/a}}{{/u}}',
 				{
 					args: { domain, site },
 					components: {
 						strong: <strong />,
+						u: <u />,
 						a: (
 							<a
 								rel="noopener noreferrer"
