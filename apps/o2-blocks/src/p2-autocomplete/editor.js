@@ -4,7 +4,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
-import { unescape } from 'lodash';
+import { map, unescape } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,8 +16,8 @@ const p2Completer = {
 	triggerPrefix: '+',
 	options: search =>
 		apiFetch( {
-			path: addQueryArgs( 'rest/v1.1/internal/P2s', { search } ),
-		} ),
+			path: addQueryArgs( '/internal/P2s', { search } ),
+		} ).then( result => map( result.list, ( p2, subdomain ) => ( { ...p2, subdomain } ) ) ),
 	getOptionKeywords: site => [ site.subdomain, site.title ],
 	getOptionLabel: site => (
 		<div className="p2-autocomplete">
