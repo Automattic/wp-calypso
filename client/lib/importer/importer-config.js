@@ -11,7 +11,6 @@ import { filter, head, orderBy, values } from 'lodash';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
-import InlineSupportLink from 'components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -28,19 +27,14 @@ function getConfig( { siteTitle = '' } = {} ) {
 				'importing into {{b2}}%(title)s{{/b2}}. A WordPress export is ' +
 				'an XML file with your page and post content, or a zip archive ' +
 				'containing several XML files. ' +
-				'Need help {{inlineSupportLink/}}?',
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
 				args: { title: siteTitle },
 				components: {
 					b: <strong />,
 					b2: <strong />,
-					inlineSupportLink: (
-						<InlineSupportLink
-							supportPostId={ 2087 }
-							supportLink={ 'https://en.support.wordpress.com/export/' }
-							text={ translate( 'exporting your content' ) }
-							showIcon={ false }
-						/>
+					ExternalLink: (
+						<ExternalLink href="https://en.support.wordpress.com/coming-from-self-hosted/" />
 					),
 				},
 			}
@@ -110,7 +104,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 			'Upload your {{b}}%(importerName)s export file{{/b}} to start importing into ' +
 				'{{b}}%(siteTitle)s{{/b}}. A %(importerName)s export file is a ZIP ' +
 				'file containing several HTML files with your stories. ' +
-				'Need help {{inlineSupportLink/}}?',
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
 				args: {
 					importerName: 'Medium',
@@ -118,13 +112,8 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
-					inlineSupportLink: (
-						<InlineSupportLink
-							supportPostId={ 93180 }
-							supportLink={ 'https://en.support.wordpress.com/import/import-from-medium/' }
-							text={ translate( 'exporting your content' ) }
-							showIcon={ false }
-						/>
+					ExternalLink: (
+						<ExternalLink href={ 'https://en.support.wordpress.com/import/import-from-medium/' } />
 					),
 				},
 			}
@@ -151,7 +140,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
 				'A %(importerName)s export file is an XML file ' +
 				'containing your page and post content. ' +
-				'Need help {{inlineSupportLink/}}?',
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
 				args: {
 					importerName: 'Squarespace',
@@ -159,12 +148,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
-					inlineSupportLink: (
-						<InlineSupportLink
-							supportPostId={ 87696 }
-							supportLink={ 'https://en.support.wordpress.com/import/import-from-squarespace' }
-							text={ translate( 'exporting your content' ) }
-							showIcon={ false }
+					ExternalLink: (
+						<ExternalLink
+							href={ 'https://en.support.wordpress.com/import/import-from-squarespace' }
 						/>
 					),
 				},
