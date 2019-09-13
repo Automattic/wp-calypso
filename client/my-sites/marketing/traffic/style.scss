@@ -205,7 +205,7 @@
 
 	.card {
 		&.is-placeholder div {
-			@include placeholder;
+			@include placeholder();
 		}
 	}
 
@@ -260,7 +260,7 @@
 
 	&.is-expanded .foldable-card__content {
 		padding: 8px 24px 24px;
-		border-top: 1px var( --color-neutral-100 ) solid;
+		border-top: 1px var( --color-neutral-10 ) solid;
 	}
 
 	&.is-expanded.is-top-level .foldable-card__content {

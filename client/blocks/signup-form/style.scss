@@ -35,7 +35,7 @@
 
 	p {
 		font-size: 13px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		margin: 0 0 12px;
 		text-align: center;
 
@@ -55,6 +55,6 @@
 }
 
 .signup-form__social-buttons-tos a {
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	text-decoration: underline;
 }

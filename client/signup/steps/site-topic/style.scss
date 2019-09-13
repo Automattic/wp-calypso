@@ -11,7 +11,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		width: 100%;
 		z-index: 1000; // I know, I know...
 		border-radius: 4px;
-		background: var( --color-white );
+		background: var( --color-surface );
 		@include elevation ( 2dp );
 	}
 

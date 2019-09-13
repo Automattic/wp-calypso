@@ -20,7 +20,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
-	background-color: $transparent;
+	background-color: rgba( var( --color-surface-rgb ), 0 );
 	position: absolute;
 		top: 0;
 		right: 8px;

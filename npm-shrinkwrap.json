@@ -69,6 +69,11 @@
 				"react": "^16.8.3"
 			}
 		},
+		"@automattic/color-studio": {
+			"version": "2.1.0",
+			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.1.0.tgz",
+			"integrity": "sha512-h1m7IRCz4UUQD8O568TKlCQDPyaEtNhzPs0TAP03dpOb/OIt/o8MBsa2gx9kwgcP/cpTLDEj0E5Z96YNBVDL4w=="
+		},
 		"@automattic/format-currency": {
 			"version": "file:packages/format-currency",
 			"requires": {
@@ -6135,12 +6140,6 @@
 				"color-name": "^1.0.0",
 				"simple-swizzle": "^0.2.2"
 			}
-		},
-		"color-studio": {
-			"version": "1.0.5",
-			"resolved": "https://registry.npmjs.org/color-studio/-/color-studio-1.0.5.tgz",
-			"integrity": "sha512-XW2pF7K4v0wd4G9oab7wxiaf07wW1chv5ZSEsKZ0aY8clS05/hnb1x5gNwytH949S0Tu9v9J6ttKaNebCt3gpg==",
-			"dev": true
 		},
 		"colors": {
 			"version": "0.6.2",
