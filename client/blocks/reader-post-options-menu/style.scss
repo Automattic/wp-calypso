@@ -44,7 +44,7 @@
 			padding-right: 0;
 
 			&:hover {
-				fill: var( --color-white );
+				fill: var( --color-text-inverted );
 			}
 		}
 
@@ -54,12 +54,12 @@
 			color: white;
 
 			.gridicon {
-				fill: var( --color-white );
+				fill: var( --color-text-inverted );
 			}
 
 			.follow-button__label,
 			.conversation-follow-button__label {
-				color: var( --color-white );
+				color: var( --color-text-inverted );
 			}
 		}
 
@@ -89,11 +89,11 @@
 
 		&:hover,
 		&:focus {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			background: var( --color-error );
 
 			.gridicon {
-				fill: var( --color-white );
+				fill: var( --color-text-inverted );
 			}
 		}
 	}

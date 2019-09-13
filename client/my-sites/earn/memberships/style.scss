@@ -1,18 +1,16 @@
-
 .memberships__module-header {
-	background: var( --color-white );
+	background: var( --color-surface );
 	height: 40px;
 	line-height: 40px;
 	padding-left: 24px;
 	position: relative;
 }
 
-
 .memberships__module-header-title {
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
@@ -31,7 +29,7 @@
 	padding-right: 10px;
 }
 .memberships__onboarding-column-image {
-	display:none;
+	display: none;
 	@include breakpoint( '>800px' ) {
 		display: block;
 		flex: 1;
@@ -40,7 +38,6 @@
 	}
 }
 
-
 .memberships__onboarding-header {
 	font-size: 24px;
 	margin-bottom: 24px;
@@ -48,10 +45,10 @@
 .memberships__onboarding-paragraph {
 	font-size: 15px;
 	margin-bottom: 24px;
-	color: var( --color-neutral-400 );
+	color: var( --color-text-subtle );
 }
 .memberships__onboarding-benefits {
-	color: var( --color-neutral-400 );
+	color: var( --color-text-subtle );
 	margin-top: 24px;
 }
 .memberships__onboarding-benefits > div {
@@ -65,9 +62,8 @@
 	margin: 0;
 }
 
-
 .memberships__earnings-breakdown-label {
-	color: var( --color-neutral-600 );
+	color: var( --color-neutral-60 );
 	font-size: 14px;
 	letter-spacing: 0.1em;
 	line-height: 1.8;
@@ -92,11 +88,10 @@
 		padding: 10px 24px;
 		text-align: left;
 	}
-
 }
 
 .memberships__earnings-breakdown-label {
-	color: var( --color-neutral-600 );
+	color: var( --color-neutral-60 );
 	font-size: 14px;
 	letter-spacing: 0.1em;
 	line-height: 1.8;
@@ -107,7 +102,6 @@
 		line-height: 1.6;
 	}
 }
-
 
 .memberships__earnings-breakdown-value {
 	width: 100%;
@@ -165,7 +159,7 @@
 }
 
 .memberships__subscriber-username {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 16px;
 	font-weight: 600;
 	white-space: pre;
@@ -191,7 +185,6 @@
 	}
 }
 
-
 .memberships__subscriber-subscribed {
 	color: var( --color-text-subtle );
 	font-size: 12px;
@@ -202,10 +195,9 @@
 	margin-top: 20px;
 }
 
-
 .memberships__module-products-title {
 	margin-bottom: 10px;
-	color: var( --color-black );
+	color: var( --color-neutral-100 );
 }
 
 .memberships__module-products-list {
@@ -223,7 +215,7 @@
 	flex-grow: 1;
 }
 .memberships__products-product-price {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 16px;
 	line-height: 1.5;
 }
@@ -233,7 +225,7 @@
 }
 .memberships__earnings-breakdown-notes {
 	clear: both;
-	color: var( --color-neutral-300 );
+	color: var( --color-neutral-30 );
 	padding-bottom: 12px;
 	padding-top: 24px;
 	font-size: 12px;

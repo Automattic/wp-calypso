@@ -36,11 +36,11 @@ Name | Type | Default | Description
 `displayAsLink` | `bool` | false | Used for cards without a `href` that need to display as a link. Primarily intended for use when `tagName` is "button" and when an `onClick` attribute is set. The corresponding button will render with the same visual appearance as a link (including the right chevron icon).
 `target` | `string` | null | If used with `href`, this specifies where the link opens. Changes the icon to `external`.
 `compact` | `bool` | false | Decreases the size of the card.
-`highlight` | `string` | `false` | Displays a colored highlight. Can be `false` (no highlight, default), `info`, `success`, `error`, or `warning`.
+`highlight` | `string` | null | Displays a colored highlight. If specified (default is no highlight), can be one of `info`, `success`, `error`, or `warning`.
 
 ### Additional usage information
 
-* **Compact**: Use to save vertical space when displaying many consecutive cards in a list. The `CompactCard` component slightly modifies the `Card` component.
+* **Compact**: Use to save vertical space when displaying many consecutive cards in a list. The `CompactCard` component slightly modifies the `Card` component (and is equivalent to using `<Card compact />`).
 * **Highlight**: Use when you need to highlight information that is neither a `Notice` or `Banner`.
 
 ### General guidelines

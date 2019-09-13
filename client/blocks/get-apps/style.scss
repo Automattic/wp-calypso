@@ -67,6 +67,29 @@
 		}
 	}
 
+	.get-apps__magic-link-subpanel {
+
+		margin-top: 64px;
+
+		.get-apps__link-button-wrapper {
+
+			@include breakpoint('>480px') {
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				align-items: center;
+			}
+
+			@include breakpoint('<480px') {
+
+				.get-apps__magic-link-button {
+					width: 100%;
+				}
+			}
+		}
+
+	}
+
 	.get-apps__sms-subpanel {
 
 		// This is a hack to allow us to use a feature flag to hide this subpanel
@@ -119,8 +142,8 @@
 }
 
 .get-apps__illustration {
-	background-color: var( --color-white );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	background-color: var( --color-surface );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 	box-sizing: border-box;
 	color: var( --color-primary-dark );

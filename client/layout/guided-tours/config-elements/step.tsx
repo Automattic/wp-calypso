@@ -3,7 +3,7 @@
  */
 import React, { Component, CSSProperties, FunctionComponent } from 'react';
 import classNames from 'classnames';
-import { defer, get, isFunction } from 'lodash';
+import { defer, isFunction } from 'lodash';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 
@@ -160,15 +160,10 @@ export default class Step extends Component< Props, State > {
 		start( { step, tour, tourVersion } );
 	}
 
-	wait( props: Props, context ) {
+	async wait( props: Props, context ) {
 		if ( isFunction( props.wait ) ) {
-			const ret = props.wait( { reduxStore: context.store } );
-			if ( isFunction( get( ret, 'then' ) ) ) {
-				return ret;
-			}
+			await context.dispatch( props.wait() );
 		}
-
-		return Promise.resolve();
 	}
 
 	safeSetState( state: State ) {

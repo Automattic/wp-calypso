@@ -69,40 +69,8 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionKeyDown = event => {
-		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
-			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
-
-			switch ( event.key ) {
-				case 'ArrowRight':
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'ArrowUp':
-					if ( suggestionPosition === 0 ) {
-						suggestionPosition = this.suggestionsRef.props.suggestions.length;
-					}
-
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition - 1 ) );
-
-					break;
-				case 'ArrowDown':
-					suggestionPosition++;
-
-					if ( suggestionPosition === this.suggestionsRef.props.suggestions.length ) {
-						suggestionPosition = 0;
-					}
-
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'Tab':
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'Enter':
-					event.preventDefault();
-					break;
-			}
+		if ( this.suggestionsRef.props.suggestions.length > 0 && event.key === 'Enter' ) {
+			event.preventDefault();
 		}
 
 		this.suggestionsRef.handleKeyEvent( event );

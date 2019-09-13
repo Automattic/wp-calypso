@@ -6,6 +6,7 @@
  */
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies.
@@ -1146,9 +1147,15 @@ Undocumented.prototype.transactions = function( method, data, fn ) {
 };
 
 Undocumented.prototype.updateCreditCard = function( params, fn ) {
-	const data = pick( params, [ 'country', 'zip', 'month', 'year', 'name' ] );
-	data.paygate_token = params.cardToken;
-
+	const data = pick( params, [
+		'country',
+		'zip',
+		'month',
+		'year',
+		'name',
+		'payment_partner',
+		'paygate_token',
+	] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
@@ -1895,10 +1902,10 @@ Undocumented.prototype.resetPasswordForMailbox = function( domainName, mailbox, 
 };
 
 Undocumented.prototype.isSiteImportable = function( site_url ) {
-	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
+	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
 	return this.wpcom.req.get(
-		{ path: '/site-importer-global/is-site-importable', apiNamespace: 'wpcom/v2' },
+		{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
 		{ site_url }
 	);
 };
@@ -1915,6 +1922,21 @@ Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
+	} );
+};
+
+Undocumented.prototype.importWithSiteImporter = function(
+	siteId,
+	importerStatus,
+	params,
+	targetUrl
+) {
+	debug( `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }` );
+
+	return this.wpcom.req.post( {
+		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
+		apiNamespace: 'wpcom/v2',
+		formData: [ [ 'import_status', JSON.stringify( importerStatus ) ], [ 'site_url', targetUrl ] ],
 	} );
 };
 

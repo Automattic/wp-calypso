@@ -293,7 +293,7 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, unlimited' +
+				' Google Analytics support, 200 GB' +
 				' storage, and the ability to remove WordPress.com branding.',
 			{
 				components: {
@@ -306,7 +306,7 @@ const getPlanBusinessDetails = () => ( {
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, unlimited' +
+				' Google Analytics support, 200 GB' +
 				' storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
@@ -716,7 +716,6 @@ export const PLANS_LIST = {
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				constants.FEATURE_WORDADS_INSTANT,
 				constants.FEATURE_ADVANCED_SEO,
-				constants.FEATURE_CONCIERGE_SETUP,
 				constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -775,7 +774,6 @@ export const PLANS_LIST = {
 				constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				constants.FEATURE_WORDADS_INSTANT,
 				constants.FEATURE_ADVANCED_SEO,
-				constants.FEATURE_CONCIERGE_SETUP,
 				constants.FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),

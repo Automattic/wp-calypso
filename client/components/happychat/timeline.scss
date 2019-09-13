@@ -15,7 +15,7 @@
 .happychat__welcome {
 	flex: 1 auto;
 	padding: 16px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
@@ -30,8 +30,8 @@
 	flex: 1;
 	padding: 8px 12px;
 	border-radius: 8px 8px 8px 0;
-	color: var( --color-neutral-700 );
-	background: var( --color-white );
+	color: var( --color-neutral-70 );
+	background: var( --color-surface );
 	position: relative;
 
 	overflow-wrap: break-word;
@@ -61,13 +61,13 @@
 		// draw a triangle
 		width: 0;
 		height: 0;
-		border-bottom: 8px solid var( --color-white );
+		border-bottom: 8px solid var( --color-border-inverted );
 		border-left: 8px solid transparent;
 	}
 
 	.is-user-message & {
 		color: var( --color-primary-dark );
-		background: var( --color-primary-50 );
+		background: var( --color-primary-5 );
 		border-radius: 8px 8px 0;
 
 		&::after {
@@ -77,7 +77,7 @@
 			// draw a triangle
 			width: 0;
 			height: 0;
-			border-bottom: 8px solid var( --color-primary-50 );
+			border-bottom: 8px solid var( --color-primary-5 );
 			border-left: none;
 			border-right: 8px solid transparent;
 		}

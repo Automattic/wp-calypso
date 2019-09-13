@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_STEPS_SITE_VERTICAL_SET,
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { createReducerWithValidation } from 'state/utils';
 import { siteVerticalSchema } from './schema';
 
 const initialState = {
@@ -27,7 +26,7 @@ const initialState = {
 // TODO:
 // This reducer can be further simplify since the verticals data can be
 // found in `signup.verticals`, so it only needs to store the site vertical name.
-export default createReducer(
+export default createReducerWithValidation(
 	initialState,
 	{
 		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, siteVerticalData ) => {

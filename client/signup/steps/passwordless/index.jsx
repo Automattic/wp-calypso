@@ -77,7 +77,7 @@ export class PasswordlessStep extends Component {
 			submitting: true,
 		} );
 
-		createPasswordlessUser( this.handleUserCreationRequest, null, data );
+		createPasswordlessUser( this.handleUserCreationRequest, data );
 	};
 
 	handleUserCreationRequest = ( error, response ) => {
@@ -101,17 +101,15 @@ export class PasswordlessStep extends Component {
 
 	verifyUser = event => {
 		event.preventDefault();
-		const data = {
-			email: getFieldValue( this.formStore.get(), 'email' ),
-			code: getFieldValue( this.formStore.get(), 'code' ),
-		};
-
 		this.setState( {
 			errorMessages: null,
 			submitting: true,
 		} );
 
-		verifyPasswordlessUser( this.handleUserVerificationRequest, null, data );
+		verifyPasswordlessUser( this.handleUserVerificationRequest, {
+			email: getFieldValue( this.formStore.get(), 'email' ),
+			code: getFieldValue( this.formStore.get(), 'code' ),
+		} );
 	};
 
 	handleUserVerificationRequest = ( error, providedDependencies ) => {
@@ -251,7 +249,6 @@ export class PasswordlessStep extends Component {
 				headerText={ this.props.headerText }
 				subHeaderText={ this.props.translate( 'Create a WordPress.com account' ) }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

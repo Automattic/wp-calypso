@@ -1,3 +1,6 @@
+#### Unreleased
+- Breaking: Removed rule [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
+
 #### v4.1.0 (2019-05-07)
 
 - Enhancement: `jsx-classname-namespace` doesn't limit classnames without suffix to root elements
@@ -72,7 +75,7 @@
 
 #### v1.4.1 (2016-08-12)
 
-- Add: String template support for all rules 
+- Add: String template support for all rules
 
 #### v1.4.0 (2016-07-29)
 

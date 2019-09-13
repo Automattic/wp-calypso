@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { mapValues, reduce, reduceRight } from 'lodash';
-import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
+import { get, mapValues, reduce, reduceRight } from 'lodash';
+import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
 import { APPLY_STORED_STATE, SERIALIZE } from 'state/action-types';
-import { withSchemaValidation } from './schema-utils';
 import { SerializationResult } from 'state/serialization-result';
 import { withoutPersistence } from './without-persistence';
 
@@ -75,10 +74,7 @@ export function addReducer( origReducer, reducers ) {
  * Returns a single reducing function that ensures that persistence is opt-in.
  * If you don't need state to be stored, simply use this method instead of
  * combineReducers from redux. This function uses the same interface.
- *
- * To mark that a reducer's state should be persisted, add the related JSON
- * schema as a property on the reducer.
- *
+ * *
  * @example
  * const age = ( state = 0, action ) =>
  *     GROW === action.type
@@ -88,9 +84,6 @@ export function addReducer( origReducer, reducers ) {
  *     GROW === action.type
  *         ? state + 1
  *         : state
- * const schema = { type: 'number', minimum: 0 };
- *
- * age.schema = schema;
  *
  * const combinedReducer = combineReducers( {
  *     age,
@@ -153,7 +146,7 @@ function applyStoredState( reducers, state, action ) {
 		}
 
 		// Descend into nested state levels, possibly the storageKey will be found there?
-		const prevStateForKey = state[ key ];
+		const prevStateForKey = get( state, key );
 		const nextStateForKey = reducer( prevStateForKey, action );
 		hasChanged = hasChanged || nextStateForKey !== prevStateForKey;
 		return nextStateForKey;
@@ -238,8 +231,6 @@ function serializeState( reducers, state, action ) {
 /*
  * Wrap the reducer with appropriate persistence code. If it has the `hasCustomPersistence` flag,
  * it means it's already set up and we don't need to make any changes.
- * If the reducer has a `schema` property, it means that persistence is requested and we
- * wrap it with code that validates the schema when loading persisted state.
  */
 function setupReducerPersistence( reducer ) {
 	if ( reducer.hasCustomPersistence ) {
@@ -247,7 +238,10 @@ function setupReducerPersistence( reducer ) {
 	}
 
 	if ( reducer.schema ) {
-		return withSchemaValidation( reducer.schema, reducer );
+		throw new Error(
+			'`schema` properties in reducers are no longer supported.' +
+				'Please use createReducerWithValidation or wrap reducers with withSchemaValidation.'
+		);
 	}
 
 	return withoutPersistence( reducer );

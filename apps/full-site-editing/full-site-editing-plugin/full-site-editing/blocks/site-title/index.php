@@ -2,8 +2,10 @@
 /**
  * Render site title block.
  *
- * @package full-site-editing
+ * @package A8C\FSE
  */
+
+namespace A8C\FSE;
 
 /**
  * Renders the site title and allows for editing in the full site editor.
@@ -18,6 +20,12 @@ function render_site_title_block( $attributes ) {
 	if ( isset( $attributes['className'] ) ) {
 		$class .= ' ' . $attributes['className'];
 	}
+
+	$align = ' alignwide';
+	if ( isset( $attributes['align'] ) ) {
+		$align = empty( $attributes['align'] ) ? '' : ' align' . $attributes['align'];
+	}
+	$class .= $align;
 
 	?>
 	<h1 class="<?php echo esc_attr( $class ); ?>">

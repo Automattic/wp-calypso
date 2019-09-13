@@ -32,6 +32,11 @@ import { preventWidows } from 'lib/formatting';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import supportImage from 'assets/images/illustrations/dotcom-support.svg';
+
 export class HappinessSupport extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
@@ -133,7 +138,7 @@ export class HappinessSupport extends Component {
 		return (
 			<div className="happiness-support__image">
 				<div className="happiness-support__icon">
-					<img alt="" src="/calypso/images/illustrations/dotcom-support.svg" />
+					<img alt="" src={ supportImage } />
 				</div>
 			</div>
 		);

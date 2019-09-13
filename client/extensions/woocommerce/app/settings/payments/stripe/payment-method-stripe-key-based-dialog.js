@@ -60,7 +60,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 		if ( ! this.state.hadKeysAtStart ) {
 			return (
 				<div className="stripe__method-edit-header">
-					{ translate( 'Take credit card payments with Stripe' ) }
+					{ translate( 'Accept credit card payments with Stripe' ) }
 				</div>
 			);
 		}

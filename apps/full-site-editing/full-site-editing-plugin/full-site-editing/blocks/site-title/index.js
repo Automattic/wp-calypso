@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * WordPress dependencies
  */
@@ -16,9 +17,16 @@ registerBlockType( 'a8c/site-title', {
 	icon: 'layout',
 	category: 'layout',
 	supports: {
+		align: [ 'wide', 'full' ],
 		html: false,
 		multiple: false,
 		reusable: false,
+	},
+	attributes: {
+		align: {
+			type: 'string',
+			default: 'wide',
+		},
 	},
 	edit,
 	save: () => null,

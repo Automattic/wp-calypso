@@ -26,6 +26,7 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import withTrackingTool from 'lib/analytics/with-tracking-tool';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -140,4 +141,4 @@ export default connect( state => {
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};
-} )( localize( Plans ) );
+} )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

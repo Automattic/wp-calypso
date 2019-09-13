@@ -25,6 +25,8 @@ import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { hideSitePreview } from 'state/signup/preview/actions';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 
 /**
  * Style dependencies
@@ -60,6 +62,13 @@ class DomainSearchResults extends React.Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 	};
+
+	componentDidUpdate() {
+		// If the signup site preview is showing, turn it off when domain search results are visible
+		if ( this.props.isSignupStep && this.props.isSitePreviewVisible ) {
+			this.props.hideSitePreview();
+		}
+	}
 
 	renderDomainAvailability() {
 		const {
@@ -316,7 +325,11 @@ const mapStateToProps = ( state, ownProps ) => {
 	return {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
+		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible( state ),
 	};
 };
 
-export default connect( mapStateToProps )( localize( DomainSearchResults ) );
+export default connect(
+	mapStateToProps,
+	{ hideSitePreview }
+)( localize( DomainSearchResults ) );

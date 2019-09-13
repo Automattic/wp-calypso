@@ -20,13 +20,13 @@
 		}
 
 		.gravatar {
-			border: 2px solid var( --color-white );
+			border: 2px solid var( --color-border-inverted );
 			height: 80px;
 			position: relative;
 				left: 30px;
 				top: -75px;
 			width: 80px;
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 		}
 	}
 

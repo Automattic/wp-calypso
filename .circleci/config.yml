@@ -9,7 +9,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:10.15.2-browsers
+    - image: circleci/node:10.16.3-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -673,13 +673,13 @@ workflows:
           requires:
             - wait-calypso-live
           test-flags: '-C -S $CIRCLE_SHA1'
-#      - test-e2e-canary:
-#          name: test-e2e-canary-ie
-#          requires:
-#            - wait-calypso-live
-#          test-flags: '-z -S $CIRCLE_SHA1'
-#          test-target: 'IE11'
-#          slack-webhook: '$SLACK_IE'
+      - test-e2e-canary:
+          name: test-e2e-canary-ie
+          requires:
+            - wait-calypso-live
+          test-flags: '-z -S $CIRCLE_SHA1'
+          test-target: 'IE11'
+          slack-webhook: '$SLACK_IE'
       - test-e2e-canary:
           name: test-e2e-canary-safari
           requires:

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { mapValues, omit, map } from 'lodash';
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -54,7 +52,7 @@ import { decodeEntities } from 'lib/formatting';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const activeThemes = createReducer(
+export const activeThemes = createReducerWithValidation(
 	{},
 	{
 		[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
@@ -195,7 +193,7 @@ export function themeInstalls( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const themeRequestErrors = createReducer(
+export const themeRequestErrors = createReducerWithValidation(
 	{},
 	{
 		[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => ( {
@@ -315,7 +313,7 @@ export const queries = ( () => {
 	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
 	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
 
-	return createReducer(
+	return createReducerWithValidation(
 		{},
 		{
 			[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
@@ -400,7 +398,7 @@ export const themePreviewVisibility = createReducer( null, {
 	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => themeId,
 } );
 
-export const themeFilters = createReducer(
+export const themeFilters = createReducerWithValidation(
 	{},
 	{
 		[ THEME_FILTERS_ADD ]: ( state, { filters } ) => filters,

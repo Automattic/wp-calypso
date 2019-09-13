@@ -75,6 +75,7 @@ describe( 'parseAuthorizationQuery', () => {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
 			client_id: '12345',
+			closeWindowAfterLogin: false,
 			home_url: 'https://yourjetpack.blog',
 			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
 			scope: 'administrator:34579bf2a3185a47d1b31aab30125d',

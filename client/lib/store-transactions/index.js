@@ -333,9 +333,10 @@ TransactionFlow.prototype.stripeModalAuth = async function( stripeConfiguration,
 			} );
 		}
 	} catch ( error ) {
+		debug( 'error during stripeModalAuth', error );
 		this._pushStep( {
 			name: RECEIVED_AUTHORIZATION_RESPONSE,
-			error: error.message,
+			error: error.stripeError ? error.stripeError : error.message,
 			last: true,
 		} );
 	}
@@ -483,8 +484,8 @@ export function createCardToken( requestType, cardDetails, callback, forcedPayga
 	return createPaygateToken( requestType, cardDetails, callback );
 }
 
-export async function getStripeConfiguration( { country } ) {
-	const config = await wpcom.stripeConfiguration( { country } );
+export async function getStripeConfiguration( requestArgs ) {
+	const config = await wpcom.stripeConfiguration( requestArgs );
 	debug( 'Stripe configuration', config );
 	return config;
 }

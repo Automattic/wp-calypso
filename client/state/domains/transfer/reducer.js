@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers } from 'state/utils';
+import { createReducerWithValidation, combineReducers } from 'state/utils';
 import { domainTransferSchema } from './schema';
 import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
 
@@ -14,7 +13,7 @@ import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ DOMAIN_TRANSFER_UPDATE ]: ( state, { domain, options } ) => ( {

@@ -204,7 +204,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_UNLIMITED_STORAGE_SIGNUP ]: {
 		getSlug: () => constants.FEATURE_UNLIMITED_STORAGE_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited storage' ),
+		getTitle: () => i18n.translate( '200 GB storage' ),
 		getDescription: () =>
 			i18n.translate(
 				"With increased storage space you'll be able to upload more images, videos, audio, and documents to your website."
@@ -276,7 +276,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_UNLIMITED_STORAGE ]: {
 		getSlug: () => constants.FEATURE_UNLIMITED_STORAGE,
 		getTitle: () =>
-			i18n.translate( '{{strong}}Unlimited{{/strong}} Storage Space', {
+			i18n.translate( '{{strong}}200 GB{{/strong}} Storage Space', {
 				components: {
 					strong: <strong />,
 				},

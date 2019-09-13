@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -69,19 +67,10 @@ describe( 'scroll-helper', () => {
 	} );
 
 	describe( 'Container and placeholder positioning', () => {
-		let preparedBounds = {
-				topPlaceholder: {
-					top: -2000,
-					height: 1000,
-				},
-				bottomPlaceholder: {
-					bottom: 4000,
-					height: 2000,
-				},
-			},
-			helper = new ScrollHelper( function( ref ) {
-				return preparedBounds[ ref ];
-			} );
+		const topPlaceholderBounds = () => ( { top: -2000, height: 1000 } );
+		const bottomPlaceholderBounds = () => ( { bottom: 4000, height: 2000 } );
+
+		const helper = new ScrollHelper( () => null, topPlaceholderBounds, bottomPlaceholderBounds );
 
 		helper.updatePlaceholderDimensions();
 
@@ -135,7 +124,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Hiding batch of items', () => {
-			let preparedBounds = {
+			const preparedBounds = {
 					i0: {
 						bottom: -1850,
 					},
@@ -190,7 +179,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Completely above context', () => {
-			let preparedBounds = {
+			const preparedBounds = {
 					i0: {
 						bottom: -1850,
 					},
@@ -349,7 +338,7 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Hiding batch of items', () => {
-			let preparedBounds = {
+			const preparedBounds = {
 					i5: {
 						top: 1900,
 					},
