@@ -133,6 +133,7 @@
 .site-address-changer__confirmation-detail {
 	.gridicon {
 		float: left;
+		margin-top: 4px;
 
 		@include breakpoint( '<660px' ) {
 			display: none;
