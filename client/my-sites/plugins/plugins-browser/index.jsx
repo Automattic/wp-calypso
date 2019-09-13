@@ -37,6 +37,7 @@ import {
 	isRequestingSites,
 	canJetpackSiteManage,
 } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import HeaderButton from 'components/header-button';
@@ -540,6 +541,7 @@ export class PluginsBrowser extends Component {
 		if (
 			! this.props.selectedSiteId ||
 			! this.props.sitePlan ||
+			this.props.isVipSite ||
 			this.props.isJetpackSite ||
 			this.props.hasBusinessPlan
 		) {
@@ -631,6 +633,7 @@ export default flow(
 				hasPremiumPlan,
 				hasBusinessPlan,
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
+				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
 				jetpackManageError:
 					!! isJetpackSite( state, selectedSiteId ) &&
