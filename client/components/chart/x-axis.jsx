@@ -18,7 +18,7 @@ const ModuleChartXAxis = ( { data, isRtl, labelWidth } ) => {
 	const dataCount = data.length || 1;
 
 	const [ spacing, setSpacing ] = useState( labelWidth );
-	// the divisor determines how many labels are rendered, start very conservative
+
 	const [ divisor, setDivisor ] = useState( 1 );
 
 	useLayoutEffect( () => {
