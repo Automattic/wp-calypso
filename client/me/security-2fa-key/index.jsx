@@ -6,7 +6,6 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import webauthn from 'lib/webauthn';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import SectionHeader from 'components/section-header';
 import Security2faKeyAdd from './add';
 import Security2faKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import webauthn from 'lib/webauthn';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 
