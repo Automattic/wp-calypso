@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import config from 'config';
 import {
 	getRedirectToSanitized,
