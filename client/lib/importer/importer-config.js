@@ -12,6 +12,7 @@ import { filter, head, orderBy, values } from 'lodash';
  */
 import ExternalLink from 'components/external-link';
 import InlineSupportLink from 'components/inline-support-link';
+import ExternalLink from 'components/external-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -28,19 +29,14 @@ function getConfig( { siteTitle = '' } = {} ) {
 				'importing into {{b2}}%(title)s{{/b2}}. A WordPress export is ' +
 				'an XML file with your page and post content, or a zip archive ' +
 				'containing several XML files. ' +
-				'Need help {{inlineSupportLink/}}?',
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
 				args: { title: siteTitle },
 				components: {
 					b: <strong />,
 					b2: <strong />,
-					inlineSupportLink: (
-						<InlineSupportLink
-							supportPostId={ 2087 }
-							supportLink={ 'https://en.support.wordpress.com/export/' }
-							text={ translate( 'exporting your content' ) }
-							showIcon={ false }
-						/>
+					ExternalLink: (
+						<ExternalLink href="https://en.support.wordpress.com/coming-from-self-hosted/" />
 					),
 				},
 			}
