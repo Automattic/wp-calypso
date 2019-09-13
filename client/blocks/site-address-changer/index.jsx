@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { debounce, get, flow, inRange, isEmpty } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -225,7 +225,7 @@ export class SiteAddressChanger extends Component {
 		const serverValidationMessage = get( validationError, 'message' );
 
 		return isAvailable
-			? translate( 'Good news, this site address is available!' )
+			? translate( 'Good news, that site address is available!' )
 			: validationMessage || serverValidationMessage;
 	}
 
