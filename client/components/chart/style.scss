@@ -434,18 +434,11 @@ $y-axis-padding: 0 20px 0 10px;
 			min-width: 0;
 
 			&::before {
-				content: '';
+				@include long-content-fade( $color: var( --color-primary-rgb ) );
 				position: relative;
-				background-image: linear-gradient(
-					to right,
-					rgba( 61, 89, 109, 0 ) 0%,
-					rgba( 61, 89, 109, 0.5 ),
-					rgba( 61, 89, 109, 1 )
-				);
 				left: -30px;
 				width: 30px;
 				height: 24px;
-				display: block;
 			}
 		}
 	}
