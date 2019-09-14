@@ -30,7 +30,8 @@ const p2Completer = {
 			{ site.blavatar ? (
 				<img
 					key="blavatar"
-					src={ site.blavatar }
+					src={ `${ site.blavatar }?s=20` }
+					srcset={ `${ site.blavatar }?s=20 1x, ${ site.blavatar }?s=40 2x` }
 					width="20"
 					height="20"
 					className="p2-autocomplete__blavatar"
