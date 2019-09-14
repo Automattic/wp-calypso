@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers, keyedReducer } from 'state/utils';
+import { createReducerWithValidation, combineReducers, keyedReducer } from 'state/utils';
 import credentialsSchema from './schema';
 import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -12,7 +10,7 @@ import {
 
 const credentialsReducer = keyedReducer(
 	'siteId',
-	createReducer(
+	createReducerWithValidation(
 		{},
 		{
 			[ JETPACK_ONBOARDING_CREDENTIALS_RECEIVE ]: ( state, { credentials } ) => credentials,

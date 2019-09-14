@@ -16,14 +16,13 @@ import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 
 class ContactsPrivacyCard extends React.PureComponent {
 	static propTypes = {
-		contactInformation: PropTypes.object.isRequired,
 		privateDomain: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	render() {
-		const { contactInformation, privateDomain, translate } = this.props;
+		const { privateDomain, translate, selectedDomainName } = this.props;
 		let privacyText = translate(
 			'{{strong}}Privacy Protection is enabled{{/strong}} so your contact information' +
 				' {{strong}}is not shown{{/strong}}.',
@@ -51,7 +50,10 @@ class ContactsPrivacyCard extends React.PureComponent {
 
 				<CompactCard className="contacts-privacy__card">
 					<p>{ privacyText }</p>
-					<ContactDisplay contactInformation={ contactInformation } />
+					<ContactDisplay
+						selectedDomainName={ selectedDomainName }
+						privateDomain={ privateDomain }
+					/>
 					<p className="contacts-privacy__settings-explanation">
 						{ translate(
 							'Domain owners are required to provide correct contact information. ' +

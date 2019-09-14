@@ -3,6 +3,8 @@
  * @jest-environment jsdom
  */
 
+jest.mock( 'components/data/document-head', () => 'DocumentHead' );
+
 /**
  * External dependencies
  */

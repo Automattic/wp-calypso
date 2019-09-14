@@ -1,0 +1,116 @@
+.customer-home__layout-col {
+	@include breakpoint('>960px') {
+		width: 49%;
+	}
+}
+
+.customer-home__card-subheader {
+	color: var( --color-text-subtle );
+	margin: -0.5rem 0 1rem;
+    font-size: 0.85rem;
+}
+
+.customer-home__layout {
+	@include breakpoint('>960px') {
+		display: flex;
+		justify-content: space-between;
+	}
+}
+
+.customer-home__card-button-pair {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.button {
+		width: 49%;
+		text-align:center;
+	}
+}
+
+.customer-home__card-boxes {
+	margin-top: rem( -15px );
+}
+
+.customer-home__boxes {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+}
+
+.customer-home__box-action {
+	width: 47%;
+    margin-bottom: 6%;
+
+	.button {
+		border-width: 1px;
+		display: flex;
+		width: 100%;
+		height: 100px;
+		align-items: center;
+		justify-content: space-evenly;
+		flex-direction: column;
+		padding: 1rem 0;
+
+		img {
+			transition: transform 0.3s ease-out;
+		}
+
+		&:hover {
+			box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
+
+			img {
+				transform: scale( 1.2 );
+			}
+		}
+	}
+
+	span {
+		display: block;
+	}
+}
+
+.customer-home__layout-col {
+	.card-heading {
+		margin-top: 0;
+	}
+
+	.vertical-nav-item {
+		border-bottom: 1px solid #ccc;
+		box-shadow: none;
+		padding: 0.5rem 0;
+
+		.gridicon {
+			right: 0;
+		}
+	}
+
+	a:last-child .vertical-nav-item {
+		border-bottom: none;
+	}
+}
+
+.customer-home__card-support {
+	display: flex;
+	justify-content: space-between;
+
+	img {
+		width: 40%;
+		margin: 0 5%;
+		height: 100%;
+	}
+
+	.vertical-nav {
+		width: 50%;
+	}
+}
+
+.customer-home__card-mobile .button {
+	background: #000;
+	border: none; /* it was cheaper to remove it here than setting borderless and then remove the border on hover*/
+	
+	img {
+		height: 25px;
+    	vertical-align: middle;
+	}
+}

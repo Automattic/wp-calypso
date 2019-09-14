@@ -17,7 +17,6 @@ import {
 	includes,
 	pick,
 	flatten,
-	forEach,
 	groupBy,
 	intersection,
 	snakeCase,
@@ -46,20 +45,14 @@ import { login } from 'lib/paths';
 import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 
 const debug = debugFactory( 'calypso:pages' );
 
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const staticFiles = [
-	{ path: 'style.css' },
-	{ path: 'editor.css' },
-	{ path: 'tinymce/skins/wordpress/wp-content.css' },
-	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'style-debug-rtl.css' },
-];
+const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 	if ( ! file.hash ) {
@@ -179,24 +172,6 @@ const getFilesForEntrypoint = ( target, name ) => {
 	);
 	return groupAssetsByType( entrypointAssets );
 };
-/**
- * Generate an object that maps asset names name to a server-relative urls.
- * Assets in request and static files are included.
- *
- * @param {String} target The build target name.
- *
- * @returns {Object} Map of asset names to urls
- **/
-function generateStaticUrls( target ) {
-	const urls = { ...staticFilesUrls };
-	const assets = getAssets( target ).assetsByChunkName;
-
-	forEach( assets, ( asset, name ) => {
-		urls[ name ] = asset;
-	} );
-
-	return urls;
-}
 
 function getCurrentBranchName() {
 	try {
@@ -301,16 +276,22 @@ function getDefaultContext( request ) {
 
 	const target = getBuildTargetFromRequest( request );
 
+	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
+	const isWCComConnect =
+		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
+		request.query[ 'wccom-from' ] &&
+		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
-		urls: generateStaticUrls( target ),
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
-		isDebug,
 		requestFrom: request.query.from,
+		isWCComConnect,
 		badge: false,
 		lang,
 		entrypoint: getFilesForEntrypoint( target, 'entry-main' ),
@@ -329,7 +310,7 @@ function getDefaultContext( request ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isDebug: context.env === 'development' || context.isDebug,
+		isDebug,
 		staticUrls: staticFilesUrls,
 	};
 
@@ -530,6 +511,7 @@ function setUpCSP( req, res, next ) {
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',
+			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
@@ -580,9 +562,14 @@ function setUpRoute( req, res, next ) {
 	);
 }
 
-function render404( request, response ) {
-	const ctx = getDefaultContext( request );
-	response.status( 404 ).send( renderJsx( '404', ctx ) );
+function render404( req, res ) {
+	const ctx = {
+		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
+	};
+
+	res.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
 /* We don't use `next` but need to add it for express.js to
@@ -594,14 +581,13 @@ function renderServerError( err, req, res, next ) {
 		console.error( err );
 	}
 
-	const target = getBuildTargetFromRequest( req );
-
-	res.status( err.status || 500 );
 	const ctx = {
-		urls: generateStaticUrls( target ),
 		faviconURL: config( 'favicon_url' ),
+		isRTL: config( 'rtl' ),
+		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
 	};
-	res.send( renderJsx( '500', ctx ) );
+
+	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
 }
 
 /**

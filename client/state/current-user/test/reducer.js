@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { id, capabilities as unwrappedCapabilities, currencyCode } from '../reducer';
+import reducer, { id, capabilities, currencyCode } from '../reducer';
 import {
 	CURRENT_USER_RECEIVE,
 	DESERIALIZE,
@@ -19,9 +17,7 @@ import {
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
 } from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
-const capabilities = withSchemaValidation( unwrappedCapabilities.schema, unwrappedCapabilities );
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {

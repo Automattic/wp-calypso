@@ -20,7 +20,7 @@ main.plan-upgrade-upsell.main {
 
 		.is-placeholder {
 			animation: pulse-light 800ms ease-in-out infinite;
-			background: var( --color-neutral-100 );
+			background: var( --color-neutral-10 );
 		}
 	}
 
@@ -125,7 +125,7 @@ main.plan-upgrade-upsell.main {
 
 		&-item-icon {
 			width: 18px;
-			fill: var( --color-jetpack );
+			fill: var( --studio-jetpack-green-30 );
 			margin-right: 5px;
 		}
 

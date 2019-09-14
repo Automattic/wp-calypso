@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -8,10 +7,10 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	[],
 	{
 		[ READER_TEAMS_RECEIVE ]: ( state, action ) => {

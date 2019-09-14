@@ -13,30 +13,86 @@ import wpcomFactory from 'lib/wp';
 
 const wpcom = wpcomFactory.undocumented();
 
-export async function saveCreditCard( {
+export async function saveOrUpdateCreditCard( {
 	createCardToken,
 	saveStoredCard,
 	translate,
-	successCallback,
 	apiParams,
 	purchase,
 	siteSlug,
 	formFieldValues,
+	stripeConfiguration,
+	parseTokenFromResponse,
 } ) {
-	const cardDetails = kebabCaseFormFields( formFieldValues );
-	const { token } = await createCardTokenAsync( { cardDetails, createCardToken } );
+	const token = await getTokenForSavingCard( {
+		formFieldValues,
+		createCardToken,
+		parseTokenFromResponse,
+		translate,
+	} );
 
 	if ( saveStoredCard ) {
-		await saveStoredCard( { token } );
-		notices.success( translate( 'Card added successfully' ), {
-			persistent: true,
+		return saveCreditCard( {
+			token,
+			translate,
+			saveStoredCard,
+			stripeConfiguration,
 		} );
-		successCallback();
-		return;
 	}
 
-	const updatedCreditCardApiParams = getParamsForApi( cardDetails, token, apiParams );
-	const response = wpcom.updateCreditCard( updatedCreditCardApiParams );
+	return updateCreditCard( {
+		formFieldValues,
+		apiParams,
+		purchase,
+		siteSlug,
+		token,
+		translate,
+		stripeConfiguration,
+	} );
+}
+
+async function getTokenForSavingCard( {
+	formFieldValues,
+	createCardToken,
+	parseTokenFromResponse,
+	translate,
+} ) {
+	const cardDetails = kebabCaseFormFields( formFieldValues );
+	const tokenResponse = await createCardToken( cardDetails );
+	const token = parseTokenFromResponse( tokenResponse );
+	if ( ! token ) {
+		throw new Error( translate( 'Failed to add card.' ) );
+	}
+	return token;
+}
+
+async function saveCreditCard( { token, translate, saveStoredCard, stripeConfiguration } ) {
+	const additionalData = stripeConfiguration
+		? { payment_partner: stripeConfiguration.processor_id }
+		: {};
+	await saveStoredCard( { token, additionalData } );
+	notices.success( translate( 'Card added successfully' ), {
+		persistent: true,
+	} );
+}
+
+async function updateCreditCard( {
+	formFieldValues,
+	apiParams,
+	purchase,
+	siteSlug,
+	token,
+	translate,
+	stripeConfiguration,
+} ) {
+	const cardDetails = kebabCaseFormFields( formFieldValues );
+	const updatedCreditCardApiParams = getParamsForApi(
+		cardDetails,
+		token,
+		stripeConfiguration,
+		apiParams
+	);
+	const response = await wpcom.updateCreditCard( updatedCreditCardApiParams );
 	if ( response.error ) {
 		throw new Error( response );
 	}
@@ -54,16 +110,14 @@ export async function saveCreditCard( {
 			persistent: true,
 		};
 		notices.info( noticeMessage, noticeOptions );
-		successCallback();
 		return;
 	}
 	notices.success( response.success, {
 		persistent: true,
 	} );
-	successCallback();
 }
 
-export function getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
+export function getParamsForApi( cardDetails, cardToken, stripeConfiguration, extraParams = {} ) {
 	return {
 		...extraParams,
 		country: cardDetails.country,
@@ -78,7 +132,8 @@ export function getParamsForApi( cardDetails, cardToken, extraParams = {} ) {
 		city: cardDetails.city,
 		state: cardDetails.state,
 		phone_number: cardDetails[ 'phone-number' ],
-		cardToken,
+		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
+		paygate_token: cardToken,
 	};
 }
 
@@ -89,16 +144,18 @@ export function useDebounce( value, delay ) {
 	return [ debouncedValue, setDebouncedValue ];
 }
 
-function createCardTokenAsync( { cardDetails, createCardToken } ) {
-	return new Promise( ( resolve, reject ) => {
-		createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
-			if ( gatewayError || ! gatewayData.token ) {
-				reject( gatewayError || new Error( 'No card token returned' ) );
-				return;
-			}
-			resolve( gatewayData );
+export function makeAsyncCreateCardToken( createCardToken ) {
+	return cardDetails => {
+		return new Promise( ( resolve, reject ) => {
+			createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
+				if ( gatewayError || ! gatewayData.token ) {
+					reject( gatewayError || new Error( 'No card token returned' ) );
+					return;
+				}
+				resolve( gatewayData );
+			} );
 		} );
-	} );
+	};
 }
 
 export function areFormFieldsEmpty( formFieldValues ) {

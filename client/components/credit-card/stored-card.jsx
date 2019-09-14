@@ -41,7 +41,7 @@ export const getCreditCardSummary = ( translate, type, digits ) => {
 
 const StoredCard = ( { lastDigits, cardType, name, expiry, translate, moment } ) => {
 	// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
-	const expirationDate = moment( expiry ).format( 'MM/YY' );
+	const expirationDate = expiry ? moment( expiry ).format( 'MM/YY' ) : null;
 
 	const type = cardType && cardType.toLocaleLowerCase();
 	const cardClasses = classNames( 'credit-card__stored-card', {
@@ -61,20 +61,21 @@ const StoredCard = ( { lastDigits, cardType, name, expiry, translate, moment } )
 			</span>
 			<span className="credit-card__stored-card-name">{ name }</span>
 			<span className="credit-card__stored-card-expiration-date">
-				{ translate( 'Expires %(date)s', {
-					args: { date: expirationDate },
-					context: 'date is of the form MM/YY',
-				} ) }
+				{ expirationDate &&
+					translate( 'Expires %(date)s', {
+						args: { date: expirationDate },
+						context: 'date is of the form MM/YY',
+					} ) }
 			</span>
 		</div>
 	);
 };
 
 StoredCard.propTypes = {
-	lastDigits: PropTypes.string.isRequired,
+	lastDigits: PropTypes.string,
 	cardType: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
-	expiry: PropTypes.string.isRequired,
+	expiry: PropTypes.string,
 };
 
 export default compose(

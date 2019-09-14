@@ -66,8 +66,7 @@
 /test @Automattic/team-calypso
 
 # Types, TypeScript, and type annotations
-*.ts @Automattic/type-review
-*.tsx @Automattic/type-review
+/client/types.ts @Automattic/type-review
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # G Suite

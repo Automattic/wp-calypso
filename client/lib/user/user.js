@@ -245,10 +245,8 @@ User.prototype.getAvatarUrl = function( options ) {
 
 /**
  * Clear any user data.
- *
- * @param {function}  onClear called when data has been cleared
  */
-User.prototype.clear = function( onClear ) {
+User.prototype.clear = async function() {
 	/**
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
@@ -257,9 +255,7 @@ User.prototype.clear = function( onClear ) {
 	delete this.settings;
 	store.clearAll();
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		clearStorage().then( onClear );
-	} else if ( onClear ) {
-		Promise.resolve().then( onClear );
+		await clearStorage();
 	}
 };
 

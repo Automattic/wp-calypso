@@ -12,7 +12,7 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
-	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
+	SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
 } from 'state/action-types';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
@@ -50,7 +50,10 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				propValue = !! propValue;
 			}
 
-			if ( propName === 'cart_item' && typeof propValue !== 'string' ) {
+			if (
+				( propName === 'cart_item' || propName === 'domain_item' ) &&
+				typeof propValue !== 'string'
+			) {
 				propValue = toPairs( propValue )
 					.map( pair => pair.join( ':' ) )
 					.join( ',' );
@@ -126,9 +129,10 @@ export function invalidateStep( step, errors ) {
 	};
 }
 
-export function removeUnneededSteps( flowName ) {
+export function setResumeAfterLogin( step ) {
+	const lastUpdated = Date.now();
 	return {
-		type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
-		flowName,
+		type: SIGNUP_PROGRESS_RESUME_AFTER_LOGIN_SET,
+		resumeStep: { ...step, lastUpdated },
 	};
 }

@@ -1,9 +1,7 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
-
 import { mapValues, merge } from 'lodash';
 
 /**
@@ -18,7 +16,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
@@ -55,7 +53,7 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping of serialized query key to an array of term IDs
  * for the query, if a query response was successfully received.
  */
-export const queries = createReducer(
+export const queries = createReducerWithValidation(
 	{},
 	{
 		[ TERMS_RECEIVE ]: ( state, action ) => {

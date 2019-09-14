@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,7 +17,7 @@ import ProgressBar from 'components/progress-bar';
 import { getSelectedSite } from 'state/ui/selectors';
 import syncSelectors from 'state/jetpack-sync/selectors';
 import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
-import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
+import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import analytics from 'lib/analytics';
 

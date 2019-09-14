@@ -59,6 +59,12 @@ class CurrentPlan extends Component {
 		showThankYou: PropTypes.bool,
 	};
 
+	componentDidMount() {
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+	}
+
 	isLoading() {
 		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
 
@@ -122,7 +128,10 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<Dialog isVisible={ showThankYou }>
+				<Dialog
+					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+					isVisible={ showThankYou }
+				>
 					{ isFreePlan ? <FreePlanThankYou /> : <PaidPlanThankYou /> }
 				</Dialog>
 

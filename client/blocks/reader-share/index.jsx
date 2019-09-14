@@ -1,15 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import url from 'url';
 import { defer } from 'lodash';
 import config from 'config';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { stringify } from 'qs';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -39,32 +36,26 @@ function preloadEditor() {
  */
 const actionMap = {
 	twitter( post ) {
-		const twitterUrlProperties = {
-			scheme: 'https',
-			hostname: 'twitter.com',
-			pathname: '/intent/tweet',
-			query: {
-				text: post.title,
-				url: post.URL,
-			},
-		};
+		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
+		const params = new URLSearchParams( {
+			text: post.title,
+			url: post.URL,
+		} );
+		baseUrl.search = params.toString();
 
-		const twitterUrl = url.format( twitterUrlProperties );
+		const twitterUrl = baseUrl.href;
 
 		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
 	},
 	facebook( post ) {
-		const facebookUrlProperties = {
-			scheme: 'https',
-			hostname: 'www.facebook.com',
-			pathname: '/sharer.php',
-			query: {
-				u: post.URL,
-				app_id: config( 'facebook_api_key' ),
-			},
-		};
+		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
+		const params = new URLSearchParams( {
+			u: post.URL,
+			app_id: config( 'facebook_api_key' ),
+		} );
+		baseUrl.search = params.toString();
 
-		const facebookUrl = url.format( facebookUrlProperties );
+		const facebookUrl = baseUrl.href;
 
 		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	},
@@ -84,7 +75,8 @@ function buildQuerystringForPost( post ) {
 	args.text = post.excerpt;
 	args.url = post.URL;
 
-	return stringify( args );
+	const params = new URLSearchParams( args );
+	return params.toString();
 }
 
 class ReaderShare extends React.Component {

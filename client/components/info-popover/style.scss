@@ -8,14 +8,14 @@
 	&:hover,
 	&.is-active {
 		.gridicon {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 }
 
 .popover.info-popover__tooltip {
 	.popover__inner {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		font-size: 13px;
 		max-width: 220px;
 		padding: 16px;

@@ -155,16 +155,17 @@ export function getRememberedCoupon() {
 	}
 	const COUPON_CODE_WHITELIST = [
 		'ALT',
+		'FBSAVE15',
 		'FIVERR',
 		'GENEA',
 		'KITVISA',
 		'LINKEDIN',
 		'PATREON',
 		'ROCKETLAWYER',
+		'RBC',
 		'SAFE',
 		'SBDC',
 		'TXAM',
-		'FBSAVE15',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

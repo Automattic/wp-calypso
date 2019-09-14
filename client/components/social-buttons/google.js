@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -25,15 +25,15 @@ import './style.scss';
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
-		isFormDisabled: PropTypes.bool,
 		clientId: PropTypes.string.isRequired,
-		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
-		uxMode: PropTypes.string,
+		isFormDisabled: PropTypes.bool,
+		onClick: PropTypes.func,
 		recordTracksEvent: PropTypes.func.isRequired,
 		responseHandler: PropTypes.func.isRequired,
+		scope: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		onClick: PropTypes.func,
+		uxMode: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -191,7 +191,7 @@ class GoogleLoginButton extends Component {
 		}
 
 		return (
-			<div className="social-buttons__button-container">
+			<Fragment>
 				{ customButton ? (
 					customButton
 				) : (
@@ -209,7 +209,7 @@ class GoogleLoginButton extends Component {
 							{ this.props.translate( 'Continue with %(service)s', {
 								args: { service: 'Google' },
 								comment:
-									'%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...',
+									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 							} ) }
 						</span>
 					</button>
@@ -224,7 +224,7 @@ class GoogleLoginButton extends Component {
 				>
 					{ preventWidows( this.state.error ) }
 				</Popover>
-			</div>
+			</Fragment>
 		);
 	}
 }

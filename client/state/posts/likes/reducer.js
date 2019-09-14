@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { dropWhile, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import itemSchema from './schema';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation, keyedReducer } from 'state/utils';
 import {
 	POST_LIKES_ADD_LIKER,
 	POST_LIKES_RECEIVE,
@@ -27,7 +24,7 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const itemReducer = createReducer(
+export const itemReducer = createReducerWithValidation(
 	{ likes: undefined, iLike: false, found: 0, lastUpdated: undefined },
 	{
 		[ POST_LIKES_RECEIVE ]: ( state, { likes, iLike, found } ) => {

@@ -1,11 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
-	MASTERBAR_TOGGLE_VISIBILITY,
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
@@ -22,6 +18,7 @@ import guidedTour from './guided-tours/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
+import masterbarVisibility from './masterbar-visibility/reducer';
 import mediaModal from './media-modal/reducer';
 import npsSurveyNotice from './nps-survey-notice/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
@@ -30,6 +27,7 @@ import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import reader from './reader/reducer';
 import route from './route/reducer';
+import section from './section/reducer';
 import themeSetup from './theme-setup/reducers';
 
 /**
@@ -51,15 +49,6 @@ export function selectedSiteId( state = null, action ) {
 export const siteSelectionInitialized = createReducer( false, {
 	[ SELECTED_SITE_SET ]: () => true,
 } );
-
-//TODO: do we really want to mix strings and booleans?
-export function section( state = false, action ) {
-	switch ( action.type ) {
-		case SECTION_SET:
-			return action.section !== undefined ? action.section : state;
-	}
-	return state;
-}
 
 export function hasSidebar( state = true, action ) {
 	switch ( action.type ) {
@@ -94,9 +83,6 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	}
 	return state;
 };
-
-export const masterbarVisibility = ( state = true, { type, isVisible } ) =>
-	type === MASTERBAR_TOGGLE_VISIBILITY ? isVisible : state;
 
 const reducer = combineReducers( {
 	actionLog,

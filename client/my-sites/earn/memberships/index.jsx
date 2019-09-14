@@ -96,13 +96,22 @@ class MembershipsSection extends Component {
 					</div>
 					<div className="memberships__earnings-breakdown-notes">
 						{ translate(
-							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
+							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
 							{
 								args: {
 									commission: '' + parseFloat( this.props.commission ) * 100 + '%',
 									stripe: '2.9%+30c',
 								},
-								components: { em: <em />, br: <br /> },
+								components: {
+									em: <em />,
+									br: <br />,
+									a: (
+										<ExternalLink
+											href="https://en.support.wordpress.com/recurring-payments-button/#related-fees"
+											icon={ true }
+										/>
+									),
+								},
 							}
 						) }
 					</div>
@@ -293,6 +302,35 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
+				{ this.props.query.stripe_connect_success === 'earn' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+						) }
+					>
+						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
+							{ this.props.translate( 'Add a Payment Plan' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				{ this.props.query.stripe_connect_success === 'gutenberg' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
+						) }
+					>
+						<NoticeAction
+							href={ `https://support.wordpress.com/recurring-payments-button/#stripe-account-connected` }
+							icon="external"
+						>
+							{ this.props.translate( 'Learn how' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderProducts() }
@@ -357,7 +395,7 @@ class MembershipsSection extends Component {
 					/>
 				) }
 				{ this.renderOnboarding(
-					<Button primary={ true } href={ this.props.connectUrl } target="_blank">
+					<Button primary={ true } href={ this.props.connectUrl }>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{' '}
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>

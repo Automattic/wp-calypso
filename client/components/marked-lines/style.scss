@@ -20,7 +20,7 @@
 
 .marked-lines__line-number {
 	padding: 0 4px;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	color: var( --color-text-subtle );
 
 	&.marked-lines__marked-line {
@@ -41,7 +41,7 @@
 
 .marked-lines__mark {
 	background-color: var( --color-error );
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	border-radius: 4px;
 	padding: 2px 4px;
 }

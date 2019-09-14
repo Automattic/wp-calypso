@@ -103,9 +103,10 @@ export const itemsSchema = {
 A JSON Schema must be provided if the subtree chooses to persist state. If we find that our persisted data doesn't
 match our described data shape, we should throw it out and rebuild that section of the tree with our default state.
 
-When using `createReducer` util you can pass a schema as a third param and all that will be handled for you.
+You can use `createReducerWithValidation` similarly to `createReducer`, passing the schema as the third param, and all
+that will be handled for you.
 ```javascript
-export const items = createReducer( defaultState, {
+export const items = createReducerWithValidation( defaultState, {
 	[THEMES_RECEIVE]: ( state, action ) => // ...
 }, itemsSchema );
 ```
@@ -160,11 +161,10 @@ return combineReducers( {
 } );
 ```
 
-To persist, we add the schema as a property on the reducer:
+To persist, we add the schema by wrapping the reducer with the `withValidation` util:
 ```javascript
-age.schema = ageSchema;
 return combineReducers( {
-    age,
+    age: withValidation( ageSchema, age ),
     height,
 } );
 ```

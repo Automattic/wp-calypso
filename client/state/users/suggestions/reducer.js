@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -45,7 +42,7 @@ export const requesting = createReducer(
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {

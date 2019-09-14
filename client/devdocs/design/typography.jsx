@@ -62,7 +62,7 @@ export default class Typography extends React.PureComponent {
 							{ '\n\t' }
 							font-weight: 400;
 							{ '\n\t' }
-							color: var( --color-neutral-700 );
+							color: var( --color-neutral-70 );
 							{ '\n' }
 							&#125;
 						</code>

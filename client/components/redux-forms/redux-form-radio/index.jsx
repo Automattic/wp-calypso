@@ -11,7 +11,6 @@ import { Field } from 'redux-form';
  */
 import FormRadio from 'components/forms/form-radio';
 
-// eslint-disable-next-line no-unused-vars
 const RadioRenderer = ( { input, meta, type, ...props } ) => (
 	<FormRadio { ...input } { ...props } />
 );

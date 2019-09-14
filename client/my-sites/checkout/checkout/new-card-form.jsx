@@ -24,6 +24,8 @@ class NewCardForm extends Component {
 		transaction: PropTypes.object.isRequired,
 		selected: PropTypes.bool,
 		stripe: PropTypes.object,
+		isStripeLoading: PropTypes.bool,
+		stripeLoadingError: PropTypes.object,
 	};
 
 	getErrorMessage = fieldName => {
@@ -41,6 +43,8 @@ class NewCardForm extends Component {
 				onFieldChange={ this.handleFieldChange }
 				getErrorMessage={ this.getErrorMessage }
 				stripe={ this.props.stripe }
+				isStripeLoading={ this.props.isStripeLoading }
+				stripeLoadingError={ this.props.stripeLoadingError }
 			/>
 		);
 	};

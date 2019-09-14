@@ -3,7 +3,7 @@
  * Exernal dependencies
  */
 import cookie from 'cookie';
-import { filter, find, includes, indexOf, isEmpty, pick } from 'lodash';
+import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -177,7 +177,17 @@ export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 
 export function getFilteredSteps( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	return filter( progress, step => includes( flow.steps, step.stepName ) );
+
+	if ( ! flow ) {
+		return [];
+	}
+
+	return sortBy(
+		// filter steps...
+		filter( progress, step => includes( flow.steps, step.stepName ) ),
+		// then order according to the flow definition...
+		( { stepName } ) => flow.steps.indexOf( stepName )
+	);
 }
 
 export function getFirstInvalidStep( flowName, progress ) {
@@ -223,4 +233,9 @@ export const clearSignupDestinationCookie = () => {
 	const options = { path: '/', expires: expirationDate };
 
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
+};
+
+export const shouldForceLogin = flowName => {
+	const flow = flows.getFlow( flowName );
+	return !! flow && flow.forceLogin;
 };

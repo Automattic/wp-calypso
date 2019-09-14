@@ -8,7 +8,7 @@
 
 	// Globe icon for sites without an icon
 	&.is-blank {
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 		.gridicon {
 			color: var( --color-surface );
 			z-index: z-index( 'root', '.site-icon.is-blank .gridicon' );
@@ -22,10 +22,10 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: rgba( var( --color-white-rgb ), 0.75 );
+	background-color: rgba( var( --color-surface-rgb ), 0.75 );
 }
 
 .site-icon__img {
-	background: $transparent;
+	background: rgba( var( --color-surface-rgb ), 0 );
 	position: relative;
 }
