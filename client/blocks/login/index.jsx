@@ -346,10 +346,10 @@ class Login extends Component {
 			socialServiceResponse,
 			disableAutoFocus,
 		} = this.props;
-		console.log( twoFactorAuthType, typeof twoFactorAuthType );
+
 		if (
 			twoFactorEnabled &&
-			( typeof twoFactorAuthType === 'undefined' || includes( [ 'u2f' ], twoFactorAuthType ) )
+			( typeof twoFactorAuthType === 'undefined' || twoFactorAuthType === 'u2f' )
 		) {
 			return (
 				<div>

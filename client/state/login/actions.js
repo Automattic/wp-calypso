@@ -244,11 +244,28 @@ export const loginUserWithHardwareKey = () => ( dispatch, getState ) => {
 				...loginParams,
 				client_data: JSON.stringify( publicKeyCredential ),
 			} );
+		} )
+		.then( response => {
+			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
+			} );
+		} )
+		.catch( httpError => {
+			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
+
+			if ( twoStepNonce ) {
+				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
+			}
+
+			const error = getErrorFromHTTPError( httpError );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+				error,
+			} );
+
+			return Promise.reject( error );
 		} );
-	/*	return webauthn.authenticate(
-		getTwoFactorUserId( getState() ),
-		getTwoFactorAuthNonce( getState(), 'u2f' )
-	);*/
 };
 
 /**
