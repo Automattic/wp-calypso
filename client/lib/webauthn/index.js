@@ -132,7 +132,11 @@ function register() {
 				publicKeyCredential.rawId = binToStr( attestation.rawId );
 			}
 			if ( ! attestation.response ) {
-				Promise.reject( 'response lacking "response" attribute' );
+				return Promise.reject( {
+					context: 'AuthenticatorResponse',
+					error: 'NoResponse',
+					message: 'Response lacking "response" attribute',
+				} );
 			}
 			const response = {};
 			response.clientDataJSON = binToStr( attestation.response.clientDataJSON );
@@ -143,9 +147,40 @@ function register() {
 				'/me/two-step/security-key/registration_validate',
 				{
 					data: JSON.stringify( publicKeyCredential ),
+					name: 'Key from ' + new Date().toUTCString(),
 				},
 				POST
 			);
+		} )
+		.catch( error => {
+			switch ( error.name ) {
+				case 'InvalidStateError':
+					return Promise.reject( {
+						context: 'PublicKeyCredential',
+						error: 'DuplicateKey',
+						message: 'Security key has already been registered',
+					} );
+				case 'NotAllowedError':
+					return Promise.reject( {
+						context: 'PublicKeyCredential',
+						error: 'TimeoutCanceled',
+						message: 'Security key interaction timed out or canceled',
+					} );
+				case 'AbortError':
+					return Promise.reject( {
+						context: 'PublicKeyCredential',
+						error: 'Canceled',
+						message: 'Security key interaction canceled',
+					} );
+				case 'NotSupportedError':
+				case 'SecurityError':
+				default:
+					return Promise.reject( {
+						context: 'PublicKeyCredential',
+						error: 'Unknown',
+						message: 'Security key registration error',
+					} );
+			}
 		} );
 }
 function wpcomLoginRequest( action, form ) {
