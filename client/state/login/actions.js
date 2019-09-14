@@ -51,6 +51,7 @@ import wpcom from 'lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
+import webauthn from 'lib/webauthn';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -173,6 +174,15 @@ export const updateNonce = ( nonceType, twoStepNonce ) => ( {
 	nonceType,
 	twoStepNonce,
 } );
+
+export const loginUserWithHardwareKey = () => ( dispatch, getState ) => {
+	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+
+	return webauthn.authenticate(
+		getTwoFactorUserId( getState() ),
+		getTwoFactorAuthNonce( getState(), 'u2f' )
+	);
+};
 
 /**
  * Logs a user in with a two factor verification code.

@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import config from 'config';
 
 let _backend;
 
@@ -40,7 +41,7 @@ function credentialListConversion( list ) {
 	} );
 }
 
-function wpcomRequestPromise( path, _data, method ) {
+function wpcomApiRequest( path, _data, method ) {
 	const data = _data || {};
 	if ( process.env.NODE_ENV === 'development' ) {
 		data.hostname = window.location.hostname;
@@ -89,7 +90,7 @@ function isSupported() {
 }
 
 function register() {
-	return wpcomRequestPromise( '/me/two-step/security-key/registration_challenge' )
+	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
 		.then( options => {
 			const makeCredentialOptions = {};
 			makeCredentialOptions.rp = options.rp;
@@ -138,7 +139,7 @@ function register() {
 			response.attestationObject = binToStr( attestation.response.attestationObject );
 			publicKeyCredential.response = response;
 
-			return wpcomRequestPromise(
+			return wpcomApiRequest(
 				'/me/two-step/security-key/registration_validate',
 				{
 					data: JSON.stringify( publicKeyCredential ),
@@ -147,7 +148,70 @@ function register() {
 			);
 		} );
 }
+function wpcomLoginRequest( action, form ) {
+	form.append( 'client_id', config( 'wpcom_signup_id' ) );
+	form.append( 'client_secret', config( 'wpcom_signup_key' ) );
+	if ( process.env.NODE_ENV === 'development' ) {
+		form.append( 'dev_hostname', window.location.hostname );
+	}
+	return fetch( `https://wordpress.com/wp-login.php?action=${ action }`, {
+		method: 'POST',
+		body: form,
+		credentials: 'include',
+	} ).then( response => response.json() );
+}
 
-function authenticate() {}
+function authenticate( wpcom_user_id, nonce ) {
+	let form = new FormData();
+	form.append( 'user_id', wpcom_user_id );
+	form.append( 'two_step_nonce', nonce );
+	form.append( 'auth_type', 'u2f' );
+
+	return wpcomLoginRequest( 'u2f-challenge-endpoint', form )
+		.then( response => {
+			const parameters = response.data;
+			const requestOptions = {};
+
+			requestOptions.challenge = strToBin( parameters.challenge );
+			requestOptions.timeout = 6000;
+			if ( 'rpId' in parameters ) {
+				requestOptions.rpId = parameters.rpId;
+			}
+			if ( 'allowCredentials' in parameters ) {
+				requestOptions.allowCredentials = credentialListConversion( parameters.allowCredentials );
+			}
+			return navigator.credentials.get( { publicKey: requestOptions } );
+		} )
+		.then( assertion => {
+			const publicKeyCredential = {};
+			if ( 'id' in assertion ) {
+				publicKeyCredential.id = assertion.id;
+			}
+			if ( 'type' in assertion ) {
+				publicKeyCredential.type = assertion.type;
+			}
+			if ( 'rawId' in assertion ) {
+				publicKeyCredential.rawId = binToStr( assertion.rawId );
+			}
+			if ( ! assertion.response ) {
+				throw "Get assertion response lacking 'response' attribute";
+			}
+
+			const _response = assertion.response;
+			publicKeyCredential.response = {
+				clientDataJSON: binToStr( _response.clientDataJSON ),
+				authenticatorData: binToStr( _response.authenticatorData ),
+				signature: binToStr( _response.signature ),
+			};
+			if ( _response.userHandle ) {
+				publicKeyCredential.response.userHandle = binToStr( _response.userHandle );
+			}
+			form = new FormData();
+			form.append( 'user_id', wpcom_user_id );
+			form.append( 'client_data', JSON.stringify( publicKeyCredential ) );
+
+			return wpcomLoginRequest( 'u2f-authentication-endpoint', form );
+		} );
+}
 
 export default { isSupported, register, authenticate };

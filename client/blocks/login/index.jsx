@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'component/gridicons';
 import { capitalize, findLast, get, includes, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -42,6 +42,7 @@ import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import SecurityKeyForm from './two-factor-authentication/security-key-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 
 /**
@@ -345,6 +346,14 @@ class Login extends Component {
 			socialServiceResponse,
 			disableAutoFocus,
 		} = this.props;
+
+		if ( twoFactorEnabled && includes( [ 'u2f' ], twoFactorAuthType ) ) {
+			return (
+				<div>
+					<SecurityKeyForm twoFactorAuthType={ 'u2f' } onSuccess={ this.handleValid2FACode } />
+				</div>
+			);
+		}
 
 		let poller;
 		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
