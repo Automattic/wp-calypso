@@ -11,7 +11,7 @@ import { map, unescape } from 'lodash';
 import './editor.scss';
 
 /*
- * This is a workaround for the way Gutenberg autocomplete works. It onlylooks for
+ * This is a workaround for the way Gutenberg autocomplete works. It only looks for
  * beginnings of words and something like "teamabcp2" won't be found if you search "abc".
  * Adding spaces around the word solves the problem.
  */
