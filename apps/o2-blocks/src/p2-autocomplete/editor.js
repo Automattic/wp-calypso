@@ -3,7 +3,6 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
-import { addQueryArgs } from '@wordpress/url';
 import { map, unescape } from 'lodash';
 
 /**
@@ -11,13 +10,14 @@ import { map, unescape } from 'lodash';
  */
 import './editor.scss';
 
+const p2s = apiFetch( {
+	path: '/internal/P2s',
+} ).then( result => map( result.list, ( p2, subdomain ) => ( { ...p2, subdomain } ) ) );
+
 const p2Completer = {
 	name: 'p2s',
 	triggerPrefix: '+',
-	options: search =>
-		apiFetch( {
-			path: addQueryArgs( '/internal/P2s', { search } ),
-		} ).then( result => map( result.list, ( p2, subdomain ) => ( { ...p2, subdomain } ) ) ),
+	options: p2s,
 	getOptionKeywords: site => [ site.subdomain, site.title ],
 	getOptionLabel: site => (
 		<div className="p2-autocomplete">
