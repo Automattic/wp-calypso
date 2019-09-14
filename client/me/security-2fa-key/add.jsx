@@ -11,6 +11,8 @@ import debugFactory from 'debug';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import webauthn from 'lib/webauthn';
 import Spinner from 'components/spinner';
 
@@ -23,11 +25,16 @@ class Security2faKeyAdd extends React.Component {
 		registerRequests: PropTypes.object.isRequired,
 	};
 
+	state = {
+		error: false,
+	}
+	
 	componentDidMount = () => {
 		this.registerKey();
 	};
 
 	registerKey = () => {
+		this.setState( { error: false } );
 		webauthn
 			.register()
 			.then( data => {
@@ -35,7 +42,7 @@ class Security2faKeyAdd extends React.Component {
 				this.keyRegistered();
 			} )
 			.catch( err => {
-				this.props.onCancel( err );
+				this.setState( { error: err } );
 			} );
 	};
 
@@ -47,16 +54,30 @@ class Security2faKeyAdd extends React.Component {
 		return (
 			<Card>
 				<Fragment>
-					<div className="security-2fa-key__add-wait-for-key">
-						<Spinner />
-						<p>{ this.props.translate( 'Insert your USB key into your USB port.' ) }</p>
-						<p>
-							{ this.props.translate( 'Then tap the button or gold disk on the security device' ) }
-						</p>
-					</div>
-					<div className="security-2fa-key__add-button-container">
-						<Button onClick={ this.props.onCancel }>Cancel</Button>
-					</div>
+				{ ! this.state.error &&
+					<>
+						<div className="security-2fa-key__add-wait-for-key">
+							<Spinner />
+							<p>{ this.props.translate( 'Insert your USB key into your USB port.' ) }</p>
+							<p>
+								{ this.props.translate( 'Then tap the button or gold disk on the security device' ) }
+							</p>
+						</div>
+						<div className="security-2fa-key__add-button-container">
+							<Button onClick={ this.props.onCancel }>Cancel</Button>
+						</div>
+					</>
+				}
+				{ this.state.error &&
+					<Notice
+						status={ this.state.error.error === "Canceled" ? 'is-warning' : 'is-error'  }
+						className="security-2fa-key__error-notice"
+						onDismissClick={ this.props.onCancel }
+						text={ this.state.error.message }
+					>
+						<NoticeAction onClick={ this.registerKey }>{ this.props.translate( 'Retry' ) }</NoticeAction> 
+					</Notice>
+				}
 				</Fragment>
 			</Card>
 		);
