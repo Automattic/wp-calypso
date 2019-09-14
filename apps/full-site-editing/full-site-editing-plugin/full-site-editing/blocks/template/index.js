@@ -12,6 +12,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import edit from './edit';
 import './style.scss';
+import './site-logo';
 
 if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/template', {
@@ -19,11 +20,15 @@ if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 		description: __( 'Display a template.' ),
 		icon: 'layout',
 		category: 'layout',
-		attributes: { templateId: { type: 'number' } },
+		attributes: {
+			templateId: { type: 'number' },
+			className: { type: 'string' },
+		},
 		supports: {
 			anchor: false,
-			customClassName: true, // Needed to support the classname we inject
+			customClassName: false,
 			html: false,
+			inserter: false,
 			reusable: false,
 		},
 		edit,
@@ -44,4 +49,10 @@ const addFSETemplateClassname = createHigherOrderComponent( BlockListBlock => {
 	};
 }, 'addFSETemplateClassname' );
 
-addFilter( 'editor.BlockListBlock', 'full-site-editing/blocks/template', addFSETemplateClassname );
+// Must be 9 or this breaks on Simple Sites
+addFilter(
+	'editor.BlockListBlock',
+	'full-site-editing/blocks/template',
+	addFSETemplateClassname,
+	9
+);

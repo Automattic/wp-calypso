@@ -18,8 +18,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 1,
@@ -41,8 +39,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 2,
@@ -64,8 +60,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 									page_on_front: 0,
@@ -103,8 +97,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									page_for_posts: 1,
 								},
@@ -125,8 +117,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									page_for_posts: 2,
 								},

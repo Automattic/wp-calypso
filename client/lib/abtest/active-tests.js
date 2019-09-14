@@ -1,15 +1,5 @@
 /** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -108,7 +98,7 @@ export default {
 		defaultVariation: 'siteType',
 	},
 	skippableDomainStep: {
-		datestamp: '20190717',
+		datestamp: '20290717',
 		variations: {
 			skippable: 0,
 			notSkippable: 100,
@@ -116,22 +106,66 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellNudge: {
-		datestamp: '20190712',
+	showPlanUpsellGSuite: {
+		datestamp: '20190805',
 		variations: {
-			variantShowNudge: 50,
+			variantShowPlanBump: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	defaultMonthlyJetpackPlan: {
-		datestamp: '20190722',
+	showPlanUpsellConcierge: {
+		datestamp: '20190805',
 		variations: {
-			monthlyPlan: 50,
-			yearlyPlan: 50,
+			variantShowPlanBump: 100,
+			control: 0,
 		},
-		defaultVariation: 'yearlyPlan',
+		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	privateByDefault: {
+		datestamp: '20190730',
+		variations: {
+			selected: 90,
+			control: 10,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	removeBlogFlow: {
+		datestamp: '20190813',
+		variations: {
+			remove: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	customerHomePage: {
+		datestamp: '20190903',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		assignmentMethod: 'userId',
+	},
+	signupEscapeHatch: {
+		datestamp: '20190826',
+		variations: {
+			variant: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	placesApiInCheckout: {
+		datestamp: '20190923',
+		variations: {
+			original: 50,
+			placesApi: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

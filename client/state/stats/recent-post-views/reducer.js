@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { items as itemsSchemas } from './schema';
 import { STATS_RECENT_POST_VIEWS_RECEIVE } from 'state/action-types';
 
@@ -21,7 +18,7 @@ import { STATS_RECENT_POST_VIEWS_RECEIVE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemsSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case STATS_RECENT_POST_VIEWS_RECEIVE: {
 			const viewsForState = {};
@@ -40,8 +37,7 @@ export function items( state = {}, action ) {
 	}
 
 	return state;
-}
-items.schema = itemsSchemas;
+} );
 
 export default combineReducers( {
 	items,

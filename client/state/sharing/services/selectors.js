@@ -114,6 +114,11 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		// Omit Apple as we cannot let users disconnect without losing their name and email
+		if ( 'apple' === service.ID ) {
+			return false;
+		}
+
 		return true;
 	} );
 }

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import {
 	domainsRequestFailureAction,
 } from '../actions';
 import domainsReducer, {
-	items,
+	items as itemsReducer,
 	requesting as requestReducer,
 	errors as errorsReducer,
 } from '../reducer';
@@ -35,13 +34,10 @@ import {
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
-
-const itemsReducer = withSchemaValidation( items.schema, items );
 
 describe( 'reducer', () => {
 	let sandbox;

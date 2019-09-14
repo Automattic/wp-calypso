@@ -178,7 +178,10 @@ export class UpsellNudge extends React.Component {
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
-		page( `/checkout/${ siteSlug }/${ upgradeItem }` );
+
+		return siteSlug
+			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
+			: page( `/checkout/${ upgradeItem }` );
 	};
 }
 

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -14,7 +13,7 @@ import {
 	READER_FEED_UPDATE,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { itemsSchema } from './schema';
 import { safeLink } from 'lib/post-normalizer/utils';
@@ -64,7 +63,7 @@ function handleFeedUpdate( state, action ) {
 	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
 }
 
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ SERIALIZE ]: handleSerialize,

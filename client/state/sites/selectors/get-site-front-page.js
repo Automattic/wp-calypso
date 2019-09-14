@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getSiteOption from './get-site-option';
+import { getSiteOption } from 'state/sites/selectors';
 
 /**
  * Returns the ID of the static page set as the front page, or 0 if a static page is not set.

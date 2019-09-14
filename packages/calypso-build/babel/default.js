@@ -22,6 +22,9 @@ module.exports = () => ( {
 				helpers: true,
 				regenerator: false,
 				useESModules: false,
+				// Needed so that helpers aren't duplicated.
+				// This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
+				version: '7.5.5',
 			},
 		],
 	],

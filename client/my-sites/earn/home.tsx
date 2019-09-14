@@ -167,7 +167,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						onClick: () => trackCtaButton( 'referral-jetpack' ),
 				  }
 				: {
-						url: 'https://refer.wordpress.com/',
+						url:
+							'https://refer.wordpress.com/?utm_source=calypso&utm_campaign=calypso_earn&utm_medium=automattic_referred&atk=341b381c971a0631a88f080f598faafb25c344db',
 						onClick: () => trackCtaButton( 'referral-wpcom' ),
 				  },
 		};
@@ -203,24 +204,25 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getAdsCard = () => {
-		const cta = hasWordAds
-			? {
-					text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
-					action: () => {
-						trackCtaButton( 'ads' );
-						page(
-							`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
-						);
-					},
-			  }
-			: {
-					text: translate( 'Upgrade to a Premium Plan' ),
-					action: () => {
-						trackUpgrade( 'premium', 'ads' );
-						page( `/checkout/${ selectedSiteSlug }/premium/` );
-					},
-			  };
-		const title = hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn ad revenue' );
+		const cta =
+			hasWordAds || hasSetupAds
+				? {
+						text: hasSetupAds ? translate( 'View Ad Dashboard' ) : translate( 'Earn Ad Revenue' ),
+						action: () => {
+							trackCtaButton( 'ads' );
+							page(
+								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
+							);
+						},
+				  }
+				: {
+						text: translate( 'Upgrade to a Premium Plan' ),
+						action: () => {
+							trackUpgrade( 'premium', 'ads' );
+							page( `/checkout/${ selectedSiteSlug }/premium/` );
+						},
+				  };
+		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
 		const body = hasSetupAds
 			? translate(
 					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
@@ -233,7 +235,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						},
 					}
 			  );
-		const learnMoreLink = ! hasWordAds
+		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
 		return {

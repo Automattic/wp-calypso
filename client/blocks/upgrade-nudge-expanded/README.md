@@ -1,7 +1,8 @@
 # Upgrade Nudge Expanded
 
 UpgradeNudgeExpanded displays a huge upgrade nudge, containing PlanCompare card, reasons to upgrade, highlighted feature and benefits of it.
-It's meant to comprehensivly describe a plan and give enough reasons to upgrade. It uses `plans/constants` information to figure out what features to present and how to direct to checkout.
+
+It's meant to comprehensively describe a plan and give enough reasons to upgrade. It uses `plans/constants` information to figure out what features to present and how to direct to checkout.
 
 ## Props
 

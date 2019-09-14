@@ -21,6 +21,7 @@ export const authorizeQueryDataSchema = {
 		auth_approved: { type: 'string' },
 		blogname: { type: 'string' },
 		client_id: { pattern: '^\\d+$', type: 'string' },
+		close_window_after_login: { type: 'string' },
 		from: { type: 'string' },
 		home_url: { type: 'string' },
 		jp_version: { type: 'string' },

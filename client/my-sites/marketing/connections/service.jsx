@@ -173,7 +173,7 @@ export class SharingService extends Component {
 			} else {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
-				requestExternalAccess( service.connect_URL, newKeyringId => {
+				requestExternalAccess( service.connect_URL, ( { keyring_id: newKeyringId } ) => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
 					this.props.requestKeyringConnections();

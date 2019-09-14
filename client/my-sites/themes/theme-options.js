@@ -22,7 +22,6 @@ import {
 import {
 	getThemeSignupUrl,
 	getThemePurchaseUrl,
-	getThemeCustomizeUrl,
 	getThemeDetailsUrl,
 	getThemeSupportUrl,
 	getJetpackUpgradeUrlIfPremiumTheme,
@@ -35,6 +34,7 @@ import {
 import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUser } from 'state/current-user/selectors';
+import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -110,7 +110,7 @@ const customize = {
 		comment: 'label in the dialog for selecting a site for which to customize a theme',
 	} ),
 	icon: 'customize',
-	getUrl: getThemeCustomizeUrl,
+	getUrl: getCustomizeOrEditFrontPageUrl,
 	hideForTheme: ( state, themeId, siteId ) =>
 		! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 		! isThemeActive( state, themeId, siteId ),

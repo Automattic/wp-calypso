@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -38,6 +37,7 @@ import {
 	isRequestingSites,
 	canJetpackSiteManage,
 } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import HeaderButton from 'components/header-button';
@@ -47,7 +47,6 @@ import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
-import { abtest } from 'lib/abtest';
 import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins';
 
 /**
@@ -412,12 +411,6 @@ export class PluginsBrowser extends Component {
 		this.props.doSearch( term );
 	};
 
-	handleUpgradeNudgeClick = () => {
-		const { siteSlug } = this.props;
-		const href = `/checkout/${ siteSlug }/business`;
-		page.redirect( href );
-	};
-
 	getSearchBar() {
 		const suggestedSearches = [
 			this.props.translate( 'Engagement', { context: 'Plugins suggested search term' } ),
@@ -548,13 +541,15 @@ export class PluginsBrowser extends Component {
 		if (
 			! this.props.selectedSiteId ||
 			! this.props.sitePlan ||
+			this.props.isVipSite ||
 			this.props.isJetpackSite ||
 			this.props.hasBusinessPlan
 		) {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { translate, siteSlug } = this.props;
+		const bannerURL = `/checkout/${ siteSlug }/business`;
 		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
@@ -563,8 +558,7 @@ export class PluginsBrowser extends Component {
 		return (
 			<Banner
 				event="calypso_plugins_browser_upgrade_nudge"
-				disableHref={ true }
-				onClick={ this.handleUpgradeNudgeClick }
+				href={ bannerURL }
 				plan={ plan }
 				title={ title }
 			/>
@@ -639,6 +633,7 @@ export default flow(
 				hasPremiumPlan,
 				hasBusinessPlan,
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
+				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
 				jetpackManageError:
 					!! isJetpackSite( state, selectedSiteId ) &&

@@ -56,7 +56,7 @@ function SiteTitleEdit( {
 				value={ option }
 				onChange={ value => handleChange( value ) }
 				onKeyDown={ onKeyDown }
-				placeholder={ __( 'Site Title' ) }
+				placeholder={ __( 'Add a Site Title' ) }
 				aria-label={ __( 'Site Title' ) }
 			/>
 		</Fragment>

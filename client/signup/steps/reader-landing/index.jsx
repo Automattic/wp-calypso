@@ -28,7 +28,7 @@ class ReaderLandingStep extends Component {
 	};
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, positionInFlow, stepName, translate } = this.props;
 
 		return (
 			<div className="reader-landing">
@@ -40,7 +40,6 @@ class ReaderLandingStep extends Component {
 					subHeaderText={ translate(
 						'Read posts from all the sites you follow, find great new reads, and stay up-to-date on comments and replies in one convenient place: the WordPress.com Reader.'
 					) }
-					signupProgress={ signupProgress }
 					stepContent={ <ReaderLandingStepContent onButtonClick={ this.handleButtonClick } /> }
 				/>
 			</div>

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
+import CancelAutoRenewalForm from 'components/marketing-survey/cancel-auto-renewal-form';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { getSite } from 'state/sites/selectors';
@@ -213,13 +213,11 @@ class AutoRenewDisablingDialog extends Component {
 		const { purchase, isVisible, selectedSite } = this.props;
 
 		return (
-			<CancelPurchaseForm
+			<CancelAutoRenewalForm
 				purchase={ purchase }
 				selectedSite={ selectedSite }
 				isVisible={ isVisible }
 				onClose={ this.closeAndCleanup }
-				onClickFinalConfirm={ this.closeAndCleanup }
-				flowType={ 'cancel_autorenew_survey_only' }
 			/>
 		);
 	};

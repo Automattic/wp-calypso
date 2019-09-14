@@ -1,4 +1,4 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -6,17 +6,17 @@
 /**
  * WordPress dependencies
  */
-import { ServerSideRender } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 
-const NavigationMenuEdit = ( { attributes } ) => {
+const NavigationMenuEdit = () => {
 	return (
 		<Fragment>
-			<ServerSideRender attributes={ attributes } block="a8c/navigation-menu" />
+			<ServerSideRender block="a8c/navigation-menu" />
 		</Fragment>
 	);
 };

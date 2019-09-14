@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	SHARING_BUTTONS_RECEIVE,
@@ -79,7 +76,7 @@ export const saveRequests = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ SHARING_BUTTONS_RECEIVE ]: ( state, { siteId, settings } ) => ( {

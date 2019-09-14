@@ -25,6 +25,7 @@ class IcannVerificationCard extends React.Component {
 		explanationContext: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		whoisData: PropTypes.array,
 	};
 
 	getExplanation() {
@@ -80,8 +81,10 @@ class IcannVerificationCard extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
-	} ),
+	( state, ownProps ) => {
+		return {
+			contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
+		};
+	},
 	{ errorNotice }
 )( localize( IcannVerificationCard ) );

@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { intersection, merge, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { shortcodesSchema } from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
@@ -89,7 +86,7 @@ function mediaItemsReducer( state, { siteId, data } ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		FLUX_RECEIVE_MEDIA_ITEM: mediaItemsReducer,

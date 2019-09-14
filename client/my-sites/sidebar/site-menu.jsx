@@ -142,6 +142,11 @@ class SiteMenu extends PureComponent {
 			return null;
 		}
 
+		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
+		if ( 'wp_template' === menuItem.name ) {
+			return null;
+		}
+
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
 		const isEnabled = ! menuItem.config || config.isEnabled( menuItem.config );
@@ -165,36 +170,6 @@ class SiteMenu extends PureComponent {
 			preload = 'posts-custom';
 		}
 
-		let icon;
-		switch ( menuItem.name ) {
-			case 'post':
-				icon = 'posts';
-				break;
-			case 'page':
-				icon = 'pages';
-				break;
-			case 'import':
-				icon = 'cloud-upload';
-				break;
-			case 'jetpack-portfolio':
-				icon = 'folder';
-				break;
-			case 'jetpack-testimonial':
-				icon = 'quote';
-				break;
-			case 'media':
-				icon = 'image';
-				break;
-			case 'comments':
-				icon = 'chat';
-				break;
-			case 'plugins':
-				icon = 'plugins';
-				break;
-			default:
-				icon = 'custom-post-type';
-		}
-
 		return (
 			<SidebarItem
 				key={ menuItem.name }
@@ -202,7 +177,6 @@ class SiteMenu extends PureComponent {
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
-				icon={ icon }
 				preloadSectionName={ preload }
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }

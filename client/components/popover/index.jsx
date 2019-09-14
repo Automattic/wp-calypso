@@ -26,6 +26,11 @@ import {
 import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const noop = () => {};

@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import { postFormatsItemsSchema } from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
@@ -38,7 +35,7 @@ export const requesting = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ POST_FORMATS_RECEIVE ]: ( state, { siteId, formats } ) => {

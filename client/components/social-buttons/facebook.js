@@ -125,7 +125,7 @@ class FacebookLoginButton extends Component {
 						{ this.props.translate( 'Continue with %(service)s', {
 							args: { service: 'Facebook' },
 							comment:
-								'%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...',
+								'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 						} ) }
 					</span>
 				</button>

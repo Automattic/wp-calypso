@@ -37,17 +37,18 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
 import { getSiteTypePropertyValue } from './site-type';
+
 import SignupCart from './cart';
 import { promisify } from '../../utils';
 
 // Others
 import flows from 'signup/config/flows';
 import steps, { isDomainStepSkippable } from 'signup/config/steps';
-import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
 
 /**
@@ -124,10 +125,8 @@ function getSiteVertical( state ) {
 	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
-export function createSiteWithCart(
-	callback,
-	dependencies,
-	{
+export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
+	const {
 		cartItem,
 		domainItem,
 		flowName,
@@ -137,9 +136,8 @@ export function createSiteWithCart(
 		siteUrl,
 		themeSlugWithRepo,
 		themeItem,
-	},
-	reduxStore
-) {
+	} = stepData;
+
 	const state = reduxStore.getState();
 
 	const designType = getDesignType( state ).trim();
@@ -166,20 +164,14 @@ export function createSiteWithCart(
 				title: siteTitle,
 			},
 		},
-		public: 1,
+		public: getNewSitePublicSetting( state ),
 		validate: false,
 	};
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	if ( 'import' === flowName ) {
-		const importingFromUrl = getNuxUrlInputValue( state );
-		newSiteParams.blog_name = normalizeImportUrl( importingFromUrl );
-		newSiteParams.find_available_url = true;
-		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
-		newSiteParams.options.nux_import_from_url = importingFromUrl;
-	} else if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
+	if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||
 			get( getSignupDependencyStore( state ), 'username' ) ||
@@ -190,6 +182,14 @@ export function createSiteWithCart(
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
+	}
+
+	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
+		// If `siteTitle` wasn't inferred by the site detection api, use
+		// the `siteUrl` until an import replaces it with an actual title.
+		newSiteParams.blog_title = siteTitle || siteUrl;
+		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
+		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
 
 	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
@@ -372,8 +372,6 @@ export function createAccount(
 	const siteVertical = getSiteVertical( state );
 	const surveySiteType = getSurveySiteType( state ).trim();
 	const userExperience = getUserExperience( state );
-	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
-	const importFromSite = 'import' === flowName ? getNuxUrlInputValue( state ) : '';
 
 	if ( service ) {
 		// We're creating a new social account
@@ -383,6 +381,7 @@ export function createAccount(
 				access_token,
 				id_token,
 				signup_flow_name: flowName,
+				...userData,
 			},
 			( error, response ) => {
 				const errors =
@@ -422,8 +421,6 @@ export function createAccount(
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: siteVertical,
 					nux_q_question_experience: userExperience || undefined,
-					import_engine: importEngine,
-					import_from_site: importFromSite,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 				},
@@ -488,11 +485,15 @@ export function createAccount(
 	}
 }
 
-export function createSite( callback, { themeSlugWithRepo }, { site }, reduxStore ) {
+export function createSite( callback, dependencies, stepData, reduxStore ) {
+	const { themeSlugWithRepo } = dependencies;
+	const { site } = stepData;
+	const state = reduxStore.getState();
+
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: -1,
+		public: getNewSitePublicSetting( state ),
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};
@@ -558,12 +559,12 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
-		submitSignupStep( { stepName, cartItem }, { cartItem } );
+		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies = [ 'cartItem' ];
 	} else if ( defaultDependencies && defaultDependencies.cartItem ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
-		submitSignupStep( { stepName, cartItem }, { cartItem } );
+		submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
 		fulfilledDependencies = [ 'cartItem' ];
 	}
@@ -624,7 +625,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 		nextProps.setSurvey( { vertical, otherText: '' } );
 
 		nextProps.submitSignupStep(
-			{ stepName: 'survey' },
+			{ stepName: 'survey', wasSkipped: true },
 			{ surveySiteType: 'blog', surveyQuestion: vertical }
 		);
 
@@ -653,32 +654,33 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 }
 
-export function createPasswordlessUser( callback, dependencies, data ) {
-	const { email } = data;
-
-	wpcom.undocumented().usersEmailNew( { email }, function( error, response ) {
-		if ( error ) {
-			callback( error );
-
-			return;
-		}
-		callback( error, response );
-	} );
+/**
+ * Creates a user account and sends the user a verification code via email to confirm the account.
+ * Returns the dependencies for the step.
+ *
+ * @param {function} callback Callback function
+ * @param {object}   data     POST data object
+ */
+export function createPasswordlessUser( callback, { email } ) {
+	wpcom
+		.undocumented()
+		.usersEmailNew( { email }, null )
+		.then( response => callback( null, response ) )
+		.catch( err => callback( err ) );
 }
 
-export function verifyPasswordlessUser( callback, dependencies, data ) {
-	const { email, code } = data;
-
-	wpcom.undocumented().usersEmailVerification( { email, code }, function( error, response ) {
-		if ( error ) {
-			callback( error );
-
-			return;
-		}
-		const providedDependencies = assign(
-			{},
-			{ email, username: email, bearer_token: response.token.access_token }
-		);
-		callback( error, providedDependencies );
-	} );
+/**
+ * Verifies a passwordless user code.
+ *
+ * @param {function} callback Callback function
+ * @param {object}   data     POST data object
+ */
+export async function verifyPasswordlessUser( callback, { email, code } ) {
+	wpcom
+		.undocumented()
+		.usersEmailVerification( { email, code }, null )
+		.then( response =>
+			callback( null, { email, username: email, bearer_token: response.token.access_token } )
+		)
+		.catch( err => callback( err ) );
 }

@@ -33,7 +33,7 @@ if ( $posts_list instanceof WP_Query && $posts_list->have_posts() ) :
 	<?php
 else :
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	echo a8c_pl_render_template( 'no-posts' );
+	echo A8C\FSE\render_template( 'no-posts' );
 endif;
 
 

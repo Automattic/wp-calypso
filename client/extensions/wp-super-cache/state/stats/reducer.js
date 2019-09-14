@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { statsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
@@ -74,7 +71,7 @@ const deleting = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated stats
  */
-const items = createReducer(
+const items = createReducerWithValidation(
 	{},
 	{
 		[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId, stats } ) => ( {

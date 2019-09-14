@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
 import { localizeUrl } from 'lib/i18n-utils';
+import { createStripeSetupIntent, StripeSetupIntentError, StripeValidationError } from 'lib/stripe';
 import {
 	getInitializedFields,
 	camelCaseFormFields,
@@ -29,13 +31,16 @@ import {
 	assignAllFormFields,
 	areFormFieldsEmpty,
 	useDebounce,
-	saveCreditCard,
+	saveOrUpdateCreditCard,
+	makeAsyncCreateCardToken,
 } from './helpers';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const debug = debugFactory( 'calypso:credit-card-form' );
 
 export function CreditCardForm( {
 	apiParams = {},
@@ -53,12 +58,21 @@ export function CreditCardForm( {
 	onCancel,
 	translate,
 	stripe,
+	stripeConfiguration,
+	isStripeLoading,
+	stripeLoadingError,
+	setStripeError,
 } ) {
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
 	const [ formFieldErrors, setFormFieldErrors ] = useState(
-		camelCaseFormFields( validatePaymentDetails( kebabCaseFormFields( formFieldValues ) ).errors )
+		camelCaseFormFields(
+			validatePaymentDetails(
+				kebabCaseFormFields( formFieldValues ),
+				stripe ? 'stripe' : 'credit-card'
+			).errors
+		)
 	);
 	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
 
@@ -71,7 +85,12 @@ export function CreditCardForm( {
 		setDebouncedFieldErrors( { ...debouncedFieldErrors, ...clearedErrors } );
 		// Debounce updating validation errors
 		setFormFieldErrors(
-			camelCaseFormFields( validatePaymentDetails( kebabCaseFormFields( newValues ) ).errors )
+			camelCaseFormFields(
+				validatePaymentDetails(
+					kebabCaseFormFields( newValues ),
+					stripe ? 'stripe' : 'credit-card'
+				).errors
+			)
 		);
 	};
 
@@ -97,26 +116,37 @@ export function CreditCardForm( {
 				throw new Error( translate( 'Your credit card information is not valid' ) );
 			}
 			recordFormSubmitEvent();
-			await saveCreditCard( {
-				createCardToken,
+			const createCardTokenAsync = makeAsyncCreateCardToken( createCardToken );
+			const createStripeSetupIntentAsync = async paymentDetails => {
+				const { name, country, 'postal-code': zip } = paymentDetails;
+				const paymentDetailsForStripe = {
+					name,
+					address: {
+						country: country,
+						postal_code: zip,
+					},
+				};
+				return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
+			};
+			const parseStripeToken = response => response.payment_method;
+			const parsePaygateToken = response => response.token;
+			await saveOrUpdateCreditCard( {
+				createCardToken: stripe ? createStripeSetupIntentAsync : createCardTokenAsync,
 				saveStoredCard,
 				translate,
-				successCallback,
 				apiParams,
 				purchase,
 				siteSlug,
 				formFieldValues,
+				stripeConfiguration,
+				parseTokenFromResponse: stripe ? parseStripeToken : parsePaygateToken,
 			} );
+			successCallback();
 		} catch ( error ) {
+			debug( 'Error while submitting', error );
 			setFormSubmitting( false );
-			error &&
-				notices.error(
-					typeof error.message === 'object' ? (
-						<ValidationErrorList messages={ values( error.message ) } />
-					) : (
-						error.message
-					)
-				);
+			error && setStripeError && setStripeError( error );
+			error && displayError( { translate, error } );
 		}
 	};
 
@@ -129,6 +159,8 @@ export function CreditCardForm( {
 					card={ kebabCaseFormFields( formFieldValues ) }
 					countriesList={ countriesList }
 					stripe={ stripe }
+					isStripeLoading={ isStripeLoading }
+					stripeLoadingError={ stripeLoadingError }
 					eventFormName="Edit Card Details Form"
 					onFieldChange={ onFieldChange }
 					getErrorMessage={ getErrorMessage }
@@ -173,6 +205,9 @@ CreditCardForm.propTypes = {
 	heading: PropTypes.string,
 	onCancel: PropTypes.func,
 	stripe: PropTypes.object,
+	isStripeLoading: PropTypes.bool,
+	stripeLoadingError: PropTypes.object,
+	setStripeError: PropTypes.func,
 	translate: PropTypes.func.isRequired,
 };
 
@@ -230,6 +265,28 @@ function UsedForExistingPurchasesInfo( { translate, showUsedForExistingPurchases
 			<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
 		</div>
 	);
+}
+
+function StripeError( { translate } ) {
+	return (
+		<div>
+			{ translate(
+				'There was a problem with your credit card. Please check your information and try again.'
+			) }
+		</div>
+	);
+}
+
+function displayError( { translate, error } ) {
+	if ( error instanceof StripeSetupIntentError || error instanceof StripeValidationError ) {
+		notices.error( <StripeError translate={ translate } /> );
+		return;
+	}
+	if ( typeof error.message === 'object' ) {
+		notices.error( <ValidationErrorList messages={ values( error.message ) } /> );
+		return;
+	}
+	notices.error( error.message );
 }
 
 export default connect( state => ( {
