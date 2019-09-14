@@ -80,7 +80,7 @@ class TwoFactorActions extends Component {
 		return (
 			<Card className="two-factor-authentication__actions">
 				{ isSecurityKeyAvailable && (
-					<Button n data-e2e-link="2fa-sms-link" onClick={ this.recordSecurityKey }>
+					<Button n data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
 						{ translate( 'Continue with your security\u00A0key' ) }
 					</Button>
 				) }
