@@ -20,7 +20,7 @@ import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import EllipsisMenu from 'components/ellipsis-menu';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import HappychatButton from 'components/happychat/button';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
