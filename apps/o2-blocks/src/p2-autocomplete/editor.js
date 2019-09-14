@@ -1,23 +1,19 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
-import { addQueryArgs } from '@wordpress/url';
-import { map, unescape } from 'lodash';
+import { unescape } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import p2Store from './store';
 import './editor.scss';
 
 const p2Completer = {
 	name: 'p2s',
 	triggerPrefix: '+',
-	options: search =>
-		apiFetch( {
-			path: addQueryArgs( '/internal/P2s', { search } ),
-		} ).then( result => map( result.list, ( p2, subdomain ) => ( { ...p2, subdomain } ) ) ),
+	options: search => p2Store.getState().getP2s( search ),
 	getOptionKeywords: site => [ site.subdomain, site.title ],
 	getOptionLabel: site => (
 		<div className="p2-autocomplete">
