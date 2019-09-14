@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 import config from 'config';
 import {
 	getRedirectToSanitized,

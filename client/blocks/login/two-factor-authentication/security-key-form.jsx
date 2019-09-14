@@ -94,7 +94,7 @@ class SecurityKeyForm extends Component {
 }
 
 export default connect(
-	state => {},
+	null,
 	{
 		formUpdate,
 		loginUserWithSecurityKey,
