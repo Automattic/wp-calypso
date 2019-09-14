@@ -41,8 +41,8 @@ class Security2faKeyAdd extends React.Component {
 				debug( 'registered key with data', data );
 				this.keyRegistered();
 			} )
-			.catch( err => {
-				this.setState( { error: err } );
+			.catch( error => {
+				this.setState( { error } );
 			} );
 	};
 
