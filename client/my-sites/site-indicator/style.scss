@@ -110,14 +110,12 @@
 	vertical-align: middle;
 
 	// Links within the action message
-	a,
+	a:link,
 	a:visited,
 	.button.is-borderless.is-scary,
 	.site-indicator__action-button {
-		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
-		border-radius: 0;
 		color: var( --color-text-inverted );
-		text-decoration: none;
+		text-decoration: underline;
 	}
 
 	a > .gridicons-external {
