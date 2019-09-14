@@ -36,16 +36,13 @@
 }
 
 .plugins__header-buttons {
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	display: flex;
+	margin: 0 10px 0 0;
 
 	.header-button {
 		flex: auto;
 		flex-basis: 0;
-
-		&:not( :last-child ) {
-			border-right: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
-		}
-
 		.gridicon {
 			margin-top: 4px;
 		}
@@ -54,6 +51,11 @@
 			flex: none;
 		}
 	}
+}
+
+.plugins__header-navigation {
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	width: 100%;
 }
 
 .plugins__more-header {

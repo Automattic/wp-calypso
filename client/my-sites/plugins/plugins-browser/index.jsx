@@ -493,11 +493,11 @@ export class PluginsBrowser extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="plugins-browser__main-header">
-				{ navigation }
 				<div className="plugins__header-buttons">
 					{ this.renderManageButton() }
 					{ this.renderUploadPluginButton() }
 				</div>
+				<div className="plugins__header-navigation">{ navigation }</div>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
