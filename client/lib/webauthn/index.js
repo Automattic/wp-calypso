@@ -9,14 +9,14 @@ let _backend;
 
 const POST = 'POST';
 
-function strToBin( str ) {
+export function strToBin( str ) {
 	str = str.replace( /[-_]/g, function( m ) {
 		return m[ 0 ] === '-' ? '+' : '/';
 	} );
 	return Uint8Array.from( atob( str ), c => c.charCodeAt( 0 ) );
 }
 
-function binToStr( bin ) {
+export function binToStr( bin ) {
 	return btoa( new Uint8Array( bin ).reduce( ( s, byte ) => s + String.fromCharCode( byte ), '' ) );
 }
 
@@ -29,7 +29,7 @@ function isBrowser() {
 	return true;
 }
 
-function credentialListConversion( list ) {
+export function credentialListConversion( list ) {
 	return list.map( item => {
 		const cred = {
 			type: item.type,
@@ -64,7 +64,7 @@ function wpcomApiRequest( path, _data, method ) {
 	} );
 }
 
-function isSupported() {
+export function isSupported() {
 	if ( ! _backend ) {
 		_backend = new Promise( function( resolve ) {
 			function notSupported() {
@@ -90,7 +90,7 @@ function isSupported() {
 	return _backend.then( backend => !! backend.webauthn );
 }
 
-function register( keyName = null ) {
+export function register( keyName = null ) {
 	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
 		.then( options => {
 			const makeCredentialOptions = {};
@@ -184,11 +184,3 @@ function register( keyName = null ) {
 			}
 		} );
 }
-
-export default {
-	isSupported,
-	register,
-	strToBin,
-	binToStr,
-	credentialListConversion,
-};

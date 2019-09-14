@@ -12,7 +12,7 @@ import debugFactory from 'debug';
  */
 import Card from 'components/card';
 import { errorNotice, warningNotice } from 'state/notices/actions';
-import webauthn from 'lib/webauthn';
+import { register } from 'lib/webauthn';
 import Spinner from 'components/spinner';
 import Security2faKeyAddName from './name';
 
@@ -31,8 +31,7 @@ class Security2faKeyAdd extends React.Component {
 
 	registerKey = securityKeyName => {
 		this.setState( { securityKeyName } );
-		webauthn
-			.register( securityKeyName )
+		register( securityKeyName )
 			.then( data => {
 				debug( 'registered key with data', data );
 				this.keyRegistered();
