@@ -10,17 +10,18 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, includes, noop, partition } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
+import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, TYPE_BUSINESS } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSitePlan, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Banner from 'components/banner';
 import Button from 'components/button';
@@ -45,6 +46,7 @@ export const EligibilityWarnings = ( {
 	onProceed,
 	onCancel,
 	siteId,
+	sitePlan,
 	siteSlug,
 	translate,
 } ) => {
@@ -65,7 +67,9 @@ export const EligibilityWarnings = ( {
 			'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
 		);
 		const title = translate( 'Business plan required' );
-		const plan = PLAN_BUSINESS;
+		const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
+			type: TYPE_BUSINESS,
+		} );
 		let feature = null;
 		let event = null;
 
@@ -76,6 +80,8 @@ export const EligibilityWarnings = ( {
 			feature = FEATURE_UPLOAD_THEMES;
 			event = 'calypso-theme-eligibility-upgrade-nudge';
 		}
+
+		const bannerURL = `/checkout/${ siteSlug }/business`;
 		businessUpsellBanner = (
 			<Banner
 				description={ description }
@@ -83,6 +89,7 @@ export const EligibilityWarnings = ( {
 				event={ event }
 				plan={ plan }
 				title={ title }
+				href={ bannerURL }
 			/>
 		);
 	}
@@ -175,6 +182,7 @@ const mapStateToProps = state => {
 	const hasBusinessPlan = ! includes( eligibilityHolds, 'NO_BUSINESS_PLAN' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
+	const sitePlan = getSitePlan( state, siteId );
 
 	return {
 		eligibilityData,
@@ -184,6 +192,7 @@ const mapStateToProps = state => {
 		isPlaceholder: ! dataLoaded,
 		siteId,
 		siteSlug,
+		sitePlan,
 	};
 };
 
