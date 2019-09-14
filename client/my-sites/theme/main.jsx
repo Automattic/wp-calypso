@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import titlecase from 'to-title-case';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { head, split } from 'lodash';
 import photon from 'photon';
 import page from 'page';

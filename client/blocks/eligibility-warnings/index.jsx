@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, includes, noop, partition } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

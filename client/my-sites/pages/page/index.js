@@ -15,7 +15,7 @@ import { flow, get, includes, noop, partial } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Notice from 'components/notice';
