@@ -33,7 +33,7 @@
 	}
 
 	.transfer-domain-step__free-with-plan {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		font-weight: 400;
 		font-size: 0.9em;
 		line-height: 25px;
@@ -120,7 +120,7 @@
 }
 
 .transfer-domain-step__map-option {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 }
 
 .transfer-domain-step__map-help {
@@ -134,9 +134,9 @@
 	height: 28px;
 	line-height: 28px;
 	border-radius: 50%;
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 18px;
 	text-align: center;
 	margin-right: 15px;
@@ -153,7 +153,7 @@
 	}
 
 	.transfer-domain-step__section-heading {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		align-items: center;
 		display: flex;
 		font-size: 16px;
@@ -169,7 +169,7 @@
 		align-items: flex-start;
 
 		.transfer-domain-step__section-heading {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 
@@ -243,7 +243,7 @@
 	flex-grow: 1;
 
 	p {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		font-size: 14px;
 	}
 }
@@ -279,7 +279,7 @@ input {
 
 .transfer-domain-step__options {
 	label {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	legend {
@@ -289,7 +289,7 @@ input {
 			color: var( --color-primary );
 		}
 
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		margin-bottom: 0;
 		font-size: 16px;
 	}

@@ -50,19 +50,19 @@
 	}
 
 	&.is-error {
-		border-left: 3px solid var( --color-error );
+		border-left: 3px solid var( --color-error-20 );
 	}
 
 	&.is-info {
-		border-left: 3px solid var( --color-primary );
+		border-left: 3px solid var( --color-primary-20 );
 	}
 
 	&.is-success {
-		border-left: 3px solid var( --color-success );
+		border-left: 3px solid var( --color-success-20 );
 	}
 
 	&.is-warning {
-		border-left: 3px solid var( --color-warning );
+		border-left: 3px solid var( --color-warning-20 );
 	}
 }
 

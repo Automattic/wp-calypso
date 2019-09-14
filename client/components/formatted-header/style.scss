@@ -28,7 +28,7 @@
 }
 
 .formatted-header__subtitle {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 14px;
 
 	@include breakpoint( '<480px' ) {

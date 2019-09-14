@@ -48,6 +48,8 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 
 /**
  * Style dependencies
@@ -123,6 +125,19 @@ class DomainsStep extends React.Component {
 		return {
 			previousStepSectionName: nextProps.stepSectionName,
 		};
+	}
+
+	componentDidUpdate( prevProps ) {
+		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
+		if ( prevProps.stepSectionName !== this.props.stepSectionName ) {
+			if ( this.props.isSitePreviewVisible && this.props.stepSectionName ) {
+				this.props.hideSitePreview();
+			}
+
+			if ( ! this.props.isSitePreviewVisible && ! this.props.stepSectionName ) {
+				this.props.showSitePreview();
+			}
+		}
 	}
 
 	getMapDomainUrl = () => {
@@ -617,6 +632,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
+			isSitePreviewVisible: isSitePreviewVisible( state ),
 		};
 	},
 	{
@@ -629,5 +645,7 @@ export default connect(
 		saveSignupStep,
 		submitSignupStep,
 		fetchUsernameSuggestion,
+		hideSitePreview,
+		showSitePreview,
 	}
 )( localize( DomainsStep ) );

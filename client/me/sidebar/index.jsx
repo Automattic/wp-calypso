@@ -119,7 +119,7 @@ class MeSidebar extends React.Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<ProfileGravatar user={ this.props.currentUser } />
+					<ProfileGravatar inSidebar user={ this.props.currentUser } />
 
 					<div className="sidebar__me-signout">
 						<Button

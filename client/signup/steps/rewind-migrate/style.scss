@@ -38,7 +38,7 @@
 	font-size: rem( 25px );
 	font-weight: 300;
 	letter-spacing: rem( 1.5px );
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .rewind-switch__description {
@@ -58,6 +58,6 @@
 		max-width: 600px;
 		font-style: italic;
 		font-size: 12px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }

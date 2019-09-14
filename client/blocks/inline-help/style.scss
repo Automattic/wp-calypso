@@ -18,7 +18,7 @@
 		border: 1px solid var( --color-primary );
 
 		.gridicon {
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 			margin: 2px;
 			top: 0;
 			height: 24px;
@@ -27,7 +27,7 @@
 
 		&.is-active {
 			background: var( --color-primary );
-			border-color: var( --color-primary-400 );
+			border-color: var( --color-primary-40 );
 		}
 	}
 
@@ -68,7 +68,7 @@
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		margin: 0;
 		top: 0;
 		height: 36px;
@@ -88,13 +88,13 @@
 
 	&.is-active {
 		background: var( --color-primary );
-		border-color: var( --color-primary-400 );
+		border-color: var( --color-primary-40 );
 	}
 
 	&.has-notification::before {
 		display: block;
-		background-color: var( --color-accent-300 );
-		border: 2px solid var( --color-white );
+		background-color: var( --color-accent-30 );
+		border: 2px solid var( --color-border-inverted );
 		content: '';
 		border-radius: 50%;
 		width: 10px;
@@ -290,7 +290,7 @@
 
 .inline-help__footer {
 	background: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	border-radius: 0 0 4px 4px;
 	display: flex;
 	flex-direction: row;
@@ -399,10 +399,10 @@
 	&.is-selected {
 		background: var( --color-primary );
 		cursor: pointer;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			&:hover {
 				background: none;
 			}

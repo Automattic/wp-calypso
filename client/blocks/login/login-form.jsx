@@ -118,9 +118,8 @@ export class LoginForm extends Component {
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
 			nextProps.socialAccountIsLinking
 		) {
-			if ( ! this.state.usernameOrEmail ) {
-				this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
-			}
+			this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
+			this.props.getAuthAccountType( nextProps.socialAccountLinkEmail );
 		}
 
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
