@@ -64,10 +64,10 @@ class PostsMain extends React.Component {
 			order: status === 'future' ? 'ASC' : 'DESC',
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
-			// Search across all statuses so the user can always find what they
-			// are looking for, regardless of what tab they are on. (The API
-			// accepts "any" but this would exclude trashed posts, so use
-			// POST_STATUSES instead.)
+			// When searching, search across all statuses so the user can
+			// always find what they are looking for, regardless of what tab
+			// the search was initiated from. Use POST_STATUSES rather than
+			// "any" to do this, since the latter excludes trashed posts.
 			status: search ? POST_STATUSES.join( ',' ) : status,
 			tag,
 			type: 'post',
