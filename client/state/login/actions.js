@@ -176,12 +176,79 @@ export const updateNonce = ( nonceType, twoStepNonce ) => ( {
 } );
 
 export const loginUserWithHardwareKey = () => ( dispatch, getState ) => {
+	const twoFactorAuthType = 'u2f';
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+	const loginParams = {
+		user_id: getTwoFactorUserId( getState() ),
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		auth_type: twoFactorAuthType,
+	};
+	if ( process.env.NODE_ENV === 'development' ) {
+		loginParams.dev_hostname = 'calypso.localhost';
+	}
+	return postLoginRequest( 'u2f-challenge-endpoint', {
+		...loginParams,
+		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
+	} )
+		.then( response => {
+			const parameters = get( response, 'body.data', [] );
+			const requestOptions = {};
+			const twoStepNonce = get( parameters, 'two_step_nonce' );
 
-	return webauthn.authenticate(
+			if ( twoStepNonce ) {
+				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
+			}
+
+			requestOptions.challenge = webauthn.strToBin( parameters.challenge );
+			requestOptions.timeout = 6000;
+			if ( 'rpId' in parameters ) {
+				if ( parameters.rpId !== window.location.hostname ) {
+					throw 'Invalid domain';
+				}
+				requestOptions.rpId = parameters.rpId;
+			}
+			if ( 'allowCredentials' in parameters ) {
+				requestOptions.allowCredentials = webauthn.credentialListConversion(
+					parameters.allowCredentials
+				);
+			}
+			return navigator.credentials.get( { publicKey: requestOptions } );
+		} )
+		.then( assertion => {
+			const publicKeyCredential = {};
+			if ( 'id' in assertion ) {
+				publicKeyCredential.id = assertion.id;
+			}
+			if ( 'type' in assertion ) {
+				publicKeyCredential.type = assertion.type;
+			}
+			if ( 'rawId' in assertion ) {
+				publicKeyCredential.rawId = webauthn.binToStr( assertion.rawId );
+			}
+			if ( ! assertion.response ) {
+				throw "Get assertion response lacking 'response' attribute";
+			}
+
+			const _response = assertion.response;
+			publicKeyCredential.response = {
+				clientDataJSON: webauthn.binToStr( _response.clientDataJSON ),
+				authenticatorData: webauthn.binToStr( _response.authenticatorData ),
+				signature: webauthn.binToStr( _response.signature ),
+			};
+			if ( _response.userHandle ) {
+				publicKeyCredential.response.userHandle = webauthn.binToStr( _response.userHandle );
+			}
+
+			return postLoginRequest( 'u2f-authentication-endpoint', {
+				...loginParams,
+				client_data: JSON.stringify( publicKeyCredential ),
+			} );
+		} );
+	/*	return webauthn.authenticate(
 		getTwoFactorUserId( getState() ),
 		getTwoFactorAuthNonce( getState(), 'u2f' )
-	);
+	);*/
 };
 
 /**
