@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import { translate } from 'i18n-calypso';
+import config from 'config';
 
 let _backend;
 
@@ -43,7 +44,7 @@ function credentialListConversion( list ) {
 
 function wpcomApiRequest( path, _data, method ) {
 	const data = _data || {};
-	if ( 'production' !== process.env.NODE_ENV ) {
+	if ( 'production' !== config( 'env_id' ) ) {
 		data.hostname = window.location.hostname;
 	}
 
