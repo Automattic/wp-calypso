@@ -96,6 +96,7 @@ class BlogPostsPage extends React.Component {
 
 		return (
 			<span>
+				<Gridicon icon="info-outline" size={ 18 } className="blog-posts-page__info-icon" />
 				{ translate( '"%(pageTitle)s" page is showing your latest posts.', {
 					args: {
 						pageTitle: this.getPageTitle( this.props.postsPage ),
@@ -106,7 +107,7 @@ class BlogPostsPage extends React.Component {
 	}
 
 	render() {
-		const { isFullSiteEditing, translate } = this.props;
+		const { isFullSiteEditing } = this.props;
 
 		if ( isFullSiteEditing ) {
 			return null;
@@ -127,14 +128,6 @@ class BlogPostsPage extends React.Component {
 				className="blog-posts-page"
 			>
 				<div className="blog-posts-page__details">
-					<div
-						className={ classNames( {
-							'blog-posts-page__title': true,
-							'is-disabled': isStaticHomePageWithNoPostsPage,
-						} ) }
-					>
-						{ translate( 'Blog Posts' ) }
-					</div>
 					<div
 						className={ classNames( {
 							'blog-posts-page__info': true,
