@@ -9,7 +9,7 @@
 .happiness-support.is-placeholder {
 	.happiness-support__heading,
 	.happiness-support__text {
-		@include placeholder( --color-neutral-10 );
+		@include placeholder( --color-text-subtle );
 	}
 
 	.happiness-support__heading {
@@ -32,7 +32,7 @@
 }
 
 .happiness-support__heading {
-	color: var( --color-neutral-40 );
+	color: var( --color-text-subtle );
 	clear: none;
 	font-size: 21px;
 }
