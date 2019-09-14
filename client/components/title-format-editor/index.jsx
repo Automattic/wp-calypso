@@ -36,6 +36,7 @@ const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {
 	static propTypes = {
+		defaultValue: PropTypes.array,
 		disabled: PropTypes.bool,
 		placeholder: PropTypes.string,
 		type: PropTypes.object.isRequired,
@@ -53,12 +54,12 @@ export class TitleFormatEditor extends Component {
 
 		this.storeEditorReference = r => ( this.editor = r );
 		this.focusEditor = () => this.editor.focus();
-
 		this.updateEditor = this.updateEditor.bind( this );
 		this.addToken = this.addToken.bind( this );
 		this.removeToken = this.removeToken.bind( this );
 		this.renderTokens = this.renderTokens.bind( this );
 		this.editorStateFrom = this.editorStateFrom.bind( this );
+		this.setToDefault = this.setToDefault.bind( this );
 		this.skipOverTokens = this.skipOverTokens.bind( this );
 
 		this.state = {
@@ -87,6 +88,8 @@ export class TitleFormatEditor extends Component {
 			] )
 		);
 	}
+
+	setToDefault() {}
 
 	/**
 	 * Returns a new editorState that forces
@@ -228,7 +231,7 @@ export class TitleFormatEditor extends Component {
 
 	render() {
 		const { editorState } = this.state;
-		const { disabled, placeholder, titleData, translate, tokens, type } = this.props;
+		const { disabled, defaultValue, placeholder, titleData, translate, tokens, type } = this.props;
 
 		const previewText =
 			type.value && editorState.getCurrentContent().hasText()
@@ -258,8 +261,18 @@ export class TitleFormatEditor extends Component {
 						>
 							{ title }
 						</span>
-						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 					) ) }
+					{ defaultValue && (
+						<span
+							key={ 'default' }
+							className="title-format-editor__default-button"
+							onClick={ this.setToDefault() }
+						>
+							{ translate( 'Set to default value' ) }
+						</span>
+					)
+					/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
+					 }
 				</div>
 				<div className="title-format-editor__editor-wrapper">
 					<Editor

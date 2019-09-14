@@ -44,6 +44,14 @@ const tokenMap = {
 	archives: [ 'siteName', 'tagline', 'date' ],
 };
 
+const defaultsMap = {
+	frontPage: [ { type: 'siteName' }, { type: 'string', value: ' - ' }, { type: 'tagline' } ],
+	posts: [ { type: 'siteName' }, { type: 'string', value: ' - ' }, { type: 'postTitle' } ],
+	pages: [ { type: 'siteName' }, { type: 'string', value: ' - ' }, { type: 'pageTitle' } ],
+	groups: [ { type: 'siteName' }, { type: 'string', value: ' - ' }, { type: 'groupTitle' } ],
+	archives: [ { type: 'siteName' }, { type: 'string', value: ' - ' }, { type: 'date' } ],
+};
+
 const getTokensForType = ( type, translate ) => {
 	return get( tokenMap, type, [] ).reduce(
 		( allTokens, name ) => ( {
@@ -89,6 +97,7 @@ export class MetaTitleEditor extends Component {
 				{ titleTypes( translate ).map( type => (
 					<TitleFormatEditor
 						key={ type.value }
+						defaultValue={ get( defaultsMap, type.value, undefined ) }
 						disabled={ disabled }
 						onChange={ this.updateTitleFormat }
 						placeholder={ site && site.title }
