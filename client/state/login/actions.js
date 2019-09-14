@@ -175,7 +175,7 @@ export const updateNonce = ( nonceType, twoStepNonce ) => ( {
 	twoStepNonce,
 } );
 
-export const loginUserWithHardwareKey = () => ( dispatch, getState ) => {
+export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 	const twoFactorAuthType = 'u2f';
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 	const loginParams = {

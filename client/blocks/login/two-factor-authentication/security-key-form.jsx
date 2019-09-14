@@ -14,9 +14,8 @@ import React, { Component } from 'react';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import { localize } from 'i18n-calypso';
-import { getTwoFactorAuthRequestError } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { formUpdate, loginUserWithHardwareKey, sendSmsCode } from 'state/login/actions';
+import { formUpdate, loginUserWithSecurityKey } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
 /**
@@ -27,17 +26,13 @@ import './verification-code-form.scss';
 class SecurityKeyForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
-		loginUserWithHardwareKey: PropTypes.func.isRequired,
+		loginUserWithSecurityKey: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		twoFactorAuthRequestError: PropTypes.object,
-		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 
 	state = {
-		twoStepCode: '',
 		isDisabled: true,
 	};
 
@@ -46,29 +41,13 @@ class SecurityKeyForm extends Component {
 		this.setState( { isDisabled: false }, () => {} );
 	}
 
-	componentWillReceiveProps = nextProps => {
-		// Resets the verification code input field when switching pages
-		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
-			this.setState( { twoStepCode: '' } );
-		}
-	};
-
-	onChangeField = event => {
-		const { name, value = '' } = event.target;
-
-		this.props.formUpdate();
-
-		this.setState( { [ name ]: value } );
-	};
-
 	onSubmitForm = event => {
 		event.preventDefault();
 
-		const { onSuccess, twoFactorAuthType } = this.props;
-		const { twoStepCode } = this.state;
+		const { onSuccess } = this.props;
 
 		this.props
-			.loginUserWithHardwareKey()
+			.loginUserWithSecurityKey()
 			.then( () => onSuccess() )
 			.catch( error => {
 				this.setState( { isDisabled: false } );
@@ -80,12 +59,8 @@ class SecurityKeyForm extends Component {
 			} );
 	};
 
-	saveRef = input => {
-		this.input = input;
-	};
-
 	render() {
-		const { translate, twoFactorAuthRequestError: requestError, twoFactorAuthType } = this.props;
+		const { translate } = this.props;
 
 		let smallPrint;
 
@@ -112,20 +87,17 @@ class SecurityKeyForm extends Component {
 					{ smallPrint }
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ twoFactorAuthType } />
+				<TwoFactorActions twoFactorAuthType={ 'u2f' } />
 			</form>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-	} ),
+	state => {},
 	{
 		formUpdate,
-		loginUserWithHardwareKey,
+		loginUserWithSecurityKey,
 		recordTracksEvent,
-		sendSmsCode,
 	}
 )( localize( SecurityKeyForm ) );
