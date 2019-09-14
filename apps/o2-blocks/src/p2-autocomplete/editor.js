@@ -24,8 +24,8 @@ const p2Completer = {
 			<span key="subdomain" className="p2-autocomplete__subdomain">
 				+{ site.subdomain }
 			</span>
-			<span key="description" className="p2-autocomplete__description">
-				{ unescape( site.description ) }
+			<span key="description" className="p2-autocomplete__title">
+				{ unescape( site.title ) }
 			</span>
 			{ site.blavatar ? (
 				<img
