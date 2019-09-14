@@ -282,7 +282,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate( 'View my plan' );
+			return translate( 'View my new features' );
 		}
 
 		if (
