@@ -11,7 +11,7 @@ import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 import { stringify } from 'qs';
 
 /**

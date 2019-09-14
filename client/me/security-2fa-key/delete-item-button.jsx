@@ -13,7 +13,7 @@ import Button from 'components/button';
 import { successNotice } from '../../state/notices/actions';
 import { recordGoogleEvent } from '../../state/analytics/actions';
 import Dialog from 'components/dialog';
-import Gridicon from 'gridicons';
+import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 
 class Security2faKeyDeleteButton extends Component {
 	static propTypes = {

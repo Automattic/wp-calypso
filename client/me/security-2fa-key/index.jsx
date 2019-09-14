@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
