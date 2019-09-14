@@ -116,7 +116,7 @@ class Security2faKey extends React.Component {
 				{ errorMessage && <Notice status="is-error" icon="notice" text={ errorMessage } /> }
 				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
-						<p>Use a 2nd factor security key to sign in.</p>
+						<p>Use a second factor security key to sign in.</p>
 						{ ! isBrowserSupported && (
 							<p>
 								Looks like you browser doesn't support the FIDO2 standard yet. Read more about the
