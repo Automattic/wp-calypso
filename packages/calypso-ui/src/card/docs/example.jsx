@@ -27,7 +27,7 @@ class Cards extends React.Component {
 			<div>
 				<Card>I am a Card.</Card>
 				<Card>I am another Card.</Card>
-				<Card className="awesome sauce">I am a third Card with custom classes!</Card>
+				<Card className="docs__awesome sauce">I am a third Card with custom classes!</Card>
 				<Card href="#cards">I am a linkable Card</Card>
 				<Card href="#cards" target="_blank" rel="noopener noreferrer">
 					I am a externally linked Card

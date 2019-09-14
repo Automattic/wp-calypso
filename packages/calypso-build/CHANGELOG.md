@@ -1,3 +1,8 @@
+[UNRELEASED]
+
+- Add `enzyme-to-json` serializer to `jest-preset.js`.
+- Make Jest ignore transpiled files in `dist/`.
+
 # 4.0.1
 
 - Replace esm import/export with `require`.
