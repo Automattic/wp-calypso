@@ -1,7 +1,5 @@
 /**
  * **** WARNING: No ES6 modules here. Not transpiled! ****
- *
- * @format
  */
 
 /* eslint-disable import/no-nodejs-modules */
@@ -9,7 +7,6 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
