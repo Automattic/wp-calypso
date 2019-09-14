@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'component/gridicons';
+import Gridicon from 'gridicons';
 import { capitalize, findLast, get, includes, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -346,8 +346,11 @@ class Login extends Component {
 			socialServiceResponse,
 			disableAutoFocus,
 		} = this.props;
-
-		if ( twoFactorEnabled && includes( [ 'u2f' ], twoFactorAuthType ) ) {
+		console.log( twoFactorAuthType, typeof twoFactorAuthType );
+		if (
+			twoFactorEnabled &&
+			( typeof twoFactorAuthType === 'undefined' || includes( [ 'u2f' ], twoFactorAuthType ) )
+		) {
 			return (
 				<div>
 					<SecurityKeyForm twoFactorAuthType={ 'u2f' } onSuccess={ this.handleValid2FACode } />

@@ -53,6 +53,10 @@ class TwoFactorActions extends Component {
 
 		page( login( { isNative: true, twoFactorAuthType: 'authenticator' } ) );
 	};
+	recordSecurityKey = event => {
+		event.preventDefault();
+		page( login( { isNative: true, twoFactorAuthType: 'u2f' } ) );
+	};
 
 	render() {
 		const { isAuthenticatorSupported, isSmsSupported, translate, twoFactorAuthType } = this.props;
@@ -67,6 +71,9 @@ class TwoFactorActions extends Component {
 
 		return (
 			<Card className="two-factor-authentication__actions">
+				<Button n data-e2e-link="2fa-sms-link" onClick={ this.recordSecurityKey }>
+					{ translate( 'Continue with your security\u00A0key' ) }
+				</Button>
 				{ isSmsAvailable && (
 					<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
 						{ translate( 'Send code via\u00A0text\u00A0message' ) }
