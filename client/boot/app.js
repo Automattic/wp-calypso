@@ -18,6 +18,11 @@ import { getInitialState, persistOnChange } from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 
+/**
+ * Style dependencies
+ */
+import 'assets/stylesheets/style.scss';
+
 const debug = debugFactory( 'calypso' );
 
 const boot = currentUser => {

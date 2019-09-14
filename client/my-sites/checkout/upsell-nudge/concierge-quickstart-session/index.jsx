@@ -65,7 +65,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 	}
 
 	body() {
-		const { translate, productCost, productDisplayCost, currencyCode } = this.props;
+		const { translate, productCost, productDisplayCost, currencyCode, receiptId } = this.props;
 		const fullCost = Math.round( productCost * 2.021 );
 		return (
 			<>
@@ -192,15 +192,17 @@ export class ConciergeQuickstartSession extends PureComponent {
 							</b>{' '}
 						</p>
 						<p>
-							{ translate(
-								'Please notice, this is a one-time offer because you just got a new plan and we want you to make the most out of it! Regular price for {{em}}Quick Start{{/em}} sessions is %(oldPrice)s.',
-								{
-									components: { b: <b />, em: <em /> },
-									args: {
-										oldPrice: formatCurrency( fullCost, currencyCode ),
-									},
-								}
-							) }
+							{ receiptId
+								? translate(
+										'Please notice, this is a one-time offer because you just got a new plan and we want you to make the most out of it! Regular price for {{em}}Quick Start{{/em}} sessions is %(oldPrice)s.',
+										{
+											components: { b: <b />, em: <em /> },
+											args: {
+												oldPrice: formatCurrency( fullCost, currencyCode ),
+											},
+										}
+								  )
+								: '' }
 						</p>
 						<p>
 							<em>

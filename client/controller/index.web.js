@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 
@@ -20,11 +17,13 @@ import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
 import { getSiteFragment } from 'lib/route';
+import { hydrate } from './web-util.js';
 
 /**
  * Re-export
  */
 export { setSection, setUpLocale } from './shared.js';
+export { render, hydrate, redirectLoggedIn } from './web-util.js';
 
 export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 	const state = store.getState();
@@ -45,6 +44,16 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
+const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
+	<ReduxProvider store={ store }>
+		<MomentProvider>
+			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+		</MomentProvider>
+	</ReduxProvider>
+);
+
+export const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
+
 /**
  * Isomorphic routing helper, client side
  *
@@ -61,17 +70,6 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  */
 export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, hydrate );
-}
-
-export function redirectLoggedIn( context, next ) {
-	const userLoggedIn = isUserLoggedIn( context.store.getState() );
-
-	if ( userLoggedIn ) {
-		page.redirect( '/' );
-		return;
-	}
-
-	next();
 }
 
 export function redirectLoggedOut( context, next ) {
@@ -105,12 +103,4 @@ export function redirectLoggedOut( context, next ) {
 		return;
 	}
 	next();
-}
-
-export function render( context ) {
-	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
-}
-
-export function hydrate( context ) {
-	ReactDom.hydrate( context.layout, document.getElementById( 'wpcom' ) );
 }

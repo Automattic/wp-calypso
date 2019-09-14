@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, get, has } from 'lodash';
 import moment from 'moment-timezone';
 
@@ -44,6 +44,7 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -353,6 +354,70 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	handleClimateToggle = () => {
+		const { fields, submitForm, trackEvent, updateFields } = this.props;
+		const climatestrike = ! fields.climatestrike;
+		this.props.recordTracksEvent( 'calypso_general_settings_climatestrike_updated', {
+			climatestrike: climatestrike,
+		} );
+		updateFields( { climatestrike: climatestrike }, () => {
+			submitForm();
+			trackEvent( 'Toggled Climate Strike Toggle' );
+		} );
+	};
+
+	climateStrikeOption() {
+		const { fields, isRequestingSettings, translate } = this.props;
+
+		const today = moment(),
+			lastDay = moment( { year: 2019, month: 9, day: 21 } );
+
+		if ( today.isAfter( lastDay, 'day' ) ) {
+			return null;
+		}
+
+		return (
+			<>
+				<SettingsSectionHeader title={ translate( 'Climate Strike 2019' ) } />
+				<Card>
+					<FormFieldset>
+						<CompactFormToggle
+							checked={ !! fields.climatestrike }
+							disabled={ isRequestingSettings }
+							onChange={ this.handleClimateToggle }
+						>
+							{ translate(
+								'This September, millions of us will take to the streets to {{climateStrikeLink}}demand an end to the age ' +
+									'of fossil fuels{{/climateStrikeLink}}. Show your solidarity on your site by displaying a ' +
+									'{{digitalClimateStrikeLink}}digital climate strike banner{{/digitalClimateStrikeLink}} for the month. ' +
+									'On September 20th, the day of the Global Climate Strike, the banner will expand to a full-screen overlay ' +
+									'that site visitors can dismiss.',
+								{
+									components: {
+										climateStrikeLink: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												href={ 'https://globalclimatestrike.net' }
+											/>
+										),
+										digitalClimateStrikeLink: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												href={ 'https://digital.globalclimatestrike.net' }
+											/>
+										),
+									},
+								}
+							) }
+						</CompactFormToggle>
+					</FormFieldset>
+				</Card>
+			</>
+		);
+	}
+
 	Timezone() {
 		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = moment.tz.guess();
@@ -507,6 +572,8 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
+				{ ! siteIsJetpack && this.climateStrikeOption() }
+
 				<SettingsSectionHeader
 					data-tip-target="settings-site-profile-save"
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -622,6 +689,7 @@ const getFormSettings = settings => {
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
+		climatestrike: false,
 	};
 
 	if ( ! settings ) {
@@ -635,6 +703,7 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
+		climatestrike: settings.climatestrike,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

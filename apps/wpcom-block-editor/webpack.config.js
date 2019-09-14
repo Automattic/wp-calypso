@@ -6,6 +6,7 @@
 /**
  * External dependencies
  */
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
 
@@ -57,6 +58,23 @@ function getWebpackConfig(
 	return {
 		...webpackConfig,
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
+		plugins: [
+			...webpackConfig.plugins.filter(
+				plugin => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+			),
+			new DependencyExtractionWebpackPlugin( {
+				requestToExternal( request ) {
+					if ( request === 'tinymce/tinymce' ) {
+						return 'tinymce';
+					}
+				},
+				requestToHandle( request ) {
+					if ( request === 'tinymce/tinymce' ) {
+						return 'wp-tinymce';
+					}
+				},
+			} ),
+		],
 	};
 }
 

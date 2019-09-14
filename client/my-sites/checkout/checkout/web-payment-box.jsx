@@ -526,6 +526,7 @@ export class WebPaymentBox extends React.Component {
 							<span className="payment-request-button">{ button }</span>
 							<SubscriptionText cart={ cart } />
 						</span>
+
 						<div className="checkout__secure-payment">
 							<div className="checkout__secure-payment-content">
 								<Gridicon icon="lock" />

@@ -30,7 +30,11 @@ class DomainRegistrationHsts extends React.PureComponent {
 			domains,
 			( tlds, domain ) => {
 				if ( isHstsRequired( domain.product_slug, productsList ) ) {
-					tlds.push( '.' + getTld( domain.meta ) );
+					const tld = '.' + getTld( domain.meta );
+
+					if ( tlds.indexOf( tld ) === -1 ) {
+						tlds.push( tld );
+					}
 				}
 
 				return tlds;

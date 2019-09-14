@@ -4,8 +4,9 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loadScript } from '@automattic/load-script';
+import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 
 /**
  * Internal dependencies
@@ -37,11 +38,45 @@ StripeValidationError.prototype = new Error();
 export { StripeValidationError };
 
 /**
+ * An error related to a Setup Intent
+ *
+ * If this error is thrown, the setup intent probably needs to be recreated
+ * before being used again.
+ *
+ * The object will include the original stripe error in the stripeError prop.
+ *
+ * @param {object} stripeError - The original Stripe error object
+ */
+function StripeSetupIntentError( stripeError ) {
+	this.stripeError = stripeError;
+	this.message = stripeError.message;
+}
+StripeSetupIntentError.prototype = new Error();
+export { StripeSetupIntentError };
+
+/**
+ * An error related to a Stripe PaymentMethod
+ *
+ * The object will include the original stripe error in the stripeError prop.
+ *
+ * @param {object} stripeError - The original Stripe error object
+ */
+function StripePaymentMethodError( stripeError ) {
+	this.stripeError = stripeError;
+	this.message = stripeError.message;
+}
+StripePaymentMethodError.prototype = new Error();
+export { StripePaymentMethodError };
+
+/**
  * Create a Stripe PaymentMethod using Stripe Elements
  *
  * paymentDetails should include data not gathered by Stripe Elements. For
  * example, `name` (string), `address` (object with `country` [string] and
  * `postal_code` [string]).
+ *
+ * On success, the Promise will be resolved with an object that contains the
+ * PaymentMethod token in the `id` field.
  *
  * If there is an error, it will include a `message` field which can be used to
  * display the error. It will also include a `type` and possibly other fields
@@ -72,6 +107,30 @@ export async function createStripePaymentMethod( stripe, paymentDetails ) {
 	return paymentMethod;
 }
 
+export async function createStripeSetupIntent( stripe, stripeConfiguration, paymentDetails ) {
+	debug( 'creating setup intent...', paymentDetails );
+	const { setupIntent, error } = await stripe.handleCardSetup(
+		stripeConfiguration.setup_intent_id,
+		{
+			payment_method_data: {
+				billing_details: paymentDetails,
+			},
+		}
+	);
+	debug( 'setup intent creation complete', setupIntent, error );
+	if ( error ) {
+		// Note that this is a promise rejection
+		if ( error.type === 'validation_error' ) {
+			throw new StripeValidationError(
+				error.code,
+				getValidationErrorsFromStripeError( error ) || {}
+			);
+		}
+		throw new StripeSetupIntentError( error );
+	}
+	return setupIntent;
+}
+
 /**
  * Confirm any PaymentIntent from Stripe response and carry out 3DS or
  * other next_actions if they are required.
@@ -96,8 +155,9 @@ export async function confirmStripePaymentIntent( stripeConfiguration, paymentIn
 		{}
 	);
 	if ( error ) {
+		debug( 'Confirming paymentIntent failed', error );
 		// Note that this is a promise rejection
-		throw new Error( error );
+		throw new StripePaymentMethodError( error );
 	}
 
 	return paymentIntent;
@@ -141,44 +201,114 @@ function getValidationErrorsFromStripeError( error ) {
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
- * @return {object} stripeJs
+ * @return {object} { stripeJs, isStripeLoading }
  */
 export function useStripeJs( stripeConfiguration ) {
 	const [ stripeJs, setStripeJs ] = useState( null );
+	const [ isStripeLoading, setStripeLoading ] = useState( true );
+	const [ stripeLoadingError, setStripeLoadingError ] = useState();
 	useEffect( () => {
-		if ( ! stripeConfiguration ) {
-			return;
-		}
-		if ( window.Stripe ) {
-			debug( 'stripe.js already loaded' );
-			setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
-			return;
-		}
-		debug( 'loading stripe.js...' );
-		loadScript( stripeConfiguration.js_url, function( error ) {
-			if ( error ) {
-				debug( 'stripe.js script ' + error.src + ' failed to load.' );
+		let isSubscribed = true;
+		async function loadAndInitStripe() {
+			if ( ! stripeConfiguration ) {
 				return;
 			}
+			if ( window.Stripe ) {
+				debug( 'stripe.js already loaded' );
+				setStripeLoading( false );
+				if ( ! stripeJs ) {
+					setStripeLoadingError();
+					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+				}
+				return;
+			}
+			debug( 'loading stripe.js...' );
+			await loadScriptAsync( stripeConfiguration.js_url );
 			debug( 'stripe.js loaded!' );
-			setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+			isSubscribed && setStripeLoading( false );
+			isSubscribed && setStripeLoadingError();
+			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+		}
+
+		loadAndInitStripe().catch( error => {
+			debug( 'error while loading stripeJs', error );
+			isSubscribed && setStripeLoading( false );
+			isSubscribed && setStripeLoadingError( error );
 		} );
-	}, [ stripeConfiguration ] );
-	return stripeJs;
+
+		return () => ( isSubscribed = false );
+	}, [ stripeConfiguration, stripeJs ] );
+	return { stripeJs, isStripeLoading, stripeLoadingError };
+}
+
+function loadScriptAsync( url ) {
+	return new Promise( ( resolve, reject ) => {
+		loadScript( url, loadError => ( loadError ? reject( loadError ) : resolve() ) );
+	} );
 }
 
 /**
  * React custom Hook for loading the Stripe Configuration
  *
- * @param {string} country (optional) The country code
- * @return {object} Stripe Configuration as returned by the stripe configuration endpoint
+ * Returns an object with two properties: `stripeConfiguration`, and
+ * `setStripeError`.
+ *
+ * `stripeConfiguration` is an object as returned by the stripe configuration
+ * endpoint, possibly including a Setup Intent if one was requested (via
+ * `needs_intent`).
+ *
+ * If there is a stripe error, it may be necessary to reload the configuration
+ * since (for example) a Setup Intent may need to be recreated. You can force
+ * the configuration to reload by setting a value by calling `setStripeError()`
+ * with a value for that error.
+ *
+ * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
+ * @return {object} See above
  */
-export function useStripeConfiguration( country ) {
+export function useStripeConfiguration( requestArgs = {} ) {
+	const [ stripeError, setStripeError ] = useState();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
-		getStripeConfiguration( { country } ).then( configuration =>
-			setStripeConfiguration( configuration )
+		let isSubscribed = true;
+		getStripeConfiguration( requestArgs ).then(
+			configuration => isSubscribed && setStripeConfiguration( configuration )
 		);
-	}, [ country ] );
-	return stripeConfiguration;
+		return () => ( isSubscribed = false );
+	}, [ requestArgs, stripeError ] );
+	return { stripeConfiguration, setStripeError };
+}
+
+/**
+ * HOC to render a component with StripeJs
+ *
+ * The wrapped component will receieve the additional props:
+ *
+ * - stripe (the stripe.js object)
+ * - stripeConfiguration (the results of the stripe-configuration endpoint)
+ * - isStripeLoading (true while the other two props are still loading)
+ *
+ * @param {object} WrappedComponent The component to wrap
+ * @param {object} configurationArgs (optional) Options for configuration endpoint request. Can include `country` or `needs_intent`
+ * @return {object} WrappedComponent
+ */
+export function withStripe( WrappedComponent, configurationArgs = {} ) {
+	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
+	return props => {
+		const { stripeConfiguration, setStripeError } = useStripeConfiguration( configurationArgs );
+		const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
+
+		return (
+			<StripeProvider stripe={ stripeJs }>
+				<Elements>
+					<StripeInjectedWrappedComponent
+						stripeConfiguration={ stripeConfiguration }
+						isStripeLoading={ isStripeLoading }
+						setStripeError={ setStripeError }
+						stripeLoadingError={ stripeLoadingError }
+						{ ...props }
+					/>
+				</Elements>
+			</StripeProvider>
+		);
+	};
 }

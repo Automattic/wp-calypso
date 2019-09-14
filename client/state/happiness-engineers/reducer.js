@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
@@ -41,7 +38,7 @@ export const requesting = createReducer( false, {
  * @param  {Object} action Action object
  * @return {Array}         Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	null,
 	{
 		[ HAPPINESS_ENGINEERS_RECEIVE ]: ( state, { happinessEngineers } ) => {

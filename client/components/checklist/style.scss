@@ -20,6 +20,10 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 }
 
+.checklist__task-notice {
+	margin: 10px 0 0;
+}
+
 .checklist__task {
 	width: 100%;
 	order: 1;
@@ -39,7 +43,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		top: 0;
 		bottom: 0;
 		left: 34px;
-		border-left: 1px solid var( --color-neutral-100 );
+		border-left: 1px solid var( --color-neutral-10 );
 		z-index: 1;
 	}
 
@@ -50,15 +54,15 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		left: 24px;
 		width: 16px;
 		height: 16px;
-		border: 2px solid var( --color-neutral-100 );
+		border: 2px solid var( --color-neutral-10 );
 		border-radius: 16px;
-		background: var( --color-white );
+		background: var( --color-surface );
 		cursor: pointer;
 		z-index: 2;
 
 		.gridicons-checkmark {
 			display: none;
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 			position: absolute;
 			top: -1px;
 			left: 1px;
@@ -83,8 +87,8 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		&.is-disabled:focus,
 		&.is-disabled:hover,
 		&.is-disabled:active {
-			border: 2px solid var( --color-neutral-100 );
-			background: var( --color-white );
+			border: 2px solid var( --color-neutral-10 );
+			background: var( --color-surface );
 			cursor: default;
 		}
 	}
@@ -104,7 +108,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		width: 18px;
 		height: 18px;
 		border-radius: 16px;
-		background: var( --color-white );
+		background: var( --color-surface );
 		cursor: pointer;
 	}
 
@@ -257,7 +261,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			padding-bottom: 16px;
 
 			&:hover {
-				background: var( --color-neutral-50 );
+				background: var( --color-neutral-5 );
 			}
 		}
 
@@ -278,7 +282,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		.checklist__task-title,
 		.checklist__task-description,
 		.checklist__task-duration {
-			background-color: var( --color-neutral-50 );
+			background-color: var( --color-neutral-5 );
 			color: transparent;
 			animation: pulse-light 3s ease-in-out infinite;
 		}

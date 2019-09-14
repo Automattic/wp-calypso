@@ -414,8 +414,6 @@ class SiteSelector extends Component {
 				onMouseLeave={ this.onMouseLeave }
 			>
 				<Search
-					// eslint-disable-next-line react/no-string-refs
-					ref="siteSearch"
 					onSearch={ this.onSearch }
 					delaySearch={ true }
 					// eslint-disable-next-line jsx-a11y/no-autofocus

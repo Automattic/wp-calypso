@@ -11,6 +11,7 @@ import url from 'url';
 import { get, startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
+import Modal from 'react-modal';
 import store from 'store';
 
 /**
@@ -200,10 +201,6 @@ export const locales = ( currentUser, reduxStore ) => {
 export const utils = () => {
 	debug( 'Executing Calypso utils.' );
 
-	if ( process.env.NODE_ENV === 'development' ) {
-		require( './dev-modules' ).default();
-	}
-
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
 	if ( hasTouch() ) {
@@ -214,6 +211,9 @@ export const utils = () => {
 
 	// Add accessible-focus listener
 	accessibleFocus();
+
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {

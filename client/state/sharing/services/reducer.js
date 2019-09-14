@@ -1,20 +1,17 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	KEYRING_SERVICES_RECEIVE,
 	KEYRING_SERVICES_REQUEST,
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemSchema } from './schema';
 
 // Stores the list of available keyring services
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ KEYRING_SERVICES_RECEIVE ]: ( state, action ) => action.services,

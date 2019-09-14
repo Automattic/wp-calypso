@@ -1,34 +1,46 @@
 .current-plan-thank-you {
+	display: flex;
+	flex-direction: row;
 	max-width: 720px;
-	text-align: center;
 
 	@include breakpoint( '>800px' ) {
 		font-size: 16px;
+		padding: 20px 0;
+	}
 
-		a {
-			font-size: 14px;
+	&__title {
+		font-size: 24px;
+
+		@include breakpoint( '<660px' ) {
+			text-align: center;
 		}
 	}
 
+	&__link {
+		font-size: 14px;
+	}
+
 	.progress-bar {
-		max-width: 80%;
+		@include breakpoint( '>660px' ) {
+			max-width: 80%;
+		}
+	}
+
+	.button {
+		padding-right: 80px;
+		padding-left: 80px;
+
+		@include breakpoint( '<660px' ) {
+			text-align: center;
+			width: 100%;
+		}
 	}
 }
 
 .current-plan-thank-you__illustration {
-	display: none;
-	margin-bottom: 18px;
+	margin-right: 32px;
 
-	@include breakpoint( '>480px' ) {
-		display: inline;
-		margin-bottom: 18px;
-		width: 70%;
+	@include breakpoint( '<660px' ) {
+		display: none;
 	}
-	@include breakpoint( '>800px' ) {
-		width: 52%;
-	}
-}
-
-.current-plan-thank-you__title {
-	font-size: 24px;
 }

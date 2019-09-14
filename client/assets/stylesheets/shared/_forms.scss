@@ -1,0 +1,220 @@
+
+// ==========================================================================
+// Global form elements
+// ==========================================================================
+
+form {
+	@extend %form;
+}
+input[type='text'],
+input[type='search'],
+input[type='email'],
+input[type='number'],
+input[type='password'],
+input[type='checkbox'],
+input[type='radio'],
+input[type='tel'],
+input[type='url'],
+textarea {
+	@extend %form-field;
+}
+textarea {
+	@extend %textarea;
+}
+
+fieldset,
+input[type='text'],
+input[type='search'],
+input[type='email'],
+input[type='number'],
+input[type='password'],
+input[type='tel'],
+input[type='url'],
+textarea,
+select,
+label {
+	box-sizing: border-box;
+}
+
+input[type='password'],
+input[type='email'],
+input[type='url'] {
+	/*!rtl:ignore*/
+	direction: ltr;
+}
+
+/*Checkbooms*/
+
+input[type='checkbox'],
+input[type='radio'] {
+	clear: none;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 0;
+	height: 16px;
+	margin: 2px 0 0;
+	float: left;
+	outline: 0;
+	padding: 0;
+	text-align: center;
+	vertical-align: middle;
+	width: 16px;
+	min-width: 16px;
+	appearance: none;
+}
+
+input[type='checkbox'] + span,
+input[type='radio'] + span {
+	display: block;
+	margin-left: 24px;
+}
+
+input[type='checkbox'] {
+	border-radius: 2px;
+
+	&:checked::before {
+		content: url( '/calypso/images/checkbox-icons/checkmark-primary.svg' );
+		width: 12px;
+		height: 12px;
+		margin: 1px auto;
+		display: inline-block;
+		speak: none;
+	}
+
+	&:disabled:checked::before {
+		color: var( --color-neutral-20 );
+	}
+}
+
+input[type='radio'] {
+	border-radius: 50%;
+	margin-right: 4px;
+	line-height: 10px;
+
+	&:checked::before {
+		float: left;
+		display: inline-block;
+		content: '\2022';
+		margin: 3px;
+		width: 8px;
+		height: 8px;
+		text-indent: -9999px;
+		background: var( --color-primary );
+		vertical-align: middle;
+		border-radius: 50%;
+		animation: grow 0.2s ease-in-out;
+	}
+
+	&:disabled:checked::before {
+		background: var( --color-neutral-0 );
+	}
+}
+
+@keyframes grow {
+	0% {
+		transform: scale( 0.3 );
+	}
+
+	60% {
+		transform: scale( 1.15 );
+	}
+
+	100% {
+		transform: scale( 1 );
+	}
+}
+
+/* end checkbooms */
+
+select {
+	background: var( --color-surface )
+		url( 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjQzhEN0UxIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==' )
+		no-repeat right 10px center;
+	border-color: var( --color-neutral-10 );
+	border-style: solid;
+	border-radius: 4px;
+	border-width: 1px 1px 2px;
+	color: var( --color-neutral-70 );
+	cursor: pointer;
+	display: inline-block;
+	margin: 0;
+	outline: 0;
+	overflow: hidden;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.4em;
+	text-overflow: ellipsis;
+	text-decoration: none;
+	vertical-align: top;
+	white-space: nowrap;
+	box-sizing: border-box;
+	padding: 7px 32px 9px 14px; // Aligns the text to the 8px baseline grid and adds padding on right to allow for the arrow.
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	&:hover {
+		background-image: url( 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjYThiZWNlIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==' );
+	}
+
+	&:focus {
+		background-image: url( 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiA8dGl0bGU+YXJyb3ctZG93bjwvdGl0bGU+IDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPiA8ZGVmcz48L2RlZnM+IDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPiA8ZyBpZD0iYXJyb3ctZG93biIgc2tldGNoOnR5cGU9Ik1TQXJ0Ym9hcmRHcm91cCIgZmlsbD0iIzJlNDQ1MyI+IDxwYXRoIGQ9Ik0xNS41LDYgTDE3LDcuNSBMMTAuMjUsMTQuMjUgTDMuNSw3LjUgTDUsNiBMMTAuMjUsMTEuMjUgTDE1LjUsNiBaIiBpZD0iRG93bi1BcnJvdyIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPiA8L2c+IDwvZz48L3N2Zz4=' );
+		border-color: var( --color-primary );
+		box-shadow: 0 0 0 2px var( --color-primary-10 );
+		outline: 0;
+		-moz-outline: none;
+		-moz-user-focus: ignore;
+	}
+
+	&:disabled,
+	&:hover:disabled {
+		background: url( 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjZTllZmYzIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==' )
+			no-repeat right 10px center;
+	}
+
+	// A smaller variant that works well when presented inline with text
+	&.is-compact {
+		min-width: 0;
+		padding: 0 20px 2px 6px;
+		margin: 0 4px;
+		background-position: right 5px center;
+		background-size: 12px 12px;
+	}
+
+	// Make it display:block when it follows a label
+	label &,
+	label + & {
+		display: block;
+		min-width: 200px;
+
+		&.is-compact {
+			display: inline-block;
+			min-width: 0;
+		}
+	}
+
+	// IE: Remove the default arrow
+	&::-ms-expand {
+		display: none;
+	}
+
+	// IE: Remove default background and color styles on focus
+	&::-ms-value {
+		background: none;
+		color: var( --color-neutral-70 );
+	}
+
+	// Firefox: Remove the focus outline, see http://stackoverflow.com/questions/3773430/remove-outline-from-select-box-in-ff/18853002#18853002
+	&:-moz-focusring {
+		color: transparent;
+		text-shadow: 0 0 0 var( --color-neutral-70 );
+	}
+}
+
+/*Search Inputs*/
+input[type='search']::-webkit-search-decoration {
+	// We don't use the native results="" UI
+	// Ensures the input text is flush to the start of the element, as in regular text inputs
+	// See, for example, http://geek.michaelgrace.org/2011/06/webkit-search-input-styling/
+	display: none;
+}

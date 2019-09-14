@@ -179,8 +179,8 @@ class ImportingPane extends React.PureComponent {
 		}
 
 		return this.props.translate(
-			'Waiting on %(numResources)s resource to import',
-			'Waiting on %(numResources)s resources to import',
+			'%(numResources)s post, page, or media file left to import',
+			'%(numResources)s posts, pages, and media files left to import',
 			{
 				count: numResources,
 				args: { numResources: numberFormat( numResources ) },

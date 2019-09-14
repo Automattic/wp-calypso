@@ -1,8 +1,8 @@
-/* global wp */
-
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
@@ -20,17 +20,24 @@ registerBlockType( 'a8c/post-content', {
 	icon: 'layout',
 	category: 'layout',
 	supports: {
+		align: [ 'full' ],
 		anchor: false,
 		customClassName: false,
 		html: false,
+		inserter: false,
 		multiple: false,
 		reusable: false,
+	},
+	attributes: {
+		align: {
+			type: 'string',
+			default: 'full',
+		},
 	},
 	edit,
 	save,
 } );
 
-const { createHigherOrderComponent } = wp.compose;
 const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
 	return props => {
 		if ( props.name !== 'a8c/post-content' ) {
@@ -41,8 +48,10 @@ const addContentSlotClassname = createHigherOrderComponent( BlockListBlock => {
 	};
 }, 'addContentSlotClassname' );
 
+// Must be 9 or this breaks on Simple Sites
 addFilter(
 	'editor.BlockListBlock',
 	'full-site-editing/blocks/post-content',
-	addContentSlotClassname
+	addContentSlotClassname,
+	9
 );

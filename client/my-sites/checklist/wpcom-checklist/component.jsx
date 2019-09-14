@@ -25,12 +25,7 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { successNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSiteOption,
-	getSiteSlug,
-	getSiteFrontPage,
-	isCurrentPlanPaid,
-} from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
@@ -337,8 +332,6 @@ class WpcomChecklistComponent extends PureComponent {
 			siteSlug,
 			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
-			// only render an unclickable grey circle
-			disableIcon: ! task.isCompleted && 'email_verified' === task.id,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
@@ -374,6 +367,8 @@ class WpcomChecklistComponent extends PureComponent {
 						},
 					}
 				) }
+				// only render an unclickable grey circle when email conformation is incomplete
+				disableIcon={ ! baseProps.completed }
 				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
 				onClick={ this.handleSendVerificationEmail }
 				title={ translate( 'Confirm your email address' ) }
@@ -604,7 +599,8 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { needsVerification, translate } = this.props;
+		const disabled = ! baseProps.completed && needsVerification;
 
 		return (
 			<TaskComponent
@@ -613,8 +609,13 @@ class WpcomChecklistComponent extends PureComponent {
 				buttonText={ translate( 'Launch site' ) }
 				completedTitle={ translate( 'You launched your site' ) }
 				description={ translate(
-					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
+					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				) }
+				disableIcon={ disabled }
+				isButtonDisabled={ disabled }
+				noticeText={
+					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
+				}
 				onClick={ this.handleLaunchSite( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Launch your site' ) }
@@ -1040,7 +1041,11 @@ const getTaskUrls = createSelector(
 		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
 		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getPageEditorUrl( state, siteId, getSiteFrontPage( state, siteId ) );
+		const frontPageUrl = getPageEditorUrl(
+			state,
+			siteId,
+			getSiteOption( state, siteId, 'page_on_front' )
+		);
 
 		return {
 			post_published: getPageEditorUrl( state, siteId, firstPostID ),

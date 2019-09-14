@@ -13,13 +13,15 @@ import CartData from 'components/data/cart';
 import CheckoutData from 'components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
 
+/**
+ * Style dependencies
+ */
+import './checkout-container.scss';
+
 class CheckoutContainer extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			headerText: '',
-		};
-	}
+	state = {
+		headerText: '',
+	};
 
 	renderCheckoutHeader() {
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;

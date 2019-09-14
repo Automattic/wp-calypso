@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -36,9 +35,16 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
+	SITE_FRONT_PAGE_UPDATE,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import {
+	combineReducers,
+	createReducer,
+	createReducerWithValidation,
+	keyedReducer,
+	withSchemaValidation,
+} from 'state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -47,12 +53,12 @@ import { combineReducers, createReducer, keyedReducer } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = null, action ) {
+export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
 	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
 		return null;
 	}
 	switch ( action.type ) {
-		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS: {
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
 				return Object.assign( {}, state, {
@@ -60,14 +66,17 @@ export function items( state = null, action ) {
 				} );
 			}
 			return state;
+		}
 
 		case SITE_RECEIVE:
-		case SITES_RECEIVE:
+		case SITES_RECEIVE: {
 			// Normalize incoming site(s) to array
+
 			const sites = action.site ? [ action.site ] : action.sites;
 
 			// SITES_RECEIVE occurs when we receive the entire set of user
 			// sites (replace existing state). Otherwise merge into state.
+
 			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
 
 			return reduce(
@@ -88,6 +97,7 @@ export function items( state = null, action ) {
 				},
 				initialNextState || {}
 			);
+		}
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
@@ -131,7 +141,7 @@ export function items( state = null, action ) {
 					}
 
 					switch ( key ) {
-						case 'blog_public':
+						case 'blog_public': {
 							const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
 
 							if ( site.is_private === isPrivate ) {
@@ -143,7 +153,8 @@ export function items( state = null, action ) {
 								is_private: isPrivate,
 							};
 							break;
-						case 'site_icon':
+						}
+						case 'site_icon': {
 							const mediaId = settings.site_icon;
 							// Return unchanged if next icon matches current value,
 							// accounting for the fact that a non-existent icon property is
@@ -169,6 +180,7 @@ export function items( state = null, action ) {
 								};
 							}
 							break;
+						}
 					}
 
 					if ( memo === state ) {
@@ -214,11 +226,27 @@ export function items( state = null, action ) {
 				},
 			};
 		}
+
+		case SITE_FRONT_PAGE_UPDATE: {
+			const { siteId, frontPageOptions } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				break;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					options: {
+						...frontPageOptions,
+					},
+				} ),
+			};
+		}
 	}
 
 	return state;
-}
-items.schema = sitesSchema;
+} );
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -285,7 +313,7 @@ export const deleting = keyedReducer(
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const hasAllSitesList = createReducer(
+export const hasAllSitesList = createReducerWithValidation(
 	false,
 	{
 		[ SITES_RECEIVE ]: () => true,

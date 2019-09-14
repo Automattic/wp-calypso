@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { NonUndefined } from 'utility-types';
+
 // Web stuff
 export type URL = string;
 export type Scheme = 'http' | 'https';
@@ -22,5 +27,6 @@ export type CommentId = number;
 
 // Language stuff
 export type Lazy< T > = () => T;
+export type TimeoutMS = NonUndefined< Parameters< typeof setTimeout >[1] >;
 export type TimestampMS = ReturnType< typeof Date.now >;
 export type TimerHandle = ReturnType< typeof setTimeout >;

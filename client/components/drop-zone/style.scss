@@ -43,7 +43,7 @@
 	font-size: 14px;
 	font-weight: bold;
 	text-align: center;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	transition: transform 0.3s ease-in-out;
 }
 
@@ -77,7 +77,11 @@
 		background-color: var( --color-accent-light );
 	}
 
-	.drop-zone__content {
-		color: var( --color-text );
+	.drop-zone__content-icon svg g {
+		fill: var( --color-white );
+	}
+
+	.drop-zone__content-text {
+		color: var( --color-white );
 	}
 }

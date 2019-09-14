@@ -16,7 +16,6 @@ import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
-import SetupFooter from 'my-sites/site-settings/jetpack-credentials/credentials-setup-flow/setup-footer';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
 /**
@@ -29,7 +28,6 @@ class RewindFormCreds extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 
 		// Connected props
@@ -75,7 +73,6 @@ class RewindFormCreds extends Component {
 						{ translate( 'Enter your credentials' ) }
 					</Card>
 					<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
-					<SetupFooter />
 				</Card>
 				,
 			</Fragment>
@@ -88,7 +85,6 @@ class RewindFormCreds extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.stepContent() }
 				hideFormattedHeader={ true }
 				hideSkip={ true }

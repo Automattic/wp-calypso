@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { LOCALE_SET } from 'state/action-types';
 import { localeSlugSchema, localeVariantSchema, isRtlSchema } from './schema';
 import { getLanguage } from 'lib/i18n-utils/utils';
@@ -17,7 +14,7 @@ import { getLanguage } from 'lib/i18n-utils/utils';
  * @return {Object}        Updated state
  *
  */
-export const localeSlug = createReducer(
+export const localeSlug = createReducerWithValidation(
 	null,
 	{
 		[ LOCALE_SET ]: ( state, action ) => action.localeSlug,
@@ -33,7 +30,7 @@ export const localeSlug = createReducer(
  * @return {Object}        Updated or default state
  *
  */
-export const localeVariant = createReducer(
+export const localeVariant = createReducerWithValidation(
 	null,
 	{
 		[ LOCALE_SET ]: ( state, action ) => action.localeVariant || state,
@@ -49,7 +46,7 @@ export const localeVariant = createReducer(
  * @return {Object}        Updated state
  *
  */
-export const isRtl = createReducer(
+export const isRtl = createReducerWithValidation(
 	null,
 	{
 		[ LOCALE_SET ]: ( state, action ) => {

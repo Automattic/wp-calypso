@@ -35,6 +35,9 @@ export class HiddenInput extends PureComponent {
 
 	assignInputFieldRef = input => {
 		this.inputField = input;
+		if ( this.props.inputRef ) {
+			this.props.inputRef( input );
+		}
 	};
 
 	render() {

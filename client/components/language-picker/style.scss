@@ -1,5 +1,5 @@
 .language-picker {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
 	width: 300px;
@@ -33,7 +33,7 @@
 		&:hover {
 			&,
 			.language-picker__icon {
-				border-color: var( --color-neutral-200 );
+				border-color: var( --color-neutral-20 );
 			}
 		}
 
@@ -43,10 +43,10 @@
 				border-color: var( --color-primary );
 			}
 
-			box-shadow: 0 0 0 2px var( --color-primary-100 );
+			box-shadow: 0 0 0 2px var( --color-primary-10 );
 
 			&:hover {
-				box-shadow: 0 0 0 2px var( --color-primary-200 );
+				box-shadow: 0 0 0 2px var( --color-primary-20 );
 			}
 		}
 	}
@@ -73,7 +73,7 @@
 	align-items: center;
 	justify-content: center;
 	flex: none;
-	border-right: 1px solid var( --color-neutral-100 );
+	border-right: 1px solid var( --color-neutral-10 );
 	transition: border-color 150ms ease-in-out;
 }
 
