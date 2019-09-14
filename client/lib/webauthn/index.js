@@ -41,7 +41,7 @@ function credentialListConversion( list ) {
 	} );
 }
 
-function wpcomRequestPromise( path, _data, method ) {
+function wpcomApiRequest( path, _data, method ) {
 	const data = _data || {};
 	if ( process.env.NODE_ENV === 'development' ) {
 		data.hostname = window.location.hostname;
@@ -90,7 +90,7 @@ function isSupported() {
 }
 
 function register() {
-	return wpcomRequestPromise( '/me/two-step/security-key/registration_challenge' )
+	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
 		.then( options => {
 			const makeCredentialOptions = {};
 			makeCredentialOptions.rp = options.rp;
@@ -143,7 +143,7 @@ function register() {
 			response.attestationObject = binToStr( attestation.response.attestationObject );
 			publicKeyCredential.response = response;
 
-			return wpcomRequestPromise(
+			return wpcomApiRequest(
 				'/me/two-step/security-key/registration_validate',
 				{
 					data: JSON.stringify( publicKeyCredential ),
@@ -184,6 +184,10 @@ function register() {
 		} );
 }
 
-function authenticate() {}
-
-export default { isSupported, register, authenticate };
+export default {
+	isSupported,
+	register,
+	strToBin,
+	binToStr,
+	credentialListConversion,
+};

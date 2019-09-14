@@ -59,20 +59,37 @@ class TwoFactorActions extends Component {
 			} )
 		);
 	};
+	recordSecurityKey = event => {
+		event.preventDefault();
+		page( login( { isNative: true, twoFactorAuthType: 'u2f' } ) );
+	};
 
 	render() {
-		const { isAuthenticatorSupported, isSmsSupported, translate, twoFactorAuthType } = this.props;
+		const {
+			isAuthenticatorSupported,
+			isSecurityKeySupported,
+			isSmsSupported,
+			translate,
+			twoFactorAuthType,
+		} = this.props;
 
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
 		const isAuthenticatorAvailable =
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
+		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'u2f';
 
-		if ( ! isSmsAvailable && ! isAuthenticatorAvailable ) {
+		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
 			return null;
 		}
 
 		return (
 			<Card className="two-factor-authentication__actions">
+				{ isSecurityKeyAvailable && (
+					<Button n data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
+						{ translate( 'Continue with your security\u00A0key' ) }
+					</Button>
+				) }
+
 				{ isSmsAvailable && (
 					<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
 						{ translate( 'Send code via\u00A0text\u00A0message' ) }
@@ -93,6 +110,7 @@ export default connect(
 	state => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'u2f' ),
 	} ),
 	{
 		recordTracksEvent,
