@@ -43,7 +43,7 @@ function credentialListConversion( list ) {
 
 function wpcomApiRequest( path, _data, method ) {
 	const data = _data || {};
-	if ( process.env.NODE_ENV === 'development' ) {
+	if ( [ 'development', 'wpcalypso' ].includes( process.env.NODE_ENV ) ) {
 		data.hostname = window.location.hostname;
 	}
 
