@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.0.1
+
+* Included WP Admin button colors.
+
 ## 2.0.0
 
 This update brings backwards-incompatible changes to the package. The most notable ones include:
