@@ -197,6 +197,7 @@ export class PostTypeFilter extends Component {
 						<Search
 							pinned
 							fitsContainer
+							initialValue={ query.search }
 							onSearch={ this.props.doSearch }
 							placeholder={ this.props.translate( 'Search…' ) }
 							delaySearch={ true }
