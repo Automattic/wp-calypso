@@ -44,15 +44,10 @@ const p2Completer = {
 	getOptionKeywords: site => site.keywords,
 	getOptionLabel: site => (
 		<div className="p2-autocomplete">
-			<span key="subdomain" className="p2-autocomplete__subdomain">
-				+{ site.subdomain }
-			</span>
-			<span key="description" className="p2-autocomplete__title">
-				{ unescape( site.title ) }
-			</span>
+			<span className="p2-autocomplete__subdomain">+{ site.subdomain }</span>
+			<span className="p2-autocomplete__title">{ unescape( site.title ) }</span>
 			{ site.blavatar ? (
 				<img
-					key="blavatar"
 					src={ `${ site.blavatar }?s=20` }
 					srcset={ `${ site.blavatar }?s=20 1x, ${ site.blavatar }?s=40 2x` }
 					width="20"
