@@ -42,6 +42,7 @@ const p2Completer = {
 		</div>
 	),
 	getOptionCompletion: site => `+${ site.subdomain }`,
+	isDebounced: true,
 };
 
 // Register autocompleter for all blocks
