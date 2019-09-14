@@ -249,4 +249,11 @@ function authenticate( wpcom_user_id, nonce ) {
 		} );
 }
 
-export default { isSupported, register, authenticate };
+export default {
+	isSupported,
+	register,
+	authenticate,
+	strToBin,
+	binToStr,
+	credentialListConversion,
+};
