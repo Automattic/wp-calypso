@@ -12,13 +12,30 @@ import './editor.scss';
 
 const p2s = apiFetch( {
 	path: '/internal/P2s',
-} ).then( result => map( result.list, ( p2, subdomain ) => ( { ...p2, subdomain } ) ) );
+} ).then( result =>
+	map( result.list, ( p2, subdomain ) => {
+		const keywords = [ subdomain ];
+		/*
+		 * This is a workaround for the way Gutenberg autocomplete works. It looks for
+		 * beginnings of words and something like "teamabcp2" won't be found if you search "abc".
+		 * Adding spaces around the word solves the problem.
+		 */
+		if ( subdomain.indexOf( 'team' ) > -1 ) {
+			keywords.push( subdomain.replace( 'team', ' team ' ) );
+		}
+		return {
+			...p2,
+			subdomain,
+			keywords,
+		};
+	} )
+);
 
 const p2Completer = {
 	name: 'p2s',
 	triggerPrefix: '+',
 	options: p2s,
-	getOptionKeywords: site => [ site.subdomain, site.title ],
+	getOptionKeywords: site => site.keywords,
 	getOptionLabel: site => (
 		<div className="p2-autocomplete">
 			<span key="subdomain" className="p2-autocomplete__subdomain">
