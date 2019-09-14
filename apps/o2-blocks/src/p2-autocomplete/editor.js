@@ -10,18 +10,24 @@ import { map, unescape } from 'lodash';
  */
 import './editor.scss';
 
+/*
+ * This is a workaround for the way Gutenberg autocomplete works. It onlylooks for
+ * beginnings of words and something like "teamabcp2" won't be found if you search "abc".
+ * Adding spaces around the word solves the problem.
+ */
+const COMMON_PREFIXES = /^(team|a8c)/i;
+const stripCommonPrefixes = str => {
+	return str.replace( COMMON_PREFIXES, '' );
+};
+
 const p2s = apiFetch( {
 	path: '/internal/P2s',
 } ).then( result =>
 	map( result.list, ( p2, subdomain ) => {
 		const keywords = [ subdomain ];
-		/*
-		 * This is a workaround for the way Gutenberg autocomplete works. It looks for
-		 * beginnings of words and something like "teamabcp2" won't be found if you search "abc".
-		 * Adding spaces around the word solves the problem.
-		 */
-		if ( subdomain.indexOf( 'team' ) > -1 ) {
-			keywords.push( subdomain.replace( 'team', ' team ' ) );
+		const unprefixed = stripCommonPrefixes( subdomain );
+		if ( subdomain !== unprefixed ) {
+			keywords.push( unprefixed );
 		}
 		return {
 			...p2,
