@@ -25,7 +25,7 @@ class Security2faKeyItem extends Component {
 				<div className="security-2fa-key__item">
 					<div className="security-2fa-key__item-information">
 						<h2 className="security-2fa-key__item-title">
-							{ this.props.securityKey.registered } Key
+							{ this.props.securityKey.name === '' ? 'Key' : this.props.securityKey.name }
 						</h2>
 					</div>
 					<Security2faDeleteButton

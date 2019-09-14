@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -27,8 +27,8 @@ class Security2faKeyAdd extends React.Component {
 
 	state = {
 		error: false,
-	}
-	
+	};
+
 	componentDidMount = () => {
 		this.registerKey();
 	};
@@ -41,8 +41,8 @@ class Security2faKeyAdd extends React.Component {
 				debug( 'registered key with data', data );
 				this.keyRegistered();
 			} )
-			.catch( err => {
-				this.setState( { error: err } );
+			.catch( error => {
+				this.setState( { error } );
 			} );
 	};
 
@@ -53,32 +53,34 @@ class Security2faKeyAdd extends React.Component {
 	render() {
 		return (
 			<Card>
-				<Fragment>
-				{ ! this.state.error &&
+				{ ! this.state.error && (
 					<>
 						<div className="security-2fa-key__add-wait-for-key">
 							<Spinner />
 							<p>{ this.props.translate( 'Insert your USB key into your USB port.' ) }</p>
 							<p>
-								{ this.props.translate( 'Then tap the button or gold disk on the security device' ) }
+								{ this.props.translate(
+									'Then tap the button or gold disk on the security device'
+								) }
 							</p>
 						</div>
 						<div className="security-2fa-key__add-button-container">
 							<Button onClick={ this.props.onCancel }>Cancel</Button>
 						</div>
 					</>
-				}
-				{ this.state.error &&
+				) }
+				{ this.state.error && (
 					<Notice
-						status={ this.state.error.error === "Canceled" ? 'is-warning' : 'is-error'  }
+						status={ this.state.error.error === 'Canceled' ? 'is-warning' : 'is-error' }
 						className="security-2fa-key__error-notice"
 						onDismissClick={ this.props.onCancel }
 						text={ this.state.error.message }
 					>
-						<NoticeAction onClick={ this.registerKey }>{ this.props.translate( 'Retry' ) }</NoticeAction> 
+						<NoticeAction onClick={ this.registerKey }>
+							{ this.props.translate( 'Retry' ) }
+						</NoticeAction>
 					</Notice>
-				}
-				</Fragment>
+				) }
 			</Card>
 		);
 	}
