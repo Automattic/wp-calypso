@@ -15,6 +15,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import webauthn from 'lib/webauthn';
 import Spinner from 'components/spinner';
+import Security2faKeyAddName from './name';
 
 const debug = debugFactory( 'calypso:me:security-2fa-key' );
 
@@ -27,16 +28,13 @@ class Security2faKeyAdd extends React.Component {
 
 	state = {
 		error: false,
+		securityKeyName: ''
 	};
 
-	componentDidMount = () => {
-		this.registerKey();
-	};
-
-	registerKey = () => {
-		this.setState( { error: false } );
+	registerKey = securityKeyName => {
+		this.setState( { error: false, securityKeyName } );
 		webauthn
-			.register()
+			.register( securityKeyName )
 			.then( data => {
 				debug( 'registered key with data', data );
 				this.keyRegistered();
@@ -53,7 +51,15 @@ class Security2faKeyAdd extends React.Component {
 	render() {
 		return (
 			<Card>
-				{ ! this.state.error && (
+				{ ! this.state.securityKeyName && (
+					<>
+						<Security2faKeyAddName
+							onNameSubmit={ this.registerKey }
+							onCancel={ this.props.onCancel }
+						/>
+					</>
+				) }
+				{ ! this.state.error && this.state.securityKeyName && (
 					<>
 						<div className="security-2fa-key__add-wait-for-key">
 							<Spinner />
