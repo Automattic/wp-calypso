@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import * as React from 'react';
 import classnames from 'classnames';
 
 /**
@@ -18,7 +16,22 @@ import ScreenReaderText from '../screen-reader-text';
  */
 import './style.scss';
 
-export default class ProgressBar extends PureComponent {
+export interface Props {
+	value: number,
+	total: number,
+	color?: string,
+	title?: string,
+	compact: boolean,
+	className?: string,
+	isPulsing: boolean,
+	canGoBackwards: boolean,
+}
+
+interface State {
+	allTimeMax: number,
+}
+
+export default class ProgressBar extends React.PureComponent<Props, State> {
 	static defaultProps = {
 		total: 100,
 		compact: false,
@@ -26,24 +39,13 @@ export default class ProgressBar extends PureComponent {
 		canGoBackwards: false,
 	};
 
-	static propTypes = {
-		value: PropTypes.number.isRequired,
-		total: PropTypes.number,
-		color: PropTypes.string,
-		title: PropTypes.string,
-		compact: PropTypes.bool,
-		className: PropTypes.string,
-		isPulsing: PropTypes.bool,
-		canGoBackwards: PropTypes.bool,
-	};
-
-	static getDerivedStateFromProps( props, state ) {
+	static getDerivedStateFromProps( props: Props, state: State ) {
 		return {
 			allTimeMax: Math.max( state.allTimeMax, props.value ),
 		};
 	}
 
-	state = {
+	state: State = {
 		allTimeMax: this.props.value,
 	};
 
@@ -61,7 +63,7 @@ export default class ProgressBar extends PureComponent {
 	renderBar() {
 		const { color, title, total, value } = this.props;
 
-		const styles = { width: this.getCompletionPercentage() + '%' };
+		const styles: React.CSSProperties = { width: this.getCompletionPercentage() + '%' };
 		if ( color ) {
 			styles.backgroundColor = color;
 		}
