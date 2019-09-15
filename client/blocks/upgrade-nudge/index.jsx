@@ -21,6 +21,7 @@ import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
+import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 
@@ -87,9 +88,11 @@ export class UpgradeNudge extends React.Component {
 			site,
 			title,
 			translate,
+			isVip,
 		} = this.props;
 
 		const shouldNotDisplay =
+			isVip ||
 			! canManageSite ||
 			( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) ||
 			( feature && planHasFeature ) ||
@@ -155,6 +158,7 @@ export default connect(
 			site: getSite( state, siteId ),
 			planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 			canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
+			isVip: isVipSite( state, siteId ),
 		};
 	},
 	{ recordTracksEvent }
