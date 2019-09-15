@@ -119,8 +119,7 @@ class Security2faKey extends React.Component {
 						<p>Use a second factor security key to sign in.</p>
 						{ ! isBrowserSupported && (
 							<p>
-								Looks like you browser doesn't support the FIDO2 standard yet. Read more about the
-								requirements for adding a key to your account.
+								{ this.props.translate( "Looks like you browser doesn't support the FIDO2 standard yet." ) }
 							</p>
 						) }
 					</Card>
