@@ -81,7 +81,7 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		disableEmailExplanation: PropTypes.bool,
+		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
