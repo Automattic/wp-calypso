@@ -4,23 +4,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import webauthn from 'lib/webauthn';
-import Spinner from 'components/spinner';
-
-const debug = debugFactory( 'calypso:me:security-2fa-key' );
 
 class Security2faKeyAddName extends React.Component {
 	static propTypes = {
@@ -43,9 +35,9 @@ class Security2faKeyAddName extends React.Component {
 	};
 
 	handleChange = e => {
-        const { name, value } = e.currentTarget;
-        this.setState( { keyName: value } );
-    };
+		const { value } = e.currentTarget;
+		this.setState( { keyName: value } );
+	};
 
 	render() {
 		return (
@@ -58,7 +50,7 @@ class Security2faKeyAddName extends React.Component {
 						className="security-2fa-key__key-name"
 						id="security-2fa-key__key_name"
 						name="security_key_name"
-						placeholder={ this.props.translate( 'ex: myFidokey' ) }
+						placeholder={ this.props.translate( 'ex: My FIDO Key' ) }
 						onChange={ this.handleChange }
 						value={ this.state.keyName }
 					/>
@@ -66,13 +58,13 @@ class Security2faKeyAddName extends React.Component {
 				<Button onClick={ this.props.onCancel }>{ this.props.translate( 'Cancel' ) }</Button>
 				<FormButton
 					className="security-2fa-key__register-key"
-					//onClick={ this.submitName }
+					disabled={ 0 === this.state.keyName.length }
 				>
-				{ this.props.translate( 'Register key' ) }
+					{ this.props.translate( 'Register key' ) }
 				</FormButton>
 			</form>
 		);
-	};
+	}
 }
 
 export default localize( Security2faKeyAddName );
