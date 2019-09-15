@@ -55,7 +55,7 @@ class Security2faKeyAdd extends React.Component {
 	};
 
 	keyRegistered = () => {
-		this.props.successNotice( this.props.translate( 'Security key has been successfully added.' ), {
+		this.props.successNotice( this.props.translate( 'Security key has been successfully registered.' ), {
 			showDismiss: true,
 			isPersistent: true,
 			duration: 5000,
