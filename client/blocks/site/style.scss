@@ -75,7 +75,7 @@
 		outline: none;
 		box-shadow: inset 0 0 0 2px var( --color-primary-light );
 
-		// Temporarily hides fade out effect on right  
+		// Temporarily hides fade out effect on right
 		// which is there for extra long domains and titles
 		// Else the focus box-shadow is only partially shown
 		.site__domain::after,
@@ -123,14 +123,15 @@
 .site__domain {
 	overflow: hidden;
 	white-space: nowrap;
+
 	&::after {
-		@include long-content-fade( $color: var( --sidebar-secondary-background-gradient ) );
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
 	}
 }
 
 .site__home {
-	background: var( --color-accent );
-	color: var( --color-white );
+	background: var( --color-sidebar-menu-selected-background );
+	color: var( --color-sidebar-menu-selected-text );
 	display: block;
 	width: 32px;
 	height: 32px;
@@ -152,10 +153,6 @@
 	.site.is-compact & {
 		width: 24px;
 		height: 24px;
-	}
-
-	&:hover {
-		color: var( --color-white );
 	}
 
 	@include breakpoint( '<660px' ) {

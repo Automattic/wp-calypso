@@ -148,7 +148,7 @@ class PluginUpload extends React.Component {
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
-				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
+				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
 				{ upgradeJetpack && (
 					<JetpackManageErrorPage
 						template="updateJetpack"

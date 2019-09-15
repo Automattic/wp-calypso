@@ -52,11 +52,15 @@ class InviteAcceptLoggedOut extends React.Component {
 		window.location = signInLink;
 	};
 
-	submitForm = ( form, userData ) => {
+	submitForm = ( form, userData, analyticsData, callback ) => {
+		if ( form.username.value === '' ) {
+			// If user hasn't entered anything, don't try to submit
+			callback();
+			return;
+		}
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
 		store.set( 'invite_accepted', this.props.invite );
-
 		const createAccountCallback = ( error, bearerToken ) => {
 			debug( 'Create account error: ' + JSON.stringify( error ) );
 			debug( 'Create account bearerToken: ' + bearerToken );
@@ -159,6 +163,7 @@ class InviteAcceptLoggedOut extends React.Component {
 					submitButtonText={ this.submitButtonText() }
 					footerLink={ this.renderFooterLink() }
 					email={ this.props.invite.sentTo }
+					suggestedUsername=""
 					disableEmailInput={ this.props.forceMatchingEmail }
 					disableEmailExplanation={ this.props.translate(
 						'This invite is only valid for %(email)s.',

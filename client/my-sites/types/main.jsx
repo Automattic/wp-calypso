@@ -26,7 +26,7 @@ import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 
 function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (
-		<Main>
+		<Main wideLayout>
 			<DocumentHead title={ get( postType, 'label' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />

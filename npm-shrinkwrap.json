@@ -69,6 +69,11 @@
 				"react": "^16.8.3"
 			}
 		},
+		"@automattic/color-studio": {
+			"version": "2.1.0",
+			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.1.0.tgz",
+			"integrity": "sha512-h1m7IRCz4UUQD8O568TKlCQDPyaEtNhzPs0TAP03dpOb/OIt/o8MBsa2gx9kwgcP/cpTLDEj0E5Z96YNBVDL4w=="
+		},
 		"@automattic/format-currency": {
 			"version": "file:packages/format-currency",
 			"requires": {
@@ -6136,12 +6141,6 @@
 				"simple-swizzle": "^0.2.2"
 			}
 		},
-		"color-studio": {
-			"version": "1.0.5",
-			"resolved": "https://registry.npmjs.org/color-studio/-/color-studio-1.0.5.tgz",
-			"integrity": "sha512-XW2pF7K4v0wd4G9oab7wxiaf07wW1chv5ZSEsKZ0aY8clS05/hnb1x5gNwytH949S0Tu9v9J6ttKaNebCt3gpg==",
-			"dev": true
-		},
 		"colors": {
 			"version": "0.6.2",
 			"resolved": "https://registry.npmjs.org/colors/-/colors-0.6.2.tgz",
@@ -7987,9 +7986,9 @@
 			"integrity": "sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0="
 		},
 		"ejs": {
-			"version": "2.6.2",
-			"resolved": "https://registry.npmjs.org/ejs/-/ejs-2.6.2.tgz",
-			"integrity": "sha512-PcW2a0tyTuPHz3tWyYqtK6r1fZ3gp+3Sop8Ph+ZYN81Ob5rwmbHEzaqs10N3BEsaGTkh/ooniXK+WwszGlc2+Q=="
+			"version": "2.7.1",
+			"resolved": "https://registry.npmjs.org/ejs/-/ejs-2.7.1.tgz",
+			"integrity": "sha512-kS/gEPzZs3Y1rRsbGX4UOSjtP/CeJP0CxSNZHYxGfVM/VgLcv0ZqM7C45YyTj2DI2g7+P9Dd24C+IMIg6D0nYQ=="
 		},
 		"electron-to-chromium": {
 			"version": "1.3.245",
@@ -22764,9 +22763,9 @@
 			}
 		},
 		"webpack-bundle-analyzer": {
-			"version": "3.4.1",
-			"resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.4.1.tgz",
-			"integrity": "sha512-Bs8D/1zF+17lhqj2OYmzi7HEVYqEVxu7lCO9Ff8BwajenOU0vAwEoV8e4ICCPNZAcqR1PCR/7o2SkW+cnCmF0A==",
+			"version": "3.5.0",
+			"resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.5.0.tgz",
+			"integrity": "sha512-NzueflueLSJxWGzDlMq5oUV+P8Qoq6yiaQlXGCbDYUpHEKlmzWdPLBJ4k/B6HTdAP/vHM8ply1Fx08mDnY+S8Q==",
 			"requires": {
 				"acorn": "^6.0.7",
 				"acorn-walk": "^6.1.1",

@@ -1,6 +1,8 @@
 # Calypso Color Schemes
 
-This package contains a number of CSS custom properties and Sass variables used in Calypso.
+This package contains a number of CSS custom properties used in Calypso.
+
+![Color scheme thumbnails](screenshot@2x.png)
 
 ## Installation
 
@@ -12,5 +14,3 @@ npm install @automattic/calypso-color-schemes
 
 Add this packages CSS from `dist/calypso-color-schemes.css` in order to access the CSS custom
 properties.
-
-Alternatively, you may import the sass to use the variables directly: `@import 'src/shared/_colors';`

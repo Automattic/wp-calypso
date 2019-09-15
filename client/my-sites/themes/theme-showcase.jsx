@@ -246,7 +246,7 @@ class ThemeShowcase extends React.Component {
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>
 							<Gridicon icon="cloud-upload" />
-							{ translate( 'Upload Theme' ) }
+							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
 					<ThemesSelection
