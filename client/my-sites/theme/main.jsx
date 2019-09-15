@@ -29,6 +29,7 @@ import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -601,6 +602,7 @@ class ThemeSheet extends React.Component {
 			retired,
 			isPremium,
 			isJetpack,
+			isVip,
 			translate,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
@@ -646,7 +648,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes;
+		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip;
 		if ( hasUpsellBanner ) {
 			pageUpsellBanner = (
 				<Banner
@@ -784,6 +786,7 @@ export default connect(
 			isLoggedIn: !! currentUserId,
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
+			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
