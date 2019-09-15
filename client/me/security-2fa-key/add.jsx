@@ -78,8 +78,12 @@ class Security2faKeyAdd extends React.Component {
 					<>
 						<div className="security-2fa-key__add-wait-for-key">
 							<Spinner />
-							<p className="security-2fa-key__add-wait-for-key__heading">{ this.props.translate( 'Waiting for security key' ) }</p>
-							<p>{ this.props.translate( 'Connect and touch your security key to register it.' ) }</p>
+							<p className="security-2fa-key__add-wait-for-key-heading">
+								{ this.props.translate( 'Waiting for security key' ) }
+							</p>
+							<p>
+								{ this.props.translate( 'Connect and touch your security key to register it.' ) }
+							</p>
 						</div>
 					</>
 				) }
