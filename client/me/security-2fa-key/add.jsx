@@ -55,11 +55,14 @@ class Security2faKeyAdd extends React.Component {
 	};
 
 	keyRegistered = () => {
-		this.props.successNotice( this.props.translate( 'Security key has been successfully registered.' ), {
-			showDismiss: true,
-			isPersistent: true,
-			duration: 5000,
-		} );
+		this.props.successNotice(
+			this.props.translate( 'Security key has been successfully registered.' ),
+			{
+				showDismiss: true,
+				isPersistent: true,
+				duration: 5000,
+			}
+		);
 		this.props.onRegister();
 	};
 
@@ -67,25 +70,19 @@ class Security2faKeyAdd extends React.Component {
 		return (
 			<Card>
 				{ ! this.state.securityKeyName && (
-					<>
-						<Security2faKeyAddName
-							onNameSubmit={ this.registerKey }
-							onCancel={ this.props.onCancel }
-						/>
-					</>
+					<Security2faKeyAddName
+						onNameSubmit={ this.registerKey }
+						onCancel={ this.props.onCancel }
+					/>
 				) }
 				{ this.state.securityKeyName && (
-					<>
-						<div className="security-2fa-key__add-wait-for-key">
-							<Spinner />
-							<p className="security-2fa-key__add-wait-for-key-heading">
-								{ this.props.translate( 'Waiting for security key' ) }
-							</p>
-							<p>
-								{ this.props.translate( 'Connect and touch your security key to register it.' ) }
-							</p>
-						</div>
-					</>
+					<div className="security-2fa-key__add-wait-for-key">
+						<Spinner />
+						<p className="security-2fa-key__add-wait-for-key-heading">
+							{ this.props.translate( 'Waiting for security key' ) }
+						</p>
+						<p>{ this.props.translate( 'Connect and touch your security key to register it.' ) }</p>
+					</div>
 				) }
 			</Card>
 		);
