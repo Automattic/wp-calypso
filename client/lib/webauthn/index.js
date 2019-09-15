@@ -90,7 +90,7 @@ function isSupported() {
 	return _backend.then( backend => !! backend.webauthn );
 }
 
-function register() {
+function register( keyName = null ) {
 	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
 		.then( options => {
 			const makeCredentialOptions = {};
@@ -148,7 +148,7 @@ function register() {
 				'/me/two-step/security-key/registration_validate',
 				{
 					data: JSON.stringify( publicKeyCredential ),
-					name: 'Key @' + new Date().toUTCString(),
+					name: keyName || 'Key @' + new Date().toUTCString(),
 				},
 				POST
 			);
