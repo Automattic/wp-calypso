@@ -65,7 +65,7 @@ export { default as PromoSection } from 'components/promo-section/docs/example';
 export { default as PromoCard } from 'components/promo-section/promo-card/docs/example';
 export { default as Ranges } from 'components/forms/range/docs/example';
 export { default as Rating } from 'components/rating/docs/example';
-export { default as Ribbon } from 'components/ribbon/docs/example';
+export { default as Ribbon } from '@automattic/calypso-ui/src/ribbon/docs/example';
 export {
 	default as ScreenReaderTextExample,
 } from '@automattic/calypso-ui/src/screen-reader-text/docs/example';
