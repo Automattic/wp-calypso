@@ -3,7 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
-import { map, unescape } from 'lodash';
+import { mapValues, unescape, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,9 +19,9 @@ const COMMON_PREFIXES = /(team|a8c|woo|happiness)/i;
 const stripCommonWords = str => str.replace( COMMON_PREFIXES, ' ' );
 
 const p2s = apiFetch( {
-	path: '/internal/P2s',
-} ).then( result =>
-	map( result.list, ( p2, subdomain ) => {
+	path: '/internal/P2s?current_blog=' + window._currentSiteId + '&get_most_used=true',
+} ).then( result => {
+	result.list = mapValues( result.list, ( p2, subdomain ) => {
 		const keywords = [ subdomain ];
 		const stripped = stripCommonWords( subdomain );
 		if ( subdomain !== stripped ) {
@@ -32,13 +32,26 @@ const p2s = apiFetch( {
 			subdomain,
 			keywords,
 		};
-	} )
-);
+	} );
+
+	const popular = result.most_used ? Object.keys( result.most_used ) : [];
+	return {
+		all: Object.values( result.list ),
+		popular: popular.length > 0 ? Object.values( pick( result.list, popular ) ) : false,
+	};
+} );
 
 const p2Completer = {
 	name: 'p2s',
 	triggerPrefix: '+',
-	options: p2s,
+	options: search => {
+		return p2s.then( lists => {
+			if ( lists.popular && search === '' ) {
+				return lists.popular;
+			}
+			return lists.all;
+		} );
+	},
 	getOptionKeywords: site => site.keywords,
 	getOptionLabel: site => (
 		<div className="p2-autocomplete">
