@@ -70,7 +70,7 @@ class SecurityKeyForm extends Component {
 					<FormButton primary>{ translate( 'Continue with security key' ) }</FormButton>
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ 'u2f' } />
+				<TwoFactorActions twoFactorAuthType={ 'webauthn' } />
 			</form>
 		);
 	}

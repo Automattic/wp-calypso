@@ -61,7 +61,7 @@ class TwoFactorActions extends Component {
 	};
 	recordSecurityKey = event => {
 		event.preventDefault();
-		page( login( { isNative: true, twoFactorAuthType: 'u2f' } ) );
+		page( login( { isNative: true, twoFactorAuthType: 'webauthn' } ) );
 	};
 
 	render() {
@@ -76,7 +76,7 @@ class TwoFactorActions extends Component {
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
 		const isAuthenticatorAvailable =
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
-		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'u2f';
+		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
 
 		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
 			return null;
@@ -110,7 +110,7 @@ export default connect(
 	state => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'u2f' ),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 	} ),
 	{
 		recordTracksEvent,

@@ -176,7 +176,7 @@ export const updateNonce = ( nonceType, twoStepNonce ) => ( {
 } );
 
 export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
-	const twoFactorAuthType = 'u2f';
+	const twoFactorAuthType = 'webauthn';
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 	const loginParams = {
 		user_id: getTwoFactorUserId( getState() ),
@@ -187,7 +187,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 	if ( process.env.NODE_ENV === 'development' ) {
 		loginParams.dev_hostname = 'calypso.localhost';
 	}
-	return postLoginRequest( 'u2f-challenge-endpoint', {
+	return postLoginRequest( 'webauthn-challenge-endpoint', {
 		...loginParams,
 		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 	} )
@@ -238,7 +238,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				publicKeyCredential.response.userHandle = binToStr( _response.userHandle );
 			}
 
-			return postLoginRequest( 'u2f-authentication-endpoint', {
+			return postLoginRequest( 'webauthn-authentication-endpoint', {
 				...loginParams,
 				client_data: JSON.stringify( publicKeyCredential ),
 			} );
