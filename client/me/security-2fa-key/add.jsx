@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Card from 'components/card';
-import { errorNotice, warningNotice } from 'state/notices/actions';
+import { errorNotice, warningNotice, successNotice } from 'state/notices/actions';
 import { registerSecurityKey } from 'lib/webauthn';
 import Spinner from 'components/spinner';
 import Security2faKeyAddName from './name';
@@ -55,6 +55,11 @@ class Security2faKeyAdd extends React.Component {
 	};
 
 	keyRegistered = () => {
+		this.props.successNotice( this.props.translate( 'Security key has been successfully added.' ), {
+			showDismiss: true,
+			isPersistent: true,
+			duration: 5000,
+		} );
 		this.props.onRegister();
 	};
 
@@ -92,5 +97,6 @@ export default connect(
 	{
 		errorNotice,
 		warningNotice,
+		successNotice,
 	}
 )( localize( Security2faKeyAdd ) );
