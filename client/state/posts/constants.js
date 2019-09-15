@@ -26,3 +26,6 @@ export const DEFAULT_NEW_POST_VALUES = {
 	format: 'default',
 	featured_image: '',
 };
+
+// All post statuses displayed in Calypso.
+export const POST_STATUSES = [ 'publish', 'draft', 'pending', 'private', 'future', 'trash' ];
