@@ -77,7 +77,7 @@ class SecurityKeyForm extends Component {
 					) }
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ 'u2f' } />
+				<TwoFactorActions twoFactorAuthType={ 'webauthn' } />
 			</form>
 		);
 	}
