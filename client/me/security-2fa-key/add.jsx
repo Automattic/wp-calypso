@@ -77,9 +77,6 @@ class Security2faKeyAdd extends React.Component {
 								) }
 							</p>
 						</div>
-						<div className="security-2fa-key__add-button-container">
-							<Button onClick={ this.props.onCancel }>Cancel</Button>
-						</div>
 					</>
 				) }
 			</Card>
