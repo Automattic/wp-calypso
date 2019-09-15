@@ -11,8 +11,7 @@ import debugFactory from 'debug';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import { errorNotice, warningNotice } from 'state/notices/actions';
 import webauthn from 'lib/webauthn';
 import Spinner from 'components/spinner';
 import Security2faKeyAddName from './name';
@@ -27,22 +26,30 @@ class Security2faKeyAdd extends React.Component {
 	};
 
 	state = {
-		error: false,
 		securityKeyName: ''
 	};
 
 	registerKey = securityKeyName => {
-		this.setState( { error: false, securityKeyName } );
+		this.setState( { securityKeyName } );
 		webauthn
 			.register( securityKeyName )
 			.then( data => {
 				debug( 'registered key with data', data );
 				this.keyRegistered();
 			} )
-			.catch( error => {
-				this.setState( { error } );
+			.catch( e => {
+				this.handleError( e );
 			} );
 	};
+
+	handleError = e => {
+		if ( 'Canceled' === e.error ) {
+			dispatch( warningNotice( e.message ) );
+		} else {
+			dispatch( errorNotice( e.message ) );
+		}
+		this.props.onCancel();
+	}
 
 	keyRegistered = () => {
 		this.props.onRegister();
@@ -59,7 +66,7 @@ class Security2faKeyAdd extends React.Component {
 						/>
 					</>
 				) }
-				{ ! this.state.error && this.state.securityKeyName && (
+				{ this.state.securityKeyName && (
 					<>
 						<div className="security-2fa-key__add-wait-for-key">
 							<Spinner />
@@ -74,18 +81,6 @@ class Security2faKeyAdd extends React.Component {
 							<Button onClick={ this.props.onCancel }>Cancel</Button>
 						</div>
 					</>
-				) }
-				{ this.state.error && (
-					<Notice
-						status={ this.state.error.error === 'Canceled' ? 'is-warning' : 'is-error' }
-						className="security-2fa-key__error-notice"
-						onDismissClick={ this.props.onCancel }
-						text={ this.state.error.message }
-					>
-						<NoticeAction onClick={ this.registerKey }>
-							{ this.props.translate( 'Retry' ) }
-						</NoticeAction>
-					</Notice>
 				) }
 			</Card>
 		);
