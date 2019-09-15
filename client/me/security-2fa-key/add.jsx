@@ -9,7 +9,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import { errorNotice, warningNotice } from 'state/notices/actions';
 import webauthn from 'lib/webauthn';
@@ -26,7 +25,7 @@ class Security2faKeyAdd extends React.Component {
 	};
 
 	state = {
-		securityKeyName: ''
+		securityKeyName: '',
 	};
 
 	registerKey = securityKeyName => {
@@ -52,12 +51,10 @@ class Security2faKeyAdd extends React.Component {
 				} )
 			);
 		} else {
-			dispatch(
-				errorNotice( e.message )
-			);
+			dispatch( errorNotice( e.message ) );
 		}
 		this.props.onCancel();
-	}
+	};
 
 	keyRegistered = () => {
 		this.props.onRegister();
