@@ -27,7 +27,7 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -159,6 +159,11 @@ export class PostTypeFilter extends Component {
 		const isSingleSite = !! siteId;
 
 		const navItems = this.getNavItems();
+		const sortOrder = [ 'filter-publish', 'filter-draft', 'filter-future', 'filter-trash' ];
+		navItems.sort( ( a, b ) =>
+			sortOrder.indexOf( a.key ) > sortOrder.indexOf( b.key ) ? 1 : -1
+		);
+
 		const selectedItem = find( navItems, 'selected' ) || {};
 
 		const scopes = {
@@ -197,6 +202,7 @@ export class PostTypeFilter extends Component {
 						<Search
 							pinned
 							fitsContainer
+							initialValue={ query.search }
 							onSearch={ this.props.doSearch }
 							placeholder={ this.props.translate( 'Search…' ) }
 							delaySearch={ true }

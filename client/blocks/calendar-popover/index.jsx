@@ -13,7 +13,6 @@ import { noop, pick } from 'lodash';
  * Internal dependencies
  */
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
@@ -57,13 +56,9 @@ class CalendarPopover extends Component {
 		onDayMouseLeave: noop,
 	};
 
-	state = { date: null };
-
-	componentWillMount() {
-		if ( this.props.selectedDay ) {
-			this.setState( { date: this.props.selectedDay } );
-		}
-	}
+	state = {
+		date: this.props.selectedDay || null,
+	};
 
 	setDate = date => {
 		this.setState( { date } );
@@ -71,21 +66,18 @@ class CalendarPopover extends Component {
 	};
 
 	renderScheduler() {
-		const schedulerProps = Object.assign(
-			{},
-			pick( this.props, [
-				'events',
-				'posts',
-				'site',
-				'disabledDays',
-				'showOutsideDays',
-				'modifiers',
-				'onDateChange',
-				'onMonthChange',
-				'onDayMouseEnter',
-				'onDayMouseLeave',
-			] )
-		);
+		const schedulerProps = pick( this.props, [
+			'events',
+			'posts',
+			'site',
+			'disabledDays',
+			'showOutsideDays',
+			'modifiers',
+			'onDateChange',
+			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
+		] );
 
 		return (
 			<PostSchedule
@@ -100,28 +92,23 @@ class CalendarPopover extends Component {
 	}
 
 	render() {
-		const popoverProps = Object.assign(
-			{},
-			pick( this.props, [
-				'autoPosition',
-				'closeOnEsc',
-				'context',
-				'ignoreContext',
-				'isVisible',
-				'position',
-				'rootClassName',
-				'showDelay',
-				'onClose',
-				'onShow',
-			] )
-		);
+		const popoverProps = pick( this.props, [
+			'autoPosition',
+			'closeOnEsc',
+			'context',
+			'ignoreContext',
+			'isVisible',
+			'position',
+			'rootClassName',
+			'showDelay',
+			'onClose',
+			'onShow',
+		] );
 
 		return (
-			<div className="calendar-popover">
-				<Popover { ...popoverProps } className="calendar-popover__popover">
-					{ this.renderScheduler() }
-				</Popover>
-			</div>
+			<Popover { ...popoverProps } className="calendar-popover__popover">
+				{ this.renderScheduler() }
+			</Popover>
 		);
 	}
 }

@@ -37,7 +37,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { getNewSitePublicSetting } from 'state/selectors/get-new-site-public-setting';
+import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -164,7 +164,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 		},
-		public: getNewSitePublicSetting( state, siteType ),
+		public: getNewSitePublicSetting( state ),
 		validate: false,
 	};
 
@@ -185,6 +185,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
+		// If `siteTitle` wasn't inferred by the site detection api, use
+		// the `siteUrl` until an import replaces it with an actual title.
+		newSiteParams.blog_title = siteTitle || siteUrl;
 		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
 		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
@@ -378,6 +381,7 @@ export function createAccount(
 				access_token,
 				id_token,
 				signup_flow_name: flowName,
+				...userData,
 			},
 			( error, response ) => {
 				const errors =
@@ -485,12 +489,11 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
 	const state = reduxStore.getState();
-	const siteType = getSiteType( state ).trim();
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( state, siteType ),
+		public: getNewSitePublicSetting( state ),
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};

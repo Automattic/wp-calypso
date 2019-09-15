@@ -1,6 +1,6 @@
 .reader-popover.popover .popover__inner {
 	background-color: var( --color-neutral-0 );
-	border-color: var( --color-neutral-100 );
+	border-color: var( --color-neutral-10 );
 }
 
 // Popover arrows
@@ -60,8 +60,8 @@
 }
 
 .reader-popover__header {
-	border-bottom: 1px solid var( --color-neutral-100 );
-	color: var( --color-neutral-700 );
+	border-bottom: 1px solid var( --color-neutral-10 );
+	color: var( --color-neutral-70 );
 	display: flex;
 	font-size: 14px;
 	justify-content: flex-start;

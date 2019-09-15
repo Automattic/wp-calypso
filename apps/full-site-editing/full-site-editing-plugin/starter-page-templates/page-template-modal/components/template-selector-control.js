@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, noop } from 'lodash';
+import { isEmpty, noop, map } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -17,19 +17,17 @@ import { memo } from '@wordpress/element';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 
-// Load config passed from backend.
-const { siteInformation = {} } = window.starterPageTemplatesConfig;
-
 const TemplateSelectorControl = ( {
 	label,
 	className,
 	help,
 	instanceId,
-	templates = [],
+	templates = {},
+	blocksByTemplates = {},
 	useDynamicPreview = false,
-	numBlocksInPreview,
 	onTemplateSelect = noop,
 	onTemplateFocus = noop,
+	siteInformation = {},
 } ) => {
 	if ( isEmpty( templates ) ) {
 		return null;
@@ -45,8 +43,8 @@ const TemplateSelectorControl = ( {
 			className={ classnames( className, 'template-selector-control' ) }
 		>
 			<ul className="template-selector-control__options">
-				{ templates.map( ( { slug, title, content, preview, previewAlt, value } ) => (
-					<li key={ `${ id }-${ value }` } className="template-selector-control__template">
+				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
+					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
@@ -56,9 +54,8 @@ const TemplateSelectorControl = ( {
 							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							rawContent={ content }
+							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
 							useDynamicPreview={ useDynamicPreview }
-							numBlocksInPreview={ numBlocksInPreview }
 						/>
 					</li>
 				) ) }

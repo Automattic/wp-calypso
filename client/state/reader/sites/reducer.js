@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +14,7 @@ import {
 	READER_SITE_UPDATE,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
 import { decodeEntities } from 'lib/formatting';
@@ -84,7 +83,7 @@ function handleSiteUpdate( state, action ) {
 	return assign( {}, state, keyBy( sites, 'ID' ) );
 }
 
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ SERIALIZE ]: handleSerialize,

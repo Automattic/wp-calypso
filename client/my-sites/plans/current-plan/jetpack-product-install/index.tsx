@@ -11,7 +11,7 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
-import Interval, { EVERY_SECOND, EVERY_FIVE_SECONDS } from 'lib/interval';
+import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'lib/interval';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
@@ -235,8 +235,15 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * or by a retry if we discover we have a recoverable error.
 	 */
 	requestInstallationStatus = (): void => {
-		const { siteId } = this.props;
+		const { requestedInstalls, siteId } = this.props;
+
+		// We require a siteId to get install status
 		if ( ! siteId ) {
+			return;
+		}
+
+		// Don't do anything if we haven't requested any installs
+		if ( ! requestedInstalls.length ) {
 			return;
 		}
 

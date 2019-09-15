@@ -6,7 +6,6 @@
 import React from 'react';
 import { get } from 'lodash';
 import page from 'page';
-import { isEnabled } from 'config';
 
 /**
  * Internal Dependencies
@@ -14,10 +13,8 @@ import { isEnabled } from 'config';
 
 import ChecklistMain from './main';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	canCurrentUserUseCustomerHome,
-	canCurrentUserUseChecklistMenu,
-} from 'state/sites/selectors';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 
 export function show( context, next ) {
 	const displayMode = get( context, 'query.d' );
@@ -29,12 +26,14 @@ export function maybeRedirect( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const slug = getSelectedSiteSlug( state );
-	if ( isEnabled( 'customer-home' ) && canCurrentUserUseCustomerHome( state, siteId ) ) {
-		page.redirect( `/home/${ slug }` );
+	const queryString = context.querystring ? `?${ context.querystring }` : '';
+
+	if ( canCurrentUserUseCustomerHome( state, siteId ) ) {
+		page.redirect( `/home/${ slug }${ queryString }` );
 		return;
 	}
 
-	if ( ! canCurrentUserUseChecklistMenu( state, siteId ) ) {
+	if ( ! isEligibleForDotcomChecklist( state, siteId ) ) {
 		page.redirect( `/plans/my-plan/${ slug }` );
 		return;
 	}

@@ -1,5 +1,4 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { includes, map, pick, zipObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -52,7 +51,7 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ INVITES_REQUEST_SUCCESS ]: ( state, action ) => {

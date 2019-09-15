@@ -4,7 +4,6 @@
  */
 
 const path = require( 'path' ),
-	build = require( 'build' ),
 	config = require( 'config' ),
 	chalk = require( 'chalk' ),
 	express = require( 'express' ),
@@ -31,12 +30,6 @@ function setup() {
 	app.use( userAgent.express() );
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		// use legacy CSS rebuild system if css-hot-reload is disabled
-		if ( ! config.isEnabled( 'css-hot-reload' ) ) {
-			// only do `build` upon every request in "development"
-			app.use( build() );
-		}
-
 		require( 'bundler' )( app );
 
 		// setup logger

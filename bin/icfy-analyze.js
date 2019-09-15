@@ -1,7 +1,7 @@
 /** @format */
 
 const { getViewerData, readStatsFromFile } = require( 'webpack-bundle-analyzer/lib/analyzer' );
-const { statSync, readFileSync, writeFileSync } = require( 'fs' );
+const { existsSync, statSync, readFileSync, writeFileSync } = require( 'fs' );
 const { createHash } = require( 'crypto' );
 const gzip = require( 'gzip-size' );
 
@@ -27,6 +27,9 @@ function hashFile( inputFile ) {
 }
 
 function analyzeStylesheet( inputCSSFile, outputJSONFile ) {
+	if ( ! existsSync( inputCSSFile ) ) {
+		return;
+	}
 	const parsedSize = statSync( inputCSSFile ).size;
 	const gzipSize = gzip.fileSync( inputCSSFile );
 	const hash = hashFile( inputCSSFile );

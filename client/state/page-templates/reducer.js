@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	PAGE_TEMPLATES_RECEIVE,
@@ -45,7 +42,7 @@ export const requesting = createReducer(
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ PAGE_TEMPLATES_RECEIVE ]: ( state, { siteId, templates } ) => {

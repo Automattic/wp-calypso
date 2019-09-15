@@ -55,7 +55,7 @@
 }
 
 .editor-ground-control__quick-save {
-	border-left: 1px solid var( --color-neutral-50 );
+	border-left: 1px solid var( --color-neutral-5 );
 	display: flex;
 
 	// Hide the ground-control save buttons on mobile
@@ -143,8 +143,8 @@
 .focus-sidebar .editor-ground-control__toggle-sidebar:hover,
 .focus-sidebar .editor-ground-control__toggle-sidebar:focus,
 .focus-sidebar .editor-ground-control__toggle-sidebar {
-	color: var( --color-white );
-	background: var( --color-neutral-700 );
+	color: var( --color-text-inverted );
+	background: var( --color-neutral-70 );
 }
 
 .focus-sidebar .editor-ground-control__toggle-sidebar svg {
@@ -193,7 +193,7 @@
 
 .editor-ground-control__save-status {
 	text-decoration: none;
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 }
 
 .editor-ground-control .edit-post-status {
@@ -212,7 +212,7 @@
 	padding: 8px 8px 8px 40px;
 	background: white;
 	color: var( --color-primary );
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	cursor: pointer;
 	fill: var( --color-primary );
 	position: absolute;
@@ -220,7 +220,7 @@
 	right: 16px;
 	top: 40px;
 	border-radius: 2px;
-	box-shadow: 0 1px 4px rgba( var( --color-neutral-700-rgb ), 0.2 );
+	box-shadow: 0 1px 4px rgba( var( --color-neutral-70-rgb ), 0.2 );
 	max-width: 264px;
 	box-sizing: border-box;
 	text-align: left;
@@ -234,8 +234,8 @@
 		top: -6px;
 		right: 48px;
 		transform: translate( -50% ) rotate( 45deg );
-		border-top: 1px solid var( --color-neutral-100 );
-		border-left: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
+		border-left: 1px solid var( --color-neutral-10 );
 	}
 
 	&:focus:not( :active ) {
@@ -262,7 +262,7 @@
 }
 
 .editor-ground-control__back.button.is-borderless {
-	border-right: 1px solid var( --color-neutral-50 );
+	border-right: 1px solid var( --color-neutral-5 );
 	padding: 6px 16px;
 	min-width: 80px;
 	height: 46px;

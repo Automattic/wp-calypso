@@ -43,7 +43,7 @@
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/remote-install": true,
-		"jetpack/connect/site-questions": true,
+		"jetpack/connect/site-questions": false,
 		"jetpack/connect/woocommerce": false,
 		"jetpack/happychat": true,
 		"jitms": true,
@@ -137,6 +137,7 @@
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
+		"woocommerce/onboarding-oauth": false,
 		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,

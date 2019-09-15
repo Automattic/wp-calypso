@@ -19,6 +19,7 @@ BadgeExample.displayName = 'Badge';
 BadgeExample.defaultProps = {
 	exampleCode: (
 		<div>
+			<Badge type="info">Info Badge</Badge>
 			<Badge type="success">Success Badge</Badge>
 			<Badge type="warning">Warning Badge</Badge>
 		</div>

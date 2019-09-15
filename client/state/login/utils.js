@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { get, omit } from 'lodash';
+import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -147,3 +148,20 @@ export const isRegularAccount = authAccountType => authAccountType === 'regular'
  * @return {Boolean} true if the account is passwordless, false otherwise
  */
 export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
+
+export async function postLoginRequest( action, bodyObj ) {
+	const response = await fetch(
+		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
+		{
+			method: 'POST',
+			credentials: 'include',
+			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: stringify( bodyObj ),
+		}
+	);
+
+	if ( response.ok ) {
+		return { body: await response.json() };
+	}
+	throw new HTTPError( response, await response.text() );
+}

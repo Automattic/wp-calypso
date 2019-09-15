@@ -5,7 +5,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import debugModule from 'debug';
-import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, get, includes, startsWith } from 'lodash';
@@ -23,6 +22,7 @@ import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
 import HelpButton from './help-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
@@ -116,12 +116,20 @@ export class JetpackAuthorize extends Component {
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
-		const { from, clientId } = this.props.authQuery;
+		const { from, clientId, closeWindowAfterLogin } = this.props.authQuery;
 		const tracksProperties = {
 			from,
 			is_mobile_app_flow: isMobileAppFlow,
 			site: clientId,
 		};
+
+		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the login step within a popup window.
+			// In these cases, we'll want to automatically close the window when the login
+			// step is complete, and continue authorization in the parent window.
+			debug( 'Closing window after login' );
+			window.close();
+		}
 
 		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
 		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );

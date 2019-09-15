@@ -19,7 +19,7 @@ import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import buildUrl from 'lib/build-url';
+import { buildRelativeSearchUrl } from 'lib/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
@@ -132,7 +132,7 @@ class ThemeShowcase extends React.Component {
 		filterSection = filterSection.replace( /\s/g, '+' );
 
 		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
-		return buildUrl( url, searchString );
+		return buildRelativeSearchUrl( url, searchString );
 	};
 
 	onTierSelect = ( { value: tier } ) => {
@@ -246,7 +246,7 @@ class ThemeShowcase extends React.Component {
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>
 							<Gridicon icon="cloud-upload" />
-							{ translate( 'Upload Theme' ) }
+							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
 					<ThemesSelection

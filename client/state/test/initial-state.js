@@ -383,12 +383,12 @@ describe( 'initial-state', () => {
 							siteType: 'blog',
 							siteTitle: 'Logged out test title',
 						},
-						progress: [
-							{
+						progress: {
+							'logged-out-step': {
 								stepName: 'logged-out-step',
 								status: 'completed',
 							},
-						],
+						},
 						_timestamp,
 					},
 				};
@@ -440,12 +440,12 @@ describe( 'initial-state', () => {
 							siteType: 'blog',
 							siteTitle: 'Logged in test title',
 						},
-						progress: [
-							{
+						progress: {
+							'logged-in-step': {
 								stepName: 'logged-in-step',
 								status: 'completed',
 							},
-						],
+						},
 						_timestamp,
 					},
 					'redux-state-logged-out:signup': {
@@ -453,12 +453,12 @@ describe( 'initial-state', () => {
 							siteType: 'blog',
 							siteTitle: 'Logged out test title',
 						},
-						progress: [
-							{
+						progress: {
+							'logged-out-step': {
 								stepName: 'logged-out-step',
 								status: 'completed',
 							},
-						],
+						},
 						_timestamp,
 					},
 				};

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -12,7 +10,7 @@ import {
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 
 /**
  * Tracks the current message the user has typed into the happychat client
@@ -32,6 +30,7 @@ export const currentMessage = ( state = '', action ) => {
 	return state;
 };
 
+const lostFocusAtSchema = { type: 'number' };
 /**
  * Tracks the last time Happychat had focus. This lets us determine things like
  * whether the user has unread messages. A numerical value is the timestamp where focus
@@ -40,7 +39,7 @@ export const currentMessage = ( state = '', action ) => {
  * @param {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const lostFocusAt = ( state = null, action ) => {
+export const lostFocusAt = withSchemaValidation( lostFocusAtSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
 			// If there's already a timestamp set, use that. Otherwise treat a SERIALIZE as a
@@ -55,8 +54,7 @@ export const lostFocusAt = ( state = null, action ) => {
 			return null;
 	}
 	return state;
-};
-lostFocusAt.schema = { type: 'number' };
+} );
 
 const isOpen = ( state = false, action ) => {
 	switch ( action.type ) {

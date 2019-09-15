@@ -1,9 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import {
+	combineReducers,
+	createReducerWithValidation,
+	createReducer,
+	keyedReducer,
+} from 'state/utils';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_FAILURE,
@@ -11,7 +14,7 @@ import {
 } from 'state/action-types';
 import { usersSchema } from './schema';
 
-export const usersReducer = createReducer(
+export const usersReducer = createReducerWithValidation(
 	null,
 	{
 		[ GSUITE_USERS_REQUEST ]: () => null,

@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import { siteRolesSchema } from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,
@@ -39,7 +36,7 @@ export const requesting = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ SITE_ROLES_RECEIVE ]: ( state, { siteId, roles } ) => ( { ...state, [ siteId ]: roles } ),

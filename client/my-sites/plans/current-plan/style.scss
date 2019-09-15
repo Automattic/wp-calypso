@@ -1,3 +1,13 @@
+.current-plan__dialog.dialog__backdrop {
+	background-color: rgba( var( --color-neutral-dark-rgb ), 0.85 );
+	box-shadow: none;
+	margin: 0;
+	
+	.dialog__backdrop__content {
+		background-color: var( --color-surface );
+	}
+}
+
 .current-plan__header {
 	display: flex;
 	flex-flow: row wrap;
@@ -7,8 +17,8 @@
 .current-plan__header-content {
 	width: 100%;
 	padding: 14px 32px;
-	background-color: var( --color-white );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	background-color: var( --color-surface );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 	
 	&-main {
@@ -29,6 +39,7 @@
 
 	@include breakpoint( '>480px' ) {
 		display: flex;
+    flex-shrink: 0;
 		width: 100px;
 		height: 100px;
 		margin: auto 40px auto 20px;
@@ -68,7 +79,7 @@
 
 	.current-plan__header-heading,
 	.current-plan__header-text {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 
 		display: block;
 

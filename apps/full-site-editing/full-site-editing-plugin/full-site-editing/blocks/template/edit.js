@@ -24,11 +24,11 @@ import { addQueryArgs } from '@wordpress/url';
 import './style.scss';
 
 const TemplateEdit = compose(
-	withState( { templateClientId: null, shouldCloseSidebarOnSelect: true } ),
+	withState( { templateClientId: null } ),
 	withSelect( ( select, { attributes, templateClientId } ) => {
 		const { getEntityRecord } = select( 'core' );
 		const { getCurrentPostId, isEditedPostDirty } = select( 'core/editor' );
-		const { getBlock } = select( 'core/block-editor' );
+		const { getBlock, getSelectedBlock } = select( 'core/block-editor' );
 		const { isEditorSidebarOpened } = select( 'core/edit-post' );
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
@@ -37,6 +37,7 @@ const TemplateEdit = compose(
 			post: templateId,
 			fse_parent_post: currentPostId,
 		} );
+		const selectedBlock = getSelectedBlock();
 
 		return {
 			currentPostId,
@@ -46,12 +47,12 @@ const TemplateEdit = compose(
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
 			isDirty: isEditedPostDirty(),
 			isEditorSidebarOpened: !! isEditorSidebarOpened(),
+			isAnyTemplateBlockSelected: selectedBlock && 'a8c/template' === selectedBlock.name,
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const { receiveBlocks } = dispatch( 'core/block-editor' );
-		const { closeGeneralSidebar } = dispatch( 'core/edit-post' );
-		const { clearSelectedBlock } = dispatch( 'core/editor' );
+		const { openGeneralSidebar } = dispatch( 'core/edit-post' );
 		const { template, templateClientId, setState } = ownProps;
 		return {
 			savePost: dispatch( 'core/editor' ).savePost,
@@ -61,16 +62,12 @@ const TemplateEdit = compose(
 				}
 
 				const templateBlocks = parse( get( template, [ 'content', 'raw' ], '' ) );
-				const templateBlock =
-					templateBlocks.length === 1
-						? templateBlocks[ 0 ]
-						: createBlock( 'core/template', {}, templateBlocks );
+				const templateBlock = createBlock( 'core/template', {}, templateBlocks );
 
 				receiveBlocks( [ templateBlock ] );
 				setState( { templateClientId: templateBlock.clientId } );
 			},
-			closeGeneralSidebar,
-			clearSelectedBlock,
+			openGeneralSidebar,
 		};
 	} )
 )(
@@ -83,12 +80,9 @@ const TemplateEdit = compose(
 		templateTitle,
 		isDirty,
 		savePost,
-		isSelected,
 		isEditorSidebarOpened,
-		closeGeneralSidebar,
-		clearSelectedBlock,
-		shouldCloseSidebarOnSelect,
-		setState,
+		openGeneralSidebar,
+		isAnyTemplateBlockSelected,
 	} ) => {
 		if ( ! template ) {
 			return (
@@ -111,55 +105,70 @@ const TemplateEdit = compose(
 		} );
 
 		useEffect( () => {
-			if ( isSelected ) {
-				if ( ! isEditorSidebarOpened ) {
-					setState( { shouldCloseSidebarOnSelect: false } );
-				} else if ( shouldCloseSidebarOnSelect ) {
-					closeGeneralSidebar();
-				} else {
-					clearSelectedBlock();
+			// Since the Block Sidebar (`edit-post/block`) is not available for the Template block,
+			// if the sidebar is open, we force toggle to the Document Sidebar, and hide the Block button.
+			const blockSidebarButton = document.querySelector(
+				'.edit-post-sidebar__panel-tabs ul li:last-child'
+			);
+			if ( isEditorSidebarOpened && blockSidebarButton ) {
+				if ( isAnyTemplateBlockSelected ) {
+					openGeneralSidebar( 'edit-post/document' );
+					blockSidebarButton.classList.add( 'hidden' );
+					return;
 				}
-			} else {
-				setState( { shouldCloseSidebarOnSelect: true } );
+				blockSidebarButton.classList.remove( 'hidden' );
 			}
-		} );
+		}, [ isAnyTemplateBlockSelected, isEditorSidebarOpened, openGeneralSidebar ] );
 
 		const { align, className } = attributes;
 
 		const save = event => {
+			setNavigateToTemplate( true );
 			if ( ! isDirty ) {
 				return;
 			}
 			event.preventDefault();
-			setNavigateToTemplate( true );
 			savePost();
 		};
 
 		return (
 			<div
-				className={ classNames( 'template-block', className, {
+				className={ classNames( 'template-block', {
 					[ `align${ align }` ]: align,
+					'is-navigating-to-template': navigateToTemplate,
 				} ) }
 			>
 				{ templateBlock && (
 					<Fragment>
 						<Disabled>
-							<BlockEdit
-								attributes={ templateBlock.attributes }
-								block={ templateBlock }
-								clientId={ templateBlock.clientId }
-								isSelected={ false }
-								name={ templateBlock.name }
-								setAttributes={ noop }
-							/>
+							<div className={ className }>
+								<BlockEdit
+									attributes={ templateBlock.attributes }
+									block={ templateBlock }
+									clientId={ templateBlock.clientId }
+									isSelected={ false }
+									name={ templateBlock.name }
+									setAttributes={ noop }
+								/>
+							</div>
 						</Disabled>
-						{ isSelected && (
-							<Placeholder className="template-block__overlay">
-								<Button href={ editTemplateUrl } onClick={ save } isDefault ref={ navButton }>
-									{ navigateToTemplate ? <Spinner /> : sprintf( __( 'Edit %s' ), templateTitle ) }
-								</Button>
-							</Placeholder>
-						) }
+						<Placeholder className="template-block__overlay">
+							{ navigateToTemplate && (
+								<div className="template-block__loading">
+									<Spinner /> { sprintf( __( 'Loading %s Editor' ), templateTitle ) }
+								</div>
+							) }
+							<Button
+								className={ navigateToTemplate ? 'hidden' : null }
+								href={ editTemplateUrl }
+								onClick={ save }
+								isDefault
+								isLarge
+								ref={ navButton }
+							>
+								{ sprintf( __( 'Edit %s' ), templateTitle ) }
+							</Button>
+						</Placeholder>
 					</Fragment>
 				) }
 			</div>

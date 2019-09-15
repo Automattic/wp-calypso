@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -42,7 +41,6 @@ export class UpgradeNudge extends React.Component {
 		compact: PropTypes.bool,
 		plan: PropTypes.string,
 		feature: PropTypes.string,
-		shouldDisplay: PropTypes.oneOfType( [ PropTypes.func, PropTypes.bool ] ),
 		site: PropTypes.object,
 		translate: PropTypes.func,
 	};
@@ -56,7 +54,6 @@ export class UpgradeNudge extends React.Component {
 		plan: null,
 		feature: null,
 		compact: false,
-		shouldDisplay: null,
 		site: null,
 		translate: identity,
 	};
@@ -91,14 +88,14 @@ export class UpgradeNudge extends React.Component {
 			title,
 			translate,
 		} = this.props;
-		
-		const shouldNotDisplay = 
-			  ! canManageSite || 
-			  ( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) ||
-			  ( feature && planHasFeature ) ||
-			  ( ! feature && ! isFreePlan( site.plan ) ) ||
-			  ( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-			  ( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) );
+
+		const shouldNotDisplay =
+			! canManageSite ||
+			( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) ||
+			( feature && planHasFeature ) ||
+			( ! feature && ! isFreePlan( site.plan ) ) ||
+			( feature === FEATURE_NO_ADS && site.options.wordads ) ||
+			( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) );
 
 		if ( shouldNotDisplay ) {
 			return null;

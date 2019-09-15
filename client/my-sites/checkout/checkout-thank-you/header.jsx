@@ -92,24 +92,28 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-					"It's doing somersaults in excitement!",
-				{
-					args: { productName: primaryPurchase.productName },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
+						"It's doing somersaults in excitement!",
+					{
+						args: { productName: primaryPurchase.productName },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
 		if ( isDomainRegistration( primaryPurchase ) ) {
-			return translate(
-				'Your new domain {{strong}}%(domainName)s{{/strong}} is ' +
-					'being set up. Your site is doing somersaults in excitement!',
-				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your new domain {{strong}}%(domainName)s{{/strong}} is ' +
+						'being set up. Your site is doing somersaults in excitement!',
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
@@ -139,13 +143,15 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isGoogleApps( primaryPurchase ) ) {
-			return translate(
-				'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
-					"It's doing somersaults in excitement!",
-				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
+						"It's doing somersaults in excitement!",
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
@@ -171,13 +177,15 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isSiteRedirect( primaryPurchase ) ) {
-			return translate(
-				'Your site is now redirecting to {{strong}}%(domainName)s{{/strong}}. ' +
-					"It's doing somersaults in excitement!",
-				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
-				}
+			return preventWidows(
+				translate(
+					'Your site is now redirecting to {{strong}}%(domainName)s{{/strong}}. ' +
+						"It's doing somersaults in excitement!",
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				)
 			);
 		}
 
@@ -208,8 +216,8 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isChargeback( primaryPurchase ) ) {
-			return translate(
-				'Your chargeback fee is paid. Your site is doing somersaults in excitement!'
+			return preventWidows(
+				translate( 'Your chargeback fee is paid. Your site is doing somersaults in excitement!' )
 			);
 		}
 
@@ -274,7 +282,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate( 'View my plan' );
+			return translate( 'View my new features' );
 		}
 
 		if (

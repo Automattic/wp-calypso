@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Spinner from 'components/spinner';
-import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
+import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import classNames from 'classnames';
 
 /**
@@ -26,6 +25,7 @@ import SplitButton from 'components/split-button';
 import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
 import { requestRewindState } from 'state/rewind/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -37,12 +37,12 @@ export class ThreatAlert extends Component {
 
 	handleFix = () => {
 		this.setState( { requesting: true } );
-		this.props.fixThreatAlert( this.props.siteId, this.props.threat.id );
+		this.props.fixThreat( this.props.siteId, this.props.threat.id );
 	};
 
 	handleIgnore = () => {
 		this.setState( { requesting: true } );
-		this.props.ignoreThreatAlert( this.props.siteId, this.props.threat.id );
+		this.props.ignoreThreat( this.props.siteId, this.props.threat.id );
 	};
 
 	refreshRewindState = () => this.props.requestRewindState( this.props.siteId );
@@ -396,8 +396,16 @@ const mapStateToProps = state => ( {
 export default connect(
 	mapStateToProps,
 	{
-		fixThreatAlert,
-		ignoreThreatAlert,
+		fixThreat: ( siteId, threatId ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_threat_fix', { threat_id: threatId } ),
+				fixThreatAlert( siteId, threatId )
+			),
+		ignoreThreat: ( siteId, threatId ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
+				ignoreThreatAlert( siteId, threatId )
+			),
 		requestRewindState,
 	}
 )( localize( ThreatAlert ) );

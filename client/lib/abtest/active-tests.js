@@ -98,7 +98,7 @@ export default {
 		defaultVariation: 'siteType',
 	},
 	skippableDomainStep: {
-		datestamp: '20190717',
+		datestamp: '20290717',
 		variations: {
 			skippable: 0,
 			notSkippable: 100,
@@ -106,11 +106,20 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellNudge: {
-		datestamp: '20190712',
+	showPlanUpsellGSuite: {
+		datestamp: '20190805',
 		variations: {
-			variantShowNudge: 0,
-			control: 100,
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20190805',
+		variations: {
+			variantShowPlanBump: 100,
+			control: 0,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -124,34 +133,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	checkoutSealsCopyBundle: {
-		datestamp: '20190613',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		//localeTargets: 'any',
-	},
-	showImportFlowInSiteTypeStep: {
-		datestamp: '20991231',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
-	moveUserStepPosition: {
-		datestamp: '20190719',
-		variations: {
-			first: 50,
-			last: 50,
-		},
-		defaultVariation: 'first',
-		allowExistingUsers: true,
-	},
 	removeBlogFlow: {
 		datestamp: '20190813',
 		variations: {
@@ -161,13 +142,30 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	removeWebsiteFlow: {
-		datestamp: '20190813',
+	customerHomePage: {
+		datestamp: '20190903',
 		variations: {
-			remove: 50,
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		assignmentMethod: 'userId',
+	},
+	signupEscapeHatch: {
+		datestamp: '20190826',
+		variations: {
+			variant: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	placesApiInCheckout: {
+		datestamp: '20190923',
+		variations: {
+			original: 50,
+			placesApi: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

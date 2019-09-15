@@ -36,7 +36,7 @@ import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Buttons from 'components/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
-import Cards from 'components/card/docs/example';
+import Cards from '@automattic/calypso-ui/src/card/docs/example';
 import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';

@@ -28,6 +28,7 @@ import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
 
@@ -82,10 +83,17 @@ class MasterbarLoggedIn extends React.Component {
 	};
 
 	renderMySites() {
-		const { domainOnlySite, hasMoreThanOneSite, siteSlug, translate } = this.props,
-			mySitesUrl = domainOnlySite
-				? domainManagementList( siteSlug )
-				: getStatsPathForTab( 'day', siteSlug );
+		const {
+				domainOnlySite,
+				hasMoreThanOneSite,
+				siteSlug,
+				translate,
+				isCustomerHomeEnabled,
+			} = this.props,
+			homeUrl = isCustomerHomeEnabled
+				? `/home/${ siteSlug }`
+				: getStatsPathForTab( 'day', siteSlug ),
+			mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
 
 		return (
 			<Item
@@ -176,6 +184,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
 
 		return {
+			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: getSiteSlug( state, siteId ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),

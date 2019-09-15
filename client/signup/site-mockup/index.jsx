@@ -4,10 +4,10 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, find, isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -23,7 +23,7 @@ import {
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getSiteStyleOptions, getThemeCssUri } from 'lib/signup/site-styles';
+import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
@@ -200,8 +200,7 @@ export default connect(
 	( state, ownProps ) => {
 		const siteStyle = getSiteStyle( state );
 		const siteType = getSiteType( state );
-		const styleOptions = getSiteStyleOptions( siteType );
-		const style = find( styleOptions, { id: siteStyle || 'modern' } );
+		const themeSlug = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
 		const verticalPreviewContent = getSiteVerticalPreview( state );
 		const shouldFetchVerticalData = ! verticalPreviewContent;
@@ -216,8 +215,8 @@ export default connect(
 			shouldShowHelpTip:
 				'site-topic-with-preview' === ownProps.stepName ||
 				'site-title-with-preview' === ownProps.stepName,
-			themeSlug: style.theme,
-			fontUrl: style.fontUrl,
+			themeSlug: themeSlug,
+			fontUrl: defaultFontUri,
 			shouldFetchVerticalData,
 		};
 	},

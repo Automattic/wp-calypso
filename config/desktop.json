@@ -38,7 +38,7 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,
-		"jetpack/connect/site-questions": true,
+		"jetpack/connect/site-questions": false,
 		"jitms": false,
 		"login/magic-login": false,
 		"login/native-login-links": false,

@@ -1,4 +1,4 @@
-.gmb-stats__metrics {
+.stats__metrics {
 
 	.pie-chart__chart-drawing,
 	.pie-chart__placeholder-drawing {
@@ -6,7 +6,7 @@
 	}
 }
 
-.gmb-stats__metric {
+.stats__metric {
 	display: inline-block;
 	margin-top: 1px; // Fixes shadow truncated at the top of the second column
 	width: 100%;

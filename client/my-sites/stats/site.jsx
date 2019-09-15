@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,6 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
@@ -29,7 +26,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
-import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -129,37 +125,23 @@ class StatsSite extends Component {
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let videoList;
 		let fileDownloadList;
 
 		const query = memoizedQuery( period, endOf );
 
-		// Video plays and file downloads are not yet supported in Jetpack Stats
+		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
-			videoList = (
+			fileDownloadList = (
 				<StatsModule
-					path="videoplays"
-					moduleStrings={ moduleStrings.videoplays }
+					path="filedownloads"
+					moduleStrings={ moduleStrings.filedownloads }
 					period={ this.props.period }
 					query={ query }
-					statType="statsVideoPlays"
+					statType="statsFileDownloads"
 					showSummaryLink
+					useShortLabel={ true }
 				/>
 			);
-
-			if ( config.isEnabled( 'manage/stats/file-downloads' ) ) {
-				fileDownloadList = (
-					<StatsModule
-						path="filedownloads"
-						moduleStrings={ moduleStrings.filedownloads }
-						period={ this.props.period }
-						query={ query }
-						statType="statsFileDownloads"
-						showSummaryLink
-						useShortLabel={ true }
-					/>
-				);
-			}
 		}
 
 		return (
@@ -226,7 +208,7 @@ class StatsSite extends Component {
 								statType="statsSearchTerms"
 								showSummaryLink
 							/>
-							{ videoList }
+							{ fileDownloadList }
 						</div>
 						<div className="stats__module-column">
 							<Countries
@@ -262,7 +244,14 @@ class StatsSite extends Component {
 								className="stats__author-views"
 								showSummaryLink
 							/>
-							{ fileDownloadList }
+							<StatsModule
+								path="videoplays"
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								statType="statsVideoPlays"
+								showSummaryLink
+							/>
 						</div>
 					</div>
 				</div>

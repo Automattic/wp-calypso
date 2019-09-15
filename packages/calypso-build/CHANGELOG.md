@@ -1,6 +1,18 @@
-# [Unreleased]
+# _unreleased_
 
-- Update `@automattic/wordpress-external-dependencies-plugin` references in `README.md` to `@wordpress/dependency-extraction-webpack-plugin`.
+- Add config options to file-loader
+- Add `enzyme-to-json` serializer to `jest-preset.js`.
+- Make Jest ignore transpiled files in `dist/`.
+
+# 4.0.1
+
+- Replace esm import/export with `require`.
+
+# 4.0.0
+
+- Move `jest.config.js` to `jest-preset.js` so it can be used as a jest preset.
+- Add jest babel transform to load calypso-build babel configuration.
+- Reorganize jest transforms under `@automattic/calypso-build/jest/transform/`.
 - Added transform-runtime versioning to babel/default.js
   This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
 
