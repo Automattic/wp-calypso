@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { stringify } from 'qs';
 
 /**
@@ -323,6 +321,9 @@ export class LoginForm extends Component {
 						</label>
 
 						<TextControl
+							autoCapitalize="off"
+							autoCorrect="off"
+							spellCheck="false"
 							label={ this.props.translate( 'Email Address or Username' ) }
 							disabled={ isFormDisabled || this.isPasswordView() }
 							id="usernameOrEmail"
@@ -487,6 +488,8 @@ export class LoginForm extends Component {
 
 						<FormTextInput
 							autoCapitalize="off"
+							autoCorrect="off"
+							spellCheck="false"
 							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
