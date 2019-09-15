@@ -44,9 +44,17 @@ class Security2faKeyAdd extends React.Component {
 
 	handleError = e => {
 		if ( 'Canceled' === e.error ) {
-			dispatch( warningNotice( e.message ) );
+			dispatch(
+				warningNotice( e.message, {
+					showDismiss: true,
+					isPersistent: true,
+					duration: 5000,
+				} )
+			);
 		} else {
-			dispatch( errorNotice( e.message ) );
+			dispatch(
+				errorNotice( e.message )
+			);
 		}
 		this.props.onCancel();
 	}
