@@ -69,7 +69,7 @@ class PostsMain extends React.Component {
 		};
 
 		return (
-			<Main className="posts">
+			<Main wideLayout className="posts">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<SidebarNavigation />
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
