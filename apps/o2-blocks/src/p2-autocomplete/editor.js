@@ -16,9 +16,7 @@ import './editor.scss';
  * Adding spaces around the word solves the problem.
  */
 const COMMON_PREFIXES = /(team|a8c|woo|happiness)/i;
-const stripCommonWords = str => {
-	return str.replace( COMMON_PREFIXES, ' ' );
-};
+const stripCommonWords = str => str.replace( COMMON_PREFIXES, ' ' );
 
 const p2s = apiFetch( {
 	path: '/internal/P2s',
