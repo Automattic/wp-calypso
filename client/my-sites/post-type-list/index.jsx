@@ -47,6 +47,7 @@ class PostTypeList extends Component {
 	static propTypes = {
 		// Props
 		query: PropTypes.object,
+		showPublishedStatus: PropTypes.bool,
 		scrollContainer: PropTypes.object,
 
 		// Connected props
@@ -232,13 +233,14 @@ class PostTypeList extends Component {
 
 	renderPost( post ) {
 		const globalId = post.global_ID;
-		const { query } = this.props;
+		const { query, showPublishedStatus } = this.props;
 
 		return (
 			<PostItem
 				key={ globalId }
 				globalId={ globalId }
 				singleUserQuery={ query && !! query.author }
+				showPublishedStatus={ showPublishedStatus }
 			/>
 		);
 	}

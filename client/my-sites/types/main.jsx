@@ -24,7 +24,15 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 
-function Types( { siteId, query, postType, postTypeSupported, userCanEdit, statusSlug } ) {
+function Types( {
+	siteId,
+	query,
+	postType,
+	postTypeSupported,
+	userCanEdit,
+	statusSlug,
+	showPublishedStatus,
+} ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
@@ -40,6 +48,7 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit, statu
 					<PostTypeList
 						key="list"
 						query={ userCanEdit ? query : null }
+						showPublishedStatus={ showPublishedStatus }
 						scrollContainer={ document.body }
 					/>,
 				] }
@@ -56,6 +65,7 @@ Types.propTypes = {
 	postTypeSupported: PropTypes.bool,
 	userCanEdit: PropTypes.bool,
 	statusSlug: PropTypes.string,
+	showPublishedStatus: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {

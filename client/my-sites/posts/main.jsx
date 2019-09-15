@@ -72,6 +72,9 @@ class PostsMain extends React.Component {
 			tag,
 			type: 'post',
 		};
+		// Since searches are across all statuses, the status needs to be shown
+		// next to each post.
+		const showPublishedStatus = Boolean( query.search );
 
 		return (
 			<Main className="posts">
@@ -79,7 +82,11 @@ class PostsMain extends React.Component {
 				<SidebarNavigation />
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				{ siteId && <PostTypeBulkEditBar /> }
-				<PostTypeList query={ query } scrollContainer={ document.body } />
+				<PostTypeList
+					query={ query }
+					showPublishedStatus={ showPublishedStatus }
+					scrollContainer={ document.body }
+				/>
 			</Main>
 		);
 	}
