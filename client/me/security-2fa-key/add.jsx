@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -43,15 +44,13 @@ class Security2faKeyAdd extends React.Component {
 
 	handleError = e => {
 		if ( 'Canceled' === e.error ) {
-			dispatch(
-				warningNotice( e.message, {
-					showDismiss: true,
-					isPersistent: true,
-					duration: 5000,
-				} )
-			);
+			this.props.warningNotice( e.message, {
+				showDismiss: true,
+				isPersistent: true,
+				duration: 5000,
+			} );
 		} else {
-			dispatch( errorNotice( e.message ) );
+			this.props.errorNotice( e.message );
 		}
 		this.props.onCancel();
 	};
@@ -89,4 +88,10 @@ class Security2faKeyAdd extends React.Component {
 	}
 }
 
-export default localize( Security2faKeyAdd );
+export default connect(
+	null,
+	{
+		errorNotice,
+		warningNotice,
+	}
+)( localize( Security2faKeyAdd ) );
