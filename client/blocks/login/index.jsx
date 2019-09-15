@@ -19,6 +19,7 @@ import {
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
+	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
@@ -71,6 +72,7 @@ class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
+		isSecurityKeySupported: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
@@ -95,15 +97,18 @@ class Login extends Component {
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
+			let defaultAuthType;
+			if ( this.props.isSecurityKeySupported && this.props.twoFactorNotificationSent !== 'push' ) {
+				defaultAuthType = 'u2f';
+			} else {
+				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
+			}
 			page(
 				login( {
 					isNative: true,
 					isJetpack: this.props.isJetpack,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
-						'none',
-						'authenticator'
-					),
+					twoFactorAuthType: defaultAuthType,
 				} )
 			);
 		} else if ( this.props.isLinking ) {
@@ -349,10 +354,7 @@ class Login extends Component {
 			disableAutoFocus,
 		} = this.props;
 
-		if (
-			twoFactorEnabled &&
-			( typeof twoFactorAuthType === 'undefined' || twoFactorAuthType === 'u2f' )
-		) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'u2f' ) {
 			return (
 				<div>
 					<SecurityKeyForm twoFactorAuthType={ 'u2f' } onSuccess={ this.handleValid2FACode } />
@@ -434,6 +436,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'u2f' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:

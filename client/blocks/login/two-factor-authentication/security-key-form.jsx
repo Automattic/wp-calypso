@@ -33,39 +33,30 @@ class SecurityKeyForm extends Component {
 	};
 
 	state = {
-		isDisabled: true,
+		showError: false,
 	};
 
 	componentDidMount() {
 		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { isDisabled: false }, () => {} );
+		this.initiateSecurityKeyAuthentication();
 	}
 
-	onSubmitForm = event => {
-		event.preventDefault();
-
+	initiateSecurityKeyAuthentication = () => {
 		const { onSuccess } = this.props;
 
 		this.props
 			.loginUserWithSecurityKey()
 			.then( () => onSuccess() )
-			.catch( error => {
-				this.setState( { isDisabled: false } );
-
-				this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
+			.catch( () => {
+				this.setState( { showError: true } );
 			} );
 	};
 
 	render() {
 		const { translate } = this.props;
 
-		let smallPrint;
-
 		return (
-			<form onSubmit={ this.onSubmitForm }>
+			<form onSubmit={ event => event.preventDefault() }>
 				<Card compact className="two-factor-authentication__verification-code-form">
 					<p>
 						{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
@@ -79,12 +70,11 @@ class SecurityKeyForm extends Component {
 							'Insert your security key into your USB port. Then tap the button or gold disc.'
 						) }
 					</p>
-
-					<FormButton primary disabled={ this.state.isDisabled }>
-						{ translate( 'Continue' ) }
-					</FormButton>
-
-					{ smallPrint }
+					{ this.state.showError && (
+						<FormButton primary onClick={ this.initiateSecurityKeyAuthentication }>
+							{ translate( 'Retry' ) }
+						</FormButton>
+					) }
 				</Card>
 
 				<TwoFactorActions twoFactorAuthType={ 'u2f' } />
