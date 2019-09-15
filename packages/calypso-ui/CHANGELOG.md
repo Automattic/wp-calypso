@@ -1,6 +1,7 @@
 # 1.1.0
 
 - Add Card
+- Add Ribbon
 
 # 1.0.0
 
