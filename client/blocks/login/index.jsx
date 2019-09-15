@@ -99,7 +99,7 @@ class Login extends Component {
 		if ( this.props.twoFactorEnabled ) {
 			let defaultAuthType;
 			if ( this.props.isSecurityKeySupported && this.props.twoFactorNotificationSent !== 'push' ) {
-				defaultAuthType = 'u2f';
+				defaultAuthType = 'webauthn';
 			} else {
 				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
 			}
@@ -352,10 +352,10 @@ class Login extends Component {
 			disableAutoFocus,
 		} = this.props;
 
-		if ( twoFactorEnabled && twoFactorAuthType === 'u2f' ) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' ) {
 			return (
 				<div>
-					<SecurityKeyForm twoFactorAuthType={ 'u2f' } onSuccess={ this.handleValid2FACode } />
+					<SecurityKeyForm twoFactorAuthType={ 'webauthn' } onSuccess={ this.handleValid2FACode } />
 				</div>
 			);
 		}
@@ -433,7 +433,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
-		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'u2f' ),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
