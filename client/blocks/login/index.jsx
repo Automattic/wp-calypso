@@ -97,17 +97,14 @@ class Login extends Component {
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
-			let defaultAuthType;
-			if ( this.props.isSecurityKeySupported && this.props.twoFactorNotificationSent !== 'push' ) {
-				defaultAuthType = 'u2f';
-			} else {
-				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
-			}
 			page(
 				login( {
 					isNative: true,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: defaultAuthType,
+					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
+						'none',
+						'authenticator'
+					),
 				} )
 			);
 		} else if ( this.props.isLinking ) {
