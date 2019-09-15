@@ -19,15 +19,15 @@
 		top: 0;
 		height: 100%;
 		z-index: -2;
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 	}
 
 	&::after {
 		bottom: 0;
 		height: 16px;
 		z-index: -1;
-		background: var( --color-neutral-100 );
-		background: linear-gradient( var( --color-neutral-100 ), var( --color-surface-backdrop ) );
+		background: var( --color-neutral-10 );
+		background: linear-gradient( var( --color-neutral-10 ), var( --color-surface-backdrop ) );
 	}
 }
 
@@ -46,7 +46,7 @@
 		height: 23px;
 		width: 100px;
 		margin: 3px 0;
-		background-color: var( --color-neutral-100 );
+		background-color: var( --color-neutral-10 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

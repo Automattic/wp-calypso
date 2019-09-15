@@ -13,8 +13,8 @@ import debugFactory from 'debug';
 import Card from 'components/card';
 import { errorNotice, warningNotice, successNotice } from 'state/notices/actions';
 import { registerSecurityKey } from 'lib/webauthn';
-import Spinner from 'components/spinner';
 import Security2faKeyAddName from './name';
+import WaitForKey from './wait-for-key';
 
 const debug = debugFactory( 'calypso:me:security-2fa-key' );
 
@@ -55,11 +55,14 @@ class Security2faKeyAdd extends React.Component {
 	};
 
 	keyRegistered = () => {
-		this.props.successNotice( this.props.translate( 'Security key has been successfully registered.' ), {
-			showDismiss: true,
-			isPersistent: true,
-			duration: 5000,
-		} );
+		this.props.successNotice(
+			this.props.translate( 'Security key has been successfully registered.' ),
+			{
+				showDismiss: true,
+				isPersistent: true,
+				duration: 5000,
+			}
+		);
 		this.props.onRegister();
 	};
 
@@ -67,22 +70,12 @@ class Security2faKeyAdd extends React.Component {
 		return (
 			<Card>
 				{ ! this.state.securityKeyName && (
-					<>
-						<Security2faKeyAddName
-							onNameSubmit={ this.registerKey }
-							onCancel={ this.props.onCancel }
-						/>
-					</>
+					<Security2faKeyAddName
+						onNameSubmit={ this.registerKey }
+						onCancel={ this.props.onCancel }
+					/>
 				) }
-				{ this.state.securityKeyName && (
-					<>
-						<div className="security-2fa-key__add-wait-for-key">
-							<Spinner />
-							<p className="security-2fa-key__add-wait-for-key__heading">{ this.props.translate( 'Waiting for security key' ) }</p>
-							<p>{ this.props.translate( 'Connect and touch your security key to register it.' ) }</p>
-						</div>
-					</>
-				) }
+				{ this.state.securityKeyName && <WaitForKey /> }
 			</Card>
 		);
 	}

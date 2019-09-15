@@ -1,5 +1,5 @@
 .masterbar__oauth-client {
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 
 	nav {
 		display: flex;
@@ -90,7 +90,6 @@
 .crowdsignal {
 	// Crowdsignal color palette
 	--color-accent: #fb5457;
-	--color-button-primary-background-hover: #fb5457;
 	--color-crowdsignal: #384869;
 	--color-link: #384869;
 	--color-text: #384869;
@@ -161,8 +160,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --color-white );
-				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+				background-color: var( --color-surface );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				padding: 35px 55px 20px;
 				width: 550px;
@@ -274,8 +273,8 @@
 			margin: 0;
 
 			&:disabled {
-				background-color: var( --color-neutral-50 );
-				color: var( --color-white );
+				background-color: var( --color-neutral-5 );
+				color: var( --color-text-inverted );
 			}
 		}
 
@@ -297,8 +296,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --color-white );
-				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+				background-color: var( --color-surface );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				max-width: 550px;
 				padding: 40px 55px 30px;
@@ -544,7 +543,7 @@
 		@include breakpoint( '>660px' ) {
 			flex-direction: row;
 
-			button:not(:first-of-type) {
+			button:not( :first-of-type ) {
 				margin-top: 0;
 			}
 		}

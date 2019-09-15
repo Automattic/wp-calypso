@@ -70,7 +70,7 @@
 	align-items: center;
 
 	&:not( :last-child ) {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 	}
 }
 
@@ -78,14 +78,14 @@
 	&.is-placeholder {
 		@include placeholder();
 		pointer-events: none;
-		background: var( --color-white );
+		background: var( --color-surface );
 
 		.gridicon,
 		p,
 		a,
 		button {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-50 );
+			background-color: var( --color-neutral-5 );
 			color: transparent;
 			cursor: default;
 		}
