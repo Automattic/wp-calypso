@@ -99,7 +99,7 @@ class Login extends Component {
 		if ( this.props.twoFactorEnabled ) {
 			let defaultAuthType;
 			if ( this.props.isSecurityKeySupported && this.props.twoFactorNotificationSent !== 'push' ) {
-				defaultAuthType = 'u2f';
+				defaultAuthType = 'webauthn';
 			} else {
 				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
 			}
