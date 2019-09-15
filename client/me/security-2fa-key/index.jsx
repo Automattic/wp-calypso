@@ -92,7 +92,7 @@ class Security2faKey extends React.Component {
 		const { translate } = this.props;
 		const { addingKey, isBrowserSupported, errorMessage, security2faKeys } = this.state;
 		return (
-			<div class="security-2fa-key">
+			<div className="security-2fa-key">
 				<SectionHeader label={ translate( 'Security Key' ) }>
 					{ ! addingKey && (
 						<Button
