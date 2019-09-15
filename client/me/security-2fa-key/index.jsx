@@ -94,7 +94,7 @@ class Security2faKey extends React.Component {
 		return (
 			<div className="security-2fa-key">
 				<SectionHeader label={ translate( 'Security Key' ) }>
-					{ ! addingKey && (
+					{ ! addingKey && isBrowserSupported && (
 						<Button
 							compact
 							onClick={ this.getClickHandler( 'Register New Key Button', this.addKeyStart ) }
@@ -116,12 +116,11 @@ class Security2faKey extends React.Component {
 				{ errorMessage && <Notice status="is-error" icon="notice" text={ errorMessage } /> }
 				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
-						<p>Use a second factor security key to sign in.</p>
+						{ isBrowserSupported &&(
+							<p>{ this.props.translate( 'Use a second factor security key to sign in.' ) }</p>	
+						) }
 						{ ! isBrowserSupported && (
-							<p>
-								Looks like you browser doesn't support the FIDO2 standard yet. Read more about the
-								requirements for adding a key to your account.
-							</p>
+							<p>{ this.props.translate( "Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browsers like Chrome or Firefox." ) }</p>
 						) }
 					</Card>
 				) }
