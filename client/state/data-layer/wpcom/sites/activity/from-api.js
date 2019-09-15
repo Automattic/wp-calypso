@@ -43,6 +43,13 @@ export function processItem( item ) {
 				activityMeta.errorCode = 'bad_credentials';
 			}
 			break;
+		case 'post__trashed':
+			activityMeta.postId = object.object_id;
+			break;
+		case 'comment__trashed':
+			activityMeta.commentId = object.object_id;
+			activityMeta.postId = item.target.post_id;
+			break;
 	}
 
 	return Object.assign(

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -43,6 +43,8 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { getSite } from 'state/sites/selectors';
 import { withDesktopBreakpoint } from 'lib/viewport/react';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { restorePost } from 'state/posts/actions';
+import { changeCommentStatus } from 'state/comments/actions';
 
 /**
  * Style dependencies
@@ -79,6 +81,7 @@ class ActivityLogItem extends Component {
 		},
 		disableRestoreButton: false,
 		disableDownloadButton: false,
+		canRestoreSingleItem: true,
 	};
 
 	confirmBackup = () =>
@@ -235,6 +238,53 @@ class ActivityLogItem extends Component {
 
 	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
 
+	restoreTrashedPost = () => {
+		const { postId } = this.props.activity.activityMeta;
+		this.setState( { canRestoreSingleItem: false } );
+		this.props.restorePost( postId );
+	};
+
+	restoreTrashedComment = () => {
+		const { postId, commentId } = this.props.activity.activityMeta;
+		this.setState( { canRestoreSingleItem: false } );
+		this.props.restoreComment( postId, commentId );
+	};
+
+	renderRestoreAlternatives() {
+		const { activity, canRestoreSingleItem, translate } = this.props;
+
+		switch ( activity.activityName ) {
+			case 'post__trashed':
+				return (
+					<Fragment>
+						<PopoverMenuItem
+							icon="history"
+							onClick={ this.restoreTrashedPost }
+							disabled={ ! this.state.canRestoreSingleItem }
+						>
+							{ translate( 'Restore post' ) }
+						</PopoverMenuItem>
+					</Fragment>
+				);
+				break;
+			case 'comment__trashed':
+				return (
+					<Fragment>
+						<PopoverMenuItem
+							icon="history"
+							onClick={ this.restoreTrashedComment }
+							disabled={ ! this.state.canRestoreSingleItem }
+						>
+							{ translate( 'Restore comment' ) }
+						</PopoverMenuItem>
+					</Fragment>
+				);
+				break;
+		}
+
+		return null;
+	}
+
 	renderRewindAction() {
 		const {
 			createBackup,
@@ -256,6 +306,8 @@ class ActivityLogItem extends Component {
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
 						{ translate( 'Rewind to this point' ) }
 					</PopoverMenuItem>
+
+					{ this.renderRestoreAlternatives() }
 
 					<PopoverMenuSeparator />
 
@@ -419,6 +471,20 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) => ( {
+	restoreComment: ( postId, commentId ) =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_comment' ),
+				changeCommentStatus( siteId, postId, commentId, 'approved' )
+			)
+		),
+	restorePost: postId =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_post' ),
+				restorePost( siteId, postId )
+			)
+		),
 	createBackup: () =>
 		dispatch(
 			withAnalytics(
