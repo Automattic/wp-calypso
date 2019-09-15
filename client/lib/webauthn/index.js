@@ -64,7 +64,7 @@ function wpcomApiRequest( path, _data, method ) {
 	} );
 }
 
-export function isSupported() {
+export function isWebauthnSupported() {
 	if ( ! _backend ) {
 		_backend = new Promise( function( resolve ) {
 			function notSupported() {
@@ -90,7 +90,7 @@ export function isSupported() {
 	return _backend.then( backend => !! backend.webauthn );
 }
 
-export function register( keyName = null ) {
+export function registerSecurityKey( keyName = null ) {
 	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
 		.then( options => {
 			const makeCredentialOptions = {};
