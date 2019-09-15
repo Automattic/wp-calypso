@@ -16,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import Security2faKeyAdd from './add';
 import Security2faKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import webauthn from 'lib/webauthn';
+import { isWebauthnSupported } from 'lib/webauthn';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 
@@ -33,7 +33,7 @@ class Security2faKey extends React.Component {
 
 	componentDidMount = () => {
 		this.getKeysFromServer();
-		webauthn.isSupported().then( this.setSupported );
+		isWebauthnSupported().then( this.setSupported );
 	};
 
 	getClickHandler = ( action, callback ) => {
