@@ -241,6 +241,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			return postLoginRequest( 'webauthn-authentication-endpoint', {
 				...loginParams,
 				client_data: JSON.stringify( publicKeyCredential ),
+				two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 			} );
 		} )
 		.then( response => {
