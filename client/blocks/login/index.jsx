@@ -45,6 +45,7 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import SecurityKeyForm from './two-factor-authentication/security-key-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import { isWebauthnSupported } from 'lib/webauthn';
 
 /**
  * Style dependencies
@@ -75,6 +76,10 @@ class Login extends Component {
 		isSecurityKeySupported: PropTypes.bool,
 	};
 
+	state = {
+		isBrowserSupported: false,
+	};
+
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
 
 	componentDidMount() {
@@ -82,6 +87,7 @@ class Login extends Component {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
 		}
+		isWebauthnSupported().then( supported => this.setState( { isBrowserSupported: supported } ) );
 
 		window.scrollTo( 0, 0 );
 	}
@@ -98,7 +104,11 @@ class Login extends Component {
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
 			let defaultAuthType;
-			if ( this.props.isSecurityKeySupported && this.props.twoFactorNotificationSent !== 'push' ) {
+			if (
+				this.state.isBrowserSupported &&
+				this.props.isSecurityKeySupported &&
+				this.props.twoFactorNotificationSent !== 'push'
+			) {
 				defaultAuthType = 'webauthn';
 			} else {
 				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
@@ -354,7 +364,7 @@ class Login extends Component {
 			disableAutoFocus,
 		} = this.props;
 
-		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' ) {
+		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
 			return (
 				<div>
 					<SecurityKeyForm twoFactorAuthType={ 'webauthn' } onSuccess={ this.handleValid2FACode } />
