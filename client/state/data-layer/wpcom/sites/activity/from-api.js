@@ -44,11 +44,11 @@ export function processItem( item ) {
 			}
 			break;
 		case 'post__trashed':
-			activityMeta.postId = object.object_id;
+			activityMeta.postId = object && object.object_id ? object.object_id : null;
 			break;
 		case 'comment__trashed':
-			activityMeta.commentId = object.object_id;
-			activityMeta.postId = item.target.post_id;
+			activityMeta.commentId = object && object.object_id ? object.object_id : null;
+			activityMeta.postId = item && item.target && item.target.post_id ? item.target.post_id : null;
 			break;
 	}
 

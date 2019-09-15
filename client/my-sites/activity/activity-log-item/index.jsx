@@ -251,10 +251,12 @@ class ActivityLogItem extends Component {
 	};
 
 	renderRestoreAlternatives() {
-		const { activity, canRestoreSingleItem, translate } = this.props;
+		const { activity, translate } = this.props;
 
 		switch ( activity.activityName ) {
 			case 'post__trashed':
+				// What do we need in props to restore a trashed post? Check they all exist, and bail if not.
+				// Also check that the post is actually still in the trash. Bail if not.
 				return (
 					<Fragment>
 						<PopoverMenuItem
@@ -268,6 +270,8 @@ class ActivityLogItem extends Component {
 				);
 				break;
 			case 'comment__trashed':
+				// What do we need in props to restore a trashed comment? Check they all exist, and bail if not.
+				// Also check that the comment is actually still in the trash. Bail if not.
 				return (
 					<Fragment>
 						<PopoverMenuItem
