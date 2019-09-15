@@ -177,9 +177,9 @@ class TwoStep extends Component {
 
 				<Card>{ this.renderTwoStepSection() }</Card>
 
+				{ config.isEnabled( '2fa/keys-support' ) && this.render2faKey() }
 				{ this.renderBackupCodes() }
 				{ this.renderApplicationPasswords() }
-				{ config.isEnabled( '2fa/keys-support' ) && this.render2faKey() }
 			</Main>
 		);
 	}

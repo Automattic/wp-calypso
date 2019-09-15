@@ -148,7 +148,7 @@ function register( keyName = null ) {
 				'/me/two-step/security-key/registration_validate',
 				{
 					data: JSON.stringify( publicKeyCredential ),
-					name: keyName || 'Key @' + new Date().toUTCString(),
+					name: keyName,
 				},
 				POST
 			);

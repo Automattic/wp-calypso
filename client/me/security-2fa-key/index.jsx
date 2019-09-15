@@ -2,7 +2,7 @@
  * External dependencies
  */
 import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -92,7 +92,7 @@ class Security2faKey extends React.Component {
 		const { translate } = this.props;
 		const { addingKey, isBrowserSupported, errorMessage, security2faKeys } = this.state;
 		return (
-			<Fragment>
+			<div class="security-2fa-key">
 				<SectionHeader label={ translate( 'Security Key' ) }>
 					{ ! addingKey && (
 						<Button
@@ -131,7 +131,7 @@ class Security2faKey extends React.Component {
 						onDelete={ this.deleteKeyRegister }
 					/>
 				) }
-			</Fragment>
+			</div>
 		);
 	}
 }
