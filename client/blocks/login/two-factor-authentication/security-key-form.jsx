@@ -38,25 +38,22 @@ class SecurityKeyForm extends Component {
 
 	componentDidMount() {
 		// eslint-disable-next-line react/no-did-mount-set-state
-		this.initiateSecurityKeyAuthentication();
+		//		this.initiateSecurityKeyAuthentication();
 	}
 
-	initiateSecurityKeyAuthentication = () => {
+	initiateSecurityKeyAuthentication = event => {
+		event.preventDefault();
+
 		const { onSuccess } = this.props;
 
-		this.props
-			.loginUserWithSecurityKey()
-			.then( () => onSuccess() )
-			.catch( () => {
-				this.setState( { showError: true } );
-			} );
+		this.props.loginUserWithSecurityKey().then( () => onSuccess() );
 	};
 
 	render() {
 		const { translate } = this.props;
 
 		return (
-			<form onSubmit={ event => event.preventDefault() }>
+			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
 				<Card compact className="two-factor-authentication__verification-code-form">
 					<p>
 						{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
@@ -70,11 +67,7 @@ class SecurityKeyForm extends Component {
 							'Insert your security key into your USB port. Then tap the button or gold disc.'
 						) }
 					</p>
-					{ this.state.showError && (
-						<FormButton primary onClick={ this.initiateSecurityKeyAuthentication }>
-							{ translate( 'Retry' ) }
-						</FormButton>
-					) }
+					<FormButton primary>{ translate( 'Continue with security key' ) }</FormButton>
 				</Card>
 
 				<TwoFactorActions twoFactorAuthType={ 'u2f' } />
