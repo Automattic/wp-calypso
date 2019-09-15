@@ -51,7 +51,7 @@ import wpcom from 'lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
-import webauthn from 'lib/webauthn';
+import { binToStr, strToBin, credentialListConversion } from 'lib/webauthn';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -200,7 +200,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
 			}
 
-			requestOptions.challenge = webauthn.strToBin( parameters.challenge );
+			requestOptions.challenge = strToBin( parameters.challenge );
 			requestOptions.timeout = 6000;
 			if ( 'rpId' in parameters ) {
 				if ( parameters.rpId !== window.location.hostname ) {
@@ -209,9 +209,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				requestOptions.rpId = parameters.rpId;
 			}
 			if ( 'allowCredentials' in parameters ) {
-				requestOptions.allowCredentials = webauthn.credentialListConversion(
-					parameters.allowCredentials
-				);
+				requestOptions.allowCredentials = credentialListConversion( parameters.allowCredentials );
 			}
 			return navigator.credentials.get( { publicKey: requestOptions } );
 		} )
@@ -224,7 +222,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				publicKeyCredential.type = assertion.type;
 			}
 			if ( 'rawId' in assertion ) {
-				publicKeyCredential.rawId = webauthn.binToStr( assertion.rawId );
+				publicKeyCredential.rawId = binToStr( assertion.rawId );
 			}
 			if ( ! assertion.response ) {
 				throw "Get assertion response lacking 'response' attribute";
@@ -232,12 +230,12 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 
 			const _response = assertion.response;
 			publicKeyCredential.response = {
-				clientDataJSON: webauthn.binToStr( _response.clientDataJSON ),
-				authenticatorData: webauthn.binToStr( _response.authenticatorData ),
-				signature: webauthn.binToStr( _response.signature ),
+				clientDataJSON: binToStr( _response.clientDataJSON ),
+				authenticatorData: binToStr( _response.authenticatorData ),
+				signature: binToStr( _response.signature ),
 			};
 			if ( _response.userHandle ) {
-				publicKeyCredential.response.userHandle = webauthn.binToStr( _response.userHandle );
+				publicKeyCredential.response.userHandle = binToStr( _response.userHandle );
 			}
 
 			return postLoginRequest( 'u2f-authentication-endpoint', {
