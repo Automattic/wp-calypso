@@ -17,6 +17,7 @@ import { localize } from 'i18n-calypso';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
+import WaitForKey from 'me/security-2fa-key/wait-for-key.jsx';
 
 /**
  * Style dependencies
@@ -53,18 +54,23 @@ class SecurityKeyForm extends Component {
 		return (
 			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
 				<Card compact className="two-factor-authentication__verification-code-form">
-					<p>
-						{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
-							components: {
-								strong: <strong />,
-							},
-						} ) }
-					</p>
-					<p>
-						{ translate(
-							'Insert your security key into your USB port. Then tap the button or gold disc.'
-						) }
-					</p>
+					{ ! this.state.isDisabled && (
+						<div>
+							<p>
+								{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
+									components: {
+										strong: <strong />,
+									},
+								} ) }
+							</p>
+							<p>
+								{ translate(
+									'Insert your security key into your USB port. Then tap the button or gold disc.'
+								) }
+							</p>
+						</div>
+					) }
+					{ this.state.isDisabled && <WaitForKey /> }
 					<FormButton primary disabled={ this.state.isDisabled }>
 						{ translate( 'Continue with security key' ) }
 					</FormButton>
