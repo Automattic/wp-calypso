@@ -242,6 +242,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				...loginParams,
 				client_data: JSON.stringify( publicKeyCredential ),
 				two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
+				remember_me: true,
 			} );
 		} )
 		.then( response => {
