@@ -47,7 +47,7 @@ class Security2faKeyAddName extends React.Component {
 						{ this.props.translate( 'Give the security key a name' ) }
 					</FormLabel>
 					<FormTextInput
-						autocomplete="off"
+						autoComplete="off"
 						className="security-2fa-key__key-name"
 						id="security-2fa-key__key_name"
 						name="security_key_name"
