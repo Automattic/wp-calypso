@@ -43,6 +43,5 @@ Currently we have both Flux and Redux mixed. Props for loading data:
 - `needsProductsList` - Loads products list (Redux)
 - `needsSiteRedirect` - Loads `SiteRedirectStore` (Flux)
 - `needsUsers` - Loads `UsersStore` (Flux)
-- `needsWhois` - Loads `WhoisStore` (Flux)
 
 The child component should receive processed props defined in `getStateFromStores()`. It's updated whenever the data it needs changes.
