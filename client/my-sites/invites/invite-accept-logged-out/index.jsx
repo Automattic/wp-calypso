@@ -52,12 +52,7 @@ class InviteAcceptLoggedOut extends React.Component {
 		window.location = signInLink;
 	};
 
-	submitForm = ( form, userData, analyticsData, callback ) => {
-		if ( form.username.value === '' ) {
-			// If user hasn't entered anything, don't try to submit
-			callback();
-			return;
-		}
+	submitForm = ( form, userData ) => {
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
 		store.set( 'invite_accepted', this.props.invite );
