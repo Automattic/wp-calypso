@@ -1,0 +1,24 @@
+{
+	"name": "@automattic/calypso-sass-prelude",
+	"version": "1.0.0-alpha.0",
+	"description": "The SASS environment for Calypso",
+	"keywords": [],
+	"author": "Automattic, Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-sass-prelude"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"sass"
+	],
+	"scripts": {}
+}
