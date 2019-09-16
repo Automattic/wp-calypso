@@ -32,8 +32,8 @@
 //
 // QUIT AND RESTART YOUR BROWSER NORMALLY WHEN YOU'RE DONE MAKING LOCAL CSS CHANGES.
 
-@import 'shared/utils';
-@import 'shared/forms';
+@import '~@automattic/calypso-sass-prelude/sass/utils';
+@import '~@automattic/calypso-sass-prelude/sass/forms';
 
 * {
 	font-family: $sans;

@@ -20,5 +20,8 @@
 		"clean": "npx rimraf dist",
 		"prebuild": "npm run clean",
 		"build": "calypso-build --config='./webpack.config.js'"
+	},
+	"dependencies": {
+		"@automattic/calypso-sass-prelude": "../../packages/calypso-sass-prelude"
 	}
 }
