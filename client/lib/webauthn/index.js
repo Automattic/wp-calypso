@@ -154,7 +154,7 @@ export function registerSecurityKey( keyName = null ) {
 			);
 		} )
 		.catch( error => {
-			debugger;
+			console.log( { name: error.name } );
 			switch ( error.name ) {
 				case 'InvalidStateError':
 					return Promise.reject( {
