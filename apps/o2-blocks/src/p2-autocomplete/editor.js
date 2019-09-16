@@ -10,29 +10,27 @@ import { map, unescape } from 'lodash';
  */
 import './editor.scss';
 
-/*
- * This is a workaround for the way Gutenberg autocomplete works. It only looks for
- * beginnings of words and something like "teamabcp2" won't be found if you search "abc".
- * Adding spaces around the word solves the problem.
- */
-const COMMON_PREFIXES = /(team|a8c|woo|happiness)/i;
-const stripCommonWords = str => str.replace( COMMON_PREFIXES, ' ' );
+function substrings( name, subs = [ name ] ) {
+	if ( name.length === 0 ) {
+		return subs;
+	}
+
+	const [ , ...t ] = [ ...name ]; // don't accidentally split characters
+	const next = t.join( '' );
+
+	subs.push( next );
+
+	return substrings( next, subs );
+}
 
 const p2s = apiFetch( {
 	path: '/internal/P2s',
 } ).then( result =>
-	map( result.list, ( p2, subdomain ) => {
-		const keywords = [ subdomain ];
-		const stripped = stripCommonWords( subdomain );
-		if ( subdomain !== stripped ) {
-			keywords.push( stripped );
-		}
-		return {
-			...p2,
-			subdomain,
-			keywords,
-		};
-	} )
+	map( result.list, ( p2, subdomain ) => ( {
+		...p2,
+		subdomain,
+		keywords: substrings( subdomain ),
+	} ) )
 );
 
 const p2Completer = {
