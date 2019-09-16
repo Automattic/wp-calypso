@@ -212,10 +212,7 @@ const webpackConfig = {
 			SassConfig.loader( {
 				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
-				prelude: `@import '${ path.join(
-					__dirname,
-					'client/assets/stylesheets/shared/_utils.scss'
-				) }';`,
+				prelude: `@import '~@automattic/calypso-sass-prelude/sass/utils';`,
 			} ),
 			{
 				include: path.join( __dirname, 'client/sections.js' ),
