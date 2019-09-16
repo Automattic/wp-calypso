@@ -17,7 +17,7 @@ import { localize } from 'i18n-calypso';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
-import WaitForKey from 'me/security-2fa-key/wait-for-key.jsx';
+import Spinner from 'components/spinner';
 
 /**
  * Style dependencies
@@ -70,7 +70,15 @@ class SecurityKeyForm extends Component {
 							</p>
 						</div>
 					) }
-					{ this.state.isDisabled && <WaitForKey /> }
+					{ this.state.isDisabled && (
+						<div className="security-key-form__add-wait-for-key">
+							<Spinner />
+							<p className="security-key-form__add-wait-for-key-heading">
+								{ translate( 'Waiting for security key' ) }
+							</p>
+							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
+						</div>
+					) }
 					<FormButton primary disabled={ this.state.isDisabled }>
 						{ translate( 'Continue with security key' ) }
 					</FormButton>
