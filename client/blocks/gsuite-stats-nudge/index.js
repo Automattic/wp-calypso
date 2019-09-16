@@ -29,7 +29,6 @@ import './style.scss';
 
 class GSuiteStatsNudge extends Component {
 	static propTypes = {
-		domainSlug: PropTypes.string.isRequired,
 		isDismissed: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -71,7 +70,7 @@ class GSuiteStatsNudge extends Component {
 	}
 
 	render() {
-		const { domainSlug, siteSlug, translate } = this.props;
+		const { siteSlug, translate } = this.props;
 		const url = emailManagement( siteSlug );
 
 		if ( ! this.isVisible() ) {
@@ -104,19 +103,12 @@ class GSuiteStatsNudge extends Component {
 
 					<div className="gsuite-stats-nudge__info">
 						<h1 className="gsuite-stats-nudge__title">
-							{ translate(
-								'Customers can’t reach you at contact@%s – click here to add a mailbox',
-								{ args: domainSlug }
-							) }
+							{ translate( 'Get a mailbox powered by G Suite' ) }
 						</h1>
 						{
 							<p>
 								{ translate(
-									"Let customers reach you at {{strong}}contact@%s{{/strong}}. We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.",
-									{
-										args: domainSlug,
-										components: { strong: <strong /> },
-									}
+									"We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site."
 								) }
 							</p>
 						}

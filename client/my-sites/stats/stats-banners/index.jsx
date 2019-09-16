@@ -69,9 +69,8 @@ class StatsBanners extends Component {
 	}
 
 	renderGSuiteBanner() {
-		const { domains, siteId, slug } = this.props;
-		const domainSlug = getGSuiteSupportedDomains( domains )[ 0 ].name;
-		return <GSuiteStatsNudge siteSlug={ slug } siteId={ siteId } domainSlug={ domainSlug } />;
+		const { siteId, slug } = this.props;
+		return <GSuiteStatsNudge siteSlug={ slug } siteId={ siteId } />;
 	}
 
 	renderUpworkBanner() {
