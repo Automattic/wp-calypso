@@ -26,7 +26,9 @@ class Security2faKeyAddName extends React.Component {
 	};
 
 	componentDidMount = () => {
-		this.setState( { error: false, keyName: '' } );
+		this.setState( { error: false, keyName: '' }, () => {
+			this.keyNameInput.focus();
+		} );
 	};
 
 	submitName = e => {
@@ -51,6 +53,7 @@ class Security2faKeyAddName extends React.Component {
 						className="security-2fa-key__key-name"
 						id="security-2fa-key__key_name"
 						name="security_key_name"
+						ref={ input => ( this.keyNameInput = input ) }
 						placeholder={ this.props.translate( 'ex: My FIDO Key' ) }
 						onChange={ this.handleChange }
 						value={ this.state.keyName }
