@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -15,6 +14,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Card from 'components/card';
 import { emailManagement } from 'my-sites/email/paths';
+import Gridicon from 'components/gridicons';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
