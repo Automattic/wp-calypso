@@ -159,19 +159,19 @@ export function registerSecurityKey( keyName = null ) {
 					return Promise.reject( {
 						context: 'PublicKeyCredential',
 						error: 'DuplicateKey',
-						message: translate( 'Security key has already been registered' ),
+						message: translate( 'Security key has already been registered.' ),
 					} );
 				case 'NotAllowedError':
 					return Promise.reject( {
 						context: 'PublicKeyCredential',
 						error: 'TimeoutCanceled',
-						message: translate( 'Security key interaction timed out or canceled' ),
+						message: translate( 'Security key interaction timed out or canceled.' ),
 					} );
 				case 'AbortError':
 					return Promise.reject( {
 						context: 'PublicKeyCredential',
 						error: 'Canceled',
-						message: translate( 'Security key interaction canceled' ),
+						message: translate( 'Security key interaction canceled.' ),
 					} );
 				case 'NotSupportedError':
 				case 'SecurityError':
@@ -179,7 +179,7 @@ export function registerSecurityKey( keyName = null ) {
 					return Promise.reject( {
 						context: 'PublicKeyCredential',
 						error: 'Unknown',
-						message: translate( 'Security key registration error' ),
+						message: translate( 'Security key registration error.' ),
 					} );
 			}
 		} );
