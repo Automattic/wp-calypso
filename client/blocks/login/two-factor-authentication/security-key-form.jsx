@@ -33,15 +33,18 @@ class SecurityKeyForm extends Component {
 	};
 
 	state = {
-		showError: false,
+		isDisabled: false,
 	};
 
 	initiateSecurityKeyAuthentication = event => {
 		event.preventDefault();
 
 		const { onSuccess } = this.props;
-
-		this.props.loginUserWithSecurityKey().then( () => onSuccess() );
+		this.setState( { isDisabled: true } );
+		this.props
+			.loginUserWithSecurityKey()
+			.then( () => onSuccess() )
+			.finally( () => this.setState( { isDisabled: false } ) );
 	};
 
 	render() {
@@ -62,7 +65,9 @@ class SecurityKeyForm extends Component {
 							'Insert your security key into your USB port. Then tap the button or gold disc.'
 						) }
 					</p>
-					<FormButton primary>{ translate( 'Continue with security key' ) }</FormButton>
+					<FormButton primary disabled={ this.state.isDisabled }>
+						{ translate( 'Continue with security key' ) }
+					</FormButton>
 				</Card>
 
 				<TwoFactorActions twoFactorAuthType={ 'webauthn' } />
