@@ -8,13 +8,13 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import CheckoutData from 'components/data/checkout';
+import CartData from 'components/data/cart';
 import Plans from './plans';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 
 export function plans( context, next ) {
 	context.primary = (
-		<CheckoutData>
+		<CartData>
 			<Plans
 				context={ context }
 				intervalType={ context.params.intervalType }
@@ -24,7 +24,7 @@ export function plans( context, next ) {
 				withDiscount={ context.query.discount }
 				discountEndDate={ context.query.ts }
 			/>
-		</CheckoutData>
+		</CartData>
 	);
 	next();
 }
