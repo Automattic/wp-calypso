@@ -36,11 +36,6 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	componentDidMount() {
-		// eslint-disable-next-line react/no-did-mount-set-state
-		//		this.initiateSecurityKeyAuthentication();
-	}
-
 	initiateSecurityKeyAuthentication = event => {
 		event.preventDefault();
 
