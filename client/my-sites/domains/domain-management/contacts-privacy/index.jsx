@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -23,6 +24,7 @@ import {
 	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
+import isRequestingWhois from 'state/selectors/is-requesting-whois';
 
 /**
  * Style dependencies
@@ -34,7 +36,6 @@ class ContactsPrivacy extends React.PureComponent {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		whois: PropTypes.object.isRequired,
 	};
 
 	render() {
@@ -87,7 +88,7 @@ class ContactsPrivacy extends React.PureComponent {
 	}
 
 	isDataLoading() {
-		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
+		return ! getSelectedDomain( this.props ) || this.props.isRequestingWhois;
 	}
 
 	goToEdit = () => {
@@ -95,4 +96,8 @@ class ContactsPrivacy extends React.PureComponent {
 	};
 }
 
-export default localize( ContactsPrivacy );
+export default connect( ( state, ownProps ) => {
+	return {
+		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
+	};
+} )( localize( ContactsPrivacy ) );
