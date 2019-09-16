@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import Button from 'components/button';
 import Card from 'components/card';
 import { emailManagement } from 'my-sites/email/paths';
-import Gridicon from 'components/gridicons';
+import Gridicon from 'components/gridicon';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
