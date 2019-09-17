@@ -36,6 +36,6 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "transpile && copy-styles"
+		"prepare": "tsc && transpile && copy-styles"
 	}
 }
