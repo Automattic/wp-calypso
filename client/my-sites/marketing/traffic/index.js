@@ -40,7 +40,7 @@ const SiteSettingsTraffic = ( {
 	handleAutosavingRadio,
 	handleSubmitForm,
 	isAdmin,
-	isJetpack,
+	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
@@ -48,7 +48,7 @@ const SiteSettingsTraffic = ( {
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<Main className="settings-traffic site-settings" wideLayout>
-    <PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
+		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		{ ! isAdmin && (
 			<EmptyContent
@@ -58,7 +58,7 @@ const SiteSettingsTraffic = ( {
 		) }
 		<JetpackDevModeNotice />
 
-		{ isJetpack && (
+		{ isJetpackAdmin && (
 			<JetpackAds
 				handleAutosavingToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
@@ -66,9 +66,9 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		{ isAdmin && ( <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> ) }
-		{ isAdmin && ( <SeoSettingsMain /> ) }
-		{ isAdmin && ( 
+		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
+		{ isAdmin && <SeoSettingsMain /> }
+		{ isAdmin && (
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -76,9 +76,9 @@ const SiteSettingsTraffic = ( {
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-		 ) }
-				
-		{ isJetpack && (
+		) }
+
+		{ isJetpackAdmin && (
 			<JetpackSiteStats
 				handleAutosavingToggle={ handleAutosavingToggle }
 				setFieldValue={ setFieldValue }
@@ -87,8 +87,8 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		{ isAdmin && ( <AnalyticsSettings /> ) }
-		{ isJetpack && (
+		{ isAdmin && <AnalyticsSettings /> }
+		{ isJetpackAdmin && (
 			<Shortlinks
 				handleAutosavingRadio={ handleAutosavingRadio }
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -98,19 +98,21 @@ const SiteSettingsTraffic = ( {
 				onSubmitForm={ handleSubmitForm }
 			/>
 		) }
-		{ isAdmin && ( 
+		{ isAdmin && (
 			<Sitemaps
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
-			/> 
+			/>
 		) }
-		{ isAdmin && ( <SiteVerification /> ) }
+		{ isAdmin && <SiteVerification /> }
 	</Main>
 );
 
 const connectComponent = connect( state => ( {
-	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+	isJetpackAdmin:
+		isJetpackSite( state, getSelectedSiteId( state ) ) &&
+		canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	isAdmin: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 } ) );
 
