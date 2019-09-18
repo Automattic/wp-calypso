@@ -3,16 +3,16 @@
 		/* Basic Options */
 		// "incremental": true,                   /* Enable incremental compilation */
 		"target": "es5" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */,
-		"module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
+		"module": "es2015" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
 		// "lib": [],                             /* Specify library files to be included in the compilation. */
-		"allowJs": false /* Allow javascript files to be compiled. */,
-		//"checkJs": true /* Report errors in .js files. */,
-		"jsx": "preserve" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
+		"allowJs": true /* Allow javascript files to be compiled. */,
+		// "checkJs": true /* Report errors in .js files. */,
+		"jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
 		// "declaration": true,                   /* Generates corresponding '.d.ts' file. */
 		// "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
 		// "sourceMap": true,                     /* Generates corresponding '.map' file. */
 		// "outFile": "./",                       /* Concatenate and emit output to single file. */
-		"outDir": "./dist" /* Redirect output structure to the directory. */,
+		"outDir": "./dist/esm" /* Redirect output structure to the directory. */,
 		// "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
 		// "composite": true,                     /* Enable project compilation */
 		// "tsBuildInfoFile": "./",               /* Specify file to store incremental compilation information */
@@ -27,7 +27,7 @@
 		/* Strict Type-Checking Options */
 		/* Enable all strict type-checking options. */
 		"strict": true,
-		// "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
+		"noImplicitAny": false /* Raise error on expressions and declarations with an implied 'any' type. */,
 		// "strictNullChecks": true,              /* Enable strict null checks. */
 		// "strictFunctionTypes": true,           /* Enable strict checking of function types. */
 		// "strictBindCallApply": true,           /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
@@ -42,7 +42,7 @@
 		// "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
 
 		/* Module Resolution Options */
-		// "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+		"moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
 		// "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
 		// "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
 		// "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
@@ -64,5 +64,6 @@
 		// "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
 		// "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
 	},
-	"include": [ "src/**/*" ]
+	"include": [ "src/**/*" ],
+	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
 }

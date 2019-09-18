@@ -36,6 +36,6 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "npm run clean",
-		"prepare": "tsc && transpile && copy-styles"
+		"prepare": "tsc --project ./tsconfig-cjs.json && tsc --project ./tsconfig-esm.json && copy-styles"
 	}
 }
