@@ -20801,19 +20801,19 @@
 			"dev": true
 		},
 		"stackframe": {
-			"version": "1.0.4",
-			"resolved": "https://registry.npmjs.org/stackframe/-/stackframe-1.0.4.tgz",
-			"integrity": "sha512-to7oADIniaYwS3MhtCa/sQhrxidCCQiF/qp4/m5iN3ipf0Y7Xlri0f6eG29r08aL7JYl8n32AF3Q5GYBZ7K8vw==",
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/stackframe/-/stackframe-1.1.0.tgz",
+			"integrity": "sha512-Vx6W1Yvy+AM1R/ckVwcHQHV147pTPBKWCRLrXMuPrFVfvBUc3os7PR1QLIWCMhPpRg5eX9ojzbQIMLGBwyLjqg==",
 			"dev": true
 		},
 		"stacktrace-gps": {
-			"version": "3.0.2",
-			"resolved": "https://registry.npmjs.org/stacktrace-gps/-/stacktrace-gps-3.0.2.tgz",
-			"integrity": "sha512-9o+nWhiz5wFnrB3hBHs2PTyYrS60M1vvpSzHxwxnIbtY2q9Nt51hZvhrG1+2AxD374ecwyS+IUwfkHRE/2zuGg==",
+			"version": "3.0.3",
+			"resolved": "https://registry.npmjs.org/stacktrace-gps/-/stacktrace-gps-3.0.3.tgz",
+			"integrity": "sha512-51Rr7dXkyFUKNmhY/vqZWK+EvdsfFSRiQVtgHTFlAdNIYaDD7bVh21yBHXaNWAvTD+w+QSjxHg7/v6Tz4veExA==",
 			"dev": true,
 			"requires": {
 				"source-map": "0.5.6",
-				"stackframe": "^1.0.4"
+				"stackframe": "^1.1.0"
 			},
 			"dependencies": {
 				"source-map": {
