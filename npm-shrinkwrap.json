@@ -18732,11 +18732,11 @@
 			}
 		},
 		"react-stripe-elements": {
-			"version": "4.0.0",
-			"resolved": "https://registry.npmjs.org/react-stripe-elements/-/react-stripe-elements-4.0.0.tgz",
-			"integrity": "sha512-/GK7oMJSp06gNww/3vp7BHie3VavjaCa2m7IQ+it7QLcPTGaG+sTVFz2tRz9OGKlcM2HqqTiutrNwYfRRK+YIw==",
+			"version": "5.0.1",
+			"resolved": "https://registry.npmjs.org/react-stripe-elements/-/react-stripe-elements-5.0.1.tgz",
+			"integrity": "sha512-4fKjN1jXIo1T19lp7TE/Zwad6wolNVRzzQBxwounm6pDcJPdNeYVTr3TS4D1blVo9StGdf1Q8WbVa1nx1E7Yng==",
 			"requires": {
-				"prop-types": "^15.5.10"
+				"prop-types": "15.7.2"
 			}
 		},
 		"react-test-renderer": {
