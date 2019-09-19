@@ -22,7 +22,7 @@
 		// "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
 
 		/* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
-		"isolatedModules": true,
+		// "isolatedModules": true,
 
 		/* Strict Type-Checking Options */
 		/* Enable all strict type-checking options. */
@@ -36,10 +36,10 @@
 		// "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
 
 		/* Additional Checks */
-		// "noUnusedLocals": true,                /* Report errors on unused locals. */
-		// "noUnusedParameters": true,            /* Report errors on unused parameters. */
-		// "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
-		// "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
+		"noUnusedLocals": true /* Report errors on unused locals. */,
+		"noUnusedParameters": true /* Report errors on unused parameters. */,
+		"noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+		"noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
 
 		/* Module Resolution Options */
 		"moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
