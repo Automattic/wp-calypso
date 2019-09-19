@@ -84,7 +84,7 @@ class StepWrapper extends Component {
 				return this.props.headerText;
 			}
 
-			return this.props.translate( "Let's get started" );
+			return this.props.translate( 'Start your site with WordPress.com' );
 		}
 
 		if ( this.props.fallbackHeaderText !== undefined ) {
@@ -98,7 +98,9 @@ class StepWrapper extends Component {
 				return this.props.subHeaderText;
 			}
 
-			return this.props.translate( 'Welcome to the best place for your WordPress website.' );
+			return this.props.translate(
+				"Create and account and answer a few questions about what you want to build. We'll start your off with a new site tailored to your choices."
+			);
 		}
 
 		if ( this.props.fallbackSubHeaderText !== undefined ) {
