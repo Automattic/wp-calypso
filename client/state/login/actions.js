@@ -184,9 +184,6 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 		client_secret: config( 'wpcom_signup_key' ),
 		auth_type: twoFactorAuthType,
 	};
-	if ( process.env.NODE_ENV === 'development' ) {
-		loginParams.dev_hostname = 'calypso.localhost';
-	}
 	return postLoginRequest( 'webauthn-challenge-endpoint', {
 		...loginParams,
 		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
