@@ -37,6 +37,7 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
@@ -385,6 +386,7 @@ const connectHome = connect(
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+		const domains = getDomainsBySiteId( state, siteId );
 
 		return {
 			site: getSelectedSite( state ),
@@ -399,7 +401,7 @@ const connectHome = connect(
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
-			hasCustomDomain: getDomainsBySiteId( state, siteId ).length > 1,
+			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
 		};
 	},
 	dispatch => ( {
