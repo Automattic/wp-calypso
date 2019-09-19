@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import PropTypes from 'prop-types';
 import Card from 'components/card';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';
 import QueryWordadsEarnings from 'components/data/query-wordads-earnings';

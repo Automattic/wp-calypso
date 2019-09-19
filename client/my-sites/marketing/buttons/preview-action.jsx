@@ -12,7 +12,7 @@ import { omit, startsWith, endsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 const SharingButtonsPreviewAction = props => {
 	const { active, position, icon, children } = props;

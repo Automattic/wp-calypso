@@ -1,5 +1,17 @@
 # Release Notes
 
+## 2.1.0
+
+* Updated the color palette to the most recent version.
+* Removed the following properties:
+  * `--color-section-nav-item-background-hover`
+  * `--color-themes-active-text`
+  * `--color-themes-active-text-rgb`
+
+## 2.0.1
+
+* Included WP Admin button colors.
+
 ## 2.0.0
 
 This update brings backwards-incompatible changes to the package. The most notable ones include:
