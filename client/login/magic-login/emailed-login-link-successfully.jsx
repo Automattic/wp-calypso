@@ -26,7 +26,6 @@ import {
 import { withEnhancers } from 'state/utils';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 
-
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
