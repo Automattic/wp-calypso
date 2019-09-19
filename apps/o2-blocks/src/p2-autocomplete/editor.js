@@ -22,33 +22,37 @@ const p2s = apiFetch( {
 	path: '/internal/P2s?current_blog=' + window._currentSiteId + '&get_most_used=true',
 } ).then( result => {
 	const shouldCheckPopular = isArray( result.most_used );
-	return reduce( result.list, ( autocomplete, p2, subdomain ) => {
-		// Construct object for autocomplete.
-		const item = {
-			...p2,
-			subdomain,
-			keywords: [ subdomain ],
-		};
+	return reduce(
+		result.list,
+		( autocomplete, p2, subdomain ) => {
+			// Construct object for autocomplete.
+			const item = {
+				...p2,
+				subdomain,
+				keywords: [ subdomain ],
+			};
 
-		// Generate keyword variants for easier searching.
-		const stripped = stripCommonWords( subdomain );
-		if ( subdomain !== stripped ) {
-			item.keywords.push( stripped );
+			// Generate keyword variants for easier searching.
+			const stripped = stripCommonWords( subdomain );
+			if ( subdomain !== stripped ) {
+				item.keywords.push( stripped );
+			}
+
+			// Build popular list.
+			if ( shouldCheckPopular && result.most_used.indexOf( subdomain ) > -1 ) {
+				autocomplete.popular.push( item );
+			}
+
+			// Add to the full list.
+			autocomplete.all.push( item );
+
+			return autocomplete;
+		},
+		{
+			all: [],
+			popular: [],
 		}
-
-		// Build popular list.
-		if ( shouldCheckPopular && result.most_used.indexOf( subdomain ) > -1 ) {
-			autocomplete.popular.push( item );
-		}
-
-		// Add to the full list.
-		autocomplete.all.push( item );
-
-		return autocomplete;
-	}, {
-		all: [],
-		popular: [],
-	} );
+	);
 } );
 
 const p2Completer = {
@@ -82,7 +86,6 @@ const p2Completer = {
 		</div>
 	),
 	getOptionCompletion: site => `+${ site.subdomain }`,
-	isDebounced: true,
 };
 
 // Register autocompleter for all blocks
