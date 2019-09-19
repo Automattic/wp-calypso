@@ -267,7 +267,7 @@ class Home extends Component {
 								iconSrc="/calypso/images/customer-home/images.svg"
 							/>
 							<ActionBox
-								href="https://logojoy.grsm.io/looka"
+								href="https://looka.com/make-a-logo"
 								onClick={ () => trackAction( 'my_site', 'design_logo' ) }
 								label={ translate( 'Design a logo' ) }
 								iconSrc="/calypso/images/customer-home/logo.svg"
