@@ -100,7 +100,7 @@ export class PaypalPaymentBox extends React.Component {
 					if ( error.message ) {
 						errorMessage = error.message;
 					} else {
-						errorMessage = this.props.translate( 'Please specify a country and postal code.' );
+						errorMessage = this.props.translate( 'Please specify a country and postal code' );
 					}
 
 					this.setSubmitState( {
