@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

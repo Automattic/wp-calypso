@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { noop, pick } from 'lodash';
 

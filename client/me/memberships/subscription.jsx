@@ -20,7 +20,7 @@ import QueryMembershipsSubscriptions from 'components/data/query-memberships-sub
 import HeaderCake from 'components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import CompactCard from 'components/card/compact';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';

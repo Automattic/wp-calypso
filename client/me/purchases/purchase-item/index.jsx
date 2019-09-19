@@ -32,7 +32,7 @@ import {
 } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getPlanTermLabel } from 'lib/plans';
