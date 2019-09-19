@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, get } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

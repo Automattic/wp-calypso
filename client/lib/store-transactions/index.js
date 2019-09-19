@@ -28,7 +28,6 @@ import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	translatedEbanxError,
 } from 'lib/checkout/processor-specific';
-import analytics from 'lib/analytics';
 import {
 	createStripePaymentMethod,
 	confirmStripePaymentIntent,
@@ -504,14 +503,12 @@ function getEbanxParameters( cardDetails ) {
 	};
 }
 
-export function createCardToken( requestType, cardDetails, callback, forcedPaygate = false ) {
-	if ( ! forcedPaygate && isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
+export function createCardToken( requestType, cardDetails, callback ) {
+	if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
 		return createEbanxToken( requestType, cardDetails ).then(
 			result => callback( null, result ),
-			function( reason ) {
-				analytics.mc.bumpStat( 'cc_token_fallback', 'ebanx_to_paygate' );
-				debug( 'Error creating EBANX token, falling back to paygate', reason );
-				return createCardToken( requestType, cardDetails, callback, true );
+			function( errorMsg ) {
+				return callback( new Error( errorMsg ) );
 			}
 		);
 	}

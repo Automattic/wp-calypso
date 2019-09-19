@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { snakeCase, includes } from 'lodash';
 
 /**

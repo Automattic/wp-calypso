@@ -380,6 +380,8 @@ class TransferDomainStep extends React.Component {
 				domain: null,
 				inboundTransferStatus: {},
 				precheck: false,
+				notice: null,
+				searchQuery: '',
 				supportsPrivacy: false,
 			} );
 		} else {
@@ -484,7 +486,10 @@ class TransferDomainStep extends React.Component {
 			this.setState( prevState => {
 				const { submittingAvailability, submittingWhois } = prevState;
 
-				return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
+				return {
+					domain,
+					precheck: prevState.domain && ! submittingAvailability && ! submittingWhois
+				};
 			} );
 
 			if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {

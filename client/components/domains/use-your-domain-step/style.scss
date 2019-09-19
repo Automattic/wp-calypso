@@ -95,10 +95,10 @@
 	color: var( --color-text );
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			text-decoration: underline;
 
 			&:hover {

@@ -118,8 +118,8 @@ export default {
 	showPlanUpsellConcierge: {
 		datestamp: '20190805',
 		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
+			variantShowPlanBump: 100,
+			control: 0,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -159,5 +159,13 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	placesApiInCheckout: {
+		datestamp: '20190923',
+		variations: {
+			original: 50,
+			placesApi: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

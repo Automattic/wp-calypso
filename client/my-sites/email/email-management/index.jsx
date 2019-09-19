@@ -45,6 +45,11 @@ import QuerySiteDomains from 'components/data/query-site-domains';
  */
 import './style.scss';
 
+/**
+ * Image dependencies
+ */
+import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
+
 class EmailManagement extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
@@ -143,7 +148,7 @@ class EmailManagement extends React.Component {
 			};
 		}
 		Object.assign( emptyContentProps, {
-			illustration: '/calypso/images/illustrations/custom-domain.svg',
+			illustration: customDomainImage,
 			action: translate( 'Add a Custom Domain' ),
 			actionURL: '/domains/add/' + selectedSiteSlug,
 		} );

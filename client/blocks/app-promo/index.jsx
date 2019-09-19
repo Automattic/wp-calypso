@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { identity, noop, sample } from 'lodash';
 import store from 'store';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

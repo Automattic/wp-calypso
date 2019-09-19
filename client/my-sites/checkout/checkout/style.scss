@@ -39,13 +39,13 @@
 				display: flex;
 				flex-flow: row wrap;
 				justify-content: space-around;
-				background-color: var( --color-white );
+				background-color: var( --color-surface );
 				padding: 10px;
 			}
 
 			.placeholder {
 				animation: pulse-light 800ms ease-in-out infinite;
-				background: var( --color-neutral-100 );
+				background: var( --color-neutral-10 );
 				width: 100%;
 				height: 100%;
 			}
@@ -142,7 +142,7 @@
 	}
 
 	h5 {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		font-size: 15px;
 		font-weight: 600;
 		opacity: 0.7;
@@ -296,7 +296,7 @@
 
 	.credit-card-payment-box {
 		.payment-box-sections {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
@@ -324,7 +324,7 @@
 		}
 
 		.checkout__payment-box-section .checkout__new-card-fields {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 			max-height: 0;
 			overflow: hidden;
 			padding: 0 15px 0 12px;
@@ -395,7 +395,7 @@
 	.web-payment-box {
 		.payment-box-section:not( .checkout__free-cart-payment-box ),
 		.checkout__payment-box-section {
-			background-color: var( --color-white );
+			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
@@ -539,7 +539,7 @@
 	// Supporting Text / Fine Print
 	// -----------------------------------
 	.supporting-text {
-		border-top: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
 		font-size: 13px;
 		list-style: none;
 		margin: 0;
@@ -547,12 +547,12 @@
 		@include clear-fix;
 
 		@include breakpoint( '>660px' ) {
-			border-bottom: 1px solid var( --color-neutral-100 );
+			border-bottom: 1px solid var( --color-neutral-10 );
 			margin: 30px 0;
 		}
 
 		li {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 			text-align: center;
 
 			@include breakpoint( '>660px' ) {
@@ -567,7 +567,7 @@
 			}
 
 			h6 {
-				color: var( --color-neutral-500 );
+				color: var( --color-neutral-50 );
 				font-size: 14px;
 				font-weight: 600;
 			}
@@ -582,7 +582,7 @@
 
 	.credit-card-supporting-text__refund-link {
 		white-space: nowrap;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		text-decoration: underline;
 	}
 }
@@ -610,8 +610,8 @@
 	}
 
 	label {
-		background-color: var( --color-white );
-		border: 3px solid var( --color-white );
+		background-color: var( --color-surface );
+		border: 3px solid var( --color-border-inverted );
 		border-radius: 3px;
 		display: block;
 		margin-top: 10px;
@@ -737,7 +737,7 @@
 }
 
 .checkout__secure-payment {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	flex-grow: 1;
 	margin-top: 10px;
 
@@ -745,7 +745,6 @@
 		flex: 1 0 40%;
 	}
 }
-
 
 .checkout__secure-payment-content {
 	display: flex;
@@ -847,7 +846,7 @@
 }
 
 .checkout__privacy-protection-radio-text-description {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 }
 
 .checkout__privacy-protection-radio-price-text {
@@ -866,7 +865,7 @@
 		}
 		.is-selected {
 			background-color: var( --color-neutral-0 );
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 
@@ -1063,7 +1062,7 @@
 
 .checkout__form-info-text {
 	margin-left: 15px;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	display: block;
 	font-size: 12px;
 	font-style: italic;
@@ -1097,7 +1096,7 @@
 	@include jetpack-connect-colors();
 
 	.payment-box-section {
-		--color-primary: var( --color-primary-500 );
+		--color-primary: var( --color-primary-50 );
 	}
 }
 
@@ -1108,9 +1107,9 @@
 	.formatted-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
-	
+
 	.formatted-header__subtitle {
-		color: var( --color-primary-100 );
+		color: var( --color-primary-10 );
 	}
 
 	.card {
@@ -1137,5 +1136,24 @@
 	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
 	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
 		box-shadow: none;
+	}
+}
+
+.checkout__site-created-notice-wrapper {
+	overflow: hidden;
+	float: none;
+	clear: both;
+	margin: 0 auto 20px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
+	.checkout__site-created-copy {
+		margin: 0 20px;
+	}
+	.checkout__site-created-image {
+		height: 40px;
 	}
 }

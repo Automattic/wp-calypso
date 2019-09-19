@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React, { Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 

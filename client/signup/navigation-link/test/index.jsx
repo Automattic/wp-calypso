@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,19 +9,17 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { NavigationLink } from '../';
-import EMPTY_COMPONENT from 'components/empty-component';
+import Gridicon from 'components/gridicon';
 
 jest.mock( 'signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 	getFilteredSteps: jest.fn(),
 } ) );
-jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
 const signupUtils = require( 'signup/utils' );
 const { getStepUrl, getFilteredSteps } = signupUtils;
 
 describe( 'NavigationLink', () => {
-	const Gridicon = EMPTY_COMPONENT;
 	const props = {
 		flowName: 'test:flow',
 		stepName: 'test:step2',

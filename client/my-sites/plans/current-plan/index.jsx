@@ -128,7 +128,10 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<Dialog isVisible={ showThankYou }>
+				<Dialog
+					baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+					isVisible={ showThankYou }
+				>
 					{ isFreePlan ? <FreePlanThankYou /> : <PaidPlanThankYou /> }
 				</Dialog>
 

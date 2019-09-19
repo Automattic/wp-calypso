@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

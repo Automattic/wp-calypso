@@ -15,6 +15,7 @@ import PostTypeList from 'my-sites/post-type-list';
 import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import titlecase from 'to-title-case';
 import Main from 'components/main';
+import { POST_STATUSES } from 'state/posts/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { mapPostStatus } from 'lib/route';
 
@@ -63,18 +64,29 @@ class PostsMain extends React.Component {
 			order: status === 'future' ? 'ASC' : 'DESC',
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
-			status,
+			// When searching, search across all statuses so the user can
+			// always find what they are looking for, regardless of what tab
+			// the search was initiated from. Use POST_STATUSES rather than
+			// "any" to do this, since the latter excludes trashed posts.
+			status: search ? POST_STATUSES.join( ',' ) : status,
 			tag,
 			type: 'post',
 		};
+		// Since searches are across all statuses, the status needs to be shown
+		// next to each post.
+		const showPublishedStatus = Boolean( query.search );
 
 		return (
-			<Main className="posts">
+			<Main wideLayout className="posts">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<SidebarNavigation />
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				{ siteId && <PostTypeBulkEditBar /> }
-				<PostTypeList query={ query } scrollContainer={ document.body } />
+				<PostTypeList
+					query={ query }
+					showPublishedStatus={ showPublishedStatus }
+					scrollContainer={ document.body }
+				/>
 			</Main>
 		);
 	}

@@ -9,7 +9,7 @@ import React from 'react';
 import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

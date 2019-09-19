@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { get, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { Env } from 'tinymce/tinymce';
 
 /**

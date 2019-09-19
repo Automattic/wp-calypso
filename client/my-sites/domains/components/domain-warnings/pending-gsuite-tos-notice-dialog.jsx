@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';

@@ -54,7 +54,7 @@
 		flex-basis: 15%;
 		font-size: 14px;
 		font-style: italic;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 	}
 	dfn {
 		margin-bottom: 5px;
@@ -69,7 +69,7 @@
 	}
 	&.placeholder > span {
 		animation: pulse-light 800ms ease-in-out infinite;
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 		height: 20px;
 	}
 }
