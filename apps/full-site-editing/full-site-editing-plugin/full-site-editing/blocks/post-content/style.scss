@@ -1,5 +1,9 @@
 .post-content-block.alignfull {
 	padding: 0 12px;
+
+	@media ( max-width: 768px ) {
+		overflow-x: hidden;
+	}
 }
 
 .post-content-block__selector {
