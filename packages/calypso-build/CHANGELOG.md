@@ -1,8 +1,9 @@
 # _unreleased_
 
-- Add config options to file-loader
+- Add config options to file-loader.
 - Add `enzyme-to-json` serializer to `jest-preset.js`.
 - Make Jest ignore transpiled files in `dist/`.
+- Handle `TypeScript` files in `transpile` command.
 
 # 4.0.1
 
