@@ -3,7 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
-import { mapValues, unescape, pick } from 'lodash';
+import { reduce, unescape, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,24 +21,34 @@ const stripCommonWords = str => str.replace( COMMON_PREFIXES, ' ' );
 const p2s = apiFetch( {
 	path: '/internal/P2s?current_blog=' + window._currentSiteId + '&get_most_used=true',
 } ).then( result => {
-	result.list = mapValues( result.list, ( p2, subdomain ) => {
-		const keywords = [ subdomain ];
-		const stripped = stripCommonWords( subdomain );
-		if ( subdomain !== stripped ) {
-			keywords.push( stripped );
-		}
-		return {
+	const shouldCheckPopular = isArray( result.most_used );
+	return reduce( result.list, ( autocomplete, p2, subdomain ) => {
+		// Construct object for autocomplete.
+		const item = {
 			...p2,
 			subdomain,
-			keywords,
+			keywords: [ subdomain ],
 		};
-	} );
 
-	const popular = result.most_used ? Object.keys( result.most_used ) : [];
-	return {
-		all: Object.values( result.list ),
-		popular: popular.length > 0 ? Object.values( pick( result.list, popular ) ) : false,
-	};
+		// Generate keyword variants for easier searching.
+		const stripped = stripCommonWords( subdomain );
+		if ( subdomain !== stripped ) {
+			item.keywords.push( stripped );
+		}
+
+		// Build popular list.
+		if ( shouldCheckPopular && result.most_used.indexOf( subdomain ) > -1 ) {
+			autocomplete.popular.push( item );
+		}
+
+		// Add to the full list.
+		autocomplete.all.push( item );
+
+		return autocomplete;
+	}, {
+		all: [],
+		popular: [],
+	} );
 } );
 
 const p2Completer = {
@@ -46,7 +56,7 @@ const p2Completer = {
 	triggerPrefix: '+',
 	options: search => {
 		return p2s.then( lists => {
-			if ( lists.popular && search === '' ) {
+			if ( lists.popular.length > 0 && search === '' ) {
 				return lists.popular;
 			}
 			return lists.all;
