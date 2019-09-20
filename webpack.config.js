@@ -155,9 +155,11 @@ const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 const fileLoader = FileConfig.loader( {
-	outputPath: path.join( __dirname, 'public', 'images' ),
+	// File-loader does not understand absolute paths so __dirname won't work.
+	// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
+	outputPath: path.join( '..', 'images' ),
 	publicPath: '/calypso/images/',
-	emitFile: browserslistEnv === 'evergreen', // Only output files once.
+	emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
 } );
 
 const webpackConfig = {
