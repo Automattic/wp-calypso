@@ -23,7 +23,7 @@ const TemplateSelectorItem = props => {
 		useDynamicPreview = false,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
-		blocks,
+		blocks = [],
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
