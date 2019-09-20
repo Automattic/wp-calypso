@@ -274,7 +274,7 @@ export class SiteNotice extends React.Component {
 	render() {
 		const { site } = this.props;
 		if ( ! site ) {
-			return <div className="site__notices" />;
+			return <div className="current-site__notices" />;
 		}
 
 		const discountOrFreeToPaid = this.activeDiscountNotice() || this.freeToPaidPlanNotice();
@@ -282,10 +282,11 @@ export class SiteNotice extends React.Component {
 		const domainCreditNotice = this.domainCreditNotice();
 		const jetpackPluginsSetupNotice = this.jetpackPluginsSetupNotice();
 
-		const shouldShowDomainUpsellNudge = ! discountOrFreeToPaid && ! domainCreditNotice && ! jetpackPluginsSetupNotice;
+		const shouldShowDomainUpsellNudge =
+			! discountOrFreeToPaid && ! domainCreditNotice && ! jetpackPluginsSetupNotice;
 
 		return (
-			<div className="site__notices">
+			<div className="current-site__notices">
 				<QueryProductsList />
 				<QueryActivePromotions />
 				{ discountOrFreeToPaid || <DomainToPaidPlanNotice /> }
@@ -294,9 +295,7 @@ export class SiteNotice extends React.Component {
 				{ this.pendingPaymentNotice() }
 				{ domainCreditNotice }
 				{ jetpackPluginsSetupNotice }
-				{ shouldShowDomainUpsellNudge
-					? this.domainUpsellNudge()
-					: null }
+				{ shouldShowDomainUpsellNudge ? this.domainUpsellNudge() : null }
 			</div>
 		);
 	}
