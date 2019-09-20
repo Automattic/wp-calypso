@@ -109,25 +109,24 @@ export class SiteNotice extends React.Component {
 
 		const { currencyCode, productsList, translate } = this.props;
 
-		const priceAndSaleInfo = transform( productsList, function( result, value, key ) {
-			if ( value.is_domain_registration && value.available && key !== 'domain_reg' ) {
-				const regularPrice = getUnformattedDomainPrice( key, productsList );
-				const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
-				result.minRegularPrice = Math.min( minRegularPrice, regularPrice );
+		const priceAndSaleInfo = transform(
+			productsList,
+			function( result, value, key ) {
+				if ( value.is_domain_registration && value.available ) {
+					const regularPrice = getUnformattedDomainPrice( key, productsList );
+					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
+					result.minRegularPrice = Math.min( minRegularPrice, regularPrice );
 
-				const salePrice = getUnformattedDomainSalePrice( key, productsList );
-				if ( salePrice ) {
-					const minSalePrice = get( result, 'minSalePrice', salePrice );
-					result.minSalePrice = Math.min( minSalePrice, salePrice );
-
-					if ( ! result.saleTlds ) {
-						result.saleTlds = [];
+					const salePrice = getUnformattedDomainSalePrice( key, productsList );
+					if ( salePrice ) {
+						const minSalePrice = get( result, 'minSalePrice', salePrice );
+						result.minSalePrice = Math.min( minSalePrice, salePrice );
+						result.saleTlds.push( value.tld );
 					}
-
-					result.saleTlds.push( value.tld );
 				}
-			}
-		} );
+			},
+			{ saleTlds: [] }
+		);
 
 		if ( ! priceAndSaleInfo.minSalePrice && ! priceAndSaleInfo.minRegularPrice ) {
 			return null;
