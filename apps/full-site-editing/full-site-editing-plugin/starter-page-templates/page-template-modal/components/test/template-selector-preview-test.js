@@ -5,11 +5,9 @@ import { render } from '@testing-library/react';
 import { blocksFixture } from './helpers/templates-blocks-helpers';
 import TemplateSelectorPreview from '../template-selector-preview';
 
-// Mock out this component until @wordpress/block-editor
-// `BlockPreview` component is available as default export.
-// Once available, swap this mock to mocking out `BlockPreview`
-// directly as it causes too many knock on effects when rendering
-jest.mock( '../block-template-preview', () => () => {
+// Mock the "pass through" version of the `BlockPreview` component
+// See `components/block-preview.js`
+jest.mock( '../block-preview', () => () => {
 	return <div data-testid="block-template-preview">MockedBlockPreview</div>;
 } );
 

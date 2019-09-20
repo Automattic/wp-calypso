@@ -9,9 +9,34 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview when blocks
       class="components-disabled"
     >
       <div
-        data-testid="block-template-preview"
+        class="edit-post-visual-editor"
       >
-        MockedBlockPreview
+        <div
+          class="editor-styles-wrapper"
+          style="visibility: hidden;"
+        >
+          <div
+            class="editor-writing-flow"
+          >
+            <div
+              class="editor-post-title"
+              style="transform: none;"
+            >
+              <div
+                class="editor-post-title__block"
+              >
+                <textarea
+                  class="editor-post-title__input"
+                />
+              </div>
+            </div>
+            <div
+              data-testid="block-template-preview"
+            >
+              MockedBlockPreview
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

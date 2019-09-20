@@ -9,7 +9,9 @@
 /**
  * WordPress dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
 import { BlockPreview } from '@wordpress/block-editor';
+/* eslint-enable import/no-extraneous-dependencies */
 
 const BlockTemplatePreview = ( { blocks = [], viewportWidth } ) => {
 	if ( ! blocks || ! blocks.length ) {
