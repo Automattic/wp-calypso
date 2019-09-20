@@ -157,11 +157,13 @@ function handlePressThis( calypsoPort ) {
 		const unsubscribe = subscribe( () => {
 			// Calypso sends the message as soon as the iframe is loaded, so we
 			// need to be sure that the editor is initialized and the core blocks
-			// registered. There is no specific hook or selector for that, so we use
-			// `isCleanNewPost` which is triggered when everything is initialized if
-			// the post is new.
-			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
-			if ( ! isCleanNewPost ) {
+			// registered. There is an unstable selector for that, so we use
+			// `isCleanNewPost` otherwise which is triggered when everything is
+			// initialized if the post is new.
+			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
+				? select( 'core/editor' ).__unstableIsEditorReady()
+				: select( 'core/editor' ).isCleanNewPost();
+			if ( ! editorIsReady ) {
 				return;
 			}
 
@@ -471,8 +473,8 @@ function handlePreview( calypsoPort ) {
 			dispatch( 'core/editor' ).autosave( { isPreview: true } );
 		}
 		const unsubscribe = subscribe( () => {
-			const isSavingPost = select( 'core/editor' ).isSavingPost();
-			if ( ! isSavingPost ) {
+			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+			if ( previewUrl ) {
 				unsubscribe();
 				sendPreviewData();
 			}

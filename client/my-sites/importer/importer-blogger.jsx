@@ -34,7 +34,7 @@ class ImporterBlogger extends React.PureComponent {
 
 	render() {
 		const importerData = importerConfig( {
-			siteTitle: this.props.site.title,
+			siteTitle: this.props.siteTitle,
 		} ).blogger;
 
 		return <FileImporter importerData={ importerData } { ...this.props } />;

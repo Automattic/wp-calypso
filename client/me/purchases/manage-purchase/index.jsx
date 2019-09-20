@@ -42,7 +42,7 @@ import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '..
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import {
 	isPersonal,

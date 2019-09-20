@@ -17,6 +17,7 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getThankYouNoSiteDestination = noop,
+	getChecklistThemeDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -33,7 +34,6 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				'site-style-with-preview',
 				'domains-with-preview',
 				'plans-business',
 			],
@@ -48,7 +48,6 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				'site-style-with-preview',
 				'domains-with-preview',
 				'plans-premium',
 			],
@@ -63,7 +62,6 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				'site-style-with-preview',
 				'domains-with-preview',
 				'plans-personal',
 			],
@@ -78,7 +76,6 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				'site-style-with-preview',
 				'domains-with-preview',
 			],
 			destination: getSignupDestination,
@@ -93,13 +90,6 @@ export function generateFlows( {
 			lastModified: '2017-09-01',
 		},
 
-		website: {
-			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with website themes',
-			lastModified: '2017-09-01',
-		},
-
 		'rebrand-cities': {
 			steps: [ 'rebrand-cities-welcome', 'user' ],
 			destination: function( dependencies ) {
@@ -111,9 +101,9 @@ export function generateFlows( {
 
 		'with-theme': {
 			steps: [ 'domains-theme-preselected', 'plans', 'user' ],
-			destination: getSiteDestination,
+			destination: getChecklistThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2016-01-27',
+			lastModified: '2019-08-20',
 		},
 
 		main: {
@@ -129,13 +119,19 @@ export function generateFlows( {
 				'site-type',
 				'site-topic-with-preview',
 				'site-title-with-preview',
-				'site-style-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-06-20',
+		},
+
+		'blank-canvas': {
+			steps: [ 'user', 'site-type', 'domains', 'plans' ],
+			destination: getSignupDestination,
+			description: 'A blank slate flow used with the `signupEscapeHatch` AB test',
+			lastModified: '2019-08-09',
 		},
 
 		desktop: {

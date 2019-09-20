@@ -1,55 +1,43 @@
 /**
  * External dependencies
  */
-import { debounce } from 'lodash';
-
-/**
- * Internal dependencies
- */
+/* eslint-disable import/no-extraneous-dependencies */
+import { isNil, isEmpty } from 'lodash';
+/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * WordPress dependencies
  */
-import { useState, useMemo } from '@wordpress/element';
 import BlockPreview from './block-template-preview';
-import { parse as parseBlocks } from '@wordpress/blocks';
+/* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
+/* eslint-enable import/no-extraneous-dependencies */
 
 const TemplateSelectorItem = props => {
 	const {
 		id,
 		value,
-		help,
 		onFocus,
 		onSelect,
 		label,
 		useDynamicPreview = false,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
-		rawContent,
-		numBlocksInPreview,
+		blocks = [],
 	} = props;
 
-	const ON_FOCUS_DELAY = 500;
+	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
+		return null;
+	}
 
-	const [ blocksLimit, setBlockLimit ] = useState( numBlocksInPreview );
-	const blocks = useMemo( () => ( rawContent ? parseBlocks( rawContent ) : null ), [ rawContent ] );
-
-	const onFocusHandler = debounce( () => {
-		if ( blocks && blocks.length > blocksLimit ) {
-			setBlockLimit( null ); // not blocks limit to template preview
-		}
-
-		onFocus( value, label, blocks );
-	}, ON_FOCUS_DELAY );
+	if ( useDynamicPreview && ( isNil( blocks ) || isEmpty( blocks ) ) ) {
+		return null;
+	}
 
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
 		<Disabled>
-			<BlockPreview
-				blocks={ blocksLimit && blocks ? blocks.slice( 0, blocksLimit ) : blocks }
-				viewportWidth={ 960 }
-			/>
+			<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
 		</Disabled>
 	) : (
 		<img
@@ -59,20 +47,19 @@ const TemplateSelectorItem = props => {
 		/>
 	);
 
+	const labelId = `label-${ id }-${ value }`;
+
 	return (
 		<button
 			type="button"
-			id={ `${ id }-${ value }` }
 			className="template-selector-item__label"
 			value={ value }
-			// onFocus={ onFocusHandler }
-			onMouseEnter={ onFocusHandler }
-			onMouseLeave={ onFocusHandler.cancel }
-			onClick={ () => onSelect( value, label, blocks ) }
-			aria-describedby={ help ? `${ id }__help` : undefined }
+			onMouseEnter={ () => onFocus( value, label ) }
+			onClick={ () => onSelect( value, label ) }
+			aria-labelledby={ `${ id } ${ labelId }` }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			{ label }
+			<span id={ labelId }>{ label }</span>
 		</button>
 	);
 };

@@ -212,7 +212,10 @@ const webpackConfig = {
 			SassConfig.loader( {
 				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
-				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				prelude: `@import '${ path.join(
+					__dirname,
+					'client/assets/stylesheets/shared/_utils.scss'
+				) }';`,
 			} ),
 			{
 				include: path.join( __dirname, 'client/sections.js' ),
@@ -339,6 +342,10 @@ const polyfillsSkippedInEvergreen = [
 	/^svg4everybody$/,
 	// The fetch polyfill isn't needed for evergreen browsers, as they all support it.
 	/^isomorphic-fetch$/,
+	// All modern browsers support the URL API.
+	/^@webcomponents[/\\]url$/,
+	// All evergreen browsers support the URLSearchParams API.
+	/^@ungap[/\\]url-search-params$/,
 ];
 
 if ( browserslistEnv === 'evergreen' ) {

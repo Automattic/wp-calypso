@@ -14,7 +14,7 @@ import { isUndefined } from 'lodash';
 import ActivityLogBanner from './index';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';

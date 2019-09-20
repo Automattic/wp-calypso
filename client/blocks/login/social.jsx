@@ -95,10 +95,54 @@ class SocialLoginForm extends Component {
 							} )
 					);
 				} else if ( error.code === 'user_exists' ) {
-					this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
+					this.props.createSocialUserFailed( socialInfo, error );
 				}
 
 				this.recordEvent( 'calypso_login_social_login_failure', 'google', {
+					error_code: error.code,
+					error_message: error.message,
+				} );
+			}
+		);
+	};
+
+	handleAppleResponse = response => {
+		const { onSuccess, redirectTo } = this.props;
+
+		if ( ! response.id_token ) {
+			return;
+		}
+
+		const user = response.user || {};
+
+		const socialInfo = {
+			service: 'apple',
+			id_token: response.id_token,
+			user_name: user.name,
+			user_email: user.email,
+		};
+
+		this.props.loginSocialUser( socialInfo, redirectTo ).then(
+			() => {
+				this.recordEvent( 'calypso_login_social_login_success', 'apple' );
+
+				onSuccess();
+			},
+			error => {
+				if ( error.code === 'unknown_user' ) {
+					return this.props.createSocialUser( socialInfo, 'login' ).then(
+						() => this.recordEvent( 'calypso_login_social_signup_success', 'apple' ),
+						createAccountError =>
+							this.recordEvent( 'calypso_login_social_signup_failure', 'apple', {
+								error_code: createAccountError.code,
+								error_message: createAccountError.message,
+							} )
+					);
+				} else if ( error.code === 'user_exists' ) {
+					this.props.createSocialUserFailed( socialInfo, error );
+				}
+
+				this.recordEvent( 'calypso_login_social_login_failure', 'apple', {
 					error_code: error.code,
 					error_message: error.message,
 				} );
@@ -139,11 +183,24 @@ class SocialLoginForm extends Component {
 						redirectUri={ this.getRedirectUrl( uxMode, 'google' ) }
 						onClick={ this.trackLogin.bind( null, 'google' ) }
 					/>
+
 					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
-						redirectUri={ this.getRedirectUrl( uxMode, 'apple' ) }
+						responseHandler={ this.handleAppleResponse }
 						onClick={ this.trackLogin.bind( null, 'apple' ) }
 					/>
+
+					<p className="login__social-tos">
+						{ this.props.translate(
+							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
+								' are creating an account and you agree to our' +
+								' {{a}}Terms of Service{{/a}}.',
+							{
+								components: {
+									a: <a href="https://wordpress.com/tos" />,
+								},
+							}
+						) }
+					</p>
 				</div>
 
 				{ this.props.isSocialAccountCreating && (

@@ -4,7 +4,7 @@
 
 .filterbar.is-loading {
 	height: 50px;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -41,7 +41,7 @@
 	.filterbar__selection.button {
 		margin: 8px;
 		padding: 8px;
-		border: 1px solid var( --color-neutral-200 );
+		border: 1px solid var( --color-neutral-20 );
 		border-radius: 5px;
 		overflow: hidden;
 		white-space: nowrap;
@@ -50,9 +50,9 @@
 	.filterbar__selection.is-selected {
 		margin: 8px;
 		border-radius: 5px;
-		border: 1px solid var( --color-neutral-600 );
-		background: var( --color-neutral-600 );
-		color: var( --color-white );
+		border: 1px solid var( --color-neutral-60 );
+		background: var( --color-neutral-60 );
+		color: var( --color-text-inverted );
 
 		@include breakpoint( '>660px' ) {
 			margin-right: 0;
@@ -64,20 +64,20 @@
 	.filterbar__selection.is-active {
 		margin: 8px;
 		border-radius: 5px;
-		border: 1px solid var( --color-neutral-600 );
-		background: var( --color-neutral-600 );
-		color: var( --color-white );
+		border: 1px solid var( --color-neutral-60 );
+		background: var( --color-neutral-60 );
+		color: var( --color-text-inverted );
 	}
 
 	.filterbar__selection-close {
 		margin: 8px 8px 8px 0;
 		padding: 8px 8px 8px 0;
-		background-color: var( --color-neutral-600 );
-		color: var( --color-white );
+		background-color: var( --color-neutral-60 );
+		color: var( --color-text-inverted );
 		border-radius: 0;
 		border-top-right-radius: 5px;
 		border-bottom-right-radius: 5px;
-		border: 1px solid var( --color-neutral-600 );
+		border: 1px solid var( --color-neutral-60 );
 		display: none;
 
 		@include breakpoint( '>660px' ) {
@@ -86,8 +86,8 @@
 	}
 
 	.filterbar__selection-close:hover {
-		color: var( --color-white );
-		background-color: var( --color-neutral-600 );
+		color: var( --color-text-inverted );
+		background-color: var( --color-neutral-60 );
 	}
 }
 
@@ -136,7 +136,7 @@
 	justify-content: space-between;
 	margin-top: 16px;
 	padding-top: 14px;
-	border-top: 1px solid var( --color-neutral-50 );
+	border-top: 1px solid var( --color-neutral-5 );
 }
 
 .filterbar__date-range-wrap {
@@ -165,7 +165,7 @@
 		justify-content: space-between;
 		margin-top: 16px;
 		padding-top: 14px;
-		border-top: 1px solid var( --color-neutral-50 );
+		border-top: 1px solid var( --color-neutral-5 );
 	}
 
 	.filterbar__date-range-info {
@@ -191,7 +191,7 @@
 	}
 
 	.DayPicker-Day.DayPicker-Day--today .date-picker__day {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		position: relative;
 		display: block;
 		z-index: 0;
@@ -206,7 +206,7 @@
 		content: '';
 		position: absolute;
 		display: block;
-		background-color: var( --color-neutral-700 );
+		background-color: var( --color-neutral-70 );
 		border-radius: 50%;
 		width: 26px;
 		height: 26px;
@@ -218,7 +218,7 @@
 	.DayPicker-Day.DayPicker-Day--selected .date-picker__day {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		&:hover,
 		&:focus {
 			padding: 0 7px;
@@ -228,7 +228,7 @@
 	.DayPicker-Day.DayPicker-Day--start .date-picker__day,
 	.DayPicker-Day.DayPicker-Day--end .date-picker__day {
 		border-radius: 50%;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		padding: 0;
 		position: relative;
 		display: block;
@@ -293,11 +293,11 @@
 
 		&:hover,
 		&:focus {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		&.is-selected {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }

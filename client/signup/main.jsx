@@ -57,7 +57,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { removeUnneededSteps, submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -66,6 +66,8 @@ import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { showSitePreview, hideSitePreview } from 'state/signup/preview/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -169,12 +171,6 @@ class Signup extends React.Component {
 			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
 		}
 
-		if ( 'remove' === abtest( 'removeWebsiteFlow' ) && 'website' === this.props.flowName ) {
-			const destinationStep = flows.getFlow( 'onboarding' ).steps[ 0 ];
-			this.setState( { resumingStep: destinationStep } );
-			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
-		}
-
 		this.recordStep();
 	}
 
@@ -209,6 +205,7 @@ class Signup extends React.Component {
 		this.startTrackingForBusinessSite();
 		this.recordSignupStart();
 		this.preloadNextStep();
+		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -239,7 +236,17 @@ class Signup extends React.Component {
 		}
 
 		if ( this.props.stepName !== prevProps.stepName ) {
+			this.maybeShowSitePreview();
 			this.preloadNextStep();
+		}
+	}
+
+	maybeShowSitePreview() {
+		// Only show the site preview on main step pages, not sub step section screens
+		if ( this.props.shouldStepShowSitePreview && ! this.props.stepSectionName ) {
+			this.props.showSitePreview();
+		} else {
+			this.props.hideSitePreview();
 		}
 	}
 
@@ -368,6 +375,7 @@ class Signup extends React.Component {
 		if ( userIsLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
+				this.signupFlowController.reset();
 				return ( window.location.href = destination );
 			}
 
@@ -451,14 +459,13 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName ).steps,
-			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
-			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
-			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
+		const flowSteps = flows.getFlow( nextFlowName ).steps;
+		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const nextStepName = flowSteps[ currentStepIndex + 1 ];
+		const nextProgressItem = get( this.props.progress, nextStepName );
+		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
-			this.props.removeUnneededSteps( nextFlowName );
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
@@ -524,26 +531,23 @@ class Signup extends React.Component {
 					{ this.state.shouldShowLoadingScreen ? (
 						<SignupProcessingScreen />
 					) : (
-						<>
-							<CurrentComponent
-								path={ this.props.path }
-								step={ currentStepProgress }
-								initialContext={ this.props.initialContext }
-								steps={ flow.steps }
-								stepName={ this.props.stepName }
-								meta={ flow.meta || {} }
-								goToNextStep={ this.goToNextStep }
-								goToStep={ this.goToStep }
-								previousFlowName={ this.state.previousFlowName }
-								flowName={ this.props.flowName }
-								signupDependencies={ this.props.signupDependencies }
-								stepSectionName={ this.props.stepSectionName }
-								positionInFlow={ this.getPositionInFlow() }
-								hideFreePlan={ hideFreePlan }
-								{ ...propsFromConfig }
-							/>
-							{ this.props.shouldShowMockups && <SiteMockups stepName={ this.props.stepName } /> }
-						</>
+						<CurrentComponent
+							path={ this.props.path }
+							step={ currentStepProgress }
+							initialContext={ this.props.initialContext }
+							steps={ flow.steps }
+							stepName={ this.props.stepName }
+							meta={ flow.meta || {} }
+							goToNextStep={ this.goToNextStep }
+							goToStep={ this.goToStep }
+							previousFlowName={ this.state.previousFlowName }
+							flowName={ this.props.flowName }
+							signupDependencies={ this.props.signupDependencies }
+							stepSectionName={ this.props.stepSectionName }
+							positionInFlow={ this.getPositionInFlow() }
+							hideFreePlan={ hideFreePlan }
+							{ ...propsFromConfig }
+						/>
 					) }
 				</div>
 			</div>
@@ -599,6 +603,9 @@ class Signup extends React.Component {
 					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 				/>
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -616,6 +623,11 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteId = getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const shouldStepShowSitePreview = get(
+			steps[ ownProps.stepName ],
+			'props.showSiteMockups',
+			false
+		);
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
 				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
@@ -631,7 +643,8 @@ export default connect(
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
-			shouldShowMockups: get( steps[ ownProps.stepName ], 'props.showSiteMockups', false ),
+			shouldStepShowSitePreview,
+			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 		};
 	},
 	{
@@ -640,6 +653,7 @@ export default connect(
 		submitSiteVertical,
 		submitSignupStep,
 		loadTrackingTool,
-		removeUnneededSteps,
+		showSitePreview,
+		hideSitePreview,
 	}
 )( Signup );

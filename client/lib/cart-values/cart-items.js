@@ -21,6 +21,7 @@ import {
 	toLower,
 	uniq,
 } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -406,16 +407,6 @@ export function hasDomainRegistration( cart ) {
 	return some( getAllCartItems( cart ), isDomainRegistration );
 }
 
-/**
- * Determines whether there is at least one domain registration item in the specified shopping cart.
- *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {boolean} true if there is at least one domain registration item, false otherwise
- */
-export function hasOnlyDomainProducts( cart ) {
-	return every( getAllCartItems( cart ), isDomainProduct );
-}
-
 export function hasOnlyDomainProductsWithPrivacySupport( cart ) {
 	return every(
 		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
@@ -690,6 +681,48 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
 			return addCartItem( item );
 		} )
+	);
+}
+
+/**
+ * Returns the domain part of an email address.
+ *
+ * @param {String} emailAddress - a valid email address
+ * @returns {String} the domain
+ */
+const getDomainPartFromEmail = emailAddress =>
+	// Domain is any string after `@` character
+	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
+		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
+		: null;
+
+/**
+ * Returns a predicate that determines if a domain matches a product meta.
+ *
+ * @param {String} domain domain to compare.
+ * @returns {function(*=): (boolean)} true if the domain matches.
+ */
+const isSameDomainAsProductMeta = domain => product =>
+	product &&
+	product.meta &&
+	'string' === typeof domain &&
+	'string' === typeof product.meta &&
+	product.meta.trim().toUpperCase() === domain.trim().toUpperCase();
+
+export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
+	return (
+		! emailValidator.validate( contactDetails.email ) ||
+		some(
+			cart.products,
+			isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
+		)
+	);
+}
+
+export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
+	return some(
+		cart.products,
+		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.alternateEmail ) )
 	);
 }
 

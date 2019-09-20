@@ -106,41 +106,22 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellNudge: {
-		datestamp: '20190712',
+	showPlanUpsellGSuite: {
+		datestamp: '20190805',
 		variations: {
-			variantShowNudge: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	privateByDefault: {
-		datestamp: '20190730',
-		variations: {
-			selected: 90,
-			control: 10,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	checkoutSealsCopyBundle: {
-		datestamp: '20190613',
-		variations: {
-			variant: 50,
+			variantShowPlanBump: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-		//localeTargets: 'any',
 	},
-	showImportFlowInSiteTypeStep: {
-		datestamp: '20190820',
+	showPlanUpsellConcierge: {
+		datestamp: '20190805',
 		variations: {
-			show: 50,
-			hide: 50,
+			variantShowPlanBump: 100,
+			control: 0,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 	removeBlogFlow: {
@@ -152,13 +133,30 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	removeWebsiteFlow: {
-		datestamp: '20190813',
+	customerHomePage: {
+		datestamp: '20190903',
 		variations: {
-			remove: 50,
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		assignmentMethod: 'userId',
+	},
+	signupEscapeHatch: {
+		datestamp: '20190826',
+		variations: {
+			variant: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	placesApiInCheckout: {
+		datestamp: '20190923',
+		variations: {
+			original: 50,
+			placesApi: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

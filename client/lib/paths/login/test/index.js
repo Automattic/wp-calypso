@@ -81,5 +81,11 @@ describe( 'index', () => {
 
 			expect( url ).to.equal( '/log-in/jetpack?from=woocommerce-setup-wizard' );
 		} );
+
+		test( 'should return the login url with WooCommerce.com handler', () => {
+			const url = login( { isNative: true, oauth2ClientId: 12345, wccomFrom: 'testing' } );
+
+			expect( url ).to.equal( '/log-in?client_id=12345&wccom-from=testing' );
+		} );
 	} );
 } );

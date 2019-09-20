@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-ui",
-	"version": "1.0.0",
+	"version": "2.0.0-alpha.0",
 	"description": "Calypso UI Components",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -28,8 +28,10 @@
 	],
 	"dependencies": {
 		"classnames": "2.2.6",
-		"react": "^16.8.3",
-		"prop-types": "^15.7.2"
+		"enzyme": "^3.10.0",
+		"gridicons": "^3.3.1",
+		"prop-types": "^15.7.2",
+		"react": "^16.8.3"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -33,9 +33,6 @@ import RecentRenewals from './recent-renewals';
 import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import CheckoutTerms from './checkout-terms';
-
-import { hasDomainRegistration, hasOnlyDomainProducts } from 'lib/cart-values/cart-items';
-import { abtest } from 'lib/abtest';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -141,24 +138,6 @@ export class WechatPaymentBox extends Component {
 				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			);
 
-		const testSealsCopy = 'variant' === abtest( 'checkoutSealsCopyBundle' ),
-			moneyBackGuarantee = ! hasOnlyDomainProducts( cart ) && testSealsCopy,
-			paymentButtonClasses = classNames(
-				'checkout__payment-box-buttons',
-				'payment-box__payment-buttons',
-				{
-					'checkout__payment-box-buttons-variant': testSealsCopy,
-				}
-			),
-			payButtonText = testSealsCopy
-				? translate( 'Complete purchase with WeChat Pay' )
-				: translate( 'Pay %(price)s with WeChat Pay', {
-						args: { price: cart.total_cost_display },
-				  } ),
-			secureText = testSealsCopy
-				? translate( 'This is a secure 128-SSL encrypted connection' )
-				: translate( 'Secure Payment' );
-
 		// Wechat qr codes get set on desktop instead of redirecting
 		if ( redirectUrl && ! isMobile ) {
 			return (
@@ -202,7 +181,7 @@ export class WechatPaymentBox extends Component {
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
-						<div className={ paymentButtonClasses }>
+						<div className="checkout__payment-buttons  payment-box__payment-buttons">
 							<span className="checkout__payment-button pay-button">
 								<Button
 									type="submit"
@@ -210,25 +189,16 @@ export class WechatPaymentBox extends Component {
 									busy={ this.props.pending }
 									disabled={ this.props.pending || this.props.failure }
 								>
-									{ payButtonText }
+									{ translate( 'Pay %(price)s with WeChat Pay', {
+										args: { price: cart.total_cost_display },
+									} ) }
 								</Button>
 								<SubscriptionText cart={ cart } />
 							</span>
 							<div className="checkout__secure-payment">
-								{ moneyBackGuarantee && (
-									<div className="checkout__secure-payment-content">
-										<Gridicon icon="refresh" />
-										<div className="checkout__money-back-guarantee">
-											<div>{ translate( '30-day Money Back Guarantee' ) }</div>
-											{ hasDomainRegistration( cart ) && (
-												<div>{ translate( '(96 hrs for domains)' ) }</div>
-											) }
-										</div>
-									</div>
-								) }
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ secureText }
+									{ translate( 'Secure Payment' ) }
 								</div>
 							</div>
 							{ showPaymentChatButton && (

@@ -151,6 +151,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		&.is-rendering {
 			opacity: 0.5;
 		}
+
+        .block-editor-block-list__layout,
+        .block-editor-block-list__block {
+			padding: inherit;
+        }
 	}
 
 	.template-selector-item__media {
@@ -226,33 +231,34 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	background: $template-selector-empty-background;
 	border: 1px solid $template-selector-border-color;
 	border-radius: 6px;
-	pointer-events: none;
 	overflow-x: hidden;
 	overflow-y: auto;
 
-	.template-selector-preview__loading {
-		top: 0;
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 10;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		// Retaining the element in the render tree (ie: avoiding display: none)
-		// avoids reflow/repaint cycle which makes UI more responsive when
-		// loading state is toggled rapidly.
-		// See: https://www.phpied.com/rendering-repaint-reflowrelayout-restyle/.
-		will-change: transform; // tell the browser to expect a change here
-		transform: translate( 0, 0 );
+	.edit-post-visual-editor {
+		margin-top: 20px;
 	}
 
-	&.is-loaded {
-		pointer-events: auto; // reset to allow scrolling loaded previews
-		.template-selector-preview__loading {
-			transform: translate( -9999px, -9999px );
+	$template-large-preview-title-height: 117px;
+	.editor-styles-wrapper {
+		.editor-post-title {
+			transform-origin: top left;
+			width: 960px;
+			display: block;
+			position: absolute;
+			top: 0;
+		}
+
+		.editor-post-title,
+		.editor-post-title__block {
+			height: $template-large-preview-title-height;
+			margin-top: 0;
+			margin-bottom: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		body.show-post-title-before-content & .block-editor-block-preview__content > .block-editor-block-list__layout {
+			margin-top: $template-large-preview-title-height;
 		}
 	}
 }
@@ -261,14 +267,15 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate3d( -50%, -50%, 0 );
+	transform: translateX( -50% );
 	width: 80%;
 	text-align: center;
 }
 
 // Preview adjustments.
 // Tweak styles which are inside of the preview container.
-.block-editor-block-preview__container {
+.block-editor-block-preview__container,
+.template-selector-preview {
 	.editor-styles-wrapper {
 		.wp-block {
 			width: 100%;
@@ -309,6 +316,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			}
 		}
 
+		// Fix upstream: https://github.com/WordPress/gutenberg/pull/17202.
+		.block-editor-block-list__layout,
+		.block-editor-block-list__block {
+			padding: inherit;
+		}
 	}
 }
 
@@ -321,5 +333,18 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	.editor-styles-wrapper {
 		height: 100%;
+	}
+}
+
+.page-template-modal__loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+	transform: translate( -50%, -50% );
+	display: flex;
+    align-items: flex-end;
+
+	.components-spinner {
+		float: none;
 	}
 }

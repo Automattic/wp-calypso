@@ -24,7 +24,6 @@ import {
 	REDIRECTING_FOR_AUTHORIZATION,
 	MODAL_AUTHORIZATION,
 } from 'lib/store-transactions/step-types';
-import { abtest } from 'lib/abtest';
 
 export class PayButton extends React.Component {
 	buttonState = () => {
@@ -125,54 +124,11 @@ export class PayButton extends React.Component {
 
 		return this.props.translate( 'Pay now', { context: 'Pay button on /checkout' } );
 	};
-	beforeSubmitTextVariant = () => {
-		const cart = this.props.cart;
-
-		if ( this.props.beforeSubmitTextVariant ) {
-			return this.props.beforeSubmitTextVariant;
-		}
-
-		if ( hasOnlyFreeTrial( cart ) ) {
-			return this.props.translate( 'Start %(days)s Day Free Trial', {
-				args: { days: '14' },
-				context: 'Pay button for free trials on /checkout',
-			} );
-		}
-
-		if ( cart.total_cost_display ) {
-			if ( isPaidForFullyInCredits( cart ) ) {
-				if ( hasRenewalItem( this.props.cart ) ) {
-					return this.props.translate( 'Complete subscription purchase with Credits', {
-						context: 'Renew button on /checkout',
-					} );
-				}
-
-				return this.props.translate( 'Complete purchase with Credits', {
-					context: 'Pay button on /checkout',
-				} );
-			}
-
-			if ( hasRenewalItem( this.props.cart ) ) {
-				return this.props.translate( 'Renew subscription now', {
-					context: 'Renew button on /checkout',
-				} );
-			}
-
-			return this.props.translate( 'Complete purchase', {
-				context: 'Pay button on /checkout',
-			} );
-		}
-
-		return this.props.translate( 'Complete purchase', { context: 'Pay button on /checkout' } );
-	};
 
 	beforeSubmit = () => {
 		return {
 			disabled: false,
-			text:
-				'variant' === abtest( 'checkoutSealsCopyBundle' )
-					? this.beforeSubmitTextVariant()
-					: this.beforeSubmitText(),
+			text: this.beforeSubmitText(),
 		};
 	};
 

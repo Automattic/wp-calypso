@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
 
@@ -16,6 +13,7 @@ import { defer } from 'lodash';
 import AuthorSelector from 'blocks/author-selector';
 import User from 'components/user';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -80,7 +78,7 @@ class ImporterAuthorMapping extends React.Component {
 
 		return (
 			<div className="importer__author-mapping">
-				<span className="importer__source-author">{ name }</span>
+				<span className="importer__source-author">{ decodeEntities( name ) }</span>
 				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
 				{ ! hasSingleAuthor ? (
 					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -19,11 +20,19 @@ registerBlockType( 'a8c/post-content', {
 	icon: 'layout',
 	category: 'layout',
 	supports: {
+		align: [ 'full' ],
 		anchor: false,
 		customClassName: false,
 		html: false,
+		inserter: false,
 		multiple: false,
 		reusable: false,
+	},
+	attributes: {
+		align: {
+			type: 'string',
+			default: 'full',
+		},
 	},
 	edit,
 	save,

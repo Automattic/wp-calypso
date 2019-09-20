@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, isEqual, reduce, keys, first } from 'lodash';
 
 /**
@@ -17,7 +14,7 @@ import {
 	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation, withSchemaValidation } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
@@ -35,7 +32,7 @@ import emailVerification from './email-verification/reducer';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const id = createReducer(
+export const id = createReducerWithValidation(
 	null,
 	{
 		[ CURRENT_USER_RECEIVE ]: ( state, action ) => action.user.ID,
@@ -43,7 +40,7 @@ export const id = createReducer(
 	idSchema
 );
 
-export const flags = createReducer(
+export const flags = createReducerWithValidation(
 	[],
 	{
 		[ CURRENT_USER_RECEIVE ]: ( state, action ) =>
@@ -60,7 +57,7 @@ export const flags = createReducer(
  * @return {Object}        Updated state
  *
  */
-export const currencyCode = createReducer(
+export const currencyCode = createReducerWithValidation(
 	null,
 	{
 		[ PRODUCTS_LIST_RECEIVE ]: ( state, action ) => {
@@ -89,7 +86,7 @@ export const currencyCode = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function capabilities( state = {}, action ) {
+export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {
@@ -114,8 +111,7 @@ export function capabilities( state = {}, action ) {
 	}
 
 	return state;
-}
-capabilities.schema = capabilitiesSchema;
+} );
 
 export default combineReducers( {
 	id,

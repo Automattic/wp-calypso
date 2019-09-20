@@ -126,7 +126,7 @@ class StatsGeochart extends Component {
 		// defaults as raw hex values here.
 		const chartColorLight =
 			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent-50' )
+				.getPropertyValue( '--color-accent-5' )
 				.trim() || '#ffdff3';
 		const chartColorDark =
 			getComputedStyle( document.body )

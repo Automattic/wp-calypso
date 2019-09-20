@@ -28,6 +28,7 @@ if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 			anchor: false,
 			customClassName: false,
 			html: false,
+			inserter: false,
 			reusable: false,
 		},
 		edit,

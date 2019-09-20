@@ -218,6 +218,17 @@ function maybeWithinRefundPeriod( purchase ) {
 }
 
 /**
+ * Checks if a purchase have a bound payment method that we can recharge.
+ * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} if the purchase can be recharged by us through the bound payment method.
+ */
+function isRechargeable( purchase ) {
+	return purchase.isRechargeable;
+}
+
+/**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
  * Purchases usually can be refunded up to 30 days after purchase.
  * Domains and domain mappings can be refunded up to 96 hours.
@@ -427,6 +438,7 @@ export {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isRechargeable,
 	isRefundable,
 	isRemovable,
 	isRenewable,

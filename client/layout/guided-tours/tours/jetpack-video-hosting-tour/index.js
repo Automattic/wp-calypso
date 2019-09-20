@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ export const JetpackVideoHostingTour = makeTour(
 						<SiteLink isButton href="/plans/my-plan/:site">
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
-						<Quit>{ translate( 'No thanks.' ) }</Quit>
+						<Quit>{ translate( 'No, thanks.' ) }</Quit>
 					</ButtonRow>
 				</Fragment>
 			) }

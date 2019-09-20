@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import Button from 'components/button';
 import SiteTypeForm from './form';
@@ -20,6 +21,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
+	'blank-canvas': 'blank-canvas',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -36,6 +38,8 @@ class SiteType extends Component {
 		this.submitStep( 'import' );
 	};
 
+	handleBlankCanvasButtonClick = () => this.submitStep( 'blank-canvas' );
+
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
 
@@ -51,14 +55,28 @@ class SiteType extends Component {
 	};
 
 	renderImportButton() {
-		if ( 'show' !== abtest( 'showImportFlowInSiteTypeStep' ) ) {
+		if ( ! isEnabled( 'signup/import' ) ) {
 			return null;
 		}
 
 		return (
 			<div className="site-type__import-button">
 				<Button borderless onClick={ this.handleImportFlowClick }>
-					{ this.props.translate( 'Already have a website?' ) }
+					{ this.props.translate( 'Already have a website? Import your content here.' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	renderStartWithBlankCanvasButton() {
+		if ( 'variant' !== abtest( 'signupEscapeHatch' ) ) {
+			return null;
+		}
+
+		return (
+			<div className="site-type__blank-canvas">
+				<Button borderless onClick={ this.handleBlankCanvasButtonClick }>
+					{ this.props.translate( 'Skip setup and start with a blank website.' ) }
 				</Button>
 			</div>
 		);
@@ -74,6 +92,7 @@ class SiteType extends Component {
 					submitForm={ this.submitStep }
 					siteType={ siteType }
 				/>
+				{ this.renderStartWithBlankCanvasButton() }
 				{ this.renderImportButton() }
 			</Fragment>
 		);

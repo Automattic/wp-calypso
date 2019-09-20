@@ -206,7 +206,7 @@ class CancelPurchaseForm extends React.Component {
 	onSubmit = () => {
 		const { purchase, selectedSite } = this.props;
 
-		if ( ! isGoogleApps( purchase ) ) {
+		if ( ! isGoogleApps( purchase ) && selectedSite ) {
 			this.setState( {
 				isSubmitting: true,
 			} );

@@ -68,13 +68,13 @@ class TwoFactorActions extends Component {
 		return (
 			<Card className="two-factor-authentication__actions">
 				{ isSmsAvailable && (
-					<Button block data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
+					<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
 						{ translate( 'Send code via\u00A0text\u00A0message' ) }
 					</Button>
 				) }
 
 				{ isAuthenticatorAvailable && (
-					<Button block data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
+					<Button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
 						{ translate( 'Continue with your authenticator\u00A0app' ) }
 					</Button>
 				) }

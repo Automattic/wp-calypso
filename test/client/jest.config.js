@@ -1,13 +1,11 @@
-/** @format */
-
 module.exports = {
 	moduleNameMapper: {
 		'^config$': '<rootDir>/server/config/index.js',
 	},
 	transform: {
-		'^.+\\.[jt]sx?$': 'babel-jest',
+		'\\.[jt]sx?$': 'babel-jest',
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
-			'@automattic/calypso-build/jest/util/assets/transform.js'
+			'@automattic/calypso-build/jest/transform/asset.js'
 		),
 	},
 	modulePaths: [ '<rootDir>/test/', '<rootDir>/client/', '<rootDir>/client/extensions/' ],

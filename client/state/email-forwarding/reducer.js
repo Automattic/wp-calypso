@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,12 @@ import { orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import {
+	combineReducers,
+	createReducer,
+	createReducerWithValidation,
+	keyedReducer,
+} from 'state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -84,7 +87,7 @@ const changeMailBoxTemporary = temporary => ( forwards, { mailbox } ) => {
 	} );
 };
 
-export const typeReducer = createReducer(
+export const typeReducer = createReducerWithValidation(
 	null,
 	{
 		[ EMAIL_FORWARDING_REQUEST ]: () => null,
@@ -94,7 +97,7 @@ export const typeReducer = createReducer(
 	typeSchema
 );
 
-export const mxServersReducer = createReducer(
+export const mxServersReducer = createReducerWithValidation(
 	null,
 	{
 		[ EMAIL_FORWARDING_REQUEST ]: () => null,
@@ -105,7 +108,7 @@ export const mxServersReducer = createReducer(
 	mxSchema
 );
 
-export const forwardsReducer = createReducer(
+export const forwardsReducer = createReducerWithValidation(
 	null,
 	{
 		[ EMAIL_FORWARDING_REQUEST ]: () => null,

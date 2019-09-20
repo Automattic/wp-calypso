@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,31 +9,36 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { NavigationLink } from '../';
-import EMPTY_COMPONENT from 'components/empty-component';
+import Gridicon from 'components/gridicon';
 
-jest.mock( 'signup/utils', () => ( { getStepUrl: jest.fn() } ) );
-jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
+jest.mock( 'signup/utils', () => ( {
+	getStepUrl: jest.fn(),
+	getFilteredSteps: jest.fn(),
+} ) );
 
 const signupUtils = require( 'signup/utils' );
-const { getStepUrl } = signupUtils;
+const { getStepUrl, getFilteredSteps } = signupUtils;
 
 describe( 'NavigationLink', () => {
-	const Gridicon = EMPTY_COMPONENT;
 	const props = {
 		flowName: 'test:flow',
 		stepName: 'test:step2',
 		positionInFlow: 1,
 		stepSectionName: 'test:section',
-		signupProgress: [
-			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
-			{ stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
-			{ stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
-		],
+		signupProgress: {
+			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+			'test:step2': { stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
+			'test:step3': { stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
+		},
 		recordTracksEvent: noop,
 		submitSignupStep: noop,
 		goToNextStep: jest.fn(),
 		translate: str => `translated:${ str }`,
 	};
+
+	beforeEach( () => {
+		getFilteredSteps.mockReturnValue( Object.values( props.signupProgress ) );
+	} );
 
 	afterEach( () => {
 		getStepUrl.mockReset();
@@ -85,6 +89,9 @@ describe( 'NavigationLink', () => {
 
 		// when it is the first step
 		getStepUrl.mockReset();
+		getFilteredSteps.mockReturnValue( [
+			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+		] );
 		wrapper.setProps( { stepName: 'test:step1' } ); // set the first step
 		expect( getStepUrl ).toHaveBeenCalled();
 		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en' );

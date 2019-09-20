@@ -8,7 +8,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { MySitesSidebar } from '../sidebar';
+import { MySitesSidebar } from '..';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 

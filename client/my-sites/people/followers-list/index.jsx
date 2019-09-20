@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import deterministicStringify from 'json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

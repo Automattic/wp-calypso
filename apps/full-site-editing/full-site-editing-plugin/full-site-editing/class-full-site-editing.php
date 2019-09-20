@@ -40,13 +40,6 @@ class Full_Site_Editing {
 	public $wp_template_inserter;
 
 	/**
-	 * List of FSE supported themes.
-	 *
-	 * @var array
-	 */
-	const SUPPORTED_THEMES = [ 'modern-business' ];
-
-	/**
 	 * Full_Site_Editing constructor.
 	 */
 	private function __construct() {
@@ -89,12 +82,16 @@ class Full_Site_Editing {
 	/**
 	 * Determines whether provided theme supports FSE.
 	 *
+	 * @deprecated being replaced soon by an is_active static method - don't add new usages
 	 * @param string $theme_slug Theme slug to check support for.
 	 *
 	 * @return bool True if passed theme supports FSE, false otherwise.
 	 */
-	public function is_supported_theme( $theme_slug ) {
-		return in_array( $theme_slug, self::SUPPORTED_THEMES, true );
+	// phpcs:disable
+	public function is_supported_theme( $theme_slug = null ) {
+		// phpcs:enable
+		// now in reality is_current_theme_supported.
+		return current_theme_supports( 'full-site-editing' );
 	}
 
 	/**
@@ -104,8 +101,8 @@ class Full_Site_Editing {
 	 * It is hooked into after_switch_theme action.
 	 */
 	public function insert_default_data() {
-		// Bail if theme doesn't support FSE.
-		if ( ! $this->is_supported_theme( $this->theme_slug ) ) {
+		// Bail if current theme doesn't support FSE.
+		if ( ! $this->is_supported_theme() ) {
 			return;
 		}
 
@@ -122,7 +119,7 @@ class Full_Site_Editing {
 	 * Returns normalized theme slug for the current theme.
 	 *
 	 * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
-	 * For example, we will get 'modern-business' when retrieving theme slug on self hosted sites,
+	 * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
 	 * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
 	 *
 	 * @param string $theme_slug Theme slug to check support for.
@@ -131,7 +128,11 @@ class Full_Site_Editing {
 	 */
 	public function normalize_theme_slug( $theme_slug ) {
 		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
-			$theme_slug = str_replace( 'pub/', '', $theme_slug );
+			$theme_slug = substr( $theme_slug, 4 );
+		}
+
+		if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
+			$theme_slug = substr( $theme_slug, 0, -6 );
 		}
 
 		return $theme_slug;
@@ -338,13 +339,8 @@ class Full_Site_Editing {
 	 * @param \WP_Post $post Post instance.
 	 */
 	public function merge_template_and_post( $post ) {
-		// Bail if not a REST API Request.
-		if ( defined( 'REST_REQUEST' ) && ! REST_REQUEST ) {
-			return;
-		}
-
-		// Bail if the post is not a full site page.
-		if ( ! $this->is_full_site_page() ) {
+		// Bail if not a REST API Request and not in the editor.
+		if ( ! $this->should_merge_template_and_post( $post ) ) {
 			return;
 		}
 
@@ -357,6 +353,29 @@ class Full_Site_Editing {
 		}
 
 		$post->post_content = preg_replace( '@(<!-- wp:a8c/post-content)(.*?)(/-->)@', "$1$2-->$post->post_content<!-- /wp:a8c/post-content -->", $template_content );
+	}
+
+	/**
+	 * Detects if we are in a context where the template and post should be merged.
+	 *
+	 * Conditions:
+	 * 1. Current theme supports it
+	 * 2. AND in a REST API request (either flavour)
+	 * 3. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
+	 * 4. AND editing a post_type that supports full site editing
+	 *
+	 * @param \WP_Post $post object for the check.
+	 * @return bool
+	 */
+	private function should_merge_template_and_post( $post ) {
+		$is_rest_api_wpcom      = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
+		$is_rest_api_core       = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
+
+		if ( ! ( $is_block_editor_screen || $is_rest_api_core || $is_rest_api_wpcom ) ) {
+			return false;
+		}
+		return $this->is_full_site_page( $post );
 	}
 
 	/**
@@ -433,10 +452,12 @@ class Full_Site_Editing {
 	 * Determine if the current edited post is a full site page.
 	 * So far we only support static pages.
 	 *
+	 * @param object $post optional post object, if not passed in then current post is checked.
 	 * @return boolean
 	 */
-	public function is_full_site_page() {
-		return 'page' === get_post_type();
+	public function is_full_site_page( $post = null ) {
+		$post_type = get_post_type( $post );
+		return 'page' === $post_type || ( 'revision' === $post_type && 'page' === get_post_type( $post->post_parent ) );
 	}
 
 	/**

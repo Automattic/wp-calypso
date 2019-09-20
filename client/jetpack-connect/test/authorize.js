@@ -35,6 +35,7 @@ const DEFAULT_PROPS = deepFreeze( {
 		authApproved: false,
 		blogname: 'Example Blog',
 		clientId: CLIENT_ID,
+		closeWindowAfterLogin: false,
 		from: 'banner-44-slide-1-dashboard',
 		homeUrl: `http://${ SITE_SLUG }`,
 		jpVersion: '5.4',

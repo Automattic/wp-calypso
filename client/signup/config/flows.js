@@ -16,7 +16,7 @@ import { generateFlows } from 'signup/config/flows-pure';
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
-	return '/checkout/' + dependencies.siteSlug;
+	return `/checkout/${ dependencies.siteSlug }?signup=1`;
 }
 
 function dependenciesContainCartItem( dependencies ) {
@@ -57,11 +57,16 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
+function getChecklistThemeDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getThankYouNoSiteDestination,
+	getChecklistThemeDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

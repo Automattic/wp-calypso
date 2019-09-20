@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { keyBy, omit, without } from 'lodash';
 
 /**
@@ -18,7 +15,7 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { itemSchema } from './schema';
 
 // Tracks fetching state for keyring connections
@@ -29,7 +26,7 @@ export const isFetching = createReducer( false, {
 } );
 
 // Stores the list of available keyring connections
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ KEYRING_CONNECTIONS_RECEIVE ]: ( state, { connections } ) => ( {

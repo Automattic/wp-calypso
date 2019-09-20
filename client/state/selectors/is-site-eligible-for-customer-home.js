@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { abtest } from 'lib/abtest';
+import { canCurrentUserUseChecklistMenu } from 'state/sites/selectors';
 
 /**
  * Returns true if the current should be able to use the customer home screen
@@ -13,9 +13,8 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  * @return {?Boolean}        Whether the site can use the customer home screen
  */
 export default function isSiteEligibleForCustomerHome( state, siteId = null ) {
-	//TODO Add A/B test and new site logic
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
-	return ! ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) );
+	return 'show' === abtest( 'customerHomePage' ) && canCurrentUserUseChecklistMenu( state, siteId );
 }
