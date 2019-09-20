@@ -26,9 +26,7 @@ class Security2faKeyAddName extends React.Component {
 	};
 
 	componentDidMount = () => {
-		this.setState( { error: false, keyName: '' }, () => {
-			this.keyNameInput.focus();
-		} );
+		this.keyNameInput.focus();
 	};
 
 	submitName = e => {
