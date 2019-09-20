@@ -11,7 +11,7 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import ReaderPopover from 'reader/components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import FormToggle from 'components/forms/form-toggle';

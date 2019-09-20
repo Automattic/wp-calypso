@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 export const Item = props => {
 	const { isSelected, onClick, label, icon, href } = props;
