@@ -154,6 +154,12 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const fileLoader = FileConfig.loader( {
+	outputPath: path.join( __dirname, 'public', 'images' ),
+	publicPath: '../images/',
+	emitFile: browserslistEnv === 'evergreen', // Only output files once.
+} );
+
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
@@ -228,7 +234,7 @@ const webpackConfig = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			FileConfig.loader(),
+			fileLoader,
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
 				use: 'exports-loader?window=tinymce',
