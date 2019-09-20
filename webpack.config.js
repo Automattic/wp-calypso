@@ -156,7 +156,7 @@ const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 const fileLoader = FileConfig.loader( {
 	outputPath: path.join( __dirname, 'public', 'images' ),
-	publicPath: '../images/',
+	publicPath: '/calypso/images/',
 	emitFile: browserslistEnv === 'evergreen', // Only output files once.
 } );
 
