@@ -1,13 +1,17 @@
 /**
  * External dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
 import { isNil, isEmpty } from 'lodash';
+/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * WordPress dependencies
  */
 import BlockPreview from './block-template-preview';
+/* eslint-disable import/no-extraneous-dependencies */
 import { Disabled } from '@wordpress/components';
+/* eslint-enable import/no-extraneous-dependencies */
 
 const TemplateSelectorItem = props => {
 	const {
@@ -23,10 +27,6 @@ const TemplateSelectorItem = props => {
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
-		return null;
-	}
-
-	if ( ! useDynamicPreview && isNil( staticPreviewImg ) ) {
 		return null;
 	}
 

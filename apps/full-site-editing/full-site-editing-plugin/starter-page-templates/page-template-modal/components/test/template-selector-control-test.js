@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import { uniqueId } from 'lodash';
+/* eslint-disable import/no-extraneous-dependencies */
+import { uniqueId, omit } from 'lodash';
+/* eslint-enable import/no-extraneous-dependencies */
 
 import { render, fireEvent } from '@testing-library/react';
 
@@ -30,6 +32,8 @@ afterAll( () => {
 	global.MutationObserver.mockRestore();
 } );
 
+const testUniqueId = uniqueId();
+
 describe( 'TemplateSelectorControl', () => {
 	const siteInformation = {
 		title: 'gutenberg-training',
@@ -41,7 +45,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { getByText, container } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					templates={ templatesFixture }
 					blocksByTemplates={ blocksByTemplatesFixture }
 					siteInformation={ siteInformation }
@@ -49,8 +53,9 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( getByText( 'Select a Template...' ) ).toBeInTheDocument();
+			expect( getByText( 'Blank' ) ).toBeInTheDocument();
 			expect( document.querySelectorAll( 'button.template-selector-item__label' ) ).toHaveLength(
-				3
+				4
 			);
 			expect( container ).toMatchSnapshot();
 		} );
@@ -59,7 +64,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { queryByText, queryByTestId } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					blocksByTemplates={ blocksByTemplatesFixture }
 				/>
 			);
@@ -73,7 +78,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { queryByText, queryByTestId } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					templates={ 'evil stuff here' }
 					blocksByTemplates={ blocksByTemplatesFixture }
 				/>
@@ -91,7 +96,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { getByText } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					templates={ templatesFixture }
 					blocksByTemplates={ blocksByTemplatesFixture }
 					siteInformation={ siteInformation }
@@ -110,7 +115,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { getByText } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					templates={ templatesFixture }
 					blocksByTemplates={ blocksByTemplatesFixture }
 					siteInformation={ siteInformation }
@@ -129,7 +134,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { getByAltText } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					templates={ templatesFixture }
 					blocksByTemplates={ blocksByTemplatesFixture }
 					siteInformation={ siteInformation }
@@ -137,7 +142,26 @@ describe( 'TemplateSelectorControl', () => {
 			);
 
 			expect( getByAltText( 'Testing alt 2' ) ).toBeInTheDocument();
-			expect( document.querySelectorAll( 'img.template-selector-item__media' ) ).toHaveLength( 3 );
+			expect( document.querySelectorAll( 'img.template-selector-item__media' ) ).toHaveLength( 4 );
+		} );
+
+		it( 'renders in "blank" mode when static preview is not provided ', () => {
+			const templatesFixtureWithoutPreviews = templatesFixture.map( template =>
+				omit( template, 'preview' )
+			);
+
+			const { getByText } = render(
+				<TemplateSelectorControl
+					label="Select a Template..."
+					instanceId={ testUniqueId }
+					templates={ templatesFixtureWithoutPreviews }
+					blocksByTemplates={ blocksByTemplatesFixture }
+					siteInformation={ siteInformation }
+				/>
+			);
+
+			expect( getByText( 'Select a Template...' ) ).toBeInTheDocument();
+			expect( getByText( 'Blank' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -146,7 +170,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { queryByAltText, getAllByTestId } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					templates={ templatesFixture }
 					blocksByTemplates={ blocksByTemplatesFixture }
 					siteInformation={ siteInformation }
@@ -156,7 +180,7 @@ describe( 'TemplateSelectorControl', () => {
 
 			const mockedBlockTemplatePreviews = getAllByTestId( 'block-template-preview' );
 
-			expect( mockedBlockTemplatePreviews ).toHaveLength( 3 );
+			expect( mockedBlockTemplatePreviews ).toHaveLength( 4 );
 			expect( queryByAltText( 'Testing alt 2' ) ).not.toBeInTheDocument();
 			expect( document.querySelectorAll( 'img.template-selector-item__media' ) ).toHaveLength( 0 );
 		} );
@@ -165,7 +189,7 @@ describe( 'TemplateSelectorControl', () => {
 			const { queryByLabelText, queryByTestId } = render(
 				<TemplateSelectorControl
 					label="Select a Template..."
-					instanceId={ uniqueId() }
+					instanceId={ testUniqueId }
 					templates={ templatesFixture }
 					siteInformation={ siteInformation }
 					useDynamicPreview={ true }
