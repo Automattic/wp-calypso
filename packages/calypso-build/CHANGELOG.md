@@ -1,9 +1,10 @@
-# _unreleased_
+# 4.1.0
 
 - Add config options to file-loader.
 - Add `enzyme-to-json` serializer to `jest-preset.js`.
 - Make Jest ignore transpiled files in `dist/`.
 - Handle `TypeScript` files in `transpile` command.
+- Use `require.resolve` to resolve babel plugins and presets.
 
 # 4.0.1
 
