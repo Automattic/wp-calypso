@@ -116,6 +116,10 @@ class BlogPostsPage extends React.Component {
 			this.props.frontPageType === 'page' && ! this.props.postsPage;
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 
+		if ( ! isCurrentlySetAsHomepage ) {
+			return null;
+		}
+
 		return (
 			<Card
 				href={ this.getPostsPageLink( {
