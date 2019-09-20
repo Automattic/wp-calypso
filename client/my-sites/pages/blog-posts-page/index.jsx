@@ -68,7 +68,7 @@ class BlogPostsPage extends React.Component {
 			return (
 				<span>
 					<Gridicon size={ 12 } icon="not-visible" className="blog-posts-page__not-used-icon" />
-					{ this.props.translate( 'Not in use.' ) + ' ' }
+					{ this.props.translate( 'Posts page not in use.' ) + ' ' }
 					{ // Prevent displaying '"Untitled" is the homepage.' while the settings are loading.
 					!! this.props.frontPage &&
 						this.props.translate( '"%(pageTitle)s" is the homepage.', {
@@ -112,7 +112,6 @@ class BlogPostsPage extends React.Component {
 		if ( isFullSiteEditing ) {
 			return null;
 		}
-
 		const isStaticHomePageWithNoPostsPage =
 			this.props.frontPageType === 'page' && ! this.props.postsPage;
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';

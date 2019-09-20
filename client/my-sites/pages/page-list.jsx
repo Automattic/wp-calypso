@@ -325,7 +325,7 @@ class Pages extends Component {
 			: this.renderChronological( { pages, site } );
 	}
 
-	renderHierarchical( { pages, site } ) {
+	renderHierarchical( { pages } ) {
 		pages = sortPagesHierarchically( pages );
 		const rows = pages.map( function( page ) {
 			return (
@@ -343,7 +343,6 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				{ this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
