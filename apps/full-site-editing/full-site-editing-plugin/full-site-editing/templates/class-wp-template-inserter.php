@@ -82,7 +82,7 @@ class WP_Template_Inserter {
 		$response = $this->fetch_retry( $request_url, $request_args );
 
 		if ( ! $response ) {
-			do_action( 'fse_log_template_population_error' );
+			do_action( 'a8c_fse_log', 'The FSE templates failed to populate at point of activation' );
 			$this->header_content = $this->get_default_header();
 			$this->footer_content = $this->get_default_footer();
 			return;
@@ -135,16 +135,7 @@ class WP_Template_Inserter {
 	public function get_default_header() {
 		return '<!-- wp:a8c/site-description /-->
 			<!-- wp:a8c/site-title /-->
-			<!-- wp:a8c/navigation-menu /-->
-			<!-- wp:paragraph -->
-				<p>' .
-				__(
-					'The theme did not activate correctly so it may not look identical to the demo site. 
-					You are still able to edit the header and footer content to suit your needs.',
-					'full-site-editing'
-				)
-				.
-				'</p><!-- /wp:paragraph -->';
+			<!-- wp:a8c/navigation-menu /-->';
 	}
 
 	/**
