@@ -99,7 +99,7 @@ class StepWrapper extends Component {
 			}
 
 			return this.props.translate(
-				"Create and account and answer a few questions about what you want to build. We'll start your off with a new site tailored to your choices."
+				"Create an account and answer a few questions about what you want to build. We'll start you off with a new site tailored to your choices."
 			);
 		}
 
