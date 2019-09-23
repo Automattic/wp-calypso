@@ -278,7 +278,7 @@ class Home extends Component {
 							{ hasCustomDomain ? (
 								<ActionBox
 									onClick={ () => {
-										trackAction( 'my_site', 'add_gsuite' );
+										trackAction( 'my_site', 'add_email' );
 										page( `/email/${ siteSlug }` );
 									} }
 									label={ translate( 'Add email' ) }
