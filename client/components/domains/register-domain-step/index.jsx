@@ -1022,9 +1022,7 @@ class RegisterDomainStep extends React.Component {
 		const pageNumber = this.state.pageNumber + 1;
 
 		debug(
-			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${
-				this.props.analyticsSection
-			}"`
+			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${ this.props.analyticsSection }"`
 		);
 
 		this.props.recordShowMoreResults(
