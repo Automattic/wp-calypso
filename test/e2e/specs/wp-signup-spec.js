@@ -35,9 +35,9 @@ import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
 import DomainOnlySettingsPage from '../lib/pages/domain-only-settings-page';
 import DomainDetailsPage from '../lib/pages/domain-details-page';
-import ManagePurchasePage from '../lib/pages/manage-purchase-page';
-import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
-import CancelDomainPage from '../lib/pages/cancel-domain-page';
+// import ManagePurchasePage from '../lib/pages/manage-purchase-page';
+// import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
+// import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import GSuiteUpsellPage from '../lib/pages/gsuite-upsell-page';
 import ThemesPage from '../lib/pages/themes-page';
 import ThemeDetailPage from '../lib/pages/theme-detail-page';
@@ -55,8 +55,8 @@ import * as SlackNotifier from '../lib/slack-notifier';
 
 import EmailClient from '../lib/email-client.js';
 import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-domain-registration-unavailable-component';
-import DeleteAccountFlow from '../lib/flows/delete-account-flow';
-import DeletePlanFlow from '../lib/flows/delete-plan-flow';
+// import DeleteAccountFlow from '../lib/flows/delete-account-flow';
+// import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
@@ -198,9 +198,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await ReaderPage.Expect( driver );
 		} );
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up for a free site, see the site preview, activate email and can publish @parallel', function() {
@@ -274,9 +274,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up for a non-blog site on a premium paid plan through main flow using a coupon @parallel @visdiff', function() {
@@ -388,9 +388,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			assert.strictEqual( removedCouponAmount, originalCartAmount, 'Coupon not removed properly' );
 		} );
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency @parallel @canary', function() {
@@ -516,13 +516,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete the plan', async function() {
-			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
-		} );
+		// step( 'Can delete the plan', async function() {
+		// 	return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
+		// } );
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @parallel', function() {
@@ -639,13 +639,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete the plan', async function() {
-			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
-		} );
-
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// step( 'Can delete the plan', async function() {
+		// 	return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
+		// } );
+		//
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up for a site on a personal paid plan coming in via /create as personal flow in GBP currency @parallel', function() {
@@ -765,13 +765,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete the plan', async function() {
-			return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
-		} );
-
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// step( 'Can delete the plan', async function() {
+		// 	return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
+		// } );
+		//
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe.skip( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @parallel', function() {
@@ -934,40 +934,40 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return assert( exists, 'The settings menu option does not exist' );
 		} );
 
-		after( 'We can cancel the domain and delete newly created account', async function() {
-			return await ( async () => {
-				await ReaderPage.Visit( driver );
-				const navBarComponent = await NavBarComponent.Expect( driver );
-				await navBarComponent.clickMySites();
-				const sidebarComponent = await SideBarComponent.Expect( driver );
-				await sidebarComponent.selectSettings();
-				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
-				await domainOnlySettingsPage.manageDomain();
-				const domainDetailsPage = await DomainDetailsPage.Expect( driver );
-				await domainDetailsPage.viewPaymentSettings();
-
-				const managePurchasePage = await ManagePurchasePage.Expect( driver );
-				const domainDisplayed = await managePurchasePage.domainDisplayed();
-				assert.strictEqual(
-					domainDisplayed,
-					expectedDomainName,
-					'The domain displayed on the manage purchase page is unexpected'
-				);
-				await managePurchasePage.chooseCancelAndRefund();
-
-				const cancelPurchasePage = await CancelPurchasePage.Expect( driver );
-				await cancelPurchasePage.clickCancelPurchase();
-
-				const cancelDomainPage = await CancelDomainPage.Expect( driver );
-				await cancelDomainPage.completeSurveyAndConfirm();
-				return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
-			} )().catch( err => {
-				SlackNotifier.warn(
-					`There was an error in the hooks that clean up the test account but since it is cleaning up we really don't care: '${ err }'`,
-					{ suppressDuplicateMessages: true }
-				);
-			} );
-		} );
+		// after( 'We can cancel the domain and delete newly created account', async function() {
+		// 	return await ( async () => {
+		// 		await ReaderPage.Visit( driver );
+		// 		const navBarComponent = await NavBarComponent.Expect( driver );
+		// 		await navBarComponent.clickMySites();
+		// 		const sidebarComponent = await SideBarComponent.Expect( driver );
+		// 		await sidebarComponent.selectSettings();
+		// 		const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
+		// 		await domainOnlySettingsPage.manageDomain();
+		// 		const domainDetailsPage = await DomainDetailsPage.Expect( driver );
+		// 		await domainDetailsPage.viewPaymentSettings();
+		//
+		// 		const managePurchasePage = await ManagePurchasePage.Expect( driver );
+		// 		const domainDisplayed = await managePurchasePage.domainDisplayed();
+		// 		assert.strictEqual(
+		// 			domainDisplayed,
+		// 			expectedDomainName,
+		// 			'The domain displayed on the manage purchase page is unexpected'
+		// 		);
+		// 		await managePurchasePage.chooseCancelAndRefund();
+		//
+		// 		const cancelPurchasePage = await CancelPurchasePage.Expect( driver );
+		// 		await cancelPurchasePage.clickCancelPurchase();
+		//
+		// 		const cancelDomainPage = await CancelDomainPage.Expect( driver );
+		// 		await cancelDomainPage.completeSurveyAndConfirm();
+		// 		return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
+		// 	} )().catch( err => {
+		// 		SlackNotifier.warn(
+		// 			`There was an error in the hooks that clean up the test account but since it is cleaning up we really don't care: '${ err }'`,
+		// 			{ suppressDuplicateMessages: true }
+		// 		);
+		// 	} );
+		// } );
 	} );
 
 	describe( 'Sign up for a site on a business paid plan w/ domain name coming in via /create as business flow in CAD currency @parallel', function() {
@@ -1144,15 +1144,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete the plan', async function() {
-			return await new DeletePlanFlow( driver ).deletePlan( 'business', {
-				deleteDomainAlso: true,
-			} );
-		} );
-
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
-		} );
+		// step( 'Can delete the plan', async function() {
+		// 	return await new DeletePlanFlow( driver ).deletePlan( 'business', {
+		// 		deleteDomainAlso: true,
+		// 	} );
+		// } );
+		//
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
+		// } );
 	} );
 
 	describe( 'Basic sign up for a free site @parallel @email @ie11canary', function() {
@@ -1226,9 +1226,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up while purchasing premium theme in AUD currency @parallel @email', function() {
@@ -1349,13 +1349,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete the plan', async function() {
-			return await new DeletePlanFlow( driver ).deletePlan( 'theme' );
-		} );
-
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// step( 'Can delete the plan', async function() {
+		// 	return await new DeletePlanFlow( driver ).deletePlan( 'theme' );
+		// } );
+		//
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up for free subdomain site @parallel', function() {
@@ -1448,9 +1448,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await settingsPage.deleteSite( expectedDomainName );
 		} );
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+		// } );
 	} );
 
 	describe( 'Sign up for an account only (no site) then add a site @parallel', function() {
@@ -1550,9 +1550,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		// } );
 	} );
 
 	describe( 'Sign up for a Reader account @parallel', function() {
@@ -1602,9 +1602,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await ReaderPage.Expect( driver );
 		} );
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		// } );
 	} );
 
 	describe( 'Import a site while signing up @parallel', function() {
@@ -1757,9 +1757,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			await driver.get( activationLink );
 		} );
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		// } );
 	} );
 
 	describe( 'Sign up for a free WordPress.com site via the new onboarding flow @parallel', () => {
@@ -1834,9 +1834,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		// } );
 
 		after( async function() {
 			return await overrideABTests.setABTestControlGroups( driver, { reset: true } );
@@ -1933,9 +1933,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		after( 'Can delete our newly created account', async function() {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
-		} );
+		// after( 'Can delete our newly created account', async function() {
+		// 	return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		// } );
 
 		after( async function() {
 			return await overrideABTests.setABTestControlGroups( driver, { reset: true } );
