@@ -19,11 +19,11 @@ console.log( 'Building %s', dir );
 const baseCommand = `npx babel --presets="${ babelPresetFile }" --extensions='.js,.jsx,.ts,.tsx'`;
 
 execSync( `${ baseCommand } -d "${ outputDirEsm }" "${ inputDir }"`, {
-	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
+	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults', MODULES: 'esm' } ),
 	cwd: root,
 } );
 
 execSync( `${ baseCommand } -d "${ outputDirCommon }" "${ inputDir }"`, {
-	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'server' } ),
+	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
 	cwd: root,
 } );

@@ -1,7 +1,8 @@
-const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
-
-// Use commonjs for Node
-const modules = isBrowser ? false : 'commonjs';
+// @babel/preset-env modules option. `false` for ECMAScript modules.
+let modules = 'commonjs'; // Default
+if ( typeof process.env.MODULES !== 'undefined' ) {
+	modules = process.env.MODULES === 'esm' ? false : process.env.MODULES;
+}
 
 module.exports = () => ( {
 	presets: [
