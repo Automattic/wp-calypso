@@ -12,7 +12,6 @@ import UpsellPage from '../pages/signup/upsell-page';
 import ChecklistPage from '../pages/checklist-page';
 import InlineHelpChecklistComponent from '../components/inline-help-checklist-component.js';
 import SitePreviewComponent from '../components/site-preview-component.js';
-import SideBarComponent from '../components/sidebar-component';
 
 export const canSeeTheSitePreview = () => {
 	step( 'Can then see the site preview', async function() {
@@ -52,10 +51,6 @@ export const canSeeTheOnboardingChecklist = () => {
 			const upsellPage = await UpsellPage.Expect( this.driver );
 			await upsellPage.declineOffer();
 		} catch ( e ) {}
-
-		// Open Checklist
-		const sideBarComponent = await SideBarComponent.Expect( this.driver );
-		await sideBarComponent.selectChecklist();
 
 		const checklistPage = await ChecklistPage.Expect( this.driver );
 		const header = await checklistPage.headerExists();

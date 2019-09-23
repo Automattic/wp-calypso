@@ -41,13 +41,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await this._scrollToAndClickMenuItem( 'domains' );
 	}
 
-	async selectChecklist() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.menu-link-text[data-e2e-sidebar="Checklist"]' )
-		);
-	}
-
 	async selectPeople() {
 		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'people' );
