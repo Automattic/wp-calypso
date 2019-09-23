@@ -43,6 +43,7 @@ import ThemesPage from '../lib/pages/themes-page';
 import ThemeDetailPage from '../lib/pages/theme-detail-page';
 import ImportPage from '../lib/pages/import-page';
 import SettingsPage from '../lib/pages/settings-page';
+import PlansPage from '../lib/pages/plans-page.js';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
@@ -763,7 +764,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		step( 'Can see Plans page', async function() {
+			return await PlansPage.Expect( driver );
+		} );
 
 		step( 'Can delete the plan', async function() {
 			return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
