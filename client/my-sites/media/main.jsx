@@ -260,7 +260,14 @@ class Media extends Component {
 					callback();
 				}
 			},
-			translate( 'Delete' ),
+			selectedCount < 2 
+				? translate( 'Delete 1 item' ) 
+				: translate( 'Delete %(selectedCount)s items', {
+					args: {
+						selectedCount: selectedCount,
+					},
+				}
+			),
 			null,
 			{
 				isScary: true,
