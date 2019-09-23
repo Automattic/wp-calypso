@@ -77,15 +77,19 @@ function PendingGSuiteTosNoticeDialog( props ) {
 				setPassword( data.password );
 			},
 			() => {
-				props.errorNotice( translate( 'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.', {
-						args: {
-							gsuiteEmail: props.user,
-						},
-						components: {
-							link: <a href={ CALYPSO_CONTACT } />,
-						},
-					}
-				) );
+				props.errorNotice(
+					translate(
+						'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.',
+						{
+							args: {
+								gsuiteEmail: props.user,
+							},
+							components: {
+								link: <a href={ CALYPSO_CONTACT } />,
+							},
+						}
+					)
+				);
 
 				setOpenTracked( false );
 				props.onClose();
