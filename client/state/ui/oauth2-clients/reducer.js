@@ -18,7 +18,11 @@ export const currentClientId = createReducer( null, {
 			return query.client_id ? Number( query.client_id ) : state;
 		}
 
-		if ( startsWith( path, '/start/wpcc' ) || startsWith( path, '/start/crowdsignal' ) ) {
+		if (
+			startsWith( path, '/start/wpcc' ) ||
+			startsWith( path, '/start/crowdsignal' ) ||
+			startsWith( path, '/start/wpcc-simple' )
+		) {
 			return query.oauth2_client_id ? Number( query.oauth2_client_id ) : state;
 		}
 

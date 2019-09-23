@@ -118,10 +118,7 @@ export class PasswordlessStep extends Component {
 			submitting: true,
 		} );
 
-		verifyPasswordlessUser( this.handleUserVerificationRequest, {
-			email: getFieldValue( this.formStore.get(), 'email' ),
-			code: getFieldValue( this.formStore.get(), 'code' ),
-		} );
+		verifyPasswordlessUser( this.handleUserVerificationRequest, data );
 	};
 
 	handleUserVerificationRequest = ( error, providedDependencies ) => {
@@ -253,13 +250,35 @@ export class PasswordlessStep extends Component {
 			: this.renderSignupForm();
 	}
 
+	getHeaderText() {
+		if (
+			this.props.flowName === 'wpcc-simple' &&
+			this.props.queryObject.oauth2_client_id === '50916'
+		) {
+			return this.props.translate( 'Get started with WooCommerce Payments' );
+		}
+
+		return this.props.headerText;
+	}
+
+	getSubHeaderText() {
+		if (
+			this.props.flowName === 'wpcc-simple' &&
+			this.props.queryObject.oauth2_client_id === '50916'
+		) {
+			return this.props.translate( 'Enter the email address of the primary business owner' );
+		}
+
+		return this.props.translate( 'Create a WordPress.com account' );
+	}
+
 	render() {
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
-				headerText={ this.props.headerText }
-				subHeaderText={ this.props.translate( 'Create a WordPress.com account' ) }
+				headerText={ this.getHeaderText() }
+				subHeaderText={ this.getSubHeaderText() }
 				positionInFlow={ this.props.positionInFlow }
 				stepContent={ this.renderStepContent() }
 			/>

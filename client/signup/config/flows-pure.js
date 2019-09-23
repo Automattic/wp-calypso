@@ -237,6 +237,14 @@ export function generateFlows( {
 
 	if ( isEnabled( 'signup/wpcc' ) ) {
 		flows.wpcc = {
+			steps: [ 'oauth2' ],
+			destination: getRedirectDestination,
+			description: 'WordPress.com Connect signup flow',
+			lastModified: '2017-08-24',
+			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+		};
+
+		flows[ 'wpcc-simple' ] = {
 			steps: [ 'oauth2-passwordless' ],
 			destination: getRedirectDestination,
 			description: 'WordPress.com Connect signup flow',

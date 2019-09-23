@@ -675,20 +675,21 @@ export function createPasswordlessUser( callback, { email } ) {
  * @param {function} callback Callback function
  * @param {object}   data     POST data object
  */
-export function verifyPasswordlessUser( callback, dependencies, data ) {
-	const { email, code } = data;
-
+export function verifyPasswordlessUser(
+	callback,
+	{ email, code, oauth2_client_id, oauth2_redirect }
+) {
 	wpcom.undocumented().usersEmailVerification(
 		assign(
 			{},
 			{ email, code },
 			// TODO Duplicated from line 499 please refactor
-			data.oauth2_client_id
+			oauth2_client_id
 				? {
-						oauth2_client_id: data.oauth2_client_id,
+						oauth2_client_id: oauth2_client_id,
 						// url of the WordPress.com authorize page for this OAuth2 client
 						// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
-						oauth2_redirect: data.oauth2_redirect && '0@' + data.oauth2_redirect,
+						oauth2_redirect: oauth2_redirect && '0@' + oauth2_redirect,
 				  }
 				: null
 		),
@@ -703,9 +704,9 @@ export function verifyPasswordlessUser( callback, dependencies, data ) {
 				{},
 				{ email, username: email, bearer_token: response.token.access_token },
 				// TODO Duplicated from line 540 please refactor
-				data.oauth2_client_id
+				oauth2_client_id
 					? {
-							oauth2_client_id: data.oauth2_client_id,
+							oauth2_client_id: oauth2_client_id,
 							// url of the WordPress.com authorize page for this OAuth2 client
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: response.oauth2_redirect && '0@' + response.oauth2_redirect,
