@@ -147,8 +147,6 @@ class RequiredPluginsInstallView extends Component {
 			waitingForPluginListFromSite = true;
 		} else if ( ! Array.isArray( sitePlugins ) ) {
 			waitingForPluginListFromSite = true;
-		} else if ( 0 === sitePlugins.length ) {
-			waitingForPluginListFromSite = true;
 		}
 
 		if ( waitingForPluginListFromSite ) {
@@ -250,7 +248,12 @@ class RequiredPluginsInstallView extends Component {
 			const thisPlugin = getPlugin( wporg, workingOn );
 			// Set a default ID if needed.
 			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
-			this.props.installPlugin( site.ID, thisPlugin );
+			this.props.installPlugin( site.ID, thisPlugin ).catch( () => {
+				this.setState( {
+					engineState: 'DONEFAILURE',
+				} );
+				return;
+			} );
 
 			this.setState( {
 				toInstall,
@@ -411,26 +414,45 @@ class RequiredPluginsInstallView extends Component {
 		return TIME_TO_PLUGIN_INSTALLATION;
 	};
 
-	renderContactSupport() {
-		const { translate, wporg } = this.props;
+	renderHelp() {
+		const { translate, wporg, siteSuffix, sitePlugins } = this.props;
 		const { workingOn } = this.state;
 		const plugin = getPlugin( wporg, workingOn );
 
-		const subtitle = [
-			<p key="line-1">
-				{ translate(
-					"Your store is missing some required plugins. We can't fix this automatically " +
-						'due to a problem with the {{b}}%(pluginName)s{{/b}} plugin.',
-					{
+		let subtitle, cta;
+
+		if ( sitePlugins.length === 0 ) {
+			subtitle = [
+				<p key="line-1">
+					{ translate( 'To set up a store, please install the {{b}}WooCommerce{{/b}} plugin.', {
+						components: { b: <strong /> },
+					} ) }
+				</p>,
+			];
+			cta = (
+				<Button primary href={ '/plugins/woocommerce' + siteSuffix } rel="noopener noreferrer">
+					{ this.props.translate( 'Go to WooCommerce' ) }
+				</Button>
+			);
+		} else {
+			subtitle = [
+				<p key="line-1">
+					{ translate( 'There was a problem with the {{b}}%(pluginName)s{{/b}} plugin.', {
 						args: { pluginName: plugin.name || workingOn },
 						components: { b: <strong /> },
-					}
-				) }
-			</p>,
-			<p key="line-2">
-				{ translate( "Please contact support and we'll get your store back up and running!" ) }
-			</p>,
-		];
+					} ) }
+				</p>,
+				<p key="line-2">
+					{ translate( "Please contact support and we'll get your store back up and running!" ) }
+				</p>,
+			];
+
+			cta = (
+				<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+					{ this.props.translate( 'Get in touch' ) }
+				</Button>
+			);
+		}
 
 		return (
 			<div className="dashboard__setup-wrapper setup__wrapper">
@@ -441,9 +463,7 @@ class RequiredPluginsInstallView extends Component {
 						title={ translate( "We can't update your store" ) }
 						subtitle={ subtitle }
 					>
-						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
-							{ this.props.translate( 'Get in touch' ) }
-						</Button>
+						{ cta }
 					</SetupHeader>
 				</div>
 			</div>
@@ -459,7 +479,7 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
-			return this.renderContactSupport();
+			return this.renderHelp();
 		}
 
 		const title = fixMode ? translate( 'Updating your store' ) : translate( 'Building your store' );
@@ -497,6 +517,7 @@ function mapStateToProps( state ) {
 		wporg: state.plugins.wporg.items,
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 		hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
+		siteSuffix: site ? '/' + site.slug : '',
 	};
 }
 

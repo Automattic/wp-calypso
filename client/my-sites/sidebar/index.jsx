@@ -55,7 +55,6 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
-import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import {
@@ -419,17 +418,17 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const { translate, site, siteSuffix, canUserManageOptions } = this.props;
 
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! site ) {
 			return null;
 		}
 
-		if ( ! canUserUseStore ) {
+		if ( ! canUserManageOptions ) {
 			return null;
 		}
 
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! isBusiness( site.plan ) && ! isEcommerce( site.plan ) ) {
 			return null;
 		}
 
@@ -774,7 +773,6 @@ function mapStateToProps( state ) {
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isCustomerHomeEnabled,
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
-		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
