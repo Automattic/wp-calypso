@@ -39,6 +39,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import StatsBanners from 'my-sites/stats/stats-banners';
 
 /**
  * Style dependencies
@@ -114,7 +115,7 @@ class Home extends Component {
 	}
 
 	render() {
-		const { translate, canUserUseCustomerHome } = this.props;
+		const { translate, canUserUseCustomerHome, siteSlug } = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
 			const title = this.props.isSiteEligible
@@ -136,6 +137,7 @@ class Home extends Component {
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				<SidebarNavigation />
+				<StatsBanners siteId={ siteId } slug={ siteSlug } />
 				{ renderChecklistCompleteBanner && (
 					<Banner
 						dismissPreferenceName="checklist-complete"
