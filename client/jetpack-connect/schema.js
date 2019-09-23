@@ -24,6 +24,7 @@ export const authorizeQueryDataSchema = {
 		close_window_after_login: { type: 'string' },
 		from: { type: 'string' },
 		home_url: { type: 'string' },
+		is_popup: { type: 'string' },
 		jp_version: { type: 'string' },
 		partner_id: { pattern: '^\\d+$', type: 'string' },
 		redirect_after_auth: { type: 'string' },

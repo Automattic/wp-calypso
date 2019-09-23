@@ -19,6 +19,7 @@ export function authQueryTransformer( queryObject ) {
 		clientId: parseInt( queryObject.client_id, 10 ),
 		closeWindowAfterLogin: !! queryObject.close_window_after_login,
 		homeUrl: queryObject.home_url,
+		isPopup: !! queryObject.is_popup,
 		nonce: queryObject._wp_nonce,
 		redirectUri: queryObject.redirect_uri,
 		scope: queryObject.scope,
