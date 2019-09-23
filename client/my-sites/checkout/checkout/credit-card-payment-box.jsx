@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, overSome, some } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

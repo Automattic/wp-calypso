@@ -131,8 +131,8 @@ const onError = ( action: HttpDataAction, error: unknown ) => {
 	return { type: HTTP_DATA_TICK };
 };
 
-type SuccessfulParse = [undefined, ReturnType< ResponseParser >];
-type FailedParse = [unknown, undefined];
+type SuccessfulParse = [ undefined, ReturnType< ResponseParser > ];
+type FailedParse = [ unknown, undefined ];
 type ParseResult = SuccessfulParse | FailedParse;
 
 /**
@@ -219,7 +219,7 @@ export const enhancer = ( next: StoreEnhancerStoreCreator ) => (
 	return store;
 };
 
-type ResourcePair = [DataId, any];
+type ResourcePair = [ DataId, any ];
 type ResponseParser = ( apiData: any ) => ResourcePair[];
 
 interface RequestHttpDataOptions {
@@ -266,10 +266,10 @@ export const requestHttpData = (
 };
 
 interface Query {
-	[key: string]: Lazy< Resource >;
+	[ key: string ]: Lazy< Resource >;
 }
 
-type Results< T extends Query > = { [P in keyof T]: ReturnType< T[P] > };
+type Results< T extends Query > = { [ P in keyof T ]: ReturnType< T[ P ] > };
 
 /**
  * Blocks execution until requested data has been fulfilled
@@ -315,7 +315,7 @@ export const waitForData = < T extends Query >(
 						allDone && ( value.state === DataState.Success || value.state === DataState.Failure ),
 					];
 				},
-				[ {}, true, true ] as [Results< T >, boolean, boolean]
+				[ {}, true, true ] as [ Results< T >, boolean, boolean ]
 			);
 
 		const listener = () => {

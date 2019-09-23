@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-export { default as Gridicon } from 'gridicons';
+export { default as Gridicon } from 'components/gridicon';
 
 /**
  * Docs examples

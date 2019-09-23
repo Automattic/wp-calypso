@@ -7,7 +7,7 @@
 import { localize } from 'i18n-calypso';
 import { assign, overSome, some } from 'lodash';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { clamp, inRange, range, round } from 'lodash';
 import classNames from 'classnames';
 

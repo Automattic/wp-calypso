@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { noop } from 'lodash';
 
 /**

@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

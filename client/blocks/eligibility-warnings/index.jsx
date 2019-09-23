@@ -22,6 +22,7 @@ import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES, TYPE_BUSINESS } from 'li
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSitePlan, isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Banner from 'components/banner';
 import Button from 'components/button';
@@ -42,6 +43,7 @@ export const EligibilityWarnings = ( {
 	hasBusinessPlan,
 	isEligible,
 	isJetpack,
+	isVip,
 	isPlaceholder,
 	onProceed,
 	onCancel,
@@ -62,7 +64,7 @@ export const EligibilityWarnings = ( {
 	} );
 
 	let businessUpsellBanner = null;
-	if ( ! hasBusinessPlan && ! isJetpack ) {
+	if ( ! hasBusinessPlan && ! isJetpack && ! isVip ) {
 		const description = translate(
 			'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
 		);
@@ -181,6 +183,7 @@ const mapStateToProps = state => {
 	const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
 	const hasBusinessPlan = ! includes( eligibilityHolds, 'NO_BUSINESS_PLAN' );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isVip = isVipSite( state, siteId );
 	const dataLoaded = !! eligibilityData.lastUpdate;
 	const sitePlan = getSitePlan( state, siteId );
 
@@ -189,6 +192,7 @@ const mapStateToProps = state => {
 		hasBusinessPlan,
 		isEligible,
 		isJetpack,
+		isVip,
 		isPlaceholder: ! dataLoaded,
 		siteId,
 		siteSlug,

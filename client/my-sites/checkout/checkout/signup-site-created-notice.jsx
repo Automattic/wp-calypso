@@ -20,7 +20,7 @@ export class SignupSiteCreatedNotice extends PureComponent {
 		if ( hasPlanInCart ) {
 			hintText = translate( 'Complete your plan purchase to upgrade.' );
 		}
-		
+
 		if ( hasPlanInCart && bundledDomain ) {
 			hintText = translate(
 				"Once you've upgraded, your new site address will be {{strong}}%(bundledDomain)s{{/strong}}",
@@ -48,14 +48,11 @@ export class SignupSiteCreatedNotice extends PureComponent {
 				/>
 				<div className="checkout__site-created-copy">
 					<div>
-						{ translate(
-							"{{em}}%(siteSlug)s{{/em}} is up and running!",
-							{
-								components: { em: <em /> },
-								args: { siteSlug: selectedSite.slug },
-								comment: '`siteSlug` is the WordPress.com site, e.g., testsite.wordpress.com',
-							} )
-						}
+						{ translate( '{{em}}%(siteSlug)s{{/em}} is up and running!', {
+							components: { em: <em /> },
+							args: { siteSlug: selectedSite.slug },
+							comment: '`siteSlug` is the WordPress.com site, e.g., testsite.wordpress.com',
+						} ) }
 					</div>
 					<div>{ this.getUpgradeText() }</div>
 				</div>

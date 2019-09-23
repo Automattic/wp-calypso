@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { REFUNDS } from 'lib/url/support';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { hasDomainBeingUsedForPlan, hasDomainRegistration } from 'lib/cart-values/cart-items';
 
 class DomainRegistrationRefundPolicy extends React.Component {

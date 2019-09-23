@@ -131,7 +131,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return;
 		}
 
-		const installerPositionalArguments: ['akismet', 'vaultpress'] = [ 'akismet', 'vaultpress' ];
+		const installerPositionalArguments: [ 'akismet', 'vaultpress' ] = [ 'akismet', 'vaultpress' ];
 		const startJetpackProductInstallArgs = installerPositionalArguments.map( slug =>
 			// Installation hasn't been initiated for the plugin
 			! this.state.initiatedInstalls.has( slug ) &&
@@ -163,7 +163,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 			this.props.startJetpackProductInstall(
 				siteId,
 				.../* We know this array will include exactly 2 items */
-				( startJetpackProductInstallArgs as [string | null, string | null] )
+				( startJetpackProductInstallArgs as [ string | null, string | null ] )
 			);
 		}
 	}
@@ -337,7 +337,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 interface ConnectedProps {
 	siteId: SiteId | null;
-	pluginKeys: { [key in PluginSlug]: string } | null;
+	pluginKeys: { [ key in PluginSlug ]: string } | null;
 	progressComplete: ReturnType< typeof getJetpackProductInstallProgress >;
 	requestedInstalls: PluginSlug[];
 	status: ReturnType< typeof getJetpackProductInstallStatus >;

@@ -16,12 +16,14 @@ const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 
 console.log( 'Building %s', dir );
 
-execSync( `npx babel --presets="${ babelPresetFile }" -d "${ outputDirEsm }" "${ inputDir }"`, {
+const baseCommand = `npx babel --presets="${ babelPresetFile }" --extensions='.js,.jsx,.ts,.tsx'`;
+
+execSync( `${ baseCommand } -d "${ outputDirEsm }" "${ inputDir }"`, {
 	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults' } ),
 	cwd: root,
 } );
 
-execSync( `npx babel --presets="${ babelPresetFile }" -d "${ outputDirCommon }" "${ inputDir }"`, {
+execSync( `${ baseCommand } -d "${ outputDirCommon }" "${ inputDir }"`, {
 	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'server' } ),
 	cwd: root,
 } );
