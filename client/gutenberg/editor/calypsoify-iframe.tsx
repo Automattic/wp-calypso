@@ -112,7 +112,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
-	templatePorts: [T.PostId, MessagePort][] = [];
+	templatePorts: [ T.PostId, MessagePort ][] = [];
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );

@@ -21,10 +21,10 @@ declare namespace i18nCalypso {
 	export type Substitutions =
 		| Substitution
 		| Substitution[]
-		| { [placeholder: string]: Substitution };
+		| { [ placeholder: string ]: Substitution };
 
 	export interface ComponentInterpolations {
-		[placeholder: string]: React.ReactElement;
+		[ placeholder: string ]: React.ReactElement;
 	}
 
 	export interface TranslateOptions {

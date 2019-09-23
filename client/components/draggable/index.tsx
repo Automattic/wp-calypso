@@ -36,7 +36,7 @@ interface State {
 
 interface MinimalTouchList {
 	readonly length: number;
-	[index: number]: HasPageCoords;
+	[ index: number ]: HasPageCoords;
 }
 interface HasTouches {
 	readonly touches: MinimalTouchList;
@@ -83,7 +83,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 	relativePos: { x: number; y: number } | null = null;
 	mousePos: { x: number; y: number } | null = null;
 
-	static getDerivedStateFromProps( props: Draggable['props'], state: State ) {
+	static getDerivedStateFromProps( props: Draggable[ 'props' ], state: State ) {
 		if ( state.x !== props.x || state.y !== props.y ) {
 			return {
 				x: props.x,
@@ -125,8 +125,8 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		const coords = isEventWithTouches( event ) ? event.touches[ 0 ] : event;
 
 		// draggingStartedHandler populates `relativePos` and it should not be undefined.
-		const x = coords.pageX - ( this.relativePos as NonNullable< Draggable['relativePos'] > ).x;
-		const y = coords.pageY - ( this.relativePos as NonNullable< Draggable['relativePos'] > ).y;
+		const x = coords.pageX - ( this.relativePos as NonNullable< Draggable[ 'relativePos' ] > ).x;
+		const y = coords.pageY - ( this.relativePos as NonNullable< Draggable[ 'relativePos' ] > ).y;
 
 		this.mousePos = { x, y };
 	};

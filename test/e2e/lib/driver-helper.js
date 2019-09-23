@@ -46,9 +46,7 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
 	);
 }
 
@@ -132,9 +130,7 @@ export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be present and displayed`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
 	);
 }
 
@@ -256,9 +252,7 @@ export function waitForFieldClearable( driver, selector ) {
 			);
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clearable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clearable`
 	);
 }
 
@@ -290,9 +284,7 @@ export function setWhenSettable(
 			return actualValue === value;
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be settable to: '${ logValue }'`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be settable to: '${ logValue }'`
 	);
 }
 
@@ -327,9 +319,7 @@ export function waitTillNotPresent( driver, selector, waitOverride ) {
 			} );
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to NOT be present`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to NOT be present`
 	);
 }
 
