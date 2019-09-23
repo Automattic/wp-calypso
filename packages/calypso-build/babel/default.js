@@ -1,10 +1,16 @@
+const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
+
+// Use commonjs for Node
+const modules = isBrowser ? false : 'commonjs';
+
 module.exports = () => ( {
 	presets: [
 		[
 			require.resolve( '@babel/preset-env' ),
 			{
-				useBuiltIns: 'entry',
 				corejs: 2,
+				modules,
+				useBuiltIns: 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
 				exclude: [ 'transform-typeof-symbol' ],
 			},
