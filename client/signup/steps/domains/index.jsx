@@ -90,7 +90,7 @@ class DomainsStep extends React.Component {
 			return queryValue || suggestedDomain;
 		}
 
-		if ( abtest( 'prefilDomainStepValue' ) === 'test' ) {
+		if ( abtest( 'prefillDomainStepValue' ) === 'test' ) {
 			return get( this.props, 'signupDependencies.siteTitle', '' );
 		}
 
@@ -103,7 +103,7 @@ class DomainsStep extends React.Component {
 	// between cases where the site title was used vs cases where the initial
 	// query was set by some other method. Remove this once the A/B test is finished.
 	hasMadeSuggestion = !! (
-		abtest( 'prefilDomainStepValue' ) === 'test' &&
+		abtest( 'prefillDomainStepValue' ) === 'test' &&
 		get( this.props, 'signupDependencies.siteTitle' ) &&
 		get( this.props, 'signupDependencies.siteTitle' ) === this.getInitialQuery()
 	);
@@ -190,7 +190,7 @@ class DomainsStep extends React.Component {
 			suggestion,
 		};
 
-		if ( abtest( 'prefilDomainStepValue' ) === 'test' ) {
+		if ( abtest( 'prefillDomainStepValue' ) === 'test' ) {
 			stepData.usedSuggestedDomain = usedSuggestedDomain;
 		}
 
@@ -633,8 +633,8 @@ const submitDomainStepSelection = ( suggestion, section, usedSuggestedDomain ) =
 	if ( suggestion.isBestAlternative ) {
 		tracksObjects.label = 'best-alternative';
 	}
-	if ( abtest( 'prefilDomainStepValue' ) === 'test' && isBoolean( usedSuggestedDomain ) ) {
-		tracksObjects.usedSuggestedDomain = usedSuggestedDomain;
+	if ( abtest( 'prefillDomainStepValue' ) === 'test' && isBoolean( usedSuggestedDomain ) ) {
+		tracksObjects.used_suggested_domain = usedSuggestedDomain;
 	}
 
 	return composeAnalytics(
