@@ -36,7 +36,7 @@ export const UpgradeToPremiumNudgePure = props => {
 			translate( 'Unlimited premium themes.' ),
 		];
 	}
-	
+
 	if ( ! canUserUpgrade ) {
 		return null;
 	}

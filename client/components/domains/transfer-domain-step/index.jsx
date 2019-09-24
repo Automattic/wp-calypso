@@ -488,7 +488,7 @@ class TransferDomainStep extends React.Component {
 
 				return {
 					domain,
-					precheck: prevState.domain && ! submittingAvailability && ! submittingWhois
+					precheck: prevState.domain && ! submittingAvailability && ! submittingWhois,
 				};
 			} );
 

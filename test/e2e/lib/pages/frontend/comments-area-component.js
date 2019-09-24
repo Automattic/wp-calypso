@@ -39,9 +39,7 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 	async reply( commentObj, depth = 2 ) {
 		const replyButton = By.css( '.comment-reply-link' );
 		const replyContent = By.xpath(
-			`//li[contains(@class,'depth-${ depth }')]//div[@class='comment-content']/p[.='${
-				commentObj.comment
-			}']`
+			`//li[contains(@class,'depth-${ depth }')]//div[@class='comment-content']/p[.='${ commentObj.comment }']`
 		);
 		await driverHelper.clickWhenClickable( this.driver, replyButton );
 		await this._postComment( commentObj );

@@ -1,7 +1,7 @@
 module.exports = () => ( {
 	presets: [
 		[
-			'@babel/env',
+			require.resolve( '@babel/preset-env' ),
 			{
 				useBuiltIns: 'entry',
 				corejs: 2,
@@ -9,14 +9,14 @@ module.exports = () => ( {
 				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
-		'@babel/react',
-		'@babel/preset-typescript',
+		require.resolve( '@babel/preset-react' ),
+		require.resolve( '@babel/preset-typescript' ),
 	],
 	plugins: [
-		'@babel/plugin-proposal-class-properties',
-		'@babel/plugin-syntax-dynamic-import',
+		require.resolve( '@babel/plugin-proposal-class-properties' ),
+		require.resolve( '@babel/plugin-syntax-dynamic-import' ),
 		[
-			'@babel/transform-runtime',
+			require.resolve( '@babel/plugin-transform-runtime' ),
 			{
 				corejs: false, // we polyfill so we don't need core-js
 				helpers: true,
