@@ -14,13 +14,12 @@ import { head, includes, isEmpty, split } from 'lodash';
 import { addQueryArgs, untrailingslashit } from 'lib/route';
 
 export function authQueryTransformer( queryObject ) {
-	const truthy = [ 'true', 'True', 'TRUE', '1' ];
 	return {
 		// Required
 		clientId: parseInt( queryObject.client_id, 10 ),
-		closeWindowAfterLogin: -1 !== truthy.indexOf( queryObject.close_window_after_login ),
+		closeWindowAfterLogin: '1' === queryObject.close_window_after_login,
 		homeUrl: queryObject.home_url,
-		isPopup: -1 !== truthy.indexOf( queryObject.is_popup ),
+		isPopup: '1' === queryObject.is_popup,
 		nonce: queryObject._wp_nonce,
 		redirectUri: queryObject.redirect_uri,
 		scope: queryObject.scope,

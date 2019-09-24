@@ -89,14 +89,14 @@ describe( 'parseAuthorizationQuery', () => {
 		expect( result ).toMatchSnapshot();
 	} );
 
-	test( 'isPopup, closeWindowAfterLogin should be true if string is truthy', () => {
+	test( 'isPopup, closeWindowAfterLogin should be true if string is 1', () => {
 		const data = {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
 			client_id: '12345',
 			close_window_after_login: '1',
 			home_url: 'https://yourjetpack.blog',
-			is_popup: 'true',
+			is_popup: '1',
 			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
 			scope: 'administrator:34579bf2a3185a47d1b31aab30125d',
 			secret: '640fdbd69f96a8ca9e61',
@@ -109,7 +109,7 @@ describe( 'parseAuthorizationQuery', () => {
 		expect( result.closeWindowAfterLogin ).toBe( true );
 	} );
 
-	test( 'isPopup, closeWindowAfterLogin should be false if string is falsy', () => {
+	test( 'isPopup, closeWindowAfterLogin should be false if string is not 1', () => {
 		const data = {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
