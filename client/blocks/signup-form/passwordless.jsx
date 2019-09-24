@@ -15,7 +15,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import ValidationFieldset from 'signup/validation-fieldset';
-import { onboardPasswordlessUser } from 'lib/signup/step-actions';
+import { createUserAccountFromEmailAddress } from 'lib/signup/step-actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import { submitSignupStep } from 'state/signup/progress/actions';
@@ -31,11 +31,12 @@ export class PasswordlessSignupForm extends Component {
 		errorMessages: null,
 	};
 
-	submitTracksEvent = ( isSuccessful, message ) =>
-		this.props.recordTracksEvent( 'calypso_signup_actions_onboarding_passwordless_login', {
-			is_successful: isSuccessful,
-			action_message: message,
+	submitTracksEvent = ( isSuccessful, props ) => {
+		const tracksEventName = isSuccessful ? 'calypso_signup_actions_onboarding_passwordless_login_success' : 'calypso_signup_actions_onboarding_passwordless_login_error';
+		this.props.recordTracksEvent( tracksEventName, {
+			...props,
 		} );
+	};
 
 	onFormSubmit = event => {
 		event.preventDefault();
@@ -45,7 +46,7 @@ export class PasswordlessSignupForm extends Component {
 				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
 				isSubmitting: false,
 			} );
-			this.submitTracksEvent( false, 'Please provide a valid email address.' );
+			this.submitTracksEvent( false, { action_message: 'Please provide a valid email address.' } );
 			return;
 		}
 
@@ -53,19 +54,19 @@ export class PasswordlessSignupForm extends Component {
 			isSubmitting: true,
 		} );
 
-		onboardPasswordlessUser( this.onboardPasswordlessUserCallback, {
+		createUserAccountFromEmailAddress( this.createUserAccountFromEmailAddressCallback, {
 			email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 		} );
 	};
 
-	onboardPasswordlessUserCallback = ( error, response ) => {
+	createUserAccountFromEmailAddressCallback = ( error, response ) => {
 		if ( error ) {
 			const errorMessage = this.getErrorMessage( error );
 			this.setState( {
 				errorMessages: [ errorMessage ],
 				isSubmitting: false,
 			} );
-			this.submitTracksEvent( false, error.message );
+			this.submitTracksEvent( false, { action_message: error.message } );
 			return;
 		}
 
@@ -123,7 +124,7 @@ export class PasswordlessSignupForm extends Component {
 			},
 			data
 		);
-		this.submitTracksEvent( true, 'Successful login' );
+		this.submitTracksEvent( true, { action_message: 'Successful login', username: data.username } );
 		goToNextStep();
 	};
 
@@ -131,6 +132,7 @@ export class PasswordlessSignupForm extends Component {
 		this.setState( {
 			email: value,
 			errorMessages: null,
+			isEmailAddressValid: emailValidator.validate( value ),
 		} );
 
 	renderNotice() {
@@ -145,7 +147,7 @@ export class PasswordlessSignupForm extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const { email, errorMessages, isSubmitting } = this.state;
+		const { errorMessages, isSubmitting, isEmailAddressValid } = this.state;
 		const submitButtonText = isSubmitting
 			? translate( 'Creating Your Account…' )
 			: translate( 'Create your account' );
@@ -169,7 +171,7 @@ export class PasswordlessSignupForm extends Component {
 							type="submit"
 							primary
 							busy={ isSubmitting }
-							disabled={ isSubmitting || ! emailValidator.validate( email ) }
+							disabled={ isSubmitting || ! isEmailAddressValid }
 						>
 							{ submitButtonText }
 						</Button>

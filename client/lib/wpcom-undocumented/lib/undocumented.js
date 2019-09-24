@@ -1462,7 +1462,7 @@ Undocumented.prototype.usersEmailNew = function( query, fn ) {
  * @param {object} query - an object with the following values: email
  * @param {Function} fn - Function to invoke when request is complete
  */
-Undocumented.prototype.usersEmailOnboard = function( query, fn ) {
+Undocumented.prototype.createUserAccountFromEmailAddress = function( query, fn ) {
 	debug( '/users/email/onboard' );
 
 	// This API call is restricted to these OAuth keys
