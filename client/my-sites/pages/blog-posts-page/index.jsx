@@ -49,11 +49,7 @@ class BlogPostsPage extends React.Component {
 			: this.props.translate( 'Untitled' );
 	};
 
-	getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {
-		if ( isStaticHomePageWithNoPostsPage ) {
-			return null;
-		}
-
+	getPostsPageLink( { isCurrentlySetAsHomepage } ) {
 		if ( ! isCurrentlySetAsHomepage ) {
 			return this.getPageProperty( { pageId: this.props.postsPage, property: 'URL' } );
 		}
@@ -61,24 +57,8 @@ class BlogPostsPage extends React.Component {
 		return this.props.site.URL;
 	}
 
-	renderPostsPageInfo( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {
+	renderPostsPageInfo( { isCurrentlySetAsHomepage } ) {
 		const { translate } = this.props;
-
-		if ( isStaticHomePageWithNoPostsPage ) {
-			return (
-				<span>
-					<Gridicon size={ 12 } icon="not-visible" className="blog-posts-page__not-used-icon" />
-					{ this.props.translate( 'Posts page not in use.' ) + ' ' }
-					{ // Prevent displaying '"Untitled" is the homepage.' while the settings are loading.
-					!! this.props.frontPage &&
-						this.props.translate( '"%(pageTitle)s" is the homepage.', {
-							args: {
-								pageTitle: this.getPageTitle( this.props.frontPage ),
-							},
-						} ) }
-				</span>
-			);
-		}
 
 		if ( isCurrentlySetAsHomepage ) {
 			return (
@@ -112,8 +92,7 @@ class BlogPostsPage extends React.Component {
 		if ( isFullSiteEditing ) {
 			return null;
 		}
-		const isStaticHomePageWithNoPostsPage =
-			this.props.frontPageType === 'page' && ! this.props.postsPage;
+
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 
 		if ( ! isCurrentlySetAsHomepage ) {
@@ -123,7 +102,6 @@ class BlogPostsPage extends React.Component {
 		return (
 			<Card
 				href={ this.getPostsPageLink( {
-					isStaticHomePageWithNoPostsPage,
 					isCurrentlySetAsHomepage,
 				} ) }
 				target="_blank"
@@ -134,11 +112,9 @@ class BlogPostsPage extends React.Component {
 					<div
 						className={ classNames( {
 							'blog-posts-page__info': true,
-							'is-disabled': isStaticHomePageWithNoPostsPage,
 						} ) }
 					>
 						{ this.renderPostsPageInfo( {
-							isStaticHomePageWithNoPostsPage,
 							isCurrentlySetAsHomepage,
 						} ) }
 					</div>
