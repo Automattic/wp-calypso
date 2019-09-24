@@ -30,7 +30,8 @@ export default function stepsForProductAndSurvey(
 	survey,
 	product,
 	canChat,
-	precancellationChatAvailable
+	precancellationChatAvailable,
+	isImport
 ) {
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) && abtest( 'ATPromptOnCancel' ) === 'show' ) {
@@ -43,6 +44,10 @@ export default function stepsForProductAndSurvey(
 		) {
 			return [ steps.INITIAL_STEP, steps.UPGRADE_AT_STEP, steps.FINAL_STEP ];
 		}
+	}
+
+	if ( isImport ) {
+		return [ steps.IMPORT_SURVEY_STEP, steps.FINAL_STEP ];
 	}
 
 	if (
