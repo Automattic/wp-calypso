@@ -55,21 +55,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async publish( { visit = false } = {} ) {
+		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		await this.waitForSuccessViewPostNotice();
-		const url = await this.driver
-			.findElement( By.css( '.post-publish-panel__postpublish-header a' ) )
-			.getAttribute( 'href' );
+		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
 		if ( visit ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.post-publish-panel__postpublish-buttons a' )
-			);
+			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
 		}
 
 		return url;
