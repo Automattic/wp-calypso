@@ -6905,29 +6905,27 @@
 			}
 		},
 		"cross-env": {
-			"version": "5.2.1",
-			"resolved": "https://registry.npmjs.org/cross-env/-/cross-env-5.2.1.tgz",
-			"integrity": "sha512-1yHhtcfAd1r4nwQgknowuUNfIT9E8dOMMspC36g45dN+iD1blloi7xp8X/xAIDnjHWyt1uQ8PHk2fkNaym7soQ==",
+			"version": "6.0.0",
+			"resolved": "https://registry.npmjs.org/cross-env/-/cross-env-6.0.0.tgz",
+			"integrity": "sha512-G/B6gtkjgthT8AP/xN1wdj5Xe18fVyk58JepK8GxpUbqcz3hyWxegocMbvnZK+KoTslwd0ACZ3woi/DVUdVjyQ==",
 			"requires": {
-				"cross-spawn": "^6.0.5"
+				"cross-spawn": "^7.0.0"
 			},
 			"dependencies": {
 				"cross-spawn": {
-					"version": "6.0.5",
-					"resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-6.0.5.tgz",
-					"integrity": "sha512-eTVLrBSt7fjbDygz805pMnstIs2VTBNkRm0qxZd+M7A5XDdxVRWO5MxGBXZhjY4cqLYLdtrGqRf8mBPmzwSpWQ==",
+					"version": "7.0.0",
+					"resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.0.tgz",
+					"integrity": "sha512-6U/8SMK2FBNnB21oQ4+6Nsodxanw1gTkntYA2zBdkFYFu3ZDx65P2ONEXGSvob/QS6REjVHQ9zxzdOafwFdstw==",
 					"requires": {
-						"nice-try": "^1.0.4",
-						"path-key": "^2.0.1",
-						"semver": "^5.5.0",
+						"path-key": "^3.1.0",
 						"shebang-command": "^1.2.0",
 						"which": "^1.2.9"
 					}
 				},
-				"semver": {
-					"version": "5.7.1",
-					"resolved": "https://registry.npmjs.org/semver/-/semver-5.7.1.tgz",
-					"integrity": "sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ=="
+				"path-key": {
+					"version": "3.1.0",
+					"resolved": "https://registry.npmjs.org/path-key/-/path-key-3.1.0.tgz",
+					"integrity": "sha512-8cChqz0RP6SHJkMt48FW0A7+qUOn+OsnOsVtzI59tZ8m+5bCSk7hzwET0pulwOM2YMn9J1efb07KB9l9f30SGg=="
 				}
 			}
 		},
@@ -18152,8 +18150,8 @@
 			"dev": true
 		},
 		"prettier": {
-			"version": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.17.0/wp-prettier-1.17.0.tgz",
-			"integrity": "sha512-T6Ya21PFyCgcrTDvMe8pNx9kMpg6nm5KG6ohAx7UzDdcTClsH0X83pNjdQ3AuVJwStz6fhIBW8Wo9P3BEHqFLQ==",
+			"version": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.18.2/wp-prettier-1.18.2.tgz",
+			"integrity": "sha512-MZWjD8vE5xFscQxZsBQgNyxqkQbRMWildoUUKm0TNAbuCLjswU6UMtPDLRL1iTkyhWMvJISibVvasqC8PnJPuA==",
 			"dev": true
 		},
 		"pretty-error": {
@@ -20801,19 +20799,19 @@
 			"dev": true
 		},
 		"stackframe": {
-			"version": "1.0.4",
-			"resolved": "https://registry.npmjs.org/stackframe/-/stackframe-1.0.4.tgz",
-			"integrity": "sha512-to7oADIniaYwS3MhtCa/sQhrxidCCQiF/qp4/m5iN3ipf0Y7Xlri0f6eG29r08aL7JYl8n32AF3Q5GYBZ7K8vw==",
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/stackframe/-/stackframe-1.1.0.tgz",
+			"integrity": "sha512-Vx6W1Yvy+AM1R/ckVwcHQHV147pTPBKWCRLrXMuPrFVfvBUc3os7PR1QLIWCMhPpRg5eX9ojzbQIMLGBwyLjqg==",
 			"dev": true
 		},
 		"stacktrace-gps": {
-			"version": "3.0.2",
-			"resolved": "https://registry.npmjs.org/stacktrace-gps/-/stacktrace-gps-3.0.2.tgz",
-			"integrity": "sha512-9o+nWhiz5wFnrB3hBHs2PTyYrS60M1vvpSzHxwxnIbtY2q9Nt51hZvhrG1+2AxD374ecwyS+IUwfkHRE/2zuGg==",
+			"version": "3.0.3",
+			"resolved": "https://registry.npmjs.org/stacktrace-gps/-/stacktrace-gps-3.0.3.tgz",
+			"integrity": "sha512-51Rr7dXkyFUKNmhY/vqZWK+EvdsfFSRiQVtgHTFlAdNIYaDD7bVh21yBHXaNWAvTD+w+QSjxHg7/v6Tz4veExA==",
 			"dev": true,
 			"requires": {
 				"source-map": "0.5.6",
-				"stackframe": "^1.0.4"
+				"stackframe": "^1.1.0"
 			},
 			"dependencies": {
 				"source-map": {

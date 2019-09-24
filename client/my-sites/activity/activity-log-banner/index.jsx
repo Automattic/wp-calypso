@@ -14,7 +14,7 @@ import { noop } from 'lodash';
  */
 import Card from 'components/card';
 import ScreenReaderText from 'components/screen-reader-text';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

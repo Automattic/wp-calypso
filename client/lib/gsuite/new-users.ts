@@ -116,7 +116,7 @@ const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
  */
 const validateNewUserMailboxIsUnique = (
 	{ value: mailBox, error: previousError }: GSuiteNewUserField,
-	mailboxesByCount: { [mailbox: string]: number }
+	mailboxesByCount: { [ mailbox: string ]: number }
 ) => ( {
 	value: mailBox,
 	error:
@@ -129,7 +129,7 @@ const validateNewUserMailboxIsUnique = (
  * Adds a duplicate error to each mailBox with a duplicate mailbox
  */
 const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
-	const mailboxesByCount: { [mailbox: string]: number } = countBy(
+	const mailboxesByCount: { [ mailbox: string ]: number } = countBy(
 		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
 	);
 
@@ -241,7 +241,7 @@ const getItemsForCart = (
 	productSlug: string,
 	users: GSuiteNewUser[]
 ) => {
-	const usersGroupedByDomain: { [domain: string]: GSuiteProductUser[] } = mapValues(
+	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
 		groupedUsers => groupedUsers.map( transformUserForCart )
 	);

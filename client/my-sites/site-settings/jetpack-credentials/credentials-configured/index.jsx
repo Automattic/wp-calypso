@@ -10,7 +10,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
 import RewindCredentialsForm from 'components/rewind-credentials-form';

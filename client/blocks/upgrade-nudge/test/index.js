@@ -75,7 +75,7 @@ describe( 'UpgradeNudge', () => {
 
 			expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 		} );
-		
+
 		describe( 'with feature prop', () => {
 			test( 'should not display when plan has feature', () => {
 				const props = createProps( {

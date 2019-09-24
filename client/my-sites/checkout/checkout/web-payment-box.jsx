@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import config from 'config';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import debugFactory from 'debug';
 import { overSome, some } from 'lodash';
 

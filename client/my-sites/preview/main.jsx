@@ -21,7 +21,7 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import {
 	showInlineHelpPopover,

@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 const SetupStart = ( { goToNextStep, translate } ) => (
 	<CompactCard className="credentials-setup-flow__setup-start" onClick={ goToNextStep }>

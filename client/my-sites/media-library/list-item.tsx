@@ -26,7 +26,7 @@ import './list-item.scss';
 interface MediaObject {
 	transient?: boolean;
 	file?: string;
-	[propName: string]: any;
+	[ propName: string ]: any;
 }
 type Media = string | MediaObject;
 // END TODO
