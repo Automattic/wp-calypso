@@ -7,9 +7,9 @@ import { isEmpty, reduce } from 'lodash';
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Button, Modal, Spinner } from '@wordpress/components';
+import { Modal, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
@@ -193,19 +193,6 @@ class PageTemplateModal extends Component {
 							/>
 						</>
 					) }
-				</div>
-				<div className="page-template-modal__buttons">
-					<Button isDefault isLarge onClick={ this.closeModal }>
-						{ __( 'Cancel', 'full-site-editing' ) }
-					</Button>
-					<Button
-						isPrimary
-						isLarge
-						disabled={ isEmpty( this.state.slug ) || this.state.isLoading }
-						onClick={ this.handleConfirmation }
-					>
-						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
-					</Button>
 				</div>
 			</Modal>
 		);
