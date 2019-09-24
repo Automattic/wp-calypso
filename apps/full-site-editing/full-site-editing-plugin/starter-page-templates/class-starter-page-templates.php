@@ -190,6 +190,7 @@ class Starter_Page_Templates {
 			$request_url = add_query_arg(
 				[
 					'_locale' => $this->get_iso_639_locale(),
+					'theme'   => get_stylesheet(),
 				],
 				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
 			);
