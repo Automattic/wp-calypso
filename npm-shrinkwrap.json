@@ -18151,7 +18151,7 @@
 		},
 		"prettier": {
 			"version": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.18.2/wp-prettier-1.18.2.tgz",
-			"integrity": "sha512-MZWjD8vE5xFscQxZsBQgNyxqkQbRMWildoUUKm0TNAbuCLjswU6UMtPDLRL1iTkyhWMvJISibVvasqC8PnJPuA==",
+			"integrity": "sha512-J9Bipqt0wEJ5t7X3ODqlY9d/+E4/co7PuCeFi8HqxQPZge/8v9NkwhyXce8PO2+e71Z1wjQM5H4iL8OZPDXsiA==",
 			"dev": true
 		},
 		"pretty-error": {
