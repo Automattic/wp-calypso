@@ -22,6 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
+import getSiteImportEngine from 'state/selectors/get-site-import-engine';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
@@ -75,13 +76,20 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getAllSurveySteps = () => {
-		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
+		const {
+			purchase,
+			isChatAvailable,
+			isChatActive,
+			precancellationChatAvailable,
+			isImport,
+		} = this.props;
 
 		return stepsForProductAndSurvey(
 			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
-			precancellationChatAvailable
+			precancellationChatAvailable,
+			isImport
 		);
 	};
 
@@ -488,6 +496,10 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
+			if ( surveyStep === steps.IMPORT_SURVEY_STEP ) {
+				return <div>Import survey here</div>;
+			}
+
 			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
 				return <BusinessATStep />;
 			}
@@ -640,6 +652,7 @@ export default connect(
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
+		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 	} ),
 	{
