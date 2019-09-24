@@ -109,7 +109,7 @@ class SiteType extends Component {
 
 		const headerText = translate( 'Where do you want to start?' );
 		const subHeaderText = translate(
-			'We’ll add a few recommended pages to your site based on your choices.'
+			"We'll add a few recommended pages to your site based on your choices."
 		);
 
 		return (
