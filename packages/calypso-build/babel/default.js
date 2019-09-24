@@ -1,16 +1,23 @@
 // @babel/preset-env modules option. `false` for ECMAScript modules.
-let modules = 'commonjs'; // Default
-if ( typeof process.env.MODULES !== 'undefined' ) {
-	modules = process.env.MODULES === 'esm' ? false : process.env.MODULES;
+function modulesOption( opts ) {
+	if ( opts && opts.modules !== undefined ) {
+		return opts.modules;
+	}
+
+	if ( typeof process.env.MODULES !== 'undefined' ) {
+		return process.env.MODULES === 'esm' ? false : process.env.MODULES;
+	}
+
+	return false; // Default
 }
 
-module.exports = () => ( {
+module.exports = ( api, opts ) => ( {
 	presets: [
 		[
 			require.resolve( '@babel/preset-env' ),
 			{
 				corejs: 2,
-				modules,
+				modules: modulesOption( opts ),
 				useBuiltIns: 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
 				exclude: [ 'transform-typeof-symbol' ],
