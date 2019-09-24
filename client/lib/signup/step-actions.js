@@ -22,7 +22,6 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'lib/cart-values/cart-items';
-import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 
 // State actions and selectors
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
