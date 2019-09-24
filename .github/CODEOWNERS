@@ -22,7 +22,6 @@
 /client/blocks/inline-help @Automattic/zelda
 
 # Client state
-/client/state/jetpack-connect @Automattic/luna
 /client/state/signup @Automattic/zelda
 
 # Client components
@@ -72,9 +71,6 @@
 
 # Gutenberg editor (Gutenframe)
 /client/gutenberg @Automattic/serenity @Automattic/cylon @Automattic/ajax
-
-# Jetpack Connect
-/client/jetpack-connect @Automattic/luna
 
 # Reader
 /client/reader @Automattic/reader
