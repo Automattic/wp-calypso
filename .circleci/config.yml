@@ -565,6 +565,44 @@ jobs:
       - slack/status:
           webhook: $SLACK_E2E
 
+  test-e2e-full:
+    <<: *defaults
+    working_directory: ~/wp-calypso/test/e2e
+    parallelism: 3
+    parameters:
+      live-branches:
+        type: string
+        default: "false"
+      pull-request-num:
+        type: string
+        default: ""
+      run-args:
+        type: string
+        default: ""
+      calypso-sha:
+        type: string
+        default: ""
+      test-flag:
+        type: string
+        default: ""
+    steps:
+      - prepare
+      - run: *set-e2e-variables
+      - run: npm run decryptconfig
+      - run: |
+          echo "export TESTFILES=\"$(circleci tests glob "specs*/**/*spec.js" | circleci tests split --split-by=filesize | tr '\n' ',' )\"" >> $BASH_ENV
+          echo "export LIVEBRANCHES=<< parameters.live-branches >>" >> $BASH_ENV
+          echo "export CIRCLE_SHA1=<< parameters.calypso-sha >>" >> $BASH_ENV
+          echo "export CIRCLE_PULL_REQUEST=https://github.com/Automattic/wp-calypso/pull/<< parameters.live-branches >>" >> $BASH_ENV
+          echo "export CIRCLE_PULL_REQUESTS=https://github.com/Automattic/wp-calypso/pull/<< parameters.live-branches >>" >> $BASH_ENV
+          echo "export CI_PULL_REQUEST=https://github.com/Automattic/wp-calypso/pull/<< parameters.live-branches >>" >> $BASH_ENV
+          echo "export CI_PULL_REQUESTS=https://github.com/Automattic/wp-calypso/pull/<< parameters.live-branches >>" >> $BASH_ENV
+      - run: echo running test command "./run.sh -R << parameters.test-flag >> -f ${TESTFILES} << parameters.run-args >>"
+      - run: ./run.sh -R << parameters.test-flag >> -f ${TESTFILES} << parameters.run-args >>
+      - store-artifacts-and-test-results
+      - slack/status:
+          webhook: $SLACK_E2E
+
   test-e2e-canary:
     <<: *defaults
     working_directory: ~/wp-calypso/test/e2e
@@ -630,6 +668,26 @@ jobs:
       - store-artifacts-and-test-results
       - slack/status:
           webhook: << parameters.slack-webhook >>
+
+parameters:
+  e2e-only:
+    type: boolean
+    default: false
+  live-branches:
+    type: string
+    default: "false"
+  pull-request-num:
+    type: string
+    default: ""
+  run-args:
+    type: string
+    default: ""
+  calypso-sha:
+    type: string
+    default: ""
+  test-flag:
+    type: string
+    default: ""
 
 workflows:
   version: 2
@@ -745,6 +803,25 @@ workflows:
           filters:
             branches:
               only: master
+
+  e2e-full-suite-triggered:
+    when: << pipeline.parameters.e2e-only >>
+    jobs:
+      - setup:
+          name: setup-e2e
+      - wait-calypso-live:
+          requires:
+            - setup-e2e
+      - test-e2e-full:
+          name: test-e2e-full-desktop
+          requires:
+            - wait-calypso-live
+          test-flag: '-g -s desktop'
+      - test-e2e-full:
+          name: test-e2e-full-mobile
+          requires:
+            - wait-calypso-live
+          test-flag: '-g -s mobile'
 
   e2e-canary-scheduled:
     jobs:
