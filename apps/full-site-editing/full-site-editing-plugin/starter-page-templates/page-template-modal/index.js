@@ -1,24 +1,30 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { isEmpty, reduce } from 'lodash';
+
+/**
+ * External dependencies
+ */
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import ensureAssets from './utils/ensure-assets';
+import { parse as parseBlocks } from '@wordpress/blocks';
 import '@wordpress/nux';
+/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
  */
 import './styles/starter-page-templates-editor.scss';
+import ensureAssets from './utils/ensure-assets';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
-import { parse as parseBlocks } from '@wordpress/blocks';
 import replacePlaceholders from './utils/replace-placeholders';
 
 // Load config passed from backend.
@@ -175,6 +181,8 @@ class PageTemplateModal extends Component {
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
+										currentTemplate={ this.state.slug }
+										handleTemplateConfirmation={ this.handleConfirmation }
 									/>
 								</fieldset>
 							</form>

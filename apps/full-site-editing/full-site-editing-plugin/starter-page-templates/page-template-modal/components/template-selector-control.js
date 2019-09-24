@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
 import { isEmpty, isArray, noop, map } from 'lodash';
+/* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
+/* eslint-disable import/no-extraneous-dependencies */
 import { withInstanceId, compose } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
 import { memo } from '@wordpress/element';
+/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
@@ -28,6 +32,8 @@ export const TemplateSelectorControl = ( {
 	onTemplateSelect = noop,
 	onTemplateFocus = noop,
 	siteInformation = {},
+	currentTemplate = '',
+	handleTemplateConfirmation = noop,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
 		return null;
@@ -57,12 +63,14 @@ export const TemplateSelectorControl = ( {
 							value={ slug }
 							label={ replacePlaceholders( title, siteInformation ) }
 							help={ help }
+							isSelected={ currentTemplate === slug }
 							onSelect={ onTemplateSelect }
 							onFocus={ onTemplateFocus }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
 							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
 							useDynamicPreview={ useDynamicPreview }
+							handleTemplateConfirmation={ handleTemplateConfirmation }
 						/>
 					</li>
 				) ) }

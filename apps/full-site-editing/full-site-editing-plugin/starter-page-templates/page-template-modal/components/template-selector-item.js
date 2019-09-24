@@ -10,7 +10,8 @@ import { isNil, isEmpty } from 'lodash';
  */
 import BlockPreview from './block-template-preview';
 /* eslint-disable import/no-extraneous-dependencies */
-import { Disabled } from '@wordpress/components';
+import { Disabled, Button } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 /* eslint-enable import/no-extraneous-dependencies */
 
 const TemplateSelectorItem = props => {
@@ -24,6 +25,8 @@ const TemplateSelectorItem = props => {
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
 		blocks = [],
+		isSelected = false,
+		handleTemplateConfirmation,
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
@@ -50,17 +53,28 @@ const TemplateSelectorItem = props => {
 	const labelId = `label-${ id }-${ value }`;
 
 	return (
-		<button
-			type="button"
-			className="template-selector-item__label"
-			value={ value }
-			onMouseEnter={ () => onFocus( value, label ) }
-			onClick={ () => onSelect( value, label ) }
-			aria-labelledby={ `${ id } ${ labelId }` }
-		>
-			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
-			<span id={ labelId }>{ label }</span>
-		</button>
+		<Fragment>
+			<button
+				type="button"
+				className="template-selector-item__label"
+				value={ value }
+				onMouseEnter={ () => onFocus( value, label ) }
+				onClick={ () => onSelect( value, label ) }
+				aria-labelledby={ `${ id } ${ labelId }` }
+			>
+				<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
+				<span id={ labelId }>{ label }</span>
+			</button>
+			{ isSelected && (
+				<Button
+					className="template-selector-item__confirm-selection"
+					isPrimary={ true }
+					onClick={ handleTemplateConfirmation }
+				>
+					Use { label } <span>template</span>
+				</Button>
+			) }
+		</Fragment>
 	);
 };
 
