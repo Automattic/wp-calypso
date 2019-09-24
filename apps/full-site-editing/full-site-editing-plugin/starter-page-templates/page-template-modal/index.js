@@ -33,7 +33,7 @@ const {
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
-		selectedTemplate: null,
+		previewedTemplate: null,
 		blocksBySlug: {},
 		templatesBySlug: {},
 		error: null,
@@ -46,7 +46,7 @@ class PageTemplateModal extends Component {
 		this.state.isOpen = hasTemplates;
 		// Select the first template automatically.
 		if ( hasTemplates ) {
-			this.state.selectedTemplate = get( props.templates, [ 0, 'slug' ] );
+			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
 			this.state.templatesBySlug = keyBy( props.templates, 'slug' );
 		}
 	}
@@ -117,7 +117,7 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = () => this.setTemplate( this.state.selectedTemplate );
+	handleConfirmation = () => this.setTemplate( this.state.previewedTemplate );
 
 	previewTemplate = slug => {
 		// Immediately confirm and close when 'blank' is selected.
@@ -125,7 +125,7 @@ class PageTemplateModal extends Component {
 			this.setTemplate( slug );
 			return;
 		}
-		this.setState( { selectedTemplate: slug } );
+		this.setState( { previewedTemplate: slug } );
 	};
 
 	closeModal = event => {
@@ -138,11 +138,11 @@ class PageTemplateModal extends Component {
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
-	getBlocksBySlug( slug = this.state.selectedTemplate ) {
+	getBlocksBySlug( slug = this.state.previewedTemplate ) {
 		return get( this.state.blocksBySlug, [ slug ], [] );
 	}
 
-	getTitleBySlug( slug = this.state.selectedTemplate ) {
+	getTitleBySlug( slug = this.state.previewedTemplate ) {
 		return get( this.state.templatesBySlug, [ slug, 'title' ], '' );
 	}
 
@@ -193,7 +193,7 @@ class PageTemplateModal extends Component {
 					<Button
 						isPrimary
 						isLarge
-						disabled={ isEmpty( this.state.selectedTemplate ) || this.state.isLoading }
+						disabled={ isEmpty( this.state.previewedTemplate ) || this.state.isLoading }
 						onClick={ this.handleConfirmation }
 					>
 						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.getTitleBySlug() ) }
