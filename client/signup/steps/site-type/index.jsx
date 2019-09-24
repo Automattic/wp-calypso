@@ -107,7 +107,7 @@ class SiteType extends Component {
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = translate( 'Where do you want to start?' );
+		const headerText = translate( 'What kind of site are you building?' );
 		const subHeaderText = translate(
 			"We'll add a few recommended pages to your site based on your choices."
 		);
