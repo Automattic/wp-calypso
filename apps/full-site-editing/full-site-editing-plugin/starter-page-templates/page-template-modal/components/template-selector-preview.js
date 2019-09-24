@@ -24,6 +24,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const THRESHOLD_RESIZE = 300;
 
 	const [ visibility, setVisibility ] = useState( 'hidden' );
+	const [ titleTransform, setTitleTransform ] = useState( 'scale(1)' );
 
 	const [ recompute, triggerRecompute ] = useReducer( state => state + 1, 0 );
 
@@ -50,6 +51,11 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		);
 	}
 
+	const setTemplateTitle = ( { styles } ) => {
+		setVisibility( 'visible' );
+		setTitleTransform( styles.transform );
+	};
+
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className="template-selector-preview editor-styles-wrapper">
@@ -57,8 +63,13 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 				<div className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper" style={ { visibility } }>
 						<div className="editor-writing-flow">
-							<PreviewTemplateTitle title={ title } />
-							<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
+							<PreviewTemplateTitle title={ title } transform={ titleTransform } />
+							<BlockPreview
+								key={ recompute }
+								blocks={ blocks }
+								viewportWidth={ viewportWidth }
+								__experimentalOnReady={ setTemplateTitle }
+							/>
 						</div>
 					</div>
 				</div>

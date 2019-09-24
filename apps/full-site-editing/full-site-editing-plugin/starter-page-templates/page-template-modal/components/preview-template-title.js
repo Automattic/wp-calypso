@@ -4,12 +4,13 @@
  * inherited from the Editor.
  *
  * @param {string} title Template title - transform css rule.
+ * @param {string} transform CSS transform rule.
  * @return {*} Component
  */
 
-const PreviewTemplateTitle = ( { title } ) => (
+const PreviewTemplateTitle = ( { title, transform } ) => (
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	<div className="editor-post-title">
+	<div className="editor-post-title" style={ { transform } }>
 		<div className="editor-post-title__block">
 			<textarea className="editor-post-title__input" value={ title } />
 		</div>
