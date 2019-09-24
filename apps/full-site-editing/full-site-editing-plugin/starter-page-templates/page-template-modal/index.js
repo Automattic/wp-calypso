@@ -171,7 +171,7 @@ class PageTemplateModal extends Component {
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
 										templates={ this.props.templates }
-										blocksBySlug={ this.state.blocks }
+										blocksByTemplates={ this.state.blocksBySlug }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
