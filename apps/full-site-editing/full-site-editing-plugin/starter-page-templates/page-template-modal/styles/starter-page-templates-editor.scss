@@ -148,6 +148,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	    margin: 5px;
 		display: block;
 
+		&:disabled {
+			@include screen-reader-text(); // visually hide the button but keep active for screen readers
+		}
+
 		> span {
 			@include screen-reader-text();
 		}

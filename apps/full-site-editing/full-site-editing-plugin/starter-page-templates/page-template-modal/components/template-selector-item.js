@@ -3,13 +3,16 @@
  */
 /* eslint-disable import/no-extraneous-dependencies */
 import { isNil, isEmpty } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * WordPress dependencies
  */
+import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import BlockPreview from './block-template-preview';
-/* eslint-disable import/no-extraneous-dependencies */
 import { Disabled, Button } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 /* eslint-enable import/no-extraneous-dependencies */
@@ -61,19 +64,20 @@ const TemplateSelectorItem = props => {
 				onMouseEnter={ () => onFocus( value, label ) }
 				onClick={ () => onSelect( value, label ) }
 				aria-labelledby={ `${ id } ${ labelId }` }
+				aria-pressed={ isSelected }
 			>
 				<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
 				<span id={ labelId }>{ label }</span>
 			</button>
-			{ isSelected && (
-				<Button
-					className="template-selector-item__confirm-selection"
-					isPrimary={ true }
-					onClick={ handleTemplateConfirmation }
-				>
-					Use { label } <span>template</span>
-				</Button>
-			) }
+
+			<Button
+				className="template-selector-item__confirm-selection"
+				isPrimary={ true }
+				disabled={ ! isSelected }
+				onClick={ handleTemplateConfirmation }
+			>
+				{ __( 'Use template', 'full-site-editing' ) }
+			</Button>
 		</Fragment>
 	);
 };
