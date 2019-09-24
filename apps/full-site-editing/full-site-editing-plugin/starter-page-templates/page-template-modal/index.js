@@ -125,9 +125,6 @@ class PageTemplateModal extends Component {
 
 	previewTemplate = ( slug, title ) => {
 		this.setState( { slug, title } );
-		if ( slug === 'blank' ) {
-			this.setTemplate( slug, title );
-		}
 	};
 
 	closeModal = event => {
