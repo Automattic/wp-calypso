@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce } from 'lodash';
+import { isEmpty, reduce, get, keyBy } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner } from '@wordpress/components';
@@ -33,16 +33,22 @@ const {
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
-		slug: '',
-		title: '',
-		blocks: {},
+		selectedTemplate: null,
+		blocksBySlug: {},
+		templatesBySlug: {},
 		error: null,
 		isOpen: false,
 	};
 
 	constructor( props ) {
 		super();
-		this.state.isOpen = ! isEmpty( props.templates );
+		const hasTemplates = ! isEmpty( props.templates );
+		this.state.isOpen = hasTemplates;
+		// Select the first template automatically.
+		if ( hasTemplates ) {
+			this.state.selectedTemplate = get( props.templates, [ 0, 'slug' ] );
+			this.state.templatesBySlug = keyBy( props.templates, 'slug' );
+		}
 	}
 
 	componentDidMount() {
@@ -51,7 +57,7 @@ class PageTemplateModal extends Component {
 		}
 
 		// Parse templates blocks and store them into the state.
-		const blocks = reduce(
+		const blocksBySlug = reduce(
 			templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
@@ -63,34 +69,29 @@ class PageTemplateModal extends Component {
 		);
 
 		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocks } );
+		this.setState( { blocksBySlug } );
 	}
 
-	setBeforeInsertTemplate = ( slug, title, blocks ) => {
+	setTemplate = slug => {
+		// Track selection and mark post as using a template in its postmeta.
+		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
-		this.props.insertTemplate( title, blocks );
-		this.setState( { isOpen: false } );
-	};
 
-	setTemplate = ( slug, title ) => {
+		// Load content.
+		const blocks = this.getBlocksBySlug( slug );
+		const title = this.getTitleBySlug( slug );
+
+		// Skip inserting if there's nothing to insert.
+		if ( ! blocks || ! blocks.length ) {
+			this.setState( { isOpen: false } );
+			return;
+		}
+
+		// Show loading state.
 		this.setState( {
 			error: null,
 			isLoading: true,
 		} );
-
-		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
-
-		const blocks = this.state.blocks[ slug ];
-
-		// Do not prefetch for `blank` template.
-		if ( 'blank' === slug ) {
-			return this.setBeforeInsertTemplate( slug, title, blocks );
-		}
-
-		// Skip inserting if there's nothing to insert.
-		if ( ! blocks || ! blocks.length ) {
-			return;
-		}
 
 		// Make sure all blocks use local assets before inserting.
 		this.maybePrefetchAssets( blocks )
@@ -101,7 +102,8 @@ class PageTemplateModal extends Component {
 					return;
 				}
 
-				this.setBeforeInsertTemplate( slug, title, blocksWithAssets );
+				this.props.insertTemplate( title, blocksWithAssets );
+				this.setState( { isOpen: false } );
 			} )
 			.catch( error => {
 				this.setState( {
@@ -115,13 +117,15 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = () => this.setTemplate( this.state.slug, this.state.title );
+	handleConfirmation = () => this.setTemplate( this.state.selectedTemplate );
 
-	previewTemplate = ( slug, title ) => {
-		this.setState( { slug, title } );
+	previewTemplate = slug => {
+		// Immediately confirm and close when 'blank' is selected.
 		if ( slug === 'blank' ) {
-			this.setTemplate( slug, title );
+			this.setTemplate( slug );
+			return;
 		}
+		this.setState( { selectedTemplate: slug } );
 	};
 
 	closeModal = event => {
@@ -134,16 +138,12 @@ class PageTemplateModal extends Component {
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
-	getBlocksByTemplateSlug( slug = this.state.slug ) {
-		if ( ! slug ) {
-			return [];
-		}
+	getBlocksBySlug( slug = this.state.selectedTemplate ) {
+		return get( this.state.blocksBySlug, [ slug ], [] );
+	}
 
-		if ( ! this.state.blocks.hasOwnProperty( slug ) ) {
-			return [];
-		}
-
-		return this.state.blocks[ slug ];
+	getTitleBySlug( slug = this.state.selectedTemplate ) {
+		return get( this.state.templatesBySlug, [ slug, 'title' ], '' );
 	}
 
 	render() {
@@ -171,7 +171,7 @@ class PageTemplateModal extends Component {
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
 										templates={ this.props.templates }
-										blocksByTemplates={ this.state.blocks }
+										blocksBySlug={ this.state.blocks }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
@@ -179,9 +179,9 @@ class PageTemplateModal extends Component {
 								</fieldset>
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksByTemplateSlug() }
+								blocks={ this.getBlocksBySlug() }
 								viewportWidth={ 960 }
-								title={ this.state.title }
+								title={ this.getTitleBySlug() }
 							/>
 						</>
 					) }
@@ -193,10 +193,10 @@ class PageTemplateModal extends Component {
 					<Button
 						isPrimary
 						isLarge
-						disabled={ isEmpty( this.state.slug ) || this.state.isLoading }
+						disabled={ isEmpty( this.state.selectedTemplate ) || this.state.isLoading }
 						onClick={ this.handleConfirmation }
 					>
-						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
+						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.getTitleBySlug() ) }
 					</Button>
 				</div>
 			</Modal>
