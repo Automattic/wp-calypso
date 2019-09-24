@@ -55,6 +55,20 @@ const TemplateSelectorItem = props => {
 
 	const labelId = `label-${ id }-${ value }`;
 
+	/**
+	 * Determines (based on arbitary "mobile" breakpoint) whether or not
+	 * the Template selection UI interaction model should be select and confirm
+	 * or simply a single "tap to confirm". The reason for this is that on larger screens
+	 * the large preview is visible which necessitates the double interaction. Without this
+	 * then only a single tap is necessary.
+	 * @return {Function} the appropriate interaction handler function depending on the breakpoint match status
+	 */
+	const handleLabelClick = () => {
+		return window.matchMedia( '(min-width: 660px)' ).matches
+			? onSelect( value, label )
+			: handleTemplateConfirmation();
+	};
+
 	return (
 		<Fragment>
 			<button
@@ -62,7 +76,7 @@ const TemplateSelectorItem = props => {
 				className="template-selector-item__label"
 				value={ value }
 				onMouseEnter={ () => onFocus( value, label ) }
-				onClick={ () => onSelect( value, label ) }
+				onClick={ handleLabelClick }
 				aria-labelledby={ `${ id } ${ labelId }` }
 				aria-pressed={ isSelected }
 			>

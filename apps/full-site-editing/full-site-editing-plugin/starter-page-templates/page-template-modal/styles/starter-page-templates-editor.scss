@@ -16,6 +16,7 @@ $template-selector-empty-background: #f6f6f6;
 $template-selector-modal-offset-right: 32px;
 $template-selector-modal-offset-bottom: 25px;
 $template-preview-height: 170px;
+$bp-template-large-preview-visible: 660px;
 
 // Modal Overlay
 .page-template-modal-screen-overlay {
@@ -89,7 +90,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		grid-template-columns: 1fr 1fr; // force 2 col on small screens to ensure blank isn't the only option visible on load
 		grid-gap: 1.75em;
 
-		@media screen and ( min-width: 660px ) {
+		@media screen and ( min-width: $bp-template-large-preview-visible ) {
 			margin-top: 0;
 			// stylelint-disable unit-whitelist
 			grid-template-columns: repeat(
@@ -214,7 +215,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .page-template-modal__form {
-	@media screen and ( min-width: 660px ) {
+	@media screen and ( min-width: $bp-template-large-preview-visible ) {
 		max-width: 50%;
 	}
 }
