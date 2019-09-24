@@ -144,7 +144,16 @@ class Site extends React.Component {
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
 					<div className="site__info">
 						<div className="site__title">
-							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							{ site.title }
+						</div>
+						<div className="site__domain">
+							{ this.props.homeLink
+								? translate( 'View %(domain)s', {
+										args: { domain: site.domain },
+								  } )
+								: site.domain }
+						</div>
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							{ this.props.site.is_private && (
 								<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
 							) }
@@ -158,16 +167,7 @@ class Site extends React.Component {
 									{ translate( 'Domain' ) }
 								</span>
 							) }
-							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ site.title }
-						</div>
-						<div className="site__domain">
-							{ this.props.homeLink
-								? translate( 'View %(domain)s', {
-										args: { domain: site.domain },
-								  } )
-								: site.domain }
-						</div>
+						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</div>
 					{ this.props.homeLink && this.props.showHomeIcon && (
 						<span className="site__home">
