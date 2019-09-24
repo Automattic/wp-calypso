@@ -17,7 +17,6 @@ const TemplateSelectorItem = props => {
 	const {
 		id,
 		value,
-		onFocus,
 		onSelect,
 		label,
 		useDynamicPreview = false,
@@ -54,8 +53,7 @@ const TemplateSelectorItem = props => {
 			type="button"
 			className="template-selector-item__label"
 			value={ value }
-			onMouseEnter={ () => onFocus( value, label ) }
-			onClick={ () => onSelect( value, label ) }
+			onClick={ () => onSelect( value ) }
 			aria-labelledby={ `${ id } ${ labelId }` }
 		>
 			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
