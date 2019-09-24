@@ -167,13 +167,21 @@ class Media extends Component {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { selectedSite, translate } = this.props;
+		const selectedMediaCount = MediaLibrarySelectedStore.getAll( selectedSite.ID ).length;
 
 		return [
 			{
 				action: 'delete',
 				additionalClassNames: 'is-borderless is-scary',
-				label: translate( 'Delete' ),
+				label:
+					selectedMediaCount < 2
+						? translate( 'Delete item' )
+						: translate( 'Delete %(selectedMediaCount)s items', {
+								args: {
+									selectedMediaCount: selectedMediaCount,
+								},
+						  } ),
 				isPrimary: false,
 				disabled: false,
 				onClick: this.deleteMediaByItemDetail,
@@ -260,14 +268,13 @@ class Media extends Component {
 					callback();
 				}
 			},
-			selectedCount < 2 
-				? translate( 'Delete 1 item' ) 
+			selectedCount < 2
+				? translate( 'Delete 1 item' )
 				: translate( 'Delete %(selectedCount)s items', {
-					args: {
-						selectedCount: selectedCount,
-					},
-				}
-			),
+						args: {
+							selectedCount: selectedCount,
+						},
+				  } ),
 			null,
 			{
 				isScary: true,
