@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,33 +13,28 @@ import CompactCard from 'components/card/compact';
 import { recordGoogleEvent } from '../../state/analytics/actions';
 import Security2faDeleteButton from './delete-item-button';
 
-class Security2faKeyItem extends Component {
-	static propTypes = {
-		onDelete: PropTypes.func.isRequired,
-		securityKey: PropTypes.object.isRequired,
-	};
-
-	render() {
-		return (
-			<CompactCard>
-				<div className="security-2fa-key__item">
-					<div className="security-2fa-key__item-information">
-						<h2 className="security-2fa-key__item-title">
-							{ this.props.securityKey.name === '' ? 'Key' : this.props.securityKey.name }
-						</h2>
-					</div>
-					<Security2faDeleteButton
-						securityKey={ this.props.securityKey }
-						onDelete={ this.props.onDelete }
-					/>
+function Security2faKeyItem( props ) {
+	return (
+		<CompactCard>
+			<div className="security-2fa-key__item">
+				<div className="security-2fa-key__item-information">
+					<h2 className="security-2fa-key__item-title">
+						{ props.securityKey.name === '' ? 'Key' : props.securityKey.name }
+					</h2>
 				</div>
-			</CompactCard>
-		);
-	}
+				<Security2faDeleteButton securityKey={ props.securityKey } onDelete={ props.onDelete } />
+			</div>
+		</CompactCard>
+	);
 }
 
+Security2faKeyItem.propTypes = {
+	onDelete: PropTypes.func.isRequired,
+	securityKey: PropTypes.object.isRequired,
+};
+
 export default connect(
-	state => ( { state } ),
+	null,
 	{
 		recordGoogleEvent,
 	}
