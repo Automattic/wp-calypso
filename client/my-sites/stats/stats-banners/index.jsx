@@ -12,6 +12,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { isEcommercePlan } from 'lib/plans';
 import config from 'config';
 import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
 import { getSitePlanSlug } from 'state/sites/selectors';
@@ -116,10 +117,10 @@ class StatsBanners extends Component {
 			<Fragment>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ /* Hide `WpcomChecklist` on the Customer Home because the checklist is displayed on the page. */ }
-				{ 'ecommerce-bundle' !== planSlug && ! isCustomerHomeEnabled && (
+				{ ! isEcommercePlan( planSlug ) && ! isCustomerHomeEnabled && (
 					<WpcomChecklist viewMode="banner" />
 				) }
-				{ 'ecommerce-bundle' === planSlug && <ECommerceManageNudge siteId={ siteId } /> }
+				{ isEcommercePlan( planSlug ) && <ECommerceManageNudge siteId={ siteId } /> }
 				{ this.renderBanner() }
 			</Fragment>
 		);
