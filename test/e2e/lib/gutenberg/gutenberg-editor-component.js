@@ -272,6 +272,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// FIXME: Temporary hack to make sure it works with both 6.1 and core's Gutenberg (WP 5.2)
 		const noticeSelector =
 			getJetpackHost() === 'WPCOM' ? '.components-snackbar' : '.components-notice.is-success';
+		if ( driverManager.currentScreenSize() === 'mobile' ) {
+			// potentially close out the publish sidebar, as the snackbar won't show up in mobile views
+			if (
+				await driverHelper.isElementPresent( this.driver, By.css( '.editor-post-publish-panel' ) )
+			) {
+				await this.closePublishedPanel();
+			}
+		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( noticeSelector ) );
 	}
 
