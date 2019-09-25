@@ -176,6 +176,28 @@ function load_starter_page_templates() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
 
 /**
+ * Callback to configure Global Styles plugin.
+ * We configure a different REST endpoint for WordPress.com.
+ *
+ * @param array $settings Global Styles settings.
+ */
+function configure_global_styles_settings( $settings ) {
+	$settings['rest_namespace']   = 'wp/v2';
+	$settings['rest_route']       = 'a8c-global-styles';
+	$settings['rest_path_client'] = 'a8c-global-styles';
+	return $settings;
+}
+
+/**
+ * Load Global Styles plugin.
+ */
+function load_global_styles() {
+	require_once __DIR__ . '/global-styles/class-global-styles.php';
+	add_filter( 'global_styles_settings', __NAMESPACE__ . '\configure_global_styles_settings' );
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
+
+/**
  * Inserts default full site editing data for current theme during plugin activation.
  *
  * We usually perform this on theme activation hook, but this is needed to handle
