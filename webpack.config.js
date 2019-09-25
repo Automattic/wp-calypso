@@ -154,13 +154,21 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
-const fileLoader = FileConfig.loader( {
-	// File-loader does not understand absolute paths so __dirname won't work.
-	// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
-	outputPath: path.join( '..', 'images' ),
-	publicPath: '/calypso/images/',
-	emitFile: isDevelopment || browserslistEnv === defaultBrowserslistEnv, // Only output files once.
-} );
+const fileLoader = FileConfig.loader(
+	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
+	// This is required so that running calypso via `npm start` doesn't break.
+	isDevelopment && ! isDesktop
+		? {
+				outputPath: 'images/',
+				publicPath: '/calypso/evergreen/images/',
+		  }
+		: {
+				// File-loader does not understand absolute paths so __dirname won't work.
+				// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
+				outputPath: path.join( '..', 'images' ),
+				publicPath: '/calypso/images/',
+		  }
+);
 
 const webpackConfig = {
 	bail: ! isDevelopment,
