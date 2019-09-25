@@ -154,6 +154,14 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const fileLoader = FileConfig.loader( {
+	// File-loader does not understand absolute paths so __dirname won't work.
+	// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
+	outputPath: path.join( '..', 'images' ),
+	publicPath: '/calypso/images/',
+	emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
+} );
+
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
@@ -228,7 +236,7 @@ const webpackConfig = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			FileConfig.loader(),
+			fileLoader,
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
 				use: 'exports-loader?window=tinymce',
