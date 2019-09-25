@@ -21,16 +21,14 @@ import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 
 class Security2faKey extends React.Component {
-	static initialState = Object.freeze( {
+	state = {
 		isEnabled: false,
 		addingKey: false,
 		isBrowserSupported: true,
 		errorMessage: false,
 		security2faChallenge: {},
 		security2faKeys: [],
-	} );
-
-	state = this.constructor.initialState;
+	};
 
 	componentDidMount = () => {
 		this.getKeysFromServer();
