@@ -200,9 +200,6 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			requestOptions.challenge = base64ToArrayBuffer( parameters.challenge );
 			requestOptions.timeout = 6000;
 			if ( 'rpId' in parameters ) {
-				if ( parameters.rpId !== window.location.hostname ) {
-					throw 'Invalid domain';
-				}
 				requestOptions.rpId = parameters.rpId;
 			}
 			if ( 'allowCredentials' in parameters ) {
