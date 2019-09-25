@@ -61,12 +61,19 @@ const TemplateSelectorItem = props => {
 	 * or simply a single "tap to confirm". The reason for this is that on larger screens
 	 * the large preview is visible which necessitates the double interaction. Without this
 	 * then only a single tap is necessary.
-	 * @return {Function} the appropriate interaction handler function depending on the breakpoint match status
+	 *
+	 * @param  {string} tplSlug template slug string from the button value attr
+	 * @param  {string} tplName template name string from the button text
 	 */
-	const handleLabelClick = () => {
-		return window.matchMedia( '(min-width: 660px)' ).matches
-			? onSelect( value, label )
-			: handleTemplateConfirmation();
+	const handleLabelClick = ( tplSlug, tplName ) => {
+		// On both case set the template as being selected
+		onSelect( tplSlug, tplName );
+
+		// Only on screens where large preview is not visible immediately
+		// confirm the template with no further interaction step
+		if ( window.matchMedia( '(max-width: 660px)' ).matches ) {
+			handleTemplateConfirmation( tplSlug, tplName );
+		}
 	};
 
 	return (
@@ -76,7 +83,7 @@ const TemplateSelectorItem = props => {
 				className="template-selector-item__label"
 				value={ value }
 				onMouseEnter={ () => onFocus( value, label ) }
-				onClick={ handleLabelClick }
+				onClick={ () => handleLabelClick( value, label ) }
 				aria-labelledby={ `${ id } ${ labelId }` }
 				aria-pressed={ isSelected }
 			>
@@ -88,7 +95,7 @@ const TemplateSelectorItem = props => {
 				className="template-selector-item__confirm-selection"
 				isPrimary={ true }
 				disabled={ ! isSelected }
-				onClick={ handleTemplateConfirmation }
+				onClick={ () => handleTemplateConfirmation( value, label ) }
 			>
 				{ __( 'Use template', 'full-site-editing' ) }
 			</Button>
