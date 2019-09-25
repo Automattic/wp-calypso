@@ -117,7 +117,12 @@ class DomainsStep extends React.Component {
 
 		// If we landed anew from `/domains` and it's the `new-flow` variation
 		// or there's a suggestedDomain from previous steps, always rerun the search.
-		if ( ( search && props.path.indexOf( '?' ) !== -1 ) || suggestedDomain ) {
+		if (
+			( search && props.path.indexOf( '?' ) !== -1 ) ||
+			suggestedDomain ||
+			( this.hasMadeSuggestion &&
+				get( this.props.step, 'domainForm.isInitialQueryActive' ) === true )
+		) {
 			this.searchOnInitialRender = true;
 		}
 
