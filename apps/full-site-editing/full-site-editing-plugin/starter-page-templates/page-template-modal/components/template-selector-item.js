@@ -7,7 +7,7 @@ import { isNil, isEmpty } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -100,7 +100,7 @@ const TemplateSelectorItem = props => {
 				disabled={ ! isSelected }
 				onClick={ () => handleTemplateConfirmation( value, label ) }
 			>
-				{ __( 'Use template', 'full-site-editing' ) }
+				{ sprintf( __( 'Use %s template', 'full-site-editing' ), label ) }
 			</Button>
 		</Fragment>
 	);
