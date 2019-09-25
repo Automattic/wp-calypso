@@ -17,9 +17,7 @@ function addModuleImportToSections( { sections, shouldSplit, onlyIsomorphic } ) 
 			return;
 		}
 
-		const loaderFunction = `function() { return require( /* webpackChunkName: '${
-			section.name
-		}' */ '${ section.module }'); }`;
+		const loaderFunction = `function() { return require( /* webpackChunkName: '${ section.name }' */ '${ section.module }'); }`;
 
 		section.load = shouldSplit ? loaderFunction.replace( 'require', 'import' ) : loaderFunction;
 	} );

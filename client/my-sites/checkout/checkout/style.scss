@@ -1139,3 +1139,22 @@
 		box-shadow: none;
 	}
 }
+
+.checkout__site-created-notice-wrapper {
+	overflow: hidden;
+	float: none;
+	clear: both;
+	margin: 0 auto 20px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
+	.checkout__site-created-copy {
+		margin: 0 20px;
+	}
+	.checkout__site-created-image {
+		height: 40px;
+	}
+}

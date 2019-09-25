@@ -27,6 +27,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCustomizerUrl, getSiteOption } from 'state/sites/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
@@ -36,9 +37,11 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import StatsBanners from 'my-sites/stats/stats-banners';
 
 /**
  * Style dependencies
@@ -114,7 +117,7 @@ class Home extends Component {
 	}
 
 	render() {
-		const { translate, canUserUseCustomerHome } = this.props;
+		const { translate, canUserUseCustomerHome, siteSlug } = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
 			const title = this.props.isSiteEligible
@@ -136,6 +139,7 @@ class Home extends Component {
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
 				<SidebarNavigation />
+				<StatsBanners siteId={ siteId } slug={ siteSlug } />
 				{ renderChecklistCompleteBanner && (
 					<Banner
 						dismissPreferenceName="checklist-complete"
@@ -169,6 +173,7 @@ class Home extends Component {
 			isStaticHomePage,
 			staticHomePageId,
 			showCustomizer,
+			hasCustomDomain,
 		} = this.props;
 		const editHomePageUrl =
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
@@ -272,14 +277,25 @@ class Home extends Component {
 								label={ translate( 'Design a logo' ) }
 								iconSrc="/calypso/images/customer-home/logo.svg"
 							/>
-							<ActionBox
-								onClick={ () => {
-									trackAction( 'my_site', 'add_gsuite' );
-									page( `/email/${ siteSlug }` );
-								} }
-								label={ translate( 'Add G Suite' ) }
-								iconSrc="/calypso/images/customer-home/gsuite.svg"
-							/>
+							{ hasCustomDomain ? (
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'add_email' );
+										page( `/email/${ siteSlug }` );
+									} }
+									label={ translate( 'Add email' ) }
+									iconSrc="/calypso/images/customer-home/gsuite.svg"
+								/>
+							) : (
+								<ActionBox
+									onClick={ () => {
+										trackAction( 'my_site', 'add_domain' );
+										page( `/domains/add/${ siteSlug }` );
+									} }
+									label={ translate( 'Add a domain' ) }
+									iconSrc="/calypso/images/customer-home/custom-domain.svg"
+								/>
+							) }
 						</div>
 					</Card>
 				</div>
@@ -372,6 +388,7 @@ const connectHome = connect(
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+		const domains = getDomainsBySiteId( state, siteId );
 
 		return {
 			site: getSelectedSite( state ),
@@ -386,6 +403,7 @@ const connectHome = connect(
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
+			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
 		};
 	},
 	dispatch => ( {

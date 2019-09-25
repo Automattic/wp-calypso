@@ -18,7 +18,6 @@ import { getPostType } from 'state/post-types/selectors';
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
 import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
-import { mapPostStatus } from 'lib/route';
 import { isEnabled } from 'config';
 import urlSearch from 'lib/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
@@ -53,7 +52,7 @@ export class PostTypeFilter extends Component {
 	};
 
 	getNavItems() {
-		const { query, siteId, siteSlug, jetpack, counts } = this.props;
+		const { query, siteId, siteSlug, statusSlug, jetpack, counts } = this.props;
 
 		return reduce(
 			counts,
@@ -111,7 +110,7 @@ export class PostTypeFilter extends Component {
 						pathStatus,
 						siteSlug,
 					] ).join( '/' ),
-					selected: mapPostStatus( pathStatus ) === query.status,
+					selected: pathStatus === statusSlug,
 					children: label,
 				} );
 			},

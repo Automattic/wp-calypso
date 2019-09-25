@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

@@ -448,9 +448,7 @@ export class Checkout extends React.Component {
 				if ( domainsForGSuite.length ) {
 					return (
 						this.maybeShowPlanBumpOfferGSuite( pendingOrReceiptId ) ||
-						`/checkout/${ selectedSiteSlug }/with-gsuite/${
-							domainsForGSuite[ 0 ].meta
-						}/${ pendingOrReceiptId }`
+						`/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`
 					);
 				}
 			}

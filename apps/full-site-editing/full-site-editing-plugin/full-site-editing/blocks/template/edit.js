@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* global fullSiteEditing */
 /**
@@ -62,7 +63,7 @@ const TemplateEdit = compose(
 				}
 
 				const templateBlocks = parse( get( template, [ 'content', 'raw' ], '' ) );
-				const templateBlock = createBlock( 'core/template', {}, templateBlocks );
+				const templateBlock = createBlock( 'core/group', {}, templateBlocks );
 
 				receiveBlocks( [ templateBlock ] );
 				setState( { templateClientId: templateBlock.clientId } );

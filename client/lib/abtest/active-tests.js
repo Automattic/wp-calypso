@@ -124,15 +124,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	privateByDefault: {
-		datestamp: '20190730',
-		variations: {
-			selected: 90,
-			control: 10,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	removeBlogFlow: {
 		datestamp: '20190813',
 		variations: {

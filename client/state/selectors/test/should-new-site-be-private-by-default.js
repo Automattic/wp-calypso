@@ -3,10 +3,6 @@
  */
 import shouldNewSiteBePrivateByDefault from '../should-new-site-be-private-by-default';
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: testName => ( testName === 'privateByDefault' ? 'selected' : '' ),
-} ) );
-
 describe( 'shouldNewSiteBePrivateByDefault()', () => {
 	test( 'should be true with no input', () => {
 		expect( shouldNewSiteBePrivateByDefault() ).toBe( true );

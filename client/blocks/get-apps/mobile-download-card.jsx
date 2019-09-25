@@ -60,28 +60,24 @@ function sendMagicLink( email ) {
 	//Actions must be plain objects. Use custom middleware for async actions.
 	// https://stackoverflow.com/questions/46765896/react-redux-actions-must-be-plain-objects-use-custom-middleware-for-async-acti
 	return function( dispatch ) {
-		const duration = { duration: 4000 }
+		const duration = { duration: 4000 };
 		dispatch( infoNotice( i18n.translate( 'Sending email' ), duration ) );
 
 		return wpcom
 			.undocumented()
 			.requestMagicLoginEmail( {
 				email,
-				'infer': true,
-				'scheme': 'wordpress',
+				infer: true,
+				scheme: 'wordpress',
 			} )
 			.then( () => {
-				dispatch(
-					successNotice( i18n.translate( 'Email Sent. Check your mail app!' ), duration )
-				);
+				dispatch( successNotice( i18n.translate( 'Email Sent. Check your mail app!' ), duration ) );
 			} )
 			.catch( error => {
-				dispatch(
-					errorNotice( i18n.translate( 'Sorry, we couldn’t send the email.' ), duration )
-				);
+				dispatch( errorNotice( i18n.translate( 'Sorry, we couldn’t send the email.' ), duration ) );
 				return Promise.reject( error );
 			} );
-	}
+	};
 }
 
 class MobileDownloadCard extends React.Component {
@@ -284,14 +280,13 @@ class MobileDownloadCard extends React.Component {
 						<p>
 							<strong>{ translate( 'Instantly log in to the mobile app' ) }</strong>
 							<br />
-							{ translate( 'Send yourself links to download the app and instantly log in on your mobile device.' ) }
+							{ translate(
+								'Send yourself links to download the app and instantly log in on your mobile device.'
+							) }
 						</p>
 					</div>
 					<div className="get-apps__link-button-wrapper">
-						<Button
-							className="get-apps__magic-link-button"
-							onClick={ this.onSubmitLink }
-						>
+						<Button className="get-apps__magic-link-button" onClick={ this.onSubmitLink }>
 							{ translate( 'Email me a log in link' ) }
 						</Button>
 					</div>
@@ -326,8 +321,8 @@ class MobileDownloadCard extends React.Component {
 	onSubmitLink = () => {
 		this.props.recordTracksEvent( 'calypso_get_apps_magic_link_button_click' );
 		const email = this.props.userSettings.user_email;
-		this.props.sendMagicLink( email )
-	}
+		this.props.sendMagicLink( email );
+	};
 }
 
 export default connect(

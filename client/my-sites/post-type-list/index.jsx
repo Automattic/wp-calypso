@@ -48,8 +48,8 @@ class PostTypeList extends Component {
 	static propTypes = {
 		// Props
 		query: PropTypes.object,
+		showPublishedStatus: PropTypes.bool,
 		scrollContainer: PropTypes.object,
-		isVipSite: PropTypes.bool,
 
 		// Connected props
 		siteId: PropTypes.number,
@@ -58,6 +58,7 @@ class PostTypeList extends Component {
 		totalPostCount: PropTypes.number,
 		totalPageCount: PropTypes.number,
 		lastPageToRequest: PropTypes.number,
+		isVip: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -234,32 +235,34 @@ class PostTypeList extends Component {
 
 	renderPost( post ) {
 		const globalId = post.global_ID;
-		const { query } = this.props;
+		const { query, showPublishedStatus } = this.props;
 
 		return (
 			<PostItem
 				key={ globalId }
 				globalId={ globalId }
 				singleUserQuery={ query && !! query.author }
+				showPublishedStatus={ showPublishedStatus }
 			/>
 		);
 	}
 
 	render() {
-		const { query, siteId, isRequestingPosts, translate } = this.props;
+		const { query, siteId, isRequestingPosts, translate, isVip } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
+		const postStatuses = query.status.split( ',' );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
 		const showUpgradeNudge =
 			siteId &&
-			! this.props.isVipSite &&
 			posts.length > 10 &&
+			! isVip &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
-			query.status === 'publish,private';
+			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
 
 		return (
 			<div className={ classes }>
@@ -302,7 +305,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		isVipSite: isVipSite( state, siteId ),
+		isVip: isVipSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,

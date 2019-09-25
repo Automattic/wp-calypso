@@ -22,6 +22,7 @@ import Notice from 'components/notice';
 
 class Security2faKey extends React.Component {
 	static initialState = Object.freeze( {
+		isEnabled: false,
 		addingKey: false,
 		isBrowserSupported: true,
 		errorMessage: false,
@@ -60,7 +61,6 @@ class Security2faKey extends React.Component {
 	};
 
 	deleteKeyRegister = keyData => {
-		console.log( 'Register key: ', keyData ); //eslint-disable-line
 		wpcom.req.get(
 			'/me/two-step/security-key/delete',
 			{ credential_id: keyData.id },
@@ -73,7 +73,13 @@ class Security2faKey extends React.Component {
 	};
 
 	keysFromServer = ( err, data ) => {
-		this.setState( { addingKey: false, security2faKeys: get( data, 'registrations', [] ) } );
+		if ( null === err ) {
+			this.setState( {
+				isEnabled: true,
+				addingKey: false,
+				security2faKeys: get( data, 'registrations', [] ),
+			} );
+		}
 	};
 
 	getChallenge = () => {
@@ -90,7 +96,12 @@ class Security2faKey extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const { addingKey, isBrowserSupported, errorMessage, security2faKeys } = this.state;
+		const { isEnabled, addingKey, isBrowserSupported, errorMessage, security2faKeys } = this.state;
+
+		if ( ! isEnabled ) {
+			return null;
+		}
+
 		return (
 			<div className="security-2fa-key">
 				<SectionHeader label={ translate( 'Security Key' ) }>
@@ -116,11 +127,15 @@ class Security2faKey extends React.Component {
 				{ errorMessage && <Notice status="is-error" icon="notice" text={ errorMessage } /> }
 				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
-						{ isBrowserSupported &&(
-							<p>{ this.props.translate( 'Use a second factor security key to sign in.' ) }</p>	
+						{ isBrowserSupported && (
+							<p>{ this.props.translate( 'Use a second factor security key to sign in.' ) }</p>
 						) }
 						{ ! isBrowserSupported && (
-							<p>{ this.props.translate( "Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browsers like Chrome or Firefox." ) }</p>
+							<p>
+								{ this.props.translate(
+									"Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browsers like Chrome or Firefox."
+								) }
+							</p>
 						) }
 					</Card>
 				) }

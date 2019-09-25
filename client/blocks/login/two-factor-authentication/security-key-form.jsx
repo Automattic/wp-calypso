@@ -1,9 +1,7 @@
-/** @format */
 
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -45,7 +43,7 @@ class SecurityKeyForm extends Component {
 		this.props
 			.loginUserWithSecurityKey()
 			.then( () => onSuccess() )
-			.finally( () => this.setState( { isDisabled: false } ) );
+			.catch( () => this.setState( { isDisabled: false } ) );
 	};
 
 	render() {
@@ -79,7 +77,11 @@ class SecurityKeyForm extends Component {
 							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
 						</div>
 					) }
-					<FormButton primary disabled={ this.state.isDisabled }>
+					<FormButton
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+						primary
+						disabled={ this.state.isDisabled }
+					>
 						{ translate( 'Continue with security key' ) }
 					</FormButton>
 				</Card>

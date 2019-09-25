@@ -38,9 +38,7 @@ const WpcomDomain = createReactClass( {
 		return (
 			<VerticalNav>
 				<VerticalNavItem
-					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${
-						this.props.selectedSite.ID
-					}` }
+					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
 					external={ true }
 					onClick={ this.handleEditSiteAddressClick }
 				>

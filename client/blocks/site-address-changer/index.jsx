@@ -225,7 +225,7 @@ export class SiteAddressChanger extends Component {
 		const serverValidationMessage = get( validationError, 'message' );
 
 		return isAvailable
-			? translate( 'Good news, this site address is available!' )
+			? translate( 'Good news, that site address is available!' )
 			: validationMessage || serverValidationMessage;
 	}
 
