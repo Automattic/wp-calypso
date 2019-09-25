@@ -90,25 +90,6 @@ describe( 'TemplateSelectorControl', () => {
 	} );
 
 	describe( 'Event handlers', () => {
-		it( 'calls onTemplateFocus prop on mouseEnter over template', () => {
-			const onFocusSpy = jest.fn();
-
-			const { getByText } = render(
-				<TemplateSelectorControl
-					label="Select a Template..."
-					instanceId={ testUniqueId }
-					templates={ templatesFixture }
-					blocksByTemplates={ blocksByTemplatesFixture }
-					siteInformation={ siteInformation }
-					onTemplateFocus={ onFocusSpy }
-				/>
-			);
-
-			fireEvent.mouseEnter( getByText( 'Template 2' ) );
-
-			expect( onFocusSpy ).toHaveBeenCalled();
-		} );
-
 		it( 'calls onTemplateSelect prop when template is clicked', () => {
 			const onSelectSpy = jest.fn();
 
