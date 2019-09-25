@@ -14,6 +14,7 @@ import React, { Component, Fragment } from 'react';
 import { abtest } from 'lib/abtest';
 import config from 'config';
 import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
+import { getSitePlanSlug } from 'state/sites/selectors';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getGSuiteSupportedDomains, hasGSuite } from 'lib/gsuite';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
@@ -135,5 +136,6 @@ export default connect( ( state, ownProps ) => {
 		isGSuiteStatsNudgeVisible: ! isGSuiteStatsNudgeDismissed( state, ownProps.siteId ),
 		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
 		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
+		planSlug: getSitePlanSlug( state, ownProps.siteId ),
 	};
 } )( localize( StatsBanners ) );
