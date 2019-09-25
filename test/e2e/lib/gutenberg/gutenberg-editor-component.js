@@ -61,6 +61,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+		await this.closePublishedPanel();
 		await this.waitForSuccessViewPostNotice();
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
