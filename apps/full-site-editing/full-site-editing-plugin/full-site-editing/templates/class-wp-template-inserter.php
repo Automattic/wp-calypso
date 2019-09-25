@@ -82,7 +82,14 @@ class WP_Template_Inserter {
 		$response = $this->fetch_retry( $request_url, $request_args );
 
 		if ( ! $response ) {
-			do_action( 'a8c_fse_log', 'The FSE templates failed to populate at point of activation' );
+			do_action(
+				'a8c_fse_log',
+				'template_population_failure',
+				array(
+					'theme_slug' => $this->theme_slug,
+					'context'    => 'WP_Template_Inserter->fetch_template_parts',
+				)
+			);
 			$this->header_content = $this->get_default_header();
 			$this->footer_content = $this->get_default_footer();
 			return;
