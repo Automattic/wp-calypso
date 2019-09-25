@@ -1357,6 +1357,11 @@
 				}
 			}
 		},
+		"@github/webauthn-json": {
+			"version": "0.3.6",
+			"resolved": "https://registry.npmjs.org/@github/webauthn-json/-/webauthn-json-0.3.6.tgz",
+			"integrity": "sha512-0yTfZ8mbmaGv7jck0DfkCP9vXcAAkKKWVrScSGp314gIcuNiYluHLSCnl+lTS8q2UIWZeEamqHCQw6dQ327nNg=="
+		},
 		"@jest/console": {
 			"version": "24.9.0",
 			"resolved": "https://registry.npmjs.org/@jest/console/-/console-24.9.0.tgz",

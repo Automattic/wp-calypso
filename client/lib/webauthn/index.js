@@ -4,6 +4,7 @@
 import wpcom from 'lib/wp';
 import { translate } from 'i18n-calypso';
 import config from 'config';
+import { create } from '@github/webauthn-json';
 
 let _backend;
 
@@ -92,62 +93,12 @@ export function isWebauthnSupported() {
 
 export function registerSecurityKey( keyName = null ) {
 	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
-		.then( options => {
-			const makeCredentialOptions = {};
-			makeCredentialOptions.rp = options.rp;
-			makeCredentialOptions.user = options.user;
-			makeCredentialOptions.user.id = base64ToArrayBuffer( options.user.id );
-			makeCredentialOptions.challenge = base64ToArrayBuffer( options.challenge );
-			makeCredentialOptions.pubKeyCredParams = options.pubKeyCredParams;
-
-			if ( 'timeout' in options ) {
-				makeCredentialOptions.timeout = options.timeout;
-			}
-			if ( 'excludeCredentials' in options ) {
-				makeCredentialOptions.excludeCredentials = credentialListConversion(
-					options.excludeCredentials
-				);
-			}
-			if ( 'authenticatorSelection' in options ) {
-				makeCredentialOptions.authenticatorSelection = options.authenticatorSelection;
-			}
-			if ( 'attestation' in options ) {
-				makeCredentialOptions.attestation = options.attestation;
-			}
-			if ( 'extensions' in options ) {
-				makeCredentialOptions.extensions = options.extensions;
-			}
-			return navigator.credentials.create( {
-				publicKey: makeCredentialOptions,
-			} );
-		} )
-		.then( attestation => {
-			const publicKeyCredential = {};
-			if ( 'id' in attestation ) {
-				publicKeyCredential.id = attestation.id;
-			}
-			if ( 'type' in attestation ) {
-				publicKeyCredential.type = attestation.type;
-			}
-			if ( 'rawId' in attestation ) {
-				publicKeyCredential.rawId = arrayBufferToBase64( attestation.rawId );
-			}
-			if ( ! attestation.response ) {
-				return Promise.reject( {
-					context: 'AuthenticatorResponse',
-					error: 'NoResponse',
-					message: 'Response lacking "response" attribute',
-				} );
-			}
-			const response = {};
-			response.clientDataJSON = arrayBufferToBase64( attestation.response.clientDataJSON );
-			response.attestationObject = arrayBufferToBase64( attestation.response.attestationObject );
-			publicKeyCredential.response = response;
-
+		.then( options => create( { publicKey: options } ) )
+		.then( response => {
 			return wpcomApiRequest(
 				'/me/two-step/security-key/registration_validate',
 				{
-					data: JSON.stringify( publicKeyCredential ),
+					data: JSON.stringify( response ),
 					name: keyName,
 				},
 				POST
