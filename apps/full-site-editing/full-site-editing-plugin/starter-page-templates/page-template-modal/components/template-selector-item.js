@@ -56,22 +56,25 @@ const TemplateSelectorItem = props => {
 	const labelId = `label-${ id }-${ value }`;
 
 	/**
-	 * Determines (based on arbitary "mobile" breakpoint) whether or not
-	 * the Template selection UI interaction model should be select and confirm
-	 * or simply a single "tap to confirm". The reason for this is that on larger screens
-	 * the large preview is visible which necessitates the double interaction. Without this
-	 * then only a single tap is necessary.
+	 * Determines (based on whether the large preview is able to be visible at the
+	 * current breakpoint) whether or not the Template selection UI interaction model
+	 * should be select _and_ confirm or simply a single "tap to confirm".
+	 * The reason for this is that on larger screens the large preview is visible
+	 * which necessitates the double interaction. Without this then only a single tap
+	 * is necessary.
 	 *
 	 * @param  {string} tplSlug template slug string from the button value attr
 	 * @param  {string} tplName template name string from the button text
 	 */
 	const handleLabelClick = ( tplSlug, tplName ) => {
+		const largeTplPreviewVisible = window.matchMedia( '(min-width: 660px)' ).matches;
+
 		// On both case set the template as being selected
 		onSelect( tplSlug, tplName );
 
 		// Only on screens where large preview is not visible immediately
 		// confirm the template with no further interaction step
-		if ( window.matchMedia( '(max-width: 660px)' ).matches ) {
+		if ( ! largeTplPreviewVisible ) {
 			handleTemplateConfirmation( tplSlug, tplName );
 		}
 	};
