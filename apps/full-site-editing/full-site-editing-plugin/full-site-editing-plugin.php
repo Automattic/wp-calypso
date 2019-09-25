@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Full Site Editing Test
+ * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
  * Version: 0.7
  * Author: Automattic
