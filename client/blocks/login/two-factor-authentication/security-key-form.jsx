@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -32,18 +31,18 @@ class SecurityKeyForm extends Component {
 	};
 
 	state = {
-		isDisabled: false,
+		isAuthenticating: false,
 	};
 
 	initiateSecurityKeyAuthentication = event => {
 		event.preventDefault();
 
 		const { onSuccess } = this.props;
-		this.setState( { isDisabled: true } );
+		this.setState( { isAuthenticating: true } );
 		this.props
 			.loginUserWithSecurityKey()
 			.then( () => onSuccess() )
-			.catch( () => this.setState( { isDisabled: false } ) );
+			.catch( () => this.setState( { isAuthenticating: false } ) );
 	};
 
 	render() {
@@ -52,7 +51,7 @@ class SecurityKeyForm extends Component {
 		return (
 			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
 				<Card compact className="two-factor-authentication__verification-code-form">
-					{ ! this.state.isDisabled && (
+					{ ! this.state.isAuthenticating && (
 						<div>
 							<p>
 								{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
@@ -68,7 +67,7 @@ class SecurityKeyForm extends Component {
 							</p>
 						</div>
 					) }
-					{ this.state.isDisabled && (
+					{ this.state.isAuthenticating && (
 						<div className="security-key-form__add-wait-for-key">
 							<Spinner />
 							<p className="security-key-form__add-wait-for-key-heading">
@@ -80,7 +79,7 @@ class SecurityKeyForm extends Component {
 					<FormButton
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						primary
-						disabled={ this.state.isDisabled }
+						disabled={ this.state.isAuthenticating }
 					>
 						{ translate( 'Continue with security key' ) }
 					</FormButton>
