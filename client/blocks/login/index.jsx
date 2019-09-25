@@ -365,7 +365,7 @@ class Login extends Component {
 		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
 			return (
 				<div>
-					<SecurityKeyForm twoFactorAuthType={ 'webauthn' } onSuccess={ this.handleValid2FACode } />
+					<SecurityKeyForm twoFactorAuthType="webauthn" onSuccess={ this.handleValid2FACode } />
 				</div>
 			);
 		}
