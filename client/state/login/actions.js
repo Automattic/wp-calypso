@@ -200,7 +200,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 		.then( assertion => {
 			const response = assertion.response;
 			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
-				//	delete response.userHandle;
+				delete response.userHandle;
 			}
 			return postLoginRequest( 'webauthn-authentication-endpoint', {
 				...loginParams,

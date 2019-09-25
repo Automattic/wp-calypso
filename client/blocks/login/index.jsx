@@ -45,7 +45,7 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import SecurityKeyForm from './two-factor-authentication/security-key-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
-import { isWebauthnSupported } from 'lib/webauthn';
+import { supported as isWebAuthnSupported } from '@github/webauthn-json';
 
 /**
  * Style dependencies
@@ -77,7 +77,7 @@ class Login extends Component {
 	};
 
 	state = {
-		isBrowserSupported: false,
+		isBrowserSupported: isWebAuthnSupported(),
 	};
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
@@ -87,7 +87,6 @@ class Login extends Component {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true } ) );
 		}
-		isWebauthnSupported().then( supported => this.setState( { isBrowserSupported: supported } ) );
 
 		window.scrollTo( 0, 0 );
 	}

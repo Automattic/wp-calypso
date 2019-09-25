@@ -6,42 +6,7 @@ import { translate } from 'i18n-calypso';
 import config from 'config';
 import { create } from '@github/webauthn-json';
 
-let _backend;
-
 const POST = 'POST';
-
-export function base64ToArrayBuffer( str ) {
-	str = str.replace( /[-_]/g, function( m ) {
-		return m[ 0 ] === '-' ? '+' : '/';
-	} );
-	return Uint8Array.from( atob( str ), c => c.charCodeAt( 0 ) );
-}
-
-export function arrayBufferToBase64( bin ) {
-	return btoa( new Uint8Array( bin ).reduce( ( s, byte ) => s + String.fromCharCode( byte ), '' ) );
-}
-
-function isBrowser() {
-	try {
-		if ( ! window ) return false;
-	} catch ( err ) {
-		return false;
-	}
-	return true;
-}
-
-export function credentialListConversion( list ) {
-	return list.map( item => {
-		const cred = {
-			type: item.type,
-			id: base64ToArrayBuffer( item.id ),
-		};
-		if ( 'transports' in item && item.transports.length > 0 ) {
-			cred.transports = list.transports;
-		}
-		return cred;
-	} );
-}
 
 function wpcomApiRequest( path, _data, method ) {
 	const data = _data || {};
@@ -63,32 +28,6 @@ function wpcomApiRequest( path, _data, method ) {
 			wpcom.req.get( path, data, promise );
 		}
 	} );
-}
-
-export function isWebauthnSupported() {
-	if ( ! _backend ) {
-		_backend = new Promise( function( resolve ) {
-			function notSupported() {
-				resolve( { webauthn: null } );
-			}
-			if ( ! isBrowser() ) {
-				return notSupported();
-			}
-			if ( ! window.isSecureContext ) {
-				return notSupported();
-			}
-			if (
-				window.PublicKeyCredential === undefined ||
-				typeof window.PublicKeyCredential !== 'function' ||
-				typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable !==
-					'function'
-			) {
-				return notSupported();
-			}
-			resolve( { webauthn: true } );
-		} );
-	}
-	return _backend.then( backend => !! backend.webauthn );
 }
 
 export function registerSecurityKey( keyName = null ) {
