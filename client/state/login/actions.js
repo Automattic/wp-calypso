@@ -51,7 +51,7 @@ import wpcom from 'lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
-import { binToStr, strToBin, credentialListConversion } from 'lib/webauthn';
+import { binaryBufferToBase64, base64ToBinaryBuffer, credentialListConversion } from 'lib/webauthn';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -197,7 +197,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
 			}
 
-			requestOptions.challenge = strToBin( parameters.challenge );
+			requestOptions.challenge = base64ToBinaryBuffer( parameters.challenge );
 			requestOptions.timeout = 6000;
 			if ( 'rpId' in parameters ) {
 				if ( parameters.rpId !== window.location.hostname ) {
@@ -219,7 +219,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				publicKeyCredential.type = assertion.type;
 			}
 			if ( 'rawId' in assertion ) {
-				publicKeyCredential.rawId = binToStr( assertion.rawId );
+				publicKeyCredential.rawId = binaryBufferToBase64( assertion.rawId );
 			}
 			if ( ! assertion.response ) {
 				throw "Get assertion response lacking 'response' attribute";
@@ -227,12 +227,12 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 
 			const _response = assertion.response;
 			publicKeyCredential.response = {
-				clientDataJSON: binToStr( _response.clientDataJSON ),
-				authenticatorData: binToStr( _response.authenticatorData ),
-				signature: binToStr( _response.signature ),
+				clientDataJSON: binaryBufferToBase64( _response.clientDataJSON ),
+				authenticatorData: binaryBufferToBase64( _response.authenticatorData ),
+				signature: binaryBufferToBase64( _response.signature ),
 			};
 			if ( _response.userHandle ) {
-				publicKeyCredential.response.userHandle = binToStr( _response.userHandle );
+				publicKeyCredential.response.userHandle = binaryBufferToBase64( _response.userHandle );
 			}
 
 			return postLoginRequest( 'webauthn-authentication-endpoint', {

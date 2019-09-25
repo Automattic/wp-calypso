@@ -9,14 +9,14 @@ let _backend;
 
 const POST = 'POST';
 
-export function strToBin( str ) {
+export function base64ToBinaryBuffer( str ) {
 	str = str.replace( /[-_]/g, function( m ) {
 		return m[ 0 ] === '-' ? '+' : '/';
 	} );
 	return Uint8Array.from( atob( str ), c => c.charCodeAt( 0 ) );
 }
 
-export function binToStr( bin ) {
+export function binaryBufferToBase64( bin ) {
 	return btoa( new Uint8Array( bin ).reduce( ( s, byte ) => s + String.fromCharCode( byte ), '' ) );
 }
 
@@ -33,7 +33,7 @@ export function credentialListConversion( list ) {
 	return list.map( item => {
 		const cred = {
 			type: item.type,
-			id: strToBin( item.id ),
+			id: base64ToBinaryBuffer( item.id ),
 		};
 		if ( 'transports' in item && item.transports.length > 0 ) {
 			cred.transports = list.transports;
@@ -96,8 +96,8 @@ export function registerSecurityKey( keyName = null ) {
 			const makeCredentialOptions = {};
 			makeCredentialOptions.rp = options.rp;
 			makeCredentialOptions.user = options.user;
-			makeCredentialOptions.user.id = strToBin( options.user.id );
-			makeCredentialOptions.challenge = strToBin( options.challenge );
+			makeCredentialOptions.user.id = base64ToBinaryBuffer( options.user.id );
+			makeCredentialOptions.challenge = base64ToBinaryBuffer( options.challenge );
 			makeCredentialOptions.pubKeyCredParams = options.pubKeyCredParams;
 
 			if ( 'timeout' in options ) {
@@ -130,7 +130,7 @@ export function registerSecurityKey( keyName = null ) {
 				publicKeyCredential.type = attestation.type;
 			}
 			if ( 'rawId' in attestation ) {
-				publicKeyCredential.rawId = binToStr( attestation.rawId );
+				publicKeyCredential.rawId = binaryBufferToBase64( attestation.rawId );
 			}
 			if ( ! attestation.response ) {
 				return Promise.reject( {
@@ -140,8 +140,8 @@ export function registerSecurityKey( keyName = null ) {
 				} );
 			}
 			const response = {};
-			response.clientDataJSON = binToStr( attestation.response.clientDataJSON );
-			response.attestationObject = binToStr( attestation.response.attestationObject );
+			response.clientDataJSON = binaryBufferToBase64( attestation.response.clientDataJSON );
+			response.attestationObject = binaryBufferToBase64( attestation.response.attestationObject );
 			publicKeyCredential.response = response;
 
 			return wpcomApiRequest(
