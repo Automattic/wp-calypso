@@ -671,6 +671,9 @@ workflows:
       - lint-and-translate:
           requires:
             - setup
+      - wp-i18n-extract-strings:
+          requires:
+            - setup
       - test-client:
           requires:
             - setup
