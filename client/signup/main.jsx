@@ -38,7 +38,6 @@ import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 // Libraries
-import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
@@ -163,12 +162,6 @@ class Signup extends React.Component {
 			const destinationStep = flows.getFlow( this.props.flowName ).steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
-		}
-
-		if ( 'remove' === abtest( 'removeBlogFlow' ) && 'blog' === this.props.flowName ) {
-			const destinationStep = flows.getFlow( 'onboarding' ).steps[ 0 ];
-			this.setState( { resumingStep: destinationStep } );
-			return page.redirect( getStepUrl( 'onboarding', destinationStep, this.props.locale ) );
 		}
 
 		this.recordStep();

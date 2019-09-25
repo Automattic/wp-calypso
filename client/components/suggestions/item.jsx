@@ -33,7 +33,7 @@ class Item extends PureComponent {
 		if ( railcar ) {
 			tracks.recordEvent(
 				'calypso_traintracks_render',
-				pick( railcar, [ 'railcar', 'fetch_algo', 'fetch_position' ] )
+				pick( railcar, [ 'railcar', 'fetch_algo', 'fetch_position', 'ui_algo', 'ui_position' ] )
 			);
 		}
 	}
@@ -69,7 +69,7 @@ class Item extends PureComponent {
 		event.stopPropagation();
 		event.preventDefault();
 
-		this.props.onMouseDown( this.props.label );
+		this.props.onMouseDown();
 		if ( railcar ) {
 			tracks.recordEvent(
 				'calypso_traintracks_interact',
@@ -79,7 +79,7 @@ class Item extends PureComponent {
 	};
 
 	handleMouseOver = () => {
-		this.props.onMouseOver( this.props.label );
+		this.props.onMouseOver();
 	};
 
 	render() {

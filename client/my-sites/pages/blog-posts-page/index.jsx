@@ -68,7 +68,7 @@ class BlogPostsPage extends React.Component {
 			return (
 				<span>
 					<Gridicon size={ 12 } icon="not-visible" className="blog-posts-page__not-used-icon" />
-					{ this.props.translate( 'Not in use.' ) + ' ' }
+					{ this.props.translate( 'Posts page not in use.' ) + ' ' }
 					{ // Prevent displaying '"Untitled" is the homepage.' while the settings are loading.
 					!! this.props.frontPage &&
 						this.props.translate( '"%(pageTitle)s" is the homepage.', {
@@ -96,6 +96,7 @@ class BlogPostsPage extends React.Component {
 
 		return (
 			<span>
+				<Gridicon icon="info-outline" size={ 18 } className="blog-posts-page__info-icon" />
 				{ translate( '"%(pageTitle)s" page is showing your latest posts.', {
 					args: {
 						pageTitle: this.getPageTitle( this.props.postsPage ),
@@ -106,15 +107,18 @@ class BlogPostsPage extends React.Component {
 	}
 
 	render() {
-		const { isFullSiteEditing, translate } = this.props;
+		const { isFullSiteEditing } = this.props;
 
 		if ( isFullSiteEditing ) {
 			return null;
 		}
-
 		const isStaticHomePageWithNoPostsPage =
 			this.props.frontPageType === 'page' && ! this.props.postsPage;
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
+
+		if ( ! isCurrentlySetAsHomepage ) {
+			return null;
+		}
 
 		return (
 			<Card
@@ -127,14 +131,6 @@ class BlogPostsPage extends React.Component {
 				className="blog-posts-page"
 			>
 				<div className="blog-posts-page__details">
-					<div
-						className={ classNames( {
-							'blog-posts-page__title': true,
-							'is-disabled': isStaticHomePageWithNoPostsPage,
-						} ) }
-					>
-						{ translate( 'Blog Posts' ) }
-					</div>
 					<div
 						className={ classNames( {
 							'blog-posts-page__info': true,

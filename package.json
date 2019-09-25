@@ -327,7 +327,7 @@
 		"ncp": "2.0.0",
 		"nock": "10.0.6",
 		"npm-merge-driver": "2.3.5",
-		"prettier": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.18.2/wp-prettier-1.18.2.tgz",
+		"prettier": "npm:wp-prettier@1.18.2",
 		"react-test-renderer": "16.8.6",
 		"readline-sync": "1.4.9",
 		"replace": "1.1.0",
