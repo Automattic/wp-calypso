@@ -12,6 +12,9 @@ import PropTypes from 'prop-types';
 import { recordGoogleEvent } from '../../state/analytics/actions';
 import Security2faKeyItem from './item';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 class Security2faKeyList extends React.Component {
