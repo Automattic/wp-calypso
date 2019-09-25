@@ -39,16 +39,6 @@ class BlogPostsPage extends React.Component {
 			.shift();
 	}
 
-	getPageTitle = pageId => {
-		const pageTitle = this.getPageProperty( { pageId, property: 'title' } );
-		if ( pageTitle ) {
-			return pageTitle;
-		}
-		return pageId
-			? `${ this.props.translate( 'Untitled' ) } (#${ pageId })`
-			: this.props.translate( 'Untitled' );
-	};
-
 	getPostsPageLink( { isCurrentlySetAsHomepage } ) {
 		if ( ! isCurrentlySetAsHomepage ) {
 			return this.getPageProperty( { pageId: this.props.postsPage, property: 'URL' } );
@@ -68,22 +58,6 @@ class BlogPostsPage extends React.Component {
 				</span>
 			);
 		}
-
-		// Prevent displaying '"Untitled" page is showing your latest posts.' while the settings are loading.
-		if ( ! this.props.postsPage ) {
-			return null;
-		}
-
-		return (
-			<span>
-				<Gridicon icon="info-outline" size={ 18 } className="blog-posts-page__info-icon" />
-				{ translate( '"%(pageTitle)s" page is showing your latest posts.', {
-					args: {
-						pageTitle: this.getPageTitle( this.props.postsPage ),
-					},
-				} ) }
-			</span>
-		);
 	}
 
 	render() {
