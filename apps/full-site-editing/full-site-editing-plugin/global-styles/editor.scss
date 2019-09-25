@@ -1,0 +1,69 @@
+/**
+ * Global Styles Sidebar
+ */
+.global-styles-sidebar {
+	// Make the font dropdown a bit more spacy.
+	.components-select-control__input {
+		line-height: 1;
+		font-size: 18px;
+		height: 36px;
+	}
+
+	h3 {
+		margin: 0 0 1em;
+	}
+}
+
+.global-styles-sidebar__publish-buttons {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.font-pairings-panel {
+	cursor: pointer;
+	border-radius: 4px;
+	padding: 4px;
+	margin-bottom: 0.5em;
+
+	&.is-selected {
+		box-shadow: 0 0 0 2px #555d66;
+	}
+	
+	&:focus {
+		box-shadow: 0 0 0 2px #00a0d2;
+	}
+	
+	&:hover {
+		background-color: #f3f4f5;
+		color: #191e23;
+	}
+}
+
+.font-pairings-panel__preview {
+	border: 1px solid rgba( 25, 30, 35, 0.2 );
+	border-radius: 4px;
+	background-color: white;
+	padding: 4px;
+
+	// For when no art directed preview is present.
+	h1,
+	p {
+		margin: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 10px 0;
+	}
+
+	// For the art directed preview.
+	svg {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+}
+
+.font-pairings-panel__label {
+	text-align: center;
+	margin-bottom: 0;
+}

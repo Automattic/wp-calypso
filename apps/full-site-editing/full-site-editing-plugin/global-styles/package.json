@@ -1,0 +1,19 @@
+{
+	"name": "a8c-global-styles",
+	"version": "1.0.0",
+	"description": "Global Styles",
+	"main": "src/index.js",
+	"author": "Automattic",
+	"license": "GPL-3.0-or-later",
+	"scripts": {
+		"start": "node-sass ./editor.scss -o build && node-sass ./style.scss -o build && wp-scripts start & node-sass --watch editor.scss -o build && node-sass --watch style.scss -o build",
+		"build": "wp-scripts build && node-sass ./editor.scss -o build && node-sass ./style.scss -o build"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^5.0.0",
+		"node-sass": "^4.12.0"
+	},
+	"dependencies": {
+		"classnames": "^2.2.6"
+	}
+}
