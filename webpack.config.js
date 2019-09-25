@@ -159,7 +159,7 @@ const fileLoader = FileConfig.loader( {
 	// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
 	outputPath: path.join( '..', 'images' ),
 	publicPath: '/calypso/images/',
-	emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
+	emitFile: isDevelopment || browserslistEnv === defaultBrowserslistEnv, // Only output files once.
 } );
 
 const webpackConfig = {
