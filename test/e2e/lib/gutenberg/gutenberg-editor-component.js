@@ -275,7 +275,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			// potentially close out the publish sidebar, as the snackbar won't show up in mobile views
 			if (
-				await driverHelper.isElementPresent( this.driver, By.css( '.editor-post-publish-panel' ) )
+				await driverHelper.isElementPresent(
+					this.driver,
+					By.css(
+						'.editor-post-publish-panel__header button.components-button.components-icon-button'
+					)
+				)
 			) {
 				await this.closePublishedPanel();
 			}
