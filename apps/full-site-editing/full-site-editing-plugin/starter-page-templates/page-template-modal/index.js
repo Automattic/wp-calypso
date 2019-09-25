@@ -34,7 +34,7 @@ class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		previewedTemplate: null,
-		blocksBySlug: {},
+		blocksByTemplateSlug: {},
 		templatesBySlug: {},
 		error: null,
 		isOpen: false,
@@ -57,7 +57,7 @@ class PageTemplateModal extends Component {
 		}
 
 		// Parse templates blocks and store them into the state.
-		const blocksBySlug = reduce(
+		const blocksByTemplateSlug = reduce(
 			templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
@@ -69,7 +69,7 @@ class PageTemplateModal extends Component {
 		);
 
 		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocksBySlug } );
+		this.setState( { blocksByTemplateSlug } );
 	}
 
 	setTemplate = slug => {
@@ -78,8 +78,8 @@ class PageTemplateModal extends Component {
 		this.props.saveTemplateChoice( slug );
 
 		// Load content.
-		const blocks = this.getBlocksBySlug( slug );
-		const title = this.getTitleBySlug( slug );
+		const blocks = this.getBlocksByTemplateSlug( slug );
+		const title = this.getTitleByTemplateSlug( slug );
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
@@ -138,16 +138,19 @@ class PageTemplateModal extends Component {
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
-	getBlocksBySlug( slug = this.state.previewedTemplate ) {
-		return get( this.state.blocksBySlug, [ slug ], [] );
+	getBlocksByTemplateSlug( slug ) {
+		return get( this.state.blocksByTemplateSlug, [ slug ], [] );
 	}
 
-	getTitleBySlug( slug = this.state.previewedTemplate ) {
+	getTitleByTemplateSlug( slug ) {
 		return get( this.state.templatesBySlug, [ slug, 'title' ], '' );
 	}
 
 	render() {
-		if ( ! this.state.isOpen ) {
+		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
+		const { templates } = this.props;
+
+		if ( ! isOpen ) {
 			return null;
 		}
 
@@ -159,7 +162,7 @@ class PageTemplateModal extends Component {
 				overlayClassName="page-template-modal-screen-overlay"
 			>
 				<div className="page-template-modal__inner">
-					{ this.state.isLoading ? (
+					{ isLoading ? (
 						<div className="page-template-modal__loading">
 							<Spinner />
 							{ __( 'Inserting template…', 'full-site-editing' ) }
@@ -170,8 +173,8 @@ class PageTemplateModal extends Component {
 								<fieldset className="page-template-modal__list">
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
-										templates={ this.props.templates }
-										blocksByTemplates={ this.state.blocksBySlug }
+										templates={ templates }
+										blocksByTemplates={ blocksByTemplateSlug }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
@@ -179,9 +182,9 @@ class PageTemplateModal extends Component {
 								</fieldset>
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksBySlug() }
+								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
 								viewportWidth={ 960 }
-								title={ this.getTitleBySlug() }
+								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>
 						</>
 					) }
@@ -193,10 +196,13 @@ class PageTemplateModal extends Component {
 					<Button
 						isPrimary
 						isLarge
-						disabled={ isEmpty( this.state.previewedTemplate ) || this.state.isLoading }
+						disabled={ isEmpty( previewedTemplate ) || isLoading }
 						onClick={ this.handleConfirmation }
 					>
-						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.getTitleBySlug() ) }
+						{ sprintf(
+							__( 'Use %s template', 'full-site-editing' ),
+							this.getTitleByTemplateSlug( previewedTemplate )
+						) }
 					</Button>
 				</div>
 			</Modal>
