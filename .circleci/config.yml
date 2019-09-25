@@ -294,8 +294,8 @@ jobs:
       - run:
           name: Extract @wordpress/i18n strings
           command: |
-            wp i18n make-pot . merged.pot --slug=calypso  --ignore-domain --domain=default --exclude=build/,packages/,public/,test/ --merge=calypso-strings.pot
-            mv merged.pot "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+            wp i18n make-pot . calypso-strings.pot --slug=calypso --ignore-domain --domain=default --exclude=build/,packages/,public/,test/ --merge=translate.pot
+            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - store-artifacts-and-test-results
 
   build-notifications:
