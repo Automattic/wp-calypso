@@ -120,14 +120,7 @@ class PageTemplateModal extends Component {
 
 	handleConfirmation = () => this.setTemplate( this.state.previewedTemplate );
 
-	previewTemplate = slug => {
-		// Immediately confirm and close when 'blank' is selected.
-		if ( slug === 'blank' ) {
-			this.setTemplate( slug );
-			return;
-		}
-		this.setState( { previewedTemplate: slug } );
-	};
+	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
 
 	closeModal = event => {
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
