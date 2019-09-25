@@ -298,7 +298,7 @@ export class UserStep extends Component {
 			return translate( 'Account created - Go to next step' );
 		}
 
-		return translate( 'Create your account' );
+		return translate( 'Continue with email' );
 	}
 
 	renderSignupForm() {

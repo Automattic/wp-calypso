@@ -740,7 +740,7 @@ class SignupForm extends Component {
 			return (
 				<p className="signup-form__terms-of-service-link">
 					{ this.props.translate(
-						'By creating an account, you agree to our {{a}}Terms of Service{{/a}}.',
+						'By continuing with the options below, you are creating an account on WordPress.com, and you agree to our {{a}}Terms of Service{{/a}}.',
 						{
 							components: {
 								a: tosLink,
