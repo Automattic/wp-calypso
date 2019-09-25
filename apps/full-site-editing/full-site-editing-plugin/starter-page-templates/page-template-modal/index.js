@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce, get, keyBy } from 'lodash';
+import { isEmpty, reduce, get, keyBy, mapValues } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner } from '@wordpress/components';
@@ -35,7 +35,7 @@ class PageTemplateModal extends Component {
 		isLoading: false,
 		previewedTemplate: null,
 		blocksByTemplateSlug: {},
-		templatesBySlug: {},
+		titlesByTemplateSlug: {},
 		error: null,
 		isOpen: false,
 	};
@@ -44,10 +44,11 @@ class PageTemplateModal extends Component {
 		super();
 		const hasTemplates = ! isEmpty( props.templates );
 		this.state.isOpen = hasTemplates;
-		// Select the first template automatically.
 		if ( hasTemplates ) {
+			// Select the first template automatically.
 			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
-			this.state.templatesBySlug = keyBy( props.templates, 'slug' );
+			// Extract titles for faster lookup.
+			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
 		}
 	}
 
@@ -143,7 +144,7 @@ class PageTemplateModal extends Component {
 	}
 
 	getTitleByTemplateSlug( slug ) {
-		return get( this.state.templatesBySlug, [ slug, 'title' ], '' );
+		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
 	}
 
 	render() {
