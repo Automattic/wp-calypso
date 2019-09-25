@@ -15,7 +15,6 @@ import { has, identity, mapValues, pickBy } from 'lodash';
 import config from 'config';
 import {
 	activate as activateAction,
-	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
 } from 'state/themes/actions';
@@ -116,25 +115,6 @@ const customize = {
 		! isThemeActive( state, themeId, siteId ),
 };
 
-const tryandcustomize = {
-	label: i18n.translate( 'Try & Customize' ),
-	extendedLabel: i18n.translate( 'Try & Customize' ),
-	header: i18n.translate( 'Try & Customize on:', {
-		comment: 'label in the dialog for opening the Customizer with the theme in preview',
-	} ),
-	action: tryAndCustomizeAction,
-	hideForTheme: ( state, themeId, siteId ) =>
-		! getCurrentUser( state ) ||
-		( siteId &&
-			( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-				( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
-		isThemeActive( state, themeId, siteId ) ||
-		( isThemePremium( state, themeId ) &&
-			isJetpackSite( state, siteId ) &&
-			! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ),
-};
-
 const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website',
@@ -183,7 +163,6 @@ const ALL_THEME_OPTIONS = {
 	purchase,
 	upgradePlan,
 	activate,
-	tryandcustomize,
 	deleteTheme,
 	signup,
 	separator,
