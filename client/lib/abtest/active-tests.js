@@ -109,8 +109,8 @@ export default {
 	showPlanUpsellGSuite: {
 		datestamp: '20190805',
 		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
+			variantShowPlanBump: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -118,8 +118,8 @@ export default {
 	showPlanUpsellConcierge: {
 		datestamp: '20190805',
 		variations: {
-			variantShowPlanBump: 100,
-			control: 0,
+			variantShowPlanBump: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

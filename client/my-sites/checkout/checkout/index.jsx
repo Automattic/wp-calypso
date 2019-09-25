@@ -405,29 +405,31 @@ export class Checkout extends React.Component {
 	}
 
 	maybeShowPlanBumpOfferGSuite( receiptId ) {
-		const { cart, selectedSiteSlug } = this.props;
+		// The plan bump test is having some discrepancies,
+		// turning it off till a fix is found. Check pa1C6h-z7-p2.
 
-		if ( hasPersonalPlan( cart ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellGSuite' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-			}
-		}
+		//const { cart, selectedSiteSlug } = this.props;
+
+		//if ( hasPersonalPlan( cart ) ) {
+		//	if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellGSuite' ) ) {
+		//		return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+		//	}
+		//}
 
 		return;
 	}
 
 	maybeShowPlanBumpOfferConcierge( receiptId ) {
-		const { cart, selectedSiteSlug } = this.props;
+		// The plan bump test is having some discrepancies,
+		// turning it off till a fix is found. Check pa1C6h-z7-p2.
 
-		if ( hasPersonalPlan( cart ) ) {
-			// The plan bump vs concierge test is having some discrepancies,
-			// we will comment this out till a fix is found. Check pa1C6h-z7-p2.
-			/*if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-			}*/
-			// Temporarily showing the plan bump to all users
-			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-		}
+		//const { cart, selectedSiteSlug } = this.props;
+
+		//if ( hasPersonalPlan( cart ) ) {
+		//	if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
+		//		return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+		//	}
+		//}
 
 		return;
 	}
@@ -479,10 +481,9 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
-			//We are commenting out this code to temporaritly not show the concierge upsell to any user
-			/*if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
 				return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
-			}*/
+			}
 		}
 
 		return;
