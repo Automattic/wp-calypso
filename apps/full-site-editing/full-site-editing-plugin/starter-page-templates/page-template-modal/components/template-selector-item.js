@@ -3,6 +3,7 @@
  */
 /* eslint-disable import/no-extraneous-dependencies */
 import { isNil, isEmpty } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
@@ -79,6 +80,12 @@ const TemplateSelectorItem = props => {
 		}
 	};
 
+	// Used to determine whether or not to apply a bottom border to the template preview
+	// Larger confirmation buttons will overlap the border which doesn't look good, so we
+	// disable the border in those cases.
+	const longLabelTextThreshold = 25;
+	const confirmButtonText = sprintf( __( 'Use %s template', 'full-site-editing' ), label );
+
 	return (
 		<Fragment>
 			<button
@@ -90,7 +97,14 @@ const TemplateSelectorItem = props => {
 				aria-labelledby={ `${ id } ${ labelId }` }
 				aria-pressed={ isSelected }
 			>
-				<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
+				<div
+					className={ classnames( 'template-selector-item__preview-wrap', {
+						'has-long-label': confirmButtonText.length > longLabelTextThreshold,
+						'is-selected': isSelected,
+					} ) }
+				>
+					{ innerPreview }
+				</div>
 				<span id={ labelId }>{ label }</span>
 			</button>
 
@@ -100,7 +114,7 @@ const TemplateSelectorItem = props => {
 				disabled={ ! isSelected }
 				onClick={ () => handleTemplateConfirmation( value, label ) }
 			>
-				{ sprintf( __( 'Use %s template', 'full-site-editing' ), label ) }
+				{ confirmButtonText }
 			</Button>
 		</Fragment>
 	);

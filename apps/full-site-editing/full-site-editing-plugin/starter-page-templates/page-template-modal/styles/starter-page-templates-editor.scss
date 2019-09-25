@@ -142,12 +142,17 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 	.template-selector-item__confirm-selection {
 	    position: absolute;
-	    top: $template-preview-height + 1px;
+	    bottom: 0;
 	    left: 0;
 	    width: calc( 100% - 10px );
-	    height: 37px;
+	    height: auto; // allow flexible height
+		line-height: 1.2;
+		padding-top: 10px;
+		padding-bottom: 10px;
 	    margin: 5px;
 		display: block;
+		white-space: normal; // allow text to wrap
+
 
 		&:disabled {
 			@include screen-reader-text(); // visually hide the button but keep active for screen readers
@@ -174,6 +179,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 		&.is-rendering {
 			opacity: 0.5;
+		}
+
+		&.is-selected.has-long-label {
+			border-bottom-color: transparent;
 		}
 
         .block-editor-block-list__layout,
