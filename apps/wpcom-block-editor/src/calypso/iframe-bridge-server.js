@@ -690,6 +690,20 @@ function getCloseButtonUrl( calypsoPort ) {
 	};
 }
 
+/**
+ * Passes uncaught errors in window.onerror to Calypso for logging.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleUncaughtErrors( calypsoPort ) {
+	window.onerror = ( ...error ) => {
+		calypsoPort.postMessage( {
+			action: 'logError',
+			payload: { error },
+		} );
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -772,6 +786,8 @@ function initPort( message ) {
 		setupEditTemplateLinks( calypsoPort );
 
 		getCloseButtonUrl( calypsoPort );
+
+		handleUncaughtErrors( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
