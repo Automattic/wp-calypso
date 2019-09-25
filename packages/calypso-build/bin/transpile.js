@@ -24,6 +24,6 @@ execSync( `${ baseCommand } -d "${ outputDirEsm }" "${ inputDir }"`, {
 } );
 
 execSync( `${ baseCommand } -d "${ outputDirCommon }" "${ inputDir }"`, {
-	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'server' } ),
+	env: Object.assign( {}, process.env, { BROWSERSLIST_ENV: 'defaults', MODULES: 'commonjs' } ),
 	cwd: root,
 } );
