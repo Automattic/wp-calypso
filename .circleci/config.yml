@@ -285,7 +285,7 @@ jobs:
     working_directory: ~/wp-calypso
     environment: *shared-environment
     docker:
-      - image: php:7-cli
+      - image: wordpress:cli
     parallelism: 1
     steps:
       - prepare
@@ -294,12 +294,7 @@ jobs:
       - run:
           name: Extract @wordpress/i18n strings
           command: |
-            # Get wp-cli
-            curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            # Install wp i18n
-            php wp-cli.phar wp package install git@github.com:wp-cli/i18n-command.git
-            # Extract strings.
-            php wp-cli.phar wp i18n make-pot . merged.pot --slug=calypso  --ignore-domain --domain=default --exclude=build/,packages/,public/,test/ --merge=calypso-strings.pot
+            wp i18n make-pot . merged.pot --slug=calypso  --ignore-domain --domain=default --exclude=build/,packages/,public/,test/ --merge=calypso-strings.pot
             mv merged.pot "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
       - store-artifacts-and-test-results
 
@@ -672,7 +667,7 @@ workflows:
             - setup
       - wp-i18n-extract-strings:
           requires:
-            - setup
+            - lint-and-translate
       - test-client:
           requires:
             - setup
