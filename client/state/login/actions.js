@@ -51,7 +51,7 @@ import wpcom from 'lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
-import { arrayBufferToBase64, base64ToArrayBuffer, credentialListConversion } from 'lib/webauthn';
+import { get as webauthn_auth } from '@github/webauthn-json';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -190,51 +190,21 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 	} )
 		.then( response => {
 			const parameters = get( response, 'body.data', [] );
-			const requestOptions = {};
 			const twoStepNonce = get( parameters, 'two_step_nonce' );
 
 			if ( twoStepNonce ) {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
 			}
-
-			requestOptions.challenge = base64ToArrayBuffer( parameters.challenge );
-			requestOptions.timeout = 6000;
-			if ( 'rpId' in parameters ) {
-				requestOptions.rpId = parameters.rpId;
-			}
-			if ( 'allowCredentials' in parameters ) {
-				requestOptions.allowCredentials = credentialListConversion( parameters.allowCredentials );
-			}
-			return navigator.credentials.get( { publicKey: requestOptions } );
+			return webauthn_auth( { publicKey: parameters } );
 		} )
 		.then( assertion => {
-			const publicKeyCredential = {};
-			if ( 'id' in assertion ) {
-				publicKeyCredential.id = assertion.id;
+			const response = assertion.response;
+			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
+				delete response.userHandle;
 			}
-			if ( 'type' in assertion ) {
-				publicKeyCredential.type = assertion.type;
-			}
-			if ( 'rawId' in assertion ) {
-				publicKeyCredential.rawId = arrayBufferToBase64( assertion.rawId );
-			}
-			if ( ! assertion.response ) {
-				throw "Get assertion response lacking 'response' attribute";
-			}
-
-			const _response = assertion.response;
-			publicKeyCredential.response = {
-				clientDataJSON: arrayBufferToBase64( _response.clientDataJSON ),
-				authenticatorData: arrayBufferToBase64( _response.authenticatorData ),
-				signature: arrayBufferToBase64( _response.signature ),
-			};
-			if ( _response.userHandle ) {
-				publicKeyCredential.response.userHandle = arrayBufferToBase64( _response.userHandle );
-			}
-
 			return postLoginRequest( 'webauthn-authentication-endpoint', {
 				...loginParams,
-				client_data: JSON.stringify( publicKeyCredential ),
+				client_data: JSON.stringify( assertion ),
 				two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 				remember_me: true,
 			} );
