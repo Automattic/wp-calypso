@@ -245,13 +245,12 @@ jobs:
       - run:
           name: Build calypso-strings.pot
           when: always
-          command: |
-            npm run translate
+          command: npm run translate
       - persist_to_workspace:
           root: '~'
           paths:
             - wp-calypso
-     - run:
+      - run:
           name: Build New Strings .pot
           when: always
           command: |
