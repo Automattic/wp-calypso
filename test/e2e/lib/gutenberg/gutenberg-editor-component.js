@@ -68,6 +68,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
 		}
 
+		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
 	}
 
