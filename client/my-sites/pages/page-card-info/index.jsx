@@ -80,15 +80,15 @@ function PageCardInfo( {
 			<div>
 				{ showTimestamp && renderTimestamp() }
 				{ isFront && (
-					<span className="page-card-info__item">
-						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__item-icon" />
-						<span className="page-card-info__item-text">{ translate( 'Homepage' ) }</span>
+					<span className="page-card-info__badge">
+						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__badge-icon" />
+						<span className="page-card-info__badge-text">{ translate( 'Homepage' ) }</span>
 					</span>
 				) }
 				{ isPosts && (
-					<span className="page-card-info__item">
-						<Gridicon icon="posts" size={ ICON_SIZE } className="page-card-info__item-icon" />
-						<span className="page-card-info__item-text">{ translate( 'Your latest posts' ) }</span>
+					<span className="page-card-info__badge">
+						<Gridicon icon="posts" size={ ICON_SIZE } className="page-card-info__badge-icon" />
+						<span className="page-card-info__badge-text">{ translate( 'Your latest posts' ) }</span>
 					</span>
 				) }
 				{ ! isFront && theme && (

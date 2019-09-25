@@ -46,8 +46,6 @@ const stepNameToModuleName = {
 	'survey-user': 'survey-user',
 	test: 'test-step',
 	themes: 'theme-selection',
-	'website-themes': 'theme-selection',
-	'blog-themes': 'theme-selection',
 	'themes-site-selected': 'theme-selection',
 	user: 'user',
 	'oauth2-user': 'user',
