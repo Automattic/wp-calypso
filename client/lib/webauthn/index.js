@@ -4,7 +4,7 @@
 import wpcom from 'lib/wp';
 import { translate } from 'i18n-calypso';
 import config from 'config';
-import { create } from '@github/webauthn-json';
+import { create, supported } from '@github/webauthn-json';
 
 const POST = 'POST';
 
@@ -28,6 +28,19 @@ function wpcomApiRequest( path, _data, method ) {
 			wpcom.req.get( path, data, promise );
 		}
 	} );
+}
+
+function isBrowser() {
+	try {
+		if ( ! window ) return false;
+	} catch ( err ) {
+		return false;
+	}
+	return true;
+}
+
+export function isWebAuthnSupported() {
+	return isBrowser() && supported();
 }
 
 export function registerSecurityKey( keyName = null ) {

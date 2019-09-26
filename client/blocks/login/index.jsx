@@ -45,7 +45,7 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import SecurityKeyForm from './two-factor-authentication/security-key-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
-import { supported as isWebAuthnSupported } from '@github/webauthn-json';
+import { isWebAuthnSupported } from 'lib/webauthn';
 
 /**
  * Style dependencies
