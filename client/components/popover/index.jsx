@@ -45,7 +45,6 @@ class Popover extends Component {
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
-		isFocusOnShow: PropTypes.bool,
 		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [
@@ -75,7 +74,6 @@ class Popover extends Component {
 		autoRtl: true,
 		className: '',
 		closeOnEsc: true,
-		isFocusOnShow: false,
 		isRtl: false,
 		isVisible: false,
 		position: 'top',
@@ -283,7 +281,7 @@ class Popover extends Component {
 	}
 
 	focusPopover() {
-		if ( ! this.props.isFocusOnShow || ! this.popoverNode ) {
+		if ( ! this.popoverNode ) {
 			return null;
 		}
 
@@ -506,7 +504,7 @@ class Popover extends Component {
 					aria-label={ this.props[ 'aria-label' ] }
 					id={ this.id }
 					role="tooltip"
-					tabIndex={ this.props.isFocusOnShow ? 0 : null }
+					tabIndex="-1"
 					style={ this.getStylePosition() }
 					className={ classes }
 				>
