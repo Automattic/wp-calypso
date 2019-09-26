@@ -151,7 +151,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		width: 100%;
 		display: block;
 		margin: 0 auto 14px;
-		border-bottom: 1px solid #a1aab2;
 		background: $template-selector-empty-background;
 		border-radius: 0;
 		overflow: hidden;
@@ -209,6 +208,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
+.page-template-modal__form-title {
+	font-weight: bold;
+	margin-bottom: 1em;
+}
+
 .page-template-modal__buttons {
     position: absolute;
     right: 0;
@@ -241,11 +245,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	right: 0;
 	width: calc( 50% - 24px );
 	background: $template-selector-empty-background;
-	border: 1px solid $template-selector-border-color;
-	border-radius: 6px;
+	border-radius: 2px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	max-height: 80vh; // avoid overflow off bottom of screen if no of thumbs is large
+	box-shadow: 0 0 13px rgba( 0, 0, 0, 0.2 );
 
 	.edit-post-visual-editor {
 		margin-top: 20px;
