@@ -19,6 +19,7 @@ $template-selector-modal-offset-bottom: 25px;
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	animation: none;
+	background-color: transparent; // hide the overlay visually
 }
 
 // When not in fullscreen mode allow space for WP.org sidebar
@@ -45,17 +46,21 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
-	max-width: 800px;
 	animation: none;
-
-	@media screen and ( min-width: 1200px ) {
-		width: 80%;
-		max-width: 1200px;
-	}
+	box-shadow: none; // cancel "modal" appearance
+	border: none; // cancel "modal" appearance
+	top: 0; // overlay the Block Editor toolbar
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    max-width: none;
+    max-height: none;
+    background-color: #eeeeee;
 }
 
 .page-template-modal .components-modal__header-heading-container {
-	justify-content: center;
+	justify-content: flex-start;
 }
 
 .page-template-modal .components-modal__content {
@@ -124,6 +129,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		appearance: none;
 		padding: 0 0 14px;
 		overflow: hidden;
+		background-color: #fff;
 
 		&:hover,
 		&:focus,
@@ -225,7 +231,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		display: none;
 	}
 
-	position: fixed;
+	position: absolute;
 	top: 80px;
 	bottom: $template-selector-modal-offset-bottom + 50px;
 	right: $template-selector-modal-offset-right;
