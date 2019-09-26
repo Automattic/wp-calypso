@@ -1,5 +1,3 @@
-/** @format */
-
 module.exports = {
 	'i18n-ellipsis': require( './i18n-ellipsis' ),
 	'i18n-mismatched-placeholders': require( './i18n-mismatched-placeholders' ),

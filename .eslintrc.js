@@ -1,4 +1,3 @@
-/** @format */
 const { merge } = require( 'lodash' );
 const reactVersion = require( './package.json' ).dependencies.react;
 

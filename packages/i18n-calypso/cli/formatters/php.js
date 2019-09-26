@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Determine the correct GlotPress i18n function to use based on the input:
  * __(), _n(), _nx(), _x()

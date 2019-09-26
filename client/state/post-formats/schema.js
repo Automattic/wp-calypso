@@ -1,4 +1,3 @@
-/** @format */
 export const postFormatsItemsSchema = {
 	type: 'object',
 	additionalProperties: false,

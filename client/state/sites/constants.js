@@ -1,5 +1,3 @@
-/** @format */
-
 export const SITE_REQUEST_FIELDS = [
 	'ID',
 	'URL',

@@ -1,5 +1,3 @@
-/** @format */
-
 const emptyStream = {
 	items: [],
 	pendingItems: { lastUpdated: null, items: [] },

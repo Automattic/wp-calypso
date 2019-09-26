@@ -1,5 +1,3 @@
-/** @format */
-
 import { dropRightWhile, last } from 'lodash';
 
 /**

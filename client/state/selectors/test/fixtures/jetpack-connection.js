@@ -1,4 +1,3 @@
-/** @format */
 export const items = {
 	12345678: {
 		isActive: false,

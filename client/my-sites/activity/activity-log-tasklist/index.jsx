@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies

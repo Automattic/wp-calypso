@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Module variables
  */

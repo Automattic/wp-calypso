@@ -1,4 +1,3 @@
-/** @format */
 const trailingSlashRe = /(\/)?$/;
 
 export default function trailingSlashIt( path ) {

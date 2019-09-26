@@ -1,4 +1,3 @@
-/** @format */
 export const testSchema = {
 	type: 'object',
 	patternProperties: {

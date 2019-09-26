@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Takes an xgettext-js match and processes it into a form more easily consumed
  * by server-side i18n functions.

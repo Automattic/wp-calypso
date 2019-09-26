@@ -1,4 +1,3 @@
-/** @format */
 // Initialize polyfills before any dependencies are loaded
 import './polyfills';
 

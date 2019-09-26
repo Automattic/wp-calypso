@@ -1,5 +1,3 @@
-/** @format */
-
 export function getSaveErrorMessage( slug, translate ) {
 	switch ( slug ) {
 		case 'term_exists':

@@ -1,5 +1,3 @@
-/** @format */
-
 export const fromApi = ( posts, siteId ) =>
 	posts.map( post => ( {
 		id: post.ID,

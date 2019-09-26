@@ -1,4 +1,3 @@
-/** @format */
 jest.mock( 'config', () => ( {
 	isEnabled: () => true,
 } ) );

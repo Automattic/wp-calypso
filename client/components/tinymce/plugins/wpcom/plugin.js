@@ -1,4 +1,3 @@
-/** @format **/
 /**
  * Adapted from the WordPress wp TinyMCE plugin.
  *

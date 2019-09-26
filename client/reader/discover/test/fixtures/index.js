@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable quote-props*/
 /**
  * External dependencies

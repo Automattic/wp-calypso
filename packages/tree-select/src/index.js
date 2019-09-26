@@ -1,5 +1,3 @@
-/** @format */
-
 const defaultGetCacheKey = ( ...args ) => args.join();
 
 const isFunction = fn => {

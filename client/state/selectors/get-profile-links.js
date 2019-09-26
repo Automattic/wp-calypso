@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Returns all profile links of the current user.
  *

@@ -1,4 +1,3 @@
-/** @format */
 export const transferStates = {
 	PENDING: 'pending',
 	INQUIRING: 'inquiring',

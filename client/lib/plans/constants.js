@@ -1,5 +1,3 @@
-/** @format */
-
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';

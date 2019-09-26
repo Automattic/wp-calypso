@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Component which handle remote credentials for installing Jetpack
  */

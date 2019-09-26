@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Returns the next step for cancellation or the last step if at the last step.
  *

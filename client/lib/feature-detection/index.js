@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Detects if CSS custom properties are supported
  *

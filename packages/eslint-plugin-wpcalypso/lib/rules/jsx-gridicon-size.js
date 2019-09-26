@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview Enforce recommended Gridicon size attributes
  * @author Automattic

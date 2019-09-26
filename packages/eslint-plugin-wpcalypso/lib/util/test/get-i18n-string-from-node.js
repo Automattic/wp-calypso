@@ -1,4 +1,3 @@
-/** @format */
 /**
  * @fileoverview Utility for extracting strings from node
  * @author Automattic

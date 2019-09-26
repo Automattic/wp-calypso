@@ -1,5 +1,3 @@
-/** @format */
-
 export default function isSurveyFilledIn( survey ) {
 	const answeredBothQuestions = survey.questionOneRadio && survey.questionTwoRadio;
 

@@ -1,5 +1,3 @@
-/** @format */
-
 export const CART_COUPON_APPLY = 'CART_COUPON_APPLY';
 export const CART_COUPON_REMOVE = 'CART_COUPON_REMOVE';
 export const CART_DISABLE = 'CART_DISABLE';

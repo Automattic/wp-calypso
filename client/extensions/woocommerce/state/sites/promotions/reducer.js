@@ -1,5 +1,3 @@
-/** @format */
-
 // TODO: whenever it's possible, change to rely on the stored data under
 // products and coupons instead of accumulating duplicate state here.
 // It would be best to do this after further updates to the data layer.

@@ -1,5 +1,3 @@
-/** @format */
-
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 /**
  * External dependencies

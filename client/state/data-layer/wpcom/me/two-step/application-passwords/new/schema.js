@@ -1,5 +1,3 @@
-/** @format */
-
 export default {
 	type: 'object',
 	properties: {
