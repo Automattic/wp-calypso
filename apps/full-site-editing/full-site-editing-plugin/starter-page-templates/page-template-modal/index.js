@@ -233,7 +233,7 @@ const PageTemplatesPlugin = compose(
 
 				// Insert blocks.
 				const postContentBlock = ownProps.postContentBlock;
-				editorDispatcher.insertBlocks(
+				dispatch( 'core/block-editor' ).insertBlocks(
 					blocks,
 					0,
 					postContentBlock ? postContentBlock.clientId : '',
