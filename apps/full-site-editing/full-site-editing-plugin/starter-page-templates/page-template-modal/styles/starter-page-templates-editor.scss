@@ -12,23 +12,28 @@
 }
 
 $template-selector-border-color: #a1aab2;
-$template-selector-empty-background: #f6f6f6;
+$template-selector-empty-background: #fff;
 $template-selector-modal-offset-right: 32px;
 $template-selector-modal-offset-bottom: 25px;
+$template-large-preview-title-height: 117px;
+
+$wp-org-sidebar-reduced: 36px;
+$wp-org-sidebar-full: 160px;
 
 // Modal Overlay
 .page-template-modal-screen-overlay {
 	animation: none;
+	background-color: transparent; // hide the overlay visually
 }
 
 // When not in fullscreen mode allow space for WP.org sidebar
 body:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@media screen and ( min-width: 783px ) {
-		left: 36px;
+		left: $wp-org-sidebar-reduced;
 	}
 
 	@media screen and ( min-width: 961px ) {
-		left: 160px;
+		left: $wp-org-sidebar-full;
 	}
 }
 
@@ -45,17 +50,26 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .page-template-modal {
 	width: 100%;
 	height: 100vh;
-	max-width: 800px;
 	animation: none;
-
-	@media screen and ( min-width: 1200px ) {
-		width: 80%;
-		max-width: 1200px;
-	}
+	box-shadow: none; // cancel "modal" appearance
+	border: none; // cancel "modal" appearance
+	top: 0; // overlay the Block Editor toolbar
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    max-width: none;
+    max-height: none;
+    background-color: #eeeeee;
 }
 
 .page-template-modal .components-modal__header-heading-container {
-	justify-content: center;
+	@include screen-reader-text();
+}
+
+// Close button
+.page-template-modal .components-modal__header .components-button {
+	left: 0;
 }
 
 .page-template-modal .components-modal__content {
@@ -64,7 +78,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .page-template-modal__inner {
-	max-width: 720px;
+	position: relative;
 	margin: 0 auto;
 	padding: 0;
 
@@ -120,10 +134,21 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		border: 1px solid $template-selector-border-color;
 		border-radius: 6px;
 		cursor: pointer;
-		background: none;
 		appearance: none;
-		padding: 0 0 14px;
+		padding: 0;
 		overflow: hidden;
+		background-color: #fff;
+		position: relative;
+
+		.template-selector-item__template-title {
+			width: 100%;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			height: 40px;
+			line-height: 40px;
+			background-color: #fff;
+		}
 
 		&:hover,
 		&:focus,
@@ -139,12 +164,12 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.template-selector-item__preview-wrap {
 		width: 100%;
 		display: block;
-		margin: 0 auto 14px;
-		border-bottom: 1px solid #a1aab2;
+		margin: 0 auto;
 		background: $template-selector-empty-background;
 		border-radius: 0;
 		overflow: hidden;
-		height: 170px;
+		height: 0;
+		padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
 		box-sizing: content-box;
 		position: relative;
 		pointer-events: none;
@@ -198,24 +223,28 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-.page-template-modal__buttons {
-	position: fixed;
-	right: $template-selector-modal-offset-right;
-	bottom: $template-selector-modal-offset-bottom;
+.page-template-modal__form-title {
+	font-weight: bold;
+	margin-bottom: 1em;
+}
 
-	@media screen and ( max-width: 659px ) {
-		display: flex;
-		justify-content: flex-end;
-		right: 0;
-		left: 0;
-		bottom: 0;
-		padding: 15px;
-		background: white;
-		border-top: 1px solid $template-selector-border-color;
-	}
+.page-template-modal__buttons {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding-right: 24px;
+
+    &.is-visually-hidden {
+    	@include screen-reader-text();
+    }
 
 	.components-button {
-		margin-left: 10px;
+		height: 33px; // match to Gutenberg toolbar styles
+	    line-height: 32px; // match to Gutenberg toolbar styles
 	}
 }
 
@@ -226,21 +255,21 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	position: fixed;
-	top: 80px;
-	bottom: $template-selector-modal-offset-bottom + 50px;
-	right: $template-selector-modal-offset-right;
+	top: 111px;
+	bottom: 24px;
+	right: 24px;
 	width: calc( 50% - 50px );
 	background: $template-selector-empty-background;
-	border: 1px solid $template-selector-border-color;
-	border-radius: 6px;
+	border-radius: 2px;
 	overflow-x: hidden;
 	overflow-y: auto;
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 
 	.edit-post-visual-editor {
 		margin-top: 20px;
 	}
 
-	$template-large-preview-title-height: 117px;
+
 	.editor-styles-wrapper {
 		.editor-post-title {
 			transform-origin: top left;
@@ -262,6 +291,16 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		body.show-post-title-before-content & .block-editor-block-preview__content > .block-editor-block-list__layout {
 			margin-top: $template-large-preview-title-height;
 		}
+	}
+}
+
+body:not( .is-fullscreen-mode ) .template-selector-preview {
+	@media screen and ( min-width: 783px ) {
+		width: calc( 50% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+	}
+
+	@media screen and ( min-width: 961px ) {
+		width: calc( 50% - #{$wp-org-sidebar-full } );
 	}
 }
 

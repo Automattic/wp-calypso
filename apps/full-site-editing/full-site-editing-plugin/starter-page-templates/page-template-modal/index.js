@@ -1,15 +1,17 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { isEmpty, reduce, get, keyBy, mapValues } from 'lodash';
+import classnames from 'classnames';
+import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import ensureAssets from './utils/ensure-assets';
-import '@wordpress/nux';
+import { parse as parseBlocks } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -18,8 +20,9 @@ import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
-import { parse as parseBlocks } from '@wordpress/blocks';
 import replacePlaceholders from './utils/replace-placeholders';
+import ensureAssets from './utils/ensure-assets';
+/* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
 const {
@@ -165,6 +168,9 @@ class PageTemplateModal extends Component {
 						<>
 							<form className="page-template-modal__form">
 								<fieldset className="page-template-modal__list">
+									<legend className="page-template-modal__form-title">
+										{ __( 'Choose a template…', 'full-site-editing' ) }
+									</legend>
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
 										templates={ templates }
@@ -184,10 +190,11 @@ class PageTemplateModal extends Component {
 						</>
 					) }
 				</div>
-				<div className="page-template-modal__buttons">
-					<Button isDefault isLarge onClick={ this.closeModal }>
-						{ __( 'Cancel', 'full-site-editing' ) }
-					</Button>
+				<div
+					className={ classnames( 'page-template-modal__buttons', {
+						'is-visually-hidden': isEmpty( previewedTemplate ) || isLoading,
+					} ) }
+				>
 					<Button
 						isPrimary
 						isLarge
