@@ -82,6 +82,16 @@ class WP_Template_Inserter {
 		$response = $this->fetch_retry( $request_url, $request_args );
 
 		if ( ! $response ) {
+			do_action(
+				'a8c_fse_log',
+				'template_population_failure',
+				array(
+					'theme_slug' => $this->theme_slug,
+					'context'    => 'WP_Template_Inserter->fetch_template_parts',
+				)
+			);
+			$this->header_content = $this->get_default_header();
+			$this->footer_content = $this->get_default_footer();
 			return;
 		}
 
@@ -122,6 +132,26 @@ class WP_Template_Inserter {
 		sleep( pow( 2, $attempt ) );
 		$attempt++;
 		$this->fetch_retry( $request_url, $request_args, $attempt );
+	}
+
+	/**
+	 * Returns a default header if call to template api fails for some reason.
+	 *
+	 * @return string Content of a default header
+	 */
+	public function get_default_header() {
+		return '<!-- wp:a8c/site-description /-->
+			<!-- wp:a8c/site-title /-->
+			<!-- wp:a8c/navigation-menu /-->';
+	}
+
+	/**
+	 * Returns a default footer if call to template api fails for some reason.
+	 *
+	 * @return string Content of a default footer
+	 */
+	public function get_default_footer() {
+		return '<!-- wp:a8c/navigation-menu /-->';
 	}
 
 	/**
