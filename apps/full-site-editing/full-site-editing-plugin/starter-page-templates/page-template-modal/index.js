@@ -172,6 +172,7 @@ class PageTemplateModal extends Component {
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
+										selectedTemplate={ previewedTemplate }
 									/>
 								</fieldset>
 							</form>

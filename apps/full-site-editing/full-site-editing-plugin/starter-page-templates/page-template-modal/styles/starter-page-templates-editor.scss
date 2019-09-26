@@ -126,11 +126,13 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		overflow: hidden;
 
 		&:hover,
-		&:focus {
+		&:focus,
+		&.is-selected {
 			border-color: #2562b7;
 			box-shadow: 0 0 0 1px #2562b7;
 			outline: 1px solid transparent;
 			outline-offset: -1px;
+			color: inherit;
 		}
 	}
 
