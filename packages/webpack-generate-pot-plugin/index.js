@@ -173,7 +173,7 @@ class GeneratePotPlugin {
 
 			const compiled = po.compile( data );
 
-			writeFileSync( 'out.pot', compiled );
+			writeFileSync( 'calypso-strings.pot', compiled );
 		};
 
 		compiler.hooks.compilation.tap( 'GeneratePotPlugin', handleCompilation );
