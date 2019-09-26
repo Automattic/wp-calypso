@@ -186,6 +186,7 @@ step( 'Can delete our newly created account', async function() {
 } );
 ```
 
+
 ## Waiting for elements
 
 When waiting for elements we should always use a quantity of the config value defined as `explicitWaitMS` instead of hardcoding values. This allows us to change it readily, and also adjust this for different environments, for example the live branch environment is not as fast as production so it waits twice as long.
