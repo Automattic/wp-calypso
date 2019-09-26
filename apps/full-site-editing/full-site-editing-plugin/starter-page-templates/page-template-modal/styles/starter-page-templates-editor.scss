@@ -134,11 +134,21 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		border: 1px solid $template-selector-border-color;
 		border-radius: 6px;
 		cursor: pointer;
-		background: none;
 		appearance: none;
-		padding: 0 0 14px;
+		padding: 0;
 		overflow: hidden;
 		background-color: #fff;
+		position: relative;
+
+		span {
+			width: 100%;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			height: 40px;
+			line-height: 40px;
+			background-color: #fff;
+		}
 
 		&:hover,
 		&:focus {
@@ -152,11 +162,12 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.template-selector-item__preview-wrap {
 		width: 100%;
 		display: block;
-		margin: 0 auto 14px;
+		margin: 0 auto;
 		background: $template-selector-empty-background;
 		border-radius: 0;
 		overflow: hidden;
-		height: 170px;
+		height: 0;
+		padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
 		box-sizing: content-box;
 		position: relative;
 		pointer-events: none;
@@ -228,7 +239,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     &.is-visually-hidden {
     	@include screen-reader-text();
     }
-	
+
 	.components-button {
 		height: 33px; // match to Gutenberg toolbar styles
 	    line-height: 32px; // match to Gutenberg toolbar styles
