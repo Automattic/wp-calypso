@@ -23,6 +23,7 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const GeneratePotPlugin = require( '@automattic/webpack-generate-pot-plugin' );
 
 /**
  * Internal dependencies
@@ -41,6 +42,7 @@ const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
+const shouldGeneratePot = process.env.GENERATE_POT === 'true';
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
@@ -298,6 +300,7 @@ const webpackConfig = {
 				assetExtraPath: extraPath,
 			} ),
 		new DuplicatePackageCheckerPlugin(),
+		shouldGeneratePot && new GeneratePotPlugin(),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
 				exclude: /node_modules/,
