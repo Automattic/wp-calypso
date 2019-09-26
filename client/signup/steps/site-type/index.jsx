@@ -40,19 +40,8 @@ class SiteType extends Component {
 	};
 
 	// This function is to support the A/B test `signupWithBasicSite`
-	// by prefilling the vertical with 'travel'
-	handleBasicSiteButtonClick = () => {
-		const { translate } = this.props;
-		// prefill the vertical values to inform headstart of which vertical template to use.
-		this.props.setSiteVertical( {
-			isUserInput: false,
-			name: translate( 'Travel' ),
-			slug: 'Travel',
-			id: 'p2v7',
-			parentId: 'p2',
-		} );
-		this.submitStep( 'business', 'get-started' );
-	};
+	// by using a flow that does not include intermediary steps before 'domain'
+	handleBasicSiteButtonClick = () => this.submitStep( 'business', 'get-started' );
 
 	submitStep = ( siteTypeValue, flowName ) => {
 		this.props.submitSiteType( siteTypeValue );
