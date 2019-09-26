@@ -29,6 +29,7 @@ import './two-factor-actions.scss';
 class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
+		isJetpack: PropTypes.bool,
 		isSmsSupported: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
@@ -41,7 +42,7 @@ class TwoFactorActions extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
 
-		page( login( { isNative: true, twoFactorAuthType: 'sms' } ) );
+		page( login( { isNative: true, twoFactorAuthType: 'sms', isJetpack: this.props.isJetpack } ) );
 
 		this.props.sendSmsCode();
 	};
@@ -51,7 +52,13 @@ class TwoFactorActions extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
 
-		page( login( { isNative: true, twoFactorAuthType: 'authenticator' } ) );
+		page(
+			login( {
+				isNative: true,
+				twoFactorAuthType: 'authenticator',
+				isJetpack: this.props.isJetpack,
+			} )
+		);
 	};
 
 	render() {
