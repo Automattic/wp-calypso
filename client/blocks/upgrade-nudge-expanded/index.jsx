@@ -54,7 +54,7 @@ class UpgradeNudgeExpanded extends Component {
 	}
 
 	render() {
-		if ( ! this.props.currentPlan && ! this.props.shouldDisplay ) {
+		if ( ! this.props.currentPlan && ! this.props.forceDisplay ) {
 			return null;
 		}
 
@@ -149,7 +149,7 @@ UpgradeNudgeExpanded.propTypes = {
 	eventName: PropTypes.string,
 	event: PropTypes.string,
 	siteSlug: PropTypes.string,
-	shouldDisplay: PropTypes.bool,
+	forceDisplay: PropTypes.bool,
 	recordTracksEvent: PropTypes.func.isRequired,
 };
 

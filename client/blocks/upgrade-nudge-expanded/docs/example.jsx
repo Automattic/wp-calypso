@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import { stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +28,7 @@ const UpgradeNudgeExpandedExample = () => {
 						'Allow you to control how page titles will appear on Google search results, or when shared on social networks.',
 						'Modify front page meta data in order to customize how your site appears to search engines.',
 					] }
-					shouldDisplay={ stubTrue }
+					forceDisplay={ true }
 				/>
 			</div>
 		</div>
