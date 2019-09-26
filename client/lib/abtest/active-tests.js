@@ -106,24 +106,6 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellGSuite: {
-		datestamp: '20190805',
-		variations: {
-			variantShowPlanBump: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	showPlanUpsellConcierge: {
-		datestamp: '20190805',
-		variations: {
-			variantShowPlanBump: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	removeBlogFlow: {
 		datestamp: '20190813',
 		variations: {
