@@ -30,9 +30,12 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 class StatsBanners extends Component {
 	static propTypes = {
+		domains: PropTypes.array.isRequired,
+		isCustomerHomeEnabled: PropTypes.bool.isRequired,
 		isGoogleMyBusinessStatsNudgeVisible: PropTypes.bool.isRequired,
 		isGSuiteStatsNudgeVisible: PropTypes.bool.isRequired,
 		isUpworkStatsNudgeVisible: PropTypes.bool.isRequired,
+		planSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
 		slug: PropTypes.string.isRequired,
 	};
@@ -130,13 +133,13 @@ class StatsBanners extends Component {
 export default connect( ( state, ownProps ) => {
 	return {
 		domains: getDecoratedSiteDomains( state, ownProps.siteId ),
+		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
 		isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 			state,
 			ownProps.siteId
 		),
 		isGSuiteStatsNudgeVisible: ! isGSuiteStatsNudgeDismissed( state, ownProps.siteId ),
 		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
-		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
 		planSlug: getSitePlanSlug( state, ownProps.siteId ),
 	};
 } )( localize( StatsBanners ) );
