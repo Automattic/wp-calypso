@@ -211,6 +211,7 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = null;
 						countryCode = null;
 						break;
+					case 'WPCOM_Billing_Web_Payment':
 					case 'WPCOM_Billing_Stripe_Payment_Method': {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];

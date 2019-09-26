@@ -237,7 +237,7 @@ class SignupForm extends Component {
 		const fieldsForValidation = filter( [
 			'email',
 			this.state.focusPassword && 'password',
-			this.props.displayUsernameInput && this.state.focusUsername && 'username',
+			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );

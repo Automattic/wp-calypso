@@ -3092,6 +3092,12 @@
 				"@types/unist": "*"
 			}
 		},
+		"@types/webpack-env": {
+			"version": "1.14.0",
+			"resolved": "https://registry.npmjs.org/@types/webpack-env/-/webpack-env-1.14.0.tgz",
+			"integrity": "sha512-Fv+0gYJzE/czLoRKq+gnXWr4yBpPM3tO3C8pDLFwqVKlMICQUq5OsxwwFZYDaVr7+L6mgNDp16iOcJHEz3J5RQ==",
+			"dev": true
+		},
 		"@types/yargs": {
 			"version": "13.0.2",
 			"resolved": "https://registry.npmjs.org/@types/yargs/-/yargs-13.0.2.tgz",
