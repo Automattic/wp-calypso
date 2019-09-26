@@ -1,0 +1,29 @@
+// Plans prototype
+
+.plans-prototype {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.plans-prototype__plan {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	width: 100%;
+}
+
+.plans-prototype__plan:nth-child( 2 ) {
+	margin-left: 16px;
+	margin-right: 16px;
+}
+
+.plan-features__actions {
+	margin-top: auto;
+	padding: 8px 24px 24px;
+}
+
+.plan-features__actions-button {
+	margin-top: 8px;
+	width: 100%;
+}

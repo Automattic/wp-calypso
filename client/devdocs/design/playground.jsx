@@ -3,127 +3,28 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import page from 'page';
 import classnames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import { keys } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import * as componentExamples from 'devdocs/design/component-examples';
-import * as playgroundScope from 'devdocs/design/playground-scope';
+import Button from 'components/button';
+import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import Main from 'components/main';
-import SelectDropdown from 'components/select-dropdown';
-import { getExampleCodeFromComponent } from './playground-utils';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import SectionNav from 'components/section-nav';
+import PlanFeaturesHeader from 'my-sites/plan-features/header';
 
 /**
  * Style Dependencies
  */
-import './playground.scss';
-import './syntax.scss';
+import 'my-sites/plan-features/style.scss';
+import './plans-prototype.scss';
 
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
-
-	componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
-	}
-
-	state = {
-		code: `<Main>
-    <HeaderCake actionText="Fun" actionIcon="status">Welcome to the Playground</HeaderCake>
-  	<Button primary onClick={
-  		function() {
-  			alert( 'World' )
-  		}
-  	}>
-  		<Gridicon icon="code" /> Hello
-  	</Button>
-  	<br /><hr /><br />
-  	<ActionCard
-  		headerText={ 'Change the code above' }
-  		mainText={ "The playground lets you drop in components and play with values. It's experiemental and likely will break." }
-  		buttonText={ 'WordPress' }
-  		buttonIcon="external"
-  		buttonPrimary={ false }
-  		buttonHref="https://wordpress.com"
-  		buttonTarget="_blank"
-  	/>
-  	<br /><hr /><br />
-  	<JetpackLogo />
-    <SectionNav >
-      <NavTabs label="Status" selectedText="Published">
-          <NavItem path="/posts" selected={ true }>Published</NavItem>
-          <NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
-          <NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
-          <NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
-      </NavTabs>
-
-      <NavSegmented label="Author">
-          <NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
-          <NavItem path="/posts" selected={ true }>Everyone</NavItem>
-      </NavSegmented>
-
-      <Search
-          pinned
-          fitsContainer
-          placeholder="Search Published..."
-          delaySearch={ true }
-          onSearch={ () => {} }
-      />
-    </SectionNav>
-</Main>`,
-	};
-
-	backToComponents = () => {
-		page( '/devdocs/design/' );
-	};
-
-	addComponent = exampleCode => () => {
-		this.setState( {
-			code:
-				'<Main>' +
-				this.state.code.replace( /(^<Main>)/, '' ).replace( /(<\/Main>$)/, '' ) +
-				'\n\t' +
-				exampleCode +
-				'\n</Main>',
-		} );
-	};
-
-	handleChange = code => {
-		this.setState( {
-			code: code,
-		} );
-	};
-
-	listOfExamples() {
-		return (
-			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
-				{ keys( componentExamples ).map( name => {
-					const ExampleComponentName = componentExamples[ name ];
-					const exampleComponent = <ExampleComponentName />;
-					const exampleCode = getExampleCodeFromComponent( exampleComponent );
-					return (
-						exampleCode && (
-							<SelectDropdown.Item key={ name } onClick={ this.addComponent( exampleCode ) }>
-								{ name }
-							</SelectDropdown.Item>
-						)
-					);
-				} ) }
-			</SelectDropdown>
-		);
-	}
 
 	render() {
 		const className = classnames( 'devdocs', 'devdocs__components', {
@@ -132,57 +33,138 @@ class DesignAssets extends React.Component {
 		} );
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */ // disable for prototyping
 			<Main className={ className }>
-				<DocumentHead title="Playground" />
-				<LiveProvider
-					code={ this.state.code }
-					scope={ playgroundScope }
-					mountStylesheet={ false }
-					className="design__playground"
-				>
-					<div className="design__editor">
-						<div className="design__error">
-							<LiveError />
+				<DocumentHead title="Plans" />
+
+				<SectionNav>
+					<NavTabs label="Section" selectedText="Plans">
+						<NavItem path="#" selected={ false }>
+							My Plan
+						</NavItem>
+						<NavItem path="#" selected={ true }>
+							Plans
+						</NavItem>
+						<NavItem path="#" selected={ false }>
+							Domains
+						</NavItem>
+						<NavItem path="#" selected={ false }>
+							Email
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+
+				<div className="plans-prototype">
+					<Card className="plans-prototype__plan">
+						<PlanFeaturesHeader
+							availableForPurchase={ true }
+							current={ true }
+							currencyCode="USD"
+							isJetpack={ false }
+							popular={ false }
+							newPlan={ false }
+							bestValue={ false }
+							title="Premium"
+							planType="value_bundle"
+							rawPrice={ 8 }
+							discountPrice={ null }
+							billingTimeFrame="per month, billed annually"
+							hideMonthly={ false }
+							isPlaceholder={ false }
+							basePlansPath={ null }
+							relatedMonthlyPlan={ null }
+							isInSignup={ false }
+							selectedPlan={ null }
+						/>
+
+						<p class="plan-features__description">
+							<strong class="plans__features plan-features__targeted-description-heading">
+								Best for Freelancers:
+							</strong>
+							Build a unique website with advanced design tools, CSS editing, lots of space for
+							audio and video, and the ability to monetize your site with ads.
+						</p>
+
+						<div class="plan-features__actions">
+							<Button className="plan-features__actions-button">Manage Plan</Button>
 						</div>
-						<LiveEditor />
-					</div>
-					<div className="design__preview">
-						{ this.listOfExamples() }
-						<LivePreview />
-					</div>
-				</LiveProvider>
+					</Card>
+
+					<Card className="plans-prototype__plan">
+						<PlanFeaturesHeader
+							availableForPurchase={ true }
+							current={ false }
+							currencyCode="USD"
+							isJetpack={ false }
+							popular={ true }
+							newPlan={ false }
+							bestValue={ false }
+							title="Business"
+							planType="business_bundle"
+							rawPrice={ 25 }
+							discountPrice={ null }
+							billingTimeFrame="per month, billed annually"
+							hideMonthly={ false }
+							isPlaceholder={ false }
+							basePlansPath={ null }
+							relatedMonthlyPlan={ null }
+							isInSignup={ false }
+							selectedPlan={ null }
+						/>
+
+						<p class="plan-features__description">
+							<strong class="plans__features plan-features__targeted-description-heading">
+								Best for Small Businesses:
+							</strong>
+							Power your business website with custom plugins and themes, unlimited premium and
+							business theme templates, Google Analytics support, 200 GB storage, and the ability to
+							remove WordPress.com branding.
+						</p>
+						<div class="plan-features__actions">
+							<Button primary className="plan-features__actions-button">
+								Upgrade
+							</Button>
+						</div>
+					</Card>
+
+					<Card className="plans-prototype__plan">
+						<PlanFeaturesHeader
+							availableForPurchase={ true }
+							current={ false }
+							currencyCode="USD"
+							isJetpack={ false }
+							popular={ false }
+							newPlan={ false }
+							bestValue={ false }
+							title="eCommerce"
+							planType="ecommerce-bundle"
+							rawPrice={ 45 }
+							discountPrice={ null }
+							billingTimeFrame="per month, billed annually"
+							hideMonthly={ false }
+							isPlaceholder={ false }
+							basePlansPath={ null }
+							relatedMonthlyPlan={ null }
+							isInSignup={ false }
+							selectedPlan={ null }
+						/>
+
+						<p class="plan-features__description">
+							<strong class="plans__features plan-features__targeted-description-heading">
+								Best for Online Stores:
+							</strong>
+							Sell products or services with this powerful, all-in-one online store experience. This
+							plan includes premium integrations and is extendable, so it’ll grow with you as your
+							business grows.
+						</p>
+						<div class="plan-features__actions">
+							<Button className="plan-features__actions-button">Upgrade</Button>
+						</div>
+					</Card>
+				</div>
 			</Main>
 		);
 	}
 }
 
-let connectedDesignAssets;
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = state => {
-		const { componentsUsageStats } = state;
-
-		return componentsUsageStats;
-	};
-
-	const mapDispatchToProps = dispatch => {
-		return bindActionCreators(
-			{
-				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
-			},
-			dispatch
-		);
-	};
-
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func,
-	};
-
-	connectedDesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
-}
-
-export default connectedDesignAssets || DesignAssets;
+export default DesignAssets;
