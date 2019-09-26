@@ -292,6 +292,7 @@
 		"@types/page": "1.8.0",
 		"@types/react": "16.8.16",
 		"@types/react-redux": "7.0.6",
+		"@types/webpack-env": "1.14.0",
 		"@typescript-eslint/eslint-plugin": "1.10.2",
 		"@typescript-eslint/parser": "1.10.2",
 		"@wordpress/babel-plugin-makepot": "2.1.3",

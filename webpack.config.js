@@ -328,16 +328,10 @@ const webpackConfig = {
 			),
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	] ),
 	externals: [ 'electron' ],
 };
-
-if ( isDevelopment ) {
-	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	for ( const entrypoint of Object.keys( webpackConfig.entry ) ) {
-		webpackConfig.entry[ entrypoint ].unshift( 'webpack-hot-middleware/client' );
-	}
-}
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
