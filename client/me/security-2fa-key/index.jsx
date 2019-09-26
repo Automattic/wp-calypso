@@ -16,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import Security2faKeyAdd from './add';
 import Security2faKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { supported as isWebAuthnSupported } from '@github/webauthn-json';
+import { isWebAuthnSupported } from 'lib/webauthn';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 
