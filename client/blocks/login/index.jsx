@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import { capitalize, findLast, get, includes, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -13,12 +12,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import config from 'config';
 import {
 	getRedirectToSanitized,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
+	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
@@ -40,9 +41,11 @@ import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/wooc
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import VerificationCodeForm from './two-factor-authentication/verification-code-form';
-import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
+import VerificationCodeForm from './two-factor-authentication/verification-code-form';
+import SecurityKeyForm from './two-factor-authentication/security-key-form';
+import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
+import { isWebAuthnSupported } from 'lib/webauthn';
 
 /**
  * Style dependencies
@@ -70,6 +73,11 @@ class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
+		isSecurityKeySupported: PropTypes.bool,
+	};
+
+	state = {
+		isBrowserSupported: isWebAuthnSupported(),
 	};
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
@@ -94,15 +102,22 @@ class Login extends Component {
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
+			let defaultAuthType;
+			if (
+				this.state.isBrowserSupported &&
+				this.props.isSecurityKeySupported &&
+				this.props.twoFactorNotificationSent !== 'push'
+			) {
+				defaultAuthType = 'webauthn';
+			} else {
+				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
+			}
 			page(
 				login( {
 					isNative: true,
 					isJetpack: this.props.isJetpack,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
-						'none',
-						'authenticator'
-					),
+					twoFactorAuthType: defaultAuthType,
 				} )
 			);
 		} else if ( this.props.isLinking ) {
@@ -348,6 +363,14 @@ class Login extends Component {
 			disableAutoFocus,
 		} = this.props;
 
+		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
+			return (
+				<div>
+					<SecurityKeyForm twoFactorAuthType="webauthn" onSuccess={ this.handleValid2FACode } />
+				</div>
+			);
+		}
+
 		let poller;
 		if ( twoFactorEnabled && twoFactorAuthType && twoFactorNotificationSent === 'push' ) {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
@@ -422,6 +445,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
+		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:

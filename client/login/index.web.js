@@ -37,7 +37,7 @@ export default router => {
 	if ( config.isEnabled( 'login/wp-login' ) ) {
 		router(
 			[
-				`/log-in/:twoFactorAuthType(authenticator|backup|sms|push)/${ lang }`,
+				`/log-in/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 				`/log-in/:flow(social-connect|private-site)/${ lang }`,
 				`/log-in/:socialService(google)/callback/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/${ lang }`,

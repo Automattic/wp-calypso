@@ -167,6 +167,7 @@ const twoFactorProperties = [
 	'two_step_nonce_sms',
 	'two_step_nonce_authenticator',
 	'two_step_nonce_push',
+	'two_step_nonce_webauthn',
 	'user_id',
 ];
 
