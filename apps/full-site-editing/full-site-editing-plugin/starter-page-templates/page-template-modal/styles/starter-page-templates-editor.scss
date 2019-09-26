@@ -75,7 +75,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 .page-template-modal__inner {
 	position: relative;
-	max-width: 720px;
 	margin: 0 auto;
 	padding: 0;
 
@@ -244,6 +243,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	border-radius: 6px;
 	overflow-x: hidden;
 	overflow-y: auto;
+	max-height: 80vh; // avoid overflow off bottom of screen if no of thumbs is large
 
 	.edit-post-visual-editor {
 		margin-top: 20px;
