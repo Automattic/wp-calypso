@@ -62,14 +62,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {

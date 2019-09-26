@@ -21,6 +21,7 @@ import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
+import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
@@ -105,7 +106,7 @@ class StatsBanners extends Component {
 	}
 
 	render() {
-		const { planSlug, siteId } = this.props;
+		const { isCustomerHomeEnabled, planSlug, siteId } = this.props;
 		if ( ! this.props.domains.length ) {
 			return null;
 		}
@@ -113,7 +114,10 @@ class StatsBanners extends Component {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				{ 'ecommerce-bundle' !== planSlug && <WpcomChecklist viewMode="banner" /> }
+				{ /* Hide `WpcomChecklist` on the Customer Home because the checklist is displayed on the page. */ }
+				{ 'ecommerce-bundle' !== planSlug && ! isCustomerHomeEnabled && (
+					<WpcomChecklist viewMode="banner" />
+				) }
 				{ 'ecommerce-bundle' === planSlug && <ECommerceManageNudge siteId={ siteId } /> }
 				{ this.renderBanner() }
 			</Fragment>
@@ -130,5 +134,6 @@ export default connect( ( state, ownProps ) => {
 		),
 		isGSuiteStatsNudgeVisible: ! isGSuiteStatsNudgeDismissed( state, ownProps.siteId ),
 		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
+		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
 	};
 } )( localize( StatsBanners ) );

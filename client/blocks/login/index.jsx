@@ -85,7 +85,7 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isNative: true } ) );
+			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
 		}
 
 		window.scrollTo( 0, 0 );
@@ -115,6 +115,7 @@ class Login extends Component {
 			page(
 				login( {
 					isNative: true,
+					isJetpack: this.props.isJetpack,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: defaultAuthType,
 				} )
@@ -351,6 +352,7 @@ class Login extends Component {
 	renderContent() {
 		const {
 			domain,
+			isJetpack,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -379,6 +381,7 @@ class Login extends Component {
 				<div>
 					{ poller }
 					<VerificationCodeForm
+						isJetpack={ isJetpack }
 						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
@@ -390,7 +393,7 @@ class Login extends Component {
 			return (
 				<div>
 					{ poller }
-					<WaitingTwoFactorNotificationApproval />
+					<WaitingTwoFactorNotificationApproval isJetpack={ isJetpack } />
 				</div>
 			);
 		}

@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import AppleLoginButton from 'components/social-buttons/apple';
 import config from 'config';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import GoogleLoginButton from 'components/social-buttons/google';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -62,9 +63,17 @@ class SocialSignupForm extends Component {
 	};
 
 	shouldUseRedirectFlow() {
+		const { currentRoute } = this.props;
+
 		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
 		// let's use the redirect flow instead in that case
-		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+		let isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+
+		// Jetpack Connect-in-place auth flow contains special reserved args, so we want a popup for social signup.
+		// See p1HpG7-7nj-p2 for more information.
+		if ( isPopup && '/jetpack/connect/authorize' === currentRoute ) {
+			isPopup = false;
+		}
 
 		return isPopup;
 	}
@@ -112,6 +121,8 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

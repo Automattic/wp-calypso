@@ -39,6 +39,7 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
+		"hosting": false,
 		"jetpack/api-cache": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,

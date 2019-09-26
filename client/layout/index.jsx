@@ -187,7 +187,7 @@ export default connect( state => {
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpackLogin = currentRoute === '/log-in/jetpack';
+	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	const noMasterbarForCheckout = startsWith( currentRoute, '/checkout' );
 	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
