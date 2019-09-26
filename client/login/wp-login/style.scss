@@ -180,7 +180,8 @@ $image-height: 47px;
 
 	.login__form-terms a,
 	.login__social-tos a,
-	.form-input-validation a {
+	.form-input-validation a,
+	.login__form-change-username {
 		color: var( --color-accent-dark );
 
 		&:hover,
