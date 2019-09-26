@@ -27,6 +27,7 @@ export const TemplateSelectorControl = ( {
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
 	siteInformation = {},
+	selectedTemplate,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
 		return null;
@@ -61,6 +62,7 @@ export const TemplateSelectorControl = ( {
 							staticPreviewImgAlt={ previewAlt }
 							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
 							useDynamicPreview={ useDynamicPreview }
+							isSelected={ slug === selectedTemplate }
 						/>
 					</li>
 				) ) }
