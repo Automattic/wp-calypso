@@ -142,4 +142,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	checkoutCollectPhoneNumber: {
+		datestamp: '2019-09-03',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 };
