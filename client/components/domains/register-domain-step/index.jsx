@@ -201,7 +201,11 @@ class RegisterDomainStep extends React.Component {
 				this.state.subdomainSearchResults = props.initialState.subdomainSearchResults;
 			}
 
-			if ( this.state.searchResults || this.state.subdomainSearchResults ) {
+			if (
+				this.state.searchResults ||
+				this.state.subdomainSearchResults ||
+				! props.initialState.isInitialQueryActive
+			) {
 				this.state.lastQuery = props.initialState.lastQuery;
 			} else {
 				this.state.railcarId = this.getNewRailcarId();
