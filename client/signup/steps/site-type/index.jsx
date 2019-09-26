@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isEnabled } from 'config';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import Button from 'components/button';
