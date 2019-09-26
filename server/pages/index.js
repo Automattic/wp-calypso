@@ -168,7 +168,7 @@ const getFilesForChunk = ( chunkName, request ) => {
 
 const getFilesForEntrypoint = ( target, name ) => {
 	const entrypointAssets = getAssets( target ).entrypoints[ name ].assets.filter(
-		asset => ! asset.startsWith( 'manifest' )
+		asset => ! /(\/|^)manifest\.js$/.test( asset )
 	);
 	return groupAssetsByType( entrypointAssets );
 };
