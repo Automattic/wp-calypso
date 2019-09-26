@@ -168,7 +168,9 @@ class PageTemplateModal extends Component {
 						<>
 							<form className="page-template-modal__form">
 								<fieldset className="page-template-modal__list">
-									<legend className="page-template-modal__form-title">Choose a template...</legend>
+									<legend className="page-template-modal__form-title">
+										{ __( 'Choose a template…', 'full-site-editing' ) }
+									</legend>
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
 										templates={ templates }
