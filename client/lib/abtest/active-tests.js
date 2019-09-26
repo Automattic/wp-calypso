@@ -125,15 +125,6 @@ export default {
 		defaultVariation: 'hide',
 		assignmentMethod: 'userId',
 	},
-	signupEscapeHatch: {
-		datestamp: '20190826',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	placesApiInCheckout: {
 		datestamp: '20190923',
 		variations: {
