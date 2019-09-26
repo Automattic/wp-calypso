@@ -62,14 +62,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -106,15 +98,6 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	removeBlogFlow: {
-		datestamp: '20190813',
-		variations: {
-			remove: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	customerHomePage: {
 		datestamp: '20190903',
 		variations: {
@@ -123,15 +106,6 @@ export default {
 		},
 		defaultVariation: 'hide',
 		assignmentMethod: 'userId',
-	},
-	signupEscapeHatch: {
-		datestamp: '20190826',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
 	},
 	placesApiInCheckout: {
 		datestamp: '20190923',

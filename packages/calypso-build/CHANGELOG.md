@@ -1,3 +1,6 @@
+# 4.2.0
+- Support CommonJS/ESM compilation by adding a `modules` option (and `MODULES` env variable) to the `babel/default` preset.
+
 # 4.1.0
 
 - Add config options to file-loader.

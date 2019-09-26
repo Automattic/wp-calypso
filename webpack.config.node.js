@@ -8,6 +8,7 @@
  * External dependencies
  */
 const path = require( 'path' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
 
@@ -26,7 +27,9 @@ const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
+
 const fileLoader = FileConfig.loader( {
+	publicPath: isDevelopment ? '/calypso/evergreen/images/' : '/calypso/images/',
 	emitFile: false, // On the server side, don't actually copy files
 } );
 

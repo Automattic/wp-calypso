@@ -40,4 +40,8 @@
 	&.is-disabled {
 		color: var( --color-neutral-20 );
 	}
+
+	.blog-posts-page__info-icon {
+		margin: 0 4px -4px 0;
+	}
 }

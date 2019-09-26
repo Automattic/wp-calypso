@@ -55,23 +55,21 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async publish( { visit = false } = {} ) {
+		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+		await this.closePublishedPanel();
 		await this.waitForSuccessViewPostNotice();
-		const url = await this.driver
-			.findElement( By.css( '.post-publish-panel__postpublish-header a' ) )
-			.getAttribute( 'href' );
+		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
 		if ( visit ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.post-publish-panel__postpublish-buttons a' )
-			);
+			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
 		}
 
+		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
 	}
 
@@ -295,7 +293,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const revertDraftSelector = By.css( 'button.editor-post-switch-to-draft' );
 		await driverHelper.clickWhenClickable( this.driver, revertDraftSelector );
 		const revertAlert = await this.driver.switchTo().alert();
-		return await revertAlert.accept();
+		await revertAlert.accept();
+		await this.waitForSuccessViewPostNotice();
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( 'button.editor-post-publish-panel__toggle' )
+		);
+		return await driverHelper.waitTillNotPresent(
+			this.driver,
+			By.css( 'button.editor-post-switch-to-draft' )
+		);
 	}
 
 	async isDraft() {

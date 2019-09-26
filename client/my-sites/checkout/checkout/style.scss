@@ -522,18 +522,17 @@
 
 	// Web Payment Box
 	// -----------------------------------
-	.web-payment-box {
-		.web-payment-box__apple-pay-button {
-			-webkit-appearance: -apple-pay-button;
-			-apple-pay-button-type: buy;
-			-apple-pay-button-style: black;
-			vertical-align: middle;
-			cursor: pointer;
+	.payment-request-button {
+		-webkit-appearance: -apple-pay-button;
+		-apple-pay-button-type: buy;
+		-apple-pay-button-style: black;
+		vertical-align: middle;
+		cursor: pointer;
+		width: 100%;
+		height: 40px;
 
-			&[disabled] {
-				opacity: 0.4;
-				cursor: not-allowed;
-			}
+		&[disabled] {
+			cursor: not-allowed;
 		}
 	}
 

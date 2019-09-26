@@ -83,13 +83,6 @@ export function generateFlows( {
 			lastModified: '2019-08-05',
 		},
 
-		blog: {
-			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with blog themes',
-			lastModified: '2017-09-01',
-		},
-
 		'rebrand-cities': {
 			steps: [ 'rebrand-cities-welcome', 'user' ],
 			destination: function( dependencies ) {
@@ -125,13 +118,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-06-20',
-		},
-
-		'blank-canvas': {
-			steps: [ 'user', 'site-type', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'A blank slate flow used with the `signupEscapeHatch` AB test',
-			lastModified: '2019-08-09',
 		},
 
 		desktop: {
