@@ -60,7 +60,12 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .page-template-modal .components-modal__header-heading-container {
-	justify-content: flex-start;
+	@include screen-reader-text();
+}
+
+// Close button
+.page-template-modal .components-modal__header .components-button {
+	left: 0;
 }
 
 .page-template-modal .components-modal__content {
@@ -69,6 +74,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .page-template-modal__inner {
+	position: relative;
 	max-width: 720px;
 	margin: 0 auto;
 	padding: 0;
@@ -203,23 +209,22 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 }
 
 .page-template-modal__buttons {
-	position: fixed;
-	right: $template-selector-modal-offset-right;
-	bottom: $template-selector-modal-offset-bottom;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding-right: 24px;
 
-	@media screen and ( max-width: 659px ) {
-		display: flex;
-		justify-content: flex-end;
-		right: 0;
-		left: 0;
-		bottom: 0;
-		padding: 15px;
-		background: white;
-		border-top: 1px solid $template-selector-border-color;
-	}
-
+    &.is-visually-hidden {
+    	@include screen-reader-text();
+    }
+	
 	.components-button {
-		margin-left: 10px;
+		height: 33px; // match to Gutenberg toolbar styles
+	    line-height: 32px; // match to Gutenberg toolbar styles
 	}
 }
 
@@ -230,10 +235,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	position: absolute;
-	top: 80px;
-	bottom: $template-selector-modal-offset-bottom + 50px;
-	right: $template-selector-modal-offset-right;
-	width: calc( 50% - 50px );
+	top: 0;
+	bottom: 0;
+	right: 0;
+	width: calc( 50% - 24px );
 	background: $template-selector-empty-background;
 	border: 1px solid $template-selector-border-color;
 	border-radius: 6px;
