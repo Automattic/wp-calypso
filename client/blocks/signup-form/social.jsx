@@ -15,6 +15,7 @@ import AppleLoginButton from 'components/social-buttons/apple';
 import config from 'config';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import GoogleLoginButton from 'components/social-buttons/google';
+import { localizeUrl } from 'lib/i18n-utils';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -109,7 +110,13 @@ class SocialSignupForm extends Component {
 								' {{a}}Terms of Service{{/a}}.',
 							{
 								components: {
-									a: <a href="https://wordpress.com/tos" />,
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
 								},
 							}
 						) }
