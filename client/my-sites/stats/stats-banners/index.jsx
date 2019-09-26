@@ -12,8 +12,10 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { isEcommercePlan } from 'lib/plans';
 import config from 'config';
 import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
+import { getSitePlanSlug } from 'state/sites/selectors';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getGSuiteSupportedDomains, hasGSuite } from 'lib/gsuite';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
@@ -28,9 +30,12 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 class StatsBanners extends Component {
 	static propTypes = {
+		domains: PropTypes.array.isRequired,
+		isCustomerHomeEnabled: PropTypes.bool.isRequired,
 		isGoogleMyBusinessStatsNudgeVisible: PropTypes.bool.isRequired,
 		isGSuiteStatsNudgeVisible: PropTypes.bool.isRequired,
 		isUpworkStatsNudgeVisible: PropTypes.bool.isRequired,
+		planSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
 		slug: PropTypes.string.isRequired,
 	};
@@ -115,10 +120,10 @@ class StatsBanners extends Component {
 			<Fragment>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ /* Hide `WpcomChecklist` on the Customer Home because the checklist is displayed on the page. */ }
-				{ 'ecommerce-bundle' !== planSlug && ! isCustomerHomeEnabled && (
+				{ ! isEcommercePlan( planSlug ) && ! isCustomerHomeEnabled && (
 					<WpcomChecklist viewMode="banner" />
 				) }
-				{ 'ecommerce-bundle' === planSlug && <ECommerceManageNudge siteId={ siteId } /> }
+				{ isEcommercePlan( planSlug ) && <ECommerceManageNudge siteId={ siteId } /> }
 				{ this.renderBanner() }
 			</Fragment>
 		);
@@ -128,12 +133,13 @@ class StatsBanners extends Component {
 export default connect( ( state, ownProps ) => {
 	return {
 		domains: getDecoratedSiteDomains( state, ownProps.siteId ),
+		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
 		isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 			state,
 			ownProps.siteId
 		),
 		isGSuiteStatsNudgeVisible: ! isGSuiteStatsNudgeDismissed( state, ownProps.siteId ),
 		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
-		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
+		planSlug: getSitePlanSlug( state, ownProps.siteId ),
 	};
 } )( localize( StatsBanners ) );
