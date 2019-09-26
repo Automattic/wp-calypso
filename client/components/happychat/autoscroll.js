@@ -7,8 +7,6 @@
  * where `node` is an html element with scrolling enabled.
  *
  * After every update the content will be scrolled to the bottom of the content.
- *
- * @format
  */
 
 export default {

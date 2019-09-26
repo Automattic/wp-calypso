@@ -1,12 +1,10 @@
 /**
  * Returns a user object by user ID.
  *
- *
- * @format
- * @param {Number} userId User ID
- * @return {Object}        User object
+ * @param  {object} state  Global state tree
+ * @param  {number} userId User ID
+ * @return {object}        User object
  */
-
 export function getUser( state, userId ) {
 	return state.users.items[ userId ];
 }

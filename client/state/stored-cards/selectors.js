@@ -1,12 +1,9 @@
 /**
  * Return user's stored cards from state object
  *
- *
- * @format
  * @param {Object} state - current state object
  * @return {Array} Stored Cards
  */
-
 export const getStoredCards = state => state.storedCards.items;
 
 /**

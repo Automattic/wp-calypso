@@ -1,9 +1,6 @@
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';

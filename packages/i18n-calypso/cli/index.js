@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/** @format */
 /* eslint-disable no-console */
 
 /**

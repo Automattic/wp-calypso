@@ -1,8 +1,4 @@
 /**
- * @format
- */
-
-/**
  * External dependencies
  */
 import React, { Fragment } from 'react';

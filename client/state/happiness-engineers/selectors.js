@@ -1,10 +1,8 @@
 /**
  * Returns happiness engineers
  *
- *
- * @format
- * @param {{}} state currents state
- * @returns {Array} happiness engineers
+ * @param  {object} state currents state
+ * @return {Array}  happiness engineers
  */
 
 export function getHappinessEngineers( state ) {

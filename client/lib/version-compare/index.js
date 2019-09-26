@@ -1,8 +1,4 @@
-/**
- * /*eslint-disable
- *
- * @format
- */
+/* eslint-disable */
 
 /**
  * Modified from phpjs original to convert to a module

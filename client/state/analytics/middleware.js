@@ -1,9 +1,6 @@
 /**
  *  External dependencies
- *
- * @format
  */
-
 import { has, invoke } from 'lodash';
 
 /**

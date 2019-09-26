@@ -1,7 +1,5 @@
 /**
  * External Dependencies
- *
- * @format
  */
 
 import config from 'config';

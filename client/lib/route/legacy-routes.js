@@ -1,8 +1,6 @@
 /**
  * A legacy route is a path that Calypso should ignore, allowing the browser
  * to reload the page.
- *
- * @format
  */
 
 /**

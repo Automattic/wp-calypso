@@ -8,8 +8,6 @@
  * files will be compared. If the shrinkwrap is newer, it means that
  * the packages at node_modules may be outdated. That will happen,
  * for example, when switching branches.
- *
- * @format
  */
 
 const fs = require( 'fs' );

@@ -6,11 +6,9 @@ import { isPlainObject, values } from 'lodash';
 /**
  * Normalize API Settings
  *
- * @format
- * @param {Object} settings Raw API settings
- * @return {Object}          Normalized settings
+ * @param  {object} settings Raw API settings
+ * @return {object}          Normalized settings
  */
-
 export function normalizeSettings( settings ) {
 	return Object.keys( settings ).reduce( ( memo, key ) => {
 		switch ( key ) {

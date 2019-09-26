@@ -1,15 +1,8 @@
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 
 const Head = ( {
 	title = 'WordPress.com',
