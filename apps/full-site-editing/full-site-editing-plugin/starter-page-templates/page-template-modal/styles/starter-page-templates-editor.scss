@@ -15,6 +15,10 @@ $template-selector-border-color: #a1aab2;
 $template-selector-empty-background: #f6f6f6;
 $template-selector-modal-offset-right: 32px;
 $template-selector-modal-offset-bottom: 25px;
+$template-large-preview-title-height: 117px;
+
+$wp-org-sidebar-reduced: 36px;
+$wp-org-sidebar-full: 160px;
 
 // Modal Overlay
 .page-template-modal-screen-overlay {
@@ -25,11 +29,11 @@ $template-selector-modal-offset-bottom: 25px;
 // When not in fullscreen mode allow space for WP.org sidebar
 body:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@media screen and ( min-width: 783px ) {
-		left: 36px;
+		left: $wp-org-sidebar-reduced;
 	}
 
 	@media screen and ( min-width: 961px ) {
-		left: 160px;
+		left: $wp-org-sidebar-full;
 	}
 }
 
@@ -239,23 +243,22 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		display: none;
 	}
 
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	width: calc( 50% - 24px );
+	position: fixed;
+	top: 111px;
+	bottom: 24px;
+	right: 24px;
+	width: calc( 50% - 50px );
 	background: $template-selector-empty-background;
 	border-radius: 2px;
 	overflow-x: hidden;
 	overflow-y: auto;
-	max-height: 80vh; // avoid overflow off bottom of screen if no of thumbs is large
 	box-shadow: 0 0 13px rgba( 0, 0, 0, 0.2 );
 
 	.edit-post-visual-editor {
 		margin-top: 20px;
 	}
 
-	$template-large-preview-title-height: 117px;
+
 	.editor-styles-wrapper {
 		.editor-post-title {
 			transform-origin: top left;
@@ -277,6 +280,16 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		body.show-post-title-before-content & .block-editor-block-preview__content > .block-editor-block-list__layout {
 			margin-top: $template-large-preview-title-height;
 		}
+	}
+}
+
+body:not( .is-fullscreen-mode ) .template-selector-preview {
+	@media screen and ( min-width: 783px ) {
+		width: calc( 50% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+	}
+
+	@media screen and ( min-width: 961px ) {
+		width: calc( 50% - #{$wp-org-sidebar-full } );
 	}
 }
 
