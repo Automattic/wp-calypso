@@ -280,7 +280,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
 		if ( EditorActions.LogError === action ) {
 			const { error } = payload;
-			isArray( error ) && window.onerror && window.onerror( ...error );
+			if ( isArray( error ) && error.length > 4 && window.onerror ) {
+				const errorObject = error[ 4 ];
+				error[ 4 ] = errorObject && JSON.parse( errorObject );
+				window.onerror( ...error );
+			}
 		}
 	};
 
