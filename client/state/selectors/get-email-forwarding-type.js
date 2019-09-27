@@ -3,12 +3,13 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getEmailForwards } from 'state/selectors/get-email-forwards';
+import isRequestingEmailForwards from 'state/selectors/is-requesting-email-forwards';
 
 /**
  * Retrieve the type of the email forwards
@@ -22,23 +23,21 @@ export default function getEmailForwardingType( state, domainName ) {
 }
 
 /**
- * Retrieve the type of the email forwards for domains
+ * Retrieve the type of the email associated with a domain name
  *
  * @param  {Object} state    Global state tree
- * @param  {Array}  domains domains to filter
- * @param  {boolean} setPending set forward type to `pending` while waiting for a request to complete.
- * @return {Object} an object containing the email forward type per domain. The type per domain could be null if it has not be retrieved yet
+ * @param  {String}  domainName domains name to query
+ * @return {String} the email type for the domain. It's set as `pending` if it has not been retrieved yet
  */
-export function getEmailForwardingTypeForDomains( state, domains, setPending = false ) {
-	return Object.fromEntries(
-		domains.map( domain => {
-			const requesting =
-				get( state.emailForwarding, [ domain.name, 'requesting' ], false ) === true;
-			let type =
-				setPending && requesting ? 'pending' : getEmailForwardingType( state, domain.name );
-			const forwards = getEmailForwards( state, domain.name );
-			type = 'forward' === type && 0 === forwards.length ? null : type;
-			return [ domain.name, type ];
-		} )
-	);
+export function getEmailTypeForDomainName( state, domainName ) {
+	// Set the type to `pending` if `requesting`
+	let type = isRequestingEmailForwards( state, domainName )
+		? 'pending'
+		: getEmailForwardingType( state, domainName );
+	const forwards = getEmailForwards( state, domainName );
+	// Explicitly set the type to null if type === `forward` but there are no active forwards
+	if ( 'forward' === type ) {
+		type = isEmpty( forwards ) ? null : type;
+	}
+	return type;
 }

@@ -6,7 +6,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import { get, includes, some, endsWith } from 'lodash';
+import { get, includes, some, endsWith, find } from 'lodash';
 import { type as domainTypes } from 'lib/domains/constants';
 import userFactory from 'lib/user';
 
@@ -100,10 +100,22 @@ function getGSuiteSupportedDomains( domains ) {
 			includes( [ domainTypes.REGISTERED ], domain.type ) &&
 			( domain.hasWpcomNameservers || hasGSuite( domain ) );
 		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
-		const notOtherProvidor =
+		const notOtherProvider =
 			domain.googleAppsSubscription && domain.googleAppsSubscription.status !== 'other_provider';
-		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name ) && notOtherProvidor;
+		return ( wpcomHosted || mapped ) && canDomainAddGSuite( domain.name ) && notOtherProvider;
 	} );
+}
+
+/**
+ * Returns the primary domain name if the domain name supports GSuite
+ *
+ * @param {Array} domains - list of domain objects
+ * @returns {String} - name of the domain if valid
+ */
+function getGSuiteSupportedPrimaryDomainName( domains ) {
+	const eligibleGSuiteDomains = getGSuiteSupportedDomains( domains );
+	const selectedGSuiteDomain = find( eligibleGSuiteDomains, 'isPrimary' );
+	return get( selectedGSuiteDomain, 'name' );
 }
 
 /**
@@ -157,12 +169,12 @@ function hasGSuite( domain ) {
 }
 
 /**
- * Given a domain object, does that domain have G Suite with another providor
+ * Given a domain object, does that domain have G Suite with another provider
  *
  * @param {Object} domain - domain object
- * @returns {Boolean} - Does a domain have G Suite with another providor
+ * @returns {Boolean} - Does a domain have G Suite with another provider
  */
-function hasGSuiteOtherProvidor( domain ) {
+function hasGSuiteOtherProvider( domain ) {
 	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
 	return 'other_provider' === domainStatus;
 }
@@ -204,10 +216,11 @@ export {
 	getEligibleGSuiteDomain,
 	getGSuiteSettingsUrl,
 	getGSuiteSupportedDomains,
+	getGSuiteSupportedPrimaryDomainName,
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
 	hasGSuite,
-	hasGSuiteOtherProvidor,
+	hasGSuiteOtherProvider,
 	hasGSuiteSupportedDomain,
 	hasPendingGSuiteUsers,
 	isGSuiteRestricted,

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,18 +18,17 @@ import config from 'config';
 import ECommerceManageNudge from 'blocks/ecommerce-manage-nudge';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getGSuiteSupportedDomains, hasGSuite, hasGSuiteOtherProvidor } from 'lib/gsuite';
-import { getEmailForwardingTypeForDomains } from 'state/selectors/get-email-forwarding-type';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
-import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
+import isGSuiteStatsNudgeVisible from 'state/selectors/is-gsuite-stats-nudge-visible';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QueryEmailForwards from 'components/data/query-email-forwards';
+import { getGSuiteSupportedPrimaryDomainName } from 'lib/gsuite';
 
 class StatsBanners extends Component {
 	static propTypes = {
@@ -39,6 +38,7 @@ class StatsBanners extends Component {
 		isGSuiteStatsNudgeVisible: PropTypes.bool.isRequired,
 		isUpworkStatsNudgeVisible: PropTypes.bool.isRequired,
 		planSlug: PropTypes.string.isRequired,
+		selectedGSuiteDomainName: PropTypes.string,
 		siteId: PropTypes.number.isRequired,
 		slug: PropTypes.string.isRequired,
 	};
@@ -50,7 +50,7 @@ class StatsBanners extends Component {
 			this.props.isGoogleMyBusinessStatsNudgeVisible !==
 				nextProps.isGoogleMyBusinessStatsNudgeVisible ||
 			this.props.domains.length !== nextProps.domains.length ||
-			! isEqual( this.props.emailForwardingTypes, nextProps.emailForwardingTypes )
+			this.props.selectedGSuiteDomainName !== nextProps.selectedGSuiteDomainName
 		);
 	}
 
@@ -76,9 +76,14 @@ class StatsBanners extends Component {
 	}
 
 	renderGSuiteBanner() {
-		const { domains, siteId, slug } = this.props;
-		const domainSlug = getGSuiteSupportedDomains( domains )[ 0 ].name;
-		return <GSuiteStatsNudge siteSlug={ slug } siteId={ siteId } domainSlug={ domainSlug } />;
+		const { selectedGSuiteDomainName, siteId, slug } = this.props;
+		return (
+			<GSuiteStatsNudge
+				siteSlug={ slug }
+				siteId={ siteId }
+				domainSlug={ selectedGSuiteDomainName }
+			/>
+		);
 	}
 
 	renderUpworkBanner() {
@@ -93,18 +98,7 @@ class StatsBanners extends Component {
 	}
 
 	showGSuiteBanner() {
-		const { domains, emailForwardingTypes } = this.props;
-		const supportedDomains = getGSuiteSupportedDomains( domains );
-
-		return (
-			this.props.isGSuiteStatsNudgeVisible &&
-			supportedDomains.length > 0 &&
-			! (
-				hasGSuite( supportedDomains[ 0 ] ) ||
-				hasGSuiteOtherProvidor( supportedDomains[ 0 ] ) ||
-				emailForwardingTypes[ supportedDomains[ 0 ].name ]
-			)
-		);
+		return this.props.isGSuiteStatsNudgeVisible;
 	}
 
 	showUpworkBanner() {
@@ -115,16 +109,16 @@ class StatsBanners extends Component {
 	}
 
 	render() {
-		const { isCustomerHomeEnabled, planSlug, siteId } = this.props;
-		if ( ! this.props.domains.length ) {
+		const { selectedGSuiteDomainName, isCustomerHomeEnabled, planSlug, siteId, domains } = this.props;
+		if ( isEmpty( domains ) ) {
 			return null;
 		}
 
 		return (
 			<Fragment>
-				{ this.props.domains.map( domain => (
-					<QueryEmailForwards domainName={ domain.name } key={ domain.name } />
-				) ) }
+				{ selectedGSuiteDomainName && (
+					<QueryEmailForwards domainName={ selectedGSuiteDomainName } />
+				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ /* Hide `WpcomChecklist` on the Customer Home because the checklist is displayed on the page. */ }
 				{ ! isEcommercePlan( planSlug ) && ! isCustomerHomeEnabled && (
@@ -142,17 +136,13 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		domains,
-		emailForwardingTypes: getEmailForwardingTypeForDomains(
-			state,
-			getGSuiteSupportedDomains( domains ),
-			true
-		),
 		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
+		selectedGSuiteDomainName: getGSuiteSupportedPrimaryDomainName( domains ),
 		isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 			state,
 			ownProps.siteId
 		),
-		isGSuiteStatsNudgeVisible: ! isGSuiteStatsNudgeDismissed( state, ownProps.siteId ),
+		isGSuiteStatsNudgeVisible: isGSuiteStatsNudgeVisible( state, ownProps.siteId, domains ),
 		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
 		planSlug: getSitePlanSlug( state, ownProps.siteId ),
 	};

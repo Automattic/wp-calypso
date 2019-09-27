@@ -18,7 +18,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import {
 	hasGSuite,
 	isGSuiteRestricted,
-	hasGSuiteOtherProvidor,
+	hasGSuiteOtherProvider,
 	hasGSuiteSupportedDomain,
 	getEligibleGSuiteDomain,
 } from 'lib/gsuite';
@@ -123,7 +123,7 @@ class EmailManagement extends React.Component {
 						'to a professional custom domain.'
 				),
 			};
-		} else if ( selectedDomain && hasGSuiteOtherProvidor( selectedDomain ) ) {
+		} else if ( selectedDomain && hasGSuiteOtherProvider( selectedDomain ) ) {
 			emptyContentProps = {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate(
