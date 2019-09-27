@@ -61,6 +61,9 @@ import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+import ActivateConfirm from 'my-sites/themes/activate-confirm';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import { themeSupportsFullSiteEditing } from 'state/themes/full-site-editing';
 
 /**
  * Style dependencies
@@ -92,6 +95,7 @@ class ThemeSheet extends React.Component {
 		isActive: PropTypes.bool,
 		isPurchased: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isFseActive: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -111,6 +115,11 @@ class ThemeSheet extends React.Component {
 	static defaultProps = {
 		section: '',
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = { isConfirming: false };
+	}
 
 	scrollToTop = () => {
 		window.scroll( 0, 0 );
@@ -137,8 +146,24 @@ class ThemeSheet extends React.Component {
 		return !! this.props.screenshots;
 	};
 
+	onCloseConfirmation = action => {
+		const { id, defaultOption } = this.props;
+		if ( action === 'confirm' ) {
+			defaultOption && defaultOption.action( id );
+		}
+		this.setState( { isConfirming: false } );
+	};
+
 	onButtonClick = () => {
-		const { defaultOption } = this.props;
+		const { defaultOption, options, isFseActive, id } = this.props;
+		// we need extra confirmation for activating on FSE sites
+		if (
+			isFseActive &&
+			! themeSupportsFullSiteEditing( id ) &&
+			defaultOption === options.activate
+		) {
+			return this.setState( { isConfirming: true } );
+		}
 		defaultOption.action && defaultOption.action( this.props.id );
 	};
 
@@ -701,6 +726,11 @@ class ThemeSheet extends React.Component {
 					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
+				<ActivateConfirm
+					isVisible={ this.state.isConfirming }
+					onClose={ this.onCloseConfirmation }
+					themeName={ this.props.name }
+				/>
 			</Main>
 		);
 	};
@@ -794,6 +824,7 @@ export default connect(
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
 			previousRoute: getPreviousRoute( state ),
+			isFseActive: isSiteUsingFullSiteEditing( state, siteId ),
 		};
 	},
 	{
