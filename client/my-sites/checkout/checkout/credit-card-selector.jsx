@@ -13,7 +13,7 @@ import analytics from 'lib/analytics';
 import CreditCard from 'components/credit-card';
 import NewCardForm from './new-card-form';
 
-import { newCardPayment, newStripeCardPayment, storedCardPayment } from 'lib/store-transactions';
+import { newStripeCardPayment, storedCardPayment } from 'lib/store-transactions';
 import { setPayment } from 'lib/upgrades/actions';
 
 class CreditCardSelector extends React.Component {
@@ -102,11 +102,7 @@ class CreditCardSelector extends React.Component {
 
 	savePayment = section => {
 		if ( 'new-card' === section ) {
-			if ( this.props.stripe ) {
-				return setPayment( newStripeCardPayment( this.props.transaction.newCardRawDetails ) );
-			}
-
-			return setPayment( newCardPayment( this.props.transaction.newCardRawDetails ) );
+			return setPayment( newStripeCardPayment( this.props.transaction.newCardRawDetails ) );
 		}
 		setPayment( storedCardPayment( this.getStoredCardDetails( section ) ) );
 	};
