@@ -15,6 +15,7 @@ import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import Security2faBackupCodesPasswordPromt from './name';
 
 /**
  * Style dependencies
@@ -32,19 +33,31 @@ class Security2faBackupCodes extends React.Component {
 			showPrompt: ! printed,
 			backupCodes: [],
 			generatingCodes: false,
+			addingPassword: false,
 		};
 	}
 
 	handleGenerateButtonClick = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
 
+		this.setState( { addingPassword: true, showPrompt: false } );
+		return;
+	};
+
+	handleGenerateButton = password => {
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
 			showPrompt: true,
+			addingPassword: false,
 		} );
 
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
+	};
+
+	toggleBackupCodePassword = event => {
+		event.preventDefault();
+		this.setState( { addingPassword: ! this.state.addingPassword } );
 	};
 
 	onRequestComplete = ( error, data ) => {
@@ -109,6 +122,15 @@ class Security2faBackupCodes extends React.Component {
 		);
 	}
 
+	renderPasswordPrompt() {
+		return (
+			<Security2faBackupCodesPasswordPromt
+				onCancel={ this.toggleBackupCodePassword }
+				onSubmit={ this.handleGenerateButton }
+			/>
+		);
+	}
+
 	renderList() {
 		return (
 			<Security2faBackupCodesList
@@ -151,9 +173,11 @@ class Security2faBackupCodes extends React.Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					{ this.state.generatingCodes || this.state.backupCodes.length
-						? this.renderList()
-						: this.renderPrompt() }
+					{ this.state.addingPassword && this.renderPasswordPrompt() }
+					{ ! this.state.addingPassword &&
+						( this.state.generatingCodes || this.state.backupCodes.length
+							? this.renderList()
+							: this.renderPrompt() ) }
 				</Card>
 			</div>
 		);
