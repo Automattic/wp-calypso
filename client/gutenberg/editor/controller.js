@@ -17,7 +17,7 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
-import { getSiteUrl } from 'state/sites/selectors';
+import { getSiteUrl, getSiteOption } from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
@@ -38,6 +38,13 @@ function determinePostType( context ) {
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
 		return null;
+	}
+
+	if ( 'home' === context.params.post ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+
+		return parseInt( getSiteOption( state, siteId, 'page_on_front' ) );
 	}
 
 	// both post and site are in the path
