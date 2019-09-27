@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
  */
 import Dialog from 'components/dialog';
 
-export default function ActivationConfirm( { isVisible, onClose, themeName } ) {
+export default function ActivateConfirm( { isVisible, onClose, themeName } ) {
 	const confirmLabel = translate( 'Activate %(theme)s', {
 		args: { theme: themeName },
 	} );
