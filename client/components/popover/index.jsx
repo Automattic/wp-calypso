@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
-import { uniqueId } from 'lodash';
+import { defer, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -308,7 +308,7 @@ class Popover extends Component {
 
 		this.setPosition();
 
-		this.focusPopover();
+		defer( () => this.focusPopover() );
 	}
 
 	getPositionClass( position = this.props.position ) {
