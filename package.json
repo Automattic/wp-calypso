@@ -274,7 +274,7 @@
 		"test-server": "jest -c=test/server/jest.config.js",
 		"test-server:coverage": "npm run -s test-server -- --coverage",
 		"test-server:watch": "npm run -s test-server -- --watch",
-		"translate": "NODE_PATH=$NODE_PATH:server:client:. node --max_old_space_size=8192 ./node_modules/webpack/bin/webpack.js --display errors-only",
+		"translate": "NODE_PATH=$NODE_PATH:server:client:. GENERATE_POT=true node --max_old_space_size=8192 ./node_modules/webpack/bin/webpack.js --display errors-only",
 		"update-deps": "npx rimraf npm-shrinkwrap.json && npm run -s distclean && npm i && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",

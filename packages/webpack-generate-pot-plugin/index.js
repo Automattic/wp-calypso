@@ -2,6 +2,7 @@
  * External Dependencies
  */
 const ConstDependency = require( 'webpack/lib/dependencies/ConstDependency' );
+const BasicEvaluatedExpression = require( 'webpack/lib/BasicEvaluatedExpression' );
 const NullFactory = require( 'webpack/lib/NullFactory' );
 const { po } = require( 'gettext-parser' );
 const { merge, isEmpty } = require( 'lodash' );
@@ -34,7 +35,18 @@ function getNodeAsString( node ) {
 }
 
 class GeneratePotPlugin {
-	constructor() {}
+	constructor( options ) {
+		this.opts = {
+			filename: 'out.pot',
+			headers: {},
+		};
+		if ( options ) {
+			this.opts.filename = options.filename || 'out.pot';
+			this.opts.headers = options.headers || {
+				'content-type': 'text/plain; charset=UTF-8',
+			};
+		}
+	}
 
 	apply( compiler ) {
 		const strings = {};
@@ -45,8 +57,11 @@ class GeneratePotPlugin {
 			compilation.dependencyFactories.set( ConstDependency, new NullFactory() );
 			compilation.dependencyTemplates.set( ConstDependency, new ConstDependency.Template() );
 
-			const handler = ( parser, parserOptions ) => {
+			const handler = parser => {
 				const processCall = call => {
+					if ( undefined === call.callee ) {
+						return;
+					}
 					const { callee } = call;
 
 					// Determine function name by direct invocation or property name
@@ -56,7 +71,6 @@ class GeneratePotPlugin {
 					} else {
 						name = callee.name;
 					}
-
 					if ( '__' !== name && '_x' !== name && '_n' !== name && 'translate' !== name ) {
 						return;
 					}
@@ -78,7 +92,7 @@ class GeneratePotPlugin {
 					if ( ! baseData ) {
 						baseData = {
 							charset: 'utf-8',
-							headers: [],
+							headers: this.opts.headers,
 							translations: {
 								'': {
 									'': {
@@ -96,7 +110,7 @@ class GeneratePotPlugin {
 						}
 
 						// Attempt to exract nplurals from header
-						const pluralsMatch = ( baseData.headers[ 'plural-forms' ] || '' ).match(
+						const pluralsMatch = ( baseData.headers[ 'plural-forms' ] || 'nplurals=2' ).match(
 							/nplurals\s*=\s*(\d+);/
 						);
 						if ( pluralsMatch ) {
@@ -105,10 +119,13 @@ class GeneratePotPlugin {
 					}
 
 					if ( call.arguments.length > i ) {
-						if ( '_x' === name ) {
+						if ( '_x' === name && 'ObjectExpression' !== call.arguments[ i ].type ) {
 							translation.msgctxt = getNodeAsString( call.arguments[ i ] );
 							i++;
-						} else if ( '_n' === name || 'translate' === name ) {
+						} else if (
+							'_n' === name ||
+							( 'translate' === name && 'ObjectExpression' !== call.arguments[ i ].type )
+						) {
 							const msgid_plural = getNodeAsString( call.arguments[ i ] );
 							if ( msgid_plural.length ) {
 								translation.msgid_plural = msgid_plural;
@@ -125,7 +142,7 @@ class GeneratePotPlugin {
 						'ObjectExpression' === call.arguments[ i ].type
 					) {
 						for ( const j in call.arguments[ i ].properties ) {
-							if ( 'ObjectProperty' === call.arguments[ i ].properties[ j ].type ) {
+							if ( 'Property' === call.arguments[ i ].properties[ j ].type ) {
 								switch ( call.arguments[ i ].properties[ j ].key.name ) {
 									case 'context':
 										translation.msgctxt = call.arguments[ i ].properties[ j ].value.value;
@@ -155,25 +172,45 @@ class GeneratePotPlugin {
 						strings[ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
 					}
 				};
-				parser.hooks.call.for( 'imported var' ).tap( 'GeneratePotPlugin', processCall );
-				parser.hooks.callAnyMember.for( 'imported var' ).tap( 'GeneratePotPlugin', processCall );
+				const fixMemberIdentifier = expression => {
+					return new BasicEvaluatedExpression()
+						.setIdentifier( 'translate' )
+						.setRange( expression.range );
+				};
 
-				return true;
+				parser.hooks.evaluate.for( 'CallExpression' ).tap( 'GeneratePotPlugin', processCall );
+				parser.hooks.evaluateDefinedIdentifier
+					.for( 'i18n.translate' )
+					.tap( 'GeneratePotPlugin', fixMemberIdentifier );
+				parser.hooks.evaluateDefinedIdentifier
+					.for( 'this.props.translate' )
+					.tap( 'GeneratePotPlugin', fixMemberIdentifier );
+				parser.hooks.evaluateDefinedIdentifier
+					.for( 'translate' )
+					.tap( 'GeneratePotPlugin', fixMemberIdentifier );
+				parser.hooks.call.for( 'translate' ).tap( 'GeneratePotPlugin', processCall );
+				parser.hooks.call.for( '__' ).tap( 'GeneratePotPlugin', processCall );
+				parser.hooks.call.for( '_x' ).tap( 'GeneratePotPlugin', processCall );
+				parser.hooks.call.for( '_n' ).tap( 'GeneratePotPlugin', processCall );
+				parser.hooks.call.for( 'imported var' ).tap( 'GeneratePotPlugin', processCall );
+				parser.hooks.call.for( 'imported var.translate' ).tap( 'GeneratePotPlugin', processCall );
 			};
 
 			normalModuleFactory.hooks.parser.for( 'javascript/auto' ).tap( 'GeneratePotPlugin', handler );
+			normalModuleFactory.hooks.parser
+				.for( 'javascript/dynamic' )
+				.tap( 'GeneratePotPlugin', handler );
 		};
 
 		const saveFile = () => {
 			if ( isEmpty( strings ) ) {
 				return;
 			}
-
 			const data = merge( {}, baseData, { translations: strings } );
 
 			const compiled = po.compile( data );
 
-			writeFileSync( 'calypso-strings.pot', compiled );
+			writeFileSync( this.opts.filename, compiled );
 		};
 
 		compiler.hooks.compilation.tap( 'GeneratePotPlugin', handleCompilation );

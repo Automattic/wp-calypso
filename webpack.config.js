@@ -300,7 +300,14 @@ const webpackConfig = {
 				assetExtraPath: extraPath,
 			} ),
 		new DuplicatePackageCheckerPlugin(),
-		shouldGeneratePot && new GeneratePotPlugin(),
+		shouldGeneratePot &&
+			new GeneratePotPlugin( {
+				filename: 'calypso-strings.pot',
+				headers: {
+					'content-type': 'text/plain; charset=UTF-8',
+					'x-generator': 'calypso',
+				},
+			} ),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
 				exclude: /node_modules/,
