@@ -690,6 +690,27 @@ function getCloseButtonUrl( calypsoPort ) {
 	};
 }
 
+/**
+ * Passes uncaught errors in window.onerror to Calypso for logging.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleUncaughtErrors( calypsoPort ) {
+	window.onerror = ( ...error ) => {
+		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
+		// We therefore stringify the error with a custom replacer containing the object's properties.
+		const errorObject = error[ 4 ]; // the 5th argument is the error object
+		error[ 4 ] =
+			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
+
+		// The other parameters don't need encoded since they are numbers or strings.
+		calypsoPort.postMessage( {
+			action: 'logError',
+			payload: { error },
+		} );
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -772,6 +793,8 @@ function initPort( message ) {
 		setupEditTemplateLinks( calypsoPort );
 
 		getCloseButtonUrl( calypsoPort );
+
+		handleUncaughtErrors( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
