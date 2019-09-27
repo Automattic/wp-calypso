@@ -16,6 +16,7 @@ export function generateFlows( {
 	getSignupDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
+	getEditorDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -116,6 +117,20 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-06-20',
+		},
+
+		'onboarding-dev': {
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getEditorDestination,
+			description: 'Testing flow for Gutenboarding.',
+			lastModified: '2019-09-26',
 		},
 
 		desktop: {
