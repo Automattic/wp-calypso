@@ -23,12 +23,21 @@ import Ribbon from 'components/ribbon';
 import InfoPopover from 'components/info-popover';
 import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import ActivateConfirm from 'my-sites/themes/activate-confirm';
 import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { themeSupportsFullSiteEditing } from 'state/themes/full-site-editing';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const originalState = {
+	isConfirming: false,
+	originalAction: noop,
+};
 
 export class Theme extends Component {
 	static propTypes = {
@@ -74,6 +83,8 @@ export class Theme extends Component {
 		actionLabel: PropTypes.string,
 		// Translate function,
 		translate: PropTypes.func,
+		// Full Site Editing active?
+		isFseActive: PropTypes.bool.isRequired,
 	};
 
 	static defaultProps = {
@@ -83,6 +94,11 @@ export class Theme extends Component {
 		actionLabel: '',
 		active: false,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = originalState;
+	}
 
 	shouldComponentUpdate( nextProps ) {
 		return (
@@ -140,6 +156,35 @@ export class Theme extends Component {
 		} );
 	};
 
+	getButtonContents() {
+		const { buttonContents: contents, theme, isFseActive } = this.props;
+		// doesn't matter if FSE is inactive
+		if ( ! isFseActive ) {
+			return contents;
+		}
+
+		// check the theme and if it has an activate action
+		if ( ! themeSupportsFullSiteEditing( theme.id ) && contents.activate ) {
+			const originalAction = contents.activate.action;
+			contents.activate.action = () => {
+				this.setState( {
+					isConfirming: true,
+					originalAction,
+				} );
+				this.forceUpdate();
+			};
+		}
+		return contents;
+	}
+
+	onCloseConfirmation = action => {
+		if ( action === 'confirm' ) {
+			this.state.originalAction( this.props.theme.id );
+		}
+		this.setState( originalState );
+		this.forceUpdate();
+	};
+
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
@@ -148,6 +193,7 @@ export class Theme extends Component {
 			'is-active': active,
 			'is-actionable': isActionable,
 		} );
+		const buttonContents = this.getButtonContents();
 
 		const hasPrice = /\d/g.test( price );
 		const showUpsell = hasPrice && upsellUrl;
@@ -244,15 +290,22 @@ export class Theme extends Component {
 						) }
 						<span className={ priceClass }>{ price }</span>
 						{ upsell }
-						{ ! isEmpty( this.props.buttonContents ) ? (
-							<ThemeMoreButton
-								index={ this.props.index }
-								themeId={ this.props.theme.id }
-								active={ this.props.active }
-								onMoreButtonClick={ this.props.onMoreButtonClick }
-								options={ this.props.buttonContents }
-							/>
-						) : null }
+						{ ! isEmpty( buttonContents ) && (
+							<>
+								<ThemeMoreButton
+									index={ this.props.index }
+									themeId={ this.props.theme.id }
+									active={ this.props.active }
+									onMoreButtonClick={ this.props.onMoreButtonClick }
+									options={ buttonContents }
+								/>
+								<ActivateConfirm
+									isVisible={ this.state.isConfirming }
+									onClose={ this.onCloseConfirmation }
+									themeName={ this.props.theme.name }
+								/>
+							</>
+						) }
 					</div>
 				</div>
 			</Card>
@@ -260,7 +313,14 @@ export class Theme extends Component {
 	}
 }
 
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isFseActive: isSiteUsingFullSiteEditing( state, siteId ),
+	};
+};
+
 export default connect(
-	null,
+	mapStateToProps,
 	{ recordTracksEvent }
 )( localize( Theme ) );
