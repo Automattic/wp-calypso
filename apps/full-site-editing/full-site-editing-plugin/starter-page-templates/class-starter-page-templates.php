@@ -28,6 +28,7 @@ class Starter_Page_Templates {
 		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'delete_attachment', [ $this, 'clear_sideloaded_image_cache' ] );
+		add_action( 'switch_theme', [ $this, 'clear_templates_cache' ] );
 	}
 
 	/**
@@ -215,6 +216,23 @@ class Starter_Page_Templates {
 		if ( ! empty( $url ) ) {
 			delete_transient( 'fse_sideloaded_image_' . hash( 'crc32b', $url ) );
 		}
+	}
+
+	/**
+	 * Deletes cached templates data when theme switches.
+	 */
+	public function clear_templates_cache() {
+		$transient_key = implode(
+			'_',
+			[
+				'starter_page_templates',
+				PLUGIN_VERSION,
+				get_option( 'site_vertical', 'default' ),
+				get_locale(),
+			]
+		);
+
+		delete_transient( $transient_key );
 	}
 
 	/**
