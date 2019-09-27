@@ -424,12 +424,17 @@
 		line-height: 83px;
 		margin: 0 auto;
 		z-index: 100;
+	}
 
-		nav {
-			box-sizing: border-box;
-			max-width: 1500px;
-			margin-left: auto;
-			margin-right: auto;
+	.masterbar__oauth-client nav {
+		box-sizing: border-box;
+		max-width: 1500px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 13px;
+		padding-right: 13px;
+
+		@include breakpoint( '>480px' ) {
 			padding-left: 55px;
 			padding-right: 13px;
 		}
@@ -451,9 +456,13 @@
 			color: #999;
 			font-size: 0.9em;
 			font-weight: bold;
-			padding: 32px;
+			padding: 32px 10px;
 			text-decoration: none;
 			text-transform: uppercase;
+
+			@include breakpoint( '>480px' ) {
+				padding: 32px;
+			}
 		}
 	}
 
@@ -540,8 +549,14 @@
 	.login__social-buttons {
 		margin-top: 0;
 
+		.login__social-tos {
+			margin: 2.5em auto 0;
+			max-width: 90%;
+		}
+
 		@include breakpoint( '>660px' ) {
 			flex-direction: row;
+			flex-wrap: wrap;
 
 			button:not( :first-of-type ) {
 				margin-top: 0;
@@ -562,6 +577,10 @@
 		box-shadow: none;
 		padding-left: 0;
 		padding-right: 0;
+	}
+
+	.wp-login__container {
+		margin-top: 50px;
 	}
 
 	.wp-login__container,
