@@ -143,7 +143,7 @@ export default {
 		defaultVariation: 'original',
 	},
 	passwordlessSignup: {
-		datestamp: '20190806',
+		datestamp: '20190927',
 		variations: {
 			passwordless: 10,
 			default: 90,
