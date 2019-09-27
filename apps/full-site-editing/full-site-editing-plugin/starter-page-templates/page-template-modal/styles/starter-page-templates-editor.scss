@@ -180,14 +180,25 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		box-sizing: content-box;
 		position: relative;
 		pointer-events: none;
-		opacity: 1;
 
+<<<<<<< HEAD
 		@media screen and ( max-width: 659px ) {
 			padding-top: 120%;
 		}
 
 		&.is-rendering {
+=======
+		&.is-parsing {
+>>>>>>> a1f7085... show spinner when still parsing
 			opacity: 0.5;
+		}
+
+		.components-spinner {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin: -9px 0 0 -9px;
+			padding: 0;
 		}
 
         .block-editor-block-list__layout,
@@ -400,8 +411,6 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 }
 
 // Set full height to preview container to inherits styles defined for themes.
-.template-selector-preview .components-disabled,
-.template-selector-preview .edit-post-visual-editor,
 .template-selector-item__preview-wrap .components-disabled,
 .template-selector-item__preview-wrap .edit-post-visual-editor {
 	height: 100%;
@@ -411,15 +420,11 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 	}
 }
 
-.page-template-modal__loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-	transform: translate( -50%, -50% );
-	display: flex;
-    align-items: flex-end;
+.template-selector-item__label .edit-post-visual-editor {
+	padding: 0;
+}
 
-	.components-spinner {
-		float: none;
-	}
+.template-selector-item__label .block-editor-block-preview__container {
+	position: absolute;
+	top: 0;
 }

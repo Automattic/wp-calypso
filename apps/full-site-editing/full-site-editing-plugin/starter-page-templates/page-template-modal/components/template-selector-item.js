@@ -9,10 +9,12 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
+import { Disabled, Spinner } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
 import BlockPreview from './block-template-preview';
-/* eslint-disable import/no-extraneous-dependencies */
-import { Disabled } from '@wordpress/components';
-/* eslint-enable import/no-extraneous-dependencies */
 
 const TemplateSelectorItem = props => {
 	const {
@@ -26,28 +28,40 @@ const TemplateSelectorItem = props => {
 		blocks = [],
 		isSelected,
 		handleTemplateConfirmation,
+		isParsing,
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
 		return null;
 	}
 
-	if ( useDynamicPreview && ( isNil( blocks ) || isEmpty( blocks ) ) ) {
-		return null;
-	}
+	const renderInnerPreview = () => {
+		if ( isParsing ) {
+			return (
+				<div className="template-selector-item__preview-wrap is-parsing">
+					<Spinner />;
+				</div>
+			);
+		}
 
-	// Define static or dynamic preview.
-	const innerPreview = useDynamicPreview ? (
-		<Disabled>
-			<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
-		</Disabled>
-	) : (
-		<img
-			className="template-selector-item__media"
-			src={ staticPreviewImg }
-			alt={ staticPreviewImgAlt }
-		/>
-	);
+		if ( useDynamicPreview ) {
+			return (
+				<Disabled>
+					<BlockPreview blocks={blocks} viewportWidth={960}/>
+				</Disabled>
+			);
+		}
+
+		return (
+			<div className="template-selector-item__preview-wrap">
+				<img
+					className="template-selector-item__media"
+					src={ staticPreviewImg }
+					alt={ staticPreviewImgAlt }
+				/>
+			</div>
+		);
+	};
 
 	const labelId = `label-${ id }-${ value }`;
 
@@ -76,7 +90,7 @@ const TemplateSelectorItem = props => {
 			onClick={ handleLabelClick }
 			aria-labelledby={ `${ id } ${ labelId }` }
 		>
-			<div className="template-selector-item__preview-wrap">{ innerPreview }</div>
+			{ renderInnerPreview() }
 			<span className="template-selector-item__template-title" id={ labelId }>
 				{ label }
 			</span>

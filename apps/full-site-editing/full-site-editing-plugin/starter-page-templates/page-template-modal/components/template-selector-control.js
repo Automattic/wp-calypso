@@ -2,7 +2,7 @@
  * External dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { isEmpty, isArray, noop, map } from 'lodash';
+import { isEmpty, isArray, noop, map, get } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
@@ -65,10 +65,14 @@ export const TemplateSelectorControl = ( {
 							onSelect={ onTemplateSelect }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
+							blocks={ get( blocksByTemplates, [ slug, 'blocks' ], [] ) }
 							useDynamicPreview={ useDynamicPreview }
 							isSelected={ slug === selectedTemplate }
+<<<<<<< HEAD
 							handleTemplateConfirmation={ handleTemplateConfirmation }
+=======
+							isParsing={ get( blocksByTemplates, [ slug, 'isParsing' ], false ) }
+>>>>>>> a1f7085... show spinner when still parsing
 						/>
 					</li>
 				) ) }
