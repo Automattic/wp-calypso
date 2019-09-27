@@ -185,7 +185,6 @@ export class DropdownFilters extends Component {
 				className="search-filters__popover"
 				context={ this.button.current }
 				id={ popoverId }
-				isFocusOnShow
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
 				position="bottom left"
