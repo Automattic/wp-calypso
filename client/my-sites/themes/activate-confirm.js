@@ -16,22 +16,27 @@ export default function ActivateConfirm( { isVisible, onClose, themeName } ) {
 		args: { theme: themeName },
 	} );
 	const buttons = [
-		{ action: 'cancel', label: translate( 'Keep current theme' ), isPrimary: true },
 		{ action: 'confirm', label: confirmLabel },
+		{ action: 'cancel', label: translate( 'Keep current theme' ), isPrimary: true },
 	];
 	const props = { isVisible, onClose };
-	const message = translate(
-		'{{strong}}%(theme)s{{/strong}} does not fully support editing headers and footers. ' +
-			'Any changes you have made will not be displayed on your site. You will need to use ' +
-			'the legacy Customizer tool to edit some areas of your site.',
+	const first = translate(
+		'{{strong}}%(theme)s{{/strong}} does not fully support editing all parts of your site, such as headers and footers.',
 		{
 			components: { strong: <strong /> },
 			args: { theme: themeName },
 		}
 	);
+	const second = translate(
+		'If you activate this theme, you will still have limited site appearance control using the legacy Customizer tool.'
+	);
 	return (
 		<Dialog { ...props } buttons={ buttons }>
-			<p>{ message }</p>
+			<div style={ { maxWidth: '33em' } }>
+				<h1>{ translate( 'Warning' ) }</h1>
+				<p>{ first }</p>
+				<p>{ second }</p>
+			</div>
 		</Dialog>
 	);
 }
