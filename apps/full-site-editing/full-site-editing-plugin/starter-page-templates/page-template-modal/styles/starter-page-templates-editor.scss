@@ -69,7 +69,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 // Close button
 .page-template-modal .components-modal__header .components-button {
-	left: 0;
+	left: -24px; // Make up for 24px modal padding.
+	margin: 9px 10px;
+	padding: 4px;
 }
 
 .page-template-modal .components-modal__content {
