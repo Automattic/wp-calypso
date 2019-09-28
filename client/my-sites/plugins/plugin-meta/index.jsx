@@ -247,12 +247,12 @@ export class PluginMeta extends Component {
 			'database-browser',
 			'duplicator',
 			'extended-wp-reset',
-			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'plugins-garbage-collector',
 			'post-type-switcher',
 			'reset-wp',
+			'secure-file-manager',
 			'ultimate-wp-reset',
 			'username-changer',
 			'username-updater',
@@ -275,7 +275,6 @@ export class PluginMeta extends Component {
 			'backup-wd',
 			'backupwordpress',
 			'backwpup',
-			'updraftplus',
 			'wp-db-backup',
 
 			// caching
@@ -283,6 +282,7 @@ export class PluginMeta extends Component {
 			'comet-cache',
 			'hyper-cache',
 			'powered-cache',
+			'jch-optimize',
 			'quick-cache',
 			'sg-cachepress',
 			'w3-total-cache',
@@ -330,6 +330,8 @@ export class PluginMeta extends Component {
 			'wp-staging',
 
 			// misc
+			'adult-mass-photos-downloader',
+			'adult-mass-videos-embedder',
 			'ari-adminer',
 			'automatic-video-posts',
 			'bwp-minify',
@@ -345,6 +347,8 @@ export class PluginMeta extends Component {
 			'porn-embed',
 			'propellerads-official',
 			'speed-contact-bar',
+			'unplug-jetpack',
+			'really-simple-ssl',
 			'robo-gallery',
 			'under-construction-page',
 			'video-importer',
