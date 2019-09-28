@@ -34,7 +34,7 @@ calypso-codemods commonjs-exports client/devdocs/a.js client/devdocs/b.js client
 How about chaining codemods on multiple directories?
 
 ```bash
-calypso-codemods commonjs-imports,commonjs-exports,named-export-from-default client/blocks/ client/components/
+calypso-codemods commonjs-imports,commonjs-exports,named-exports-from-default client/blocks/ client/components/
 ```
 
 ## List of available transformations
