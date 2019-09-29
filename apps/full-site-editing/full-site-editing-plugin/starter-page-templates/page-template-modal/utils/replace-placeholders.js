@@ -18,10 +18,6 @@ const KEY_MAP = {
 };
 
 const replacePlaceholders = ( pageContent, siteInformation = {} ) => {
-	if ( ! pageContent ) {
-		return '';
-	}
-
 	return pageContent.replace( /{{(\w+)}}/g, ( match, placeholder ) => {
 		const defaultValue = PLACEHOLDER_DEFAULTS[ placeholder ];
 		const key = KEY_MAP[ placeholder ];

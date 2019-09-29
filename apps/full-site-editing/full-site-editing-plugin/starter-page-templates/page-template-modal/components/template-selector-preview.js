@@ -2,24 +2,20 @@
  * External dependencies
  */
 import classnames from 'classnames';
-/* eslint-disable import/no-extraneous-dependencies */
-import { isEmpty, isArray, debounce } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
+import { isEmpty, debounce } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { __ } from '@wordpress/i18n';
+import { BlockPreview } from '@wordpress/block-editor';
 import { Disabled } from '@wordpress/components';
 import { useState, useEffect, useLayoutEffect, useRef, useReducer } from '@wordpress/element';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
  */
 import PreviewTemplateTitle from './preview-template-title';
-import BlockPreview from './block-preview';
 
 const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const THRESHOLD_RESIZE = 300;
@@ -69,7 +65,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	}, [ blocks ] );
 
 	useEffect( () => {
-		if ( ! blocks || ! blocks.length ) {
+		if ( ! blocks.length ) {
 			return;
 		}
 
@@ -86,7 +82,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		};
 	}, [ blocks ] );
 
-	if ( isEmpty( blocks ) || ! isArray( blocks ) ) {
+	if ( isEmpty( blocks ) ) {
 		return (
 			<div className={ previewElClasses }>
 				<div className="template-selector-preview__placeholder">
