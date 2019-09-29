@@ -126,7 +126,7 @@ export default {
 		assignmentMethod: 'userId',
 	},
 	signupWithBasicSite: {
-		datestamp: '20190923',
+		datestamp: '20190930',
 		variations: {
 			variant: 50,
 			control: 50,
