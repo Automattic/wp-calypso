@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, includes, isBoolean, isEmpty } from 'lodash';
+import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -638,7 +638,7 @@ const submitDomainStepSelection = ( suggestion, section, usedSuggestedDomain ) =
 	if ( suggestion.isBestAlternative ) {
 		tracksObjects.label = 'best-alternative';
 	}
-	if ( abtest( 'prefillDomainStepValue' ) === 'test' && isBoolean( usedSuggestedDomain ) ) {
+	if ( abtest( 'prefillDomainStepValue' ) === 'test' && typeof usedSuggestedDomain === 'boolean' ) {
 		tracksObjects.used_suggested_domain = usedSuggestedDomain;
 	}
 
