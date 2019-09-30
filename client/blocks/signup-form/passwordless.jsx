@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -22,12 +21,8 @@ import Notice from 'components/notice';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
 export class PasswordlessSignupForm extends Component {
-	static propTypes = {
-		flowName: PropTypes.string.isRequired,
-		stepName: PropTypes.string.isRequired,
-		goToNextStep: PropTypes.func.isRequired,
-		getloginUrl: PropTypes.func.isRequired,
-		renderTerms: PropTypes.func.isRequired,
+	static defaultProps = {
+		locale: 'en',
 	};
 
 	state = {
