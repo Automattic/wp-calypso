@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -21,8 +22,12 @@ import Notice from 'components/notice';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
 export class PasswordlessSignupForm extends Component {
-	static defaultProps = {
-		locale: 'en',
+	static propTypes = {
+		flowName: PropTypes.string.isRequired,
+		stepName: PropTypes.string.isRequired,
+		goToNextStep: PropTypes.func.isRequired,
+		getloginUrl: PropTypes.func.isRequired,
+		renderTerms: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -32,7 +37,9 @@ export class PasswordlessSignupForm extends Component {
 	};
 
 	submitTracksEvent = ( isSuccessful, props ) => {
-		const tracksEventName = isSuccessful ? 'calypso_signup_actions_onboarding_passwordless_login_success' : 'calypso_signup_actions_onboarding_passwordless_login_error';
+		const tracksEventName = isSuccessful
+			? 'calypso_signup_actions_onboarding_passwordless_login_success'
+			: 'calypso_signup_actions_onboarding_passwordless_login_error';
 		this.props.recordTracksEvent( tracksEventName, {
 			...props,
 		} );
