@@ -36,7 +36,7 @@ import RecentRenewals from './recent-renewals';
 import PaymentRequestButton from './payment-request-button';
 import SubscriptionText from './subscription-text';
 import { useDebounce } from 'blocks/credit-card-form/helpers';
-import { useStripe } from 'lib/stripe';
+import { useStripe, StripeHookProvider } from 'lib/stripe';
 
 const debug = debugFactory( 'calypso:checkout:payment:web-payment-box' );
 
@@ -117,14 +117,16 @@ export function WebPaymentBox( {
 				<span className={ 'payment-box__payment-buttons' }>
 					<span className="pay-button">
 						<span className="payment-request-button">
-							<WebPayButton
-								countryCode={ countryCode }
-								postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
-								cart={ cart }
-								onSubmit={ onSubmit }
-								paymentType={ paymentType }
-								translate={ translate }
-							/>
+							<StripeHookProvider>
+								<WebPayButton
+									countryCode={ countryCode }
+									postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
+									cart={ cart }
+									onSubmit={ onSubmit }
+									paymentType={ paymentType }
+									translate={ translate }
+								/>
+							</StripeHookProvider>
 						</span>
 						<SubscriptionText cart={ cart } />
 					</span>
