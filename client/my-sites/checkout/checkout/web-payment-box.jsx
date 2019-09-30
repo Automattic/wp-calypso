@@ -35,7 +35,6 @@ import PaymentChatButton from './payment-chat-button';
 import RecentRenewals from './recent-renewals';
 import PaymentRequestButton from './payment-request-button';
 import SubscriptionText from './subscription-text';
-import { withStripe } from 'lib/stripe';
 import { useDebounce } from 'blocks/credit-card-form/helpers';
 
 const debug = debugFactory( 'calypso:checkout:payment:web-payment-box' );
@@ -46,8 +45,6 @@ const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerEmail: false,
 	requestShipping: false,
 };
-
-const WebPayButtonWithStripe = withStripe( WebPayButton );
 
 export function WebPaymentBox( {
 	cart,
@@ -119,7 +116,7 @@ export function WebPaymentBox( {
 				<span className={ 'payment-box__payment-buttons' }>
 					<span className="pay-button">
 						<span className="payment-request-button">
-							<WebPayButtonWithStripe
+							<WebPayButton
 								countryCode={ countryCode }
 								postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
 								cart={ cart }
