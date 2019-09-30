@@ -223,6 +223,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			this.driver,
 			By.css( '.edit-post-post-visibility__toggle' )
 		);
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.editor-post-visibility__choice' )
+		);
 		await driverHelper.selectElementByText(
 			this.driver,
 			By.css( '.editor-post-visibility__dialog-label' ),
