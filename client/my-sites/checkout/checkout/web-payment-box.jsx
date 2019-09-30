@@ -36,6 +36,7 @@ import RecentRenewals from './recent-renewals';
 import PaymentRequestButton from './payment-request-button';
 import SubscriptionText from './subscription-text';
 import { useDebounce } from 'blocks/credit-card-form/helpers';
+import { useStripe } from 'lib/stripe';
 
 const debug = debugFactory( 'calypso:checkout:payment:web-payment-box' );
 
@@ -159,20 +160,11 @@ WebPaymentBox.propTypes = {
 	disablePostalCodeDebounce: PropTypes.bool,
 };
 
-function WebPayButton( {
-	stripe,
-	isStripeLoading,
-	stripeConfiguration,
-	countryCode,
-	postalCode,
-	cart,
-	onSubmit,
-	paymentType,
-	translate,
-} ) {
+function WebPayButton( { countryCode, postalCode, cart, onSubmit, paymentType, translate } ) {
 	const { currency, total_cost_integer, sub_total_integer, total_tax_integer } = cart;
 	const isRenewal = hasRenewalItem( cart );
 	const shouldDisplayItems = shouldShowTax( cart );
+	const { stripe, stripeConfiguration, isStripeLoading } = useStripe();
 	useEffect( () => {
 		stripe && setStripeObject( stripe, stripeConfiguration );
 	}, [ stripe, stripeConfiguration ] );
@@ -218,7 +210,6 @@ function WebPayButton( {
 }
 
 WebPayButton.propTypes = {
-	stripe: PropTypes.object,
 	countryCode: PropTypes.string,
 	postalCode: PropTypes.string,
 	cart: PropTypes.shape( {
