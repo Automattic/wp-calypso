@@ -32,7 +32,9 @@ export class PasswordlessSignupForm extends Component {
 	};
 
 	submitTracksEvent = ( isSuccessful, props ) => {
-		const tracksEventName = isSuccessful ? 'calypso_signup_actions_onboarding_passwordless_login_success' : 'calypso_signup_actions_onboarding_passwordless_login_error';
+		const tracksEventName = isSuccessful
+			? 'calypso_signup_actions_onboarding_passwordless_login_success'
+			: 'calypso_signup_actions_onboarding_passwordless_login_error';
 		this.props.recordTracksEvent( tracksEventName, {
 			...props,
 		} );
