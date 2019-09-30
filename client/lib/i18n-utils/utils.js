@@ -50,6 +50,18 @@ export function isLocaleVariant( locale ) {
 	return !! language && isString( language.parentLangSlug );
 }
 
+export function isLocaleRtl( locale ) {
+	if ( ! isString( locale ) ) {
+		return null;
+	}
+	const language = getLanguage( locale );
+	if ( ! language ) {
+		return null;
+	}
+
+	return Boolean( language.rtl );
+}
+
 /**
  * Checks against a list of locales that don't have any GP translation sets
  * A 'translation set' refers to a collection of strings to be translated see:
