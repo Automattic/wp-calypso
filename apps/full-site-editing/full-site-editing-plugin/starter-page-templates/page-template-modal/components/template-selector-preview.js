@@ -51,9 +51,9 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 		);
 	}
 
-	const setTemplateTitle = ( { styles } ) => {
+	const setTemplateTitle = ( { inlineStyles } ) => {
 		setVisibility( 'visible' );
-		setTitleTransform( styles.transform );
+		setTitleTransform( inlineStyles.transform );
 	};
 
 	return (
@@ -69,6 +69,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 								blocks={ blocks }
 								viewportWidth={ viewportWidth }
 								__experimentalOnReady={ setTemplateTitle }
+								__experimentalScalingDelay={ 0 }
 							/>
 						</div>
 					</div>
