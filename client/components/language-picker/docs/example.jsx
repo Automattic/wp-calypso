@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { languages } from 'languages';
 import LanguagePicker from 'components/language-picker';
 import Card from 'components/card';
 
@@ -59,7 +59,7 @@ class LanguagePickerExample extends PureComponent {
 				</a>
 				<Card>
 					<LanguagePicker
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						valueKey="langSlug"
 						value={ loading ? null : language }
 						onChange={ this.selectLanguage }
