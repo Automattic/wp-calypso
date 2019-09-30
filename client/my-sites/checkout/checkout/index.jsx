@@ -404,34 +404,6 @@ export class Checkout extends React.Component {
 		return '/';
 	}
 
-	maybeShowPlanBumpOfferGSuite( receiptId ) {
-		const { cart, selectedSiteSlug } = this.props;
-
-		if ( hasPersonalPlan( cart ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellGSuite' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-			}
-		}
-
-		return;
-	}
-
-	maybeShowPlanBumpOfferConcierge( receiptId ) {
-		const { cart, selectedSiteSlug } = this.props;
-
-		if ( hasPersonalPlan( cart ) ) {
-			// The plan bump vs concierge test is having some discrepancies,
-			// we will comment this out till a fix is found. Check pa1C6h-z7-p2.
-			/*if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-			}*/
-			// Temporarily showing the plan bump to all users
-			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
-		}
-
-		return;
-	}
-
 	maybeRedirectToGSuiteNudge( pendingOrReceiptId, stepResult ) {
 		const { isNewlyCreatedSite, selectedSiteSlug, cart } = this.props;
 
@@ -446,10 +418,7 @@ export class Checkout extends React.Component {
 			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
 				if ( domainsForGSuite.length ) {
-					return (
-						this.maybeShowPlanBumpOfferGSuite( pendingOrReceiptId ) ||
-						`/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`
-					);
+					return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGSuite[ 0 ].meta }/${ pendingOrReceiptId }`;
 				}
 			}
 		}
@@ -471,18 +440,12 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId );
-			if ( upgradePath ) {
-				return upgradePath;
-			}
-
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
-			//We are commenting out this code to temporaritly not show the concierge upsell to any user
-			/*if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
 				return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
-			}*/
+			}
 		}
 
 		return;
