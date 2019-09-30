@@ -353,10 +353,9 @@ export function useStripe() {
  * @return {object} WrappedComponent
  */
 export function withStripeProps( WrappedComponent ) {
-	const StripeInjectedWrappedComponent = injectStripe( WrappedComponent );
 	return props => {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
-		return <StripeInjectedWrappedComponent { ...newProps } />;
+		return <WrappedComponent { ...newProps } />;
 	};
 }
