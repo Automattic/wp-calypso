@@ -209,3 +209,21 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+export const requestAtomicSFTPDetails = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/hosting/sftp`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{
+			fromApi: () => data => {
+				return [ 'sftpData', data ];
+			},
+		}
+	);

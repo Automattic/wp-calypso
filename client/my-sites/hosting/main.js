@@ -20,6 +20,7 @@ import CardHeading from 'components/card-heading';
 import Button from 'components/button';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { requestAtomicSFTPDetails } from 'state/data-getters';
 
 /**
  * Style dependencies
@@ -86,8 +87,15 @@ const Hosting = ( { translate } ) => {
 	);
 };
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( Hosting ) );
+export default connect( state => {
+    
+	const atomicSFTPDetails = requestAtomicSFTPDetails( getSelectedSiteId( state ) );
+
+	return {
+		atomicSFTPDetails,
+        site: getSelectedSite( state ),
+        siteId: getSelectedSiteId( state ),
+        siteSlug: getSelectedSiteSlug( state ),
+    };
+    
+} )( localize( Hosting ) );
