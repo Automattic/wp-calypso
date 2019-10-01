@@ -27,7 +27,9 @@ const enhanceContextWithLogin = context => {
 		query,
 	} = context;
 
-	const socialServiceResponse = context.hash && context.hash.client_id ? context.hash : null;
+	const previousHash = context.state || {};
+	const { client_id, user_email, user_name, id_token } = previousHash;
+	const socialServiceResponse = client_id ? { client_id, user_email, user_name, id_token } : null;
 
 	context.primary = (
 		<WPLogin
@@ -53,6 +55,13 @@ export function login( context, next ) {
 	const {
 		query: { client_id, redirect_to },
 	} = context;
+
+	// Remove id_token from the address bar and push social connect args into the state instead
+	if ( context.hash && context.hash.client_id ) {
+		page.replace( context.path, context.hash );
+
+		return;
+	}
 
 	if ( client_id ) {
 		if ( ! redirect_to ) {
