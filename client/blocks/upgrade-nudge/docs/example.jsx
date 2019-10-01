@@ -23,7 +23,7 @@ const UpgradeNudgeExample = () => {
 					title="This is a title"
 					message="This is a custom message"
 					icon="customize"
-					forceDisplay={ true }
+					forceDisplay
 					compact
 				/>
 			</div>
