@@ -83,7 +83,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	padding: 0;
 
 	@media screen and ( max-width: 659px ) {
-		padding-bottom: 3em;
+		padding: 0 14% 3em;
 	}
 
 	@media screen and ( min-width: 1200px ) {
@@ -99,7 +99,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.template-selector-control__options {
 		display: grid;
 		// stylelint-disable-next-line unit-whitelist
-		grid-template-columns: 1fr 1fr; // force 2 col on small screens to ensure blank isn't the only option visible on load
+		grid-template-columns: 1fr;
 		grid-gap: 1.75em;
 
 		@media screen and ( min-width: 660px ) {
@@ -175,6 +175,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		pointer-events: none;
 		opacity: 1;
 
+		@media screen and ( max-width: 659px ) {
+			padding-top: 120%;
+		}
+
 		&.is-rendering {
 			opacity: 0.5;
 		}
@@ -226,6 +230,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .page-template-modal__form-title {
 	font-weight: bold;
 	margin-bottom: 1em;
+	@media screen and ( max-width: 659px ) {
+		text-align: center;
+	}
 }
 
 .page-template-modal__buttons {
