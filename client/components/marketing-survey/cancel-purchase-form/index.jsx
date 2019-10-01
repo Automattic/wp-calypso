@@ -76,20 +76,13 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getAllSurveySteps = () => {
-		const {
-			purchase,
-			isChatAvailable,
-			isChatActive,
-			precancellationChatAvailable,
-			isImport,
-		} = this.props;
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
 
 		return stepsForProductAndSurvey(
 			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
-			precancellationChatAvailable,
-			isImport
+			precancellationChatAvailable
 		);
 	};
 
