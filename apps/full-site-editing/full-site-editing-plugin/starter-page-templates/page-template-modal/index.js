@@ -41,6 +41,7 @@ class PageTemplateModal extends Component {
 		titlesByTemplateSlug: {},
 		error: null,
 		isOpen: false,
+		wasClosed: false,
 	};
 
 	constructor( props ) {
@@ -131,6 +132,8 @@ class PageTemplateModal extends Component {
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
 		}
+
+		this.setState( { wasClosed: true } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 
 		if ( window && window.history && window.history.length ) {
@@ -149,8 +152,8 @@ class PageTemplateModal extends Component {
 	}
 
 	render() {
-		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
 		/* eslint-disable no-shadow */
+		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug, wasClosed } = this.state;
 		const { templates } = this.props;
 		/* eslint-enable no-shadow */
 
@@ -207,7 +210,7 @@ class PageTemplateModal extends Component {
 					<Button
 						isPrimary
 						isLarge
-						disabled={ isEmpty( previewedTemplate ) || isLoading }
+						disabled={ isEmpty( previewedTemplate ) || isLoading || wasClosed }
 						onClick={ this.handleConfirmation }
 					>
 						{ sprintf(
