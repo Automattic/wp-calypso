@@ -14,7 +14,7 @@ import { memoize } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
+import { getABTestVariation } from 'lib/abtest';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
@@ -783,7 +783,7 @@ function mapStateToProps( state ) {
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
-	const isCustomerHomeEnabled = 'show' === abtest( 'customerHomePage' );
+	const isCustomerHomeEnabled = 'show' === ( getABTestVariation( 'customerHomePage' ) || 'show' );
 
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
