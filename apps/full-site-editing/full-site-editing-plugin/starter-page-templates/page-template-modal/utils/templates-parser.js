@@ -42,12 +42,14 @@ setTimeout( () => {
 
 export const getAllTemplatesBlocks= () => allTemplatesBlockBySlug;
 
-export const hasTemplates = () => !! Object.keys( allTemplatesBlockBySlug ).length;
+export const hasTemplates = () => !! templates.length;
 
 export const getBlocksByTemplateSlug = slug => get( allTemplatesBlockBySlug, [ slug, 'blocks' ], [] );
 
 export const getTitleByTemplateSlug = slug => get ( allTemplatesBlockBySlug, [ slug, 'title' ], [] );
 
 export const getTemplateBySlug = slug => get( allTemplatesBlockBySlug, [ slug ], {} );
+
+export const getFirstTemplateSlug = () => get( templates, [ 0, 'slug' ] );
 
 export default allTemplatesBlockBySlug;

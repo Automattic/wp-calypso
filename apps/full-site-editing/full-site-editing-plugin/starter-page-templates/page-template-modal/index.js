@@ -25,6 +25,7 @@ import {
 	getBlocksByTemplateSlug,
 	getTitleByTemplateSlug,
 	hasTemplates,
+	getFirstTemplateSlug,
 } from  './utils/templates-parser';
 
 /* eslint-enable import/no-extraneous-dependencies */
@@ -52,7 +53,7 @@ class PageTemplateModal extends Component {
 
 		if ( this.state.isOpen ) {
 			// Select the first template automatically.
-			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
+			this.state.previewedTemplate = getFirstTemplateSlug();
 		}
 	}
 
