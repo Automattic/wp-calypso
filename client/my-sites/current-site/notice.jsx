@@ -107,7 +107,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const { currencyCode, productsList, translate } = this.props;
+		const { site, currencyCode, productsList, translate } = this.props;
 
 		const priceAndSaleInfo = transform(
 			productsList,
@@ -132,15 +132,9 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const eventProps = {
-			sale: false,
-			tld: null,
-		};
 		let noticeText;
 
 		if ( priceAndSaleInfo.minSalePrice ) {
-			eventProps.sale = true;
-
 			if ( get( priceAndSaleInfo, 'saleTlds.length', 0 ) === 1 ) {
 				noticeText = translate( 'Get a %(tld)s domain for just %(salePrice)s for a limited time', {
 					args: {
@@ -148,7 +142,6 @@ export class SiteNotice extends React.Component {
 						salePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
 					},
 				} );
-				eventProps.tld = priceAndSaleInfo.saleTlds[ 0 ];
 			} else {
 				noticeText = translate( 'Domains on sale starting at %(minSalePrice)s', {
 					args: {
@@ -165,18 +158,13 @@ export class SiteNotice extends React.Component {
 		}
 
 		return (
-			<Notice isCompact status="is-success" icon="info-outline" text={ noticeText }>
-				<TrackComponentView
-					eventName="calypso_domain_upsell_nudge_impression"
-					eventProperties={ eventProps }
-				/>
-				<NoticeAction
-					onClick={ this.props.clickGoDomainUpsellNudge }
-					href={ `/domains/add/${ this.props.site.slug }` }
-				>
-					{ translate( 'Go' ) }
-				</NoticeAction>
-			</Notice>
+			<SidebarBanner
+				ctaName="domain-upsell-nudge"
+				ctaText={ translate( 'Go' ) }
+				href={ '/domains/add/' + site.slug }
+				icon="info-outline"
+				text={ noticeText }
+			/>
 		);
 	}
 
@@ -326,8 +314,6 @@ export default connect(
 						cta_name: 'current_site_domain_notice',
 					} )
 				),
-			clickGoDomainUpsellNudge: () =>
-				dispatch( recordTracksEvent( 'calypso_domain_upsell_nudge_click' ) ),
 			clickFreeToPaidPlanNotice: () =>
 				dispatch(
 					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
