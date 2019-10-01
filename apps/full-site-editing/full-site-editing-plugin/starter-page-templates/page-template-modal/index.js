@@ -159,6 +159,7 @@ class PageTemplateModal extends Component {
 				onRequestClose={ this.closeModal }
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
+				shouldCloseOnClickOutside={ false }
 			>
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
