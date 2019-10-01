@@ -50,6 +50,6 @@ export const getTitleByTemplateSlug = slug => get ( allTemplatesBlockBySlug, [ s
 
 export const getTemplateBySlug = slug => get( allTemplatesBlockBySlug, [ slug ], {} );
 
-export const getFirstTemplateSlug = () => get( templates, [ 0, 'slug' ] );
+export const getFirstTemplateSlug = () => get( templates, [ 0, 'slug' ], null );
 
 export default allTemplatesBlockBySlug;

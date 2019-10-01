@@ -42,20 +42,10 @@ const {
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
-		previewedTemplate: null,
+		previewedTemplate: getFirstTemplateSlug(),
 		error: null,
-		isOpen: false,
+		isOpen: hasTemplates(),
 	};
-
-	constructor( props ) {
-		super();
-		this.state.isOpen = hasTemplates();
-
-		if ( this.state.isOpen ) {
-			// Select the first template automatically.
-			this.state.previewedTemplate = getFirstTemplateSlug();
-		}
-	}
 
 	componentDidMount() {
 		if ( this.state.isOpen ) {
