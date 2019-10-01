@@ -223,15 +223,13 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			this.driver,
 			By.css( '.edit-post-post-visibility__toggle' )
 		);
-		await driverHelper.waitTillPresentAndDisplayed(
+		await this.driver.sleep( 1000 );
+		await driverHelper.setCheckbox(
 			this.driver,
-			By.css( '.editor-post-visibility__choice' )
+			By.css( 'input#editor-post-private-0[value="private"]' )
 		);
-		await driverHelper.selectElementByText(
-			this.driver,
-			By.css( '.editor-post-visibility__dialog-label' ),
-			'Private'
-		);
+
+		await driverHelper.waitForAlertPresent( this.driver );
 		const publishPrivateAlert = await this.driver.switchTo().alert();
 		return await publishPrivateAlert.accept();
 	}
