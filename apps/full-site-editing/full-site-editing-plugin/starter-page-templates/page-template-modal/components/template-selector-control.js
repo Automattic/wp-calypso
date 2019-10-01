@@ -20,6 +20,7 @@ import { memo } from '@wordpress/element';
  */
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
+import { getTemplateBySlug, hasTemplates } from '../utils/templates-parser';
 
 export const TemplateSelectorControl = ( {
 	label,
@@ -27,7 +28,6 @@ export const TemplateSelectorControl = ( {
 	help,
 	instanceId,
 	templates = [],
-	blocksByTemplates = {},
 	useDynamicPreview = false,
 	onTemplateSelect = noop,
 	siteInformation = {},
@@ -38,7 +38,7 @@ export const TemplateSelectorControl = ( {
 		return null;
 	}
 
-	if ( true === useDynamicPreview && isEmpty( blocksByTemplates ) ) {
+	if ( true === useDynamicPreview && ! hasTemplates() ) {
 		return null;
 	}
 
@@ -65,14 +65,11 @@ export const TemplateSelectorControl = ( {
 							onSelect={ onTemplateSelect }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							blocks={ get( blocksByTemplates, [ slug, 'blocks' ], [] ) }
 							useDynamicPreview={ useDynamicPreview }
 							isSelected={ slug === selectedTemplate }
-<<<<<<< HEAD
 							handleTemplateConfirmation={ handleTemplateConfirmation }
-=======
 							isParsing={ get( blocksByTemplates, [ slug, 'isParsing' ], false ) }
->>>>>>> a1f7085... show spinner when still parsing
+							template={ getTemplateBySlug( slug ) }
 						/>
 					</li>
 				) ) }

@@ -25,24 +25,23 @@ const TemplateSelectorItem = props => {
 		useDynamicPreview,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
-		blocks = [],
 		isSelected,
 		handleTemplateConfirmation,
-		isParsing,
+		template,
 	} = props;
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
 		return null;
 	}
 
+	const { isParsing, isEmpty, blocks } = template;
+
 	const renderInnerPreview = () => {
-		if ( isParsing ) {
+		if ( isParsing && ! isEmpty ) {
 			return (
-				<div className="edit-post-visual-editor">
-					<div className="editor-styles-wrapper">
-						<div className="template-selector-item__preview-wrap is-parsing">
-							<Spinner />;
-						</div>
+				<div className="editor-styles-wrapper">
+					<div className="template-selector-item__preview-wrap is-parsing">
+						<Spinner />;
 					</div>
 				</div>
 			);
@@ -51,7 +50,7 @@ const TemplateSelectorItem = props => {
 		if ( useDynamicPreview ) {
 			return (
 				<Disabled>
-					<BlockPreview blocks={blocks} viewportWidth={960}/>
+					<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
 				</Disabled>
 			);
 		}

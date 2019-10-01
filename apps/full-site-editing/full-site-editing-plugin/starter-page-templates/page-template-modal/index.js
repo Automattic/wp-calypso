@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce, get, keyBy, mapValues } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,7 +11,6 @@ import { Button, Modal, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { parse as parseBlocks } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -20,8 +19,14 @@ import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
-import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
+import {
+	getAllTemplatesBlocks,
+	getBlocksByTemplateSlug,
+	getTitleByTemplateSlug,
+	hasTemplates,
+} from  './utils/templates-parser';
+
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
@@ -37,30 +42,17 @@ class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		previewedTemplate: null,
-		blocksByTemplateSlug: {},
-		titlesByTemplateSlug: {},
-		isTemplateParsingBySlug: {},
 		error: null,
 		isOpen: false,
 	};
 
 	constructor( props ) {
 		super();
-		const hasTemplates = ! isEmpty( props.templates );
-		this.state.isOpen = hasTemplates;
-		if ( hasTemplates ) {
+		this.state.isOpen = hasTemplates();
+
+		if ( this.state.isOpen ) {
 			// Select the first template automatically.
 			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
-
-			// Organize templates in an object, by slug key.
-			const templatesBySlug = keyBy( props.templates, 'slug' );
-			// Extract titles for faster lookup.
-			this.state.titlesByTemplateSlug = mapValues( templatesBySlug, 'title' );
-			// Set initially parsing by slug to `false`.
-			this.state.blocksByTemplateSlug = mapValues( templatesBySlug, ( { content } ) => ( {
-				blocks: [],
-				isParsing: !! content,
-			} ) );
 		}
 	}
 
@@ -68,31 +60,6 @@ class PageTemplateModal extends Component {
 		if ( this.state.isOpen ) {
 			trackView( this.props.segment.id, this.props.vertical.id );
 		}
-
-		// Populate the state with parsed blocks,
-		// immediately after the modal has been rendered.
-		// Wrapping it in a setTimeout() call,
-		// allows showing the templates selector with empty thumbnails
-		// before to start to parser and render them.
-		setTimeout( () => {
-			// Parse templates blocks and store them into the state.
-			const blocksByTemplateSlug = reduce(
-				templates,
-				( prev, { slug, content } ) => {
-					prev[ slug ] = content
-						? {
-								blocks: parseBlocks( replacePlaceholders( content, siteInformation ) ),
-								isParsing: false,
-						  }
-						: { blocks: [], isParsing: false };
-
-					return prev;
-				},
-				{}
-			);
-
-			this.setState( { blocksByTemplateSlug } );
-		}, 0 );
 	}
 
 	setTemplate = slug => {
@@ -101,8 +68,8 @@ class PageTemplateModal extends Component {
 		this.props.saveTemplateChoice( slug );
 
 		// Load content.
-		const blocks = this.getBlocksByTemplateSlug( slug );
-		const title = this.getTitleByTemplateSlug( slug );
+		const blocks = getBlocksByTemplateSlug( slug );
+		const title = getTitleByTemplateSlug( slug );
 
 		// Skip inserting if there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
@@ -142,7 +109,7 @@ class PageTemplateModal extends Component {
 
 	handleConfirmation = ( slug = this.state.previewedTemplate ) => this.setTemplate( slug );
 
-	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
+	previewTemplate = previewedTemplate => this.setState( { previewedTemplate } );
 
 	closeModal = event => {
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
@@ -154,18 +121,9 @@ class PageTemplateModal extends Component {
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
-	getBlocksByTemplateSlug( slug ) {
-		return get( this.state.blocksByTemplateSlug, [ slug, 'blocks' ], [] );
-	}
-
-	getTitleByTemplateSlug( slug ) {
-		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
-	}
-
 	render() {
-		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
-
 		/* eslint-disable no-shadow */
+		const { previewedTemplate, isOpen, isLoading } = this.state;
 		const { templates } = this.props;
 		/* eslint-enable no-shadow */
 
@@ -196,21 +154,20 @@ class PageTemplateModal extends Component {
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
 										templates={ templates }
-										blocksByTemplates={ blocksByTemplateSlug }
+										blocksByTemplates={ getAllTemplatesBlocks() }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ true }
 										siteInformation={ siteInformation }
 										selectedTemplate={ previewedTemplate }
 										handleTemplateConfirmation={ this.handleConfirmation }
 										isLoading={ isLoading }
-										isTemplateParsingBySlug={ isTemplateParsingBySlug }
 									/>
 								</fieldset>
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
+								blocks={ getBlocksByTemplateSlug( previewedTemplate ) }
 								viewportWidth={ 960 }
-								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
+								title={ getTitleByTemplateSlug( previewedTemplate ) }
 							/>
 						</>
 					) }
@@ -228,7 +185,7 @@ class PageTemplateModal extends Component {
 					>
 						{ sprintf(
 							__( 'Use %s template', 'full-site-editing' ),
-							this.getTitleByTemplateSlug( previewedTemplate )
+							getTitleByTemplateSlug( previewedTemplate )
 						) }
 					</Button>
 				</div>
