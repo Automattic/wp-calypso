@@ -26,7 +26,7 @@ module.exports = function() {
 		oauth( app );
 	}
 
-	if ( config.isEnabled( 'sign-in-with-apple' ) ) {
+	if ( config.isEnabled( 'sign-in-with-apple/redirect' ) ) {
 		signInWithApple( app );
 	}
 

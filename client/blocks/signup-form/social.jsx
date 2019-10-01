@@ -83,6 +83,7 @@ class SocialSignupForm extends Component {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
 		const host = typeof window !== 'undefined' && window.location.host;
 		const redirectUri = host ? `https://${ host }/start/user` : null;
+		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
 
 		return (
 			<div className="signup-form__social">
@@ -105,7 +106,7 @@ class SocialSignupForm extends Component {
 					<AppleLoginButton
 						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						uxMode="redirect"
+						uxMode={ uxModeApple }
 						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'apple' ) }
 						socialServiceResponse={

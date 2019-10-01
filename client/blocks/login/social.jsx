@@ -185,6 +185,8 @@ class SocialLoginForm extends Component {
 
 	render() {
 		const { redirectTo, uxMode } = this.props;
+		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
+
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
@@ -202,7 +204,7 @@ class SocialLoginForm extends Component {
 					<AppleLoginButton
 						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						uxMode="redirect"
+						uxMode={ uxModeApple }
 						redirectUri={ this.getRedirectUrl( uxMode, 'apple' ) }
 						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
 						socialServiceResponse={
