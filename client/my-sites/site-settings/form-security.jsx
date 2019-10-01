@@ -54,7 +54,6 @@ class SiteSettingsFormSecurity extends Component {
 		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
 		const disableSpamFiltering = ! fields.akismet || akismetUnavailable;
 
-		// *********************************************************************************************************
 		const inTransition = isRequestingSettings || isSavingSettings;
 		const isStoredKey = fields.wordpress_api_key === settings.wordpress_api_key;
 		const isDirty = includes( dirtyFields, 'wordpress_api_key' );
@@ -72,7 +71,6 @@ class SiteSettingsFormSecurity extends Component {
 		if ( ! inTransition && isInvalidKey ) {
 			fieldStyle = 'is-error';
 		}
-		// *********************************************************************************************************
 
 		return (
 			<form
