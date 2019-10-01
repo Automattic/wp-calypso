@@ -175,17 +175,12 @@ class SocialLoginForm extends Component {
 
 	getRedirectUrl = ( uxMode, service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
-
-		if ( ! host || uxMode !== 'redirect' ) {
-			return null;
-		}
-
 		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
 
 	render() {
 		const { redirectTo, uxMode } = this.props;
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
+		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
 			<Card className="login__social">

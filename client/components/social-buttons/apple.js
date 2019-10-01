@@ -29,7 +29,7 @@ class AppleLoginButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		isFormDisabled: PropTypes.bool,
-		redirectUri: PropTypes.string.isRequired,
+		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
 		uxMode: PropTypes.oneOf( [ 'redirect', 'popup' ] ),
@@ -47,21 +47,24 @@ class AppleLoginButton extends Component {
 			return;
 		}
 
-		this.loadAppleClient();
+		if ( this.props.uxMode === 'redirect' ) {
+			// do not load the client for the popup flow as
+			// we won't have a valid redirectUri to give to the apple client
+			this.loadAppleClient();
 
-		if (
-			this.props.uxMode === 'redirect' &&
-			this.props.socialServiceResponse &&
-			this.props.socialServiceResponse.client_id === config( 'apple_oauth_client_id' )
-		) {
-			const user = {
-				email: this.props.socialServiceResponse.user_email,
-				name: this.props.socialServiceResponse.user_name,
-			};
-			this.props.responseHandler( {
-				id_token: this.props.socialServiceResponse.id_token,
-				user: user,
-			} );
+			if (
+				this.props.socialServiceResponse &&
+				this.props.socialServiceResponse.client_id === config( 'apple_oauth_client_id' )
+			) {
+				const user = {
+					email: this.props.socialServiceResponse.user_email,
+					name: this.props.socialServiceResponse.user_name,
+				};
+				this.props.responseHandler( {
+					id_token: this.props.socialServiceResponse.id_token,
+					user: user,
+				} );
+			}
 		}
 	}
 
@@ -79,7 +82,6 @@ class AppleLoginButton extends Component {
 			return this.appleClientLoaded;
 		}
 
-		this.setState( { error: '' } );
 		this.appleClientLoaded = this.loadDependency()
 			.then( AppleID =>
 				AppleID.auth.init( {

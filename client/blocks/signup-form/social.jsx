@@ -82,8 +82,8 @@ class SocialSignupForm extends Component {
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
 		const host = typeof window !== 'undefined' && window.location.host;
-		const redirectUri = host ? `https://${ host }/start/user` : null;
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
+		const redirectUri = `https://${ host }/start/user`;
+		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
 			<div className="signup-form__social">
