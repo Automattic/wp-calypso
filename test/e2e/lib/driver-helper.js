@@ -554,6 +554,5 @@ export async function acceptAlertIfPresent( driver ) {
 }
 
 export async function waitForAlertPresent( driver ) {
-	console.log( this.explicitWaitMS );
 	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
 }
