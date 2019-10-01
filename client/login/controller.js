@@ -27,13 +27,15 @@ const enhanceContextWithLogin = context => {
 		query,
 	} = context;
 
+	const socialServiceResponse = context.hash && context.hash.client_id ? context.hash : null;
+
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
-			socialServiceResponse={ context.hash }
+			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
 			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }

@@ -40,6 +40,10 @@ function getSocialServiceFromClientId( clientId ) {
 		return 'facebook';
 	}
 
+	if ( clientId === config( 'apple_oauth_client_id' ) ) {
+		return 'apple';
+	}
+
 	return null;
 }
 

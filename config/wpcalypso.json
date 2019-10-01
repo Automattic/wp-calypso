@@ -117,6 +117,7 @@
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
+		"sign-in-with-apple": true,
 		"signup/import": true,
 		"signup/onboarding-flow": true,
 		"signup/social": true,

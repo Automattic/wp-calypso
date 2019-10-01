@@ -108,11 +108,19 @@ class SocialLoginForm extends Component {
 	};
 
 	handleAppleResponse = response => {
-		const { onSuccess, redirectTo } = this.props;
+		const { onSuccess, socialService } = this.props;
+		let redirectTo = this.props.redirectTo;
 
 		if ( ! response.id_token ) {
 			return;
 		}
+
+		// load persisted redirect_to url from session storage, needed for redirect_to to work with apple redirect flow
+		if ( socialService === 'apple' && ! redirectTo ) {
+			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
+		}
+
+		window.sessionStorage.removeItem( 'login_redirect_to' );
 
 		const user = response.user || {};
 
@@ -157,7 +165,7 @@ class SocialLoginForm extends Component {
 			...params,
 		} );
 
-	trackLogin = service => {
+	trackLoginAndRememberRedirect = service => {
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
 		if ( this.props.redirectTo ) {
@@ -166,10 +174,13 @@ class SocialLoginForm extends Component {
 	};
 
 	getRedirectUrl = ( uxMode, service ) => {
-		return uxMode
-			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
-					login( { isNative: true, socialService: service } ) }`
-			: null;
+		const host = typeof window !== 'undefined' && window.location.host;
+
+		if ( ! host || uxMode !== 'redirect' ) {
+			return null;
+		}
+
+		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
 
 	render() {
@@ -182,12 +193,21 @@ class SocialLoginForm extends Component {
 						responseHandler={ this.handleGoogleResponse }
 						uxMode={ uxMode }
 						redirectUri={ this.getRedirectUrl( uxMode, 'google' ) }
-						onClick={ this.trackLogin.bind( null, 'google' ) }
+						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
+						socialServiceResponse={
+							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
+						}
 					/>
 
 					<AppleLoginButton
+						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						onClick={ this.trackLogin.bind( null, 'apple' ) }
+						uxMode="redirect"
+						redirectUri={ this.getRedirectUrl( uxMode, 'apple' ) }
+						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+						socialServiceResponse={
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
 					/>
 
 					<p className="login__social-tos">

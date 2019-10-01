@@ -120,7 +120,11 @@ class SocialLoginActionButton extends Component {
 
 		if ( service === 'apple' ) {
 			return (
-				<AppleLoginButton responseHandler={ this.handleSocialServiceResponse }>
+				<AppleLoginButton
+					clientId={ config( 'apple_oauth_client_id' ) }
+					uxMode="popup"
+					responseHandler={ this.handleSocialServiceResponse }
+				>
 					{ actionButton }
 				</AppleLoginButton>
 			);
