@@ -70,7 +70,24 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 // Close button
 .page-template-modal .components-modal__header .components-button {
-	left: 0;
+	left: -20px;
+	top: -1px;
+	.dashicon {
+		width: 28px;
+		height: 28px;
+	}
+}
+
+.page-template-modal .components-modal__header {
+	position: relative;
+
+	&::after {
+		position: absolute;
+		content: ' ';
+		border-right: 1px solid #e2e4e7;
+		height: 100%;
+		left: 54px;
+	}
 }
 
 .page-template-modal .components-modal__content {
