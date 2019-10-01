@@ -16,6 +16,7 @@ import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-componen
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
 import * as dataHelper from '../lib/data-helper';
+import * as mediaHelper from '../lib/media-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -60,33 +61,43 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	// describe( 'Insert a Click to Tweet block: @parallel', function() {
-	// 	step( 'Can log in', async function() {
-	// 		this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
-	// 		return await this.loginFlow.loginAndStartNewPost( null, true );
-	// 	} );
+	describe( 'Insert a Click to Tweet block: @parallel', function() {
+		step( 'Can log in', async function() {
+			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			return await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
 
-	// 	step( 'Can insert the Click to Tweet block', async function() {
-	// 		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-	// 		await gEditorComponent.addBlock( 'Click to Tweet' );
-	//         return await driverHelper.waitTillPresentAndDisplayed(
-	//             driver,
-	//             By.css( '.wp-block-coblocks-click-to-tweet' )
-	//         );
-	// 	} );
+		step( 'Can insert the Click to Tweet block', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.addBlock( 'Click to Tweet' );
+			return await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.wp-block-coblocks-click-to-tweet' )
+			);
+		} );
 
-	// 	step( 'Can publish and view content', async function() {
-	// 		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-	// 		return await gEditorComponent.publish( { visit: true } );
-	// 	} );
+		step( 'Can enter text to tweet', async function() {
+			const textSelector = By.css( '.wp-block-coblocks-click-to-tweet__text' );
+			await driverHelper.waitTillPresentAndDisplayed( driver, textSelector );
+			return await driver
+				.findElement( textSelector )
+				.sendKeys(
+					'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim'
+				);
+		} );
 
-	// 	step( 'Can see the Click to Tweet block in our published post', async function() {
-	//         return await driverHelper.waitTillPresentAndDisplayed(
-	//             driver,
-	//             By.css( '.wp-block-coblocks-click-to-tweet' )
-	//         );
-	// 	} );
-	// } );
+		step( 'Can publish and view content', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.publish( { visit: true } );
+		} );
+
+		step( 'Can see the Click to Tweet block in our published post', async function() {
+			return await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.wp-block-coblocks-click-to-tweet' )
+			);
+		} );
+	} );
 
 	describe( 'Insert a Dynamic HR block: @parallel', function() {
 		step( 'Can log in', async function() {
@@ -144,33 +155,60 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	// describe( 'Insert a Logos & Badges block: @parallel', function() {
-	// 	step( 'Can log in', async function() {
-	// 		this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
-	// 		return await this.loginFlow.loginAndStartNewPost( null, true );
-	// 	} );
+	describe( 'Insert a Logos & Badges block: @parallel', function() {
+		let fileDetails;
 
-	// 	step( 'Can insert the Logos & Badges block', async function() {
-	// 		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-	// 		await gEditorComponent.addBlock( 'Logos' );
-	//         return await driverHelper.waitTillPresentAndDisplayed(
-	//             driver,
-	//             By.css( '.wp-block-coblocks-logos' )
-	//         );
-	// 	} );
+		// Create image file for upload
+		before( async function() {
+			fileDetails = await mediaHelper.createFile();
+			return fileDetails;
+		} );
 
-	// 	step( 'Can publish and view content', async function() {
-	// 		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-	// 		return await gEditorComponent.publish( { visit: true } );
-	// 	} );
+		step( 'Can log in', async function() {
+			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			return await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
 
-	// 	step( 'Can see the Logos & Badges block in our published post', async function() {
-	//         return await driverHelper.waitTillPresentAndDisplayed(
-	//             driver,
-	//             By.css( '.wp-block-coblocks-logos' )
-	//         );
-	// 	} );
-	// } );
+		step( 'Can insert the Logos & Badges block', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.addBlock( 'Logos' );
+			return await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.wp-block-coblocks-logos' )
+			);
+		} );
+
+		step( 'Can select an image as a logo', async function() {
+			await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.editor-media-placeholder' )
+			);
+			await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.components-form-file-upload ' )
+			);
+			const filePathInput = await driver.findElement(
+				By.css( '.components-form-file-upload input[type="file"]' )
+			);
+			await filePathInput.sendKeys( fileDetails.file );
+			return await driverHelper.waitTillNotPresent(
+				driver,
+				By.css( '.wp-block-image .components-spinner' )
+			);
+		} );
+
+		step( 'Can publish and view content', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.publish( { visit: true } );
+		} );
+
+		step( 'Can see the Logos & Badges block in our published post', async function() {
+			return await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.wp-block-coblocks-logos' )
+			);
+		} );
+	} );
 
 	describe( 'Insert a Pricing Table block: @parallel', function() {
 		step( 'Can log in', async function() {
