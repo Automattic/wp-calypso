@@ -935,7 +935,7 @@ class SignupForm extends Component {
 function TrackRender( { children, eventName } ) {
 	useEffect( () => {
 		analytics.tracks.recordEvent( eventName );
-	}, [] );
+	}, [ eventName ] );
 
 	return children;
 }
