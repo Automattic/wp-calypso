@@ -131,8 +131,13 @@ class PageTemplateModal extends Component {
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
 		}
-		this.setState( { isOpen: false } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
+
+		if ( window && window.history && window.history.length ) {
+			window.history.back();
+		} else {
+			this.setState( { isOpen: false } );
+		}
 	};
 
 	getBlocksByTemplateSlug( slug ) {

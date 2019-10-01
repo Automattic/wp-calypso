@@ -70,8 +70,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 // Close button
 .page-template-modal .components-modal__header .components-button {
-	left: -20px;
-	top: -1px;
+	left: -24px; // Make up for 24px modal padding.
+	margin: 9px 10px;
+	padding: 4px;
+
 	.dashicon {
 		width: 28px;
 		height: 28px;
