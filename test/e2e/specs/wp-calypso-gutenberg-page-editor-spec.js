@@ -25,6 +25,7 @@ import * as mediaHelper from '../lib/media-helper.js';
 import * as dataHelper from '../lib/data-helper.js';
 import * as driverHelper from '../lib/driver-helper';
 
+const calypsoBaseURL = config.get( 'calypsoBaseURL' );
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -617,6 +618,24 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		step( 'Can insert an image in an Image block with the Media Modal', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			return await gEditorComponent.addImageFromMediaModal( fileDetails );
+		} );
+	} );
+
+	describe( 'Back Button to WordPress.com: @parallel', function() {
+		step( 'Can log in', async function() {
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			return await loginFlow.loginAndStartNewPage( null, true );
+		} );
+
+		step( 'Can click Back button to WordPress.com', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.closeEditor();
+			const url = await driver.getCurrentUrl();
+			assert.strictEqual(
+				true,
+				url.includes( calypsoBaseURL ),
+				`The current url: '${ url }' does not include '${ calypsoBaseURL }'`
+			);
 		} );
 	} );
 } );
