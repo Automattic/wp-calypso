@@ -6,24 +6,30 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
+import { flow, includes, isEmpty, partialRight, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { Button, TextControl, Panel, PanelBody, PanelRow } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import wrapSettingsForm from './wrap-settings-form';
 import Protect from './protect';
 import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import FormInputValidation from 'components/forms/form-input-validation';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { isATEnabled } from 'lib/automated-transfer';
+import { FEATURE_SPAM_AKISMET_PLUS, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
 
 class SiteSettingsFormSecurity extends Component {
 	render() {
@@ -33,6 +39,8 @@ class SiteSettingsFormSecurity extends Component {
 			fields,
 			handleAutosavingToggle,
 			handleSubmitForm,
+			hasAkismetFeature,
+			hasAkismetKeyError,
 			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
@@ -46,6 +54,26 @@ class SiteSettingsFormSecurity extends Component {
 		} = this.props;
 		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
 		const disableSpamFiltering = ! fields.akismet || akismetUnavailable;
+
+		// *********************************************************************************************************
+		const inTransition = isRequestingSettings || isSavingSettings;
+		const isStoredKey = fields.wordpress_api_key === settings.wordpress_api_key;
+		const isDirty = includes( dirtyFields, 'wordpress_api_key' );
+		const isEmptyKey = isEmpty( fields.wordpress_api_key ) || isEmpty( settings.wordpress_api_key );
+		const isValidKey =
+			( fields.wordpress_api_key && isStoredKey ) ||
+			( fields.wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
+		const isInvalidKey = ( isDirty && hasAkismetKeyError && ! isStoredKey ) || isEmptyKey;
+
+		let fieldStyle;
+		if ( ! inTransition && isValidKey ) {
+			fieldStyle = 'is-valid';
+		}
+
+		if ( ! inTransition && isInvalidKey ) {
+			fieldStyle = 'is-error';
+		}
+		// *********************************************************************************************************
 
 		return (
 			<form
@@ -71,6 +99,62 @@ class SiteSettingsFormSecurity extends Component {
 				/>
 
 				<QueryJetpackSettings siteId={ siteId } />
+
+				{ ! isAtomic && (
+					<Panel header={ translate( 'Jetpack Anti-spam' ) }>
+						{ ! inTransition && ! hasAkismetFeature && ! isValidKey ? (
+							<PanelBody>
+								<Banner
+									description={ translate(
+										'Automatically remove spam from comments and contact forms.'
+									) }
+									event={ 'calypso_akismet_settings_upgrade_nudge' }
+									feature={ FEATURE_SPAM_AKISMET_PLUS }
+									plan={ PLAN_JETPACK_PERSONAL }
+									title={ translate(
+										'Defend your site against spam! Upgrade to Jetpack Personal.'
+									) }
+								/>
+							</PanelBody>
+						) : (
+							<PanelBody
+								title={ translate( 'Your site is protected from spam' ) }
+								icon="yes"
+								initialOpen={ true }
+							>
+								<PanelRow className="form-security__text-field-panel-row">
+									{ /* TODO: don't style this inline?  */ }
+									<div style={ { display: 'flex', flexDirection: 'column' } }>
+										<TextControl
+											className={ fieldStyle }
+											disabled={ inTransition || ! fields.akismet }
+											label={ translate( 'Your API Key' ) }
+											onChange={ apiKey => {
+												// TODO: this isn't the best pattern
+												const onChangeApiKey = onChangeField( 'wordpress_api_key' );
+												onChangeApiKey( { target: { value: apiKey } } );
+											} }
+											value={ fields.wordpress_api_key }
+										/>
+										{ ( isValidKey || isInvalidKey ) && ! inTransition && (
+											<FormInputValidation
+												isError={ isInvalidKey }
+												text={ translate( 'Please enter a valid Antispam API key.' ) }
+											/>
+										) }
+									</div>
+									<Button
+										isPrimary
+										disabled={ isRequestingSettings || isSavingSettings || disableSpamFiltering }
+										onClick={ handleSubmitForm }
+									>
+										{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+									</Button>
+								</PanelRow>
+							</PanelBody>
+						) }
+					</Panel>
+				) }
 
 				{ ! isAtomic && (
 					<div>
@@ -104,7 +188,8 @@ class SiteSettingsFormSecurity extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state, ownProps ) => {
+	const { fields, dirtyFields } = ownProps;
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
@@ -119,8 +204,14 @@ const connectComponent = connect( state => {
 		siteId,
 		'akismet'
 	);
+	const hasAkismetFeature = hasFeature( state, siteId, FEATURE_SPAM_AKISMET_PLUS );
+	const hasAkismetKeyError =
+		isJetpackSettingsSaveFailure( state, siteId, fields ) &&
+		includes( dirtyFields, 'wordpress_api_key' );
 
 	return {
+		hasAkismetFeature,
+		hasAkismetKeyError,
 		isAtomic: isATEnabled( selectedSite ),
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
@@ -138,7 +229,7 @@ const getFormSettings = partialRight( pick, [
 	'wordpress_api_key',
 ] );
 
-export default flowRight(
+export default flow(
 	connectComponent,
 	localize,
 	wrapSettingsForm( getFormSettings )
