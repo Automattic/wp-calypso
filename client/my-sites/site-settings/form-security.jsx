@@ -26,7 +26,6 @@ import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-sa
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { isATEnabled } from 'lib/automated-transfer';
 import { FEATURE_SPAM_AKISMET_PLUS, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
@@ -123,20 +122,24 @@ class SiteSettingsFormSecurity extends Component {
 								initialOpen={ true }
 							>
 								<PanelRow className="form-security__text-field-panel-row">
-									{ /* TODO: don't style this inline?  */ }
 									<div style={ { display: 'flex', flexDirection: 'column' } }>
 										<TextControl
 											className={ fieldStyle }
 											disabled={ inTransition || ! fields.akismet }
 											label={ translate( 'Your API Key' ) }
 											onChange={ apiKey => {
-												// TODO: this isn't the best pattern
 												const onChangeApiKey = onChangeField( 'wordpress_api_key' );
 												onChangeApiKey( { target: { value: apiKey } } );
 											} }
 											value={ fields.wordpress_api_key }
 										/>
-										{ ( isValidKey || isInvalidKey ) && ! inTransition && (
+										{ ! inTransition && isValidKey && (
+											<FormInputValidation
+												isError={ isInvalidKey }
+												text={ translate( 'Your Antispam key is valid.' ) }
+											/>
+										) }
+										{ ! inTransition && isInvalidKey && (
 											<FormInputValidation
 												isError={ isInvalidKey }
 												text={ translate( 'Please enter a valid Antispam API key.' ) }
@@ -154,26 +157,6 @@ class SiteSettingsFormSecurity extends Component {
 							</PanelBody>
 						) }
 					</Panel>
-				) }
-
-				{ ! isAtomic && (
-					<div>
-						<SettingsSectionHeader
-							disabled={ isRequestingSettings || isSavingSettings || disableSpamFiltering }
-							isSaving={ isSavingSettings }
-							onButtonClick={ handleSubmitForm }
-							showButton
-							title={ translate( 'Jetpack Anti-spam' ) }
-						/>
-						<SpamFilteringSettings
-							dirtyFields={ dirtyFields }
-							fields={ fields }
-							currentAkismetKey={ settings.wordpress_api_key }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							onChangeField={ onChangeField }
-						/>
-					</div>
 				) }
 
 				<SettingsSectionHeader title={ translate( 'WordPress.com log in' ) } />
