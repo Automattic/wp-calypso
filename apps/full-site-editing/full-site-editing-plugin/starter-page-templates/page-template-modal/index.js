@@ -1,8 +1,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import {
+	getBlocksByTemplateSlug,
+	getTitleByTemplateSlug,
+	hasTemplates,
+	getFirstTemplateSlug,
+	getTemplates,
+} from './utils/templates-parser';
+
 /**
  * External dependencies
  */
-import { isEmpty, get } from 'lodash';
+import { isEmpty } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -20,19 +28,9 @@ import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
 import ensureAssets from './utils/ensure-assets';
-import {
-	getAllTemplatesBlocks,
-	getBlocksByTemplateSlug,
-	getTitleByTemplateSlug,
-	hasTemplates,
-	getFirstTemplateSlug,
-} from  './utils/templates-parser';
-
-/* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
 const {
-	templates = [],
 	vertical,
 	segment,
 	tracksUserData,
@@ -145,7 +143,6 @@ class PageTemplateModal extends Component {
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
 										templates={ templates }
-										blocksByTemplates={ getAllTemplatesBlocks() }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ true }
 										siteInformation={ siteInformation }
@@ -234,7 +231,7 @@ registerPlugin( 'page-templates', {
 		return (
 			<PageTemplatesPlugin
 				shouldPrefetchAssets={ false }
-				templates={ templates }
+				templates={ getTemplates() }
 				vertical={ vertical }
 				segment={ segment }
 			/>

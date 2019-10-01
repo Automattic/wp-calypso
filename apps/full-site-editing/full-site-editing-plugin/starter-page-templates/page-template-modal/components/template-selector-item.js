@@ -2,19 +2,21 @@
  * External dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { isNil } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
+import { isNil, get } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
 import { Disabled, Spinner } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
+/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
  */
 import BlockPreview from './block-template-preview';
+import { getBlocksByTemplateSlug, getTemplateBySlug } from '../utils/templates-parser';
 
 const TemplateSelectorItem = props => {
 	const {
@@ -27,16 +29,33 @@ const TemplateSelectorItem = props => {
 		staticPreviewImgAlt = '',
 		isSelected,
 		handleTemplateConfirmation,
-		template,
 	} = props;
+	const template = getTemplateBySlug( value );
+	const [ isParsing, setIsParsing ] = useState( template.isParsing );
+
+	const onTemplatesParseListener = event => {
+		const parsedTemplate = get( event, [ 'detail', 'template' ] );
+		if ( value !== parsedTemplate.slug ) {
+			return;
+		}
+		setIsParsing( parsedTemplate.isParsing );
+	};
+	window.addEventListener( 'onTemplateParse', onTemplatesParseListener );
+
+	useEffect( () => {
+		return () => {
+			window.removeEventListener( 'resize', onTemplatesParseListener );
+		};
+	}, [] );
 
 	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
 		return null;
 	}
 
-	const { isParsing, isEmpty, blocks } = template;
+	const { isEmpty } = template;
 
 	const renderInnerPreview = () => {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		if ( isParsing && ! isEmpty ) {
 			return (
 				<div className="editor-styles-wrapper">
@@ -46,11 +65,12 @@ const TemplateSelectorItem = props => {
 				</div>
 			);
 		}
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		if ( useDynamicPreview ) {
 			return (
 				<Disabled>
-					<BlockPreview blocks={ blocks } viewportWidth={ 960 } />
+					<BlockPreview blocks={ getBlocksByTemplateSlug( value ) } viewportWidth={ 960 } />
 				</Disabled>
 			);
 		}
@@ -89,6 +109,7 @@ const TemplateSelectorItem = props => {
 			type="button"
 			className={ classnames( 'template-selector-item__label', {
 				'is-selected': isSelected,
+				'is-parsing': isParsing,
 			} ) }
 			value={ value }
 			onClick={ handleLabelClick }

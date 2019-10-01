@@ -183,15 +183,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		position: relative;
 		pointer-events: none;
 
-<<<<<<< HEAD
 		@media screen and ( max-width: 659px ) {
 			padding-top: 120%;
 		}
 
-		&.is-rendering {
-=======
 		&.is-parsing {
->>>>>>> a1f7085... show spinner when still parsing
 			opacity: 0.5;
 		}
 
@@ -279,7 +275,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     display: flex;
     align-items: center;
 	padding-right: 24px;
-	
+
 	@media screen and ( max-width: 659px ) {
 		display: none;
 	}

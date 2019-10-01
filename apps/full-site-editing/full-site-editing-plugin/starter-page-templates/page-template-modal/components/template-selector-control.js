@@ -2,7 +2,7 @@
  * External dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { isEmpty, isArray, noop, map, get } from 'lodash';
+import { isEmpty, isArray, noop, map } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
@@ -20,7 +20,6 @@ import { memo } from '@wordpress/element';
  */
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
-import { getTemplateBySlug, hasTemplates } from '../utils/templates-parser';
 
 export const TemplateSelectorControl = ( {
 	label,
@@ -35,10 +34,6 @@ export const TemplateSelectorControl = ( {
 	handleTemplateConfirmation = noop,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
-		return null;
-	}
-
-	if ( true === useDynamicPreview && ! hasTemplates() ) {
 		return null;
 	}
 
@@ -68,8 +63,6 @@ export const TemplateSelectorControl = ( {
 							useDynamicPreview={ useDynamicPreview }
 							isSelected={ slug === selectedTemplate }
 							handleTemplateConfirmation={ handleTemplateConfirmation }
-							isParsing={ get( blocksByTemplates, [ slug, 'isParsing' ], false ) }
-							template={ getTemplateBySlug( slug ) }
 						/>
 					</li>
 				) ) }
