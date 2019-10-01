@@ -133,4 +133,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	domainSuggestionsEn: {
+		datestamp: '20191003',
+		variations: {
+			control: 50,
+			test: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
