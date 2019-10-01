@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, get, has } from 'lodash';
 import moment from 'moment-timezone';
 
@@ -40,6 +40,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
@@ -492,6 +493,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			site,
 			siteIsJetpack,
+			siteIsVip,
 			siteSlug,
 			translate,
 		} = this.props;
@@ -548,7 +550,7 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ site && ! isBusiness( site.plan ) && (
+						{ site && ! isBusiness( site.plan ) && ! siteIsVip && (
 							<Banner
 								feature={ FEATURE_NO_BRANDING }
 								plan={ PLAN_BUSINESS }
@@ -603,6 +605,7 @@ const connectComponent = connect(
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
+			siteIsVip: isVipSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 			selectedSite,
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -77,15 +77,19 @@ function PendingGSuiteTosNoticeDialog( props ) {
 				setPassword( data.password );
 			},
 			() => {
-				props.errorNotice( translate( 'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.', {
-						args: {
-							gsuiteEmail: props.user,
-						},
-						components: {
-							link: <a href={ CALYPSO_CONTACT } />,
-						},
-					}
-				) );
+				props.errorNotice(
+					translate(
+						'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.',
+						{
+							args: {
+								gsuiteEmail: props.user,
+							},
+							components: {
+								link: <a href={ CALYPSO_CONTACT } />,
+							},
+						}
+					)
+				);
 
 				setOpenTracked( false );
 				props.onClose();

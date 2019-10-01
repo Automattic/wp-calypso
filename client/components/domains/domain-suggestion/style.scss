@@ -66,7 +66,7 @@
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		&.is-success {
 			background: var( --color-success );
@@ -133,6 +133,7 @@
 
 	.domain-registration-suggestion__title {
 		width: auto;
+		max-width: 100%;
 		padding-right: 0.2em;
 	}
 
@@ -149,6 +150,7 @@
 
 .domain-registration-suggestion__title {
 	font-size: 16px;
+	word-break: break-all;
 
 	@include breakpoint( '>480px' ) {
 		align-self: center;

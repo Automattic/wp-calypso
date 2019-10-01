@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { stringify } from 'qs';
 
 /**
@@ -28,6 +26,7 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import {
@@ -118,9 +117,8 @@ export class LoginForm extends Component {
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
 			nextProps.socialAccountIsLinking
 		) {
-			if ( ! this.state.usernameOrEmail ) {
-				this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
-			}
+			this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
+			this.props.getAuthAccountType( nextProps.socialAccountLinkEmail );
 		}
 
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
@@ -235,10 +233,17 @@ export class LoginForm extends Component {
 	};
 
 	shouldUseRedirectLoginFlow() {
-		const { oauth2Client } = this.props;
+		const { currentRoute, oauth2Client } = this.props;
 		// If calypso is loaded in a popup, we don't want to open a second popup for social login
 		// let's use the redirect flow instead in that case
-		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+		let isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+
+		// Jetpack Connect-in-place auth flow contains special reserved args, so we want a popup for social login.
+		// See p1HpG7-7nj-p2 for more information.
+		if ( isPopup && '/log-in/jetpack' === currentRoute ) {
+			isPopup = false;
+		}
+
 		// disable for oauth2 flows for now
 		return ! oauth2Client && isPopup;
 	}
@@ -324,6 +329,9 @@ export class LoginForm extends Component {
 						</label>
 
 						<TextControl
+							autoCapitalize="off"
+							autoCorrect="off"
+							spellCheck="false"
 							label={ this.props.translate( 'Email Address or Username' ) }
 							disabled={ isFormDisabled || this.isPasswordView() }
 							id="usernameOrEmail"
@@ -488,6 +496,8 @@ export class LoginForm extends Component {
 
 						<FormTextInput
 							autoCapitalize="off"
+							autoCorrect="off"
+							spellCheck="false"
 							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
@@ -623,6 +633,7 @@ export default connect(
 
 		return {
 			accountType,
+			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),

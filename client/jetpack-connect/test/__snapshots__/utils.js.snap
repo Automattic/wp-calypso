@@ -9,6 +9,7 @@ Object {
   "closeWindowAfterLogin": false,
   "from": "[unknown]",
   "homeUrl": "https://yourjetpack.blog",
+  "isPopup": false,
   "jpVersion": null,
   "nonce": "foobar",
   "redirectAfterAuth": null,

@@ -7,7 +7,7 @@
 import { localize } from 'i18n-calypso';
 import { assign, overSome, some } from 'lodash';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -100,7 +100,7 @@ export class PaypalPaymentBox extends React.Component {
 					if ( error.message ) {
 						errorMessage = error.message;
 					} else {
-						errorMessage = this.props.translate( 'Please specify a country and postal code.' );
+						errorMessage = this.props.translate( 'Please specify a country and postal code' );
 					}
 
 					this.setSubmitState( {

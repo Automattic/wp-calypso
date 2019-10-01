@@ -16,6 +16,7 @@ import page from 'page';
  * Internal dependencies
  */
 import accept from 'lib/accept';
+import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import QueryShippingZones, {
 	areShippingZonesFullyLoaded,
@@ -141,7 +142,7 @@ class Shipping extends Component {
 	}
 
 	render() {
-		const { className, isRestOfTheWorld, hasEdits, siteId } = this.props;
+		const { className, isRestOfTheWorld, hasEdits, siteId, translate } = this.props;
 
 		return (
 			<Main className={ classNames( 'shipping', className ) } wideLayout>
@@ -149,6 +150,7 @@ class Shipping extends Component {
 				<QueryShippingZones siteId={ siteId } />
 				<QuerySettingsGeneral siteId={ siteId } />
 				<ShippingZoneHeader onSave={ this.onSave } onDelete={ this.onDelete } />
+				<FormattedHeader headerText={ translate( 'Add a Shipping Zone' ) } />
 				{ ! isRestOfTheWorld && <ShippingZoneLocationList siteId={ siteId } /> }
 				<ShippingZoneMethodList siteId={ siteId } />
 				{ ! isRestOfTheWorld && <ShippingZoneName siteId={ siteId } /> }

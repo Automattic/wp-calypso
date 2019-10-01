@@ -9,11 +9,11 @@
 	margin-top: 14px;
 	margin-bottom: 14px;
 
-	border: 1px solid var( --color-primary-200 );
+	border: 1px solid var( --color-primary-20 );
 	box-shadow: none;
 	box-sizing: border-box;
 	border-radius: 3px;
-	background: var( --color-white );
+	background: var( --color-surface );
 
 	.text-control__input {
 		width: 100%;
@@ -81,7 +81,7 @@
 		}
 		input[type='text'], input[type='email'], input[type='password'] {
 			top: 15px;
-			color: var( --color-primary-500 );
+			color: var( --color-primary-50 );
 		}
 	}
 
@@ -91,9 +91,9 @@
 		}
 		input[type='text'], input[type='email'], input[type='password'] {
 			top: 17px;
-			color: var( --color-primary-200 );
+			color: var( --color-primary-20 );
 			&::placeholder {
-				color: var( --color-primary-200 );
+				color: var( --color-primary-20 );
 				opacity: 1;
 			}
 		}

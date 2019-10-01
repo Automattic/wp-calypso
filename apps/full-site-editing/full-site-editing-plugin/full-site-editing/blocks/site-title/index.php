@@ -21,6 +21,12 @@ function render_site_title_block( $attributes ) {
 		$class .= ' ' . $attributes['className'];
 	}
 
+	$align = ' alignwide';
+	if ( isset( $attributes['align'] ) ) {
+		$align = empty( $attributes['align'] ) ? '' : ' align' . $attributes['align'];
+	}
+	$class .= $align;
+
 	?>
 	<h1 class="<?php echo esc_attr( $class ); ?>">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>

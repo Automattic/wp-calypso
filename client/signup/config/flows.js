@@ -16,7 +16,7 @@ import { generateFlows } from 'signup/config/flows-pure';
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
-	return '/checkout/' + dependencies.siteSlug;
+	return `/checkout/${ dependencies.siteSlug }?signup=1`;
 }
 
 function dependenciesContainCartItem( dependencies ) {

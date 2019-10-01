@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { noop, pick } from 'lodash';
 
@@ -26,7 +26,6 @@ class CalendarButton extends Component {
 		events: PropTypes.array,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
-		rootClassName: PropTypes.string,
 		selectedDay: PropTypes.object,
 		showDelay: PropTypes.number,
 		siteId: PropTypes.number,
@@ -85,7 +84,6 @@ class CalendarButton extends Component {
 			'ignoreContext',
 			'isVisible',
 			'modifiers',
-			'rootClassName',
 			'selectedDay',
 			'showDelay',
 			'siteId',

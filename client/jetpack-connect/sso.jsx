@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, map } from 'lodash';

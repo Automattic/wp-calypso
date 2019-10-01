@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,8 +30,14 @@ class AppleLoginButton extends Component {
 		responseHandler: PropTypes.func.isRequired,
 	};
 
+	static defaultProps = {
+		onClick: noop,
+	};
+
 	handleClick = event => {
 		event.preventDefault();
+
+		this.props.onClick( event );
 
 		requestExternalAccess( connectUrl, this.props.responseHandler );
 	};

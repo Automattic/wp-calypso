@@ -24,18 +24,31 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
 
-function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
+function Types( {
+	siteId,
+	query,
+	postType,
+	postTypeSupported,
+	userCanEdit,
+	statusSlug,
+	showPublishedStatus,
+} ) {
 	return (
-		<Main>
+		<Main wideLayout>
 			<DocumentHead title={ get( postType, 'label' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
 			{ false !== userCanEdit &&
 				false !== postTypeSupported && [
-					<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
+					<PostTypeFilter
+						key="filter"
+						query={ userCanEdit ? query : null }
+						statusSlug={ statusSlug }
+					/>,
 					<PostTypeList
 						key="list"
 						query={ userCanEdit ? query : null }
+						showPublishedStatus={ showPublishedStatus }
 						scrollContainer={ document.body }
 					/>,
 				] }
@@ -51,6 +64,8 @@ Types.propTypes = {
 	postType: PropTypes.object,
 	postTypeSupported: PropTypes.bool,
 	userCanEdit: PropTypes.bool,
+	statusSlug: PropTypes.string,
+	showPublishedStatus: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {

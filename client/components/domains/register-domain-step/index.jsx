@@ -93,6 +93,8 @@ import Button from 'components/button';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import { isBlogger } from 'lib/products-values';
 import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 
 /**
  * Style dependencies
@@ -333,6 +335,11 @@ class RegisterDomainStep extends React.Component {
 			this.props.selectedSite.domain !== prevProps.selectedSite.domain
 		) {
 			this.focusSearchCard();
+		}
+
+		// Hide the signup site preview when we're loading results
+		if ( this.props.isSignupStep && this.state.loadingResults && this.props.isSitePreviewVisible ) {
+			this.props.hideSitePreview();
 		}
 	}
 
@@ -656,6 +663,11 @@ class RegisterDomainStep extends React.Component {
 	onSearchChange = ( searchQuery, callback = noop ) => {
 		if ( ! this._isMounted ) {
 			return;
+		}
+
+		// Reshow the signup site preview if there is no search query
+		if ( ! searchQuery && this.props.isSignupStep && ! this.props.isSitePreviewVisible ) {
+			this.props.showSitePreview();
 		}
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
@@ -1010,9 +1022,7 @@ class RegisterDomainStep extends React.Component {
 		const pageNumber = this.state.pageNumber + 1;
 
 		debug(
-			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${
-				this.props.analyticsSection
-			}"`
+			`Showing page ${ pageNumber } with query "${ this.state.lastQuery }" in section "${ this.props.analyticsSection }"`
 		);
 
 		this.props.recordShowMoreResults(
@@ -1316,6 +1326,7 @@ export default connect(
 	( state, props ) => {
 		const queryObject = getQueryObject( props );
 		return {
+			isSitePreviewVisible: isSitePreviewVisible( state ),
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
@@ -1333,5 +1344,7 @@ export default connect(
 		recordShowMoreResults,
 		recordTransferDomainButtonClick,
 		recordUseYourDomainButtonClick,
+		hideSitePreview,
+		showSitePreview,
 	}
 )( localize( RegisterDomainStep ) );

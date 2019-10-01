@@ -16,7 +16,7 @@ $faq-gutter-width: 24px;
 	margin-bottom: 32px;
 	font-size: 24px;
 	font-weight: 300;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .faq__list {
@@ -51,12 +51,12 @@ $faq-gutter-width: 24px;
 .faq__question {
 	margin-bottom: 12px;
 	font-weight: 600;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .faq__answer {
 	margin-bottom: 1em;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 
 	a {
 		text-decoration: underline;

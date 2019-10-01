@@ -26,6 +26,7 @@ import {
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
+import { localizeUrl } from 'lib/i18n-utils';
 import { login } from 'lib/paths';
 
 /**
@@ -188,6 +189,25 @@ class SocialLoginForm extends Component {
 						responseHandler={ this.handleAppleResponse }
 						onClick={ this.trackLogin.bind( null, 'apple' ) }
 					/>
+
+					<p className="login__social-tos">
+						{ this.props.translate(
+							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
+								' are creating an account and you agree to our' +
+								' {{a}}Terms of Service{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
 				</div>
 
 				{ this.props.isSocialAccountCreating && (

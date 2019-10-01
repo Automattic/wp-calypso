@@ -513,7 +513,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_UPLOAD_THEMES ]: {
 		getSlug: () => constants.FEATURE_UPLOAD_THEMES,
-		getTitle: () => i18n.translate( 'Upload Themes' ),
+		getTitle: () => i18n.translate( 'Install Themes' ),
 		getDescription: () => i18n.translate( 'Upload custom themes on your site.' ),
 	},
 

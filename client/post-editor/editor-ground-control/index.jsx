@@ -8,7 +8,7 @@ import { identity, noop, get, findLast } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**

@@ -123,6 +123,19 @@ module.exports = {
 						importNames: [ 'combineReducers' ],
 						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
 					},
+					// Deprecate createReducer and createReducerWithValidation.
+					{
+						name: 'state/utils',
+						importNames: [ 'createReducer', 'createReducerWithValidation' ],
+						message:
+							'This method is deprecated; please use a plain reducer function ' +
+							'and wrap it with `withSchemaValidation` if it needs schema validation.',
+					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
+					},
 				],
 			},
 		],
@@ -136,6 +149,11 @@ module.exports = {
 					{
 						name: 'gridicons',
 						message: "Please use 'components/gridicon' instead.",
+					},
+					// Use fetch instead of superagent.
+					{
+						name: 'superagent',
+						message: 'Please use native `fetch` instead.',
 					},
 				],
 			},

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -30,7 +30,12 @@ import { TERM_ANNUALLY, TYPE_BUSINESS } from 'lib/plans/constants';
 import './style.scss';
 import upgradeNudgeImage from './preview-upgrade-nudge.png';
 
-export const SeoPreviewNudge = ( { canCurrentUserUpgrade, translate, site, isJetpack = false } ) => {
+export const SeoPreviewNudge = ( {
+	canCurrentUserUpgrade,
+	translate,
+	site,
+	isJetpack = false,
+} ) => {
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
@@ -44,9 +49,13 @@ export const SeoPreviewNudge = ( { canCurrentUserUpgrade, translate, site, isJet
 						...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
 					} )
 				}
-				title={ canCurrentUserUpgrade ? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' ) 
-						: translate ( "Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan." ) 
-					  }
+				title={
+					canCurrentUserUpgrade
+						? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' )
+						: translate(
+								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan."
+						  )
+				}
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"
 			/>

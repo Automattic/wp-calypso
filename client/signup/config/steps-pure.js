@@ -52,24 +52,6 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
-		'blog-themes': {
-			stepName: 'blog-themes',
-			props: {
-				designType: 'blog',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
-		'website-themes': {
-			stepName: 'website-themes',
-			props: {
-				designType: 'page',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
 		'portfolio-themes': {
 			stepName: 'portfolio-themes',
 			props: {

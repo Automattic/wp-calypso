@@ -11,6 +11,8 @@ import { createBaseReducer } from './create-base-reducer';
  * of invoking the handler key corresponding with the dispatched action type,
  * passing both the current state and action object.
  *
+ * @deprecated Use a plain reducer function instead.
+ *
  * @param  {*}        initialState   Initial state
  * @param  {Object}   handlers       Object mapping action types to state action handlers
  * @return {Function}                Reducer function
@@ -18,7 +20,8 @@ import { createBaseReducer } from './create-base-reducer';
 export function createReducer( initialState, handlers, __deprecatedArg__ ) {
 	if ( __deprecatedArg__ !== undefined ) {
 		throw new Error(
-			'Schema support in createReducer is no longer available. Please use createReducerWithValidation instead.'
+			'Schema support in createReducer is no longer available. ' +
+				'Please use a plain reducer function wrapped with `withSchemaValidation`.'
 		);
 	}
 	const reducer = createBaseReducer( initialState, handlers );

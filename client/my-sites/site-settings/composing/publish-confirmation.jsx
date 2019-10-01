@@ -50,7 +50,7 @@ class PublishConfirmation extends Component {
 		if ( showPublishFlow ) {
 			return (
 				<FormFieldset>
-					<FormLabel>{ translate( 'Show publish confirmation' ) }</FormLabel>
+					<FormLabel>{ translate( 'Show Publish Confirmation' ) }</FormLabel>
 					<FormSettingExplanation isIndented>
 						{ translate(
 							'The Block Editor handles the Publish confirmation setting. ' +
