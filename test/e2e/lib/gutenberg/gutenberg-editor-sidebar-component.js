@@ -223,7 +223,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			this.driver,
 			By.css( '.edit-post-post-visibility__toggle' )
 		);
-		await this.driver.sleep( 1000 );
+		await this.driver.sleep( 1000 ); // wait for popover to be fully loaded
 		await driverHelper.setCheckbox(
 			this.driver,
 			By.css( 'input#editor-post-private-0[value="private"]' )
