@@ -311,23 +311,18 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	overflow-y: auto;
 	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 
-	.edit-post-visual-editor {
-		margin-top: 20px;
-	}
-
-
 	.editor-styles-wrapper {
 		.editor-post-title {
 			transform-origin: top left;
 			width: 960px;
 			display: block;
-			position: absolute;
-			top: 0;
 		}
 
 		.editor-post-title,
-		.editor-post-title__block {
+		.editor-post-title__block,
+		.editor-post-title__block .editor-post-title__input {
 			height: $template-large-preview-title-height;
+			line-height: $template-large-preview-title-height !important;
 			margin-top: 0;
 			margin-bottom: 0;
 			padding-top: 0;
@@ -361,8 +356,8 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 
 // Preview adjustments.
 // Tweak styles which are inside of the preview container.
-.block-editor-block-preview__container,
-.template-selector-preview {
+.template-selector-item__label, 	// thumbnail
+.template-selector-preview {		// Large Preview
 	.editor-styles-wrapper {
 		.wp-block {
 			width: 100%;
@@ -382,8 +377,6 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 
 		// `core/columns`
 		.wp-block-columns > .editor-inner-blocks > .editor-block-list__layout > [data-type='core/column'] {
-			//margin-left: -14px;
-			//margin-right: -14px;
 
 			& > .editor-block-list__block-edit > div > .block-core-columns > .editor-inner-blocks {
 				margin-top: 0;
@@ -421,6 +414,7 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 	}
 }
 
+.template-selector-preview .edit-post-visual-editor,
 .template-selector-item__label .edit-post-visual-editor {
 	padding: 0;
 }
