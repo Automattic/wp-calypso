@@ -76,20 +76,13 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getAllSurveySteps = () => {
-		const {
-			purchase,
-			isChatAvailable,
-			isChatActive,
-			precancellationChatAvailable,
-			isImport,
-		} = this.props;
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
 
 		return stepsForProductAndSurvey(
 			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
-			precancellationChatAvailable,
-			isImport
+			precancellationChatAvailable
 		);
 	};
 
@@ -121,6 +114,7 @@ class CancelPurchaseForm extends React.Component {
 			questionTwoText: '',
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: '',
+			importQuestionText: '',
 
 			isSubmitting: false,
 		};
@@ -195,6 +189,27 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
+	onImportRadioChange = event => {
+		this.recordClickRadioEvent( 'import_radio', event.currentTarget.value );
+
+		const newState = {
+			...this.state,
+			importQuestionRadio: event.currentTarget.value,
+			importQuestionText: '',
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
+	onImportTextChange = event => {
+		const newState = {
+			...this.state,
+			importQuestionText: event.currentTarget.value,
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
 	// Because of the legacy reason, we can't just use `flowType` here.
 	// Instead we have to map it to the data keys defined way before `flowType` is introduced.
 	getSurveyDataType = () => {
@@ -229,6 +244,7 @@ class CancelPurchaseForm extends React.Component {
 					text: this.state.questionTwoText,
 				},
 				'what-better': { text: this.state.questionThreeText },
+				'import-satisfaction': { response: this.state.importQuestionRadio },
 				type: this.getSurveyDataType(),
 			};
 
@@ -381,6 +397,55 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
+	renderImportQuestion = () => {
+		const reasons = [];
+		const { translate } = this.props;
+		const { importQuestionRadio, importQuestionText } = this.state;
+
+		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+			reasons.push(
+				radioOption(
+					key,
+					importQuestionRadio,
+					importQuestionText,
+					this.onImportRadioChange,
+					this.onImportTextChange,
+					radioPrompt,
+					textPlaceholder
+				)
+			);
+
+		appendRadioOption( 'happy', translate( 'I was happy with the import.' ) );
+
+		appendRadioOption(
+			'look',
+			translate(
+				'Most of the content of my existing site was imported, but it was too hard to get things looking how I wanted.'
+			)
+		);
+
+		appendRadioOption(
+			'content',
+			translate( 'Too much content of my existing site was not imported.' )
+		);
+
+		appendRadioOption(
+			'functionality',
+			translate( 'I no longer have support for key functionality I had on my existing site.' )
+		);
+
+		return (
+			<div>
+				<FormLegend>
+					{ translate(
+						'We see that you imported from another site. What was your satisfaction with the import?'
+					) }
+				</FormLegend>
+				{ reasons }
+			</div>
+		);
+	};
+
 	renderFreeformQuestion = () => {
 		const { translate } = this.props;
 		return (
@@ -457,7 +522,7 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	surveyContent() {
-		const { translate, showSurvey } = this.props;
+		const { translate, isImport, showSurvey } = this.props;
 		const { surveyStep } = this.state;
 
 		if ( showSurvey ) {
@@ -472,6 +537,7 @@ class CancelPurchaseForm extends React.Component {
 						</p>
 						{ this.renderQuestionOne() }
 						{ this.renderQuestionTwo() }
+						{ isImport && this.renderImportQuestion() }
 					</div>
 				);
 			}
@@ -540,7 +606,8 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	clickNext = () => {
-		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state ) ) {
+		const { isImport } = this.props;
+		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state, isImport ) ) {
 			return;
 		}
 		this.changeSurveyStep( nextStep );
@@ -554,7 +621,7 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getStepButtons = () => {
-		const { flowType, translate, disableButtons, purchase } = this.props;
+		const { flowType, translate, disableButtons, purchase, isImport } = this.props;
 		const { surveyStep } = this.state;
 		const disabled = disableButtons || this.state.isSubmitting;
 
@@ -572,7 +639,7 @@ class CancelPurchaseForm extends React.Component {
 			),
 			next = {
 				action: 'next',
-				disabled: disabled || ! isSurveyFilledIn( this.state ),
+				disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
 				label: translate( 'Next Step' ),
 				onClick: this.clickNext,
 			},
