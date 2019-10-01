@@ -24,6 +24,7 @@ import {
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -168,6 +169,7 @@ class Login extends Component {
 			isJetpackWooCommerceFlow,
 			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
+			changingEmailAddress,
 			linkingSocialService,
 			oauth2Client,
 			privateSite,
@@ -312,6 +314,9 @@ class Login extends Component {
 		} else if ( currentUser && ! twoFactorEnabled ) {
 			// someone is already logged in, offer to proceed to the app without a new login
 			postHeader = <ContinueAsUser />;
+		} else if ( changingEmailAddress ) {
+			// if requesting to change the email address of the account
+			headerText = translate( 'Log into your account to complete the email address change' );
 		}
 
 		return (
@@ -434,6 +439,7 @@ export default connect(
 		isLinking: getSocialAccountIsLinking( state ),
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
+		changingEmailAddress: getPreviousRoute( state ) === '/verify-email',
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
