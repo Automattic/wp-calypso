@@ -49,6 +49,12 @@ function createPurchaseObject( purchase ) {
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
 		priceText: purchase.price_text,
+		partner: purchase.partner
+			? {
+					name: purchase.partner.name,
+					createOn: purchase.partner.created_on,
+			  }
+			: null,
 		payment: {
 			name: purchase.payment_name,
 			type: purchase.payment_type,
