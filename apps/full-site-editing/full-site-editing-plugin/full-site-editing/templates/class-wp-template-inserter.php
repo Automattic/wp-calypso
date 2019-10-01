@@ -313,37 +313,25 @@ class WP_Template_Inserter {
 
 		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		$about_page_content   = '';
-		$contact_page_content = '';
+		// Convert templates response to [ slug => content ] pairs to extract required content more easily.
+		$template_content_by_slug = wp_list_pluck( $api_response['templates'], 'content', 'slug' );
 
-		/*
-		 * Array of returned templates is not keyed by name, so we have to access it directly like this.
-		 * About page is at position 6 in the array, and Contact page at 1.
-		 */
-		if ( ! empty( $api_response['templates'][6]['content'] ) ) {
-			$about_page_content = $api_response['templates'][6]['content'];
-		}
-
-		if ( ! empty( $api_response['templates'][1]['content'] ) ) {
-			$contact_page_content = $api_response['templates'][1]['content'];
-		}
-
-		if ( empty( get_page_by_title( 'About' ) ) ) {
+		if ( empty( get_page_by_title( 'About' ) ) && ! empty( $template_content_by_slug['about'] ) ) {
 			wp_insert_post(
 				[
 					'post_title'   => _x( 'About', 'Default page title', 'full-site-editing' ),
-					'post_content' => $about_page_content,
+					'post_content' => $template_content_by_slug['about'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
 				]
 			);
 		}
 
-		if ( empty( get_page_by_title( 'Contact' ) ) ) {
+		if ( empty( get_page_by_title( 'Contact' ) ) && ! empty( $template_content_by_slug['contact'] ) ) {
 			wp_insert_post(
 				[
 					'post_title'   => _x( 'Contact', 'Default page title', 'full-site-editing' ),
-					'post_content' => $contact_page_content,
+					'post_content' => $template_content_by_slug['contact'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
 				]
