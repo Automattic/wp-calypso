@@ -11,7 +11,6 @@ import moment from 'moment';
  */
 import getSiteOptions from 'state/selectors/get-site-options';
 import { isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 /**
  * @param {Object} state Global state tree
@@ -21,7 +20,6 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  */
 export default function isEligibleForDotcomChecklist( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );
-	const designType = get( siteOptions, 'design_type' );
 	const createdAt = get( siteOptions, 'created_at', '' );
 
 	// Checklist should not show up if the site is created before the feature was launched.
@@ -33,9 +31,5 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 		return false;
 	}
 
-	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
-		return false;
-	}
-
-	return 'store' !== designType;
+	return ! isJetpackSite( state, siteId );
 }
