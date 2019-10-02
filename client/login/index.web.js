@@ -1,4 +1,11 @@
 /**
+ * External dependencies
+ */
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { MomentProvider } from 'components/localized-moment/context';
+
+/**
  * Internal dependencies
  */
 import config from 'config';
@@ -11,15 +18,37 @@ import {
 	redirectDefaultLocale,
 } from './controller';
 import { setShouldServerSideRenderLogin } from './ssr';
-import { makeLoggedOutLayout } from 'controller';
-import { setUpLocale } from 'controller/shared';
+import { setUpLocale, setSection, makeLayoutMiddleware } from 'controller/shared';
 import { redirectLoggedIn } from 'controller/web-util';
+import LayoutLoggedOut from 'layout/logged-out';
+
+export const LOGIN_SECTION_DEFINITION = {
+	name: 'login',
+	paths: [ '/log-in' ],
+	module: 'login',
+	enableLoggedOut: true,
+	secondary: false,
+	isomorphic: true,
+};
+
+const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+	return (
+		<ReduxProvider store={ store }>
+			<MomentProvider>
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</MomentProvider>
+		</ReduxProvider>
+	);
+};
+
+const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
 export default router => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
 			`/log-in/link/use/${ lang }`,
 			setUpLocale,
+			setSection( LOGIN_SECTION_DEFINITION ),
 			redirectLoggedIn,
 			magicLoginUse,
 			makeLoggedOutLayout
@@ -28,6 +57,7 @@ export default router => {
 		router(
 			`/log-in/link/${ lang }`,
 			setUpLocale,
+			setSection( LOGIN_SECTION_DEFINITION ),
 			redirectLoggedIn,
 			magicLogin,
 			makeLoggedOutLayout
@@ -47,6 +77,7 @@ export default router => {
 			redirectJetpack,
 			redirectDefaultLocale,
 			setUpLocale,
+			setSection( LOGIN_SECTION_DEFINITION ),
 			login,
 			setShouldServerSideRenderLogin,
 			makeLoggedOutLayout
