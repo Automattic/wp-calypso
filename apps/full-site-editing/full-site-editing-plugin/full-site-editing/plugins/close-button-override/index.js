@@ -5,11 +5,6 @@
  */
 import domReady from '@wordpress/dom-ready';
 
-/**
- * Internal dependencies
- */
-import './style.scss';
-
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
