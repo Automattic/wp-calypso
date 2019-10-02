@@ -276,6 +276,7 @@ const webpackConfig = {
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
