@@ -30,6 +30,7 @@ import {
 	isExpired,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isPartnerPurchase,
 	isRefundable,
 	isRenewable,
 	isRenewal,
@@ -139,7 +140,7 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		if ( ! isRenewable( purchase ) || ! this.props.site ) {
+		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
