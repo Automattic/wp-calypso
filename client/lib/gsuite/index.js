@@ -78,7 +78,6 @@ function getAnnualPrice( cost, currencyCode ) {
  *
  *   - The domain from the site currently selected
  *   - The primary domain of the site
- *   - The first domain of the site
  *
  * @param {String} selectedDomainName - domain name for the site currently selected by the user
  * @param {Array} domains - list of domain objects
@@ -157,8 +156,8 @@ function getGSuiteSettingsUrl( domainName ) {
 /**
  * Given a domain object, does that domain have G Suite with us.
  *
- * @param {Object} domain
- * @returns {Boolean} - true if the domain is with under our management, false otherwise
+ * @param {Object} domain - domain object
+ * @returns {Boolean} - true if the domain is under our management, false otherwise
  */
 function hasGSuiteWithUs( domain ) {
 	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
@@ -169,7 +168,7 @@ function hasGSuiteWithUs( domain ) {
 /**
  * Given a domain object, does that domain have G Suite with another provider.
  *
- * @param {Object} domain
+ * @param {Object} domain - domain object
  * @returns {Boolean} - true if the domain is with another provider, false otherwise
  */
 function hasGSuiteWithAnotherProvider( domain ) {
