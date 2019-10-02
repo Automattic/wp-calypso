@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import { assign, overSome, some } from 'lodash';
 import React from 'react';
 import Gridicon from 'components/gridicon';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -29,6 +30,8 @@ import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 
 const wpcom = wp.undocumented();
+
+const debug = debugFactory( 'calypso:paypal-payment-box' );
 
 export class PaypalPaymentBox extends React.Component {
 	static displayName = 'PaypalPaymentBox';
@@ -92,32 +95,42 @@ export class PaypalPaymentBox extends React.Component {
 		} );
 
 		// get PayPal Express URL from rest endpoint
+		debug( 'submitting paypalExpress request', dataForApi );
 		wpcom.paypalExpressUrl(
 			dataForApi,
 			function( error, paypalExpressURL ) {
-				let errorMessage;
+				debug( 'paypalExpress request complete' );
 				if ( error ) {
-					if ( error.message ) {
-						errorMessage = error.message;
-					} else {
-						errorMessage = this.props.translate( 'Please specify a country and postal code.' );
-					}
-
+					debug( 'paypalExpress request had an error', error );
+					const errorMessage =
+						error.message || this.props.translate( 'Please specify a country and postal code' );
 					this.setSubmitState( {
 						error: errorMessage,
 						disabled: false,
 					} );
+					return;
 				}
 
-				if ( paypalExpressURL ) {
+				if ( ! paypalExpressURL ) {
+					debug( 'paypalExpress request returned no url' );
+					const errorMessage = this.props.translate(
+						'An error occurred connecting to PayPal; please check your information and try again'
+					);
 					this.setSubmitState( {
-						info: this.props.translate( 'Redirecting you to PayPal' ),
-						disabled: true,
+						error: errorMessage,
+						disabled: false,
 					} );
-					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
-					analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
-					window.location = paypalExpressURL;
+					return;
 				}
+
+				debug( 'paypalExpress request successfully got a url', paypalExpressURL );
+				this.setSubmitState( {
+					info: this.props.translate( 'Redirecting you to PayPal' ),
+					disabled: true,
+				} );
+				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
+				analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
+				window.location = paypalExpressURL;
 			}.bind( this )
 		);
 	};

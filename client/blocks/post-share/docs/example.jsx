@@ -58,9 +58,7 @@ class PostShareExample extends Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ `Keep in mind that you are able to share the '${
-							post.title
-						}' post now. Be careful!` }
+						text={ `Keep in mind that you are able to share the '${ post.title }' post now. Be careful!` }
 					/>
 				) }
 

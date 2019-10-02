@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith, isArray } from 'lodash';
 import url from 'url';
 
 /**
@@ -95,6 +95,7 @@ enum EditorActions {
 	OpenCustomizer = 'openCustomizer',
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
+	LogError = 'logError',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -112,7 +113,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
-	templatePorts: [T.PostId, MessagePort][] = [];
+	templatePorts: [ T.PostId, MessagePort ][] = [];
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -274,6 +275,16 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( EditorActions.GetCloseButtonUrl === action ) {
 			const { closeUrl } = this.props;
 			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
+		}
+
+		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
+		if ( EditorActions.LogError === action ) {
+			const { error } = payload;
+			if ( isArray( error ) && error.length > 4 && window.onerror ) {
+				const errorObject = error[ 4 ];
+				error[ 4 ] = errorObject && JSON.parse( errorObject );
+				window.onerror( ...error );
+			}
 		}
 	};
 

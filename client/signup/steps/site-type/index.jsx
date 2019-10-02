@@ -18,10 +18,11 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
-	'blank-canvas': 'blank-canvas',
+	'get-started': 'get-started',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -38,13 +39,19 @@ class SiteType extends Component {
 		this.submitStep( 'import' );
 	};
 
-	handleBlankCanvasButtonClick = () => this.submitStep( 'blank-canvas' );
+	// This function is to support the A/B test `signupWithBasicSite`
+	// by using a flow that does not include intermediary steps before 'domain'
+	handleBasicSiteButtonClick = () => this.submitStep( 'business', 'get-started' );
 
-	submitStep = siteTypeValue => {
+	submitStep = ( siteTypeValue, flowName ) => {
 		this.props.submitSiteType( siteTypeValue );
 
+		if ( flowName ) {
+			this.props.goToNextStep( flowName );
+			return;
+		}
+
 		// Modify the flowname if the site type matches an override.
-		let flowName;
 		if ( 'import-onboarding' === this.props.flowName ) {
 			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
 		} else {
@@ -68,15 +75,15 @@ class SiteType extends Component {
 		);
 	}
 
-	renderStartWithBlankCanvasButton() {
-		if ( 'variant' !== abtest( 'signupEscapeHatch' ) ) {
+	renderStartWithBasicSiteButton() {
+		if ( 'variant' !== abtest( 'signupWithBasicSite' ) ) {
 			return null;
 		}
 
 		return (
-			<div className="site-type__blank-canvas">
-				<Button borderless onClick={ this.handleBlankCanvasButtonClick }>
-					{ this.props.translate( 'Skip setup and start with a blank website.' ) }
+			<div className="site-type__basic-site">
+				<Button borderless onClick={ this.handleBasicSiteButtonClick }>
+					{ this.props.translate( 'Skip setup and start with a basic website.' ) }
 				</Button>
 			</div>
 		);
@@ -92,7 +99,7 @@ class SiteType extends Component {
 					submitForm={ this.submitStep }
 					siteType={ siteType }
 				/>
-				{ this.renderStartWithBlankCanvasButton() }
+				{ this.renderStartWithBasicSiteButton() }
 				{ this.renderImportButton() }
 			</Fragment>
 		);
@@ -135,5 +142,5 @@ export default connect(
 		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
-	{ recordTracksEvent, saveSignupStep, submitSiteType }
+	{ recordTracksEvent, saveSignupStep, submitSiteType, setSiteVertical }
 )( localize( SiteType ) );

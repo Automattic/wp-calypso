@@ -373,14 +373,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'login',
-		paths: [ '/log-in' ],
-		module: 'login',
-		enableLoggedOut: true,
-		secondary: false,
-		isomorphic: true,
-	},
-	{
 		name: 'auth',
 		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
@@ -460,6 +452,13 @@ const sections = [
 		name: 'home',
 		paths: [ '/home' ],
 		module: 'my-sites/customer-home',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'hosting',
+		paths: [ '/hosting' ],
+		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
 	},

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* global fullSiteEditing */
 /**
@@ -62,7 +63,7 @@ const TemplateEdit = compose(
 				}
 
 				const templateBlocks = parse( get( template, [ 'content', 'raw' ], '' ) );
-				const templateBlock = createBlock( 'core/template', {}, templateBlocks );
+				const templateBlock = createBlock( 'core/group', {}, templateBlocks );
 
 				receiveBlocks( [ templateBlock ] );
 				setState( { templateClientId: templateBlock.clientId } );
@@ -130,6 +131,22 @@ const TemplateEdit = compose(
 			event.preventDefault();
 			savePost();
 		};
+
+		/**
+		 * IMPORTANT: Be careful about changes to the overlay button. There is code in
+		 * iframe-bridge-server.js (setupEditTemplateLinks) which looks for two
+		 * elements matching '.template__block-container .template-block__overlay a'.
+		 * This code updates the href of the button to match the calypso URL (which is
+		 * sent through the iFrame port) since editTemplateUrl here will be the wpadmin URL.
+		 *
+		 * If you make changes to the button, navigation to the template editor MAY BREAK.
+		 *
+		 * For example, if the button does not exist in the DOM as the editor is loaded,
+		 * the links may not be updated in time, or an interval will continuously try to
+		 * find them (which is bad for performance).
+		 *
+		 * This has already broken several times, so be careful!
+		 */
 
 		return (
 			<div

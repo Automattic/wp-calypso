@@ -1,15 +1,17 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
-import { isEmpty, reduce } from 'lodash';
+import { isEmpty, reduce, get, keyBy, mapValues } from 'lodash';
+import classnames from 'classnames';
+import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { Button, Modal, Spinner } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import ensureAssets from './utils/ensure-assets';
-import '@wordpress/nux';
+import { parse as parseBlocks } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -18,8 +20,9 @@ import './styles/starter-page-templates-editor.scss';
 import TemplateSelectorControl from './components/template-selector-control';
 import TemplateSelectorPreview from './components/template-selector-preview';
 import { trackDismiss, trackSelection, trackView, initializeWithIdentity } from './utils/tracking';
-import { parse as parseBlocks } from '@wordpress/blocks';
 import replacePlaceholders from './utils/replace-placeholders';
+import ensureAssets from './utils/ensure-assets';
+/* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
 const {
@@ -33,16 +36,23 @@ const {
 class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
-		slug: '',
-		title: '',
-		blocks: {},
+		previewedTemplate: null,
+		blocksByTemplateSlug: {},
+		titlesByTemplateSlug: {},
 		error: null,
 		isOpen: false,
 	};
 
 	constructor( props ) {
 		super();
-		this.state.isOpen = ! isEmpty( props.templates );
+		const hasTemplates = ! isEmpty( props.templates );
+		this.state.isOpen = hasTemplates;
+		if ( hasTemplates ) {
+			// Select the first template automatically.
+			this.state.previewedTemplate = get( props.templates, [ 0, 'slug' ] );
+			// Extract titles for faster lookup.
+			this.state.titlesByTemplateSlug = mapValues( keyBy( props.templates, 'slug' ), 'title' );
+		}
 	}
 
 	componentDidMount() {
@@ -51,7 +61,7 @@ class PageTemplateModal extends Component {
 		}
 
 		// Parse templates blocks and store them into the state.
-		const blocks = reduce(
+		const blocksByTemplateSlug = reduce(
 			templates,
 			( prev, { slug, content } ) => {
 				prev[ slug ] = content
@@ -63,34 +73,29 @@ class PageTemplateModal extends Component {
 		);
 
 		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( { blocks } );
+		this.setState( { blocksByTemplateSlug } );
 	}
 
-	setBeforeInsertTemplate = ( slug, title, blocks ) => {
+	setTemplate = slug => {
+		// Track selection and mark post as using a template in its postmeta.
+		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
-		this.props.insertTemplate( title, blocks );
-		this.setState( { isOpen: false } );
-	};
 
-	setTemplate = ( slug, title ) => {
+		// Load content.
+		const blocks = this.getBlocksByTemplateSlug( slug );
+		const title = this.getTitleByTemplateSlug( slug );
+
+		// Skip inserting if there's nothing to insert.
+		if ( ! blocks || ! blocks.length ) {
+			this.setState( { isOpen: false } );
+			return;
+		}
+
+		// Show loading state.
 		this.setState( {
 			error: null,
 			isLoading: true,
 		} );
-
-		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
-
-		const blocks = this.state.blocks[ slug ];
-
-		// Do not prefetch for `blank` template.
-		if ( 'blank' === slug ) {
-			return this.setBeforeInsertTemplate( slug, title, blocks );
-		}
-
-		// Skip inserting if there's nothing to insert.
-		if ( ! blocks || ! blocks.length ) {
-			return;
-		}
 
 		// Make sure all blocks use local assets before inserting.
 		this.maybePrefetchAssets( blocks )
@@ -101,7 +106,8 @@ class PageTemplateModal extends Component {
 					return;
 				}
 
-				this.setBeforeInsertTemplate( slug, title, blocksWithAssets );
+				this.props.insertTemplate( title, blocksWithAssets );
+				this.setState( { isOpen: false } );
 			} )
 			.catch( error => {
 				this.setState( {
@@ -115,14 +121,9 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = () => this.setTemplate( this.state.slug, this.state.title );
+	handleConfirmation = () => this.setTemplate( this.state.previewedTemplate );
 
-	previewTemplate = ( slug, title ) => {
-		this.setState( { slug, title } );
-		if ( slug === 'blank' ) {
-			this.setTemplate( slug, title );
-		}
-	};
+	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
 
 	closeModal = event => {
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
@@ -134,20 +135,19 @@ class PageTemplateModal extends Component {
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 	};
 
-	getBlocksByTemplateSlug( slug = this.state.slug ) {
-		if ( ! slug ) {
-			return [];
-		}
+	getBlocksByTemplateSlug( slug ) {
+		return get( this.state.blocksByTemplateSlug, [ slug ], [] );
+	}
 
-		if ( ! this.state.blocks.hasOwnProperty( slug ) ) {
-			return [];
-		}
-
-		return this.state.blocks[ slug ];
+	getTitleByTemplateSlug( slug ) {
+		return get( this.state.titlesByTemplateSlug, [ slug ], '' );
 	}
 
 	render() {
-		if ( ! this.state.isOpen ) {
+		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
+		const { templates } = this.props;
+
+		if ( ! isOpen ) {
 			return null;
 		}
 
@@ -159,7 +159,7 @@ class PageTemplateModal extends Component {
 				overlayClassName="page-template-modal-screen-overlay"
 			>
 				<div className="page-template-modal__inner">
-					{ this.state.isLoading ? (
+					{ isLoading ? (
 						<div className="page-template-modal__loading">
 							<Spinner />
 							{ __( 'Inserting template…', 'full-site-editing' ) }
@@ -168,35 +168,43 @@ class PageTemplateModal extends Component {
 						<>
 							<form className="page-template-modal__form">
 								<fieldset className="page-template-modal__list">
+									<legend className="page-template-modal__form-title">
+										{ __( 'Choose a template…', 'full-site-editing' ) }
+									</legend>
 									<TemplateSelectorControl
 										label={ __( 'Template', 'full-site-editing' ) }
-										templates={ this.props.templates }
-										blocksByTemplates={ this.state.blocks }
+										templates={ templates }
+										blocksByTemplates={ blocksByTemplateSlug }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
+										selectedTemplate={ previewedTemplate }
 									/>
 								</fieldset>
 							</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksByTemplateSlug() }
+								blocks={ this.getBlocksByTemplateSlug( previewedTemplate ) }
 								viewportWidth={ 960 }
-								title={ this.state.title }
+								title={ this.getTitleByTemplateSlug( previewedTemplate ) }
 							/>
 						</>
 					) }
 				</div>
-				<div className="page-template-modal__buttons">
-					<Button isDefault isLarge onClick={ this.closeModal }>
-						{ __( 'Cancel', 'full-site-editing' ) }
-					</Button>
+				<div
+					className={ classnames( 'page-template-modal__buttons', {
+						'is-visually-hidden': isEmpty( previewedTemplate ) || isLoading,
+					} ) }
+				>
 					<Button
 						isPrimary
 						isLarge
-						disabled={ isEmpty( this.state.slug ) || this.state.isLoading }
+						disabled={ isEmpty( previewedTemplate ) || isLoading }
 						onClick={ this.handleConfirmation }
 					>
-						{ sprintf( __( 'Use %s template', 'full-site-editing' ), this.state.title ) }
+						{ sprintf(
+							__( 'Use %s template', 'full-site-editing' ),
+							this.getTitleByTemplateSlug( previewedTemplate )
+						) }
 					</Button>
 				</div>
 			</Modal>
@@ -233,7 +241,7 @@ const PageTemplatesPlugin = compose(
 
 				// Insert blocks.
 				const postContentBlock = ownProps.postContentBlock;
-				editorDispatcher.insertBlocks(
+				dispatch( 'core/block-editor' ).insertBlocks(
 					blocks,
 					0,
 					postContentBlock ? postContentBlock.clientId : '',

@@ -10,6 +10,8 @@ import { createBaseReducer } from './create-base-reducer';
  * passing both the current state and action object. Defines default
  * serialization (persistence) handlers based on the presence of a schema.
  *
+ * @deprecated Use a plain reducer function wrapped with `withSchemaValidation` instead.
+ *
  * @param  {*}        initialState   Initial state
  * @param  {Object}   handlers       Object mapping action types to state action handlers
  * @param  {?Object}  schema         JSON schema object for deserialization validation

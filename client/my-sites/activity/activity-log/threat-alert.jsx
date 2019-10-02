@@ -341,7 +341,7 @@ export class ThreatAlert extends Component {
 										{ this.renderTitle() }
 										<TimeSince
 											className="activity-log__threat-alert-time-since"
-											date={ threat.firstDetected }
+											date={ threat.first_detected }
 											dateFormat="ll"
 										/>
 									</span>

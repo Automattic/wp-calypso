@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
 	camelCase,
@@ -237,7 +234,7 @@ class SignupForm extends Component {
 		const fieldsForValidation = filter( [
 			'email',
 			this.state.focusPassword && 'password',
-			this.props.displayUsernameInput && this.state.focusUsername && 'username',
+			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -747,12 +744,16 @@ class SignupForm extends Component {
 			return this.globalNotice( this.state.notice );
 		}
 		if ( this.userCreationComplete() ) {
-			return this.globalNotice( {
-				info: true,
-				message: this.props.translate(
-					'Your account has already been created. You can change your email, username, and password later.'
-				),
-			} );
+			return (
+				<TrackRender eventName="calypso_signup_account_already_created_show">
+					{ this.globalNotice( {
+						info: true,
+						message: this.props.translate(
+							'Your account has already been created. You can change your email, username, and password later.'
+						),
+					} ) }
+				</TrackRender>
+			);
 		}
 		return false;
 	}
@@ -929,6 +930,14 @@ class SignupForm extends Component {
 			</div>
 		);
 	}
+}
+
+function TrackRender( { children, eventName } ) {
+	useEffect( () => {
+		analytics.tracks.recordEvent( eventName );
+	}, [ eventName ] );
+
+	return children;
 }
 
 export default connect(

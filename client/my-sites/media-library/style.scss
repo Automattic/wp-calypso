@@ -42,6 +42,18 @@
 	}
 }
 
+.media-library__content.has-no-upload-button .media-library {	
+	&__header.card {
+		padding-bottom: 36px;
+	}
+	
+	&__scale-range.range {
+		right: 50%;
+		margin: 0;
+		transform: translateX( 50% );
+	}
+}
+
 .media-library__filter-bar {
 	display: flex;
 	flex-flow: row nowrap;
@@ -143,7 +155,7 @@
 
 .media-library__source-button.is-borderless {
 	padding: 5px;
-	padding-left: 12px;
+	padding-left: 9px;
 	height: 38px;
 
 	img {

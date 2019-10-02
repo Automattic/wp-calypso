@@ -109,7 +109,7 @@ export function getIframeSource(
 					*/
 					.entry .entry-content .wp-block-cover-image,
 					.entry .entry-content .wp-block-cover {
-						min-height: 500px !important;
+						height: 480px !important;
 					}
 				}
 
