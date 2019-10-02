@@ -271,6 +271,8 @@ const webpackConfig = {
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
+				react: path.dirname( require.resolve( 'react' ) ),
+				'react-dom': path.dirname( require.resolve( 'react-dom' ) ),
 				'react-virtualized': 'react-virtualized/dist/es',
 				debug: path.resolve( __dirname, 'node_modules/debug' ),
 				store: 'store/dist/store.modern',
@@ -285,6 +287,7 @@ const webpackConfig = {
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),

@@ -462,6 +462,13 @@ const sections = [
 		secondary: true,
 		group: 'sites',
 	},
+	{
+		name: 'gutenboarding',
+		paths: [ '/gutenboarding' ],
+		module: 'gutenboarding',
+		secondary: false,
+		group: 'sites',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {
