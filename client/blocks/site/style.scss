@@ -177,12 +177,13 @@
 	padding: 1px 10px;
 }
 
-.site:hover .site__badge {
+.site__content:hover .site__badge {
 	background: var( --color-sidebar-background );
 	color: var( --color-sidebar-text );
 }
 
-.current-site .site:hover .site__badge {
+.current-site .site__content:hover .site__badge,
+.purchases-site .site__content:hover .site__badge {
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
 }
