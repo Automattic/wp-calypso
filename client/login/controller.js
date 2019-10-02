@@ -28,8 +28,10 @@ const enhanceContextWithLogin = context => {
 	} = context;
 
 	const previousHash = context.state || {};
-	const { client_id, user_email, user_name, id_token } = previousHash;
-	const socialServiceResponse = client_id ? { client_id, user_email, user_name, id_token } : null;
+	const { client_id, user_email, user_name, id_token, state } = previousHash;
+	const socialServiceResponse = client_id
+		? { client_id, user_email, user_name, id_token, state }
+		: null;
 
 	context.primary = (
 		<WPLogin

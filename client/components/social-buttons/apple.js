@@ -48,14 +48,17 @@ class AppleLoginButton extends Component {
 		}
 
 		if ( this.props.uxMode === 'redirect' ) {
-			// do not load the client for the popup flow as
-			// we won't have a valid redirectUri to give to the apple client
-			this.loadAppleClient();
-
 			if (
 				this.props.socialServiceResponse &&
 				this.props.socialServiceResponse.client_id === config( 'apple_oauth_client_id' )
 			) {
+				const storedOauth2State = window.sessionStorage.getItem( 'siwa_state' );
+				window.sessionStorage.removeItem( 'siwa_state' );
+
+				if ( this.props.socialServiceResponse.state !== storedOauth2State ) {
+					return;
+				}
+
 				const user = {
 					email: this.props.socialServiceResponse.user_email,
 					name: this.props.socialServiceResponse.user_name,
@@ -65,6 +68,10 @@ class AppleLoginButton extends Component {
 					user: user,
 				} );
 			}
+
+			// do not load the client for the popup flow as
+			// we won't have a valid redirectUri to give to the apple client
+			this.loadAppleClient();
 		}
 	}
 
@@ -77,26 +84,25 @@ class AppleLoginButton extends Component {
 		return window.AppleID;
 	}
 
-	loadAppleClient() {
+	async loadAppleClient() {
 		if ( this.appleClientLoaded ) {
 			return this.appleClientLoaded;
 		}
 
-		this.appleClientLoaded = this.loadDependency()
-			.then( AppleID =>
-				AppleID.auth.init( {
-					clientId: this.props.clientId,
-					scope: this.props.scope,
-					redirectURI: this.props.redirectUri,
-					state: '1',
-				} )
-			)
-			.catch( error => {
-				this.appleClientLoaded = null;
-				return Promise.reject( error );
-			} );
+		const AppleID = await this.loadDependency();
+		const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
+		window.sessionStorage.setItem( 'siwa_state', oauth2State );
 
-		return this.appleClientLoaded;
+		AppleID.auth.init( {
+			clientId: this.props.clientId,
+			scope: this.props.scope,
+			redirectURI: this.props.redirectUri,
+			state: oauth2State,
+		} );
+
+		this.appleClientLoaded = AppleID;
+
+		return AppleID;
 	}
 
 	handleClick = event => {
@@ -112,7 +118,7 @@ class AppleLoginButton extends Component {
 		}
 
 		if ( this.props.uxMode === 'redirect' ) {
-			this.loadDependency().then( AppleID => AppleID.auth.signIn() );
+			this.loadAppleClient().then( AppleID => AppleID.auth.signIn() );
 			return;
 		}
 	};

@@ -56,6 +56,7 @@ function loginWithApple( request, response, next ) {
 		user_email: userEmail,
 		user_name: userName,
 		client_id: config( 'apple_oauth_client_id' ),
+		state: request.body.state,
 	} );
 
 	response.redirect( originalUrlPath + '#' + hashString );
