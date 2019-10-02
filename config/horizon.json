@@ -94,6 +94,7 @@
 		"settings/theme-setup": false,
 		"sign-in-with-apple": false,
 		"signup/full-site-editing": true,
+		"signup/global-styles": true,
 		"signup/onboarding-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,

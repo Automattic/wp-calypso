@@ -339,6 +339,22 @@ export function generateFlows( {
 		};
 	}
 
+	if ( isEnabled( 'signup/global-styles' ) ) {
+		flows[ 'test-global-styles' ] = {
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getSignupDestination,
+			description: 'A copy of `onboarding` for testing Global Styles',
+			lastModified: '2019-10-02',
+		};
+	}
+
 	return flows;
 }
 
