@@ -68,8 +68,8 @@ export default withoutPersistence( ( state = null, action ) => {
 			return [ ...state.slice( 0, zoneIndex ), zone, ...state.slice( zoneIndex + 1 ) ];
 		}
 		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED: {
+			let { data } = action;
 			const {
-				data,
 				originatingAction: { zone },
 			} = action;
 			data = processZoneData( data );

@@ -102,19 +102,21 @@ export function items( state = {}, action ) {
 	const stateKey = getStateKey( siteId, postId );
 
 	switch ( type ) {
-		case COMMENTS_CHANGE_STATUS:
+		case COMMENTS_CHANGE_STATUS: {
 			const { status } = action;
 			return {
 				...state,
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
 			};
-		case COMMENTS_EDIT:
+		}
+		case COMMENTS_EDIT: {
 			const { comment } = action;
 			return {
 				...state,
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
 			};
-		case COMMENTS_RECEIVE:
+		}
+		case COMMENTS_RECEIVE: {
 			const { skipSort } = action;
 			const comments = map( action.comments, _comment => ( {
 				..._comment,
@@ -126,6 +128,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
 			};
+		}
 		case COMMENTS_DELETE:
 			return {
 				...state,
@@ -148,7 +151,7 @@ export function items( state = {}, action ) {
 				),
 			};
 		case COMMENTS_RECEIVE_ERROR:
-		case COMMENTS_WRITE_ERROR:
+		case COMMENTS_WRITE_ERROR: {
 			const { error, errorType } = action;
 			return {
 				...state,
@@ -161,6 +164,7 @@ export function items( state = {}, action ) {
 					} )
 				),
 			};
+		}
 	}
 
 	return state;
@@ -183,7 +187,7 @@ export function pendingItems( state = {}, action ) {
 	const stateKey = getStateKey( siteId, postId );
 
 	switch ( type ) {
-		case COMMENTS_UPDATES_RECEIVE:
+		case COMMENTS_UPDATES_RECEIVE: {
 			const comments = map( action.comments, _comment => ( {
 				..._comment,
 				contiguous: ! action.commentById,
@@ -194,8 +198,9 @@ export function pendingItems( state = {}, action ) {
 				...state,
 				[ stateKey ]: orderBy( allComments, getCommentDate, [ 'desc' ] ),
 			};
+		}
 
-		case COMMENTS_RECEIVE:
+		case COMMENTS_RECEIVE: {
 			const receivedCommentIds = map( action.comments, 'ID' );
 			return {
 				...state,
@@ -204,6 +209,7 @@ export function pendingItems( state = {}, action ) {
 					_comment => ! includes( receivedCommentIds, _comment.ID )
 				),
 			};
+		}
 	}
 
 	return state;

@@ -29,12 +29,10 @@ const initialState = {
 export default withSchemaValidation( siteVerticalSchema, ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case SIGNUP_STEPS_SITE_VERTICAL_SET:
-			return ( ( state, siteVerticalData ) => {
-				return {
-					...state,
-					...omit( siteVerticalData, 'type' ),
-				};
-			} )( state, action );
+			return {
+				...state,
+				...omit( action, 'type' ),
+			};
 		case SIGNUP_COMPLETE_RESET: {
 			return {};
 		}

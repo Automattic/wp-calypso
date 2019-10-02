@@ -9,10 +9,10 @@ import { combineReducers, withoutPersistence } from 'state/utils';
 const summary = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_EARNINGS_RECEIVE:
-			return ( ( state, data ) => ( {
+			return {
 				...state,
-				[ data.siteId ]: data.earnings,
-			} ) )( state, action );
+				[ action.siteId ]: action.earnings,
+			};
 	}
 
 	return state;

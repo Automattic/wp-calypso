@@ -9,7 +9,7 @@ import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 export const rawOffsets = withSchemaValidation( rawOffsetsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case TIMEZONES_RECEIVE:
-			return ( ( state, actions ) => actions.rawOffsets )( state, action );
+			return action.rawOffsets;
 	}
 
 	return state;
@@ -18,7 +18,7 @@ export const rawOffsets = withSchemaValidation( rawOffsetsSchema, ( state = {}, 
 export const labels = withSchemaValidation( labelsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case TIMEZONES_RECEIVE:
-			return ( ( state, actions ) => actions.labels )( state, action );
+			return action.labels;
 	}
 
 	return state;
@@ -27,7 +27,7 @@ export const labels = withSchemaValidation( labelsSchema, ( state = {}, action )
 export const byContinents = withSchemaValidation( continentsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case TIMEZONES_RECEIVE:
-			return ( ( state, actions ) => actions.byContinents )( state, action );
+			return action.byContinents;
 	}
 
 	return state;

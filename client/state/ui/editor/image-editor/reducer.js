@@ -94,10 +94,10 @@ export function imageIsLoading( state = true, action ) {
 
 export function fileInfo( state = defaultFileInfo, action ) {
 	switch ( action.type ) {
-		case IMAGE_EDITOR_SET_FILE_INFO:
+		case IMAGE_EDITOR_SET_FILE_INFO: {
 			const { src, fileName, mimeType, title } = action;
 			return { ...state, src, fileName, mimeType, title };
-
+		}
 		case IMAGE_EDITOR_STATE_RESET_ALL:
 			return {
 				...state,
@@ -171,7 +171,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 		case IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO:
 			return action.ratio;
 		case IMAGE_EDITOR_STATE_RESET:
-		case IMAGE_EDITOR_STATE_RESET_ALL:
+		case IMAGE_EDITOR_STATE_RESET_ALL: {
 			const { additionalData = {} } = action;
 			const { aspectRatio: payloadAspectRatio } = additionalData;
 
@@ -180,6 +180,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 			}
 
 			return AspectRatios.FREE;
+		}
 	}
 
 	return state;

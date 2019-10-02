@@ -96,18 +96,16 @@ export default withoutPersistence( ( state = null, action ) => {
 			const data = update.update;
 			return process_data( data );
 		}
-		case WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE:
-			return ( ( state, error ) => {
-				const settings = Object.assign( {}, omit( state, 'isSaving' ) );
-				settings.error = error;
-				return settings;
-			} )( state, action );
-		case WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE:
-			return ( ( state, reason ) => {
-				const settings = Object.assign( {}, omit( state, [ 'save', 'isSaving' ] ) );
-				settings.invalidValue = reason;
-				return settings;
-			} )( state, action );
+		case WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE: {
+			const settings = Object.assign( {}, omit( state, 'isSaving' ) );
+			settings.error = action;
+			return settings;
+		}
+		case WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE: {
+			const settings = Object.assign( {}, omit( state, [ 'save', 'isSaving' ] ) );
+			settings.invalidValue = action;
+			return settings;
+		}
 	}
 
 	return state;

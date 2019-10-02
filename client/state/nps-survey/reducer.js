@@ -33,7 +33,7 @@ export const isSessionEligible = withoutPersistence( ( state = false, action ) =
 export const isAvailableForConciergeSession = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY:
-			return ( ( _, action ) => action.isAvailableForConciergeSession )( state, action );
+			return action.isAvailableForConciergeSession;
 	}
 
 	return state;

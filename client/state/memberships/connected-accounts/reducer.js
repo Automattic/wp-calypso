@@ -12,10 +12,10 @@ import { combineReducers, withoutPersistence } from 'state/utils';
 const accounts = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE:
-			return ( ( state, data ) => ( {
+			return {
 				...state,
-				...data.accounts,
-			} ) )( state, action );
+				...action.accounts,
+			};
 	}
 
 	return state;

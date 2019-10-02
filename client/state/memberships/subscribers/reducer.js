@@ -14,20 +14,20 @@ import { MEMBERSHIPS_SUBSCRIBERS_RECEIVE } from '../../action-types';
 const list = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_SUBSCRIBERS_RECEIVE:
-			return ( ( state, data ) => ( {
+			return {
 				...state,
 
-				[ data.siteId ]: {
-					total: get( data, 'subscribers.total', 0 ),
-					ownerships: get( data, 'subscribers.ownerships', [] ).reduce(
+				[ action.siteId ]: {
+					total: get( action, 'subscribers.total', 0 ),
+					ownerships: get( action, 'subscribers.ownerships', [] ).reduce(
 						( prev, item ) => {
 							prev[ item.id ] = item;
 							return prev;
 						},
-						{ ...get( state, [ data.siteId, 'ownerships' ], {} ) }
+						{ ...get( state, [ action.siteId, 'ownerships' ], {} ) }
 					),
 				},
-			} ) )( state, action );
+			};
 	}
 
 	return state;

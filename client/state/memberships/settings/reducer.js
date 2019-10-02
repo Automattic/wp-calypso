@@ -14,14 +14,14 @@ import { MEMBERSHIPS_SETTINGS_RECEIVE } from '../../action-types';
 export default withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_SETTINGS_RECEIVE:
-			return ( ( state, data ) => ( {
+			return {
 				...state,
 
-				[ data.siteId ]: {
-					connectedAccountId: get( data, 'data.connected_account_id', null ),
-					connectUrl: get( data, 'data.connect_url', null ),
+				[ action.siteId ]: {
+					connectedAccountId: get( action, 'data.connected_account_id', null ),
+					connectUrl: get( action, 'data.connect_url', null ),
 				},
-			} ) )( state, action );
+			};
 	}
 
 	return state;
