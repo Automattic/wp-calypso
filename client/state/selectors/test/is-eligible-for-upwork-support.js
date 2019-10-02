@@ -93,4 +93,46 @@ describe( 'isEligibleForUpworkSupport()', () => {
 		};
 		expect( isEligibleForUpworkSupport( state ) ).to.be.true;
 	} );
+
+	test( 'returns true for German language users without Business and E-Commerce plans', () => {
+		const state = {
+			currentUser: { id: 1 },
+			sites: {
+				items: {
+					111: { plan: { product_slug: PLAN_FREE } },
+					222: { plan: { product_slug: PLAN_PREMIUM } },
+				},
+			},
+			users: { items: { 1: { localeSlug: 'de' } } },
+		};
+		expect( isEligibleForUpworkSupport( state ) ).to.be.true;
+	} );
+
+	test( 'returns true for Italian language users without Business and E-Commerce plans', () => {
+		const state = {
+			currentUser: { id: 1 },
+			sites: {
+				items: {
+					111: { plan: { product_slug: PLAN_FREE } },
+					222: { plan: { product_slug: PLAN_PREMIUM } },
+				},
+			},
+			users: { items: { 1: { localeSlug: 'it' } } },
+		};
+		expect( isEligibleForUpworkSupport( state ) ).to.be.true;
+	} );
+
+	test( 'returns true for Dutch language users without Business and E-Commerce plans', () => {
+		const state = {
+			currentUser: { id: 1 },
+			sites: {
+				items: {
+					111: { plan: { product_slug: PLAN_FREE } },
+					222: { plan: { product_slug: PLAN_PREMIUM } },
+				},
+			},
+			users: { items: { 1: { localeSlug: 'nl' } } },
+		};
+		expect( isEligibleForUpworkSupport( state ) ).to.be.true;
+	} );
 } );
