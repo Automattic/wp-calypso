@@ -43,7 +43,7 @@ export default function isGSuiteStatsNudgeVisible( state, siteId, domains ) {
 
 	const forwards = getEmailForwards( state, eligibleDomain );
 
-	// Prevents the nudge from appearing until the list of email forwards has loaded
+	// Prevents the nudge from appearing until the list of email forwards has loaded to avoid flickering
 	if ( forwards === null ) {
 		return false;
 	}

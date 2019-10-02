@@ -16,11 +16,11 @@ import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import {
-	hasGSuite,
-	isGSuiteRestricted,
-	hasGSuiteOtherProvider,
-	hasGSuiteSupportedDomain,
 	getEligibleGSuiteDomain,
+	hasGSuiteSupportedDomain,
+	hasGSuiteWithAnotherProvider,
+	hasGSuiteWithUs,
+	isGSuiteRestricted,
 } from 'lib/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
@@ -99,7 +99,7 @@ class EmailManagement extends React.Component {
 		}
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuite ) ) {
+		if ( domainList.some( hasGSuiteWithUs ) ) {
 			return this.googleAppsUsersCard();
 		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
 			return this.addGSuiteCta();
@@ -123,7 +123,7 @@ class EmailManagement extends React.Component {
 						'to a professional custom domain.'
 				),
 			};
-		} else if ( selectedDomain && hasGSuiteOtherProvider( selectedDomain ) ) {
+		} else if ( selectedDomain && hasGSuiteWithAnotherProvider( selectedDomain ) ) {
 			emptyContentProps = {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate(

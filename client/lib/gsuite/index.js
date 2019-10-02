@@ -104,11 +104,11 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
  */
 function getGSuiteSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		if ( hasGSuiteOtherProvider( domain ) ) {
+		if ( hasGSuiteWithAnotherProvider( domain ) ) {
 			return false;
 		}
 
-		const isHostedOnWpcom = isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuite( domain ) );
+		const isHostedOnWpcom = isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuiteWithUs( domain ) );
 		const isMapped = isMappedDomain( domain );
 
 		return ( isHostedOnWpcom || isMapped ) && canDomainAddGSuite( domain.name );
@@ -155,24 +155,26 @@ function getGSuiteSettingsUrl( domainName ) {
 }
 
 /**
- * Given a domain object, does that domain have G Suite
+ * Given a domain object, does that domain have G Suite with us.
  *
- * @param {Object} domain - domain object
- * @returns {Boolean} - Does a domain have G Suite
+ * @param {Object} domain
+ * @returns {Boolean} - true if the domain is with under our management, false otherwise
  */
-function hasGSuite( domain ) {
+function hasGSuiteWithUs( domain ) {
 	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+
 	return 'no_subscription' !== domainStatus && 'other_provider' !== domainStatus;
 }
 
 /**
- * Given a domain object, does that domain have G Suite with another provider
+ * Given a domain object, does that domain have G Suite with another provider.
  *
- * @param {Object} domain - domain object
- * @returns {Boolean} - Does a domain have G Suite with another provider
+ * @param {Object} domain
+ * @returns {Boolean} - true if the domain is with another provider, false otherwise
  */
-function hasGSuiteOtherProvider( domain ) {
+function hasGSuiteWithAnotherProvider( domain ) {
 	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+
 	return 'other_provider' === domainStatus;
 }
 
@@ -215,9 +217,9 @@ export {
 	getGSuiteSupportedDomains,
 	getLoginUrlWithTOSRedirect,
 	getMonthlyPrice,
-	hasGSuite,
-	hasGSuiteOtherProvider,
 	hasGSuiteSupportedDomain,
+	hasGSuiteWithAnotherProvider,
+	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
 	isGSuiteRestricted,
 };
