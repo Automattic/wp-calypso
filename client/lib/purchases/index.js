@@ -73,7 +73,7 @@ function getName( purchase ) {
 
 function getPartnerName( purchase ) {
 	if ( isPartnerPurchase( purchase ) ) {
-		return purchase.partner.name;
+		return purchase.partnerName;
 	}
 	return null;
 }
@@ -281,7 +281,7 @@ function isRemovable( purchase ) {
 }
 
 function isPartnerPurchase( purchase ) {
-	return null !== purchase.partner;
+	return !! purchase.partnerName;
 }
 
 /**
