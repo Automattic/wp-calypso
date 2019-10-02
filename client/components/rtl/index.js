@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { forwardRef, useState, useEffect } from 'react';
+import React, { forwardRef } from 'react';
+import { useSubscription } from 'use-subscription';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import i18n from 'i18n-calypso';
 
@@ -10,20 +11,19 @@ import i18n from 'i18n-calypso';
  */
 import { getLocaleSlug, isLocaleRtl } from 'lib/i18n-utils';
 
-export function isCurrentLanguageRtl() {
-	return isLocaleRtl( getLocaleSlug() );
-}
+// Subscription object (adapter) for the `useSubscription` hook
+const RtlSubscription = {
+	getCurrentValue() {
+		return isLocaleRtl( getLocaleSlug() );
+	},
+	subscribe( callback ) {
+		i18n.on( 'change', callback );
+		return () => i18n.off( 'change', callback );
+	},
+};
 
 export function useRtl() {
-	const [ isRtl, setRtl ] = useState( isCurrentLanguageRtl );
-
-	useEffect( () => {
-		const onChange = () => setRtl( isCurrentLanguageRtl );
-		i18n.on( 'change', onChange );
-		return () => i18n.off( 'change', onChange );
-	} );
-
-	return isRtl;
+	return useSubscription( RtlSubscription );
 }
 
 export const withRtl = createHigherOrderComponent(
