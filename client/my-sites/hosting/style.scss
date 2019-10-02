@@ -1,0 +1,29 @@
+.hosting__cards {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+	@include breakpoint( '>1280px' ) {
+		flex-direction: row;
+    }
+    
+    .card {
+        display: flex;
+        flex-direction: row;
+        width: calc( 100% - 10px );
+        
+        .card-heading {
+            margin-top: 0;
+        }
+
+		@include breakpoint( '>1280px' ) {
+			width: calc( 50% - 10px );
+		}
+	}
+}
+
+.hosting__card-icon-col {
+    margin-right: 24px;
+    height: 100%;
+}
