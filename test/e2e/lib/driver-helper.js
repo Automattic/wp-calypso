@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import webdriver, { until } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -551,4 +551,8 @@ export async function acceptAlertIfPresent( driver ) {
 	} catch ( error ) {
 		return false;
 	}
+}
+
+export async function waitForAlertPresent( driver ) {
+	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
 }
