@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,21 +15,21 @@ import ScreenReaderText from '../screen-reader-text';
 import './style.scss';
 
 export interface Props {
-	value: number,
-	total: number,
-	color?: string,
-	title?: string,
-	compact: boolean,
-	className?: string,
-	isPulsing: boolean,
-	canGoBackwards: boolean,
+	value: number;
+	total: number;
+	color?: string;
+	title?: string;
+	compact: boolean;
+	className?: string;
+	isPulsing: boolean;
+	canGoBackwards: boolean;
 }
 
 interface State {
-	allTimeMax: number,
+	allTimeMax: number;
 }
 
-export default class ProgressBar extends React.PureComponent<Props, State> {
+export default class ProgressBar extends React.PureComponent< Props, State > {
 	static defaultProps = {
 		total: 100,
 		compact: false,
