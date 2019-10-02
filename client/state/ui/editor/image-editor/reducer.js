@@ -17,7 +17,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import { AspectRatios } from './constants';
 
 export const defaultTransform = {
@@ -67,11 +67,17 @@ export function hasChanges( state = false, action ) {
 	return state;
 }
 
-export const originalAspectRatio = createReducer( null, {
-	[ IMAGE_EDITOR_IMAGE_HAS_LOADED ]: ( state, { width, height } ) => {
-		return { width, height };
-	},
-	[ IMAGE_EDITOR_STATE_RESET_ALL ]: () => null,
+export const originalAspectRatio = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case IMAGE_EDITOR_IMAGE_HAS_LOADED: {
+			const { width, height } = action;
+			return { width, height };
+		}
+		case IMAGE_EDITOR_STATE_RESET_ALL:
+			return null;
+	}
+
+	return state;
 } );
 
 export function imageIsLoading( state = true, action ) {

@@ -9,7 +9,7 @@ import { difference, forEach, get, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { getSerializedProductsQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
@@ -20,16 +20,22 @@ import {
 } from 'woocommerce/state/action-types';
 import { decodeEntities } from 'lib/formatting';
 
-export default createReducer(
-	{},
-	{
-		[ WOOCOMMERCE_PRODUCT_DELETE_SUCCESS ]: productsDeleteSuccess,
-		[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdated,
-		[ WOOCOMMERCE_PRODUCTS_REQUEST ]: productsRequest,
-		[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
-		[ WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE ]: productsRequestFailure,
+export default withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCT_DELETE_SUCCESS:
+			return productsDeleteSuccess( state, action );
+		case WOOCOMMERCE_PRODUCT_UPDATED:
+			return productUpdated( state, action );
+		case WOOCOMMERCE_PRODUCTS_REQUEST:
+			return productsRequest( state, action );
+		case WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS:
+			return productsRequestSuccess( state, action );
+		case WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE:
+			return productsRequestFailure( state, action );
 	}
-);
+
+	return state;
+} );
 
 /**
  * Merge a product into the products list

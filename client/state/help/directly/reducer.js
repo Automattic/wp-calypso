@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
 	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_START,
@@ -23,10 +23,17 @@ export const questionAsked = ( state = null, action ) => {
 	return state;
 };
 
-export const status = createReducer( STATUS_UNINITIALIZED, {
-	[ DIRECTLY_INITIALIZATION_START ]: () => STATUS_INITIALIZING,
-	[ DIRECTLY_INITIALIZATION_SUCCESS ]: () => STATUS_READY,
-	[ DIRECTLY_INITIALIZATION_ERROR ]: () => STATUS_ERROR,
+export const status = withoutPersistence( ( state = STATUS_UNINITIALIZED, action ) => {
+	switch ( action.type ) {
+		case DIRECTLY_INITIALIZATION_START:
+			return STATUS_INITIALIZING;
+		case DIRECTLY_INITIALIZATION_SUCCESS:
+			return STATUS_READY;
+		case DIRECTLY_INITIALIZATION_ERROR:
+			return STATUS_ERROR;
+	}
+
+	return state;
 } );
 
 export default combineReducers( {
