@@ -21,6 +21,7 @@ import notices from 'state/notices/reducer';
 import i18n from 'state/i18n/reducer';
 import users from 'state/users/reducer';
 import currentUser from 'state/current-user/reducer';
+import preferences from 'state/preferences/reducer';
 
 // Create Redux store
 const reducer = combineReducers( {
@@ -32,6 +33,7 @@ const reducer = combineReducers( {
 	i18n,
 	users,
 	currentUser,
+	preferences,
 	ui: combineReducers( {
 		language,
 		route,

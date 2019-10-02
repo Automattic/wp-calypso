@@ -53,6 +53,26 @@ export function setupContextMiddleware() {
 	} );
 }
 
+function renderDevHelpers( reduxStore ) {
+	if ( config.isEnabled( 'dev/test-helper' ) ) {
+		const testHelperEl = document.querySelector( '.environment.is-tests' );
+		if ( testHelperEl ) {
+			asyncRequire( 'lib/abtest/test-helper', testHelper => {
+				testHelper( testHelperEl );
+			} );
+		}
+	}
+
+	if ( config.isEnabled( 'dev/preferences-helper' ) ) {
+		const prefHelperEl = document.querySelector( '.environment.is-prefs' );
+		if ( prefHelperEl ) {
+			asyncRequire( 'lib/preferences-helper', prefHelper => {
+				prefHelper( prefHelperEl, reduxStore );
+			} );
+		}
+	}
+}
+
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
@@ -73,4 +93,5 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 
 export function setupMiddlewares( currentUser, reduxStore ) {
 	setupContextMiddleware( reduxStore );
+	renderDevHelpers( reduxStore );
 }
