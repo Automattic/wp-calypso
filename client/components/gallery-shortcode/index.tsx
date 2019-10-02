@@ -1,14 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { assign, omit, pick } from 'lodash';
+import { assign, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,28 +13,35 @@ import Shortcode from 'blocks/shortcode';
 import { parse as parseShortcode } from 'lib/shortcode';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
+import { SiteId } from 'client/types';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:gallery-shortcode' );
 
-export default class GalleryShortcode extends React.Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		children: PropTypes.string,
-		items: PropTypes.array,
-		type: PropTypes.string,
-		columns: PropTypes.number,
-		orderBy: PropTypes.string,
-		link: PropTypes.string,
-		size: PropTypes.string,
-		className: PropTypes.string,
-	};
+interface Props {
+	siteId: SiteId;
+	items?: unknown[];
+	type?: string;
+	columns?: number;
+	orderBy?: string;
+	link?: string;
+	size?: string;
+	className?: string;
+	children?: string;
+}
 
+interface RenderedShortcode {
+	body?: unknown;
+	scripts?: unknown;
+	styles?: unknown;
+}
+
+export default class GalleryShortcode extends Component< Props > {
 	static defaultProps = GalleryDefaultAttrs;
 
-	filterRenderResult = rendered => {
+	filterRenderResult = ( rendered: RenderedShortcode ) => {
 		if ( ! rendered.body && ! rendered.scripts && ! rendered.styles ) {
 			return rendered;
 		}
@@ -106,14 +109,27 @@ export default class GalleryShortcode extends React.Component {
 			return null;
 		}
 
-		const classes = classNames( 'gallery-shortcode', this.props.className );
-
 		debug( shortcode );
+
+		const {
+			siteId,
+			items,
+			type,
+			columns,
+			orderBy,
+			link,
+			size,
+			className,
+			children,
+			...restProps
+		} = this.props;
+
+		const classes = classNames( 'gallery-shortcode', className );
 
 		return (
 			<Shortcode
-				{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
-				siteId={ this.props.siteId }
+				{ ...restProps }
+				siteId={ siteId }
 				filterRenderResult={ this.filterRenderResult }
 				className={ classes }
 			>

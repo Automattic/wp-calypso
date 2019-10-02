@@ -6,7 +6,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { isEqual, pick } from 'lodash';
 
@@ -185,7 +185,6 @@ export class DropdownFilters extends Component {
 				className="search-filters__popover"
 				context={ this.button.current }
 				id={ popoverId }
-				isFocusOnShow
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
 				position="bottom left"

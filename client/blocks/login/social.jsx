@@ -26,6 +26,7 @@ import {
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
+import { localizeUrl } from 'lib/i18n-utils';
 import { login } from 'lib/paths';
 
 /**
@@ -196,7 +197,13 @@ class SocialLoginForm extends Component {
 								' {{a}}Terms of Service{{/a}}.',
 							{
 								components: {
-									a: <a href="https://wordpress.com/tos" />,
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
 								},
 							}
 						) }

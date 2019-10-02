@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -98,7 +96,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'media',
 				label: translate( 'Media' ),
-				capability: 'upload_files',
+				capability: 'edit_posts',
 				queryable: true,
 				link: '/media',
 				wpAdminLink: 'upload.php',

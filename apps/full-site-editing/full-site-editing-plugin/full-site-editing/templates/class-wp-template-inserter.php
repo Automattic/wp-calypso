@@ -82,6 +82,17 @@ class WP_Template_Inserter {
 		$response = $this->fetch_retry( $request_url, $request_args );
 
 		if ( ! $response ) {
+			do_action(
+				'a8c_fse_log',
+				'template_population_failure',
+				[
+					'context'    => 'WP_Template_Inserter->fetch_template_parts',
+					'error'      => 'Fetch retry timeout',
+					'theme_slug' => $this->theme_slug,
+				]
+			);
+			$this->header_content = $this->get_default_header();
+			$this->footer_content = $this->get_default_footer();
 			return;
 		}
 
@@ -125,6 +136,26 @@ class WP_Template_Inserter {
 	}
 
 	/**
+	 * Returns a default header if call to template api fails for some reason.
+	 *
+	 * @return string Content of a default header
+	 */
+	public function get_default_header() {
+		return '<!-- wp:a8c/site-description /-->
+			<!-- wp:a8c/site-title /-->
+			<!-- wp:a8c/navigation-menu /-->';
+	}
+
+	/**
+	 * Returns a default footer if call to template api fails for some reason.
+	 *
+	 * @return string Content of a default footer
+	 */
+	public function get_default_footer() {
+		return '<!-- wp:a8c/navigation-menu /-->';
+	}
+
+	/**
 	 * Determines whether FSE data has already been inserted.
 	 *
 	 * @return bool True if FSE data has already been inserted, false otherwise.
@@ -137,11 +168,29 @@ class WP_Template_Inserter {
 	 * This function will be called on plugin activation hook.
 	 */
 	public function insert_default_template_data() {
+		do_action(
+			'a8c_fse_log',
+			'before_template_population',
+			[
+				'context'    => 'WP_Template_Inserter->insert_default_template_data',
+				'theme_slug' => $this->theme_slug,
+			]
+		);
+
 		if ( $this->is_template_data_inserted() ) {
 			/*
 			 * Bail here to prevent inserting the FSE data twice for any given theme.
 			 * Multiple themes will still be able to insert different templates.
 			 */
+			do_action(
+				'a8c_fse_log',
+				'template_population_failure',
+				[
+					'context'    => 'WP_Template_Inserter->insert_default_template_data',
+					'error'      => 'Data already exist',
+					'theme_slug' => $this->theme_slug,
+				]
+			);
 			return;
 		}
 
@@ -190,6 +239,15 @@ class WP_Template_Inserter {
 		wp_set_object_terms( $footer_id, "$this->theme_slug-footer", 'wp_template_type' );
 
 		add_option( $this->fse_template_data_option, true );
+
+		do_action(
+			'a8c_fse_log',
+			'template_population_success',
+			[
+				'context'    => 'WP_Template_Inserter->insert_default_template_data',
+				'theme_slug' => $this->theme_slug,
+			]
+		);
 	}
 
 	/**
@@ -208,8 +266,26 @@ class WP_Template_Inserter {
 	 * with 'About' and 'Contact' titles already exist.
 	 */
 	public function insert_default_pages() {
+		do_action(
+			'a8c_fse_log',
+			'before_pages_population',
+			[
+				'context'    => 'WP_Template_Inserter->insert_default_pages',
+				'theme_slug' => $this->theme_slug,
+			]
+		);
+
 		// Bail if this data has already been inserted.
 		if ( $this->is_pages_data_inserted() ) {
+			do_action(
+				'a8c_fse_log',
+				'pages_population_failure',
+				[
+					'context'    => 'WP_Template_Inserter->insert_default_pages',
+					'error'      => 'Data already exist',
+					'theme_slug' => $this->theme_slug,
+				]
+			);
 			return;
 		}
 
@@ -223,42 +299,39 @@ class WP_Template_Inserter {
 		$response = $this->fetch_retry( $request_url );
 
 		if ( ! $response ) {
+			do_action(
+				'a8c_fse_log',
+				'pages_population_failure',
+				[
+					'context'    => 'WP_Template_Inserter->insert_default_pages',
+					'error'      => 'Fetch retry timeout',
+					'theme_slug' => $this->theme_slug,
+				]
+			);
 			return;
 		}
 
 		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		$about_page_content   = '';
-		$contact_page_content = '';
+		// Convert templates response to [ slug => content ] pairs to extract required content more easily.
+		$template_content_by_slug = wp_list_pluck( $api_response['templates'], 'content', 'slug' );
 
-		/*
-		 * Array of returned templates is not keyed by name, so we have to access it directly like this.
-		 * About page is at position 6 in the array, and Contact page at 1.
-		 */
-		if ( ! empty( $api_response['templates'][6]['content'] ) ) {
-			$about_page_content = $api_response['templates'][6]['content'];
-		}
-
-		if ( ! empty( $api_response['templates'][1]['content'] ) ) {
-			$contact_page_content = $api_response['templates'][1]['content'];
-		}
-
-		if ( empty( get_page_by_title( 'About' ) ) ) {
+		if ( empty( get_page_by_title( 'About' ) ) && ! empty( $template_content_by_slug['about'] ) ) {
 			wp_insert_post(
 				[
 					'post_title'   => _x( 'About', 'Default page title', 'full-site-editing' ),
-					'post_content' => $about_page_content,
+					'post_content' => $template_content_by_slug['about'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
 				]
 			);
 		}
 
-		if ( empty( get_page_by_title( 'Contact' ) ) ) {
+		if ( empty( get_page_by_title( 'Contact' ) ) && ! empty( $template_content_by_slug['contact'] ) ) {
 			wp_insert_post(
 				[
 					'post_title'   => _x( 'Contact', 'Default page title', 'full-site-editing' ),
-					'post_content' => $contact_page_content,
+					'post_content' => $template_content_by_slug['contact'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
 				]
@@ -266,6 +339,15 @@ class WP_Template_Inserter {
 		}
 
 		update_option( $this->fse_page_data_option, true );
+
+		do_action(
+			'a8c_fse_log',
+			'pages_population_success',
+			[
+				'context'    => 'WP_Template_Inserter->insert_default_pages',
+				'theme_slug' => $this->theme_slug,
+			]
+		);
 	}
 
 	/**

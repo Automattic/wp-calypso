@@ -227,7 +227,7 @@ function getAcceptedLanguagesFromHeader( header ) {
  * all following handlers (including the locale and redirect ones) can rely on the context values.
  */
 function setupLoggedInContext( req, res, next ) {
-	const isSupportSession = !! req.get( 'x-support-session' );
+	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {

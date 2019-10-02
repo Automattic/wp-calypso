@@ -62,14 +62,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -106,42 +98,6 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellGSuite: {
-		datestamp: '20190805',
-		variations: {
-			variantShowPlanBump: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	showPlanUpsellConcierge: {
-		datestamp: '20190805',
-		variations: {
-			variantShowPlanBump: 100,
-			control: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	privateByDefault: {
-		datestamp: '20190730',
-		variations: {
-			selected: 90,
-			control: 10,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	removeBlogFlow: {
-		datestamp: '20190813',
-		variations: {
-			remove: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	customerHomePage: {
 		datestamp: '20190903',
 		variations: {
@@ -151,8 +107,8 @@ export default {
 		defaultVariation: 'hide',
 		assignmentMethod: 'userId',
 	},
-	signupEscapeHatch: {
-		datestamp: '20190826',
+	signupWithBasicSite: {
+		datestamp: '20190930',
 		variations: {
 			variant: 50,
 			control: 50,
@@ -167,5 +123,14 @@ export default {
 			placesApi: 50,
 		},
 		defaultVariation: 'original',
+	},
+	prefillDomainStepValue: {
+		datestamp: '20190929',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

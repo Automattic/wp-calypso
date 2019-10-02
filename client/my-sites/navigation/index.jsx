@@ -22,7 +22,7 @@ class MySitesNavigation extends React.Component {
 
 	render() {
 		return (
-			<div className="sites-navigation">
+			<div>
 				<SitePicker
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }

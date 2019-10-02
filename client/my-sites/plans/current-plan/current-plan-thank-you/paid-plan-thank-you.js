@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { parse as parseUrl } from 'url';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component, Fragment } from 'react';
 
 /**

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
@@ -19,5 +18,5 @@ export default function shouldNewSiteBePrivateByDefault( state: object ): boolea
 		return false;
 	}
 
-	return abtest( 'privateByDefault' ) === 'selected';
+	return true;
 }

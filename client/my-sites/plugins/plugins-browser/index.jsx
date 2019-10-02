@@ -475,8 +475,8 @@ export class PluginsBrowser extends Component {
 		return (
 			<HeaderButton
 				icon="cloud-upload"
-				label={ translate( 'Upload Plugin' ) }
-				aria-label={ translate( 'Upload Plugin' ) }
+				label={ translate( 'Install Plugin' ) }
+				aria-label={ translate( 'Install Plugin' ) }
 				href={ uploadUrl }
 				onClick={ this.handleUploadPluginButtonClick }
 			/>

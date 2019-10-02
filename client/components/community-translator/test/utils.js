@@ -100,9 +100,7 @@ describe( 'Community Translator', () => {
 
 		test( 'should return valid url with correct params for root language', () => {
 			expect( getTranslationPermaLink( '123', languagesMock[ 0 ] ) ).toBe(
-				`${ GP_BASE_URL }/projects/${ GP_PROJECT }/${
-					languagesMock[ 0 ].langSlug
-				}/default?filters[original_id]=123`
+				`${ GP_BASE_URL }/projects/${ GP_PROJECT }/${ languagesMock[ 0 ].langSlug }/default?filters[original_id]=123`
 			);
 		} );
 

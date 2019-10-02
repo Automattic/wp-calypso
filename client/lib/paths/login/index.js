@@ -29,6 +29,8 @@ export function login( {
 
 		if ( socialService ) {
 			url += '/' + socialService + '/callback';
+		} else if ( twoFactorAuthType && isJetpack ) {
+			url += '/jetpack/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		} else if ( socialConnect ) {

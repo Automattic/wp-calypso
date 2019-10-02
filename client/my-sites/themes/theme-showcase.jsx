@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -246,7 +246,7 @@ class ThemeShowcase extends React.Component {
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>
 							<Gridicon icon="cloud-upload" />
-							{ translate( 'Upload Theme' ) }
+							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
 					<ThemesSelection

@@ -203,10 +203,17 @@ class WP_Template {
 
 		// 10 priority
 		$content = wptexturize( $content );
-		// @todo maybe look at WPCOM_Responsive_Images for WPCom responsive image handling
 
 		// 11 priority
 		$content = do_shortcode( $content );
+
+		$content = prepend_attachment( $content );
+
+		if ( has_filter( 'a8c_fse_make_content_images_responsive' ) ) {
+			$content = apply_filters( 'a8c_fse_make_content_images_responsive', $content );
+		} else {
+			$content = wp_make_content_images_responsive( $content );
+		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $content;

@@ -18,12 +18,14 @@
 
 	.is-section-signup & {
 		@include breakpoint( '>660px' ) {
+			padding-left: 1em;
 			padding-right: 2em;
 		}
 	}
 
 	.is-section-domains & {
 		@include breakpoint( '>800px' ) {
+			padding-left: 1em;
 			padding-right: 2em;
 		}
 	}

@@ -8,7 +8,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import Clipboard from 'clipboard';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { saveAs } from 'browser-filesaver';
 import { flowRight as compose } from 'lodash';
 

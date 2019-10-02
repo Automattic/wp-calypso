@@ -62,7 +62,26 @@ class SuggestionsExample extends Component {
 		);
 	}
 }
+```
 
+The suggestion list also supports headings by adding a category field to the suggestions. Suggestions with the same category value are grouped together under the heading. Suggestions with no category will always appear at the top of the list.
+
+For example:
+
+```jsx
+const FoodSuggestions = React.forwardRef( ( props, ref ) => (
+	<Suggestions
+		ref={ ref }
+		query=""
+		suggest={ props.suggest }
+		suggestions={ [
+			{ label: 'Oats' },
+			{ label: 'Apple', category: 'Fruit' },
+			{ label: 'Orange', category: 'Fruit' },
+			{ label: 'Carrot', category: 'Vegetable' },
+		] }
+	/>
+) );
 ```
 
 ## Props
@@ -70,5 +89,5 @@ class SuggestionsExample extends Component {
 The following props are available:
 
 - `query`: (string) The search query that the suggestions are based on. Will be highlighted in the suggestions.
-- `suggestions`: (arry) An array of possible suggestions that match the query, made of objects of the shape `{ label: 'Label' }
+- `suggestions`: (arry) An array of possible suggestions that match the query, made of objects of the shape `{ label: 'Label', category: 'This is optional' }
 - `suggest`: A function that is called when the suggestion is selected.

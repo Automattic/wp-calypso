@@ -23,11 +23,6 @@ $autobar-height: 20px;
 		background: var( --studio-orange );
 		border-bottom: 1px solid var( --studio-orange-60 );
 	}
-
-	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
-		border: none;
-	}
 }
 
 .pride .masterbar {

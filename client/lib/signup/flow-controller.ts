@@ -35,7 +35,7 @@ import { resetSignup, updateDependencies } from 'state/signup/actions';
 import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
 
 interface Dependencies {
-	[other: string]: any;
+	[ other: string ]: any;
 }
 
 interface Flow {

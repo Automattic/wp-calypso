@@ -100,7 +100,7 @@ function Chart( {
 	const maxBars = Math.floor( width / minWidth );
 
 	// Memoize data calculations to avoid performing them too often.
-	const { chartData, isEmptyChart, yMax } = useMemo(() => {
+	const { chartData, isEmptyChart, yMax } = useMemo( () => {
 		if ( ! hasResized ) {
 			return {};
 		}
@@ -113,7 +113,7 @@ function Chart( {
 			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( a => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
-	}, [ data, maxBars, hasResized ]);
+	}, [ data, maxBars, hasResized ] );
 
 	// If we don't have any sizing info yet, render an empty chart with the ref.
 	if ( ! hasResized ) {

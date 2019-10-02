@@ -106,13 +106,8 @@ class Full_Site_Editing {
 			return;
 		}
 
-		if ( ! $this->wp_template_inserter->is_template_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_template_data();
-		}
-
-		if ( ! $this->wp_template_inserter->is_pages_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_pages();
-		}
+		$this->wp_template_inserter->insert_default_template_data();
+		$this->wp_template_inserter->insert_default_pages();
 	}
 
 	/**

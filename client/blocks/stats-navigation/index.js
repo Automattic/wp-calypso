@@ -104,7 +104,9 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		isWordAds: getSiteOption( state, siteId, 'wordads' ) && canCurrentUser( state, siteId, 'manage_options' ),
+		isWordAds:
+			getSiteOption( state, siteId, 'wordads' ) &&
+			canCurrentUser( state, siteId, 'manage_options' ),
 		siteId,
 	};
 } )( StatsNavigation );
