@@ -87,8 +87,29 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can publish and view content', async function() {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
+			// FIXME: hack based on `gEditorComponent.publish()`, which was closing the sidebar too fast in this test
+			// We're basically removing the `this.closePublishedPanel()` call.
+			const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
+			const publishSelector = By.css(
+				'.editor-post-publish-panel__header-publish-button button[aria-disabled=false]'
+			);
+			await driverHelper.clickWhenClickable(
+				driver,
+				By.css( '.editor-post-publish-panel__toggle' )
+			);
+			await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.editor-post-publish-panel__header' )
+			);
+			await driverHelper.waitTillPresentAndDisplayed( driver, publishSelector );
+			await driverHelper.clickWhenClickable( driver, publishSelector );
+			await driverHelper.waitTillNotPresent(
+				driver,
+				By.css( '.editor-post-publish-panel__content .components-spinner' )
+			);
+			await driverHelper.waitTillPresentAndDisplayed( driver, By.css( '.components-snackbar' ) );
+			await driverHelper.clickWhenClickable( driver, snackBarNoticeLinkSelector );
+			return await driverHelper.acceptAlertIfPresent( driver );
 		} );
 
 		step( 'Can see the Click to Tweet block in our published post', async function() {
