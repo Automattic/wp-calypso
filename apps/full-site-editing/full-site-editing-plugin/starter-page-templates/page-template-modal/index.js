@@ -145,7 +145,9 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
+		/* eslint-disable no-shadow */
 		const { templates } = this.props;
+		/* eslint-enable no-shadow */
 
 		if ( ! isOpen ) {
 			return null;
