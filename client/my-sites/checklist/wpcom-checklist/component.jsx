@@ -1036,7 +1036,7 @@ function getPageEditorUrl( state, siteId, pageId ) {
 	return getEditorUrl( state, siteId, pageId, 'page' );
 }
 
-const getTaskUrls = createSelector(
+export const getTaskUrls = createSelector(
 	( state, siteId ) => {
 		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
 		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );

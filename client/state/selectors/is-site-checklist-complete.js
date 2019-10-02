@@ -6,6 +6,8 @@
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 import { getSiteFrontPage } from 'state/sites/selectors';
+import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
+import { getTaskUrls } from 'my-sites/checklist/wpcom-checklist/component';
 
 /**
  * Checks whether the tasklist has been completed.
@@ -50,5 +52,14 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		return false;
 	};
 
-	return siteChecklist.tasks.every( isTaskComplete );
+	const taskList = getTaskList( {
+		taskStatuses: siteChecklist.tasks,
+		phase2: siteChecklist.phase2,
+		siteVerticals: siteChecklist.verticals,
+		siteSegment: siteChecklist.siteSegment,
+	} ).getAll();
+	const taskUrls = getTaskUrls( state, siteId );
+	const hasUrl = task => ! ( taskUrls.hasOwnProperty( task.id ) && ! taskUrls[ task.id ] );
+
+	return taskList.filter( hasUrl ).every( isTaskComplete );
 }
