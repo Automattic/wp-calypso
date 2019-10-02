@@ -173,7 +173,7 @@ class SocialLoginForm extends Component {
 		}
 	};
 
-	getRedirectUrl = ( uxMode, service ) => {
+	getRedirectUrl = service => {
 		const host = typeof window !== 'undefined' && window.location.host;
 		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
@@ -189,7 +189,7 @@ class SocialLoginForm extends Component {
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
 						uxMode={ uxMode }
-						redirectUri={ this.getRedirectUrl( uxMode, 'google' ) }
+						redirectUri={ this.getRedirectUrl( 'google' ) }
 						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
 						socialServiceResponse={
 							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
@@ -200,7 +200,7 @@ class SocialLoginForm extends Component {
 						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
 						uxMode={ uxModeApple }
-						redirectUri={ this.getRedirectUrl( uxMode, 'apple' ) }
+						redirectUri={ this.getRedirectUrl( 'apple' ) }
 						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
