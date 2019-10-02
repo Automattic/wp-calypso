@@ -1,12 +1,7 @@
-const jscodeshiftArgs = [
-	'--extensions=js,jsx',
-];
+const jscodeshiftArgs = [ '--extensions=js,jsx' ];
 
 // Used primarily by 5to6-codemod transformations
-const recastArgs = [
-	'--useTabs=true',
-	'--arrayBracketSpacing=true',
-];
+const recastArgs = [ '--useTabs=true', '--arrayBracketSpacing=true' ];
 
 const recastOptions = {
 	arrayBracketSpacing: true,
@@ -17,18 +12,19 @@ const recastOptions = {
 		objects: true,
 		arrays: true,
 		parameters: false,
-	}
+	},
 };
+
 const commonArgs = {
 	'5to6': [
 		// Recast options via 5to6
 		...recastArgs,
 	],
-	'react': [
+	react: [
 		// Recast options via react-codemod
 		`--printOptions=${ JSON.stringify( recastOptions ) }`,
 	],
-}
+};
 
 const codemodArgs = {
 	'commonjs-exports': [
@@ -40,11 +36,13 @@ const codemodArgs = {
 		...commonArgs[ '5to6' ],
 		'--transform=node_modules/5to6-codemod/transforms/cjs.js',
 	],
+
 	'commonjs-imports-hoist': [
 		...commonArgs[ '5to6' ],
 		'--transform=node_modules/5to6-codemod/transforms/cjs.js',
 		'--hoist=true',
 	],
+
 	'named-exports-from-default': [
 		...commonArgs[ '5to6' ],
 		'--transform=node_modules/5to6-codemod/transforms/named-export-generation.js',
@@ -58,11 +56,12 @@ const codemodArgs = {
 		'--pure-component=true',
 		'--mixin-module-name="react-pure-render/mixin"', // Your days are numbered, pure-render-mixin!
 	],
+
 	'react-proptypes': [
 		...commonArgs[ 'react' ],
 		'--transform=node_modules/react-codemod/transforms/React-PropTypes-to-prop-types.js',
 	],
-}
+};
 
 module.exports = {
 	codemodArgs,
