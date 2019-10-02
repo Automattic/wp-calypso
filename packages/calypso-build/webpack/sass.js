@@ -16,7 +16,12 @@ const path = require( 'path' );
  *
  * @return {Object}                                   webpack loader object
  */
-module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude } ) => ( {
+module.exports.loader = ( {
+	preserveCssCustomProperties,
+	importCssCustomPropertiesFrom,
+	includePaths,
+	prelude,
+} = {} ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
@@ -32,6 +37,7 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 				config: {
 					ctx: {
 						preserveCssCustomProperties,
+						importCssCustomPropertiesFrom,
 					},
 					path: path.join( __dirname, '..' ),
 				},

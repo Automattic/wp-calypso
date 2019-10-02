@@ -236,6 +236,7 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
+				importCssCustomPropertiesFrom: [ require.resolve( '@automattic/calypso-color-schemes' ) ],
 				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
 				prelude: `@import '${ path.join(

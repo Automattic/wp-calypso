@@ -1,7 +1,9 @@
-module.exports = ( { options: { preserveCssCustomProperties = true } } ) => ( {
+module.exports = ( {
+	options: { preserveCssCustomProperties = true, importCssCustomPropertiesFrom },
+} ) => ( {
 	plugins: {
 		'postcss-custom-properties': {
-			importFrom: [ require.resolve( '@automattic/calypso-color-schemes' ) ],
+			importFrom: importCssCustomPropertiesFrom,
 			preserve: preserveCssCustomProperties,
 		},
 		autoprefixer: {},

@@ -20,7 +20,6 @@
 			"version": "file:packages/calypso-build",
 			"dev": true,
 			"requires": {
-				"@automattic/calypso-color-schemes": "file:packages/calypso-color-schemes",
 				"@babel/core": "7.6.2",
 				"@babel/plugin-proposal-class-properties": "7.5.5",
 				"@babel/plugin-syntax-dynamic-import": "7.2.0",

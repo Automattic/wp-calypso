@@ -106,10 +106,7 @@ function getWebpackConfig(
 					presets,
 					workerCount,
 				} ),
-				SassConfig.loader( {
-					preserveCssCustomProperties: false,
-					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
-				} ),
+				SassConfig.loader(),
 				FileConfig.loader(),
 			],
 		},
