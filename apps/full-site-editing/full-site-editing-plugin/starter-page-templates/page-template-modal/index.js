@@ -121,7 +121,7 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = () => this.setTemplate( this.state.previewedTemplate );
+	handleConfirmation = ( slug = this.state.previewedTemplate ) => this.setTemplate( slug );
 
 	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
 
@@ -181,6 +181,7 @@ class PageTemplateModal extends Component {
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
 										selectedTemplate={ previewedTemplate }
+										handleTemplateConfirmation={ this.handleConfirmation }
 									/>
 								</fieldset>
 							</form>
