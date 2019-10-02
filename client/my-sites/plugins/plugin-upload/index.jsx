@@ -45,6 +45,7 @@ import {
 } from 'state/automated-transfer/selectors';
 import { successNotice } from 'state/notices/actions';
 import { transferStates } from 'state/automated-transfer/constants';
+import { abtest } from 'lib/abtest';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -144,11 +145,12 @@ class PluginUpload extends React.Component {
 	render() {
 		const { translate, isJetpackMultisite, upgradeJetpack, siteId, siteSlug } = this.props;
 		const { showEligibility } = this.state;
-		const upsell = (
-			<Card>
-				<PluginsUpsellComponent />
-			</Card>
-		);
+		const upsell =
+			abtest( 'upsellUploadPlugin' ) === 'upsell' ? (
+				<Card>
+					<PluginsUpsellComponent />
+				</Card>
+			) : null;
 		return (
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />

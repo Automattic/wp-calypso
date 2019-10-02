@@ -261,11 +261,12 @@ class Upload extends React.Component {
 		if ( isMultisite ) {
 			return this.renderNotAvailableForMultisite();
 		}
-		const upsell = (
-			<Card>
-				<ThemesUpsellComponent />
-			</Card>
-		);
+		const upsell =
+			abtest( 'upsellUploadTheme' ) === 'upsell' ? (
+				<Card>
+					<ThemesUpsellComponent />
+				</Card>
+			) : null;
 		return (
 			<Main>
 				<QueryEligibility siteId={ siteId } />

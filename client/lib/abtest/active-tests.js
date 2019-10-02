@@ -170,4 +170,22 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	upsellUploadPlugin: {
+		datestamp: '20191002',
+		variations: {
+			upsell: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	upsellUploadTheme: {
+		datestamp: '20191002',
+		variations: {
+			upsell: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
