@@ -2,7 +2,7 @@
  * Global polyfills
  */
 import 'boot/polyfills';
-import { hydrate, render } from 'controller/web-util';
+import { render } from 'controller/web-util';
 
 /**
  * External dependencies
@@ -27,29 +27,23 @@ import 'components/environment-badge/style.scss';
 // Create Redux store
 const store = createStore();
 
-setupMiddlewares( store );
-
-page( '*', ( context, next ) => {
-	context.store = store;
-	next();
-} );
-
-page.exit( '*', ( context, next ) => {
-	context.store = store;
-	next();
-} );
-
-initLoginSection( ( route, ...handlers ) => page( route, ...handlers, renderHandler ) );
-function renderHandler( context, next ) {
-	( context.serverSideRender ? hydrate : render )( context );
-	next();
-}
-
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
 	configureReduxStore( currentUser, store );
 	setupMiddlewares( currentUser, store );
+
+	page( '*', ( context, next ) => {
+		context.store = store;
+		next();
+	} );
+
+	page.exit( '*', ( context, next ) => {
+		context.store = store;
+		next();
+	} );
+
+	initLoginSection( ( route, ...handlers ) => page( route, ...handlers, render ) );
 	page.start( { decodeURLComponents: false } );
 };
 
