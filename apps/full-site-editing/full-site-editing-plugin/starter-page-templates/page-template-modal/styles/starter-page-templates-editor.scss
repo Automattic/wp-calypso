@@ -70,21 +70,19 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 // Show close button only in full screen mode.
 .page-template-modal .components-modal__header::after,
-.components-modal__header .components-button {
+.page-template-modal__close-button {
 	display: none;
 }
 
 body.is-fullscreen-mode {
-	.page-template-modal .components-modal__header .components-button {
+	.page-template-modal__close-button {
 		display: block;
-		left: -24px; // Make up for 24px modal padding.
-		margin: 9px 10px;
-		padding: 4px;
-
-		.dashicon {
-			width: 28px;
-			height: 28px;
-		}
+		position: absolute;
+		z-index: 20;
+		top: 9px;
+		width: 36px;
+		height: 36px;
+		left: 8px;
 	}
 
 	.page-template-modal .components-modal__header {
