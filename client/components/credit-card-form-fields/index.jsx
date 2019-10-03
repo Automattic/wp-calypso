@@ -359,7 +359,8 @@ export class CreditCardFormFields extends React.Component {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': countryDetailsRequired,
 		} );
-		const shouldShowPhoneField = ! countryDetailsRequired && abtest( 'checkoutCollectPhoneNumber' ) === 'show';
+		const shouldShowPhoneField =
+			! countryDetailsRequired && abtest( 'checkoutCollectPhoneNumber' ) === 'show';
 
 		return (
 			<div className="credit-card-form-fields">
@@ -438,17 +439,20 @@ export class CreditCardFormFields extends React.Component {
 }
 
 function PhoneNumberField( { countriesList, translate, createField, onChange, countryCode } ) {
+	const label = (
+		<React.Fragment>
+			{ translate( 'Phone Number' ) }
+			<span className="credit-card-form-fields__explainer">{ translate( 'Optional' ) }</span>
+		</React.Fragment>
+	);
+
 	return (
 		<React.Fragment>
 			{ createField( 'phone-number', FormPhoneMediaInput, {
 				onChange,
 				countriesList,
 				countryCode: countryCode || 'US',
-				label: translate( 'Phone Number {{span}}(Optional){{/span}}', {
-					components: {
-						span: <span className="credit-card-form-fields__explainer" />,
-					},
-				} ),
+				label: label,
 			} ) }
 		</React.Fragment>
 	);
