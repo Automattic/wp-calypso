@@ -44,6 +44,8 @@ class AppleLoginButton extends Component {
 		uxMode: 'popup',
 	};
 
+	appleClient = null;
+
 	componentDidMount() {
 		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
 			return;
@@ -76,8 +78,8 @@ class AppleLoginButton extends Component {
 	}
 
 	async loadAppleClient() {
-		if ( this.appleClientLoaded ) {
-			return this.appleClientLoaded;
+		if ( this.appleClient ) {
+			return this.appleClient;
 		}
 
 		if ( ! window.AppleID ) {
@@ -94,9 +96,9 @@ class AppleLoginButton extends Component {
 			state: oauth2State,
 		} );
 
-		this.appleClientLoaded = window.AppleID;
+		this.appleClient = window.AppleID;
 
-		return window.AppleID;
+		return this.appleClient;
 	}
 
 	handleClick = event => {
