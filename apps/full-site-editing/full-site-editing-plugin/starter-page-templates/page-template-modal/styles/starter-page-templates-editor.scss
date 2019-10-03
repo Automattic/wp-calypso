@@ -68,27 +68,36 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@include screen-reader-text();
 }
 
-// Close button
-.page-template-modal .components-modal__header .components-button {
-	left: -24px; // Make up for 24px modal padding.
-	margin: 9px 10px;
-	padding: 4px;
-
-	.dashicon {
-		width: 28px;
-		height: 28px;
-	}
+// Show close button only in full screen mode.
+.page-template-modal .components-modal__header::after,
+.components-modal__header .components-button {
+	display: none;
 }
 
-.page-template-modal .components-modal__header {
-	position: relative;
+body.is-fullscreen-mode {
+	.page-template-modal .components-modal__header .components-button {
+		display: block;
+		left: -24px; // Make up for 24px modal padding.
+		margin: 9px 10px;
+		padding: 4px;
 
-	&::after {
-		position: absolute;
-		content: ' ';
-		border-right: 1px solid #e2e4e7;
-		height: 100%;
-		left: 54px;
+		.dashicon {
+			width: 28px;
+			height: 28px;
+		}
+	}
+
+	.page-template-modal .components-modal__header {
+		position: relative;
+
+		&::after {
+			display: block;
+			position: absolute;
+			content: ' ';
+			border-right: 1px solid #e2e4e7;
+			height: 100%;
+			left: 54px;
+		}
 	}
 }
 
@@ -286,7 +295,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     display: flex;
     align-items: center;
 	padding-right: 24px;
-	
+
 	@media screen and ( max-width: 659px ) {
 		display: none;
 	}
