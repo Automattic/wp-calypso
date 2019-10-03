@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, ge
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.2
-Stable tag: 0.8
+Stable tag: 0.9
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -40,7 +40,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
-= 0.8 =
+= 0.9 =
 
 * Rename wp_template CPT to wp_template_part.
 
