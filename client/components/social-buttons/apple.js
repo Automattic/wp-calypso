@@ -22,6 +22,8 @@ import requestExternalAccess from 'lib/sharing';
 import './style.scss';
 import AppleIcon from 'components/social-icons/apple';
 
+const appleClientUrl =
+	'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
 const connectUrlPopupFLow =
 	'https://public-api.wordpress.com/connect/?magic=keyring&service=apple&action=request&for=connect';
 
@@ -69,19 +71,8 @@ class AppleLoginButton extends Component {
 				} );
 			}
 
-			// do not load the client for the popup flow as
-			// we won't have a valid redirectUri to give to the apple client
 			this.loadAppleClient();
 		}
-	}
-
-	async loadDependency() {
-		if ( ! window.AppleID ) {
-			await loadScript(
-				'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'
-			);
-		}
-		return window.AppleID;
 	}
 
 	async loadAppleClient() {
@@ -89,20 +80,23 @@ class AppleLoginButton extends Component {
 			return this.appleClientLoaded;
 		}
 
-		const AppleID = await this.loadDependency();
+		if ( ! window.AppleID ) {
+			await loadScript( appleClientUrl );
+		}
+
 		const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
 		window.sessionStorage.setItem( 'siwa_state', oauth2State );
 
-		AppleID.auth.init( {
+		window.AppleID.auth.init( {
 			clientId: this.props.clientId,
 			scope: this.props.scope,
 			redirectURI: this.props.redirectUri,
 			state: oauth2State,
 		} );
 
-		this.appleClientLoaded = AppleID;
+		this.appleClientLoaded = window.AppleID;
 
-		return AppleID;
+		return window.AppleID;
 	}
 
 	handleClick = event => {
