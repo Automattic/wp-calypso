@@ -17,10 +17,12 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
 	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
+	getPartnerName,
 } from 'lib/purchases';
 import {
 	isDomainProduct,
@@ -191,6 +193,16 @@ class PurchaseItem extends Component {
 			{ 'is-placeholder': isPlaceholder },
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
 		);
+
+		const partnerLabel =
+			purchase && isPartnerPurchase( purchase )
+				? translate( 'This plan is managed by %(partnerName)s', {
+						args: {
+							partnerName: getPartnerName( purchase ),
+						},
+				  } )
+				: null;
+
 		const termLabel =
 			purchase && purchase.productSlug ? getPlanTermLabel( purchase.productSlug, translate ) : null;
 
@@ -204,8 +216,15 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__details">
 						<div className="purchase-item__title">{ getName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
-						{ termLabel ? <div className="purchase-item__term-label">{ termLabel }</div> : null }
-						<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+						{ partnerLabel ? (
+							<div className="purchase-item__term-label">{ partnerLabel }</div>
+						) : null }
+						{ ! partnerLabel && termLabel ? (
+							<div className="purchase-item__term-label">{ termLabel }</div>
+						) : null }
+						{ ! isPartnerPurchase( purchase ) && (
+							<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+						) }
 					</div>
 				</span>
 			);

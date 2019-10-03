@@ -396,6 +396,10 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 
+	if ( isPartnerPurchase( purchase ) ) {
+		return i18n.translate( 'Host Managed Plan' );
+	}
+
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
