@@ -9,7 +9,6 @@ import {
 	addScriptCallback,
 	executeCallbacks,
 	getCallbacksMap,
-	handleRequestError,
 	handleRequestSuccess,
 	isLoading,
 	removeAllScriptCallbacks,
@@ -211,27 +210,6 @@ describe( 'loadScript/callback-handler', () => {
 
 		test( 'should set this.onload to null', () => {
 			expect( elementObject.onload ).toBeNull();
-		} );
-	} );
-
-	describe( 'handleRequestError( event )', () => {
-		const url = '/';
-		const elementObject = { getAttribute: () => url };
-		const eventObject = { target: elementObject };
-		const callback = jest.fn();
-
-		beforeAll( function() {
-			addScriptCallback( url, callback );
-			handleRequestError.bind( elementObject )( eventObject );
-		} );
-
-		test( 'should execute callbacks associated with the url with an error', () => {
-			expect( callback ).toHaveBeenCalledTimes( 1 );
-			expect( callback ).toHaveBeenCalledWith( new Error( `Failed to load script "${ url }"` ) );
-		} );
-
-		test( 'should set this.onerror to null', () => {
-			expect( elementObject.onerror ).toBeNull();
 		} );
 	} );
 } );
