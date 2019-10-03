@@ -8,7 +8,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { Disabled, Spinner } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 /* eslint-enable import/no-extraneous-dependencies */
 
@@ -68,11 +68,7 @@ const TemplateSelectorItem = props => {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		if ( useDynamicPreview ) {
-			return (
-				<Disabled>
-					<BlockPreview blocks={ getBlocksByTemplateSlug( value ) } viewportWidth={ 960 } />
-				</Disabled>
-			);
+			return <BlockPreview blocks={ getBlocksByTemplateSlug( value ) } viewportWidth={ 960 } />;
 		}
 
 		return (
@@ -105,6 +101,7 @@ const TemplateSelectorItem = props => {
 	};
 
 	return (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<button
 			type="button"
 			className={ classnames( 'template-selector-item__label', {
@@ -117,9 +114,10 @@ const TemplateSelectorItem = props => {
 		>
 			{ renderInnerPreview() }
 			<span className="template-selector-item__template-title" id={ labelId }>
-				{ label }
+				<div className="editor-styles-wrapper">{ label }</div>
 			</span>
 		</button>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 };
 

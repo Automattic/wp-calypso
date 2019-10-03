@@ -155,6 +155,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			height: 40px;
 			line-height: 40px;
 			background-color: #fff;
+			.editor-styles-wrapper {
+				font-size: 14px;
+				height: 40px;
+				line-height: 40px;
+			}
 		}
 
 		&:hover,
@@ -174,7 +179,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		width: 100%;
 		display: block;
 		margin: 0 auto;
-		background: $template-selector-empty-background;
+		//background: $template-selector-empty-background;
 		border-radius: 0;
 		overflow: hidden;
 		height: 0;
@@ -182,6 +187,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		box-sizing: content-box;
 		position: relative;
 		pointer-events: none;
+
+		.edit-post-visual-editor {
+			padding-top: 100%;
+			margin-top: -100%;
+		}
 
 		@media screen and ( max-width: 659px ) {
 			padding-top: 120%;
@@ -419,3 +429,10 @@ body:not( .is-fullscreen-mode ) .template-selector-preview {
 	position: absolute;
 	top: 0;
 }
+//
+//.template-selector-control__template {
+//	.editor-styles-wrapper .editor-writing-flow {
+//		max-width: 80%;
+//		margin: 0 10%;
+//	}
+//}
