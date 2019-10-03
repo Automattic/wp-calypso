@@ -18,7 +18,6 @@ import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
 	getName,
-	getPartnerName,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -200,26 +199,6 @@ class PurchaseNotice extends Component {
 		);
 	}
 
-	renderPartnerPurchase() {
-		const { purchase, translate } = this.props;
-		if ( ! isPartnerPurchase( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				className="manage-purchase__purchase-expiring-notice"
-				showDismiss={ false }
-				status="is-info"
-				text={ translate( 'Manage this purchase through partner %(partnerName)s', {
-					args: {
-						partnerName: getPartnerName( purchase ),
-					},
-				} ) }
-			/>
-		);
-	}
-
 	onClickUpdateCreditCardDetails = () => {
 		this.trackClick( 'credit-card-expiring' );
 	};
@@ -328,13 +307,8 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) || isPartnerPurchase( this.props.purchase ) ) {
 			return null;
-		}
-
-		const partnerNotice = this.renderPartnerPurchase();
-		if ( partnerNotice ) {
-			return partnerNotice;
 		}
 
 		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();

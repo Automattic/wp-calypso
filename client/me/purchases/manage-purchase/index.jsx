@@ -162,6 +162,10 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
+		if ( isPartnerPurchase( purchase ) ) {
+			return null;
+		}
+
 		return (
 			<CompactCard tagName="button" displayAsLink onClick={ this.handleRenew }>
 				{ translate( 'Renew Now' ) }
@@ -173,6 +177,10 @@ class ManagePurchase extends Component {
 		const { purchase, translate } = this.props;
 
 		if ( ! this.props.site ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -201,6 +209,10 @@ class ManagePurchase extends Component {
 	}
 
 	renderRemovePurchaseNavItem() {
+		if ( isPartnerPurchase( this.props.purchase ) ) {
+			return null;
+		}
+
 		return (
 			<RemovePurchase
 				hasLoadedSites={ this.props.hasLoadedSites }
@@ -215,7 +227,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || ! this.props.site ) {
+		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
