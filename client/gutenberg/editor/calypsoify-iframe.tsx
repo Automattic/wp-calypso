@@ -643,7 +643,7 @@ const mapStateToProps = (
 			state,
 			siteId,
 			partial.placeholder,
-			'wp_template'
+			'wp_template_part'
 		),
 	};
 };
