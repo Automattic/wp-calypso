@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Button, Modal, Spinner } from '@wordpress/components';
+import { Button, Modal, Spinner, Dashicon } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
@@ -144,8 +144,8 @@ class PageTemplateModal extends Component {
 	}
 
 	render() {
-		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
 		/* eslint-disable no-shadow */
+		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
 		const { templates } = this.props;
 		/* eslint-enable no-shadow */
 
@@ -156,10 +156,18 @@ class PageTemplateModal extends Component {
 		return (
 			<Modal
 				title={ __( 'Select Page Template', 'full-site-editing' ) }
-				onRequestClose={ this.closeModal }
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
+				shouldCloseOnClickOutside={ false }
+				isDismissible={ false }
 			>
+				<Button
+					className="page-template-modal__close-button components-icon-button"
+					onClick={ this.closeModal }
+				>
+					<Dashicon icon="arrow-left-alt2" />
+				</Button>
+
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
 						<div className="page-template-modal__loading">
