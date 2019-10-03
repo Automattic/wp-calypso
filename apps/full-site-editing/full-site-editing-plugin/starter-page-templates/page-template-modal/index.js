@@ -121,7 +121,13 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = ( slug = this.state.previewedTemplate ) => this.setTemplate( slug );
+	handleConfirmation = slug => {
+		if ( typeof slug !== 'string' ) {
+			slug = this.state.previewedTemplate;
+		}
+
+		this.setTemplate( slug );
+	};
 
 	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
 
