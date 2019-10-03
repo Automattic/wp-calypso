@@ -393,18 +393,20 @@ class ManagePurchase extends Component {
 						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
-							<PlanPrice
-								rawPrice={ getRenewalPrice( purchase ) }
-								currencyCode={ purchase.currencyCode }
-								taxText={ purchase.taxText }
-								isOnSale={ !! purchase.saleAmount }
-							/>
+							{ ! isPartnerPurchase( purchase ) && (
+								<PlanPrice
+									rawPrice={ getRenewalPrice( purchase ) }
+									currencyCode={ purchase.currencyCode }
+									taxText={ purchase.taxText }
+									isOnSale={ !! purchase.saleAmount }
+								/>
+							) }
 						</div>
 					</header>
 					{ this.renderPlanDescription() }
-
-					<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
-
+					{ ! isPartnerPurchase( purchase ) && (
+						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
+					) }
 					{ this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
