@@ -176,7 +176,7 @@ class ReaderStream extends React.Component {
 	}
 
 	handleOpenSelectionNewTab = () => {
-		window.open( this.props.selectedPostKey.url, '_blank' );
+		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
 	};
 
 	handleOpenSelection = () => {
