@@ -21,8 +21,10 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
+	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
 	getName,
+	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
 	hasPaymentMethod,
@@ -37,8 +39,6 @@ import {
 	isRenewing,
 	isSubscription,
 	purchaseType,
-	cardProcessorSupportsUpdates,
-	getPartnerName,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
