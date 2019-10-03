@@ -185,8 +185,24 @@ class PurchaseItem extends Component {
 		);
 	}
 
+	getLabelText() {
+		const { purchase, translate } = this.props;
+
+		if ( purchase && isPartnerPurchase( purchase ) ) {
+			return translate( 'This plan is managed by %(partnerName)s', {
+				args: {
+					partnerName: getPartnerName( purchase ),
+				},
+			} );
+		} else if ( purchase && purchase.productSlug ) {
+			return getPlanTermLabel( purchase.productSlug, translate );
+		}
+
+		return null;
+	}
+
 	render() {
-		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack, translate } = this.props;
+		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
 		const classes = classNames(
 			'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
@@ -194,17 +210,7 @@ class PurchaseItem extends Component {
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
 		);
 
-		const partnerLabel =
-			purchase && isPartnerPurchase( purchase )
-				? translate( 'This plan is managed by %(partnerName)s', {
-						args: {
-							partnerName: getPartnerName( purchase ),
-						},
-				  } )
-				: null;
-
-		const termLabel =
-			purchase && purchase.productSlug ? getPlanTermLabel( purchase.productSlug, translate ) : null;
+		const label = this.getLabelText();
 
 		let content;
 		if ( isPlaceholder ) {
@@ -216,12 +222,7 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__details">
 						<div className="purchase-item__title">{ getName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
-						{ partnerLabel ? (
-							<div className="purchase-item__term-label">{ partnerLabel }</div>
-						) : null }
-						{ ! partnerLabel && termLabel ? (
-							<div className="purchase-item__term-label">{ termLabel }</div>
-						) : null }
+						{ label && <div className="purchase-item__term-label">{ label }</div> }
 						{ ! isPartnerPurchase( purchase ) && (
 							<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
 						) }
