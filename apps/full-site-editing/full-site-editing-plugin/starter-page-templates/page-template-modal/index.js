@@ -136,11 +136,7 @@ class PageTemplateModal extends Component {
 		this.setState( { wasClosed: true } );
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 
-		if ( window && window.history && window.history.length ) {
-			window.history.back();
-		} else {
-			this.setState( { isOpen: false } );
-		}
+		this.setState( { isOpen: false } );
 	};
 
 	getBlocksByTemplateSlug( slug ) {
