@@ -137,8 +137,14 @@ class PageTemplateModal extends Component {
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
 		}
-		this.setState( { isOpen: false } );
+
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
+
+		if ( typeof window.calypsoifyGutenberg !== 'undefined' ) {
+			window.top.location = window.calypsoifyGutenberg.closeUrl;
+		} else {
+			window.top.location = 'edit.php?post_type=page';
+		}
 	};
 
 	getBlocksByTemplateSlug( slug ) {
@@ -165,6 +171,7 @@ class PageTemplateModal extends Component {
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
 				shouldCloseOnClickOutside={ false }
+				isDismissable={ false }
 				isDismissible={ false }
 			>
 				<Button
