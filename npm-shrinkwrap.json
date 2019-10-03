@@ -3657,19 +3657,12 @@
 			}
 		},
 		"@wordpress/dom": {
-			"version": "2.5.1",
-			"resolved": "https://registry.npmjs.org/@wordpress/dom/-/dom-2.5.1.tgz",
-			"integrity": "sha512-ZdolWmJGFcyLHmTEWzlWpSoA8EmT163f2wDNKNRGkyFcQ2A3T4F75bE020x+W0JhDpM+EclOfyflIu79O8Tn+w==",
+			"version": "2.3.0",
+			"resolved": "https://registry.npmjs.org/@wordpress/dom/-/dom-2.3.0.tgz",
+			"integrity": "sha512-cy/AD7gcbQmYJd8hSsuOVhdvkdFARsP1UBirZ1nwQZtQyjwAqWQzMdLUml5PzeczhEZQlo9vzJGo8fGwQvpxEw==",
 			"requires": {
 				"@babel/runtime": "^7.4.4",
-				"lodash": "^4.17.15"
-			},
-			"dependencies": {
-				"lodash": {
-					"version": "4.17.15",
-					"resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.15.tgz",
-					"integrity": "sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A=="
-				}
+				"lodash": "^4.17.11"
 			}
 		},
 		"@wordpress/dom-ready": {
@@ -3889,21 +3882,13 @@
 			}
 		},
 		"@wordpress/redux-routine": {
-			"version": "3.6.1",
-			"resolved": "https://registry.npmjs.org/@wordpress/redux-routine/-/redux-routine-3.6.1.tgz",
-			"integrity": "sha512-1Qyg82ZVK6gF2m66scopYifIxDDQhDQOUhdRIpvF+aNOWkwyuYHg+WT+xHIwJdkSIQziLMP/8TpTRHWWdAXnLA==",
+			"version": "3.4.0",
+			"resolved": "https://registry.npmjs.org/@wordpress/redux-routine/-/redux-routine-3.4.0.tgz",
+			"integrity": "sha512-v4aQWBQjjsZ3qEbA1vnI/do7lEx8xBI1rVJKEOzN98+xfweAVtTQLW+2+bpQQDPTs+SUrp5LAqLgWLqFP6V1RQ==",
 			"requires": {
 				"@babel/runtime": "^7.4.4",
 				"is-promise": "^2.1.0",
-				"lodash": "^4.17.15",
 				"rungen": "^0.3.2"
-			},
-			"dependencies": {
-				"lodash": {
-					"version": "4.17.15",
-					"resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.15.tgz",
-					"integrity": "sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A=="
-				}
 			}
 		},
 		"@wordpress/rich-text": {
@@ -3936,20 +3921,13 @@
 			}
 		},
 		"@wordpress/shortcode": {
-			"version": "2.4.1",
-			"resolved": "https://registry.npmjs.org/@wordpress/shortcode/-/shortcode-2.4.1.tgz",
-			"integrity": "sha512-OcbUufn1Fq57V5Qxk4pFajR4+Q69VMCdJg0bB+/7qNZfJrx+vP2Av88SzhqnweQGWnBaNV5P0BFiLmu0Inpyyg==",
+			"version": "2.3.0",
+			"resolved": "https://registry.npmjs.org/@wordpress/shortcode/-/shortcode-2.3.0.tgz",
+			"integrity": "sha512-JVsykCMc1pvEnqM9Q+xOj1qTUCCtY0c5yOtXWMAEpyeDni99p/eROH2AIUW6hKzqSWTlAJSBLIoDR9Ih4YbcxQ==",
 			"requires": {
 				"@babel/runtime": "^7.4.4",
-				"lodash": "^4.17.15",
+				"lodash": "^4.17.11",
 				"memize": "^1.0.5"
-			},
-			"dependencies": {
-				"lodash": {
-					"version": "4.17.15",
-					"resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.15.tgz",
-					"integrity": "sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A=="
-				}
 			}
 		},
 		"@wordpress/token-list": {
