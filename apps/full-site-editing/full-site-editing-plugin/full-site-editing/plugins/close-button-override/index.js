@@ -17,7 +17,7 @@ domReady( () => {
 		clearInterval( editPostHeaderInception );
 
 		// When closing Template CPT (e.g. header) to navigate back to parent page.
-		if ( 'wp_template' === editorPostType && closeButtonUrl ) {
+		if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
 			const newCloseButton = document.createElement( 'a' );
 			newCloseButton.href = closeButtonUrl;
 			newCloseButton.innerHTML = closeButtonLabel;
