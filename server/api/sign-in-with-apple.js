@@ -64,7 +64,7 @@ function loginWithApple( request, response, next ) {
 
 module.exports = function( app ) {
 	return app.post(
-		[ '/log-in/apple/callback', '/start/user' ],
+		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
 		bodyParser.urlencoded(),
 		loginWithApple
 	);

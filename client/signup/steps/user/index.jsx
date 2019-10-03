@@ -26,26 +26,7 @@ import { WPCC } from 'lib/url/support';
 import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
-
-function getSocialServiceFromClientId( clientId ) {
-	if ( ! clientId ) {
-		return null;
-	}
-
-	if ( clientId === config( 'google_oauth_client_id' ) ) {
-		return 'google';
-	}
-
-	if ( clientId === config( 'facebook_app_id' ) ) {
-		return 'facebook';
-	}
-
-	if ( clientId === config( 'apple_oauth_client_id' ) ) {
-		return 'apple';
-	}
-
-	return null;
-}
+import { getSocialServiceFromClientId } from 'lib/login';
 
 export class UserStep extends Component {
 	static propTypes = {
