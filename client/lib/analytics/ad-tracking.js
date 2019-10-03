@@ -46,6 +46,7 @@ const isLinkedinEnabled = false;
 const isCriteoEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
+const isAdRollEnabled = true;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
@@ -80,6 +81,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
 	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
 	PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js',
+	ADROLL_SCRIPT_URL = 'https://s.adroll.com/j/roundtrip.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -99,6 +101,9 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 		wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
 		pinterestInit: '2613194105266',
+		adRollAccountId: 'PEJHFPIHPJC2PD3IMTCWTT',
+		adRollPixelId: 'WV6A5O5PBJBIBDYGZHVBM5',
+		adRollPurchaseSegmentId: '0969dd87',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
@@ -170,6 +175,11 @@ if ( typeof window !== 'undefined' ) {
 	// Pinterest
 	if ( isPinterestEnabled ) {
 		setupPinterestGlobal();
+	}
+
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		setupAdRollGlobal();
 	}
 }
 
@@ -320,6 +330,14 @@ function setupPinterestGlobal() {
 	}
 }
 
+function setupAdRollGlobal() {
+	if ( ! window.__adroll_loaded ) {
+		window.__adroll_loaded = true;
+		window.adroll_adv_id = TRACKING_IDS.adRollAccountId;
+		window.adroll_pix_id = TRACKING_IDS.adRollPixelId;
+	}
+}
+
 const loadScript = promisify( loadScriptCallback );
 
 async function loadTrackingScripts( callback ) {
@@ -383,6 +401,10 @@ async function loadTrackingScripts( callback ) {
 
 	if ( isPinterestEnabled ) {
 		scripts.push( PINTEREST_SCRIPT_URL );
+	}
+
+	if ( isAdRollEnabled ) {
+		scripts.push( ADROLL_SCRIPT_URL );
 	}
 
 	let hasError = false;
@@ -1115,6 +1137,12 @@ export function recordOrder( cart, orderId ) {
 		];
 		debug( 'recordOrder: [Pinterest]', params );
 		window.pintrk( ...params );
+	}
+
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		debug( 'recordOrder: [AdRoll]' );
+		window.__adroll.record_user( { adroll_segments: TRACKING_IDS.adRollPurchaseSegmentId } );
 	}
 
 	// Uses JSON.stringify() to print the expanded object because during localhost or .live testing after firing this
