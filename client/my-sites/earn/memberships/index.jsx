@@ -144,7 +144,10 @@ class MembershipsSection extends Component {
 				'renewal_price',
 				'currency',
 				'renew_interval',
-			].join( ',' ),
+				'All time total',
+			]
+				.map( field => '"' + field + '"' )
+				.join( ',' ),
 		]
 			.concat(
 				Object.values( this.props.subscribers ).map( row =>
@@ -160,7 +163,10 @@ class MembershipsSection extends Component {
 						row.plan.renewal_price,
 						row.plan.currency,
 						row.renew_interval,
-					].join( ',' )
+						row.all_time_total,
+					]
+						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.join( ',' )
 				)
 			)
 			.join( '\n' );
@@ -246,19 +252,27 @@ class MembershipsSection extends Component {
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
-			return this.props.translate( 'Paying %(amount)s/year since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
-			return this.props.translate( 'Paying %(amount)s/month since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		}
 	}
 	renderSubscriberActions( subscriber ) {
