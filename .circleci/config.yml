@@ -322,6 +322,10 @@ jobs:
           command: |
             npx lerna run build --scope='@automattic/full-site-editing'
             cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
+      - run:
+          name: Test the Full Site Editing plugin and theme
+          command: |
+            npm ci && cd apps/full-site-editing && npm ci && npm run test:unit
       - store-artifacts-and-test-results
 
   test-client:
