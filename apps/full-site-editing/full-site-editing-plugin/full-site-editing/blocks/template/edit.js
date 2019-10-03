@@ -33,7 +33,7 @@ const TemplateEdit = compose(
 		const { isEditorSidebarOpened } = select( 'core/edit-post' );
 		const { templateId } = attributes;
 		const currentPostId = getCurrentPostId();
-		const template = templateId && getEntityRecord( 'postType', 'wp_template', templateId );
+		const template = templateId && getEntityRecord( 'postType', 'wp_template_part', templateId );
 		const editTemplateUrl = addQueryArgs( fullSiteEditing.editTemplateBaseUrl, {
 			post: templateId,
 			fse_parent_post: currentPostId,

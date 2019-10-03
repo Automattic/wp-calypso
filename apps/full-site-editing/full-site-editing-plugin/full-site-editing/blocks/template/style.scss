@@ -85,7 +85,7 @@
 }
 
 // Hide the site logo description and buttons when not editing the Template
-.block-editor-page:not( .post-type-wp_template ) {
+.block-editor-page:not( .post-type-wp_template_part ) {
 	.fse-site-logo {
 		.components-placeholder__fieldset, .components-placeholder__instructions {
 			display: none;

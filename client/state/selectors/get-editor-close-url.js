@@ -19,7 +19,7 @@ import isLastNonEditorRouteChecklist from 'state/selectors/is-last-non-editor-ro
 
 export default function getEditorCloseUrl( state, siteId, postType, fseParentPageId ) {
 	// Handle returning to parent editor for full site editing templates
-	if ( 'wp_template' === postType ) {
+	if ( 'wp_template_part' === postType ) {
 		return getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
 	}
 

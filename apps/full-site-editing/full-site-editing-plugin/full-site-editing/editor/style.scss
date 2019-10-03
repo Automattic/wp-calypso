@@ -1,4 +1,4 @@
-.post-type-wp_template {
+.post-type-wp_template_part {
 	.editor-post-title,
 	.editor-post-trash {
 		display: none;
@@ -20,7 +20,7 @@
 	}
 }
 
-.post-type-page, .post-type-wp_template {
+.post-type-page, .post-type-wp_template_part {
 	@media ( min-width: 768px ) {
 		.edit-post-layout__content {
 			background: #eee;
