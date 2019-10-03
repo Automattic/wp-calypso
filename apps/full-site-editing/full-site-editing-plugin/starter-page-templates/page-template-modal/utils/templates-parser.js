@@ -2,7 +2,7 @@
  * External dependencies
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import { get } from 'lodash';
+import { get, map } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
@@ -18,49 +18,67 @@ import { parse as parseBlocks } from '@wordpress/blocks';
 import replacePlaceholders from './replace-placeholders';
 
 const { templates = [], siteInformation = {} } = window.starterPageTemplatesConfig;
-const allTemplatesBlockBySlug = {};
+const allTemplatesBySlug = {};
+const allTemplates = map( templates, ( { slug, title, preview, previewAlt } ) => ( {
+	slug,
+	title,
+	preview,
+	previewAlt,
+} ) );
 
-for ( const k in templates ) {
-	const template = templates[ k ];
-	const { content, title, slug } = template;
+/**
+ * Parse a template async.
+ * Collect the parsed templates into the global allTemplatesBySlug.
+ * Dispatch `onTemplateParse` global event.
+ *
+ * @param {string}	content	Template serialized content.
+ * @param {string}	title	Template title.
+ * @param {string}	slug	Template slug.
+ * @return {number} Timeout identifier.
+ */
+const parseTemplate = ( { content, title, slug } ) => {
+	return setTimeout( () => {
+		const blocks = content ? parseBlocks( replacePlaceholders( content, siteInformation ) ) : [];
 
-	let parsedTemplate = {
-		blocks: [],
-		count: 0,
-		isEmpty: ! content,
-		isParsing: !! content,
-		title,
-		slug,
-	};
+		const template = {
+			blocks,
+			count: blocks.length,
+			isEmpty: ! content,
+			title,
+			slug,
+		};
 
-	allTemplatesBlockBySlug[ slug ] = parsedTemplate;
-	setTimeout( () => {
-		if ( content ) {
-			const blocks = parseBlocks( replacePlaceholders( content, siteInformation ) );
-			parsedTemplate = { ...parsedTemplate, blocks, isParsing: false };
-			allTemplatesBlockBySlug[ slug ] = parsedTemplate;
-		}
+		// Populate global templates container.
+		allTemplatesBySlug[ slug ] = template;
 
 		// Dispatch a global event to indicate a template has been parsed.
-		window.dispatchEvent(
-			new CustomEvent( 'onTemplateParse', {
-				detail: { template: parsedTemplate },
-			} )
-		);
+		window.dispatchEvent( new CustomEvent( 'onTemplateParse', { detail: { template } } ) );
 	}, 0 );
-}
+};
 
+// Listen when a template is parsed, and start to parse another one if exists.
+window.addEventListener( 'onTemplateParse', () => {
+	const nextTemplate = templates.shift();
+	if ( nextTemplate ) {
+		parseTemplate( nextTemplate );
+	}
+} );
+
+// Parse the first one template from the templates list.
+const firstTemplate = templates.shift();
+parseTemplate( firstTemplate );
+
+// Selectors.
 export const hasTemplates = () => !! templates.length;
 
-export const getBlocksByTemplateSlug = slug =>
-	get( allTemplatesBlockBySlug, [ slug, 'blocks' ], [] );
+export const getBlocksByTemplateSlug = slug => get( allTemplatesBySlug, [ slug, 'blocks' ], [] );
 
-export const getTitleByTemplateSlug = slug => get( allTemplatesBlockBySlug, [ slug, 'title' ], [] );
+export const getTitleByTemplateSlug = slug => get( allTemplatesBySlug, [ slug, 'title' ], [] );
 
-export const getTemplateBySlug = slug => get( allTemplatesBlockBySlug, [ slug ], {} );
+export const getTemplateBySlug = slug => get( allTemplatesBySlug, [ slug ], {} );
 
 export const getFirstTemplateSlug = () => get( templates, [ 0, 'slug' ], null );
 
-export const getTemplates = () => templates;
+export const getAllTemplateSlugs = () => allTemplates;
 
-export default allTemplatesBlockBySlug;
+export default allTemplatesBySlug;

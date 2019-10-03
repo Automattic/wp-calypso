@@ -4,7 +4,7 @@ import {
 	getTitleByTemplateSlug,
 	hasTemplates,
 	getFirstTemplateSlug,
-	getTemplates,
+	getAllTemplateSlugs,
 } from './utils/templates-parser';
 
 /**
@@ -96,7 +96,7 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = ( slug = this.state.previewedTemplate ) => this.setTemplate( slug );
+	// handleConfirmation = ( slug = this.state.previewedTemplate ) => this.setTemplate( slug );
 
 	previewTemplate = previewedTemplate => this.setState( { previewedTemplate } );
 
@@ -231,7 +231,7 @@ registerPlugin( 'page-templates', {
 		return (
 			<PageTemplatesPlugin
 				shouldPrefetchAssets={ false }
-				templates={ getTemplates() }
+				templates={ getAllTemplateSlugs() }
 				vertical={ vertical }
 				segment={ segment }
 			/>

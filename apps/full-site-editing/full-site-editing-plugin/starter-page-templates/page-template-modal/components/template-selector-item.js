@@ -31,14 +31,14 @@ const TemplateSelectorItem = props => {
 		handleTemplateConfirmation,
 	} = props;
 	const template = getTemplateBySlug( value );
-	const [ isParsing, setIsParsing ] = useState( template.isParsing );
+	const [ isParsing, setIsParsing ] = useState( true );
 
 	const onTemplatesParseListener = event => {
 		const parsedTemplate = get( event, [ 'detail', 'template' ] );
 		if ( value !== parsedTemplate.slug ) {
 			return;
 		}
-		setIsParsing( parsedTemplate.isParsing );
+		setIsParsing( false );
 	};
 	window.addEventListener( 'onTemplateParse', onTemplatesParseListener );
 

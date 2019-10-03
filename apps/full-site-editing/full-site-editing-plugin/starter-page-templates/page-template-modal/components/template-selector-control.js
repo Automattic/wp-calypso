@@ -38,7 +38,6 @@ export const TemplateSelectorControl = ( {
 	}
 
 	const id = `template-selector-control-${ instanceId }`;
-
 	return (
 		<BaseControl
 			label={ label }
