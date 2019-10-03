@@ -774,7 +774,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const content = await viewPostPage.postContent();
 				assert.strictEqual(
 					content.indexOf( blogPostQuote ) > -1,
-					true,
+					false,
 					'The post content (' +
 						content +
 						') does not include the expected content (' +
