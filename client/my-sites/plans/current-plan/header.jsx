@@ -23,6 +23,7 @@ export class CurrentPlanHeader extends Component {
 		siteSlug: PropTypes.string,
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
+		isPartnerPlan: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
@@ -70,7 +71,15 @@ export class CurrentPlanHeader extends Component {
 	}
 
 	render() {
-		const { currentPlan, isPlaceholder, siteSlug, tagLine, title, translate } = this.props;
+		const {
+			currentPlan,
+			isPartnerPlan,
+			isPlaceholder,
+			siteSlug,
+			tagLine,
+			title,
+			translate,
+		} = this.props;
 
 		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
@@ -104,7 +113,7 @@ export class CurrentPlanHeader extends Component {
 							</h2>
 						</div>
 					</div>
-					{ this.renderPurchaseInfo() }
+					{ ! isPartnerPlan && this.renderPurchaseInfo() }
 					{ currentPlan && isFree && siteSlug && (
 						<div className="current-plan__compare-plans">
 							<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>

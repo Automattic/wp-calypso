@@ -28,6 +28,7 @@ import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -37,6 +38,8 @@ import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
+import { getByPurchaseId } from 'state/purchases/selectors';
+import { isPartnerPurchase } from 'lib/purchases';
 
 /**
  * Style dependencies
@@ -100,6 +103,7 @@ class CurrentPlan extends Component {
 			isExpiring,
 			isFreePlan,
 			path,
+			purchase,
 			selectedSite,
 			selectedSiteId,
 			shouldShowDomainWarnings,
@@ -126,6 +130,7 @@ class CurrentPlan extends Component {
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
+				<QuerySitePurchases siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<Dialog
@@ -160,6 +165,7 @@ class CurrentPlan extends Component {
 					tagLine={ tagLine }
 					currentPlan={ currentPlan }
 					isExpiring={ isExpiring }
+					isPartnerPlan={ purchase && isPartnerPurchase( purchase ) }
 					siteSlug={ selectedSite ? selectedSite.slug : null }
 				/>
 
@@ -195,16 +201,19 @@ export default connect( ( state, { requestThankYou } ) => {
 
 	const isJetpackNotAtomic = false === isAutomatedTransfer && isJetpack;
 
+	const currentPlan = getCurrentPlan( state, selectedSiteId );
+
 	return {
 		selectedSite,
 		selectedSiteId,
 		domains,
-		currentPlan: getCurrentPlan( state, selectedSiteId ),
+		currentPlan: currentPlan,
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		isFreePlan: isSiteOnFreePlan( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 	};
