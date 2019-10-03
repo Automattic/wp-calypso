@@ -468,6 +468,7 @@ const sections = [
 		module: 'gutenboarding',
 		secondary: false,
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 ];
 
