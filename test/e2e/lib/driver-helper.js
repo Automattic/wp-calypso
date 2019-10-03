@@ -22,7 +22,11 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 	return driver.wait(
 		function() {
 			return driver.findElement( selector ).then(
-				function( element ) {
+				async function( element ) {
+					await driver.executeScript(
+						"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
+						element
+					); // highlight element
 					return element.click().then(
 						function() {
 							return true;
@@ -271,6 +275,10 @@ export function setWhenSettable(
 		async function() {
 			await self.waitForFieldClearable( driver, selector );
 			const element = await driver.findElement( selector );
+			await driver.executeScript(
+				"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
+				element
+			); // highlight element
 			if ( pauseBetweenKeysMS === 0 ) {
 				await element.sendKeys( value );
 			} else {
