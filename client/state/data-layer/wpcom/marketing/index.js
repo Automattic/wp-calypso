@@ -15,7 +15,7 @@ export const notifyUpgradeNudgeClick = action =>
 			method: 'POST',
 			path: '/nudge/click',
 			apiNamespace: 'wpcom/v2',
-			query: {
+			body: {
 				nudge_name: action.nudgeName,
 			},
 		},
