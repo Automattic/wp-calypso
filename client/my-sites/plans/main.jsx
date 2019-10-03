@@ -78,7 +78,7 @@ class Plans extends React.Component {
 	}
 
 	renderPlanWithPartner = () => {
-		const { cart, context, purchase, translate } = this.props;
+		const { context, purchase, translate } = this.props;
 
 		const partnerName = getPartnerName( purchase );
 
@@ -88,7 +88,7 @@ class Plans extends React.Component {
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
 					<div id="plans" className="plans plans__has-sidebar">
-						<PlansNavigation cart={ cart } path={ context.path } />
+						<PlansNavigation path={ context.path } />
 						<EmptyContent
 							illustration="/calypso/images/illustrations/jetpack-header.svg"
 							title={ translate( 'Your plan is managed by %(partnerName)s', {
