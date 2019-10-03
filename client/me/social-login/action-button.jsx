@@ -121,7 +121,8 @@ class SocialLoginActionButton extends Component {
 
 		if ( service === 'apple' ) {
 			const uxMode = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
-			const redirectUri = window.location.origin + window.location.pathname;
+			const redirectUri =
+				typeof window !== 'undefined' ? window.location.origin + window.location.pathname : null;
 			return (
 				<AppleLoginButton
 					clientId={ config( 'apple_oauth_client_id' ) }
