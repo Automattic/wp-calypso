@@ -38,6 +38,7 @@ import {
 	isSubscription,
 	purchaseType,
 	cardProcessorSupportsUpdates,
+	getPartnerName,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -346,7 +347,9 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					<ProductLink purchase={ purchase } selectedSite={ site } />
+					{ ! isPartnerPurchase( purchase ) && (
+						<ProductLink purchase={ purchase } selectedSite={ site } />
+					) }
 				</span>
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
@@ -386,7 +389,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId } = this.props;
+		const { purchase, siteId, translate } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
@@ -405,7 +408,15 @@ class ManagePurchase extends Component {
 						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
-							{ ! isPartnerPurchase( purchase ) && (
+							{ isPartnerPurchase( purchase ) ? (
+								<div className="manage-purchase__contact-partner">
+									{ translate( 'Please contact your site host %(partnerName)s for details', {
+										args: {
+											partnerName: getPartnerName( purchase ),
+										},
+									} ) }
+								</div>
+							) : (
 								<PlanPrice
 									rawPrice={ getRenewalPrice( purchase ) }
 									currencyCode={ purchase.currencyCode }
