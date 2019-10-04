@@ -63,6 +63,7 @@ export class SignupSitePreview extends Component {
 		onPreviewClick: PropTypes.func,
 		resize: PropTypes.bool,
 		scrolling: PropTypes.bool,
+		screenshot: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -79,16 +80,17 @@ export class SignupSitePreview extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			isLoaded: false,
+			isLoaded: !! props.screenshot,
 			wrapperHeight: 800,
 		};
 	}
 
 	componentDidUpdate( prevProps ) {
 		if (
-			this.props.cssUrl !== prevProps.cssUrl ||
-			this.props.fontUrl !== prevProps.fontUrl ||
-			this.props.langSlug !== prevProps.langSlug
+			! this.props.screenshot &&
+			( this.props.cssUrl !== prevProps.cssUrl ||
+				this.props.fontUrl !== prevProps.fontUrl ||
+				this.props.langSlug !== prevProps.langSlug )
 		) {
 			this.setIsLoaded( false );
 		}
@@ -98,25 +100,32 @@ export class SignupSitePreview extends Component {
 	setWrapperHeight = wrapperHeight => this.setState( { wrapperHeight } );
 
 	render() {
-		const { isDesktop, isPhone } = this.props;
+		const { isDesktop, isPhone, screenshot } = this.props;
 		const className = classNames( this.props.className, 'signup-site-preview__wrapper', {
 			'is-desktop': isDesktop,
 			'is-phone': isPhone,
 		} );
 		const wrapperHeightStyle = {
-			height: this.state.wrapperHeight,
+			height: screenshot ? 'auto' : this.state.wrapperHeight,
 		};
 
 		return (
 			<div className={ className } style={ this.props.resize ? wrapperHeightStyle : null }>
 				<div className="signup-site-preview__iframe-wrapper">
 					{ isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
-					{ ! this.state.isLoaded && <Spinner size={ isPhone ? 20 : 40 } /> }
-					<SignupSitePreviewIframe
-						{ ...this.props }
-						setIsLoaded={ this.setIsLoaded }
-						setWrapperHeight={ this.setWrapperHeight }
-					/>
+					{ ! this.state.isLoaded && ! screenshot && <Spinner size={ isPhone ? 20 : 40 } /> }
+					{ ! screenshot && (
+						<SignupSitePreviewIframe
+							{ ...this.props }
+							setIsLoaded={ this.setIsLoaded }
+							setWrapperHeight={ this.setWrapperHeight }
+						/>
+					) }
+					{ screenshot && (
+						<div style={ isPhone ? { height: '100%', overflowY: 'scroll' } : {} }>
+							<img src={ screenshot } alt="Site preview" />
+						</div>
+					) }
 				</div>
 			</div>
 		);
