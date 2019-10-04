@@ -1,0 +1,68 @@
+/**
+ * External dependencies
+ */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+import AsyncLoad from 'components/async-load';
+import GlobalNotices from 'components/global-notices';
+import notices from 'notices';
+import { getSelectedSiteId, getSectionGroup, getSectionName } from 'state/ui/selectors';
+import DocumentHead from 'components/data/document-head';
+import BodySectionCssClass from './body-section-css-class';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+class JetpackDashboardLayout extends Component {
+	static propTypes = {
+		primary: PropTypes.element,
+		secondary: PropTypes.element,
+		// connected props
+		sectionGroup: PropTypes.string,
+		sectionName: PropTypes.string,
+	};
+
+	render() {
+		const sectionClass = classnames( 'layout', `is-section-${ this.props.sectionName }` );
+
+		return (
+			<div className={ sectionClass }>
+				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
+				<DocumentHead />
+
+				<div id="content" className="layout__content">
+					<GlobalNotices id="notices" notices={ notices.list } />
+					<div id="secondary" className="layout__secondary" role="navigation">
+						{ this.props.secondary }
+					</div>
+					<div id="primary" className="layout__primary">
+						{ this.props.primary }
+					</div>
+				</div>
+				{ 'development' === process.env.NODE_ENV && (
+					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
+				) }
+			</div>
+		);
+	}
+}
+
+export default connect( state => {
+	const sectionGroup = getSectionGroup( state );
+	const sectionName = getSectionName( state );
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		sectionGroup,
+		sectionName,
+		siteId,
+	};
+} )( JetpackDashboardLayout );
