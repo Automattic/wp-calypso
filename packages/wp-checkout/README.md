@@ -186,3 +186,7 @@ What if we want to customize the markup in an individual line item (like a highl
 ### Header customization
 
 The "Complete your purchase" header at the top of the component could also be a customizable slot, so that it's possible to include a domain name there if the purchase includes one.
+
+### List update callback
+
+Depending on the implementation, the host page might find it challenging to resolve the differences between the old list and the new list when calling `onChangeItems`. In fact, since the only action the form does by itself (without host additions) is to remove items, we could remove the setter entirely and just have a `onDeleteItem` callback or something similar and leave everything else to the host page.
