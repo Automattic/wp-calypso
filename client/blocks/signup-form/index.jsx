@@ -23,6 +23,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -49,6 +50,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import PasswordlessSignupForm from 'blocks/signup-form/passwordless';
 import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -700,7 +702,7 @@ class SignupForm extends Component {
 		return localizeUrl( 'https://wordpress.com/tos/' );
 	}
 
-	termsOfServiceLink() {
+	termsOfServiceLink = () => {
 		const tosLink = (
 			<a
 				href={ this.getTermsOfServiceUrl() }
@@ -734,7 +736,7 @@ class SignupForm extends Component {
 		}
 
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
-	}
+	};
 
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
@@ -900,6 +902,45 @@ class SignupForm extends Component {
 					<LoggedOutFormLinkItem href={ logInUrl }>
 						{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
 					</LoggedOutFormLinkItem>
+				</div>
+			);
+		}
+
+		/*
+
+			AB Test: passwordlessSignup
+
+			`<PasswordlessSignupForm />` is for the `onboarding` flow.
+
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
+		*/
+		if (
+			this.props.flowName === 'onboarding' &&
+			'passwordless' === abtest( 'passwordlessSignup' )
+		) {
+			const logInUrl = config.isEnabled( 'login/native-login-links' )
+				? this.getLoginLink()
+				: localizeUrl( config( 'login_url' ), this.props.locale );
+
+			return (
+				<div className={ classNames( 'signup-form', this.props.className ) }>
+					{ this.getNotice() }
+					<PasswordlessSignupForm
+						stepName={ this.props.stepName }
+						flowName={ this.props.flowName }
+						goToNextStep={ this.props.goToNextStep }
+						renderTerms={ this.termsOfServiceLink }
+						logInUrl={ logInUrl }
+					/>
+					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						<SocialSignupForm
+							handleResponse={ this.props.handleSocialResponse }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+						/>
+					) }
+
+					{ this.props.footerLink || this.footerLink() }
 				</div>
 			);
 		}

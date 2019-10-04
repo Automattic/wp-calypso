@@ -152,6 +152,7 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+<<<<<<< HEAD
 	verticalSuggestedThemes: {
 		datestamp: '20191011',
 		variations: {
@@ -160,5 +161,14 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+=======
+	passwordlessSignup: {
+		datestamp: '20190927',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+>>>>>>> Add passwordlessSignup A/B test
 	},
 };
