@@ -1,0 +1,63 @@
+/**
+ * Often re-used variables
+ */
+
+// Fonts & basics
+$default-font: -apple-system, BlinkMacSystemFont,"Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,"Helvetica Neue", sans-serif;
+$default-font-size: 13px;
+$default-line-height: 1.4;
+$editor-font: "Noto Serif", serif;
+$editor-html-font: Menlo, Consolas, monaco, monospace;
+$editor-font-size: 16px;
+$text-editor-font-size: 14px;
+$editor-line-height: 1.8;
+$big-font-size: 18px;
+$mobile-text-min-font-size: 16px; // Any font size below 16px will cause Mobile Safari to "zoom in"
+
+// Grid size
+$grid-size-small: 4px;
+$grid-size: 8px;
+$grid-size-large: 16px;
+
+// Widths, heights & dimensions
+$panel-padding: 16px;
+$header-height: 56px;
+$panel-header-height: 50px;
+$admin-bar-height: 32px;
+$admin-bar-height-big: 46px;
+$admin-sidebar-width: 160px;
+$admin-sidebar-width-big: 190px;
+$admin-sidebar-width-collapsed: 36px;
+$empty-paragraph-height: $text-editor-font-size * 4;
+$modal-min-width: 360px;
+
+// Visuals
+$shadow-popover: 0 3px 30px rgba($dark-gray-900, 0.1);
+$shadow-toolbar: 0 2px 10px rgba($dark-gray-900, 0.1), 0 0 2px rgba($dark-gray-900, 0.1);
+$shadow-below-only: 0 5px 10px rgba($dark-gray-900, 0.05), 0 2px 2px rgba($dark-gray-900, 0.05);
+$shadow-modal: 0 3px 30px rgba($dark-gray-900, 0.2);
+
+// Editor Widths
+$sidebar-width: 280px;
+$content-width: 610px; // For the visual width, subtract 30px (2 * $block-padding + 2px borders). This comes to 580px, which is optimized for 70 characters.
+
+// Block UI
+$border-width: 1px;
+$block-controls-height: 36px;
+$icon-button-size: 36px;
+$icon-button-size-small: 24px;
+$inserter-tabs-height: 36px;
+$block-toolbar-height: $block-controls-height + $border-width;
+$resize-handler-size: 16px;
+$resize-handler-container-size: $resize-handler-size + ($grid-size-small * 2); // Make the resize handle container larger so there's a larger grabbable area.
+
+// Blocks
+$block-padding: 14px; // Space between block footprint and focus boundaries. These are drawn outside the block footprint, and do not affect the size.
+$block-spacing: 4px; // Vertical space between blocks.
+$block-side-ui-width: 28px; // Width of the movers/drag handle UI.
+$block-side-ui-clearance: 2px; // Space between movers/drag handle UI, and block.
+$block-container-side-padding: $block-side-ui-width + $block-padding + 2 * $block-side-ui-clearance; // Total space left and right of the block footprint.
+
+// Buttons & UI Widgets
+$radius-round-rectangle: 4px;
+$radius-round: 50%;

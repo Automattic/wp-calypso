@@ -1,0 +1,607 @@
+/**
+ * Breakpoint mixins
+ */
+
+@mixin break-huge() {
+	@media (min-width: #{ ($break-huge) }) {
+		@content;
+	}
+}
+
+@mixin break-wide() {
+	@media (min-width: #{ ($break-wide) }) {
+		@content;
+	}
+}
+
+@mixin break-xlarge() {
+	@media (min-width: #{ ($break-xlarge) }) {
+		@content;
+	}
+}
+
+@mixin break-large() {
+	@media (min-width: #{ ($break-large) }) {
+		@content;
+	}
+}
+
+@mixin break-medium() {
+	@media (min-width: #{ ($break-medium) }) {
+		@content;
+	}
+}
+
+@mixin break-small() {
+	@media (min-width: #{ ($break-small) }) {
+		@content;
+	}
+}
+
+@mixin break-mobile() {
+	@media (min-width: #{ ($break-mobile) }) {
+		@content;
+	}
+}
+
+@mixin break-zoomed-in() {
+	@media (min-width: #{ ($break-zoomed-in) }) {
+		@content;
+	}
+}
+
+
+/**
+ * Long content fade mixin
+ *
+ * Creates a fading overlay to signify that the content is longer
+ * than the space allows.
+ */
+
+@mixin long-content-fade($direction: right, $size: 20%, $color: #fff, $edge: 0, $z-index: false) {
+	content: "";
+	display: block;
+	position: absolute;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+
+	@if $z-index {
+		z-index: $z-index;
+	}
+
+	@if $direction == "bottom" {
+		background: linear-gradient(to top, rgba($color, 0), $color 90%);
+		left: $edge;
+		right: $edge;
+		top: $edge;
+		bottom: calc(100% - $size);
+		width: auto;
+	}
+
+	@if $direction == "top" {
+		background: linear-gradient(to bottom, rgba($color, 0), $color 90%);
+		top: calc(100% - $size);
+		left: $edge;
+		right: $edge;
+		bottom: $edge;
+		width: auto;
+	}
+
+	@if $direction == "left" {
+		background: linear-gradient(to left, rgba($color, 0), $color 90%);
+		top: $edge;
+		left: $edge;
+		bottom: $edge;
+		right: auto;
+		width: $size;
+		height: auto;
+	}
+
+	@if $direction == "right" {
+		background: linear-gradient(to right, rgba($color, 0), $color 90%);
+		top: $edge;
+		bottom: $edge;
+		right: $edge;
+		left: auto;
+		width: $size;
+		height: auto;
+	}
+}
+
+/**
+ * Button states and focus styles
+ */
+
+// Buttons with rounded corners.
+@mixin button-style__disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+@mixin button-style__hover {
+	background-color: $white;
+	color: $dark-gray-900;
+	box-shadow: inset 0 0 0 1px $light-gray-500, inset 0 0 0 2px $white, 0 1px 1px rgba($dark-gray-900, 0.2);
+}
+
+@mixin button-style__active() {
+	outline: none;
+	background-color: $white;
+	color: $dark-gray-900;
+	box-shadow: inset 0 0 0 1px $light-gray-700, inset 0 0 0 2px $white;
+}
+
+@mixin button-style__focus-active() {
+	background-color: $white;
+	color: $dark-gray-900;
+	box-shadow: inset 0 0 0 1px $dark-gray-300, inset 0 0 0 2px $white;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 2px solid transparent;
+}
+
+// Switch.
+@mixin switch-style__focus-active() {
+	box-shadow: 0 0 0 2px $white, 0 0 0 3px $dark-gray-300;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+// Formatting Buttons.
+@mixin formatting-button-style__hover {
+	color: $dark-gray-500;
+	box-shadow: inset 0 0 0 1px $dark-gray-500, inset 0 0 0 2px $white;
+}
+
+@mixin formatting-button-style__active() {
+	outline: none;
+	color: $white;
+	box-shadow: none;
+	background: $dark-gray-500;
+}
+
+@mixin formatting-button-style__focus() {
+	box-shadow: inset 0 0 0 1px $dark-gray-500, inset 0 0 0 2px $white;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 2px solid transparent;
+}
+
+// Tabs, Inputs, Square buttons.
+@mixin input-style__neutral() {
+	box-shadow: 0 0 0 transparent;
+	transition: box-shadow 0.1s linear;
+	border-radius: $radius-round-rectangle;
+	border: $border-width solid $dark-gray-200;
+	@include reduce-motion("transition");
+}
+
+@mixin input-style__focus() {
+	color: $dark-gray-900;
+	border-color: $blue-medium-focus;
+	box-shadow: 0 0 0 1px $blue-medium-focus;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 2px solid transparent;
+}
+
+// Square buttons.
+@mixin square-style__neutral() {
+	outline-offset: -1px;
+}
+
+@mixin square-style__focus() {
+	color: $dark-gray-900;
+	outline-offset: -1px;
+	outline: 1px dotted $dark-gray-500;
+}
+
+// Menu items.
+@mixin menu-style__neutral() {
+	border: none;
+	box-shadow: none;
+}
+
+@mixin menu-style__hover() {
+	color: $dark-gray-900;
+	border: none;
+	box-shadow: none;
+	background: $light-gray-200;
+}
+
+@mixin menu-style__focus() {
+	color: $dark-gray-900;
+	border: none;
+	box-shadow: none;
+	outline-offset: -2px;
+	outline: 1px dotted $dark-gray-500;
+}
+
+// Blocks in the Library.
+@mixin block-style__disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+@mixin block-style__hover {
+	background: $light-gray-200;
+	color: $dark-gray-900;
+}
+
+@mixin block-style__focus() {
+	color: $dark-gray-900;
+	box-shadow: 0 0 0 1px $white, 0 0 0 3px $blue-medium-500;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 2px solid transparent;
+}
+
+@mixin block-style__is-active() {
+	color: $dark-gray-900;
+	box-shadow: inset 0 0 0 2px $dark-gray-500;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 2px solid transparent;
+	outline-offset: -2px;
+}
+
+@mixin block-style__is-active-focus() {
+	color: $dark-gray-900;
+	box-shadow: 0 0 0 1px $white, 0 0 0 3px $blue-medium-500, inset 0 0 0 2px $dark-gray-500;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 4px solid transparent;
+	outline-offset: -4px;
+}
+
+/**
+ * Applies editor left position to the selector passed as argument
+ */
+
+@mixin editor-left($selector) {
+	#{$selector} { /* Set left position when auto-fold is not on the body element. */
+		left: 0;
+
+		@include break-medium() {
+			left: $admin-sidebar-width;
+		}
+	}
+
+	.auto-fold #{$selector} { /* Auto fold is when on smaller breakpoints, nav menu auto collapses. */
+		@include break-medium() {
+			left: $admin-sidebar-width-collapsed;
+		}
+
+		@include break-large() {
+			left: $admin-sidebar-width;
+		}
+	}
+
+	/* Sidebar manually collapsed. */
+	.folded #{$selector} {
+		left: 0;
+
+		@include break-medium() {
+			left: $admin-sidebar-width-collapsed;
+		}
+	}
+
+	/* Mobile menu opened. */
+	@media (max-width: #{ ($break-medium) }) {
+		.auto-fold .wp-responsive-open #{$selector} {
+			left: $admin-sidebar-width-big;
+		}
+	}
+
+	/* In small screens with responsive menu expanded there is small white space. */
+	@media (max-width: #{ ($break-small) }) {
+		.auto-fold .wp-responsive-open #{$selector} {
+			margin-left: -18px;
+		}
+	}
+
+	body.is-fullscreen-mode #{$selector} {
+		left: 0 !important;
+	}
+}
+
+/**
+ * Applies editor right position to the selector passed as argument
+ */
+
+@mixin editor-right($selector) {
+	#{ $selector } {
+		right: 0;
+	}
+
+	.edit-post-layout.is-sidebar-opened #{ $selector } {
+		right: $sidebar-width;
+	}
+}
+
+
+/**
+ * Styles that are reused verbatim in a few places
+ */
+
+// These are additional styles for all captions, when the theme opts in to block styles.
+@mixin caption-style-theme() {
+	color: $dark-gray-500;
+	font-size: $default-font-size;
+	text-align: center;
+}
+
+@mixin dropdown-arrow() {
+	content: "";
+	pointer-events: none;
+	display: block;
+	width: 0;
+	height: 0;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-top: 5px solid;
+	margin-left: $grid-size-small;
+
+	// This gives the icon space on the right side consistent with the material
+	// icon standards.
+	margin-right: 2px;
+}
+
+/**
+ * Allows users to opt-out of animations via OS-level preferences.
+ */
+
+@mixin reduce-motion($property: "") {
+
+	@if $property == "transition" {
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0s;
+		}
+	}
+
+	@else if $property == "animation" {
+		@media (prefers-reduced-motion: reduce) {
+			animation-duration: 1ms;
+		}
+	}
+
+	@else {
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0s;
+			animation-duration: 1ms;
+		}
+	}
+
+}
+
+/**
+ * Reset default styles for JavaScript UI based pages.
+ * This is a WP-admin agnostic reset
+ */
+@mixin reset {
+	box-sizing: border-box;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: inherit;
+	}
+
+	.input-control, // Upstream name is `.regular-text`.
+	input[type="text"],
+	input[type="search"],
+	input[type="radio"],
+	input[type="tel"],
+	input[type="time"],
+	input[type="url"],
+	input[type="week"],
+	input[type="password"],
+	input[type="checkbox"],
+	input[type="color"],
+	input[type="date"],
+	input[type="datetime"],
+	input[type="datetime-local"],
+	input[type="email"],
+	input[type="month"],
+	input[type="number"],
+	select,
+	textarea {
+		font-family: $default-font;
+		padding: 6px 8px;
+		@include input-style__neutral();
+
+		/* Fonts smaller than 16px causes mobile safari to zoom. */
+		font-size: $mobile-text-min-font-size;
+		/* Override core line-height. To be reviewed. */
+		line-height: normal;
+		@include break-small {
+			font-size: $default-font-size;
+			/* Override core line-height. To be reviewed. */
+			line-height: normal;
+		}
+
+		&:focus {
+			@include input-style__focus();
+		}
+	}
+
+	input[type="number"] {
+		padding-left: 4px;
+		padding-right: 4px;
+	}
+
+	select {
+		padding: 2px;
+		font-size: $default-font-size;
+		color: $dark-gray-500;
+
+		&:focus {
+			border-color: $blue-medium-600;
+			// Windows High Contrast mode will show this outline
+			outline: 2px solid transparent;
+			outline-offset: 0;
+		}
+	}
+
+	input[type="checkbox"],
+	input[type="radio"] {
+		border: $border-width + 1 solid $dark-gray-300;
+		margin-right: 12px;
+		transition: none;
+
+		&:focus {
+			border-color: $dark-gray-300;
+			box-shadow: 0 0 0 1px $dark-gray-300;
+		}
+
+		&:checked {
+			background: theme(toggle);
+			border-color: theme(toggle);
+		}
+
+		&:checked:focus {
+			box-shadow: 0 0 0 2px $dark-gray-500;
+		}
+	}
+
+	input[type="checkbox"] {
+		border-radius: $radius-round-rectangle / 2;
+
+		&:checked::before,
+		&[aria-checked="mixed"]::before {
+			margin: -3px -5px;
+			color: $white;
+
+			@include break-medium() {
+				margin: -4px 0 0 -5px;
+			}
+		}
+
+		&[aria-checked="mixed"] {
+			background: theme(toggle);
+			border-color: theme(toggle);
+
+			&::before {
+				// Inherited from `forms.css`.
+				// See: https://github.com/WordPress/wordpress-develop/tree/5.1.1/src/wp-admin/css/forms.css#L122-L132
+				content: "\f460";
+				float: left;
+				display: inline-block;
+				vertical-align: middle;
+				width: 16px;
+				/* stylelint-disable */
+				font: normal 30px/1 dashicons;
+				/* stylelint-enable */
+				speak: none;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+
+				@include break-medium() {
+					float: none;
+					font-size: 21px;
+				}
+			}
+
+			&:focus {
+				box-shadow: 0 0 0 2px $dark-gray-500;
+			}
+		}
+	}
+
+	// We provide explicit pixel dimensions to ensure a crisp appearance.
+	// This radio button style should be ported upstream.
+	input[type="radio"] {
+		border-radius: $radius-round;
+
+		&:checked::before {
+			width: 6px;
+			height: 6px;
+			margin: 6px 0 0 6px;
+			background-color: $white;
+
+			@include break-medium() {
+				margin: 3px 0 0 3px;
+			}
+		}
+	}
+
+	// Placeholder colors
+	input,
+	textarea {
+		// Use opacity to work in various editor styles.
+		&::-webkit-input-placeholder {
+			color: $dark-opacity-300;
+		}
+
+		&::-moz-placeholder {
+			opacity: 1; // Necessary because Firefox reduces this from 1.
+			color: $dark-opacity-300;
+		}
+
+		&:-ms-input-placeholder {
+			color: $dark-opacity-300;
+		}
+
+		.is-dark-theme & {
+			&::-webkit-input-placeholder {
+				color: $light-opacity-300;
+			}
+
+			&::-moz-placeholder {
+				opacity: 1; // Necessary because Firefox reduces this from 1.
+				color: $light-opacity-300;
+			}
+
+			&:-ms-input-placeholder {
+				color: $light-opacity-300;
+			}
+		}
+	}
+}
+
+/**
+ * Reset the WP Admin page styles for Gutenberg-like pages.
+ */
+@mixin wp-admin-reset( $content-container ) {
+	background: $white;
+
+	#wpcontent {
+		padding-left: 0;
+	}
+
+	#wpbody-content {
+		padding-bottom: 0;
+	}
+
+	/* We hide legacy notices in Gutenberg Based Pages, because they were not designed in a way that scaled well.
+	   Plugins can use Gutenberg notices if they need to pass on information to the user when they are editing. */
+	#wpbody-content > div:not(#{ $content-container }):not(#screen-meta) {
+		display: none;
+	}
+
+	#wpfooter {
+		display: none;
+	}
+
+	.a11y-speak-region {
+		left: -1px;
+		top: -1px;
+	}
+
+	ul#adminmenu a.wp-has-current-submenu::after,
+	ul#adminmenu > li.current > a.current::after {
+		border-right-color: $white;
+	}
+
+	.media-frame select.attachment-filters:last-of-type {
+		width: auto;
+		max-width: 100%;
+	}
+}
