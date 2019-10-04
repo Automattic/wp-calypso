@@ -27,7 +27,7 @@ class AppointmentInfo extends Component {
 
 	renderAppointmentDetails() {
 		const {
-			appointment: { beginTimestamp, endTimestamp, id, meta },
+			appointment: { beginTimestamp, endTimestamp, id, scheduleId, meta },
 			translate,
 			site,
 		} = this.props;
@@ -93,12 +93,26 @@ class AppointmentInfo extends Component {
 							</FormButton>
 						</a>
 					</FormFieldset>
-					<br />
-					<FormSettingExplanation>
-						Note: You have 30 days from the date of purchase to cancel an unused Quick Start session
-						and receive a refund. Please note, if you miss a scheduled session twice, the purchase
-						will be cancelled without a refund.
-					</FormSettingExplanation>
+
+					{ scheduleId === 1 ? (
+						<>
+							<br />
+							<FormSettingExplanation>
+								Note: You have two free sessions with your plan. If you are unable to attend a
+								session, you may cancel or reschedule it at least one hour in advance so that it
+								does not count towards your session total.
+							</FormSettingExplanation>
+						</>
+					) : (
+						<>
+							<br />
+							<FormSettingExplanation>
+								Note: You have 30 days from the date of purchase to cancel an unused Quick Start
+								session and receive a refund. Please note, if you miss a scheduled session twice,
+								the purchase will be cancelled without a refund.
+							</FormSettingExplanation>
+						</>
+					) }
 				</CompactCard>
 			</>
 		);
