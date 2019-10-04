@@ -52,29 +52,32 @@ class AppleLoginButton extends Component {
 		}
 
 		if ( this.props.uxMode === 'redirect' ) {
-			if (
-				this.props.socialServiceResponse &&
-				this.props.socialServiceResponse.client_id === config( 'apple_oauth_client_id' )
-			) {
-				const storedOauth2State = window.sessionStorage.getItem( 'siwa_state' );
-				window.sessionStorage.removeItem( 'siwa_state' );
-
-				if ( this.props.socialServiceResponse.state !== storedOauth2State ) {
-					return;
-				}
-
-				const user = {
-					email: this.props.socialServiceResponse.user_email,
-					name: this.props.socialServiceResponse.user_name,
-				};
-				this.props.responseHandler( {
-					id_token: this.props.socialServiceResponse.id_token,
-					user: user,
-				} );
-			}
-
+			this.props.socialServiceResponse &&
+				this.handleSocialResponseFromRedirect( this.props.socialServiceResponse );
 			this.loadAppleClient();
 		}
+	}
+
+	handleSocialResponseFromRedirect( socialServiceResponse ) {
+		if ( socialServiceResponse.client_id !== config( 'apple_oauth_client_id' ) ) {
+			return;
+		}
+
+		const storedOauth2State = window.sessionStorage.getItem( 'siwa_state' );
+		window.sessionStorage.removeItem( 'siwa_state' );
+
+		if ( socialServiceResponse.state !== storedOauth2State ) {
+			return;
+		}
+
+		const user = {
+			email: socialServiceResponse.user_email,
+			name: socialServiceResponse.user_name,
+		};
+		this.props.responseHandler( {
+			id_token: socialServiceResponse.id_token,
+			user: user,
+		} );
 	}
 
 	async loadAppleClient() {
