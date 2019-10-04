@@ -1,18 +1,21 @@
 /**
- * External dependencies
- */
-import { format as formatUrl, parse as parseUrl } from 'url';
-import { has, isString, omit, startsWith } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
-import { URL, SiteSlug, Scheme } from 'types';
+import { URL as URLType, SiteSlug, Scheme } from 'types';
 import { Falsey } from 'utility-types';
 
 export { addQueryArgs } from 'lib/route';
+
+// Base URL used for URL parsing. The WHATWG URL API doesn't support relative
+// URLs, so we always need to provide a base of some sort.
+const BASE_HOSTNAME = 'base.invalid';
+const BASE_URL = `http://${ BASE_HOSTNAME }`;
+
+interface Stringable {
+	toString: () => string;
+}
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -23,26 +26,28 @@ export { addQueryArgs } from 'lib/route';
  * @param  url URL to check
  * @return     true if the given URL is located outside of Calypso
  */
-export function isOutsideCalypso( url: URL ): boolean {
-	return !! url && ( startsWith( url, '//' ) || ! startsWith( url, '/' ) );
+export function isOutsideCalypso( url: URLType ): boolean {
+	return !! url && ( url.startsWith( '//' ) || ! url.startsWith( '/' ) );
 }
 
-export function isExternal( url: URL ): boolean {
-	// parseURL will return hostname = null if no protocol or double-slashes
-	// the url passed in might be of form `en.support.wordpress.com`
-	// so for this function we'll append double-slashes to fake it
-	// if it is a relative URL the hostname will still be empty from parseURL
+export function isExternal( url: URLType ): boolean {
+	// The url passed in might be of form `en.support.wordpress.com`,
+	// so for this function we'll append double-slashes to fake it.
+	// If it is a relative URL the hostname will be the base hostname.
 	if (
-		! startsWith( url, 'http://' ) &&
-		! startsWith( url, 'https://' ) &&
-		! startsWith( url, '//' )
+		! url.startsWith( 'http://' ) &&
+		! url.startsWith( 'https://' ) &&
+		! url.startsWith( '/' ) &&
+		! url.startsWith( '?' ) &&
+		! url.startsWith( '#' )
 	) {
 		url = '//' + url;
 	}
 
-	const { hostname, path } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
+	const { hostname, pathname } = new URL( url, BASE_URL );
 
-	if ( ! hostname ) {
+	// Did we parse a relative URL?
+	if ( hostname === BASE_HOSTNAME ) {
 		return false;
 	}
 
@@ -51,7 +56,7 @@ export function isExternal( url: URL ): boolean {
 			// even if hostname matches, the url might be outside calypso
 			// outside calypso should be considered external
 			// double separators are valid paths - but not handled correctly
-			if ( path && isLegacyRoute( path.replace( '//', '/' ) ) ) {
+			if ( pathname && isLegacyRoute( pathname.replace( '//', '/' ) ) ) {
 				return true;
 			}
 			return false;
@@ -61,8 +66,8 @@ export function isExternal( url: URL ): boolean {
 	return hostname !== config( 'hostname' );
 }
 
-export function isHttps( url: URL ): boolean {
-	return !! url && startsWith( url, 'https://' );
+export function isHttps( url: URLType ): boolean {
+	return !! url && url.startsWith( 'https://' );
 }
 
 const schemeRegex = /^\w+:\/\//;
@@ -75,8 +80,8 @@ const urlWithoutHttpRegex = /^https?:\/\//;
  */
 export function withoutHttp( url: '' ): '';
 export function withoutHttp( url: Falsey ): null;
-export function withoutHttp( url: URL ): URL;
-export function withoutHttp( url: URL | Falsey ): URL | null {
+export function withoutHttp( url: URLType ): URLType;
+export function withoutHttp( url: URLType | Falsey ): URLType | null {
 	if ( url === '' ) {
 		return '';
 	}
@@ -88,16 +93,16 @@ export function withoutHttp( url: URL | Falsey ): URL | null {
 	return url.replace( urlWithoutHttpRegex, '' );
 }
 
-export function addSchemeIfMissing( url: URL, scheme: Scheme ): URL {
+export function addSchemeIfMissing( url: URLType, scheme: Scheme ): URLType {
 	if ( false === schemeRegex.test( url ) ) {
 		return scheme + '://' + url;
 	}
 	return url;
 }
 
-export function setUrlScheme( url: URL, scheme: Scheme ) {
+export function setUrlScheme( url: URLType, scheme: Scheme ) {
 	const schemeWithSlashes = scheme + '://';
-	if ( startsWith( url, schemeWithSlashes ) ) {
+	if ( url && url.startsWith( schemeWithSlashes ) ) {
 		return url;
 	}
 
@@ -110,8 +115,8 @@ export function setUrlScheme( url: URL, scheme: Scheme ) {
 }
 
 export function urlToSlug( url: Falsey ): null;
-export function urlToSlug( url: URL ): SiteSlug;
-export function urlToSlug( url: URL | Falsey ): SiteSlug | null {
+export function urlToSlug( url: URLType ): SiteSlug;
+export function urlToSlug( url: URLType | Falsey ): SiteSlug | null {
 	if ( ! url ) {
 		return null;
 	}
@@ -127,7 +132,7 @@ export function urlToSlug( url: URL | Falsey ): SiteSlug | null {
  * @param  urlToConvert The URL to convert
  * @return              The URL's domain and path
  */
-export function urlToDomainAndPath( urlToConvert: URL ): URL {
+export function urlToDomainAndPath( urlToConvert: URLType ): URLType {
 	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
 }
 
@@ -145,11 +150,24 @@ export function resemblesUrl( query: string ): boolean {
 		return false;
 	}
 
-	let parsedUrl = parseUrl( query );
+	let parsedUrl;
+	try {
+		parsedUrl = new URL( query );
+	} catch {
+		// Do nothing.
+	}
 
-	// Make sure the query has a protocol - hostname ends up blank otherwise
-	if ( ! parsedUrl.protocol ) {
-		parsedUrl = parseUrl( 'http://' + query );
+	// If we got an invalid URL, add a protocol and try again.
+	if ( parsedUrl === undefined ) {
+		try {
+			parsedUrl = new URL( 'http://' + query );
+		} catch {
+			// Do nothing.
+		}
+	}
+
+	if ( ! parsedUrl ) {
+		return false;
 	}
 
 	if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
@@ -173,22 +191,37 @@ export function resemblesUrl( query: string ): boolean {
 /**
  * Removes given params from a url.
  *
- * @param  {String} url URL to be cleaned
- * @param  {Array|String}  paramsToOmit The collection of params or single param to reject
- * @return {String} Url less the omitted params.
+ * @param  url URL to be cleaned
+ * @param  paramsToOmit The collection of params or single param to reject
+ * @return Url less the omitted params.
  */
 export function omitUrlParams( url: Falsey, paramsToOmit: string | string[] ): null;
-export function omitUrlParams( url: URL, paramsToOmit: string | string[] ): URL;
-export function omitUrlParams( url: URL | Falsey, paramsToOmit: string | string[] ): URL | null {
+export function omitUrlParams( url: URLType, paramsToOmit: string | string[] ): URLType;
+export function omitUrlParams(
+	url: URLType | Falsey,
+	paramsToOmit: string | string[]
+): URLType | null {
 	if ( ! url ) {
 		return null;
 	}
 
-	const parsed = parseUrl( url, true );
-	parsed.query = omit( parsed.query, paramsToOmit );
+	let toOmit: string[];
 
-	delete parsed.search;
-	return formatUrl( parsed );
+	if ( typeof paramsToOmit === 'string' ) {
+		toOmit = [ paramsToOmit as string ];
+	} else {
+		toOmit = paramsToOmit;
+	}
+
+	const parsed = new URL( url );
+	const filtered = Array.from( parsed.searchParams.entries() ).filter(
+		( [ key ] ) => ! toOmit || ! toOmit.includes( key )
+	);
+
+	const newUrl = new URL( url );
+	newUrl.search = new URLSearchParams( filtered ).toString();
+
+	return newUrl.href;
 }
 
 /**
@@ -197,14 +230,23 @@ export function omitUrlParams( url: URL | Falsey, paramsToOmit: string | string[
  * @param  encodedURI URI to attempt to decode
  * @return            Decoded URI (or passed in value on error)
  */
-export function decodeURIIfValid( encodedURI: string ): URL {
-	if ( ! ( isString( encodedURI ) || has( encodedURI, 'toString' ) ) ) {
+export function decodeURIIfValid( encodedURI: string | Stringable ): URLType {
+	let encodedURIString: string;
+
+	if ( encodedURI as Stringable ) {
+		encodedURIString = encodedURI.toString();
+	} else {
+		encodedURIString = encodedURI as string;
+	}
+
+	if ( typeof encodedURIString !== 'string' ) {
 		return '';
 	}
+
 	try {
-		return decodeURI( encodedURI );
+		return decodeURI( encodedURIString );
 	} catch ( e ) {
-		return encodedURI;
+		return encodedURIString;
 	}
 }
 
@@ -214,13 +256,22 @@ export function decodeURIIfValid( encodedURI: string ): URL {
  * @param  encodedURIComponent URI component to attempt to decode
  * @return                     Decoded URI component (or passed in value on error)
  */
-export function decodeURIComponentIfValid( encodedURIComponent: string ): string {
-	if ( ! ( isString( encodedURIComponent ) || has( encodedURIComponent, 'toString' ) ) ) {
+export function decodeURIComponentIfValid( encodedURIComponent: string | Stringable ): string {
+	let encodedURIComponentString: string;
+
+	if ( encodedURIComponent as Stringable ) {
+		encodedURIComponentString = encodedURIComponent.toString();
+	} else {
+		encodedURIComponentString = encodedURIComponent as string;
+	}
+
+	if ( typeof encodedURIComponentString !== 'string' ) {
 		return '';
 	}
+
 	try {
-		return decodeURIComponent( encodedURIComponent );
+		return decodeURIComponent( encodedURIComponentString );
 	} catch ( e ) {
-		return encodedURIComponent;
+		return encodedURIComponentString;
 	}
 }
