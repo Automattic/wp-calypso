@@ -145,8 +145,8 @@ export default {
 	checkoutCollectPhoneNumber: {
 		datestamp: '20191003',
 		variations: {
-			show: 50,
-			hide: 50,
+			show: 0,
+			hide: 100,
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
