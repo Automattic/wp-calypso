@@ -34,7 +34,7 @@ import ImporterActionButtonContainer from 'my-sites/importer/importer-action-but
 import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { appStates } from 'state/imports/constants';
-import { cancelImport } from 'lib/importer/actions';
+import { cancelImport, setUploadStartState } from 'lib/importer/actions';
 
 /**
  * Style dependencies
@@ -183,6 +183,10 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	importSite = () => {
+		// To track an "upload start"
+		const { importerId } = this.props.importerStatus;
+		setUploadStartState( importerId, this.props.validatedSiteUrl );
+
 		this.props.importSite( {
 			engine: this.props.importData.engine,
 			importerStatus: this.props.importerStatus,
