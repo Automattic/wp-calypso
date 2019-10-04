@@ -13,7 +13,7 @@ export const notifyUpgradeNudgeClick = action =>
 	http(
 		{
 			method: 'POST',
-			path: '/nudge/click',
+			path: `/sites/${ action.siteId }/nudge/click`,
 			apiNamespace: 'wpcom/v2',
 			body: {
 				nudge_name: action.nudgeName,

@@ -16,6 +16,7 @@ import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { clickUpgradeNudge } from 'state/marketing/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -40,10 +41,10 @@ export class SidebarBanner extends Component {
 	};
 
 	onClick = e => {
-		const { ctaName, track, clickNudge, onClick } = this.props;
+		const { selectedSiteId, ctaName, track, clickNudge, onClick } = this.props;
 
 		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
-		clickNudge( ctaName );
+		clickNudge( selectedSiteId, ctaName );
 
 		if ( onClick ) {
 			onClick( e );
@@ -74,13 +75,12 @@ export class SidebarBanner extends Component {
 	}
 }
 
-const mapStateToProps = null;
-const mapDispatchToProps = {
-	track: recordTracksEvent,
-	clickNudge: clickUpgradeNudge,
-};
-
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+	state => ( {
+		selectedSiteId: getSelectedSiteId( state ),
+	} ),
+	{
+		track: recordTracksEvent,
+		clickNudge: clickUpgradeNudge,
+	}
 )( localize( SidebarBanner ) );
