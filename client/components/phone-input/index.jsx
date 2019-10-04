@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import { find, identity, noop } from 'lodash';
+import { find, identity } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -30,13 +30,17 @@ import './style.scss';
 class PhoneInput extends React.PureComponent {
 	static propTypes = {
 		onChange: PropTypes.func.isRequired,
+		className: PropTypes.string,
+		isError: PropTypes.bool,
+		disabled: PropTypes.bool,
 		value: PropTypes.string.isRequired,
 		countryCode: PropTypes.string.isRequired,
 		countriesList: PropTypes.array.isRequired,
+		setComponentReference: PropTypes.func,
+		enableStickyCountry: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		setComponentReference: noop,
 		enableStickyCountry: true,
 	};
 
@@ -82,11 +86,11 @@ class PhoneInput extends React.PureComponent {
 		if ( value !== this.props.value || countryCode !== this.props.countryCode ) {
 			this.props.onChange( { value, countryCode } );
 		}
-		this.props.setComponentReference( this );
+		this.props.setComponentReference && this.props.setComponentReference( this );
 	}
 
 	componentWillUnmount() {
-		this.props.setComponentReference( undefined );
+		this.props.setComponentReference && this.props.setComponentReference( undefined );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -104,9 +108,15 @@ class PhoneInput extends React.PureComponent {
 	}
 
 	componentWillUpdate( nextProps ) {
-		const currentFormat = this.props.value,
-			currentCursorPoint = this.numberInput.selectionStart,
-			nextFormat = nextProps.value;
+		if (
+			nextProps.value === this.props.value &&
+			nextProps.countryCode === this.props.countryCode
+		) {
+			return;
+		}
+		const currentFormat = this.props.value;
+		const currentCursorPoint = this.numberInput.selectionStart;
+		const nextFormat = nextProps.value;
 
 		let newCursorPoint = currentCursorPoint;
 		/*
