@@ -160,6 +160,7 @@ export function upsellNudge( context, next ) {
 			shouldShowCart={ false }
 			clearTransaction={ true }
 			purchaseId={ Number( receiptId ) }
+			isComingFromSignup={ !! context.query.signup }
 		>
 			<UpsellNudge
 				siteSlugParam={ site }

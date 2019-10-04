@@ -50,6 +50,15 @@ class CheckoutContainer extends React.Component {
 		}
 	}
 
+	shouldComponentUpdate( nextProps ) {
+		if ( this.props.isComingFromSignup !== nextProps.isComingFromSignup ) {
+			this.setState( { shouldDisplaySiteCreatedNotice: nextProps.isComingFromSignup } );
+			return false;
+		}
+
+		return true;
+	}
+
 	renderCheckoutHeader() {
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
@@ -71,6 +80,7 @@ class CheckoutContainer extends React.Component {
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
+
 		return (
 			<>
 				{ this.renderCheckoutHeader() }
