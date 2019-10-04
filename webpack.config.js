@@ -244,6 +244,13 @@ const webpackConfig = {
 				},
 			},
 			{
+				include: path.join( __dirname, 'client/jetpack-dashboard-sections.js' ),
+				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+				options: {
+					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
+				},
+			},
+			{
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
