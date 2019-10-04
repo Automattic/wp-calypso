@@ -61,6 +61,7 @@ import { getActiveTheme } from 'state/themes/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
+import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -384,7 +385,8 @@ function mapStateToProps( state, { moment } ) {
 
 	const isAllowedToUseClassic =
 		! isSiteUsingFullSiteEditing( state, siteId ) && ! isUsingGutenbergPageTemplates;
-	const showOptOut = optInEnabled && isGutenbergEditor && isAllowedToUseClassic;
+	const showOptOut =
+		isGutenbergOptOutEnabled( state, siteId ) && isGutenbergEditor && isAllowedToUseClassic;
 
 	return {
 		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),

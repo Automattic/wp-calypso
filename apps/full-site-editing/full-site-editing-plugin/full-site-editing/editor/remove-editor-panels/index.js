@@ -24,7 +24,7 @@ const unsubscribe = subscribe( () => {
 	// removeEditorPanel action won't have the desired effect. See:
 	// https://github.com/WordPress/gutenberg/pull/17117
 	// When support is added, we should remove the CSS hack at '../style.scss'
-	if ( 'wp_template' === fullSiteEditing.editorPostType ) {
+	if ( 'wp_template_part' === fullSiteEditing.editorPostType ) {
 		removeEditorPanel( 'post-status' );
 	}
 	return unsubscribe();
