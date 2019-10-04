@@ -38,15 +38,15 @@ Any change to the `defaultBillingContact` prop while the component is visible wi
 
 The third step's order review content can be overridden using the `orderReview` prop, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
-The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, amount: {currency: string, value: int, displayValue: string}}`. All the properties are required except for `subLabel`. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` will not be mutated; instead, the component will call the `onChangeItems` prop of `WPCheckout` with a modified copy of `items`. It is incumbent on the parent component to use `onChangeItems` to create a modified line item list and then return it to `WPCheckout`.
+The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, amount: {currency: string, value: int, displayValue: string}}`. All the properties are required except for `subLabel`. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` will not be mutated; instead, the component will call the `onDeleteItem` prop of `WPCheckout` with the item that is deleted. It is incumbent on the parent component to use `onDeleteItem` to create a modified line item list and then return it to `WPCheckout`.
 
-The line items are mostly for display purposes only. The actual charge is performed on the sum of the totals, which must be passed separately to `WPCheckout` using the required `totals` array prop. Each total in this array has a type in the set of 'subtotal', or 'tax', which defines its role and how it will be displayed. There can be multiple totals of each type and they will be added together (for example, multiple taxes). Totals are objects of the form `{type: string, label: string, amount: { currency: string, value: int, displayValue: string }}`. If the `onChangeItems` callback is called, the parent component must also update the `totals` prop.
+The line items are mostly for display purposes only. The actual charge is performed on the sum of the totals, which must be passed separately to `WPCheckout` using the required `totals` array prop. Each total in this array has a type in the set of 'subtotal', or 'tax', which defines its role and how it will be displayed. There can be multiple totals of each type and they will be added together (for example, multiple taxes). Totals are objects of the form `{type: string, label: string, amount: { currency: string, value: int, displayValue: string }}`. If the `onDeleteItem` callback is called, the parent component must also update the `totals` prop.
 
 The `displayValue` property of both items and totals can use limited Markdown formatting, including the `~` character for strike-through text.
 
 There are two other optional props which allow customizing the contents of the form. `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
-Any component within `WPCheckout` can use the custom React Hook `useCheckoutLineItems`, which returns a three element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), the second element is the current array of totals (matching the `totals` prop), and the third element is a function that will attempt to change the array of line items (it will call the `onChangeItems` prop on `WPCheckout` which should do whatever is necessary to update the `items` prop). Rememeber that if `onChangeItems` is called, it's important for the parent to also update the totals.
+Any component within `WPCheckout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), the second element is the current array of totals (matching the `totals` prop).
 
 ### Submitting the form
 
@@ -79,7 +79,7 @@ const defaultBillingContact = {
 };
 
 // These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
-const availablePaymentMethods = ['apple-pay', 'card', 'paypal', 'ebanx', 'ideal' ];
+const availablePaymentMethods = ['apple-pay', 'card', 'paypal', 'ebanx', 'ideal'];
 
 // These are used only for non-redirect payment methods
 const onSuccess = () => console.log('Payment succeeded!');
@@ -89,13 +89,14 @@ const onFailure = error => console.error('There was a problem with your payment'
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
-// Certain blocks have a default component but can be overridden to provide custom implementations
-const orderReview = <OrderReview />;
-const upSell = <UpSellCoupon />;
-
 function MyCheckout() {
 	const [items, setItems] = useState(initialItems);
 	const [totals, setTotals] = useState(calculateTotalsForItems(initialItems));
+	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
+
+	// Certain blocks have a default component but can be overridden to provide custom implementations
+	const orderReview = <OrderReview />;
+	const upSell = <UpSellCoupon setItems={setItems} />;
 
 	// Keep totals up-to-date when items change
 	useEffect(() => {
@@ -112,7 +113,7 @@ function MyCheckout() {
 		onFailure={onFailure}
 		successRedirectUrl={successRedirectUrl}
 		failureRedirectUrl={failureRedirectUrl}
-		onChangeItems={setItems}
+		onDeleteItem={onDeleteItem}
 		orderReview={orderReview}
 		upSell={upSell}
 	/>;
@@ -136,8 +137,8 @@ function OrderReview() {
 	</React.Fragment>;
 }
 
-function UpSellCoupon() {
-	const [items, , setItems] = useCheckoutLineItems();
+function UpSellCoupon({ setItems }) {
+	const [items] = useCheckoutLineItems();
 	const quickStartItem = {label: 'Quick Start', id: 'quickstart', amount: {currency: 'USD', value: 2500, displayValue: '~$50~ $25'}};
 	const addQuickStart = () => setItems([...items, quickStartItem]);
 
@@ -186,7 +187,3 @@ What if we want to customize the markup in an individual line item (like a highl
 ### Header customization
 
 The "Complete your purchase" header at the top of the component could also be a customizable slot, so that it's possible to include a domain name there if the purchase includes one.
-
-### List update callback
-
-Depending on the implementation, the host page might find it challenging to resolve the differences between the old list and the new list when calling `onChangeItems`. In fact, since the only action the form does by itself (without host additions) is to remove items, we could remove the setter entirely and just have a `onDeleteItem` callback or something similar and leave everything else to the host page.
