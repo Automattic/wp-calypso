@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import AsyncLoad from 'components/async-load';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
-import { getSelectedSiteId, getSectionGroup, getSectionName } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
 
 /**
@@ -25,7 +25,6 @@ class JetpackDashboardLayout extends Component {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
 		// connected props
-		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 	};
 
@@ -54,12 +53,10 @@ class JetpackDashboardLayout extends Component {
 }
 
 export default connect( state => {
-	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		sectionGroup,
 		sectionName,
 		siteId,
 	};
