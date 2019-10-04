@@ -184,14 +184,28 @@ body.is-fullscreen-mode {
 		&:hover,
 		&:focus,
 		&.is-selected {
-			@media screen and ( min-width: 660px ) {
-				border-color: #2562b7;
-				box-shadow: 0 0 0 1px #2562b7;
-				outline: 1px solid transparent;
-				outline-offset: -1px;
-				color: inherit;
+			outline: 1px solid transparent;
+			outline-offset: -1px;
+			color: inherit;
+		}
+		
+		&:hover,
+		&:focus {
+			border-color: #555d66;
+			box-shadow: 0 0 0 1px #555d66;
+		}
+
+		&.is-selected {
+			border-color: #2562b7;
+			box-shadow: 0 0 0 1px #2562b7;
+
+			&:hover,
+			&:focus {
+				box-shadow: 0 0 0 1px #555d66, 0 0 0 2px #fff, 0 0 0 3px #2562b7;
 			}
 		}
+
+		
 	}
 
 	.template-selector-item__preview-wrap {
