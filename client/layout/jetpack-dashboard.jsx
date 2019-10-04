@@ -14,7 +14,6 @@ import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import { getSelectedSiteId, getSectionGroup, getSectionName } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
-import BodySectionCssClass from './body-section-css-class';
 
 /**
  * Style dependencies
@@ -35,7 +34,6 @@ class JetpackDashboardLayout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<DocumentHead />
 
 				<div id="content" className="layout__content">
