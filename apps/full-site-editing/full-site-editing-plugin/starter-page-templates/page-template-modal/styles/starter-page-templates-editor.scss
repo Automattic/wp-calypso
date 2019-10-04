@@ -142,15 +142,6 @@ body.is-fullscreen-mode {
 			); // allow grid to take over number of cols on large screens
 			// stylelint-enable unit-whitelist
 		}
-
-		@media screen and ( min-width: 1200px ) {
-			// stylelint-disable unit-whitelist
-			grid-template-columns: repeat(
-				auto-fit,
-				minmax( 150px, 1fr )
-			); // allow grid to take over number of cols on large screens
-			// stylelint-enable unit-whitelist
-		}
 	}
 
 	.template-selector-control__option {
@@ -286,7 +277,11 @@ body.is-fullscreen-mode {
 
 .page-template-modal__form {
 	@media screen and ( min-width: 660px ) {
-		max-width: 50%;
+		max-width: 20%;
+	}
+
+	@media screen and ( min-width: 783px ) {
+		max-width: 30%;
 	}
 }
 
@@ -332,7 +327,7 @@ body.is-fullscreen-mode {
 	top: 111px;
 	bottom: 24px;
 	right: 24px;
-	width: calc( 50% - 50px );
+	width: calc( 80% - 50px );
 	background: $template-selector-empty-background;
 	border-radius: 2px;
 	overflow-x: hidden;
@@ -370,11 +365,11 @@ body.is-fullscreen-mode {
 
 body:not( .is-fullscreen-mode ) .template-selector-preview {
 	@media screen and ( min-width: 783px ) {
-		width: calc( 50% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
+		width: calc( 70% - #{$wp-org-sidebar-reduced + (24px * 2 ) } );
 	}
 
 	@media screen and ( min-width: 961px ) {
-		width: calc( 50% - #{$wp-org-sidebar-full } );
+		width: calc( 70% - #{$wp-org-sidebar-full } );
 	}
 }
 
