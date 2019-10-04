@@ -16,6 +16,13 @@ import * as dataHelper from './data-helper';
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
+export async function highlightElement( driver, element ) {
+	return await driver.executeScript(
+		"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
+		element
+	);
+}
+
 export function clickWhenClickable( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
 
@@ -23,10 +30,7 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 		function() {
 			return driver.findElement( selector ).then(
 				async function( element ) {
-					await driver.executeScript(
-						"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
-						element
-					); // highlight element
+					await highlightElement( driver, element );
 					return element.click().then(
 						function() {
 							return true;
@@ -275,10 +279,7 @@ export function setWhenSettable(
 		async function() {
 			await self.waitForFieldClearable( driver, selector );
 			const element = await driver.findElement( selector );
-			await driver.executeScript(
-				"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
-				element
-			); // highlight element
+			await highlightElement( driver, element );
 			if ( pauseBetweenKeysMS === 0 ) {
 				await element.sendKeys( value );
 			} else {
