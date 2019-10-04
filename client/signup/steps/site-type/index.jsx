@@ -9,18 +9,20 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import Button from 'components/button';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
-import { isEnabled } from 'config';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
+	'get-started': 'get-started',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -37,36 +39,51 @@ class SiteType extends Component {
 		this.submitStep( 'import' );
 	};
 
-	submitStep = siteTypeValue => {
+	// This function is to support the A/B test `signupWithBasicSite`
+	// by using a flow that does not include intermediary steps before 'domain'
+	handleBasicSiteButtonClick = () => this.submitStep( 'business', 'get-started' );
+
+	submitStep = ( siteTypeValue, flowName ) => {
 		this.props.submitSiteType( siteTypeValue );
 
-		// This hack ensures that users in the moveUserStepPosition A/B Test
-		// reach a compatible flow when selecting the online-store site type.
-		if (
-			abtest( 'moveUserStepPosition' ) === 'last' &&
-			this.props.flowName === 'onboarding-user-last' &&
-			siteTypeValue === 'online-store'
-		) {
-			this.props.goToNextStep( 'ecommerce-store-onboarding' );
-		} else {
-			// Modify the flowname if the site type matches an override.
-			this.props.goToNextStep( siteTypeToFlowname[ siteTypeValue ] || this.props.flowName );
+		if ( flowName ) {
+			this.props.goToNextStep( flowName );
+			return;
 		}
+
+		// Modify the flowname if the site type matches an override.
+		if ( 'import-onboarding' === this.props.flowName ) {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
+		} else {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || this.props.flowName;
+		}
+
+		this.props.goToNextStep( flowName );
 	};
 
 	renderImportButton() {
-		if (
-			! isEnabled( 'signup/import-flow' ) ||
-			'last' === abtest( 'moveUserStepPosition' ) ||
-			'show' !== abtest( 'showImportFlowInSiteTypeStep' )
-		) {
+		if ( ! isEnabled( 'signup/import' ) ) {
 			return null;
 		}
 
 		return (
 			<div className="site-type__import-button">
 				<Button borderless onClick={ this.handleImportFlowClick }>
-					{ this.props.translate( 'Already have a website?' ) }
+					{ this.props.translate( 'Already have a website? Import your content here.' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	renderStartWithBasicSiteButton() {
+		if ( 'variant' !== abtest( 'signupWithBasicSite' ) ) {
+			return null;
+		}
+
+		return (
+			<div className="site-type__basic-site">
+				<Button borderless onClick={ this.handleBasicSiteButtonClick }>
+					{ this.props.translate( 'Skip setup and start with a basic website.' ) }
 				</Button>
 			</div>
 		);
@@ -82,6 +99,7 @@ class SiteType extends Component {
 					submitForm={ this.submitStep }
 					siteType={ siteType }
 				/>
+				{ this.renderStartWithBasicSiteButton() }
 				{ this.renderImportButton() }
 			</Fragment>
 		);
@@ -124,5 +142,5 @@ export default connect(
 		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
-	{ recordTracksEvent, saveSignupStep, submitSiteType }
+	{ recordTracksEvent, saveSignupStep, submitSiteType, setSiteVertical }
 )( localize( SiteType ) );

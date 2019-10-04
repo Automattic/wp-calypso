@@ -157,11 +157,13 @@ function handlePressThis( calypsoPort ) {
 		const unsubscribe = subscribe( () => {
 			// Calypso sends the message as soon as the iframe is loaded, so we
 			// need to be sure that the editor is initialized and the core blocks
-			// registered. There is no specific hook or selector for that, so we use
-			// `isCleanNewPost` which is triggered when everything is initialized if
-			// the post is new.
-			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
-			if ( ! isCleanNewPost ) {
+			// registered. There is an unstable selector for that, so we use
+			// `isCleanNewPost` otherwise which is triggered when everything is
+			// initialized if the post is new.
+			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
+				? select( 'core/editor' ).__unstableIsEditorReady()
+				: select( 'core/editor' ).isCleanNewPost();
+			if ( ! editorIsReady ) {
 				return;
 			}
 
@@ -471,8 +473,8 @@ function handlePreview( calypsoPort ) {
 			dispatch( 'core/editor' ).autosave( { isPreview: true } );
 		}
 		const unsubscribe = subscribe( () => {
-			const isSavingPost = select( 'core/editor' ).isSavingPost();
-			if ( ! isSavingPost ) {
+			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+			if ( previewUrl ) {
 				unsubscribe();
 				sendPreviewData();
 			}
@@ -612,12 +614,19 @@ function openCustomizer( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function setupEditTemplateLinks( calypsoPort ) {
-	// We only want this when editing a full site page.
+	// We only want this when editing an FSE page.
 	if ( ! window.fullSiteEditing || 'page' !== window.fullSiteEditing.editorPostType ) {
 		return;
 	}
 
+	const handledLinks = [];
 	const handleNewTemplateLinks = link => {
+		// Don't do anything if we already saw this link:
+		if ( handledLinks.some( existingLink => existingLink.isSameNode( link ) ) ) {
+			return;
+		}
+
+		handledLinks.push( link );
 		const templateId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
 
 		const { port1, port2 } = new MessageChannel();
@@ -627,7 +636,7 @@ function setupEditTemplateLinks( calypsoPort ) {
 			link.setAttribute( 'href', data );
 		};
 
-		// Ask for another URl for the template:
+		// Ask for an updated URL for the button:
 		calypsoPort.postMessage(
 			{
 				action: 'getTemplateEditorUrl',
@@ -637,7 +646,7 @@ function setupEditTemplateLinks( calypsoPort ) {
 		);
 	};
 
-	subscribe( () => {
+	const unsubscribe = subscribe( () => {
 		const currentPost = select( 'core/editor' ).getCurrentPost();
 		const initialized = currentPost && currentPost.id;
 
@@ -645,24 +654,21 @@ function setupEditTemplateLinks( calypsoPort ) {
 			return;
 		}
 
-		// When the template block becomes selected, we want to change
-		// the link of the "edit template" button.
-		const selectedBlock = select( 'core/editor' ).getSelectedBlock();
+		unsubscribe();
 
-		if ( selectedBlock && 'a8c/template' === selectedBlock.name ) {
-			const getImpendingLinks = setInterval( () => {
-				const editTemplateLink = document.querySelector(
-					'[data-type="a8c/template"] .template-block__overlay a'
-				);
+		const getImpendingLinks = setInterval( () => {
+			const editTemplateLinks = document.querySelectorAll(
+				'.template__block-container .template-block__overlay a'
+			);
 
-				// Keep looking for it as the DOM may not have loaded yet:
-				if ( ! editTemplateLink ) {
-					return;
-				}
+			// We want to stop looking after the header/footer have been handled:
+			if ( handledLinks.length === 2 ) {
 				clearInterval( getImpendingLinks );
-				handleNewTemplateLinks( editTemplateLink );
-			} );
-		}
+			}
+
+			// Handle the links:
+			editTemplateLinks.forEach( handleNewTemplateLinks );
+		} );
 	} );
 }
 
@@ -685,6 +691,27 @@ function getCloseButtonUrl( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		// data is the closeUrl:
 		calypsoifyGutenberg.closeUrl = data;
+	};
+}
+
+/**
+ * Passes uncaught errors in window.onerror to Calypso for logging.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleUncaughtErrors( calypsoPort ) {
+	window.onerror = ( ...error ) => {
+		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
+		// We therefore stringify the error with a custom replacer containing the object's properties.
+		const errorObject = error[ 4 ]; // the 5th argument is the error object
+		error[ 4 ] =
+			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
+
+		// The other parameters don't need encoded since they are numbers or strings.
+		calypsoPort.postMessage( {
+			action: 'logError',
+			payload: { error },
+		} );
 	};
 }
 
@@ -770,6 +797,8 @@ function initPort( message ) {
 		setupEditTemplateLinks( calypsoPort );
 
 		getCloseButtonUrl( calypsoPort );
+
+		handleUncaughtErrors( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

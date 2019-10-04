@@ -1,13 +1,14 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { withSchemaValidation } from 'state/utils';
 import { LOCALE_SET } from 'state/action-types';
-import { localeSlugSchema, localeVariantSchema, isRtlSchema } from './schema';
-import { getLanguage } from 'lib/i18n-utils/utils';
+import { localeSchema } from './schema';
+
+const initialState = {
+	localeSlug: null,
+	localeVariant: null,
+};
 
 /**
  * Tracks the state of the ui locale
@@ -17,58 +18,15 @@ import { getLanguage } from 'lib/i18n-utils/utils';
  * @return {Object}        Updated state
  *
  */
-export const localeSlug = createReducer(
-	null,
-	{
-		[ LOCALE_SET ]: ( state, action ) => action.localeSlug,
-	},
-	localeSlugSchema
-);
+export default withSchemaValidation( localeSchema, ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case LOCALE_SET:
+			return {
+				localeSlug: action.localeSlug,
+				localeVariant: action.localeVariant,
+			};
 
-/**
- * Tracks the state of the ui locale variant
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated or default state
- *
- */
-export const localeVariant = createReducer(
-	null,
-	{
-		[ LOCALE_SET ]: ( state, action ) => action.localeVariant || state,
-	},
-	localeVariantSchema
-);
-
-/**
- * Tracks the state of the ui language isRtl.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- *
- */
-export const isRtl = createReducer(
-	null,
-	{
-		[ LOCALE_SET ]: ( state, action ) => {
-			const localeSlugFromAction = action.localeSlug;
-
-			if ( ! localeSlugFromAction ) {
-				return null;
-			}
-
-			const language = getLanguage( localeSlugFromAction );
-
-			if ( ! language ) {
-				return null;
-			}
-
-			return Boolean( language.rtl );
-		},
-	},
-	isRtlSchema
-);
-
-export default combineReducers( { localeSlug, localeVariant, isRtl } );
+		default:
+			return state;
+	}
+} );

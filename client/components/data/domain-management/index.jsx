@@ -20,7 +20,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import NameserversStore from 'lib/domains/nameservers/store';
-import { fetchDns, fetchNameservers, fetchWapiDomainInfo, fetchWhois } from 'lib/upgrades/actions';
+import { fetchDns, fetchNameservers, fetchWapiDomainInfo } from 'lib/upgrades/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryProductsList from 'components/data/query-products-list';
@@ -30,7 +30,6 @@ import SiteRedirectStore from 'lib/domains/site-redirect/store';
 import StoreConnection from 'components/data/store-connection';
 import UsersStore from 'lib/users/store';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
-import WhoisStore from 'lib/domains/whois/store';
 
 function getStateFromStores( props ) {
 	return {
@@ -48,7 +47,6 @@ function getStateFromStores( props ) {
 		user: props.currentUser,
 		users: UsersStore.getUsers( { siteId: props.selectedSite.ID } ),
 		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName ),
-		whois: WhoisStore.getByDomainName( props.selectedDomainName ),
 	};
 }
 
@@ -69,7 +67,6 @@ class DomainManagementData extends React.Component {
 		needsProductsList: PropTypes.bool,
 		needsSiteRedirect: PropTypes.bool,
 		needsUsers: PropTypes.bool,
-		needsWhois: PropTypes.bool,
 		productsList: PropTypes.object,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object,
@@ -101,10 +98,6 @@ class DomainManagementData extends React.Component {
 			fetchNameservers( selectedDomainName );
 		}
 
-		if ( this.props.needsWhois ) {
-			fetchWhois( this.props.selectedDomainName );
-		}
-
 		if (
 			needsUsers &&
 			( prevProps.needsUsers !== needsUsers || prevProps.selectedSite !== selectedSite )
@@ -125,7 +118,6 @@ class DomainManagementData extends React.Component {
 			needsProductsList,
 			needsSiteRedirect,
 			needsUsers,
-			needsWhois,
 			selectedSite,
 		} = this.props;
 
@@ -147,9 +139,6 @@ class DomainManagementData extends React.Component {
 		}
 		if ( needsUsers ) {
 			stores.push( UsersStore );
-		}
-		if ( needsWhois ) {
-			stores.push( WhoisStore );
 		}
 
 		return (

@@ -104,9 +104,7 @@ class ExtensiveLodashReplacementPlugin {
 			// Output compilation warning.
 			this.compilation.warnings.push(
 				new Error(
-					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash-es version ${
-						this.baseLodashESVersion
-					}`
+					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash-es version ${ this.baseLodashESVersion }`
 				)
 			);
 		}

@@ -50,7 +50,7 @@ class WP_Template {
 	 * Returns normalized theme slug for the current theme.
 	 *
 	 * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
-	 * For example, we will get 'modern-business' when retrieving theme slug on self hosted sites,
+	 * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
 	 * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
 	 *
 	 * @param string $theme_slug Theme slug to check support for.
@@ -59,7 +59,11 @@ class WP_Template {
 	 */
 	public function normalize_theme_slug( $theme_slug ) {
 		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
-			$theme_slug = str_replace( 'pub/', '', $theme_slug );
+			$theme_slug = substr( $theme_slug, 4 );
+		}
+
+		if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
+			$theme_slug = substr( $theme_slug, 0, -6 );
 		}
 
 		return $theme_slug;
@@ -89,7 +93,7 @@ class WP_Template {
 			return null;
 		}
 
-		$term = get_term_by( 'name', "$this->current_theme_name-$template_type", 'wp_template_type', ARRAY_A );
+		$term = get_term_by( 'name', "$this->current_theme_name-$template_type", 'wp_template_part_type', ARRAY_A );
 
 		// Bail if current site doesn't have this term registered.
 		if ( ! isset( $term['term_id'] ) ) {
@@ -148,6 +152,15 @@ class WP_Template {
 		$header_id = $this->get_template_id( self::HEADER );
 		$footer_id = $this->get_template_id( self::FOOTER );
 
+		/*
+		 * Bail if we are missing header or footer. Otherwise this would cause us to
+		 * always return some page template content and show template parts (with empty IDs),
+		 * even for themes that don't support FSE.
+		 */
+		if ( ! $header_id || ! $footer_id ) {
+			return null;
+		}
+
 		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"className\":\"site-header site-branding\"} /-->" .
 				'<!-- wp:a8c/post-content /-->' .
 				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"className\":\"site-footer\"} /-->";
@@ -176,7 +189,33 @@ class WP_Template {
 			return null;
 		}
 
+		// Things that follow are from wp-includes/default-filters.php
+		// not everything is appropriate for template content as opposed to post content.
+		global $wp_embed;
+		$content = $this->get_template_content( $template_type );
+
+		// 8 priority
+		$content = $wp_embed->run_shortcode( $content );
+		$content = $wp_embed->autoembed( $content );
+
+		// 9 priority
+		$content = do_blocks( $content );
+
+		// 10 priority
+		$content = wptexturize( $content );
+
+		// 11 priority
+		$content = do_shortcode( $content );
+
+		$content = prepend_attachment( $content );
+
+		if ( has_filter( 'a8c_fse_make_content_images_responsive' ) ) {
+			$content = apply_filters( 'a8c_fse_make_content_images_responsive', $content );
+		} else {
+			$content = wp_make_content_images_responsive( $content );
+		}
+
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo do_blocks( $this->get_template_content( $template_type ) );
+		echo $content;
 	}
 }

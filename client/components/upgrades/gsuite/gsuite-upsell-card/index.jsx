@@ -11,7 +11,6 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
@@ -68,6 +67,7 @@ const GSuiteUpsellCard = ( {
 
 	const handleSkipClick = () => {
 		recordClickEvent( `calypso_checkout_gsuite_upgrade_skip_button_click` );
+
 		onSkipClick();
 	};
 
@@ -80,17 +80,14 @@ const GSuiteUpsellCard = ( {
 
 	const handleUsersChange = changedUsers => {
 		recordUsersChangedEvent( users, changedUsers );
+
 		setUsers( changedUsers );
 	};
-
-	const renderAddEmailButtonText = () =>
-		abtest( 'gSuiteContinueButtonCopy' ) === 'purchase'
-			? translate( 'Purchase G Suite' )
-			: translate( 'Yes, Add Email \u00BB' );
 
 	return (
 		<div className="gsuite-upsell-card__form">
 			<QueryProducts />
+
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
@@ -100,11 +97,13 @@ const GSuiteUpsellCard = ( {
 							},
 						} ) }
 					</h2>
+
 					<h5 className="gsuite-upsell-card__no-setup-required">
 						{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
 					</h5>
 				</header>
 			</CompactCard>
+
 			<CompactCard>
 				<GSuiteUpsellProductDetails
 					domain={ domain }
@@ -112,6 +111,7 @@ const GSuiteUpsellCard = ( {
 					currencyCode={ currencyCode }
 					plan={ gSuiteProductSlug }
 				/>
+
 				<GSuiteNewUserList
 					extraValidation={ user => user }
 					selectedDomainName={ domain }
@@ -130,7 +130,7 @@ const GSuiteUpsellCard = ( {
 							disabled={ ! canContinue }
 							onClick={ handleAddEmailClick }
 						>
-							{ renderAddEmailButtonText() }
+							{ translate( 'Purchase G Suite' ) }
 						</Button>
 					</div>
 				</GSuiteNewUserList>

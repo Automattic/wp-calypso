@@ -18,7 +18,7 @@ class ImporterMedium extends React.PureComponent {
 
 	render() {
 		const importerData = importerConfig( {
-			siteTitle: this.props.site.title,
+			siteTitle: this.props.siteTitle,
 		} ).medium;
 
 		return <FileImporter importerData={ importerData } { ...this.props } />;

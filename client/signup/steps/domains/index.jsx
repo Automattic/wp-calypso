@@ -13,7 +13,6 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import MapDomainStep from 'components/domains/map-domain-step';
-import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -49,6 +48,9 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -76,10 +78,35 @@ class DomainsStep extends React.Component {
 	getDefaultState = () => ( {
 		previousStepSectionName: this.props.stepSectionName,
 		suggestion: null,
-		showTrademarkClaimsNotice: false,
 	} );
 
 	state = this.getDefaultState();
+
+	getInitialQuery = () => {
+		const queryValue = get( this.props, 'queryObject.new', '' );
+		const suggestedDomain = get( this.props, 'signupDependencies.suggestedDomain', '' );
+
+		if ( queryValue || suggestedDomain ) {
+			return queryValue || suggestedDomain;
+		}
+
+		if ( abtest( 'prefillDomainStepValue' ) === 'test' ) {
+			return get( this.props, 'signupDependencies.siteTitle', '' );
+		}
+
+		return '';
+	};
+
+	initialQuery = this.getInitialQuery();
+
+	// TODO: This property is only used to be able to distinguish
+	// between cases where the site title was used vs cases where the initial
+	// query was set by some other method. Remove this once the A/B test is finished.
+	hasMadeSuggestion = !! (
+		abtest( 'prefillDomainStepValue' ) === 'test' &&
+		get( this.props, 'signupDependencies.siteTitle' ) &&
+		get( this.props, 'signupDependencies.siteTitle' ) === this.getInitialQuery()
+	);
 
 	constructor( props ) {
 		super( props );
@@ -90,7 +117,12 @@ class DomainsStep extends React.Component {
 
 		// If we landed anew from `/domains` and it's the `new-flow` variation
 		// or there's a suggestedDomain from previous steps, always rerun the search.
-		if ( ( search && props.path.indexOf( '?' ) !== -1 ) || suggestedDomain ) {
+		if (
+			( search && props.path.indexOf( '?' ) !== -1 ) ||
+			suggestedDomain ||
+			( this.hasMadeSuggestion &&
+				get( this.props.step, 'domainForm.isInitialQueryActive' ) === true )
+		) {
 			this.searchOnInitialRender = true;
 		}
 
@@ -121,17 +153,23 @@ class DomainsStep extends React.Component {
 		}
 	}
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		let showTrademarkClaimsNotice = prevState.showTrademarkClaimsNotice;
-
-		if ( nextProps.stepSectionName !== prevState.previousStepSectionName ) {
-			showTrademarkClaimsNotice = false;
-		}
-
+	static getDerivedStateFromProps( nextProps ) {
 		return {
 			previousStepSectionName: nextProps.stepSectionName,
-			showTrademarkClaimsNotice,
 		};
+	}
+
+	componentDidUpdate( prevProps ) {
+		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
+		if ( prevProps.stepSectionName !== this.props.stepSectionName ) {
+			if ( this.props.isSitePreviewVisible && this.props.stepSectionName ) {
+				this.props.hideSitePreview();
+			}
+
+			if ( ! this.props.isSitePreviewVisible && ! this.props.stepSectionName ) {
+				this.props.showSitePreview();
+			}
+		}
 	}
 
 	getMapDomainUrl = () => {
@@ -151,27 +189,21 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	handleAddDomain = suggestion => {
+	handleAddDomain = ( suggestion, usedSuggestedDomain ) => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
 		};
 
-		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
-
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
-		if ( ! isEmpty( trademarkClaimsNoticeInfo ) ) {
-			this.setState( {
-				suggestion,
-				showTrademarkClaimsNotice: true,
-			} );
-			return;
+		if ( abtest( 'prefillDomainStepValue' ) === 'test' ) {
+			stepData.usedSuggestedDomain = usedSuggestedDomain;
 		}
 
+		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain();
+			this.submitWithDomain( null, usedSuggestedDomain );
 		} );
 	};
 
@@ -205,7 +237,7 @@ class DomainsStep extends React.Component {
 		this.props.goToNextStep();
 	};
 
-	submitWithDomain = googleAppsCartItem => {
+	submitWithDomain = ( googleAppsCartItem, usedSuggestedDomain ) => {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
 			siteUrl = isPurchasingItem
@@ -218,7 +250,11 @@ class DomainsStep extends React.Component {
 				  } )
 				: undefined;
 
-		this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
+		this.props.submitDomainStepSelection(
+			suggestion,
+			this.getAnalyticsSection(),
+			this.hasMadeSuggestion ? usedSuggestedDomain : null
+		);
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -317,31 +353,14 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteGoals, signupDependencies } = this.props;
-		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
-
-		// 'subdomain' flow coming from .blog landing pages
-		if ( flowName === 'subdomain' ) {
-			return true;
-		}
-
-		// 'blog' flow, starting with blog themes
-		if ( flowName === 'blog' ) {
-			return true;
-		}
-
-		// No .blog subdomains for domain only sites
-		if ( isDomainOnly ) {
+		// Disable for domain only sites
+		if ( this.props.isDomainOnly ) {
 			return false;
 		}
 
-		// If we detect a 'blog' site type from Signup data
-		return (
-			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
-			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
-			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' )
-		);
+		// Enable if the query includes ".blog"
+		const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
+		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
 	domainForm = () => {
@@ -353,14 +372,9 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
-		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
-		const initialQuery =
-			get( this.props, 'queryObject.new', '' ) ||
-			get( this.props, 'signupDependencies.suggestedDomain' );
-
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			( initialQuery && this.searchOnInitialRender ) ||
+			( this.initialQuery && this.searchOnInitialRender ) ||
 			// If the subdomain type has changed, rerun the search
 			( initialState &&
 				initialState.subdomainSearchResults &&
@@ -409,7 +423,7 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				suggestion={ initialQuery }
+				suggestion={ this.initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
@@ -487,34 +501,6 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	rejectTrademarkClaim = () => {
-		this.setState( { showTrademarkClaimsNotice: false } );
-	};
-
-	acceptTrademarkClaim = () => {
-		const { suggestion } = this.state;
-
-		suggestion.trademark_claims_notice_info = null;
-		this.handleAddDomain( suggestion );
-	};
-
-	trademarkClaimsNotice = () => {
-		const { suggestion } = this.state;
-		const domain = get( suggestion, 'domain_name' );
-		const trademarkClaimsNoticeInfo = get( suggestion, 'trademark_claims_notice_info' );
-
-		return (
-			<TrademarkClaimsNotice
-				basePath={ this.props.path }
-				domain={ domain }
-				isSignupStep
-				onAccept={ this.acceptTrademarkClaim }
-				onReject={ this.rejectTrademarkClaim }
-				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
-			/>
-		);
-	};
-
 	getSubHeaderText() {
 		const { flowName, siteType, translate } = this.props;
 		const onboardingSubHeaderCopy =
@@ -557,10 +543,6 @@ class DomainsStep extends React.Component {
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
 			content = this.domainForm();
-		}
-
-		if ( this.state.showTrademarkClaimsNotice ) {
-			content = this.trademarkClaimsNotice();
 		}
 
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
@@ -636,7 +618,7 @@ class DomainsStep extends React.Component {
 	}
 }
 
-const submitDomainStepSelection = ( suggestion, section ) => {
+const submitDomainStepSelection = ( suggestion, section, usedSuggestedDomain ) => {
 	let domainType = 'domain_reg';
 	if ( suggestion.is_free ) {
 		domainType = 'wpcom_subdomain';
@@ -655,6 +637,9 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 	}
 	if ( suggestion.isBestAlternative ) {
 		tracksObjects.label = 'best-alternative';
+	}
+	if ( abtest( 'prefillDomainStepValue' ) === 'test' && typeof usedSuggestedDomain === 'boolean' ) {
+		tracksObjects.used_suggested_domain = usedSuggestedDomain;
 	}
 
 	return composeAnalytics(
@@ -685,6 +670,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
+			isSitePreviewVisible: isSitePreviewVisible( state ),
 		};
 	},
 	{
@@ -697,5 +683,7 @@ export default connect(
 		saveSignupStep,
 		submitSignupStep,
 		fetchUsernameSuggestion,
+		hideSitePreview,
+		showSitePreview,
 	}
 )( localize( DomainsStep ) );

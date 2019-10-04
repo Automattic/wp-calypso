@@ -81,7 +81,7 @@ export const protectForm = < P extends ProtectedFormProps >(
 				<WrappedComponent
 					markChanged={ this.markChanged }
 					markSaved={ this.markSaved }
-					{ ...this.props as P }
+					{ ...( this.props as P ) }
 				/>
 			);
 		}

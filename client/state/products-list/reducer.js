@@ -1,19 +1,16 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, createReducerWithValidation } from 'state/utils';
 import { productsListSchema } from './schema';
 
 // Stores the complete list of products, indexed by the product key
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ PRODUCTS_LIST_RECEIVE ]: ( state, action ) => action.productsList,

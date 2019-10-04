@@ -37,7 +37,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { requestSites } from 'state/sites/actions';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { getNewSitePublicSetting } from 'state/selectors/get-new-site-public-setting';
+import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from './verticals';
@@ -60,7 +60,9 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
-	let { domainItem } = dependencies;
+	const domainItem = dependencies.domainItem
+		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore )
+		: null;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -70,14 +72,6 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			themeSlugWithRepo: null,
 			domainItem,
 		};
-
-		if ( domainItem ) {
-			const { product_slug: productSlug } = domainItem;
-			const productsList = getProductsList( reduxStore.getState() );
-			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				domainItem = updatePrivacyForDomain( domainItem, true );
-			}
-		}
 
 		const domainChoiceCart = [ domainItem ];
 		SignupCart.createCart( cartKey, domainChoiceCart, error =>
@@ -164,7 +158,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 		},
-		public: getNewSitePublicSetting( state, siteType ),
+		public: getNewSitePublicSetting( state ),
 		validate: false,
 	};
 
@@ -185,6 +179,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
+		// If `siteTitle` wasn't inferred by the site detection api, use
+		// the `siteUrl` until an import replaces it with an actual title.
+		newSiteParams.blog_title = siteTitle || siteUrl;
 		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
 		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
@@ -304,24 +301,12 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		let privacyItem = null;
-		const state = reduxStore.getState();
-		const { domainItem } = newCartItems;
+		const newCartItemsToAdd = newCartItems.map( item =>
+			addPrivacyProtectionIfSupported( item, reduxStore )
+		);
 
-		if ( domainItem ) {
-			const { product_slug: productSlug } = domainItem;
-			const productsList = getProductsList( state );
-			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-				privacyItem = updatePrivacyForDomain( domainItem, true );
-
-				if ( privacyItem ) {
-					newCartItems.push( privacyItem );
-				}
-			}
-		}
-
-		if ( newCartItems.length ) {
-			SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
+		if ( newCartItemsToAdd.length ) {
+			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function( cartError ) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
@@ -342,6 +327,16 @@ function processItemCart(
 	} else {
 		addToCartAndProceed();
 	}
+}
+
+function addPrivacyProtectionIfSupported( item, reduxStore ) {
+	const { product_slug: productSlug } = item;
+	const productsList = getProductsList( reduxStore.getState() );
+	if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+		return updatePrivacyForDomain( item, true );
+	}
+
+	return item;
 }
 
 export function launchSiteApi( callback, dependencies ) {
@@ -378,6 +373,7 @@ export function createAccount(
 				access_token,
 				id_token,
 				signup_flow_name: flowName,
+				...userData,
 			},
 			( error, response ) => {
 				const errors =
@@ -485,12 +481,11 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
 	const state = reduxStore.getState();
-	const siteType = getSiteType( state ).trim();
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( state, siteType ),
+		public: getNewSitePublicSetting( state ),
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};

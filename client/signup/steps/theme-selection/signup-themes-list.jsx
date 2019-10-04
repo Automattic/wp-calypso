@@ -42,9 +42,7 @@ class SignupThemesList extends Component {
 	}
 
 	getScreenshotUrl( theme ) {
-		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${ theme.repo }/${
-			theme.slug
-		}/screenshot.png?w=660`;
+		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${ theme.repo }/${ theme.slug }/screenshot.png?w=660`;
 	}
 
 	render() {

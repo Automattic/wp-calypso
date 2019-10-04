@@ -1,92 +1,91 @@
 .template-block {
 	min-height: 200px;
-	
-	.components-button .components-spinner {
-		margin-top: 4px;
+	// Prevent blur bleeding
+	overflow: hidden;
+	position: relative;
+}
+
+.template__block-container {
+	&.is-hovered {
+		cursor: pointer;
 	}
-}
 
-.template-block.alignfull {
-	padding: 0 12px;
-}
-
-.template-block__selector {
-	width: 300px;
-	a {
-		font-family: sans-serif;
-		font-size: 13px;
-		padding-left: 8px;
+	&.is-hovered, &.is-selected, .is-navigating-to-template {
+		.components-disabled {
+			filter: blur( 2px );
+			transition: filter 0.2s linear 0.7s;
+		}
+		.template-block__overlay {
+			opacity: 1;
+			transition: opacity 0.2s linear;
+			.components-button {
+				opacity: 1;
+				transition: opacity 0.2s linear 0.7s;
+			}
+		}
 	}
-}
 
-.template-block__content {
-	pointer-events: none;
-	&::after {
-		content: '';
-		clear: both;
-		display: table;
+	.components-disabled {
+		filter: blur( 0 );
+		transition: filter 0.2s linear 0s;
+	}
+
+	// Hide the block toolbar and border
+	.block-editor-block-contextual-toolbar,
+	.block-editor-block-list__block-mobile-toolbar,
+	.block-editor-block-list__insertion-point,
+	.block-editor-block-list__breadcrumb,
+	.block-editor-block-list__block-edit::before {
+		display: none;
 	}
 }
 
 .template-block__overlay {
-	display: flex;
+	background: rgba( #ffffff, 0.8 );
+	border: 0 solid rgba( #7b86a2, 0.3 ); // Gutenberg $dark-opacity-light-600
+	bottom: 0;
+	left: 0;
+	margin: 0;
+	opacity: 0;
+	padding: 0;
 	position: absolute;
+	right: 0;
+	transition: opacity 0.2s linear 0s;
 	top: 0;
-	left: 2px;
-	width: 100%;
-	height: 100%;
-	justify-content: center;
-	align-items: center;
-	background: rgba( #f5f5f5, 0.8 );
 	z-index: 2;
-}
 
-.block-editor-block-list__layout {
-	.template__block-container {
-		.wp-block {
-			margin-top: 15px;
-			margin-bottom: 15px;
-		}
+	.is-selected & {
+		border-color: rgba( #425863, 0.4 ); // Gutenberg $dark-opacity-light-800
+	}
 
-		&.is-hovered {
-			cursor: pointer;
-		}
+	.editor-block-list__block:first-child & {
+		border-bottom-width: 1px;
+	}
+	.editor-block-list__block:last-child & {
+		border-top-width: 1px;
+	}
 
-		&.is-selected {
-			// Hide the toolbar for this block
-			.block-editor-block-contextual-toolbar {
-				display: none;
-			}
+	@media only screen and ( min-width: 768px ) {
+		border-width: 1px;
+	}
 
-			.components-disabled {
-				filter: blur( 2px );
-			}
-		}
-
-		&.block-editor-block-list__block {
-			// Need to get super specific to override the core css selectors:
-			&,
-			&.has-child-selected,
-			&.is-hovered,
-			&.is-navigate-mode {
-				> .block-editor-block-list__block-edit {
-					&::before {
-						transition: none;
-						border: none;
-						outline: none;
-						box-shadow: none;
-					}
-					> .block-editor-block-list__breadcrumb {
-						display: none;
-					}
-				}
-			}
+	.components-button {
+		opacity: 0;
+		transition: opacity 0.2s linear 0s;
+		&.hidden {
+			display: none;
 		}
 	}
 }
 
-// don't display the site logo action buttons if not editing the template
-.block-editor-page:not( .post-type-wp_template ) {
+.template-block__loading {
+	display: flex;
+	align-items: center;
+	color: #191e23;
+}
+
+// Hide the site logo description and buttons when not editing the Template
+.block-editor-page:not( .post-type-wp_template_part ) {
 	.fse-site-logo {
 		.components-placeholder__fieldset, .components-placeholder__instructions {
 			display: none;

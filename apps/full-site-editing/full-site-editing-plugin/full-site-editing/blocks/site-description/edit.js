@@ -1,6 +1,11 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
 import { PlainText } from '@wordpress/editor';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -48,7 +53,7 @@ function SiteDescriptionEdit( {
 	return (
 		<Fragment>
 			<PlainText
-				className={ className }
+				className={ classNames( 'site-description', className ) }
 				value={ option }
 				onChange={ value => handleChange( value ) }
 				onKeyDown={ onKeyDown }

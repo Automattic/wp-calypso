@@ -8,8 +8,11 @@
 .profile-gravatar__user-secondary-info {
 	margin-bottom: 30px;
 	text-align: center;
-	color: var( --profile-gravatar-user-secondary-info-color );
 	font-size: 14px;
+
+	.profile-gravatar.is-in-sidebar & {
+		color: var( --color-sidebar-text-alternative );
+	}
 }
 
 .profile-gravatar__user-display-name {

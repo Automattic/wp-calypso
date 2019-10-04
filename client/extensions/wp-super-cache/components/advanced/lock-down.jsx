@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { pick } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

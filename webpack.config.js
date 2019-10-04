@@ -110,6 +110,7 @@ const nodeModulesToTranspile = [
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
+	'@github/webauthn-json/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
@@ -154,12 +155,30 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const fileLoader = FileConfig.loader(
+	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
+	// This is required so that running calypso via `npm start` doesn't break.
+	isDevelopment
+		? {
+				outputPath: 'images',
+				publicPath: '/calypso/evergreen/images/',
+		  }
+		: {
+				// File-loader does not understand absolute paths so __dirname won't work.
+				// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
+				outputPath: path.join( '..', 'images' ),
+				publicPath: '/calypso/images/',
+				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
+		  }
+);
+
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
 	entry: {
 		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
@@ -212,7 +231,10 @@ const webpackConfig = {
 			SassConfig.loader( {
 				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
-				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				prelude: `@import '${ path.join(
+					__dirname,
+					'client/assets/stylesheets/shared/_utils.scss'
+				) }';`,
 			} ),
 			{
 				include: path.join( __dirname, 'client/sections.js' ),
@@ -225,7 +247,7 @@ const webpackConfig = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			FileConfig.loader(),
+			fileLoader,
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
 				use: 'exports-loader?window=tinymce',
@@ -308,16 +330,10 @@ const webpackConfig = {
 			),
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	] ),
 	externals: [ 'electron' ],
 };
-
-if ( isDevelopment ) {
-	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	for ( const entrypoint of Object.keys( webpackConfig.entry ) ) {
-		webpackConfig.entry[ entrypoint ].unshift( 'webpack-hot-middleware/client' );
-	}
-}
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
@@ -339,6 +355,10 @@ const polyfillsSkippedInEvergreen = [
 	/^svg4everybody$/,
 	// The fetch polyfill isn't needed for evergreen browsers, as they all support it.
 	/^isomorphic-fetch$/,
+	// All modern browsers support the URL API.
+	/^@webcomponents[/\\]url$/,
+	// All evergreen browsers support the URLSearchParams API.
+	/^@ungap[/\\]url-search-params$/,
 ];
 
 if ( browserslistEnv === 'evergreen' ) {

@@ -5,7 +5,6 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual } from 'lodash';
@@ -410,9 +409,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 
-				{ config.isEnabled( 'rewind-alerts' ) && siteId && isJetpack && ! isAtomic && (
-					<RewindAlerts siteId={ siteId } />
-				) }
+				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }

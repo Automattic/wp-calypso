@@ -231,3 +231,7 @@ export const resetSiteImporterImport = ( { importStage, site, targetSiteUrl } ) 
 		} ),
 		{ type: SITE_IMPORTER_IMPORT_RESET }
 	);
+
+export const clearSiteImporterImport = () => ( {
+	type: SITE_IMPORTER_IMPORT_RESET,
+} );

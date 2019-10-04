@@ -6,7 +6,7 @@
 
 import React, { Fragment } from 'react';
 import { delay, negate as not } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies

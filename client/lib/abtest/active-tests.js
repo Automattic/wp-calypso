@@ -62,14 +62,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -98,7 +90,7 @@ export default {
 		defaultVariation: 'siteType',
 	},
 	skippableDomainStep: {
-		datestamp: '20190717',
+		datestamp: '20290717',
 		variations: {
 			skippable: 0,
 			notSkippable: 100,
@@ -106,69 +98,59 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellNudge: {
-		datestamp: '20190712',
+	customerHomePage: {
+		datestamp: '20190903',
 		variations: {
-			variantShowNudge: 0,
-			control: 100,
+			show: 50,
+			hide: 50,
 		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
+		defaultVariation: 'hide',
+		assignmentMethod: 'userId',
 	},
-	privateByDefault: {
-		datestamp: '20190730',
-		variations: {
-			selected: 90,
-			control: 10,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	checkoutSealsCopyBundle: {
-		datestamp: '20190613',
+	signupWithBasicSite: {
+		datestamp: '20190930',
 		variations: {
 			variant: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
-		//localeTargets: 'any',
 	},
-	showImportFlowInSiteTypeStep: {
-		datestamp: '20991231',
+	placesApiInCheckout: {
+		datestamp: '20190923',
 		variations: {
-			show: 50,
-			hide: 50,
+			original: 50,
+			placesApi: 50,
 		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
+		defaultVariation: 'original',
 	},
-	moveUserStepPosition: {
-		datestamp: '20190719',
+	prefillDomainStepValue: {
+		datestamp: '20190929',
 		variations: {
-			first: 50,
-			last: 50,
-		},
-		defaultVariation: 'first',
-		allowExistingUsers: true,
-	},
-	removeBlogFlow: {
-		datestamp: '20190813',
-		variations: {
-			remove: 50,
+			test: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	removeWebsiteFlow: {
-		datestamp: '20190813',
+	domainSuggestionsEn: {
+		datestamp: '20191003',
 		variations: {
-			remove: 50,
 			control: 50,
+			test: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	checkoutCollectPhoneNumber: {
+		datestamp: '20191003',
+		variations: {
+			show: 0,
+			hide: 100,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 	upsellUploadPlugin: {
 		datestamp: '20191002',

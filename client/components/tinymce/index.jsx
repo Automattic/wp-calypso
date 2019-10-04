@@ -88,7 +88,7 @@ import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getPreference } from 'state/preferences/selectors';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { isLocaleRtl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -261,8 +261,8 @@ export default class extends React.Component {
 		if ( store ) {
 			const state = store.getState();
 
-			isRtl = isRtlSelector( state );
 			localeSlug = getCurrentLocaleSlug( state );
+			isRtl = isLocaleRtl( localeSlug );
 			colorScheme = getPreference( state, 'colorScheme' );
 		}
 

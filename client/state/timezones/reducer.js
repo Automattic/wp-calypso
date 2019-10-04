@@ -1,15 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { TIMEZONES_RECEIVE } from 'state/action-types';
 
 import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 
-export const rawOffsets = createReducer(
+export const rawOffsets = createReducerWithValidation(
 	{},
 	{
 		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.rawOffsets,
@@ -17,7 +14,7 @@ export const rawOffsets = createReducer(
 	rawOffsetsSchema
 );
 
-export const labels = createReducer(
+export const labels = createReducerWithValidation(
 	{},
 	{
 		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.labels,
@@ -25,7 +22,7 @@ export const labels = createReducer(
 	labelsSchema
 );
 
-export const byContinents = createReducer(
+export const byContinents = createReducerWithValidation(
 	{},
 	{
 		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.byContinents,

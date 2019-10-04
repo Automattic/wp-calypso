@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,14 +13,14 @@ import {
 	READER_POSTS_RECEIVE,
 } from 'state/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 import { key } from './utils';
 
 /**
  * Tracks all known conversation following statuses.
  */
-export const items = createReducer(
+export const items = createReducerWithValidation(
 	{},
 	{
 		[ READER_CONVERSATION_FOLLOW ]: ( state, action ) => {

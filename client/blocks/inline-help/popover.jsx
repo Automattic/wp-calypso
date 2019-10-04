@@ -8,7 +8,7 @@ import { flowRight as compose, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -44,6 +44,7 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
 	composeAnalytics,
@@ -60,6 +61,7 @@ import { getActiveTheme } from 'state/themes/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
+import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -381,6 +383,11 @@ function mapStateToProps( state, { moment } ) {
 		].includes( getActiveTheme( state, siteId ) ) &&
 		moment( getSiteOption( state, siteId, 'created_at' ) ).isAfter( '20190314' );
 
+	const isAllowedToUseClassic =
+		! isSiteUsingFullSiteEditing( state, siteId ) && ! isUsingGutenbergPageTemplates;
+	const showOptOut =
+		isGutenbergOptOutEnabled( state, siteId ) && isGutenbergEditor && isAllowedToUseClassic;
+
 	return {
 		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
@@ -390,7 +397,7 @@ function mapStateToProps( state, { moment } ) {
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: optInEnabled && isGutenbergEditor && ! isUsingGutenbergPageTemplates,
+		showOptOut,
 		showOptIn: optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 	};

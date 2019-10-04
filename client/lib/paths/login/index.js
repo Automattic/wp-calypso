@@ -19,6 +19,7 @@ export function login( {
 	emailAddress,
 	socialService,
 	oauth2ClientId,
+	wccomFrom,
 	site,
 } = {} ) {
 	let url = config( 'login_url' );
@@ -28,6 +29,8 @@ export function login( {
 
 		if ( socialService ) {
 			url += '/' + socialService + '/callback';
+		} else if ( twoFactorAuthType && isJetpack ) {
+			url += '/jetpack/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		} else if ( socialConnect ) {
@@ -63,6 +66,10 @@ export function login( {
 
 	if ( isWoo ) {
 		url = addQueryArgs( { from: 'woocommerce-setup-wizard' }, url );
+	}
+
+	if ( wccomFrom ) {
+		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
 	}
 
 	return url;

@@ -43,6 +43,7 @@ function createPurchaseObject( purchase ) {
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
+		isRechargeable: Boolean( purchase.is_rechargable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),

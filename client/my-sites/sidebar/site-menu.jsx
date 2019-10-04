@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -98,7 +96,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'media',
 				label: translate( 'Media' ),
-				capability: 'upload_files',
+				capability: 'edit_posts',
 				queryable: true,
 				link: '/media',
 				wpAdminLink: 'upload.php',
@@ -143,7 +141,7 @@ class SiteMenu extends PureComponent {
 		}
 
 		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
-		if ( 'wp_template' === menuItem.name ) {
+		if ( 'wp_template_part' === menuItem.name ) {
 			return null;
 		}
 
@@ -170,36 +168,6 @@ class SiteMenu extends PureComponent {
 			preload = 'posts-custom';
 		}
 
-		let icon;
-		switch ( menuItem.name ) {
-			case 'post':
-				icon = 'posts';
-				break;
-			case 'page':
-				icon = 'pages';
-				break;
-			case 'import':
-				icon = 'cloud-upload';
-				break;
-			case 'jetpack-portfolio':
-				icon = 'folder';
-				break;
-			case 'jetpack-testimonial':
-				icon = 'quote';
-				break;
-			case 'media':
-				icon = 'image';
-				break;
-			case 'comments':
-				icon = 'chat';
-				break;
-			case 'plugins':
-				icon = 'plugins';
-				break;
-			default:
-				icon = 'custom-post-type';
-		}
-
 		return (
 			<SidebarItem
 				key={ menuItem.name }
@@ -207,7 +175,6 @@ class SiteMenu extends PureComponent {
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
-				icon={ icon }
 				preloadSectionName={ preload }
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }

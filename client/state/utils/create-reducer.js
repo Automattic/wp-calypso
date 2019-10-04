@@ -3,40 +3,28 @@
  */
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { withoutPersistence } from './without-persistence';
-import { withSchemaValidation } from './schema-utils';
+import { createBaseReducer } from './create-base-reducer';
 
+// eslint-disable-next-line valid-jsdoc
 /**
  * Returns a reducer function with state calculation determined by the result
  * of invoking the handler key corresponding with the dispatched action type,
- * passing both the current state and action object. Defines default
- * serialization (persistence) handlers based on the presence of a schema.
+ * passing both the current state and action object.
+ *
+ * @deprecated Use a plain reducer function instead.
  *
  * @param  {*}        initialState   Initial state
  * @param  {Object}   handlers       Object mapping action types to state action handlers
- * @param  {?Object}  schema         JSON schema object for deserialization validation
  * @return {Function}                Reducer function
  */
-export function createReducer( initialState, handlers, schema ) {
-	const reducer = ( state = initialState, action ) => {
-		const { type } = action;
-
-		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
-			throw new TypeError(
-				'Reducer called with undefined type.' +
-					' Verify that the action type is defined in state/action-types.js'
-			);
-		}
-
-		if ( handlers.hasOwnProperty( type ) ) {
-			return handlers[ type ]( state, action );
-		}
-
-		return state;
-	};
-
-	if ( schema ) {
-		return withSchemaValidation( schema, reducer );
+export function createReducer( initialState, handlers, __deprecatedArg__ ) {
+	if ( __deprecatedArg__ !== undefined ) {
+		throw new Error(
+			'Schema support in createReducer is no longer available. ' +
+				'Please use a plain reducer function wrapped with `withSchemaValidation`.'
+		);
 	}
+	const reducer = createBaseReducer( initialState, handlers );
 
 	if ( ! handlers[ SERIALIZE ] && ! handlers[ DESERIALIZE ] ) {
 		return withoutPersistence( reducer );

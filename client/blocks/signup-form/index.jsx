@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
 	camelCase,
@@ -31,7 +28,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { localizeUrl } from 'lib/i18n-utils';
-import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -81,7 +78,7 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		disableEmailExplanation: PropTypes.bool,
+		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
@@ -237,7 +234,7 @@ class SignupForm extends Component {
 		const fieldsForValidation = filter( [
 			'email',
 			this.state.focusPassword && 'password',
-			this.props.displayUsernameInput && this.state.focusUsername && 'username',
+			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -408,6 +405,7 @@ class SignupForm extends Component {
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+			wccomFrom: this.props.wccomFrom,
 		} );
 	}
 
@@ -746,12 +744,16 @@ class SignupForm extends Component {
 			return this.globalNotice( this.state.notice );
 		}
 		if ( this.userCreationComplete() ) {
-			return this.globalNotice( {
-				info: true,
-				message: this.props.translate(
-					'Your account has already been created. You can change your email, username, and password later.'
-				),
-			} );
+			return (
+				<TrackRender eventName="calypso_signup_account_already_created_show">
+					{ this.globalNotice( {
+						info: true,
+						message: this.props.translate(
+							'Your account has already been created. You can change your email, username, and password later.'
+						),
+					} ) }
+				</TrackRender>
+			);
 		}
 		return false;
 	}
@@ -867,8 +869,11 @@ class SignupForm extends Component {
 		}
 
 		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			this.props.isJetpackWooCommerceFlow
+			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+				this.props.isJetpackWooCommerceFlow ) ||
+			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+				isWooOAuth2Client( this.props.oauth2Client ) &&
+				this.props.wccomFrom )
 		) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
@@ -927,12 +932,21 @@ class SignupForm extends Component {
 	}
 }
 
+function TrackRender( { children, eventName } ) {
+	useEffect( () => {
+		analytics.tracks.recordEvent( eventName );
+	}, [ eventName ] );
+
+	return children;
+}
+
 export default connect(
 	state => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),

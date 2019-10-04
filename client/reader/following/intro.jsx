@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

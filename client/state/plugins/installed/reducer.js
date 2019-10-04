@@ -1,15 +1,13 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
-
 import { omit, findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
 import status from './status/reducer';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -56,7 +54,7 @@ const updatePlugin = function( state, action ) {
 /*
  * Tracks all known installed plugin objects indexed by site ID.
  */
-export const plugins = createReducer(
+export const plugins = createReducerWithValidation(
 	{},
 	{
 		[ PLUGINS_RECEIVE ]: ( state, action ) => {

@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith, isArray } from 'lodash';
 import url from 'url';
 
 /**
@@ -29,8 +29,8 @@ import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } fr
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
-import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import getEditorCloseUrl from 'state/selectors/get-editor-close-url';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
@@ -95,6 +95,7 @@ enum EditorActions {
 	OpenCustomizer = 'openCustomizer',
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
+	LogError = 'logError',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -112,7 +113,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
-	templatePorts: [T.PostId, MessagePort][] = [];
+	templatePorts: [ T.PostId, MessagePort ][] = [];
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -275,6 +276,16 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			const { closeUrl } = this.props;
 			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
 		}
+
+		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
+		if ( EditorActions.LogError === action ) {
+			const { error } = payload;
+			if ( isArray( error ) && error.length > 4 && window.onerror ) {
+				const errorObject = error[ 4 ];
+				error[ 4 ] = errorObject && JSON.parse( errorObject );
+				window.onerror( ...error );
+			}
+		}
 	};
 
 	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
@@ -297,7 +308,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	// ID, we want to do a server nav back to that page.
 	shouldDoServerBackNav = () => {
 		const { fseParentPageId, postType } = this.props;
-		return null != fseParentPageId && 'wp_template' === postType;
+		return null != fseParentPageId && 'wp_template_part' === postType;
 	};
 
 	loadRevision = ( {
@@ -615,13 +626,8 @@ const mapStateToProps = (
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
-	let closeUrl = getPostTypeAllPostsUrl( state, postType );
-	if ( 'wp_template' === postType ) {
-		closeUrl = getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
-	}
-
 	return {
-		closeUrl,
+		closeUrl: getEditorCloseUrl( state, siteId, postType, fseParentPageId ),
 		currentRoute,
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
@@ -637,7 +643,7 @@ const mapStateToProps = (
 			state,
 			siteId,
 			partial.placeholder,
-			'wp_template'
+			'wp_template_part'
 		),
 	};
 };

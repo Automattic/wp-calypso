@@ -15,8 +15,9 @@ const stepNameToModuleName = {
 	'domain-only': 'domains',
 	'domains-theme-preselected': 'domains',
 	'domains-launch': 'domains',
-	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'from-url': 'import-url',
+	'import-preview': 'import-preview',
+	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'import-url': 'import-url-onboarding',
 	launch: 'launch-site',
 	plans: 'plans',
@@ -45,8 +46,6 @@ const stepNameToModuleName = {
 	'survey-user': 'survey-user',
 	test: 'test-step',
 	themes: 'theme-selection',
-	'website-themes': 'theme-selection',
-	'blog-themes': 'theme-selection',
 	'themes-site-selected': 'theme-selection',
 	user: 'user',
 	'oauth2-user': 'user',

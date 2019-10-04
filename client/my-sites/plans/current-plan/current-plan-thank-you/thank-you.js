@@ -52,31 +52,37 @@ export class ThankYouCard extends Component {
 						src={ illustration }
 					/>
 				) }
-				{ title && <h1 className="current-plan-thank-you__title">{ title }</h1> }
-				{ children }
-				{ showCalypsoIntro && (
-					<p>
-						{ preventWidows(
-							translate(
-								'This is your new WordPress.com dashboard. You can manage your site ' +
-									'here, or return to your self-hosted WordPress dashboard using the ' +
-									'link at the bottom of your checklist.'
-							)
-						) }
-					</p>
-				) }
-				{ showContinueButton && (
-					<Button href={ dismissUrl } onClick={ this.startChecklistTour } primary>
-						{ translate( 'Continue' ) }
-					</Button>
-				) }
-				{ showHideMessage && (
-					<p>
-						<a href={ dismissUrl } onClick={ this.startChecklistTour }>
-							{ translate( 'Hide message' ) }
-						</a>
-					</p>
-				) }
+				<div>
+					{ title && <h1 className="current-plan-thank-you__title">{ title }</h1> }
+					{ children }
+					{ showCalypsoIntro && (
+						<p>
+							{ preventWidows(
+								translate(
+									'This is your new WordPress.com dashboard. You can manage your site ' +
+										'here, or return to your self-hosted WordPress dashboard using the ' +
+										'link at the bottom of your checklist.'
+								)
+							) }
+						</p>
+					) }
+					{ showContinueButton && (
+						<Button href={ dismissUrl } onClick={ this.startChecklistTour } primary>
+							{ translate( 'Continue' ) }
+						</Button>
+					) }
+					{ showHideMessage && (
+						<p>
+							<a
+								href={ dismissUrl }
+								className="current-plan-thank-you__link"
+								onClick={ this.startChecklistTour }
+							>
+								{ translate( 'Hide message' ) }
+							</a>
+						</p>
+					) }
+				</div>
 			</div>
 		);
 	}

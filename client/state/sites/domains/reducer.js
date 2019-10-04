@@ -1,4 +1,4 @@
-/** @format */
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
@@ -14,7 +14,7 @@ import {
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -24,7 +24,7 @@ import { itemsSchema } from './schema';
  * @param {Object} action - domains action
  * @return {Object} updated state
  */
-export const items = ( state = {}, action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId } = action;
 	switch ( action.type ) {
 		case SITE_DOMAINS_RECEIVE:
@@ -52,8 +52,7 @@ export const items = ( state = {}, action ) => {
 	}
 
 	return state;
-};
-items.schema = itemsSchema;
+} );
 
 /**
  * `Reducer` function which handles request/response actions

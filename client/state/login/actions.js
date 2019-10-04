@@ -3,7 +3,6 @@
  */
 import { get, defer, replace } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -18,9 +17,6 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	LOGOUT_REQUEST,
-	LOGOUT_REQUEST_FAILURE,
-	LOGOUT_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -45,18 +41,17 @@ import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 } from 'state/action-types';
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import {
 	getErrorFromHTTPError,
 	getErrorFromWPCOMError,
 	getSMSMessageFromResponse,
-	HTTPError,
+	postLoginRequest,
 } from './utils';
 import wpcom from 'lib/wp';
-import { localizeUrl } from 'lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
+import { get as webauthn_auth } from '@github/webauthn-json';
 
 /**
  * Creates a promise that will be rejected after a given timeout
@@ -111,23 +106,6 @@ export const remoteLoginUser = loginLinks => {
 			.map( promise => promise.catch( () => {} ) )
 	);
 };
-
-async function postLoginRequest( action, bodyObj ) {
-	const response = await fetch(
-		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
-		{
-			method: 'POST',
-			credentials: 'include',
-			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: stringify( bodyObj ),
-		}
-	);
-
-	if ( response.ok ) {
-		return { body: await response.json() };
-	}
-	throw new HTTPError( response, await response.text() );
-}
 
 /**
  * Logs a user in.
@@ -196,6 +174,63 @@ export const updateNonce = ( nonceType, twoStepNonce ) => ( {
 	nonceType,
 	twoStepNonce,
 } );
+
+export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
+	const twoFactorAuthType = 'webauthn';
+	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+	const loginParams = {
+		user_id: getTwoFactorUserId( getState() ),
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		auth_type: twoFactorAuthType,
+	};
+	return postLoginRequest( 'webauthn-challenge-endpoint', {
+		...loginParams,
+		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
+	} )
+		.then( response => {
+			const parameters = get( response, 'body.data', [] );
+			const twoStepNonce = get( parameters, 'two_step_nonce' );
+
+			if ( twoStepNonce ) {
+				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
+			}
+			return webauthn_auth( { publicKey: parameters } );
+		} )
+		.then( assertion => {
+			const response = assertion.response;
+			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
+				delete response.userHandle;
+			}
+			return postLoginRequest( 'webauthn-authentication-endpoint', {
+				...loginParams,
+				client_data: JSON.stringify( assertion ),
+				two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
+				remember_me: true,
+			} );
+		} )
+		.then( response => {
+			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
+			} );
+		} )
+		.catch( httpError => {
+			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
+
+			if ( twoStepNonce ) {
+				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
+			}
+
+			const error = getErrorFromHTTPError( httpError );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+				error,
+			} );
+
+			return Promise.reject( error );
+		} );
+};
 
 /**
  * Logs a user in with a two factor verification code.
@@ -468,49 +503,6 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
 export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
-
-/**
- * Logs the current user out.
- *
- * @param  {String}   redirectTo Url to redirect the user to upon successful logout
- * @return {Function}            A thunk that can be dispatched
- */
-export const logoutUser = redirectTo => ( dispatch, getState ) => {
-	dispatch( {
-		type: LOGOUT_REQUEST,
-	} );
-
-	const currentUser = getCurrentUser( getState() );
-	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
-	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
-
-	return postLoginRequest( 'logout-endpoint', {
-		redirect_to: redirectTo,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-		logout_nonce: logoutNonce,
-	} )
-		.then( response => {
-			const data = get( response, 'body.data', {} );
-
-			dispatch( {
-				type: LOGOUT_REQUEST_SUCCESS,
-				data,
-			} );
-
-			return Promise.resolve( data );
-		} )
-		.catch( httpError => {
-			const error = getErrorFromHTTPError( httpError );
-
-			dispatch( {
-				type: LOGOUT_REQUEST_FAILURE,
-				error,
-			} );
-
-			return Promise.reject( error );
-		} );
-};
 
 /**
  * Retrieves the type of authentication of the account (regular, passwordless ...) of the specified user.

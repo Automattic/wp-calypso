@@ -18,7 +18,7 @@ import { preload } from 'sections-helper';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 import MasterbarDrafts from './drafts';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { withRtl } from 'components/rtl';
 import TranslatableString from 'components/translatable/proptype';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
@@ -130,7 +130,6 @@ const mapStateToProps = state => {
 
 	return {
 		hasMoreThanOneVisibleSite: getCurrentUserVisibleSiteCount( state ) > 1,
-		isRtl: isRtlSelector( state ),
 		editorUrl: getEditorUrl( state, siteId, null, 'post' ),
 	};
 };
@@ -148,4 +147,4 @@ const mapDispatchToProps = dispatch => ( {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( MasterbarItemNew );
+)( withRtl( MasterbarItemNew ) );

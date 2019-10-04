@@ -10,7 +10,7 @@ export { default as Banner } from 'components/banner/docs/example';
 export { default as BulkSelect } from 'components/bulk-select/docs/example';
 export { default as ButtonGroups } from 'components/button-group/docs/example';
 export { default as Buttons } from 'components/button/docs/example';
-export { default as Cards } from 'components/card/docs/example';
+export { default as Cards } from '@automattic/calypso-ui/src/card/docs/example';
 export { default as CardHeading } from 'components/card-heading/docs/example';
 export { default as Chart } from 'components/chart/docs/example';
 export { default as Checklist } from 'components/checklist/docs/example';
@@ -65,7 +65,7 @@ export { default as PromoSection } from 'components/promo-section/docs/example';
 export { default as PromoCard } from 'components/promo-section/promo-card/docs/example';
 export { default as Ranges } from 'components/forms/range/docs/example';
 export { default as Rating } from 'components/rating/docs/example';
-export { default as Ribbon } from 'components/ribbon/docs/example';
+export { default as Ribbon } from '@automattic/calypso-ui/src/ribbon/docs/example';
 export {
 	default as ScreenReaderTextExample,
 } from '@automattic/calypso-ui/src/screen-reader-text/docs/example';

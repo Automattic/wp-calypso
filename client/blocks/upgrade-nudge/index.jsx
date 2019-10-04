@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -22,6 +21,7 @@ import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
+import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 
@@ -42,7 +42,6 @@ export class UpgradeNudge extends React.Component {
 		compact: PropTypes.bool,
 		plan: PropTypes.string,
 		feature: PropTypes.string,
-		shouldDisplay: PropTypes.oneOfType( [ PropTypes.func, PropTypes.bool ] ),
 		site: PropTypes.object,
 		translate: PropTypes.func,
 	};
@@ -56,7 +55,6 @@ export class UpgradeNudge extends React.Component {
 		plan: null,
 		feature: null,
 		compact: false,
-		shouldDisplay: null,
 		site: null,
 		translate: identity,
 	};
@@ -90,15 +88,17 @@ export class UpgradeNudge extends React.Component {
 			site,
 			title,
 			translate,
+			isVip,
 		} = this.props;
-		
-		const shouldNotDisplay = 
-			  ! canManageSite || 
-			  ( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) ||
-			  ( feature && planHasFeature ) ||
-			  ( ! feature && ! isFreePlan( site.plan ) ) ||
-			  ( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-			  ( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) );
+
+		const shouldNotDisplay =
+			isVip ||
+			! canManageSite ||
+			( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) ||
+			( feature && planHasFeature ) ||
+			( ! feature && ! isFreePlan( site.plan ) ) ||
+			( feature === FEATURE_NO_ADS && site.options.wordads ) ||
+			( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) );
 
 		if ( shouldNotDisplay ) {
 			return null;
@@ -158,6 +158,7 @@ export default connect(
 			site: getSite( state, siteId ),
 			planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 			canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
+			isVip: isVipSite( state, siteId ),
 		};
 	},
 	{ recordTracksEvent }

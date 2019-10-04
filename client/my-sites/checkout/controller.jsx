@@ -36,7 +36,7 @@ export function checkout( context, next ) {
 	}
 
 	let product;
-	if ( selectedSite && selectedSite.slug !== domainOrProduct ) {
+	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
 		product = domainOrProduct;
 	} else {
 		product = context.params.product;
@@ -58,6 +58,8 @@ export function checkout( context, next ) {
 			selectedFeature={ feature }
 			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
+			// Are we being redirected from the signup flow?
+			isComingFromSignup={ !! context.query.signup }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }

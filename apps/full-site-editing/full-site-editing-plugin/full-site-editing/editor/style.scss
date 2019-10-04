@@ -1,6 +1,12 @@
-.post-type-wp_template {
+.post-type-wp_template_part {
 	.editor-post-title,
 	.editor-post-trash {
+		display: none;
+	}
+
+	// @TODO: Remove this when Gutenberg support is added for
+	// removing the PostStatus panel:
+	.edit-post-post-status {
 		display: none;
 	}
 
@@ -12,30 +18,24 @@
 	.editor-post-switch-to-draft {
 		display: none;
 	}
-
-	.editor-block-list__layout {
-		padding-top: 28px;
-	}
-
-	.editor-styles-wrapper [data-block] {
-		margin-top: 15px;
-		margin-bottom: 15px;
-	}
 }
 
-.post-type-page, .post-type-wp_template {
-	.edit-post-layout__content {
-		background: #eee;
+.post-type-page, .post-type-wp_template_part {
+	@media ( min-width: 768px ) {
+		.edit-post-layout__content {
+			background: #eee;
+		}
+
+		.edit-post-layout__content .edit-post-visual-editor {
+			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
+			flex: none;
+			margin: 36px 32px;
+		}
 	}
 
-	.edit-post-layout__content .edit-post-visual-editor {
-		flex: none;
-		margin: 36px 32px;
-		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
-
-		@media ( max-width: 768px ) {
-  			margin: 0;
-		}
+	// Remove the 50vh bottom padding that looks off with the FSE frame.
+	.editor-writing-flow__click-redirect {
+		display: none;
 	}
 }
 
@@ -48,7 +48,7 @@
 
 .post-type-page {
 	.edit-post-visual-editor {
-		padding: 0 0 4px;
+		padding-top: 0;
 	}
 
 	.block-editor-writing-flow {

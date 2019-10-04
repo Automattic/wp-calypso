@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, merge, omit, pick } from 'lodash';
 
 /**
@@ -20,7 +17,7 @@ import {
 	POST_SAVE,
 	POSTS_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducerWithValidation } from 'state/utils';
 import { countsSchema } from './schema';
 
 /**
@@ -136,7 +133,7 @@ export const counts = ( () => {
 		} );
 	}
 
-	return createReducer(
+	return createReducerWithValidation(
 		{},
 		{
 			[ POST_COUNTS_RESET_INTERNAL_STATE ]: state => {

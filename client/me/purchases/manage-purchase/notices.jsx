@@ -23,6 +23,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isRenewable,
+	isRechargeable,
 	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
@@ -64,9 +65,22 @@ class PurchaseNotice extends Component {
 			}
 
 			if ( hasPaymentMethod( purchase ) ) {
+				if ( isRechargeable( purchase ) ) {
+					return translate(
+						'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+							"Please enable auto-renewal so you don't lose out on your paid features!",
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								expiry: moment( purchase.expiryMoment ).fromNow(),
+							},
+						}
+					);
+				}
+
 				return translate(
 					'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
-						"Please enable auto-renewal so you don't lose out on your paid features!",
+						"Please renew before expiry so you don't lose out on your paid features!",
 					{
 						args: {
 							purchaseName: getName( purchase ),
@@ -127,9 +141,8 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		// In case of `manualRenew`, the text encouraging users to enable auto-renewal through the toggle will be presented.
 		return (
-			purchase.expiryStatus !== 'manualRenew' && (
+			! isRechargeable( purchase ) && (
 				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
 			)
 		);

@@ -9,7 +9,7 @@ import React from 'react';
 import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -19,7 +19,6 @@ import { preventWidows } from 'lib/formatting';
 import config from 'config';
 import FormLabel from 'components/forms/form-label';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import SelectDropdown from 'components/select-dropdown';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
@@ -226,10 +225,10 @@ export class HelpContactForm extends React.PureComponent {
 			<div className="help-contact-form__selection">
 				<SegmentedControl primary>
 					{ options.map( option => (
-						<ControlItem { ...option.props }>
+						<SegmentedControl.Item { ...option.props }>
 							{ option.label }
 							{ option.subtext }
-						</ControlItem>
+						</SegmentedControl.Item>
 					) ) }
 				</SegmentedControl>
 				<SelectDropdown

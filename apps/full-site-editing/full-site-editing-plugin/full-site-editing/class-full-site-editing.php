@@ -23,7 +23,7 @@ class Full_Site_Editing {
 	 *
 	 * @var array
 	 */
-	private $template_post_types = [ 'wp_template' ];
+	private $template_post_types = [ 'wp_template_part' ];
 
 	/**
 	 * Current theme slug.
@@ -38,13 +38,6 @@ class Full_Site_Editing {
 	 * @var WP_Template_Inserter
 	 */
 	public $wp_template_inserter;
-
-	/**
-	 * List of FSE supported themes.
-	 *
-	 * @var array
-	 */
-	const SUPPORTED_THEMES = [ 'modern-business' ];
 
 	/**
 	 * Full_Site_Editing constructor.
@@ -63,9 +56,11 @@ class Full_Site_Editing {
 		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
 		add_filter( 'bulk_actions-edit-wp_template', [ $this, 'remove_trash_bulk_action_for_template_post_type' ] );
 		add_action( 'wp_trash_post', [ $this, 'restrict_template_deletion' ] );
+		add_action( 'before_delete_post', [ $this, 'restrict_template_deletion' ] );
 		add_filter( 'wp_template_type_row_actions', [ $this, 'remove_delete_row_action_for_template_taxonomy' ], 10, 2 );
 		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
 		add_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
+		add_action( 'transition_post_status', [ $this, 'restrict_template_drafting' ], 10, 3 );
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
@@ -87,12 +82,16 @@ class Full_Site_Editing {
 	/**
 	 * Determines whether provided theme supports FSE.
 	 *
+	 * @deprecated being replaced soon by an is_active static method - don't add new usages
 	 * @param string $theme_slug Theme slug to check support for.
 	 *
 	 * @return bool True if passed theme supports FSE, false otherwise.
 	 */
-	public function is_supported_theme( $theme_slug ) {
-		return in_array( $theme_slug, self::SUPPORTED_THEMES, true );
+	// phpcs:disable
+	public function is_supported_theme( $theme_slug = null ) {
+		// phpcs:enable
+		// now in reality is_current_theme_supported.
+		return current_theme_supports( 'full-site-editing' );
 	}
 
 	/**
@@ -102,25 +101,20 @@ class Full_Site_Editing {
 	 * It is hooked into after_switch_theme action.
 	 */
 	public function insert_default_data() {
-		// Bail if theme doesn't support FSE.
-		if ( ! $this->is_supported_theme( $this->theme_slug ) ) {
+		// Bail if current theme doesn't support FSE.
+		if ( ! $this->is_supported_theme() ) {
 			return;
 		}
 
-		if ( ! $this->wp_template_inserter->is_template_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_template_data();
-		}
-
-		if ( ! $this->wp_template_inserter->is_pages_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_pages();
-		}
+		$this->wp_template_inserter->insert_default_template_data();
+		$this->wp_template_inserter->insert_default_pages();
 	}
 
 	/**
 	 * Returns normalized theme slug for the current theme.
 	 *
 	 * Normalize WP.com theme slugs that differ from those that we'll get on self hosted sites.
-	 * For example, we will get 'modern-business' when retrieving theme slug on self hosted sites,
+	 * For example, we will get 'modern-business-wpcom' when retrieving theme slug on self hosted sites,
 	 * but due to WP.com setup, on Simple sites we'll get 'pub/modern-business' for the theme.
 	 *
 	 * @param string $theme_slug Theme slug to check support for.
@@ -129,7 +123,11 @@ class Full_Site_Editing {
 	 */
 	public function normalize_theme_slug( $theme_slug ) {
 		if ( 'pub/' === substr( $theme_slug, 0, 4 ) ) {
-			$theme_slug = str_replace( 'pub/', '', $theme_slug );
+			$theme_slug = substr( $theme_slug, 4 );
+		}
+
+		if ( '-wpcom' === substr( $theme_slug, -6, 6 ) ) {
+			$theme_slug = substr( $theme_slug, 0, -6 );
 		}
 
 		return $theme_slug;
@@ -336,13 +334,8 @@ class Full_Site_Editing {
 	 * @param \WP_Post $post Post instance.
 	 */
 	public function merge_template_and_post( $post ) {
-		// Bail if not a REST API Request.
-		if ( defined( 'REST_REQUEST' ) && ! REST_REQUEST ) {
-			return;
-		}
-
-		// Bail if the post is not a full site page.
-		if ( ! $this->is_full_site_page() ) {
+		// Bail if not a REST API Request and not in the editor.
+		if ( ! $this->should_merge_template_and_post( $post ) ) {
 			return;
 		}
 
@@ -355,6 +348,29 @@ class Full_Site_Editing {
 		}
 
 		$post->post_content = preg_replace( '@(<!-- wp:a8c/post-content)(.*?)(/-->)@', "$1$2-->$post->post_content<!-- /wp:a8c/post-content -->", $template_content );
+	}
+
+	/**
+	 * Detects if we are in a context where the template and post should be merged.
+	 *
+	 * Conditions:
+	 * 1. Current theme supports it
+	 * 2. AND in a REST API request (either flavour)
+	 * 3. OR on a block editor screen (inlined requests using `rest_preload_api_request` )
+	 * 4. AND editing a post_type that supports full site editing
+	 *
+	 * @param \WP_Post $post object for the check.
+	 * @return bool
+	 */
+	private function should_merge_template_and_post( $post ) {
+		$is_rest_api_wpcom      = ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST );
+		$is_rest_api_core       = ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+		$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
+
+		if ( ! ( $is_block_editor_screen || $is_rest_api_core || $is_rest_api_wpcom ) ) {
+			return false;
+		}
+		return $this->is_full_site_page( $post );
 	}
 
 	/**
@@ -431,10 +447,23 @@ class Full_Site_Editing {
 	 * Determine if the current edited post is a full site page.
 	 * So far we only support static pages.
 	 *
+	 * @param object $post optional post object, if not passed in then current post is checked.
 	 * @return boolean
 	 */
-	public function is_full_site_page() {
-		return 'page' === get_post_type();
+	public function is_full_site_page( $post = null ) {
+		$post_type = get_post_type( $post );
+		return 'page' === $post_type || ( 'revision' === $post_type && 'page' === get_post_type( $post->post_parent ) );
+	}
+
+	/**
+	 * Determines whether given post belongs to FSE template CPTs.
+	 *
+	 * @param WP_Post $post Check if this post belongs to templates.
+	 *
+	 * @return boolean
+	 */
+	public function is_template_post_type( $post ) {
+		return in_array( $post->post_type, $this->template_post_types, true );
 	}
 
 	/**
@@ -476,7 +505,7 @@ class Full_Site_Editing {
 	 * @return array
 	 */
 	public function remove_trash_row_action_for_template_post_types( $actions, $post ) {
-		if ( in_array( $post->post_type, $this->template_post_types, true ) ) {
+		if ( $this->is_template_post_type( $post ) ) {
 			unset( $actions['trash'] );
 		}
 		return $actions;
@@ -494,15 +523,30 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Prevents posts for the template post types to be deleted
+	 * Prevents posts for the template post types to be deleted.
 	 *
 	 * @param integer $post_id The post id.
 	 */
 	public function restrict_template_deletion( $post_id ) {
-		if ( in_array( get_post_type( $post_id ), $this->template_post_types, true ) ) {
+		if ( $this->is_template_post_type( get_post( $post_id ) ) ) {
 			wp_die( esc_html__( 'Templates cannot be deleted.' ) );
 		}
 	}
+
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+	/**
+	 * Prevents draftinig of template post types.
+	 *
+	 * @param string $new_status New post status.
+	 * @param string $old_status Old post status.
+	 * @param object $post Post object for which the status change is attempted.
+	 */
+	public function restrict_template_drafting( $new_status, $old_status, $post ) {
+		if ( 'draft' === $new_status && $this->is_template_post_type( $post ) ) {
+			wp_die( esc_html__( 'Templates cannot be moved to drafts.' ) );
+		}
+	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 
 	/**
 	 * Removes the Delete action from the quick actions for the template taxonomy.
@@ -512,7 +556,7 @@ class Full_Site_Editing {
 	 * @return array
 	 */
 	public function remove_delete_row_action_for_template_taxonomy( $actions, $term ) {
-		if ( 'wp_template_type' === $term->taxonomy ) {
+		if ( 'wp_template_part_type' === $term->taxonomy ) {
 			unset( $actions['delete'] );
 		}
 		return $actions;
@@ -536,7 +580,7 @@ class Full_Site_Editing {
 	 * @param string  $taxonomy Taxonomy name.
 	 */
 	public function restrict_template_taxonomy_deletion( $term, $taxonomy ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
-		if ( 'wp_template_type' === $taxonomy ) {
+		if ( 'wp_template_part_type' === $taxonomy ) {
 			wp_die( esc_html__( 'Template Types cannon be deleted.' ) );
 		}
 	}

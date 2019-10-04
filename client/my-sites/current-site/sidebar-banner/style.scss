@@ -3,7 +3,7 @@
 
 	.sidebar-banner__link {
 		background-color: var( --color-success );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		display: flex;
 
 		@include breakpoint( '<660px' ) {

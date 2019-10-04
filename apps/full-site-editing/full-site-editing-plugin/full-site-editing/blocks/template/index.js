@@ -14,10 +14,10 @@ import edit from './edit';
 import './style.scss';
 import './site-logo';
 
-if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
+if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/template', {
-		title: __( 'Template' ),
-		description: __( 'Display a template.' ),
+		title: __( 'Template Part' ),
+		description: __( 'Display a Template Part.' ),
 		icon: 'layout',
 		category: 'layout',
 		attributes: {
@@ -28,6 +28,7 @@ if ( 'wp_template' !== fullSiteEditing.editorPostType ) {
 			anchor: false,
 			customClassName: false,
 			html: false,
+			inserter: false,
 			reusable: false,
 		},
 		edit,

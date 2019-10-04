@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -76,7 +76,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 					<div className="concierge-quickstart-session__column-content">
 						<p>
 							{ translate(
-								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their advice to build a great site… in less time you ever thought possible?"
+								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their advice to build a great site… in less time than you ever thought possible?"
 							) }
 						</p>
 						<p>

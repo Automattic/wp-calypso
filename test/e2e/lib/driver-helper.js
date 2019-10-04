@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import webdriver, { until } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -46,9 +46,7 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
 	);
 }
 
@@ -132,9 +130,7 @@ export function waitTillPresentAndDisplayed( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be present and displayed`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed`
 	);
 }
 
@@ -256,9 +252,7 @@ export function waitForFieldClearable( driver, selector ) {
 			);
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be clearable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clearable`
 	);
 }
 
@@ -290,9 +284,7 @@ export function setWhenSettable(
 			return actualValue === value;
 		},
 		explicitWaitMS,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to be settable to: '${ logValue }'`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be settable to: '${ logValue }'`
 	);
 }
 
@@ -327,9 +319,7 @@ export function waitTillNotPresent( driver, selector, waitOverride ) {
 			} );
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${
-			selector.value
-		}' to NOT be present`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to NOT be present`
 	);
 }
 
@@ -561,4 +551,8 @@ export async function acceptAlertIfPresent( driver ) {
 	} catch ( error ) {
 		return false;
 	}
+}
+
+export async function waitForAlertPresent( driver ) {
+	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
 }

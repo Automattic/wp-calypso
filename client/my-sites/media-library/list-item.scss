@@ -2,7 +2,7 @@
 	position: relative;
 	display: inline-block;
 	cursor: pointer;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	user-select: none;
 
 	&.is-selected::after {
@@ -15,13 +15,18 @@
 		height: 28px;
 		padding: 0;
 		transition: color 90ms ease;
-		box-shadow: 0 0 8px rgba( var( --color-neutral-700-rgb ), 0.4 );
+		box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.4 );
 		background: var( --color-accent );
 		border-radius: 50%;
 		font-size: 14px;
 		line-height: 28px;
 		text-align: center;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
+	}
+	
+	.media__main-section .media-library__content.has-no-upload-button & {
+		// In the Media Library, don't allow contributors to click images.
+		pointer-events: none;
 	}
 }
 
@@ -37,7 +42,7 @@
 		'.media-library__list-item',
 		'.media-library__list-item-selected-icon .gridicon'
 	);
-	fill: var( --color-white );
+	fill: var( --color-text-inverted );
 }
 
 .media-library.is-single .media-library__list-item.is-selected::after {
@@ -55,19 +60,19 @@
 	overflow: hidden;
 	height: 0;
 	padding-bottom: 100%;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 }
 
 .media-library__list-item:hover .media-library__list-item-figure {
-	box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+	box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 }
 
 .media-library__list-item.is-selected .media-library__list-item-figure {
-	box-shadow: 0 0 0 2px var( --color-accent ), 0 4px 6px var( --color-neutral-100 );
+	box-shadow: 0 0 0 2px var( --color-accent ), 0 4px 6px var( --color-neutral-10 );
 }
 
 .media-library__list-item.is-placeholder .media-library__list-item-figure {
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -78,7 +83,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-	background-color: rgba( var( --color-white-rgb ), 0.75 );
+	background-color: rgba( var( --color-surface-rgb ), 0.75 );
 	border-radius: 0;
 	z-index: z-index(
 		'.media-library__list-item',

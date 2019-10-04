@@ -380,6 +380,8 @@ class TransferDomainStep extends React.Component {
 				domain: null,
 				inboundTransferStatus: {},
 				precheck: false,
+				notice: null,
+				searchQuery: '',
 				supportsPrivacy: false,
 			} );
 		} else {
@@ -484,7 +486,10 @@ class TransferDomainStep extends React.Component {
 			this.setState( prevState => {
 				const { submittingAvailability, submittingWhois } = prevState;
 
-				return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
+				return {
+					domain,
+					precheck: prevState.domain && ! submittingAvailability && ! submittingWhois,
+				};
 			} );
 
 			if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {
@@ -512,9 +517,28 @@ class TransferDomainStep extends React.Component {
 								supportsPrivacy: get( result, 'supports_privacy', false ),
 							} );
 							break;
+						case domainAvailability.TLD_NOT_SUPPORTED: {
+							const tld = getTld( domain );
+
+							this.setState( {
+								notice: this.props.translate(
+									"This domain is available to be registered, but we don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. " +
+										'If you register it elsewhere, you can {{a}}map it{{/a}} instead.',
+									{
+										args: { tld },
+										components: {
+											strong: <strong />,
+											a: <a href="#" onClick={ this.goToMapDomainStep } />, // eslint-disable-line jsx-a11y/anchor-is-valid
+										},
+									}
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
+						}
 						case domainAvailability.MAPPABLE:
-						case domainAvailability.TLD_NOT_SUPPORTED:
-						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY: {
+						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
+						case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: {
 							const tld = getTld( domain );
 
 							this.setState( {
