@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
+import Button from 'components/button';
 import Card from 'components/card/compact';
 import Header from './card/header';
 import Property from './card/property';
@@ -17,7 +18,11 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import { domainManagementDns, domainManagementDomainConnectMapping } from 'my-sites/domains/paths';
+import {
+	domainManagementDns,
+	domainManagementDomainConnectMapping,
+	domainTransferIn as getDomainTransferPath,
+} from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
 
 // eslint-disable-next-line react/prefer-es6-class
@@ -100,12 +105,20 @@ const MappedDomain = createReactClass( {
 
 					{ this.getAutoRenewalOrExpirationDate() }
 
-					<SubscriptionSettings
-						type={ domain.type }
-						subscriptionId={ domain.subscriptionId }
-						siteSlug={ selectedSite.slug }
-						onClick={ this.handlePaymentSettingsClick }
-					/>
+					<div className="edit__domain-inline-actions">
+						<SubscriptionSettings
+							type={ domain.type }
+							subscriptionId={ domain.subscriptionId }
+							siteSlug={ selectedSite.slug }
+							onClick={ this.handlePaymentSettingsClick }
+						/>
+
+						<Button href={ getDomainTransferPath( selectedSite.slug, domain.name ) }>
+							{ this.props.translate( 'Request Transfer', {
+								comment: 'Request a transfer for a domain',
+							} ) }
+						</Button>
+					</div>
 				</Card>
 			</div>
 		);

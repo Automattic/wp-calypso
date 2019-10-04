@@ -9,6 +9,27 @@
 		}
 	}
 
+	.edit__domain-inline-actions {
+		display: flex;
+		flex-direction: row;/*rtl:row-reverse*/
+		justify-content: space-between;
+
+		.button {
+			margin-top: 15px;
+			text-decoration: none;
+			text-align: center;
+
+			/* Override width: 100%; from SubscriptionSettings style for single button */
+			&.subscription-settings {
+				width: inherit;
+			}
+
+			@include breakpoint('>660px') {
+				text-align: inherit;
+			}
+		}
+	}
+
 	.edit__transfer-text-fail {
 		font-size: 18px;
 		font-weight: 500;
