@@ -18,6 +18,7 @@ import '@wordpress/format-library';
 /**
  * Internal dependencies
  */
+import { Header } from './header';
 import './style.scss';
 
 import '@wordpress/components/build-style/style.css';
@@ -31,21 +32,24 @@ export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
 
 	return (
-		<SlotFillProvider>
-			<DropZoneProvider>
-				<BlockEditorProvider value={ blocks } onInput={ updateBlocks } onChange={ updateBlocks }>
-					<div>
-						<BlockEditorKeyboardShortcuts />
-						<WritingFlow>
-							<ObserveTyping>
-								<BlockList />
-							</ObserveTyping>
-						</WritingFlow>
-					</div>
-					<Popover.Slot />
-				</BlockEditorProvider>
-			</DropZoneProvider>
-		</SlotFillProvider>
+		<>
+			<Header />
+			<SlotFillProvider>
+				<DropZoneProvider>
+					<BlockEditorProvider value={ blocks } onInput={ updateBlocks } onChange={ updateBlocks }>
+						<div className="gutenboarding__block-editor">
+							<BlockEditorKeyboardShortcuts />
+							<WritingFlow>
+								<ObserveTyping>
+									<BlockList />
+								</ObserveTyping>
+							</WritingFlow>
+						</div>
+						<Popover.Slot />
+					</BlockEditorProvider>
+				</DropZoneProvider>
+			</SlotFillProvider>
+		</>
 	);
 }
 
