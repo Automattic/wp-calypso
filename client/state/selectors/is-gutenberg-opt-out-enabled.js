@@ -11,7 +11,7 @@ import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
 
 export const isGutenbergOptOutEnabled = ( state, siteId ) => {
 	return (
-		get( state, [ 'gutenbergOptIn', siteId ], true ) &&
+		get( state, [ 'gutenbergOptIn', siteId ], false ) &&
 		getSelectedEditor( state, siteId ) !== 'classic' &&
 		! isClassicEditorForced( state, siteId )
 	);
