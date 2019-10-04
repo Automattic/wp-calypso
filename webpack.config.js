@@ -284,6 +284,7 @@ const webpackConfig = {
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.JETPACK_DASHBOARD': JSON.stringify( process.env.JETPACK_DASHBOARD ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),

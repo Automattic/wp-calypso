@@ -133,6 +133,7 @@ const webpackConfig = {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.JETPACK_DASHBOARD': JSON.stringify( process.env.JETPACK_DASHBOARD ),
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
