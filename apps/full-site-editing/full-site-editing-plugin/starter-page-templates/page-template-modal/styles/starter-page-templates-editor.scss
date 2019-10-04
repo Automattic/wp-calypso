@@ -12,9 +12,12 @@
 }
 
 $template-selector-border-color: #e2e4e7;
+$template-selector-border-color-selected: #555d66;
+$template-selector-border-color-active: #00a0d2;
+$template-selector-border-color-hover: #c9c9ca;
 $template-selector-empty-background: #fff;
-$template-selector-modal-offset-right: 32px;
 $template-selector-modal-offset-bottom: 25px;
+$template-selector-modal-offset-right: 32px;
 $template-selector-blank-template-mobile-height: 70px;
 $template-large-preview-title-height: 117px;
 
@@ -181,31 +184,27 @@ body.is-fullscreen-mode {
 			background-color: #fff;
 		}
 
-		$selection-color: #555d66;
-		$active-color: #00a0d2;
-		$hover-color: #c9c9ca;
-
 		&:focus {
-			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $active-color;
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
 		
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
 			outline: 2px solid transparent;
 		}
 	
 		&:hover {
-			border: solid 2px $hover-color;
+			border: solid 2px $template-selector-border-color-hover;
 		}
 	
 		&.is-selected {
-			border: solid 2px $selection-color;
+			border: solid 2px $template-selector-border-color-selected;
 		
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
 			outline: 2px solid transparent;
 			outline-offset: -2px;
 	
 			&:focus {
-				box-shadow: 0 0 0 1px #fff, 0 0 0 3px $active-color;
-				border: solid 2px $selection-color;
+				box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
+				border: solid 2px $template-selector-border-color-selected;
 			
 				// Windows High Contrast mode will show this outline, but not the box-shadow.
 				outline: 4px solid transparent;
