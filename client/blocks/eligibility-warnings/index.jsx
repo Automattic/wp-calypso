@@ -83,14 +83,7 @@ export const EligibilityWarnings = ( {
 			feature = FEATURE_UPLOAD_THEMES;
 			event = 'calypso-theme-eligibility-upgrade-nudge';
 		}
-		const hrefProps =
-			isEligible || ! upsell
-				? {
-						href: `/checkout/${ siteSlug }/business`,
-				  }
-				: {
-						disableHref: true,
-				  };
+		const bannerURL = `/checkout/${ siteSlug }/business`;
 		businessUpsellBanner = (
 			<Banner
 				description={ description }
@@ -98,7 +91,7 @@ export const EligibilityWarnings = ( {
 				event={ event }
 				plan={ plan }
 				title={ title }
-				{ ...hrefProps }
+				href={ bannerURL }
 			/>
 		);
 	}
