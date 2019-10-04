@@ -162,7 +162,8 @@ body.is-fullscreen-mode {
 		width: 100%;
 		font-size: 14px;
 		text-align: center;
-		border: 1px solid $template-selector-border-color;
+		//border: 0;//1px solid $template-selector-border-color;
+		border: solid 2px transparent;
 		border-radius: 6px;
 		cursor: pointer;
 		appearance: none;
@@ -181,27 +182,39 @@ body.is-fullscreen-mode {
 			background-color: #fff;
 		}
 
-		&:hover,
-		&:focus,
-		&.is-selected {
-			outline: 1px solid transparent;
-			outline-offset: -1px;
-			color: inherit;
-		}
-		
-		&:hover,
+		$selection-color: #555d66;
+		$active-color: #00a0d2;
+		$hover-color: #f3f4f5;
+
 		&:focus {
-			border-color: #555d66;
-			box-shadow: 0 0 0 1px #555d66;
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $active-color;
+		
+			// Windows High Contrast mode will show this outline, but not the box-shadow.
+			outline: 2px solid transparent;
 		}
+	
+		&:hover {
+			background: $hover-color;
 
+			.template-selector-item__template-title {
+				background: $hover-color;
+			}
+		}
+	
 		&.is-selected {
-			border-color: #2562b7;
-			box-shadow: 0 0 0 1px #2562b7;
-
-			&:hover,
+			border: solid 2px $selection-color;
+		
+			// Windows High Contrast mode will show this outline, but not the box-shadow.
+			outline: 2px solid transparent;
+			outline-offset: -2px;
+	
 			&:focus {
-				box-shadow: 0 0 0 1px #555d66, 0 0 0 2px #fff, 0 0 0 3px #2562b7;
+				box-shadow: 0 0 0 1px #fff, 0 0 0 3px $active-color;
+				border: solid 2px $selection-color;
+			
+				// Windows High Contrast mode will show this outline, but not the box-shadow.
+				outline: 4px solid transparent;
+				outline-offset: -4px;
 			}
 		}
 
