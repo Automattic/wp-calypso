@@ -2,9 +2,7 @@
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getABTestVariation } from 'lib/abtest';
 import { canCurrentUserUseChecklistMenu } from 'state/sites/selectors';
-
 /**
  * Returns true if the current should be able to use the customer home screen
  *
@@ -16,8 +14,6 @@ export default function isSiteEligibleForCustomerHome( state, siteId = null ) {
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
-	return (
-		'show' === ( getABTestVariation( 'customerHomePage' ) || 'show' ) &&
-		canCurrentUserUseChecklistMenu( state, siteId )
-	);
+	// TODO: Refactor this so that it refers to Customer Home
+	return canCurrentUserUseChecklistMenu( state, siteId );
 }
