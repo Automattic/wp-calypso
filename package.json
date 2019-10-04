@@ -188,6 +188,7 @@
 		"source-map-support": "0.5.12",
 		"store": "2.0.12",
 		"striptags": "2.2.1",
+		"styled-components": "4.4.0",
 		"superagent": "3.8.3",
 		"svg4everybody": "2.1.9",
 		"textarea-caret": "3.1.0",
@@ -285,7 +286,8 @@
 		"validate-fallback-es5": "npx eslint --env=es5 --no-eslintrc --no-ignore ./public/fallback/*.js",
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
-		"whybundled": "whybundled stats.json"
+		"whybundled": "whybundled stats.json",
+		"wp-checkout-demo": "webpack-dev-server --config webpack.config.wp-checkout.js --mode development"
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
@@ -294,6 +296,7 @@
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "file:./packages/webpack-extensive-lodash-replacement-plugin",
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
+		"@automattic/wp-checkout": "file:./packages/wp-checkout",
 		"@types/classnames": "2.2.9",
 		"@types/debug": "4.1.4",
 		"@types/lodash": "4.14.144",
@@ -359,6 +362,9 @@
 		"supertest": "3.4.2",
 		"svgstore-cli": "1.3.1",
 		"typescript": "3.6.4",
+		"webpack": "4.41.2",
+		"webpack-cli": "3.3.9",
+		"webpack-dev-server": "3.8.2",
 		"webpack-hot-middleware": "2.25.0",
 		"webpack-node-externals": "1.7.2",
 		"whybundled": "1.4.2"
