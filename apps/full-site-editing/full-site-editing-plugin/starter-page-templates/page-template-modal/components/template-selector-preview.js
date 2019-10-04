@@ -56,21 +56,21 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 			const elStyles = window.getComputedStyle( previewContainerEl );
 			if ( elStyles && elStyles.transform ) {
 				const titleElement = ref.current.querySelector( '.editor-post-title' );
+				if ( titleElement ) {
+					// Apply the same transform css rule at template title element.
+					titleElement.style.transform = elStyles.transform;
+				}
 
-				// pick up scale factor from `transform` css.
+				// Pick up scale factor from `transform` css.
 				let scale = elStyles.transform.replace( /matrix\((.+)\)$/i, '$1' ).split( ',' );
 				scale = scale && scale.length ? Number( scale[ 0 ] ) : null;
 				scale = isNaN( scale ) ? null : scale;
 
-				if ( titleElement ) {
-					// apply the same transform css rule at template title element.
-					titleElement.style.transform = elStyles.transform;
-				}
-
-				// Try to adjust vertical offset pf the large preview.
+				// Try to adjust vertical offset of the large preview.
 				const offsetCorrectionEl = previewContainerEl.closest(
 					'.template-selector-preview__offset-correction'
 				);
+
 				if ( offsetCorrectionEl && scale ) {
 					const titleHeight = titleElement ? titleElement.offsetHeight : null;
 					offsetCorrectionEl.style.top = `${ titleHeight * scale }px`;
