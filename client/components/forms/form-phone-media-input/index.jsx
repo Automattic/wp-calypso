@@ -6,7 +6,6 @@
 
 import React from 'react';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,24 +14,31 @@ import PhoneInput from 'components/phone-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 
-export default function FormPhoneMediaInput( props ) {
-	const {
-		additionalClasses,
-		label,
-		countryCode,
-		className,
-		disabled,
-		errorMessage,
-		isError = 'false',
-		children,
-	} = props;
-
+export default function FormPhoneMediaInput( {
+	additionalClasses,
+	label,
+	value,
+	countryCode,
+	className,
+	disabled,
+	errorMessage,
+	isError = 'false',
+	onChange,
+	countriesList,
+	setComponentReference,
+	enableStickyCountry,
+	children,
+} ) {
 	return (
 		<div className={ classnames( additionalClasses, 'phone' ) }>
 			<div>
 				<FormLabel htmlFor={ name }>{ label }</FormLabel>
 				<PhoneInput
-					{ ...omit( props, [ 'className', 'countryCode', 'children' ] ) }
+					onChange={ onChange }
+					value={ value }
+					countriesList={ countriesList }
+					setComponentReference={ setComponentReference }
+					enableStickyCountry={ enableStickyCountry }
 					countryCode={ countryCode.toUpperCase() }
 					className={ className }
 					isError={ isError }
