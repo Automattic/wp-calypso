@@ -18,6 +18,7 @@ import '@wordpress/format-library';
 /**
  * Internal dependencies
  */
+import { Header } from './header';
 import './style.scss';
 
 /* eslint-disable no-restricted-syntax */
@@ -34,6 +35,7 @@ export function Gutenboard() {
 
 	return (
 		<>
+			<Header />
 			<div>
 				<a href="/gutenboarding/onboard">Onboard!</a>
 			</div>
@@ -45,7 +47,7 @@ export function Gutenboard() {
 							onInput={ updateBlocks }
 							onChange={ updateBlocks }
 						>
-							<div className="editor-styles-wrapper">
+							<div className="gutenboarding__block-editor">
 								<BlockEditorKeyboardShortcuts />
 								<WritingFlow>
 									<ObserveTyping>
