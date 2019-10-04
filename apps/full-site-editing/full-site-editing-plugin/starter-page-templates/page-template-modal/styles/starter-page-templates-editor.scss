@@ -11,7 +11,7 @@
 	word-wrap: normal !important;
 }
 
-$template-selector-border-color: #a1aab2;
+$template-selector-border-color: #e2e4e7;
 $template-selector-empty-background: #fff;
 $template-selector-modal-offset-right: 32px;
 $template-selector-modal-offset-bottom: 25px;
@@ -162,8 +162,7 @@ body.is-fullscreen-mode {
 		width: 100%;
 		font-size: 14px;
 		text-align: center;
-		//border: 0;//1px solid $template-selector-border-color;
-		border: solid 2px transparent;
+		border: solid 2px $template-selector-border-color;
 		border-radius: 6px;
 		cursor: pointer;
 		appearance: none;
@@ -184,7 +183,7 @@ body.is-fullscreen-mode {
 
 		$selection-color: #555d66;
 		$active-color: #00a0d2;
-		$hover-color: #f3f4f5;
+		$hover-color: #c9c9ca;
 
 		&:focus {
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $active-color;
@@ -194,11 +193,7 @@ body.is-fullscreen-mode {
 		}
 	
 		&:hover {
-			background: $hover-color;
-
-			.template-selector-item__template-title {
-				background: $hover-color;
-			}
+			border: solid 2px $hover-color;
 		}
 	
 		&.is-selected {
