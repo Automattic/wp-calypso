@@ -11,6 +11,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { setCurrentUser } from 'state/current-user/actions';
+import setRouteAction from 'state/ui/actions/set-route';
 
 const debug = debugFactory( 'calypso' );
 
@@ -91,7 +92,16 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
+const setRouteMiddleware = reduxStore => {
+	page( '*', ( context, next ) => {
+		reduxStore.dispatch( setRouteAction( context.pathname, context.query ) );
+
+		next();
+	} );
+};
+
 export function setupMiddlewares( currentUser, reduxStore ) {
 	setupContextMiddleware( reduxStore );
+	setRouteMiddleware( reduxStore );
 	renderDevHelpers( reduxStore );
 }
