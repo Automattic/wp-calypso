@@ -42,8 +42,25 @@ class AppleLoginButton extends Component {
 		requestExternalAccess( connectUrl, this.props.responseHandler );
 	};
 
+	shouldBeDisabledOnThisPlatform() {
+		const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : '';
+		// redirect flow will fix this
+		if ( config.isEnabled( 'sign-in-with-apple/redirect' ) ) {
+			return false;
+		}
+		// exception for Chrome user agent which contains "Safari"
+		if ( userAgent.includes( 'Chrome' ) ) {
+			return false;
+		}
+		// Disabled on Safari for iOS 13 and macOS Catalina, as those do not support the popup flow at the moment
+		return (
+			userAgent.includes( 'Safari' ) &&
+			( userAgent.includes( 'Mac OS X 10_15' ) || userAgent.includes( 'iPhone OS 13' ) )
+		);
+	}
+
 	render() {
-		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
+		if ( ! config.isEnabled( 'sign-in-with-apple' ) || this.shouldBeDisabledOnThisPlatform() ) {
 			return null;
 		}
 
