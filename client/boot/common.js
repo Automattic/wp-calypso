@@ -18,7 +18,7 @@ import store from 'store';
  * Internal dependencies
  */
 import config from 'config';
-import { ReduxWrappedLayout } from 'controller';
+import { JetpackDashboardReduxWrappedLayout, ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
 import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';
@@ -28,7 +28,7 @@ import Logger from 'lib/catch-js-errors';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import { hasTouch } from 'lib/touch-detect';
 import { installPerfmonPageHandlers } from 'lib/perfmon';
-import { setupRoutes } from 'sections-middleware';
+import { setupRoutes, setupJetpackDashboardRoutes } from 'sections-middleware';
 import { checkFormHandler } from 'lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
@@ -108,7 +108,13 @@ const setupContextMiddleware = reduxStore => {
 };
 
 // We need to require sections to load React with i18n mixin
-const loadSectionsMiddleware = () => setupRoutes();
+const loadSectionsMiddleware = () => {
+	if ( isJetpackDashboard() ) {
+		setupJetpackDashboardRoutes();
+	} else {
+		setupRoutes();
+	}
+};
 
 const loggedOutMiddleware = currentUser => {
 	if ( currentUser.get() ) {
@@ -420,11 +426,21 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 };
 
 function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ReduxWrappedLayout, {
+	const LayoutComponent = isJetpackDashboard()
+		? JetpackDashboardReduxWrappedLayout
+		: ReduxWrappedLayout;
+	const layoutElement = React.createElement( LayoutComponent, {
 		store: reduxStore,
 	} );
 
 	ReactDom.render( layoutElement, document.getElementById( 'wpcom' ) );
 
 	debug( 'Main layout rendered.' );
+}
+
+function isJetpackDashboard() {
+	return !! (
+		process.env.JETPACK_DASHBOARD ||
+		( typeof window !== 'undefined' && 'dashboard.jetpack.com' === window.location.host )
+	);
 }
