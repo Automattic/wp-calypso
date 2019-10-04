@@ -1,0 +1,104 @@
+// Stores a list of z-index values in a central location.  For clarity, when a
+// specific value is needed, add a comment explaining why (what other rules the
+// value is designed to work with).
+
+$z-layers: (
+	".editor-block-list__block-edit::before": 0,
+	".editor-block-switcher__arrow": 1,
+	".editor-block-list__block {core/image aligned left or right}": 20,
+	".editor-block-list__block {core/image aligned wide or fullwide}": 20,
+	".block-library-classic__toolbar": 10,
+	".editor-block-list__layout .reusable-block-indicator": 1,
+	".editor-block-list__breadcrumb": 2,
+	".components-form-toggle__input": 1,
+	".components-panel__header.edit-post-sidebar__panel-tabs": 1,
+	".editor-inserter__tabs": 1,
+	".editor-inserter__tab.is-active": 1,
+	".components-panel__header": 1,
+	".components-modal__header": 10,
+	".edit-post-meta-boxes-area.is-loading::before": 1,
+	".edit-post-meta-boxes-area .spinner": 5,
+	".editor-block-contextual-toolbar": 21,
+	".components-popover__close": 5,
+	".editor-block-list__insertion-point": 6,
+	".editor-inserter-with-shortcuts": 5,
+	".editor-warning": 5,
+	".block-library-gallery-item__inline-menu": 20,
+	".editor-url-input__suggestions": 30,
+	".edit-post-header": 30,
+	".block-library-button__inline-link .editor-url-input__suggestions": 6, // URL suggestions for button block above sibling inserter
+	".block-library-image__resize-handlers": 1, // Resize handlers above sibling inserter
+	".wp-block-cover.has-background-dim::before": 1, // Overlay area inside block cover need to be higher than the video background.
+	".wp-block-cover__video-background": 0, // Video background inside cover block.
+
+	// Side UI active buttons
+	".editor-block-mover__control": 1,
+
+	// Active pill button
+	".components-button.is-button {:focus or .is-primary}": 1,
+
+	// The draggable element should show up above the entire UI
+	".components-draggable__clone": 1000000000,
+
+	// Should have higher index than the inset/underlay used for dragging
+	".components-placeholder__fieldset": 1,
+	".editor-block-list__block-edit .reusable-block-edit-panel *": 1,
+
+	// Show drop zone above most standard content, but below any overlays
+	".components-drop-zone": 100,
+	".components-drop-zone__content": 110,
+
+	// Block controls, particularly in nested contexts, floats aside block and
+	// should overlap most block content.
+	".editor-block-list__block.is-{selected,hovered} .editor-block-{settings-menu,mover}": 80,
+
+	// Small screen inner blocks overlay must be displayed above drop zone,
+	// settings menu, and movers.
+	".editor-inner-blocks__small-screen-overlay:after": 120,
+
+	// Show sidebar above wp-admin navigation bar for mobile viewports:
+	// #wpadminbar { z-index: 99999 }
+	".edit-post-sidebar": 100000,
+	".edit-post-layout .edit-post-post-publish-panel": 100001,
+
+	// Show sidebar in greater than small viewports above editor related elements
+	// but bellow #adminmenuback { z-index: 100 }
+	".edit-post-sidebar {greater than small}": 90,
+
+	// Show notices below expanded wp-admin submenus:
+	// #adminmenuwrap { z-index: 9990 }
+	".components-notice-list": 9989,
+
+	// Show modal under the wp-admin menus and the popover
+	".components-modal__screen-overlay": 100000,
+
+	// Show popovers above wp-admin menus and submenus and sidebar:
+	// #adminmenuwrap { z-index: 9990 }
+	".components-popover": 1000000,
+
+	// Shows adminbar quicklink submenu above bottom popover:
+	// #wpadminbar ul li {z-index: 99999;}
+	".components-popover:not(.is-mobile).is-bottom": 99990,
+
+	// Shows above edit post sidebar; Specificity needs to be higher than 3 classes.
+	".block-editor__container .components-popover.components-color-palette__picker.is-bottom": 100001,
+
+	".components-autocomplete__results": 1000000,
+
+	".skip-to-selected-block": 100000,
+	".edit-post-toggle-publish-panel": 100000,
+
+	// Show NUX tips above popovers, wp-admin menus, submenus, and sidebar:
+	".nux-dot-tip": 1000001,
+
+	// Show tooltips above NUX tips, wp-admin menus, submenus, and sidebar:
+	".components-tooltip": 1000002
+);
+
+@function z-index( $key ) {
+	@if map-has-key( $z-layers, $key ) {
+		@return map-get( $z-layers, $key );
+	}
+
+	@error "Error: Specified z-index `#{$key}` does not exist in the mapping";
+}
