@@ -67,6 +67,7 @@ export const EligibilityWarnings = ( {
 		);
 		const title = translate( 'Business plan required' );
 		const plan = PLAN_BUSINESS;
+		const disableHref = ! isEligible && !! upsell;
 		let feature = null;
 		let event = null;
 
@@ -84,6 +85,7 @@ export const EligibilityWarnings = ( {
 				event={ event }
 				plan={ plan }
 				title={ title }
+				disableHref={ disableHref }
 			/>
 		);
 	}
