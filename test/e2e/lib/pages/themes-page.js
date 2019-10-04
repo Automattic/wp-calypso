@@ -22,15 +22,19 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async showOnlyFreeThemes() {
-		return await this.showOnlyThemesType( 'free' );
+		return await this.showOnlyThemesType( 'Free' );
 	}
 
 	async showOnlyPremiumThemes() {
-		return await this.showOnlyThemesType( 'premium' );
+		return await this.showOnlyThemesType( 'Premium' );
 	}
 
 	async showOnlyThemesType( type ) {
-		await driverHelper.clickWhenClickable( this.driver, by.css( `a[data-e2e-value="${ type }"]` ) );
+		await driverHelper.selectElementByText(
+			this.driver,
+			by.css( '.segmented-control__text' ),
+			type
+		);
 		return await this.waitUntilThemesLoaded();
 	}
 
