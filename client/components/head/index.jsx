@@ -29,7 +29,7 @@ const Head = ( {
 			<meta name="format-detection" content="telephone=no" />
 			<meta name="mobile-web-app-capable" content="yes" />
 			<meta name="apple-mobile-web-app-capable" content="yes" />
-			<meta name="theme-color" content="#2271b1" />
+			<meta name="theme-color" content="#006088" />
 			<meta name="referrer" content="origin" />
 
 			<link

@@ -29,7 +29,7 @@ exports[`Head should render custom title 1`] = `
     name="apple-mobile-web-app-capable"
   />
   <meta
-    content="#2271b1"
+    content="#006088"
     name="theme-color"
   />
   <meta
@@ -197,7 +197,7 @@ exports[`Head should render default title 1`] = `
     name="apple-mobile-web-app-capable"
   />
   <meta
-    content="#2271b1"
+    content="#006088"
     name="theme-color"
   />
   <meta
