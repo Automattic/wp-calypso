@@ -30,17 +30,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async showOnlyThemesType( type ) {
-		const themeCountBefore = await driverHelper.getText( this.driver, by.css( '.count' ) );
 		await driverHelper.clickWhenClickable( this.driver, by.css( `a[data-e2e-value="${ type }"]` ) );
-		const themeCountAfter = await driverHelper.getText( this.driver, by.css( '.count' ) );
-		if ( themeCountBefore === themeCountAfter ) {
-			// click on filter again if first click didn't pass
-			await this.driver.sleep( 1000 );
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				by.css( `a[data-e2e-value="${ type }"]` )
-			);
-		}
 		return await this.waitUntilThemesLoaded();
 	}
 
