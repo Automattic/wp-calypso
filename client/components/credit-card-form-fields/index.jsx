@@ -21,6 +21,8 @@ import InfoPopover from 'components/info-popover';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import { abtest } from 'lib/abtest';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
@@ -278,6 +280,11 @@ export class CreditCardFormFields extends React.Component {
 		isNewTransaction: false,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = { userSelectedPhoneCountryCode: '' };
+	}
+
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		return React.createElement(
@@ -330,6 +337,11 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
+	handlePhoneFieldChange = ( { value, countryCode } ) => {
+		this.updateFieldValues( 'phone-number', value );
+		this.setState( { userSelectedPhoneCountryCode: countryCode } );
+	};
+
 	shouldRenderCountrySpecificFields() {
 		// The add/update card endpoints do not process Ebanx payment details
 		// so we only show Ebanx fields at checkout,
@@ -347,6 +359,8 @@ export class CreditCardFormFields extends React.Component {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': countryDetailsRequired,
 		} );
+		const shouldShowPhoneField =
+			! countryDetailsRequired && abtest( 'checkoutCollectPhoneNumber' ) === 'show';
 
 		return (
 			<div className="credit-card-form-fields">
@@ -406,10 +420,42 @@ export class CreditCardFormFields extends React.Component {
 							placeholder: ' ',
 						} )
 					) }
+
+					{ shouldShowPhoneField && (
+						<PhoneNumberField
+							countriesList={ countriesList }
+							onChange={ this.handlePhoneFieldChange }
+							createField={ this.createField }
+							countryCode={
+								this.state.userSelectedPhoneCountryCode || this.getFieldValue( 'country' )
+							}
+							translate={ translate }
+						/>
+					) }
 				</div>
 			</div>
 		);
 	}
+}
+
+function PhoneNumberField( { countriesList, translate, createField, onChange, countryCode } ) {
+	const label = (
+		<React.Fragment>
+			{ translate( 'Phone Number' ) }
+			<span className="credit-card-form-fields__explainer">{ translate( 'Optional' ) }</span>
+		</React.Fragment>
+	);
+
+	return (
+		<React.Fragment>
+			{ createField( 'phone-number', FormPhoneMediaInput, {
+				onChange,
+				countriesList,
+				countryCode: countryCode || 'US',
+				label: label,
+			} ) }
+		</React.Fragment>
+	);
 }
 
 export default localize( CreditCardFormFields );

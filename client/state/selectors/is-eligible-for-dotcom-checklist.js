@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -28,7 +25,7 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 	if (
 		! createdAt ||
 		createdAt.substr( 0, 4 ) === '0000' ||
-		moment( createdAt ).isBefore( '2018-02-01' )
+		new Date( createdAt ) < new Date( '2018-02-01' )
 	) {
 		return false;
 	}

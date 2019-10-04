@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -35,7 +34,7 @@ export default function canCurrentUserUseChecklistMenu( state, siteId = null ) {
 	if (
 		! createdAt ||
 		createdAt.substr( 0, 4 ) === '0000' ||
-		moment( createdAt ).isBefore( '2019-08-06' )
+		new Date( createdAt ) < new Date( '2019-08-06' )
 	) {
 		return false;
 	}
