@@ -140,11 +140,9 @@ class PageTemplateModal extends Component {
 
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
 
-		if ( typeof window.calypsoifyGutenberg !== 'undefined' ) {
-			window.top.location = window.calypsoifyGutenberg.closeUrl;
-		} else {
-			window.top.location = 'edit.php?post_type=page';
-		}
+		// Try if we have specific URL to go back to, otherwise go to the page list.
+		const calypsoifyCloseUrl = get( window, [ 'calypsoifyGutenberg', 'closeUrl' ] );
+		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
 	};
 
 	getBlocksByTemplateSlug( slug ) {
@@ -171,6 +169,7 @@ class PageTemplateModal extends Component {
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
 				shouldCloseOnClickOutside={ false }
+				// Using both variants here to be compatible with new Gutenberg and old (older than 6.6).
 				isDismissable={ false }
 				isDismissible={ false }
 			>
