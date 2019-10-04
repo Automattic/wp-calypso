@@ -519,6 +519,11 @@ export function getElementByText( driver, selector, text ) {
 	};
 }
 
+export async function getText( driver, selector ) {
+	const element = await driver.findElement( selector );
+	return await element.getText();
+}
+
 export async function clearTextArea( driver, selector ) {
 	const textArea = await driver.findElement( selector );
 	const textValue = await textArea.getText();
