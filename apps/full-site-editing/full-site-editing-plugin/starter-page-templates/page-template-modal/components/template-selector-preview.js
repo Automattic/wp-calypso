@@ -38,6 +38,8 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	// once the PR ships (finger-crossed)
 	// https://github.com/WordPress/gutenberg/pull/17242
 
+	const TEMPLATE_TITLE_HEIGHT = 117;
+
 	const updateTemplateTitle = () => {
 		// Get DOM reference.
 		setTimeout( () => {
@@ -57,6 +59,19 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 			const elStyles = window.getComputedStyle( previewContainerEl );
 			if ( elStyles && elStyles.transform ) {
 				setTransform( elStyles.transform ); // apply the same transform css rule to template title.
+
+				// pick up scale factor from `transform` css.
+				let scale = elStyles.transform.replace( /matrix\((.+)\)$/i, '$1' ).split( ',' );
+				scale = scale && scale.length ? Number( scale[ 0 ] ) : null;
+				scale = isNaN( scale ) ? null : scale;
+
+				// Try to adjust vertical offset pf the large preview.
+				const offsetCorrectionEl = previewContainerEl.closest(
+					'.template-selector-preview__offset-correction'
+				);
+				if ( offsetCorrectionEl && offsetCorrectionEl.style && scale ) {
+					offsetCorrectionEl.style.top = String( TEMPLATE_TITLE_HEIGHT * scale ) + 'px';
+				}
 			}
 
 			setVisibility( 'visible' );
@@ -104,7 +119,9 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 					<div className="editor-styles-wrapper" style={ { visibility } }>
 						<div className="editor-writing-flow">
 							<PreviewTemplateTitle title={ title } transform={ transform } />
-							<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
+							<div className="template-selector-preview__offset-correction">
+								<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
+							</div>
 						</div>
 					</div>
 				</div>

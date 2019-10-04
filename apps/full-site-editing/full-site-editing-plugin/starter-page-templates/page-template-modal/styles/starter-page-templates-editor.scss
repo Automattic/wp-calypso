@@ -186,33 +186,33 @@ body.is-fullscreen-mode {
 
 		&:focus {
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
-		
+
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
 			outline: 2px solid transparent;
 		}
-	
+
 		&:hover {
 			border: solid 2px $template-selector-border-color-hover;
 		}
-	
+
 		&.is-selected {
 			border: solid 2px $template-selector-border-color-selected;
-		
+
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
 			outline: 2px solid transparent;
 			outline-offset: -2px;
-	
+
 			&:focus {
 				box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
 				border: solid 2px $template-selector-border-color-selected;
-			
+
 				// Windows High Contrast mode will show this outline, but not the box-shadow.
 				outline: 4px solid transparent;
 				outline-offset: -4px;
 			}
 		}
 
-		
+
 	}
 
 	.template-selector-item__preview-wrap {
@@ -347,11 +347,16 @@ body.is-fullscreen-mode {
 	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 
 	.edit-post-visual-editor {
-		margin-top: 20px;
+		margin: 0;
+		padding: 0;
 	}
 
-
 	.editor-styles-wrapper {
+		.template-selector-preview__offset-correction {
+			position: relative;
+			top: $template-large-preview-title-height;
+		}
+
 		.editor-post-title {
 			transform-origin: top left;
 			width: 960px;
@@ -362,11 +367,9 @@ body.is-fullscreen-mode {
 
 		.editor-post-title,
 		.editor-post-title__block {
-			height: $template-large-preview-title-height;
-			margin-top: 0;
-			margin-bottom: 0;
-			padding-top: 0;
-			padding-bottom: 0;
+			.editor-post-title__input {
+				height: $template-large-preview-title-height;
+			}
 		}
 
 		body.show-post-title-before-content & .block-editor-block-preview__content > .block-editor-block-list__layout {
