@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Button, Modal, Spinner, Dashicon } from '@wordpress/components';
+import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
@@ -167,12 +167,12 @@ class PageTemplateModal extends Component {
 				shouldCloseOnClickOutside={ false }
 				isDismissible={ false }
 			>
-				<Button
+				<IconButton
 					className="page-template-modal__close-button components-icon-button"
 					onClick={ this.closeModal }
-				>
-					<Dashicon icon="arrow-left-alt2" />
-				</Button>
+					icon="arrow-left-alt2"
+					label={ __( 'Go back' ) }
+				/>
 
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
