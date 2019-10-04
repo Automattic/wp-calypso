@@ -99,7 +99,7 @@ class SocialSignupForm extends Component {
 						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'google' ) }
 						socialServiceResponse={
-							this.props.socialService === 'google' && this.props.socialServiceResponse
+							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 						}
 					/>
 
@@ -110,7 +110,7 @@ class SocialSignupForm extends Component {
 						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'apple' ) }
 						socialServiceResponse={
-							this.props.socialService === 'apple' && this.props.socialServiceResponse
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 						}
 					/>
 
