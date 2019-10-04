@@ -89,8 +89,6 @@ body.is-fullscreen-mode {
 	}
 
 	.page-template-modal .components-modal__header {
-		position: relative;
-
 		&::after {
 			display: block;
 			position: absolute;
@@ -186,33 +184,33 @@ body.is-fullscreen-mode {
 
 		&:focus {
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
-		
+
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
 			outline: 2px solid transparent;
 		}
-	
+
 		&:hover {
 			border: solid 2px $template-selector-border-color-hover;
 		}
-	
+
 		&.is-selected {
 			border: solid 2px $template-selector-border-color-selected;
-		
+
 			// Windows High Contrast mode will show this outline, but not the box-shadow.
 			outline: 2px solid transparent;
 			outline-offset: -2px;
-	
+
 			&:focus {
 				box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
 				border: solid 2px $template-selector-border-color-selected;
-			
+
 				// Windows High Contrast mode will show this outline, but not the box-shadow.
 				outline: 4px solid transparent;
 				outline-offset: -4px;
 			}
 		}
 
-		
+
 	}
 
 	.template-selector-item__preview-wrap {
