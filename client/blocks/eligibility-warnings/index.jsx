@@ -67,7 +67,6 @@ export const EligibilityWarnings = ( {
 		);
 		const title = translate( 'Business plan required' );
 		const plan = PLAN_BUSINESS;
-		const disableHref = ! isEligible && !! upsell;
 		let feature = null;
 		let event = null;
 
@@ -78,6 +77,14 @@ export const EligibilityWarnings = ( {
 			feature = FEATURE_UPLOAD_THEMES;
 			event = 'calypso-theme-eligibility-upgrade-nudge';
 		}
+		const hrefProps =
+			isEligible || ! upsell
+				? {
+						href: `/checkout/${ siteSlug }/business`,
+				  }
+				: {
+						disableHref: true,
+				  };
 		businessUpsellBanner = (
 			<Banner
 				description={ description }
@@ -85,7 +92,7 @@ export const EligibilityWarnings = ( {
 				event={ event }
 				plan={ plan }
 				title={ title }
-				disableHref={ disableHref }
+				{ ...hrefProps }
 			/>
 		);
 	}
