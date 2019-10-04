@@ -9,6 +9,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import config from 'config';
+import JetpackDashboardLayout from 'layout/jetpack-dashboard';
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
 import { MomentProvider } from 'components/localized-moment/context';
@@ -42,7 +43,17 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 	);
 };
 
+export const JetpackDashboardReduxWrappedLayout = ( { store, primary, secondary } ) => (
+	<ReduxProvider store={ store }>
+		<JetpackDashboardLayout primary={ primary } secondary={ secondary } />
+	</ReduxProvider>
+);
+
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
+
+export const makeJetpackDashboardLayout = makeLayoutMiddleware(
+	JetpackDashboardReduxWrappedLayout
+);
 
 /**
  * Isomorphic routing helper, client side
