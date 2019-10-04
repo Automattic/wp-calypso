@@ -261,6 +261,16 @@
 	}
 }
 
+.popover-cart {
+	position: relative;
+	display: inline-block;
+
+	button {
+		min-width: auto;
+		padding: 0 16px 0 10px;
+	}
+}
+
 .popover-cart.pinned {
 	position: absolute;
 	right: 0;
@@ -413,7 +423,6 @@ div.popover-cart__popover {
 	}
 }
 
-
 .secondary-cart {
 	background: var( --color-surface );
 
@@ -431,9 +440,7 @@ div.popover-cart__popover {
 	.jetpack-logo {
 		margin: 32px 0;
 	}
-
 }
-
 
 @include breakpoint( '<660px' ) {
 	.secondary-cart__hidden {
