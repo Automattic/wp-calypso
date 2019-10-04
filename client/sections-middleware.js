@@ -16,9 +16,8 @@ import * as controller from './controller/index.web';
 import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
 import { addReducerToStore } from 'state/add-reducer';
-
 import sections from './sections';
-receiveSections( sections );
+import jetpackDashboardSections from './jetpack-dashboard-sections';
 
 function activateSection( sectionDefinition, context ) {
 	context.store.dispatch( setSection( sectionDefinition ) );
@@ -106,7 +105,19 @@ function createPageDefinition( path, sectionDefinition ) {
 }
 
 export const setupRoutes = () => {
+	receiveSections( sections );
+
 	for ( const section of sections ) {
+		for ( const path of section.paths ) {
+			createPageDefinition( path, section );
+		}
+	}
+};
+
+export const setupJetpackDashboardRoutes = () => {
+	receiveSections( jetpackDashboardSections );
+
+	for ( const section of jetpackDashboardSections ) {
 		for ( const path of section.paths ) {
 			createPageDefinition( path, section );
 		}
