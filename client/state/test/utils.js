@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
 import { testSchema } from './mocks/schema';
 import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import {
-	cachingActionCreatorFactory,
 	createReducer,
 	createReducerWithValidation,
 	extendAction,
@@ -831,93 +830,6 @@ describe( 'utils', () => {
 
 		test( 'should SERIALIZE to `undefined`', () => {
 			expect( wrapped( 10, { type: SERIALIZE } ) ).toBeUndefined();
-		} );
-	} );
-
-	describe( '#cachingActionCreatorFactory', () => {
-		let dispatch;
-		let successfulWorker;
-		let failingWorker;
-		let loadingActionCreator;
-		let successActionCreator;
-		let failureActionCreator;
-
-		let connectedLoadingActionCreator;
-		let connectedSuccessActionCreator;
-		let connectedFailureActionCreator;
-
-		beforeEach( () => {
-			dispatch = jest.fn( identity => identity );
-			successfulWorker = jest.fn( () => Promise.resolve( 'success_data' ) );
-			failingWorker = jest.fn( () => Promise.reject( 'error_data' ) );
-
-			loadingActionCreator = jest.fn( () => dispatch( { type: 'loading' } ) );
-			successActionCreator = jest.fn( () => dispatch( { type: 'success' } ) );
-			failureActionCreator = jest.fn( () => dispatch( { type: 'failure' } ) );
-
-			connectedLoadingActionCreator = () => loadingActionCreator;
-			connectedSuccessActionCreator = () => successActionCreator;
-			connectedFailureActionCreator = () => failureActionCreator;
-		} );
-
-		test( 'should call apropriate action creators on success', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				successfulWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			await actionCreator( 123 )( dispatch );
-			expect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
-			expect( successActionCreator ).toHaveBeenCalledWith( 'success_data' );
-			expect( failureActionCreator ).not.toHaveBeenCalledWith();
-		} );
-
-		test( 'should call apropriate action creators on failure', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				failingWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			await actionCreator( 123 )( dispatch );
-			expect( loadingActionCreator ).toHaveBeenCalledWith( 123 );
-			expect( failureActionCreator ).toHaveBeenCalledWith( 'error_data' );
-			expect( successActionCreator ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should cache same parameters successful call', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				successfulWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			const callActionCreator = () => actionCreator( 123 )( dispatch );
-
-			await callActionCreator();
-			await callActionCreator();
-
-			expect( successfulWorker ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'should not cache same parameters failed call', async () => {
-			const actionCreator = cachingActionCreatorFactory(
-				failingWorker,
-				connectedLoadingActionCreator,
-				connectedSuccessActionCreator,
-				connectedFailureActionCreator
-			);
-
-			const callActionCreator = () => actionCreator( 123 )( dispatch );
-
-			await callActionCreator();
-			await callActionCreator();
-
-			expect( failingWorker ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 
