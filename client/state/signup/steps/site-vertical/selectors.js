@@ -47,6 +47,10 @@ export function getSiteVerticalPreview( state ) {
 	return get( getSiteVerticalData( state ), 'preview', '' );
 }
 
+export function getSiteVerticalPreviewScreenshots( state ) {
+	return get( getSiteVerticalData( state ), 'previewScreenshots' );
+}
+
 export function getSiteVerticalPreviewStyles( state ) {
 	return get( getSiteVerticalData( state ), 'previewStylesUrl', '' );
 }

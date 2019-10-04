@@ -32,6 +32,7 @@ export const requestVerticals = action =>
 				limit: action.limit,
 				include_preview: true,
 				allow_synonyms: true,
+				suggest_theme: true,
 			},
 		},
 		action
