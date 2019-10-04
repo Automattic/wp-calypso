@@ -9,7 +9,6 @@ import React from 'react';
 import { reject } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -95,17 +94,21 @@ class PopoverCart extends React.Component {
 			<div>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
+<<<<<<< HEAD
 					<HeaderButton icon="cart" label="Cart" onClick={ this.onToggle } />
 
 					<button
 						className="cart-toggle-button"
 						ref={ this.toggleButtonRef }
+=======
+					<HeaderButton
+						icon="cart"
+						label="Cart"
+						ref={ this.toggleButton }
+>>>>>>> Replaces button element w/ HeaderButton component
 						onClick={ this.onToggle }
-					>
-						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
-						<Gridicon icon="cart" size={ 24 } />
-						{ countBadge }
-					</button>
+					/>
+					{ countBadge }
 				</div>
 
 				{ this.renderCartContent() }

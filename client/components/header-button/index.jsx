@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 
@@ -16,12 +16,18 @@ import Button from 'components/button';
  */
 import './style.scss';
 
-const HeaderButton = ( { icon, label, ...rest } ) => (
-	<Button className="header-button" { ...rest }>
-		{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-		<span className="header-button__text">{ label }</span>
-	</Button>
-);
+class HeaderButton extends Component {
+	render() {
+		const { icon, label, ...rest } = this.props;
+
+		return (
+			<Button className="header-button" { ...rest }>
+				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+				<span className="header-button__text">{ label }</span>
+			</Button>
+		);
+	}
+}
 
 HeaderButton.propTypes = {
 	icon: PropTypes.string,
