@@ -19,7 +19,7 @@ $template-selector-empty-background: #fff;
 $template-selector-modal-offset-bottom: 25px;
 $template-selector-modal-offset-right: 32px;
 $template-selector-blank-template-mobile-height: 70px;
-$template-large-preview-title-height: 117px;
+$template-large-preview-title-height: 120px;
 
 $wp-org-sidebar-reduced: 36px;
 $wp-org-sidebar-full: 160px;
@@ -366,14 +366,18 @@ body.is-fullscreen-mode {
 		}
 
 		.editor-post-title,
-		.editor-post-title__block {
+		.editor-post-title__block,
+		.editor-post-title__input {
+			padding-top: 0;
+			padding-bottom: 0;
+			margin-top: 0;
+			margin-bottom: 0;
 			.editor-post-title__input {
+				margin: 0;
+				padding: 0;
 				height: $template-large-preview-title-height;
+				line-height: $template-large-preview-title-height;
 			}
-		}
-
-		body.show-post-title-before-content & .block-editor-block-preview__content > .block-editor-block-list__layout {
-			margin-top: $template-large-preview-title-height;
 		}
 	}
 }

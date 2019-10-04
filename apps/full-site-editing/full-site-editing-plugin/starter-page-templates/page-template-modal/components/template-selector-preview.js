@@ -25,7 +25,6 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const THRESHOLD_RESIZE = 300;
 
 	const previewElClasses = classnames( 'template-selector-preview', 'editor-styles-wrapper' );
-	const [ transform, setTransform ] = useState( 'none' );
 	const [ visibility, setVisibility ] = useState( 'hidden' );
 	const ref = useRef( null );
 
@@ -37,8 +36,6 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	// The following approach can be easily replace calling this callback
 	// once the PR ships (finger-crossed)
 	// https://github.com/WordPress/gutenberg/pull/17242
-
-	const TEMPLATE_TITLE_HEIGHT = 117;
 
 	const updateTemplateTitle = () => {
 		// Get DOM reference.
@@ -58,19 +55,25 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 			// Try to get the `transform` css rule from the preview container element.
 			const elStyles = window.getComputedStyle( previewContainerEl );
 			if ( elStyles && elStyles.transform ) {
-				setTransform( elStyles.transform ); // apply the same transform css rule to template title.
+				const titleElement = ref.current.querySelector( '.editor-post-title' );
 
 				// pick up scale factor from `transform` css.
 				let scale = elStyles.transform.replace( /matrix\((.+)\)$/i, '$1' ).split( ',' );
 				scale = scale && scale.length ? Number( scale[ 0 ] ) : null;
 				scale = isNaN( scale ) ? null : scale;
 
+				if ( titleElement ) {
+					// apply the same transform css rule at template title element.
+					titleElement.style.transform = elStyles.transform;
+				}
+
 				// Try to adjust vertical offset pf the large preview.
 				const offsetCorrectionEl = previewContainerEl.closest(
 					'.template-selector-preview__offset-correction'
 				);
-				if ( offsetCorrectionEl && offsetCorrectionEl.style && scale ) {
-					offsetCorrectionEl.style.top = String( TEMPLATE_TITLE_HEIGHT * scale ) + 'px';
+				if ( offsetCorrectionEl && scale ) {
+					const titleHeight = titleElement ? titleElement.offsetHeight : null;
+					offsetCorrectionEl.style.top = `${ titleHeight * scale }px`;
 				}
 			}
 
@@ -118,7 +121,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 				<div ref={ ref } className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper" style={ { visibility } }>
 						<div className="editor-writing-flow">
-							<PreviewTemplateTitle title={ title } transform={ transform } />
+							<PreviewTemplateTitle title={ title } />
 							<div className="template-selector-preview__offset-correction">
 								<BlockPreview key={ recompute } blocks={ blocks } viewportWidth={ viewportWidth } />
 							</div>
