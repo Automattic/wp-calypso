@@ -19,7 +19,7 @@
 		"directory": "packages/babel-plugin-i18n-calypso"
 	},
 	"keywords": [],
-	"author": "Alex Kirk <alex.kirk@automattic.com> (https://automattic.com)",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
 		"clean": "npx rimraf dist",

@@ -2,6 +2,7 @@
 	"name": "@automattic/webpack-extensive-lodash-replacement-plugin",
 	"private": true,
 	"version": "0.0.2",
+	"author": "Automattic Inc.",
 	"description": "Webpack plugin to replace lodash, lodash/foo and lodash.foo imports with lodash-es",
 	"keywords": [
 		"Webpack",

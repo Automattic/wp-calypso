@@ -17,3 +17,6 @@ If you must manually build a single package, run:
 ```bash
 npx lerna run prepare --scope="@automattic/package-name"
 ```
+
+## Validating package.json
+Running `npm run lint:package-json` will lint all package.json's under `./packages/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).

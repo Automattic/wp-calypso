@@ -7,7 +7,7 @@
 	"keywords": [
 		"wordpress"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"repository": {
