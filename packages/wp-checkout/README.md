@@ -78,8 +78,7 @@ const defaultBillingContact = {
 	postalState: 'PA',
 };
 
-// These will only be shown if appropriate and can be used to disable certain
-payment methods for testing or other purposes.
+// These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
 const availablePaymentMethods = ['apple-pay', 'card', 'paypal', 'ebanx', 'ideal' ];
 
 // These are used only for non-redirect payment methods
@@ -167,6 +166,10 @@ function calculateTotalsForItems(items) {
 ### Taxes
 
 Can the component handle calculating taxes automatically? If so, we can also calculate the subtotal automatically and probably remove the need for the `totals` prop entirely. That would be a big win for simplifying the API.
+
+## Billing Address
+
+Can the component handle getting the default billing address automatically? If so, we can remove the `defaultBillingContact` prop and also probably the `onChangeBillingContact` side effect callback.
 
 ### Credits
 
