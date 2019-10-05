@@ -28,11 +28,7 @@ The content of the second and third step vary based on the payment method chosen
 
 ### Billing details
 
-An initial billing address can be optionally provided using the `defaultBillingContact` prop on `WPCheckout`. It should be an object whose properties vary based on the expected fields in the second step. The full set of properties can be seen in the example below.
-
-If the billing address is set or changed during the second step, the updated address will be used for the checkout automatically without mutating the `defaultBillingContact` prop. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can update any associated records.
-
-Any change to the `defaultBillingContact` prop while the component is visible will be treated as new default field values, but will not override anything that was typed in the form.
+The billing address may be automatically filled based on the server. If the billing address is set or changed during the second step, the updated address will be used for the checkout. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can take any neccessary actions like updating the line items, totals, and amount.
 
 ### Review order
 
@@ -71,14 +67,6 @@ const initialItems = [
 	{label: 'WordPress.com Personal Plan', id: 'wpcom-personal', amount: {currency: 'USD', value: 6000, displayValue: '$60'}},
 	{label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', amount: {currency: 'USD', value: 0, displayValue: '~$17~ 0'}},
 ];
-const defaultBillingContact = {
-	billingName: 'Anne Varney',
-	postalCountry: 'US',
-	postalCode: '18104',
-	postalAddress: '1960 W CHELSEA AVE STE 2006R',
-	postalCity: 'Allentown',
-	postalState: 'PA',
-};
 
 // These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
 const availablePaymentMethods = ['apple-pay', 'card', 'paypal', 'ebanx', 'ideal'];
@@ -109,12 +97,16 @@ function MyCheckout() {
 	const currency = items.reduce((lastCurrency, item) => item.currency, 'USD');
 	const totalAmount = { currency, value: total };
 
+	const updatePricesForAddress = address => {
+		// TODO: modify the items, totals, and totalAmount based on the address
+	};
+
 	return <WPCheckout
 		locale={'US'}
 		items={items}
 		totals={totals}
 		amount={totalAmount}
-		defaultBillingContact={defaultBillingContact}
+		onChangeBillingContact={updatePricesForAddress}
 		availablePaymentMethods={availablePaymentMethods}
 		onSuccess={onSuccess}
 		onFailure={onFailure}
@@ -181,10 +173,6 @@ function calculateTotalsForItems(items) {
 ### Taxes
 
 Can the component handle calculating taxes automatically? If so, we can also calculate the subtotal automatically and probably remove the need for the `totals` prop entirely. That would be a big win for simplifying the API.
-
-## Billing Address
-
-Can the component handle getting the default billing address automatically? If so, we can remove the `defaultBillingContact` prop and also probably the `onChangeBillingContact` side effect callback.
 
 ### Credits
 
