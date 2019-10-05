@@ -38,11 +38,13 @@ Any change to the `defaultBillingContact` prop while the component is visible wi
 
 The third step's order review content can be overridden using the `orderReview` prop, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
-The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, amount: {currency: string, value: int, displayValue: string}}`. All the properties are required except for `subLabel`. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` will not be mutated; instead, the component will call the `onDeleteItem` prop of `WPCheckout` with the item that is deleted. It is incumbent on the parent component to use `onDeleteItem` to create a modified line item list and then return it to `WPCheckout`.
+The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, amount: {currency: string, value: int, displayValue: string}}`. All the properties are required except for `subLabel`. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then return it to `WPCheckout`.
 
-The line items are mostly for display purposes only. The actual charge is performed on the sum of the totals, which must be passed separately to `WPCheckout` using the required `totals` array prop. Each total in this array has a type in the set of 'subtotal', or 'tax', which defines its role and how it will be displayed. There can be multiple totals of each type and they will be added together (for example, multiple taxes). Totals are objects of the form `{type: string, label: string, amount: { currency: string, value: int, displayValue: string }}`. If the `onDeleteItem` callback is called, the parent component must also update the `totals` prop.
+The line items are mostly for display purposes only. Similarly, the subtotals and taxes are passed using the `totals` array prop. Each total in this array has a type in the set of 'subtotal', 'tax', and 'total', which defines its role and how it will be displayed. There can be multiple totals of each type (for example, multiple taxes). Totals are objects of the form `{type: string, label: string, amount: { currency: string, value: int, displayValue: string }}`.
 
 The `displayValue` property of both items and totals can use limited Markdown formatting, including the `~` character for strike-through text.
+
+No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `amount`, which is an object of the form `{ currency: string, value: int }`.
 
 There are two other optional props which allow customizing the contents of the form. `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
@@ -62,8 +64,8 @@ The following example demonstrates a full checkout page using many of the option
 
 ```js
 import React, { useState } from 'react';
-import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotals } from 'wp-checkout';
-import { PlanLengthSelector, splitCheckoutLineItemsByType } from 'wp-checkout/wpcom';
+import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotals, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
+import { PlanLengthSelector, splitCheckoutLineItemsByType, getDisplayValueForCurrency } from 'wp-checkout/wpcom';
 
 const initialItems = [
 	{label: 'WordPress.com Personal Plan', id: 'wpcom-personal', amount: {currency: 'USD', value: 6000, displayValue: '$60'}},
@@ -95,7 +97,7 @@ function MyCheckout() {
 	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
 
 	// Certain blocks have a default component but can be overridden to provide custom implementations
-	const orderReview = <OrderReview />;
+	const orderReview = <OrderReview onDeleteItem={onDeleteItem} />;
 	const upSell = <UpSellCoupon setItems={setItems} />;
 
 	// Keep totals up-to-date when items change
@@ -103,29 +105,33 @@ function MyCheckout() {
 		setTotals(calculateTotalsForItems(items));
 	}, [items])
 
+	const total = totals.reduce((sum, item) => sum + item.amount, 0);
+	const currency = items.reduce((lastCurrency, item) => item.currency, 'USD');
+	const totalAmount = { currency, value: total };
+
 	return <WPCheckout
 		locale={'US'}
 		items={items}
 		totals={totals}
+		amount={totalAmount}
 		defaultBillingContact={defaultBillingContact}
 		availablePaymentMethods={availablePaymentMethods}
 		onSuccess={onSuccess}
 		onFailure={onFailure}
 		successRedirectUrl={successRedirectUrl}
 		failureRedirectUrl={failureRedirectUrl}
-		onDeleteItem={onDeleteItem}
 		orderReview={orderReview}
 		upSell={upSell}
 	/>;
 }
 
-function OrderReview() {
+function OrderReview({ onDeleteItem }) {
 	const [items] = useCheckoutLineItems();
 	const { planItems, domainItems } = splitCheckoutLineItemsByType(items);
 
 	return <React.Fragment>
 		<OrderReviewSection>
-			<OrderReviewLineItems items={planItems} />
+			{planItems.map( plan => <PlanItem key={plan.id} plan={plan} onDeleteItem={onDeleteItem} /> )}
 			<PlanLengthSelector />
 		</OrderReviewSection>
 		<OrderReviewSection>
@@ -135,6 +141,14 @@ function OrderReview() {
 			<OrderReviewTotals />
 		</OrderReviewSection>
 	</React.Fragment>;
+}
+
+function PlanItem({ plan, onDeleteItem }) {
+	return <div>
+		<span>{plan.label}</span>
+		<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
+		<OrderReviewLineItemDelete onClick={onDeleteItem} />
+	</div>;
 }
 
 function UpSellCoupon({ setItems }) {
@@ -179,10 +193,6 @@ Where does our component learn about credits? How are partial credits displayed 
 ### Coupons
 
 How does our component manage coupons? Can it perform the math for them automatically?
-
-### OrderReviewLineItems customization
-
-What if we want to customize the markup in an individual line item (like a highlighted "free for one year!" comment)? Perhaps we can allow special Markdown in the `label` property of the item itself like we do with the `displayValue`?
 
 ### Header customization
 
