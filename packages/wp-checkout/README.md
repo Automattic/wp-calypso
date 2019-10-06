@@ -61,7 +61,7 @@ The following example demonstrates a full checkout page using many of the option
 ```js
 import React, { useState } from 'react';
 import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotals, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
-import { PlanLengthSelector, splitCheckoutLineItemsByType, getDisplayValueForCurrency } from 'wp-checkout/wpcom';
+import { PlanLengthSelector, splitCheckoutLineItemsByType, getDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
 
 const initialItems = [
 	{label: 'WordPress.com Personal Plan', id: 'wpcom-personal', amount: {currency: 'USD', value: 6000, displayValue: '$60'}},
@@ -97,9 +97,7 @@ function MyCheckout() {
 	const currency = items.reduce((lastCurrency, item) => item.currency, 'USD');
 	const totalAmount = { currency, value: total };
 
-	const updatePricesForAddress = address => {
-		// TODO: modify the items, totals, and totalAmount based on the address
-	};
+	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
 
 	return <WPCheckout
 		locale={'US'}
