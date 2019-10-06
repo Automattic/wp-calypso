@@ -64,8 +64,8 @@ import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSect
 import { PlanLengthSelector, splitCheckoutLineItemsByType, getDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
 
 const initialItems = [
-	{label: 'WordPress.com Personal Plan', id: 'wpcom-personal', amount: {currency: 'USD', value: 6000, displayValue: '$60'}},
-	{label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', amount: {currency: 'USD', value: 0, displayValue: '~$17~ 0'}},
+	{ label: 'WordPress.com Personal Plan', id: 'wpcom-personal', amount: { currency: 'USD', value: 6000, displayValue: '$60' } },
+	{ label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' } },
 ];
 
 // These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
@@ -73,7 +73,7 @@ const availablePaymentMethods = ['apple-pay', 'card', 'paypal', 'ebanx', 'ideal'
 
 // These are used only for non-redirect payment methods
 const onSuccess = () => console.log('Payment succeeded!');
-const onFailure = error => console.error('There was a problem with your payment', error)
+const onFailure = error => console.error('There was a problem with your payment', error);
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
@@ -91,7 +91,7 @@ function MyCheckout() {
 	// Keep totals up-to-date when items change
 	useEffect(() => {
 		setTotals(calculateTotalsForItems(items));
-	}, [items])
+	}, [items]);
 
 	const total = totals.reduce((sum, item) => sum + item.amount, 0);
 	const currency = items.reduce((lastCurrency, item) => item.currency, 'USD');
@@ -99,58 +99,70 @@ function MyCheckout() {
 
 	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
 
-	return <WPCheckout
-		locale={'US'}
-		items={items}
-		totals={totals}
-		amount={totalAmount}
-		onChangeBillingContact={updatePricesForAddress}
-		availablePaymentMethods={availablePaymentMethods}
-		onSuccess={onSuccess}
-		onFailure={onFailure}
-		successRedirectUrl={successRedirectUrl}
-		failureRedirectUrl={failureRedirectUrl}
-		orderReview={orderReview}
-		upSell={upSell}
-	/>;
+	return (
+		<WPCheckout
+			locale={'US'}
+			items={items}
+			totals={totals}
+			amount={totalAmount}
+			onChangeBillingContact={updatePricesForAddress}
+			availablePaymentMethods={availablePaymentMethods}
+			onSuccess={onSuccess}
+			onFailure={onFailure}
+			successRedirectUrl={successRedirectUrl}
+			failureRedirectUrl={failureRedirectUrl}
+			orderReview={orderReview}
+			upSell={upSell}
+		/>
+	);
 }
 
 function OrderReview({ onDeleteItem }) {
 	const [items] = useCheckoutLineItems();
 	const { planItems, domainItems } = splitCheckoutLineItemsByType(items);
 
-	return <React.Fragment>
-		<OrderReviewSection>
-			{planItems.map( plan => <PlanItem key={plan.id} plan={plan} onDeleteItem={onDeleteItem} /> )}
-			<PlanLengthSelector />
-		</OrderReviewSection>
-		<OrderReviewSection>
-			<OrderReviewLineItems items={domainItems} />
-		</OrderReviewSection>
-		<OrderReviewSection>
-			<OrderReviewTotals />
-		</OrderReviewSection>
-	</React.Fragment>;
+	return (
+		<React.Fragment>
+			<OrderReviewSection>
+				{planItems.map(plan => (
+					<PlanItem key={plan.id} plan={plan} onDeleteItem={onDeleteItem} />
+				))}
+				<PlanLengthSelector />
+			</OrderReviewSection>
+			<OrderReviewSection>
+				<OrderReviewLineItems items={domainItems} />
+			</OrderReviewSection>
+			<OrderReviewSection>
+				<OrderReviewTotals />
+			</OrderReviewSection>
+		</React.Fragment>
+	);
 }
 
 function PlanItem({ plan, onDeleteItem }) {
-	return <div>
-		<span>{plan.label}</span>
-		<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
-		<OrderReviewLineItemDelete onClick={onDeleteItem} />
-	</div>;
+	return (
+		<div>
+			<span>{plan.label}</span>
+			<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
+			<OrderReviewLineItemDelete onClick={onDeleteItem} />
+		</div>
+	);
 }
 
 function UpSellCoupon({ setItems }) {
 	const [items] = useCheckoutLineItems();
-	const quickStartItem = {label: 'Quick Start', id: 'quickstart', amount: {currency: 'USD', value: 2500, displayValue: '~$50~ $25'}};
+	const quickStartItem = { label: 'Quick Start', id: 'quickstart', amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' } };
 	const addQuickStart = () => setItems([...items, quickStartItem]);
 
-	return <React.Fragment>
-		<h4>Exclusive offer</h4>
-		<p>Buy a quick start session and get 50% off.</p>
-		<a href='#' onClick={addQuickStart}>Add to cart</a>
-	</React.Fragment>;
+	return (
+		<React.Fragment>
+			<h4>Exclusive offer</h4>
+			<p>Buy a quick start session and get 50% off.</p>
+			<a href='#' onClick={addQuickStart}>
+				Add to cart
+			</a>
+		</React.Fragment>
+	);
 }
 
 function calculateTotalsForItems(items) {
@@ -160,8 +172,8 @@ function calculateTotalsForItems(items) {
 	const taxes = taxRate * subtotal;
 
 	return [
-		{label: 'Subtotal', type: 'subtotal', amount: {currency: 'USD', value: subtotal, displayValue: getDisplayValueForCurrency(currency, subtotal)}},
-		{label: 'Taxes', type: 'tax', amount: {amount: currency: 'USD', value: taxes, displayValue: getDisplayValueForCurrency(currency, taxes)}},
+		{ label: 'Subtotal', type: 'subtotal', amount: { currency: 'USD', value: subtotal, displayValue: getDisplayValueForCurrency(currency, subtotal) } },
+		{ label: 'Taxes', type: 'tax', amount: { currency: 'USD', value: taxes, displayValue: getDisplayValueForCurrency(currency, taxes) } },
 	];
 }
 ```
