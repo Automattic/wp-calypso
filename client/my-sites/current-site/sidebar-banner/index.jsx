@@ -8,11 +8,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -40,9 +40,7 @@ export class SidebarBanner extends Component {
 
 	onClick = e => {
 		const { ctaName, track, onClick } = this.props;
-
 		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
-
 		if ( onClick ) {
 			onClick( e );
 		}
@@ -72,9 +70,10 @@ export class SidebarBanner extends Component {
 	}
 }
 
+const mapStateToProps = null;
+const mapDispatchToProps = { track: recordTracksEvent };
+
 export default connect(
-	null,
-	{
-		track: recordTracksEvent,
-	}
+	mapStateToProps,
+	mapDispatchToProps
 )( localize( SidebarBanner ) );
