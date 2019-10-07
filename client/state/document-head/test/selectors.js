@@ -87,6 +87,35 @@ describe( 'selectors', () => {
 				expect( formattedTitle ).to.equal( 'WordPress.com' );
 			} );
 
+			test( 'should return only "Jetpack.com Dashboard" if no title is set on the Jetpack Dashboard', () => {
+				process.env.JETPACK_DASHBOARD = 1;
+				const formattedTitle = getDocumentHeadFormattedTitle( {
+					documentHead: {},
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
+					},
+					ui: {
+						selectedSiteId: 2916284,
+						section: {
+							name: 'reader',
+							paths: [ '/', '/read' ],
+							module: 'reader',
+							group: 'reader',
+							secondary: true,
+						},
+					},
+				} );
+				delete process.env.JETPACK_DASHBOARD;
+
+				expect( formattedTitle ).to.equal( 'Jetpack.com Dashboard' );
+			} );
+
 			test( 'should return formatted title made up of section but not site name', () => {
 				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {

@@ -13,6 +13,7 @@ import createSelector from 'lib/create-selector';
 import { decodeEntities } from 'lib/formatting';
 import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
+import { isJetpackDashboard } from 'lib/jetpack-dashboard';
 
 const UNREAD_COUNT_CAP = 40;
 
@@ -79,7 +80,12 @@ export const getDocumentHeadFormattedTitle = createSelector(
 			title = decodeEntities( title ) + ' — ';
 		}
 
-		return title + 'WordPress.com';
+		let titleBase = 'WordPress.com';
+		if ( isJetpackDashboard() ) {
+			titleBase = 'Jetpack.com Dashboard';
+		}
+
+		return title + titleBase;
 	},
 	state => [ state.documentHead, state.ui.section, state.ui.selectedSiteId ]
 );
