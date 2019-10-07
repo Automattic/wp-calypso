@@ -64,7 +64,6 @@ import { PlanLengthSelector, splitCheckoutLineItemsByType, formatDisplayValueFor
 const initialItems = [
 	{ label: 'WordPress.com Personal Plan', id: 'wpcom-personal', type: 'plan', amount: { currency: 'USD', value: 6000, displayValue: '$60' } },
 	{ label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', type: 'domain-reg', amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' } },
-	{ label: 'Taxes', id: 'wpcom-taxes', type: 'tax', amount: { currency: 'USD', value: 516, displayValue: '$5.16' } },
 ];
 
 // These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
@@ -78,24 +77,37 @@ const onFailure = error => console.error('There was a problem with your payment'
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
-function MyCheckout() {
+export default function MyCheckout() {
 	const [items, setItems] = useState(initialItems);
-	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
 
-	// Certain blocks have a default component but can be overridden to provide custom implementations
+	// Tax calculation must be performed outside checkout
+	const lineItemTotalWithoutTax = items.reduce((sum, item) => sum + item.amount.value, 0);
+	const taxRate = 0.09;
+	const taxValue = taxRate * lineItemTotalWithoutTax;
+	const taxItem = { label: 'Taxes', id: 'tax', type: 'tax', amount: { currency: 'USD', value: taxValue, displayValue: formatDisplayValueForCurrency( currency, taxValue ) } };
+	const itemsWithTax = [...items, taxItem];
+
+	// Some parts of the checkout can be customized
 	const orderReview = <OrderReview onDeleteItem={onDeleteItem} />;
-	const upSell = <UpSellCoupon setItems={setItems} />;
 
-	const lineItemTotal = items.reduce((sum, item) => sum + item.amount.value, 0);
+	// Modification of the line items must be done outside checkout
+	const quickStartItem = { label: 'Quick Start', id: 'quickstart', type: 'quickstart', amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' } };
+	const addQuickStart = () => setItems([...items, quickStartItem]);
+	const upSell = <UpSellCoupon onClick={addQuickStart} />;
+
+	// The total must be calculated outside checkout and need not be related to line items
+	const lineItemTotal = itemsWithTax.reduce((sum, item) => sum + item.amount.value, 0);
 	const currency = items.reduce((lastCurrency, item) => item.amount.currency, 'USD');
 	const total = { label: 'Total', amount: { currency, value: lineItemTotal, displayValue: formatDisplayValueForCurrency( currency, lineItemTotal ) } };
 
+	// The checkout itself does not trigger any events apart from success/failure
+	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
 	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
 
 	return (
 		<WPCheckout
 			locale={'US'}
-			items={items}
+			items={itemsWithTax}
 			total={total}
 			onChangeBillingContact={updatePricesForAddress}
 			availablePaymentMethods={availablePaymentMethods}
@@ -142,16 +154,12 @@ function PlanItem({ plan, onDeleteItem }) {
 	);
 }
 
-function UpSellCoupon({ setItems }) {
-	const [items] = useCheckoutLineItems();
-	const quickStartItem = { label: 'Quick Start', id: 'quickstart', amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' } };
-	const addQuickStart = () => setItems([...items, quickStartItem]);
-
+function UpSellCoupon({ onClick }) {
 	return (
 		<React.Fragment>
 			<h4>Exclusive offer</h4>
 			<p>Buy a quick start session and get 50% off.</p>
-			<a href='#' onClick={addQuickStart}>
+			<a href='#' onClick={onClick}>
 				Add to cart
 			</a>
 		</React.Fragment>
