@@ -43,7 +43,7 @@ export default function() {
 		clientRender
 	);
 	page(
-		'/security',
+		'/security/:siteId?',
 		preloadJetpackDashboard,
 		setupSidebar,
 		security,

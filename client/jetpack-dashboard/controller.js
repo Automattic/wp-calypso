@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
+import JetpackDashboardSecurity from './security';
 import JetpackDashboardSidebar from './sidebar';
 import { preload } from 'sections-helper';
 
@@ -20,12 +21,13 @@ export function setupSidebar( context, next ) {
 }
 
 export function jetpackDashboard( context, next ) {
-	context.primary = <div>Jetpack.com Dashboard</div>;
+	context.primary = <div>Hi, this is the Jetpack.com Dashboard!</div>;
 	next();
 }
 
 export function security( context, next ) {
-	context.primary = <div>Security</div>;
+	const siteId = context.params.siteId || 0;
+	context.primary = <JetpackDashboardSecurity siteId={ siteId } />;
 	next();
 }
 
