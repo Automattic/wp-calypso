@@ -19,6 +19,8 @@
 	}
 
 	.action-panel__body {
+		display: flex;
+		flex-direction: column;
 		flex-grow: 1;
 	}
 
@@ -28,16 +30,13 @@
 				max-width: 310px;
 			}
 		}
-		
+
 		.action-panel__body {
-			display: flex;
-			flex-direction: column;
-			justify-content:center;
+			justify-content: center;
 			p {
 				flex-grow: 0;
 			}
 		}
-
 
 		background-color: var( --color-primary-0 );
 	}
@@ -48,4 +47,3 @@
 		}
 	}
 }
-
