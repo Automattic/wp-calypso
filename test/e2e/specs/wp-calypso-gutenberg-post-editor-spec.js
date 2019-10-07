@@ -24,6 +24,7 @@ import NavBarComponent from '../lib/components/nav-bar-component.js';
 import PostPreviewComponent from '../lib/components/post-preview-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
+
 import SimplePaymentsBlockComponent from '../lib/gutenberg/blocks/payment-block-component';
 
 import * as driverManager from '../lib/driver-manager';
