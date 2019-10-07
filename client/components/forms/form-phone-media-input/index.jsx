@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classnames from 'classnames';
 
@@ -17,15 +14,15 @@ import FormInputValidation from 'components/forms/form-input-validation';
 export default function FormPhoneMediaInput( {
 	additionalClasses,
 	label,
+	name,
 	value,
 	countryCode,
 	className,
 	disabled,
 	errorMessage,
-	isError = 'false',
+	isError,
 	onChange,
 	countriesList,
-	setComponentReference,
 	enableStickyCountry,
 	children,
 } ) {
@@ -34,10 +31,10 @@ export default function FormPhoneMediaInput( {
 			<div>
 				<FormLabel htmlFor={ name }>{ label }</FormLabel>
 				<PhoneInput
+					name={ name }
 					onChange={ onChange }
 					value={ value }
 					countriesList={ countriesList }
-					setComponentReference={ setComponentReference }
 					enableStickyCountry={ enableStickyCountry }
 					countryCode={ countryCode.toUpperCase() }
 					className={ className }
