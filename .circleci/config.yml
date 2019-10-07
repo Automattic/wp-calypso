@@ -332,7 +332,7 @@ jobs:
       - run:
           name: Install Full Site Editing specific test deps
           command: |
-            npm install
+            npm ci
        - run:
           name: Run Full Site Editing client tests
           command: |
