@@ -67,7 +67,7 @@
 		"@wordpress/editor": "9.4.0",
 		"@wordpress/element": "2.5.0",
 		"@wordpress/escape-html": "1.5.0",
-		"@wordpress/format-library": "1.9.1",
+		"@wordpress/format-library": "1.6.0",
 		"@wordpress/hooks": "2.6.0",
 		"@wordpress/html-entities": "2.5.0",
 		"@wordpress/i18n": "3.6.1",
