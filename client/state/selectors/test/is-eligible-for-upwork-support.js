@@ -9,7 +9,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE, PLAN_PREMIUM } from 'lib/plans/constants';
-import isEligibleForUpworkSupport from 'state/selectors/is-eligible-for-upwork-support';
+import isEligibleForUpworkSupport, {
+	UPWORK_LOCALES,
+} from 'state/selectors/is-eligible-for-upwork-support';
 
 describe( 'isEligibleForUpworkSupport()', () => {
 	test( 'returns false for `en` users and all sites have a free plan', () => {
@@ -27,18 +29,12 @@ describe( 'isEligibleForUpworkSupport()', () => {
 	} );
 
 	/**
-	 * These locales are expected to be eligible for upwork
-	 * when no Business or E-Commerce plan is present.
-	 */
-	const upworkLocales = [ 'es', 'fr', 'pt', 'de', 'it', 'nl' ];
-
-	/**
 	 * If any plan listed below in user's account then not eligible
 	 * for upwork support.
 	 */
 	const nonUpworkPlans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
-	describe.each( upworkLocales )( 'when locale %s', localeSlug => {
+	describe.each( UPWORK_LOCALES )( 'when locale %s', localeSlug => {
 		test( 'returns true for users without Business and E-Commerce plans', () => {
 			const state = {
 				currentUser: { id: 1 },
