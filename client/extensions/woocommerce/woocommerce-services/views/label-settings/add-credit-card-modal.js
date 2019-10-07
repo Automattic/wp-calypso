@@ -19,9 +19,7 @@ import CreditCardForm from 'blocks/credit-card-form';
 import { addStoredCard } from 'state/stored-cards/actions';
 import { createCardToken } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
-import { withStripe } from 'lib/stripe';
-
-const CreditCardFormWithStripe = withStripe( CreditCardForm, { needs_intent: true } );
+import { StripeHookProvider } from 'lib/stripe';
 
 function AddCardDialog( {
 	siteId,
@@ -41,15 +39,17 @@ function AddCardDialog( {
 			isVisible={ isVisible }
 			onClose={ onClose }
 		>
-			<CreditCardFormWithStripe
-				createCardToken={ createCardAddToken }
-				recordFormSubmitEvent={ recordFormSubmitEvent }
-				saveStoredCard={ saveStoredCard }
-				successCallback={ onClose }
-				showUsedForExistingPurchasesInfo={ true }
-				heading={ translate( 'Add credit card' ) }
-				onCancel={ onClose }
-			/>
+			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+				<CreditCardForm
+					createCardToken={ createCardAddToken }
+					recordFormSubmitEvent={ recordFormSubmitEvent }
+					saveStoredCard={ saveStoredCard }
+					successCallback={ onClose }
+					showUsedForExistingPurchasesInfo={ true }
+					heading={ translate( 'Add credit card' ) }
+					onCancel={ onClose }
+				/>
+			</StripeHookProvider>
 		</Dialog>
 	);
 }
