@@ -78,32 +78,23 @@ const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
 export default function MyCheckout() {
-	const [items, setItems] = useState(initialItems);
-
-	// Tax calculation must be performed outside checkout
-	const lineItemTotalWithoutTax = items.reduce((sum, item) => sum + item.amount.value, 0);
-	const taxRate = 0.09;
-	const taxValue = taxRate * lineItemTotalWithoutTax;
-	const taxItem = { label: 'Taxes', id: 'tax', type: 'tax', amount: { currency: 'USD', value: taxValue, displayValue: formatDisplayValueForCurrency( currency, taxValue ) } };
-	const itemsWithTax = [...items, taxItem];
-
-	// The checkout itself does not trigger any events apart from success/failure
-	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
-	const onChangePlanLength = (plan, planLength) => setItems(replacePlanWithDifferentLength(items, planLength));
-	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
+	const {
+		items,
+		itemsWithTax,
+		total,
+		addItem,
+		deleteItem,
+		changePlanLength,
+		updatePricesForAddress,
+	} = useShoppingCart();
 
 	// Some parts of the checkout can be customized
-	const orderReview = <OrderReview onDeleteItem={onDeleteItem} onChangePlanLength={onChangePlanLength} />;
+	const orderReview = <OrderReview onDeleteItem={deleteItem} onChangePlanLength={changePlanLength} />;
 
 	// Modification of the line items must be done outside checkout
 	const quickStartItem = { label: 'Quick Start', id: 'quickstart', type: 'quickstart', amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' } };
-	const addQuickStart = () => setItems([...items, quickStartItem]);
+	const addQuickStart = () => addItem(quickStartItem);
 	const upSell = <UpSellCoupon onClick={addQuickStart} />;
-
-	// The total must be calculated outside checkout and need not be related to line items
-	const lineItemTotal = itemsWithTax.reduce((sum, item) => sum + item.amount.value, 0);
-	const currency = items.reduce((lastCurrency, item) => item.amount.currency, 'USD');
-	const total = { label: 'Total', amount: { currency, value: lineItemTotal, displayValue: formatDisplayValueForCurrency( currency, lineItemTotal ) } };
 
 	return (
 		<WPCheckout
@@ -120,6 +111,38 @@ export default function MyCheckout() {
 			upSell={upSell}
 		/>
 	);
+}
+
+function useShoppingCart() {
+	const [items, setItems] = useState(initialItems);
+
+	// Tax calculation must be performed outside checkout
+	const lineItemTotalWithoutTax = items.reduce((sum, item) => sum + item.amount.value, 0);
+	const taxRate = 0.09;
+	const taxValue = taxRate * lineItemTotalWithoutTax;
+	const taxItem = { label: 'Taxes', id: 'tax', type: 'tax', amount: { currency: 'USD', value: taxValue, displayValue: formatDisplayValueForCurrency( currency, taxValue ) } };
+	const itemsWithTax = [...items, taxItem];
+
+	// The checkout itself does not trigger any events apart from success/failure
+	const deleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
+	const changePlanLength = (plan, planLength) => setItems(replacePlanWithDifferentLength(items, planLength));
+	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
+	const addItem = item => setItems([...items, item]);
+
+	// The total must be calculated outside checkout and need not be related to line items
+	const lineItemTotal = itemsWithTax.reduce((sum, item) => sum + item.amount.value, 0);
+	const currency = items.reduce((lastCurrency, item) => item.amount.currency, 'USD');
+	const total = { label: 'Total', amount: { currency, value: lineItemTotal, displayValue: formatDisplayValueForCurrency( currency, lineItemTotal ) } };
+
+	return {
+		items,
+		itemsWithTax,
+		total,
+		addItem,
+		deleteItem,
+		changePlanLength,
+		updatePricesForAddress,
+	};
 }
 
 function OrderReview({ onDeleteItem, onChangePlanLength }) {
