@@ -59,7 +59,7 @@ The following example demonstrates a full checkout page using many of the option
 ```js
 import React, { useState } from 'react';
 import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotal, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
-import { PlanLengthSelector, formatDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
+import { PlanLengthSelector, formatDisplayValueForCurrency, adjustItemPricesForCountry, replacePlanWithDifferentLength } from 'wp-checkout/wpcom';
 
 const initialItems = [
 	{ label: 'WordPress.com Personal Plan', id: 'wpcom-personal', type: 'plan', amount: { currency: 'USD', value: 6000, displayValue: '$60' } },
@@ -87,8 +87,13 @@ export default function MyCheckout() {
 	const taxItem = { label: 'Taxes', id: 'tax', type: 'tax', amount: { currency: 'USD', value: taxValue, displayValue: formatDisplayValueForCurrency( currency, taxValue ) } };
 	const itemsWithTax = [...items, taxItem];
 
+	// The checkout itself does not trigger any events apart from success/failure
+	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
+	const onChangePlanLength = (plan, planLength) => setItems(replacePlanWithDifferentLength(items, planLength));
+	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
+
 	// Some parts of the checkout can be customized
-	const orderReview = <OrderReview onDeleteItem={onDeleteItem} />;
+	const orderReview = <OrderReview onDeleteItem={onDeleteItem} onChangePlanLength={onChangePlanLength} />;
 
 	// Modification of the line items must be done outside checkout
 	const quickStartItem = { label: 'Quick Start', id: 'quickstart', type: 'quickstart', amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' } };
@@ -99,10 +104,6 @@ export default function MyCheckout() {
 	const lineItemTotal = itemsWithTax.reduce((sum, item) => sum + item.amount.value, 0);
 	const currency = items.reduce((lastCurrency, item) => item.amount.currency, 'USD');
 	const total = { label: 'Total', amount: { currency, value: lineItemTotal, displayValue: formatDisplayValueForCurrency( currency, lineItemTotal ) } };
-
-	// The checkout itself does not trigger any events apart from success/failure
-	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
-	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
 
 	return (
 		<WPCheckout
@@ -121,7 +122,7 @@ export default function MyCheckout() {
 	);
 }
 
-function OrderReview({ onDeleteItem }) {
+function OrderReview({ onDeleteItem, onChangePlanLength }) {
 	const [items] = useCheckoutLineItems();
 	const planItems = items.filter(item => item.type === 'plan');
 	const domainItems = items.filter(item => item.type === 'domain');
@@ -131,9 +132,8 @@ function OrderReview({ onDeleteItem }) {
 		<React.Fragment>
 			<OrderReviewSection>
 				{planItems.map(plan => (
-					<PlanItem key={plan.id} plan={plan} onDeleteItem={onDeleteItem} />
+					<PlanItem key={plan.id} plan={plan} onDeleteItem={onDeleteItem} onChangePlanLength={onChangePlanLength} />
 				))}
-				<PlanLengthSelector />
 			</OrderReviewSection>
 			<OrderReviewSection>
 				<OrderReviewLineItems items={domainItems} />
@@ -146,13 +146,17 @@ function OrderReview({ onDeleteItem }) {
 	);
 }
 
-function PlanItem({ plan, onDeleteItem }) {
+function PlanItem({ plan, onDeleteItem, onChangePlanLength }) {
+	const changePlanLength = planLength => onChangePlanLength(plan, planLength);
 	return (
-		<div>
-			<span>{plan.label}</span>
-			<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
-			<OrderReviewLineItemDelete onClick={onDeleteItem} />
-		</div>
+		<React.Fragment>
+			<div>
+				<span>{plan.label}</span>
+				<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
+				<OrderReviewLineItemDelete onClick={onDeleteItem} />
+			</div>
+			<PlanLengthSelector onChange={changePlanLength} />
+		</React.Fragment>
 	);
 }
 
