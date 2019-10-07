@@ -639,6 +639,9 @@ workflows:
       - build-full-site-editing:
           requires:
             - setup
+      - test-full-site-editing:
+          requires:
+            - setup
       - build-notifications:
           requires:
             - setup
