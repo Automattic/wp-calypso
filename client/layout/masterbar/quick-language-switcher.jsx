@@ -12,7 +12,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 import MasterbarItem from './item';
 import LanguagePickerModal from 'components/language-picker/modal';
 import switchLocale from 'lib/i18n-utils/switch-locale';
-import config from 'config';
+import { languages } from 'languages';
 import { setLocale } from 'state/ui/language/actions';
 
 class QuickLanguageSwitcher extends React.Component {
@@ -43,7 +43,7 @@ class QuickLanguageSwitcher extends React.Component {
 
 				<LanguagePickerModal
 					isVisible={ this.state.isShowingModal }
-					languages={ config( 'languages' ) }
+					languages={ languages }
 					selected={ selectedLanguageSlug }
 					onSelected={ this.onSelected }
 					onClose={ this.toggleLanguagesModal }
