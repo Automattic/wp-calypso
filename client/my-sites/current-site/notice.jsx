@@ -40,6 +40,8 @@ import QueryProductsList from 'components/data/query-products-list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
+import { getDomainType } from 'lib/domains/utils';
+import { type as domainTypes } from 'lib/domains/constants';
 
 export class SiteNotice extends React.Component {
 	static propTypes = {
@@ -107,10 +109,10 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const nonWPCOMDomains = reject(
-			this.props.domains,
-			domain => domain.wpcom_domain || domain.domain.endsWith( '.wpcomstaging.com' )
-		);
+		const nonWPCOMDomains = reject( this.props.domains, domain => {
+			const domainType = getDomainType( domain );
+			return domainType === domainTypes.WPCOM || domainType === domainTypes.ATOMIC_STAGING;
+		} );
 
 		if ( nonWPCOMDomains.length < 1 || nonWPCOMDomains.length > 2 ) {
 			return null;
@@ -278,9 +280,6 @@ export class SiteNotice extends React.Component {
 		const domainCreditNotice = this.domainCreditNotice();
 		const jetpackPluginsSetupNotice = this.jetpackPluginsSetupNotice();
 
-		const shouldShowDomainUpsellNudge =
-			! discountOrFreeToPaid && ! domainCreditNotice && ! jetpackPluginsSetupNotice;
-
 		return (
 			<div className="current-site__notices">
 				<QueryProductsList />
@@ -291,7 +290,8 @@ export class SiteNotice extends React.Component {
 				{ this.pendingPaymentNotice() }
 				{ domainCreditNotice }
 				{ jetpackPluginsSetupNotice }
-				{ shouldShowDomainUpsellNudge ? this.domainUpsellNudge() : null }
+				{ ! ( discountOrFreeToPaid || domainCreditNotice || jetpackPluginsSetupNotice ) &&
+					this.domainUpsellNudge() }
 			</div>
 		);
 	}

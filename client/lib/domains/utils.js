@@ -27,6 +27,10 @@ export function getDomainType( domainFromApi ) {
 		return domainTypes.REGISTERED;
 	}
 
+	if ( get( domainFromApi, 'domain', '' ).endsWith( '.wpcomstaging.com' ) ) {
+		return domainTypes.ATOMIC_STAGING;
+	}
+
 	return domainTypes.MAPPED;
 }
 
