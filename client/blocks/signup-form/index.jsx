@@ -23,7 +23,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { abtest } from 'lib/abtest';
+// import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -914,37 +914,37 @@ class SignupForm extends Component {
 
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
-		if (
-			this.props.flowName === 'onboarding' &&
-			'passwordless' === abtest( 'passwordlessSignup' )
-		) {
-			// const logInUrl = config.isEnabled( 'login/native-login-links' )
-			// 	? this.getLoginLink()
-			// 	: localizeUrl( config( 'login_url' ), this.props.locale );
+		// if (
+		// 	this.props.flowName === 'onboarding' &&
+		// 	'passwordless' === abtest( 'passwordlessSignup' )
+		// ) {
+		// 	const logInUrl = config.isEnabled( 'login/native-login-links' )
+		// 		? this.getLoginLink()
+		// 		: localizeUrl( config( 'login_url' ), this.props.locale );
 
-			// return (
-			// 	<div className={ classNames( 'signup-form', this.props.className ) }>
-			// 		{ this.getNotice() }
-			// 		<PasswordlessSignupForm
-			// 			stepName={ this.props.stepName }
-			// 			flowName={ this.props.flowName }
-			// 			goToNextStep={ this.props.goToNextStep }
-			// 			renderTerms={ this.termsOfServiceLink }
-			// 			logInUrl={ logInUrl }
-			// 		/>
-			// 		{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
-			// 			<SocialSignupForm
-			// 				handleResponse={ this.props.handleSocialResponse }
-			// 				socialService={ this.props.socialService }
-			// 				socialServiceResponse={ this.props.socialServiceResponse }
-			// 			/>
-			// 		) }
+		// 	return (
+		// 		<div className={ classNames( 'signup-form', this.props.className ) }>
+		// 			{ this.getNotice() }
+		// 			<PasswordlessSignupForm
+		// 				stepName={ this.props.stepName }
+		// 				flowName={ this.props.flowName }
+		// 				goToNextStep={ this.props.goToNextStep }
+		// 				renderTerms={ this.termsOfServiceLink }
+		// 				logInUrl={ logInUrl }
+		// 			/>
+		// 			{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+		// 				<SocialSignupForm
+		// 					handleResponse={ this.props.handleSocialResponse }
+		// 					socialService={ this.props.socialService }
+		// 					socialServiceResponse={ this.props.socialServiceResponse }
+		// 				/>
+		// 			) }
 
-			// 		{ this.props.footerLink || this.footerLink() }
-			// 	</div>
-			// );
-			return null;
-		}
+		// 			{ this.props.footerLink || this.footerLink() }
+		// 		</div>
+		// 	);
+		// 	return null;
+		// }
 
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
