@@ -9352,9 +9352,9 @@
 			}
 		},
 		"filesize": {
-			"version": "3.6.1",
-			"resolved": "https://registry.npmjs.org/filesize/-/filesize-3.6.1.tgz",
-			"integrity": "sha512-7KjR1vv6qnicaPMi1iiTcI85CyYwRO/PSFCu6SvqL8jN2Wjt/NIYQTFtFs7fSDCYOstUkEWIQGFUg5YZQfjlcg=="
+			"version": "5.0.2",
+			"resolved": "https://registry.npmjs.org/filesize/-/filesize-5.0.2.tgz",
+			"integrity": "sha512-EU7BtXbva4fOuNzfIb2HbKs2wGqL45Tt+XwSAXLg4LUu2cmmdeUQIa2ZfGKYcjMIo1qldeXy8FADXU9oY090qw=="
 		},
 		"fill-range": {
 			"version": "4.0.0",
@@ -23126,6 +23126,11 @@
 				"ws": "^6.0.0"
 			},
 			"dependencies": {
+				"filesize": {
+					"version": "3.6.1",
+					"resolved": "https://registry.npmjs.org/filesize/-/filesize-3.6.1.tgz",
+					"integrity": "sha512-7KjR1vv6qnicaPMi1iiTcI85CyYwRO/PSFCu6SvqL8jN2Wjt/NIYQTFtFs7fSDCYOstUkEWIQGFUg5YZQfjlcg=="
+				},
 				"lodash": {
 					"version": "4.17.15",
 					"resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.15.tgz",
