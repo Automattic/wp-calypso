@@ -493,6 +493,30 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackHostingClick = () => {
+		this.trackMenuItemClick( 'hosting' );
+		this.onNavigate();
+	};
+
+	hosting() {
+		const { translate, path, site, isAtomicSite, siteSuffix } = this.props;
+
+		if ( ! site || ! isAtomicSite ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Hosting' ) }
+				selected={ itemLinkMatches( '/hosting', path ) }
+				link={ `/hosting${ siteSuffix }` }
+				onNavigate={ this.trackHostingClick }
+				preloadSectionName="hosting"
+				expandSection={ this.expandManageSection }
+			/>
+		);
+	}
+
 	trackPeopleClick = () => {
 		this.trackMenuItemClick( 'people' );
 		this.onNavigate();
@@ -720,6 +744,7 @@ export class MySitesSidebar extends Component {
 						materialIcon="settings"
 					>
 						<ul>
+							{ this.hosting() }
 							{ this.upgrades() }
 							{ this.users() }
 							{ this.siteSettings() }
