@@ -22,6 +22,10 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		
+		p {
+			flex-grow: 1;
+		}
 	}
 
 	&.is-primary {
