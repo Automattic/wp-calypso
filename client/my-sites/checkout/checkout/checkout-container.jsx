@@ -56,7 +56,6 @@ class CheckoutContainer extends React.Component {
 	shouldDisplaySiteCreatedNotice() {
 		return (
 			this.props.isComingFromSignup &&
-			this.props.selectedSite &&
 			isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) )
 		);
 	}
