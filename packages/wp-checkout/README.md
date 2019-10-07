@@ -28,23 +28,21 @@ The content of the second and third step vary based on the payment method chosen
 
 ### Billing details
 
-The billing address may be automatically filled based on the server. If the billing address is set or changed during the second step, the updated address will be used for the checkout. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can take any neccessary actions like updating the line items, totals, and amount.
+The billing address may be automatically filled based on the server. If the billing address is set or changed during the second step, the updated address will be used for the checkout. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can take any neccessary actions like updating the line items and total.
 
 ### Review order
 
 The third step's order review content can be overridden using the `orderReview` prop, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
-The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, amount: {currency: string, value: int, displayValue: string}}`. All the properties are required except for `subLabel`. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then return it to `WPCheckout`.
+The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel` and `id` must be unique. The `type` property is not used internally but can be used to organize the line items in the `orderReview` component. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then return it to `WPCheckout`.
 
-The line items are mostly for display purposes only. Similarly, the subtotals and taxes are passed using the `totals` array prop. Each total in this array has a type in the set of 'subtotal', 'tax', and 'total', which defines its role and how it will be displayed. There can be multiple totals of each type (for example, multiple taxes). Totals are objects of the form `{type: string, label: string, amount: { currency: string, value: int, displayValue: string }}`.
+The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is an object (very similar to the line items) of the form `{ label: string, subLabel: string, amount: { currency: string, value: int, displayValue: string } }`.
 
-The `displayValue` property of both items and totals can use limited Markdown formatting, including the `~` character for strike-through text.
-
-No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `amount`, which is an object of the form `{ currency: string, value: int }`.
+The `displayValue` property of both items and the total can use limited Markdown formatting, including the `~` character for strike-through text, if passed through the `formatDisplayValueForCurrency()` helper.
 
 There are two other optional props which allow customizing the contents of the form. `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
-Any component within `WPCheckout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), the second element is the current array of totals (matching the `totals` prop).
+Any component within `WPCheckout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), the second element is the current total (matching the `total` prop).
 
 ### Submitting the form
 
@@ -59,13 +57,14 @@ Some payment methods may require a redirect to an external site. If that occurs,
 The following example demonstrates a full checkout page using many of the options available.
 
 ```js
-import React, { useState, useEffect } from 'react';
-import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotals, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
-import { PlanLengthSelector, splitCheckoutLineItemsByType, getDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
+import React, { useState } from 'react';
+import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotal, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
+import { PlanLengthSelector, splitCheckoutLineItemsByType, formatDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
 
 const initialItems = [
-	{ label: 'WordPress.com Personal Plan', id: 'wpcom-personal', amount: { currency: 'USD', value: 6000, displayValue: '$60' } },
-	{ label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' } },
+	{ label: 'WordPress.com Personal Plan', id: 'wpcom-personal', type: 'plan', amount: { currency: 'USD', value: 6000, displayValue: '$60' } },
+	{ label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', type: 'domain-reg', amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' } },
+	{ label: 'Taxes', id: 'wpcom-taxes', type: 'tax', amount: { currency: 'USD', value: 516, displayValue: '$5.16' } },
 ];
 
 // These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
@@ -81,21 +80,15 @@ const failureRedirectUrl = window.location.href;
 
 function MyCheckout() {
 	const [items, setItems] = useState(initialItems);
-	const [totals, setTotals] = useState(calculateTotalsForItems(initialItems));
 	const onDeleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
 
 	// Certain blocks have a default component but can be overridden to provide custom implementations
 	const orderReview = <OrderReview onDeleteItem={onDeleteItem} />;
 	const upSell = <UpSellCoupon setItems={setItems} />;
 
-	// Keep totals up-to-date when items change
-	useEffect(() => {
-		setTotals(calculateTotalsForItems(items));
-	}, [items]);
-
-	const total = totals.reduce((sum, item) => sum + item.amount, 0);
-	const currency = items.reduce((lastCurrency, item) => item.currency, 'USD');
-	const totalAmount = { currency, value: total };
+	const lineItemTotal = items.reduce((sum, item) => sum + item.amount.value, 0);
+	const currency = items.reduce((lastCurrency, item) => item.amount.currency, 'USD');
+	const total = { label: 'Total', amount: { currency, value: lineItemTotal, displayValue: formatDisplayValueForCurrency( currency, lineItemTotal ) } };
 
 	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
 
@@ -103,8 +96,7 @@ function MyCheckout() {
 		<WPCheckout
 			locale={'US'}
 			items={items}
-			totals={totals}
-			amount={totalAmount}
+			total={total}
 			onChangeBillingContact={updatePricesForAddress}
 			availablePaymentMethods={availablePaymentMethods}
 			onSuccess={onSuccess}
@@ -119,7 +111,7 @@ function MyCheckout() {
 
 function OrderReview({ onDeleteItem }) {
 	const [items] = useCheckoutLineItems();
-	const { planItems, domainItems } = splitCheckoutLineItemsByType(items);
+	const { planItems, domainItems, taxItems } = splitCheckoutLineItemsByType(items);
 
 	return (
 		<React.Fragment>
@@ -133,7 +125,8 @@ function OrderReview({ onDeleteItem }) {
 				<OrderReviewLineItems items={domainItems} />
 			</OrderReviewSection>
 			<OrderReviewSection>
-				<OrderReviewTotals />
+				<OrderReviewLineItems items={taxItems} />
+				<OrderReviewTotal />
 			</OrderReviewSection>
 		</React.Fragment>
 	);
@@ -164,25 +157,13 @@ function UpSellCoupon({ setItems }) {
 		</React.Fragment>
 	);
 }
-
-function calculateTotalsForItems(items) {
-	const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
-	const currency = items.reduce((lastCurrency, item) => item.currency, 'USD');
-	const taxRate = 0.09;
-	const taxes = taxRate * subtotal;
-
-	return [
-		{ label: 'Subtotal', type: 'subtotal', amount: { currency: 'USD', value: subtotal, displayValue: getDisplayValueForCurrency(currency, subtotal) } },
-		{ label: 'Taxes', type: 'tax', amount: { currency: 'USD', value: taxes, displayValue: getDisplayValueForCurrency(currency, taxes) } },
-	];
-}
 ```
 
 ## ⚠️ 👷‍♀️ To do ⚠️
 
 ### Taxes
 
-Can the component handle calculating taxes automatically? If so, we can also calculate the subtotal automatically and probably remove the need for the `totals` prop entirely. That would be a big win for simplifying the API.
+Can the component handle calculating taxes automatically? If so, we can also calculate the subtotal automatically and probably remove the need for the `total` prop entirely. That would be a big win for simplifying the API.
 
 ### Credits
 
