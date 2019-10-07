@@ -42,7 +42,7 @@ class JetpackDashboardSidebar extends React.PureComponent {
 					<SidebarItem
 						label={ translate( 'Dashboard' ) }
 						link="/security"
-						selected={ this.isItemSelected( '/security' ) }
+						selected={ this.isItemSelected( '/security', false ) }
 					/>
 					<SidebarItem
 						label={ translate( 'Backups' ) }
