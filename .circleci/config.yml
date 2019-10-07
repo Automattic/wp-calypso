@@ -323,7 +323,15 @@ jobs:
             npx lerna run build --scope='@automattic/full-site-editing'
             cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
       - store-artifacts-and-test-results
-
+  test-full-site-editing:
+    <<: *defaults
+    parallelism: 1
+    working_directory: ~/wp-calypso/apps/full-site-editing
+    steps:
+      - prepare
+      - run: npm run install
+      - run: npm run test:unit
+      - store-artifacts-and-test-results
   test-client:
     <<: *defaults
     parallelism: 6
