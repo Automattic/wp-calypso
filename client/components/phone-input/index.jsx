@@ -33,10 +33,10 @@ class PhoneInput extends React.PureComponent {
 		className: PropTypes.string,
 		isError: PropTypes.bool,
 		disabled: PropTypes.bool,
+		name: PropTypes.string,
 		value: PropTypes.string.isRequired,
 		countryCode: PropTypes.string.isRequired,
 		countriesList: PropTypes.array.isRequired,
-		setComponentReference: PropTypes.func,
 		enableStickyCountry: PropTypes.bool,
 	};
 
@@ -86,11 +86,6 @@ class PhoneInput extends React.PureComponent {
 		if ( value !== this.props.value || countryCode !== this.props.countryCode ) {
 			this.props.onChange( { value, countryCode } );
 		}
-		this.props.setComponentReference && this.props.setComponentReference( this );
-	}
-
-	componentWillUnmount() {
-		this.props.setComponentReference && this.props.setComponentReference( undefined );
 	}
 
 	componentWillReceiveProps( nextProps ) {
