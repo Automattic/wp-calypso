@@ -32,7 +32,9 @@ import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
+import jetpackDashboardSections from '../../client/jetpack-dashboard-sections';
 import sections from '../../client/sections';
+import { isJetpackDashboard } from '../../client/lib/jetpack-dashboard';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from '../../client/login';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
@@ -785,7 +787,9 @@ module.exports = function() {
 		}
 	}
 
-	sections
+	const appSections = isJetpackDashboard() ? jetpackDashboardSections : sections;
+
+	appSections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
