@@ -334,9 +334,9 @@ jobs:
           command: |
             npm ci
       - run:
-        name: Run Full Site Editing client tests
-        command: |
-          npm run test:unit
+          name: Run Full Site Editing client tests
+          command: |
+            npm run test:unit
   test-client:
     <<: *defaults
     parallelism: 6
