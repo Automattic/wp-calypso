@@ -21,6 +21,25 @@ export function setupSidebar( context, next ) {
 
 export function jetpackDashboard( context, next ) {
 	context.primary = <div>Jetpack.com Dashboard</div>;
+	next();
+}
 
+export function security( context, next ) {
+	context.primary = <div>Security</div>;
+	next();
+}
+
+export function backups( context, next ) {
+	context.primary = <div>Backups</div>;
+	next();
+}
+
+export function scan( context, next ) {
+	context.primary = <div>Malware Scan</div>;
+	next();
+}
+
+export function antiSpam( context, next ) {
+	context.primary = <div>Anti-spam</div>;
 	next();
 }
