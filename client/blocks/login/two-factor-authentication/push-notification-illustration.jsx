@@ -5,11 +5,6 @@ import React from 'react';
 import { colors as PALETTE } from '@automattic/color-studio';
 
 /**
- * Internal dependencies
- */
-import { useLocalizedMoment } from 'components/localized-moment';
-
-/**
  * Style dependencies
  */
 import './push-notification-illustration.scss';
@@ -72,8 +67,13 @@ function NotificationSvg() {
 }
 
 export default function PushNotificationIllustration() {
-	const moment = useLocalizedMoment();
-	const currentTime = moment().format( 'h:mm' );
+	const now = new Date();
+	const hours = now.getHours() || 12;
+	const minutes = now.getMinutes();
+
+	const currentTime = `${ hours > 12 ? hours - 12 : hours }:${
+		minutes < 10 ? '0' + minutes : minutes
+	}`;
 
 	// Inlining two stacked SVGs because they’re a part of an animated image.
 	// By not loading them externally, we’re making sure the animation will
