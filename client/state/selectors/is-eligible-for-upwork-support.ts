@@ -25,12 +25,16 @@ export const UPWORK_LOCALES = [
 	'fr-ch',
 	'it',
 	'it-ch',
+	'ja',
 	'nl',
 	'nl-be',
 	'nl-nl',
 	'pt',
 	'pt-pt',
 	'pt-br',
+	'sv',
+	'sv-fi',
+	'sv-se',
 ];
 
 /**
