@@ -98,9 +98,7 @@ class StepWrapper extends Component {
 				return this.props.subHeaderText;
 			}
 
-			return this.props.translate(
-				"Create an account and answer a few questions about what you want to build. We'll start you off with a new site tailored to your choices."
-			);
+			return this.props.translate( 'Welcome to the best place for your WordPress website.' );
 		}
 
 		if ( this.props.fallbackSubHeaderText !== undefined ) {

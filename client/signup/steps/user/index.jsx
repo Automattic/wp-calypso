@@ -159,7 +159,9 @@ export class UserStep extends Component {
 		}
 
 		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
-			subHeaderText = translate( 'First, create your WordPress.com account.' );
+			subHeaderText = translate(
+				"Create an account and answer a few questions about what you want to build. We'll start you off with a new site tailored to your choices."
+			);
 		}
 
 		this.setState( { subHeaderText } );
