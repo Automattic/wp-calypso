@@ -19,7 +19,10 @@ class JetpackDashboardSecurity extends React.PureComponent {
 		if ( ! siteId ) {
 			return (
 				<Fragment>
-					<p>Site not selected. Append `/12345` to the URL, where `12345` is your site ID.</p>
+					<p>
+						Site not selected. Append <code>/12345</code> to the URL, where <code>12345</code> is
+						your site ID.
+					</p>
 				</Fragment>
 			);
 		}
