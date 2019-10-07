@@ -15,6 +15,11 @@ import notices from 'notices';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
 
+/**
+ * Style dependencies
+ */
+import './jetpack-dashboard.scss';
+
 class JetpackDashboardLayout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
