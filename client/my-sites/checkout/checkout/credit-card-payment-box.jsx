@@ -31,7 +31,7 @@ import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
-import { injectStripe } from 'react-stripe-elements';
+import { withStripeProps } from 'lib/stripe';
 import { setStripeObject } from 'lib/upgrades/actions';
 
 function isFormSubmitting( transactionStep ) {
@@ -235,5 +235,5 @@ class CreditCardPaymentBox extends React.Component {
 
 export { CreditCardPaymentBox };
 
-const InjectedStripeCreditCardPaymentBox = injectStripe( CreditCardPaymentBox );
+const InjectedStripeCreditCardPaymentBox = withStripeProps( CreditCardPaymentBox );
 export default InjectedStripeCreditCardPaymentBox;
