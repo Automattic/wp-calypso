@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { memoize } from 'lodash';
 
@@ -11,6 +12,7 @@ import { memoize } from 'lodash';
 import Sidebar from 'layout/sidebar';
 import SidebarItem from 'layout/sidebar/item';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 class JetpackDashboardSidebar extends React.PureComponent {
 	isItemSelected( itemPath, isStrict = true ) {
@@ -69,4 +71,6 @@ class JetpackDashboardSidebar extends React.PureComponent {
 	}
 }
 
-export default localize( JetpackDashboardSidebar );
+export default connect( state => ( {
+	path: getCurrentRoute( state ),
+} ) )( localize( JetpackDashboardSidebar ) );
