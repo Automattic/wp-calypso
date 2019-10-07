@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { URL as URLType } from 'types';
+import { URL as TypedURL } from 'types';
 
-export default function isHttps( url: URLType ): boolean {
+export default function isHttps( url: TypedURL ): boolean {
 	return !! url && url.startsWith( 'https://' );
 }

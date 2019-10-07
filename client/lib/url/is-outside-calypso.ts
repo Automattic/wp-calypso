@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { URL as URLType } from 'types';
+import { URL as TypedURL } from 'types';
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -12,6 +12,6 @@ import { URL as URLType } from 'types';
  * @param  url URL to check
  * @return     true if the given URL is located outside of Calypso
  */
-export default function isOutsideCalypso( url: URLType ): boolean {
+export default function isOutsideCalypso( url: TypedURL ): boolean {
 	return !! url && ( url.startsWith( '//' ) || ! url.startsWith( '/' ) );
 }

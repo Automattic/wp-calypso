@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { URL as URLType } from 'types';
+import { URL as TypedURL } from 'types';
 
 interface Stringable {
 	toString: () => string;
@@ -13,7 +13,7 @@ interface Stringable {
  * @param  encodedURI URI to attempt to decode
  * @return            Decoded URI (or passed in value on error)
  */
-export function decodeURIIfValid( encodedURI: string | Stringable ): URLType {
+export function decodeURIIfValid( encodedURI: string | Stringable ): TypedURL {
 	let encodedURIString: string;
 
 	if ( encodedURI as Stringable ) {

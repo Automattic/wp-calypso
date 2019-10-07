@@ -1,16 +1,20 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import config from 'config';
+import { URL as TypedURL } from 'types';
+
+/**
+ * Internal dependencies
+ */
 import { isLegacyRoute } from 'lib/route/legacy-routes';
-import { URL as URLType } from 'types';
 
 // Base URL used for URL parsing. The WHATWG URL API doesn't support relative
 // URLs, so we always need to provide a base of some sort.
 const BASE_HOSTNAME = 'base.invalid';
 const BASE_URL = `http://${ BASE_HOSTNAME }`;
 
-export default function isExternal( url: URLType ): boolean {
+export default function isExternal( url: TypedURL ): boolean {
 	// The url passed in might be of form `en.support.wordpress.com`,
 	// so for this function we'll append double-slashes to fake it.
 	// If it is a relative URL the hostname will be the base hostname.

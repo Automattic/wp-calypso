@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { URL as URLType, SiteSlug } from 'types';
+import { URL as TypedURL, SiteSlug } from 'types';
 import { Falsey } from 'utility-types';
 
 const urlWithoutHttpRegex = /^https?:\/\//;
@@ -13,8 +13,8 @@ const urlWithoutHttpRegex = /^https?:\/\//;
  */
 export function withoutHttp( url: '' ): '';
 export function withoutHttp( url: Falsey ): null;
-export function withoutHttp( url: URLType ): URLType;
-export function withoutHttp( url: URLType | Falsey ): URLType | null {
+export function withoutHttp( url: TypedURL ): TypedURL;
+export function withoutHttp( url: TypedURL | Falsey ): TypedURL | null {
 	if ( url === '' ) {
 		return '';
 	}
@@ -27,8 +27,8 @@ export function withoutHttp( url: URLType | Falsey ): URLType | null {
 }
 
 export function urlToSlug( url: Falsey ): null;
-export function urlToSlug( url: URLType ): SiteSlug;
-export function urlToSlug( url: URLType | Falsey ): SiteSlug | null {
+export function urlToSlug( url: TypedURL ): SiteSlug;
+export function urlToSlug( url: TypedURL | Falsey ): SiteSlug | null {
 	if ( ! url ) {
 		return null;
 	}
@@ -44,6 +44,6 @@ export function urlToSlug( url: URLType | Falsey ): SiteSlug | null {
  * @param  urlToConvert The URL to convert
  * @return              The URL's domain and path
  */
-export function urlToDomainAndPath( urlToConvert: URLType ): URLType {
+export function urlToDomainAndPath( urlToConvert: TypedURL ): TypedURL {
 	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
 }

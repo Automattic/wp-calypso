@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { URL as URLType } from 'types';
+import { URL as TypedURL } from 'types';
 import { Falsey } from 'utility-types';
 
 /**
@@ -12,11 +12,11 @@ import { Falsey } from 'utility-types';
  * @return Url less the omitted params.
  */
 export default function omitUrlParams( url: Falsey, paramsToOmit: string | string[] ): null;
-export default function omitUrlParams( url: URLType, paramsToOmit: string | string[] ): URLType;
+export default function omitUrlParams( url: TypedURL, paramsToOmit: string | string[] ): TypedURL;
 export default function omitUrlParams(
-	url: URLType | Falsey,
+	url: TypedURL | Falsey,
 	paramsToOmit: string | string[]
-): URLType | null {
+): TypedURL | null {
 	if ( ! url ) {
 		return null;
 	}
