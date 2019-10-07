@@ -17,10 +17,12 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
 
 export async function highlightElement( driver, element ) {
-	return await driver.executeScript(
-		"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
-		element
-	);
+	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
+		return await driver.executeScript(
+			"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
+			element
+		);
+	}
 }
 
 export function clickWhenClickable( driver, selector, waitOverride ) {
