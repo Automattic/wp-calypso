@@ -18,6 +18,7 @@ import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import getActiveDiscount from 'state/selectors/get-active-discount';
+import { clickUpgradeNudge } from 'state/marketing/actions';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit, isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -41,10 +42,14 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
 import { type as domainTypes } from 'lib/domains/constants';
+<<<<<<< HEAD
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
+=======
+import { CTA_FREE_TO_PAID } from './constants';
+>>>>>>> Fix: dispatching `clickUpgradeNudge()` should be in the `onClick()`
 
 export class SiteNotice extends React.Component {
 	static propTypes = {
@@ -202,11 +207,12 @@ export class SiteNotice extends React.Component {
 
 		return (
 			<SidebarBanner
-				ctaName="free-to-paid-sidebar"
+				ctaName={ CTA_FREE_TO_PAID }
 				ctaText={ translate( 'Upgrade' ) }
 				href={ '/plans/' + site.slug }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
+				onClick={ () => this.props.clickFreeToPaidPlanNotice( site.ID ) }
 			/>
 		);
 	}
@@ -351,12 +357,8 @@ export default connect(
 					} )
 				);
 			},
-			clickFreeToPaidPlanNotice: () =>
-				dispatch(
-					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
-						cta_name: 'free-to-paid-sidebar',
-					} )
-				),
+			clickFreeToPaidPlanNotice: siteId =>
+				dispatch( clickUpgradeNudge( siteId, CTA_FREE_TO_PAID ) ),
 		};
 	}
 )( localize( SiteNotice ) );
