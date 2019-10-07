@@ -27,3 +27,16 @@
     margin-right: 24px;
     height: 100%;
 }
+
+.hosting__info-table {
+    border: 1px solid var( --color-border-subtle );
+
+    th {
+        text-align: right;
+        background-color: var( --color-surface-backdrop );
+    }
+
+    th, td {
+        padding: 10px;
+    }
+}

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
@@ -12,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -30,10 +28,10 @@ import './style.scss';
 
 const DataSection = ( { title, data } ) => {
 	return (
-		<p>
-			<strong>{ title }: </strong>
-			{ data }
-		</p>
+		<tr>
+			<th>{ title }:</th>
+			<td>{ data }</td>
+		</tr>
 	);
 };
 
@@ -53,21 +51,25 @@ const Hosting = ( { translate } ) => {
 			<div className="hosting__cards">
 				<Card>
 					<div className="hosting__card-icon-col">
-						<MaterialIcon className="hosting__card-icon" icon="cloud" size={ 48 } />
+						<MaterialIcon className="hosting__card-icon" icon="cloud" size={ 32 } />
 					</div>
 					<div className="hosting__card-col">
 						<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
 						<p>
 							{ translate( "Access and edit your website's files directly using an FTP client." ) }
 						</p>
-						{ map( dummyInfo, ( data, title ) => (
-							<DataSection { ...{ data, title } } />
-						) ) }
+						<table className="hosting__info-table">
+							<tbody>
+								{ map( dummyInfo, ( data, title ) => (
+									<DataSection key={ title } { ...{ data, title } } />
+								) ) }
+							</tbody>
+						</table>
 					</div>
 				</Card>
 				<Card>
 					<div className="hosting__card-icon-col">
-						<MaterialIcon className="hosting__card-icon" icon="dns" size={ 48 } />
+						<MaterialIcon className="hosting__card-icon" icon="dns" size={ 32 } />
 					</div>
 					<div className="hosting__card-col">
 						<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
