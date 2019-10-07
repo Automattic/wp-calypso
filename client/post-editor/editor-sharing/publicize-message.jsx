@@ -128,18 +128,11 @@ class PublicizeMessage extends Component {
 						labelText={ translate( 'Customize the message', {
 							context: 'Post editor sharing message heading',
 						} ) }
-					>
-						<TrackInputChanges onNewValue={ this.recordStats }>
-							{ this.renderTextarea() }
-						</TrackInputChanges>
-					</EditorDrawerLabel>
+					/>
 				) }
-
-				{ ! displayMessageHeading && (
-					<TrackInputChanges onNewValue={ this.recordStats }>
-						{ this.renderTextarea() }
-					</TrackInputChanges>
-				) }
+				<TrackInputChanges onNewValue={ this.recordStats }>
+					{ this.renderTextarea() }
+				</TrackInputChanges>
 			</div>
 		);
 	}

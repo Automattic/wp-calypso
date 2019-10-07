@@ -47,13 +47,11 @@ export {
 	fetchNameservers,
 	fetchSiteRedirect,
 	fetchWapiDomainInfo,
-	fetchWhois,
 	requestTransferCode,
 	resendIcannVerification,
 	setPrimaryDomain,
 	updateNameservers,
 	updateSiteRedirect,
-	updateWhois,
 	requestGdprConsentManagementLink,
 } from './domain-management';
 

@@ -11,11 +11,15 @@
 	word-wrap: normal !important;
 }
 
-$template-selector-border-color: #a1aab2;
+$template-selector-border-color: #e2e4e7;
+$template-selector-border-color-selected: #555d66;
+$template-selector-border-color-active: #00a0d2;
+$template-selector-border-color-hover: #c9c9ca;
 $template-selector-empty-background: #fff;
-$template-selector-modal-offset-right: 32px;
 $template-selector-modal-offset-bottom: 25px;
-$template-large-preview-title-height: 117px;
+$template-selector-modal-offset-right: 32px;
+$template-selector-blank-template-mobile-height: 70px;
+$template-large-preview-title-height: 120px;
 
 $wp-org-sidebar-reduced: 36px;
 $wp-org-sidebar-full: 160px;
@@ -67,9 +71,33 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	@include screen-reader-text();
 }
 
-// Close button
-.page-template-modal .components-modal__header .components-button {
-	left: 0;
+// Show close button only in full screen mode.
+.page-template-modal .components-modal__header::after,
+.page-template-modal__close-button {
+	display: none;
+}
+
+body.is-fullscreen-mode {
+	.page-template-modal__close-button {
+		display: block;
+		position: absolute;
+		z-index: 20;
+		top: 9px;
+		width: 36px;
+		height: 36px;
+		left: 8px;
+	}
+
+	.page-template-modal .components-modal__header {
+		&::after {
+			display: block;
+			position: absolute;
+			content: ' ';
+			border-right: 1px solid #e2e4e7;
+			height: 100%;
+			left: 54px;
+		}
+	}
 }
 
 .page-template-modal .components-modal__content {
@@ -83,7 +111,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	padding: 0;
 
 	@media screen and ( max-width: 659px ) {
-		padding-bottom: 3em;
+		padding: 0 14% 3em;
+	}
+
+	@media screen and ( max-width: 440px ) {
+		padding: 0 15px 3em;
 	}
 
 	@media screen and ( min-width: 1200px ) {
@@ -99,7 +131,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	.template-selector-control__options {
 		display: grid;
 		// stylelint-disable-next-line unit-whitelist
-		grid-template-columns: 1fr 1fr; // force 2 col on small screens to ensure blank isn't the only option visible on load
+		grid-template-columns: 1fr;
 		grid-gap: 1.75em;
 
 		@media screen and ( min-width: 660px ) {
@@ -131,7 +163,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		width: 100%;
 		font-size: 14px;
 		text-align: center;
-		border: 1px solid $template-selector-border-color;
+		border: solid 2px $template-selector-border-color;
 		border-radius: 6px;
 		cursor: pointer;
 		appearance: none;
@@ -150,15 +182,35 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 			background-color: #fff;
 		}
 
-		&:hover,
-		&:focus,
-		&.is-selected {
-			border-color: #2562b7;
-			box-shadow: 0 0 0 1px #2562b7;
-			outline: 1px solid transparent;
-			outline-offset: -1px;
-			color: inherit;
+		&:focus {
+			box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
+
+			// Windows High Contrast mode will show this outline, but not the box-shadow.
+			outline: 2px solid transparent;
 		}
+
+		&:hover {
+			border: solid 2px $template-selector-border-color-hover;
+		}
+
+		&.is-selected {
+			border: solid 2px $template-selector-border-color-selected;
+
+			// Windows High Contrast mode will show this outline, but not the box-shadow.
+			outline: 2px solid transparent;
+			outline-offset: -2px;
+
+			&:focus {
+				box-shadow: 0 0 0 1px #fff, 0 0 0 3px $template-selector-border-color-active;
+				border: solid 2px $template-selector-border-color-selected;
+
+				// Windows High Contrast mode will show this outline, but not the box-shadow.
+				outline: 4px solid transparent;
+				outline-offset: -4px;
+			}
+		}
+
+
 	}
 
 	.template-selector-item__preview-wrap {
@@ -174,6 +226,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		position: relative;
 		pointer-events: none;
 		opacity: 1;
+
+		@media screen and ( max-width: 659px ) {
+			padding-top: 120%;
+		}
 
 		&.is-rendering {
 			opacity: 0.5;
@@ -191,6 +247,22 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		position: absolute;
 		top: 0;
 		left: 0;
+	}
+
+	// Blank template
+	.template-selector-control__template:first-child {
+		.template-selector-item__preview-wrap {
+			@media screen and ( max-width: 659px ) {
+				padding-top: 0%;
+				height: $template-selector-blank-template-mobile-height;
+			}
+		}
+		.template-selector-item__template-title {
+			@media screen and ( max-width: 659px ) {
+				height: $template-selector-blank-template-mobile-height;
+				line-height: $template-selector-blank-template-mobile-height;
+			}
+		}
 	}
 }
 
@@ -226,6 +298,9 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .page-template-modal__form-title {
 	font-weight: bold;
 	margin-bottom: 1em;
+	@media screen and ( max-width: 659px ) {
+		text-align: center;
+	}
 }
 
 .page-template-modal__buttons {
@@ -236,7 +311,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
     height: 56px;
     display: flex;
     align-items: center;
-    padding-right: 24px;
+	padding-right: 24px;
+
+	@media screen and ( max-width: 659px ) {
+		display: none;
+	}
 
     &.is-visually-hidden {
     	@include screen-reader-text();
@@ -266,11 +345,16 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ), 0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
 
 	.edit-post-visual-editor {
-		margin-top: 20px;
+		margin: 0;
+		padding: 0;
 	}
 
-
 	.editor-styles-wrapper {
+		.template-selector-preview__offset-correction {
+			position: relative;
+			top: $template-large-preview-title-height;
+		}
+
 		.editor-post-title {
 			transform-origin: top left;
 			width: 960px;
@@ -280,16 +364,18 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		}
 
 		.editor-post-title,
-		.editor-post-title__block {
-			height: $template-large-preview-title-height;
-			margin-top: 0;
-			margin-bottom: 0;
+		.editor-post-title__block,
+		.editor-post-title__input {
 			padding-top: 0;
 			padding-bottom: 0;
-		}
-
-		body.show-post-title-before-content & .block-editor-block-preview__content > .block-editor-block-list__layout {
-			margin-top: $template-large-preview-title-height;
+			margin-top: 0;
+			margin-bottom: 0;
+			.editor-post-title__input {
+				margin: 0;
+				padding: 0;
+				height: $template-large-preview-title-height;
+				line-height: $template-large-preview-title-height;
+			}
 		}
 	}
 }

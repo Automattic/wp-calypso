@@ -1250,10 +1250,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can see the themes page and select premium theme ', async function() {
-			const themesPage = await ThemesPage.Visit( driver, ThemesPage.getStartURL() );
+			// open Premium page directly. More info https://github.com/Automattic/wp-calypso/pull/36528
+			const themesPage = await ThemesPage.Visit( driver, ThemesPage.getStartURL() + '/premium' );
 			await themesPage.waitUntilThemesLoaded();
 			await themesPage.setABTestControlGroupsInLocalStorage();
-			await themesPage.showOnlyPremiumThemes();
 			chosenThemeName = await themesPage.getFirstThemeName();
 			return await themesPage.selectNewTheme();
 		} );

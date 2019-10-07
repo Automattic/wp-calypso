@@ -255,8 +255,8 @@ export class UserStep extends Component {
 					{ 'cart' === wccomFrom ? (
 						<WooCommerceConnectCartHeader />
 					) : (
-						<div className={ classNames( 'login__woocommerce-logo' ) }>
-							<div className={ classNames( 'connect-header' ) }>
+						<div className={ classNames( 'signup-form__woocommerce-wrapper' ) }>
+							<div className={ classNames( 'signup-form__woocommerce-logo' ) }>
 								<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 									<AsyncLoad
 										require="components/jetpack-header/woocommerce"
@@ -267,7 +267,7 @@ export class UserStep extends Component {
 							</div>
 						</div>
 					) }
-					<div className={ classNames( 'login__form-header' ) }>
+					<div className={ classNames( 'signup-form__woocommerce-heading' ) }>
 						{ translate( 'Create a WordPress.com account' ) }
 					</div>
 				</Fragment>

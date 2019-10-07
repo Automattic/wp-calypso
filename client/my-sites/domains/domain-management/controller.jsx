@@ -106,7 +106,6 @@ export default {
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -139,7 +138,6 @@ export default {
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
 				needsDomains
-				needsWhois
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

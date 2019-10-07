@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -34,6 +33,7 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from '../../client/login';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, renderJsx, attachBuildTimestamp, attachHead, attachI18n } from 'render';
 import stateCache from 'state-cache';
@@ -757,36 +757,38 @@ module.exports = function() {
 		res.send( pageHtml );
 	} );
 
+	function handleSectionPath( section, sectionPath, isEntrypoint = false ) {
+		const pathRegex = pathToRegExp( sectionPath );
+
+		app.get( pathRegex, function( req, res, next ) {
+			req.context = Object.assign( {}, req.context, { sectionName: section.name } );
+
+			if ( ! isEntrypoint && config.isEnabled( 'code-splitting' ) ) {
+				req.context.chunkFiles = getFilesForChunk( section.name, req );
+			} else {
+				req.context.chunkFiles = EMPTY_ASSETS;
+			}
+
+			if ( section.secondary && req.context ) {
+				req.context.hasSecondary = true;
+			}
+
+			if ( section.group && req.context ) {
+				req.context.sectionGroup = section.group;
+			}
+
+			next();
+		} );
+
+		if ( ! section.isomorphic ) {
+			app.get( pathRegex, setUpRoute, serverRender );
+		}
+	}
+
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			section.paths.forEach( sectionPath => {
-				const pathRegex = pathToRegExp( sectionPath );
-
-				app.get( pathRegex, function( req, res, next ) {
-					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
-
-					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunkFiles = getFilesForChunk( section.name, req );
-					} else {
-						req.context.chunkFiles = EMPTY_ASSETS;
-					}
-
-					if ( section.secondary && req.context ) {
-						req.context.hasSecondary = true;
-					}
-
-					if ( section.group && req.context ) {
-						req.context.sectionGroup = section.group;
-					}
-
-					next();
-				} );
-
-				if ( ! section.isomorphic ) {
-					app.get( pathRegex, setUpRoute, serverRender );
-				}
-			} );
+			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
@@ -797,6 +799,21 @@ module.exports = function() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	function loginRouteSetup( req, res, next ) {
+		req.context = getDefaultContext( req );
+		const target = getBuildTargetFromRequest( req );
+		req.context.entrypoint = getFilesForEntrypoint( target, 'entry-login' );
+		setUpCSP( req, res, () =>
+			req.context.isLoggedIn
+				? setUpLoggedInRoute( req, res, next )
+				: setUpLoggedOutRoute( req, res, next )
+		);
+	}
+
+	// Set up login routing.
+	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', true );
+	loginRouter( serverRouter( app, loginRouteSetup, null ) );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

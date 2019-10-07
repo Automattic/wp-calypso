@@ -6,7 +6,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
@@ -16,6 +15,7 @@ import { defer, uniqueId } from 'lodash';
  * Internal dependencies
  */
 import RootChild from 'components/root-child';
+import { withRtl } from 'components/rtl';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
@@ -23,7 +23,6 @@ import {
 	constrainLeft,
 	offset,
 } from './util';
-import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Style dependencies
@@ -518,6 +517,4 @@ class Popover extends Component {
 	}
 }
 
-export default connect( state => ( {
-	isRtl: isRtlSelector( state ),
-} ) )( Popover );
+export default withRtl( Popover );

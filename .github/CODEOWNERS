@@ -122,7 +122,11 @@
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # FSE (Full Site Editing)
-/apps/full-site-editing @Automattic/serenity @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/* @Automattic/serenity @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/* @Automattic/serenity @Automattic/cylon @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/full-site-editing @Automattic/serenity @Automattic/cylon
+/apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
 
 # WPcom Block Editor
 /apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax

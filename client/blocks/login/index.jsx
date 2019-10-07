@@ -239,8 +239,8 @@ class Login extends Component {
 						{ 'cart' === wccomFrom ? (
 							<WooCommerceConnectCartHeader />
 						) : (
-							<div className="login__woocommerce-logo">
-								<div className={ classNames( 'connect-header' ) }>
+							<div className="login__woocommerce-wrapper">
+								<div className={ classNames( 'login__woocommerce-logo' ) }>
 									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 										<AsyncLoad
 											require="components/jetpack-header/woocommerce"
