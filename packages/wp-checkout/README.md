@@ -59,11 +59,11 @@ The following example demonstrates a full checkout page using many of the option
 ```js
 import React, { useState } from 'react';
 import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotal, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
-import { PlanLengthSelector, splitCheckoutLineItemsByType, formatDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
+import { PlanLengthSelector, formatDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
 
 const initialItems = [
 	{ label: 'WordPress.com Personal Plan', id: 'wpcom-personal', type: 'plan', amount: { currency: 'USD', value: 6000, displayValue: '$60' } },
-	{ label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', type: 'domain-reg', amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' } },
+	{ label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', type: 'domain', amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' } },
 ];
 
 // These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
@@ -123,7 +123,9 @@ export default function MyCheckout() {
 
 function OrderReview({ onDeleteItem }) {
 	const [items] = useCheckoutLineItems();
-	const { planItems, domainItems, taxItems } = splitCheckoutLineItemsByType(items);
+	const planItems = items.filter(item => item.type === 'plan');
+	const domainItems = items.filter(item => item.type === 'domain');
+	const taxItems = items.filter(item => item.type === 'tax');
 
 	return (
 		<React.Fragment>
