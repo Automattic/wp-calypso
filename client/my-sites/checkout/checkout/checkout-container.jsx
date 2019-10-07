@@ -35,13 +35,10 @@ function isSiteCreatedDateNew( createdAt, creationWindowInMinutes = 5 ) {
 class CheckoutContainer extends React.Component {
 	state = {
 		headerText: '',
-		shouldDisplaySiteCreatedNotice:
-			this.props.isComingFromSignup &&
-			isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) ),
 	};
 
 	componentDidMount() {
-		if ( this.state.shouldDisplaySiteCreatedNotice ) {
+		if ( this.shouldDisplaySiteCreatedNotice() ) {
 			this.setHeaderText(
 				this.props.translate(
 					'Your WordPress.com site is ready! Finish your purchase to get the most out of it.'
@@ -50,20 +47,19 @@ class CheckoutContainer extends React.Component {
 		}
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		if ( this.props.isComingFromSignup !== nextProps.isComingFromSignup ) {
-			this.setState( { shouldDisplaySiteCreatedNotice: nextProps.isComingFromSignup } );
-			return false;
-		}
-
-		return true;
-	}
-
 	renderCheckoutHeader() {
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
 	setHeaderText = headerText => this.setState( { headerText } );
+
+	shouldDisplaySiteCreatedNotice() {
+		return (
+			this.props.isComingFromSignup &&
+			this.props.selectedSite &&
+			isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) )
+		);
+	}
 
 	render() {
 		const {
@@ -84,7 +80,7 @@ class CheckoutContainer extends React.Component {
 		return (
 			<>
 				{ this.renderCheckoutHeader() }
-				{ this.state.shouldDisplaySiteCreatedNotice && (
+				{ this.shouldDisplaySiteCreatedNotice() && (
 					<TransactionData>
 						<SignupSiteCreatedNotice selectedSite={ this.props.selectedSite } />
 					</TransactionData>
