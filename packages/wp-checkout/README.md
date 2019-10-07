@@ -58,12 +58,36 @@ The following example demonstrates a full checkout page using many of the option
 
 ```js
 import React, { useState } from 'react';
-import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotal, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
-import { PlanLengthSelector, formatDisplayValueForCurrency, adjustItemPricesForCountry, replacePlanWithDifferentLength } from 'wp-checkout/wpcom';
+import {
+	WPCheckout,
+	useCheckoutLineItems,
+	OrderReviewLineItems,
+	OrderReviewSection,
+	OrderReviewTotal,
+	OrderReviewLineItemDelete,
+	renderDisplayValueMarkdown,
+} from 'wp-checkout';
+import {
+	PlanLengthSelector,
+	formatDisplayValueForCurrency,
+	adjustItemPricesForCountry,
+	replacePlanWithDifferentLength,
+} from 'wp-checkout/wpcom';
 
 const initialItems = [
-	{ label: 'WordPress.com Personal Plan', id: 'wpcom-personal', type: 'plan', amount: { currency: 'USD', value: 6000, displayValue: '$60' } },
-	{ label: 'Domain registration', subLabel: 'example.com', id: 'wpcom-domain', type: 'domain', amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' } },
+	{
+		label: 'WordPress.com Personal Plan',
+		id: 'wpcom-personal',
+		type: 'plan',
+		amount: { currency: 'USD', value: 6000, displayValue: '$60' },
+	},
+	{
+		label: 'Domain registration',
+		subLabel: 'example.com',
+		id: 'wpcom-domain',
+		type: 'domain',
+		amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' },
+	},
 ];
 
 // These will only be shown if appropriate and can be used to disable certain payment methods for testing or other purposes.
@@ -79,7 +103,6 @@ const failureRedirectUrl = window.location.href;
 
 export default function MyCheckout() {
 	const {
-		items,
 		itemsWithTax,
 		total,
 		addItem,
@@ -89,10 +112,17 @@ export default function MyCheckout() {
 	} = useShoppingCart();
 
 	// Some parts of the checkout can be customized
-	const orderReview = <OrderReview onDeleteItem={deleteItem} onChangePlanLength={changePlanLength} />;
+	const orderReview = (
+		<OrderReview onDeleteItem={deleteItem} onChangePlanLength={changePlanLength} />
+	);
 
 	// Modification of the line items must be done outside checkout
-	const quickStartItem = { label: 'Quick Start', id: 'quickstart', type: 'quickstart', amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' } };
+	const quickStartItem = {
+		label: 'Quick Start',
+		id: 'quickstart',
+		type: 'quickstart',
+		amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' },
+	};
 	const addQuickStart = () => addItem(quickStartItem);
 	const upSell = <UpSellCoupon onClick={addQuickStart} />;
 
@@ -120,19 +150,37 @@ function useShoppingCart() {
 	const lineItemTotalWithoutTax = items.reduce((sum, item) => sum + item.amount.value, 0);
 	const taxRate = 0.09;
 	const taxValue = taxRate * lineItemTotalWithoutTax;
-	const taxItem = { label: 'Taxes', id: 'tax', type: 'tax', amount: { currency: 'USD', value: taxValue, displayValue: formatDisplayValueForCurrency( currency, taxValue ) } };
+	const taxItem = {
+		label: 'Taxes',
+		id: 'tax',
+		type: 'tax',
+		amount: {
+			currency: 'USD',
+			value: taxValue,
+			displayValue: formatDisplayValueForCurrency(currency, taxValue),
+		},
+	};
 	const itemsWithTax = [...items, taxItem];
 
 	// The checkout itself does not trigger any events apart from success/failure
 	const deleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
-	const changePlanLength = (plan, planLength) => setItems(replacePlanWithDifferentLength(items, planLength));
-	const updatePricesForAddress = address => setItems(adjustItemPricesForCountry(items, address.country));
+	const changePlanLength = (plan, planLength) =>
+		setItems(replacePlanWithDifferentLength(items, planLength));
+	const updatePricesForAddress = address =>
+		setItems(adjustItemPricesForCountry(items, address.country));
 	const addItem = item => setItems([...items, item]);
 
 	// The total must be calculated outside checkout and need not be related to line items
 	const lineItemTotal = itemsWithTax.reduce((sum, item) => sum + item.amount.value, 0);
 	const currency = items.reduce((lastCurrency, item) => item.amount.currency, 'USD');
-	const total = { label: 'Total', amount: { currency, value: lineItemTotal, displayValue: formatDisplayValueForCurrency( currency, lineItemTotal ) } };
+	const total = {
+		label: 'Total',
+		amount: {
+			currency,
+			value: lineItemTotal,
+			displayValue: formatDisplayValueForCurrency(currency, lineItemTotal),
+		},
+	};
 
 	return {
 		items,
@@ -155,7 +203,12 @@ function OrderReview({ onDeleteItem, onChangePlanLength }) {
 		<React.Fragment>
 			<OrderReviewSection>
 				{planItems.map(plan => (
-					<PlanItem key={plan.id} plan={plan} onDeleteItem={onDeleteItem} onChangePlanLength={onChangePlanLength} />
+					<PlanItem
+						key={plan.id}
+						plan={plan}
+						onDeleteItem={onDeleteItem}
+						onChangePlanLength={onChangePlanLength}
+					/>
 				))}
 			</OrderReviewSection>
 			<OrderReviewSection>
