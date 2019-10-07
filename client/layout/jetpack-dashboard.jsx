@@ -11,6 +11,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import GlobalNotices from 'components/global-notices';
+import JetpackDashboardMasterbar from 'layout/masterbar/jetpack-dashboard';
 import notices from 'notices';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
@@ -34,6 +35,8 @@ class JetpackDashboardLayout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
+
+				<JetpackDashboardMasterbar />
 
 				<div id="content" className="layout__content">
 					<GlobalNotices id="notices" notices={ notices.list } />
