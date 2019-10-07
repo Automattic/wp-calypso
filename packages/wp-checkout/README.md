@@ -184,3 +184,7 @@ How does our component manage coupons? Can it perform the math for them automati
 ### Header customization
 
 The "Complete your purchase" header at the top of the component could also be a customizable slot, so that it's possible to include a domain name there if the purchase includes one.
+
+### Styles
+
+How are styles customized?
