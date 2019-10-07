@@ -4,11 +4,6 @@
  */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import {
@@ -25,40 +20,40 @@ import {
 
 describe( 'withoutHttp', () => {
 	test( 'should return null if URL is not provided', () => {
-		expect( withoutHttp() ).to.be.null;
+		expect( withoutHttp() ).toBeNull();
 	} );
 
 	test( 'should return URL without initial http', () => {
 		const urlWithHttp = 'http://example.com';
 		const urlWithoutHttp = withoutHttp( urlWithHttp );
 
-		expect( urlWithoutHttp ).to.equal( 'example.com' );
+		expect( urlWithoutHttp ).toEqual( 'example.com' );
 	} );
 
 	test( 'should return URL without initial https', () => {
 		const urlWithHttps = 'https://example.com';
 		const urlWithoutHttps = withoutHttp( urlWithHttps );
 
-		expect( urlWithoutHttps ).to.equal( 'example.com' );
+		expect( urlWithoutHttps ).toEqual( 'example.com' );
 	} );
 
 	test( 'should return URL without initial http and query string if has any', () => {
 		const urlWithHttpAndQueryString = 'http://example.com?foo=bar#anchor';
 		const urlWithoutHttpAndQueryString = withoutHttp( urlWithHttpAndQueryString );
 
-		expect( urlWithoutHttpAndQueryString ).to.equal( 'example.com?foo=bar#anchor' );
+		expect( urlWithoutHttpAndQueryString ).toEqual( 'example.com?foo=bar#anchor' );
 	} );
 
 	test( "should return provided URL if it doesn't include http(s)", () => {
 		const urlWithoutHttp = 'example.com';
 
-		expect( withoutHttp( urlWithoutHttp ) ).to.equal( urlWithoutHttp );
+		expect( withoutHttp( urlWithoutHttp ) ).toEqual( urlWithoutHttp );
 	} );
 
 	test( 'should return empty string if URL is empty string', () => {
 		const urlEmptyString = '';
 
-		expect( withoutHttp( urlEmptyString ) ).to.equal( '' );
+		expect( withoutHttp( urlEmptyString ) ).toEqual( '' );
 	} );
 } );
 
@@ -68,7 +63,7 @@ describe( 'isExternal', () => {
 
 		const actual = isExternal( source );
 
-		expect( actual ).to.be.false;
+		expect( actual ).toBe( false );
 	} );
 
 	test( 'should return false for relative query-only url', () => {
@@ -76,31 +71,31 @@ describe( 'isExternal', () => {
 
 		const actual = isExternal( source );
 
-		expect( actual ).to.be.false;
+		expect( actual ).toBe( false );
 	} );
 
 	test( 'should return true for url without http', () => {
 		const urlWithoutHttp = 'en.support.wordpress.com';
 		const actual = isExternal( urlWithoutHttp );
-		expect( actual ).to.be.true;
+		expect( actual ).toBe( true );
 	} );
 
 	test( 'should return true for url without http and path', () => {
 		const urlWithoutHttp = 'en.support.wordpress.com/start';
 		const actual = isExternal( urlWithoutHttp );
-		expect( actual ).to.be.true;
+		expect( actual ).toBe( true );
 	} );
 
 	test( 'should return true for url without http and // path', () => {
 		const urlWithoutHttp = 'en.support.wordpress.com//start';
 		const actual = isExternal( urlWithoutHttp );
-		expect( actual ).to.be.true;
+		expect( actual ).toBe( true );
 	} );
 
 	test( 'should return true for just external relative // path', () => {
 		const urlWithoutHttp = '//manage';
 		const actual = isExternal( urlWithoutHttp );
-		expect( actual ).to.be.true;
+		expect( actual ).toBe( true );
 	} );
 
 	describe( 'with global.window (test against window.location.hostname)', () => {
@@ -110,7 +105,7 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.false;
+			expect( actual ).toBe( false );
 		} );
 
 		test( 'should return true for for external protocol-relative url', () => {
@@ -118,7 +113,7 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.true;
+			expect( actual ).toBe( true );
 		} );
 
 		test( 'should return false for internal url', () => {
@@ -126,7 +121,7 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.false;
+			expect( actual ).toBe( false );
 		} );
 
 		test( 'should return true for external url', () => {
@@ -134,31 +129,31 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.true;
+			expect( actual ).toBe( true );
 		} );
 
 		test( 'should return false for internal path without http', () => {
 			const urlWithoutHttp = 'example.com//me';
 			const actual = isExternal( urlWithoutHttp );
-			expect( actual ).to.be.false;
+			expect( actual ).toBe( false );
 		} );
 
 		test( 'should return true for internal but legacy path with http', () => {
 			const urlWithoutHttp = 'http://example.com/manage';
 			const actual = isExternal( urlWithoutHttp );
-			expect( actual ).to.be.true;
+			expect( actual ).toBe( true );
 		} );
 
 		test( 'should return true for internal but legacy path without http', () => {
 			const urlWithoutHttp = 'example.com/manage';
 			const actual = isExternal( urlWithoutHttp );
-			expect( actual ).to.be.true;
+			expect( actual ).toBe( true );
 		} );
 
 		test( 'should return true for subdomains', () => {
 			const source = '//ns1.example.com';
 			const actual = isExternal( source );
-			expect( actual ).to.be.true;
+			expect( actual ).toBe( true );
 		} );
 	} );
 
@@ -168,7 +163,7 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.false;
+			expect( actual ).toBe( false );
 		} );
 
 		test( 'should return true for external protocol-relative url', () => {
@@ -176,7 +171,7 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.true;
+			expect( actual ).toBe( true );
 		} );
 
 		test( 'should return false for internal url', () => {
@@ -184,7 +179,7 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.false;
+			expect( actual ).toBe( false );
 		} );
 
 		test( 'should return true for external url', () => {
@@ -192,7 +187,7 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
-			expect( actual ).to.be.true;
+			expect( actual ).toBe( true );
 		} );
 	} );
 } );
@@ -204,7 +199,7 @@ describe( 'addSchemeIfMissing()', () => {
 
 		const actual = addSchemeIfMissing( source, 'https' );
 
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should skip if scheme exists', () => {
@@ -213,7 +208,7 @@ describe( 'addSchemeIfMissing()', () => {
 
 		const actual = addSchemeIfMissing( source, 'https' );
 
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 } );
 
@@ -224,7 +219,7 @@ describe( 'setUrlScheme()', () => {
 
 		const actual = setUrlScheme( source, 'http' );
 
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should add scheme if missing', () => {
@@ -233,7 +228,7 @@ describe( 'setUrlScheme()', () => {
 
 		const actual = setUrlScheme( source, 'http' );
 
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should replace scheme if different', () => {
@@ -242,95 +237,95 @@ describe( 'setUrlScheme()', () => {
 
 		const actual = setUrlScheme( source, 'http' );
 
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 } );
 
 describe( 'urlToSlug()', () => {
 	test( 'should return null if URL is not provided', () => {
-		expect( urlToSlug() ).to.be.null;
+		expect( urlToSlug() ).toBeNull();
 	} );
 
 	test( 'should return null if URL is empty string', () => {
 		const urlEmptyString = '';
 
-		expect( urlToSlug( urlEmptyString ) ).to.be.null;
+		expect( urlToSlug( urlEmptyString ) ).toBeNull();
 	} );
 
 	test( 'should return URL without initial http', () => {
 		const urlWithHttp = 'http://example.com';
 		const urlWithoutHttp = urlToSlug( urlWithHttp );
 
-		expect( urlWithoutHttp ).to.equal( 'example.com' );
+		expect( urlWithoutHttp ).toEqual( 'example.com' );
 	} );
 
 	test( 'should return URL without initial https', () => {
 		const urlWithHttps = 'https://example.com';
 		const urlWithoutHttps = urlToSlug( urlWithHttps );
 
-		expect( urlWithoutHttps ).to.equal( 'example.com' );
+		expect( urlWithoutHttps ).toEqual( 'example.com' );
 	} );
 
 	test( 'should return URL without initial http and query string if has any', () => {
 		const urlWithHttpAndQueryString = 'http://example.com?foo=bar#anchor';
 		const urlWithoutHttpAndQueryString = urlToSlug( urlWithHttpAndQueryString );
 
-		expect( urlWithoutHttpAndQueryString ).to.equal( 'example.com?foo=bar#anchor' );
+		expect( urlWithoutHttpAndQueryString ).toEqual( 'example.com?foo=bar#anchor' );
 	} );
 
 	test( "should return provided URL if it doesn't include http(s)", () => {
 		const urlWithoutHttp = 'example.com';
 
-		expect( urlToSlug( urlWithoutHttp ) ).to.equal( urlWithoutHttp );
+		expect( urlToSlug( urlWithoutHttp ) ).toEqual( urlWithoutHttp );
 	} );
 
 	test( 'should return a slug with forward slashes converted to double colons', () => {
 		const urlWithHttp = 'http://example.com/example/test123';
 		const urlWithoutHttp = urlToSlug( urlWithHttp );
 
-		expect( urlWithoutHttp ).to.equal( 'example.com::example::test123' );
+		expect( urlWithoutHttp ).toEqual( 'example.com::example::test123' );
 	} );
 } );
 
 describe( 'resemblesUrl()', () => {
 	test( 'should detect a URL', () => {
 		const source = 'http://example.com/path';
-		expect( resemblesUrl( source ) ).to.equal( true );
+		expect( resemblesUrl( source ) ).toEqual( true );
 	} );
 
 	test( 'should detect a URL without protocol', () => {
 		const source = 'example.com';
-		expect( resemblesUrl( source ) ).to.equal( true );
+		expect( resemblesUrl( source ) ).toEqual( true );
 	} );
 
 	test( 'should detect a URL with a query string', () => {
 		const source = 'http://example.com/path?query=banana&query2=pineapple';
-		expect( resemblesUrl( source ) ).to.equal( true );
+		expect( resemblesUrl( source ) ).toEqual( true );
 	} );
 
 	test( 'should detect a URL with a short suffix', () => {
 		const source = 'http://example.cc';
-		expect( resemblesUrl( source ) ).to.equal( true );
+		expect( resemblesUrl( source ) ).toEqual( true );
 	} );
 
 	test( 'should return false with adjacent dots', () => {
 		const source = '..com';
-		expect( resemblesUrl( source ) ).to.equal( false );
+		expect( resemblesUrl( source ) ).toEqual( false );
 	} );
 
 	test( 'should return false with spaced dots', () => {
 		const source = '. . .com';
-		expect( resemblesUrl( source ) ).to.equal( false );
+		expect( resemblesUrl( source ) ).toEqual( false );
 	} );
 
 	test( 'should return false with a single dot', () => {
 		const source = '.';
-		expect( resemblesUrl( source ) ).to.equal( false );
+		expect( resemblesUrl( source ) ).toEqual( false );
 	} );
 
 	test( 'should return false if the string is not a URL', () => {
 		const source = 'exampledotcom';
-		expect( resemblesUrl( source ) ).to.equal( false );
+		expect( resemblesUrl( source ) ).toEqual( false );
 	} );
 } );
 
@@ -339,7 +334,7 @@ describe( 'omitUrlParams()', () => {
 		test( 'should return null if the string is not a URL', () => {
 			const actual = omitUrlParams();
 			const expected = null;
-			expect( actual ).to.equal( expected );
+			expect( actual ).toEqual( expected );
 		} );
 	} );
 
@@ -349,7 +344,7 @@ describe( 'omitUrlParams()', () => {
 				const url = 'http://example.com/path?query=banana&query2=pineapple&query3=avocado';
 				const actual = omitUrlParams( url );
 				const expected = 'http://example.com/path?query=banana&query2=pineapple&query3=avocado';
-				expect( actual ).to.equal( expected );
+				expect( actual ).toEqual( expected );
 			} );
 		} );
 
@@ -359,7 +354,7 @@ describe( 'omitUrlParams()', () => {
 				const param = 'query2';
 				const actual = omitUrlParams( url, param );
 				const expected = 'http://example.com/path?query=banana&query3=avocado';
-				expect( actual ).to.equal( expected );
+				expect( actual ).toEqual( expected );
 			} );
 		} );
 
@@ -369,7 +364,7 @@ describe( 'omitUrlParams()', () => {
 				const params = [ 'query', 'query2' ];
 				const actual = omitUrlParams( url, params );
 				const expected = 'http://example.com/path?query3=avocado';
-				expect( actual ).to.equal( expected );
+				expect( actual ).toEqual( expected );
 			} );
 		} );
 	} );
@@ -380,14 +375,14 @@ describe( 'decodeURIIfValid', () => {
 		const encodedURI = null;
 		const actual = decodeURIIfValid( encodedURI );
 		const expected = '';
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should return decoded URL when a valid URL with Unicode chars is provided', () => {
 		const encodedURI = 'http://example.com/?x=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF';
 		const actual = decodeURIIfValid( encodedURI );
 		const expected = 'http://example.com/?x=こんにちは';
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should return decoded URL when a valid URL with Unicode chars is provided as object', () => {
@@ -396,14 +391,14 @@ describe( 'decodeURIIfValid', () => {
 		};
 		const actual = decodeURIIfValid( encodedURI );
 		const expected = 'http://example.com/?x=こんにちは';
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should return the unmodified URL when an incorrectly-coded URL is provided', () => {
 		const encodedURI = 'http://example.com/?x=%E3%%0000000';
 		const actual = decodeURIIfValid( encodedURI );
 		const expected = encodedURI;
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 } );
 
@@ -412,14 +407,14 @@ describe( 'decodeURIComponentIfValid', () => {
 		const encodedURIComponent = null;
 		const actual = decodeURIComponentIfValid( encodedURIComponent );
 		const expected = '';
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should return decoded component when a valid component with Unicode chars is provided', () => {
 		const encodedURIComponent = '%3Fx%3D%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF';
 		const actual = decodeURIComponentIfValid( encodedURIComponent );
 		const expected = '?x=こんにちは';
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should return decoded component when a valid component with Unicode chars is provided as object', () => {
@@ -428,13 +423,13 @@ describe( 'decodeURIComponentIfValid', () => {
 		};
 		const actual = decodeURIComponentIfValid( encodedURIComponent );
 		const expected = '?x=こんにちは';
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 
 	test( 'should return the unmodified component when an incorrectly-coded component is provided', () => {
 		const encodedURIComponent = '%3Fx%3D%E3%%0000000';
 		const actual = decodeURIComponentIfValid( encodedURIComponent );
 		const expected = encodedURIComponent;
-		expect( actual ).to.equal( expected );
+		expect( actual ).toEqual( expected );
 	} );
 } );
