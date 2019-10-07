@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,6 +10,7 @@ import { localize, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ImagePreloader from 'components/image-preloader';
 import SignupSitePreviewIframe from 'components/signup-site-preview/iframe';
 import Spinner from 'components/spinner';
 
@@ -80,17 +78,16 @@ export class SignupSitePreview extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			isLoaded: !! props.screenshot,
+			isLoaded: false,
 			wrapperHeight: 800,
 		};
 	}
 
 	componentDidUpdate( prevProps ) {
 		if (
-			! this.props.screenshot &&
-			( this.props.cssUrl !== prevProps.cssUrl ||
-				this.props.fontUrl !== prevProps.fontUrl ||
-				this.props.langSlug !== prevProps.langSlug )
+			this.props.cssUrl !== prevProps.cssUrl ||
+			this.props.fontUrl !== prevProps.fontUrl ||
+			this.props.langSlug !== prevProps.langSlug
 		) {
 			this.setIsLoaded( false );
 		}
@@ -109,11 +106,13 @@ export class SignupSitePreview extends Component {
 			height: screenshot ? 'auto' : this.state.wrapperHeight,
 		};
 
+		const spinner = <Spinner size={ isPhone ? 20 : 40 } />;
+
 		return (
 			<div className={ className } style={ this.props.resize ? wrapperHeightStyle : null }>
 				<div className="signup-site-preview__iframe-wrapper">
 					{ isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
-					{ ! this.state.isLoaded && ! screenshot && <Spinner size={ isPhone ? 20 : 40 } /> }
+					{ ! this.state.isLoaded && ! screenshot && spinner }
 					{ ! screenshot && (
 						<SignupSitePreviewIframe
 							{ ...this.props }
@@ -123,7 +122,7 @@ export class SignupSitePreview extends Component {
 					) }
 					{ screenshot && (
 						<div style={ isPhone ? { height: '100%', overflowY: 'scroll' } : {} }>
-							<img src={ screenshot } alt="Site preview" />
+							<ImagePreloader src={ screenshot } placeholder={ spinner } alt="Site preview" />
 						</div>
 					) }
 				</div>
