@@ -254,7 +254,7 @@ export class CreditCardFormFields extends React.Component {
 		eventFormName: 'Credit card input',
 		onFieldChange: noop,
 		getErrorMessage: noop,
-		autoFocus: true,
+		autoFocus: false,
 		isNewTransaction: false,
 	};
 
