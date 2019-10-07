@@ -35,6 +35,8 @@ class SocialLogin extends Component {
 	static propTypes = {
 		errorUpdatingSocialConnection: PropTypes.object,
 		path: PropTypes.string,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -59,7 +61,13 @@ class SocialLogin extends Component {
 				<SocialLoginService service="google" icon={ <GoogleIcon /> } />
 
 				{ config.isEnabled( 'sign-in-with-apple' ) && (
-					<SocialLoginService service="apple" icon={ <AppleIcon /> } />
+					<SocialLoginService
+						service="apple"
+						icon={ <AppleIcon /> }
+						socialServiceResponse={
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
+					/>
 				) }
 			</div>
 		);

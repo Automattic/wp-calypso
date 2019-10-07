@@ -106,6 +106,7 @@
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": false,
 		"sign-in-with-apple": true,
+		"sign-in-with-apple/redirect": true,
 		"signup/atomic-store-flow": true,
 		"signup/ecommerce-flow": false,
 		"signup/onboarding-flow": true,
