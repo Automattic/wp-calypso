@@ -222,6 +222,15 @@ function getAcceptedLanguagesFromHeader( header ) {
 		.filter( lang => lang );
 }
 
+function getFaviconUrl() {
+	if ( isJetpackDashboard() ) {
+		// TODO: Use an actual favicon
+		return 'https://jetpackme.files.wordpress.com/2018/04/cropped-jetpack-favicon-2018.png?w=240';
+	}
+
+	return config( 'favicon_url' );
+}
+
 /*
  * Look at the request headers and determine if the request is logged in or logged out or if
  * it's a support session. Set `req.context.isLoggedIn` and `req.context.isSupportSession` flags
@@ -298,7 +307,7 @@ function getDefaultContext( request ) {
 		lang,
 		entrypoint: getFilesForEntrypoint( target, 'entry-main' ),
 		manifest: getAssets( target ).manifests.manifest,
-		faviconURL: config( 'favicon_url' ),
+		faviconURL: getFaviconUrl(),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
@@ -566,7 +575,7 @@ function setUpRoute( req, res, next ) {
 
 function render404( req, res ) {
 	const ctx = {
-		faviconURL: config( 'favicon_url' ),
+		faviconURL: getFaviconUrl(),
 		isRTL: config( 'rtl' ),
 		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
 	};
@@ -584,7 +593,7 @@ function renderServerError( err, req, res, next ) {
 	}
 
 	const ctx = {
-		faviconURL: config( 'favicon_url' ),
+		faviconURL: getFaviconUrl(),
 		isRTL: config( 'rtl' ),
 		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), 'entry-main' ),
 	};
