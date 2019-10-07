@@ -19,8 +19,10 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 } from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
+import JetpackLogo from 'components/jetpack-logo';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
+import { isJetpackDashboard } from 'lib/jetpack-dashboard';
 
 class Document extends React.Component {
 	render() {
@@ -132,9 +134,13 @@ class Document extends React.Component {
 									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
-								<div className="masterbar" />
+								{ ! isJetpackDashboard() && <div className="masterbar" /> }
 								<div className="layout__content">
-									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									{ isJetpackDashboard() ? (
+										<JetpackLogo size={ 48 } className="jetpack-logo__loading" full />
+									) : (
+										<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									) }
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />
