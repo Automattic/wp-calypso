@@ -329,8 +329,14 @@ jobs:
     working_directory: ~/wp-calypso/apps/full-site-editing
     steps:
       - prepare
-      - run: npm install
-      - run: npm run test:unit
+      - run:
+          name: Install Full Site Editing specific test deps
+          command: |
+            npm install
+       - run:
+          name: Run Full Site Editing client tests
+          command: |
+            npm run test:unit
   test-client:
     <<: *defaults
     parallelism: 6
