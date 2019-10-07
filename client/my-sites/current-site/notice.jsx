@@ -103,7 +103,16 @@ export class SiteNotice extends React.Component {
 	}
 
 	domainUpsellNudge() {
-		if ( ! this.props.isPlanOwnerAndHasDomains ) {
+		if ( ! this.props.isPlanOwner ) {
+			return null;
+		}
+
+		const nonWPCOMDomains = reject(
+			this.props.domains,
+			domain => domain.wpcom_domain || domain.domain.endsWith( '.wpcomstaging.com' )
+		);
+
+		if ( nonWPCOMDomains.length < 1 || nonWPCOMDomains.length > 2 ) {
 			return null;
 		}
 
@@ -300,9 +309,8 @@ export default connect(
 			pausedJetpackPluginsSetup:
 				isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId ),
 			productsList: getProductsList( state ),
-			isPlanOwnerAndHasDomains:
-				isCurrentUserCurrentPlanOwner( state, siteId ) &&
-				reject( getDomainsBySiteId( state, siteId ), [ 'type', 'wpcom' ] ).length,
+			domains: getDomainsBySiteId( state, siteId ),
+			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 		};
 	},
