@@ -81,9 +81,7 @@ class SocialSignupForm extends Component {
 
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
-		const host = typeof window !== 'undefined' && window.location.host;
-		const redirectUri = `https://${ host }/start/user`;
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
+		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
 
 		return (
 			<div className="signup-form__social">
@@ -95,23 +93,14 @@ class SocialSignupForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
 						redirectUri={ redirectUri }
+						uxMode={ uxMode }
 						onClick={ () => this.trackSocialLogin( 'google' ) }
-						socialServiceResponse={
-							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-						}
 					/>
 
 					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
 						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ redirectUri }
 						onClick={ () => this.trackSocialLogin( 'apple' ) }
-						socialServiceResponse={
-							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-						}
 					/>
 
 					<p className="signup-form__social-buttons-tos">

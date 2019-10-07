@@ -10,8 +10,7 @@ const express = require( 'express' );
  */
 const version = require( '../../package.json' ).version,
 	config = require( 'config' ),
-	oauth = require( './oauth' ),
-	signInWithApple = require( './sign-in-with-apple' );
+	oauth = require( './oauth' );
 
 module.exports = function() {
 	const app = express();
@@ -24,10 +23,6 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'oauth' ) ) {
 		oauth( app );
-	}
-
-	if ( config.isEnabled( 'sign-in-with-apple/redirect' ) ) {
-		signInWithApple( app );
 	}
 
 	return app;

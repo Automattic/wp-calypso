@@ -32,7 +32,6 @@ class GoogleLoginButton extends Component {
 		isFormDisabled: PropTypes.bool,
 		onClick: PropTypes.func,
 		recordTracksEvent: PropTypes.func.isRequired,
-		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
 		translate: PropTypes.func.isRequired,
