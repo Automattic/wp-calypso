@@ -143,10 +143,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	checkoutCollectPhoneNumber: {
-		datestamp: '20191003',
+		datestamp: '20191007',
 		variations: {
-			show: 0,
-			hide: 100,
+			show: 50,
+			hide: 50,
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
