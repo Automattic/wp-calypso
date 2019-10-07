@@ -59,7 +59,7 @@ Some payment methods may require a redirect to an external site. If that occurs,
 The following example demonstrates a full checkout page using many of the options available.
 
 ```js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { WPCheckout, useCheckoutLineItems, OrderReviewLineItems, OrderReviewSection, OrderReviewTotals, OrderReviewLineItemDelete, renderDisplayValueMarkdown } from 'wp-checkout';
 import { PlanLengthSelector, splitCheckoutLineItemsByType, getDisplayValueForCurrency, adjustItemPricesForCountry } from 'wp-checkout/wpcom';
 
