@@ -23,6 +23,11 @@ $autobar-height: 20px;
 		background: var( --studio-orange );
 		border-bottom: 1px solid var( --studio-orange-60 );
 	}
+
+	.is-section-jetpack-dashboard & {
+		background: var( --studio-gray-10 );
+		border-bottom-color: var( --studio-gray-20 );
+	}
 }
 
 .pride .masterbar {
@@ -145,6 +150,10 @@ $autobar-height: 20px;
 		width: 150px;
 		height: 25px;
 		margin: 0 5px;
+	}
+
+	.masterbar__jetpack-logo {
+		margin: 17px 0 0 65px;
 	}
 
 	@include breakpoint( '<480px' ) {
