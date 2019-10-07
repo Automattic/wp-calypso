@@ -137,6 +137,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
 	const siteVerticalId = getSiteVerticalId( state );
+	const siteVerticalName = getSiteVerticalName( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
@@ -154,6 +155,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
+			site_vertical_name: siteVerticalName || undefined,
 			site_information: {
 				title: siteTitle,
 			},
