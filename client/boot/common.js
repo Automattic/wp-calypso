@@ -34,6 +34,7 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
+import { isJetpackDashboard } from 'lib/jetpack-dashboard';
 import superProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
@@ -436,11 +437,4 @@ function renderLayout( reduxStore ) {
 	ReactDom.render( layoutElement, document.getElementById( 'wpcom' ) );
 
 	debug( 'Main layout rendered.' );
-}
-
-function isJetpackDashboard() {
-	return !! (
-		process.env.JETPACK_DASHBOARD ||
-		( typeof window !== 'undefined' && 'dashboard.jetpack.com' === window.location.host )
-	);
 }
