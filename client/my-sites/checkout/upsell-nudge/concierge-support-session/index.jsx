@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -181,15 +181,6 @@ export class ConciergeSupportSession extends PureComponent {
 							{ translate(
 								'Click the button below to confirm your purchase (sessions are currently limited to English language support).'
 							) }
-						</p>
-						<p>
-							<em>
-								{ translate(
-									'You have 30 days from the date of purchase to cancel an unused Quick Start session and ' +
-										'receive a refund. Please note, if you miss a scheduled session twice, ' +
-										'the purchase will be cancelled without a refund.'
-								) }
-							</em>
 						</p>
 					</div>
 					<div className="concierge-support-session__column-doodle">
