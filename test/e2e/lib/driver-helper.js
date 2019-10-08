@@ -207,7 +207,8 @@ export function clickIfPresent( driver, selector, attempts ) {
 	}
 	for ( let x = 0; x < attempts; x++ ) {
 		driver.findElement( selector ).then(
-			function( element ) {
+			async function( element ) {
+				await highlightElement( driver, element );
 				element.click().then(
 					function() {
 						return true;
