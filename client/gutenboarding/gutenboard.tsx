@@ -19,6 +19,9 @@ import '@wordpress/format-library';
  * Internal dependencies
  */
 import './style.scss';
+import Sidebar from './components/sidebar';
+import SettingsSidebar from './components/settings-sidebar';
+import SettingsButton from './components/settings-button';
 
 /* eslint-disable no-restricted-syntax */
 import '@wordpress/components/build-style/style.css';
@@ -31,6 +34,11 @@ import '@wordpress/format-library/build-style/style.css';
 
 export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
+	const [ isSettingsSidebarActive, updateIsSettingsSidebarActive ] = useState( true );
+
+	function handleToggleSettingsSidebar() {
+		updateIsSettingsSidebarActive( ! isSettingsSidebarActive );
+	}
 
 	return (
 		<>
@@ -47,6 +55,15 @@ export function Gutenboard() {
 						>
 							<div className="editor-styles-wrapper">
 								<BlockEditorKeyboardShortcuts />
+
+								<SettingsButton
+									onClick={ handleToggleSettingsSidebar }
+									isToggled={ isSettingsSidebarActive }
+								/>
+
+								<SettingsSidebar isActive={ isSettingsSidebarActive } />
+								<Sidebar.Slot />
+
 								<WritingFlow>
 									<ObserveTyping>
 										<BlockList />
