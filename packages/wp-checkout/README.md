@@ -16,6 +16,7 @@ The form has three steps:
 
 The payment methods displayed in the first step are chosen from an optional array called `availablePaymentMethods`, which in turn is selected from the following options:
 
+- 'web-payment'
 - 'apple-pay'
 - 'card'
 - 'paypal'
@@ -23,6 +24,8 @@ The payment methods displayed in the first step are chosen from an optional arra
 - 'ideal'
 
 The actual payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods in the `availablePaymentMethods` array.
+
+Any previously stored payment methods (eg: saved credit cards) will be fetched automatically and displayed in the relevant payment method section of this step.
 
 The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
 
@@ -34,13 +37,13 @@ The billing address may be automatically filled based on the server. If the bill
 
 The third step's order review content can be overridden using the `orderReview` and `orderReviewCollapsed` props, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
-The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel` and `id` must be unique. The `type` property is not used internally but can be used to organize the line items in the `orderReview` component. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then return it to `WPCheckout`.
+The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items in the `orderReview` component. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then return it to `WPCheckout`.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is an object (very similar to the line items) of the form `{ label: string, subLabel: string, amount: { currency: string, value: int, displayValue: string } }`.
 
 The `displayValue` property of both items and the total can use limited Markdown formatting, including the `~` character for strike-through text, if passed through the `formatDisplayValueForCurrency()` helper.
 
-There are two other optional props which allow customizing the contents of the form. `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
+There are several other optional props which allow customizing the contents of the form. `checkoutHeader` is the header of the form, `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
 Any component within `WPCheckout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), the second element is the current total (matching the `total` prop).
 
@@ -202,6 +205,7 @@ function OrderReview({ onDeleteItem, onChangePlanLength }) {
 	const planItems = items.filter(item => item.type === 'plan');
 	const domainItems = items.filter(item => item.type === 'domain');
 	const taxItems = items.filter(item => item.type === 'tax');
+	const miscItems = items.filter(item => ! ['plan', 'domain', 'tax'].includes(item.type));
 
 	return (
 		<React.Fragment>
@@ -214,9 +218,16 @@ function OrderReview({ onDeleteItem, onChangePlanLength }) {
 						onChangePlanLength={onChangePlanLength}
 					/>
 				))}
+				<OrderReviewLineItems items={miscItems} />
 			</OrderReviewSection>
 			<OrderReviewSection>
-				<OrderReviewLineItems items={domainItems} />
+				{domainItems.map(item => (
+					<DomainItem
+						key={item.id}
+						item={item}
+						onDeleteItem={onDeleteItem}
+					/>
+				))}
 			</OrderReviewSection>
 			<OrderReviewSection>
 				<OrderReviewLineItems items={taxItems} />
@@ -230,10 +241,12 @@ function OrderReviewCollapsed() {
 	const [items, total] = useCheckoutLineItems();
 	const planItems = items.filter(item => item.type === 'plan');
 	const domainItems = items.filter(item => item.type === 'domain');
+	const miscItems = items.filter(item => ! ['plan', 'domain', 'tax'].includes(item.type));
 
 	return (
 		<React.Fragment>
 			<OrderReviewLineItems collapsed items={planItems} />
+			<OrderReviewLineItems collapsed items={miscItems} />
 			<OrderReviewLineItems collapsed items={domainItems} />
 			<OrderReviewTotal collapsed total={total} />
 		</React.Fragment>
@@ -246,13 +259,28 @@ function PlanItem({ plan, onDeleteItem, onChangePlanLength }) {
 		<React.Fragment>
 			<div>
 				<span>
-					{plan.label}
-					{plan.subLabel && <p><span>{plan.subLabel}</span></p>}
+					<div>{plan.label}</div>
+					{plan.subLabel && <div>{plan.subLabel}</div>}
 				</span>
 				<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
 				<OrderReviewLineItemDelete onClick={onDeleteItem} />
 			</div>
 			<PlanLengthSelector onChange={changePlanLength} />
+		</React.Fragment>
+	);
+}
+
+function DomainItem({ item, onDeleteItem }) {
+	return (
+		<React.Fragment>
+			<div>
+				<span>
+					<div>{item.label}</div>
+					{item.subLabel && <div>{item.subLabel}</div>}
+				</span>
+				<span>{renderDisplayValueMarkdown(item.amount.displayValue)}</span>
+				<OrderReviewLineItemDelete onClick={onDeleteItem} />
+			</div>
 		</React.Fragment>
 	);
 }
@@ -283,6 +311,8 @@ A wrapper for a section of a list of related line items. Renders its `children` 
 Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+This component provides just a simple list of label and price. If you want to modify how each line item is displayed, or if you want to provide any actions for that item (eg: the ability to delete the item from the order), you cannot use this component; instead you should create a custom component.
 
 ### OrderReviewTotal
 
