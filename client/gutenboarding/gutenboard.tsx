@@ -20,6 +20,9 @@ import '@wordpress/format-library';
  */
 import { Header } from 'gutenboarding/components/header';
 import './style.scss';
+import Sidebar from './components/sidebar';
+import SettingsSidebar from './components/settings-sidebar';
+import SettingsButton from './components/settings-button';
 
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/block-editor/build-style/style.css';
@@ -30,6 +33,11 @@ import '@wordpress/format-library/build-style/style.css';
 
 export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
+	const [ isSettingsSidebarActive, updateIsSettingsSidebarActive ] = useState( true );
+
+	function handleToggleSettingsSidebar() {
+		updateIsSettingsSidebarActive( ! isSettingsSidebarActive );
+	}
 
 	return (
 		<div className="gutenboarding">
@@ -39,6 +47,13 @@ export function Gutenboard() {
 					<BlockEditorProvider value={ blocks } onInput={ updateBlocks } onChange={ updateBlocks }>
 						<div className="gutenboarding__block-editor">
 							<BlockEditorKeyboardShortcuts />
+							<SettingsButton
+								onClick={ handleToggleSettingsSidebar }
+								isToggled={ isSettingsSidebarActive }
+							/>
+
+							<SettingsSidebar isActive={ isSettingsSidebarActive } />
+							<Sidebar.Slot />
 							<WritingFlow>
 								<ObserveTyping>
 									<BlockList />
