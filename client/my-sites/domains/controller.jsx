@@ -118,6 +118,7 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					useStandardBack={ context.query.useStandardBack }
 				/>
 			</CartData>
 		</Main>

@@ -165,7 +165,7 @@ const MappedDomain = createReactClass( {
 			return null;
 		}
 
-		const path = domainTransferIn( this.props.selectedSite.slug, domain.name );
+		const path = domainTransferIn( this.props.selectedSite.slug, domain.name, true );
 
 		return (
 			<VerticalNavItem path={ path }>
