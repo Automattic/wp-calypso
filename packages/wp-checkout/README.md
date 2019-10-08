@@ -104,6 +104,7 @@ const onFailure = error => console.error('There was a problem with your payment'
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
+// This is the parent component which would be included on a host page
 export default function MyCheckout() {
 	const {
 		itemsWithTax,
@@ -150,6 +151,7 @@ export default function MyCheckout() {
 	);
 }
 
+// This is a simple shopping cart manager which allows CRUD operations
 function useShoppingCart() {
 	const [items, setItems] = useState(initialItems);
 
