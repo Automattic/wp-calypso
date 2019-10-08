@@ -10,7 +10,7 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import getSitesItems from 'state/selectors/get-sites-items';
 import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
 
-const UPWORK_LOCALES = [
+export const UPWORK_LOCALES = [
 	'de',
 	'de-at',
 	'de-li',
@@ -25,12 +25,16 @@ const UPWORK_LOCALES = [
 	'fr-ch',
 	'it',
 	'it-ch',
+	'ja',
 	'nl',
 	'nl-be',
 	'nl-nl',
 	'pt',
 	'pt-pt',
 	'pt-br',
+	'sv',
+	'sv-fi',
+	'sv-se',
 ];
 
 /**
