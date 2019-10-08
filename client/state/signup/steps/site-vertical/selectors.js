@@ -47,8 +47,23 @@ export function getSiteVerticalPreview( state ) {
 	return get( getSiteVerticalData( state ), 'preview', '' );
 }
 
-export function getSiteVerticalPreviewScreenshots( state ) {
-	return get( getSiteVerticalData( state ), 'previewScreenshots' );
+export function getSiteVerticalPreviewScreenshot( state, viewportDevice ) {
+	const screenshotPropName = getScreenshotPropName( viewportDevice );
+	return get( getSiteVerticalData( state ), [ 'previewScreenshots', screenshotPropName ] );
+}
+
+function getScreenshotPropName( viewportDevice ) {
+	if ( window.devicePixelRatio === 1 ) {
+		if ( viewportDevice === 'phone' ) {
+			return 'mobileLowDpi';
+		}
+		return 'desktopLowDpi';
+	}
+
+	if ( viewportDevice === 'phone' ) {
+		return 'mobileHighDpi';
+	}
+	return 'desktopHighDpi';
 }
 
 export function getSiteVerticalPreviewStyles( state ) {

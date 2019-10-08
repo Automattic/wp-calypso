@@ -19,7 +19,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalName,
 	getSiteVerticalPreview,
-	getSiteVerticalPreviewScreenshots,
+	getSiteVerticalPreviewScreenshot,
 	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
@@ -66,7 +66,7 @@ class SiteMockups extends Component {
 		title: PropTypes.string,
 		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
-		verticalPreviewScreenshots: PropTypes.object,
+		verticalPreviewScreenshot: PropTypes.string,
 		verticalPreviewStyles: PropTypes.string,
 	};
 
@@ -85,7 +85,7 @@ class SiteMockups extends Component {
 		// prevents the flashing effect.
 		if (
 			nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ||
-			nextProps.verticalPreviewScreenshots !== this.props.verticalPreviewScreenshots
+			nextProps.verticalPreviewScreenshot !== this.props.verticalPreviewScreenshot
 		) {
 			this.updateDebounced();
 			return false;
@@ -96,7 +96,7 @@ class SiteMockups extends Component {
 
 	updateDebounced = debounce( () => {
 		this.forceUpdate();
-		if ( this.props.verticalPreviewContent || this.props.verticalPreviewScreenshots ) {
+		if ( this.props.verticalPreviewContent || this.props.verticalPreviewScreenshot ) {
 			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
 				site_type: this.props.siteType,
 				vertical_slug: this.props.verticalSlug,
@@ -155,12 +155,12 @@ class SiteMockups extends Component {
 			title,
 			themeSlug,
 			verticalPreviewContent,
-			verticalPreviewScreenshots,
+			verticalPreviewScreenshot,
 			verticalPreviewStyles,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
-			'is-empty': isEmpty( verticalPreviewContent ) && ! verticalPreviewScreenshots,
+			'is-empty': isEmpty( verticalPreviewContent ) && ! verticalPreviewScreenshot,
 		} );
 		const langSlug = getLocaleSlug();
 		const language = getLanguage( langSlug );
@@ -189,14 +189,9 @@ class SiteMockups extends Component {
 						defaultViewportDevice="desktop"
 						resize={ true }
 						scrolling={ false }
-						screenshot={ verticalPreviewScreenshots && verticalPreviewScreenshots.desktopHighDpi }
 						{ ...otherProps }
 					/>
-					<SignupSitePreview
-						defaultViewportDevice="phone"
-						screenshot={ verticalPreviewScreenshots && verticalPreviewScreenshots.mobileHighDpi }
-						{ ...otherProps }
-					/>
+					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps } />
 				</div>
 				{ shouldShowHelpTip && <SiteMockupHelpTipBottom siteType={ siteType } /> }
 				{ shouldFetchVerticalData && (
@@ -214,14 +209,14 @@ export default connect(
 		const themeSlug = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
 		const verticalPreviewContent = getSiteVerticalPreview( state );
-		const verticalPreviewScreenshots = getSiteVerticalPreviewScreenshots( state );
 		const shouldFetchVerticalData = ! verticalPreviewContent;
 		return {
 			title: getSiteTitle( state ) || titleFallback,
 			siteStyle,
 			siteType,
 			verticalPreviewContent,
-			verticalPreviewScreenshots,
+			// Used to determine whether content has changed, choose any screenshot
+			verticalPreviewScreenshot: getSiteVerticalPreviewScreenshot( state, 'desktop' ),
 			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
 			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
