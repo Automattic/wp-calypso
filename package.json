@@ -76,7 +76,6 @@
 		"@wordpress/plugins": "2.4.0",
 		"@wordpress/redux-routine": "3.4.0",
 		"@wordpress/rich-text": "3.4.0",
-		"@wordpress/scripts": "5.0.1",
 		"@wordpress/server-side-render": "1.0.0",
 		"@wordpress/shortcode": "2.3.0",
 		"@wordpress/url": "2.6.0",
