@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ImagePreloader from 'components/image-preloader';
 import SignupSitePreviewIframe from 'components/signup-site-preview/iframe';
+import SignupSitePreviewScreenshot from 'components/signup-site-preview/screenshot';
 import Spinner from 'components/spinner';
 import { getSiteVerticalPreviewScreenshot } from 'state/signup/steps/site-vertical/selectors';
 
@@ -108,7 +108,6 @@ export class SignupSitePreview extends Component {
 			height: usingScreenshot ? 'auto' : this.state.wrapperHeight,
 		};
 
-		const spinner = <Spinner size={ isPhone ? 20 : 40 } />;
 		const chrome = isPhone ? (
 			<MockupChromeMobile translate={ translate } />
 		) : (
@@ -120,7 +119,7 @@ export class SignupSitePreview extends Component {
 				<div className="signup-site-preview__iframe-wrapper">
 					{ chrome }
 
-					{ ! usingScreenshot && this.state.isLoading && spinner }
+					{ ! usingScreenshot && this.state.isLoading && <Spinner size={ isPhone ? 20 : 40 } /> }
 					{ ! usingScreenshot && (
 						<SignupSitePreviewIframe
 							{ ...this.props }
@@ -130,21 +129,10 @@ export class SignupSitePreview extends Component {
 					) }
 
 					{ usingScreenshot && (
-						<div style={ isPhone ? { height: '100%', overflowY: 'scroll' } : {} }>
-							<ImagePreloader
-								src={ screenshotUrl }
-								placeholder={ spinner }
-								alt={
-									isPhone
-										? translate( 'Preview of site with phone layout', {
-												comment: 'alt text of site preview',
-										  } )
-										: translate( 'Preview of site with desktop layout', {
-												comment: 'alt text of site preview',
-										  } )
-								}
-							/>
-						</div>
+						<SignupSitePreviewScreenshot
+							{ ...this.props }
+							setWrapperHeight={ this.setWrapperHeight }
+						/>
 					) }
 				</div>
 			</div>
