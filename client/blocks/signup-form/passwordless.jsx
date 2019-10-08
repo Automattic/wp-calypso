@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux'; // eslint-disable-line no-unused-vars
-import { localize } from 'i18n-calypso'; // eslint-disable-line no-unused-vars
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -16,11 +17,15 @@ import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import ValidationFieldset from 'signup/validation-fieldset';
 import { createUserAccountFromEmailAddress } from 'lib/signup/step-actions';
-import { recordTracksEvent } from 'state/analytics/actions'; // eslint-disable-line no-unused-vars
+import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
-import { submitSignupStep } from 'state/signup/progress/actions'; // eslint-disable-line no-unused-vars
+import { submitSignupStep } from 'state/signup/progress/actions';
 
-export default class PasswordlessSignupForm extends Component {
+class PasswordlessSignupForm extends Component {
+	static propTypes = {
+		locale: PropTypes.string,
+	};
+
 	static defaultProps = {
 		locale: 'en',
 	};
@@ -179,10 +184,10 @@ export default class PasswordlessSignupForm extends Component {
 		);
 	}
 }
-// export default connect(
-// 	null,
-// 	{
-// 		recordTracksEvent,
-// 		submitCreateAccountStep: submitSignupStep,
-// 	}
-// )( localize( PasswordlessSignupForm ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+		submitCreateAccountStep: submitSignupStep,
+	}
+)( localize( PasswordlessSignupForm ) );
