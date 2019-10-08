@@ -350,16 +350,6 @@ Each component will be styled using [styled-components](https://www.styled-compo
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
-## ⚠️ 👷‍♀️ To do ⚠️
+## Credits and Coupons
 
-### Taxes
-
-Can the component handle calculating taxes automatically? If so, we can also calculate the subtotal automatically and probably remove the need for the `total` prop entirely. That would be a big win for simplifying the API.
-
-### Credits
-
-Where does our component learn about credits? How are partial credits displayed in the review step and is the math for them done automatically?
-
-### Coupons
-
-How does our component manage coupons? Can it perform the math for them automatically?
+Credits, coupons, and discounts are all ways that the line items and the total can be modified, so they must be handled by the parent component.
