@@ -29,6 +29,10 @@ function render_site_description_block( $attributes ) {
 	}
 	$class .= $align;
 
+	if ( isset( $attributes['textAlign'] ) ) {
+		$class .= ' has-text-align-' . $attributes['textAlign'];
+	}
+
 	if ( isset( $attributes['textColor'] ) ) {
 		$class .= ' has-text-color';
 		$class .= ' has-' . $attributes['textColor'] . '-color';
