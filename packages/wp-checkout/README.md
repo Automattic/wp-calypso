@@ -330,6 +330,8 @@ Each of the three steps in the checkout flow will be rendered by one of these. R
 
 If you want to render something even when the step is collapsed (eg: a summary of the step), you can also provide the optional `collapsedContent` prop which is a component.
 
+If a step has the `onEdit` prop, it will include an "Edit" link when collapsed which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the collapsed state in an appropriate way. It should also modify the URL so that the collapsed state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
+
 ### CheckoutNextStepButton
 
 Renders a button to move to the next `CheckoutStep` component. Its `value` prop can be used to customize the text which by default will be "Continue".
