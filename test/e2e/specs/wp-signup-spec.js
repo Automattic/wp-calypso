@@ -509,7 +509,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
-			// await securePaymentComponent.submitPaymentDetails();
+			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 

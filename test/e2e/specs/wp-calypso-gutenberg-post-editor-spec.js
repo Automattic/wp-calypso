@@ -286,7 +286,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const postTitle = await viewPostPage.postTitle();
 				assert.strictEqual(
 					postTitle.toLowerCase(),
-					blogPostTitle.toLowerCase() + 'test',
+					blogPostTitle.toLowerCase(),
 					'The published blog post title is not correct'
 				);
 			} );
