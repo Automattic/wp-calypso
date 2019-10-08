@@ -111,6 +111,7 @@ const nodeModulesToTranspile = [
 	'd3-scale/',
 	'debug/',
 	'@github/webauthn-json/',
+	'filesize/'
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
