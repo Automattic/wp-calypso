@@ -153,7 +153,7 @@ references:
     command: |
       echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
       echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
-#      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
+      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
 
   move-e2e-artifacts: &move-e2e-artifacts
     name: Move report and screenshots
@@ -544,7 +544,6 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
-      - run: export HIGHLIGHT_ELEMENT=true
       - run: npm run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
@@ -572,7 +571,6 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
-      - run: export HIGHLIGHT_ELEMENT=true
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
