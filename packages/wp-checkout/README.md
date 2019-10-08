@@ -308,6 +308,22 @@ function UpSellCoupon({ onClick }) {
 
 While the `WPCheckout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
 
+### CheckoutProvider
+
+Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `WPCheckout` component will do so automatically.
+
+### useBillingContact()
+
+A React Hook that will return an object containing whatever data was entered in the billing contact step. Must only be used inside `CheckoutProvider`.
+
+### usePaymentMethod()
+
+A React Hook that will return a string containing whatever paymentMethod was entered in the payment method step. Must only be used inside `CheckoutProvider`.
+
+### useCheckoutLineItems()
+
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), and the second element is the current total (matching the `total` prop).
+
 ### OrderReviewSection
 
 A wrapper for a section of a list of related line items. Renders its `children` prop.
@@ -329,6 +345,12 @@ An optional boolean prop, `collapsed`, can be used to simplify the output for wh
 ### CheckoutSubmitButton
 
 Renders the "Pay" button. Requires a `total` prop and a `paymentMethod` prop to identify the system it should use for submitting the data. The `value` prop can be used to customize the text which by default will be "Pay " followed by `total.amount.displayValue`.
+
+When clicked, the button will call its `onClick` prop. The parent component must then call the `submitCheckout()` function that is exported by this package which will take a specific action based on its first argument.
+
+### submitCheckout()
+
+Calling this function (which should only be done by the `CheckoutSubmitButton`) will take a specific action based on the payment method.
 
 ### CheckoutStep
 
