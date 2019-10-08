@@ -27,13 +27,19 @@ const enhanceContextWithLogin = context => {
 		query,
 	} = context;
 
+	const previousHash = context.state || {};
+	const { client_id, user_email, user_name, id_token, state } = previousHash;
+	const socialServiceResponse = client_id
+		? { client_id, user_email, user_name, id_token, state }
+		: null;
+
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
-			socialServiceResponse={ context.hash }
+			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
 			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
@@ -51,6 +57,13 @@ export function login( context, next ) {
 	const {
 		query: { client_id, redirect_to },
 	} = context;
+
+	// Remove id_token from the address bar and push social connect args into the state instead
+	if ( context.hash && context.hash.client_id ) {
+		page.replace( context.path, context.hash );
+
+		return;
+	}
 
 	if ( client_id ) {
 		if ( ! redirect_to ) {

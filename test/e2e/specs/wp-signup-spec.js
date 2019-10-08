@@ -647,7 +647,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe.skip( 'Sign up for a site on a personal paid plan coming in via /create as personal flow in GBP currency @parallel', function() {
+	describe( 'Sign up for a site on a personal paid plan coming in via /create as personal flow in GBP currency @parallel', function() {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1250,10 +1250,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'Can see the themes page and select premium theme ', async function() {
-			const themesPage = await ThemesPage.Visit( driver, ThemesPage.getStartURL() );
+			// open Premium page directly. More info https://github.com/Automattic/wp-calypso/pull/36528
+			const themesPage = await ThemesPage.Visit( driver, ThemesPage.getStartURL() + '/premium' );
 			await themesPage.waitUntilThemesLoaded();
 			await themesPage.setABTestControlGroupsInLocalStorage();
-			await themesPage.showOnlyPremiumThemes();
 			chosenThemeName = await themesPage.getFirstThemeName();
 			return await themesPage.selectNewTheme();
 		} );

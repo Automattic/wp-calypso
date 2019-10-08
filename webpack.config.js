@@ -111,6 +111,13 @@ const nodeModulesToTranspile = [
 	'd3-scale/',
 	'debug/',
 	'@github/webauthn-json/',
+	'filesize/',
+	'acorn-jsx/',
+	'prismjs/',
+	'regenerate-unicode-properties/',
+	'regexpu-core/',
+	'unicode-match-property-ecmascript/',
+	'unicode-match-property-value-ecmascript/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules

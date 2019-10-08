@@ -97,7 +97,7 @@ export class ConciergeMain extends Component {
 		}
 
 		if ( nextAppointment && ! rescheduling ) {
-			return <AppointmentInfo appointment={ nextAppointment } />;
+			return <AppointmentInfo appointment={ nextAppointment } site={ site } />;
 		}
 
 		if ( isEmpty( availableTimes ) ) {

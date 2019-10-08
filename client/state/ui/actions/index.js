@@ -3,7 +3,6 @@
  */
 import {
 	SELECTED_SITE_SET,
-	ROUTE_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	NAVIGATE,
@@ -15,8 +14,9 @@ import 'state/data-layer/wpcom/sites/jitm';
 /**
  * Re-exports
  */
-export { setSection } from './section/actions';
-export { showMasterbar, hideMasterbar } from './masterbar-visibility/actions';
+export { default as setRoute } from './set-route';
+export { setSection } from '../section/actions';
+export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 
 /**
  * Returns an action object to be used in signalling that a site has been set
@@ -42,21 +42,6 @@ export function setAllSitesSelected() {
 	return {
 		type: SELECTED_SITE_SET,
 		siteId: null,
-	};
-}
-
-/**
- * Returns an action object signalling that the current route is to be changed
- *
- * @param  {String} path    Route path
- * @param  {Object} [query] Query arguments
- * @return {Object}         Action object
- */
-export function setRoute( path, query = {} ) {
-	return {
-		type: ROUTE_SET,
-		path,
-		query,
 	};
 }
 
