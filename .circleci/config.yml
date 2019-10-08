@@ -152,7 +152,7 @@ references:
     name: Set e2e environment variables
     command: |
       echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
-      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
+      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
 #      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
 
   move-e2e-artifacts: &move-e2e-artifacts
