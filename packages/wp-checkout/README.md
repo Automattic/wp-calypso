@@ -344,6 +344,12 @@ Renders buttons for each payment method that can be used out of the array in the
 
 Renders the billing contact info form (typically name and address, but may also include other contact info like phone number). The fields displayed are determined by the payment method passed in as the `paymentMethod` prop.
 
+## Styles and Themes
+
+Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by wrapping checkout in a `ThemeProvider` from that package.
+
+For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
+
 ## ⚠️ 👷‍♀️ To do ⚠️
 
 ### Taxes
@@ -357,11 +363,3 @@ Where does our component learn about credits? How are partial credits displayed 
 ### Coupons
 
 How does our component manage coupons? Can it perform the math for them automatically?
-
-### Header customization
-
-The "Complete your purchase" header at the top of the component could also be a customizable slot, so that it's possible to include a domain name there if the purchase includes one.
-
-### Styles
-
-How are styles customized?
