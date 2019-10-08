@@ -453,7 +453,7 @@ export function generateSteps( {
 
 		'site-topic': {
 			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
+			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
@@ -477,7 +477,7 @@ export function generateSteps( {
 		// These can be removed once we make the preview the default
 		'site-topic-with-preview': {
 			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic' ],
+			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 			props: {
 				showSiteMockups: true,

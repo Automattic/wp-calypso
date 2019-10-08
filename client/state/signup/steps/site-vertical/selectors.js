@@ -87,6 +87,10 @@ export function getSiteVerticalIsUserInput( state ) {
 	return get( state, 'signup.steps.siteVertical.isUserInput', true );
 }
 
+export function getSiteVerticalSuggestedTheme( state ) {
+	return get( state, 'signup.steps.siteVertical.suggestedTheme' );
+}
+
 // Used to fill `vertical` param to pass to to `/domains/suggestions`
 // client/signup/steps/domains/index.jsx
 export function getVerticalForDomainSuggestions( state ) {
