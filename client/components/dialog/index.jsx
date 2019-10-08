@@ -91,11 +91,11 @@ class Dialog extends Component {
 		this.close( button.action );
 	}
 
-	close( action ) {
+	close = action => {
 		if ( this.props.onClose ) {
 			this.props.onClose( action );
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -121,7 +121,7 @@ class Dialog extends Component {
 			<RootChild>
 				<Modal
 					isOpen={ this.props.isVisible }
-					onRequestClose={ this._close }
+					onRequestClose={ this.close }
 					closeTimeoutMS={ this.props.leaveTimeout }
 					contentLabel={ this.props.label }
 					overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
