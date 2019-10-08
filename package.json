@@ -231,7 +231,7 @@
 		"prebuild-server": "mkdirp build",
 		"build-server": "cross-env-shell BROWSERSLIST_ENV=server NODE_PATH=$NODE_PATH:server:client:. webpack --display errors-only --config webpack.config.node.js",
 		"build-client": "npm run build-client-evergreen",
-		"build-client-fallback": "cross-env-shell BROWSERSLIST_ENV=defaults NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
+		"build-client-fallback": "cross-env-shell BROWSERSLIST_ENV=defaults NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only && npm run validate-fallback-es5",
 		"build-client-evergreen": "cross-env-shell BROWSERSLIST_ENV=evergreen NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
 		"build-client-both": "concurrently -c cyan -n \"fallback ,evergreen\" \"npm run build-client-fallback\" \"npm run build-client-evergreen\"",
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || cross-env-shell NODE_ARGS=--max_old_space_size=8192 npm run build-client-both",
@@ -280,6 +280,7 @@
 		"test-server:watch": "npm run -s test-server -- --watch",
 		"translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '**/*.ts' '**/*.tsx' '!build/**' '!packages/**/dist/**' '!public/**' '!**/test/**' '!node_modules/**' '!**/node_modules/**'",
 		"update-deps": "npx rimraf npm-shrinkwrap.json && npm run -s distclean && npm i && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
+		"validate-fallback-es5": "npx eslint --env=es5 --no-eslintrc --no-ignore ./public/fallback/*.js",
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
 		"whybundled": "whybundled stats.json"
