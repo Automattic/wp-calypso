@@ -34,7 +34,7 @@ import Badge from 'components/badge';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
 
-const NOTICE_GREEN = '#4ab866';
+const NOTICE_GREEN = '#9dd977';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {

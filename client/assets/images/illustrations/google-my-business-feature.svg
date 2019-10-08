@@ -28,7 +28,7 @@
                 <use xlink:href="#path-1"></use>
             </mask>
             <g id="Clip-3"></g>
-            <path d="M37.7805459,30 L0,30 L0,0 L46,0 L46,21.0092005 C46,25.9731831 42.3195307,30 37.7805459,30" id="Fill-2" fill="#84A5BC" mask="url(#mask-2)"></path>
+            <path d="M37.7805459,30 L0,30 L0,0 L46,0 L46,21.0092005 C46,25.9731831 42.3195307,30 37.7805459,30" id="Fill-2" fill="#6ab3d0" mask="url(#mask-2)"></path>
         </g>
     </g>
 </svg>

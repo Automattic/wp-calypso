@@ -522,7 +522,7 @@ class PushNotificationSettings extends React.Component {
 											fontSize="10.442623"
 											fontWeight="normal"
 										>
-											<tspan x="91" y="148" fill="#3D596D">
+											<tspan x="91" y="148" fill="#50575e">
 												{ this.props.translate( 'Notifications: Ask by default', {
 													comment:
 														'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".',
@@ -581,7 +581,7 @@ class PushNotificationSettings extends React.Component {
 												fontFamily="SFUIText-Regular, SF UI Text"
 												fontSize="9.56521739"
 												fontWeight="normal"
-												fill="#3D596D"
+												fill="#50575e"
 											>
 												<tspan x="26.434555" y="20.1594203">
 													{ this.props.translate( 'Always allow on this site', {

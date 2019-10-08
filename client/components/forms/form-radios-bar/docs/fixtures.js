@@ -33,7 +33,7 @@ export const radiosWithThumbnails = [
 		label: 'Third Radio',
 		value: 'third',
 		thumbnail: {
-			cssColor: '#0087be',
+			cssColor: '#187aa2',
 		},
 	},
 ];

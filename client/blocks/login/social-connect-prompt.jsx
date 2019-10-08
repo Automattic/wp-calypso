@@ -81,11 +81,11 @@ class SocialConnectPrompt extends Component {
 						xmlns="http://www.w3.org/2000/svg"
 					>
 						<g stroke="none" fill="none" fillRule="evenodd">
-							<circle fill="#C8D7E2" cx="2" cy="2" r="2" />
-							<circle fill="#C8D7E2" cx="13" cy="2" r="2" />
-							<circle fill="#C8D7E2" cx="24" cy="2" r="2" />
+							<circle fill="#bedae6" cx="2" cy="2" r="2" />
+							<circle fill="#bedae6" cx="13" cy="2" r="2" />
+							<circle fill="#bedae6" cx="24" cy="2" r="2" />
 							<circle fill="#74DCFC" cx="35" cy="2" r="2" />
-							<circle fill="#C8D7E2" cx="46" cy="2" r="2" />
+							<circle fill="#bedae6" cx="46" cy="2" r="2" />
 						</g>
 					</svg>
 					<SocialLogo className="login__social-connect-prompt-logo" icon="wordpress" />
