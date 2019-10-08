@@ -90,7 +90,7 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function() {
 		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.openNotifications();
 		const notificationsComponent = await NotificationsComponent.Expect( driver );
-		// await notificationsComponent.selectComments();
+		await notificationsComponent.selectComments();
 		const content = await notificationsComponent.allCommentsContent();
 		return assert.strictEqual(
 			content.includes( expectedContent ),

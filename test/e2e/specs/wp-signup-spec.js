@@ -1338,13 +1338,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			}
 		);
 
-		// step( 'Can submit test payment details', async function() {
-		// 	const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
-		// 	const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-		// 	await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
-		// 	await securePaymentComponent.submitPaymentDetails();
-		// 	return await securePaymentComponent.waitForPageToDisappear();
-		// } );
+		step( 'Can submit test payment details', async function() {
+			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
+			await securePaymentComponent.submitPaymentDetails();
+			return await securePaymentComponent.waitForPageToDisappear();
+		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 

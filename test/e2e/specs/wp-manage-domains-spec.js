@@ -113,12 +113,12 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 		} );
 
 		step( 'Empty the cart', async function() {
-			// await ReaderPage.Visit( driver );
-			// const navBarComponent = await NavBarComponent.Expect( driver );
-			// await navBarComponent.clickMySites();
-			// await StatsPage.Expect( driver );
-			// const sidebarComponent = await SidebarComponent.Expect( driver );
-			// await sidebarComponent.selectDomains();
+			await ReaderPage.Visit( driver );
+			const navBarComponent = await NavBarComponent.Expect( driver );
+			await navBarComponent.clickMySites();
+			await StatsPage.Expect( driver );
+			const sidebarComponent = await SidebarComponent.Expect( driver );
+			await sidebarComponent.selectDomains();
 			await DomainsPage.Expect( driver );
 			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
 			return await shoppingCartWidgetComponent.empty();
