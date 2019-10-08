@@ -10,7 +10,7 @@ import { stringify as stringifyQs } from 'qs';
  * Internal dependencies
  */
 import jsonp from './jsonp';
-import config from 'config';
+import { languages } from 'languages';
 
 const debug = debugFactory( 'wporg' );
 
@@ -26,7 +26,7 @@ const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 
 function getWporgLocaleCode() {
 	const currentLocaleCode = i18n.getLocaleSlug();
-	let wpOrgLocaleCode = find( config( 'languages' ), { langSlug: currentLocaleCode } ).wpLocale;
+	let wpOrgLocaleCode = find( languages, { langSlug: currentLocaleCode } ).wpLocale;
 
 	if ( wpOrgLocaleCode === '' ) {
 		wpOrgLocaleCode = currentLocaleCode;
