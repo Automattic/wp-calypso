@@ -32,7 +32,7 @@ The billing address may be automatically filled based on the server. If the bill
 
 ### Review order
 
-The third step's order review content can be overridden using the `orderReview` prop, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
+The third step's order review content can be overridden using the `orderReview` and `orderReviewCollapsed` props, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
 The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel` and `id` must be unique. The `type` property is not used internally but can be used to organize the line items in the `orderReview` component. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then return it to `WPCheckout`.
 
@@ -115,6 +115,9 @@ export default function MyCheckout() {
 	const orderReview = (
 		<OrderReview onDeleteItem={deleteItem} onChangePlanLength={changePlanLength} />
 	);
+	const orderReviewCollapsed = (
+		<OrderReviewCollapsed />
+	);
 
 	// Modification of the line items must be done outside checkout
 	const quickStartItem = {
@@ -138,6 +141,7 @@ export default function MyCheckout() {
 			successRedirectUrl={successRedirectUrl}
 			failureRedirectUrl={failureRedirectUrl}
 			orderReview={orderReview}
+			orderReviewCollapsed={orderReview}
 			upSell={upSell}
 		/>
 	);
@@ -194,7 +198,7 @@ function useShoppingCart() {
 }
 
 function OrderReview({ onDeleteItem, onChangePlanLength }) {
-	const [items] = useCheckoutLineItems();
+	const [items, total] = useCheckoutLineItems();
 	const planItems = items.filter(item => item.type === 'plan');
 	const domainItems = items.filter(item => item.type === 'domain');
 	const taxItems = items.filter(item => item.type === 'tax');
@@ -216,8 +220,22 @@ function OrderReview({ onDeleteItem, onChangePlanLength }) {
 			</OrderReviewSection>
 			<OrderReviewSection>
 				<OrderReviewLineItems items={taxItems} />
-				<OrderReviewTotal />
+				<OrderReviewTotal total={total} />
 			</OrderReviewSection>
+		</React.Fragment>
+	);
+}
+
+function OrderReviewCollapsed() {
+	const [items, total] = useCheckoutLineItems();
+	const planItems = items.filter(item => item.type === 'plan');
+	const domainItems = items.filter(item => item.type === 'domain');
+
+	return (
+		<React.Fragment>
+			<OrderReviewLineItems collapsed items={planItems} />
+			<OrderReviewLineItems collapsed items={domainItems} />
+			<OrderReviewTotal collapsed total={total} />
 		</React.Fragment>
 	);
 }
@@ -227,7 +245,10 @@ function PlanItem({ plan, onDeleteItem, onChangePlanLength }) {
 	return (
 		<React.Fragment>
 			<div>
-				<span>{plan.label}</span>
+				<span>
+					{plan.label}
+					{plan.subLabel && <p><span>{plan.subLabel}</span></p>}
+				</span>
 				<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
 				<OrderReviewLineItemDelete onClick={onDeleteItem} />
 			</div>
@@ -248,6 +269,48 @@ function UpSellCoupon({ onClick }) {
 	);
 }
 ```
+
+## Advanced API
+
+While the `WPCheckout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
+
+### OrderReviewSection
+
+A wrapper for a section of a list of related line items. Renders its `children` prop.
+
+### OrderReviewLineItems
+
+Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
+
+An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### OrderReviewTotal
+
+Renders the `total` prop like a line item,  but with different styling.
+
+An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### CheckoutSubmitButton
+
+Renders the "Pay" button. Requires a `total` prop and a `paymentMethod` prop to identify the system it should use for submitting the data. The `value` prop can be used to customize the text which by default will be "Pay " followed by `total.amount.displayValue`.
+
+### CheckoutStep
+
+Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. Each should also include a `CheckoutNextStepButton` if there is a following step. The `collapsed` prop can be used to collapse inactive steps (they will still be rendered).
+
+If you want to render something even when the step is collapsed (eg: a summary of the step), you can also provide the optional `collapsedContent` prop which is a component.
+
+### CheckoutNextStepButton
+
+Renders a button to move to the next `CheckoutStep` component. Its `value` prop can be used to customize the text which by default will be "Continue".
+
+### CheckoutPaymentMethods
+
+Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected.
+
+### CheckoutBillingContactForm
+
+Renders the billing contact info form (typically name and address, but may also include other contact info like phone number). The fields displayed are determined by the payment method passed in as the `paymentMethod` prop.
 
 ## ⚠️ 👷‍♀️ To do ⚠️
 
