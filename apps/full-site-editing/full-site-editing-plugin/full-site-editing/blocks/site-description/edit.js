@@ -19,7 +19,7 @@ import {
 	RichText,
 	withColors,
 	withFontSizes,
-} from '@wordpress/editor';
+} from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
