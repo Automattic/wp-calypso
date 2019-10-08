@@ -42,6 +42,7 @@ export const createSiteDomainObject = domain => {
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
+		isSubdomain: Boolean( domain.is_subdomain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
 		mustRemovePrivacyBeforeContactUpdate: Boolean(
