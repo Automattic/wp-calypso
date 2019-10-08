@@ -16,7 +16,6 @@ import {
 	InspectorControls,
 	PanelColorSettings,
 	PlainText,
-	RichText,
 	withColors,
 	withFontSizes,
 } from '@wordpress/block-editor';
@@ -112,30 +111,7 @@ function SiteDescriptionEdit( {
 					/>
 				</PanelColorSettings>
 			</InspectorControls>
-			{ false && (
-				<PlainText
-					aria-label={ __( 'Site Description' ) }
-					className={ classNames( 'site-description', className, {
-						'has-text-color': textColor.color,
-						'has-background': backgroundColor.color,
-						[ `has-text-align-${ textAlign }` ]: textAlign,
-						[ backgroundColor.class ]: backgroundColor.class,
-						[ textColor.class ]: textColor.class,
-						[ fontSize.class ]: fontSize.class,
-					} ) }
-					onChange={ value => handleChange( value ) }
-					onKeyDown={ onKeyDown }
-					placeholder={ __( 'Add a Site Description' ) }
-					style={ {
-						backgroundColor: backgroundColor.color,
-						color: textColor.color,
-						fontSize: fontSize.size ? fontSize.size + 'px' : undefined,
-					} }
-					value={ option }
-				/>
-			) }
-			<RichText
-				allowedFormats={ [] }
+			<PlainText
 				aria-label={ __( 'Site Description' ) }
 				className={ classNames( 'site-description', className, {
 					'has-text-color': textColor.color,
@@ -145,15 +121,15 @@ function SiteDescriptionEdit( {
 					[ textColor.class ]: textColor.class,
 					[ fontSize.class ]: fontSize.class,
 				} ) }
-				identifier="content"
 				onChange={ value => handleChange( value ) }
+				onKeyDown={ onKeyDown }
 				placeholder={ __( 'Add a Site Description' ) }
 				style={ {
 					backgroundColor: backgroundColor.color,
 					color: textColor.color,
 					fontSize: fontSize.size ? fontSize.size + 'px' : undefined,
+					padding: backgroundColor.color ? '16px' : undefined,
 				} }
-				tagName="p"
 				value={ option }
 			/>
 		</Fragment>
