@@ -73,6 +73,12 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
 	} );
 };
 
+const trackGlobalStyles = eventName => options => {
+	tracksRecordEvent( eventName, {
+		...options,
+	} );
+};
+
 /**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
@@ -81,6 +87,11 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
  * @type {object}
  */
 const REDUX_TRACKING = {
+	'a8c/global-styles': {
+		resetOptions: trackGlobalStyles( 'wpcom_global_styles_reset' ),
+		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
+		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
+	},
 	'core/editor': {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
