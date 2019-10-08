@@ -41,8 +41,11 @@ const SVG_PATH_EXCLUSIONS = [
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
 	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|net-banking|p24|paypal|paytm|sofort|tef|wechat)\.svg$/,
 
-	// Old WooCommerce mascotte,
+	// Old WooCommerce mascotte
 	/ninja-joy\.svg$/,
+
+	// Color scheme thumbnails which use all palette colors (not the subset defined below)
+	/color-scheme-thumbnail-[a-z-]+\.svg$/,
 
 	// Specific directories
 	/^docs/,
