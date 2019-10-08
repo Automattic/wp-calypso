@@ -64,7 +64,7 @@ That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "env
 
 The impact of this option is twofold:
 
-1. It will make Webpack use `@wordpress/dependency-extraction-webpack-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.deps.json` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `@wordpress/dependency-extraction-webpack-plugin`'s [docs](https://developer.wordpress.org/block-editor/packages/packages-dependency-extraction-webpack-plugin/).
+1. It will make Webpack use `@wordpress/dependency-extraction-webpack-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.assets.php` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `@wordpress/dependency-extraction-webpack-plugin`'s [docs](https://developer.wordpress.org/block-editor/packages/packages-dependency-extraction-webpack-plugin/).
 
 2. It will transpile JSX to [`@wordpress/element`](https://www.npmjs.com/package/@wordpress/element) rather than React components. This is also required for Gutenberg blocks.
 

@@ -153,12 +153,8 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
-		$script_dependencies = json_decode(
-			file_get_contents(
-				plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.deps.json'
-			),
-			true
-		);
+		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/full-site-editing.assets.php';
+		$script_dependencies = $asset_file['dependencies'];
 		wp_enqueue_script(
 			'a8c-full-site-editing-script',
 			plugins_url( 'dist/full-site-editing.js', __FILE__ ),
