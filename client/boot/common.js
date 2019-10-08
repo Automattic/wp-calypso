@@ -260,13 +260,8 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	analytics.setDispatch( reduxStore.dispatch );
 
-	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps );
-	} else {
-		analytics.setSuperProps( superProps );
-	}
+	// The analytics module requires user (when logged in) and superProps objects. Inject these here
+	analytics.initialize( currentUser, superProps );
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.

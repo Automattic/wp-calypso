@@ -186,8 +186,14 @@ const analytics = {
 	initialize: function( user, superProps ) {
 		analytics.setUser( user );
 		analytics.setSuperProps( superProps );
-		const userData = user.get();
-		analytics.identifyUser( userData.username, userData.ID );
+
+		// this is called both for anonymous and logged-in users
+		checkForBlockedTracks();
+
+		if ( user && user.get() ) {
+			const userData = user.get();
+			analytics.identifyUser( userData.username, userData.ID );
+		}
 	},
 
 	setUser: function( user ) {
@@ -195,8 +201,6 @@ const analytics = {
 	},
 
 	setSuperProps: function( superProps ) {
-		// this is called both for anonymous and logged-in users
-		checkForBlockedTracks();
 		_superProps = superProps;
 	},
 
