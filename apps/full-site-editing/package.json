@@ -25,11 +25,14 @@
 		"starter-page-templates": "calypso-build --source='starter-page-templates'",
 		"dev:starter-page-templates": "npm run starter-page-templates",
 		"build:starter-page-templates": "NODE_ENV=production npm run starter-page-templates",
-		"dev": "rimraf dist && npm-run-all --parallel dev:*",
-		"build": "rimraf dist && npm-run-all --parallel build:*",
+		"dev": "npm-run-all --parallel dev:*",
+		"build": "npm-run-all --parallel build:*",
 		"test:unit": "wp-scripts test-unit-js --config='jest.config.js'",
 		"test:unit:help": "wp-scripts test-unit-js --config='jest.config.js' --help",
-		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch"
+		"test:unit:watch": "wp-scripts test-unit-js --config='jest.config.js' --watch",
+		"clean": "npx rimraf dist",
+		"prebuild": "npm run clean",
+		"predev": "npm run clean"
 	},
 	"dependencies": {
 		"classnames": "2.2.6"
