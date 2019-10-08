@@ -16,7 +16,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import ValidationFieldset from 'signup/validation-fieldset';
-import { createUserAccountFromEmailAddress } from 'lib/signup/step-actions';
+// import { createUserAccountFromEmailAddress } from 'lib/signup/step-actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import { submitSignupStep } from 'state/signup/progress/actions';
@@ -61,9 +61,9 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: true,
 		} );
 
-		createUserAccountFromEmailAddress( this.createUserAccountFromEmailAddressCallback, {
-			email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-		} );
+		// createUserAccountFromEmailAddress( this.createUserAccountFromEmailAddressCallback, {
+		// 	email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+		// } );
 	};
 
 	createUserAccountFromEmailAddressCallback = ( error, response ) => {
