@@ -157,9 +157,7 @@ export default compose( [
 	} ),
 	withDispatch( ( dispatch, { blockIndex, rootClientId } ) => ( {
 		createErrorNotice: dispatch( 'core/notices' ).createErrorNotice,
-		insertDefaultBlock: () => {
-			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 );
-			dispatch( 'core/block-editor' ).selectNextBlock( rootClientId );
-		},
+		insertDefaultBlock: () =>
+			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
 	} ) ),
 ] )( SiteDescriptionEdit );
