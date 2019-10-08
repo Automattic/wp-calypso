@@ -5,7 +5,7 @@
 import page from 'page';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { find, get, some, includes, forEach } from 'lodash';
+import { get, includes, forEach } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -23,7 +23,6 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { successNotice } from 'state/notices/actions';
-import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -33,7 +32,9 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/s
 import userFactory from 'lib/user';
 import { launchSite } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import createSelector from 'lib/create-selector';
+import getChecklistTaskUrls, {
+	FIRST_TEN_SITE_POSTS_QUERY,
+} from 'state/selectors/get-checklist-task-urls';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import {
 	showInlineHelpPopover,
@@ -41,13 +42,10 @@ import {
 	setChecklistPromptTaskId,
 	setChecklistPromptStep,
 } from 'state/inline-help/actions';
-import getEditorUrl from 'state/selectors/get-editor-url';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
 
 const userLib = userFactory();
-
-const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
 class WpcomChecklistComponent extends PureComponent {
 	state = {
@@ -1014,61 +1012,13 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 }
 
-function getContactPage( posts ) {
-	return get(
-		find(
-			posts,
-			post =>
-				post.type === 'page' &&
-				( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
-					post.slug === 'contact' )
-		),
-		'ID',
-		null
-	);
-}
-
-function getPageEditorUrl( state, siteId, pageId ) {
-	if ( ! pageId ) {
-		return null;
-	}
-
-	return getEditorUrl( state, siteId, pageId, 'page' );
-}
-
-export const getTaskUrls = createSelector(
-	( state, siteId ) => {
-		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
-		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
-		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getPageEditorUrl(
-			state,
-			siteId,
-			getSiteOption( state, siteId, 'page_on_front' )
-		);
-
-		return {
-			post_published: getPageEditorUrl( state, siteId, firstPostID ),
-			contact_page_updated: contactPageUrl,
-			about_text_updated: frontPageUrl,
-			front_page_updated: frontPageUrl,
-			homepage_photo_updated: frontPageUrl,
-			business_hours_added: frontPageUrl,
-			service_list_added: frontPageUrl,
-			staff_info_added: frontPageUrl,
-			product_list_added: frontPageUrl,
-		};
-	},
-	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
-);
-
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const user = getCurrentUser( state );
-		const taskUrls = getTaskUrls( state, siteId );
+		const taskUrls = getChecklistTaskUrls( state, siteId );
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
