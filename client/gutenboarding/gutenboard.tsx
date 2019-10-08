@@ -45,7 +45,7 @@ export function Gutenboard() {
 							onInput={ updateBlocks }
 							onChange={ updateBlocks }
 						>
-							<div className="editor-styles-wrapper">
+							<div>
 								<BlockEditorKeyboardShortcuts />
 								<WritingFlow>
 									<ObserveTyping>

@@ -7,7 +7,7 @@ import { Header } from '@wordpress/edit-post';
 import { SelectControl } from '@wordpress/components';
 import Main from 'components/main';
 
-export function CreateSite( props ) {
+export function CreateSite() {
 	const [ siteType, setSiteType ] = useState( 'blog' );
 
 	return (
