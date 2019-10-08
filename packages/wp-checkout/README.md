@@ -348,9 +348,9 @@ Renders the "Pay" button. Requires a `total` prop and a `paymentMethod` prop to 
 
 When clicked, the button will call its `onClick` prop. The parent component must then call the `submitCheckout()` function that is exported by this package which will take a specific action based on its first argument.
 
-### submitCheckout()
+### submitCheckout({ paymentMethod, billingContact, items, total, onSuccess, onFailure, successRedirectUrl, failureRedirectUrl })
 
-Calling this function (which should only be done by the `CheckoutSubmitButton`) will take a specific action based on the payment method.
+Calling this function (which should only be done by the `CheckoutSubmitButton`) will take a specific action based on the payment method. Has one required argument which is an object of the form: `{ paymentMethod, billingContact, items, total, onSuccess, onFailure, successRedirectUrl, failureRedirectUrl }`.
 
 ### CheckoutStep
 
