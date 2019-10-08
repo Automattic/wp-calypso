@@ -15,7 +15,7 @@ import PostQueryManager from 'lib/query-manager/post';
 
 const postType = 'post';
 const pagePostType = 'page';
-const templatePostType = 'wp_template';
+const templatePostType = 'wp_template_part';
 const siteId = 1;
 
 describe( 'getEditorCloseUrl()', () => {

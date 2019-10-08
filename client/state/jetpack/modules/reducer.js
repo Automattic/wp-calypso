@@ -23,7 +23,7 @@ import {
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 
 const createItemsReducer = active => {
 	return ( state, { siteId, moduleSlug } ) => {
@@ -96,16 +96,22 @@ const createSettingsItemsReducer = () => {
  * @param  {Object} action action
  * @return {Array}         Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createItemsReducer( true ),
-		[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createItemsReducer( false ),
-		[ JETPACK_MODULES_RECEIVE ]: createItemsListReducer(),
-		[ JETPACK_SETTINGS_UPDATE ]: createSettingsItemsReducer(),
-		[ JETPACK_SETTINGS_SAVE_SUCCESS ]: createSettingsItemsReducer(),
+export const items = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case JETPACK_MODULE_ACTIVATE_SUCCESS:
+			return createItemsReducer( true )( state, action );
+		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+			return createItemsReducer( false )( state, action );
+		case JETPACK_MODULES_RECEIVE:
+			return createItemsListReducer()( state, action );
+		case JETPACK_SETTINGS_UPDATE:
+			return createSettingsItemsReducer()( state, action );
+		case JETPACK_SETTINGS_SAVE_SUCCESS:
+			return createSettingsItemsReducer()( state, action );
 	}
-);
+
+	return state;
+} );
 
 /**
  * `Reducer` function which handles request/response actions
@@ -115,20 +121,30 @@ export const items = createReducer(
  * @param {Object} action - action
  * @return {Object} updated state
  */
-export const requests = createReducer(
-	{},
-	{
-		[ JETPACK_MODULE_ACTIVATE ]: createRequestsReducer( { activating: true } ),
-		[ JETPACK_MODULE_ACTIVATE_FAILURE ]: createRequestsReducer( { activating: false } ),
-		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createRequestsReducer( { activating: false } ),
-		[ JETPACK_MODULE_DEACTIVATE ]: createRequestsReducer( { deactivating: true } ),
-		[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: createRequestsReducer( { deactivating: false } ),
-		[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createRequestsReducer( { deactivating: false } ),
-		[ JETPACK_MODULES_REQUEST ]: createModuleListRequestReducer( true ),
-		[ JETPACK_MODULES_REQUEST_FAILURE ]: createModuleListRequestReducer( false ),
-		[ JETPACK_MODULES_REQUEST_SUCCESS ]: createModuleListRequestReducer( false ),
+export const requests = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case JETPACK_MODULE_ACTIVATE:
+			return createRequestsReducer( { activating: true } )( state, action );
+		case JETPACK_MODULE_ACTIVATE_FAILURE:
+			return createRequestsReducer( { activating: false } )( state, action );
+		case JETPACK_MODULE_ACTIVATE_SUCCESS:
+			return createRequestsReducer( { activating: false } )( state, action );
+		case JETPACK_MODULE_DEACTIVATE:
+			return createRequestsReducer( { deactivating: true } )( state, action );
+		case JETPACK_MODULE_DEACTIVATE_FAILURE:
+			return createRequestsReducer( { deactivating: false } )( state, action );
+		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+			return createRequestsReducer( { deactivating: false } )( state, action );
+		case JETPACK_MODULES_REQUEST:
+			return createModuleListRequestReducer( true )( state, action );
+		case JETPACK_MODULES_REQUEST_FAILURE:
+			return createModuleListRequestReducer( false )( state, action );
+		case JETPACK_MODULES_REQUEST_SUCCESS:
+			return createModuleListRequestReducer( false )( state, action );
 	}
-);
+
+	return state;
+} );
 
 export const reducer = combineReducers( {
 	items,

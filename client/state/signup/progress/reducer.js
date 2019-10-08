@@ -16,7 +16,7 @@ import {
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'state/action-types';
-import { createReducerWithValidation } from 'state/utils';
+import { withSchemaValidation } from 'state/utils';
 import { schema } from './schema';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
@@ -102,15 +102,21 @@ const submitStep = ( state, { step } ) => {
 		: addStep( state, { ...step, status } );
 };
 
-export default createReducerWithValidation(
-	{},
-	{
-		[ SIGNUP_COMPLETE_RESET ]: overwriteSteps,
-		[ SIGNUP_PROGRESS_COMPLETE_STEP ]: completeStep,
-		[ SIGNUP_PROGRESS_INVALIDATE_STEP ]: invalidateStep,
-		[ SIGNUP_PROGRESS_PROCESS_STEP ]: processStep,
-		[ SIGNUP_PROGRESS_SAVE_STEP ]: saveStep,
-		[ SIGNUP_PROGRESS_SUBMIT_STEP ]: submitStep,
-	},
-	schema
-);
+export default withSchemaValidation( schema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SIGNUP_COMPLETE_RESET:
+			return overwriteSteps( state, action );
+		case SIGNUP_PROGRESS_COMPLETE_STEP:
+			return completeStep( state, action );
+		case SIGNUP_PROGRESS_INVALIDATE_STEP:
+			return invalidateStep( state, action );
+		case SIGNUP_PROGRESS_PROCESS_STEP:
+			return processStep( state, action );
+		case SIGNUP_PROGRESS_SAVE_STEP:
+			return saveStep( state, action );
+		case SIGNUP_PROGRESS_SUBMIT_STEP:
+			return submitStep( state, action );
+	}
+
+	return state;
+} );

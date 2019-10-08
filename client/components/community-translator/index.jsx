@@ -10,7 +10,7 @@ import { find, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import Translatable from './translatable';
-import config from 'config';
+import { languages } from 'languages';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
@@ -24,7 +24,6 @@ import './style.scss';
  * Local variables
  */
 const debug = debugModule( 'calypso:community-translator' );
-const languages = config( 'languages' );
 const user = new User();
 
 class CommunityTranslator extends Component {

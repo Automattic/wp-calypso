@@ -111,6 +111,13 @@ const nodeModulesToTranspile = [
 	'd3-scale/',
 	'debug/',
 	'@github/webauthn-json/',
+	'filesize/',
+	'acorn-jsx/',
+	'prismjs/',
+	'regenerate-unicode-properties/',
+	'regexpu-core/',
+	'unicode-match-property-ecmascript/',
+	'unicode-match-property-value-ecmascript/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
@@ -178,6 +185,7 @@ const webpackConfig = {
 	entry: {
 		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),

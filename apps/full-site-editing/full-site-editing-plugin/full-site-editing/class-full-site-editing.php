@@ -23,7 +23,7 @@ class Full_Site_Editing {
 	 *
 	 * @var array
 	 */
-	private $template_post_types = [ 'wp_template' ];
+	private $template_post_types = [ 'wp_template_part' ];
 
 	/**
 	 * Current theme slug.
@@ -106,13 +106,8 @@ class Full_Site_Editing {
 			return;
 		}
 
-		if ( ! $this->wp_template_inserter->is_template_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_template_data();
-		}
-
-		if ( ! $this->wp_template_inserter->is_pages_data_inserted() ) {
-			$this->wp_template_inserter->insert_default_pages();
-		}
+		$this->wp_template_inserter->insert_default_template_data();
+		$this->wp_template_inserter->insert_default_pages();
 	}
 
 	/**
@@ -561,7 +556,7 @@ class Full_Site_Editing {
 	 * @return array
 	 */
 	public function remove_delete_row_action_for_template_taxonomy( $actions, $term ) {
-		if ( 'wp_template_type' === $term->taxonomy ) {
+		if ( 'wp_template_part_type' === $term->taxonomy ) {
 			unset( $actions['delete'] );
 		}
 		return $actions;
@@ -585,7 +580,7 @@ class Full_Site_Editing {
 	 * @param string  $taxonomy Taxonomy name.
 	 */
 	public function restrict_template_taxonomy_deletion( $term, $taxonomy ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
-		if ( 'wp_template_type' === $taxonomy ) {
+		if ( 'wp_template_part_type' === $taxonomy ) {
 			wp_die( esc_html__( 'Template Types cannon be deleted.' ) );
 		}
 	}

@@ -924,6 +924,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.formatted-header__subtitle {
+			color: var( --color-primary-10 );
 			margin-top: 1em;
 			font-size: 16px;
 			line-height: 24px;
@@ -986,6 +987,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			color: var( --color-neutral-60 );
 		}
 
+		.signup-form__terms-of-service-link a {
+			text-decoration: underline;
+		}
+
 		.logged-out-form__link-item {
 			text-align: center;
 			text-decoration: underline;
@@ -1000,10 +1005,21 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				font-size: 12px;
 			}
 
+			.signup-form__social-buttons-tos {
+				color: var( --studio-gray-60 );
+				margin-bottom: 16px;
+				a {
+					text-decoration: underline;
+					color: var( --studio-gray-60 );
+				}
+			}
+
 			.social-buttons__button {
 				border: 1px solid var( --studio-pink-50 );
 				color: var( --studio-pink-50 );
 				box-shadow: none;
+				max-width: 310px;
+				height: 48px;
 			}
 		}
 

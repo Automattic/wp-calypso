@@ -26,22 +26,7 @@ import { WPCC } from 'lib/url/support';
 import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
-
-function getSocialServiceFromClientId( clientId ) {
-	if ( ! clientId ) {
-		return null;
-	}
-
-	if ( clientId === config( 'google_oauth_client_id' ) ) {
-		return 'google';
-	}
-
-	if ( clientId === config( 'facebook_app_id' ) ) {
-		return 'facebook';
-	}
-
-	return null;
-}
+import { getSocialServiceFromClientId } from 'lib/login';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -255,8 +240,8 @@ export class UserStep extends Component {
 					{ 'cart' === wccomFrom ? (
 						<WooCommerceConnectCartHeader />
 					) : (
-						<div className={ classNames( 'login__woocommerce-logo' ) }>
-							<div className={ classNames( 'connect-header' ) }>
+						<div className={ classNames( 'signup-form__woocommerce-wrapper' ) }>
+							<div className={ classNames( 'signup-form__woocommerce-logo' ) }>
 								<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 									<AsyncLoad
 										require="components/jetpack-header/woocommerce"
@@ -267,7 +252,7 @@ export class UserStep extends Component {
 							</div>
 						</div>
 					) }
-					<div className={ classNames( 'login__form-header' ) }>
+					<div className={ classNames( 'signup-form__woocommerce-heading' ) }>
 						{ translate( 'Create a WordPress.com account' ) }
 					</div>
 				</Fragment>

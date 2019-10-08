@@ -93,7 +93,7 @@ class WP_Template {
 			return null;
 		}
 
-		$term = get_term_by( 'name', "$this->current_theme_name-$template_type", 'wp_template_type', ARRAY_A );
+		$term = get_term_by( 'name', "$this->current_theme_name-$template_type", 'wp_template_part_type', ARRAY_A );
 
 		// Bail if current site doesn't have this term registered.
 		if ( ! isset( $term['term_id'] ) ) {

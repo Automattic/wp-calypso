@@ -191,7 +191,7 @@ TransactionFlow.prototype._paymentHandlers = {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new stripe elements card' );
 
-		const { name, country, 'postal-code': zip } = newCardDetails;
+		const { name, country, 'postal-code': zip, 'phone-number': phone } = newCardDetails;
 		const paymentDetailsForStripe = {
 			name,
 			address: {
@@ -199,6 +199,10 @@ TransactionFlow.prototype._paymentHandlers = {
 				postal_code: zip,
 			},
 		};
+
+		if ( phone ) {
+			paymentDetailsForStripe.phone = phone;
+		}
 
 		try {
 			const stripePaymentMethod = await createStripePaymentMethod(

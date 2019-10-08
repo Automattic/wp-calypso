@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -25,6 +22,11 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
