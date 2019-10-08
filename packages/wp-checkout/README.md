@@ -2,6 +2,10 @@
 
 A set of React components, custom Hooks, and helper functions that together can be used to create a purchase and checkout flow.
 
+## Installation
+
+`npm install wp-checkout styled-components`
+
 ## Usage
 
 This package provides a main component, `WPCheckout`, which creates the checkout form.
