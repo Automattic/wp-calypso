@@ -6,9 +6,6 @@
  *
  * List all non-standard color values by image path:
  * $ node ./bin/audit-svg-colors.js
- *
- * List all non-standard color values in aggregate:
- * $ node ./bin/audit-svg-colors.js --list
  */
 
 /**
@@ -84,8 +81,6 @@ const SELECTED_PALETTE_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorNam
 
 const SELECTED_PALETTE_COLOR_VALUES = _.uniq( Object.values( SELECTED_PALETTE_COLORS ) );
 
-const AGGREGATE_LIST_MODE = process.argv.includes( '--list' );
-
 /**
  * Find all color values available in the selected SVG files
  */
@@ -148,11 +143,7 @@ COLOR_VALUES_FOUND.forEach( valueObject => {
  * Output
  */
 
-if ( AGGREGATE_LIST_MODE ) {
-	printReplacementRulesInAggregate( COLOR_VALUES_TO_REPLACE );
-} else {
-	printReplacementRulesByImage( COLOR_VALUES_TO_REPLACE );
-}
+printReplacementRules( COLOR_VALUES_TO_REPLACE );
 
 /**
  * Utilities
@@ -226,7 +217,7 @@ function findPaletteColorName( value ) {
 	return name;
 }
 
-function printReplacementRulesByImage( replacementObjects ) {
+function printReplacementRules( replacementObjects ) {
 	const count = replacementObjects.length;
 
 	if ( count <= 0 ) {
@@ -243,22 +234,6 @@ function printReplacementRulesByImage( replacementObjects ) {
 	}
 }
 
-function printReplacementRulesInAggregate( replacementObjects ) {
-	const rules = getUniqueReplacementRules( replacementObjects );
-	const count = rules.length;
-
-	if ( count <= 0 ) {
-		console.log( `All SVG illustrations seem to use correct color values. ✨` );
-	} else {
-		console.log(
-			`Found ${ count } non-standard color values used in the SVG images in this repository:`
-		);
-
-		const replacementRules = formatReplacementRules( rules );
-		console.log( `\n${ replacementRules.join( '\n' ) }` );
-	}
-}
-
 function formatReplacementRules( rules ) {
 	return _.sortBy( rules, 'to.name' ).map( rule => {
 		const valueFrom = _.padEnd( rule.from.value, 7 );
@@ -266,24 +241,4 @@ function formatReplacementRules( rules ) {
 
 		return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
 	} );
-}
-
-function getUniqueReplacementRules( replacementObjects ) {
-	const colorValues = [];
-	const colorRules = [];
-
-	replacementObjects.forEach( replacementObject => {
-		replacementObject.rules.forEach( rule => {
-			const value = rule.from.value;
-
-			if ( colorValues.includes( value ) ) {
-				return;
-			}
-
-			colorValues.push( value );
-			colorRules.push( rule );
-		} );
-	} );
-
-	return colorRules;
 }
