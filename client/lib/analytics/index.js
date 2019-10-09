@@ -13,12 +13,10 @@ import { loadScript } from '@automattic/load-script';
  */
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import {
 	mayWeTrackCurrentUserGdpr,
 	doNotTrack,
 	isPiiUrl,
-	shouldReportOmitBlogId,
 	costToUSD,
 	urlParseAmpCompatible,
 	saveCouponQueryArgument,
@@ -58,7 +56,7 @@ const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
 
-let _superProps, _user, _selectedSite, _siteCount, _dispatch;
+let _superProps, _user;
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments
 
 /**
@@ -184,8 +182,8 @@ if ( typeof window !== 'undefined' ) {
 
 const analytics = {
 	initialize: function( user, superProps ) {
-		analytics.setUser( user );
-		analytics.setSuperProps( superProps );
+		_user = user;
+		_superProps = superProps;
 
 		// this is called both for anonymous and logged-in users
 		checkForBlockedTracks();
@@ -194,26 +192,6 @@ const analytics = {
 			const userData = user.get();
 			analytics.identifyUser( userData.username, userData.ID );
 		}
-	},
-
-	setUser: function( user ) {
-		_user = user;
-	},
-
-	setSuperProps: function( superProps ) {
-		_superProps = superProps;
-	},
-
-	setSelectedSite: function( selectedSite ) {
-		_selectedSite = selectedSite;
-	},
-
-	setSiteCount: function( siteCount ) {
-		_siteCount = siteCount;
-	},
-
-	setDispatch: function( dispatch ) {
-		_dispatch = dispatch;
 	},
 
 	mc: {
@@ -475,8 +453,6 @@ const analytics = {
 
 	tracks: {
 		recordEvent: function( eventName, eventProperties ) {
-			let superProperties;
-
 			eventProperties = eventProperties || {};
 
 			if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
@@ -526,7 +502,7 @@ const analytics = {
 			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
 			if (
-				eventName.indexOf( 'calypso_' ) !== 0 &&
+				! eventName.startsWith( 'calypso_' ) &&
 				! includes( EVENT_NAME_EXCEPTIONS, eventName )
 			) {
 				tracksDebug(
@@ -536,10 +512,8 @@ const analytics = {
 			}
 
 			if ( _superProps ) {
-				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
-				superProperties = _superProps.getAll( site, _siteCount );
-				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
+				const superProperties = _superProps( eventProperties );
+				eventProperties = { ...eventProperties, ...superProperties }; // assign to a new object so we don't modify the argument
 			}
 
 			// Remove properties that have an undefined value
