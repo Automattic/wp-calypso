@@ -326,21 +326,21 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 The main component in this package. It has the following props.
 
-- locale (required)
-- items (required)
-- total (required)
-- onChangeBillingContact
-- availablePaymentMethods
-- onSuccess (required)
-- onFailure (required)
-- successRedirectUrl (required)
-- failureRedirectUrl (required)
-- reviewContent
-- reviewContentCollapsed
-- upSell
-- checkoutHeader
-- orderReviewTOS
-- orderReviewFeatures
+- locale: string (required)
+- items: array (required)
+- total: object (required)
+- onChangeBillingContact: function
+- availablePaymentMethods: array
+- onSuccess: function (required)
+- onFailure: function (required)
+- successRedirectUrl: string (required)
+- failureRedirectUrl: string (required)
+- reviewContent: component
+- reviewContentCollapsed: component
+- upSell: component
+- checkoutHeader: component
+- orderReviewTOS: component
+- orderReviewFeatures: component
 
 ### formatValueForCurrency(currency, displayValue)
 
