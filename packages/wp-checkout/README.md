@@ -168,7 +168,6 @@ import Checkout, {
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
-	OrderReviewLineItemDelete,
 	renderDisplayValueMarkdown,
 } from 'wp-checkout';
 import {
@@ -358,6 +357,7 @@ function OrderReviewCollapsed() {
 
 function PlanItem({ plan, onDeleteItem, onChangePlanLength }) {
 	const changePlanLength = planLength => onChangePlanLength(plan, planLength);
+	const deleteItem = () => onDeleteItem(plan);
 	return (
 		<React.Fragment>
 			<div>
@@ -366,7 +366,7 @@ function PlanItem({ plan, onDeleteItem, onChangePlanLength }) {
 					{plan.subLabel && <div>{plan.subLabel}</div>}
 				</span>
 				<span>{renderDisplayValueMarkdown(plan.amount.displayValue)}</span>
-				<OrderReviewLineItemDelete onClick={onDeleteItem} />
+				<button onClick={deleteItem} />
 			</div>
 			<PlanLengthSelector onChange={changePlanLength} />
 		</React.Fragment>
@@ -374,6 +374,7 @@ function PlanItem({ plan, onDeleteItem, onChangePlanLength }) {
 }
 
 function DomainItem({ item, onDeleteItem }) {
+	const deleteItem = () => onDeleteItem(plan);
 	return (
 		<React.Fragment>
 			<div>
@@ -382,7 +383,7 @@ function DomainItem({ item, onDeleteItem }) {
 					{item.subLabel && <div>{item.subLabel}</div>}
 				</span>
 				<span>{renderDisplayValueMarkdown(item.amount.displayValue)}</span>
-				<OrderReviewLineItemDelete onClick={onDeleteItem} />
+				<button onClick={deleteItem} />
 			</div>
 		</React.Fragment>
 	);
