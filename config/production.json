@@ -103,6 +103,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"sign-in-with-apple": true,
+		"sign-in-with-apple/redirect": true,
 		"signup/onboarding-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,
