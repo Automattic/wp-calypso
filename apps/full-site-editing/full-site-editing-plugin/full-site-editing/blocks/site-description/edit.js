@@ -4,6 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -15,7 +16,7 @@ import {
 	FontSizePicker,
 	InspectorControls,
 	PanelColorSettings,
-	PlainText,
+	RichText,
 	withColors,
 	withFontSizes,
 } from '@wordpress/block-editor';
@@ -23,7 +24,6 @@ import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { ENTER } from '@wordpress/keycodes';
 import { PanelBody } from '@wordpress/components';
 
 /**
@@ -38,7 +38,6 @@ function SiteDescriptionEdit( {
 	createErrorNotice,
 	fontSize,
 	insertDefaultBlock,
-	isLocked,
 	isSelected,
 	setAttributes,
 	setBackgroundColor,
@@ -61,16 +60,6 @@ function SiteDescriptionEdit( {
 	);
 
 	const { option } = siteOptions;
-
-	const onKeyDown = event => {
-		if ( event.keyCode !== ENTER ) {
-			return;
-		}
-		event.preventDefault();
-		if ( ! isLocked ) {
-			insertDefaultBlock();
-		}
-	};
 
 	return (
 		<Fragment>
@@ -111,7 +100,8 @@ function SiteDescriptionEdit( {
 					/>
 				</PanelColorSettings>
 			</InspectorControls>
-			<PlainText
+			<RichText
+				allowedFormats={ [] }
 				aria-label={ __( 'Site Description' ) }
 				className={ classNames( 'site-description', className, {
 					'has-text-color': textColor.color,
@@ -121,15 +111,17 @@ function SiteDescriptionEdit( {
 					[ textColor.class ]: textColor.class,
 					[ fontSize.class ]: fontSize.class,
 				} ) }
+				identifier="content"
 				onChange={ value => handleChange( value ) }
-				onKeyDown={ onKeyDown }
+				onReplace={ insertDefaultBlock }
+				onSplit={ noop }
 				placeholder={ __( 'Add a Site Description' ) }
 				style={ {
 					backgroundColor: backgroundColor.color,
 					color: textColor.color,
 					fontSize: fontSize.size ? fontSize.size + 'px' : undefined,
-					padding: backgroundColor.color ? '16px' : undefined,
 				} }
+				tagName="p"
 				value={ option }
 			/>
 		</Fragment>
