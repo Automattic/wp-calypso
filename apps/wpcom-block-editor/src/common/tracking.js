@@ -73,6 +73,12 @@ const trackBlockReplacement = ( originalBlockIds, blocks ) => {
 	} );
 };
 
+/**
+ * Track update and publish action for Global Styles plugin.
+ *
+ * @param {string} eventName Name of the track event.
+ * @return {function}
+ */
 const trackGlobalStyles = eventName => options => {
 	tracksRecordEvent( eventName, {
 		...options,
@@ -88,7 +94,7 @@ const trackGlobalStyles = eventName => options => {
  */
 const REDUX_TRACKING = {
 	'a8c/global-styles': {
-		resetOptions: trackGlobalStyles( 'wpcom_global_styles_reset' ),
+		resetLocalChanges: 'wpcom_global_styles_reset',
 		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
 		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
 	},
