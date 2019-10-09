@@ -1,0 +1,38 @@
+.plans-single-products,
+.plans-single-products__card {
+	display: block;
+	position: relative;
+	box-sizing: border-box;
+}
+
+.plans-single-products {
+	margin: 0 auto 28px;
+
+	// On larger screens we want the container to be one big card.
+	@include breakpoint( '>660px' ) {
+		background: var( --color-surface );
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+	}
+}
+
+.plans-single-products__card {
+	margin: 0 auto 12px;
+	padding: 24px 16px;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+	// On mobile we want each product to be an individual card.
+	@include breakpoint( '>660px' ) {
+		margin-bottom: 0;
+		padding: 24px;
+		background: transparent;
+		box-shadow: none;
+	}
+}
+
+.plans-single-products__heading {
+	font-size: 22px;
+	line-height: 1;
+	font-weight: 400;
+	color: var( --color-primary-50 );
+}
