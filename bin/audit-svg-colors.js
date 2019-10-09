@@ -4,6 +4,9 @@
  * The script looks for all colors used in the SVG images found in the repository
  * and suggests Color Studio replacements for all non-standard values it finds.
  *
+ * Please note that the suggestions are automattic and therefore not perfect
+ * in some edge cases. Make sure to manually review the files you edit.
+ *
  * List all non-standard color values by image path:
  * $ node ./bin/audit-svg-colors.js
  */
@@ -21,13 +24,48 @@ const chroma = require( 'chroma-js' );
 const PALETTE = require( '@automattic/color-studio' );
 
 /**
- * Configurable constants
+ * Palette color subsets
  */
 
-const ROOT_PATH = path.join( __dirname, '..' );
-const GIT_DIR_PATH = path.join( ROOT_PATH, '.git' );
+// The subset of palette colors allowed in illustrations
+const PALETTE_ILLUSTRATION_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+	// Avoid using pure black
+	if ( colorValue === '#000' ) {
+		return;
+	}
+	// Since illustrations are a part of WordPress.com’s and Jetpack’s visual
+	// identity, we prefer them over generic Blue, Green, and Celadon. We don’t
+	// use WooCommerce Purple either
+	return ! (
+		_.startsWith( colorName, 'Blue' ) ||
+		_.startsWith( colorName, 'Green' ) ||
+		_.startsWith( colorName, 'Celadon' ) ||
+		_.startsWith( colorName, 'WooCommerce Purple' )
+	);
+} );
 
-const SVG_PATH_EXCLUSIONS = [
+// The subset of palette colors used in app-related images is slightly wider
+// than what we allow for in illustration use (the above)
+const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+	// Avoid using pure black
+	if ( colorValue === '#000' ) {
+		return;
+	}
+	// Don’t use WooCommerce Purple for any WordPress.com images
+	return ! _.startsWith( colorName, 'WooCommerce Purple' );
+} );
+
+// Making sure both sets contain only unique color values
+// (the palette defines aliases for some colors)
+const PALETTE_ILLUSTRATION_COLOR_VALUES = _.uniq( Object.values( PALETTE_ILLUSTRATION_COLORS ) );
+const PALETTE_APP_COLOR_VALUES = _.uniq( Object.values( PALETTE_APP_COLORS ) );
+
+/**
+ * SVG image rules
+ */
+
+// The image paths that match the following patterns will not be processed
+const SVG_IGNORE_PATHS = [
 	// Common logos found in the repository
 	/(?:google-photos|paypal|stripe)(-logo)?\.svg$/,
 
@@ -36,13 +74,10 @@ const SVG_PATH_EXCLUSIONS = [
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
-	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|net-banking|p24|paypal|paytm|sofort|tef|wechat)\.svg$/,
+	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)\.svg$/,
 
 	// Old WooCommerce mascotte
 	/ninja-joy\.svg$/,
-
-	// Color scheme thumbnails which use all palette colors (not the subset defined below)
-	/color-scheme-thumbnail-[a-z-]+\.svg$/,
 
 	// Specific directories
 	/^docs/,
@@ -50,55 +85,59 @@ const SVG_PATH_EXCLUSIONS = [
 	/^static\/images\/me/,
 ];
 
+// The image paths that match the following patterns will use `PALETTE_APP_COLORS`,
+// while all other paths with fall back to `PALETTE_ILLUSTRATION_COLORS`
+const SVG_APP_PATHS = [
+	// Color scheme thumbnails
+	/color-scheme-thumbnail-[a-z-]+\.svg$/,
+
+	// Gutenberg images
+	/^static\/images\/illustrations\/gutenberg/,
+
+	// Plan icons
+	/^static\/images\/plans\//,
+];
+
+// The regular expression used to identify color values
+const SVG_VALUE_EXPRESSION = /(?:fill|flood-color|lighting-color|stop-color|stroke)="([a-z0-9#]*?)"/gi;
+
+// The specific color values to ignore
+const SVG_IGNORE_VALUES = [ 'currentcolor', 'none', 'transparent' ];
+
+/**
+ * Other constants
+ */
+
+const ROOT_PATH = path.join( __dirname, '..' );
+const GIT_DIR_PATH = path.join( ROOT_PATH, '.git' );
+
 const SVG_FILES_TO_PROCESS = execSync( `git --git-dir="${ GIT_DIR_PATH }" ls-files "*.svg"` )
 	.toString()
 	.trim()
 	.split( /\s+/ )
 	.filter( excludeSelectedPaths );
 
-const SVG_COLOR_VALUE_EXPRESSION = /(?:fill|flood-color|lighting-color|stop-color|stroke)="([a-z0-9#]*?)"/gi;
-const SVG_COLOR_VALUE_EXCLUSIONS = [ 'currentcolor', 'none', 'transparent' ];
-
-const SELECTED_PALETTE_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
-	// Avoid using pure black in illustrations
-	if ( colorValue === '#000' ) {
-		return false;
-	}
-
-	// Exclude WooCommerce Purple from illustration use
-	if ( _.startsWith( colorName, 'WooCommerce Purple' ) ) {
-		return false;
-	}
-
-	// Prefer WordPress Blue and Jetpack Green over Blue and Green in SVG files
-	// as the illustrations are a part of their visual identity
-	if ( _.startsWith( colorName, 'Blue' ) || _.startsWith( colorName, 'Green' ) ) {
-		return false;
-	}
-
-	return true;
-} );
-
-const SELECTED_PALETTE_COLOR_VALUES = _.uniq( Object.values( SELECTED_PALETTE_COLORS ) );
+const REPLACEMENT_RULES = [];
 
 /**
- * Find all color values available in the selected SVG files
+ * Perform the audit
  */
 
-const COLOR_VALUES_FOUND = [];
-const COLOR_VALUES_TO_REPLACE = [];
-
 SVG_FILES_TO_PROCESS.forEach( imagePath => {
+	const targetValues = isAppImagePath( imagePath )
+		? PALETTE_APP_COLOR_VALUES
+		: PALETTE_ILLUSTRATION_COLOR_VALUES;
+
 	const imageContent = getFileContents( imagePath );
-	const colorValues = findColorValuesIn( imageContent );
+	const matchedColorValues = matchColorValues( imageContent );
 	const colorValuesToReplace = [];
 
-	_.uniq( colorValues ).forEach( value => {
-		if ( SVG_COLOR_VALUE_EXCLUSIONS.includes( value ) ) {
+	_.uniq( matchedColorValues ).forEach( value => {
+		if ( SVG_IGNORE_VALUES.includes( value ) ) {
 			return;
 		}
 
-		if ( SELECTED_PALETTE_COLOR_VALUES.includes( value ) ) {
+		if ( targetValues.includes( value ) ) {
 			return;
 		}
 
@@ -109,19 +148,14 @@ SVG_FILES_TO_PROCESS.forEach( imagePath => {
 		colorValuesToReplace.push( value );
 	} );
 
-	if ( colorValuesToReplace.length > 0 ) {
-		COLOR_VALUES_FOUND.push( {
-			file: imagePath,
-			values: colorValuesToReplace,
-		} );
+	if ( ! colorValuesToReplace.length ) {
+		return;
 	}
-} );
 
-COLOR_VALUES_FOUND.forEach( valueObject => {
-	const repacementObject = {
-		file: valueObject.file,
-		rules: valueObject.values.map( value => {
-			const replacementValue = findClosestPaletteColor( value );
+	REPLACEMENT_RULES.push( {
+		file: imagePath,
+		rules: colorValuesToReplace.map( value => {
+			const replacementValue = findClosestColor( value, targetValues );
 			const replacementName = findPaletteColorName( replacementValue );
 
 			return {
@@ -134,25 +168,29 @@ COLOR_VALUES_FOUND.forEach( valueObject => {
 				},
 			};
 		} ),
-	};
-
-	COLOR_VALUES_TO_REPLACE.push( repacementObject );
+	} );
 } );
 
 /**
  * Output
  */
 
-printReplacementRules( COLOR_VALUES_TO_REPLACE );
+printReplacementRules( REPLACEMENT_RULES );
 
 /**
  * Utilities
  */
 
 function excludeSelectedPaths( imagePath ) {
-	// Make sure none of the paths match
-	return SVG_PATH_EXCLUSIONS.every( exclusion => {
-		return ! exclusion.test( imagePath );
+	// Make sure none of the ignored paths match
+	return SVG_IGNORE_PATHS.every( ignoredPath => {
+		return ! ignoredPath.test( imagePath );
+	} );
+}
+
+function isAppImagePath( imagePath ) {
+	return SVG_APP_PATHS.some( appPath => {
+		return appPath.test( imagePath );
 	} );
 }
 
@@ -162,40 +200,40 @@ function getFileContents( filePath ) {
 		.trim();
 }
 
-function findColorValuesIn( content ) {
+function matchColorValues( content ) {
 	const values = [];
 	let match;
 
 	// `String.matchAll` is unsupported at the moment
-	while ( ( match = SVG_COLOR_VALUE_EXPRESSION.exec( content ) ) !== null ) {
+	while ( ( match = SVG_VALUE_EXPRESSION.exec( content ) ) !== null ) {
 		values.push( match[ 1 ].toLowerCase() );
 	}
 
 	return values;
 }
 
-function findClosestPaletteColor( value ) {
+function findClosestColor( value, targetValues ) {
 	let closestValue = value;
 	let closestDistance = Infinity;
-	let paletteValue;
+	let targetValue;
 
-	for ( paletteValue of SELECTED_PALETTE_COLOR_VALUES ) {
-		const distance = chroma.distance( value, paletteValue );
+	for ( targetValue of targetValues ) {
+		const distance = chroma.distance( value, targetValue );
 
 		// This bit shortens existing variations of white to `#fff`
 		if ( distance === 0 ) {
-			closestValue = paletteValue;
+			closestValue = targetValue;
 			closestDistance = distance;
 			break;
 		}
 
 		// Unless white is explicitely used, let’s not convert darker colors to it
-		if ( paletteValue === '#fff' ) {
+		if ( targetValue === '#fff' ) {
 			continue;
 		}
 
 		if ( distance < closestDistance ) {
-			closestValue = paletteValue;
+			closestValue = targetValue;
 			closestDistance = distance;
 		}
 	}
