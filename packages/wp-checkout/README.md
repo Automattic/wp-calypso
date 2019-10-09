@@ -8,13 +8,15 @@ A set of React components, custom Hooks, and helper functions that together can 
 
 ## Usage
 
-This package provides a main component, `WPCheckout`, which creates the checkout form.
+This package provides a primary component, `Checkout`, which creates a checkout form.
 
 The form has three steps:
 
 1. Payment method
 2. Billing details
 3. Review order
+
+The steps can be customized using various props. `Checkout` is actually just a wrapper for other components and functions exported by this package, though, so if these customizations aren't sufficient, it's possible to build a custom form.
 
 ### Select payment method
 
@@ -33,31 +35,43 @@ Any previously stored payment methods (eg: saved credit cards) will be fetched a
 
 The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
 
+Inside the component, this is a `CheckoutStep` wrapping a `CheckoutPaymentMethods` component.
+
 ### Billing details
 
-The billing address may be automatically filled based on the server. If the billing address is set or changed during the second step, the updated address will be used for the checkout. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can take any necessary actions like updating the line items and total.
+This step contains various form fields to collect billing contact information from the customer.
+
+The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can take any necessary actions like updating the line items and total.
+
+Any other component can request the information from these form fields by using the `useBillingContact` React Hook.
+
+Inside the component, this is a `CheckoutStep` wrapping a `CheckoutBillingContactForm` component.
 
 ### Review order
 
-The third step's order review content can be overridden using the `orderReview` and `orderReviewCollapsed` props, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
+The third step presents a simple list of line items and a total, followed by a purchase button.
 
-The line items being purchased must be passed to `WPCheckout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items in the `orderReview` component. If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then return it to `WPCheckout`.
+This step's content can be overridden using the `reviewContent` and `reviewContentCollapsed` props, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
-The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is an object (very similar to the line items) of the form `{ label: string, subLabel: string, amount: { currency: string, value: int, displayValue: string } }`.
+The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
 
-The `displayValue` property of both items and the total can use limited Markdown formatting, including the `~` character for strike-through text, if passed through the `formatDisplayValueForCurrency()` helper.
+If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then update `Checkout`.
+
+The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
+
+The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~` character for strike-through text. If customizing this component, the property should be passed through the `formatValueForCurrency()` helper.
 
 There are several other optional props which allow customizing the contents of the form. `checkoutHeader` is the header of the form, `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
-Any component within `WPCheckout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), the second element is the current total (matching the `total` prop).
+Any component within `Checkout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
 
 ### Submitting the form
 
-When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `WPCheckout` will be called with an object describing the error.
+When the payment button is pressed, the form data will be validated and submitted in a way appropriate to the payment method. If there is a problem with either validation or submission, or if the payment method's service returns an error, the `onFailure` prop on `Checkout` will be called with an object describing the error.
 
 If the payment method succeeds, the `onSuccess` prop will be called instead. It's important not to provision anything based on this callback, as it could be called by a malicious user. Instead, provisioning should be handled separately server-to-server.
 
-Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `WPCheckout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
+Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
 ## ✅ Example
 
@@ -66,7 +80,7 @@ The following example demonstrates a full checkout page using many of the option
 ```js
 import React, { useState } from 'react';
 import {
-	WPCheckout,
+	Checkout,
 	useCheckoutLineItems,
 	OrderReviewLineItems,
 	OrderReviewSection,
@@ -76,7 +90,7 @@ import {
 } from 'wp-checkout';
 import {
 	PlanLengthSelector,
-	formatDisplayValueForCurrency,
+	formatValueForCurrency,
 	adjustItemPricesForCountry,
 	replacePlanWithDifferentLength,
 } from 'wp-checkout/wpcom';
@@ -120,10 +134,10 @@ export default function MyCheckout() {
 	} = useShoppingCart();
 
 	// Some parts of the checkout can be customized
-	const orderReview = (
+	const reviewContent = (
 		<OrderReview onDeleteItem={deleteItem} onChangePlanLength={changePlanLength} />
 	);
-	const orderReviewCollapsed = (
+	const reviewContentCollapsed = (
 		<OrderReviewCollapsed />
 	);
 
@@ -138,7 +152,7 @@ export default function MyCheckout() {
 	const upSell = <UpSellCoupon onClick={addQuickStart} />;
 
 	return (
-		<WPCheckout
+		<Checkout
 			locale={'US'}
 			items={itemsWithTax}
 			total={total}
@@ -148,8 +162,8 @@ export default function MyCheckout() {
 			onFailure={onFailure}
 			successRedirectUrl={successRedirectUrl}
 			failureRedirectUrl={failureRedirectUrl}
-			orderReview={orderReview}
-			orderReviewCollapsed={orderReview}
+			reviewContent={reviewContent}
+			reviewContentCollapsed={reviewContentCollapsed}
 			upSell={upSell}
 		/>
 	);
@@ -170,7 +184,7 @@ function useShoppingCart() {
 		amount: {
 			currency: 'USD',
 			value: taxValue,
-			displayValue: formatDisplayValueForCurrency(currency, taxValue),
+			displayValue: formatValueForCurrency(currency, taxValue),
 		},
 	};
 	const itemsWithTax = [...items, taxItem];
@@ -191,7 +205,7 @@ function useShoppingCart() {
 		amount: {
 			currency,
 			value: lineItemTotal,
-			displayValue: formatDisplayValueForCurrency(currency, lineItemTotal),
+			displayValue: formatValueForCurrency(currency, lineItemTotal),
 		},
 	};
 
@@ -306,11 +320,35 @@ function UpSellCoupon({ onClick }) {
 
 ## Advanced API
 
-While the `WPCheckout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
+While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
+
+### Checkout
+
+The main component in this package. It has the following props.
+
+- locale (required)
+- items (required)
+- total (required)
+- onChangeBillingContact
+- availablePaymentMethods
+- onSuccess (required)
+- onFailure (required)
+- successRedirectUrl (required)
+- failureRedirectUrl (required)
+- reviewContent
+- reviewContentCollapsed
+- upSell
+- checkoutHeader
+- orderReviewTOS
+- orderReviewFeatures
+
+### formatValueForCurrency(currency, displayValue)
+
+Takes two arguments, a currency string and a displayValue string and returns the displayValue with some minor Markdown formatting. Specifically, the `~` character can be used to make ~strike-through~ text.
 
 ### CheckoutProvider
 
-Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `WPCheckout` component will do so automatically.
+Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `Checkout` component will do so automatically.
 
 ### useBillingContact()
 
@@ -322,7 +360,7 @@ A React Hook that will return a string containing whatever paymentMethod was ent
 
 ### useCheckoutLineItems()
 
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `WPCheckout`), and the second element is the current total (matching the `total` prop).
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
 
 ### OrderReviewSection
 
