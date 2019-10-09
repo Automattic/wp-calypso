@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isEnabled } from 'config';
 import Product from './product';
 
 /**
@@ -16,8 +16,8 @@ import Product from './product';
 import './style.scss';
 
 const PlansSingleProducts = ( { translate } ) => {
-	const displayBackup = config.isEnabled( 'plans/jetpack-backup' );
-	const displayScan = config.isEnabled( 'plans/jetpack-scan' );
+	const displayBackup = isEnabled( 'plans/jetpack-backup' );
+	const displayScan = isEnabled( 'plans/jetpack-scan' );
 
 	if ( ! displayBackup && ! displayScan ) {
 		return null;
