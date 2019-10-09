@@ -1,7 +1,7 @@
 #!/bin/bash
 MAGELLAN=./node_modules/.bin/magellan
 MOCHA_ARGS=""
-WORKERS=8
+WORKERS=7
 GRUNT=./node_modules/.bin/grunt
 REPORTER=""
 PARALLEL=0
@@ -14,6 +14,7 @@ RETURN=0
 CLEAN=0
 GREP=""
 LOCAL_BROWSER="chrome"
+FILE_LIST=""
 
 # Warn if NODE_CONFIG_ENV variable is not set
 if [ "$NODE_CONFIG_ENV" = "" ]; then
@@ -58,6 +59,7 @@ usage () {
 -I		  - Execute tests in specs-i18n/ directory
 -x		  - Execute the tests from the context of xvfb-run
 -u [baseUrl]	  - Override the calypsoBaseURL config
+-f [testFileList] - Specify a list of test files to run
 -h		  - This help listing
 EOF
   exit 1
@@ -67,7 +69,7 @@ if [ $# -eq 0 ]; then
   usage
 fi
 
-while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:fiIUvxu:h:F" opt; do
+while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
   case $opt in
     a)
       WORKERS=$OPTARG
@@ -176,6 +178,9 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:fiIUvxu:h:F" opt; do
     u)
       NODE_CONFIG_ARGS+=("\"calypsoBaseURL\":\"$OPTARG\"")
       continue
+      ;;
+    f)
+      FILE_LIST=$OPTARG
       ;;
     h)
       usage
