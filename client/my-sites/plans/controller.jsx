@@ -8,23 +8,20 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import CartData from 'components/data/cart';
 import Plans from './plans';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 
 export function plans( context, next ) {
 	context.primary = (
-		<CartData>
-			<Plans
-				context={ context }
-				intervalType={ context.params.intervalType }
-				customerType={ context.query.customerType }
-				selectedFeature={ context.query.feature }
-				selectedPlan={ context.query.plan }
-				withDiscount={ context.query.discount }
-				discountEndDate={ context.query.ts }
-			/>
-		</CartData>
+		<Plans
+			context={ context }
+			intervalType={ context.params.intervalType }
+			customerType={ context.query.customerType }
+			selectedFeature={ context.query.feature }
+			selectedPlan={ context.query.plan }
+			withDiscount={ context.query.discount }
+			discountEndDate={ context.query.ts }
+		/>
 	);
 	next();
 }
