@@ -38,7 +38,9 @@ export default function SignupSitePreviewScreenshot( {
 		<div className={ className }>
 			<ImagePreloader
 				src={ screenshotUrl }
-				placeholder={ <Spinner size={ isPhone ? 20 : 40 } /> }
+				placeholder={
+					<Spinner className="signup-site-preview__screenshot-spinner" size={ isPhone ? 20 : 40 } />
+				}
 				onClick={ () => onPreviewClick( defaultViewportDevice ) }
 				onLoad={ ( e: any ) => setWrapperHeight( e.target.height ) }
 				alt={
