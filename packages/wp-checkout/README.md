@@ -59,7 +59,7 @@ If any event in the form causes the line items to change (for example, deleting 
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
-The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~` character for strike-through text. If customizing this component, the property should be passed through the `formatValueForCurrency()` helper.
+The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `formatValueForCurrency()` helper.
 
 There are several other optional props which allow customizing the contents of the form. `checkoutHeader` is the header of the form, `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
@@ -107,7 +107,7 @@ const initialItems = [
 		subLabel: 'example.com',
 		id: 'wpcom-domain',
 		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~$17~ 0' },
+		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
 	},
 ];
 
@@ -146,7 +146,7 @@ export default function MyCheckout() {
 		label: 'Quick Start',
 		id: 'quickstart',
 		type: 'quickstart',
-		amount: { currency: 'USD', value: 2500, displayValue: '~$50~ $25' },
+		amount: { currency: 'USD', value: 2500, displayValue: '~~$50~~ $25' },
 	};
 	const addQuickStart = () => addItem(quickStartItem);
 	const upSell = <UpSellCoupon onClick={addQuickStart} />;
@@ -344,7 +344,7 @@ The main component in this package. It has the following props.
 
 ### formatValueForCurrency(currency, displayValue)
 
-Takes two arguments, a currency string and a displayValue string and returns the displayValue with some minor Markdown formatting. Specifically, the `~` character can be used to make ~strike-through~ text.
+Takes two arguments, a currency string and a displayValue string and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
 
 ### CheckoutProvider
 
