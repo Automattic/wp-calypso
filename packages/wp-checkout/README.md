@@ -57,7 +57,7 @@ The third step presents a simple list of line items and a total, followed by a p
 
 Inside the component, this is a `CheckoutStep` wrapping a `CheckoutReviewOrder` component.
 
-![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/43c2409214f5f985d686f0148992f6ddaeec4508/packages/wp-checkout/doc-assets/review-step.png "Review Order Step")
+![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/wp-checkout/doc-assets/review-step.png "Review Order Step")
 
 This step's content can be overridden using the `reviewContent` and `reviewContentCollapsed` props, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
