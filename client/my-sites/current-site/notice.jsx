@@ -161,7 +161,7 @@ export class SiteNotice extends React.Component {
 				} );
 			}
 		} else {
-			noticeText = translate( 'Get a domain starting at %(minDomainPrice)s', {
+			noticeText = translate( 'Add another domain from %(minDomainPrice)s', {
 				args: {
 					minDomainPrice: formatCurrency( priceAndSaleInfo.minRegularPrice, currencyCode ),
 				},
