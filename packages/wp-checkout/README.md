@@ -2,11 +2,11 @@
 
 A set of React components, custom Hooks, and helper functions that together can be used to create a purchase and checkout flow.
 
-## Installation
+## 💰 Installation
 
 `npm install wp-checkout styled-components`
 
-## Usage
+## 💰 Usage
 
 This package provides a primary component, `Checkout`, which creates a checkout form.
 
@@ -73,7 +73,7 @@ If the payment method succeeds, the `onSuccess` prop will be called instead. It'
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-## ✅ Example
+## 💰 Example
 
 The following example demonstrates a full checkout page using many of the options available.
 
@@ -318,7 +318,7 @@ function UpSellCoupon({ onClick }) {
 }
 ```
 
-## Advanced API
+## 💰 Advanced API
 
 While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
 
@@ -410,12 +410,12 @@ Renders buttons for each payment method that can be used out of the array in the
 
 Renders the billing contact info form (typically name and address, but may also include other contact info like phone number). The fields displayed are determined by the payment method passed in as the `paymentMethod` prop.
 
-## Styles and Themes
+## 💰 Styles and Themes
 
 Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by wrapping checkout in a `ThemeProvider` from that package.
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
-## Credits and Coupons
+## 💰 Credits and Coupons
 
 Credits, coupons, and discounts are all ways that the line items and the total can be modified, so they must be handled by the parent component.
