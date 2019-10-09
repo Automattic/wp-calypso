@@ -294,7 +294,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
 		"@types/classnames": "2.2.9",
 		"@types/debug": "4.1.4",
-		"@types/lodash": "4.14.123",
+		"@types/lodash": "4.14.144",
 		"@types/page": "1.8.0",
 		"@types/react": "16.8.16",
 		"@types/react-redux": "7.0.6",
