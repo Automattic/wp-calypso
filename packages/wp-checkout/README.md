@@ -59,7 +59,7 @@ If any event in the form causes the line items to change (for example, deleting 
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
-The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `formatValueForCurrency()` helper.
+The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
 
 There are several other optional props which allow customizing the contents of the form. `checkoutHeader` is the header of the form, `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
@@ -75,12 +75,83 @@ Some payment methods may require a redirect to an external site. If that occurs,
 
 ## 💰 Example
 
-The following example demonstrates a full checkout page using many of the options available.
+### Example 1
+
+Here is a very simple example of using the `Checkout` component with default options. Its review section is very basic and line items cannot be removed or added.
 
 ```js
 import React, { useState } from 'react';
-import {
-	Checkout,
+import Checkout from 'wp-checkout';
+import { formatValueForCurrency } from 'wp-checkout/wpcom';
+
+const initialItems = [
+	{
+		label: 'WordPress.com Personal Plan',
+		id: 'wpcom-personal',
+		type: 'plan',
+		amount: { currency: 'USD', value: 6000, displayValue: '$60' },
+	},
+	{
+		label: 'Domain registration',
+		subLabel: 'example.com',
+		id: 'wpcom-domain',
+		type: 'domain',
+		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
+	},
+];
+
+// These are used only for non-redirect payment methods
+const onSuccess = () => console.log('Payment succeeded!');
+const onFailure = error => console.error('There was a problem with your payment', error);
+
+// These are used only for redirect payment methods
+const successRedirectUrl = window.location.href;
+const failureRedirectUrl = window.location.href;
+
+// This is the parent component which would be included on a host page
+export default function MyCheckout() {
+	const { items, total } = useShoppingCart();
+
+	return (
+		<Checkout
+			locale={'US'}
+			items={items}
+			total={total}
+			onSuccess={onSuccess}
+			onFailure={onFailure}
+			successRedirectUrl={successRedirectUrl}
+			failureRedirectUrl={failureRedirectUrl}
+		/>
+	);
+}
+
+// This is a very simple shopping cart manager which can calculate totals
+function useShoppingCart() {
+	const [items] = useState(initialItems);
+
+	// The total must be calculated outside checkout and need not be related to line items
+	const lineItemTotal = items.reduce((sum, item) => sum + item.amount.value, 0);
+	const currency = items.reduce((lastCurrency, item) => item.amount.currency, 'USD');
+	const total = {
+		label: 'Total',
+		amount: {
+			currency,
+			value: lineItemTotal,
+			displayValue: formatValueForCurrency(currency, lineItemTotal),
+		},
+	};
+
+	return { items, total };
+}
+```
+
+### Example 2
+
+The following bigger example demonstrates a checkout page using many of the options available. Notably this uses a custom review section and line items can be added, removed, and modified.
+
+```js
+import React, { useState } from 'react';
+import Checkout, {
 	useCheckoutLineItems,
 	OrderReviewLineItems,
 	OrderReviewSection,
@@ -342,9 +413,13 @@ The main component in this package. It has the following props.
 - orderReviewTOS: component
 - orderReviewFeatures: component
 
-### formatValueForCurrency(currency, displayValue)
+### renderDisplayValueMarkdown(currency, displayValue)
 
 Takes two arguments, a currency string and a displayValue string and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
+
+### formatValueForCurrency(currency, int)
+
+Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
 
 ### CheckoutProvider
 
