@@ -38,7 +38,7 @@ class ConfirmationStep extends Component {
 					onClick={ this.handleClick }
 					primary={ true }
 				>
-					{ translate( 'Go to your session dashboard' ) }
+					{ translate( 'View your session dashboard' ) }
 				</Button>
 			</Confirmation>
 		);
