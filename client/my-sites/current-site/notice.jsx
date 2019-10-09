@@ -186,7 +186,7 @@ export class SiteNotice extends React.Component {
 				>
 					{ translate( 'Go' ) }
 					<TrackComponentView
-						eventName={ 'calypso_upgrade_nudge_impression' }
+						eventName="calypso_upgrade_nudge_impression"
 						eventProperties={ { cta_name: 'domain-upsell-nudge' } }
 					/>
 				</NoticeAction>
