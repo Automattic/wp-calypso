@@ -31,6 +31,8 @@ function render_site_description_block( $attributes ) {
 
 	if ( isset( $attributes['textAlign'] ) ) {
 		$class .= ' has-text-align-' . $attributes['textAlign'];
+	} else {
+		$class .= ' has-text-align-center';
 	}
 
 	if ( isset( $attributes['textColor'] ) ) {
@@ -53,6 +55,8 @@ function render_site_description_block( $attributes ) {
 		$class .= ' has-' . $attributes['fontSize'] . '-font-size';
 	} elseif ( isset( $attributes['customFontSize'] ) ) {
 		$styles .= ' font-size: ' . $attributes['customFontSize'] . 'px;';
+	} else {
+		$class .= ' has-small-font-size';
 	}
 
 	?>

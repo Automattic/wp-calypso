@@ -50,6 +50,7 @@ registerBlockType( 'a8c/site-description', {
 		},
 		fontSize: {
 			type: 'string',
+			default: 'small',
 		},
 		customFontSize: {
 			type: 'number',
