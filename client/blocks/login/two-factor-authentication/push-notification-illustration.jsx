@@ -70,11 +70,18 @@ export default function PushNotificationIllustration() {
 	// Inlining two stacked SVGs because they’re a part of an animated image.
 	// By not loading them externally, we’re making sure the animation will
 	// get fired right away with all of its elements in place.
+	const now = new Date();
+	const hours = now.getHours() || 12;
+	const minutes = now.getMinutes();
+
+	const currentTime = `${ hours > 12 ? hours - 12 : hours }:${
+		minutes < 10 ? '0' + minutes : minutes
+	}`;
 
 	return (
 		<div className="two-factor-authentication__illustration" aria-hidden="true">
 			<DeviceSvg />
-			<div className="two-factor-authentication__illustration-screen">10:07</div>
+			<div className="two-factor-authentication__illustration-screen">{ currentTime }</div>
 			<div className="two-factor-authentication__illustration-notification-container">
 				<NotificationSvg />
 			</div>
