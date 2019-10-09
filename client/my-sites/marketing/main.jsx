@@ -32,7 +32,7 @@ import { FEATURE_NO_ADS } from 'lib/plans/constants';
  */
 import './style.scss';
 
-export const Sharing = ( {
+export const Marketing = ( {
 	contentComponent,
 	path,
 	showButtons,
@@ -86,8 +86,8 @@ export const Sharing = ( {
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Sharing' ) } />
+		<Main wideLayout className="marketing">
+			<DocumentHead title={ translate( 'Marketing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
 			{ filters.length > 0 && (
@@ -114,7 +114,7 @@ export const Sharing = ( {
 	);
 };
 
-Sharing.propTypes = {
+Marketing.propTypes = {
 	canManageOptions: PropTypes.bool,
 	isVipSite: PropTypes.bool,
 	contentComponent: PropTypes.node,
@@ -142,4 +142,4 @@ export default connect( state => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
-} )( localize( Sharing ) );
+} )( localize( Marketing ) );

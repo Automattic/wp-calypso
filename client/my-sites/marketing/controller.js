@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  */
 import MarketingTools from './tools';
 import notices from 'notices';
-import Sharing from './main';
+import Marketing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
@@ -36,7 +36,7 @@ export const redirectSharingButtons = context => {
 export const layout = ( context, next ) => {
 	const { contentComponent, path } = context;
 
-	context.primary = createElement( Sharing, { contentComponent, path } );
+	context.primary = createElement( Marketing, { contentComponent, path } );
 
 	next();
 };
