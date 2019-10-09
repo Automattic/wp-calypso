@@ -37,7 +37,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
@@ -610,7 +610,7 @@ const connectComponent = connect(
 		return {
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
-			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
+			siteIsAtomic: isSiteWpcomAtomic( state, siteId ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
