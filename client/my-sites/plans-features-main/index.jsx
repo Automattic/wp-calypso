@@ -383,8 +383,13 @@ export class PlansFeaturesMain extends Component {
 
 	renderSingleProducts() {
 		const { displayJetpackPlans, translate } = this.props;
-
 		if ( ! displayJetpackPlans ) {
+			return null;
+		}
+
+		const displayBackup = isEnabled( 'plans/jetpack-backup' );
+		const displayScan = isEnabled( 'plans/jetpack-scan' );
+		if ( ! displayBackup && ! displayScan ) {
 			return null;
 		}
 
