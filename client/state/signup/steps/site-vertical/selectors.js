@@ -55,13 +55,13 @@ export function getSiteVerticalPreviewScreenshot( state, viewportDevice ) {
 function getScreenshotPropName( viewportDevice ) {
 	if ( window.devicePixelRatio === 1 ) {
 		if ( viewportDevice === 'phone' ) {
-			return 'mobileLowDpi';
+			return 'phoneLowDpi';
 		}
 		return 'desktopLowDpi';
 	}
 
 	if ( viewportDevice === 'phone' ) {
-		return 'mobileHighDpi';
+		return 'phoneHighDpi';
 	}
 	return 'desktopHighDpi';
 }
