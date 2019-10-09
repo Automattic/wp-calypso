@@ -31,7 +31,7 @@ The payment methods displayed in the first step are chosen from an optional arra
 
 The actual payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods in the `availablePaymentMethods` array.
 
-![payment method step](https://github.com/Automattic/wp-calypso/raw/add/wp-checkout-component/packages/wp-checkout/images/icon48.png "Payment Method Step")
+![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/43c2409214f5f985d686f0148992f6ddaeec4508/packages/wp-checkout/doc-assets/payment-method-step.png "Payment Method Step")
 
 Any previously stored payment methods (eg: saved credit cards) will be fetched automatically and displayed in the relevant payment method section of this step.
 
@@ -45,7 +45,7 @@ This step contains various form fields to collect billing contact information fr
 
 The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can take any necessary actions like updating the line items and total.
 
-![billing details step](https://github.com/Automattic/wp-calypso/raw/add/wp-checkout-component/packages/wp-checkout/images/icon48.png "Billing Details Step")
+![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/43c2409214f5f985d686f0148992f6ddaeec4508/packages/wp-checkout/doc-assets/billing-step.png "Billing Details Step")
 
 Any other component can request the information from these form fields by using the `useBillingContact` React Hook.
 
@@ -57,7 +57,7 @@ The third step presents a simple list of line items and a total, followed by a p
 
 Inside the component, this is a `CheckoutStep` wrapping a `CheckoutReviewOrder` component.
 
-![review order step](https://github.com/Automattic/wp-calypso/raw/add/wp-checkout-component/packages/wp-checkout/images/icon48.png "Review Order Step")
+![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/43c2409214f5f985d686f0148992f6ddaeec4508/packages/wp-checkout/doc-assets/review-step.png "Review Order Step")
 
 This step's content can be overridden using the `reviewContent` and `reviewContentCollapsed` props, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
 
@@ -73,7 +73,7 @@ The `displayValue` property of both the items and the total can use limited Mark
 
 There are several other optional props aside from `reviewContent` which allow customizing the contents of the form. `upSell` is a section at the bottom of the form, `checkoutHeader` is the header of the form, `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
-![component slots](https://github.com/Automattic/wp-calypso/raw/add/wp-checkout-component/packages/wp-checkout/images/icon48.png "Highlighted component slots")
+![component slots](https://raw.githubusercontent.com/Automattic/wp-calypso/43c2409214f5f985d686f0148992f6ddaeec4508/packages/wp-checkout/doc-assets/checkout-slots.png "Highlighted component slots")
 
 Any component within `Checkout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
 
