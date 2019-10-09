@@ -273,7 +273,7 @@ function useShoppingCart() {
 	const itemsWithTax = [...items, taxItem];
 
 	// The checkout itself does not trigger any events apart from success/failure
-	const deleteItem = itemToDelete => setItems(items.filter(item => item.id === itemToDelete.id));
+	const deleteItem = itemToDelete => setItems(items.filter(item => item.id !== itemToDelete.id));
 	const changePlanLength = (plan, planLength) =>
 		setItems(replacePlanWithDifferentLength(items, planLength));
 	const updatePricesForAddress = address =>
