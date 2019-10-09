@@ -1,5 +1,6 @@
 # 4.2.0
 - Support CommonJS/ESM compilation by adding a `modules` option (and `MODULES` env variable) to the `babel/default` preset.
+- Add `jest-enzyme` assertion library to `jest-preset.js`.
 
 # 4.1.0
 
