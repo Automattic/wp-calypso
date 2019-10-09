@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import { getSiteVerticalPreviewScreenshot } from 'state/signup/steps/site-vertic
  */
 import './style.scss';
 
-function MockupChromeMobile( { translate } ) {
+function MockupChromeMobile() {
 	return (
 		<div className="signup-site-preview__chrome-mobile">
 			<span className="signup-site-preview__chrome-label">
@@ -32,7 +32,7 @@ function MockupChromeMobile( { translate } ) {
 	);
 }
 
-function MockupChromeDesktop( { translate } ) {
+function MockupChromeDesktop() {
 	return (
 		<div className="signup-site-preview__chrome-desktop">
 			<svg width="38" height="10">
@@ -98,7 +98,7 @@ export class SignupSitePreview extends Component {
 	setWrapperHeight = wrapperHeight => this.setState( { wrapperHeight } );
 
 	render() {
-		const { isDesktop, isPhone, screenshotUrl, translate } = this.props;
+		const { isDesktop, isPhone, screenshotUrl } = this.props;
 		const className = classNames( this.props.className, 'signup-site-preview__wrapper', {
 			'is-desktop': isDesktop,
 			'is-phone': isPhone,
@@ -108,11 +108,7 @@ export class SignupSitePreview extends Component {
 			height: usingScreenshot ? 'auto' : this.state.wrapperHeight,
 		};
 
-		const chrome = isPhone ? (
-			<MockupChromeMobile translate={ translate } />
-		) : (
-			<MockupChromeDesktop translate={ translate } />
-		);
+		const chrome = isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop />;
 
 		return (
 			<div className={ className } style={ this.props.resize ? wrapperHeightStyle : null }>
