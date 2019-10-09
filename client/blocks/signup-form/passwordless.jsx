@@ -10,13 +10,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import wpcom from 'lib/wp';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import ValidationFieldset from 'signup/validation-fieldset';
-import { createUserAccountFromEmailAddress } from 'lib/signup/step-actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import { submitSignupStep } from 'state/signup/progress/actions';
@@ -61,9 +61,19 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: true,
 		} );
 
-		createUserAccountFromEmailAddress( this.createUserAccountFromEmailAddressCallback, {
-			email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-		} );
+		wpcom
+			.undocumented()
+			.createUserAccountFromEmailAddress(
+				{ email: typeof this.state.email === 'string' ? this.state.email.trim() : '' },
+				null
+			)
+			.then( response =>
+				this.createUserAccountFromEmailAddressCallback( null, {
+					username: response.username,
+					bearer_token: response.token.access_token,
+				} )
+			)
+			.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
 	};
 
 	createUserAccountFromEmailAddressCallback = ( error, response ) => {
