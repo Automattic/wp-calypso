@@ -501,7 +501,7 @@ export class MySitesSidebar extends Component {
 	hosting() {
 		const { translate, path, site, isAtomicSite, siteSuffix } = this.props;
 
-		if ( ! site || ! isAtomicSite ) {
+		if ( ! site || ! isAtomicSite || ! isEnabled( 'hosting' ) ) {
 			return null;
 		}
 
