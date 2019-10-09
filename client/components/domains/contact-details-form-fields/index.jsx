@@ -177,8 +177,14 @@ export class ContactDetailsFormFields extends Component {
 
 	getMainFieldValues() {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
-		const { countryCode, hasCountryStates, needsFax } = this.props;
+		const { needsFax } = this.props;
+		const { countryCode } = mainFieldValues;
 		let state = mainFieldValues.state;
+
+		const hasCountryStates =
+			countryCode === this.props.countryCode
+				? this.props.hasCountryStates
+				: ! isEmpty( getCountryStates( this.state, countryCode ) );
 
 		// domains registered according to ancient validation rules may have state set even though not required
 		if (
