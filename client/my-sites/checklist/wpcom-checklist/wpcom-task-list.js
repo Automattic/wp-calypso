@@ -129,6 +129,12 @@ class WpcomTaskList {
 		return found;
 	}
 
+	removeTasksWithoutUrls( taskUrls ) {
+		const hasUrl = task => ! ( task.id in taskUrls ) && taskUrls[ task.id ];
+
+		this.tasks = this.tasks.filter( hasUrl );
+	}
+
 	getFirstIncompleteTask() {
 		return this.tasks.find( task => ! task.isCompleted );
 	}

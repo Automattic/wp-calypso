@@ -3,11 +3,10 @@
 /**
  * Internal dependencies
  */
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 import { getSiteFrontPage } from 'state/sites/selectors';
-import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
-import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
 
 /**
  * Checks whether the tasklist has been completed.
@@ -52,14 +51,6 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		return false;
 	};
 
-	const taskList = getTaskList( {
-		taskStatuses: siteChecklist.tasks,
-		phase2: siteChecklist.phase2,
-		siteVerticals: siteChecklist.verticals,
-		siteSegment: siteChecklist.siteSegment,
-	} ).getAll();
-	const taskUrls = getChecklistTaskUrls( state, siteId );
-	const hasNotUrl = task => ! ( task.id in taskUrls && ! taskUrls[ task.id ] );
-
-	return taskList.filter( hasNotUrl ).every( isTaskComplete );
+	const taskList = getSiteTaskList( state, siteId );
+	return taskList.getAll().every( isTaskComplete );
 }

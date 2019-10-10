@@ -5,14 +5,13 @@
 import page from 'page';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get, includes, forEach } from 'lodash';
+import { get, includes } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getTaskList } from './wpcom-task-list';
 import { Checklist, Task } from 'components/checklist';
 import ChecklistBanner from './checklist-banner';
 import ChecklistBannerTask from './checklist-banner/task';
@@ -20,6 +19,7 @@ import ChecklistNavigation from './checklist-navigation';
 import ChecklistPrompt from './checklist-prompt';
 import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import getSiteTaskList from 'state/selectors/get-site-task-list';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { successNotice } from 'state/notices/actions';
@@ -230,7 +230,7 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	nextInlineHelp = () => {
-		const taskList = getTaskList( this.props );
+		const taskList = this.props.taskList;
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 
 		if ( firstIncomplete ) {
@@ -250,8 +250,8 @@ class WpcomChecklistComponent extends PureComponent {
 		const {
 			phase2,
 			siteId,
+			taskList,
 			taskStatuses,
-			taskUrls,
 			viewMode,
 			updateCompletion,
 			setNotification,
@@ -260,15 +260,6 @@ class WpcomChecklistComponent extends PureComponent {
 			showNotification,
 			storedTask,
 		} = this.props;
-
-		const taskList = getTaskList( this.props );
-
-		// Hide a task when we can't find the exact URL of the target page.
-		forEach( taskUrls, ( url, taskId ) => {
-			if ( ! url ) {
-				taskList.remove( taskId );
-			}
-		} );
 
 		let ChecklistComponent = Checklist;
 
@@ -1019,16 +1010,17 @@ export default connect(
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const user = getCurrentUser( state );
 		const taskUrls = getChecklistTaskUrls( state, siteId );
+		const taskList = getSiteTaskList( state, siteId );
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
 			phase2: get( siteChecklist, 'phase2' ),
 			siteId,
 			siteSlug,
-			siteSegment: get( siteChecklist, 'segment' ),
 			siteVerticals: get( siteChecklist, 'verticals' ),
 			taskStatuses: get( siteChecklist, 'tasks' ),
 			taskUrls,
+			taskList,
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
