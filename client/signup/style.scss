@@ -137,7 +137,8 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	}
 
 	.formatted-header__subtitle {
-		margin: 0;
+		margin: 0 auto;
+		max-width: 560px;
 		font-size: 15px;
 		color: var( --color-text-inverted );
 	}

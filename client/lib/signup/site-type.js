@@ -32,7 +32,7 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			siteTopicHeader: i18n.translate( 'What is your site about?' ),
 			siteTopicLabel: i18n.translate( 'What is your site about?' ),
 			siteTopicSubheader: i18n.translate(
-				"Choose the closest matching option. We’ll add relevant images and text to your site based on your choices."
+				'Choose the closest matching option. We’ll add relevant images and text to your site based on your choice. You can change everything later on.'
 			),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
 			// Domains step
@@ -97,7 +97,7 @@ export function getAllSiteTypes( siteTypeIds = allowedSiteTypeIds ) {
 			siteTopicHeader: i18n.translate( 'What is your blog about?' ),
 			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 			siteTopicSubheader: i18n.translate(
-				"Choose the closest matching option. We’ll add relevant images and text to your site based on your choices."
+				'Choose the closest matching option. We’ll add relevant images and text to your site based on your choices.'
 			),
 			siteMockupHelpTipCopy: i18n.translate(
 				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
