@@ -7,7 +7,7 @@ const path = require( 'path' );
 /**
  * Internal dependencies
  */
-const i18nCalypsoCLI = require( '../i18n' );
+const i18n = require( '../i18n' );
 
 // generate whitelist file
 const sourceFiles = [
@@ -25,14 +25,12 @@ describe( 'POT', () => {
 	let output;
 
 	beforeAll( () => {
-		output = i18nCalypsoCLI( {
+		output = i18n( {
 			projectName: 'i18nTest',
 			inputPaths: sourceFiles,
 			format: 'POT',
 			extras: [ 'date' ],
 		} );
-
-		// fs.writeFileSync( path.join( __dirname, 'pot.pot' ), output, 'utf8' );
 	} );
 
 	test( 'should have all the default headers', () => {
@@ -182,7 +180,7 @@ describe( 'PHP', () => {
 	let output;
 
 	beforeAll( () => {
-		output = i18nCalypsoCLI( {
+		output = i18n( {
 			projectName: 'i18nTest',
 			inputPaths: sourceFiles,
 			phpArrayName: 'arrayName',
@@ -286,11 +284,9 @@ describe( 'PHP', () => {
 } );
 
 describe( 'PHP with an additional textdomain parameter', () => {
-	let output;
-
 	describe( 'that has no special symbols', () => {
-		beforeAll( () => {
-			output = i18nCalypsoCLI( {
+		test( 'should create a simple __() translation', () => {
+			const output = i18n( {
 				projectName: 'i18nTest',
 				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',
@@ -298,9 +294,6 @@ describe( 'PHP with an additional textdomain parameter', () => {
 				extras: [ 'date' ],
 				textdomain: 'some_domain',
 			} );
-		} );
-
-		test( 'should create a simple __() translation', () => {
 			expect( output ).toEqual(
 				expect.stringContaining( '__( "My hat has three corners.", "some_domain" ),' )
 			);
@@ -308,8 +301,8 @@ describe( 'PHP with an additional textdomain parameter', () => {
 	} );
 
 	describe( 'that has double quotes', () => {
-		beforeAll( () => {
-			output = i18nCalypsoCLI( {
+		test( 'should escape double quotes', () => {
+			const output = i18n( {
 				projectName: 'i18nTest',
 				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',
@@ -317,9 +310,6 @@ describe( 'PHP with an additional textdomain parameter', () => {
 				extras: [ 'date' ],
 				textdomain: '"some"weird-!=domain"',
 			} );
-		} );
-
-		test( 'should escape double quotes', () => {
 			expect( output ).toEqual( expect.stringContaining( '"\\"some\\"weird-!=domain\\""' ) );
 		} );
 	} );
