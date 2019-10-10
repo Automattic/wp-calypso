@@ -178,13 +178,12 @@ export class SiteNotice extends React.Component {
 				icon="info-outline"
 				onDismissClick={ this.props.clickDomainUpsellDismiss }
 				showDismiss={ true }
-				text={ noticeText }
 			>
 				<NoticeAction
 					onClick={ this.props.clickDomainUpsellGo }
 					href={ `/domains/add/${ site.slug }` }
 				>
-					{ translate( 'Go' ) }
+					{ noticeText }
 					<TrackComponentView
 						eventName="calypso_upgrade_nudge_impression"
 						eventProperties={ { cta_name: 'domain-upsell-nudge' } }
