@@ -44,6 +44,7 @@ $dark-opacity-light-400: rgba(#95959c, 0.2);
 $dark-opacity-light-300: rgba(#829493, 0.15);
 $dark-opacity-light-200: rgba(#8b8b96, 0.1);
 $dark-opacity-light-100: rgba(#747474, 0.05);
+$dark-opacity-background-fill: rgba($dark-gray-700, 0.7); // Similar to $dark-opacity-light-200, but more opaque.
 
 // Light opacities, for use with dark themes.
 $light-opacity-900: rgba($white, 1);
@@ -64,6 +65,7 @@ $light-opacity-light-400: rgba($white, 0.25);
 $light-opacity-light-300: rgba($white, 0.2);
 $light-opacity-light-200: rgba($white, 0.15);
 $light-opacity-light-100: rgba($white, 0.1);
+$light-opacity-background-fill: rgba($light-gray-300, 0.8);  // Similar to $light-opacity-light-200, but more opaque.
 
 // Additional colors.
 // Some are from https://make.wordpress.org/design/handbook/foundations/colors/.

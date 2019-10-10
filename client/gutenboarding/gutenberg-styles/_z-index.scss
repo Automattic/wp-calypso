@@ -3,36 +3,34 @@
 // value is designed to work with).
 
 $z-layers: (
-	".editor-block-list__block-edit::before": 0,
-	".editor-block-switcher__arrow": 1,
-	".editor-block-list__block {core/image aligned left or right}": 20,
-	".editor-block-list__block {core/image aligned wide or fullwide}": 20,
+	".block-editor-block-list__block-edit::before": 0,
+	".block-editor-block-switcher__arrow": 1,
+	".block-editor-block-list__block {core/image aligned wide or fullwide}": 20,
 	".block-library-classic__toolbar": 10,
-	".editor-block-list__layout .reusable-block-indicator": 1,
-	".editor-block-list__breadcrumb": 2,
+	".block-editor-block-list__layout .reusable-block-indicator": 1,
+	".block-editor-block-list__breadcrumb": 22,
 	".components-form-toggle__input": 1,
-	".components-panel__header.edit-post-sidebar__panel-tabs": 1,
-	".editor-inserter__tabs": 1,
-	".editor-inserter__tab.is-active": 1,
+	".components-panel__header.edit-post-sidebar__panel-tabs": -1,
+	".edit-post-sidebar .components-panel": -2,
+	".block-editor-inserter__tabs": 1,
+	".block-editor-inserter__tab.is-active": 1,
 	".components-panel__header": 1,
 	".components-modal__header": 10,
 	".edit-post-meta-boxes-area.is-loading::before": 1,
 	".edit-post-meta-boxes-area .spinner": 5,
-	".editor-block-contextual-toolbar": 21,
 	".components-popover__close": 5,
-	".editor-block-list__insertion-point": 6,
-	".editor-inserter-with-shortcuts": 5,
-	".editor-warning": 5,
+	".block-editor-block-list__insertion-point": 6,
+	".block-editor-inserter-with-shortcuts": 5,
+	".block-editor-warning": 5,
 	".block-library-gallery-item__inline-menu": 20,
-	".editor-url-input__suggestions": 30,
+	".block-editor-url-input__suggestions": 30,
 	".edit-post-header": 30,
-	".block-library-button__inline-link .editor-url-input__suggestions": 6, // URL suggestions for button block above sibling inserter
+	".edit-widgets-header": 30,
+	".block-library-button__inline-link .block-editor-url-input__suggestions": 6, // URL suggestions for button block above sibling inserter
 	".block-library-image__resize-handlers": 1, // Resize handlers above sibling inserter
+	".wp-block-cover__inner-container": 1, // InnerBlocks area inside cover image block
 	".wp-block-cover.has-background-dim::before": 1, // Overlay area inside block cover need to be higher than the video background.
 	".wp-block-cover__video-background": 0, // Video background inside cover block.
-
-	// Side UI active buttons
-	".editor-block-mover__control": 1,
 
 	// Active pill button
 	".components-button.is-button {:focus or .is-primary}": 1,
@@ -42,32 +40,48 @@ $z-layers: (
 
 	// Should have higher index than the inset/underlay used for dragging
 	".components-placeholder__fieldset": 1,
-	".editor-block-list__block-edit .reusable-block-edit-panel *": 1,
+	".block-editor-block-list__block-edit .reusable-block-edit-panel *": 1,
 
 	// Show drop zone above most standard content, but below any overlays
-	".components-drop-zone": 100,
-	".components-drop-zone__content": 110,
+	".components-drop-zone": 40,
+	".components-drop-zone__content": 50,
 
-	// Block controls, particularly in nested contexts, floats aside block and
-	// should overlap most block content.
-	".editor-block-list__block.is-{selected,hovered} .editor-block-{settings-menu,mover}": 80,
+	// The block mover for floats should overlap the controls of adjacent blocks.
+	".block-editor-block-list__block {core/image aligned left or right}": 21,
 
 	// Small screen inner blocks overlay must be displayed above drop zone,
 	// settings menu, and movers.
-	".editor-inner-blocks__small-screen-overlay:after": 120,
+	".block-editor-inner-blocks.has-overlay::after": 60,
+
+	// The toolbar, when contextual, should be above any adjacent nested block click overlays.
+	".block-editor-block-list__layout .reusable-block-edit-panel": 61,
+	".block-editor-block-contextual-toolbar": 61,
+	".editor-inner-blocks .block-editor-block-list__breadcrumb": 62,
+
+	// The block mover, particularly in nested contexts,
+	// should overlap most block content.
+	".block-editor-block-list__block.is-{selected,hovered} .block-editor-block-mover": 61,
 
 	// Show sidebar above wp-admin navigation bar for mobile viewports:
 	// #wpadminbar { z-index: 99999 }
 	".edit-post-sidebar": 100000,
+	".edit-widgets-sidebar": 100000,
 	".edit-post-layout .edit-post-post-publish-panel": 100001,
+	// For larger views, the wp-admin navbar dropdown should be at top of
+	// the Publish Post sidebar.
+	".edit-post-layout .edit-post-post-publish-panel-break-medium": 99998,
 
 	// Show sidebar in greater than small viewports above editor related elements
 	// but bellow #adminmenuback { z-index: 100 }
 	".edit-post-sidebar {greater than small}": 90,
 
-	// Show notices below expanded wp-admin submenus:
-	// #adminmenuwrap { z-index: 9990 }
-	".components-notice-list": 9989,
+	// Show notices below expanded editor bar
+	// .edit-post-header { z-index: 30 }
+	".components-notice-list": 29,
+
+
+	// Show snackbars above everything (similar to popovers)
+	".components-snackbar-list": 100000,
 
 	// Show modal under the wp-admin menus and the popover
 	".components-modal__screen-overlay": 100000,
@@ -76,12 +90,12 @@ $z-layers: (
 	// #adminmenuwrap { z-index: 9990 }
 	".components-popover": 1000000,
 
-	// Shows adminbar quicklink submenu above bottom popover:
-	// #wpadminbar ul li {z-index: 99999;}
-	".components-popover:not(.is-mobile).is-bottom": 99990,
-
-	// Shows above edit post sidebar; Specificity needs to be higher than 3 classes.
-	".block-editor__container .components-popover.components-color-palette__picker.is-bottom": 100001,
+	// ...Except for popovers immediately beneath wp-admin menu on large breakpoints
+	".components-popover.block-editor-inserter__popover": 99998,
+	".components-popover.table-of-contents__popover": 99998,
+	".components-popover.block-editor-block-navigation__popover": 99998,
+	".components-popover.edit-post-more-menu__content": 99998,
+	".components-popover.block-editor-rich-text__inline-format-toolbar": 99998,
 
 	".components-autocomplete__results": 1000000,
 
@@ -92,7 +106,21 @@ $z-layers: (
 	".nux-dot-tip": 1000001,
 
 	// Show tooltips above NUX tips, wp-admin menus, submenus, and sidebar:
-	".components-tooltip": 1000002
+	".components-tooltip": 1000002,
+
+	// Make sure corner handles are above side handles for ResizableBox component
+	".components-resizable-box__side-handle": 1,
+	".components-resizable-box__corner-handle": 2,
+
+	// Make sure block manager sticky category titles appear above the options
+	".edit-post-manage-blocks-modal__category-title": 1,
+
+	// Needs to appear bellow other color circular picker related UI elements.
+	".components-circular-option-picker__option-wrapper::before": -1,
+
+	".components-circular-option-picker__option.is-active": 1,
+	// Needs to be higher than .components-circular-option-picker__option.is-active.
+	".components-circular-option-picker__option.is-active + .dashicons-saved": 2
 );
 
 @function z-index( $key ) {

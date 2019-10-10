@@ -9,6 +9,7 @@ $default-line-height: 1.4;
 $editor-font: "Noto Serif", serif;
 $editor-html-font: Menlo, Consolas, monaco, monospace;
 $editor-font-size: 16px;
+$default-block-margin: 28px; // This value provides a consistent, contiguous spacing between blocks (it's 2x $block-padding).
 $text-editor-font-size: 14px;
 $editor-line-height: 1.8;
 $big-font-size: 18px;
@@ -18,6 +19,7 @@ $mobile-text-min-font-size: 16px; // Any font size below 16px will cause Mobile 
 $grid-size-small: 4px;
 $grid-size: 8px;
 $grid-size-large: 16px;
+$grid-size-xlarge: 24px;
 
 // Widths, heights & dimensions
 $panel-padding: 16px;
@@ -48,16 +50,22 @@ $icon-button-size: 36px;
 $icon-button-size-small: 24px;
 $inserter-tabs-height: 36px;
 $block-toolbar-height: $block-controls-height + $border-width;
-$resize-handler-size: 16px;
+$resize-handler-size: 15px;
 $resize-handler-container-size: $resize-handler-size + ($grid-size-small * 2); // Make the resize handle container larger so there's a larger grabbable area.
 
 // Blocks
+$block-left-border-width: $border-width * 3;
 $block-padding: 14px; // Space between block footprint and focus boundaries. These are drawn outside the block footprint, and do not affect the size.
 $block-spacing: 4px; // Vertical space between blocks.
 $block-side-ui-width: 28px; // Width of the movers/drag handle UI.
 $block-side-ui-clearance: 2px; // Space between movers/drag handle UI, and block.
 $block-container-side-padding: $block-side-ui-width + $block-padding + 2 * $block-side-ui-clearance; // Total space left and right of the block footprint.
+$block-bg-padding--v: $block-padding + $block-spacing + $block-side-ui-clearance; // padding for Blocks with a background color (eg: paragraph or group)
+$block-bg-padding--h: $block-side-ui-width + $block-side-ui-clearance; // padding for Blocks with a background color (eg: paragraph or group)
 
 // Buttons & UI Widgets
 $radius-round-rectangle: 4px;
 $radius-round: 50%;
+
+// Widgets screen
+$widget-area-width: 700px;

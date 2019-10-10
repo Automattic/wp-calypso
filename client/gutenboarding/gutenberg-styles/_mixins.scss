@@ -126,7 +126,7 @@
 @mixin button-style__hover {
 	background-color: $white;
 	color: $dark-gray-900;
-	box-shadow: inset 0 0 0 1px $light-gray-500, inset 0 0 0 2px $white, 0 1px 1px rgba($dark-gray-900, 0.2);
+	box-shadow: inset 0 0 0 1px $dark-gray-500, inset 0 0 0 2px $white;
 }
 
 @mixin button-style__active() {
