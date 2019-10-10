@@ -507,7 +507,7 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ translate( 'Hosting' ) }
+				label={ translate( 'SFTP & MySQL' ) }
 				selected={ itemLinkMatches( '/hosting', path ) }
 				link={ `/hosting${ siteSuffix }` }
 				onNavigate={ this.trackHostingClick }
