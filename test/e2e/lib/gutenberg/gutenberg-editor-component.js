@@ -374,9 +374,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
-			await driverHelper.clickWhenClickable(
+			await driverHelper.selectElementByText(
 				this.driver,
-				By.css( '.page-template-modal .components-modal__header button' )
+				By.css( '.page-template-modal__buttons .components-button' ),
+				'Use Blank template'
 			);
 		}
 	}
