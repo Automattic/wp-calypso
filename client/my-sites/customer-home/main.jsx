@@ -43,6 +43,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
 
@@ -390,7 +391,8 @@ const connectHome = connect(
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+		const isChecklistComplete =
+			isAtomicSite( state, siteId ) || isSiteChecklistComplete( state, siteId );
 		const domains = getDomainsBySiteId( state, siteId );
 
 		return {
