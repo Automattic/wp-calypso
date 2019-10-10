@@ -37,7 +37,7 @@ Any previously stored payment methods (eg: saved credit cards) will be fetched a
 
 The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
 
-Inside the component, this is a `CheckoutSection` wrapping a `CheckoutPaymentMethods` component.
+Inside the component, this is a `CheckoutStep` wrapping a `CheckoutPaymentMethods` component.
 
 ### Billing details
 
@@ -49,13 +49,13 @@ The billing information may be automatically filled based on data retrieved from
 
 Any other component can request the information from these form fields by using the `useBillingContact` React Hook.
 
-Inside the component, this is a `CheckoutSection` wrapping a `CheckoutBillingContactForm` component.
+Inside the component, this is a `CheckoutStep` wrapping a `CheckoutBillingContactForm` component.
 
 ### Review order
 
 The third step presents a simple list of line items and a total, followed by a purchase button.
 
-Inside the component, this is a `CheckoutSection` wrapping a `CheckoutReviewOrder` component.
+Inside the component, this is a `CheckoutStep` wrapping a `CheckoutReviewOrder` component.
 
 ![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/wp-checkout/doc-assets/review-step.png "Review Order Step")
 
@@ -438,7 +438,7 @@ Renders the billing contact info form (typically name and address, but may also 
 
 ### CheckoutNextStepButton
 
-Renders a button to move to the next `CheckoutSection` component. Its `value` prop can be used to customize the text which by default will be "Continue".
+Renders a button to move to the next `CheckoutStep` component. Its `value` prop can be used to customize the text which by default will be "Continue".
 
 ### CheckoutPaymentMethods
 
@@ -454,25 +454,11 @@ Renders a list of the line items and their `displayValue` properties followed by
 
 ### CheckoutStep
 
-Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. Each should also include a `CheckoutNextStepButton` if there is a following step.
+Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. Each should also include a `CheckoutNextStepButton` if there is a following step. The `collapsed` prop can be used to collapse inactive steps (they will still be rendered).
 
 If you want to render something even when the step is collapsed (eg: a summary of the step), you can also provide the optional `collapsedContent` prop which is a component.
 
-Use a `CheckoutSection` to combine this with a `CheckoutStepCollapsed`.
-
-### CheckoutStepCollapsed
-
-Same as `CheckoutStep`, but the version that will be displayed when the step is not active. Accepts the same props but also allows an `onEdit` function.
-
-If a step has the `onEdit` prop, it will include an "Edit" link which will call the `onEdit` function. The parent component is responsible for using this to toggle the collapsed state in an appropriate way. It should also modify the URL so that the collapsed state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
-
-Use a `CheckoutSection` to combine this with a `CheckoutStep`.
-
-### CheckoutSection
-
-Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. Each should also include a `CheckoutNextStepButton` if there is a following step. The `collapsed` prop can be used to collapse inactive steps (they will still be rendered).
-
-Internally this uses a `CheckoutStep` and an optional `CheckoutStepCollapsed`.
+If a step has the `onEdit` prop, it will include an "Edit" link when collapsed which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the collapsed state in an appropriate way. It should also modify the URL so that the collapsed state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
 ### CheckoutSubmitButton
 
