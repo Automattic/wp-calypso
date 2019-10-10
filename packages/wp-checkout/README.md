@@ -442,7 +442,7 @@ Renders a button to move to the next `CheckoutStep` component. Its `value` prop 
 
 ### CheckoutPaymentMethods
 
-Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected.
+Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected. The `collapsed` prop will display a summary of the current choice if one is set.
 
 ### CheckoutProvider
 
