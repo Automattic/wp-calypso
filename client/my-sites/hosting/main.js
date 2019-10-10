@@ -17,9 +17,10 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
-import Button from 'components/button';
 import MaterialIcon from 'components/material-icon';
+import Spinner from 'components/spinner';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { requestAtomicHostingPmaNonce } from 'state/data-getters';
 
 /**
  * Style dependencies
@@ -35,7 +36,7 @@ const DataSection = ( { title, data } ) => {
 	);
 };
 
-const Hosting = ( { translate } ) => {
+const Hosting = ( { translate, atomicPmaNonce, siteId } ) => {
 	const dummyInfo = {
 		[ translate( 'URL' ) ]: 'sftp1.wordpress.com',
 		[ translate( 'Port' ) ]: 22,
@@ -78,7 +79,15 @@ const Hosting = ( { translate } ) => {
 								'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
 							) }
 						</p>
-						<Button>{ translate( 'Access PHPMyAdmin' ) }</Button>
+						{ ( ! atomicPmaNonce || ! siteId ) && <Spinner /> }
+						{ atomicPmaNonce && siteId && (
+							<a
+								href={ `https://specialurl?wpcomid=${ siteId }&nonce=${ atomicPmaNonce }` }
+								target="_blank"
+							>
+								Log in to PhpMyAdmin
+							</a>
+						) }
 					</div>
 				</Card>
 			</div>
@@ -90,4 +99,5 @@ export default connect( state => ( {
 	site: getSelectedSite( state ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),
+	atomicPmaNonce: requestAtomicHostingPmaNonce( getSelectedSiteId( state ) ).data,
 } ) )( localize( Hosting ) );

@@ -210,20 +210,20 @@ export const requestSiteAlerts = siteId => {
 	);
 };
 
-export const requestAtomicSFTPDetails = siteId =>
+export const requestAtomicHostingPmaNonce = siteId =>
 	requestHttpData(
-		`atomic-hosting-data-${ siteId }`,
+		`atomic-hosting-pma-nonce-${ siteId }`,
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/hosting/sftp`,
+				path: `/sites/${ siteId }/hosting/pam/nonce`,
 				apiNamespace: 'wpcom/v2',
 			},
-			{}
+			{ freshness: 1000 }
 		),
 		{
-			fromApi: () => data => {
-				return [ 'sftpData', data ];
+			fromApi: () => ( { nonce } ) => {
+				return [ [ `atomic-hosting-pma-nonce-${ siteId }`, nonce ] ];
 			},
 		}
 	);
