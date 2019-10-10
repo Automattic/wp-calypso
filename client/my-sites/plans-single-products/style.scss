@@ -17,22 +17,87 @@
 
 .plans-single-products__card {
 	margin: 0 auto 12px;
-	padding: 24px 16px;
 	background: var( --color-surface );
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
 
 	// On mobile we want each product to be an individual card.
 	@include breakpoint( '>660px' ) {
 		margin-bottom: 0;
-		padding: 24px;
 		background: transparent;
 		box-shadow: none;
 	}
 }
 
-.plans-single-products__heading {
+.plans-single-products__card-header,
+.plans-single-products__card-content {
+	padding: 22px 16px;
+
+	@include breakpoint( '>660px' ) {
+		padding: 24px;
+	}
+}
+
+// Product header
+.plans-single-products__card-header {
+	border-bottom: solid 2px var( --color-jetpack-plan-free );
+}
+
+.plans-single-products__product-name {
 	font-size: 22px;
 	line-height: 1;
 	font-weight: 400;
 	color: var( --color-primary-50 );
+}
+
+// Prices
+.plans-single-products__price-group {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	max-width: calc( 100% - 20px );
+
+	@include breakpoint( '<960px' ) {
+		max-width: calc( 100% - 10px );
+	}
+
+	&.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+		width: 145px;
+		height: 25px;
+		margin-top: 6px;
+		margin-bottom: 5px;
+	}
+
+	&.is-placeholder .plan-price {
+		display: none;
+	}
+}
+
+// Billing timeframe
+.plans-single-products__billing-timeframe {
+	font-size: 12px;
+	font-style: italic;
+	font-weight: 400;
+	color: var( --color-text-subtle );
+	line-height: 1;
+	margin: 0;
+
+	&.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+		width: 140px;
+		height: 12px;
+	}
+}
+
+// Product description
+.plans-single-products__product-description {
+	font-size: 14px;
+	line-height: 20px;
+	color: var( --color-text-subtle );
+	margin: 0;
+
+	a {
+		display: inline-block;
+		color: var( --color-link-light );
+	}
 }
