@@ -42,14 +42,11 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
 import { type as domainTypes } from 'lib/domains/constants';
-<<<<<<< HEAD
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
+import { CTA_FREE_TO_PAID } from './constants';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
-=======
-import { CTA_FREE_TO_PAID } from './constants';
->>>>>>> Fix: dispatching `clickUpgradeNudge()` should be in the `onClick()`
 
 export class SiteNotice extends React.Component {
 	static propTypes = {
