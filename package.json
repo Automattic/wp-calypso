@@ -338,7 +338,7 @@
 		"react-test-renderer": "16.8.6",
 		"readline-sync": "1.4.9",
 		"replace": "1.1.0",
-		"rimraf": "2.7.0",
+		"rimraf": "2.7.1",
 		"sinon": "7.4.2",
 		"sinon-chai": "3.3.0",
 		"socket.io": "2.2.0",
