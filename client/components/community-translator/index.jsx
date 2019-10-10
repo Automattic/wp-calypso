@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Translatable from './translatable';
+import { languages } from 'languages';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { loadUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
 import { getCurrentUserName } from 'state/current-user/selectors';

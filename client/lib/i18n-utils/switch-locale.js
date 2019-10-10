@@ -225,6 +225,7 @@ export function loadUndeployedTranslations( {
 	return fetch( requestUrl, {
 		headers: { Accept: 'application/json' },
 		credentials: 'include',
+		mode: 'cors',
 	} )
 		.then( res => res.json() )
 		.then( translations => i18n.addTranslations( translations ) );
