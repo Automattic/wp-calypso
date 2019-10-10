@@ -40,8 +40,11 @@ import QueryProductsList from 'components/data/query-products-list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
-import { getDomainType } from 'lib/domains/utils';
 import { type as domainTypes } from 'lib/domains/constants';
+import { getPreference } from 'state/preferences/selectors';
+import { savePreference } from 'state/preferences/actions';
+
+const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
 export class SiteNotice extends React.Component {
 	static propTypes = {
@@ -105,14 +108,14 @@ export class SiteNotice extends React.Component {
 	}
 
 	domainUpsellNudge() {
-		if ( ! this.props.isPlanOwner ) {
+		if ( ! this.props.isPlanOwner || this.props.domainUpsellNudgeDismissedDate ) {
 			return null;
 		}
 
-		const nonWPCOMDomains = reject( this.props.domains, domain => {
-			const domainType = getDomainType( domain );
-			return domainType === domainTypes.WPCOM || domainType === domainTypes.ATOMIC_STAGING;
-		} );
+		const nonWPCOMDomains = reject(
+			this.props.domains,
+			domain => domain.type === domainTypes.WPCOM || domain.type === domainTypes.ATOMIC_STAGING
+		);
 
 		if ( nonWPCOMDomains.length < 1 || nonWPCOMDomains.length > 2 ) {
 			return null;
@@ -169,13 +172,24 @@ export class SiteNotice extends React.Component {
 		}
 
 		return (
-			<SidebarBanner
-				ctaName="domain-upsell-nudge"
-				ctaText={ translate( 'Go' ) }
-				href={ '/domains/add/' + site.slug }
+			<Notice
+				isCompact
+				status="is-success"
 				icon="info-outline"
-				text={ noticeText }
-			/>
+				onDismissClick={ this.props.clickDomainUpsellDismiss }
+				showDismiss={ true }
+			>
+				<NoticeAction
+					onClick={ this.props.clickDomainUpsellGo }
+					href={ `/domains/add/${ site.slug }` }
+				>
+					{ noticeText }
+					<TrackComponentView
+						eventName="calypso_upgrade_nudge_impression"
+						eventProperties={ { cta_name: 'domain-upsell-nudge' } }
+					/>
+				</NoticeAction>
+			</Notice>
 		);
 	}
 
@@ -312,6 +326,7 @@ export default connect(
 			domains: getDomainsBySiteId( state, siteId ),
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
+			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
 		};
 	},
 	dispatch => {
@@ -322,6 +337,20 @@ export default connect(
 						cta_name: 'current_site_domain_notice',
 					} )
 				),
+			clickDomainUpsellGo: () =>
+				dispatch(
+					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+						cta_name: 'domain-upsell-nudge',
+					} )
+				),
+			clickDomainUpsellDismiss: () => {
+				dispatch( savePreference( DOMAIN_UPSELL_NUDGE_DISMISS_KEY, new Date().toISOString() ) );
+				dispatch(
+					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+						cta_name: 'domain-upsell-nudge-dismiss',
+					} )
+				);
+			},
 			clickFreeToPaidPlanNotice: () =>
 				dispatch(
 					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
