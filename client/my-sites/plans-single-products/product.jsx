@@ -9,6 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import PlanPrice from 'my-sites/plan-price';
+import ProductOption from './product-option';
 
 class PlansSingleProduct extends Component {
 	static propTypes = {
@@ -18,7 +19,11 @@ class PlansSingleProduct extends Component {
 		fullPrice: PropTypes.number,
 		isPlaceholder: PropTypes.bool,
 		moreInfoLabel: PropTypes.string,
+		onSelect: PropTypes.func,
+		options: PropTypes.array,
+		optionsHeading: PropTypes.string,
 		productDescription: PropTypes.string,
+		slug: PropTypes.string,
 		title: PropTypes.string,
 	};
 
@@ -28,8 +33,10 @@ class PlansSingleProduct extends Component {
 
 	renderPriceGroup() {
 		const { currencyCode, discountedPrice, fullPrice, isPlaceholder } = this.props;
+		const isDiscounted = !! discountedPrice;
 
 		const priceGroupClasses = classNames( 'plans-single-products__price-group', {
+			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder,
 		} );
 
@@ -67,6 +74,31 @@ class PlansSingleProduct extends Component {
 		);
 	}
 
+	renderOptions() {
+		const { billingTimeFrame, currencyCode, onSelect, options, optionsHeading } = this.props;
+
+		if ( ! options ) {
+			return null;
+		}
+
+		return (
+			<div className="plans-single-products__options">
+				{ optionsHeading && (
+					<h4 className="plans-single-products__options-heading">{ optionsHeading }</h4>
+				) }
+				{ options.map( option => (
+					<ProductOption
+						key={ option.slug }
+						billingTimeFrame={ billingTimeFrame }
+						currencyCode={ currencyCode }
+						onSelect={ onSelect }
+						{ ...option }
+					/>
+				) ) }
+			</div>
+		);
+	}
+
 	render() {
 		const { title } = this.props;
 
@@ -79,6 +111,7 @@ class PlansSingleProduct extends Component {
 				</div>
 				<div className="plans-single-products__card-content">
 					{ this.renderProductDescription() }
+					{ this.renderOptions() }
 				</div>
 			</div>
 		);

@@ -17,7 +17,13 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import './style.scss';
 
 const PlansSingleProducts = props => {
-	const { billingTimeFrame, currencyCode, isPlaceholder, productProperties } = props;
+	const {
+		billingTimeFrame,
+		currencyCode,
+		isPlaceholder,
+		onProductSelect,
+		productProperties,
+	} = props;
 	const displayBackup = isEnabled( 'plans/jetpack-backup' );
 	const displayScan = isEnabled( 'plans/jetpack-scan' );
 
@@ -28,6 +34,7 @@ const PlansSingleProducts = props => {
 					billingTimeFrame={ billingTimeFrame }
 					currencyCode={ currencyCode }
 					isPlaceholder={ isPlaceholder }
+					onSelect={ onProductSelect }
 					{ ...productProperties.jetpackScan }
 				/>
 			) }
@@ -36,6 +43,7 @@ const PlansSingleProducts = props => {
 					billingTimeFrame={ billingTimeFrame }
 					currencyCode={ currencyCode }
 					isPlaceholder={ isPlaceholder }
+					onSelect={ onProductSelect }
 					{ ...productProperties.jetpackBackup }
 				/>
 			) }
@@ -43,28 +51,54 @@ const PlansSingleProducts = props => {
 	);
 };
 
-export default connect( state => {
-	return {
-		billingTimeFrame: 'per year',
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		isPlaceholder: false,
-		productProperties: {
-			jetpackScan: {
-				discountedPrice: 10,
-				fullPrice: 16,
-				moreInfoLabel: 'More info',
-				productDescription:
-					'Automatic scanning and one-click fixes keep your site one step ahead of security threats.',
-				title: 'Jetpack Scan',
+export default connect(
+	state => {
+		return {
+			billingTimeFrame: 'per year',
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			isPlaceholder: false,
+			productProperties: {
+				jetpackScan: {
+					discountedPrice: 10,
+					fullPrice: 16,
+					moreInfoLabel: 'More info',
+					productDescription:
+						'Automatic scanning and one-click fixes keep your site one step ahead of security threats.',
+					slug: 'jetpack-scan',
+					title: 'Jetpack Scan',
+				},
+				jetpackBackup: {
+					discountedPrice: 16,
+					fullPrice: 25,
+					moreInfoLabel: 'Which one do I need?',
+					options: [
+						{
+							discountedPrice: 12,
+							fullPrice: 14,
+							slug: 'jetpack_backup_daily',
+							title: 'Daily Backups',
+						},
+						{
+							discountedPrice: 16,
+							fullPrice: 25,
+							slug: 'jetpack_backup_realtime',
+							title: 'Real-Time Backups',
+						},
+					],
+					optionsHeading: 'Backup Options:',
+					productDescription:
+						'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.',
+					slug: 'jetpack-backup',
+					title: 'Jetpack Backup',
+				},
 			},
-			jetpackBackup: {
-				discountedPrice: 16,
-				fullPrice: 25,
-				moreInfoLabel: 'Which one do I need?',
-				productDescription:
-					'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.',
-				title: 'Jetpack Backup',
+		};
+	},
+	() => {
+		return {
+			onProductSelect: () => {
+				return null;
 			},
-		},
-	};
-} )( PlansSingleProducts );
+		};
+	}
+)( PlansSingleProducts );
