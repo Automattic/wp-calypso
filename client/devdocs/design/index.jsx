@@ -172,7 +172,7 @@ class DesignAssets extends React.Component {
 					</React.Fragment>
 				) : (
 					<div>
-						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
+						<ReadmeViewer readmeFilePath="devdocs/design/README.md" />
 						<SearchCard
 							onSearch={ this.onSearch }
 							initialValue={ filter }

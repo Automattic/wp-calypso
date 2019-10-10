@@ -120,7 +120,7 @@ export default class AppComponents extends React.Component {
 					</React.Fragment>
 				) : (
 					<div>
-						<ReadmeViewer readmeFilePath="/client/devdocs/blocks/README.md" />
+						<ReadmeViewer readmeFilePath="devdocs/blocks/README.md" />
 						<SearchCard
 							onSearch={ this.onSearch }
 							initialValue={ this.state.filter }

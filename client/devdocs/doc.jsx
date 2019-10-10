@@ -8,7 +8,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DocService from './service';
 import Error from './error';
 import DocumentHead from 'components/data/document-head';
 import highlight from 'lib/highlight';
@@ -52,15 +51,13 @@ export default class extends React.Component {
 			error: null,
 		} );
 		this.delayLoadingMessage();
-		DocService.fetch(
-			this.props.path,
-			function( error, body ) {
-				this.setState( {
-					body,
-					error,
-				} );
-			}.bind( this )
-		);
+		import(
+			/* webpackChunkName: "async-load-doc-[request]" */
+			/* webpackInclude: /\.md$/ */
+			`../../${ this.props.path }`
+		)
+			.then( module => this.setState( { body: module.default, error: null } ) )
+			.catch( error => this.setState( { body: null, error } ) );
 	};
 
 	setBodyScrollPosition = () => {

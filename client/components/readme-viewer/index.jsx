@@ -30,11 +30,12 @@ export default class ReadmeViewer extends Component {
 		const { readmeFilePath } = this.props;
 
 		try {
-			const res = await fetch( `/devdocs/service/content?path=${ readmeFilePath }` );
-			if ( res.ok ) {
-				const text = await res.text();
-				this.setState( { readme: htmlToReactParser.parse( text ) } );
-			}
+			const res = await import(
+				/* webpackChunkName: "async-load-readme-[request]" */
+				/* webpackInclude: /README\.md$/ */
+				`../../${ readmeFilePath }`
+			);
+			this.setState( { readme: htmlToReactParser.parse( res.default ) } );
 		} catch ( err ) {
 			// Do nothing.
 		}
@@ -55,7 +56,7 @@ export default class ReadmeViewer extends Component {
 		const editLink = (
 			<a
 				className="readme-viewer__doc-edit-link devdocs__doc-edit-link"
-				href={ `https://github.com/Automattic/wp-calypso/edit/master${ readmeFilePath }` }
+				href={ `https://github.com/Automattic/wp-calypso/edit/master/client${ readmeFilePath }` }
 			>
 				Improve this document on GitHub
 			</a>

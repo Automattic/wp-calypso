@@ -1,17 +1,9 @@
 /**
  * External dependencies
  */
-
 import express from 'express';
-import fs from 'fs';
-import fspath from 'path';
-import marked from 'marked';
 import lunr from 'lunr';
 import { find, escape as escapeHTML } from 'lodash';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-jsx';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-scss';
 
 /**
  * Internal dependencies
@@ -20,27 +12,15 @@ import config from 'config';
 import searchIndex from 'devdocs/search-index';
 import componentsUsageStats from 'devdocs/components-usage-stats.json';
 
-const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
-	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents,
-	selectors = require( './selectors' );
+const docsIndex = lunr.Index.load( searchIndex.index );
+const documents = searchIndex.documents;
+const selectors = require( './selectors' );
 
 /**
  * Constants
  */
 const SNIPPET_PAD_LENGTH = 40;
 const DEFAULT_SNIPPET_LENGTH = 100;
-
-// Alias `javascript` language to `es6`
-Prism.languages.es6 = Prism.languages.javascript;
-
-// Configure marked to use Prism for code-block highlighting.
-marked.setOptions( {
-	highlight: function( code, language ) {
-		const syntax = Prism.languages[ language ];
-		return syntax ? Prism.highlight( code, syntax ) : code;
-	},
-} );
 
 /**
  * Query the index using lunr.
@@ -206,39 +186,6 @@ module.exports = function() {
 		}
 
 		response.json( listDocs( files.split( ',' ) ) );
-	} );
-
-	// return the content of a document in the given format (assumes that the document is in
-	// markdown format)
-	app.get( '/devdocs/service/content', ( request, response ) => {
-		let path = request.query.path;
-		const format = request.query.format || 'html';
-
-		if ( ! path ) {
-			response
-				.status( 400 )
-				.send( 'Need to provide a file path (e.g. path=client/devdocs/README.md)' );
-			return;
-		}
-
-		if ( ! /\.md$/.test( path ) ) {
-			path = fspath.join( path, 'README.md' );
-		}
-
-		try {
-			path = fs.realpathSync( fspath.join( root, path ) );
-		} catch ( err ) {
-			path = null;
-		}
-
-		if ( ! path || path.substring( 0, root.length + 1 ) !== root + fspath.sep ) {
-			response.status( 404 ).send( 'File does not exist' );
-			return;
-		}
-
-		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
-
-		response.send( 'html' === format ? marked( fileContents ) : fileContents );
 	} );
 
 	// return json for the components usage stats

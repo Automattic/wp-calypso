@@ -25,7 +25,7 @@ class WizardComponent extends Component {
 					Wizard
 				</HeaderCake>
 				<Wizard stepName={ stepName } />
-				<ReadmeViewer section="design" readmeFilePath="/client/components/wizard/README.md" />
+				<ReadmeViewer section="design" readmeFilePath="components/wizard/README.md" />
 			</Main>
 		);
 	}

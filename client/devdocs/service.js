@@ -33,8 +33,4 @@ export default {
 	list: function( filenames, callback ) {
 		fetchDocsEndpoint( 'list', { files: filenames.join( ',' ) }, callback );
 	},
-
-	fetch: function( path, callback ) {
-		fetchDocsEndpoint( 'content', { path: path }, callback );
-	},
 };
