@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { reject } from 'lodash';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -103,7 +103,7 @@ class PopoverCart extends React.Component {
 =======
 					<HeaderButton
 						icon="cart"
-						label="Cart"
+						label={ translate( 'Cart' ) }
 						ref={ this.toggleButton }
 >>>>>>> Replaces button element w/ HeaderButton component
 						onClick={ this.onToggle }
