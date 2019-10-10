@@ -12,7 +12,7 @@ import page from 'page';
  */
 import CustomerHome from './main';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
+import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
 
 export default function( context, next ) {
 	const siteId = getSelectedSiteId( context.store.getState() );
@@ -29,7 +29,7 @@ export default function( context, next ) {
 export function maybeRedirect( context, next ) {
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
-	if ( ! isSiteEligibleForCustomerHome( state ) ) {
+	if ( ! canCurrentUserUseCustomerHome( state ) ) {
 		page.redirect( `/stats/day/${ slug }` );
 		return;
 	}
