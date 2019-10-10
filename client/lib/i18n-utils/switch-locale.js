@@ -193,8 +193,7 @@ export function loadUndeployedTranslations( {
 	}
 
 	if ( 'waiting' === translationStatus ) {
-		// TODO only allow loading your own waiting translations. Disallow loading them for now.
-		// return;
+		// TODO only allow loading your own waiting translations.
 	}
 
 	debug(
