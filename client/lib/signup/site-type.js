@@ -151,7 +151,6 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: true,
-			forcePublicSite: true,
 		},
 	];
 }

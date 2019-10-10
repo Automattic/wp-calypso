@@ -55,8 +55,6 @@ import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -196,43 +194,7 @@ export class SecurePaymentForm extends Component {
 			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
 		}
 
-		try {
-			await this.maybeSetSiteToPublic( { cart: params.cart } );
-		} catch ( e ) {
-			debug( 'Error setting site to public', e );
-			displayError();
-			return;
-		}
-
 		submitTransaction( params );
-	}
-
-	async maybeSetSiteToPublic( { cart } ) {
-		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
-
-		if ( isJetpack || ! siteIsPrivate ) {
-			return;
-		}
-
-		const forcedAtomicProducts = get( cart, 'products', [] ).filter( ( { product_slug = '' } ) => {
-			return (
-				planHasFeature( product_slug, FEATURE_UPLOAD_PLUGINS ) ||
-				planHasFeature( product_slug, FEATURE_UPLOAD_THEMES )
-			);
-		} );
-
-		if ( ! forcedAtomicProducts.length ) {
-			return;
-		}
-
-		// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-		debug( 'Setting site to public because it is an Atomic plan' );
-		const response = await this.props.saveSiteSettings( selectedSiteId, {
-			blog_public: 1,
-		} );
-		if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
-			throw 'Invalid response';
-		}
 	}
 
 	handleTransactionStep( { cart, selectedSite, transaction } ) {

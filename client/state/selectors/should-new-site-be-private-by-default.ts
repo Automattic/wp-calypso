@@ -1,9 +1,9 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:selectors:private-by-default' );
 
 /**
  * Should the site be private by default
@@ -11,12 +11,15 @@ import { getCurrentFlowName } from 'state/signup/flow/selectors';
  * @returns `true` for private by default & `false` for not
  */
 export default function shouldNewSiteBePrivateByDefault( state: object ): boolean {
+	debug( { state } );
+	return true;
+	/* TODO see what we need from here
 	if ( getCurrentFlowName( state ) === 'test-fse' ) {
 		return true;
 	}
+
 	if ( getSiteTypePropertyValue( 'slug', getSiteType( state ).trim(), 'forcePublicSite' ) ) {
 		return false;
 	}
-
-	return true;
+*/
 }

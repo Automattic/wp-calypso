@@ -17,7 +17,6 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
@@ -41,7 +40,6 @@ import {
 	getPlanPath,
 	isFreePlan,
 	getPlanClass,
-	planHasFeature,
 } from 'lib/plans';
 import {
 	getCurrentPlan,
@@ -62,8 +60,6 @@ import {
 	isBestValue,
 	isMonthly,
 	isNew,
-	FEATURE_UPLOAD_PLUGINS,
-	FEATURE_UPLOAD_THEMES,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -78,11 +74,9 @@ import PlanFeaturesScroller from './scroller';
  * Style dependencies
  */
 import './style.scss';
-import Dialog from 'components/dialog';
 
 const defaultState = {
 	checkoutUrl: '/checkout',
-	showingSiteLaunchDialog: false,
 	choosingPlanSlug: '',
 };
 
@@ -130,7 +124,6 @@ export class PlanFeatures extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
-					{ this.renderSiteLaunchDialog() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
 						<PlanFeaturesScroller
@@ -191,52 +184,6 @@ export class PlanFeatures extends Component {
 				{ activeDiscount.plansPageNoticeText }
 			</Notice>,
 			bannerContainer
-		);
-	}
-
-	renderSiteLaunchDialog() {
-		const { currentSitePlanSlug, translate } = this.props;
-		const { checkoutUrl, choosingPlanSlug, showingSiteLaunchDialog } = this.state;
-
-		if ( ! showingSiteLaunchDialog ) {
-			return null;
-		}
-
-		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_shown', {
-			current_plan: currentSitePlanSlug,
-			upgrading_to: choosingPlanSlug,
-		} );
-
-		return (
-			<Dialog
-				additionalClassNames="plan-features__upgrade-launch-dialog"
-				isVisible
-				buttons={ [
-					{ action: 'cancel', label: translate( 'Cancel' ) },
-					{
-						action: 'continue',
-						label: translate( "Let's do it!" ),
-						isPrimary: true,
-						onClick: () => {
-							this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
-								current_plan: currentSitePlanSlug,
-								upgrading_to: choosingPlanSlug,
-							} );
-							page( checkoutUrl );
-						},
-					},
-				] }
-				onClose={ this.setDefaultState }
-			>
-				<h1>{ translate( 'Site Privacy' ) }</h1>
-				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
-				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
-				<InlineSupportLink
-					showIcon={ false }
-					supportLink="https://support.wordpress.com/settings/privacy-settings/"
-					supportPostId={ 1507 }
-				/>
-			</Dialog>
 		);
 	}
 
@@ -548,15 +495,9 @@ export class PlanFeatures extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
+		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 
-		const {
-			availableForPurchase,
-			cartItemForPlan,
-			checkoutUrl,
-			siteIsPrivateAndGoingAtomic,
-			productSlug,
-		} = singlePlanProperties;
+		const { availableForPurchase, cartItemForPlan, checkoutUrl } = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
 			ownPropsOnUpgradeClick( cartItemForPlan );
@@ -564,19 +505,6 @@ export class PlanFeatures extends Component {
 		}
 
 		if ( ! availableForPurchase ) {
-			return;
-		}
-
-		if ( siteIsPrivateAndGoingAtomic ) {
-			if ( isInSignup ) {
-				// Let signup do its thing
-				return;
-			}
-			this.setState( {
-				checkoutUrl,
-				choosingPlanSlug: productSlug,
-				showingSiteLaunchDialog: true,
-			} );
 			return;
 		}
 
@@ -943,10 +871,6 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
-				const siteIsPrivateAndGoingAtomic =
-					siteIsPrivate &&
-					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
-						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
 
 				return {
 					availableForPurchase,
@@ -976,7 +900,6 @@ export default connect(
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan,
-					siteIsPrivateAndGoingAtomic,
 				};
 			} )
 		);
