@@ -22,7 +22,6 @@ import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor';
-import QueryUserSettings from 'components/data/query-user-settings';
 import { isOffline } from 'state/application/selectors';
 import {
 	getSelectedSiteId,
@@ -44,7 +43,6 @@ import DocumentHead from 'components/data/document-head';
 import AppBanner from 'blocks/app-banner';
 import GdprBanner from 'blocks/gdpr-banner';
 import { getPreference } from 'state/preferences/selectors';
-import getUserSetting from 'state/selectors/get-user-setting';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
@@ -54,7 +52,7 @@ import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import LayoutLoader from './loader';
-import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
+import CommunityTranslator from 'components/community-translator';
 
 /**
  * Style dependencies
@@ -138,7 +136,6 @@ class Layout extends Component {
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
-				{ config.isEnabled( 'i18n/community-translator' ) && <QueryUserSettings /> }
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
@@ -159,13 +156,7 @@ class Layout extends Component {
 						{ this.props.primary }
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' ) ? (
-					this.props.communityTranslatorEnabled && (
-						<AsyncLoad require="components/community-translator" />
-					)
-				) : (
-					<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
-				) }
+				<CommunityTranslator />
 				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="components/happychat" />
@@ -229,8 +220,5 @@ export default connect( state => {
 		authorization, it would remove the newly connected site that has been fetched separately.
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-		communityTranslatorEnabled:
-			config.isEnabled( 'i18n/community-translator' ) &&
-			getUserSetting( state, ENABLE_TRANSLATOR_KEY ),
 	};
 } )( Layout );
