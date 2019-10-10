@@ -429,6 +429,18 @@ export class Checkout extends React.Component {
 		return;
 	}
 
+	maybeShowPlanBumpOfferConcierge( receiptId ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasPersonalPlan( cart ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+			}
+		}
+
+		return;
+	}
+
 	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
@@ -443,6 +455,11 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId );
+			if ( upgradePath ) {
+				return upgradePath;
+			}
+
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
@@ -863,6 +880,10 @@ export class Checkout extends React.Component {
 			analyticsProps = { site: selectedSiteSlug };
 		} else {
 			analyticsPath = '/checkout/no-site';
+		}
+
+		if ( 'variantShowPlanBump' !== getABTestVariation( 'showPlanUpsellConcierge' ) ) {
+			abtest( 'showPlanUpsellConcierge' );
 		}
 
 		if ( this.props.children ) {

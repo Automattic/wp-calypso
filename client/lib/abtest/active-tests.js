@@ -134,4 +134,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	showPlanUpsellConcierge: {
+		datestamp: '20191010',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
