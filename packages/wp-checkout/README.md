@@ -432,65 +432,9 @@ The main component in this package. It has the following props.
 - orderReviewTOS: component
 - orderReviewFeatures: component
 
-### renderDisplayValueMarkdown(currency, displayValue)
+### CheckoutBillingContactForm
 
-Takes two arguments, a currency string and a displayValue string and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
-
-### formatValueForCurrency(currency, int)
-
-Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
-
-### CheckoutProvider
-
-Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `Checkout` component will do so automatically.
-
-### useBillingContact()
-
-A React Hook that will return an object containing whatever data was entered in the billing contact step. Must only be used inside `CheckoutProvider`.
-
-### usePaymentMethod()
-
-A React Hook that will return a string containing whatever paymentMethod was entered in the payment method step. Must only be used inside `CheckoutProvider`.
-
-### useCheckoutLineItems()
-
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
-
-### OrderReviewSection
-
-A wrapper for a section of a list of related line items. Renders its `children` prop.
-
-### OrderReviewLineItems
-
-Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
-
-An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
-
-This component provides just a simple list of label and price. If you want to modify how each line item is displayed, or if you want to provide any actions for that item (eg: the ability to delete the item from the order), you cannot use this component; instead you should create a custom component.
-
-### OrderReviewTotal
-
-Renders the `total` prop like a line item,  but with different styling.
-
-An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
-
-### CheckoutSubmitButton
-
-Renders the "Pay" button. Requires a `total` prop and a `paymentMethod` prop to identify the system it should use for submitting the data. The `value` prop can be used to customize the text which by default will be "Pay " followed by `total.amount.displayValue`.
-
-When clicked, the button will call its `onClick` prop. The parent component must then call the `submitCheckout()` function that is exported by this package which will take a specific action based on its first argument.
-
-### submitCheckout({ paymentMethod, billingContact, items, total, onSuccess, onFailure, successRedirectUrl, failureRedirectUrl })
-
-Calling this function (which should only be done by the `CheckoutSubmitButton`) will take a specific action based on the payment method. Has one required argument which is an object of the form: `{ paymentMethod, billingContact, items, total, onSuccess, onFailure, successRedirectUrl, failureRedirectUrl }`.
-
-### CheckoutStep
-
-Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. Each should also include a `CheckoutNextStepButton` if there is a following step. The `collapsed` prop can be used to collapse inactive steps (they will still be rendered).
-
-If you want to render something even when the step is collapsed (eg: a summary of the step), you can also provide the optional `collapsedContent` prop which is a component.
-
-If a step has the `onEdit` prop, it will include an "Edit" link when collapsed which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the collapsed state in an appropriate way. It should also modify the URL so that the collapsed state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
+Renders the billing contact info form (typically name and address, but may also include other contact info like phone number). The fields displayed are determined by the payment method passed in as the `paymentMethod` prop.
 
 ### CheckoutNextStepButton
 
@@ -500,13 +444,69 @@ Renders a button to move to the next `CheckoutStep` component. Its `value` prop 
 
 Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected.
 
-### CheckoutBillingContactForm
+### CheckoutProvider
 
-Renders the billing contact info form (typically name and address, but may also include other contact info like phone number). The fields displayed are determined by the payment method passed in as the `paymentMethod` prop.
+Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `Checkout` component will do so automatically.
 
 ### CheckoutReviewOrder
 
 Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and a `CheckoutSubmitButton`.
+
+### CheckoutStep
+
+Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. Each should also include a `CheckoutNextStepButton` if there is a following step. The `collapsed` prop can be used to collapse inactive steps (they will still be rendered).
+
+If you want to render something even when the step is collapsed (eg: a summary of the step), you can also provide the optional `collapsedContent` prop which is a component.
+
+If a step has the `onEdit` prop, it will include an "Edit" link when collapsed which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the collapsed state in an appropriate way. It should also modify the URL so that the collapsed state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
+
+### CheckoutSubmitButton
+
+Renders the "Pay" button. Requires a `total` prop and a `paymentMethod` prop to identify the system it should use for submitting the data. The `value` prop can be used to customize the text which by default will be "Pay " followed by `total.amount.displayValue`.
+
+When clicked, the button will call its `onClick` prop. The parent component must then call the `submitCheckout()` function that is exported by this package which will take a specific action based on its first argument.
+
+### OrderReviewLineItems
+
+Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
+
+An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+This component provides just a simple list of label and price. If you want to modify how each line item is displayed, or if you want to provide any actions for that item (eg: the ability to delete the item from the order), you cannot use this component; instead you should create a custom component.
+
+### OrderReviewSection
+
+A wrapper for a section of a list of related line items. Renders its `children` prop.
+
+### OrderReviewTotal
+
+Renders the `total` prop like a line item,  but with different styling.
+
+An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### formatValueForCurrency(currency, int)
+
+Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
+
+### renderDisplayValueMarkdown(currency, displayValue)
+
+Takes two arguments, a currency string and a displayValue string and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
+
+### submitCheckout({ paymentMethod, billingContact, items, total, onSuccess, onFailure, successRedirectUrl, failureRedirectUrl })
+
+Calling this function (which should only be done by the `CheckoutSubmitButton`) will take a specific action based on the payment method. Has one required argument which is an object of the form: `{ paymentMethod, billingContact, items, total, onSuccess, onFailure, successRedirectUrl, failureRedirectUrl }`.
+
+### useBillingContact()
+
+A React Hook that will return an object containing whatever data was entered in the billing contact step. Must only be used inside `CheckoutProvider`.
+
+### useCheckoutLineItems()
+
+A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
+
+### usePaymentMethod()
+
+A React Hook that will return a string containing whatever paymentMethod was entered in the payment method step. Must only be used inside `CheckoutProvider`.
 
 ## 💰 FAQ
 
