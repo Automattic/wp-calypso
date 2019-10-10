@@ -402,6 +402,12 @@ function UpSellCoupon({ onClick }) {
 }
 ```
 
+## 💰 Styles and Themes
+
+Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by wrapping checkout in a `ThemeProvider` from that package.
+
+For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
+
 ## 💰 Advanced API
 
 While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
@@ -502,12 +508,20 @@ Renders the billing contact info form (typically name and address, but may also 
 
 Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and a `CheckoutSubmitButton`.
 
-## 💰 Styles and Themes
+## 💰 FAQ
 
-Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by wrapping checkout in a `ThemeProvider` from that package.
-
-For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
-
-## 💰 Credits and Coupons
+### How do I use Credits and Coupons?
 
 Credits, coupons, and discounts are all ways that the line items and the total can be modified, so they must be handled by the parent component.
+
+### Do line items need to be products?
+
+No, line items can be anything. The most common use is for products, taxes, subtotals, discounts, and other adjustments to the total price. However, line items can also contain other information that you'd like to display in the review step. If you customize the Order Review step, you will also be able to decide how each line item is presented. Just be aware that line items may be passed along to the server when the purchase is made, depending on the payment method. Check the documentation for each payment method to determine if there are any specific requirements there.
+
+### Do line items amount properties have to have an integer value?
+
+The primary properties used in a line item by default are `id` (which must be unique), `label` (with an optional `subLabel`), and `amount.displayValue`. The other properties (`type`, `amount.currency`, `amount.value`) are not used outside custom implementations, but it's highly recommended that you provide them. As requirements and customizations change, it can be helpful to have a way to perform calculations, conversions, and sorting on line items, which will require those fields. If any required field is undefined, an error will be thrown to help notice these errors as soon as possible.
+
+### Can I add custom properties to line items?
+
+To maintain the integrity of the line item schema, adding custom fields is discouraged, but allowed. If you need specific custom data as part of a line item so that it can be used in another part of the form, it's recommended to pass the line item object through a helper function to collect the extra data rather than serializing it into the line item itself. This will make that data collection more testable. However, if the data collection process is expensive or slow, and caching isn't an option, it may make sense to preload the data into the line items.
