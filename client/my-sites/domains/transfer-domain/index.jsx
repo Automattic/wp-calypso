@@ -30,7 +30,7 @@ import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
 export class TransferDomain extends Component {
 	static propTypes = {
 		initialQuery: PropTypes.string,
-		useStandardBack: PropTypes.string,
+		useStandardBack: PropTypes.bool,
 		query: PropTypes.string,
 		cart: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -50,7 +50,7 @@ export class TransferDomain extends Component {
 	goBack = () => {
 		const { selectedSite, selectedSiteSlug, useStandardBack } = this.props;
 
-		if ( useStandardBack === '1' ) {
+		if ( useStandardBack ) {
 			page.back();
 			return;
 		}

@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { filter, startsWith } from 'lodash';
+import { stringify } from 'qs';
 
 export function domainManagementRoot() {
 	return '/domains/manage';
@@ -132,18 +133,19 @@ export function domainMapping( siteName, domain = '' ) {
  */
 export function domainTransferIn( siteName, domain, useStandardBack ) {
 	let path = `/domains/add/transfer/${ siteName }`;
-	const params = [];
+	const params = {};
 
 	if ( domain ) {
-		params.push( `initialQuery=${ domain }` );
+		params.initialQuery = domain;
 	}
 
 	if ( useStandardBack ) {
-		params.push( 'useStandardBack=1' );
+		params.useStandardBack = true;
 	}
 
-	if ( params.length > 0 ) {
-		path += '?' + params.join( '&' );
+	const queryString = stringify( params );
+	if ( queryString ) {
+		path += '?' + queryString;
 	}
 
 	return path;
