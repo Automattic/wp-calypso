@@ -408,6 +408,16 @@ Each component will be styled using [styled-components](https://www.styled-compo
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
+## 💰 Payment Methods
+
+A payment method, in the context of this package, consists of the following pieces:
+
+- A unique id.
+- A data object that holds any data needed by the payment method, including data from any payment method components.
+- A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It must also have a collapsed state.
+- A component form that displays the required billing contact information. It must also have a collapsed state.
+- A function that completes the payment using the data object. This function must return a Promise or use a redirect.
+
 ## 💰 Advanced API
 
 While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
