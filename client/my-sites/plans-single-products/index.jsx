@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,13 +15,10 @@ import Product from './product';
  */
 import './style.scss';
 
-const PlansSingleProducts = ( { translate } ) => {
+const PlansSingleProducts = () => {
+	const translate = useTranslate();
 	const displayBackup = isEnabled( 'plans/jetpack-backup' );
 	const displayScan = isEnabled( 'plans/jetpack-scan' );
-
-	if ( ! displayBackup && ! displayScan ) {
-		return null;
-	}
 
 	return (
 		<div className="plans-single-products">
@@ -31,4 +28,4 @@ const PlansSingleProducts = ( { translate } ) => {
 	);
 };
 
-export default localize( PlansSingleProducts );
+export default PlansSingleProducts;
