@@ -159,17 +159,17 @@ const MappedDomain = createReactClass( {
 	},
 
 	transferMappedDomainNavItem() {
-		const domain = this.props.domain;
+		const { domain, selectedSite, translate } = this.props;
 
 		if ( domain.expired || domain.isSubdomain ) {
 			return null;
 		}
 
-		const path = domainTransferIn( this.props.selectedSite.slug, domain.name, true );
+		const path = domainTransferIn( selectedSite.slug, domain.name, true );
 
 		return (
 			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Transfer Domain to WordPress.com' ) }
+				{ translate( 'Transfer Domain to WordPress.com' ) }
 			</VerticalNavItem>
 		);
 	},
