@@ -193,7 +193,7 @@ export class SecurePaymentForm extends Component {
 
 		const cardDetailsCountry = get( params.transaction, 'payment.newCardDetails.country', null );
 		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
-			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
+			params.transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
 		try {
