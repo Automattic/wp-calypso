@@ -49,7 +49,8 @@ export class PlanPrice extends Component {
 			rawPriceRange &&
 			rawPriceRange[ 0 ] &&
 			rawPriceRange[ 1 ] &&
-			rawPriceRange[ 0 ] + rawPriceRange[ 1 ] !== 0
+			rawPriceRange[ 0 ] !== 0 &&
+			rawPriceRange[ 1 ] !== 0
 		) {
 			priceRange = [
 				{
