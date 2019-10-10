@@ -94,9 +94,9 @@ describe( 'index', () => {
 		} );
 
 		test( 'returns true if googleAppsSubscription has no_subscription for status', () => {
-			expect( hasGSuiteWithUs( { googleAppsSubscription: { status: 'no_subscription' } } ) ).toEqual(
-				false
-			);
+			expect(
+				hasGSuiteWithUs( { googleAppsSubscription: { status: 'no_subscription' } } )
+			).toEqual( false );
 		} );
 	} );
 
