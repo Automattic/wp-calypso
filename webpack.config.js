@@ -305,7 +305,16 @@ const webpackConfig = {
 				path: path.join( __dirname, 'server', 'bundler' ),
 				assetExtraPath: extraPath,
 			} ),
+		// Warns about all duplicates but doesn't fail the build
 		new DuplicatePackageCheckerPlugin(),
+		// Disallow duplicates of React and fail the build
+		new DuplicatePackageCheckerPlugin( {
+			verbose: true,
+			emitError: true,
+			exclude( instance ) {
+				return instance.name !== 'react';
+			},
+		} ),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
 				exclude: /node_modules/,
