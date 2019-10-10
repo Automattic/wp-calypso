@@ -162,6 +162,16 @@ function isMappedDomain( domain ) {
 	return domain.type === domainTypes.MAPPED;
 }
 
+/**
+ * Checks if the supplied `domain` is a mapped domain and has WP.com name servers.
+ *
+ * @param {Object} domain domain object
+ * @returns {boolean} true if condition is met.
+ */
+function isMappedDomainWithWpcomNameservers( domain ) {
+	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false ) === true;
+}
+
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
 	return find( domains, domain => {
 		if ( domain.name !== selectedDomainName ) {
@@ -374,7 +384,7 @@ export {
 	getUnformattedDomainSalePrice,
 	hasMappedDomain,
 	isHstsRequired,
-	isMappedDomain,
+	isMappedDomainWithWpcomNameservers,
 	isRegisteredDomain,
 	isSubdomain,
 	resendInboundTransferEmail,
