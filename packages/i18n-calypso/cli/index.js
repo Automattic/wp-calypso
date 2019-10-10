@@ -91,7 +91,7 @@ if ( linesFile ) {
 	lines = JSON.parse( fs.readFileSync( linesFile, 'utf8' ) );
 	for ( const line in lines ) {
 		lines[ line ] = lines[ line ].map( String );
-		const modPath = path.relative( __dirname, line ).replace( /^[\/.]+/, '' );
+		const modPath = path.relative( __dirname, line ).replace( /^[/.]+/, '' );
 		if ( modPath !== line ) {
 			lines[ modPath ] = lines[ line ];
 			delete lines[ line ];
