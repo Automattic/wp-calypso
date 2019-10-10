@@ -71,6 +71,22 @@
 						"node-releases": "^1.1.25"
 					}
 				},
+				"enzyme-adapter-react-16": {
+					"version": "1.14.0",
+					"resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.14.0.tgz",
+					"integrity": "sha512-7PcOF7pb4hJUvjY7oAuPGpq3BmlCig3kxXGi2kFx0YzJHppqX1K8IIV9skT1IirxXlu8W7bneKi+oQ10QRnhcA==",
+					"dev": true,
+					"requires": {
+						"enzyme-adapter-utils": "^1.12.0",
+						"has": "^1.0.3",
+						"object.assign": "^4.1.0",
+						"object.values": "^1.1.0",
+						"prop-types": "^15.7.2",
+						"react-is": "^16.8.6",
+						"react-test-renderer": "^16.0.0-0",
+						"semver": "^5.7.0"
+					}
+				},
 				"enzyme-to-json": {
 					"version": "3.4.0",
 					"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.4.0.tgz",
@@ -8307,12 +8323,13 @@
 			}
 		},
 		"enzyme-adapter-react-16": {
-			"version": "1.14.0",
-			"resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.14.0.tgz",
-			"integrity": "sha512-7PcOF7pb4hJUvjY7oAuPGpq3BmlCig3kxXGi2kFx0YzJHppqX1K8IIV9skT1IirxXlu8W7bneKi+oQ10QRnhcA==",
+			"version": "1.15.0",
+			"resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.15.0.tgz",
+			"integrity": "sha512-p5k5TAG9hiyFNgJ7ABkfg5Poc3Gp5D2uArDEv7BW/FE0AflqIRfHFi4G3Ei+MpPuwy5Ao+ZisYWKuxC5LRCr1Q==",
 			"dev": true,
 			"requires": {
 				"enzyme-adapter-utils": "^1.12.0",
+				"enzyme-shallow-equal": "^1.0.0",
 				"has": "^1.0.3",
 				"object.assign": "^4.1.0",
 				"object.values": "^1.1.0",
@@ -8344,6 +8361,16 @@
 			"requires": {
 				"circular-json-es6": "^2.0.1",
 				"deep-equal-ident": "^1.1.1"
+			}
+		},
+		"enzyme-shallow-equal": {
+			"version": "1.0.0",
+			"resolved": "https://registry.npmjs.org/enzyme-shallow-equal/-/enzyme-shallow-equal-1.0.0.tgz",
+			"integrity": "sha512-VUf+q5o1EIv2ZaloNQQtWCJM9gpeux6vudGVH6vLmfPXFLRuxl5+Aq3U260wof9nn0b0i+P5OEUXm1vnxkRpXQ==",
+			"dev": true,
+			"requires": {
+				"has": "^1.0.3",
+				"object-is": "^1.0.1"
 			}
 		},
 		"enzyme-to-json": {
