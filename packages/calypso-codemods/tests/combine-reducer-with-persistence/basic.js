@@ -1,6 +1,6 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
 /**
  * Internal dependencies
  */
-import hello from "internal/lib";
+import hello from 'internal/lib';

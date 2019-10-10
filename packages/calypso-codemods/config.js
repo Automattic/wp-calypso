@@ -29,28 +29,28 @@ const commonArgs = {
 const codemodArgs = {
 	'commonjs-exports': [
 		...commonArgs[ '5to6' ],
-		'--transform=node_modules/5to6-codemod/transforms/exports.js',
+		`--transform=${ require.resolve( '5to6-codemod/transforms/exports.js' ) }`,
 	],
 
 	'commonjs-imports': [
 		...commonArgs[ '5to6' ],
-		'--transform=node_modules/5to6-codemod/transforms/cjs.js',
+		`--transform=${ require.resolve( '5to6-codemod/transforms/cjs.js' ) }`,
 	],
 
 	'commonjs-imports-hoist': [
 		...commonArgs[ '5to6' ],
-		'--transform=node_modules/5to6-codemod/transforms/cjs.js',
+		`--transform=${ require.resolve( '5to6-codemod/transforms/cjs.js' ) }`,
 		'--hoist=true',
 	],
 
 	'named-exports-from-default': [
 		...commonArgs[ '5to6' ],
-		'--transform=node_modules/5to6-codemod/transforms/named-export-generation.js',
+		`--transform=${ require.resolve( '5to6-codemod/transforms/named-export-generation.js' ) }`,
 	],
 
 	'react-create-class': [
-		...commonArgs[ 'react' ],
-		'--transform=node_modules/react-codemod/transforms/class.js',
+		...commonArgs.react,
+		`--transform=${ require.resolve( 'react-codemod/transforms/class.js' ) }`,
 
 		// react-codemod options
 		'--pure-component=true',
@@ -58,8 +58,10 @@ const codemodArgs = {
 	],
 
 	'react-proptypes': [
-		...commonArgs[ 'react' ],
-		'--transform=node_modules/react-codemod/transforms/React-PropTypes-to-prop-types.js',
+		...commonArgs.react,
+		`--transform=${ require.resolve(
+			'react-codemod/transforms/React-PropTypes-to-prop-types.js'
+		) }`,
 	],
 };
 

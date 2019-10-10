@@ -1,1 +1,1 @@
-test_folder(__dirname);
+test_folder( __dirname );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Single Tree Rendering Codemod
  *
@@ -54,19 +52,21 @@ export default function transformer( file, api ) {
 	const externalDependenciesSet = new Set( packageJsonDeps );
 
 	/**
-	 * @param {object} importNode Node object
-	 * @returns {boolean}
+	 * Is an import external
+	 *
+	 * @param  {object}  importNode Node object
+	 * @return {boolean}            True if import is external
 	 */
 	const isExternal = importNode =>
 		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	/**
 	 * Removes the extra newlines between two import statements
- 	 * caused by `insertAfter()`:
+	 * caused by `insertAfter()`:
 	 * @link https://github.com/benjamn/recast/issues/371
 	 *
-	 * @param {string} str
-	 * @returns {string}
+	 * @param  {string} str String
+	 * @return {string}     Cleaned string
 	 */
 	function removeExtraNewlines( str ) {
 		return str.replace( /(import.*\n)\n+(import)/g, '$1$2' );
@@ -76,9 +76,9 @@ export default function transformer( file, api ) {
 	 * Check if `parameters` has `param` either as a string or as a name of
 	 * an object, which could be e.g. an `Identifier`.
 	 *
-	 * @param {array} parameters Parameters to look from. Could be an array of strings or Identifier objects.
-	 * @param {string} parameter Parameter name
-	 * @returns {boolean}
+	 * @param  {array}   params     Parameters to look from. Could be an array of strings or Identifier objects.
+	 * @param  {string}  paramValue Parameter value
+	 * @return {boolean}            True if parameter is present
 	 */
 	function hasParam( params = [], paramValue ) {
 		return _.some( params, param => {
@@ -133,13 +133,13 @@ export default function transformer( file, api ) {
 	 * () => {
 	 *   if (true) {
 	 *      page.redirect('/foo');
-     *   } else {
+	 *   } else {
 	 *      page.redirect('/bar');
-     *   }
+	 *   }
 	 * }
 	 *
-	 * @param {object} node
-	 * @returns {boolean} True if any `page.redirect()` exist inside the function node, otherwise False
+	 * @param  {object}  node AST Node
+	 * @return {boolean}      True if any `page.redirect()` exist inside the function node, otherwise False
 	 */
 	function isRedirectMiddleware( node ) {
 		return (
@@ -169,7 +169,7 @@ export default function transformer( file, api ) {
 		if ( hasParam( path.value.params, 'context' ) ) {
 			return path.value;
 		}
-		let ret = path.value;
+		const ret = path.value;
 		ret.params = [ j.identifier( 'context' ), ...ret.params ];
 
 		return ret;
@@ -190,7 +190,7 @@ export default function transformer( file, api ) {
 			// More than just a context arg, possibly not a middleware
 			return path.value;
 		}
-		let ret = path.value;
+		const ret = path.value;
 		ret.params = [ ...ret.params, j.identifier( 'next' ) ];
 		ret.body = j.blockStatement( [
 			...path.value.body.body,
@@ -314,8 +314,6 @@ export default function transformer( file, api ) {
 					p.value.arguments[ 0 ]
 				);
 			} );
-
-		return j( node );
 	}
 
 	// Transform `ReactDom.render()` to `context.primary/secondary`
@@ -348,7 +346,7 @@ export default function transformer( file, api ) {
 		.replaceWith( ensureNextMiddleware )
 		.forEach( transformRenderWithReduxStore );
 
-	// Remove `renderWithReduxStore` from `import { a, renderWithReduxStore, b } from 'lib/react-helpers'`
+	// Remove `renderWithReduxStore` from `import { a, renderWithReduxStore, b } from 'lib/react-helpers'`
 	root
 		.find( j.ImportSpecifier, {
 			local: {
@@ -371,7 +369,7 @@ export default function transformer( file, api ) {
 	}
 
 	/**
-  	 * Removes:
+	 * Removes:
 	 * ```
 	 * ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	 * ```

@@ -7,31 +7,31 @@ import { withSchemaValidation, withoutPersistence } from 'state/utils';
 const COMPUTED_IDENTIFIER = 'COMPUTED_IDENTIFIER';
 
 const isFetchingSettings = withoutPersistence((state = false, action) => {
-  switch (action.type) {
-  case COMPUTED_IDENTIFIER:
-    return 'computed_id';
-  case 'COMPUTED_STRING':
-    return state;
-  case \\"NON_COMPUTED_STRING\\":
-    return action.thing;
-  case \\"2\\":
-    return 2;
-  case \\"FUNCTION_HANDLER\\":
-    return function( s, a ) {
-		return s;
-	}(state, action);
-  case \\"ARROW_FUNCTION_HANDLER\\":
-    return state;
-  case \\"ARROW_FUNCTION_WITH_DESTRUCT\\":
-    {
-      const { thing } = action;
-      return thing;
+    switch (action.type) {
+    case COMPUTED_IDENTIFIER:
+        return 'computed_id';
+    case 'COMPUTED_STRING':
+        return state;
+    case \\"NON_COMPUTED_STRING\\":
+        return action.thing;
+    case \\"2\\":
+        return 2;
+    case \\"FUNCTION_HANDLER\\":
+        return function( s, a ) {
+            return s;
+        }(state, action);
+    case \\"ARROW_FUNCTION_HANDLER\\":
+        return state;
+    case \\"ARROW_FUNCTION_WITH_DESTRUCT\\":
+        {
+            const { thing } = action;
+            return thing;
+        }
+    case \\"VARIABLE_HANDLER\\":
+        return f(state, action);
     }
-  case \\"VARIABLE_HANDLER\\":
-    return f(state, action);
-  }
 
-  return state;
+    return state;
 });
 
 function f() {
@@ -39,66 +39,66 @@ function f() {
 }
 
 const persistentReducer = (state = false, action) => {
-  switch (action.type) {
-  case COMPUTED_IDENTIFIER:
-    return \\"computed_id\\";
-  case \\"SERIALIZE\\":
-    return state;
-  }
+    switch (action.type) {
+    case COMPUTED_IDENTIFIER:
+        return 'computed_id';
+    case 'SERIALIZE':
+        return state;
+    }
 
-  return state;
+    return state;
 };
 
 persistentReducer.hasCustomPersistence = true;
 
 export const exportedPersistentReducer = (state = false, action) => {
-  switch (action.type) {
-  case COMPUTED_IDENTIFIER:
-    return \\"computed_id\\";
-  case \\"SERIALIZE\\":
-    return state;
-  }
+    switch (action.type) {
+    case COMPUTED_IDENTIFIER:
+        return 'computed_id';
+    case 'SERIALIZE':
+        return state;
+    }
 
-  return state;
+    return state;
 };
 
 exportedPersistentReducer.hasCustomPersistence = true;
 
 const persistentReducerArray = [];
-reducerArray[0] = (state = false, action) => {
-  switch (action.type) {
-  case COMPUTED_IDENTIFIER:
-    return \\"computed_id\\";
-  case \\"DESERIALIZE\\":
-    return state;
-  }
-
-  return state;
-};
-
-reducerArray[0].hasCustomPersistence = true;
-
-const persistentReducerObj = {
-  key: // TODO: HANDLE PERSISTENCE
-  (state = false, action) => {
+reducerArray[ 0 ] = (state = false, action) => {
     switch (action.type) {
     case COMPUTED_IDENTIFIER:
-      return \\"computed_id\\";
-    case \\"DESERIALIZE\\":
-      return state;
+        return 'computed_id';
+    case 'DESERIALIZE':
+        return state;
     }
 
     return state;
-  }
+};
+
+reducerArray[ 0 ].hasCustomPersistence = true;
+
+const persistentReducerObj = {
+	key: // TODO: HANDLE PERSISTENCE
+    (state = false, action) => {
+        switch (action.type) {
+        case COMPUTED_IDENTIFIER:
+            return 'computed_id';
+        case 'DESERIALIZE':
+            return state;
+        }
+
+        return state;
+    },
 };
 
 const validatedReducer = withSchemaValidation(schema, (state = false, action) => {
-  switch (action.type) {
-  case COMPUTED_IDENTIFIER:
-    return \\"computed_id\\";
-  }
+    switch (action.type) {
+    case COMPUTED_IDENTIFIER:
+        return 'computed_id';
+    }
 
-  return state;
+    return state;
 });
 
 "

@@ -3,10 +3,10 @@
 exports[`basic.js 1`] = `
 "import { combineReducers } from \\"state/utils\\";
 
-combineReducers({
+combineReducers( {
 	foo,
 	bar,
-});
+} );
 
 "
 `;

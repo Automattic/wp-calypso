@@ -1,6 +1,6 @@
-import { combineReducersWithPersistence } from "state/utils";
+import { combineReducersWithPersistence } from 'state/utils';
 
-combineReducersWithPersistence({
+combineReducersWithPersistence( {
 	foo,
 	bar,
-});
+} );

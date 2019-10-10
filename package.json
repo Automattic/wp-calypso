@@ -332,6 +332,7 @@
 		"babel-jest": "24.9.0",
 		"babel-plugin-dynamic-import-node": "2.3.0",
 		"babel-plugin-transform-react-remove-prop-types": "0.4.24",
+		"calypso-codemods": "file:./packages/calypso-codemods",
 		"chai": "4.2.0",
 		"chai-enzyme": "1.0.0-beta.1",
 		"check-node-version": "3.3.0",

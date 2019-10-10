@@ -4,7 +4,7 @@ exports[`basic.js 1`] = `
 "/**
  * Internal dependencies
  */
-import hello from \\"internal/lib\\";
+import hello from 'internal/lib';
 
 import { combineReducers } from \\"state/utils\\";
 
