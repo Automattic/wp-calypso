@@ -10,6 +10,8 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
+import analytics from 'lib/analytics';
+import superProps from 'lib/analytics/super-props';
 import { setCurrentUser } from 'state/current-user/actions';
 import setRouteAction from 'state/ui/actions/set-route';
 
@@ -100,8 +102,21 @@ const setRouteMiddleware = reduxStore => {
 	} );
 };
 
+const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
+	analytics.setDispatch( reduxStore.dispatch );
+
+	if ( currentUser.get() ) {
+		// When logged in the analytics module requires user and superProps objects
+		// Inject these here
+		analytics.initialize( currentUser, superProps );
+	} else {
+		analytics.setSuperProps( superProps );
+	}
+};
+
 export function setupMiddlewares( currentUser, reduxStore ) {
 	setupContextMiddleware( reduxStore );
 	setRouteMiddleware( reduxStore );
+	setAnalyticsMiddleware( currentUser, reduxStore );
 	renderDevHelpers( reduxStore );
 }
