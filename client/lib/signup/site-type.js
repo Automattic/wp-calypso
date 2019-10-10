@@ -97,7 +97,7 @@ export function getAllSiteTypes( siteTypeIds = allowedSiteTypeIds ) {
 			siteTopicHeader: i18n.translate( 'What is your blog about?' ),
 			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 			siteTopicSubheader: i18n.translate(
-				'Choose the closest matching option. We’ll add relevant images and text to your site based on your choices.'
+				'Choose the closest matching option. We’ll add relevant images and text to your blog based on your choice. You can change everything later on.'
 			),
 			siteMockupHelpTipCopy: i18n.translate(
 				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
