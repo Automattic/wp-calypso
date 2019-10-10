@@ -596,24 +596,38 @@ class SignupForm extends Component {
 		);
 	}
 
+	recordWooCommerceSignupTracks( method ) {
+		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
+				signup_method: method,
+			} );
+		} else if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			isWooOAuth2Client( oauth2Client ) &&
+			'cart' === wccomFrom
+		) {
+			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_payment_create_account', {
+				signup_method: method,
+			} );
+		}
+	}
+
 	handleWooCommerceSocialConnect = ( ...args ) => {
-		analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-			signup_method: 'google',
-		} );
+		this.recordWooCommerceSignupTracks( 'social' );
 		this.props.handleSocialResponse( args );
 	};
 
 	handleWooCommerceSubmit = event => {
 		event.preventDefault();
 		document.activeElement.blur();
+		this.recordWooCommerceSignupTracks( 'email' );
+
 		this.formStateController.handleSubmit( hasErrors => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
 			}
-			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-				signup_method: 'email',
-			} );
 		} );
 		this.handleSubmit( event );
 	};
