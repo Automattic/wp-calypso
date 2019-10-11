@@ -48,8 +48,8 @@ import StatsBanners from 'my-sites/stats/stats-banners';
  */
 import './style.scss';
 
-const ActionBox = ( { href, onClick, iconSrc, label } ) => {
-	const buttonAction = { href, onClick };
+const ActionBox = ( { href, onClick, target, iconSrc, label } ) => {
+	const buttonAction = { href, onClick, target };
 	return (
 		<div className="customer-home__box-action">
 			<Button { ...buttonAction }>
@@ -272,8 +272,9 @@ class Home extends Component {
 								iconSrc="/calypso/images/customer-home/images.svg"
 							/>
 							<ActionBox
-								href="https://logojoy.grsm.io/looka"
+								href="https://wp.me/logo-maker"
 								onClick={ () => trackAction( 'my_site', 'design_logo' ) }
+								target="_blank"
 								label={ translate( 'Design a logo' ) }
 								iconSrc="/calypso/images/customer-home/logo.svg"
 							/>

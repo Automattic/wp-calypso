@@ -31,10 +31,11 @@ import { getByPurchaseId } from 'state/purchases/selectors';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { isPartnerPurchase, getPartnerName } from 'lib/purchases';
+import CartData from 'components/data/cart';
+
 
 class Plans extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
 		context: PropTypes.object.isRequired,
 		displayJetpackPlans: PropTypes.bool,
 		intervalType: PropTypes.string,
@@ -145,7 +146,9 @@ class Plans extends React.Component {
 					) }
 					{ canAccessPlans && (
 						<div id="plans" className="plans plans__has-sidebar">
-							<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+							<CartData>
+								<PlansNavigation path={ this.props.context.path } />
+							</CartData>
 							<PlansFeaturesMain
 								displayJetpackPlans={ displayJetpackPlans }
 								hideFreePlan={ true }

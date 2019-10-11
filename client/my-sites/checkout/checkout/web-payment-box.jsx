@@ -35,8 +35,8 @@ import PaymentChatButton from './payment-chat-button';
 import RecentRenewals from './recent-renewals';
 import PaymentRequestButton from './payment-request-button';
 import SubscriptionText from './subscription-text';
-import { withStripe } from 'lib/stripe';
 import { useDebounce } from 'blocks/credit-card-form/helpers';
+import { useStripe, StripeHookProvider } from 'lib/stripe';
 
 const debug = debugFactory( 'calypso:checkout:payment:web-payment-box' );
 
@@ -46,8 +46,6 @@ const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerEmail: false,
 	requestShipping: false,
 };
-
-const WebPayButtonWithStripe = withStripe( WebPayButton );
 
 export function WebPaymentBox( {
 	cart,
@@ -119,14 +117,16 @@ export function WebPaymentBox( {
 				<span className={ 'payment-box__payment-buttons' }>
 					<span className="pay-button">
 						<span className="payment-request-button">
-							<WebPayButtonWithStripe
-								countryCode={ countryCode }
-								postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
-								cart={ cart }
-								onSubmit={ onSubmit }
-								paymentType={ paymentType }
-								translate={ translate }
-							/>
+							<StripeHookProvider>
+								<WebPayButton
+									countryCode={ countryCode }
+									postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
+									cart={ cart }
+									onSubmit={ onSubmit }
+									paymentType={ paymentType }
+									translate={ translate }
+								/>
+							</StripeHookProvider>
 						</span>
 						<SubscriptionText cart={ cart } />
 					</span>
@@ -162,20 +162,11 @@ WebPaymentBox.propTypes = {
 	disablePostalCodeDebounce: PropTypes.bool,
 };
 
-function WebPayButton( {
-	stripe,
-	isStripeLoading,
-	stripeConfiguration,
-	countryCode,
-	postalCode,
-	cart,
-	onSubmit,
-	paymentType,
-	translate,
-} ) {
+function WebPayButton( { countryCode, postalCode, cart, onSubmit, paymentType, translate } ) {
 	const { currency, total_cost_integer, sub_total_integer, total_tax_integer } = cart;
 	const isRenewal = hasRenewalItem( cart );
 	const shouldDisplayItems = shouldShowTax( cart );
+	const { stripe, stripeConfiguration, isStripeLoading } = useStripe();
 	useEffect( () => {
 		stripe && setStripeObject( stripe, stripeConfiguration );
 	}, [ stripe, stripeConfiguration ] );
@@ -221,7 +212,6 @@ function WebPayButton( {
 }
 
 WebPayButton.propTypes = {
-	stripe: PropTypes.object,
 	countryCode: PropTypes.string,
 	postalCode: PropTypes.string,
 	cart: PropTypes.shape( {

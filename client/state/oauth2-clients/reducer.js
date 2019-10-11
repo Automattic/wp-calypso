@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { OAUTH2_CLIENT_DATA_REQUEST_SUCCESS } from 'state/action-types';
 
 export const initialClientsData = {
@@ -52,10 +52,15 @@ export const initialClientsData = {
 	},
 };
 
-export default createReducer( initialClientsData, {
-	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		const newData = Object.assign( {}, state[ data.id ], data );
+export default withoutPersistence( ( state = initialClientsData, action ) => {
+	switch ( action.type ) {
+		case OAUTH2_CLIENT_DATA_REQUEST_SUCCESS: {
+			const { data } = action;
+			const newData = Object.assign( {}, state[ data.id ], data );
 
-		return Object.assign( {}, state, { [ data.id ]: newData } );
-	},
+			return Object.assign( {}, state, { [ data.id ]: newData } );
+		}
+	}
+
+	return state;
 } );

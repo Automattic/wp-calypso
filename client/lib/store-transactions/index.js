@@ -167,6 +167,52 @@ TransactionFlow.prototype._paymentHandlers = {
 		);
 	},
 
+	WPCOM_Billing_Ebanx: function() {
+		const { newCardDetails } = this._initialData.payment;
+		const { successUrl, cancelUrl } = this._initialData;
+		const paymentType = newCardDetails.tokenized_payment_data ? 'token' : undefined;
+		const validation = validatePaymentDetails( newCardDetails, paymentType );
+
+		if ( ! isEmpty( validation.errors ) ) {
+			this._pushStep( {
+				name: INPUT_VALIDATION,
+				error: new ValidationError( 'invalid-card-details', validation.errors ),
+				first: true,
+				last: true,
+			} );
+			return;
+		}
+
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
+		debug( 'submitting transaction with new card (ebanx)' );
+
+		this._createCardToken( gatewayData => {
+			const { name, country, 'postal-code': zip } = newCardDetails;
+
+			// Ebanx payments require additional customer documentation.
+			// @see https://developers.ebanx.com/api-reference/ebanx-payment-api/ebanx-payment-guide/guide-create-a-payment/brazil/
+			const ebanxPaymentData = {
+				payment_method: gatewayData.paymentMethod,
+				payment_key: gatewayData.token,
+				name,
+				zip,
+				country,
+				successUrl,
+				cancelUrl,
+				state: newCardDetails.state,
+				city: newCardDetails.city,
+				address_1: newCardDetails[ 'address-1' ],
+				address_2: newCardDetails[ 'address-2' ],
+				street_number: newCardDetails[ 'street-number' ],
+				phone_number: newCardDetails[ 'phone-number' ],
+				document: newCardDetails.document,
+				device_id: gatewayData.deviceId,
+			};
+
+			this._submitWithPayment( ebanxPaymentData );
+		} );
+	},
+
 	WPCOM_Billing_WPCOM: function() {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		this._submitWithPayment( { payment_method: 'WPCOM_Billing_WPCOM' } );
@@ -191,7 +237,7 @@ TransactionFlow.prototype._paymentHandlers = {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new stripe elements card' );
 
-		const { name, country, 'postal-code': zip } = newCardDetails;
+		const { name, country, 'postal-code': zip, 'phone-number': phone } = newCardDetails;
 		const paymentDetailsForStripe = {
 			name,
 			address: {
@@ -199,6 +245,10 @@ TransactionFlow.prototype._paymentHandlers = {
 				postal_code: zip,
 			},
 		};
+
+		if ( phone ) {
+			paymentDetailsForStripe.phone = phone;
+		}
 
 		try {
 			const stripePaymentMethod = await createStripePaymentMethod(

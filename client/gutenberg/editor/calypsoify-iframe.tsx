@@ -308,7 +308,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	// ID, we want to do a server nav back to that page.
 	shouldDoServerBackNav = () => {
 		const { fseParentPageId, postType } = this.props;
-		return null != fseParentPageId && 'wp_template' === postType;
+		return null != fseParentPageId && 'wp_template_part' === postType;
 	};
 
 	loadRevision = ( {
@@ -643,7 +643,7 @@ const mapStateToProps = (
 			state,
 			siteId,
 			partial.placeholder,
-			'wp_template'
+			'wp_template_part'
 		),
 	};
 };

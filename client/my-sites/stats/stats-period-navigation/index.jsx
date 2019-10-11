@@ -16,8 +16,8 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
+import { withRtl } from 'components/rtl';
 import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
-import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Style dependencies
@@ -124,13 +124,12 @@ class StatsPeriodNavigation extends PureComponent {
 }
 
 const connectComponent = connect(
-	state => ( {
-		isRtl: isRtlSelector( state ),
-	} ),
+	null,
 	{ recordGoogleEvent: recordGoogleEventAction }
 );
 
 export default flowRight(
 	connectComponent,
-	localize
+	localize,
+	withRtl
 )( StatsPeriodNavigation );

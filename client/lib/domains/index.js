@@ -234,17 +234,27 @@ function getDomainProductSlug( domain ) {
 	return `dot${ tldSlug }_domain`;
 }
 
-function getDomainPrice( slug, productsList, currencyCode ) {
+function getUnformattedDomainPrice( slug, productsList ) {
 	let price = get( productsList, [ slug, 'cost' ], null );
+
 	if ( price ) {
 		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
+	}
+
+	return price;
+}
+
+function getDomainPrice( slug, productsList, currencyCode ) {
+	let price = getUnformattedDomainPrice( slug, productsList );
+
+	if ( price ) {
 		price = formatCurrency( price, currencyCode );
 	}
 
 	return price;
 }
 
-function getDomainSalePrice( slug, productsList, currencyCode ) {
+function getUnformattedDomainSalePrice( slug, productsList ) {
 	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );
 	const couponValidForNewDomainPurchase = get(
 		productsList,
@@ -256,7 +266,17 @@ function getDomainSalePrice( slug, productsList, currencyCode ) {
 		return null;
 	}
 
-	return formatCurrency( saleCost, currencyCode );
+	return saleCost;
+}
+
+function getDomainSalePrice( slug, productsList, currencyCode ) {
+	let saleCost = getUnformattedDomainSalePrice( slug, productsList );
+
+	if ( saleCost ) {
+		saleCost = formatCurrency( saleCost, currencyCode );
+	}
+
+	return saleCost;
 }
 
 function getDomainTransferSalePrice( slug, productsList, currencyCode ) {
@@ -342,6 +362,8 @@ export {
 	getSelectedDomain,
 	getTld,
 	getTopLevelOfTld,
+	getUnformattedDomainPrice,
+	getUnformattedDomainSalePrice,
 	hasMappedDomain,
 	isHstsRequired,
 	isMappedDomain,

@@ -237,7 +237,7 @@ export class NpsSurvey extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'{{booking}}Reserve a 1:1 Support Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
+								'{{booking}}Reserve a 1:1 Quick Start Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
 								{
 									components: {
 										booking: (

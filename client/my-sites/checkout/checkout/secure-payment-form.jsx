@@ -24,7 +24,6 @@ import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
 import {
 	fullCreditsPayment,
-	newCardPayment,
 	newStripeCardPayment,
 	storedCardPayment,
 } from 'lib/store-transactions';
@@ -98,13 +97,6 @@ export class SecurePaymentForm extends Component {
 
 		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
 
-		if (
-			this.props.cart &&
-			this.props.cart.allowed_payment_methods.includes( 'WPCOM_Billing_Stripe_Payment_Method' )
-		) {
-			this.shouldUseStripeElements = true;
-		}
-
 		switch ( visiblePaymentBox ) {
 			case 'credits':
 			case 'free-trial':
@@ -125,11 +117,7 @@ export class SecurePaymentForm extends Component {
 				if ( this.getInitialCard() ) {
 					newPayment = storedCardPayment( this.getInitialCard() );
 				} else if ( ! get( this.props.transaction, 'payment.newCardDetails', null ) ) {
-					if ( this.shouldUseStripeElements ) {
-						newPayment = newStripeCardPayment();
-					} else {
-						newPayment = newCardPayment();
-					}
+					newPayment = newStripeCardPayment();
 				}
 				break;
 
@@ -205,7 +193,7 @@ export class SecurePaymentForm extends Component {
 
 		const cardDetailsCountry = get( params.transaction, 'payment.newCardDetails.country', null );
 		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
-			params.transaction.payment.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
+			params.transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
 		try {
@@ -600,18 +588,10 @@ export class SecurePaymentForm extends Component {
 				return this.renderFreeCartPaymentBox();
 
 			case 'credit-card':
-				if ( this.shouldUseStripeElements ) {
-					return (
-						<div>
-							{ this.renderGreatChoiceHeader() }
-							{ this.renderStripeElementsPaymentBox() }
-						</div>
-					);
-				}
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
-						{ this.renderCreditCardPaymentBox() }
+						{ this.renderStripeElementsPaymentBox() }
 					</div>
 				);
 

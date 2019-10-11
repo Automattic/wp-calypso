@@ -63,7 +63,7 @@ function get_fallback_navigation_menu() {
 			'container'   => 'ul',
 			'echo'        => false,
 			'menu_class'  => 'main-menu footer-menu',
-			'sort_column' => 'post_date',
+			'sort_column' => 'menu_order, post_date',
 		]
 	);
 

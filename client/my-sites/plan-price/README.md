@@ -31,9 +31,9 @@ export default class extends React.Component {
 | Prop         | Type   | Description                                               |
 | ----         | -------| -----------                                               |
 | rawPrice     | number | Price of the plan                                         |
+| rawPriceRange| Array  | The Min and Max Price of the plan                         |
 | original     | bool   | Is the price discounted and this is the original one?     |
 | discounted   | bool   | Is the price discounted and this is the discounted one?   |
 | isOnSale     | bool   | Is the product this price is for on sale?                 |
 | currencyCode | string | Currency of the price                                     |
 | className    | string | If you need to add additional classes                     |
-

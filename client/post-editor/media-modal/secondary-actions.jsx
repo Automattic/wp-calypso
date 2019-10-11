@@ -85,11 +85,10 @@ class MediaModalSecondaryActions extends Component {
 	}
 
 	render() {
-		
 		if ( this.props.hideButton ) {
 			return null;
 		}
-		
+
 		return (
 			<div>
 				{ this.getButtons().map( button => (

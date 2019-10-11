@@ -69,7 +69,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 			<>
 				<h2 className="plan-upgrade-upsell__header">
 					{ translate(
-						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium Designs to your order {{br/}}{{u}}for just %(discountPrice)s more{{/u}}!',
+						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium designs to your order {{br/}}{{u}}for just %(discountPrice)s more{{/u}}!',
 						{
 							args: {
 								bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
@@ -117,7 +117,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"That's exactly why we've partnered with some of the world's greatest designers to offer nearly 200 high-end designs that you can use to make your site looks incredible."
+								"That's exactly why we've partnered with some of the world's greatest designers to offer nearly 200 high-end designs that you can use to make your site look incredible."
 							) }
 						</p>
 						<p>
@@ -132,7 +132,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'Normally, each of these WordPress themes {{b}}cost between %(premiumThemePriceLow)s and %(premiumThemePriceHigh)s or more{{/b}}.',
+								'Normally, each of these WordPress themes {{b}}costs between %(premiumThemePriceLow)s and %(premiumThemePriceHigh)s or more{{/b}}.',
 								{
 									args: {
 										premiumThemePriceLow: formatCurrency( premiumThemePriceLow, currencyCode, {
@@ -179,7 +179,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
 								<span className="plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'{{b}}Advanced tools to become a social media pro.{{/b}} Schedule posts in advance, resurface your older content, to scheduling multiple social posts at a time.',
+										'{{b}}Advanced tools to become a social media pro.{{/b}} Schedule posts in advance, resurface your older content, or share multiple social posts at a time.',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
@@ -191,7 +191,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
 								<span className="plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'{{b}}Customize your premium theme to your exact needs.{{/b}} With advanced design features, you can make your site stand and never be the same as others.',
+										'{{b}}Customize your premium theme to your exact needs.{{/b}} With advanced design features, you can make your site stand out and never be the same as others.',
 										{
 											components: { b: <b /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
@@ -212,7 +212,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'Upgrade to the Premium plan (and access nearly 200 premium themes) for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
+									'Upgrade to the Premium plan and access nearly 200 premium themes for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
 									{
 										components: { del: <del /> },
 										args: {

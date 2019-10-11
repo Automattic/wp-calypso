@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Button, Modal, Spinner } from '@wordpress/components';
+import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
@@ -121,7 +121,13 @@ class PageTemplateModal extends Component {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = () => this.setTemplate( this.state.previewedTemplate );
+	handleConfirmation = slug => {
+		if ( typeof slug !== 'string' ) {
+			slug = this.state.previewedTemplate;
+		}
+
+		this.setTemplate( slug );
+	};
 
 	previewTemplate = slug => this.setState( { previewedTemplate: slug } );
 
@@ -131,8 +137,12 @@ class PageTemplateModal extends Component {
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
 			return false;
 		}
-		this.setState( { isOpen: false } );
+
 		trackDismiss( this.props.segment.id, this.props.vertical.id );
+
+		// Try if we have specific URL to go back to, otherwise go to the page list.
+		const calypsoifyCloseUrl = get( window, [ 'calypsoifyGutenberg', 'closeUrl' ] );
+		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
 	};
 
 	getBlocksByTemplateSlug( slug ) {
@@ -144,8 +154,10 @@ class PageTemplateModal extends Component {
 	}
 
 	render() {
+		/* eslint-disable no-shadow */
 		const { previewedTemplate, isOpen, isLoading, blocksByTemplateSlug } = this.state;
 		const { templates } = this.props;
+		/* eslint-enable no-shadow */
 
 		if ( ! isOpen ) {
 			return null;
@@ -154,10 +166,20 @@ class PageTemplateModal extends Component {
 		return (
 			<Modal
 				title={ __( 'Select Page Template', 'full-site-editing' ) }
-				onRequestClose={ this.closeModal }
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
+				shouldCloseOnClickOutside={ false }
+				// Using both variants here to be compatible with new Gutenberg and old (older than 6.6).
+				isDismissable={ false }
+				isDismissible={ false }
 			>
+				<IconButton
+					className="page-template-modal__close-button components-icon-button"
+					onClick={ this.closeModal }
+					icon="arrow-left-alt2"
+					label={ __( 'Go back' ) }
+				/>
+
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
 						<div className="page-template-modal__loading">
@@ -179,6 +201,7 @@ class PageTemplateModal extends Component {
 										useDynamicPreview={ false }
 										siteInformation={ siteInformation }
 										selectedTemplate={ previewedTemplate }
+										handleTemplateConfirmation={ this.handleConfirmation }
 									/>
 								</fieldset>
 							</form>
