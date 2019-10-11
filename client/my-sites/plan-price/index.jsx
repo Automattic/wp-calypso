@@ -85,7 +85,7 @@ export class PlanPrice extends Component {
 				<span className={ classes }>
 					{ priceRange[ 0 ].price.symbol }
 					{ renderPrice( priceRange[ 0 ] ) }
-					{ priceRange[ 1 ] && ' - ' }
+					{ priceRange[ 1 ] && '-' }
 					{ priceRange[ 1 ] && renderPrice( priceRange[ 1 ] ) }
 				</span>
 			);
@@ -110,7 +110,7 @@ export class PlanPrice extends Component {
 			<h4 className={ classes }>
 				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
 				{ renderPriceHtml( priceRange[ 0 ] ) }
-				{ priceRange[ 1 ] && ' - ' }
+				{ priceRange[ 1 ] && '-' }
 				{ priceRange[ 1 ] && renderPriceHtml( priceRange[ 1 ] ) }
 				{ taxText && (
 					<sup className="plan-price__tax-amount">
