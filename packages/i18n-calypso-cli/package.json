@@ -1,6 +1,6 @@
 {
 	"name": "i18n-calypso-cli",
-	"version": "4.0.0-alpha.2",
+	"version": "4.0.0",
 	"description": "i18n-calypso CLI for extracting translation files from JS sources",
 	"main": "index.js",
 	"repository": {
