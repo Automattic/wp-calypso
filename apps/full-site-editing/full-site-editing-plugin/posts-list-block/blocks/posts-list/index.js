@@ -69,7 +69,8 @@ registerBlockType( metadata.name, {
 				type: 'block',
 				blocks: [ 'newspack-blocks/homepage-articles' ],
 				transform: ( { postsPerPage } ) => {
-					// Configure the Newspack block to look the closest this one.
+					// Configure the Newspack block to look as close as possible
+					// to the output of this one.
 					return createBlock( 'newspack-blocks/homepage-articles', {
 						postsToShow: postsPerPage,
 						showAvatar: false,
