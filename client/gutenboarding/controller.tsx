@@ -10,7 +10,7 @@ import page from 'page';
  */
 import { Gutenboard } from './gutenboard';
 
-export function redirectIfNotEnabled( context, next ) {
+export function redirectIfNotEnabled( context: PageJS.Context, next ) {
 	if ( ! config.isEnabled( 'gutenboarding' ) ) {
 		page.redirect( '/' );
 		return;
@@ -18,7 +18,7 @@ export function redirectIfNotEnabled( context, next ) {
 	next();
 }
 
-export function main( context, next ) {
+export function main( context: PageJS.Context, next ) {
 	context.primary = <Gutenboard />;
 	next();
 }
