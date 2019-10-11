@@ -16,5 +16,8 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/wp-checkout#readme"
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/wp-checkout#readme",
+	"devDependencies": {
+		"local-web-server": "^3.0.7"
+	}
 }
