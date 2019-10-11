@@ -107,7 +107,8 @@ function getGSuiteSupportedDomains( domains ) {
 			return false;
 		}
 
-		const isHostedOnWpcom = isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuiteWithUs( domain ) );
+		const isHostedOnWpcom =
+			isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuiteWithUs( domain ) );
 		const isMapped = isMappedDomain( domain );
 
 		return ( isHostedOnWpcom || isMapped ) && canDomainAddGSuite( domain.name );

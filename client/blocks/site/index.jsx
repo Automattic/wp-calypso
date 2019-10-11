@@ -143,9 +143,7 @@ class Site extends React.Component {
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
 					<div className="site__info">
-						<div className="site__title">
-							{ site.title }
-						</div>
+						<div className="site__title">{ site.title }</div>
 						<div className="site__domain">
 							{ this.props.homeLink
 								? translate( 'View %(domain)s', {
@@ -154,19 +152,15 @@ class Site extends React.Component {
 								: site.domain }
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-							{ this.props.site.is_private && (
-								<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
-							) }
-							{ site.options && site.options.is_redirect && (
-								<span className="site__badge site__badge-redirect">
-									{ translate( 'Redirect' ) }
-								</span>
-							) }
-							{ site.options && site.options.is_domain_only && (
-								<span className="site__badge site__badge-domain-only">
-									{ translate( 'Domain' ) }
-								</span>
-							) }
+						{ this.props.site.is_private && (
+							<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
+						) }
+						{ site.options && site.options.is_redirect && (
+							<span className="site__badge site__badge-redirect">{ translate( 'Redirect' ) }</span>
+						) }
+						{ site.options && site.options.is_domain_only && (
+							<span className="site__badge site__badge-domain-only">{ translate( 'Domain' ) }</span>
+						) }
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</div>
 					{ this.props.homeLink && this.props.showHomeIcon && (
