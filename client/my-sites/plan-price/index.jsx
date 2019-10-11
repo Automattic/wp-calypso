@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { getCurrencyObject } from '@automattic/format-currency';
@@ -93,12 +93,12 @@ export class PlanPrice extends Component {
 
 		const renderPriceHtml = priceObj => {
 			return (
-				<Fragment>
+				<>
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>
 					<sup className="plan-price__fraction">
 						{ priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction }
 					</sup>
-				</Fragment>
+				</>
 			);
 		};
 
