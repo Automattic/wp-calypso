@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import joinClasses from './join-classes';
-import { useLocalize } from './localize';
+import joinClasses from '../join-classes';
+import { useLocalize } from '../localize';
 
 export default function CheckoutStep( {
 	className,

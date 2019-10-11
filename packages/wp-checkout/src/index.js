@@ -11,9 +11,9 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from './join-classes';
 import localizeFactory, { useLocalize } from './localize';
-import { CheckoutProvider } from './checkout-context';
-import CheckoutStep from './checkout-step';
-import CheckoutPaymentMethods from './checkout-payment-methods';
+import { CheckoutProvider } from './components/checkout-context';
+import CheckoutStep from './components/checkout-step';
+import CheckoutPaymentMethods from './components/checkout-payment-methods';
 
 // Re-export the public API
 export { CheckoutProvider, CheckoutStep, CheckoutPaymentMethods };
