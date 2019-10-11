@@ -13,25 +13,19 @@
 	},
 	"author": "@automattic",
 	"license": "GPL-2.0-or-later",
-	"bin": {
-		"i18n-calypso": "cli/cli.js"
-	},
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
 	"dependencies": {
-		"commander": "^2.9.0",
 		"debug": "^3.2.6",
-		"globby": "^9.0.0",
 		"hash.js": "^1.1.5",
-		"interpolate-components": "1.1.1",
-		"jed": "1.1.1",
+		"interpolate-components": "^1.1.1",
+		"jed": "^1.1.1",
 		"lodash": "^4.17.11",
 		"lru": "^3.1.0",
 		"moment": "^2.24.0",
-		"react": "^16.8.3",
-		"xgettext-js": "^3.0.0"
+		"react": "^16.8.3"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
