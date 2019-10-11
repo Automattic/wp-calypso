@@ -27,10 +27,10 @@ function PlanPriceExample() {
 			</span>
 			<h3>Plan with discounted price with tax</h3>
 			<span style={ { display: 'flex' } }>
-				<PlanPrice rawPrice={ 8.25 } original taxText="10" />
-				<PlanPrice rawPrice={ 2.25 } discounted taxText="10" />
-				<PlanPrice rawPriceRange={ [ 8.25, 20.23 ] } original taxText="10" />
-				<PlanPrice rawPriceRange={ [ 2.25, 3.5 ] } discounted taxText="10" />
+				<PlanPrice rawPrice={ 8.25 } original taxText="10%" />
+				<PlanPrice rawPrice={ 2.25 } discounted taxText="10%" />
+				<PlanPrice rawPriceRange={ [ 8.25, 20.23 ] } original taxText="10%" />
+				<PlanPrice rawPriceRange={ [ 2.25, 3.5 ] } discounted taxText="10%" />
 			</span>
 		</div>
 	);
