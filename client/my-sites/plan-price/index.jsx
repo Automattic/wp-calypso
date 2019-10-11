@@ -74,19 +74,23 @@ export class PlanPrice extends Component {
 		} );
 
 		const renderPrice = priceObj => {
-			return [
-				priceObj.price.integer,
-				priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction,
-			];
+			const fraction = priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction;
+			return `${ priceObj.price.integer }${ fraction }`;
 		};
 
 		if ( isInSignup ) {
+			const smallerPrice = renderPrice( priceRange[ 0 ] );
+			const higherPrice = priceRange[ 1 ] && renderPrice( priceRange[ 1 ] );
+
 			return (
 				<span className={ classes }>
 					{ priceRange[ 0 ].price.symbol }
-					{ renderPrice( priceRange[ 0 ] ) }
-					{ priceRange[ 1 ] && '-' }
-					{ priceRange[ 1 ] && renderPrice( priceRange[ 1 ] ) }
+					{ ! higherPrice && renderPrice( priceRange[ 0 ] ) }
+					{ higherPrice &&
+						translate( '%(smallerPrice)s-%(higherPrice)s', {
+							args: { smallerPrice, higherPrice },
+							comment: 'The price range for a particular product',
+						} ) }
 				</span>
 			);
 		}
@@ -106,12 +110,18 @@ export class PlanPrice extends Component {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
 
+		const smallerPriceHtml = renderPriceHtml( priceRange[ 0 ] );
+		const higherPriceHtml = priceRange[ 1 ] && renderPriceHtml( priceRange[ 1 ] );
+
 		return (
 			<h4 className={ classes }>
 				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
-				{ renderPriceHtml( priceRange[ 0 ] ) }
-				{ priceRange[ 1 ] && '-' }
-				{ priceRange[ 1 ] && renderPriceHtml( priceRange[ 1 ] ) }
+				{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
+				{ higherPriceHtml &&
+					translate( '{{smallerPrice/}}-{{higherPrice/}}', {
+						components: { smallerPrice: smallerPriceHtml, higherPrice: higherPriceHtml },
+						comment: 'The price range for a particular product',
+					} ) }
 				{ taxText && (
 					<sup className="plan-price__tax-amount">
 						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
