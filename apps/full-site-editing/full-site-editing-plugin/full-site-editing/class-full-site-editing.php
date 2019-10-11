@@ -61,6 +61,7 @@ class Full_Site_Editing {
 		add_filter( 'bulk_actions-edit-wp_template_type', [ $this, 'remove_delete_bulk_action_for_template_taxonomy' ] );
 		add_action( 'pre_delete_term', [ $this, 'restrict_template_taxonomy_deletion' ], 10, 2 );
 		add_action( 'transition_post_status', [ $this, 'restrict_template_drafting' ], 10, 3 );
+		add_action( 'admin_menu', [ $this, 'remove_wp_admin_menu_items' ] );
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
@@ -582,6 +583,31 @@ class Full_Site_Editing {
 	public function restrict_template_taxonomy_deletion( $term, $taxonomy ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 		if ( 'wp_template_part_type' === $taxonomy ) {
 			wp_die( esc_html__( 'Template Types cannon be deleted.' ) );
+		}
+	}
+
+	/**
+	 * Removes wp admin menu items we don't want like Customize and Widgets.
+	 */
+	public function remove_wp_admin_menu_items() {
+		global $submenu;
+
+		// For safety.
+		if ( ! \A8C\FSE\is_full_site_editing_active() ) {
+			return;
+		}
+
+		// Remove widget submenu.
+		remove_submenu_page( 'themes.php', 'widgets.php' );
+
+		/*
+		 * This position is hardcoded in `wp-admin/menu.php` and we can't use `remove_submenu_page`
+		 * because the customize URL varies depending on the current screen.
+		 *
+		 * We also want to access the customizer through the URL, so we shouldn't deny URL access.
+		 */
+		if ( isset( $submenu['themes.php'][6] ) ) {
+			unset( $submenu['themes.php'][6] );
 		}
 	}
 }
