@@ -9,7 +9,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { Gutenboard } from './gutenboard';
-import { CreateSite } from './create-site';
 
 export function redirectIfNotEnabled( context, next ) {
 	if ( ! config.isEnabled( 'gutenboarding' ) ) {
@@ -21,10 +20,5 @@ export function redirectIfNotEnabled( context, next ) {
 
 export function main( context, next ) {
 	context.primary = <Gutenboard />;
-	next();
-}
-
-export function createSite( context, next ) {
-	context.primary = <CreateSite />;
 	next();
 }

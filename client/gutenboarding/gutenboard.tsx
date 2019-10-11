@@ -33,32 +33,21 @@ export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
 
 	return (
-		<>
-			<div>
-				<a href="/gutenboarding/onboard">Onboard!</a>
-			</div>
-			<div>
-				<SlotFillProvider>
-					<DropZoneProvider>
-						<BlockEditorProvider
-							value={ blocks }
-							onInput={ updateBlocks }
-							onChange={ updateBlocks }
-						>
-							<div>
-								<BlockEditorKeyboardShortcuts />
-								<WritingFlow>
-									<ObserveTyping>
-										<BlockList />
-									</ObserveTyping>
-								</WritingFlow>
-							</div>
-							<Popover.Slot />
-						</BlockEditorProvider>
-					</DropZoneProvider>
-				</SlotFillProvider>
-			</div>
-		</>
+		<SlotFillProvider>
+			<DropZoneProvider>
+				<BlockEditorProvider value={ blocks } onInput={ updateBlocks } onChange={ updateBlocks }>
+					<div>
+						<BlockEditorKeyboardShortcuts />
+						<WritingFlow>
+							<ObserveTyping>
+								<BlockList />
+							</ObserveTyping>
+						</WritingFlow>
+					</div>
+					<Popover.Slot />
+				</BlockEditorProvider>
+			</DropZoneProvider>
+		</SlotFillProvider>
 	);
 }
 
