@@ -213,7 +213,7 @@ jobs:
       - run:
           name: TypeScript typecheck
           # Report but don't fail the build (`|| exit 0`)
-          command: ./node_modules/.bin/tsc --noEmit || exit 0
+          command: npm run typecheck || exit 0
 
 
   lint-and-translate:
