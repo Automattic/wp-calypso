@@ -172,7 +172,17 @@
 	}
 
 	.sidebar__menu-link {
-		padding-left: 55px;
+		padding-left: 75px;
+
+		&::before {
+			background-color: var( --color-neutral-10 );
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 58px;
+			height: 100%;
+			width: 1px;
+		}
 	}
 
 	&.is-toggle-open {
