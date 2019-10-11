@@ -18,7 +18,6 @@ import account from './account/reducer';
 import accountRecovery from './account-recovery/reducer';
 import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
-import analyticsTracking from './analytics/reducer';
 import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
 import automatedTransfer from './automated-transfer/reducer';
@@ -107,7 +106,6 @@ const reducers = {
 	accountRecovery,
 	activePromotions,
 	activityLog,
-	analyticsTracking,
 	application,
 	applicationPasswords,
 	automatedTransfer,

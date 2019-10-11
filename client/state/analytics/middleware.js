@@ -22,7 +22,6 @@ import {
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
-import isTracking from 'state/selectors/is-tracking';
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) =>
@@ -37,8 +36,8 @@ const pageViewServices = {
 	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
 };
 
-const loadTrackingTool = ( { trackingTool }, state ) => {
-	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) ) {
+const loadTrackingTool = ( { trackingTool } ) => {
+	if ( trackingTool === 'HotJar' ) {
 		addHotJarScript();
 	}
 };
