@@ -566,3 +566,7 @@ The primary properties used in a line item by default are `id` (which must be un
 ### Can I add custom properties to line items?
 
 To maintain the integrity of the line item schema, adding custom fields is discouraged, but allowed. If you need specific custom data as part of a line item so that it can be used in another part of the form, it's recommended to pass the line item object through a helper function to collect the extra data rather than serializing it into the line item itself. This will make that data collection more testable. However, if the data collection process is expensive or slow, and caching isn't an option, it may make sense to preload the data into the line items.
+
+## 💰 Development
+
+Run `npm install` to install necessary packages, then run `npm start` to start a local web server which will display the component.
