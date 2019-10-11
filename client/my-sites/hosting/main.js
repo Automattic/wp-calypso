@@ -20,6 +20,7 @@ import CardHeading from 'components/card-heading';
 import Button from 'components/button';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import ResizableIframe from 'components/resizable-iframe';
 
 /**
  * Style dependencies
@@ -35,7 +36,7 @@ const DataSection = ( { title, data } ) => {
 	);
 };
 
-const Hosting = ( { translate } ) => {
+const Hosting = ( { translate, siteId } ) => {
 	const dummyInfo = {
 		[ translate( 'URL' ) ]: 'sftp1.wordpress.com',
 		[ translate( 'Port' ) ]: 22,
@@ -79,6 +80,13 @@ const Hosting = ( { translate } ) => {
 							) }
 						</p>
 						<Button>{ translate( 'Access PHPMyAdmin' ) }</Button>
+						<ResizableIframe
+							src={ `/iframe-redirect?siteId=${ siteId }` }
+							width="100%"
+							height="100px"
+							frameBorder="0"
+							className="hosting__admin-button"
+						/>
 					</div>
 				</Card>
 			</div>

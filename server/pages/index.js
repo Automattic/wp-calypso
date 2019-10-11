@@ -909,6 +909,50 @@ module.exports = function() {
 			} );
 	} );
 
+	app.get( '/iframe-redirect', function( req, res ) {
+		res.set( {
+			'X-Frame-Options': 'SAMEORIGIN',
+		} );
+
+		if ( calypsoEnv === 'development' ) {
+			return res.send(
+				renderJsx( 'iframe-redirect', {
+					siteId: req.query.siteId,
+				} )
+			);
+		}
+
+		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
+			return res.send( renderJsx( 'iframe-redirect' ) );
+		}
+
+		// Maybe not logged in, note that you need docker to test this properly
+		const user = require( 'user-bootstrap' );
+
+		debug( 'Issuing API call to fetch user object' );
+
+		user( req )
+			.then( data => {
+				//some additional user checks here
+
+				// Passed all checks, prepare support user session
+				return res.send(
+					renderJsx( 'iframe-redirect', {
+						siteId: req.query.siteId,
+					} )
+				);
+			} )
+			.catch( () => {
+				res.clearCookie( 'wordpress_logged_in', {
+					path: '/',
+					httpOnly: true,
+					domain: '.wordpress.com',
+				} );
+
+				return res.send( renderJsx( 'iframe-redirect' ) );
+			} );
+	} );
+
 	// catchall to render 404 for all routes not whitelisted in client/sections
 	app.use( render404 );
 
