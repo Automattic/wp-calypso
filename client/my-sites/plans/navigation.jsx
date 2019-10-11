@@ -110,11 +110,7 @@ class PlansNavigation extends React.Component {
 		);
 	}
 
-	toggleCartVisibility = event => {
-		if ( event ) {
-			event.preventDefault();
-		}
-
+	toggleCartVisibility = () => {
 		this.setState( { cartVisible: ! this.state.cartVisible } );
 	};
 

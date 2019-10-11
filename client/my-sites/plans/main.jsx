@@ -27,10 +27,10 @@ import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-t
 import { isJetpackSite } from 'state/sites/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
+import CartData from 'components/data/cart';
 
 class Plans extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
 		context: PropTypes.object.isRequired,
 		displayJetpackPlans: PropTypes.bool,
 		intervalType: PropTypes.string,
@@ -109,7 +109,9 @@ class Plans extends React.Component {
 					) }
 					{ canAccessPlans && (
 						<div id="plans" className="plans plans__has-sidebar">
-							<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+							<CartData>
+								<PlansNavigation path={ this.props.context.path } />
+							</CartData>
 							<PlansFeaturesMain
 								displayJetpackPlans={ displayJetpackPlans }
 								hideFreePlan={ true }
