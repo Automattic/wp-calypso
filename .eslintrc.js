@@ -123,14 +123,6 @@ module.exports = {
 						importNames: [ 'combineReducers' ],
 						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
 					},
-					// Deprecate createReducer and createReducerWithValidation.
-					{
-						name: 'state/utils',
-						importNames: [ 'createReducer', 'createReducerWithValidation' ],
-						message:
-							'This method is deprecated; please use a plain reducer function ' +
-							'and wrap it with `withSchemaValidation` if it needs schema validation.',
-					},
 					// Use fetch instead of superagent.
 					{
 						name: 'superagent',
