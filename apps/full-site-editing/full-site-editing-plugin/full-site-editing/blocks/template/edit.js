@@ -11,7 +11,7 @@ import { get, noop } from 'lodash';
  * WordPress dependencies
  */
 import { parse, createBlock } from '@wordpress/blocks';
-import { BlockEdit } from '@wordpress/editor';
+import { BlockEdit } from '@wordpress/block-editor';
 import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
