@@ -8,7 +8,8 @@ import { get } from 'lodash';
  */
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteOptions from 'state/selectors/get-site-options';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import { isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSite from './get-site';
 
@@ -24,7 +25,7 @@ export default function canCurrentUserUseCustomerHome( state, siteId = null ) {
 		siteId = getSelectedSiteId( state );
 	}
 
-	if ( ! isEligibleForDotcomChecklist( state, siteId ) ) {
+	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
 		return false;
 	}
 
