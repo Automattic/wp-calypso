@@ -525,7 +525,8 @@
 		"@babel/parser": {
 			"version": "7.6.2",
 			"resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.6.2.tgz",
-			"integrity": "sha512-mdFqWrSPCmikBoaBYMuBulzTIKuXVPtEISFbRRVNwMWpCms/hmE2kRq0bblUHaNRKrjRlmVbx1sDHmjmRgD2Xg=="
+			"integrity": "sha512-mdFqWrSPCmikBoaBYMuBulzTIKuXVPtEISFbRRVNwMWpCms/hmE2kRq0bblUHaNRKrjRlmVbx1sDHmjmRgD2Xg==",
+			"dev": true
 		},
 		"@babel/plugin-proposal-async-generator-functions": {
 			"version": "7.2.0",
@@ -8833,7 +8834,8 @@
 		"estree-walker": {
 			"version": "0.6.1",
 			"resolved": "https://registry.npmjs.org/estree-walker/-/estree-walker-0.6.1.tgz",
-			"integrity": "sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w=="
+			"integrity": "sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==",
+			"dev": true
 		},
 		"esutils": {
 			"version": "2.0.3",
@@ -10925,16 +10927,25 @@
 		"i18n-calypso": {
 			"version": "file:packages/i18n-calypso",
 			"requires": {
-				"commander": "^2.9.0",
 				"debug": "^3.2.6",
-				"globby": "^9.0.0",
+				"events": "^3.0.0",
 				"hash.js": "^1.1.5",
-				"interpolate-components": "1.1.1",
-				"jed": "1.1.1",
+				"interpolate-components": "^1.1.1",
+				"jed": "^1.1.1",
 				"lodash": "^4.17.11",
 				"lru": "^3.1.0",
 				"moment": "^2.24.0",
-				"react": "^16.8.3",
+				"react": "^16.8.3"
+			}
+		},
+		"i18n-calypso-cli": {
+			"version": "file:packages/i18n-calypso-cli",
+			"dev": true,
+			"requires": {
+				"commander": "^2.9.0",
+				"debug": "^3.2.6",
+				"globby": "^9.0.0",
+				"jed": "1.1.1",
 				"xgettext-js": "^3.0.0"
 			}
 		},
@@ -23754,6 +23765,7 @@
 			"version": "3.0.0",
 			"resolved": "https://registry.npmjs.org/xgettext-js/-/xgettext-js-3.0.0.tgz",
 			"integrity": "sha512-htBdz05sG37ulma47azvkIaS1R02ecsp1QmhS7N0qmHffi5pbsd+34W7hg+Eb7bgbUZQQd4vO0Z1j5X9CjKXQg==",
+			"dev": true,
 			"requires": {
 				"@babel/parser": "^7.5.5",
 				"estree-walker": "^0.6.1",
