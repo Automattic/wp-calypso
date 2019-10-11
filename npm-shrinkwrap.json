@@ -95,6 +95,12 @@
 					"requires": {
 						"lodash": "^4.17.12"
 					}
+				},
+				"typescript": {
+					"version": "3.4.3",
+					"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.4.3.tgz",
+					"integrity": "sha512-FFgHdPt4T/duxx6Ndf7hwgMZZjZpB+U0nMNGVCYPq0rEzWKjEDobm4J6yb3CS7naZ0yURFqdw9Gwc7UOh/P9oQ==",
+					"dev": true
 				}
 			}
 		},
@@ -22569,9 +22575,9 @@
 			"integrity": "sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c="
 		},
 		"typescript": {
-			"version": "3.4.3",
-			"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.4.3.tgz",
-			"integrity": "sha512-FFgHdPt4T/duxx6Ndf7hwgMZZjZpB+U0nMNGVCYPq0rEzWKjEDobm4J6yb3CS7naZ0yURFqdw9Gwc7UOh/P9oQ==",
+			"version": "3.6.4",
+			"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.6.4.tgz",
+			"integrity": "sha512-unoCll1+l+YK4i4F8f22TaNVPRHcD9PA3yCuZ8g5e0qGqlVlJ/8FSateOLLSagn+Yg5+ZwuPkL8LFUc0Jcvksg==",
 			"dev": true
 		},
 		"ua-parser-js": {
