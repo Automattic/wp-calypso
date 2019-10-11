@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * WordPress dependencies
  */
@@ -6,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Placeholder, RangeControl, PanelBody } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
+/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
