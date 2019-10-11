@@ -3,29 +3,38 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../join-classes';
-import { useLocalize } from '../localize';
+import { registerPaymentMethod, getPaymentMethods } from '../payment-methods';
+
+// TODO: where should these be registered?
+registerPaymentMethod( {
+	id: 'apple-pay',
+	button: 'Apple Pay',
+	form: null,
+	billingContactForm: null,
+	submit: () => {},
+} );
 
 export default function CheckoutPaymentMethods( {
 	collapsed,
 	className,
 	availablePaymentMethods,
+	paymentMethod,
 	onChange,
 } ) {
-	// TODO: get choices from payment methods and filter by availablePaymentMethods
-	const localize = useLocalize();
-	const [ choice, setChoice ] = useState( 'apple-pay' );
-	useEffect( () => {
-		onChange( choice );
-	}, [ onChange, choice ] );
+	const paymentMethods = getPaymentMethods();
+	const paymentMethodsToDisplay = availablePaymentMethods
+		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
+		: paymentMethods;
 
 	if ( collapsed ) {
+		// TODO
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 				Summary Goes Here
@@ -35,39 +44,14 @@ export default function CheckoutPaymentMethods( {
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-			<div>
-				<input
-					type="radio"
-					id="apple-pay"
-					name="paymentMethod"
-					value="apple-pay"
-					checked={ choice === 'apple-pay' }
-					onChange={ () => setChoice( 'apple-pay' ) }
+			{ paymentMethodsToDisplay.map( method => (
+				<PaymentMethod
+					{ ...method }
+					key={ method.id }
+					checked={ paymentMethod === method.id }
+					onClick={ onChange }
 				/>
-				<label htmlFor="apple-pay">{ localize( 'Apple Pay' ) }</label>
-			</div>
-			<div>
-				<input
-					type="radio"
-					id="credit"
-					name="paymentMethod"
-					value="card"
-					checked={ choice === 'card' }
-					onChange={ () => setChoice( 'card' ) }
-				/>
-				<label htmlFor="credit">{ localize( 'Credit or debit card' ) }</label>
-			</div>
-			<div>
-				<input
-					type="radio"
-					id="paypal"
-					name="paymentMethod"
-					value="paypal"
-					checked={ choice === 'paypal' }
-					onChange={ () => setChoice( 'paypal' ) }
-				/>
-				<label htmlFor="paypal">{ localize( 'Paypal' ) }</label>
-			</div>
+			) ) }
 		</div>
 	);
 }
@@ -76,5 +60,27 @@ CheckoutPaymentMethods.propTypes = {
 	collapsed: PropTypes.bool,
 	className: PropTypes.string,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
+	paymentMethod: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 };
+
+function PaymentMethod( { id, button, form, checked, onClick } ) {
+	/* eslint-disable jsx-a11y/label-has-associated-control */
+	return (
+		<React.Fragment>
+			<div>
+				<input
+					type="radio"
+					id={ id }
+					name="paymentMethod"
+					value={ id }
+					checked={ checked }
+					onChange={ () => onClick( id ) }
+				/>
+				<label htmlFor={ id }>{ button }</label>
+			</div>
+			{ form && <div>{ form }</div> }
+		</React.Fragment>
+	);
+	/* eslint-enable jsx-a11y/label-has-associated-control */
+}

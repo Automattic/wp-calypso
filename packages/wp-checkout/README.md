@@ -433,7 +433,7 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 }
 ```
 
-Within the `form` component and the `billingContactForm` component, the Hook `usePaymentMethod()` will return an object with the above properties pertaining to the active payment method. To retreieve all the payment methods, the Hook `useAllPaymentMethods()` will return an array that contains them all.
+Within the `form` component and the `billingContactForm` component, the Hook `usePaymentMethod()` will return an object with the above properties pertaining to the active payment method. To retreieve all the payment methods, the function `getPaymentMethods()` will return an array that contains them all.
 
 ## 💰 Advanced API
 
@@ -475,6 +475,8 @@ Renders buttons for each payment method that can be used out of the array in the
 
 Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `Checkout` component will do so automatically.
 
+Requires `localize`, `paymentMethod`.
+
 ### CheckoutReviewOrder
 
 Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and a `CheckoutSubmitButton`.
@@ -490,6 +492,10 @@ If a step has the `onEdit` prop, it will include an "Edit" link when collapsed w
 Renders the "Pay" button. Requires a `total` prop and a `paymentMethod` prop to identify the system it should use for submitting the data. The `value` prop can be used to customize the text which by default will be "Pay " followed by `total.amount.displayValue`.
 
 When clicked, the button will call its `onClick` prop. The parent component must then call the `submitCheckout()` function that is exported by this package which will take a specific action based on its first argument.
+
+### getPaymentMethods()
+
+A helper function that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
 
 ### OrderReviewLineItems
 
@@ -529,13 +535,9 @@ A React Hook that will return an object containing whatever data was entered in 
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
 
-### useAllPaymentMethods()
-
-A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Must only be used inside `CheckoutProvider`.
-
 ### usePaymentMethod()
 
-A React Hook that will return an object containing all the information about a payment method. The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step. Must only be used inside `CheckoutProvider`.
+A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step. Must only be used inside `CheckoutProvider`.
 
 The object is of the form:
 

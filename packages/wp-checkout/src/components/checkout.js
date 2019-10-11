@@ -38,7 +38,7 @@ export default function Checkout( {
 	const [ paymentMethod, setPaymentMethod ] = useState( 'apple-pay' );
 
 	return (
-		<CheckoutProvider localize={ localize }>
+		<CheckoutProvider paymentMethod={ paymentMethod } localize={ localize }>
 			<section className={ joinClasses( [ className, 'checkout' ] ) }>
 				<div>{ checkoutHeader || <h2>{ localize( 'Complete your purchase' ) }</h2> }</div>
 				<PaymentMethodsStep
@@ -78,6 +78,7 @@ function PaymentMethodsStep( {
 	collapsed,
 	availablePaymentMethods,
 	setPaymentMethod,
+	paymentMethod,
 } ) {
 	const localize = useLocalize();
 
@@ -93,6 +94,7 @@ function PaymentMethodsStep( {
 				<CheckoutPaymentMethods
 					availablePaymentMethods={ availablePaymentMethods }
 					onChange={ setPaymentMethod }
+					paymentMethod={ paymentMethod }
 				/>
 			</CheckoutStep>
 			<CheckoutStep
@@ -105,6 +107,7 @@ function PaymentMethodsStep( {
 					collapsed
 					availablePaymentMethods={ availablePaymentMethods }
 					onChange={ setPaymentMethod }
+					paymentMethod={ paymentMethod }
 				/>
 			</CheckoutStep>
 		</div>
