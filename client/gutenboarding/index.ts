@@ -6,14 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { main, redirectIfNotEnabled } from './controller';
+import { hideMasterbar, main, redirectIfNotEnabled } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
-import { hideMasterbar as hideMasterbarAction } from 'state/ui/actions';
-
-function hideMasterbar( context: PageJS.Context, next ) {
-	context.store.dispatch( hideMasterbarAction() );
-	next();
-}
 
 export default function() {
 	page( '/gutenboarding', redirectIfNotEnabled, hideMasterbar, main, makeLayout, clientRender );
