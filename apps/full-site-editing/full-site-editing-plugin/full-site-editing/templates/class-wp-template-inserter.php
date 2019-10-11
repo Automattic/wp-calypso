@@ -33,6 +33,13 @@ class WP_Template_Inserter {
 	private $theme_slug;
 
 	/**
+	 * Image URLs contained in the returned from the template API
+	 *
+	 * @var array $image_urls
+	 */
+	private $image_urls;
+
+	/**
 	 * This site option will be used to indicate that template data has already been
 	 * inserted for this theme, in order to prevent this functionality from running
 	 * more than once.
@@ -106,6 +113,11 @@ class WP_Template_Inserter {
 		// Default to first returned footer for now. Support for multiple footers will be added in future iterations.
 		if ( ! empty( $api_response['footers'] ) ) {
 			$this->footer_content = $api_response['footers'][0];
+		}
+
+		// This should contain all image URLs for images in any header or footer.
+		if ( ! empty( $api_response['image_urls'] ) ) {
+			$this->image_urls = $api_response['image_urls'];
 		}
 	}
 
@@ -239,6 +251,13 @@ class WP_Template_Inserter {
 		wp_set_object_terms( $footer_id, "$this->theme_slug-footer", 'wp_template_part_type' );
 
 		add_option( $this->fse_template_data_option, true );
+
+		// Note: we set the option before doing the image upload because the template
+		// parts can work with the remote URLs even if this fails.
+		$image_urls = $this->image_urls;
+		if ( ! empty( $image_urls ) ) {
+			do_action( 'a8c_fse_upload_template_part_images', $image_urls, [ $header_id, $footer_id ] );
+		}
 
 		do_action(
 			'a8c_fse_log',
