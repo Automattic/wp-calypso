@@ -7,10 +7,10 @@
 
 .plans-single-products {
 	margin: 0 auto 28px;
-	max-width: 660px;
 
 	// On larger screens we want the container to be one big card.
 	@include breakpoint( '>660px' ) {
+		max-width: 520px;
 		background: var( --color-surface );
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
 	}
@@ -62,56 +62,6 @@
 	}
 }
 
-// Prices
-.plans-single-products__price-group {
-	display: flex;
-	flex-flow: row wrap;
-	align-items: center;
-	max-width: calc( 100% - 20px );
-
-	@include breakpoint( '<960px' ) {
-		max-width: calc( 100% - 10px );
-	}
-
-	.plan-price {
-		@include breakpoint( '>660px' ) {
-			font-size: 17px;
-		}
-	}
-
-	&.is-placeholder {
-		@include placeholder( --color-neutral-10 );
-		width: 145px;
-		height: 25px;
-		margin-top: 6px;
-		margin-bottom: 5px;
-	}
-
-	&.is-placeholder .plan-price {
-		display: none;
-	}
-
-	&.is-discounted .plans-single-products__billing-timeframe {
-		color: var( --color-success );
-	}
-}
-
-// Billing timeframe
-.plans-single-products__billing-timeframe {
-	font-size: 12px;
-	font-style: italic;
-	font-weight: 400;
-	color: var( --color-text-subtle );
-	line-height: 1;
-	margin: 0;
-
-	&.is-placeholder {
-		@include placeholder( --color-neutral-10 );
-		width: 140px;
-		height: 12px;
-	}
-}
-
 // Product description
 .plans-single-products__product-description {
 	font-size: 14px;
@@ -128,6 +78,13 @@
 // Plan options
 .plans-single-products__options {
 	padding: 10px 0 0;
+
+	@include breakpoint( '>960px' ) {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-around; // IE11 fallback.
+		justify-content: space-evenly;
+	}
 }
 
 .plans-single-products__options-heading {
@@ -136,40 +93,143 @@
 	font-size: 14px;
 	color: var( --color-text-subtle );
 	border-bottom: 1px solid var( --color-border-subtle );
+
+	@include breakpoint( '>960px' ) {
+		flex: 0 0 100%;
+		margin-bottom: 12px;
+	}
 }
 
 // Plan option
 .plans-single-products__option,
-.plans-single-products__option-price-group {
+.plans-single-products__option-description {
 	display: flex;
-	flex-flow: row nowrap;
 	align-items: center;
 }
 
 .plans-single-products__option {
+	margin: 0;
 	padding: 16px 0;
+
+	@include breakpoint( '>960px' ) {
+		flex: 0 0 40%;
+		align-items: flex-start;
+	}
+}
+
+.plans-single-products__option-description {
+	margin-left: 8px;
+	flex-grow: 1;
+	flex-wrap: wrap;
 }
 
 .plans-single-products__option-name {
 	flex-grow: 1;
 	font-size: 16px;
 	font-weight: 700;
-}
 
-.plans-single-products__option-price-group {
-	.plan-price {
-		font-size: 16px;
-		line-height: 19px;
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 2px;
+		flex: 0 0 100%;
+		font-size: 14px;
+		line-height: 20px;
 	}
 }
 
-.plans-single-products__option-billing-timeframe {
-	margin: auto 0 0;
-	font-size: 12px;
-	font-style: italic;
-	line-height: 19px;
+// Price group
+.plans-single-products__price-group {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: baseline;
 
-	&.is-discounted {
+	&.is-placeholder .plan-price {
+		display: none;
+	}
+}
+
+.plans-single-products__billing-timeframe {
+	font-style: italic;
+	font-weight: 400;
+	color: var( --color-text-subtle );
+	line-height: 1;
+
+	.is-placeholder & {
+		@include placeholder( --color-neutral-10 );
+		width: 140px;
+		height: 12px;
+	}
+}
+
+// @todo: Refactor these nested selectors once the components are extracted from the .plans-single-products
+.plans-single-products__card-header {
+	.plans-single-products__price-group {
+		.plan-price {
+			@include breakpoint( '>660px' ) {
+				margin-right: 4px;
+				font-size: 16px;
+			}
+		}
+
+		.plan-price + .plan-price {
+			@include breakpoint( '>660px' ) {
+				margin-left: 4px;
+			}
+		}
+
+		&.is-placeholder {
+			margin-top: 6px;
+			margin-bottom: 5px;
+		}
+	}
+
+	.plans-single-products__billing-timeframe {
+		font-size: 12px;
+	}
+
+	.is-discounted .plans-single-products__billing-timeframe {
+		@include breakpoint( '>660px' ) {
+			color: var( --color-success );
+		}
+	}
+}
+
+// @todo: Refactor these nested selectors once the components are extracted from the .plans-single-products
+.plans-single-products__card-content {
+	.plans-single-products__price-group {
+		.plan-price {
+			margin-right: 4px;
+			font-size: 16px;
+			line-height: 16px;
+		}
+
+		.plan-price + .plan-price {
+			margin-left: 4px;
+		}
+	}
+
+	.plans-single-products__billing-timeframe {
+		font-size: 12px;
+	}
+
+	.is-discounted .plans-single-products__billing-timeframe {
 		color: var( --color-success );
+	}
+}
+
+// Actions
+.plans-single-products__actions {
+	padding: 16px;
+	display: flex;
+	justify-content: center;
+
+	@include breakpoint( '>660px' ) {
+		padding: 16px 24px;
+	}
+}
+
+.plans-single-products__actions-button {
+	width: 100%;
+	@include breakpoint( '>480px' ) {
+		max-width: 290px;
 	}
 }
