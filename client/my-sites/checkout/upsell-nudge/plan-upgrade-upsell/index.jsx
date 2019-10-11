@@ -35,7 +35,10 @@ export class PlanUpgradeUpsell extends PureComponent {
 
 		return (
 			<>
-				<PageViewTracker path="/checkout/:site/plan-upgrade-nudge/:receipt_id" title={ title } />
+				<PageViewTracker
+					path="/checkout/:site/offer-plan-upgrade/:upgrade_item/:receipt_id"
+					title={ title }
+				/>
 				<DocumentHead title={ title } />
 				{ receiptId ? (
 					<CompactCard className="plan-upgrade-upsell__card-header">{ this.header() }</CompactCard>

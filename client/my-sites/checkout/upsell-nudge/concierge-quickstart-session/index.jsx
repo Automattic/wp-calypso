@@ -22,17 +22,27 @@ import './style.scss';
 
 export class ConciergeQuickstartSession extends PureComponent {
 	render() {
-		const { receiptId, translate } = this.props;
+		const { receiptId, translate, siteSlug, isLoggedIn } = this.props;
 
 		const title = translate( 'Checkout ‹ Quick Start Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
+		let pageViewTrackerPath;
+		if ( receiptId ) {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session/:receipt_id/:site';
+		} else if ( siteSlug ) {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session/:site';
+		} else {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session';
+		}
+
 		return (
 			<>
 				<PageViewTracker
-					path="/checkout/:site/offer-quickstart-session/:receipt_id"
+					path={ pageViewTrackerPath }
 					title={ title }
+					properties={ { isLoggedIn: isLoggedIn } }
 				/>
 				<DocumentHead title={ title } />
 				{ receiptId ? (

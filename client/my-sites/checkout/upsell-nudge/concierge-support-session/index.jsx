@@ -28,9 +28,13 @@ export class ConciergeSupportSession extends PureComponent {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
+		const pageViewTrackerPath = receiptId
+			? '/checkout/offer-support-session/:receipt_id/:site'
+			: '/checkout/offer-support-session/:site';
+
 		return (
 			<>
-				<PageViewTracker path="/checkout/:site/offer-support-session/:receipt_id" title={ title } />
+				<PageViewTracker path={ pageViewTrackerPath } title={ title } />
 				<DocumentHead title={ title } />
 				{ receiptId ? (
 					<CompactCard className="concierge-support-session__card-header">
