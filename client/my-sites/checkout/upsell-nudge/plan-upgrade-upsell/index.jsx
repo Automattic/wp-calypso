@@ -154,7 +154,9 @@ export class PlanUpgradeUpsell extends PureComponent {
 								'But if you upgrade to a Premium plan with this special offer, you can enjoy the full collection of premium themes for just an additional %(discountPrice)s!',
 								{
 									args: {
-										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode ),
+										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+											stripZeros: true,
+										} ),
 									},
 								}
 							) }
@@ -220,8 +222,10 @@ export class PlanUpgradeUpsell extends PureComponent {
 										components: { del: <del /> },
 										args: {
 											bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
-											fullPrice: formatCurrency( planRawPrice, currencyCode ),
-											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode ),
+											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+												stripZeros: true,
+											} ),
 										},
 									}
 								) }

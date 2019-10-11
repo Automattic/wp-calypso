@@ -163,7 +163,7 @@ export class ConciergeSupportSession extends PureComponent {
 								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
 								{
 									args: {
-										saveAmount: formatCurrency( savings, currencyCode ),
+										saveAmount: formatCurrency( savings, currencyCode, { stripZeros: true } ),
 									},
 								}
 							) }
@@ -176,7 +176,7 @@ export class ConciergeSupportSession extends PureComponent {
 									{
 										components: { del: <del /> },
 										args: {
-											oldPrice: formatCurrency( fullCost, currencyCode ),
+											oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											price: productDisplayCost,
 										},
 									}

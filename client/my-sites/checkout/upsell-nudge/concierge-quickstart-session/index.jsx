@@ -194,7 +194,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 									{
 										components: { del: <del />, em: <em /> },
 										args: {
-											oldPrice: formatCurrency( fullCost, currencyCode ),
+											oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											price: productDisplayCost,
 										},
 									}
@@ -208,7 +208,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 										{
 											components: { b: <b />, em: <em /> },
 											args: {
-												oldPrice: formatCurrency( fullCost, currencyCode ),
+												oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											},
 										}
 								  )
