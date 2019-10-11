@@ -8,7 +8,7 @@ import { useContext } from 'react';
 /**
  * Internal dependencies
  */
-import { CheckoutContext } from './checkout-context';
+import { CheckoutContext } from './components/checkout-context';
 
 export default function localizeFactory( locale ) {
 	return text => {

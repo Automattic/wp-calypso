@@ -42,7 +42,7 @@ export default function CheckoutPaymentMethods( {
 					name="paymentMethod"
 					value="apple-pay"
 					checked={ choice === 'apple-pay' }
-					onClick={ () => setChoice( 'apple-pay' ) }
+					onChange={ () => setChoice( 'apple-pay' ) }
 				/>
 				<label htmlFor="apple-pay">{ localize( 'Apple Pay' ) }</label>
 			</div>
@@ -51,9 +51,9 @@ export default function CheckoutPaymentMethods( {
 					type="radio"
 					id="credit"
 					name="paymentMethod"
-					value="credit"
-					checked={ choice === 'credit' }
-					onClick={ () => setChoice( 'card' ) }
+					value="card"
+					checked={ choice === 'card' }
+					onChange={ () => setChoice( 'card' ) }
 				/>
 				<label htmlFor="credit">{ localize( 'Credit or debit card' ) }</label>
 			</div>
@@ -64,7 +64,7 @@ export default function CheckoutPaymentMethods( {
 					name="paymentMethod"
 					value="paypal"
 					checked={ choice === 'paypal' }
-					onClick={ () => setChoice( 'paypal' ) }
+					onChange={ () => setChoice( 'paypal' ) }
 				/>
 				<label htmlFor="paypal">{ localize( 'Paypal' ) }</label>
 			</div>

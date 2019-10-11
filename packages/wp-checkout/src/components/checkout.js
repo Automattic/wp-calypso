@@ -39,7 +39,7 @@ export default function Checkout( {
 
 	return (
 		<CheckoutProvider localize={ localize }>
-			<section className={ joinClasses( className, 'checkout' ) }>
+			<section className={ joinClasses( [ className, 'checkout' ] ) }>
 				<div>{ checkoutHeader || <h2>{ localize( 'Complete your purchase' ) }</h2> }</div>
 				<PaymentMethodsStep
 					availablePaymentMethods={ availablePaymentMethods }
@@ -73,7 +73,12 @@ Checkout.propTypes = {
 	orderReviewFeatures: PropTypes.element,
 };
 
-function PaymentMethodsStep( { setStepNumber, collapsed, availablePaymentMethods } ) {
+function PaymentMethodsStep( {
+	setStepNumber,
+	collapsed,
+	availablePaymentMethods,
+	setPaymentMethod,
+} ) {
 	const localize = useLocalize();
 
 	// We must always display both the expanded and the collapsed version to keep
@@ -82,7 +87,7 @@ function PaymentMethodsStep( { setStepNumber, collapsed, availablePaymentMethods
 		<div>
 			<CheckoutStep
 				collapsed={ collapsed }
-				stepNumber="1"
+				stepNumber={ 1 }
 				title={ localize( 'Pick a payment method' ) }
 			>
 				<CheckoutPaymentMethods
@@ -92,7 +97,7 @@ function PaymentMethodsStep( { setStepNumber, collapsed, availablePaymentMethods
 			</CheckoutStep>
 			<CheckoutStep
 				collapsed={ ! collapsed }
-				stepNumber="1"
+				stepNumber={ 1 }
 				title={ localize( 'Payment method' ) }
 				onEdit={ () => setStepNumber( 1 ) }
 			>
