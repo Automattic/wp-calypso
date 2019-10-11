@@ -10,6 +10,7 @@ import { has, invoke } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { addHotJarScript } from 'lib/analytics/hotjar';
 import {
 	trackCustomAdWordsRemarketingEvent,
 	trackCustomFacebookConversionEvent,
@@ -38,7 +39,7 @@ const pageViewServices = {
 
 const loadTrackingTool = ( { trackingTool }, state ) => {
 	if ( trackingTool === 'HotJar' && ! isTracking( state, 'HotJar' ) ) {
-		analytics.hotjar.addHotJarScript();
+		addHotJarScript();
 	}
 };
 
