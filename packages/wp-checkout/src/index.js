@@ -78,6 +78,9 @@ Checkout.propTypes = {
 
 function PaymentMethodsStep( { setStepNumber, collapsed, availablePaymentMethods } ) {
 	const localize = useLocalize();
+
+	// We must always display both the expanded and the collapsed version to keep
+	// their data available, using CSS to hide whichever is relevant.
 	return (
 		<div>
 			<CheckoutStep
@@ -85,7 +88,10 @@ function PaymentMethodsStep( { setStepNumber, collapsed, availablePaymentMethods
 				stepNumber="1"
 				title={ localize( 'Pick a payment method' ) }
 			>
-				<CheckoutPaymentMethods />
+				<CheckoutPaymentMethods
+					availablePaymentMethods={ availablePaymentMethods }
+					onChange={ setPaymentMethod }
+				/>
 			</CheckoutStep>
 			<CheckoutStep
 				collapsed={ ! collapsed }

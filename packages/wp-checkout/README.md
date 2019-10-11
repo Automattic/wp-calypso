@@ -414,9 +414,26 @@ A payment method, in the context of this package, consists of the following piec
 
 - A unique id.
 - A data object that holds any data needed by the payment method, including data from any payment method components.
+- A component that displays that payment method selection button which can be as simple as the name and an icon.
 - A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It must also have a collapsed state.
 - A component form that displays the required billing contact information. It must also have a collapsed state.
 - A function that completes the payment using the data object. This function must return a Promise or use a redirect.
+
+Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
+
+Each payment method is registered by calling `registerPaymentMethod()` and passing an object with the following properties:
+
+```
+{
+	id: string,
+	button: component,
+	form: component,
+	billingContactForm: component,
+	submit: function,
+}
+```
+
+Within the `form` component and the `billingContactForm` component, the Hook `usePaymentMethod()` will return an object with the above properties pertaining to the active payment method. To retreieve all the payment methods, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
 ## 💰 Advanced API
 
@@ -512,9 +529,25 @@ A React Hook that will return an object containing whatever data was entered in 
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
 
+### useAllPaymentMethods()
+
+A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Must only be used inside `CheckoutProvider`.
+
 ### usePaymentMethod()
 
-A React Hook that will return a string containing whatever paymentMethod was entered in the payment method step. Must only be used inside `CheckoutProvider`.
+A React Hook that will return an object containing all the information about a payment method. The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step. Must only be used inside `CheckoutProvider`.
+
+The object is of the form:
+
+```
+{
+	id: string,
+	button: component,
+	form: component,
+	billingContactForm: component,
+	submit: function,
+}
+```
 
 ## 💰 FAQ
 
