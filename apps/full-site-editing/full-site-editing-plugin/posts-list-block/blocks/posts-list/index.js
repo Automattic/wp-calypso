@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
+import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { Placeholder, RangeControl, PanelBody } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
@@ -61,4 +61,21 @@ registerBlockType( metadata.name, {
 		</Fragment>
 	),
 	save: () => null,
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'newspack-blocks/homepage-articles' ],
+				transform: ( { postsPerPage } ) => {
+					// Configure the Newspack block to look the closest this one.
+					return createBlock( 'newspack-blocks/homepage-articles', {
+						postsToShow: postsPerPage,
+						showAvatar: false,
+						displayPostDate: true,
+						displayPostContent: true,
+					} );
+				},
+			},
+		],
+	},
 } );
