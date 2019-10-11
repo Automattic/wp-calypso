@@ -28,7 +28,6 @@ describe( 'data-layer/wpcom/signup/verticals', () => {
 						limit: mockAction.limit,
 						include_preview: true,
 						allow_synonyms: true,
-						suggest_theme: true,
 					},
 				},
 				mockAction
