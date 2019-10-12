@@ -256,6 +256,8 @@ class WP_Template_Inserter {
 		// parts can work with the remote URLs even if this fails.
 		$image_urls = $this->image_urls;
 		if ( ! empty( $image_urls ) ) {
+			$image_inserter = new Template_Image_Inserter();
+			$image_inserter->copy_images_and_update_posts( $image_urls, [ $header_id, $footer_id ] );
 			do_action( 'a8c_fse_upload_template_part_images', $image_urls, [ $header_id, $footer_id ] );
 		}
 
