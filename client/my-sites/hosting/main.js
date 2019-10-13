@@ -9,6 +9,12 @@ import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
+ * WordPress dependencies
+ */
+
+import { useState } from '@wordpress/element';
+
+/**
  * Internal dependencies
  */
 import Main from 'components/main';
@@ -20,7 +26,8 @@ import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Spinner from 'components/spinner';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { requestAtomicHostingPmaToken } from 'state/data-getters';
+import Button from 'components/button';
+import wpcom from 'lib/wp';
 
 /**
  * Style dependencies
@@ -36,19 +43,36 @@ const DataSection = ( { title, data } ) => {
 	);
 };
 
-const Hosting = ( { translate, atomicPmaToken, siteId } ) => {
+const Hosting = ( { translate } ) => {
+	const [ loadingToken, setLoadingToken ] = useState( false );
+
 	const dummyInfo = {
 		[ translate( 'URL' ) ]: 'sftp1.wordpress.com',
 		[ translate( 'Port' ) ]: 22,
 		[ translate( 'Username' ) ]: 'test',
 		[ translate( 'Password' ) ]: 'test',
 	};
-	async function handleClick() {
-		window.open(
-			`https://glendsandbox.wordpress.com/avatar-serve.php?token=${ atomicPmaToken }`,
-			'_blank'
-		);
+	function handleClick() {
+		setLoadingToken( true );
+		// We don't want the token to pass through the redux store, so just doing a raw wpcom.req here
+		// TODO: This needs to be a POST, but setting apiNamespace is not currently working for POST
+		wpcom.req
+			.get( '/sites/162711992/hosting/pam/token', {
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( response => {
+				if ( response.token ) {
+					window.open( `https://speciallink/pma.php?token=${ response.token }`, '_blank' );
+				}
+			} )
+			.catch( () => {
+				// TODO: Add proper error handling
+				// console.log( error );
+			} );
+
+		setLoadingToken( false );
 	}
+
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="hosting/:site" title="Hosting" />
@@ -84,9 +108,10 @@ const Hosting = ( { translate, atomicPmaToken, siteId } ) => {
 								'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
 							) }
 						</p>
-						{ ( ! atomicPmaToken || ! siteId ) && <Spinner /> }
-
-						{ atomicPmaToken && <div onClick={ handleClick }> Login to PhpMyAdmin </div> }
+						<Button onClick={ handleClick } className="hosting__card-phpmyadmin-login">
+							{ loadingToken && <Spinner /> }
+							{ ! loadingToken && translate( 'Login to PhpMyAdmin' ) }
+						</Button>
 					</div>
 				</Card>
 			</div>
@@ -98,5 +123,4 @@ export default connect( state => ( {
 	site: getSelectedSite( state ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),
-	atomicPmaToken: requestAtomicHostingPmaToken( getSelectedSiteId( state ) ).data,
 } ) )( localize( Hosting ) );

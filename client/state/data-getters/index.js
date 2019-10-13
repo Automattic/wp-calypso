@@ -209,21 +209,3 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
-
-export const requestAtomicHostingPmaToken = siteId =>
-	requestHttpData(
-		`atomic-hosting-pma-token-${ siteId }`,
-		http(
-			{
-				method: 'GET',
-				path: `/sites/${ siteId }/hosting/pam/token`,
-				apiNamespace: 'wpcom/v2',
-			},
-			{ freshness: 1000 }
-		),
-		{
-			fromApi: () => ( { token } ) => {
-				return [ [ `atomic-hosting-pma-token-${ siteId }`, token ] ];
-			},
-		}
-	);
