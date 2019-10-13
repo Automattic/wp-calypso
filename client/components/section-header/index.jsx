@@ -39,7 +39,9 @@ export default class SectionHeader extends PureComponent {
 				<div className="section-header__label">
 					<span className="section-header__label-text">{ this.props.label }</span>
 					{ hasCount && <Count count={ this.props.count } /> }
-					{ popoverText && ! this.props.isPlaceholder && <SupportInfo text={ popoverText } /> }
+					{ popoverText && ! this.props.isPlaceholder && (
+						<SupportInfo position="right" text={ popoverText } />
+					) }
 				</div>
 				<div className="section-header__actions">{ this.props.children }</div>
 			</CompactCard>
