@@ -225,7 +225,7 @@ class DeleteSite extends Component {
 						</p>
 						<p>
 							{ translate(
-								'This content {{strong}}can not{{/strong}} be recovered once your delete this site.',
+								'This content {{strong}}can not{{/strong}} be recovered once you delete this site.',
 								{
 									components: {
 										strong: <strong />,
