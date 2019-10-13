@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
-import InfoPopover from 'components/info-popover';
 import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
