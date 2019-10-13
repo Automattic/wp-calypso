@@ -210,20 +210,20 @@ export const requestSiteAlerts = siteId => {
 	);
 };
 
-export const requestAtomicHostingPmaNonce = siteId =>
+export const requestAtomicHostingPmaToken = siteId =>
 	requestHttpData(
-		`atomic-hosting-pma-nonce-${ siteId }`,
+		`atomic-hosting-pma-token-${ siteId }`,
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/hosting/pam/nonce`,
+				path: `/sites/${ siteId }/hosting/pam/token`,
 				apiNamespace: 'wpcom/v2',
 			},
 			{ freshness: 1000 }
 		),
 		{
-			fromApi: () => ( { nonce } ) => {
-				return [ [ `atomic-hosting-pma-nonce-${ siteId }`, nonce ] ];
+			fromApi: () => ( { token } ) => {
+				return [ [ `atomic-hosting-pma-token-${ siteId }`, token ] ];
 			},
 		}
 	);
