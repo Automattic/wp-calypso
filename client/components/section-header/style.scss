@@ -28,8 +28,14 @@
 		margin: 4px 0;
 	}
 
-	.count {
+	.count,
+	.support-info {
 		margin-left: 8px;
+	}
+	
+	.support-info {
+		position: relative;
+		top: 3px;
 	}
 }
 
