@@ -43,7 +43,7 @@ const DataSection = ( { title, data } ) => {
 	);
 };
 
-const Hosting = ( { translate } ) => {
+const Hosting = ( { translate, siteId } ) => {
 	const [ loadingToken, setLoadingToken ] = useState( false );
 
 	const dummyInfo = {
@@ -57,7 +57,7 @@ const Hosting = ( { translate } ) => {
 		// We don't want the token to pass through the redux store, so just doing a raw wpcom.req here
 		// TODO: This needs to be a POST, but setting apiNamespace is not currently working for POST
 		wpcom.req
-			.get( '/sites/162711992/hosting/pam/token', {
+			.get( `/sites/${ siteId }/hosting/pam/token`, {
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( response => {
