@@ -20,8 +20,12 @@
 
 	.domain__primary-flag {
 		vertical-align: middle;
+<<<<<<< HEAD
 		margin-left: 8px;
 		background-color: var( --color-sidebar-menu-hover-background );
+=======
+		background: var( --color-sidebar-menu-hover-background );
+>>>>>>> Fixes colors for Primary Domain flag; show compact transfer warning in the domain list rather than at the top of the screen.
 		color: var( --color-sidebar-menu-hover-text );
 		border-radius: 12px;
 		display: inline-block;

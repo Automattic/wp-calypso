@@ -88,7 +88,7 @@ export class List extends React.Component {
 			return (
 				<DomainWarnings
 					domains={ this.props.domains }
-					position="domain-list"
+					position="domain-list-item"
 					selectedSite={ this.props.selectedSite }
 					ruleWhiteList={ [
 						'newDomainsWithPrimary',
@@ -97,7 +97,6 @@ export class List extends React.Component {
 						'pendingGSuiteTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
 						'wrongNSMappedDomains',
-						'transferStatus',
 						'newTransfersWrongNS',
 						'pendingConsent',
 					] }
@@ -448,6 +447,7 @@ export class List extends React.Component {
 					} ) }
 					onSelect={ this.handleUpdatePrimaryDomain }
 					onClick={ this.goToEditDomainRoot }
+					selectedSite={ this.props.selectedSite }
 				/>
 			);
 		} );

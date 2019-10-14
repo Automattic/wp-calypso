@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
-import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Notice from 'components/notice';
 import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
@@ -57,8 +57,14 @@ class ListItem extends React.PureComponent {
 						this.showDomainExpirationWarning( this.props.domain ) }
 					{ this.showGdprConsentPending( this.props.domain ) }
 					<DomainPrimaryFlag domain={ this.props.domain } />
-					<DomainTransferFlag domain={ this.props.domain } />
 				</span>
+				<DomainWarnings
+					compact
+					domain={ this.props.domain }
+					position="domain-list-item"
+					selectedSite={ this.props.selectedSite }
+					ruleWhiteList={ [ 'transferStatus' ] }
+				/>
 				{ this.busyMessage() }
 			</div>
 		);
