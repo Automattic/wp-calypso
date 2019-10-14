@@ -4,7 +4,8 @@
 import React from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'components/gridicon';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import { Moment } from 'moment';
 
 /**
  * Internal dependencies
@@ -12,8 +13,21 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import ScreenReaderText from 'components/screen-reader-text';
+import SharedProps from './shared-props';
 
-export function DateRangeTrigger( props ) {
+interface Props {
+	startDate: Date | Moment | null | undefined;
+	endDate: Date | Moment | null | undefined;
+	startDateText: string;
+	endDateText: string;
+	buttonRef: object;
+	onTriggerClick: () => void;
+	onClearClick: () => void;
+	triggerText: ( startDateText: string, endDateText: string ) => string;
+	showClearBtn: boolean;
+}
+
+export function DateRangeTrigger( props: Props & SharedProps & LocalizeProps ) {
 	const {
 		startDate,
 		endDate,
