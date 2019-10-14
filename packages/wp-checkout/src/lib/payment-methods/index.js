@@ -8,7 +8,7 @@ import { useContext } from 'react';
 /**
  * Internal dependencies
  */
-import { CheckoutContext } from '../components/checkout-context';
+import { CheckoutContext } from '../../components/checkout-context';
 
 const paymentMethods = [];
 
