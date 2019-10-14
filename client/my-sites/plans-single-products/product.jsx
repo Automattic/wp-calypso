@@ -8,8 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import PlanPrice from 'my-sites/plan-price';
 import ProductOption from './product-option';
+import ProductPriceGroup from './product-price-group';
 
 class PlansSingleProduct extends Component {
 	static propTypes = {
@@ -19,10 +19,11 @@ class PlansSingleProduct extends Component {
 		fullPrice: PropTypes.number,
 		isPlaceholder: PropTypes.bool,
 		moreInfoLabel: PropTypes.string,
-		onSelect: PropTypes.func,
+		onChange: PropTypes.func,
 		options: PropTypes.array,
 		optionsHeading: PropTypes.string,
 		productDescription: PropTypes.string,
+		selectedProduct: PropTypes.string,
 		slug: PropTypes.string,
 		title: PropTypes.string,
 	};
@@ -30,33 +31,6 @@ class PlansSingleProduct extends Component {
 	static defaultProps = {
 		isPlaceholder: false,
 	};
-
-	renderPriceGroup() {
-		const { currencyCode, discountedPrice, fullPrice, isPlaceholder } = this.props;
-		const isDiscounted = !! discountedPrice;
-
-		const priceGroupClasses = classNames( 'plans-single-products__price-group', {
-			'is-discounted': isDiscounted,
-			'is-placeholder': isPlaceholder,
-		} );
-
-		return (
-			<div className={ priceGroupClasses }>
-				<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } original />
-				<PlanPrice currencyCode={ currencyCode } rawPrice={ discountedPrice } discounted />
-			</div>
-		);
-	}
-
-	renderBillingTimeFrame() {
-		const { billingTimeFrame, isPlaceholder } = this.props;
-
-		const timeFrameClasses = classNames( 'plans-single-products__billing-timeframe', {
-			'is-placeholder': isPlaceholder,
-		} );
-
-		return <p className={ timeFrameClasses }>{ billingTimeFrame }</p>;
-	}
 
 	renderProductDescription() {
 		const { moreInfoLabel, isPlaceholder, productDescription } = this.props;
@@ -75,7 +49,15 @@ class PlansSingleProduct extends Component {
 	}
 
 	renderOptions() {
-		const { billingTimeFrame, currencyCode, onSelect, options, optionsHeading } = this.props;
+		const {
+			billingTimeFrame,
+			currencyCode,
+			isPlaceholder,
+			onChange,
+			options,
+			optionsHeading,
+			selectedProduct,
+		} = this.props;
 
 		if ( ! options ) {
 			return null;
@@ -91,7 +73,9 @@ class PlansSingleProduct extends Component {
 						key={ option.slug }
 						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
-						onSelect={ onSelect }
+						isChecked={ selectedProduct === option.slug }
+						isPlaceholder={ isPlaceholder }
+						onChange={ onChange }
 						{ ...option }
 					/>
 				) ) }
@@ -100,14 +84,26 @@ class PlansSingleProduct extends Component {
 	}
 
 	render() {
-		const { title } = this.props;
+		const {
+			billingTimeFrame,
+			currencyCode,
+			discountedPrice,
+			fullPrice,
+			isPlaceholder,
+			title,
+		} = this.props;
 
 		return (
 			<div className="plans-single-products__card">
 				<div className="plans-single-products__card-header">
 					<h3 className="plans-single-products__product-name">{ title }</h3>
-					{ this.renderPriceGroup() }
-					{ this.renderBillingTimeFrame() }
+					<ProductPriceGroup
+						billingTimeFrame={ billingTimeFrame }
+						currencyCode={ currencyCode }
+						discountedPrice={ discountedPrice }
+						fullPrice={ fullPrice }
+						isPlaceholder={ isPlaceholder }
+					/>
 				</div>
 				<div className="plans-single-products__card-content">
 					{ this.renderProductDescription() }
