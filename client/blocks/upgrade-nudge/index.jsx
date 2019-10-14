@@ -42,6 +42,7 @@ export class UpgradeNudge extends React.Component {
 		compact: PropTypes.bool,
 		plan: PropTypes.string,
 		feature: PropTypes.string,
+		forceDisplay: PropTypes.bool,
 		site: PropTypes.object,
 		translate: PropTypes.func,
 	};
@@ -79,6 +80,7 @@ export class UpgradeNudge extends React.Component {
 			className,
 			compact,
 			event,
+			forceDisplay,
 			plan,
 			planHasFeature,
 			feature,
@@ -100,7 +102,7 @@ export class UpgradeNudge extends React.Component {
 			( feature === FEATURE_NO_ADS && site.options.wordads ) ||
 			( ( ! jetpack && site.jetpack ) || ( jetpack && ! site.jetpack ) );
 
-		if ( shouldNotDisplay ) {
+		if ( shouldNotDisplay && ! forceDisplay ) {
 			return null;
 		}
 
