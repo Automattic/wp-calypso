@@ -48,6 +48,7 @@ const Hosting = ( { translate, siteId } ) => {
 
 	function handlePMALogin() {
 		setLoadingPMA( true );
+
 		// If we don't want the pma url to pass through the redux store we can just do a raw wpcom.req here
 		// TODO: If we proceed with this it needs to be a POST, but setting apiNamespace is not currently working for POST
 		wpcom.req
@@ -58,10 +59,10 @@ const Hosting = ( { translate, siteId } ) => {
 				if ( response && response.pmaUrl ) {
 					window.open( response.pmaUrl );
 				}
+				setLoadingPMA( false );
 			} ); // TODO: Add error handling
-
-		setLoadingPMA( false );
 	}
+
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="hosting/:site" title="Hosting" />
