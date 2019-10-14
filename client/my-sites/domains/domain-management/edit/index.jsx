@@ -54,6 +54,7 @@ class Edit extends React.Component {
 	getDetailsForType = type => {
 		switch ( type ) {
 			case domainTypes.MAPPED:
+			case domainTypes.ATOMIC_STAGING:
 				return MappedDomain;
 
 			case domainTypes.REGISTERED:

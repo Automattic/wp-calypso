@@ -159,7 +159,7 @@ function isHstsRequired( productSlug, productsList ) {
 }
 
 function isMappedDomain( domain ) {
-	return domain.type === domainTypes.MAPPED;
+	return domain.type === domainTypes.MAPPED || domain.type === domainTypes.ATOMIC_STAGING;
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
