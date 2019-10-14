@@ -9,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Inserter from './inserter';
+import './style.scss';
 
 export function Header() {
 	return (

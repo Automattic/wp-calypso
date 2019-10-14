@@ -1,0 +1,37 @@
+@import '../gutenberg-styles/styles';
+
+// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
+.gutenboarding__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid $light-gray-500;
+	height: $header-height;
+	background: $white;
+	z-index: 1;
+
+	left: 0;
+	right: 0;
+	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
+	top: 0;
+	position: sticky;
+
+	// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
+	@include break-small {
+		position: fixed;
+		padding: $grid-size;
+		// Needed at wp-admin but not in Calypso
+		// top: $admin-bar-height-big;
+	}
+
+	// Needed at wp-admin but not in Calypso
+	/*
+	@include break-medium() {
+		top: $admin-bar-height;
+	}
+	*/
+}
+
+.gutenboarding__header-actions {
+	padding: 0 20px;
+}
