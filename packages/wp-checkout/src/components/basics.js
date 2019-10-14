@@ -111,3 +111,8 @@ export const StepNumber = styled.span`
 		margin-top: 4px;
 	}
 `;
+
+export const StepContent = styled.div`
+	color: ${props => props.theme.colours.gray80};
+	padding-left: 35px;
+`;
