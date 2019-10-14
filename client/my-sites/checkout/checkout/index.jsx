@@ -88,7 +88,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
-// import { abtest } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { isExternal } from 'lib/url';
@@ -882,9 +882,7 @@ export class Checkout extends React.Component {
 			analyticsPath = '/checkout/no-site';
 		}
 
-		if ( 'variantShowPlanBump' !== getABTestVariation( 'showPlanUpsellConcierge' ) ) {
-			abtest( 'showPlanUpsellConcierge' );
-		}
+		abtest( 'showPlanUpsellConcierge' );
 
 		if ( this.props.children ) {
 			this.props.setHeaderText( '' );
