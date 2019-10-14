@@ -1,5 +1,9 @@
 .importer__author-mapping {
 	height: 58px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
 
 	.author-selector__author-toggle {
 		width: 45%;
@@ -14,9 +18,7 @@
 }
 
 .importer__source-author {
-	width: 45%;
 	padding-top: 7px;
-	float: left;
 	display: inline-block;
 	color: var( --color-neutral-70 );
 	text-align: left;
