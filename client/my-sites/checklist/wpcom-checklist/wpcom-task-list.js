@@ -130,7 +130,7 @@ class WpcomTaskList {
 	}
 
 	removeTasksWithoutUrls( taskUrls ) {
-		const hasUrl = task => ! ( task.id in taskUrls ) && taskUrls[ task.id ];
+		const hasUrl = task => ! ( task.id in taskUrls ) || taskUrls[ task.id ];
 
 		this.tasks = this.tasks.filter( hasUrl );
 	}
