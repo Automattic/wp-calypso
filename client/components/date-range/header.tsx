@@ -14,8 +14,8 @@ import SharedProps from './shared-props';
 interface Props {
 	onApplyClick: () => void;
 	onCancelClick: () => void;
-	applyButtonText: string;
-	cancelButtonText: string;
+	applyButtonText: string | null | undefined;
+	cancelButtonText: string | null | undefined;
 }
 
 export function DateRangeHeader( props: Props & SharedProps & LocalizeProps ) {
@@ -25,7 +25,7 @@ export function DateRangeHeader( props: Props & SharedProps & LocalizeProps ) {
 				{ props.cancelButtonText || props.translate( 'Cancel' ) }
 			</Button>
 			<Button className="date-range__apply-btn" onClick={ props.onApplyClick } primary compact>
-				{ props.cancelButtonText || props.translate( 'Apply' ) }
+				{ props.applyButtonText || props.translate( 'Apply' ) }
 			</Button>
 		</div>
 	);
