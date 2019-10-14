@@ -105,12 +105,6 @@
 	}
 }
 
-.customer-home__card-mobile .button {
-	background: #000;
-	border: none; /* it was cheaper to remove it here than setting borderless and then remove the border on hover*/
-	
-	img {
-		height: 25px;
-    	vertical-align: middle;
-	}
+.customer-home__card-mobile {
+    justify-content: space-around;
 }
