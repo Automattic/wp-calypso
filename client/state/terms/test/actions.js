@@ -409,11 +409,9 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:ribs/delete` )
+				.delete( `/wp/v2/sites/2916284/jetpack-testimonials/10?force=true` )
 				.reply( 200, { status: 'ok' } )
-				.post(
-					`/rest/v1.1/sites/${ siteId }/taxonomies/${ categoryTaxonomyName }/terms/slug:ribs/delete`
-				)
+				.delete( `/wp/v2/sites/2916284/categories/10?force=true` )
 				.reply( 200, { status: 'ok' } );
 		} );
 

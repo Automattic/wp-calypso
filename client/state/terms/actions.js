@@ -120,21 +120,41 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 }
 
 /**
+ * Avoids an additional request to wp/v2 /taxonomies. The rest_base of a taxonomy slug may not match its slug
+ * For example tags have a taxonomy slug of post_tag, but are modifiable at /wp/v2/tags/
+ *
+ * @param   {String} taxonomy Taxonomy Slug
+ * @returns {String}          A wp/v2 rest base string.
+ */
+function getTaxonomyRestBase( taxonomy ) {
+	switch ( taxonomy ) {
+		case 'category':
+			return 'categories';
+		case 'post_tag':
+			return 'tags';
+		default:
+			return taxonomy;
+	}
+}
+
+/**
  * Returns an action thunk, deleting a term and removing it from the store
  *
  * @param  {Number} siteId   Site ID
  * @param  {String} taxonomy Taxonomy Slug
  * @param  {Number} termId   term Id
- * @param  {String} termSlug term Slug
  * @return {Object}          Action object
  */
-export function deleteTerm( siteId, taxonomy, termId, termSlug ) {
+export function deleteTerm( siteId, taxonomy, termId ) {
 	return ( dispatch, getState ) => {
-		return wpcom
-			.site( siteId )
-			.taxonomy( taxonomy )
-			.term( termSlug )
-			.delete()
+		// Taxonomy Slugs are not unique! Use wp/v2 for deletion to avoid deleting the wrong term!
+		// https://github.com/Automattic/wp-calypso/issues/36620
+		return wpcom.req
+			.get( {
+				path: `/sites/${ siteId }/${ getTaxonomyRestBase( taxonomy ) }/${ termId }?force=true`,
+				method: 'DELETE',
+				apiNamespace: 'wp/v2',
+			} )
 			.then( () => {
 				const state = getState();
 				const deletedTerm = getTerm( state, siteId, taxonomy, termId );
