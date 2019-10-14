@@ -1,9 +1,6 @@
 /**
  * Externals dependencies
- *
- * @format
  */
-
 import { mapValues } from 'lodash';
 
 /**
@@ -14,14 +11,11 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS } from 'woocommerce/woocommerce-services/state/action-types';
-import { createReducer } from 'state/utils';
 
-const reducers = {};
-
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ] = ( state, { data } ) => {
-	const newState = { ...state };
-	data.forEach( method => {
-		newState[ method.id ] = {
+function addMethodsToState( state, methods ) {
+	const nextState = { ...state };
+	methods.forEach( method => {
+		nextState[ method.id ] = {
 			id: method.id,
 			order: method.order,
 			enabled: method.enabled,
@@ -31,37 +25,37 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ] = ( state, { data 
 			...mapValues( method.settings, 'value' ),
 		};
 	} );
+	return nextState;
+}
 
-	return newState;
-};
+export default function( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS:
+			return addMethodsToState( state, action.data );
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = ( state, { data, originatingAction } ) => {
-	if ( ! data.id ) {
-		// WCS endpoints don't return the data on success, get that info from the originatingAction
-		return {
-			...state,
-			[ originatingAction.methodId ]: {
-				...state[ originatingAction.methodId ], // Preserve the previous method data
-				id: originatingAction.methodId,
-				methodType: originatingAction.methodType,
-				...originatingAction.method,
-			},
-		};
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED:
+			if ( ! action.data.id ) {
+				// WCS endpoints don't return the data on success, get that info from the originatingAction
+				return {
+					...state,
+					[ action.originatingAction.methodId ]: {
+						...state[ action.originatingAction.methodId ], // Preserve the previous method data
+						id: action.originatingAction.methodId,
+						methodType: action.originatingAction.methodType,
+						...action.originatingAction.method,
+					},
+				};
+			}
+			return addMethodsToState( state, [ action.data ] );
+
+		case WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS:
+			return {
+				...state,
+				[ action.instanceId ]: {
+					...state[ action.instanceId ],
+					...action.data.formData,
+				},
+			};
 	}
-	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ]( state, { data: [ data ] } );
-};
-
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ] = (
-	state,
-	{ instanceId, data }
-) => {
-	return {
-		...state,
-		[ instanceId ]: {
-			...state[ instanceId ],
-			...data.formData,
-		},
-	};
-};
-
-export default createReducer( {}, reducers );
+	return state;
+}
