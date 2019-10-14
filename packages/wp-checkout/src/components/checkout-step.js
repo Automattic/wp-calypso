@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from '../lib/join-classes';
 import { useLocalize } from '../lib/localize';
+import { StepWrapper } from './basics';
 
 export default function CheckoutStep( {
 	className,
@@ -24,7 +25,7 @@ export default function CheckoutStep( {
 		? [ className, 'checkout-step', 'checkout-step--is-collapsed' ]
 		: [ className, 'checkout-step' ];
 	return (
-		<div className={ joinClasses( classNames ) }>
+		<StepWrapper collapsed={ collapsed } className={ joinClasses( classNames ) }>
 			<CheckoutStepHeader
 				stepNumber={ stepNumber }
 				title={ title }
@@ -32,7 +33,7 @@ export default function CheckoutStep( {
 				onEdit={ onEdit }
 			/>
 			{ children }
-		</div>
+		</StepWrapper>
 	);
 }
 

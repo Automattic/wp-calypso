@@ -27,6 +27,7 @@ const theme = {
 	breakpoints: {
 		tabletUp: 'min-width: 700px',
 	},
+	borderWidth: '1px',
 };
 
 export default theme;

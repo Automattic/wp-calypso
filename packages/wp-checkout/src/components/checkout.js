@@ -18,7 +18,7 @@ import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
 import theme from '../theme';
 
-export default function Checkout({
+export default function Checkout( {
 	locale,
 	items,
 	total,
@@ -35,27 +35,27 @@ export default function Checkout({
 	orderReviewTOS,
 	orderReviewFeatures,
 	className,
-}) {
-	const localize = localizeFactory(locale);
-	const [stepNumber, setStepNumber] = useState(1);
-	const [paymentMethod, setPaymentMethod] = useState('apple-pay');
+} ) {
+	const localize = localizeFactory( locale );
+	const [ stepNumber, setStepNumber ] = useState( 1 );
+	const [ paymentMethod, setPaymentMethod ] = useState( 'apple-pay' );
 
 	return (
-		<ThemeProvider theme={theme}>
-			<CheckoutProvider paymentMethod={paymentMethod} localize={localize}>
-				<Container className={joinClasses([className, 'checkout'])}>
+		<ThemeProvider theme={ theme }>
+			<CheckoutProvider paymentMethod={ paymentMethod } localize={ localize }>
+				<Container className={ joinClasses( [ className, 'checkout' ] ) }>
 					<LeftColumn>
 						<div>
-							{checkoutHeader || <PageTitle>{localize('Complete your purchase')}</PageTitle>}
+							{ checkoutHeader || <PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle> }
 						</div>
 						<PaymentMethodsStep
-							availablePaymentMethods={availablePaymentMethods}
-							setStepNumber={setStepNumber}
-							collapsed={stepNumber === 1}
-							paymentMethod={paymentMethod}
-							setPaymentMethod={setPaymentMethod}
+							availablePaymentMethods={ availablePaymentMethods }
+							setStepNumber={ setStepNumber }
+							collapsed={ stepNumber !== 1 }
+							paymentMethod={ paymentMethod }
+							setPaymentMethod={ setPaymentMethod }
 						/>
-						{upSell && <div>{upSell}</div>}
+						{ upSell && <div>{ upSell }</div> }
 					</LeftColumn>
 				</Container>
 			</CheckoutProvider>
@@ -69,7 +69,7 @@ Checkout.propTypes = {
 	items: PropTypes.array.isRequired,
 	total: PropTypes.object.isRequired,
 	onChangeBillingContact: PropTypes.func,
-	availablePaymentMethods: PropTypes.arrayOf(PropTypes.string),
+	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 	onSuccess: PropTypes.func.isRequired,
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
@@ -82,39 +82,43 @@ Checkout.propTypes = {
 	orderReviewFeatures: PropTypes.element,
 };
 
-function PaymentMethodsStep({
+function PaymentMethodsStep( {
 	setStepNumber,
 	collapsed,
 	availablePaymentMethods,
 	setPaymentMethod,
 	paymentMethod,
-}) {
+} ) {
 	const localize = useLocalize();
 
 	// We must always display both the expanded and the collapsed version to keep
 	// their data available, using CSS to hide whichever is relevant.
 	return (
-		<div>
-			<CheckoutStep collapsed={collapsed} stepNumber={1} title={localize('Pick a payment method')}>
+		<React.Fragment>
+			<CheckoutStep
+				collapsed={ collapsed }
+				stepNumber={ 1 }
+				title={ localize( 'Pick a payment method' ) }
+			>
 				<CheckoutPaymentMethods
-					availablePaymentMethods={availablePaymentMethods}
-					onChange={setPaymentMethod}
-					paymentMethod={paymentMethod}
+					availablePaymentMethods={ availablePaymentMethods }
+					onChange={ setPaymentMethod }
+					paymentMethod={ paymentMethod }
 				/>
 			</CheckoutStep>
 			<CheckoutStep
-				collapsed={!collapsed}
-				stepNumber={1}
-				title={localize('Payment method')}
-				onEdit={() => setStepNumber(1)}
+				collapsed={ ! collapsed }
+				stepNumber={ 1 }
+				title={ localize( 'Payment method' ) }
+				onEdit={ () => setStepNumber( 1 ) }
 			>
 				<CheckoutPaymentMethods
 					collapsed
-					availablePaymentMethods={availablePaymentMethods}
-					onChange={setPaymentMethod}
-					paymentMethod={paymentMethod}
+					availablePaymentMethods={ availablePaymentMethods }
+					onChange={ setPaymentMethod }
+					paymentMethod={ paymentMethod }
 				/>
 			</CheckoutStep>
-		</div>
+		</React.Fragment>
 	);
 }
