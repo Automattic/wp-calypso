@@ -1,7 +1,6 @@
 /** @format */
 
 export const type = {
-	ATOMIC_STAGING: 'ATOMIC_STAGING',
 	MAPPED: 'MAPPED',
 	REGISTERED: 'REGISTERED',
 	SITE_REDIRECT: 'SITE_REDIRECT',
