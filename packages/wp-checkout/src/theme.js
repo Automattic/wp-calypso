@@ -28,6 +28,10 @@ const theme = {
 		tabletUp: 'min-width: 700px',
 	},
 	borderWidth: '1px',
+	weights: {
+		bold: '600',
+		normal: '400',
+	},
 };
 
 export default theme;

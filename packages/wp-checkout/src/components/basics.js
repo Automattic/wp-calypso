@@ -39,15 +39,16 @@ export const PageTitle = styled.h1`
 	font-weight: normal;
 	font-size: 24px;
 	color: ${props => props.theme.colours.black};
+	padding-bottom: 24px;
 `;
 
 export const StepWrapper = styled.div`
 	padding-bottom: 32px;
 	margin-bottom: 8px;
 	position: relative;
-	max-height: ${props => ( props.collapsed ? '0' : 'inherit' )};
+	max-height: ${props => ( props.collapsed ? '0' : 'initial' )};
 	overflow: hidden;
-	padding: ${props => ( props.collapsed ? '0' : 'inherit' )};
+	padding: ${props => ( props.collapsed ? '0' : 'initial' )};
 	:after {
 		display: block;
 		width: ${props => props.theme.borderWidth};
@@ -60,5 +61,53 @@ export const StepWrapper = styled.div`
 	}
 	:nth-child( 5 ) {
 		padding-bottom: 0;
+	}
+`;
+
+export const StepHeader = styled.h2`
+	font-size: 16px;
+	display: flex;
+	width: 100%;
+	align-items: center;
+	margin: 0 0 8px;
+`;
+
+export const StepTitle = styled.span`
+	font-weight: ${props =>
+		props.collapsed ? props.theme.weights.normal : props.theme.weights.bold};
+	color: ${props => ( props.collapsed ? props.theme.colours.gray80 : props.theme.colours.black )};
+	margin-right: 5px;
+`;
+
+export const StepNumber = styled.span`
+	background: ${props =>
+		props.collapsed ? props.theme.colours.gray5 : props.theme.colours.highlight};
+	font-weight: normal;
+	width: 27px;
+	height: 27px;
+	box-sizing: border-box;
+	padding: 0;
+	text-align: center;
+	display: block;
+	border-radius: 50%;
+	margin-right: 8px;
+	color: ${props => ( props.collapsed ? props.theme.colours.gray80 : props.theme.colours.white )};
+	position: relative;
+	line-height: 27px;
+	:after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		border: 2px solid
+			${props => ( props.collapsed ? props.theme.colours.gray5 : props.theme.colours.highlight )};
+		content: '';
+		display: block;
+		width: 27px;
+		height: 27px;
+		border-radius: 50%;
+		box-sizing: border-box;
+	}
+	svg {
+		margin-top: 4px;
 	}
 `;

@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from '../lib/join-classes';
 import { useLocalize } from '../lib/localize';
-import { StepWrapper } from './basics';
+import { StepWrapper, StepTitle, StepHeader, StepNumber } from './basics';
 
 export default function CheckoutStep( {
 	className,
@@ -46,15 +46,15 @@ CheckoutStep.propTypes = {
 function CheckoutStepHeader( { className, stepNumber, title, collapsed, onEdit } ) {
 	const localize = useLocalize();
 	return (
-		<div className={ joinClasses( [ className, 'checkout-step__header' ] ) }>
+		<StepHeader className={ joinClasses( [ className, 'checkout-step__header' ] ) }>
 			<Stepper isComplete={ collapsed }>{ stepNumber }</Stepper>
-			<span className="checkout-step__title">{ title }</span>
+			<StepTitle className="checkout-step__title">{ title }</StepTitle>
 			{ onEdit && collapsed && (
 				<button className="checkout-step__edit" onClick={ onEdit }>
 					{ localize( 'Edit' ) }
 				</button>
 			) }
-		</div>
+		</StepHeader>
 	);
 }
 
@@ -69,7 +69,7 @@ CheckoutStepHeader.propTypes = {
 function Stepper( { isComplete, className, children } ) {
 	if ( isComplete ) {
 		return (
-			<span
+			<StepNumber
 				className={ joinClasses( [
 					className,
 					'checkout-step__stepper',
@@ -77,11 +77,13 @@ function Stepper( { isComplete, className, children } ) {
 				] ) }
 			>
 				{ children }
-			</span>
+			</StepNumber>
 		);
 	}
 	return (
-		<span className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>{ children }</span>
+		<StepNumber className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>
+			{ children }
+		</StepNumber>
 	);
 }
 
