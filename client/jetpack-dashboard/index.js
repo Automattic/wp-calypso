@@ -10,6 +10,7 @@ import { makeJetpackDashboardLayout, render as clientRender } from 'controller';
 import {
 	antiSpam,
 	backups,
+	handleRedirects,
 	jetpackDashboard,
 	preloadJetpackDashboard,
 	scan,
@@ -20,6 +21,7 @@ import {
 export default function() {
 	page(
 		'/security/backups',
+		handleRedirects,
 		preloadJetpackDashboard,
 		setupSidebar,
 		backups,
@@ -28,6 +30,7 @@ export default function() {
 	);
 	page(
 		'/security/scan',
+		handleRedirects,
 		preloadJetpackDashboard,
 		setupSidebar,
 		scan,
@@ -36,6 +39,7 @@ export default function() {
 	);
 	page(
 		'/security/anti-spam',
+		handleRedirects,
 		preloadJetpackDashboard,
 		setupSidebar,
 		antiSpam,
@@ -44,6 +48,7 @@ export default function() {
 	);
 	page(
 		'/security/:siteId?',
+		handleRedirects,
 		preloadJetpackDashboard,
 		setupSidebar,
 		security,
@@ -52,6 +57,7 @@ export default function() {
 	);
 	page(
 		'/',
+		handleRedirects,
 		preloadJetpackDashboard,
 		setupSidebar,
 		jetpackDashboard,

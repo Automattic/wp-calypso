@@ -8,10 +8,32 @@ import React from 'react';
  */
 import JetpackDashboardSecurity from './security';
 import JetpackDashboardSidebar from './sidebar';
+import { isEnabled } from 'config';
+import {
+	JETPACK_DASHBOARD_PRIMARY_DOMAIN,
+	JETPACK_DASHBOARD_SECONDARY_DOMAIN,
+} from 'lib/jetpack-dashboard';
 import { preload } from 'sections-helper';
 
 export function preloadJetpackDashboard( context, next ) {
 	preload( 'jetpack-dashboard' );
+	next();
+}
+
+export function handleRedirects( context, next ) {
+	if ( ! isEnabled( 'jetpack-dashboard' ) ) {
+		window.location = 'https://wordpress.com';
+		return;
+	}
+
+	if ( window.location.host === JETPACK_DASHBOARD_SECONDARY_DOMAIN ) {
+		window.location = window.location.href.replace(
+			JETPACK_DASHBOARD_SECONDARY_DOMAIN,
+			JETPACK_DASHBOARD_PRIMARY_DOMAIN
+		);
+		return;
+	}
+
 	next();
 }
 

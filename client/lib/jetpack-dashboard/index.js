@@ -1,4 +1,10 @@
-const jetpackDashboardDomains = [ 'cloud.jetpack.com', 'my.jetpack.com' ];
+export const JETPACK_DASHBOARD_PRIMARY_DOMAIN = 'cloud.jetpack.com';
+export const JETPACK_DASHBOARD_SECONDARY_DOMAIN = 'my.jetpack.com';
+
+const jetpackDashboardDomains = [
+	JETPACK_DASHBOARD_PRIMARY_DOMAIN,
+	JETPACK_DASHBOARD_SECONDARY_DOMAIN,
+];
 
 export function isJetpackDashboard() {
 	return !! (
