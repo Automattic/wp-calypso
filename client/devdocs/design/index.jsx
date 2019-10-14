@@ -103,6 +103,7 @@ import SectionNav from 'components/section-nav/docs/example';
 import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
+import SingleProductPlan from 'components/single-product-plan/docs/example';
 import SiteTitleControl from 'components/site-title/docs/example';
 import SocialLogos from 'components/social-logo/docs/example';
 import Spinner from 'components/spinner/docs/example';
@@ -265,6 +266,7 @@ class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
+					<SingleProductPlan readmeFilePath="single-product-plan" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
