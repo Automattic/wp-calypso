@@ -31,7 +31,7 @@ export const makeLayout = ( context, next ) => {
 	// On server, only render LoggedOutLayout when logged-out.
 	if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 		context.layout = (
-			<JetpackDashboardLayout
+			<JetpackDashboardReduxWrappedLayout
 				store={ store }
 				primary={ primary }
 				secondary={ secondary }
