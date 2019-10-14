@@ -402,6 +402,8 @@ $autobar-height: 20px;
 	transition: all 0.2s ease-out;
 
 	&:hover {
+		background-color: var( --color-neutral-0 );
+		
 		.count {
 			border-color: var( --color-primary );
 			color: var( --color-primary );
