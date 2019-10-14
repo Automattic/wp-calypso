@@ -87,5 +87,23 @@ describe( 'index', () => {
 
 			expect( url ).toEqual( '/log-in?client_id=12345&wccom-from=testing' );
 		} );
+
+		test( 'should return the login url for requesting a magic login link', () => {
+			const url = login( { isNative: true, useMagicLink: true } );
+
+			expect( url ).toEqual( '/log-in/link' );
+		} );
+
+		test( 'should return the login url for requesting a magic login link with encoded email_address param', () => {
+			const url = login( { isNative: true, useMagicLink: true, emailAddress: 'foo@bar.com' } );
+
+			expect( url ).toEqual( '/log-in/link?email_address=foo%40bar.com' );
+		} );
+
+		test( 'should return the login url for Jetpack, ignoring useMagicLink parameter', () => {
+			const url = login( { isNative: true, isJetpack: true, useMagicLink: true } );
+
+			expect( url ).toEqual( '/log-in/jetpack' );
+		} );
 	} );
 } );
