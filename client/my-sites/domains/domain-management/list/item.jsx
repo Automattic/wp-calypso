@@ -170,6 +170,7 @@ class ListItem extends React.PureComponent {
 
 		switch ( domain.type ) {
 			case domainTypes.MAPPED:
+			case domainTypes.ATOMIC_STAGING:
 				return translate( 'Mapped Domain' );
 
 			case domainTypes.REGISTERED:
