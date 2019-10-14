@@ -1,10 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST,
@@ -15,20 +11,19 @@ const initialState = {
 	cost: 0,
 };
 
-const reducer = {};
+export default function( state = initialState, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE:
+			return {
+				...state,
+				tax_status: action.isTaxable ? 'taxable' : 'none',
+			};
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE ] = ( state, { isTaxable } ) => {
-	return {
-		...state,
-		tax_status: isTaxable ? 'taxable' : 'none',
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST ] = ( state, { cost } ) => {
-	return {
-		...state,
-		cost,
-	};
-};
-
-export default createReducer( initialState, reducer );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST:
+			return {
+				...state,
+				cost: action.cost,
+			};
+	}
+	return state;
+}
