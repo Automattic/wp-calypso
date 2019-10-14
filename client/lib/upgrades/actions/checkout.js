@@ -50,7 +50,7 @@ export function setNewCreditCardDetails( options ) {
 	} );
 }
 
-export function submitTransaction( { cart, transaction, successUrl, cancelUrl }, onComplete ) {
+export function submitTransaction( { cart, transaction, successUrl, cancelUrl } ) {
 	submit(
 		{
 			cart: cart,
@@ -70,10 +70,6 @@ export function submitTransaction( { cart, transaction, successUrl, cancelUrl },
 					type: TRANSACTION_STEP_SET,
 					step,
 				} );
-
-				if ( onComplete && step.name === 'received-wpcom-response' ) {
-					onComplete( step.error, step.data );
-				}
 			} )
 	);
 }
