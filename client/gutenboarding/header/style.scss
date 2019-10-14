@@ -8,7 +8,7 @@
 	border-bottom: 1px solid $light-gray-500;
 	height: $header-height;
 	background: $white;
-	z-index: 1;
+	z-index: z-index( '.edit-post-header' );
 
 	left: 0;
 	right: 0;
