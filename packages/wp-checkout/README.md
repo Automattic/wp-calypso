@@ -408,6 +408,8 @@ Each component will be styled using [styled-components](https://www.styled-compo
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
+When using the individual API components, you can also pass a `className` prop, which will be applied to that component in addition to the classNames from BEM and styled-components.
+
 ## 💰 Payment Methods
 
 A payment method, in the context of this package, consists of the following pieces:
