@@ -1,10 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST,
@@ -15,20 +11,19 @@ const initialState = {
 	min_amount: 0,
 };
 
-const reducer = {};
+export default function( state = initialState, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION:
+			return {
+				...state,
+				requires: action.condition,
+			};
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_CONDITION ] = ( state, { condition } ) => {
-	return {
-		...state,
-		requires: condition,
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST ] = ( state, { cost } ) => {
-	return {
-		...state,
-		min_amount: cost,
-	};
-};
-
-export default createReducer( initialState, reducer );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_MIN_COST:
+			return {
+				...state,
+				min_amount: action.cost,
+			};
+	}
+	return state;
+}
