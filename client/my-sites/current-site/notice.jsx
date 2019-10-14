@@ -40,7 +40,6 @@ import QueryProductsList from 'components/data/query-products-list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
-import { type as domainTypes } from 'lib/domains/constants';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 
@@ -114,7 +113,7 @@ export class SiteNotice extends React.Component {
 
 		const nonWPCOMDomains = reject(
 			this.props.domains,
-			domain => domain.type === domainTypes.WPCOM || domain.type === domainTypes.ATOMIC_STAGING
+			domain => domain.isWPCOMDomain || domain.name.endsWith( '.wpcomstaging.com' )
 		);
 
 		if ( nonWPCOMDomains.length < 1 || nonWPCOMDomains.length > 2 ) {
