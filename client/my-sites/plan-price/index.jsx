@@ -75,7 +75,10 @@ export class PlanPrice extends Component {
 
 		const renderPrice = priceObj => {
 			const fraction = priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction;
-			return `${ priceObj.price.integer }${ fraction }`;
+			if ( fraction ) {
+				return `${ priceObj.price.integer }${ fraction }`;
+			}
+			return priceObj.price.integer;
 		};
 
 		if ( isInSignup ) {
