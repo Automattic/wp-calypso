@@ -8,9 +8,9 @@ import { useContext } from 'react';
 /**
  * Internal dependencies
  */
-import { CheckoutContext } from './components/checkout-context';
+import { CheckoutContext } from '../components/checkout-context';
 
-export default function localizeFactory( locale ) {
+export default function localizeFactory(locale) {
 	return text => {
 		// TODO
 		return text;
@@ -18,6 +18,6 @@ export default function localizeFactory( locale ) {
 }
 
 export function useLocalize() {
-	const { localize } = useContext( CheckoutContext );
+	const { localize } = useContext(CheckoutContext);
 	return localize;
 }

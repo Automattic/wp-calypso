@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import joinClasses from '../join-classes';
-import localizeFactory, { useLocalize } from '../localize';
+import joinClasses from '../lib/join-classes';
+import localizeFactory, { useLocalize } from '../lib/localize';
 import { CheckoutProvider } from './checkout-context';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';

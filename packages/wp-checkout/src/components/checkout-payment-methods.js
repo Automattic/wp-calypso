@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import joinClasses from '../join-classes';
-import { registerPaymentMethod, getPaymentMethods } from '../payment-methods';
+import joinClasses from '../lib/join-classes';
+import { registerPaymentMethod, getPaymentMethods } from '../lib/payment-methods';
 
 // TODO: where should these be registered?
 registerPaymentMethod( {
