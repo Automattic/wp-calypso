@@ -18,7 +18,8 @@ import store from 'store';
  * Internal dependencies
  */
 import config from 'config';
-import { JetpackDashboardReduxWrappedLayout, ReduxWrappedLayout } from 'controller';
+import { ReduxWrappedLayout } from 'controller';
+import { JetpackDashboardReduxWrappedLayout } from 'jetpack-dashboard/controller';
 import notices from 'notices';
 import { getToken } from 'lib/oauth-token';
 import emailVerification from 'components/email-verification';

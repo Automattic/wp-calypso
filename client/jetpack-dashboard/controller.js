@@ -2,18 +2,49 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
+import JetpackDashboardLayout from 'layout/jetpack-dashboard';
 import JetpackDashboardSecurity from './security';
 import JetpackDashboardSidebar from './sidebar';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { isEnabled } from 'config';
 import {
 	JETPACK_DASHBOARD_PRIMARY_DOMAIN,
 	JETPACK_DASHBOARD_SECONDARY_DOMAIN,
 } from 'lib/jetpack-dashboard';
 import { preload } from 'sections-helper';
+
+export const JetpackDashboardReduxWrappedLayout = ( { store, primary, secondary } ) => (
+	<ReduxProvider store={ store }>
+		<JetpackDashboardLayout primary={ primary } secondary={ secondary } />
+	</ReduxProvider>
+);
+
+export const makeLayout = ( context, next ) => {
+	const { store, primary, secondary } = context;
+
+	// On server, only render LoggedOutLayout when logged-out.
+	if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
+		context.layout = (
+			<JetpackDashboardLayout
+				store={ store }
+				primary={ primary }
+				secondary={ secondary }
+				redirectUri={ context.originalUrl }
+			/>
+		);
+	}
+	next();
+};
+
+export const clientRender = context => {
+	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
+};
 
 export function preloadJetpackDashboard( context, next ) {
 	preload( 'jetpack-dashboard' );

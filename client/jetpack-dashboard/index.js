@@ -6,12 +6,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { makeJetpackDashboardLayout, render as clientRender } from 'controller';
 import {
 	antiSpam,
 	backups,
+	clientRender,
 	handleRedirects,
 	jetpackDashboard,
+	makeLayout,
 	preloadJetpackDashboard,
 	scan,
 	security,
@@ -25,7 +26,7 @@ export default function() {
 		preloadJetpackDashboard,
 		setupSidebar,
 		backups,
-		makeJetpackDashboardLayout,
+		makeLayout,
 		clientRender
 	);
 	page(
@@ -34,7 +35,7 @@ export default function() {
 		preloadJetpackDashboard,
 		setupSidebar,
 		scan,
-		makeJetpackDashboardLayout,
+		makeLayout,
 		clientRender
 	);
 	page(
@@ -43,7 +44,7 @@ export default function() {
 		preloadJetpackDashboard,
 		setupSidebar,
 		antiSpam,
-		makeJetpackDashboardLayout,
+		makeLayout,
 		clientRender
 	);
 	page(
@@ -52,7 +53,7 @@ export default function() {
 		preloadJetpackDashboard,
 		setupSidebar,
 		security,
-		makeJetpackDashboardLayout,
+		makeLayout,
 		clientRender
 	);
 	page(
@@ -61,7 +62,7 @@ export default function() {
 		preloadJetpackDashboard,
 		setupSidebar,
 		jetpackDashboard,
-		makeJetpackDashboardLayout,
+		makeLayout,
 		clientRender
 	);
 }
