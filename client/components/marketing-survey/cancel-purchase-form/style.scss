@@ -7,3 +7,10 @@
 	max-width: 472px;
 }
 
+.cancel-purchase-form__question {
+	margin-bottom: 1.5em;
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+

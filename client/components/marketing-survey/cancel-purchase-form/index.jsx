@@ -328,7 +328,7 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonOne', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div>
+			<div class="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
 				{ questionOneOrder.map( question => reasons[ question ] ) }
 			</div>
@@ -390,7 +390,7 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonTwo', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div>
+			<div class="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
 				{ questionTwoOrder.map( question => reasons[ question ] ) }
 			</div>
@@ -415,31 +415,26 @@ class CancelPurchaseForm extends React.Component {
 				)
 			);
 
-		appendRadioOption( 'happy', translate( 'I was happy with the import.' ) );
+		appendRadioOption( 'happy', translate( 'I was happy.' ) );
 
 		appendRadioOption(
 			'look',
 			translate(
-				'Most of the content of my existing site was imported, but it was too hard to get things looking how I wanted.'
+				'Most of my content was imported, but it was too hard to get things looking right.'
 			)
 		);
 
-		appendRadioOption(
-			'content',
-			translate( 'Too much content of my existing site was not imported.' )
-		);
+		appendRadioOption( 'content', translate( 'Not enough of my content was imported.' ) );
 
 		appendRadioOption(
 			'functionality',
-			translate( 'I no longer have support for key functionality I had on my existing site.' )
+			translate( "I didn't have the functionality I have on my existing site." )
 		);
 
 		return (
-			<div>
+			<div class="cancel-purchase-form__question">
 				<FormLegend>
-					{ translate(
-						'We see that you imported from another site. What was your satisfaction with the import?'
-					) }
+					{ translate( 'You imported from another site. How did the import go?' ) }
 				</FormLegend>
 				{ reasons }
 			</div>
@@ -536,8 +531,8 @@ class CancelPurchaseForm extends React.Component {
 							) }
 						</p>
 						{ this.renderQuestionOne() }
-						{ this.renderQuestionTwo() }
 						{ isImport && this.renderImportQuestion() }
+						{ this.renderQuestionTwo() }
 					</div>
 				);
 			}
