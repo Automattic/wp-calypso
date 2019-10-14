@@ -152,4 +152,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	verticalSuggestedThemes: {
+		datestamp: '20191011',
+		variations: {
+			control: 100,
+			test: 0,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
