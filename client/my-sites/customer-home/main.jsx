@@ -132,7 +132,7 @@ class Home extends Component {
 			);
 		}
 
-		const { siteId, hasChecklistData, isChecklistComplete, checklistMode } = this.props;
+		const { siteId, hasChecklistData, isChecklistComplete, checklistMode, isAtomic } = this.props;
 		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
@@ -153,7 +153,7 @@ class Home extends Component {
 				) }
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
 				{ hasChecklistData &&
-					( isChecklistComplete ? (
+					( isAtomic || isChecklistComplete ? (
 						this.renderCustomerHome()
 					) : (
 						<ChecklistWpcom displayMode={ checklistMode } />
@@ -391,8 +391,6 @@ const connectHome = connect(
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-		const isChecklistComplete =
-			isAtomicSite( state, siteId ) || isSiteChecklistComplete( state, siteId );
 		const domains = getDomainsBySiteId( state, siteId );
 
 		return {
@@ -403,7 +401,8 @@ const connectHome = connect(
 			menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 			hasChecklistData,
-			isChecklistComplete,
+			isChecklistComplete: isSiteChecklistComplete( state, siteId ),
+			isAtomic: isAtomicSite( state, siteId ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
