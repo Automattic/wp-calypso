@@ -28,22 +28,6 @@ class SingleProductPlan extends Component {
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	};
 
-	renderDescription() {
-		const { moreInfoLabel, isPlaceholder, productDescription } = this.props;
-
-		const productDescriptionClasses = classNames( 'plans-single-products__product-description', {
-			'is-placeholder': isPlaceholder,
-		} );
-
-		const moreInfo = moreInfoLabel ? <a href="/">{ moreInfoLabel }</a> : null;
-
-		return (
-			<p className={ productDescriptionClasses }>
-				{ productDescription } { moreInfo }
-			</p>
-		);
-	}
-
 	renderHeader() {
 		const {
 			billingTimeFrame,
