@@ -190,6 +190,13 @@ export function generateFlows( {
 			description: 'A very simple signup flow',
 			lastModified: '2019-05-09',
 		},
+
+		'woo-connect': {
+			steps: [ 'passwordless-woo' ],
+			destination: '/',
+			description: 'A woo connection flow',
+			lastModified: '2019-10-14',
+		},
 	};
 
 	if ( isEnabled( 'rewind/clone-site' ) ) {

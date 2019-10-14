@@ -524,6 +524,17 @@ export function generateSteps( {
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
 		},
+
+		'passwordless-woo': {
+			stepName: 'passwordless-woo',
+			props: {
+				headerText: i18n.translate( 'Connect your store' ),
+				subHeaderText: i18n.translate( 'Enter your email address to connect to WooPayments' ),
+			},
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'email', 'username' ],
+			unstorableDependencies: [ 'bearer_token' ],
+		},
 	};
 }
 
