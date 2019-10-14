@@ -60,14 +60,8 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import {
-	addItem,
-	replaceCartWithItems,
-	replaceItem,
-	applyCoupon,
-	resetTransaction,
-	setDomainDetails,
-} from 'lib/upgrades/actions';
+import { addItem, replaceCartWithItems, replaceItem, applyCoupon } from 'lib/upgrades/actions';
+import { resetTransaction, setDomainDetails } from 'lib/transaction/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';

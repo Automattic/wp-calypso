@@ -25,10 +25,10 @@ import ContactDetailsFormFields from 'components/domains/contact-details-form-fi
 import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
+import { setDomainDetails } from 'lib/transaction/actions';
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
-	setDomainDetails,
 	addGoogleAppsRegistrationData,
 } from 'lib/upgrades/actions';
 import {

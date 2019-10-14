@@ -10,15 +10,15 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
+import { CART_ITEM_REMOVE } from 'lib/upgrades/action-types';
 import {
-	CART_ITEM_REMOVE,
 	TRANSACTION_DOMAIN_DETAILS_SET,
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
 	TRANSACTION_RESET,
 	TRANSACTION_STEP_SET,
 	TRANSACTION_STRIPE_SET,
-} from 'lib/upgrades/action-types';
+} from './action-types';
 import { hasDomainRegistration } from 'lib/cart-values/cart-items';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';

@@ -6,7 +6,7 @@
 import { assign, flowRight, get } from 'lodash';
 import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
-import { TRANSACTION_STEP_SET } from 'lib/upgrades/action-types';
+import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
 import debugFactory from 'debug';
 
 /**
