@@ -18,6 +18,8 @@ import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
 import theme from '../theme';
 
+// TODO: these will all be used eventually
+/* eslint-disable no-unused-vars */
 export default function Checkout( {
 	locale,
 	items,
@@ -36,6 +38,7 @@ export default function Checkout( {
 	orderReviewFeatures,
 	className,
 } ) {
+	/* eslint-enable no-unused-vars */
 	const localize = localizeFactory( locale );
 	const [ stepNumber, setStepNumber ] = useState( 1 );
 	const [ paymentMethod, setPaymentMethod ] = useState( 'apple-pay' );
