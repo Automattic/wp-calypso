@@ -416,9 +416,9 @@ A payment method, in the context of this package, consists of the following piec
 
 - A unique id.
 - A data object that holds any data needed by the payment method, including data from any payment method components.
-- A component that displays that payment method selection button which can be as simple as the name and an icon.
-- A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It must also have a collapsed state.
-- A component form that displays the required billing contact information. It must also have a collapsed state.
+- A component that displays that payment method selection button which can be as simple as the name and an icon. It will receive the props of the `CheckoutStep`.
+- A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It will receive the props of the `CheckoutStep`.
+- A component form that displays the required billing contact information. It will receive the props of the `CheckoutStep`.
 - A function that completes the payment using the data object. This function must return a Promise or use a redirect.
 
 Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
@@ -471,7 +471,7 @@ Renders a button to move to the next `CheckoutStep` component. Its `value` prop 
 
 ### CheckoutPaymentMethods
 
-Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected. The `collapsed` prop will display a summary of the current choice if one is set.
+Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected. When the `isComplete` prop is true and `isActive` is false, it will display a summary of the current choice.
 
 ### CheckoutProvider
 
@@ -485,9 +485,11 @@ Renders a list of the line items and their `displayValue` properties followed by
 
 ### CheckoutStep
 
-Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. Each should also include a `CheckoutNextStepButton` if there is a following step. The `collapsed` prop can be used to collapse inactive steps (they will still be rendered).
+Each of the three steps in the checkout flow will be rendered by one of these. Renders its `children` prop and includes a numbered stepper icon which corresponds to its `stepNumber` prop. Each step must also have a `title` prop for its header. There are two boolean props that can be used to control the step's current state: `isComplete` and `isActive`. Typically the step will be hidden when `isActive` is false and may have a different appearance when `isComplete` is true.
 
-If a step has the `onEdit` prop, it will include an "Edit" link when collapsed which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the collapsed state in an appropriate way. It should also modify the URL so that the collapsed state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
+Each should include in its `children` a `CheckoutNextStepButton` if there is a following step.
+
+If a step has the `onEdit` prop, it will include an "Edit" link when `isComplete` is true which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way (perhaps by setting `isActive` to true). The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
 ### CheckoutSubmitButton
 
