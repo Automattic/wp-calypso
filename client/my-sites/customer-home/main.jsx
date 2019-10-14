@@ -366,7 +366,7 @@ class Home extends Component {
 								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
 								storeName={ 'android' }
 								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-								altText={ translate( 'Google Play' ) }
+								altText={ translate( 'Google Play Store download badge' ) }
 							>
 								<img src="/calypso/images/customer-home/google-play.png" alt="" />
 							</AppsBadge>
@@ -374,7 +374,7 @@ class Home extends Component {
 								storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
 								storeName={ 'ios' }
 								titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-								altText={ translate( 'Apple App Store' ) }
+								altText={ translate( 'Apple App Store download badge' ) }
 							>
 								<img src="/calypso/images/customer-home/apple-store.png" alt="" />
 							</AppsBadge>
