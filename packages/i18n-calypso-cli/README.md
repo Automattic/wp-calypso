@@ -4,19 +4,19 @@ Scans your JavaScript sources/build files and generates a POT file or a PHP tran
 
 ## Installation
 
-`npm install i18n-calypso`
+`npm install i18n-calypso-cli`
 
 
 ## Using the CLI
 
-- `npm install -g i18n-calypso`
+- `npm install -g i18n-calypso-cli`
 - `i18n-calypso -i <input_file> -o <output_file> -f <format:POT|PHP>`
 
 
 ## From your code
 
 ```js
-var i18nCalypso = require( 'i18n-calypso/cli' );
+var i18nCalypso = require( 'i18n-calypso-cli' );
 i18nCalypso( {
     inputPaths: <paths to your js files to scan>,
     output: <path to your destination>
@@ -25,14 +25,7 @@ i18nCalypso( {
 } );
 ```
 
-See more examples of usage in `test/cli/index.js`
-
-
-## Running the tests
-
-- Clone the repository
-- `npm install`
-- `mocha`
+See more examples of usage in `test/index.js`
 
 ## License
 
