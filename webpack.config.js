@@ -107,13 +107,14 @@ const nodeModulesToTranspile = [
 	// general form is <package-name>/.
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
+	'@github/webauthn-json/',
+	'acorn-jsx/',
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
-	'@github/webauthn-json/',
 	'filesize/',
-	'acorn-jsx/',
 	'prismjs/',
+	'react-spring/',
 	'regenerate-unicode-properties/',
 	'regexpu-core/',
 	'unicode-match-property-ecmascript/',
