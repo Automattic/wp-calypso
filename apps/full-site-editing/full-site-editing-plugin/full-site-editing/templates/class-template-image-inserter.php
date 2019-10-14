@@ -8,7 +8,7 @@
 namespace A8C\FSE;
 
 /**
- * Class WP_Template_Inserter
+ * Class Template_Image_Inserter
  */
 class Template_Image_Inserter {
 	/**
@@ -39,10 +39,10 @@ class Template_Image_Inserter {
 	public function upload_images( $image_urls ) {
 		return array_reduce(
 			$image_urls,
-			function( $total, $url ) {
+			function( $accumulator, $url ) {
 				$local_url = $this->upload_image( $url );
 				if ( $local_url ) {
-					$total[] = [
+					$accumulator[] = [
 						'old_url' => $url,
 						'new_url' => $local_url,
 					];
@@ -57,7 +57,7 @@ class Template_Image_Inserter {
 						]
 					);
 				}
-				return $total;
+				return $accumulator;
 			},
 			[]
 		);

@@ -44,6 +44,7 @@ function load_full_site_editing() {
 	require_once __DIR__ . '/full-site-editing/templates/class-rest-templates-controller.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
+	require_once __DIR__ . '/full-site-editing/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/full-site-editing/serialize-block-fallback.php';
 
 	Full_Site_Editing::get_instance();
@@ -178,6 +179,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
  */
 function populate_wp_template_data() {
 	require_once __DIR__ . '/full-site-editing/class-full-site-editing.php';
+	require_once __DIR__ . '/full-site-editing/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/full-site-editing/templates/class-wp-template-inserter.php';
 
 	$fse = Full_Site_Editing::get_instance();
