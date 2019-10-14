@@ -152,7 +152,9 @@ class Home extends Component {
 					/>
 				) }
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ hasChecklistData &&
+				{ /* For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information */
+
+				hasChecklistData &&
 					( isAtomic || isChecklistComplete ? (
 						this.renderCustomerHome()
 					) : (
