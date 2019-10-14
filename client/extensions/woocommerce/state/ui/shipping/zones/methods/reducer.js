@@ -1,15 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { find, findIndex, isEmpty, isEqual, isNil, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
@@ -47,8 +43,6 @@ export const initialState = {
 	currentlyEditingChangedType: false,
 };
 
-const reducer = {};
-
 /**
  * Gets the temporal ID object that the next created method should have.
  * @param {Object} state Current edit state
@@ -60,138 +54,283 @@ const nextCreateId = state => {
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
-	const { methodType, title } = action;
-	const id = nextCreateId( state );
-	let method = { id, methodType };
-	if ( builtInShippingMethods[ methodType ] ) {
-		method = {
-			...method,
-			title,
-			...builtInShippingMethods[ methodType ]( undefined, action ),
-		};
-	}
-	return {
-		...state,
-		currentlyEditingId: id,
-		currentlyEditingNew: true,
-		currentlyEditingChangedType: false,
-		currentlyEditingChanges: method,
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN ] = ( state, action ) => {
-	return {
-		...state,
-		currentlyEditingId: action.methodId,
-		currentlyEditingChanges: {},
-		currentlyEditingChangedType: false,
-		currentlyEditingNew: false,
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL ] = state => {
-	return {
-		...state,
-		currentlyEditingId: null,
-		currentlyEditingChangedType: false,
-		currentlyEditingNew: false,
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = state => {
-	const {
-		currentlyEditingId,
-		currentlyEditingChanges,
-		currentlyEditingNew,
-		currentlyEditingChangedType,
-	} = state;
-
-	if ( null === currentlyEditingId ) {
-		return state;
-	}
-	if ( isEmpty( currentlyEditingChanges ) ) {
-		// Nothing to save, no need to go through the rest of the algorithm
-		return {
-			...state,
-			currentlyEditingChangedType: false,
-			currentlyEditingNew: false,
-			currentlyEditingId: null,
-		};
-	}
-
-	const bucket = getBucket( { id: currentlyEditingId } );
-
-	if ( currentlyEditingNew ) {
-		return {
-			...state,
-			creates: [ ...state.creates, currentlyEditingChanges ],
-			currentlyEditingId: null,
-			currentlyEditingNew: false,
-			currentlyEditingChangedType: false,
-			currentlyEditingChanges: {},
-		};
-	}
-
-	//if method type has been changed, then remove the old one and a new method in its place
-	if ( currentlyEditingChangedType ) {
-		const method = find( state[ bucket ], { id: currentlyEditingId } );
-		let originalId = currentlyEditingId;
-		if ( method && ! isNil( method._originalId ) ) {
-			originalId = method._originalId;
-		}
-
-		state = reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ]( state, {
-			methodId: currentlyEditingId,
-		} );
-		return {
-			...state,
-			currentlyEditingId: null,
-			currentlyEditingChangedType: false,
-			currentlyEditingNew: false,
-			creates: [
-				...state.creates,
-				{
-					...currentlyEditingChanges,
-					// If the "Enabled" toggle hasn't been modified in the current changes, use the value from the old method
-					enabled: isNil( currentlyEditingChanges.enabled )
-						? method && method.enabled
-						: currentlyEditingChanges.enabled,
-					id: nextCreateId( state ),
-					_originalId: originalId,
-				},
-			],
-		};
-	}
-
-	let found = false;
-	const newBucket = state[ bucket ].map( method => {
-		if ( isEqual( currentlyEditingId, method.id ) ) {
-			found = true;
-			// If edits for the method were already in the expected bucket, just update them
+export default function mainReducer( state = initialState, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD: {
+			const { methodType, title } = action;
+			const id = nextCreateId( state );
+			let method = { id, methodType };
+			if ( builtInShippingMethods[ methodType ] ) {
+				method = {
+					...method,
+					title,
+					...builtInShippingMethods[ methodType ]( undefined, action ),
+				};
+			}
 			return {
-				...method,
-				...currentlyEditingChanges,
+				...state,
+				currentlyEditingId: id,
+				currentlyEditingNew: true,
+				currentlyEditingChangedType: false,
+				currentlyEditingChanges: method,
 			};
 		}
-		return method;
-	} );
 
-	if ( ! found ) {
-		// If edits for the zone were *not* in the bucket yet, add them
-		newBucket.push( { id: currentlyEditingId, ...currentlyEditingChanges } );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN:
+			return {
+				...state,
+				currentlyEditingId: action.methodId,
+				currentlyEditingChanges: {},
+				currentlyEditingChangedType: false,
+				currentlyEditingNew: false,
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL:
+			return {
+				...state,
+				currentlyEditingId: null,
+				currentlyEditingChangedType: false,
+				currentlyEditingNew: false,
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE: {
+			const {
+				currentlyEditingId,
+				currentlyEditingChanges,
+				currentlyEditingNew,
+				currentlyEditingChangedType,
+			} = state;
+
+			if ( null === currentlyEditingId ) {
+				return state;
+			}
+			if ( isEmpty( currentlyEditingChanges ) ) {
+				// Nothing to save, no need to go through the rest of the algorithm
+				return {
+					...state,
+					currentlyEditingChangedType: false,
+					currentlyEditingNew: false,
+					currentlyEditingId: null,
+				};
+			}
+
+			const bucket = getBucket( { id: currentlyEditingId } );
+
+			if ( currentlyEditingNew ) {
+				return {
+					...state,
+					creates: [ ...state.creates, currentlyEditingChanges ],
+					currentlyEditingId: null,
+					currentlyEditingNew: false,
+					currentlyEditingChangedType: false,
+					currentlyEditingChanges: {},
+				};
+			}
+
+			//if method type has been changed, then remove the old one and a new method in its place
+			if ( currentlyEditingChangedType ) {
+				const method = find( state[ bucket ], { id: currentlyEditingId } );
+				let originalId = currentlyEditingId;
+				if ( method && ! isNil( method._originalId ) ) {
+					originalId = method._originalId;
+				}
+
+				state = removeShippingMethod( state, currentlyEditingId );
+
+				return {
+					...state,
+					currentlyEditingId: null,
+					currentlyEditingChangedType: false,
+					currentlyEditingNew: false,
+					creates: [
+						...state.creates,
+						{
+							...currentlyEditingChanges,
+							// If the "Enabled" toggle hasn't been modified in the current changes, use the value from the old method
+							enabled: isNil( currentlyEditingChanges.enabled )
+								? method && method.enabled
+								: currentlyEditingChanges.enabled,
+							id: nextCreateId( state ),
+							_originalId: originalId,
+						},
+					],
+				};
+			}
+
+			let found = false;
+			const newBucket = state[ bucket ].map( method => {
+				if ( isEqual( currentlyEditingId, method.id ) ) {
+					found = true;
+					// If edits for the method were already in the expected bucket, just update them
+					return {
+						...method,
+						...currentlyEditingChanges,
+					};
+				}
+				return method;
+			} );
+
+			if ( ! found ) {
+				// If edits for the zone were *not* in the bucket yet, add them
+				newBucket.push( { id: currentlyEditingId, ...currentlyEditingChanges } );
+			}
+
+			return {
+				...state,
+				currentlyEditingId: null,
+				currentlyEditingChangedType: false,
+				currentlyEditingNew: false,
+				[ bucket ]: newBucket,
+			};
+		}
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE:
+			return removeShippingMethod( state, action.methodId );
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE: {
+			const { methodType, title } = action;
+			if ( ! builtInShippingMethods[ methodType ] ) {
+				return state;
+			}
+
+			const currentlyEditingChanges = {
+				...builtInShippingMethods[ methodType ]( undefined, action ),
+				id: state.currentlyEditingId,
+				title,
+				methodType,
+				enabled: state.currentlyEditingChanges && state.currentlyEditingChanges.enabled,
+			};
+
+			return {
+				...state,
+				currentlyEditingChangedType: true,
+				currentlyEditingChanges,
+			};
+		}
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE:
+			return {
+				...state,
+				currentlyEditingChanges: {
+					...state.currentlyEditingChanges,
+					title: action.title,
+				},
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED:
+			return {
+				...state,
+				currentlyEditingChanges: {
+					...state.currentlyEditingChanges,
+					enabled: action.enabled,
+				},
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED: {
+			const { methodId, enabled } = action;
+			const bucket = getBucket( { id: methodId } );
+			const index = findIndex( state[ bucket ], { id: methodId } );
+
+			if ( -1 === index ) {
+				return {
+					...state,
+					[ bucket ]: [
+						...state[ bucket ],
+						{
+							id: methodId,
+							enabled,
+						},
+					],
+				};
+			}
+
+			const methodState = {
+				...state[ bucket ][ index ],
+				enabled,
+			};
+
+			return {
+				...state,
+				[ bucket ]: [
+					...state[ bucket ].slice( 0, index ),
+					methodState,
+					...state[ bucket ].slice( index + 1 ),
+				],
+			};
+		}
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED: {
+			const {
+				data,
+				originatingAction: { methodId, method },
+			} = action;
+			const bucket = getBucket( { id: methodId } );
+			const newState = {
+				...state,
+				currentlyEditingId: null,
+			};
+
+			if ( 'creates' === bucket ) {
+				const createEdit = find( state.creates, { id: methodId } );
+				if ( createEdit ) {
+					newState.updates = [
+						...state.updates,
+						{
+							...createEdit,
+							id: data.id,
+						},
+					];
+				}
+				newState.creates = reject( state[ bucket ], { id: methodId } );
+			} else {
+				// WCS does partial updates, so only remove the method from the "updates" bucket if it all its fields were updated
+				const edit = find( state.updates, { id: methodId } );
+				const newEditFields = omit( edit, Object.keys( method ) );
+				if ( isEmpty( omit( newEditFields, [ 'id', 'methodType' ] ) ) ) {
+					newState.updates = reject( state.updates, { id: methodId } );
+				} else {
+					const index = findIndex( state.updates, { id: methodId } );
+					newState.updates = [
+						...state[ bucket ].slice( 0, index ),
+						newEditFields,
+						...state[ bucket ].slice( index + 1 ),
+					];
+				}
+			}
+			return newState;
+		}
+
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED:
+			return {
+				...state,
+				creates: reject( state.creates, { id: action.originatingAction.methodId } ),
+				updates: reject( state.updates, { id: action.originatingAction.methodId } ),
+				deletes: reject( state.deletes, { id: action.originatingAction.methodId } ),
+				currentlyEditingId: null,
+			};
+
+		default: {
+			const { methodId, methodType } = action;
+			// If the action has something to do with a built-in shipping method, fire its reducer
+			if ( methodId && methodType && builtInShippingMethods[ methodType ] ) {
+				// Only give the shipping method reducer data about the shipping method itself, not the whole tree
+				const methodState = state.currentlyEditingChanges;
+				const newMethodState = builtInShippingMethods[ methodType ]( methodState, action );
+
+				if ( newMethodState !== methodState ) {
+					return {
+						...state,
+						currentlyEditingChanges: newMethodState,
+					};
+				}
+			}
+
+			return state;
+		}
 	}
+}
 
-	return {
-		...state,
-		currentlyEditingId: null,
-		currentlyEditingChangedType: false,
-		currentlyEditingNew: false,
-		[ bucket ]: newBucket,
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => {
+function removeShippingMethod( state, methodId ) {
 	const newState = {
 		...state,
 		currentlyEditingId: null,
@@ -204,155 +343,4 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => 
 	newState[ bucket ] = reject( state[ bucket ], { id: methodId } );
 
 	return newState;
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
-	const { methodType, title } = action;
-	if ( ! builtInShippingMethods[ methodType ] ) {
-		return state;
-	}
-
-	const currentlyEditingChanges = {
-		...builtInShippingMethods[ methodType ]( undefined, action ),
-		id: state.currentlyEditingId,
-		title,
-		methodType,
-		enabled: state.currentlyEditingChanges && state.currentlyEditingChanges.enabled,
-	};
-
-	return {
-		...state,
-		currentlyEditingChangedType: true,
-		currentlyEditingChanges,
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { title } ) => {
-	return {
-		...state,
-		currentlyEditingChanges: {
-			...state.currentlyEditingChanges,
-			title,
-		},
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED ] = ( state, { enabled } ) => {
-	return {
-		...state,
-		currentlyEditingChanges: {
-			...state.currentlyEditingChanges,
-			enabled,
-		},
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId, enabled } ) => {
-	const bucket = getBucket( { id: methodId } );
-	const index = findIndex( state[ bucket ], { id: methodId } );
-
-	if ( -1 === index ) {
-		return {
-			...state,
-			[ bucket ]: [
-				...state[ bucket ],
-				{
-					id: methodId,
-					enabled,
-				},
-			],
-		};
-	}
-
-	const methodState = {
-		...state[ bucket ][ index ],
-		enabled,
-	};
-
-	return {
-		...state,
-		[ bucket ]: [
-			...state[ bucket ].slice( 0, index ),
-			methodState,
-			...state[ bucket ].slice( index + 1 ),
-		],
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = (
-	state,
-	{ data, originatingAction: { methodId, method } }
-) => {
-	const bucket = getBucket( { id: methodId } );
-	const newState = {
-		...state,
-		currentlyEditingId: null,
-	};
-
-	if ( 'creates' === bucket ) {
-		const createEdit = find( state.creates, { id: methodId } );
-		if ( createEdit ) {
-			newState.updates = [
-				...state.updates,
-				{
-					...createEdit,
-					id: data.id,
-				},
-			];
-		}
-		newState.creates = reject( state[ bucket ], { id: methodId } );
-	} else {
-		// WCS does partial updates, so only remove the method from the "updates" bucket if it all its fields were updated
-		const edit = find( state.updates, { id: methodId } );
-		const newEditFields = omit( edit, Object.keys( method ) );
-		if ( isEmpty( omit( newEditFields, [ 'id', 'methodType' ] ) ) ) {
-			newState.updates = reject( state.updates, { id: methodId } );
-		} else {
-			const index = findIndex( state.updates, { id: methodId } );
-			newState.updates = [
-				...state[ bucket ].slice( 0, index ),
-				newEditFields,
-				...state[ bucket ].slice( index + 1 ),
-			];
-		}
-	}
-	return newState;
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED ] = (
-	state,
-	{ originatingAction: { methodId } }
-) => {
-	return {
-		...state,
-		creates: reject( state.creates, { id: methodId } ),
-		updates: reject( state.updates, { id: methodId } ),
-		deletes: reject( state.deletes, { id: methodId } ),
-		currentlyEditingId: null,
-	};
-};
-
-const mainReducer = createReducer( initialState, reducer );
-
-export default ( state, action ) => {
-	if ( reducer[ action.type ] ) {
-		return mainReducer( state, action );
-	}
-
-	const { methodId, methodType } = action;
-	// If the action has something to do with a built-in shipping method, fire its reducer
-	if ( methodId && methodType && builtInShippingMethods[ methodType ] ) {
-		// Only give the shipping method reducer data about the shipping method itself, not the whole tree
-		const methodState = state.currentlyEditingChanges;
-		const newMethodState = builtInShippingMethods[ methodType ]( methodState, action );
-
-		if ( newMethodState !== methodState ) {
-			return {
-				...state,
-				currentlyEditingChanges: newMethodState,
-			};
-		}
-	}
-
-	return state;
-};
+}
