@@ -4,7 +4,7 @@
 	"description": "A checkout component for Automattic",
 	"main": "dist/cjs/index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "jest",
 		"start": "webpack-dev-server --mode development"
 	},
 	"repository": {
@@ -21,10 +21,15 @@
 	"devDependencies": {
 		"@babel/cli": "^7.6.4",
 		"@babel/core": "^7.6.4",
-		"@babel/preset-env": "^7.6.3",
-		"@babel/preset-react": "^7.6.3",
+		"@babel/preset-env": "7.6.3",
+		"@babel/preset-react": "7.6.3",
+		"babel-jest": "24.9.0",
 		"babel-loader": "^8.0.6",
 		"css-loader": "^3.2.0",
+		"enzyme": "3.10.0",
+		"enzyme-adapter-react-16": "1.15.1",
+		"jest": "24.9.0",
+		"react-test-renderer": "16.10.2",
 		"style-loader": "^1.0.0",
 		"webpack": "^4.41.1",
 		"webpack-cli": "^3.3.9",
@@ -34,5 +39,17 @@
 		"prop-types": "^15.7.2",
 		"react": "^16.10.2",
 		"react-dom": "^16.10.2"
+	},
+	"jest": {
+		"rootDir": ".",
+		"testMatch": [
+			"**/test/**/*.[jt]s?(x)"
+		],
+		"testPathIgnorePatterns": [
+			"test/setupTests.js"
+		],
+		"setupFilesAfterEnv": [
+			"<rootDir>test/setupTests.js"
+		]
 	}
 }
