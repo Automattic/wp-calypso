@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import Gridicon from 'components/gridicon';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,27 +14,6 @@ import ButtonGroup from 'components/button-group';
 import ScreenReaderText from 'components/screen-reader-text';
 
 export class DateRangeTrigger extends Component {
-	static propTypes = {
-		startDate: PropTypes.oneOfType( [
-			PropTypes.instanceOf( Date ),
-			PropTypes.instanceOf( moment ),
-		] ),
-		endDate: PropTypes.oneOfType( [
-			PropTypes.instanceOf( Date ),
-			PropTypes.instanceOf( moment ),
-		] ),
-		startDateText: PropTypes.string.isRequired,
-		endDateText: PropTypes.string.isRequired,
-		buttonRef: PropTypes.oneOfType( [
-			PropTypes.func,
-			PropTypes.shape( { current: PropTypes.instanceOf( Button ) } ),
-		] ).isRequired,
-		onTriggerClick: PropTypes.func,
-		onClearClick: PropTypes.func,
-		triggerText: PropTypes.func,
-		showClearBtn: PropTypes.bool,
-	};
-
 	static defaultProps = {
 		onTriggerClick: noop,
 		onClearClick: noop,
