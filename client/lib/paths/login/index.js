@@ -21,6 +21,7 @@ export function login( {
 	oauth2ClientId,
 	wccomFrom,
 	site,
+	useMagicLink,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -37,6 +38,8 @@ export function login( {
 			url += '/social-connect';
 		} else if ( isJetpack ) {
 			url += '/jetpack';
+		} else if ( useMagicLink ) {
+			url += '/link';
 		}
 	}
 
