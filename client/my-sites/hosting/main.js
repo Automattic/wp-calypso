@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -20,6 +20,8 @@ import CardHeading from 'components/card-heading';
 import Button from 'components/button';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Spinner from 'components/spinner';
+import wpcom from 'lib/wp';
 
 /**
  * Style dependencies
@@ -35,7 +37,8 @@ const DataSection = ( { title, data } ) => {
 	);
 };
 
-const Hosting = ( { translate } ) => {
+const Hosting = ( { translate, siteId } ) => {
+	const [ loadingPMA, setLoadingPMA ] = useState( false );
 	const dummyInfo = {
 		[ translate( 'URL' ) ]: 'sftp1.wordpress.com',
 		[ translate( 'Port' ) ]: 22,
@@ -43,6 +46,22 @@ const Hosting = ( { translate } ) => {
 		[ translate( 'Password' ) ]: 'test',
 	};
 
+	function handlePMALogin() {
+		setLoadingPMA( true );
+		// If we don't want the pma url to pass through the redux store we can just do a raw wpcom.req here
+		// TODO: If we proceed with this it needs to be a POST, but setting apiNamespace is not currently working for POST
+		wpcom.req
+			.get( `/sites/${ siteId }/hosting/pma`, {
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( response => {
+				if ( response && response.pmaUrl ) {
+					window.open( response.pmaUrl );
+				}
+			} ); // TODO: Add error handling
+
+		setLoadingPMA( false );
+	}
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="hosting/:site" title="Hosting" />
@@ -78,7 +97,10 @@ const Hosting = ( { translate } ) => {
 								'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
 							) }
 						</p>
-						<Button>{ translate( 'Access PHPMyAdmin' ) }</Button>
+						<Button onClick={ handlePMALogin } className="hosting__card-phpmyadmin-login">
+							{ loadingPMA && <Spinner /> }
+							{ ! loadingPMA && translate( 'Access PhpMyAdmin' ) }
+						</Button>
 					</div>
 				</Card>
 			</div>
