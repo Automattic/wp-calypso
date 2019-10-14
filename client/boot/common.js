@@ -34,7 +34,7 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
-import superProps from 'lib/analytics/super-props';
+import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { setCurrentUser } from 'state/current-user/actions';
@@ -258,15 +258,8 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
-	analytics.setDispatch( reduxStore.dispatch );
-
-	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps );
-	} else {
-		analytics.setSuperProps( superProps );
-	}
+	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
+	analytics.initialize( currentUser, getSuperProps( reduxStore ) );
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.

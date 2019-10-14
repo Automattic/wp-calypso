@@ -13,12 +13,10 @@ import { loadScript } from '@automattic/load-script';
  */
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import {
 	mayWeTrackCurrentUserGdpr,
 	doNotTrack,
 	isPiiUrl,
-	shouldReportOmitBlogId,
 	costToUSD,
 	urlParseAmpCompatible,
 	saveCouponQueryArgument,
@@ -58,7 +56,8 @@ const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
 
-let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
+let _superProps, _user;
+let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments
 
 /**
  * Tracks uses a bunch of special query params that should not be used as property name
@@ -101,43 +100,39 @@ function createRandomId( randomBytesLength = 9 ) {
 }
 
 function checkForBlockedTracks() {
-	if ( ! _loadTracksError ) {
-		return;
-	}
+	// proceed only after the tracks script load finished and failed
+	// calling this function from `initialize` ensures that `_user` is already set
+	_loadTracksResult.catch( () => {
+		let _ut, _ui;
 
-	let _ut, _ui;
+		// detect stats blocking, and include identity from URL, user or cookie if possible
+		if ( _user && _user.get() ) {
+			_ut = 'wpcom:user_id';
+			_ui = _user.get().ID;
+		} else {
+			_ut = getUrlParameter( '_ut' ) || 'anon';
+			_ui = getUrlParameter( '_ui' );
 
-	// detect stats blocking, and include identity from URL, user or cookie if possible
-	if ( _user && _user.get() ) {
-		_ut = 'wpcom:user_id';
-		_ui = _user.get().ID;
-	} else {
-		_ut = getUrlParameter( '_ut' ) || 'anon';
-		_ui = getUrlParameter( '_ui' );
-
-		if ( ! _ui ) {
-			const cookies = cookie.parse( document.cookie );
-			if ( cookies.tk_ai ) {
-				_ui = cookies.tk_ai;
-			} else {
-				const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
-				_ui = createRandomId( randomIdLength );
-				document.cookie = cookie.serialize( 'tk_ai', _ui );
+			if ( ! _ui ) {
+				const cookies = cookie.parse( document.cookie );
+				if ( cookies.tk_ai ) {
+					_ui = cookies.tk_ai;
+				} else {
+					const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+					_ui = createRandomId( randomIdLength );
+					document.cookie = cookie.serialize( 'tk_ai', _ui );
+				}
 			}
 		}
-	}
 
-	loadScript(
-		'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
-	);
+		return loadScript(
+			'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
+		);
+	} );
 }
 
 if ( typeof document !== 'undefined' ) {
-	loadScript( '//stats.wp.com/w.js?60', function( error ) {
-		if ( error ) {
-			_loadTracksError = true;
-		}
-	} ); // W_JS_VER
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?60' );
 }
 
 function buildQuerystring( group, name ) {
@@ -187,32 +182,16 @@ if ( typeof window !== 'undefined' ) {
 
 const analytics = {
 	initialize: function( user, superProps ) {
-		analytics.setUser( user );
-		analytics.setSuperProps( superProps );
-		const userData = user.get();
-		analytics.identifyUser( userData.username, userData.ID );
-	},
-
-	setUser: function( user ) {
 		_user = user;
-	},
+		_superProps = superProps;
 
-	setSuperProps: function( superProps ) {
 		// this is called both for anonymous and logged-in users
 		checkForBlockedTracks();
-		_superProps = superProps;
-	},
 
-	setSelectedSite: function( selectedSite ) {
-		_selectedSite = selectedSite;
-	},
-
-	setSiteCount: function( siteCount ) {
-		_siteCount = siteCount;
-	},
-
-	setDispatch: function( dispatch ) {
-		_dispatch = dispatch;
+		if ( user && user.get() ) {
+			const userData = user.get();
+			analytics.identifyUser( userData.username, userData.ID );
+		}
 	},
 
 	mc: {
@@ -474,8 +453,6 @@ const analytics = {
 
 	tracks: {
 		recordEvent: function( eventName, eventProperties ) {
-			let superProperties;
-
 			eventProperties = eventProperties || {};
 
 			if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
@@ -525,7 +502,7 @@ const analytics = {
 			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
 			if (
-				eventName.indexOf( 'calypso_' ) !== 0 &&
+				! eventName.startsWith( 'calypso_' ) &&
 				! includes( EVENT_NAME_EXCEPTIONS, eventName )
 			) {
 				tracksDebug(
@@ -535,10 +512,8 @@ const analytics = {
 			}
 
 			if ( _superProps ) {
-				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
-				superProperties = _superProps.getAll( site, _siteCount );
-				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
+				const superProperties = _superProps( eventProperties );
+				eventProperties = { ...eventProperties, ...superProperties }; // assign to a new object so we don't modify the argument
 			}
 
 			// Remove properties that have an undefined value
