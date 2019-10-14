@@ -10,16 +10,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { registerPaymentMethod, getPaymentMethods } from '../lib/payment-methods';
-
-// TODO: where should these be registered?
-registerPaymentMethod( {
-	id: 'apple-pay',
-	button: 'Apple Pay',
-	form: null,
-	billingContactForm: null,
-	submit: () => {},
-} );
+import { getPaymentMethods } from '../lib/payment-methods';
 
 export default function CheckoutPaymentMethods( {
 	collapsed,
