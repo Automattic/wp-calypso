@@ -3907,54 +3907,21 @@
 			}
 		},
 		"@wordpress/format-library": {
-			"version": "1.6.0",
-			"resolved": "https://registry.npmjs.org/@wordpress/format-library/-/format-library-1.6.0.tgz",
-			"integrity": "sha512-RF1kIZdpIKrnOJWkqiREwboT1/TC12KfNmX3AZr1rC3tIdx5EyxtzXQ+5jPxLdSMHXBiYMMJbD6Dj7OQAMGJyA==",
+			"version": "1.9.1",
+			"resolved": "https://registry.npmjs.org/@wordpress/format-library/-/format-library-1.9.1.tgz",
+			"integrity": "sha512-guokadEwGGhNJ2JiEviEXXU3jqvIl0hhwE/7Wa6LE3H5euPeUvQ0FQPsmujgKQvsRWcNaStaBmhXMFVheAhmXQ==",
 			"requires": {
 				"@babel/runtime": "^7.4.4",
-				"@wordpress/block-editor": "^2.2.0",
-				"@wordpress/components": "^8.0.0",
-				"@wordpress/editor": "^9.4.0",
-				"@wordpress/element": "^2.5.0",
-				"@wordpress/i18n": "^3.5.0",
-				"@wordpress/keycodes": "^2.4.0",
-				"@wordpress/rich-text": "^3.4.0",
-				"@wordpress/url": "^2.6.0"
-			},
-			"dependencies": {
-				"@wordpress/block-editor": {
-					"version": "2.2.0",
-					"resolved": "https://registry.npmjs.org/@wordpress/block-editor/-/block-editor-2.2.0.tgz",
-					"integrity": "sha512-gpqg81l8Inq3qLALSzN3UG9v9KQ2f6z1FZnGRKnlcQCHqcuScDPiScpspZEZEDHsEj/wAdDtzNlJrpwCMSUNCA==",
-					"requires": {
-						"@babel/runtime": "^7.4.4",
-						"@wordpress/a11y": "^2.4.0",
-						"@wordpress/blob": "^2.4.0",
-						"@wordpress/blocks": "^6.4.0",
-						"@wordpress/components": "^8.0.0",
-						"@wordpress/compose": "^3.4.0",
-						"@wordpress/data": "^4.6.0",
-						"@wordpress/dom": "^2.3.0",
-						"@wordpress/element": "^2.5.0",
-						"@wordpress/hooks": "^2.4.0",
-						"@wordpress/html-entities": "^2.4.0",
-						"@wordpress/i18n": "^3.5.0",
-						"@wordpress/is-shallow-equal": "^1.4.0",
-						"@wordpress/keycodes": "^2.4.0",
-						"@wordpress/rich-text": "^3.4.0",
-						"@wordpress/token-list": "^1.4.0",
-						"@wordpress/url": "^2.6.0",
-						"@wordpress/viewport": "^2.5.0",
-						"@wordpress/wordcount": "^2.4.0",
-						"classnames": "^2.2.5",
-						"dom-scroll-into-view": "^1.2.1",
-						"lodash": "^4.17.10",
-						"redux-multi": "^0.1.12",
-						"refx": "^3.0.0",
-						"rememo": "^3.0.0",
-						"tinycolor2": "^1.4.1"
-					}
-				}
+				"@wordpress/block-editor": "^3.2.1",
+				"@wordpress/components": "^8.3.1",
+				"@wordpress/dom": "^2.5.1",
+				"@wordpress/element": "^2.8.1",
+				"@wordpress/html-entities": "^2.5.0",
+				"@wordpress/i18n": "^3.6.1",
+				"@wordpress/keycodes": "^2.6.1",
+				"@wordpress/rich-text": "^3.7.1",
+				"@wordpress/url": "^2.8.0",
+				"lodash": "^4.17.15"
 			}
 		},
 		"@wordpress/hooks": {
