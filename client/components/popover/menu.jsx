@@ -21,7 +21,7 @@ class PopoverMenu extends Component {
 		onClose: PropTypes.func.isRequired,
 		position: PropTypes.string,
 		className: PropTypes.string,
-		popoverComponent: PropTypes.func,
+		popoverComponent: PropTypes.elementType,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
 		customPosition: PropTypes.object,
 	};
