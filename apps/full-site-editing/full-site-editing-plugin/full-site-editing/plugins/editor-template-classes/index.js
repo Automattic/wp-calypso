@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* global fullSiteEditing */
 /**
  * External dependencies
@@ -21,10 +22,10 @@ const EditorTemplateClasses = withSelect( select => {
 			''
 		);
 		if ( endsWith( typeName, '-header' ) ) {
-			return 'site-header site-branding';
+			return 'fse-header';
 		}
 		if ( endsWith( typeName, '-footer' ) ) {
-			return 'site-footer';
+			return 'fse-footer';
 		}
 	} );
 	return { templateClasses };
@@ -39,7 +40,7 @@ const EditorTemplateClasses = withSelect( select => {
 		}
 		clearInterval( blockListInception );
 
-		blockList.className = classNames( 'a8c-template-editor', ...templateClasses );
+		blockList.className = classNames( 'a8c-template-editor fse-template', ...templateClasses );
 	} );
 
 	return null;
