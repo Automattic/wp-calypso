@@ -145,7 +145,7 @@ export class PaymentBox extends PureComponent {
 			return (
 				<div className="payment-box__pm-test-wrapper">
 					<h2 className="payment-box__pm-title">
-						{ this.props.translate( 'Pick a payment method:' ) }
+						{ this.props.translate( 'Choose a payment method' ) }
 					</h2>
 					<ul className="payment-box__pm-wrapper">{ paymentMethods }</ul>
 				</div>
@@ -199,7 +199,7 @@ export class PaymentBox extends PureComponent {
 					<div className="checkout__box-padding">
 						{ isPaymentMethodTest && (
 							<h2 className="checkout__payment-information-title">
-								{ this.props.translate( 'Enter your payment information:' ) }
+								{ this.props.translate( 'Enter your payment information' ) }
 							</h2>
 						) }
 

@@ -123,7 +123,7 @@ export default {
 			default: 90,
 		},
 		defaultVariation: 'default',
-	}
+	},
 	checkoutPaymentTypes: {
 		datestamp: '20191028',
 		variations: {
