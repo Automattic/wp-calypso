@@ -9,29 +9,48 @@ import React from 'react';
  * Internal dependencies
  */
 import { registerPaymentMethod } from '../../lib/payment-methods';
+import { useLocalize } from '../../lib/localize';
+import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../../index';
 
 export default function loadPaymentMethods() {
 	registerPaymentMethod( {
 		id: 'apple-pay',
-		button: <span>Apple Pay</span>,
-		form: ( { isActive } ) => ( isActive ? 'Apple Pay' : null ),
-		billingContactForm: null,
-		submit: () => {},
+		initialData: {},
+		labelComponent: <span>Apple Pay</span>,
+		paymentMethodComponent: ApplePayComponent,
+		billingContactComponent: ApplePayBillingForm,
+		submitButtonComponent: ApplePaySubmitButton,
 	} );
 
 	registerPaymentMethod( {
 		id: 'card',
-		button: <span>Credit Card</span>,
-		form: null,
-		billingContactForm: null,
-		submit: () => {},
+		initialData: {},
+		labelComponent: <span>Credit Card</span>,
+		paymentMethodComponent: <div>Enter card info here</div>,
+		billingContactComponent: <div>Put payment info here</div>,
+		submitButtonComponent: <button>Pay</button>,
 	} );
 
 	registerPaymentMethod( {
 		id: 'paypal',
-		button: <span>Paypal</span>,
-		form: ( { isActive } ) => ( isActive ? 'Paypal' : null ),
-		billingContactForm: null,
-		submit: () => {},
+		initialData: {},
+		labelComponent: <span>Paypal</span>,
+		paymentMethodComponent: <div></div>,
+		billingContactComponent: <div>Put payment info here</div>,
+		submitButtonComponent: <button>Pay</button>,
 	} );
+}
+
+function ApplePayComponent( { isActive } ) {
+	return isActive ? 'Apple Pay' : null;
+}
+
+function ApplePayBillingForm() {}
+
+function ApplePaySubmitButton() {
+	const localize = useLocalize();
+	const [ , total ] = useCheckoutLineItems();
+	return (
+		<button>{ localize( `Pay ${ renderDisplayValueMarkdown( total.displayValue ) }` ) }</button>
+	);
 }
