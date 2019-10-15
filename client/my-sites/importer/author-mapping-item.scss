@@ -1,5 +1,6 @@
 .importer__author-mapping {
-	height: 58px;
+	padding: 8px 0 16px;
+	height: auto;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
@@ -18,7 +19,7 @@
 }
 
 .importer__source-author {
-	padding-top: 7px;
+	padding-top: 0;
 	display: inline-block;
 	color: var( --color-neutral-70 );
 	text-align: left;
