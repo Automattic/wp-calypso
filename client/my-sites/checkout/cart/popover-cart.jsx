@@ -94,18 +94,10 @@ class PopoverCart extends React.Component {
 			<div>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
-<<<<<<< HEAD
-					<HeaderButton icon="cart" label="Cart" onClick={ this.onToggle } />
-
-					<button
-						className="cart-toggle-button"
-						ref={ this.toggleButtonRef }
-=======
 					<HeaderButton
 						icon="cart"
 						label={ translate( 'Cart' ) }
 						ref={ this.toggleButton }
->>>>>>> Replaces button element w/ HeaderButton component
 						onClick={ this.onToggle }
 					/>
 					{ countBadge }
