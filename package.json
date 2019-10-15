@@ -304,7 +304,7 @@
 		"@types/wordpress__api-fetch": "3.2.2",
 		"@types/wordpress__block-editor": "2.2.2",
 		"@types/wordpress__block-library": "2.6.0",
-		"@types/wordpress__components": "7.4.4",
+		"@types/wordpress__components": "7.4.5",
 		"@types/wordpress__data": "4.6.2",
 		"@types/wordpress__editor": "9.4.0",
 		"@types/wordpress__element": "2.4.0",
