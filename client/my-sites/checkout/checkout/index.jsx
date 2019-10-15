@@ -93,7 +93,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
-import { abtest } from 'lib/abtest';
+// import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { isExternal } from 'lib/url';
@@ -443,9 +443,12 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
-			if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
-				return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
-			}
+			// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
+			// being offered and so sold, to be inline with HE availability.
+			// To dial back, uncomment the condition below and modify the test config.
+			// if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+			return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ selectedSiteSlug }`;
+			// }
 		}
 
 		return;
