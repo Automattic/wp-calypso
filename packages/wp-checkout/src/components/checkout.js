@@ -130,3 +130,12 @@ function PaymentMethodsStep( {
 		</React.Fragment>
 	);
 }
+
+PaymentMethodsStep.propTypes = {
+	setStepNumber: PropTypes.func.isRequired,
+	isActive: PropTypes.bool.isRequired,
+	isComplete: PropTypes.bool.isRequired,
+	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
+	setPaymentMethod: PropTypes.func.isRequired,
+	paymentMethod: PropTypes.string.isRequired,
+};

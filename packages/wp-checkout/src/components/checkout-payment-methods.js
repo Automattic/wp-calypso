@@ -70,3 +70,9 @@ function PaymentMethod( { id, button, form, checked, onClick } ) {
 	);
 	/* eslint-enable jsx-a11y/label-has-associated-control */
 }
+
+PaymentMethod.propTypes = {
+	id: PropTypes.string.isRequired,
+	onClick: PropTypes.func.isRequired,
+	checked: PropTypes.bool.isRequired,
+};
