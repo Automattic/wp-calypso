@@ -11,34 +11,17 @@ import classNames from 'classnames';
 import PlanPrice from 'my-sites/plan-price';
 
 const SingleProductPlanPriceGroup = props => {
-	const {
-		billingTimeFrame,
-		currencyCode,
-		discountedPrice,
-		discountedPriceRange,
-		fullPrice,
-		fullPriceRange,
-	} = props;
-	const isDiscounted = !! discountedPrice || !! discountedPriceRange;
+	const { billingTimeFrame, currencyCode, discountedPrice, fullPrice } = props;
+	const isDiscounted = !! discountedPrice;
 	const priceGroupClasses = classNames( 'single-product-plan__price-group', {
 		'is-discounted': isDiscounted,
 	} );
 
 	return (
 		<div className={ priceGroupClasses }>
-			<PlanPrice
-				currencyCode={ currencyCode }
-				rawPrice={ fullPrice }
-				rawPriceRange={ fullPriceRange }
-				original={ isDiscounted }
-			/>
+			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } original={ isDiscounted } />
 			{ isDiscounted && (
-				<PlanPrice
-					currencyCode={ currencyCode }
-					rawPrice={ discountedPrice }
-					rawPriceRange={ discountedPriceRange }
-					discounted
-				/>
+				<PlanPrice currencyCode={ currencyCode } rawPrice={ discountedPrice } discounted />
 			) }
 			<span className="single-product-plan__billing-timeframe">{ billingTimeFrame }</span>
 		</div>
@@ -48,10 +31,11 @@ const SingleProductPlanPriceGroup = props => {
 SingleProductPlanPriceGroup.propTypes = {
 	billingTimeFrame: PropTypes.string,
 	currencyCode: PropTypes.string,
-	discountedPrice: PropTypes.number,
-	discountedPriceRange: PropTypes.array,
-	fullPrice: PropTypes.number,
-	fullPriceRange: PropTypes.array,
+	discountedPrice: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.arrayOf( PropTypes.number ),
+	] ),
+	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 };
 
 export default SingleProductPlanPriceGroup;

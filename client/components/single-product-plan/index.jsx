@@ -21,8 +21,11 @@ class SingleProductPlan extends Component {
 		billingTimeFrame: PropTypes.string,
 		currencyCode: PropTypes.string,
 		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-		discountedPrice: PropTypes.number,
-		fullPrice: PropTypes.number,
+		discountedPrice: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.arrayOf( PropTypes.number ),
+		] ),
+		fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		isPurchased: PropTypes.bool,
 		subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
@@ -33,9 +36,7 @@ class SingleProductPlan extends Component {
 			billingTimeFrame,
 			currencyCode,
 			discountedPrice,
-			discountedPriceRange,
 			fullPrice,
-			fullPriceRange,
 			isPurchased,
 			subtitle,
 			title,
@@ -55,9 +56,7 @@ class SingleProductPlan extends Component {
 							billingTimeFrame={ billingTimeFrame }
 							currencyCode={ currencyCode }
 							discountedPrice={ discountedPrice }
-							discountedPriceRange={ discountedPriceRange }
 							fullPrice={ fullPrice }
-							fullPriceRange={ fullPriceRange }
 						/>
 					) }
 				</div>

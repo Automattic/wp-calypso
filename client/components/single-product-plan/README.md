@@ -44,8 +44,10 @@ The following props can be passed to the Single Product Plan component:
 * `billingTimeFrame`: ( string ) Billing time frame label
 * `currencyCode`: ( string ) Currency code
 * `description`: ( string | element ) Product description. It can be a string or a React element (e.g. `<Fragment>`)
-* `discountedPrice`: ( number ) Discounted price of the product
-* `fullPrice`: ( number ) Full price of the product
+* `discountedPrice`: ( number | array ) Discounted price of the product. If an array of number is passed, it will be
+  displayed as a price range
+* `fullPrice`: ( number | array ) Full price of the product. If an array of number is passed, it will be displayed as a
+  price range
 * `isPurchased`: ( bool ) Flag indicating if the product has already been purchased. [Read more about the way this flag
   works](#how-isPurchased-flag-works)
 * `subtitle`: ( string | element ) Product subtitle (used if the product has already been purchased). It can be a string

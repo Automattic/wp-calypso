@@ -42,8 +42,8 @@ function SingleProductPlanExample() {
 			<SingleProductPlan
 				title="Jetpack Backup"
 				billingTimeFrame="per year"
-				fullPriceRange={ [ 16, 25 ] }
-				discountedPriceRange={ [ 12, 16 ] }
+				fullPrice={ [ 16, 25 ] }
+				discountedPrice={ [ 12, 16 ] }
 				description={
 					<Fragment>
 						Always-on backups ensure you never lose your site. Choose from real-time or daily
