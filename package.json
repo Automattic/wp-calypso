@@ -300,7 +300,7 @@
 		"@types/page": "1.8.0",
 		"@types/react": "16.8.16",
 		"@types/react-redux": "5.0.21",
-		"@types/webpack-env": "1.14.0",
+		"@types/webpack-env": "1.14.1",
 		"@types/wordpress__api-fetch": "3.2.2",
 		"@types/wordpress__block-editor": "2.2.2",
 		"@types/wordpress__block-library": "2.6.0",

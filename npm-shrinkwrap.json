@@ -45,7 +45,7 @@
 				"file-loader": "3.0.1",
 				"jest-config": "24.9.0",
 				"jest-enzyme": "7.1.1",
-				"mini-css-extract-plugin-with-rtl": "mini-css-extract-plugin-with-rtl@github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
+				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 				"node-sass": "4.11.0",
 				"postcss-custom-properties": "8.0.9",
 				"postcss-loader": "3.0.0",
@@ -3080,9 +3080,9 @@
 			}
 		},
 		"@types/webpack-env": {
-			"version": "1.14.0",
-			"resolved": "https://registry.npmjs.org/@types/webpack-env/-/webpack-env-1.14.0.tgz",
-			"integrity": "sha512-Fv+0gYJzE/czLoRKq+gnXWr4yBpPM3tO3C8pDLFwqVKlMICQUq5OsxwwFZYDaVr7+L6mgNDp16iOcJHEz3J5RQ==",
+			"version": "1.14.1",
+			"resolved": "https://registry.npmjs.org/@types/webpack-env/-/webpack-env-1.14.1.tgz",
+			"integrity": "sha512-0Ki9jAAhKDSuLDXOIMADg54Hu60SuBTEsWaJGGy5cV+SSUQ63J2a+RrYYGrErzz39fXzTibhKrAQJAb8M7PNcA==",
 			"dev": true
 		},
 		"@types/wordpress__api-fetch": {
@@ -14449,8 +14449,8 @@
 			"integrity": "sha512-jf84uxzwiuiIVKiOLpfYk7N46TSy8ubTonmneY9vrpHNAnp0QBt2BxWV9dO3/j+BoVAb+a5G6YDPW3M5HOdMWQ=="
 		},
 		"mini-css-extract-plugin-with-rtl": {
-			"version": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
-			"from": "mini-css-extract-plugin-with-rtl@github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
+			"version": "github:Automattic/mini-css-extract-plugin-with-rtl#f48ce03f385390257bdacbfec4759d38df983361",
+			"from": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 			"dev": true,
 			"requires": {
 				"loader-utils": "^1.1.0",
