@@ -159,7 +159,7 @@ class Template_Image_Inserter {
 		if ( ! $res ) {
 			do_action(
 				'a8c_fse_log',
-				'update_post_with_new_images_update_postfailure',
+				'update_post_with_new_images_update_post_failure',
 				[
 					'context'    => 'Template_Image_Inserter->update_post_images',
 					'error'      => 'Issue updating the post with the new image URLs.',
