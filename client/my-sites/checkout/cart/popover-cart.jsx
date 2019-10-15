@@ -97,7 +97,7 @@ class PopoverCart extends React.Component {
 					<HeaderButton
 						icon="cart"
 						label={ translate( 'Cart' ) }
-						ref={ this.toggleButton }
+						ref={ this.toggleButtonRef }
 						onClick={ this.onToggle }
 					/>
 					{ countBadge }
