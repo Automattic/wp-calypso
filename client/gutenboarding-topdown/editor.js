@@ -21,6 +21,9 @@ import Layout from '@wordpress/edit-post/build-module/components/layout';
 import EditorInitialization from '@wordpress/edit-post/build-module/components/editor-initialization';
 import EditPostSettings from '@wordpress/edit-post/build-module/components/edit-post-settings';
 
+// We need a core/edit-post store
+import '@wordpress/edit-post/build-module/store';
+
 class Editor extends Component {
 	constructor() {
 		super( ...arguments );
