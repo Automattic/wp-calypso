@@ -142,7 +142,7 @@ class EmailManagement extends React.Component {
 					line: translate(
 						'Only domains using WordPress.com name servers are eligible for G Suite.'
 					),
-					action: translate( 'How To Change Name Servers' ),
+					action: translate( 'How to change your name servers' ),
 					actionURL:
 						'https://en.support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
 					actionTarget: '_blank',
