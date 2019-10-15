@@ -6,7 +6,7 @@ import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { Placeholder, RangeControl, PanelBody } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/editor';
+import { InspectorControls } from '@wordpress/block-editor';
 /* eslint-enable import/no-extraneous-dependencies */
 
 /**
