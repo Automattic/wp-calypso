@@ -332,8 +332,8 @@
 	opacity: 0;
 }
 
-.is-group-reader .main .empty-content,
-.is-reader-page .main .empty-content {
+.is-group-reader .main .empty-content:not( .conversations__empty-content ),
+.is-reader-page .main .empty-content:not( .conversations__empty-content ) {
 
 	padding-top: 0;
 

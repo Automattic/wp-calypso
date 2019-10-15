@@ -17,6 +17,11 @@ import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
 
+/**
+ * Image dependencies
+ */
+import readerImage from 'assets/images/reader/reader-intro-character.svg';
+
 class FollowingIntro extends React.Component {
 	componentDidMount() {
 		this.recordRenderTrack();
@@ -64,7 +69,7 @@ class FollowingIntro extends React.Component {
 							) }
 						</span>
 					</div>
-					<div className="following__intro-character" />
+					<img className="following__intro-character" src={ readerImage } alt="" />
 
 					<button
 						className="following__intro-close"
