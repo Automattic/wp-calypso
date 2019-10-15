@@ -59,7 +59,7 @@ const SFTPCard = ( { translate, username, password, errorCode, siteId, loading }
 				<table className={ classNames( 'hosting__info-table', { [ 'is-placeholder' ]: loading } ) }>
 					<tbody>
 						{ map( sftpData, ( data, title ) => (
-							<tr>
+							<tr key={ title } >
 								<th>{ title }:</th>
 								<td>
 									<span>{ ! loading && data }</span>
