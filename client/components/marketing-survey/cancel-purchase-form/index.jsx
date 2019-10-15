@@ -557,10 +557,6 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
-			if ( surveyStep === steps.IMPORT_SURVEY_STEP ) {
-				return <div>Import survey here</div>;
-			}
-
 			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
 				return <BusinessATStep />;
 			}
