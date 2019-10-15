@@ -190,7 +190,7 @@ export class PaymentBox extends PureComponent {
 			: this.props.translate( 'Loading…' );
 
 		return (
-			<div className="payment-box__payment-box-container" key={ this.props.currentPage }>
+			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
 
 				{ this.renderPaymentMethod( paymentMethods, isPaymentMethodTest, titleText ) }

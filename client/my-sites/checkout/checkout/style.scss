@@ -1,5 +1,24 @@
 @import 'jetpack-connect/colors.scss';
 
+@mixin section-border ( $position ) {
+  &::before {
+  	display: block;
+  	content: '';
+  	position: absolute;
+  	#{ $position }: 0;
+  	left: -8px;
+  	width: calc( 100% + 16px );
+  	height: 1px;
+  	box-sizing: border-box;
+  	background: var( --color-border-subtle );
+  	
+  	@include breakpoint( '>660px' ) {
+  		width: calc( 100% + 60px );
+  		left: -30px;
+  	}
+  }
+}
+
 .checkout {
 	position: relative;
 
@@ -373,30 +392,15 @@
 
 	.subscription-length-picker {
 		position: relative;
-		padding-bottom: 20px;
+		padding-bottom: 10px;
 		margin: 15px 0;
 
 		@include breakpoint( '>660px' ) {
-			padding-bottom: 20px;
+			padding-bottom: 30px;
 			margin-bottom: 20px;
 		}
 
-		&::after {
-			display: block;
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: -8px;
-			width: calc( 100% + 16px );
-			height: 1px;
-			box-sizing: border-box;
-			background: var( --color-border-subtle );
-			
-			@include breakpoint( '>660px' ) {
-				width: calc( 100% + 60px );
-				left: -30px;
-			}
-		}
+		@include section-border( bottom );
 	}
 
 	.subscription-length-picker__header {
@@ -409,22 +413,7 @@
 			padding-top: 20px;
 		}
 
-		&::before {
-			display: block;
-			content: '';
-			position: absolute;
-			top: 0;
-			left: -8px;
-			width: calc( 100% + 16px );
-			height: 1px;
-			box-sizing: border-box;
-			background: var( --color-border-subtle );
-			
-			@include breakpoint( '>660px' ) {
-				width: calc( 100% + 60px );
-				left: -30px;
-			}
-		}
+		@include section-border( top );
 	}
 
 	// PayPal Payment Box
@@ -898,6 +887,7 @@
 .checkout__alternative-payment-methods {
 	float: right;
 }
+
 .payment-box__payment-box-container {
 	.select-dropdown__option {
 		&:first-child {
@@ -1308,20 +1298,5 @@
 		padding-top: 20px;
 	}
 
-	&::before {
-		display: block;
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -8px;
-		width: calc( 100% + 16px );
-		height: 1px;
-		box-sizing: border-box;
-		background: var( --color-border-subtle );
-		
-		@include breakpoint( '>660px' ) {
-			width: calc( 100% + 60px );
-			left: -30px;
-		}
-	}
+	@include section-border( top );
 }
