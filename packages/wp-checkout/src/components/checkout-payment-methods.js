@@ -13,7 +13,8 @@ import joinClasses from '../lib/join-classes';
 import { getPaymentMethods } from '../lib/payment-methods';
 
 export default function CheckoutPaymentMethods( {
-	collapsed,
+	isActive,
+	isComplete,
 	className,
 	availablePaymentMethods,
 	paymentMethod,
@@ -24,11 +25,11 @@ export default function CheckoutPaymentMethods( {
 		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
 		: paymentMethods;
 
-	if ( collapsed ) {
+	if ( isComplete && ! isActive ) {
 		// TODO
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				Summary Goes Here
+				paymentMethod.id
 			</div>
 		);
 	}
@@ -48,7 +49,8 @@ export default function CheckoutPaymentMethods( {
 }
 
 CheckoutPaymentMethods.propTypes = {
-	collapsed: PropTypes.bool,
+	isComplete: PropTypes.bool,
+	isActive: PropTypes.bool,
 	className: PropTypes.string,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 	paymentMethod: PropTypes.string,

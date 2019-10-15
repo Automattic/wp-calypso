@@ -46,9 +46,9 @@ export const StepWrapper = styled.div`
 	padding-bottom: 32px;
 	margin-bottom: 8px;
 	position: relative;
-	max-height: ${props => ( props.collapsed ? '0' : 'initial' )};
+	max-height: ${props => ( props.isActive ? 'initial' : '0' )};
 	overflow: hidden;
-	padding: ${props => ( props.collapsed ? '0' : 'initial' )};
+	padding: ${props => ( props.isActive ? 'initial' : '0' )};
 	:after {
 		display: block;
 		width: ${props => props.theme.borderWidth};
@@ -74,14 +74,40 @@ export const StepHeader = styled.h2`
 
 export const StepTitle = styled.span`
 	font-weight: ${props =>
-		props.collapsed ? props.theme.weights.normal : props.theme.weights.bold};
-	color: ${props => ( props.collapsed ? props.theme.colours.gray80 : props.theme.colours.black )};
+		props.isActive ? props.theme.weights.normal : props.theme.weights.bold};
+	color: ${props => ( props.isActive ? props.theme.colours.gray80 : props.theme.colours.black )};
 	margin-right: 5px;
 `;
 
+function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
+	if ( isActive ) {
+		return theme.colours.highlight;
+	}
+	if ( isComplete ) {
+		return theme.colours.white;
+	}
+	return theme.colours.gray5;
+}
+
+function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
+	if ( isComplete || isActive ) {
+		return theme.colours.white;
+	}
+	return theme.colours.gray80;
+}
+
+function getStepNumberBorderColor( { isComplete, isActive, theme } ) {
+	if ( isActive ) {
+		return theme.colours.highlight;
+	}
+	if ( isComplete ) {
+		return theme.colours.green50;
+	}
+	return theme.colours.gray5;
+}
+
 export const StepNumber = styled.span`
-	background: ${props =>
-		props.collapsed ? props.theme.colours.gray5 : props.theme.colours.highlight};
+	background: ${getStepNumberBackgroundColor};
 	font-weight: normal;
 	width: 27px;
 	height: 27px;
@@ -91,15 +117,14 @@ export const StepNumber = styled.span`
 	display: block;
 	border-radius: 50%;
 	margin-right: 8px;
-	color: ${props => ( props.collapsed ? props.theme.colours.gray80 : props.theme.colours.white )};
+	color: ${getStepNumberForegroundColor};
 	position: relative;
 	line-height: 27px;
 	:after {
 		position: absolute;
 		top: 0;
 		left: 0;
-		border: 2px solid
-			${props => ( props.collapsed ? props.theme.colours.gray5 : props.theme.colours.highlight )};
+		border: 2px solid ${getStepNumberBorderColor};
 		content: '';
 		display: block;
 		width: 27px;

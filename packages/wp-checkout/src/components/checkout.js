@@ -54,7 +54,8 @@ export default function Checkout( {
 						<PaymentMethodsStep
 							availablePaymentMethods={ availablePaymentMethods }
 							setStepNumber={ setStepNumber }
-							collapsed={ stepNumber !== 1 }
+							isActive={ stepNumber === 1 }
+							isComplete={ stepNumber > 1 }
 							paymentMethod={ paymentMethod }
 							setPaymentMethod={ setPaymentMethod }
 						/>
@@ -87,19 +88,21 @@ Checkout.propTypes = {
 
 function PaymentMethodsStep( {
 	setStepNumber,
-	collapsed,
+	isActive,
+	isComplete,
 	availablePaymentMethods,
 	setPaymentMethod,
 	paymentMethod,
 } ) {
 	const localize = useLocalize();
 
-	// We must always display both the expanded and the collapsed version to keep
-	// their data available, using CSS to hide whichever is relevant.
+	// We must always display both the active and inactive version to keep their
+	// data available, using CSS to hide whichever is relevant.
 	return (
 		<React.Fragment>
 			<CheckoutStep
-				collapsed={ collapsed }
+				isActive={ isActive }
+				isComplete={ isComplete }
 				stepNumber={ 1 }
 				title={ localize( 'Pick a payment method' ) }
 			>
@@ -110,13 +113,15 @@ function PaymentMethodsStep( {
 				/>
 			</CheckoutStep>
 			<CheckoutStep
-				collapsed={ ! collapsed }
+				isActive={ ! isActive }
+				isComplete={ isComplete }
 				stepNumber={ 1 }
 				title={ localize( 'Payment method' ) }
 				onEdit={ () => setStepNumber( 1 ) }
 			>
 				<CheckoutPaymentMethods
-					collapsed
+					isActive={ isActive }
+					isComplete={ isComplete }
 					availablePaymentMethods={ availablePaymentMethods }
 					onChange={ setPaymentMethod }
 					paymentMethod={ paymentMethod }

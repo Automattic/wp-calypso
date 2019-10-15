@@ -18,18 +18,27 @@ export default function CheckoutStep( {
 	stepNumber,
 	title,
 	onEdit,
-	collapsed,
+	isActive,
+	isComplete,
 	children,
 } ) {
-	const classNames = collapsed
-		? [ className, 'checkout-step', 'checkout-step--is-collapsed' ]
-		: [ className, 'checkout-step' ];
+	const classNames = [
+		className,
+		'checkout-step',
+		...( isActive ? [ 'checkout-step--is-active' ] : [] ),
+		...( isComplete ? [ 'checkout-step--is-complete' ] : [] ),
+	];
 	return (
-		<StepWrapper collapsed={ collapsed } className={ joinClasses( classNames ) }>
+		<StepWrapper
+			isActive={ isActive }
+			isComplete={ isComplete }
+			className={ joinClasses( classNames ) }
+		>
 			<CheckoutStepHeader
 				stepNumber={ stepNumber }
 				title={ title }
-				collapsed={ collapsed }
+				isActive={ isActive }
+				isComplete={ isComplete }
 				onEdit={ onEdit }
 			/>
 			<StepContent>{ children }</StepContent>
@@ -43,13 +52,15 @@ CheckoutStep.propTypes = {
 	title: PropTypes.string.isRequired,
 };
 
-function CheckoutStepHeader( { className, stepNumber, title, collapsed, onEdit } ) {
+function CheckoutStepHeader( { className, stepNumber, title, isActive, isComplete, onEdit } ) {
 	const localize = useLocalize();
 	return (
 		<StepHeader className={ joinClasses( [ className, 'checkout-step__header' ] ) }>
-			<Stepper isComplete={ collapsed }>{ stepNumber }</Stepper>
+			<Stepper isComplete={ isComplete } isActive={ isActive }>
+				{ stepNumber }
+			</Stepper>
 			<StepTitle className="checkout-step__title">{ title }</StepTitle>
-			{ onEdit && collapsed && (
+			{ onEdit && isComplete && ! isActive && (
 				<button className="checkout-step__edit" onClick={ onEdit }>
 					{ localize( 'Edit' ) }
 				</button>
@@ -62,26 +73,18 @@ CheckoutStepHeader.propTypes = {
 	className: PropTypes.string,
 	stepNumber: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
-	collapsed: PropTypes.bool,
+	isActive: PropTypes.bool,
+	isComplete: PropTypes.bool,
 	onEdit: PropTypes.func,
 };
 
-function Stepper( { isComplete, className, children } ) {
-	if ( isComplete ) {
-		return (
-			<StepNumber
-				className={ joinClasses( [
-					className,
-					'checkout-step__stepper',
-					'checkout-step__stepper--is-complete',
-				] ) }
-			>
-				{ children }
-			</StepNumber>
-		);
-	}
+function Stepper( { isComplete, isActive, className, children } ) {
 	return (
-		<StepNumber className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }>
+		<StepNumber
+			isComplete={ isComplete }
+			isActive={ isActive }
+			className={ joinClasses( [ className, 'checkout-step__stepper' ] ) }
+		>
 			{ children }
 		</StepNumber>
 	);
@@ -90,4 +93,5 @@ function Stepper( { isComplete, className, children } ) {
 Stepper.propTypes = {
 	className: PropTypes.string,
 	isComplete: PropTypes.bool,
+	isActive: PropTypes.bool,
 };
