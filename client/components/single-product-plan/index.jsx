@@ -20,12 +20,12 @@ class SingleProductPlan extends Component {
 	static propTypes = {
 		billingTimeFrame: PropTypes.string,
 		currencyCode: PropTypes.string,
-		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		discountedPrice: PropTypes.number,
 		fullPrice: PropTypes.number,
 		isPurchased: PropTypes.bool,
-		subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+		subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	};
 
 	renderHeader() {
@@ -43,13 +43,14 @@ class SingleProductPlan extends Component {
 
 		return (
 			<div className="single-product-plan__header">
-				<div className="single-product-plan__header-primary">
-					<h3 className="single-product-plan__title">{ title }</h3>
-				</div>
+				{ title && (
+					<div className="single-product-plan__header-primary">
+						<h3 className="single-product-plan__title">{ title }</h3>
+					</div>
+				) }
 				<div className="single-product-plan__header-secondary">
-					{ isPurchased ? (
-						<div className="single-product-plan__subtitle">{ subtitle }</div>
-					) : (
+					{ subtitle && <div className="single-product-plan__subtitle">{ subtitle }</div> }
+					{ ! isPurchased && (
 						<SingleProductPlanPriceGroup
 							billingTimeFrame={ billingTimeFrame }
 							currencyCode={ currencyCode }
