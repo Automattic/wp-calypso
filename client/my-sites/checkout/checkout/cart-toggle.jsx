@@ -18,9 +18,7 @@ class CartToggle extends Component {
 		this.state = { isShowingCartOnMobile: false };
 	}
 
-	toggleCartOnMobile = event => {
-		event.preventDefault();
-
+	toggleCartOnMobile = () => {
 		const show = ! this.state.isShowingCartOnMobile;
 		this.setState( { isShowingCartOnMobile: show } );
 		showCartOnMobile( show );
@@ -30,10 +28,14 @@ class CartToggle extends Component {
 		const label = this.state.isShowingCartOnMobile
 			? this.props.translate( 'Hide order summary' )
 			: this.props.translate( 'Show order summary' );
+
 		return (
-			<a className="checkout__summary-toggle" onClick={ this.toggleCartOnMobile }>
+			<button
+				className="button is-link checkout__summary-toggle"
+				onClick={ this.toggleCartOnMobile }
+			>
 				{ label }
-			</a>
+			</button>
 		);
 	}
 }
