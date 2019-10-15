@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
 import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -97,6 +96,7 @@ import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { isExternal } from 'lib/url';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -647,8 +647,10 @@ export class Checkout extends React.Component {
 						{
 							args: {
 								productName: renewalItem.product_name,
-								duration: i18n.moment.duration( { days: renewalItem.bill_period } ).humanize(),
-								date: i18n.moment( product.expiry ).format( 'LL' ),
+								duration: this.props.moment
+									.duration( { days: renewalItem.bill_period } )
+									.humanize(),
+								date: this.props.moment( product.expiry ).format( 'LL' ),
 								email: product.user_email,
 							},
 						}
@@ -924,4 +926,4 @@ export default connect(
 		requestSite,
 		loadTrackingTool,
 	}
-)( localize( Checkout ) );
+)( localize( withLocalizedMoment( Checkout ) ) );

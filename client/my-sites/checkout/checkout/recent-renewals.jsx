@@ -1,12 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -40,7 +39,7 @@ RecentRenewalListItem.propTypes = {
 };
 
 function getRecentRenewalProductsMatchingIds( products, ids ) {
-	const oldestMoment = i18n.moment().subtract( 30, 'days' );
+	const oldestMoment = moment().subtract( 30, 'days' );
 	return products.filter( product => {
 		return (
 			ids.includes( product.productId ) &&
