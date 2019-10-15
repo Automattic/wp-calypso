@@ -59,7 +59,7 @@
 		"@wordpress/edit-post": "3.8.1",
 		"@wordpress/editor": "9.7.1",
 		"@wordpress/element": "2.8.1",
-		"@wordpress/format-library": "1.6.0",
+		"@wordpress/format-library": "1.9.1",
 		"@wordpress/notices": "1.8.1",
 		"@wordpress/nux": "3.7.1",
 		"@wordpress/plugins": "2.7.1",
