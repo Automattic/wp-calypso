@@ -1,5 +1,9 @@
 .importer__import-progress {
 	&.progress-bar {
+		display: block;
+		margin-bottom: 5px;
+		margin-left: auto;
+		margin-right: auto;
 		width: 80%;
 	}
 
@@ -12,6 +16,11 @@
 	}
 }
 
+.importer__import-progress-message {
+	text-align: center;
+	color: var( --color-text-subtle );
+}
+
 .importer__start {
 	float: none !important;
 }
@@ -22,11 +31,6 @@
 	transform: translateX( -50% );
 }
 
-.importer__importing-pane {
-	text-align: center;
-}
-
 .importer__status-message {
-	font-style: italic;
-	color: var( --color-neutral-light );
+	text-align: center;
 }
