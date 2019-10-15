@@ -18,7 +18,7 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  */
 export default function isEligibleForDotcomChecklist( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );
-	const designType = get( siteOptions, 'design_type' );
+	const isWpComStore = get( siteOptions, 'is_wpcom_store' );
 	const createdAt = get( siteOptions, 'created_at', '' );
 
 	// Checklist should not show up if the site is created before the feature was launched.
@@ -34,5 +34,5 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 		return false;
 	}
 
-	return 'store' !== designType;
+	return ! isWpComStore;
 }
