@@ -13,6 +13,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
+import AppsBadge from 'blocks/get-apps/apps-badge';
 import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -361,20 +362,22 @@ class Home extends Component {
 							{ translate( 'Make updates on the go' ) }
 						</h6>
 						<div className="customer-home__card-button-pair customer-home__card-mobile">
-							<Button
-								href="https://play.google.com/store/apps/details?id=org.wordpress.android"
-								aria-label={ translate( 'Google Play' ) }
-								onClick={ () => trackAction( 'mobile', 'google_play' ) }
+							<AppsBadge
+								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
+								storeName={ 'android' }
+								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
+								altText={ translate( 'Google Play Store download badge' ) }
 							>
 								<img src="/calypso/images/customer-home/google-play.png" alt="" />
-							</Button>
-							<Button
-								href="https://apps.apple.com/us/app/wordpress/id335703880"
-								aria-label={ translate( 'App Store' ) }
-								onClick={ () => trackAction( 'mobile', 'app_store' ) }
+							</AppsBadge>
+							<AppsBadge
+								storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
+								storeName={ 'ios' }
+								titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
+								altText={ translate( 'Apple App Store download badge' ) }
 							>
 								<img src="/calypso/images/customer-home/apple-store.png" alt="" />
-							</Button>
+							</AppsBadge>
 						</div>
 					</Card>
 				</div>
