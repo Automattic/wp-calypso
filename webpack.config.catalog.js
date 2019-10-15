@@ -2,7 +2,7 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 
 module.exports = {
-	entry: './catalog/public/index.js',
+	entry: './apps/catalog/public/index.js',
 	mode: 'development',
 	module: {
 		rules: [
@@ -20,14 +20,14 @@ module.exports = {
 	},
 	resolve: { extensions: [ '*', '.js', '.jsx' ] },
 	output: {
-		path: path.resolve( __dirname, '/catalog/dist/' ),
-		publicPath: '/catalog/dist/',
+		path: path.resolve( __dirname, '/apps/catalog/dist/' ),
+		publicPath: '/dist/',
 		filename: 'bundle.js',
 	},
 	devServer: {
-		contentBase: path.join( __dirname, '/catalog/public/' ),
+		contentBase: path.join( __dirname, '/apps/catalog/public/' ),
 		port: 3000,
-		publicPath: 'http://localhost:3000/catalog/dist/',
+		publicPath: 'http://localhost:3000/dist/',
 		hotOnly: true,
 	},
 	plugins: [ new webpack.HotModuleReplacementPlugin() ],
