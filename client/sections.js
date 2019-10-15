@@ -470,6 +470,14 @@ const sections = [
 		group: 'sites',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'gutenboarding-topdown',
+		paths: [ '/gutenboarding-topdown' ],
+		module: 'gutenboarding-topdown',
+		secondary: false,
+		group: 'sites',
+		enableLoggedOut: true,
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {
