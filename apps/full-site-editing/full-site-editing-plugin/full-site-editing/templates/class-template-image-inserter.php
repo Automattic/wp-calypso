@@ -110,13 +110,16 @@ class Template_Image_Inserter {
 		// 2. Create a file object.
 		$file_name  = basename( wp_parse_url( $image_url, PHP_URL_PATH ) );
 		$desc       = 'Template Part Image';
-		$file_array = array(
+		$file_array = [
 			'name'     => $file_name,
 			'tmp_name' => $local_file,
-		);
+		];
 
-		// 3. Sideload and return the local URL.
+		// 3. Sideload, remove tmp file, and return the local URL.
 		$id = media_handle_sideload( $file_array, 0, $desc );
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		@unlink( $local_file );
+
 		if ( is_wp_error( $id ) ) {
 			return $id;
 		}
