@@ -141,7 +141,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn
 					section={ this.props.sectionGroup }
-					compact={ this.props.sectionName === 'checkout' }
+					isCheckout={ this.props.sectionName === 'checkout' }
 				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
@@ -189,8 +189,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForCheckout = startsWith( currentRoute, '/checkout' );
-	const noMasterbarForRoute = isJetpackLogin || noMasterbarForCheckout;
+	const noMasterbarForRoute = isJetpackLogin;
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =

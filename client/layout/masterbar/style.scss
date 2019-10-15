@@ -519,3 +519,19 @@ a.masterbar__quick-language-switcher {
 	opacity: 0;
 	pointer-events: none;
 }
+
+.masterbar__secure-checkout {
+	display: flex;
+	align-items: center;
+	padding-left: 10px;
+
+	.masterbar__wpcom-wordmark {
+		margin-right: 5px;
+	}
+
+	.masterbar__secure-checkout-text {
+		font-weight: 300;
+		color: var( --color-primary-5 );
+		transform: translateY( 1px );
+	}
+}
