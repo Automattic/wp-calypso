@@ -323,6 +323,7 @@ class WP_Template_Inserter {
 					'post_content' => $template_content_by_slug['about'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
+					'menu_order'   => 1,
 				]
 			);
 		}
@@ -334,6 +335,7 @@ class WP_Template_Inserter {
 					'post_content' => $template_content_by_slug['contact'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
+					'menu_order'   => 1,
 				]
 			);
 		}
