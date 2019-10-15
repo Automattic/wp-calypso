@@ -492,12 +492,6 @@ Each should include in its `children` a `CheckoutNextStepButton` if there is a f
 
 If a step has the `onEdit` prop, it will include an "Edit" link when `isComplete` is true which will call the `onEdit` prop function. The parent component is responsible for using this to toggle the component's state in an appropriate way (perhaps by setting `isActive` to true). The parent should also modify the URL so that the state is serialized somehow in the URL (this allows the "Back" button to work in an expected way when collapsing and expanding steps).
 
-### CheckoutSubmitButton
-
-Renders the "Pay" button. Requires a `total` prop and a `paymentMethod` prop to identify the system it should use for submitting the data. The `value` prop can be used to customize the text which by default will be "Pay " followed by `total.amount.displayValue`.
-
-When clicked, the button will call its `onClick` prop. The parent component must then call the `submitCheckout()` function that is exported by this package which will take a specific action based on its first argument.
-
 ### getPaymentMethods()
 
 A helper function that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only.
