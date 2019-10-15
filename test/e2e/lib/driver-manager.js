@@ -283,9 +283,10 @@ export async function ensureNotLoggedIn( driver ) {
 		await driver.executeScript( 'window.document.cookie = "sensitive_pixel_option=no;";' );
 	}
 
-	return await driver.executeScript(
+	await driver.executeScript(
 		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com";'
 	);
+	return driver.sleep( 500 );
 }
 
 export async function dismissAllAlerts( driver ) {
