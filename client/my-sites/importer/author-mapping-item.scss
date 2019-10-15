@@ -12,6 +12,10 @@
 		float: right;
 	}
 
+	& > span {
+		width: 45%;
+	}
+
 	div.user {
 		display: inline;
 	}
