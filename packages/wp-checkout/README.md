@@ -524,9 +524,9 @@ An optional boolean prop, `collapsed`, can be used to simplify the output for wh
 
 Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
 
-### renderDisplayValueMarkdown(currency, displayValue)
+### renderDisplayValueMarkdown(displayValue)
 
-Takes two arguments, a currency string and a displayValue string and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
+Takes one argument, a displayValue string, and returns the displayValue with some minor Markdown formatting. Specifically, the `~~` characters can be used to make ~~strike-through~~ text.
 
 ### submitCheckout({ paymentMethod, billingContact, items, total, onSuccess, onFailure, successRedirectUrl, failureRedirectUrl })
 
