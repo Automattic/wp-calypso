@@ -1,0 +1,9 @@
+name: Continuous Integration
+on: push
+
+jobs:
+  check-react-duplicates:
+    name: Check duplicate React
+      runs-on: ubuntu-latest
+      steps:
+        - run: npx nodupdeps react
