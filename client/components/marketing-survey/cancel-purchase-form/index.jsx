@@ -585,10 +585,12 @@ class CancelPurchaseForm extends React.Component {
 			}
 
 			if ( surveyStep === steps.DOWNGRADE_STEP ) {
+				const { precision } = getCurrencyDefaults( purchase.currencyCode );
+				const planCost = parseFloat( this.props.downgradePlanPrice ).toFixed( precision );
 				return (
 					<DowngradeStep
 						currencySymbol={ purchase.currencySymbol }
-						planCost={ this.props.downgradePlanPrice }
+						planCost={ planCost }
 						refundAmount={ this.getRefundAmount() }
 					/>
 				);
