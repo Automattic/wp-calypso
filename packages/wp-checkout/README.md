@@ -419,7 +419,7 @@ A payment method, in the context of this package, consists of the following piec
 - A component that displays that payment method selection button which can be as simple as the name and an icon. It will receive the props of the `CheckoutStep`.
 - A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It will receive the props of the `CheckoutStep`.
 - A component form that displays the required billing contact information. It will receive the props of the `CheckoutStep`.
-- A function that completes the payment using the data object. This function must return a Promise or use a redirect.
+- A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
 
 Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
 
@@ -428,14 +428,15 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 ```
 {
 	id: string,
-	button: component,
-	form: component,
-	billingContactForm: component,
-	submit: function,
+	initialData: object,
+	labelComponent: component,
+	paymentMethodComponent: component,
+	billingContactComponent: component,
+	submitButtonComponent: component,
 }
 ```
 
-Within the `form` component and the `billingContactForm` component, the Hook `usePaymentMethod()` will return an object with the above properties pertaining to the active payment method. To retreieve all the payment methods, the function `getPaymentMethods()` will return an array that contains them all.
+Within the `form` component and the `billingContactForm` component, the Hook `usePaymentMethod()` will return a string with the key of the currently selected payment method (if any). To retreieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
 
 ## 💰 Advanced API
 
@@ -535,9 +536,17 @@ Calling this function (which should only be done by the `CheckoutSubmitButton`) 
 
 A React Hook that will return an object containing whatever data was entered in the billing contact step. Must only be used inside `CheckoutProvider`.
 
+### useCheckoutHandlers()
+
+A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`.
+
 ### useCheckoutLineItems()
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
+
+### useCheckoutRedirects()
+
+A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`.
 
 ### usePaymentMethod()
 
