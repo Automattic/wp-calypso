@@ -3,7 +3,7 @@ Single Product Plan
 
 Single Product Plan is a React component for rendering a box with single product short description and purchase options.
 
-It's used e.g. on `my-plans` page near the bundle plans grid. 
+It's used e.g. on `my-plans` page near the bundle plans grid and is intended to render a single product plan (not a regular plan). See p1HpG7-7nT-p2 for more details.
 
 ## Usage
 
@@ -16,7 +16,7 @@ export default class extends React.Component {
 		return (
 			<SingleProductPlan
 				title={ <Fragment>Jetpack Backup <em>Real-Time</em></Fragment> }
-				subtitle={ <span>Included in your <a href="/my-plan">Personal Plan</a></span> }
+				subtitle={ <Fragment>Included in your <a href="/my-plan">Personal Plan</a></Fragment> }
 				description="Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives"
 				isPurchased
 			/>
@@ -29,7 +29,7 @@ export default class extends React.Component {
 
 The following props can be passed to the Single Product Plan component:
 
-* `billingTimeFrame`: ( string ) Billing time frame
+* `billingTimeFrame`: ( string ) Billing time frame label
 * `currencyCode`: ( string ) Currency code
 * `description`: ( string | object ) Product description
 * `discountedPrice`: ( number ) Discounted price of the product
