@@ -34,19 +34,19 @@ const PhpMyAdminCard = ( { translate, siteId } ) => {
 
 	return (
 		<Card>
-			<div className="hosting__card-icon-col">
-				<MaterialIcon className="hosting__card-icon" icon="dns" size={ 32 } />
+			<div className="phpmyadmin-card__icon-col">
+				<MaterialIcon icon="dns" size={ 32 } />
 			</div>
-			<div className="hosting__card-col">
-				<CardHeading>
-					{ translate( 'Database Access' ) }
-				</CardHeading>
+			<div>
+				<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
 				<p>
 					{ translate(
 						'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
 					) }
 				</p>
-				<Button onClick={ handlePmaLogin } busy={ loading }>{ translate( 'Access PHPMyAdmin' ) }</Button>
+				<Button onClick={ handlePmaLogin } busy={ loading }>
+					{ translate( 'Access PHPMyAdmin' ) }
+				</Button>
 			</div>
 		</Card>
 	);
@@ -54,6 +54,6 @@ const PhpMyAdminCard = ( { translate, siteId } ) => {
 
 export default connect( state => {
 	return {
-		siteId: getSelectedSiteId( state )
+		siteId: getSelectedSiteId( state ),
 	};
 } )( localize( PhpMyAdminCard ) );

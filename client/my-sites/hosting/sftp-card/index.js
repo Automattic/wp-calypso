@@ -32,14 +32,14 @@ const SFTPCard = ( { translate, username, password, errorCode, siteId, loading }
 
 	return (
 		<Card>
-			<div className="hosting__icon-col">
-				<MaterialIcon className="hosting__card-icon" icon="cloud" size={ 32 } />
+			<div className="sftp-card__icon-col">
+				<MaterialIcon icon="cloud" size={ 32 } />
 			</div>
-			<div className="hosting__card-col">
+			<div>
 				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
 				<p>{ translate( "Access and edit your website's files directly using an FTP client." ) }</p>
 				{ password && (
-					<div className="hosting__callout-box">
+					<div className="sftp-card__callout-box">
 						<p>{ translate( 'Your new password for your sftp user is:' ) }</p>
 						<p>
 							<code>{ password }</code>
@@ -56,10 +56,12 @@ const SFTPCard = ( { translate, username, password, errorCode, siteId, loading }
 						Create SFTP User
 					</Button>
 				) }
-				<table className={ classNames( 'hosting__info-table', { [ 'is-placeholder' ]: loading } ) }>
+				<table
+					className={ classNames( 'sftp-card__info-table', { [ 'is-placeholder' ]: loading } ) }
+				>
 					<tbody>
 						{ map( sftpData, ( data, title ) => (
-							<tr key={ title } >
+							<tr key={ title }>
 								<th>{ title }:</th>
 								<td>
 									<span>{ ! loading && data }</span>
