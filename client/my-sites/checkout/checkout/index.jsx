@@ -882,7 +882,9 @@ export class Checkout extends React.Component {
 			analyticsPath = '/checkout/no-site';
 		}
 
-		abtest( 'showPlanUpsellConcierge' );
+		if ( hasPersonalPlan( this.props.cart ) ) {
+			abtest( 'showPlanUpsellConcierge' );
+		}
 
 		if ( this.props.children ) {
 			this.props.setHeaderText( '' );
