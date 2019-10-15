@@ -1,14 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -251,7 +248,7 @@ class CancelPurchaseForm extends React.Component {
 			submitSurvey(
 				'calypso-remove-purchase',
 				selectedSite.ID,
-				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
+				enrichedSurveyData( surveyData, null, selectedSite, purchase )
 			).then( () => {
 				this.setState( {
 					isSubmitting: false,
