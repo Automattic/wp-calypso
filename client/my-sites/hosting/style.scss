@@ -18,7 +18,11 @@
         }
 
 		@include breakpoint( '>1280px' ) {
-			width: calc( 50% - 10px );
+            width: calc( 40% - 10px );
+            
+            &:first-child {
+                width: calc( 60% - 10px );
+            }
 		}
 	}
 }
@@ -30,6 +34,7 @@
 
 .hosting__info-table {
     border: 1px solid var( --color-border-subtle );
+    margin-top: 15px;
 
     th {
         text-align: right;
@@ -39,4 +44,15 @@
     th, td {
         padding: 10px;
     }
+
+    &.is-placeholder span {
+        padding: 0 35%;
+        background-color: var( --color-surface-backdrop );
+    }
+}
+
+.hosting__callout-box {
+    border: 1px solid var( --color-accent );
+    padding: 10px;
+    margin: 10px 0;
 }

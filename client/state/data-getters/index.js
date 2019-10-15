@@ -216,14 +216,55 @@ export const requestAtomicSFTPDetails = siteId =>
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/hosting/sftp`,
+				path: `/sites/${ siteId }/hosting/ssh`,
 				apiNamespace: 'wpcom/v2',
 			},
 			{}
 		),
 		{
-			fromApi: () => data => {
-				return [ 'sftpData', data ];
+			freshness: 5 * 60 * 1000,
+			fromApi: () => ( { username } ) => {
+				return [ `atomic-hosting-data-${ siteId }`, { username } ];
 			},
+		}
+	);
+
+export const resetAtomicSFTPUserPassword = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh/reset-password`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+			},
+			freshness: 0,
+		}
+	);
+
+export const createAtomicSFTPUser = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+			},
+			freshness: 0,
 		}
 	);
