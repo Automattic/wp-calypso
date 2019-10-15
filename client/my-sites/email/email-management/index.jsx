@@ -35,7 +35,7 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import EmptyContent from 'components/empty-content';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
-import { getSelectedDomain } from 'lib/domains';
+import { getSelectedDomain, isMappedDomain } from 'lib/domains';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -137,6 +137,17 @@ class EmailManagement extends React.Component {
 				secondaryAction: translate( 'Add Email Forwarding' ),
 				secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
 			};
+			if ( isMappedDomain( selectedDomain ) ) {
+				Object.assign( emptyContentProps, {
+					line: translate(
+						'Only domains using WordPress.com name servers are eligible for G Suite.'
+					),
+					action: translate( 'How To Change Name Servers' ),
+					actionURL:
+						'https://en.support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+					actionTarget: '_blank',
+				} );
+			}
 		} else {
 			emptyContentProps = {
 				title: translate( 'Enable powerful email features.' ),
@@ -147,11 +158,12 @@ class EmailManagement extends React.Component {
 				),
 			};
 		}
-		Object.assign( emptyContentProps, {
-			illustration: customDomainImage,
-			action: translate( 'Add a Custom Domain' ),
-			actionURL: '/domains/add/' + selectedSiteSlug,
-		} );
+		emptyContentProps.action ||
+			Object.assign( emptyContentProps, {
+				illustration: customDomainImage,
+				action: translate( 'Add a Custom Domain' ),
+				actionURL: '/domains/add/' + selectedSiteSlug,
+			} );
 
 		return <EmptyContent { ...emptyContentProps } />;
 	}
