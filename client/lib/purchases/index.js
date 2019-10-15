@@ -71,6 +71,13 @@ function getName( purchase ) {
 	return purchase.productName;
 }
 
+function getPartnerName( purchase ) {
+	if ( isPartnerPurchase( purchase ) ) {
+		return purchase.partnerName;
+	}
+	return null;
+}
+
 function getSubscriptionEndDate( purchase ) {
 	return purchase.expiryMoment.format( 'LL' );
 }
@@ -273,6 +280,10 @@ function isRemovable( purchase ) {
 	);
 }
 
+function isPartnerPurchase( purchase ) {
+	return !! purchase.partnerName;
+}
+
 /**
  * Returns the purchase cancelable flag, as opposed to the super weird isCancelable function which
  * manually checks all kinds of stuff
@@ -385,6 +396,10 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 
+	if ( isPartnerPurchase( purchase ) ) {
+		return i18n.translate( 'Host Managed Plan' );
+	}
+
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
@@ -423,6 +438,7 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
@@ -433,6 +449,7 @@ export {
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isPaidWithCredits,
+	isPartnerPurchase,
 	hasPaymentMethod,
 	isExpired,
 	isExpiring,

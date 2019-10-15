@@ -153,6 +153,11 @@
 	clear: none;
 }
 
+.manage-purchase__contact-partner {
+	font-weight: bold;
+	display: block;
+}
+
 .manage-purchase__description {
 	color: var( --color-text-subtle );
 	display: block;
@@ -201,7 +206,7 @@
 			}
 			&:first-child:nth-last-child( 4 ),
 			&:first-child:nth-last-child( 4 ) ~ li {
-				  max-width: 25%;
+				max-width: 25%;
 			}
 		}
 
