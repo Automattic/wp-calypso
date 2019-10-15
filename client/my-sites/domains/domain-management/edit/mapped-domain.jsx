@@ -161,7 +161,7 @@ const MappedDomain = createReactClass( {
 	transferMappedDomainNavItem() {
 		const { domain, selectedSite, translate } = this.props;
 
-		if ( domain.expired || domain.isSubdomain || ! domain.inboundTransferSupported ) {
+		if ( domain.expired || domain.isSubdomain || ! domain.isEligibleForInboundTransfer ) {
 			return null;
 		}
 
