@@ -6,13 +6,13 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import SingleProductPlan from '../index';
+import ProductCard from '../index';
 
-function SingleProductPlanExample() {
+function ProductCardExample() {
 	return (
 		<Fragment>
-			<h3>Single Product Plan - default</h3>
-			<SingleProductPlan
+			<h3>Product Card - default</h3>
+			<ProductCard
 				title="Jetpack Scan"
 				billingTimeFrame="per year"
 				fullPrice={ 25 }
@@ -24,8 +24,8 @@ function SingleProductPlanExample() {
 				}
 			/>
 
-			<h3>Single Product Plan - with a discount</h3>
-			<SingleProductPlan
+			<h3>Product Card - with a discount</h3>
+			<ProductCard
 				title="Jetpack Scan"
 				billingTimeFrame="per year"
 				fullPrice={ 25.99 }
@@ -38,8 +38,8 @@ function SingleProductPlanExample() {
 				}
 			/>
 
-			<h3>Single Product Plan - with a discounted price range</h3>
-			<SingleProductPlan
+			<h3>Product Card - with a discounted price range</h3>
+			<ProductCard
 				title="Jetpack Backup"
 				billingTimeFrame="per year"
 				fullPrice={ [ 16, 25 ] }
@@ -52,8 +52,8 @@ function SingleProductPlanExample() {
 				}
 			/>
 
-			<h3>Single Product Plan - already purchased</h3>
-			<SingleProductPlan
+			<h3>Product Card - already purchased</h3>
+			<ProductCard
 				title={
 					<Fragment>
 						Jetpack Backup <strong>Daily</strong>
@@ -69,8 +69,8 @@ function SingleProductPlanExample() {
 				isPurchased
 			/>
 
-			<h3>Single Product Plan - part of Jetpack plan</h3>
-			<SingleProductPlan
+			<h3>Product Card - part of Jetpack plan</h3>
+			<ProductCard
 				title={
 					<Fragment>
 						Jetpack Backup <em>Real-Time</em>
@@ -88,6 +88,6 @@ function SingleProductPlanExample() {
 	);
 }
 
-SingleProductPlanExample.displayName = 'SingleProductPlan';
+ProductCardExample.displayName = 'ProductCard';
 
-export default SingleProductPlanExample;
+export default ProductCardExample;

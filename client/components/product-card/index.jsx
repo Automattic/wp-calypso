@@ -9,14 +9,14 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import SingleProductPlanPriceGroup from './price-group';
+import ProductCardPriceGroup from './price-group';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class SingleProductPlan extends Component {
+class ProductCard extends Component {
 	static propTypes = {
 		billingTimeFrame: PropTypes.string,
 		currencyCode: PropTypes.string,
@@ -43,16 +43,16 @@ class SingleProductPlan extends Component {
 		} = this.props;
 
 		return (
-			<div className="single-product-plan__header">
+			<div className="product-card__header">
 				{ title && (
-					<div className="single-product-plan__header-primary">
-						<h3 className="single-product-plan__title">{ title }</h3>
+					<div className="product-card__header-primary">
+						<h3 className="product-card__title">{ title }</h3>
 					</div>
 				) }
-				<div className="single-product-plan__header-secondary">
-					{ subtitle && <div className="single-product-plan__subtitle">{ subtitle }</div> }
+				<div className="product-card__header-secondary">
+					{ subtitle && <div className="product-card__subtitle">{ subtitle }</div> }
 					{ ! isPurchased && (
-						<SingleProductPlanPriceGroup
+						<ProductCardPriceGroup
 							billingTimeFrame={ billingTimeFrame }
 							currencyCode={ currencyCode }
 							discountedPrice={ discountedPrice }
@@ -67,17 +67,17 @@ class SingleProductPlan extends Component {
 	render() {
 		const { description, isPurchased } = this.props;
 
-		const cardClassNames = classNames( 'single-product-plan', {
+		const cardClassNames = classNames( 'product-card', {
 			'is-purchased': isPurchased,
 		} );
 
 		return (
 			<Card className={ cardClassNames }>
 				{ this.renderHeader() }
-				{ description && <p className="single-product-plan__description">{ description }</p> }
+				{ description && <p className="product-card__description">{ description }</p> }
 			</Card>
 		);
 	}
 }
 
-export default SingleProductPlan;
+export default ProductCard;

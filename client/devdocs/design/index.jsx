@@ -90,6 +90,7 @@ import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
+import ProductCard from 'components/product-card/docs/example';
 import ProgressBar from '@automattic/calypso-ui/src/progress-bar/docs/example';
 import PromoSection from 'components/promo-section/docs/example';
 import PromoCard from 'components/promo-section/promo-card/docs/example';
@@ -103,7 +104,6 @@ import SectionNav from 'components/section-nav/docs/example';
 import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
-import SingleProductPlan from 'components/single-product-plan/docs/example';
 import SiteTitleControl from 'components/site-title/docs/example';
 import SocialLogos from 'components/social-logo/docs/example';
 import Spinner from 'components/spinner/docs/example';
@@ -266,7 +266,7 @@ class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
-					<SingleProductPlan readmeFilePath="single-product-plan" />
+					<ProductCard readmeFilePath="product-card" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />

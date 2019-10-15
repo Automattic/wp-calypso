@@ -10,10 +10,10 @@ import classNames from 'classnames';
  */
 import PlanPrice from 'my-sites/plan-price';
 
-const SingleProductPlanPriceGroup = props => {
+const ProductCardPriceGroup = props => {
 	const { billingTimeFrame, currencyCode, discountedPrice, fullPrice } = props;
 	const isDiscounted = !! discountedPrice;
-	const priceGroupClasses = classNames( 'single-product-plan__price-group', {
+	const priceGroupClasses = classNames( 'product-card__price-group', {
 		'is-discounted': isDiscounted,
 	} );
 
@@ -23,12 +23,12 @@ const SingleProductPlanPriceGroup = props => {
 			{ isDiscounted && (
 				<PlanPrice currencyCode={ currencyCode } rawPrice={ discountedPrice } discounted />
 			) }
-			<span className="single-product-plan__billing-timeframe">{ billingTimeFrame }</span>
+			<span className="product-card__billing-timeframe">{ billingTimeFrame }</span>
 		</div>
 	);
 };
 
-SingleProductPlanPriceGroup.propTypes = {
+ProductCardPriceGroup.propTypes = {
 	billingTimeFrame: PropTypes.string,
 	currencyCode: PropTypes.string,
 	discountedPrice: PropTypes.oneOfType( [
@@ -38,4 +38,4 @@ SingleProductPlanPriceGroup.propTypes = {
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 };
 
-export default SingleProductPlanPriceGroup;
+export default ProductCardPriceGroup;
