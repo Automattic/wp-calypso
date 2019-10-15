@@ -145,7 +145,9 @@ class UploadingPane extends React.PureComponent {
 					onClick={ isReadyForImport ? this.openFileSelector : null }
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
-					<div className="importer__upload-content">
+					<div
+						className={ `importer__upload-content ${ this.props.importerStatus.importerState }` }
+					>
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>

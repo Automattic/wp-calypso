@@ -26,6 +26,14 @@
 	right: 0;
 	text-align: center;
 	transform: translateY( -50% );
+
+	&.importer-upload-success {
+		color: var( --color-success );
+	}
+
+	&.importer-upload-failure {
+		color: var( --color-error );
+	}
 }
 
 .importer__upload-progress {
