@@ -45,7 +45,7 @@
 				"file-loader": "3.0.1",
 				"jest-config": "24.9.0",
 				"jest-enzyme": "7.1.1",
-				"mini-css-extract-plugin-with-rtl": "mini-css-extract-plugin-with-rtl@github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
+				"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 				"node-sass": "4.11.0",
 				"postcss-custom-properties": "8.0.9",
 				"postcss-loader": "3.0.0",
@@ -3092,9 +3092,9 @@
 			"dev": true
 		},
 		"@types/wordpress__block-editor": {
-			"version": "2.2.2",
-			"resolved": "https://registry.npmjs.org/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.2.tgz",
-			"integrity": "sha512-OQ4b+pccsHy/Et/na+QV6zwUSoS+dm4bZb+uDA9gBqkGB34QBdPDqa/RWojaWmW1Z4stXltOZ9XYp1Q+8+oYQg==",
+			"version": "2.2.3",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.3.tgz",
+			"integrity": "sha512-MGHhL80BiRm1KvlG4Vj2gdhwmSRErEVyb5NFgEDrUuUAkj8QknV8MQIQecmmV15WdmSqdvfrdgTm+zGeMe84Ng==",
 			"dev": true,
 			"requires": {
 				"@types/wordpress__blocks": "*",
@@ -14449,8 +14449,8 @@
 			"integrity": "sha512-jf84uxzwiuiIVKiOLpfYk7N46TSy8ubTonmneY9vrpHNAnp0QBt2BxWV9dO3/j+BoVAb+a5G6YDPW3M5HOdMWQ=="
 		},
 		"mini-css-extract-plugin-with-rtl": {
-			"version": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
-			"from": "mini-css-extract-plugin-with-rtl@github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
+			"version": "github:Automattic/mini-css-extract-plugin-with-rtl#f48ce03f385390257bdacbfec4759d38df983361",
+			"from": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
 			"dev": true,
 			"requires": {
 				"loader-utils": "^1.1.0",
