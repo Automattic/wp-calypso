@@ -25,20 +25,13 @@ export default function CheckoutPaymentMethods( {
 		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
 		: paymentMethods;
 
-	if ( isComplete && ! isActive ) {
-		// TODO
-		return (
-			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				paymentMethod.id
-			</div>
-		);
-	}
-
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 			{ paymentMethodsToDisplay.map( method => (
 				<PaymentMethod
 					{ ...method }
+					isActive={ isActive }
+					isComplete={ isComplete }
 					key={ method.id }
 					checked={ paymentMethod === method.id }
 					onClick={ onChange }

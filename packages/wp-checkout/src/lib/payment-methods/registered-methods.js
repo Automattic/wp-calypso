@@ -1,6 +1,11 @@
 /* @format */
 
 /**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
  * Internal dependencies
  */
 import { registerPaymentMethod } from '../../lib/payment-methods';
@@ -8,15 +13,15 @@ import { registerPaymentMethod } from '../../lib/payment-methods';
 export default function loadPaymentMethods() {
 	registerPaymentMethod( {
 		id: 'apple-pay',
-		button: 'Apple Pay',
-		form: null,
+		button: <span>Apple Pay</span>,
+		form: ( { isActive } ) => ( isActive ? 'Apple Pay' : null ),
 		billingContactForm: null,
 		submit: () => {},
 	} );
 
 	registerPaymentMethod( {
 		id: 'card',
-		button: 'Credit Card',
+		button: <span>Credit Card</span>,
 		form: null,
 		billingContactForm: null,
 		submit: () => {},
@@ -24,8 +29,8 @@ export default function loadPaymentMethods() {
 
 	registerPaymentMethod( {
 		id: 'paypal',
-		button: 'Paypal',
-		form: null,
+		button: <span>Paypal</span>,
+		form: ( { isActive } ) => ( isActive ? 'Paypal' : null ),
 		billingContactForm: null,
 		submit: () => {},
 	} );
