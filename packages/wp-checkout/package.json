@@ -1,11 +1,26 @@
 {
-	"name": "wp-checkout",
+	"name": "@automattic/wp-checkout",
 	"version": "1.0.0",
-	"description": "A checkout component for Automattic",
+	"description": "A checkout component for Automattic brands",
 	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "webpack-dev-server --mode development"
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
 	},
 	"repository": {
 		"type": "git",
@@ -18,18 +33,6 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/wp-checkout#readme",
-	"devDependencies": {
-		"@babel/cli": "^7.6.4",
-		"@babel/core": "^7.6.4",
-		"@babel/preset-env": "^7.6.3",
-		"@babel/preset-react": "^7.6.3",
-		"babel-loader": "^8.0.6",
-		"css-loader": "^3.2.0",
-		"style-loader": "^1.0.0",
-		"webpack": "^4.41.1",
-		"webpack-cli": "^3.3.9",
-		"webpack-dev-server": "^3.8.2"
-	},
 	"dependencies": {
 		"prop-types": "^15.7.2",
 		"react": "^16.10.2",
