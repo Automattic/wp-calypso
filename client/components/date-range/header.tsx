@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { noop } from 'lodash';
 import { localize, LocalizeProps } from 'i18n-calypso';
 
@@ -18,7 +18,7 @@ interface Props {
 	cancelButtonText: string | null | undefined;
 }
 
-export function DateRangeHeader( props: Props & SharedProps & LocalizeProps ) {
+export const DateRangeHeader: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
 	return (
 		<div className="date-range__popover-header">
 			<Button className="date-range__cancel-btn" onClick={ props.onCancelClick } compact>
@@ -29,7 +29,7 @@ export function DateRangeHeader( props: Props & SharedProps & LocalizeProps ) {
 			</Button>
 		</div>
 	);
-}
+};
 
 DateRangeHeader.defaultProps = {
 	onApplyClick: noop,

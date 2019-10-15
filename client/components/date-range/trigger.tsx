@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'components/gridicon';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -27,7 +27,7 @@ interface Props {
 	showClearBtn: boolean;
 }
 
-export function DateRangeTrigger( props: Props & SharedProps & LocalizeProps ) {
+export const DateRangeTrigger: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
 	const {
 		startDate,
 		endDate,
@@ -80,7 +80,7 @@ export function DateRangeTrigger( props: Props & SharedProps & LocalizeProps ) {
 			) }
 		</ButtonGroup>
 	);
-}
+};
 
 DateRangeTrigger.defaultProps = {
 	onTriggerClick: noop,

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useCallback } from 'react';
+import React, { FunctionComponent, useRef, useCallback } from 'react';
 import { noop } from 'lodash';
 import uuidv4 from 'uuid/v4';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -26,7 +26,7 @@ interface Props {
 	onInputChange: ( value: string | null | undefined, startOrEnd: StartOrEnd ) => void;
 }
 
-export function DateRangeInputs( props: Props & SharedProps & LocalizeProps ) {
+export const DateRangeInputs: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
 	const uniqueId = useRef( uuidv4() );
 
 	const startDateID = `startDate-${ uniqueId }`;
@@ -127,7 +127,7 @@ export function DateRangeInputs( props: Props & SharedProps & LocalizeProps ) {
 			</div>
 		</fieldset>
 	);
-}
+};
 
 DateRangeInputs.defaultProps = {
 	onInputChange: noop,
