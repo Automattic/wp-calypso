@@ -2,13 +2,14 @@
 Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.2
-Stable tag: 0.9
+Tested up to: 5.3
+Stable tag: 0.11
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Enhances your page creation workflow within the Block Editor.
+
 
 == Description ==
 
@@ -38,10 +39,16 @@ It adds an excerpt! And meta information! It really is much more useful, especia
 
 This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
+
 == Changelog ==
 
-= 0.9 =
+= 0.11 =
+* Add color, background color, font size, and text alignment support to the Site Title, Site Description, and Navigation Menu blocks.
 
+= 0.10 =
+* Update page template selector with template preview.
+
+= 0.9 =
 * Rename wp_template CPT to wp_template_part.
 
 = 0.7 =

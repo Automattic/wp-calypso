@@ -77,6 +77,8 @@
 		"network-connection": true,
 		"perfmon": true,
 		"persist-redux": true,
+		"plans/jetpack-backup": false,
+		"plans/jetpack-scan": false,
 		"plans/personal-plan": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,

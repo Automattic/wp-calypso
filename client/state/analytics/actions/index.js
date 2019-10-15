@@ -41,27 +41,13 @@ export function bumpStat( group, name ) {
 export function loadTrackingTool( trackingTool ) {
 	return {
 		type: ANALYTICS_TRACKING_ON,
-		meta: {
-			analytics: [
-				{
-					type: ANALYTICS_TRACKING_ON,
-					payload: { trackingTool },
-				},
-			],
-		},
+		trackingTool,
 	};
 }
 
 export function setTracksOptOut( isOptingOut ) {
 	return {
 		type: ANALYTICS_TRACKS_OPT_OUT,
-		meta: {
-			analytics: [
-				{
-					type: ANALYTICS_TRACKS_OPT_OUT,
-					payload: { isOptingOut },
-				},
-			],
-		},
+		isOptingOut,
 	};
 }

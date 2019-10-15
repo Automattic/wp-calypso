@@ -22,6 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
+import getSiteImportEngine from 'state/selectors/get-site-import-engine';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
@@ -113,6 +114,7 @@ class CancelPurchaseForm extends React.Component {
 			questionTwoText: '',
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: '',
+			importQuestionText: '',
 
 			isSubmitting: false,
 		};
@@ -187,6 +189,27 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
+	onImportRadioChange = event => {
+		this.recordClickRadioEvent( 'import_radio', event.currentTarget.value );
+
+		const newState = {
+			...this.state,
+			importQuestionRadio: event.currentTarget.value,
+			importQuestionText: '',
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
+	onImportTextChange = event => {
+		const newState = {
+			...this.state,
+			importQuestionText: event.currentTarget.value,
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
 	// Because of the legacy reason, we can't just use `flowType` here.
 	// Instead we have to map it to the data keys defined way before `flowType` is introduced.
 	getSurveyDataType = () => {
@@ -221,6 +244,7 @@ class CancelPurchaseForm extends React.Component {
 					text: this.state.questionTwoText,
 				},
 				'what-better': { text: this.state.questionThreeText },
+				'import-satisfaction': { response: this.state.importQuestionRadio },
 				type: this.getSurveyDataType(),
 			};
 
@@ -304,7 +328,7 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonOne', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div>
+			<div class="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
 				{ questionOneOrder.map( question => reasons[ question ] ) }
 			</div>
@@ -366,9 +390,53 @@ class CancelPurchaseForm extends React.Component {
 		appendRadioOption( 'anotherReasonTwo', translate( 'Another reason…' ), ' ' );
 
 		return (
-			<div>
+			<div class="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
 				{ questionTwoOrder.map( question => reasons[ question ] ) }
+			</div>
+		);
+	};
+
+	renderImportQuestion = () => {
+		const reasons = [];
+		const { translate } = this.props;
+		const { importQuestionRadio, importQuestionText } = this.state;
+
+		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+			reasons.push(
+				radioOption(
+					key,
+					importQuestionRadio,
+					importQuestionText,
+					this.onImportRadioChange,
+					this.onImportTextChange,
+					radioPrompt,
+					textPlaceholder
+				)
+			);
+
+		appendRadioOption( 'happy', translate( 'I was happy.' ) );
+
+		appendRadioOption(
+			'look',
+			translate(
+				'Most of my content was imported, but it was too hard to get things looking right.'
+			)
+		);
+
+		appendRadioOption( 'content', translate( 'Not enough of my content was imported.' ) );
+
+		appendRadioOption(
+			'functionality',
+			translate( "I didn't have the functionality I have on my existing site." )
+		);
+
+		return (
+			<div class="cancel-purchase-form__question">
+				<FormLegend>
+					{ translate( 'You imported from another site. How did the import go?' ) }
+				</FormLegend>
+				{ reasons }
 			</div>
 		);
 	};
@@ -449,7 +517,7 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	surveyContent() {
-		const { translate, showSurvey } = this.props;
+		const { translate, isImport, showSurvey } = this.props;
 		const { surveyStep } = this.state;
 
 		if ( showSurvey ) {
@@ -463,6 +531,7 @@ class CancelPurchaseForm extends React.Component {
 							) }
 						</p>
 						{ this.renderQuestionOne() }
+						{ isImport && this.renderImportQuestion() }
 						{ this.renderQuestionTwo() }
 					</div>
 				);
@@ -486,6 +555,10 @@ class CancelPurchaseForm extends React.Component {
 						{ this.renderLiveChat() }
 					</div>
 				);
+			}
+
+			if ( surveyStep === steps.IMPORT_SURVEY_STEP ) {
+				return <div>Import survey here</div>;
 			}
 
 			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
@@ -528,7 +601,8 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	clickNext = () => {
-		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state ) ) {
+		const { isImport } = this.props;
+		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state, isImport ) ) {
 			return;
 		}
 		this.changeSurveyStep( nextStep );
@@ -542,7 +616,7 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getStepButtons = () => {
-		const { flowType, translate, disableButtons, purchase } = this.props;
+		const { flowType, translate, disableButtons, purchase, isImport } = this.props;
 		const { surveyStep } = this.state;
 		const disabled = disableButtons || this.state.isSubmitting;
 
@@ -560,7 +634,7 @@ class CancelPurchaseForm extends React.Component {
 			),
 			next = {
 				action: 'next',
-				disabled: disabled || ! isSurveyFilledIn( this.state ),
+				disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
 				label: translate( 'Next Step' ),
 				onClick: this.clickNext,
 			},
@@ -640,6 +714,7 @@ export default connect(
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
+		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 	} ),
 	{

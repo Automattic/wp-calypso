@@ -136,7 +136,7 @@ class SharingButtons extends Component {
 			<form
 				onSubmit={ this.saveChanges }
 				id="sharing-buttons"
-				className="sharing-settings sharing-buttons"
+				className="buttons__sharing-settings buttons__sharing-buttons"
 			>
 				<PageViewTracker
 					path="/marketing/sharing-buttons/:site"

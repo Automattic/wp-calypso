@@ -374,10 +374,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.page-template-modal .components-modal__header button' )
-			);
+			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				await driverHelper.selectElementByText(
+					this.driver,
+					By.css( '.template-selector-item__template-title' ),
+					'Blank'
+				);
+				await this.closeSidebar();
+			} else {
+				await driverHelper.selectElementByText(
+					this.driver,
+					By.css( '.page-template-modal__buttons .components-button' ),
+					'Use Blank template'
+				);
+			}
 		}
 	}
 }

@@ -28,12 +28,6 @@ registerBlockType( 'a8c/navigation-menu', {
 		html: false,
 		reusable: false,
 	},
-	attributes: {
-		align: {
-			type: 'string',
-			default: 'wide',
-		},
-	},
 	edit,
 	save: () => null,
 } );

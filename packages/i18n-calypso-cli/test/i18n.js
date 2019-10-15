@@ -7,7 +7,7 @@ const path = require( 'path' );
 /**
  * Internal dependencies
  */
-const i18n = require( '../i18n' );
+const i18n = require( '..' );
 
 // generate whitelist file
 const sourceFiles = [

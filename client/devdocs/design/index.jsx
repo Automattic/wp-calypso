@@ -34,7 +34,7 @@ import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from 'components/button/docs/example';
+import Buttons from '@automattic/calypso-ui/src/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
 import Cards from '@automattic/calypso-ui/src/card/docs/example';
 import Chart from 'components/chart/docs/example';

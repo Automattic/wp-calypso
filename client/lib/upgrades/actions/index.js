@@ -57,8 +57,6 @@ export {
 
 export { goToDomainCheckout } from './domain-search';
 
-export { startFreeTrial } from './free-trials';
-
 export {
 	cancelAndRefundPurchase,
 	cancelPurchase,

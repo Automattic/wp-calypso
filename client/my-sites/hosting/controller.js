@@ -19,15 +19,15 @@ export function redirectIfNotAtomic( context, next ) {
 	const state = store.getState();
 	const isAtomic = isSiteAutomatedTransfer( state, getSelectedSiteId( state ) );
 
-	if ( ! config.isEnabled( 'hosting' ) || ! isAtomic ) {
-		page.redirect( '/' );
+	if ( config.isEnabled( 'hosting' ) && isAtomic ) {
+		next();
+		return;
 	}
 
-	next();
+	page.redirect( '/' );
 }
 
 export function layout( context, next ) {
 	context.primary = React.createElement( Hosting );
-
 	next();
 }

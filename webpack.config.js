@@ -107,13 +107,14 @@ const nodeModulesToTranspile = [
 	// general form is <package-name>/.
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
+	'@github/webauthn-json/',
+	'acorn-jsx/',
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
-	'@github/webauthn-json/',
 	'filesize/',
-	'acorn-jsx/',
 	'prismjs/',
+	'react-spring/',
 	'regenerate-unicode-properties/',
 	'regexpu-core/',
 	'unicode-match-property-ecmascript/',
@@ -284,6 +285,7 @@ const webpackConfig = {
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
@@ -351,6 +353,15 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 // Replace `lodash` with `lodash-es`.
 if ( isCalypsoClient ) {
 	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
+}
+
+// Don't bundle `wpcom-xhr-request` for the browser.
+// Even though it's requested, we don't need it on the browser, because we're using
+// `wpcom-proxy-request` instead. Keep it for desktop and server, though.
+if ( isCalypsoClient && ! isDesktop ) {
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
+	);
 }
 
 // List of polyfills that we skip including in the evergreen bundle.

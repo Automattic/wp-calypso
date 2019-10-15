@@ -79,13 +79,7 @@ class StatsBanners extends Component {
 	renderGSuiteBanner() {
 		const { gsuiteDomainName, siteId, slug } = this.props;
 
-		return (
-			<GSuiteStatsNudge
-				siteSlug={ slug }
-				siteId={ siteId }
-				domainSlug={ gsuiteDomainName }
-			/>
-		);
+		return <GSuiteStatsNudge siteSlug={ slug } siteId={ siteId } domainSlug={ gsuiteDomainName } />;
 	}
 
 	renderUpworkBanner() {
@@ -95,7 +89,9 @@ class StatsBanners extends Component {
 	}
 
 	showGoogleMyBusinessBanner() {
-		return config.isEnabled( 'google-my-business' ) && this.props.isGoogleMyBusinessStatsNudgeVisible;
+		return (
+			config.isEnabled( 'google-my-business' ) && this.props.isGoogleMyBusinessStatsNudgeVisible
+		);
 	}
 
 	showGSuiteBanner() {
@@ -118,9 +114,7 @@ class StatsBanners extends Component {
 
 		return (
 			<Fragment>
-				{ gsuiteDomainName && (
-					<QueryEmailForwards domainName={ gsuiteDomainName } />
-				) }
+				{ gsuiteDomainName && <QueryEmailForwards domainName={ gsuiteDomainName } /> }
 
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 

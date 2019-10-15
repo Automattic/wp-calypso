@@ -201,16 +201,11 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
 						countryCode = extractStoredCardMetaValue( action, 'country_code' );
 						break;
-					case 'WPCOM_Billing_MoneyPress_Paygate': {
-						const paymentDetails = get( action, 'payment.newCardDetails', {} );
-						postalCode = paymentDetails[ 'postal-code' ];
-						countryCode = paymentDetails.country;
-						break;
-					}
 					case 'WPCOM_Billing_WPCOM':
 						postalCode = null;
 						countryCode = null;
 						break;
+					case 'WPCOM_Billing_Ebanx':
 					case 'WPCOM_Billing_Web_Payment':
 					case 'WPCOM_Billing_Stripe_Payment_Method': {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );

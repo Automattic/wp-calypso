@@ -197,9 +197,36 @@ class Full_Site_Editing {
 			'a8c/navigation-menu',
 			array(
 				'attributes'      => [
-					'className' => [
-						'default' => '',
+					'className'             => [
 						'type'    => 'string',
+						'default' => '',
+					],
+					'align'                 => [
+						'type'    => 'string',
+						'default' => 'wide',
+					],
+					'textAlign'             => [
+						'type'    => 'string',
+						'default' => 'center',
+					],
+					'textColor'             => [
+						'type' => 'string',
+					],
+					'customTextColor'       => [
+						'type' => 'string',
+					],
+					'backgroundColor'       => [
+						'type' => 'string',
+					],
+					'customBackgroundColor' => [
+						'type' => 'string',
+					],
+					'fontSize'              => [
+						'type'    => 'string',
+						'default' => 'normal',
+					],
+					'customFontSize'        => [
+						'type' => 'number',
 					],
 				],
 				'render_callback' => __NAMESPACE__ . '\render_navigation_menu_block',

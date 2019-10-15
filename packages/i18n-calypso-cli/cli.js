@@ -13,7 +13,7 @@ const program = require( 'commander' );
 /**
  * Internal dependencies
  */
-const i18n = require( './i18n' );
+const i18n = require( '.' );
 
 function collect( val, memo ) {
 	memo.push( val );
@@ -91,7 +91,7 @@ if ( linesFile ) {
 	lines = JSON.parse( fs.readFileSync( linesFile, 'utf8' ) );
 	for ( const line in lines ) {
 		lines[ line ] = lines[ line ].map( String );
-		const modPath = path.relative( __dirname, line ).replace( /^[\/.]+/, '' );
+		const modPath = path.relative( __dirname, line ).replace( /^[/.]+/, '' );
 		if ( modPath !== line ) {
 			lines[ modPath ] = lines[ line ];
 			delete lines[ line ];

@@ -8,6 +8,7 @@ import thunkMiddleware from 'redux-thunk';
  * Internal dependencies
  */
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
+import analyticsMiddleware from 'state/analytics/middleware';
 import { reducer as httpData, enhancer as httpDataEnhancer } from 'state/data-layer/http-data';
 import { combineReducers } from 'state/utils';
 import application from 'state/application/reducer';
@@ -51,5 +52,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export default () =>
 	createStore(
 		reducer,
-		composeEnhancers( httpDataEnhancer, applyMiddleware( thunkMiddleware, wpcomApiMiddleware ) )
+		composeEnhancers(
+			httpDataEnhancer,
+			applyMiddleware( thunkMiddleware, wpcomApiMiddleware, analyticsMiddleware )
+		)
 	);

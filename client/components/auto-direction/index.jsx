@@ -209,7 +209,7 @@ const setChildDirection = ( child, isRtl ) => {
  * @param {Object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
-export default function AutoDirection ( { children } ) {
+export default function AutoDirection( { children } ) {
 	const isRtl = useRtl();
 	return setChildDirection( children, isRtl );
-};
+}
