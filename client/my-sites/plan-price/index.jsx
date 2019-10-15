@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,7 +23,6 @@ export class PlanPrice extends Component {
 		const {
 			currencyCode,
 			rawPrice,
-			rawPriceRange,
 			original,
 			discounted,
 			className,
@@ -35,38 +32,22 @@ export class PlanPrice extends Component {
 			translate,
 		} = this.props;
 
-		let priceRange = false;
-		if ( rawPrice && rawPrice !== 0 ) {
-			priceRange = [
-				{
-					price: getCurrencyObject( rawPrice, currencyCode ),
-					raw: rawPrice,
-				},
-			];
-		}
-
-		if (
-			rawPriceRange &&
-			rawPriceRange[ 0 ] &&
-			rawPriceRange[ 1 ] &&
-			rawPriceRange[ 0 ] !== 0 &&
-			rawPriceRange[ 1 ] !== 0
-		) {
-			priceRange = [
-				{
-					price: getCurrencyObject( rawPriceRange[ 0 ], currencyCode ),
-					raw: rawPriceRange[ 0 ],
-				},
-				{
-					price: getCurrencyObject( rawPriceRange[ 1 ], currencyCode ),
-					raw: rawPriceRange[ 1 ],
-				},
-			];
-		}
-
-		if ( ! currencyCode || ! priceRange ) {
+		if ( ! currencyCode || ! rawPrice ) {
 			return null;
 		}
+
+		// "Normalize" the input price or price range.
+		const rawPriceRange = Array.isArray( rawPrice ) ? rawPrice.slice( 0, 2 ) : [ rawPrice ];
+		if ( rawPriceRange.includes( 0 ) ) {
+			return null;
+		}
+
+		const priceRange = rawPriceRange.map( item => {
+			return {
+				price: getCurrencyObject( item, currencyCode ),
+				raw: item,
+			};
+		} );
 
 		const classes = classNames( 'plan-price', className, {
 			'is-original': original,
@@ -139,8 +120,7 @@ export class PlanPrice extends Component {
 export default localize( PlanPrice );
 
 PlanPrice.propTypes = {
-	rawPrice: PropTypes.number,
-	rawPriceRange: PropTypes.array,
+	rawPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 	original: PropTypes.bool,
 	discounted: PropTypes.bool,
 	currencyCode: PropTypes.string,
