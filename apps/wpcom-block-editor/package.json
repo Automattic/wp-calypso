@@ -19,7 +19,9 @@
 		"bundle": "calypso-build --env.WP",
 		"build:dev": "npm run bundle --",
 		"build:prod": "NODE_ENV=production npm run bundle --",
-		"build": "npm-run-all --parallel \"build:* -- {@}\" --"
+		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
+		"clean": "npx rimraf dist",
+		"prebuild": "npm run clean"
 	},
 	"dependencies": {
 		"debug": "3.2.6"
