@@ -478,7 +478,7 @@ Renders buttons for each payment method that can be used out of the array in the
 
 Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `Checkout` component will do so automatically.
 
-Requires `localize`, `paymentMethod`.
+Requires `localize`, `paymentMethod`, `total`, `items`.
 
 ### CheckoutReviewOrder
 

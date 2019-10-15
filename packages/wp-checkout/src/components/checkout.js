@@ -45,7 +45,12 @@ export default function Checkout( {
 
 	return (
 		<ThemeProvider theme={ theme }>
-			<CheckoutProvider paymentMethod={ paymentMethod } localize={ localize }>
+			<CheckoutProvider
+				paymentMethod={ paymentMethod }
+				localize={ localize }
+				items={ items }
+				total={ total }
+			>
 				<Container className={ joinClasses( [ className, 'checkout' ] ) }>
 					<LeftColumn>
 						<div>
