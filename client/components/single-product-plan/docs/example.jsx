@@ -77,9 +77,9 @@ function SingleProductPlanExample() {
 					</Fragment>
 				}
 				subtitle={
-					<span>
+					<Fragment>
 						Included in your <a href="/my-plan">Personal Plan</a>
-					</span>
+					</Fragment>
 				}
 				description="Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives"
 				isPurchased
