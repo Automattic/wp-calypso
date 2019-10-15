@@ -1,8 +1,6 @@
-/** @format */
 /**
  * External dependencies
  */
-import { moment } from 'i18n-calypso';
 import { cloneDeep, slice } from 'lodash';
 import deepFreeze from 'deep-freeze';
 
@@ -184,7 +182,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ).map(
 					transaction => ( {
 						...transaction,
-						date: moment( transaction.date ).toDate(),
+						date: new Date( transaction.date ),
 					} )
 				),
 			} );
@@ -225,7 +223,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ).map(
 					transaction => ( {
 						...transaction,
-						date: moment( transaction.date ).toDate(),
+						date: new Date( transaction.date ),
 					} )
 				),
 			} );
@@ -254,7 +252,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ).map(
 					transaction => ( {
 						...transaction,
-						date: moment( transaction.date ).toDate(),
+						date: new Date( transaction.date ),
 					} )
 				),
 			} );

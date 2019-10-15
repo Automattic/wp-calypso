@@ -4,7 +4,7 @@
 import debugFactory from 'debug';
 import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
-import i18n from 'i18n-calypso';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -207,7 +207,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary =
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
-	const localeFromSession = i18n.getLocaleSlug() || 'en';
+	const localeFromSession = getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
 	const userLocale = user.get().localeSlug || 'en';
 
