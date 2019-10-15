@@ -266,11 +266,12 @@
 	display: inline-block;
 
 	button {
+		box-sizing: border-box;
 		min-width: auto;
-		padding: 0 25px 0 5px;
+		padding: 0 15px 0 10px;
 
 		@include breakpoint( '>480px' ) {
-			min-height: 50px;
+			padding: 14px 20px 12px;
 		}
 	}
 }
@@ -287,9 +288,14 @@
 
 .cart__count-badge .count {
 	position: absolute;
-	top: 5px;
-	right: 5px;
+	top: 2px;
+	right: 2px;
 	animation: pulsing-badge 2s infinite;
+
+	@include breakpoint( '>480px' ) {
+		top: 5px;
+		right: 5px;
+	}
 }
 
 .cart__count-badge:hover .count {
