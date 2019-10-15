@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -15,22 +15,36 @@ import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Button from 'components/button';
-import { requestPmaLink } from 'state/data-getters';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
-const PhpMyAdminCard = ( { translate, siteId } ) => {
-	const [ request, setRequest ] = useState( null );
+const requestId = siteId => `pma-link-request-${ siteId }`;
 
-	const pmaLink = get( request, 'data.pmaLink', null );
-	const loading = get( request, 'status', null ) === 'pending';
+export const requestPmaLink = siteId =>
+	requestHttpData(
+		requestId( siteId ),
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/hosting/pma`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { pmaUrl } ) => {
+				return [ [ requestId( siteId ), { pmaUrl } ] ];
+			},
+		}
+	);
 
-	if ( pmaLink ) {
-		window.open( pmaLink );
-	}
-
-	const handlePmaLogin = () => {
-		setRequest( requestPmaLink( siteId ) );
-	};
+const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
+	useEffect( () => {
+		if ( pmaLink ) {
+			window.open( pmaLink );
+		}
+	}, [ pmaLink ] );
 
 	return (
 		<Card>
@@ -44,7 +58,7 @@ const PhpMyAdminCard = ( { translate, siteId } ) => {
 						'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
 					) }
 				</p>
-				<Button onClick={ handlePmaLogin } busy={ loading }>
+				<Button onClick={ () => requestPmaLink( siteId ) } busy={ loading }>
 					{ translate( 'Access PHPMyAdmin' ) }
 				</Button>
 			</div>
@@ -53,7 +67,12 @@ const PhpMyAdminCard = ( { translate, siteId } ) => {
 };
 
 export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const pmaLinkRequest = getHttpData( requestId( siteId ) );
+
 	return {
-		siteId: getSelectedSiteId( state ),
+		pmaLink: get( pmaLinkRequest, 'data.pmaUrl', null ),
+		loading: get( pmaLinkRequest, 'status', null ) === 'pending',
+		siteId,
 	};
 } )( localize( PhpMyAdminCard ) );

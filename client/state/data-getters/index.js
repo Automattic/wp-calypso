@@ -268,18 +268,3 @@ export const createAtomicSFTPUser = siteId =>
 			freshness: 0,
 		}
 	);
-
-export const requestPmaLink = siteId => 
-	requestHttpData(
-		`pma-link-request-${ siteId }`,
-		http( {
-			method: 'GET',
-			path: `/sites/${ siteId }/hosting/pma`,
-			apiNamespace: 'wpcom/v2',
-		}, {} ),
-		{
-			fromApi: () => ( { pmaUrl } ) => { 
-				return [ [ `pma-link-request-${ siteId }`, { pmaUrl } ] ];
-			},
-		}
-	);
