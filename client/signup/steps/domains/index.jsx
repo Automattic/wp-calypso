@@ -50,7 +50,6 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -82,32 +81,6 @@ class DomainsStep extends React.Component {
 
 	state = this.getDefaultState();
 
-	getInitialQuery = () => {
-		const queryValue = get( this.props, 'queryObject.new', '' );
-		const suggestedDomain = get( this.props, 'signupDependencies.suggestedDomain', '' );
-
-		if ( queryValue || suggestedDomain ) {
-			return queryValue || suggestedDomain;
-		}
-
-		if ( abtest( 'prefillDomainStepValue' ) === 'test' ) {
-			return get( this.props, 'signupDependencies.siteTitle', '' );
-		}
-
-		return '';
-	};
-
-	initialQuery = this.getInitialQuery();
-
-	// TODO: This property is only used to be able to distinguish
-	// between cases where the site title was used vs cases where the initial
-	// query was set by some other method. Remove this once the A/B test is finished.
-	hasMadeSuggestion = !! (
-		abtest( 'prefillDomainStepValue' ) === 'test' &&
-		get( this.props, 'signupDependencies.siteTitle' ) &&
-		get( this.props, 'signupDependencies.siteTitle' ) === this.getInitialQuery()
-	);
-
 	constructor( props ) {
 		super( props );
 
@@ -117,12 +90,7 @@ class DomainsStep extends React.Component {
 
 		// If we landed anew from `/domains` and it's the `new-flow` variation
 		// or there's a suggestedDomain from previous steps, always rerun the search.
-		if (
-			( search && props.path.indexOf( '?' ) !== -1 ) ||
-			suggestedDomain ||
-			( this.hasMadeSuggestion &&
-				get( this.props.step, 'domainForm.isInitialQueryActive' ) === true )
-		) {
+		if ( ( search && props.path.indexOf( '?' ) !== -1 ) || suggestedDomain ) {
 			this.searchOnInitialRender = true;
 		}
 
@@ -189,21 +157,17 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	handleAddDomain = ( suggestion, usedSuggestedDomain ) => {
+	handleAddDomain = suggestion => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
 		};
 
-		if ( abtest( 'prefillDomainStepValue' ) === 'test' ) {
-			stepData.usedSuggestedDomain = usedSuggestedDomain;
-		}
-
 		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( null, usedSuggestedDomain );
+			this.submitWithDomain();
 		} );
 	};
 
@@ -237,7 +201,7 @@ class DomainsStep extends React.Component {
 		this.props.goToNextStep();
 	};
 
-	submitWithDomain = ( googleAppsCartItem, usedSuggestedDomain ) => {
+	submitWithDomain = googleAppsCartItem => {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
 			siteUrl = isPurchasingItem
@@ -250,11 +214,7 @@ class DomainsStep extends React.Component {
 				  } )
 				: undefined;
 
-		this.props.submitDomainStepSelection(
-			suggestion,
-			this.getAnalyticsSection(),
-			this.hasMadeSuggestion ? usedSuggestedDomain : null
-		);
+		this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -372,9 +332,14 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
+		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
+		const initialQuery =
+			get( this.props, 'queryObject.new', '' ) ||
+			get( this.props, 'signupDependencies.suggestedDomain' );
+
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			( this.initialQuery && this.searchOnInitialRender ) ||
+			( initialQuery && this.searchOnInitialRender ) ||
 			// If the subdomain type has changed, rerun the search
 			( initialState &&
 				initialState.subdomainSearchResults &&
@@ -423,7 +388,7 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				suggestion={ this.initialQuery }
+				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
@@ -618,7 +583,7 @@ class DomainsStep extends React.Component {
 	}
 }
 
-const submitDomainStepSelection = ( suggestion, section, usedSuggestedDomain ) => {
+const submitDomainStepSelection = ( suggestion, section ) => {
 	let domainType = 'domain_reg';
 	if ( suggestion.is_free ) {
 		domainType = 'wpcom_subdomain';
@@ -637,9 +602,6 @@ const submitDomainStepSelection = ( suggestion, section, usedSuggestedDomain ) =
 	}
 	if ( suggestion.isBestAlternative ) {
 		tracksObjects.label = 'best-alternative';
-	}
-	if ( abtest( 'prefillDomainStepValue' ) === 'test' && typeof usedSuggestedDomain === 'boolean' ) {
-		tracksObjects.used_suggested_domain = usedSuggestedDomain;
 	}
 
 	return composeAnalytics(

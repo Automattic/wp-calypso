@@ -201,11 +201,7 @@ class RegisterDomainStep extends React.Component {
 				this.state.subdomainSearchResults = props.initialState.subdomainSearchResults;
 			}
 
-			if (
-				this.state.searchResults ||
-				this.state.subdomainSearchResults ||
-				! props.initialState.isInitialQueryActive
-			) {
+			if ( this.state.searchResults || this.state.subdomainSearchResults ) {
 				this.state.lastQuery = props.initialState.lastQuery;
 			} else {
 				this.state.railcarId = this.getNewRailcarId();
@@ -247,7 +243,6 @@ class RegisterDomainStep extends React.Component {
 			unavailableDomains: [],
 			trademarkClaimsNoticeInfo: null,
 			selectedSuggestion: null,
-			isInitialQueryActive: !! this.props.suggestion,
 		};
 	}
 
@@ -489,7 +484,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	acceptTrademarkClaim = () => {
-		this.props.onAddDomain( this.state.selectedSuggestion, this.state.isInitialQueryActive );
+		this.props.onAddDomain( this.state.selectedSuggestion );
 	};
 
 	renderTrademarkClaimsNotice() {
@@ -677,11 +672,9 @@ class RegisterDomainStep extends React.Component {
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( cleanedQuery );
-		const isInitialQueryActive = searchQuery === this.props.suggestion;
 
 		this.setState(
 			{
-				isInitialQueryActive,
 				availabilityError: null,
 				availabilityErrorData: null,
 				exactMatchDomain: null,
@@ -1137,11 +1130,11 @@ class RegisterDomainStep extends React.Component {
 							selectedSuggestion: suggestion,
 						} );
 					} else {
-						this.props.onAddDomain( suggestion, this.state.isInitialQueryActive );
+						this.props.onAddDomain( suggestion );
 					}
 				} );
 		} else {
-			this.props.onAddDomain( suggestion, this.state.isInitialQueryActive );
+			this.props.onAddDomain( suggestion );
 		}
 	};
 
