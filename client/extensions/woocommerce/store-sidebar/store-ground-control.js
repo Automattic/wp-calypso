@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,11 +17,15 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Site from 'blocks/site';
 import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
+import { getStatsDefaultSitePage } from 'lib/route/path';
 
 const StoreGroundControl = ( { canUserUseCustomerHome, site, translate } ) => {
 	const isPlaceholder = ! site;
-	const backDestination = canUserUseCustomerHome ? '/home/' : '/stats/day/';
-	const backUrl = isPlaceholder ? '' : backDestination + site.slug;
+	const siteSlug = get( site, 'slug', '' );
+	const backDestination = canUserUseCustomerHome
+		? `/home/${ siteSlug }`
+		: getStatsDefaultSitePage( siteSlug );
+	const backUrl = isPlaceholder ? '' : backDestination;
 
 	return (
 		<div className="store-sidebar__ground-control">
