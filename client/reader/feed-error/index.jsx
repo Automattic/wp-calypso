@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class FeedError extends React.Component {
 	static defaultProps = {
-		message: i18n.translate( "Sorry, we can't find that site." ),
+		message: translate( "Sorry, we can't find that site." ),
 	};
 
 	recordAction = () => {

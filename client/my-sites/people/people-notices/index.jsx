@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -77,19 +74,19 @@ class PeopleNotices extends React.Component {
 		const log = this.state.inProgress[ 0 ];
 		switch ( log.action ) {
 			case 'UPDATE_SITE_USER':
-				return i18n.translate( 'Updating @%(user)s', {
+				return translate( 'Updating @%(user)s', {
 					args: translateArg( log ),
 					context: 'In progress message while a site is performing actions on users.',
 				} );
 			case 'DELETE_SITE_USER':
 				if ( isMultisite( this.props.site ) ) {
-					return i18n.translate( 'Removing @%(user)s', {
+					return translate( 'Removing @%(user)s', {
 						args: translateArg( log ),
 						context: 'In progress message while a site is performing actions on users.',
 					} );
 				}
 
-				return i18n.translate( 'Deleting @%(user)s', {
+				return translate( 'Deleting @%(user)s', {
 					args: translateArg( log ),
 					context: 'In progress message while a site is performing actions on users.',
 				} );
@@ -101,14 +98,14 @@ class PeopleNotices extends React.Component {
 		switch ( log.action ) {
 			case 'RECEIVE_UPDATE_SITE_USER_FAILURE':
 				// Generic update error. Use `localStorage.setItem( 'debug', 'calypso:users:actions' ) for a more detailed error.
-				return i18n.translate( 'There was an error updating @%(user)s', {
+				return translate( 'There was an error updating @%(user)s', {
 					args: translateArg( log ),
 					context: 'Error message after A site has failed to perform actions on a user.',
 				} );
 			case 'RECEIVE_DELETE_SITE_USER_FAILURE':
 				if ( 'user_owns_domain_subscription' === log.error.error ) {
 					const numDomains = log.error.message.split( ',' ).length;
-					return i18n.translate(
+					return translate(
 						'@%(user)s owns following domain used on this site: {{strong}}%(domains)s{{/strong}}. This domain will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
 						'@%(user)s owns following domains used on this site: {{strong}}%(domains)s{{/strong}}. These domains will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
 						{
@@ -124,23 +121,23 @@ class PeopleNotices extends React.Component {
 					);
 				}
 				if ( isMultisite( this.props.site ) ) {
-					return i18n.translate( 'There was an error removing @%(user)s', {
+					return translate( 'There was an error removing @%(user)s', {
 						args: translateArg( log ),
 						context: 'Error message after A site has failed to perform actions on a user.',
 					} );
 				}
-				return i18n.translate( 'There was an error deleting @%(user)s', {
+				return translate( 'There was an error deleting @%(user)s', {
 					args: translateArg( log ),
 					context: 'Error message after A site has failed to perform actions on a user.',
 				} );
 			case 'RECEIVE_USERS':
-				return i18n.translate( 'There was an error retrieving users' );
+				return translate( 'There was an error retrieving users' );
 			case 'RECEIVE_FOLLOWERS':
-				return i18n.translate( 'There was an error retrieving followers' );
+				return translate( 'There was an error retrieving followers' );
 			case 'RECEIVE_EMAIL_FOLLOWERS':
-				return i18n.translate( 'There was an error retrieving email followers' );
+				return translate( 'There was an error retrieving email followers' );
 			case 'RECEIVE_VIEWERS':
-				return i18n.translate( 'There was an error retrieving viewers' );
+				return translate( 'There was an error retrieving viewers' );
 		}
 	};
 
@@ -148,18 +145,18 @@ class PeopleNotices extends React.Component {
 		const log = this.state.completed[ this.state.completed.length - 1 ];
 		switch ( log.action ) {
 			case 'RECEIVE_UPDATE_SITE_USER_SUCCESS':
-				return i18n.translate( 'Successfully updated @%(user)s', {
+				return translate( 'Successfully updated @%(user)s', {
 					args: translateArg( log ),
 					context: 'Success message after a user has been modified.',
 				} );
 			case 'RECEIVE_DELETE_SITE_USER_SUCCESS':
 				if ( isMultisite( this.props.site ) ) {
-					return i18n.translate( 'Successfully removed @%(user)s', {
+					return translate( 'Successfully removed @%(user)s', {
 						args: translateArg( log ),
 						context: 'Success message after a user has been modified.',
 					} );
 				}
-				return i18n.translate( 'Successfully deleted @%(user)s', {
+				return translate( 'Successfully deleted @%(user)s', {
 					args: translateArg( log ),
 					context: 'Success message after a user has been modified.',
 				} );

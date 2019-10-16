@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { assign, debounce, find, findLast, pick, values } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { parse, stringify } from 'lib/shortcode';
 import closest from 'component-closest';
 
@@ -448,7 +447,7 @@ function mediaButton( editor ) {
 	editor.addButton( 'wpcom_add_media', {
 		classes: 'btn wpcom-icon-button media',
 		cmd: 'wpcomAddMedia',
-		title: i18n.translate( 'Add Media' ),
+		title: translate( 'Add Media' ),
 		onPostRender: function() {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
@@ -464,7 +463,7 @@ function mediaButton( editor ) {
 	} );
 
 	editor.addButton( 'wp_img_edit', {
-		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
+		tooltip: translate( 'Edit', { context: 'verb' } ),
 		classes: 'toolbar-segment-start',
 		icon: 'dashicon dashicons-edit',
 		onclick: function() {
@@ -487,7 +486,7 @@ function mediaButton( editor ) {
 				{
 					visible: true,
 					labels: {
-						confirm: i18n.translate( 'Update', { context: 'verb' } ),
+						confirm: translate( 'Update', { context: 'verb' } ),
 					},
 				},
 				{
@@ -499,7 +498,7 @@ function mediaButton( editor ) {
 	} );
 
 	editor.addButton( 'wp_img_caption', {
-		tooltip: i18n.translate( 'Caption', { context: 'verb' } ),
+		tooltip: translate( 'Caption', { context: 'verb' } ),
 		icon: 'dashicon dashicons-admin-comments',
 		classes: 'toolbar-segment-start toolbar-segment-end',
 		stateSelector: '.wp-caption',
@@ -534,7 +533,7 @@ function mediaButton( editor ) {
 			if ( media && media.caption ) {
 				content = media.caption;
 			} else {
-				content = i18n.translate( 'Enter a caption' );
+				content = translate( 'Enter a caption' );
 			}
 
 			// Assign missing DOM dimensions to image node. The `wpeditimage`
@@ -674,7 +673,7 @@ function mediaButton( editor ) {
 	}
 
 	editor.addButton( 'wpcom_img_size_decrease', {
-		tooltip: i18n.translate( 'Decrease size' ),
+		tooltip: translate( 'Decrease size' ),
 		classes: 'toolbar-segment-start img-size-decrease',
 		icon: 'dashicon dashicons-minus',
 		onPostRender: function() {
@@ -686,7 +685,7 @@ function mediaButton( editor ) {
 	} );
 
 	editor.addButton( 'wpcom_img_size_increase', {
-		tooltip: i18n.translate( 'Increase size' ),
+		tooltip: translate( 'Increase size' ),
 		classes: 'toolbar-segment-end img-size-increase',
 		icon: 'dashicon dashicons-plus',
 		onPostRender: function() {
@@ -743,7 +742,7 @@ function mediaButton( editor ) {
 				visible: true,
 				initialGallerySettings: gallery,
 				labels: {
-					confirm: i18n.translate( 'Update', { context: 'verb' } ),
+					confirm: translate( 'Update', { context: 'verb' } ),
 				},
 			},
 			{

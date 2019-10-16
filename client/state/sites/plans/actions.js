@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { map } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:site-plans:actions' );
 
@@ -57,7 +54,7 @@ export function cancelSitePlanTrial( siteId, planId ) {
 
 					const errorMessage =
 						error.message ||
-						i18n.translate(
+						translate(
 							'There was a problem canceling the plan trial. Please try again later or contact support.'
 						);
 
@@ -107,7 +104,7 @@ export function fetchSitePlans( siteId ) {
 
 					const errorMessage =
 						error.message ||
-						i18n.translate(
+						translate(
 							'There was a problem fetching site plans. Please try again later or contact support.'
 						);
 

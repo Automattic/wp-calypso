@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { renderToString } from 'react-dom/server';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -32,17 +31,14 @@ function initialize( editor ) {
 
 	editor.addButton( 'wpcom_insert_menu', {
 		type: 'menubutton',
-		title: i18n.translate( 'Add content' ),
+		title: translate( 'Add content' ),
 		classes: 'btn wpcom-insert-menu insert-menu',
 		menu: filteredMenuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
 			const [ insertContentElm ] = this.$el[ 0 ].children;
 
 			insertContentElm.innerHTML = renderToString(
-				<GridiconButton
-					icon={ <Gridicon icon="add-outline" /> }
-					label={ i18n.translate( 'Add' ) }
-				/>
+				<GridiconButton icon={ <Gridicon icon="add-outline" /> } label={ translate( 'Add' ) } />
 			);
 		},
 	} );

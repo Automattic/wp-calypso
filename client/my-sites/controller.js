@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import page from 'page';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { get, noop, some, startsWith, uniq } from 'lodash';
 
 /**
@@ -123,7 +122,7 @@ function renderNoVisibleSites( context ) {
 	removeSidebar( context );
 
 	context.primary = React.createElement( EmptyContentComponent, {
-		title: i18n.translate(
+		title: translate(
 			'You have %(hidden)d hidden WordPress site.',
 			'You have %(hidden)d hidden WordPress sites.',
 			{
@@ -132,7 +131,7 @@ function renderNoVisibleSites( context ) {
 			}
 		),
 
-		line: i18n.translate(
+		line: translate(
 			'To manage it here, set it to visible.',
 			'To manage them here, set them to visible.',
 			{
@@ -140,9 +139,9 @@ function renderNoVisibleSites( context ) {
 			}
 		),
 
-		action: i18n.translate( 'Change Visibility' ),
+		action: translate( 'Change Visibility' ),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
-		secondaryAction: i18n.translate( 'Create New Site' ),
+		secondaryAction: translate( 'Create New Site' ),
 		secondaryActionURL: `${ signup_url }?ref=calypso-nosites`,
 	} );
 
@@ -291,7 +290,7 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 
 	if ( currentUser.primary_blog_is_jetpack ) {
 		dispatch(
-			warningNotice( i18n.translate( "Please check your Primary Site's Jetpack connection" ), {
+			warningNotice( translate( "Please check your Primary Site's Jetpack connection" ), {
 				button: 'wp-admin',
 				href: `${ currentUser.primary_blog_url }/wp-admin`,
 			} )
@@ -451,7 +450,7 @@ export function navigation( context, next ) {
 export function sites( context, next ) {
 	if ( context.query.verified === '1' ) {
 		notices.success(
-			i18n.translate(
+			translate(
 				"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
 			)
 		);

@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,9 +11,7 @@ import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 const user = userFactory();
 
-/**
- * Initialize Username with defaults
- */
+// Initialize Username with defaults
 function Username() {
 	if ( ! ( this instanceof Username ) ) {
 		return new Username();
@@ -33,16 +28,14 @@ Username.prototype.validate = function( username ) {
 		if ( username.length < 4 ) {
 			this.validation = {
 				error: 'invalid_input',
-				message: i18n.translate( 'Usernames must be at least 4 characters.' ),
+				message: translate( 'Usernames must be at least 4 characters.' ),
 			};
 
 			this.emit( 'change' );
 		} else if ( ! /^[a-z0-9]+$/.test( username ) ) {
 			this.validation = {
 				error: 'invalid_input',
-				message: i18n.translate(
-					'Usernames can only contain lowercase letters (a-z) and numbers.'
-				),
+				message: translate( 'Usernames can only contain lowercase letters (a-z) and numbers.' ),
 			};
 
 			this.emit( 'change' );

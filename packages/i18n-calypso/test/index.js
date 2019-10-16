@@ -8,7 +8,7 @@ import ReactDomServer from 'react-dom/server';
  * Internal dependencies
  */
 import data from './data';
-import i18n, { numberFormat, translate } from '../src';
+import { numberFormat, translate, setLocale, configure, addTranslations } from '../src';
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes
@@ -22,17 +22,17 @@ function stripReactAttributes( string ) {
 
 describe( 'I18n', function() {
 	beforeEach( function() {
-		i18n.setLocale( data.locale );
+		setLocale( data.locale );
 	} );
 
 	afterEach( function() {
-		i18n.configure(); // ensure everything is reset
+		configure(); // ensure everything is reset
 	} );
 
 	describe( 'setLocale()', function() {
 		describe( 'adding a new locale source from the same language', function() {
 			beforeEach( function() {
-				i18n.setLocale( {
+				setLocale( {
 					'': data.locale[ '' ],
 					test1: [ 'translation1-1' ],
 					test2: [ 'translation2' ],
@@ -54,7 +54,7 @@ describe( 'I18n', function() {
 
 		describe( 'adding a new locale source from a different language', function() {
 			beforeEach( function() {
-				i18n.setLocale( {
+				setLocale( {
 					'': Object.assign( {}, data.locale[ '' ], {
 						localeSlug: 'fr',
 						'Plural-Forms': 'nplurals=2; plural=n > 1;',
@@ -191,14 +191,14 @@ describe( 'I18n', function() {
 
 		describe( 'adding new translations', function() {
 			it( 'should find a new translation after it has been added', function() {
-				i18n.addTranslations( {
+				addTranslations( {
 					'test-does-not-exist': [ 'translation3' ],
 				} );
 
 				expect( translate( 'test-does-not-exist' ) ).toBe( 'translation3' );
 			} );
 			it( 'should return the new translation if it has been overwritten', function() {
-				i18n.addTranslations( {
+				addTranslations( {
 					'test-will-overwrite': [ 'not-translation1' ],
 				} );
 
@@ -251,7 +251,7 @@ describe( 'I18n', function() {
 
 	describe( 'hashed locale data', function() {
 		it( 'should find keys when looked up by simple hash', function() {
-			i18n.setLocale( {
+			setLocale( {
 				'': {
 					localeSlug: 'xx-pig-latin',
 					'key-hash': 'sha1',
@@ -262,7 +262,7 @@ describe( 'I18n', function() {
 		} );
 
 		it( 'should find keys when looked up by single length hash', function() {
-			i18n.setLocale( {
+			setLocale( {
 				'': {
 					localeSlug: 'xx-pig-latin',
 					'key-hash': 'sha1-1',
@@ -273,7 +273,7 @@ describe( 'I18n', function() {
 		} );
 
 		it( 'should find keys when looked up by multi length hash', function() {
-			i18n.setLocale( {
+			setLocale( {
 				'': {
 					localeSlug: 'xx-pig-latin',
 					'key-hash': 'sha1-1-2',

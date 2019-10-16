@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -63,7 +62,7 @@ export default function( editor ) {
 	}
 
 	editor.addButton( 'wp_img_advanced', {
-		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
+		tooltip: translate( 'Edit', { context: 'verb' } ),
 
 		classes: 'toolbar-segment-start',
 

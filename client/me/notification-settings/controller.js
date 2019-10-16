@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +16,7 @@ import NotificationSubscriptions from 'me/notification-settings/reader-subscript
 
 export function notifications( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationsComponent, {
 		userSettings: userSettings,
@@ -29,9 +27,7 @@ export function notifications( context, next ) {
 
 export function comments( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch(
-		setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) )
-	);
+	context.store.dispatch( setTitle( translate( 'Comments on other sites', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( CommentSettingsComponent, {
 		path: context.path,
@@ -42,7 +38,7 @@ export function comments( context, next ) {
 export function updates( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch(
-		setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) )
+		setTitle( translate( 'Updates from WordPress.com', { textOnly: true } ) )
 	);
 
 	context.primary = React.createElement( WPcomSettingsComponent, {
@@ -53,7 +49,7 @@ export function updates( context, next ) {
 
 export function subscriptions( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationSubscriptions, {
 		userSettings: userSettings,

@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 export const request = action => {
-	const notice = successNotice( i18n.translate( 'Ignoring threat…' ), { duration: 30000 } );
+	const notice = successNotice( translate( 'Ignoring threat…' ), { duration: 30000 } );
 	const {
 		notice: { noticeId },
 	} = notice;
@@ -35,7 +34,7 @@ export const request = action => {
 };
 
 export const success = ( action, rewind_state ) => [
-	successNotice( i18n.translate( 'Threat ignored.' ), {
+	successNotice( translate( 'Threat ignored.' ), {
 		duration: 4000,
 		id: action.noticeId,
 	} ),
@@ -55,7 +54,7 @@ export const success = ( action, rewind_state ) => [
 ];
 
 export const failure = action =>
-	errorNotice( i18n.translate( 'Error ignoring threat. Please contact support.' ), {
+	errorNotice( translate( 'Error ignoring threat. Please contact support.' ), {
 		duration: 10000,
 		id: action.noticeId,
 	} );

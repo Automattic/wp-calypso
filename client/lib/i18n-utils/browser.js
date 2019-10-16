@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { getLocaleSlug as i18nGetLocaleSlug } from 'i18n-calypso';
 
 export {
 	addLocaleToPath,
@@ -19,4 +18,4 @@ export {
 	filterLanguageRevisions,
 } from './utils';
 
-export const getLocaleSlug = () => i18n.getLocaleSlug();
+export const getLocaleSlug = () => i18nGetLocaleSlug();

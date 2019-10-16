@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { compact } from 'lodash';
 
 /**
@@ -39,12 +39,10 @@ export default function getJetpackSiteUpdateFilesDisabledReasons(
 				action === 'autoupdateCore'
 			) {
 				if ( clue === 'has_no_file_system_write_access' ) {
-					return i18n.translate( 'The file permissions on this host prevent editing files.' );
+					return translate( 'The file permissions on this host prevent editing files.' );
 				}
 				if ( clue === 'disallow_file_mods' ) {
-					return i18n.translate(
-						'File modifications are explicitly disabled by a site administrator.'
-					);
+					return translate( 'File modifications are explicitly disabled by a site administrator.' );
 				}
 			}
 
@@ -52,13 +50,11 @@ export default function getJetpackSiteUpdateFilesDisabledReasons(
 				( action === 'autoupdateFiles' || action === 'autoupdateCore' ) &&
 				clue === 'automatic_updater_disabled'
 			) {
-				return i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' );
+				return translate( 'Any autoupdates are explicitly disabled by a site administrator.' );
 			}
 
 			if ( action === 'autoupdateCore' && clue === 'wp_auto_update_core_disabled' ) {
-				return i18n.translate(
-					'Core autoupdates are explicitly disabled by a site administrator.'
-				);
+				return translate( 'Core autoupdates are explicitly disabled by a site administrator.' );
 			}
 			return null;
 		} )

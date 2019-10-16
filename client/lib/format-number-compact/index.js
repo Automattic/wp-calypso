@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import i18n, { numberFormat } from 'i18n-calypso';
+import { numberFormat, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +14,7 @@ import { THOUSANDS } from './thousands';
  * @param   {String}     code                language code e.g. 'es'
  * @returns {?String}                        A formatted string.
  */
-export default function formatNumberCompact( number, code = i18n.getLocaleSlug() ) {
+export default function formatNumberCompact( number, code = getLocaleSlug() ) {
 	//use numberFormat directly from i18n in this case!
 	if ( isNaN( number ) || ! THOUSANDS[ code ] ) {
 		return null;

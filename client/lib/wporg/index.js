@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
+import { getLocaleSlug } from 'i18n-calypso';
 import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
 
@@ -25,7 +25,7 @@ const DEFAULT_FIRST_PAGE = 1;
 const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 
 function getWporgLocaleCode() {
-	const currentLocaleCode = i18n.getLocaleSlug();
+	const currentLocaleCode = getLocaleSlug();
 	let wpOrgLocaleCode = find( languages, { langSlug: currentLocaleCode } ).wpLocale;
 
 	if ( wpOrgLocaleCode === '' ) {

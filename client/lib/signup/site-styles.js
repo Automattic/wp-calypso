@@ -1,17 +1,15 @@
-/** @format **/
-
 /**
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { get } from 'lodash';
 
 // For now the site style step will determine which 'style pack' to use on pub/radcliffe-2
 export const siteStyleOptions = {
 	business: [
 		{
-			description: i18n.translate( 'A gutenberg-ready business variation.', {
+			description: translate( 'A gutenberg-ready business variation.', {
 				comment: 'A description of a WordPress theme style.',
 			} ),
 			id: 'modern',
@@ -31,7 +29,7 @@ export const siteStyleOptions = {
 			),
 		},
 		{
-			description: i18n.translate( 'A gutenberg-ready business variation.', {
+			description: translate( 'A gutenberg-ready business variation.', {
 				comment: 'A description of a WordPress theme style.',
 			} ),
 			id: 'sophisticated',
@@ -52,7 +50,7 @@ export const siteStyleOptions = {
 			),
 		},
 		{
-			description: i18n.translate( 'Simple, yet sophisticated, with subtle, elegant typography.', {
+			description: translate( 'Simple, yet sophisticated, with subtle, elegant typography.', {
 				comment: 'A description of a WordPress theme style.',
 			} ),
 			id: 'professional',
@@ -72,7 +70,7 @@ export const siteStyleOptions = {
 			),
 		},
 		{
-			description: i18n.translate( 'A gutenberg-ready business variation.', {
+			description: translate( 'A gutenberg-ready business variation.', {
 				comment: 'A description of a WordPress theme style.',
 			} ),
 			id: 'calm',

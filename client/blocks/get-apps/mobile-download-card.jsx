@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { translate as i18nTranslate, localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -37,12 +34,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
-		dispatch( successNotice( i18n.translate( 'SMS Sent. Go check your messages!' ) ) );
+		dispatch( successNotice( i18nTranslate( 'SMS Sent. Go check your messages!' ) ) );
 	}
 
 	function onFailure( dispatch ) {
 		dispatch(
-			errorNotice( i18n.translate( 'We couldn’t send the SMS — double check your number.' ) )
+			errorNotice( i18nTranslate( 'We couldn’t send the SMS — double check your number.' ) )
 		);
 	}
 
@@ -61,7 +58,7 @@ function sendMagicLink( email ) {
 	// https://stackoverflow.com/questions/46765896/react-redux-actions-must-be-plain-objects-use-custom-middleware-for-async-acti
 	return function( dispatch ) {
 		const duration = { duration: 4000 };
-		dispatch( infoNotice( i18n.translate( 'Sending email' ), duration ) );
+		dispatch( infoNotice( i18nTranslate( 'Sending email' ), duration ) );
 
 		return wpcom
 			.undocumented()
@@ -71,10 +68,10 @@ function sendMagicLink( email ) {
 				scheme: 'wordpress',
 			} )
 			.then( () => {
-				dispatch( successNotice( i18n.translate( 'Email Sent. Check your mail app!' ), duration ) );
+				dispatch( successNotice( i18nTranslate( 'Email Sent. Check your mail app!' ), duration ) );
 			} )
 			.catch( error => {
-				dispatch( errorNotice( i18n.translate( 'Sorry, we couldn’t send the email.' ), duration ) );
+				dispatch( errorNotice( i18nTranslate( 'Sorry, we couldn’t send the email.' ), duration ) );
 				return Promise.reject( error );
 			} );
 	};

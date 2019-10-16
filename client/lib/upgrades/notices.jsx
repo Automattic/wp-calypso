@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { flatten, get, values } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -35,7 +32,7 @@ function getErrorFromApi( errorMessage ) {
 		return errorMessage;
 	}
 
-	return i18n.translate( 'There was a problem completing the checkout. Please try again.' );
+	return translate( 'There was a problem completing the checkout. Please try again.' );
 }
 
 export function displayError( error ) {

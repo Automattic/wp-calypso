@@ -1,9 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import {
+	localize,
+	getLocale,
+	registerTranslateHook,
+	registerComponentUpdateHook,
+	on as i18nOn,
+	off as i18nOff,
+} from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
 /**
@@ -35,26 +41,26 @@ class CommunityTranslator extends Component {
 		this.setLanguage();
 
 		// wrap translations from i18n
-		i18n.registerTranslateHook( ( translation, options ) =>
+		registerTranslateHook( ( translation, options ) =>
 			this.wrapTranslation( options.original, translation, options )
 		);
 
 		// callback when translated component changes.
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
-		i18n.registerComponentUpdateHook( () => {} );
-		i18n.on( 'change', this.refresh );
+		registerComponentUpdateHook( () => {} );
+		i18nOn( 'change', this.refresh );
 		user.on( 'change', this.refresh );
 		userSettings.on( 'change', this.refresh );
 	}
 
 	componentWillUnmount() {
-		i18n.off( 'change', this.refresh );
+		i18nOff( 'change', this.refresh );
 		user.removeListener( 'change', this.refresh );
 		userSettings.removeListener( 'change', this.refresh );
 	}
 
 	setLanguage() {
-		this.languageJson = i18n.getLocale() || { '': {} };
+		this.languageJson = getLocale() || { '': {} };
 		// The '' here is a Jed convention used for storing configuration data
 		// alongside translations in the same dictionary (because '' will never
 		// be a legitimately translatable string)

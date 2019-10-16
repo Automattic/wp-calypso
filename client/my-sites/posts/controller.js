@@ -1,14 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React from 'react';
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
+
 const debug = debugFactory( 'calypso:my-sites:posts' );
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -56,7 +54,7 @@ export default {
 		}
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( translate( 'Blog Posts', { textOnly: true } ) ) );
 
 		context.primary = React.createElement( Posts, {
 			context,

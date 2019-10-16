@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -134,12 +133,12 @@ const exported = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );
 
-		setPageTitle( context, i18n.translate( 'Following' ) );
+		setPageTitle( context, translate( 'Following' ) );
 
 		// warn: don't async load this only. we need it to keep feed-post-store in the reader bundle
 		context.primary = React.createElement( StreamComponent, {
 			key: 'following',
-			listName: i18n.translate( 'Followed Sites' ),
+			listName: translate( 'Followed Sites' ),
 			streamKey: 'following',
 			startDate,
 			recsStreamKey: 'custom_recs_posts_with_images',

@@ -1,9 +1,8 @@
-/** @format **/
 /**
  * Externel dependencies
  */
 import { noop } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -252,7 +251,7 @@ export function fetchSiteRedirect( siteId ) {
 		} else {
 			Dispatcher.handleServerAction( {
 				type: SITE_REDIRECT_FETCH_FAILED,
-				error: i18n.translate(
+				error: translate(
 					'There was a problem retrieving the redirect settings. Please try again later or contact support.'
 				),
 				siteId,
@@ -275,7 +274,7 @@ export function updateSiteRedirect( siteId, location, onComplete ) {
 				type: SITE_REDIRECT_UPDATE_COMPLETED,
 				location,
 				siteId,
-				success: i18n.translate( 'The redirect settings were updated successfully.' ),
+				success: translate( 'The redirect settings were updated successfully.' ),
 			} );
 
 			success = true;
@@ -288,7 +287,7 @@ export function updateSiteRedirect( siteId, location, onComplete ) {
 		} else {
 			Dispatcher.handleServerAction( {
 				type: SITE_REDIRECT_UPDATE_FAILED,
-				error: i18n.translate(
+				error: translate(
 					'There was a problem updating the redirect settings. Please try again later or contact support.'
 				),
 				siteId,

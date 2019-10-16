@@ -2,15 +2,15 @@
  * Internal dependencies
  */
 import data from './data';
-import i18n, { moment } from '../src';
+import { moment, setLocale, configure } from '../src';
 
 describe( 'I18n', function() {
 	beforeEach( function() {
-		i18n.setLocale( data.locale );
+		setLocale( data.locale );
 	} );
 
 	afterEach( function() {
-		i18n.configure(); // ensure everything is reset
+		configure(); // ensure everything is reset
 	} );
 
 	describe( 'moment()', function() {

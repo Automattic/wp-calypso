@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -46,12 +43,12 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 
 			<PurchaseDetail
 				icon={ <img alt="" src={ conciergeImage } /> }
-				title={ i18n.translate( 'Get personalized help' ) }
-				description={ i18n.translate(
+				title={ translate( 'Get personalized help' ) }
+				description={ translate(
 					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
 						'your site and learn more about WordPress.com.'
 				) }
-				buttonText={ i18n.translate( 'Schedule a session' ) }
+				buttonText={ translate( 'Schedule a session' ) }
 				href={ `/me/concierge/${ selectedSite.slug }/book` }
 				onClick={ trackOnboardingButtonClick }
 			/>
@@ -59,12 +56,12 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 			{ ! selectedFeature && (
 				<PurchaseDetail
 					icon={ <img alt="" src={ themeImage } /> }
-					title={ i18n.translate( 'Try a New Theme' ) }
-					description={ i18n.translate(
+					title={ translate( 'Try a New Theme' ) }
+					description={ translate(
 						"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. " +
 							'Give one a try!'
 					) }
-					buttonText={ i18n.translate( 'Browse premium themes' ) }
+					buttonText={ translate( 'Browse premium themes' ) }
 					href={ '/themes/' + selectedSite.slug }
 				/>
 			) }
@@ -72,23 +69,23 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) && (
 				<PurchaseDetail
 					icon={ <img alt="" src={ updatesImage } /> }
-					title={ i18n.translate( 'Add a Plugin' ) }
-					description={ i18n.translate(
+					title={ translate( 'Add a Plugin' ) }
+					description={ translate(
 						'Search and add plugins right from your dashboard, or upload a plugin ' +
 							'from your computer with a drag-and-drop interface.'
 					) }
-					buttonText={ i18n.translate( 'Upload a plugin now' ) }
+					buttonText={ translate( 'Upload a plugin now' ) }
 					href={ '/plugins/manage/' + selectedSite.slug }
 				/>
 			) }
 
 			<PurchaseDetail
 				icon={ <img alt="" src={ analyticsImage } /> }
-				title={ i18n.translate( 'Connect to Google Analytics' ) }
-				description={ i18n.translate(
+				title={ translate( 'Connect to Google Analytics' ) }
+				description={ translate(
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
 				) }
-				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
+				buttonText={ translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug }
 			/>
 		</div>

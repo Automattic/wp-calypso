@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -732,7 +729,7 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
 	}
 
 	if ( isJetpackSite( state, siteId ) ) {
-		return i18n.translate( 'Upgrade', {
+		return translate( 'Upgrade', {
 			comment:
 				'Used to indicate a premium theme is available to the user once they upgrade their plan',
 		} );

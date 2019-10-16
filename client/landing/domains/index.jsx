@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import RenderDom from 'react-dom';
-import i18n from 'i18n-calypso';
+import { setLocale } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -72,7 +72,7 @@ class DomainsLandingPage extends Component {
 function boot() {
 	if ( window.i18nLocaleStrings ) {
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		i18n.setLocale( i18nLocaleStringsObject );
+		setLocale( i18nLocaleStringsObject );
 	}
 
 	RenderDom.render(

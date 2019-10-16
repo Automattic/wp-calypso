@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { keys } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Style dependencies
@@ -32,7 +32,7 @@ const ALT_TEXT = {
 	placeholder: '',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
-	wechat: i18n.translate( 'WeChat Pay', {
+	wechat: translate( 'WeChat Pay', {
 		comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 	} ),
 	sofort: 'Sofort',

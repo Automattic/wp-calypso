@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -22,7 +20,7 @@ export default {
 
 		// Page Title
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( translate( 'Media', { textOnly: true } ) ) );
 
 		const mediaId = context.params.mediaId ? parseInt( context.params.mediaId ) : null;
 		// Render

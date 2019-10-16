@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { stringify } from 'qs';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 const baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
 export default {
 	generatePreviewUrlFromButtons: function( buttons, showMore ) {
-		let numberOfCustomButtons = 0,
-			query = {};
+		let numberOfCustomButtons = 0;
+		const query = {};
 
 		// Build the query parameter array of services names to be rendered
 		// by the official sharing buttons preview widget
@@ -32,7 +29,7 @@ export default {
 		} );
 
 		if ( showMore ) {
-			query.more = i18n.translate( 'More' );
+			query.more = translate( 'More' );
 		}
 
 		return baseUrl + '?' + stringify( query );

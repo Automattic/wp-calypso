@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,7 +19,7 @@ import { getSocialServiceFromClientId } from 'lib/login';
 
 export function password( context, next ) {
 	if ( context.query && context.query.updated === 'password' ) {
-		notices.success( i18n.translate( 'Your password was saved successfully.' ), {
+		notices.success( translate( 'Your password was saved successfully.' ), {
 			displayOnNextPage: true,
 		} );
 

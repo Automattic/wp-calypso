@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { has, identity, mapValues, pickBy } from 'lodash';
 
 /**
@@ -38,11 +35,11 @@ import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edi
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
-			label: i18n.translate( 'Purchase', {
+			label: translate( 'Purchase', {
 				context: 'verb',
 			} ),
-			extendedLabel: i18n.translate( 'Purchase this design' ),
-			header: i18n.translate( 'Purchase on:', {
+			extendedLabel: translate( 'Purchase this design' ),
+			header: translate( 'Purchase on:', {
 				context: 'verb',
 				comment: 'label for selecting a site for which to purchase a theme',
 			} ),
@@ -58,13 +55,13 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 
 const upgradePlan = config.isEnabled( 'upgrades/checkout' )
 	? {
-			label: i18n.translate( 'Upgrade to activate', {
+			label: translate( 'Upgrade to activate', {
 				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
 			} ),
-			extendedLabel: i18n.translate( 'Upgrade to activate', {
+			extendedLabel: translate( 'Upgrade to activate', {
 				comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
 			} ),
-			header: i18n.translate( 'Upgrade on:', {
+			header: translate( 'Upgrade on:', {
 				context: 'verb',
 				comment: 'label for selecting a site for which to upgrade a plan',
 			} ),
@@ -80,9 +77,9 @@ const upgradePlan = config.isEnabled( 'upgrades/checkout' )
 	: {};
 
 const activate = {
-	label: i18n.translate( 'Activate' ),
-	extendedLabel: i18n.translate( 'Activate this design' ),
-	header: i18n.translate( 'Activate on:', {
+	label: translate( 'Activate' ),
+	extendedLabel: translate( 'Activate this design' ),
+	header: translate( 'Activate on:', {
 		comment: 'label for selecting a site on which to activate a theme',
 	} ),
 	action: activateAction,
@@ -95,7 +92,7 @@ const activate = {
 };
 
 const deleteTheme = {
-	label: i18n.translate( 'Delete' ),
+	label: translate( 'Delete' ),
 	action: confirmDelete,
 	hideForTheme: ( state, themeId, siteId, origin ) =>
 		! isJetpackSite( state, siteId ) ||
@@ -104,9 +101,9 @@ const deleteTheme = {
 };
 
 const customize = {
-	label: i18n.translate( 'Customize' ),
-	extendedLabel: i18n.translate( 'Customize this design' ),
-	header: i18n.translate( 'Customize on:', {
+	label: translate( 'Customize' ),
+	extendedLabel: translate( 'Customize this design' ),
+	header: translate( 'Customize on:', {
 		comment: 'label in the dialog for selecting a site for which to customize a theme',
 	} ),
 	icon: 'customize',
@@ -117,9 +114,9 @@ const customize = {
 };
 
 const tryandcustomize = {
-	label: i18n.translate( 'Try & Customize' ),
-	extendedLabel: i18n.translate( 'Try & Customize' ),
-	header: i18n.translate( 'Try & Customize on:', {
+	label: translate( 'Try & Customize' ),
+	extendedLabel: translate( 'Try & Customize' ),
+	header: translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview',
 	} ),
 	action: tryAndCustomizeAction,
@@ -136,13 +133,13 @@ const tryandcustomize = {
 };
 
 const preview = {
-	label: i18n.translate( 'Live demo', {
+	label: translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website',
 	} ),
 	action: themePreview,
 };
 
-const signupLabel = i18n.translate( 'Pick this design', {
+const signupLabel = translate( 'Pick this design', {
 	comment: 'when signing up for a WordPress.com account with a selected theme',
 } );
 
@@ -158,7 +155,7 @@ const separator = {
 };
 
 const info = {
-	label: i18n.translate( 'Info', {
+	label: translate( 'Info', {
 		comment: 'label for displaying the theme info sheet',
 	} ),
 	icon: 'info',
@@ -166,14 +163,14 @@ const info = {
 };
 
 const support = {
-	label: i18n.translate( 'Setup' ),
+	label: translate( 'Setup' ),
 	icon: 'help',
 	getUrl: getThemeSupportUrl,
 	hideForTheme: ( state, themeId ) => ! isThemePremium( state, themeId ),
 };
 
 const help = {
-	label: i18n.translate( 'Support' ),
+	label: translate( 'Support' ),
 	getUrl: getThemeHelpUrl,
 };
 

@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
@@ -47,7 +46,7 @@ export function checkout( context, next ) {
 	}
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+	context.store.dispatch( setTitle( translate( 'Checkout' ) ) );
 
 	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
@@ -93,7 +92,7 @@ export function checkoutThankYou( context, next ) {
 	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
+	context.store.dispatch( setTitle( translate( 'Thank You' ) ) );
 
 	context.primary = (
 		<CheckoutThankYouComponent

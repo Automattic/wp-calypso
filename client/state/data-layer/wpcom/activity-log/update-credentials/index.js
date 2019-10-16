@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -49,7 +48,7 @@ export const primeHappychat = ( { dispatch, getState } ) => {
 };
 
 export const request = action => {
-	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
+	const notice = successNotice( translate( 'Testing connection…' ), { duration: 30000 } );
 	const {
 		notice: { noticeId },
 	} = notice;
@@ -84,7 +83,7 @@ export const success = ( action, { rewind_state } ) => [
 		},
 		siteId: action.siteId,
 	},
-	successNotice( i18n.translate( 'Your site is now connected.' ), {
+	successNotice( translate( 'Your site is now connected.' ), {
 		duration: 4000,
 		id: action.noticeId,
 	} ),
@@ -145,10 +144,10 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	switch ( error.error ) {
 		case 'service_unavailable':
 			announce(
-				i18n.translate(
+				translate(
 					'A error occurred when we were trying to validate your site information. Please make sure your credentials and host URL are correct and try again. If you need help, please click on the support chat link.'
 				),
-				{ button: i18n.translate( 'Support chat' ), onClick: getHelp }
+				{ button: translate( 'Support chat' ), onClick: getHelp }
 			);
 			spreadHappiness(
 				'Rewind Credentials: update request failed on timeout (could be us or remote site)'
@@ -157,14 +156,14 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 		case 'missing_args':
 			announce(
-				i18n.translate( 'Something seems to be missing — please fill out all the required fields.' )
+				translate( 'Something seems to be missing — please fill out all the required fields.' )
 			);
 			spreadHappiness( 'Rewind Credentials: missing API args (contact a dev)' );
 			break;
 
 		case 'invalid_args':
 			announce(
-				i18n.translate(
+				translate(
 					"The information you entered seems to be incorrect. Let's take " +
 						'another look to ensure everything is in the right place.'
 				)
@@ -174,7 +173,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 		case 'invalid_credentials':
 			announce(
-				i18n.translate(
+				translate(
 					"We couldn't connect to your site. Please verify your credentials and give it another try."
 				)
 			);
@@ -183,29 +182,29 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 		case 'invalid_wordpress_path':
 			announce(
-				i18n.translate(
+				translate(
 					'We looked for `wp-config.php` in the WordPress installation ' +
 						"path you provided but couldn't find it."
 				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+				{ button: translate( 'Get help' ), onClick: getHelp }
 			);
 			spreadHappiness( "Rewind Credentials: can't find WordPress installation files" );
 			break;
 
 		case 'read_only_install':
 			announce(
-				i18n.translate(
+				translate(
 					'It looks like your server is read-only. ' +
 						'To create backups and rewind your site, we need permission to write to your server.'
 				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+				{ button: translate( 'Get help' ), onClick: getHelp }
 			);
 			spreadHappiness( 'Rewind Credentials: creds only seem to provide read-only access' );
 			break;
 
 		case 'unreachable_path':
 			announce(
-				i18n.translate(
+				translate(
 					'We tried to access your WordPress installation through its publicly available URL, ' +
 						"but it didn't work. Please make sure the directory is accessible and try again."
 				)
@@ -214,7 +213,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		default:
-			announce( i18n.translate( 'Error saving. Please check your credentials and try again.' ) );
+			announce( translate( 'Error saving. Please check your credentials and try again.' ) );
 			spreadHappiness( 'Rewind Credentials: unknown failure saving credentials' );
 	}
 };

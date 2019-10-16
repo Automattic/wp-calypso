@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -45,7 +42,7 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 		return <div />;
 	}
 
-	return <div className={ classes }>{ i18n.translate( 'What now?' ) }</div>;
+	return <div className={ classes }>{ translate( 'What now?' ) }</div>;
 };
 
 FeaturesHeader.propTypes = {

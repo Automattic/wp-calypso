@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { forEach } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 export default function detectSurveys( post, dom ) {
 	if ( ! dom ) {
@@ -40,7 +38,7 @@ export default function detectSurveys( post, dom ) {
 			surveyDomain +
 			surveySlug +
 			'">' +
-			i18n.translate( 'Take our survey' ) +
+			translate( 'Take our survey' ) +
 			'</a>';
 
 		// Replace the .pd-embed div with the new paragraph

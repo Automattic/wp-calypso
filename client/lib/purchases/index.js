@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -389,19 +386,19 @@ function paymentLogoType( purchase ) {
 
 function purchaseType( purchase ) {
 	if ( isTheme( purchase ) ) {
-		return i18n.translate( 'Premium Theme' );
+		return translate( 'Premium Theme' );
 	}
 
 	if ( isConciergeSession( purchase ) ) {
-		return i18n.translate( 'One-on-one Support' );
+		return translate( 'One-on-one Support' );
 	}
 
 	if ( isPartnerPurchase( purchase ) ) {
-		return i18n.translate( 'Host Managed Plan' );
+		return translate( 'Host Managed Plan' );
 	}
 
 	if ( isPlan( purchase ) ) {
-		return i18n.translate( 'Site Plan' );
+		return translate( 'Site Plan' );
 	}
 
 	if ( isDomainRegistration( purchase ) ) {

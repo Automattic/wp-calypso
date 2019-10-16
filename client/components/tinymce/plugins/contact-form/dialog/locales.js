@@ -1,30 +1,32 @@
-/** @format */
-import i18n from 'i18n-calypso';
+/**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
 
 const labels = {
 	name() {
-		return i18n.translate( 'Name' );
+		return translate( 'Name' );
 	},
 	email() {
-		return i18n.translate( 'Email Address' );
+		return translate( 'Email Address' );
 	},
 	checkbox() {
-		return i18n.translate( 'Checkbox' );
+		return translate( 'Checkbox' );
 	},
 	select() {
-		return i18n.translate( 'Dropdown' );
+		return translate( 'Dropdown' );
 	},
 	radio() {
-		return i18n.translate( 'Radio Button' );
+		return translate( 'Radio Button' );
 	},
 	text() {
-		return i18n.translate( 'Text' );
+		return translate( 'Text' );
 	},
 	textarea() {
-		return i18n.translate( 'Text Area' );
+		return translate( 'Text Area' );
 	},
 	url() {
-		return i18n.translate( 'Web Address' );
+		return translate( 'Web Address' );
 	},
 };
 

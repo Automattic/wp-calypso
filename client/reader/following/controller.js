@@ -1,9 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ const exported = {
 		const mcKey = 'following_manage';
 		const { q: sitesQuery, s: subsQuery, sort: subsSortOrder, showMoreResults } = context.query;
 
-		setPageTitle( context, i18n.translate( 'Manage Followed Sites' ) );
+		setPageTitle( context, translate( 'Manage Followed Sites' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 

@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import switchLocale from 'lib/i18n-utils/switch-locale';
-import i18n from 'i18n-calypso';
+import { setLocale as i18nSetLocale } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -35,7 +32,7 @@ export const setLocale = ( localeSlug, localeVariant = null ) => {
  * @returns {Object} Action
  */
 export const setLocaleRawData = localeData => {
-	i18n.setLocale( localeData );
+	i18nSetLocale( localeData );
 
 	const { localeSlug, localeVariant = null } = localeData[ '' ];
 

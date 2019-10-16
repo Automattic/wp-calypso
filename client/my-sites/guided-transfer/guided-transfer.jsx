@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
@@ -25,18 +25,18 @@ import './style.scss';
 
 const guidedTransferHosts = {
 	bluehost: {
-		label: i18n.translate( 'Bluehost' ),
+		label: translate( 'Bluehost' ),
 		logo: '/calypso/images/guided-transfer/bluehost-logo.png',
 		url: 'https://bluehost.com/track/wpgt?page=/web-hosting/signup',
 	},
 	siteground: {
 		logo: '/calypso/images/guided-transfer/siteground-logo.png',
-		label: i18n.translate( 'SiteGround' ),
+		label: translate( 'SiteGround' ),
 		url: 'https://www.siteground.com/wordpress-hosting.htm?afcode=134c903505c0a2296bd25772edebf669',
 	},
 	pressable: {
 		logo: '/calypso/images/guided-transfer/pressable-logo.png',
-		label: i18n.translate( 'Pressable' ),
+		label: translate( 'Pressable' ),
 		url: 'https://pressable.com',
 	},
 };

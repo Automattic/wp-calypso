@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import Debug from 'debug';
 import { get, isEmpty } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -155,12 +152,12 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId, i
 							: Object.keys( data.errors ).length;
 
 					if ( countErrors === usernamesOrEmails.length ) {
-						message = i18n.translate( 'Invitation failed to send', 'Invitations failed to send', {
+						message = translate( 'Invitation failed to send', 'Invitations failed to send', {
 							count: countErrors,
 							context: 'Displayed in a notice when all invitations failed to send.',
 						} );
 					} else {
-						message = i18n.translate(
+						message = translate(
 							'An invitation failed to send',
 							'Some invitations failed to send',
 							{
@@ -175,7 +172,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId, i
 				} else {
 					dispatch(
 						successNotice(
-							i18n.translate( 'Invitation sent successfully', 'Invitations sent successfully', {
+							translate( 'Invitation sent successfully', 'Invitations sent successfully', {
 								count: usernamesOrEmails.length,
 							} )
 						)

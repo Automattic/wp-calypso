@@ -1,8 +1,6 @@
 /**
  * Adapted from the WordPress wp-view TinyMCE plugin.
  *
- *
- * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  */
@@ -16,7 +14,7 @@ import { debounce } from 'lodash';
 import tinymce from 'tinymce/tinymce';
 import ReactDom from 'react-dom';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -31,14 +29,15 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {object} editor The TinyMCE instance.
  */
 function wpview( editor ) {
-	let $ = editor.$,
-		selected,
-		Env = tinymce.Env,
-		VK = tinymce.util.VK,
-		TreeWalker = tinymce.dom.TreeWalker,
+	const $ = editor.$;
+	const Env = tinymce.Env;
+	const VK = tinymce.util.VK;
+	const TreeWalker = tinymce.dom.TreeWalker;
+	const isios = /iPad|iPod|iPhone/.test( navigator.userAgent );
+
+	let selected,
 		toRemove = false,
 		firstFocus = true,
-		isios = /iPad|iPod|iPhone/.test( navigator.userAgent ),
 		cursorInterval,
 		lastKeyDownNode,
 		setViewCursorTries,
@@ -60,8 +59,8 @@ function wpview( editor ) {
 		}
 
 		markers.each( function( index, node ) {
-			let text = editor.dom.getAttrib( node, 'data-wpview-text' ),
-				type = editor.dom.getAttrib( node, 'data-wpview-type' );
+			const text = editor.dom.getAttrib( node, 'data-wpview-text' );
+			const type = editor.dom.getAttrib( node, 'data-wpview-type' );
 			editor.dom.replace(
 				editor.dom.createFragment(
 					'<div class="wpview-wrap" data-wpview-text="' +
@@ -153,8 +152,8 @@ function wpview( editor ) {
 	}
 
 	function setViewCursor( before, view ) {
-		let location = before ? 'before' : 'after',
-			offset = before ? 0 : 1;
+		const location = before ? 'before' : 'after';
+		const offset = before ? 0 : 1;
 		deselect();
 		editor.selection.setCursorLocation(
 			editor.dom.select( '.wpview-selection-' + location, view )[ 0 ],
@@ -164,8 +163,8 @@ function wpview( editor ) {
 	}
 
 	function handleEnter( view, before, key ) {
-		let dom = editor.dom,
-			padNode = dom.create( 'p' );
+		const dom = editor.dom;
+		const padNode = dom.create( 'p' );
 
 		if ( ! ( Env.ie && Env.ie < 11 ) ) {
 			padNode.innerHTML = '<br data-mce-bogus="1">';
@@ -198,8 +197,8 @@ function wpview( editor ) {
 	}
 
 	function select( viewNode ) {
-		let clipboard,
-			dom = editor.dom;
+		let clipboard;
+		const dom = editor.dom;
 
 		if ( ! viewNode ) {
 			return;
@@ -248,8 +247,8 @@ function wpview( editor ) {
 	 * Deselect a selected view and remove clipboard
 	 */
 	function deselect() {
-		let clipboard,
-			dom = editor.dom;
+		let clipboard;
+		const dom = editor.dom;
 
 		if ( selected ) {
 			clipboard = editor.dom.select( '.wpview-clipboard', selected )[ 0 ];
@@ -278,14 +277,12 @@ function wpview( editor ) {
 	}
 
 	function setMarkers() {
-		let content, processedContent;
-
 		if ( editor.isHidden() ) {
 			return;
 		}
 
-		content = editor.getContent( { format: 'raw' } );
-		processedContent = views.setMarkers( content );
+		const content = editor.getContent( { format: 'raw' } );
+		const processedContent = views.setMarkers( content );
 
 		if ( content !== processedContent ) {
 			editor.setContent( processedContent, {
@@ -373,22 +370,21 @@ function wpview( editor ) {
 
 	// Set the cursor before or after a view when clicking next to it.
 	editor.on( 'click', function( event ) {
-		let x = event.clientX,
-			y = event.clientY,
-			body = editor.getBody(),
-			bodyRect = body.getBoundingClientRect(),
-			first = body.firstChild,
-			last = body.lastChild,
-			firstRect,
-			lastRect,
-			view;
+		const x = event.clientX;
+		const y = event.clientY;
+		const body = editor.getBody();
+		const bodyRect = body.getBoundingClientRect();
+		const first = body.firstChild;
+		const last = body.lastChild;
+
+		let view;
 
 		if ( ! first || ! last ) {
 			return;
 		}
 
-		firstRect = first.getBoundingClientRect();
-		lastRect = last.getBoundingClientRect();
+		const firstRect = first.getBoundingClientRect();
+		const lastRect = last.getBoundingClientRect();
 
 		if ( y < firstRect.top && ( view = getView( first ) ) ) {
 			setViewCursor( true, view );
@@ -397,8 +393,8 @@ function wpview( editor ) {
 			setViewCursor( false, view );
 			event.preventDefault();
 		} else if ( x < bodyRect.left || x > bodyRect.right ) {
-			tinymce.each( editor.dom.select( '.wpview-wrap' ), function( view ) {
-				const rect = view.getBoundingClientRect();
+			tinymce.each( editor.dom.select( '.wpview-wrap' ), function( v ) {
+				const rect = v.getBoundingClientRect();
 
 				if ( y < rect.top ) {
 					return false;
@@ -406,10 +402,10 @@ function wpview( editor ) {
 
 				if ( y >= rect.top && y <= rect.bottom ) {
 					if ( x < bodyRect.left ) {
-						setViewCursor( true, view );
+						setViewCursor( true, v );
 						event.preventDefault();
 					} else if ( x > bodyRect.right ) {
-						setViewCursor( false, view );
+						setViewCursor( false, v );
 						event.preventDefault();
 					}
 
@@ -420,16 +416,15 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'init', function() {
-		let scrolled = false,
-			selection = editor.selection,
-			MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+		let scrolled = false;
+		const selection = editor.selection;
+		const MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 		// When a view is selected, ensure content that is being pasted
 		// or inserted is added to a text node (instead of the view).
 		editor.on( 'BeforeSetContent', function() {
-			let walker,
-				target,
-				view = getView( selection.getNode() );
+			let walker, target;
+			const view = getView( selection.getNode() );
 
 			// If the selection is not within a view, bail.
 			if ( ! view ) {
@@ -569,16 +564,11 @@ function wpview( editor ) {
 
 	// (De)select views when arrow keys are used to navigate the content of the editor.
 	editor.on( 'keydown', function( event ) {
-		let key = event.keyCode,
-			dom = editor.dom,
-			selection = editor.selection,
-			node,
-			view,
-			cursorBefore,
-			cursorAfter,
-			range,
-			clonedRange,
-			tempRange;
+		const key = event.keyCode;
+		const dom = editor.dom;
+		const selection = editor.selection;
+
+		let node, view, cursorBefore, cursorAfter, range, clonedRange, tempRange;
 
 		if ( selected ) {
 			// Ignore key presses that involve the command or control key, but continue when in combination with backspace or v.
@@ -796,20 +786,20 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'NodeChange', function( event ) {
-		let dom = editor.dom,
-			views = editor.dom.select( '.wpview-wrap' ),
-			className = event.element.className,
-			view = getView( event.element ),
-			lKDN = lastKeyDownNode;
+		const dom = editor.dom;
+		const wpviewWraps = editor.dom.select( '.wpview-wrap' );
+		const className = event.element.className;
+		const view = getView( event.element );
+		const lKDN = lastKeyDownNode;
 
 		lastKeyDownNode = false;
 
 		clearInterval( cursorInterval );
 
 		// This runs a lot and is faster than replacing each class separately
-		tinymce.each( views, function( view ) {
+		tinymce.each( wpviewWraps, function( wpviewWrap ) {
 			if ( view.className ) {
-				view.className = view.className.replace(
+				wpviewWrap.className = wpviewWrap.className.replace(
 					/ ?\bwpview-(?:selection-before|selection-after|cursor-hide)\b/g,
 					''
 				);
@@ -855,8 +845,8 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'BeforeExecCommand', function() {
-		let node = editor.selection.getNode(),
-			view;
+		const node = editor.selection.getNode();
+		let view;
 
 		if (
 			node &&
@@ -906,37 +896,33 @@ function wpview( editor ) {
 	} );
 
 	editor.addButton( 'wp_view_edit', {
-		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
+		tooltip: translate( 'Edit', { context: 'verb' } ),
 		icon: 'dashicon dashicons-edit',
 		onPostRender: function() {
 			editor.on(
 				'wptoolbar',
 				function() {
-					let type;
-
 					if ( ! selected ) {
 						return;
 					}
 
-					type = editor.dom.getAttrib( selected, 'data-wpview-type' );
+					const type = editor.dom.getAttrib( selected, 'data-wpview-type' );
 					this.visible( views.isEditable( type ) );
 				}.bind( this )
 			);
 		},
 		onClick: function() {
-			let type;
-
 			if ( ! selected ) {
 				return;
 			}
 
-			type = editor.dom.getAttrib( selected, 'data-wpview-type' );
+			const type = editor.dom.getAttrib( selected, 'data-wpview-type' );
 			views.edit( type, editor, getText( selected ) );
 		},
 	} );
 
 	editor.addButton( 'wp_view_remove', {
-		tooltip: i18n.translate( 'Remove' ),
+		tooltip: translate( 'Remove' ),
 		icon: 'dashicon dashicons-no',
 		onClick: function() {
 			selected && removeView( selected );

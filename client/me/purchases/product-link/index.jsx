@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -35,22 +32,22 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 
 	if ( isPlan( purchase ) ) {
 		url = '/plans/compare/' + selectedSite.slug;
-		text = i18n.translate( 'View Plan Features' );
+		text = translate( 'View Plan Features' );
 	}
 
 	if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
 		url = domainManagementEdit( selectedSite.slug, purchase.meta );
-		text = i18n.translate( 'Domain Settings' );
+		text = translate( 'Domain Settings' );
 	}
 
 	if ( isGoogleApps( purchase ) ) {
 		url = getGSuiteSettingsUrl( purchase.meta );
-		text = i18n.translate( 'G Suite Settings' );
+		text = translate( 'G Suite Settings' );
 	}
 
 	if ( isTheme( purchase ) ) {
 		url = productUrl;
-		text = i18n.translate( 'Theme Details' );
+		text = translate( 'Theme Details' );
 
 		if ( ! config.isEnabled( 'manage/themes/details' ) ) {
 			props = { target: '_blank' };

@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,7 +36,7 @@ export const menuItems = [
 		item: (
 			<GridiconButton
 				icon={ <Gridicon icon="image" /> }
-				label={ i18n.translate( 'Media' ) }
+				label={ translate( 'Media' ) }
 				e2e="media"
 			/>
 		),
@@ -54,7 +51,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			item: (
 				<GridiconButton
 					icon={ <Gridicon icon="shutter" /> }
-					label={ i18n.translate( 'Google Photos library' ) }
+					label={ translate( 'Google Photos library' ) }
 					e2e="google-media"
 				/>
 			),
@@ -68,7 +65,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			item: (
 				<GridiconButton
 					icon={ <Gridicon icon="image-multiple" /> }
-					label={ i18n.translate( 'Free photo library' ) }
+					label={ translate( 'Free photo library' ) }
 					e2e="stock-media-pexels"
 				/>
 			),
@@ -83,7 +80,7 @@ menuItems.push( {
 	item: (
 		<GridiconButton
 			icon={ <Gridicon icon="mention" /> }
-			label={ i18n.translate( 'Contact form' ) }
+			label={ translate( 'Contact form' ) }
 			e2e="contact-form"
 		/>
 	),
@@ -95,7 +92,7 @@ menuItems.push( {
 	item: (
 		<GridiconButton
 			icon={ <Gridicon icon="money" /> }
-			label={ i18n.translate( 'Payment button' ) }
+			label={ translate( 'Payment button' ) }
 			e2e="payment-button"
 		/>
 	),

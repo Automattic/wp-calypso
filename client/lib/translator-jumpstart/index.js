@@ -1,12 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import {
+	getLocale,
+	setLocale,
+	reRenderTranslations,
+	registerTranslateHook,
+	registerComponentUpdateHook,
+	on as i18nOn,
+} from 'i18n-calypso';
 import { find, isUndefined } from 'lodash';
 
 /**
@@ -143,7 +147,7 @@ const communityTranslatorJumpstart = {
 	},
 
 	init( isUserSettingsReady ) {
-		const languageJson = i18n.getLocale() || { '': {} };
+		const languageJson = getLocale() || { '': {} };
 		const { localeSlug: localeCode, localeVariant } = languageJson[ '' ];
 
 		if ( localeCode && languageJson ) {
@@ -229,7 +233,7 @@ const communityTranslatorJumpstart = {
 		function activate() {
 			// Wrap DOM elements and then activate the translator
 			_shouldWrapTranslations = true;
-			i18n.reRenderTranslations();
+			reRenderTranslations();
 			window.communityTranslator.load();
 			debug( 'Translator activated' );
 			return true;
@@ -239,7 +243,7 @@ const communityTranslatorJumpstart = {
 			window.communityTranslator.unload();
 			// Remove all the data tags from the DOM
 			_shouldWrapTranslations = false;
-			i18n.reRenderTranslations();
+			reRenderTranslations();
 			debug( 'Translator deactivated' );
 			return false;
 		}
@@ -280,7 +284,7 @@ const communityTranslatorJumpstart = {
 
 	// Merge a Community Translator TranslationPair into the i18n locale
 	updateTranslation( newTranslation ) {
-		const locale = i18n.getLocale(),
+		const locale = getLocale(),
 			key = newTranslation.key,
 			plural = newTranslation.plural,
 			translations = newTranslation.translations;
@@ -296,7 +300,7 @@ const communityTranslatorJumpstart = {
 		);
 		locale[ key ] = [ plural ].concat( translations );
 
-		i18n.setLocale( locale );
+		setLocale( locale );
 	},
 
 	isValidBrowser() {
@@ -309,13 +313,13 @@ const communityTranslatorJumpstart = {
 };
 
 // wrap translations from i18n
-i18n.registerTranslateHook( ( translation, options ) => {
+registerTranslateHook( ( translation, options ) => {
 	return communityTranslatorJumpstart.wrapTranslation( options.original, translation, options );
 } );
 
 // callback when translated component changes.
 // the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
-i18n.registerComponentUpdateHook( () => {
+registerComponentUpdateHook( () => {
 	if ( typeof translationDataFromPage.contentChangedCallback === 'function' ) {
 		return translationDataFromPage.contentChangedCallback();
 	}
@@ -337,7 +341,7 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 }
 
 // re-initialize when new locale data is loaded
-i18n.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
+i18nOn.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 user.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 
 export default communityTranslatorJumpstart;

@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
@@ -54,7 +51,7 @@ const CancelPurchaseRefundInformation = ( {
 
 	if ( isRefundable( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
-			text = i18n.translate(
+			text = translate(
 				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
 					"you'll receive a refund and it will be removed from your site immediately.",
 				{
@@ -65,7 +62,7 @@ const CancelPurchaseRefundInformation = ( {
 
 		if ( isSubscription( purchase ) ) {
 			text = [
-				i18n.translate(
+				translate(
 					"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try.",
 					{
 						args: {
@@ -76,7 +73,7 @@ const CancelPurchaseRefundInformation = ( {
 			];
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
 				text.push(
-					i18n.translate(
+					translate(
 						'This plan includes mapping for the domain %(mappedDomain)s. ' +
 							"Cancelling will remove all the plan's features from your site, including the domain.",
 						{
@@ -85,7 +82,7 @@ const CancelPurchaseRefundInformation = ( {
 							},
 						}
 					),
-					i18n.translate(
+					translate(
 						'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
 						{
 							args: {
@@ -94,7 +91,7 @@ const CancelPurchaseRefundInformation = ( {
 							},
 						}
 					),
-					i18n.translate(
+					translate(
 						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
 							'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
 						{
@@ -115,7 +112,7 @@ const CancelPurchaseRefundInformation = ( {
 					);
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
-						i18n.translate(
+						translate(
 							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
 								'in mind that when you cancel a domain you risk losing it forever, and visitors to your site may ' +
 								'experience difficulties accessing it.',
@@ -125,7 +122,7 @@ const CancelPurchaseRefundInformation = ( {
 								},
 							}
 						),
-						i18n.translate( "We'd like to offer you two options to choose from:" ),
+						translate( "We'd like to offer you two options to choose from:" ),
 						<FormLabel key="keep_bundled_domain">
 							<FormRadio
 								name="keep_bundled_domain_false"
@@ -134,13 +131,13 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 							/>
 							<span>
-								{ i18n.translate( 'Cancel the plan, but keep %(domain)s.', {
+								{ translate( 'Cancel the plan, but keep %(domain)s.', {
 									args: {
 										domain: includedDomainPurchase.meta,
 									},
 								} ) }
 								<br />
-								{ i18n.translate(
+								{ translate(
 									"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
 										'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
 										"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
@@ -162,7 +159,7 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 							/>
 							<span>
-								{ i18n.translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
+								{ translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
 									args: {
 										domain: includedDomainPurchase.meta,
 									},
@@ -171,7 +168,7 @@ const CancelPurchaseRefundInformation = ( {
 									},
 								} ) }
 								<br />
-								{ i18n.translate(
+								{ translate(
 									"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
 										"you'll lose it permanently.",
 									{
@@ -186,7 +183,7 @@ const CancelPurchaseRefundInformation = ( {
 
 					if ( cancelBundledDomain ) {
 						text.push(
-							i18n.translate(
+							translate(
 								"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
 									"available again, so it's possible you won't have another chance to register it in the future. " +
 									"If you'd like to use your domain on a site hosted elsewhere, consider {{a}}updating your name " +
@@ -203,7 +200,7 @@ const CancelPurchaseRefundInformation = ( {
 									onChange={ onConfirmCancelBundledDomainChange }
 								/>
 								<span>
-									{ i18n.translate(
+									{ translate(
 										'I understand that canceling my domain means I might {{strong}}never be able to register it ' +
 											'again{{/strong}}.',
 										{
@@ -218,7 +215,7 @@ const CancelPurchaseRefundInformation = ( {
 					}
 				} else {
 					text.push(
-						i18n.translate(
+						translate(
 							'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
 								'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
 							{
@@ -228,7 +225,7 @@ const CancelPurchaseRefundInformation = ( {
 								},
 							}
 						),
-						i18n.translate(
+						translate(
 							'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
 								'minus %(domainCost)s for the domain.',
 							{
@@ -244,7 +241,7 @@ const CancelPurchaseRefundInformation = ( {
 
 				showSupportLink = false;
 			} else {
-				text = i18n.translate(
+				text = translate(
 					'When you cancel your subscription within %(refundPeriodInDays)d days of purchasing, ' +
 						"you'll receive a refund and it will be removed from your site immediately.",
 					{
@@ -255,7 +252,7 @@ const CancelPurchaseRefundInformation = ( {
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
-			text = i18n.translate(
+			text = translate(
 				'When you cancel this purchase within %(refundPeriodInDays)d days of purchasing, ' +
 					"you'll receive a refund and it will be removed from your site immediately.",
 				{
@@ -264,7 +261,7 @@ const CancelPurchaseRefundInformation = ( {
 			);
 		}
 	} else if ( isDomainRegistration( purchase ) ) {
-		text = i18n.translate(
+		text = translate(
 			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
 				'at which point it will be automatically removed from your site.'
 		);
@@ -273,7 +270,7 @@ const CancelPurchaseRefundInformation = ( {
 		includedDomainPurchase &&
 		isDomainMapping( includedDomainPurchase )
 	) {
-		text = i18n.translate(
+		text = translate(
 			'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
 				'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
 			{
@@ -288,7 +285,7 @@ const CancelPurchaseRefundInformation = ( {
 		includedDomainPurchase &&
 		isDomainRegistration( includedDomainPurchase )
 	) {
-		text = i18n.translate(
+		text = translate(
 			'This plan includes the custom domain, %(domain)s. ' +
 				'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
 			{
@@ -299,7 +296,7 @@ const CancelPurchaseRefundInformation = ( {
 			}
 		);
 	} else {
-		text = i18n.translate(
+		text = translate(
 			"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
 				'Once it expires, it will be automatically removed from your site.',
 			{
@@ -328,7 +325,7 @@ const CancelPurchaseRefundInformation = ( {
 			{ showSupportLink && (
 				<strong className="cancel-purchase__support-information">
 					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
-						? i18n.translate(
+						? translate(
 								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
 								{
 									components: {
@@ -336,7 +333,7 @@ const CancelPurchaseRefundInformation = ( {
 									},
 								}
 						  )
-						: i18n.translate(
+						: translate(
 								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
 								{
 									components: {

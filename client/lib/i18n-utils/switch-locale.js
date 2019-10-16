@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import {
+	configure as i18nConfigure,
+	setLocale as i18nSetLocale,
+	addTranslations as i18nAddTranslations,
+} from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
 import { parse as parseUrl, format as formatUrl } from 'url';
@@ -113,7 +117,7 @@ export default function switchLocale( localeSlug ) {
 	lastRequestedLocale = targetLocaleSlug;
 
 	if ( isDefaultLocale( targetLocaleSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
+		i18nConfigure( { defaultLocaleSlug: targetLocaleSlug } );
 		setLocaleInDOM( domLocaleSlug, !! language.rtl );
 	} else {
 		getLanguageFile( targetLocaleSlug ).then(
@@ -126,7 +130,7 @@ export default function switchLocale( localeSlug ) {
 						return;
 					}
 
-					i18n.setLocale( body );
+					i18nSetLocale( body );
 
 					setLocaleInDOM( domLocaleSlug, !! language.rtl );
 
@@ -198,7 +202,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		credentials: 'include',
 	} )
 		.then( res => res.json() )
-		.then( translations => i18n.addTranslations( translations ) );
+		.then( translations => i18nAddTranslations( translations ) );
 }
 
 /*

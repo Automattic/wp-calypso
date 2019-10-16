@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, intersection } from 'lodash';
@@ -13,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { taxonomiesWelcomeWhitelist, taxonomyToGridicon } from './taxonomies-config.js';
 
 class MagicSearchWelcome extends React.Component {
@@ -62,7 +59,7 @@ class MagicSearchWelcome extends React.Component {
 				this.movePositionBy( -1 );
 				event.preventDefault();
 				break;
-			case 'Enter':
+			case 'Enter': {
 				const position = this.state.suggestionPosition;
 				if ( position !== -1 ) {
 					this.props.suggestionsCallback( this.visibleTaxonomies[ position ] + ':' );
@@ -71,6 +68,7 @@ class MagicSearchWelcome extends React.Component {
 					return true;
 				}
 				break;
+			}
 		}
 		return false;
 	};
@@ -110,9 +108,7 @@ class MagicSearchWelcome extends React.Component {
 	render() {
 		return (
 			<div className="themes-magic-search-card__welcome">
-				<div className="themes-magic-search-card__welcome-header">
-					{ i18n.translate( 'Search by' ) }
-				</div>
+				<div className="themes-magic-search-card__welcome-header">{ translate( 'Search by' ) }</div>
 				<div className="themes-magic-search-card__welcome-taxonomies">
 					{ this.renderTaxonomies() }
 				</div>

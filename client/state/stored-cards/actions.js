@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -50,7 +49,7 @@ export const fetchStoredCards = () => dispatch => {
 		.catch( error => {
 			dispatch( {
 				type: STORED_CARDS_FETCH_FAILED,
-				error: error.message || i18n.translate( 'There was a problem retrieving stored cards.' ),
+				error: error.message || translate( 'There was a problem retrieving stored cards.' ),
 			} );
 		} );
 };
@@ -78,7 +77,7 @@ export const deleteStoredCard = card => dispatch => {
 			dispatch( {
 				type: STORED_CARDS_DELETE_FAILED,
 				card,
-				error: error.message || i18n.translate( 'There was a problem deleting the stored card.' ),
+				error: error.message || translate( 'There was a problem deleting the stored card.' ),
 			} );
 		} );
 };

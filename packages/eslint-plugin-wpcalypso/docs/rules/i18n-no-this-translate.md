@@ -17,8 +17,8 @@ class MyComponent extends React.Component {
 The following patterns are not warnings:
 
 ```js
-import i18n from 'i18n-calypso';
-i18n.translate( 'Hello World' );
+import { translate } from 'i18n-calypso';
+translate( 'Hello World' );
 ```
 
 ```js

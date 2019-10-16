@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import i18n from 'i18n-calypso';
+import { getLocaleSlug, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,9 +22,9 @@ export default function emailVerification( context, next ) {
 		setTimeout( () => {
 			// TODO: unify these once translations catch up
 			const message =
-				i18n.getLocaleSlug() === 'en'
-					? i18n.translate( 'Email confirmed!' )
-					: i18n.translate(
+				getLocaleSlug() === 'en'
+					? translate( 'Email confirmed!' )
+					: translate(
 							"Email confirmed! Now that you've confirmed your email address you can publish posts on your blog."
 					  );
 			const notice = successNotice( message, { duration: 10000 } );

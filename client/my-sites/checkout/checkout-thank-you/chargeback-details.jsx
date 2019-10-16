@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,11 +15,9 @@ const ChargebackDetails = ( { selectedSite } ) => {
 	return (
 		<PurchaseDetail
 			icon="create"
-			title={ i18n.translate( 'Get back to posting' ) }
-			description={ i18n.translate(
-				'You can now use the full features of your site, without limits.'
-			) }
-			buttonText={ i18n.translate( 'Write a Post' ) }
+			title={ translate( 'Get back to posting' ) }
+			description={ translate( 'You can now use the full features of your site, without limits.' ) }
+			buttonText={ translate( 'Write a Post' ) }
 			href={ newPost( selectedSite ) }
 		/>
 	);

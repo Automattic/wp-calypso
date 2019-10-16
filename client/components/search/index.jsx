@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -307,7 +307,7 @@ class Search extends Component {
 
 	render() {
 		const searchValue = this.state.keyword;
-		const placeholder = this.props.placeholder || i18n.translate( 'Search…', { textOnly: true } );
+		const placeholder = this.props.placeholder || translate( 'Search…', { textOnly: true } );
 		const inputLabel = this.props.inputLabel;
 		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
 		const isOpenUnpinnedOrQueried =
@@ -343,7 +343,7 @@ class Search extends Component {
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon ? this.openListener : null }
 					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }
+					aria-label={ translate( 'Open Search', { context: 'button label' } ) }
 				>
 					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
 				</div>
@@ -353,7 +353,7 @@ class Search extends Component {
 						id={ 'search-component-' + this.instanceId }
 						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						aria-describedby={ this.props.describedBy }
-						aria-label={ inputLabel ? inputLabel : i18n.translate( 'Search' ) }
+						aria-label={ inputLabel ? inputLabel : translate( 'Search' ) }
 						aria-hidden={ ! isOpenUnpinnedOrQueried }
 						className={ inputClass }
 						placeholder={ placeholder }
@@ -398,7 +398,7 @@ class Search extends Component {
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }
+					aria-label={ translate( 'Close Search', { context: 'button label' } ) }
 				>
 					<Gridicon icon="cross" className="search__close-icon" />
 				</div>

@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import creditcards from 'creditcards';
 import { capitalize, compact, isArray, isEmpty, mergeWith, union } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { isValidPostalCode } from 'lib/postal-code';
 
 /**
@@ -25,36 +24,36 @@ import {
 export function getCreditCardFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Cardholder Name', {
+			description: translate( 'Cardholder Name', {
 				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		number: {
-			description: i18n.translate( 'Card Number', {
+			description: translate( 'Card Number', {
 				comment: 'Card number label on credit card form',
 			} ),
 			rules: [ 'validCreditCardNumber' ],
 		},
 
 		'expiration-date': {
-			description: i18n.translate( 'Credit Card Expiration Date' ),
+			description: translate( 'Credit Card Expiration Date' ),
 			rules: [ 'validExpirationDate' ],
 		},
 
 		cvv: {
-			description: i18n.translate( 'Credit Card CVV Code' ),
+			description: translate( 'Credit Card CVV Code' ),
 			rules: [ 'validCvvNumber' ],
 		},
 
 		country: {
-			description: i18n.translate( 'Country' ),
+			description: translate( 'Country' ),
 			rules: [ 'required' ],
 		},
 
 		'postal-code': {
-			description: i18n.translate( 'Postal Code', {
+			description: translate( 'Postal Code', {
 				comment: 'Postal code on credit card form',
 			} ),
 			rules: [ 'required' ],
@@ -69,19 +68,19 @@ export function getCreditCardFieldRules() {
 export function getStripeElementsRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Cardholder Name', {
+			description: translate( 'Cardholder Name', {
 				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		country: {
-			description: i18n.translate( 'Country' ),
+			description: translate( 'Country' ),
 			rules: [ 'required' ],
 		},
 
 		'postal-code': {
-			description: i18n.translate( 'Postal Code', {
+			description: translate( 'Postal Code', {
 				comment: 'Postal code on credit card form',
 			} ),
 			rules: [ 'required' ],
@@ -98,12 +97,12 @@ export function tefPaymentFieldRules() {
 	return Object.assign(
 		{
 			name: {
-				description: i18n.translate( 'Your Name' ),
+				description: translate( 'Your Name' ),
 				rules: [ 'required' ],
 			},
 
 			'tef-bank': {
-				description: i18n.translate( 'Bank' ),
+				description: translate( 'Bank' ),
 				rules: [ 'required' ],
 			},
 		},
@@ -118,14 +117,14 @@ export function tefPaymentFieldRules() {
 export function tokenFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Cardholder Name', {
+			description: translate( 'Cardholder Name', {
 				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		tokenized_payment_data: {
-			description: i18n.translate( 'Tokenized Payment Data', {
+			description: translate( 'Tokenized Payment Data', {
 				comment: 'Tokenized payment data from the token provider',
 			} ),
 			rules: [ 'required' ],
@@ -181,7 +180,7 @@ function parseExpiration( value ) {
 }
 
 function validationError( description ) {
-	return i18n.translate( '%(description)s is invalid', {
+	return translate( '%(description)s is invalid', {
 		args: { description: capitalize( description ) },
 	} );
 }
@@ -194,7 +193,7 @@ validators.required = {
 	},
 
 	error: function( description ) {
-		return i18n.translate( 'Missing required %(description)s field', {
+		return translate( 'Missing required %(description)s field', {
 			args: { description: description },
 		} );
 	},
@@ -244,7 +243,7 @@ validators.validBrazilTaxId = {
 		return isValidCPF( value ) || isValidCNPJ( value );
 	},
 	error: function( description ) {
-		return i18n.translate(
+		return translate(
 			'%(description)s is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
 			{
 				args: { description: description },
@@ -263,7 +262,7 @@ validators.validIndiaPan = {
 		return panRegex.test( value );
 	},
 	error: function( description ) {
-		return i18n.translate( '%(description)s is invalid', {
+		return translate( '%(description)s is invalid', {
 			args: { description: capitalize( description ) },
 		} );
 	},
@@ -272,7 +271,7 @@ validators.validIndiaPan = {
 validators.validPostalCodeUS = {
 	isValid: value => isValidPostalCode( value, 'US' ),
 	error: function( description ) {
-		return i18n.translate( '%(description)s is invalid. Must be a 5 digit number', {
+		return translate( '%(description)s is invalid. Must be a 5 digit number', {
 			args: { description: description },
 		} );
 	},
@@ -386,7 +385,7 @@ function getConditionalCreditCardRules( { country } ) {
 		case 'US':
 			return {
 				'postal-code': {
-					description: i18n.translate( 'Postal Code', {
+					description: translate( 'Postal Code', {
 						comment: 'Postal code on credit card form',
 					} ),
 					rules: [ 'required', 'validPostalCodeUS' ],

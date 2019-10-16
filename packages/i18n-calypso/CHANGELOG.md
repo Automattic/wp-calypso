@@ -1,5 +1,11 @@
+Unreleased
+------
+
+* Remove default export
+* Remove `I18N` export
+
 4.0.0
------
+------
 
 * Move i18n-calypso into Calypso repository.
 * Refactor i18n-calypso to Calypso standards.

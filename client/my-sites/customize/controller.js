@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -13,7 +12,7 @@ import CustomizeComponent from 'my-sites/customize/main';
 
 export function customize( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Customizer', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( translate( 'Customizer', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( CustomizeComponent, {
 		domain: context.params.domain || '',

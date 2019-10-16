@@ -72,7 +72,7 @@ import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { requestSitePosts } from 'state/posts/actions';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import accept from 'lib/accept';
 
 import 'state/data-layer/wpcom/theme-filters';
@@ -844,18 +844,18 @@ export function confirmDelete( themeId, siteId ) {
 		const { name: themeName } = getTheme( getState(), siteId, themeId );
 		const siteTitle = getSiteTitle( getState(), siteId );
 		accept(
-			i18n.translate( 'Are you sure you want to delete %(themeName)s from %(siteTitle)s?', {
+			translate( 'Are you sure you want to delete %(themeName)s from %(siteTitle)s?', {
 				args: { themeName, siteTitle },
 				comment: 'Themes: theme delete confirmation dialog',
 			} ),
 			accepted => {
 				accepted && dispatch( deleteTheme( themeId, siteId ) );
 			},
-			i18n.translate( 'Delete %(themeName)s', {
+			translate( 'Delete %(themeName)s', {
 				args: { themeName },
 				comment: 'Themes: theme delete dialog confirm button',
 			} ),
-			i18n.translate( 'Back', { context: 'go back (like the back button in a browser)' } )
+			translate( 'Back', { context: 'go back (like the back button in a browser)' } )
 		);
 	};
 }

@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -91,7 +88,7 @@ WordadsSettingsStore.dispatchToken = Dispatcher.register( function( payload ) {
 			WordadsSettingsStore.emitChange();
 			break;
 		case 'UPDATED_WORDADS_SETTINGS':
-			_notice = i18n.translate( 'WordAds settings saved successfully!' );
+			_notice = translate( 'WordAds settings saved successfully!' );
 		case 'RECEIVE_WORDADS_SETTINGS':
 			debug( 'WordadsSettingsStore UPDATE/RECEIVE_WORDADS_SETTINGS', action );
 			_isLoading = false;

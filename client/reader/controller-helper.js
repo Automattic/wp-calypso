@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External Dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import moment from 'moment';
 
 /**
@@ -55,7 +54,7 @@ export function setPageTitle( context, title ) {
 	// @todo Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch(
 		setTitle(
-			i18n.translate( '%s ‹ Reader', {
+			translate( '%s ‹ Reader', {
 				args: title,
 				comment: '%s is the section name. For example: "My Likes"',
 			} )

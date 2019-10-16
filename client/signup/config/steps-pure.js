@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { noop } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -70,7 +68,7 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
-				headerText: i18n.translate( 'Choose a theme for your new site.' ),
+				headerText: translate( 'Choose a theme for your new site.' ),
 			},
 		},
 
@@ -84,8 +82,8 @@ export function generateSteps( {
 				showExampleSuggestions: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
-				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
-				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
+				headerText: translate( 'Getting ready to launch, pick a domain' ),
+				subHeaderText: translate( 'Select a domain name for your website' ),
 			},
 			dependencies: [ 'siteSlug' ],
 		},
@@ -208,9 +206,9 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
-				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you." ),
-				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
+				headerText: translate( 'Getting ready to launch your website' ),
+				subHeaderText: translate( "Pick a plan that's right for you." ),
+				fallbackHeaderText: translate( "Almost there, pick a plan that's right for you." ),
 				isLaunchPage: true,
 			},
 		},
@@ -267,8 +265,8 @@ export function generateSteps( {
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			props: {
-				headerText: i18n.translate( 'Create an account for Jetpack' ),
-				subHeaderText: i18n.translate( "You're moments away from connecting Jetpack." ),
+				headerText: translate( 'Create an account for Jetpack' ),
+				subHeaderText: translate( "You're moments away from connecting Jetpack." ),
 			},
 			providesDependencies: [ 'bearer_token', 'username' ],
 		},
@@ -313,8 +311,8 @@ export function generateSteps( {
 		'site-or-domain': {
 			stepName: 'site-or-domain',
 			props: {
-				headerText: i18n.translate( 'Choose how you want to use your domain.' ),
-				subHeaderText: i18n.translate(
+				headerText: translate( 'Choose how you want to use your domain.' ),
+				subHeaderText: translate(
 					"Don't worry you can easily add a site later if you're not ready."
 				),
 			},
@@ -331,7 +329,7 @@ export function generateSteps( {
 			stepName: 'site-picker',
 			apiRequestFunction: createSiteOrDomain,
 			props: {
-				headerText: i18n.translate( 'Choose your site?' ),
+				headerText: translate( 'Choose your site?' ),
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
 			dependencies: [ 'cartItem', 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],

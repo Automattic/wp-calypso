@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 
 /**
@@ -24,5 +24,5 @@ export default function hasDefaultSiteTitle( state, siteId ) {
 	}
 	const slug = getSiteSlug( state, siteId );
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
-	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
+	return site.name === translate( 'Site Title' ) || startsWith( slug, site.name );
 }

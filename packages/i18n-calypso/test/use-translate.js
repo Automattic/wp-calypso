@@ -11,7 +11,7 @@ import { act } from 'react-dom/test-utils';
 /**
  * Internal dependencies
  */
-import i18n, { useTranslate } from '../src';
+import { useTranslate, setLocale } from '../src';
 
 function Label() {
 	const translate = useTranslate();
@@ -23,7 +23,7 @@ describe( 'useTranslate()', () => {
 
 	beforeEach( () => {
 		// reset to default locale
-		i18n.setLocale();
+		setLocale();
 
 		// create container
 		container = document.createElement( 'div' );
@@ -39,7 +39,7 @@ describe( 'useTranslate()', () => {
 
 	test( 'renders a translated string', () => {
 		// set some locale data
-		i18n.setLocale( {
+		setLocale( {
 			'': { localeSlug: 'cs' },
 			'hook (%(lang)s)': [ 'háček (%(lang)s)' ],
 		} );
@@ -63,7 +63,7 @@ describe( 'useTranslate()', () => {
 
 		// change locale and ensure that React UI is rerendered
 		act( () => {
-			i18n.setLocale( {
+			setLocale( {
 				'': { localeSlug: 'cs' },
 				'hook (%(lang)s)': [ 'háček (%(lang)s)' ],
 			} );
@@ -74,7 +74,7 @@ describe( 'useTranslate()', () => {
 
 	test( 'rerenders after update of current locale translations', () => {
 		// set some locale data
-		i18n.setLocale( {
+		setLocale( {
 			'': { localeSlug: 'cs' },
 			'hook (%(lang)s)': [ 'háček (%(lang)s)' ],
 		} );
@@ -89,7 +89,7 @@ describe( 'useTranslate()', () => {
 
 		// update the translations for the current locale
 		act( () => {
-			i18n.setLocale( {
+			setLocale( {
 				'': { localeSlug: 'cs' },
 				'hook (%(lang)s)': [ 'hák (%(lang)s)' ],
 			} );

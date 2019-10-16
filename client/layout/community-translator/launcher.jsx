@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import i18n, { localize } from 'i18n-calypso';
+import { localize, on as i18nOn, off as i18nOff } from 'i18n-calypso';
 import React, { Fragment } from 'react';
 import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
@@ -55,11 +52,11 @@ class TranslatorLauncher extends React.Component {
 	};
 
 	componentDidMount() {
-		i18n.on( 'change', this.onI18nChange );
+		i18nOn( 'change', this.onI18nChange );
 	}
 
 	componentWillUnmount() {
-		i18n.off( 'change', this.onI18nChange );
+		i18nOff( 'change', this.onI18nChange );
 	}
 
 	onI18nChange = () => {

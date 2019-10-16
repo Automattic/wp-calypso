@@ -13,7 +13,7 @@ The FAQ component is made of two parts:
 ```jsx
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 export default class MyFaq extends React.Component {
 	static displayName = 'MyFaq';
@@ -26,8 +26,8 @@ export default class MyFaq extends React.Component {
 					answer="Need help deciding which plan works for you? Our happiness engineers are available for any questions you may have."
 				/>
 				<FAQItem
-					question={ i18n.translate( 'A translated question?' ) }
-					answer={ i18n.translate( 'Yeah, we got you covered!' ) }
+					question={ translate( 'A translated question?' ) }
+					answer={ translate( 'Yeah, we got you covered!' ) }
 				/>
 			</FAQ>
 		);

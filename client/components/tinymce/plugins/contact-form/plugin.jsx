@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import tinymce from 'tinymce/tinymce';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React, { createElement } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -95,7 +92,7 @@ function wpcomContactForm( editor ) {
 
 	editor.addButton( 'wpcom_add_contact_form', {
 		classes: 'btn wpcom-icon-button contact-form',
-		title: i18n.translate( 'Add Contact Form' ),
+		title: translate( 'Add Contact Form' ),
 		cmd: 'wpcomContactForm',
 		onPostRender() {
 			this.innerHtml(

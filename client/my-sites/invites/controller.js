@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import store from 'store';
 import page from 'page';
 import { find, get, isEmpty, pick } from 'lodash';
 import debugModule from 'debug';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -45,7 +44,7 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 
 export function acceptInvite( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( translate( 'Accept Invite', { textOnly: true } ) ) );
 
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 

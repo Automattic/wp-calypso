@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { camelCase } from 'lodash';
-import i18n from 'i18n-calypso';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,7 +17,7 @@ function createPurchaseObject( purchase ) {
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		mostRecentRenewDate: purchase.most_recent_renew_date,
 		mostRecentRenewMoment: purchase.most_recent_renew_date
-			? i18n.moment( purchase.most_recent_renew_date )
+			? moment( purchase.most_recent_renew_date )
 			: null,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
@@ -37,7 +34,7 @@ function createPurchaseObject( purchase ) {
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
 		error: null,
 		expiryDate: purchase.expiry_date,
-		expiryMoment: purchase.expiry_date ? i18n.moment( purchase.expiry_date ) : null,
+		expiryMoment: purchase.expiry_date ? moment( purchase.expiry_date ) : null,
 		expiryStatus: camelCase( purchase.expiry_status ),
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
@@ -68,7 +65,7 @@ function createPurchaseObject( purchase ) {
 		renewDate: purchase.renew_date,
 		// only generate a moment if `renewDate` is present and positive
 		renewMoment:
-			purchase.renew_date && purchase.renew_date > '0' ? i18n.moment( purchase.renew_date ) : null,
+			purchase.renew_date && purchase.renew_date > '0' ? moment( purchase.renew_date ) : null,
 		saleAmount: purchase.sale_amount,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
@@ -88,9 +85,7 @@ function createPurchaseObject( purchase ) {
 				processor: purchase.payment_card_processor,
 				number: purchase.payment_details,
 				expiryDate: purchase.payment_expiry,
-				expiryMoment: purchase.payment_expiry
-					? i18n.moment( purchase.payment_expiry, 'MM/YY' )
-					: null,
+				expiryMoment: purchase.payment_expiry ? moment( purchase.payment_expiry, 'MM/YY' ) : null,
 			},
 		} );
 
@@ -99,7 +94,7 @@ function createPurchaseObject( purchase ) {
 
 	if ( 'paypal_direct' === purchase.payment_type ) {
 		object.payment.expiryMoment = purchase.payment_expiry
-			? i18n.moment( purchase.payment_expiry, 'MM/YY' )
+			? moment( purchase.payment_expiry, 'MM/YY' )
 			: null;
 	}
 

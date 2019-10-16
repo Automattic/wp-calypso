@@ -4,7 +4,7 @@
 import React, { forwardRef } from 'react';
 import { useSubscription } from 'use-subscription';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import i18n from 'i18n-calypso';
+import { on as i18nOn, off as i18nOff } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,8 +17,8 @@ const RtlSubscription = {
 		return isLocaleRtl( getLocaleSlug() );
 	},
 	subscribe( callback ) {
-		i18n.on( 'change', callback );
-		return () => i18n.off( 'change', callback );
+		i18nOn( 'change', callback );
+		return () => i18nOff( 'change', callback );
 	},
 };
 

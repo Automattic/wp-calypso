@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -51,10 +51,10 @@ const NetworkConnectionApp = {
 		const changeCallback = () => {
 			if ( connected ) {
 				debug( 'Showing notice "Connection restored".' );
-				reduxStore.dispatch( connectionRestored( i18n.translate( 'Connection restored.' ) ) );
+				reduxStore.dispatch( connectionRestored( translate( 'Connection restored.' ) ) );
 			} else {
 				reduxStore.dispatch(
-					connectionLost( i18n.translate( 'Not connected. Some information may be out of sync.' ) )
+					connectionLost( translate( 'Not connected. Some information may be out of sync.' ) )
 				);
 				debug( 'Showing notice "No internet connection".' );
 			}

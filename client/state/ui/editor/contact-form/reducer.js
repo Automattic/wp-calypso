@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { cloneDeep, merge } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -42,7 +39,7 @@ export default function( state = initialState, action ) {
 			state.fields.splice( index, 1 );
 			break;
 		}
-		case EDITOR_CONTACT_FORM_FIELD_UPDATE:
+		case EDITOR_CONTACT_FORM_FIELD_UPDATE: {
 			state = cloneDeep( state );
 			state.fields[ index ] = Object.assign( {}, state.fields[ index ], field );
 
@@ -51,13 +48,14 @@ export default function( state = initialState, action ) {
 			if ( newField.type !== 'radio' && newField.type !== 'select' ) {
 				delete newField.options;
 			} else if ( newField.options === undefined ) {
-				newField.options = i18n.translate( 'Option One,Option Two', {
+				newField.options = translate( 'Option One,Option Two', {
 					comment:
 						'Default options for drop down lists and radio buttons. Must be separated by a comma without extra spaces.',
 				} );
 			}
 
 			break;
+		}
 		case EDITOR_CONTACT_FORM_SETTINGS_UPDATE:
 			state = merge( {}, state, settings );
 			break;

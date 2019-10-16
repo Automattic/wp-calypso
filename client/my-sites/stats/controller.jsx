@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 import { find, pick, get } from 'lodash';
 
 /**
@@ -51,7 +51,7 @@ function rangeOfPeriod( period, date ) {
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
-	const durationAgo = i18n.moment.duration( endOfCurrentPeriod.diff( date ) );
+	const durationAgo = moment.duration( endOfCurrentPeriod.diff( date ) );
 	let numPeriodAgo;
 
 	switch ( period ) {
@@ -74,51 +74,51 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 function getSiteFilters( siteId ) {
 	const filters = [
 		{
-			title: i18n.translate( 'Insights' ),
+			title: translate( 'Insights' ),
 			path: '/stats/insights/' + siteId,
 			id: 'stats-insights',
 		},
 		{
-			title: i18n.translate( 'Days' ),
+			title: translate( 'Days' ),
 			path: '/stats/day/' + siteId,
 			id: 'stats-day',
 			period: 'day',
 		},
 		{
-			title: i18n.translate( 'Weeks' ),
+			title: translate( 'Weeks' ),
 			path: '/stats/week/' + siteId,
 			id: 'stats-week',
 			period: 'week',
 		},
 		{
-			title: i18n.translate( 'Months' ),
+			title: translate( 'Months' ),
 			path: '/stats/month/' + siteId,
 			id: 'stats-month',
 			period: 'month',
 		},
 		{
-			title: i18n.translate( 'Years' ),
+			title: translate( 'Years' ),
 			path: '/stats/year/' + siteId,
 			id: 'stats-year',
 			period: 'year',
 		},
 		{
-			title: i18n.translate( 'WordAds - Days' ),
+			title: translate( 'WordAds - Days' ),
 			path: '/stats/ads/day/' + siteId,
 			period: 'day',
 		},
 		{
-			title: i18n.translate( 'WordAds - Weeks' ),
+			title: translate( 'WordAds - Weeks' ),
 			id: 'stats-wordads-week',
 			period: 'week',
 		},
 		{
-			title: i18n.translate( 'WordAds - Months' ),
+			title: translate( 'WordAds - Months' ),
 			id: 'stats-wordads-month',
 			period: 'month',
 		},
 		{
-			title: i18n.translate( 'WordAds - Years' ),
+			title: translate( 'WordAds - Years' ),
 			id: 'stats-wordads-year',
 			period: 'year',
 		},
@@ -129,7 +129,7 @@ function getSiteFilters( siteId ) {
 
 function getMomentSiteZone( state, siteId ) {
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	return i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
 export default {
@@ -170,20 +170,20 @@ export default {
 		const filters = function() {
 			return [
 				{
-					title: i18n.translate( 'Days' ),
+					title: translate( 'Days' ),
 					path: '/stats/day',
 					altPaths: [ '/stats' ],
 					id: 'stats-day',
 					period: 'day',
 				},
-				{ title: i18n.translate( 'Weeks' ), path: '/stats/week', id: 'stats-week', period: 'week' },
+				{ title: translate( 'Weeks' ), path: '/stats/week', id: 'stats-week', period: 'week' },
 				{
-					title: i18n.translate( 'Months' ),
+					title: translate( 'Months' ),
 					path: '/stats/month',
 					id: 'stats-month',
 					period: 'month',
 				},
-				{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' },
+				{ title: translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' },
 			];
 		};
 
@@ -244,11 +244,10 @@ export default {
 		}
 
 		const momentSiteZone = getMomentSiteZone( state, siteId );
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			? moment( queryOptions.startDate ).locale( 'en' )
 			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 
 		const parsedPeriod = isValidStartDate
@@ -306,7 +305,7 @@ export default {
 			'searchterms',
 			'annualstats',
 		];
-		let momentSiteZone = i18n.moment();
+		let momentSiteZone = moment();
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -329,12 +328,11 @@ export default {
 
 		const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
 		if ( Number.isFinite( gmtOffset ) ) {
-			momentSiteZone = i18n.moment().utcOffset( gmtOffset );
+			momentSiteZone = moment().utcOffset( gmtOffset );
 		}
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			? moment( queryOptions.startDate ).locale( 'en' )
 			: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 		const period = rangeOfPeriod( activeFilter.period, date );
 
@@ -432,11 +430,10 @@ export default {
 		}
 
 		const momentSiteZone = getMomentSiteZone( state, siteId );
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			? moment( queryOptions.startDate ).locale( 'en' )
 			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 
 		const parsedPeriod = isValidStartDate

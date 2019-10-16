@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,15 +16,15 @@ const SiteRedirectDetails = ( { selectedSite, domain } ) => {
 		<div>
 			<PurchaseDetail
 				icon="external"
-				title={ i18n.translate( 'Test the redirect' ) }
-				description={ i18n.translate(
+				title={ translate( 'Test the redirect' ) }
+				description={ translate(
 					'Visitors to your site will be automatically redirected to {{em}}%(url)s{{/em}}.',
 					{
 						args: { url: domain },
 						components: { em: <em /> },
 					}
 				) }
-				buttonText={ i18n.translate( 'Try it now' ) }
+				buttonText={ translate( 'Try it now' ) }
 				href={ `${ selectedSite.options.unmapped_url }` }
 				target="_blank"
 				rel="noopener noreferrer"
@@ -35,11 +32,11 @@ const SiteRedirectDetails = ( { selectedSite, domain } ) => {
 
 			<PurchaseDetail
 				icon="cog"
-				title={ i18n.translate( 'Change redirect settings' ) }
-				description={ i18n.translate(
+				title={ translate( 'Change redirect settings' ) }
+				description={ translate(
 					'Disable the redirect by choosing a different primary domain, or change the target address.'
 				) }
-				buttonText={ i18n.translate( 'Manage redirect' ) }
+				buttonText={ translate( 'Manage redirect' ) }
 				href={ getDomainManagementUrl( selectedSite, domain ) }
 			/>
 		</div>

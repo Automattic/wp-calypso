@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import debugModule from 'debug';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -40,7 +37,7 @@ class SyncInitialize extends React.Component {
 					<input
 						name="firstName"
 						type="text"
-						placeholder={ i18n.translate( 'First Name' ) }
+						placeholder={ translate( 'First Name' ) }
 						onChange={ this.handleFieldChange.bind( this ) }
 						disabled={ isFieldDisabled( this.state.form, 'firstName' ) }
 					/>
@@ -48,11 +45,12 @@ class SyncInitialize extends React.Component {
 					<input
 						name="lastName"
 						type="text"
-						placeholder={ i18n.translate( 'Last Name' ) }
+						placeholder={ translate( 'Last Name' ) }
 						onChange={ this.handleFieldChange.bind( this ) }
 						disabled={ isFieldDisabled( this.state.form, 'lastName' ) }
 					/>
 
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<button type="submit" className="button is-primary">
 						Submit
 					</button>

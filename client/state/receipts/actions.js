@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -27,7 +24,7 @@ export function fetchReceipt( receiptId ) {
 				.getReceipt( receiptId, ( error, data ) => {
 					if ( error ) {
 						const errorMessage =
-							error.message || i18n.translate( 'There was a problem retrieving your receipt.' );
+							error.message || translate( 'There was a problem retrieving your receipt.' );
 
 						dispatch( {
 							type: RECEIPT_FETCH_FAILED,

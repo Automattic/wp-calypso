@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,8 +22,8 @@ import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import wp from 'lib/wp';
 const wpcom = wp.undocumented();
 
-const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
-const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
+const PURCHASES_FETCH_ERROR_MESSAGE = translate( 'There was an error retrieving purchases.' );
+const PURCHASE_REMOVE_ERROR_MESSAGE = translate( 'There was an error removing the purchase.' );
 
 export const clearPurchases = () => dispatch => {
 	dispatch( { type: PURCHASES_REMOVE } );

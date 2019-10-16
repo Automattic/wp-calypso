@@ -18,7 +18,7 @@ import {
 	mapValues,
 } from 'lodash';
 import classNames from 'classnames';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Style dependencies
@@ -299,7 +299,7 @@ class KeyedSuggestions extends React.Component {
 				<div className="keyed-suggestions__category" key={ key }>
 					<span className="keyed-suggestions__category-name">{ key }</span>
 					<span className="keyed-suggestions__category-counter">
-						{ i18n.translate( '%(filtered)s of %(total)s', {
+						{ translate( '%(filtered)s of %(total)s', {
 							args: { filtered, total },
 						} ) }
 					</span>
@@ -307,14 +307,14 @@ class KeyedSuggestions extends React.Component {
 						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
 							category={ key }
-							label={ i18n.translate( 'Show all' ) }
+							label={ translate( 'Show all' ) }
 						/>
 					) }
 					{ key === this.state.showAll && (
 						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
 							category={ '' }
-							label={ i18n.translate( 'Show less' ) }
+							label={ translate( 'Show less' ) }
 						/>
 					) }
 				</div>

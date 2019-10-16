@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import titlecase from 'to-title-case';
 import Gridicon from 'components/gridicon';
@@ -185,7 +185,7 @@ class ThemeSheet extends React.Component {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
 		const tag = this.props.author
-			? i18n.translate( 'by %(author)s', { args: { author: this.props.author } } )
+			? translate( 'by %(author)s', { args: { author: this.props.author } } )
 			: placeholder;
 
 		return (
@@ -236,7 +236,7 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-preview-link">
 				<span className="theme__sheet-preview-link-text">
-					{ i18n.translate( 'Open Live Demo', {
+					{ translate( 'Open Live Demo', {
 						context: 'Individual theme live preview button',
 					} ) }
 				</span>
@@ -252,7 +252,7 @@ class ThemeSheet extends React.Component {
 		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
 			<img
-				alt={ i18n.translate( 'Screenshot of the %(themeName)s theme', {
+				alt={ translate( 'Screenshot of the %(themeName)s theme', {
 					args: { themeName },
 				} ) }
 				className="theme__sheet-img"
@@ -280,9 +280,9 @@ class ThemeSheet extends React.Component {
 
 	renderSectionNav = currentSection => {
 		const filterStrings = {
-			'': i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
-			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
-			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
+			'': translate( 'Overview', { context: 'Filter label for theme content' } ),
+			setup: translate( 'Setup', { context: 'Filter label for theme content' } ),
+			support: translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
 		const { siteSlug, id } = this.props;
@@ -305,7 +305,7 @@ class ThemeSheet extends React.Component {
 						onClick={ this.previewAction }
 						className="theme__sheet-preview-nav-item"
 					>
-						{ i18n.translate( 'Open Live Demo', {
+						{ translate( 'Open Live Demo', {
 							context: 'Individual theme live preview button',
 						} ) }
 					</NavItem>
@@ -355,7 +355,7 @@ class ThemeSheet extends React.Component {
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
 
 		const nextThemeHref = `/theme/${ next }${ sitePart }`;
-		return <SectionHeader href={ nextThemeHref } label={ i18n.translate( 'Next theme' ) } />;
+		return <SectionHeader href={ nextThemeHref } label={ translate( 'Next theme' ) } />;
 	};
 
 	renderOverviewTab = () => {
@@ -392,15 +392,15 @@ class ThemeSheet extends React.Component {
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Need extra help?' ) }
-					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
+					{ translate( 'Need extra help?' ) }
+					<small>{ translate( 'Get in touch with our support team' ) }</small>
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
 					href={ '/help/contact/' }
 					onClick={ this.trackContactUsClick }
 				>
-					{ i18n.translate( 'Contact us' ) }
+					{ translate( 'Contact us' ) }
 				</Button>
 			</Card>
 		);
@@ -412,14 +412,14 @@ class ThemeSheet extends React.Component {
 		}
 
 		const description = this.props.isPremium
-			? i18n.translate( 'Get in touch with the theme author' )
-			: i18n.translate( 'Get help from volunteers and staff' );
+			? translate( 'Get in touch with the theme author' )
+			: translate( 'Get help from volunteers and staff' );
 
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="comment" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Have a question about this theme?' ) }
+					{ translate( 'Have a question about this theme?' ) }
 					<small>{ description }</small>
 				</div>
 				<Button
@@ -427,7 +427,7 @@ class ThemeSheet extends React.Component {
 					href={ this.props.forumUrl }
 					onClick={ this.trackThemeForumClick }
 				>
-					{ i18n.translate( 'Visit forum' ) }
+					{ translate( 'Visit forum' ) }
 				</Button>
 			</Card>
 		);
@@ -438,15 +438,15 @@ class ThemeSheet extends React.Component {
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Need CSS help? ' ) }
-					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
+					{ translate( 'Need CSS help? ' ) }
+					<small>{ translate( 'Get help from the experts in our CSS forum' ) }</small>
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
 					href="//en.forums.wordpress.com/forum/css-customization"
 					onClick={ this.trackCssClick }
 				>
-					{ i18n.translate( 'Visit forum' ) }
+					{ translate( 'Visit forum' ) }
 				</Button>
 			</Card>
 		);
@@ -472,9 +472,9 @@ class ThemeSheet extends React.Component {
 					<Card className="theme__sheet-card-support">
 						<Gridicon icon="notice-outline" size={ 48 } />
 						<div className="theme__sheet-card-support-details">
-							{ i18n.translate( 'This theme is unsupported' ) }
+							{ translate( 'This theme is unsupported' ) }
 							<small>
-								{ i18n.translate( "Maybe it's a custom theme? Sorry about that.", {
+								{ translate( "Maybe it's a custom theme? Sorry about that.", {
 									context: 'Support message when we no support links are available',
 								} ) }
 							</small>
@@ -488,9 +488,9 @@ class ThemeSheet extends React.Component {
 				<Card className="theme__sheet-card-support">
 					<Gridicon icon="help" size={ 48 } />
 					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Have a question about this theme?' ) }
+						{ translate( 'Have a question about this theme?' ) }
 						<small>
-							{ i18n.translate( 'Pick this design and start a site with us, we can help!', {
+							{ translate( 'Pick this design and start a site with us, we can help!', {
 								context: 'Logged out theme support message',
 							} ) }
 						</small>
@@ -509,15 +509,15 @@ class ThemeSheet extends React.Component {
 			return (
 				<span className="theme__sheet-customize-button">
 					<Gridicon icon="external" />
-					{ i18n.translate( 'Customize site' ) }
+					{ translate( 'Customize site' ) }
 				</span>
 			);
 		} else if ( isLoggedIn ) {
 			if ( isPremium && ! isPurchased ) {
 				// purchase
-				return i18n.translate( 'Pick this design' );
+				return translate( 'Pick this design' );
 			} // else: activate
-			return i18n.translate( 'Activate this design' );
+			return translate( 'Activate this design' );
 		}
 		return defaultOption.label;
 	};
@@ -529,16 +529,16 @@ class ThemeSheet extends React.Component {
 					<Gridicon icon="cross-circle" size={ 48 } />
 					<div className="theme__retired-theme-message-details">
 						<div className="theme__retired-theme-message-details-title">
-							{ i18n.translate( 'This theme is retired' ) }
+							{ translate( 'This theme is retired' ) }
 						</div>
 						<div>
-							{ i18n.translate(
+							{ translate(
 								'We invite you to try out a newer theme; start by browsing our WordPress theme directory.'
 							) }
 						</div>
 					</div>
 					<Button primary={ true } href={ '/themes/' }>
-						{ i18n.translate( 'See All Themes' ) }
+						{ translate( 'See All Themes' ) }
 					</Button>
 				</Card>
 
@@ -554,7 +554,7 @@ class ThemeSheet extends React.Component {
 		if ( ! this.isLoaded() || this.props.isActive ) {
 			price = '';
 		} else if ( ! this.props.isPremium ) {
-			price = i18n.translate( 'Free' );
+			price = translate( 'Free' );
 		}
 
 		const className = classNames( 'theme__sheet-action-bar-cost', {
@@ -603,7 +603,7 @@ class ThemeSheet extends React.Component {
 			isPremium,
 			isJetpack,
 			isVip,
-			translate,
+			translate: translateProp,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
 		} = this.props;
@@ -620,7 +620,7 @@ class ThemeSheet extends React.Component {
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title =
 			themeName &&
-			i18n.translate( '%(themeName)s Theme', {
+			translateProp( '%(themeName)s Theme', {
 				args: { themeName },
 			} );
 
@@ -688,7 +688,7 @@ class ThemeSheet extends React.Component {
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
-					backText={ previousRoute ? i18n.translate( 'Back' ) : i18n.translate( 'All Themes' ) }
+					backText={ previousRoute ? translateProp( 'Back' ) : translateProp( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
 					{ ! retired && this.renderButton() }

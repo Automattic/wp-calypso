@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { forEach } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -49,7 +46,7 @@ export default function detectPolls( post, dom ) {
 					'<a target="_blank" rel="external noopener noreferrer" href="https://poll.fm/' +
 					pollId +
 					'">' +
-					i18n.translate( 'Take our poll' ) +
+					translate( 'Take our poll' ) +
 					'</a>';
 				noscript.parentNode.replaceChild( p, noscript );
 			}

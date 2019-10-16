@@ -4,7 +4,7 @@
 import React, { Component, ComponentType } from 'react';
 import debugModule from 'debug';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { includes, without } from 'lodash';
 import { Subtract } from 'utility-types';
 
@@ -23,7 +23,7 @@ function warnIfChanged( event: BeforeUnloadEvent ) {
 		return;
 	}
 	debug( 'unsaved form changes detected' );
-	const beforeUnloadText = i18n.translate( 'You have unsaved changes.' );
+	const beforeUnloadText = translate( 'You have unsaved changes.' );
 	( event || window.event ).returnValue = beforeUnloadText;
 	return beforeUnloadText;
 }
@@ -121,7 +121,7 @@ function windowConfirm() {
 	if ( typeof window === 'undefined' ) {
 		return true;
 	}
-	const confirmText = i18n.translate(
+	const confirmText = translate(
 		'You have unsaved changes. Are you sure you want to leave this page?'
 	);
 	return window.confirm( confirmText );

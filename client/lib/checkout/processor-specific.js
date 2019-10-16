@@ -1,9 +1,8 @@
 /**
  * External dependencies
  *
- * @format
  */
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { isUndefined, isEmpty, pick } from 'lodash';
 import { CPF, CNPJ } from 'cpf_cnpj';
 
@@ -63,27 +62,27 @@ export function isValidCNPJ( cnpj = '' ) {
 export function fullAddressFieldsRules() {
 	return {
 		'street-number': {
-			description: i18n.translate( 'Street Number' ),
+			description: translate( 'Street Number' ),
 			rules: [ 'required', 'validStreetNumber' ],
 		},
 
 		'address-1': {
-			description: i18n.translate( 'Address' ),
+			description: translate( 'Address' ),
 			rules: [ 'required' ],
 		},
 
 		state: {
-			description: i18n.translate( 'State' ),
+			description: translate( 'State' ),
 			rules: [ 'required' ],
 		},
 
 		city: {
-			description: i18n.translate( 'City' ),
+			description: translate( 'City' ),
 			rules: [ 'required' ],
 		},
 
 		'postal-code': {
-			description: i18n.translate( 'Postal Code' ),
+			description: translate( 'Postal Code' ),
 			rules: [ 'required' ],
 		},
 	};
@@ -102,24 +101,24 @@ export function countrySpecificFieldRules( country ) {
 		Object.assign(
 			{
 				document: {
-					description: i18n.translate( 'Taxpayer Identification Number' ),
+					description: translate( 'Taxpayer Identification Number' ),
 					rules: [ 'validBrazilTaxId' ],
 				},
 
 				'phone-number': {
-					description: i18n.translate( 'Phone Number' ),
+					description: translate( 'Phone Number' ),
 					rules: [ 'required' ],
 				},
 				name: {
-					description: i18n.translate( 'Your Name' ),
+					description: translate( 'Your Name' ),
 					rules: [ 'required' ],
 				},
 				pan: {
-					description: i18n.translate( 'PAN - Permanent account number' ),
+					description: translate( 'PAN - Permanent account number' ),
 					rules: [ 'validIndiaPan' ],
 				},
 				'postal-code': {
-					description: i18n.translate( 'Postal Code' ),
+					description: translate( 'Postal Code' ),
 					rules: [ 'required' ],
 				},
 			},
@@ -130,17 +129,17 @@ export function countrySpecificFieldRules( country ) {
 }
 
 export function translatedEbanxError( error ) {
-	let errorMessage = i18n.translate(
+	let errorMessage = translate(
 		'Your payment was not processed this time due to an error, please try to submit it again.'
 	);
 
 	switch ( error.status_code ) {
 		case 'BP-DR-55':
-			errorMessage = { message: { cvv: i18n.translate( 'Invalid credit card CVV number' ) } };
+			errorMessage = { message: { cvv: translate( 'Invalid credit card CVV number' ) } };
 			break;
 		case 'BP-DR-51':
 		case 'BP-DR-95':
-			errorMessage = { message: { name: i18n.translate( 'Please enter your name.' ) } };
+			errorMessage = { message: { name: translate( 'Please enter your name.' ) } };
 			break;
 	}
 

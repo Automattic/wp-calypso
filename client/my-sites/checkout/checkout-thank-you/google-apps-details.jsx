@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -24,8 +21,8 @@ const GoogleAppsDetails = props => {
 	return (
 		<PurchaseDetail
 			icon="mail"
-			title={ i18n.translate( 'Check your email to finish setting up your G Suite account' ) }
-			description={ i18n.translate(
+			title={ translate( 'Check your email to finish setting up your G Suite account' ) }
+			description={ translate(
 				'We emailed you at {{strong}}%(email)s{{/strong}} with login information ' +
 					'so you can start using new professional email addresses and other G Suite apps. ' +
 					'If you can’t find it, try searching “G Suite” in your email inbox. {{link}}Learn more about G Suite{{/link}}',
@@ -46,7 +43,7 @@ const GoogleAppsDetails = props => {
 					},
 				}
 			) }
-			requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
+			requiredText={ translate( 'Almost done! One step remaining…' ) }
 			isRequired
 		/>
 	);

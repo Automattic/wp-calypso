@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, uniqBy } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -135,25 +132,19 @@ export default {
 				if ( translateArg.isMultiSite ) {
 					switch ( combination ) {
 						case '1 site 1 plugin':
-							return i18n.translate( 'Successfully installed %(plugin)s on %(site)s.', {
+							return translate( 'Successfully installed %(plugin)s on %(site)s.', {
 								args: translateArg,
 							} );
 						case '1 site n plugins':
-							return i18n.translate(
-								'Successfully installed %(numberOfPlugins)d plugins on %(site)s.',
-								{
-									args: translateArg,
-								}
-							);
+							return translate( 'Successfully installed %(numberOfPlugins)d plugins on %(site)s.', {
+								args: translateArg,
+							} );
 						case 'n sites 1 plugin':
-							return i18n.translate(
-								'Successfully installed %(plugin)s on %(numberOfSites)d sites.',
-								{
-									args: translateArg,
-								}
-							);
+							return translate( 'Successfully installed %(plugin)s on %(numberOfSites)d sites.', {
+								args: translateArg,
+							} );
 						case 'n sites n plugins':
-							return i18n.translate(
+							return translate(
 								'Successfully installed %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 								{
 									args: translateArg,
@@ -163,25 +154,25 @@ export default {
 				}
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Successfully installed and activated %(plugin)s on %(site)s.', {
+						return translate( 'Successfully installed and activated %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully installed and activated %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'Successfully installed and activated %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully installed and activated %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -193,22 +184,19 @@ export default {
 			case 'REMOVE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Successfully removed %(plugin)s on %(site)s.', {
+						return translate( 'Successfully removed %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
-							'Successfully removed %(numberOfPlugins)d plugins on %(site)s.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Successfully removed %(numberOfPlugins)d plugins on %(site)s.', {
+							args: translateArg,
+						} );
 					case 'n sites 1 plugin':
-						return i18n.translate( 'Successfully removed %(plugin)s on %(numberOfSites)d sites.', {
+						return translate( 'Successfully removed %(plugin)s on %(numberOfSites)d sites.', {
 							args: translateArg,
 						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully removed %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -219,22 +207,19 @@ export default {
 			case 'UPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Successfully updated %(plugin)s on %(site)s.', {
+						return translate( 'Successfully updated %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
-							'Successfully updated %(numberOfPlugins)d plugins on %(site)s.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Successfully updated %(numberOfPlugins)d plugins on %(site)s.', {
+							args: translateArg,
+						} );
 					case 'n sites 1 plugin':
-						return i18n.translate( 'Successfully updated %(plugin)s on %(numberOfSites)d sites.', {
+						return translate( 'Successfully updated %(plugin)s on %(numberOfSites)d sites.', {
 							args: translateArg,
 						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully updated %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -245,25 +230,19 @@ export default {
 			case 'ACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Successfully activated %(plugin)s on %(site)s.', {
+						return translate( 'Successfully activated %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
-							'Successfully activated %(numberOfPlugins)d plugins on %(site)s.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Successfully activated %(numberOfPlugins)d plugins on %(site)s.', {
+							args: translateArg,
+						} );
 					case 'n sites 1 plugin':
-						return i18n.translate(
-							'Successfully activated %(plugin)s on %(numberOfSites)d sites.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Successfully activated %(plugin)s on %(numberOfSites)d sites.', {
+							args: translateArg,
+						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully activated %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -274,25 +253,19 @@ export default {
 			case 'DEACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Successfully deactivated %(plugin)s on %(site)s.', {
+						return translate( 'Successfully deactivated %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
-							'Successfully deactivated %(numberOfPlugins)d plugins on %(site)s.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Successfully deactivated %(numberOfPlugins)d plugins on %(site)s.', {
+							args: translateArg,
+						} );
 					case 'n sites 1 plugin':
-						return i18n.translate(
-							'Successfully deactivated %(plugin)s on %(numberOfSites)d sites.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Successfully deactivated %(plugin)s on %(numberOfSites)d sites.', {
+							args: translateArg,
+						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully deactivated %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -303,25 +276,25 @@ export default {
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Successfully enabled autoupdates for %(plugin)s on %(site)s.', {
+						return translate( 'Successfully enabled autoupdates for %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully enabled autoupdates for %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'Successfully enabled autoupdates for %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully enabled autoupdates for %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -332,28 +305,25 @@ export default {
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate(
-							'Successfully disabled autoupdates for %(plugin)s on %(site)s.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Successfully disabled autoupdates for %(plugin)s on %(site)s.', {
+							args: translateArg,
+						} );
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully disabled autoupdates for %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'Successfully disabled autoupdates for %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Successfully disabled autoupdates for %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -362,7 +332,7 @@ export default {
 				}
 				break;
 			case 'PLUGIN_UPLOAD':
-				return i18n.translate( "You've successfully installed the %(plugin)s plugin.", {
+				return translate( "You've successfully installed the %(plugin)s plugin.", {
 					args: translateArg,
 				} );
 		}
@@ -373,22 +343,22 @@ export default {
 			case 'INSTALL_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Installing %(plugin)s on %(site)s.', {
+						return translate( 'Installing %(plugin)s on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate( 'Installing %(numberOfPlugins)d plugins on %(site)s.', {
+						return translate( 'Installing %(numberOfPlugins)d plugins on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites 1 plugin':
-						return i18n.translate( 'Installing %(plugin)s on %(numberOfSites)d sites.', {
+						return translate( 'Installing %(plugin)s on %(numberOfSites)d sites.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Installing %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								context: 'In progress message',
@@ -400,70 +370,64 @@ export default {
 			case 'REMOVE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Removing %(plugin)s on %(site)s.', { args: translateArg } );
+						return translate( 'Removing %(plugin)s on %(site)s.', { args: translateArg } );
 					case '1 site n plugins':
-						return i18n.translate( 'Removing %(numberOfPlugins)d plugins on %(site)s.', {
+						return translate( 'Removing %(numberOfPlugins)d plugins on %(site)s.', {
 							args: translateArg,
 						} );
 					case 'n sites 1 plugin':
-						return i18n.translate( 'Removing %(plugin)s on %(numberOfSites)d sites.', {
+						return translate( 'Removing %(plugin)s on %(numberOfSites)d sites.', {
 							args: translateArg,
 						} );
 					case 'n sites n plugins':
-						return i18n.translate(
-							'Removing %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Removing %(numberOfPlugins)d plugins on %(numberOfSites)d sites.', {
+							args: translateArg,
+						} );
 				}
 				break;
 			case 'UPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Updating %(plugin)s on %(site)s.', {
+						return translate( 'Updating %(plugin)s on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate( 'Updating %(numberOfPlugins)d plugins on %(site)s.', {
+						return translate( 'Updating %(numberOfPlugins)d plugins on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites 1 plugin':
-						return i18n.translate( 'Updating %(plugin)s on %(numberOfSites)d sites.', {
+						return translate( 'Updating %(plugin)s on %(numberOfSites)d sites.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites n plugins':
-						return i18n.translate(
-							'Updating %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
-							{
-								context: 'In progress message',
-								args: translateArg,
-							}
-						);
+						return translate( 'Updating %(numberOfPlugins)d plugins on %(numberOfSites)d sites.', {
+							context: 'In progress message',
+							args: translateArg,
+						} );
 				}
 				break;
 			case 'ACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Activating %(plugin)s on %(site)s.', {
+						return translate( 'Activating %(plugin)s on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate( 'Activating %(numberOfPlugins)d plugins on %(site)s.', {
+						return translate( 'Activating %(numberOfPlugins)d plugins on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites 1 plugin':
-						return i18n.translate( 'Activating %(plugin)s on %(numberOfSites)d sites.', {
+						return translate( 'Activating %(plugin)s on %(numberOfSites)d sites.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Activating %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								context: 'In progress message',
@@ -475,22 +439,22 @@ export default {
 			case 'DEACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Deactivating %(plugin)s on %(site)s', {
+						return translate( 'Deactivating %(plugin)s on %(site)s', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate( 'Deactivating %(numberOfPlugins)d plugins on %(site)s.', {
+						return translate( 'Deactivating %(numberOfPlugins)d plugins on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites 1 plugin':
-						return i18n.translate( 'Deactivating %(plugin)s on %(numberOfSites)d sites.', {
+						return translate( 'Deactivating %(plugin)s on %(numberOfSites)d sites.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Deactivating %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								context: 'In progress message',
@@ -502,28 +466,22 @@ export default {
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Enabling autoupdates for %(plugin)s on %(site)s.', {
+						return translate( 'Enabling autoupdates for %(plugin)s on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
-							'Enabling autoupdates for %(numberOfPlugins)d plugins on %(site)s.',
-							{
-								context: 'In progress message',
-								args: translateArg,
-							}
-						);
+						return translate( 'Enabling autoupdates for %(numberOfPlugins)d plugins on %(site)s.', {
+							context: 'In progress message',
+							args: translateArg,
+						} );
 					case 'n sites 1 plugin':
-						return i18n.translate(
-							'Enabling autoupdates for %(plugin)s on %(numberOfSites)d sites.',
-							{
-								context: 'In progress message',
-								args: translateArg,
-							}
-						);
+						return translate( 'Enabling autoupdates for %(plugin)s on %(numberOfSites)d sites.', {
+							context: 'In progress message',
+							args: translateArg,
+						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Enabling autoupdates for %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								context: 'In progress message',
@@ -535,12 +493,12 @@ export default {
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						return i18n.translate( 'Disabling autoupdates for %(plugin)s on %(site)s.', {
+						return translate( 'Disabling autoupdates for %(plugin)s on %(site)s.', {
 							context: 'In progress message',
 							args: translateArg,
 						} );
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'Disabling autoupdates for %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								context: 'In progress message',
@@ -548,15 +506,12 @@ export default {
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
-							'Disabling autoupdates for %(plugin)s on %(numberOfSites)d sites.',
-							{
-								context: 'In progress message',
-								args: translateArg,
-							}
-						);
+						return translate( 'Disabling autoupdates for %(plugin)s on %(numberOfSites)d sites.', {
+							context: 'In progress message',
+							args: translateArg,
+						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'Disabling autoupdates for %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								context: 'In progress message',
@@ -586,21 +541,21 @@ export default {
 			case 'INSTALL_PLUGIN':
 				switch ( combination ) {
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors installing %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'There were errors installing %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors installing %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -611,21 +566,18 @@ export default {
 			case 'REMOVE_PLUGIN':
 				switch ( combination ) {
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors removing %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
-							'There were errors removing %(plugin)s on %(numberOfSites)d sites.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'There were errors removing %(plugin)s on %(numberOfSites)d sites.', {
+							args: translateArg,
+						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors removing %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -636,21 +588,18 @@ export default {
 			case 'UPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors updating %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
-							'There were errors updating %(plugin)s on %(numberOfSites)d sites.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'There were errors updating %(plugin)s on %(numberOfSites)d sites.', {
+							args: translateArg,
+						} );
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors updating %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -661,21 +610,21 @@ export default {
 			case 'ACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors activating %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'There were errors activating %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors activating %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -686,21 +635,21 @@ export default {
 			case 'DEACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors deactivating %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'There were errors deactivating %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors deactivating %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -711,21 +660,21 @@ export default {
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors enabling autoupdates %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'There were errors enabling autoupdates %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors enabling autoupdates %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -736,21 +685,21 @@ export default {
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors disabling autoupdates %(numberOfPlugins)d plugins on %(site)s.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites 1 plugin':
-						return i18n.translate(
+						return translate(
 							'There were errors disabling autoupdates %(plugin)s on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
 							}
 						);
 					case 'n sites n plugins':
-						return i18n.translate(
+						return translate(
 							'There were errors disabling autoupdates %(numberOfPlugins)d plugins on %(numberOfSites)d sites.',
 							{
 								args: translateArg,
@@ -759,7 +708,7 @@ export default {
 				}
 				break;
 			case 'RECEIVE_PLUGINS':
-				return i18n.translate(
+				return translate(
 					'Error fetching plugins on %(numberOfSites)d site.',
 					'Error fetching plugins on %(numberOfSites)d sites.',
 					{
@@ -773,68 +722,68 @@ export default {
 	additionalExplanation( error_code ) {
 		switch ( error_code ) {
 			case 'no_package':
-				return i18n.translate( "Plugin doesn't exist in the plugin repo." );
+				return translate( "Plugin doesn't exist in the plugin repo." );
 
 			case 'resource_not_found':
-				return i18n.translate( 'The site could not be reached.' );
+				return translate( 'The site could not be reached.' );
 
 			case 'download_failed':
-				return i18n.translate( 'Download failed.' );
+				return translate( 'Download failed.' );
 
 			case 'plugin_already_installed':
-				return i18n.translate( 'Plugin is already installed.' );
+				return translate( 'Plugin is already installed.' );
 
 			case 'incompatible_archive':
-				return i18n.translate( 'Incompatible Archive. The package could not be installed.' );
+				return translate( 'Incompatible Archive. The package could not be installed.' );
 
 			case 'empty_archive_pclzip':
-				return i18n.translate( 'Empty archive.' );
+				return translate( 'Empty archive.' );
 
 			case 'disk_full_unzip_file':
-				return i18n.translate( 'Could not copy files. You may have run out of disk space.' );
+				return translate( 'Could not copy files. You may have run out of disk space.' );
 
 			case 'mkdir_failed_ziparchive':
 			case 'mkdir_failed_pclzip':
-				return i18n.translate( 'Could not create directory.' );
+				return translate( 'Could not create directory.' );
 
 			case 'copy_failed_pclzip':
-				return i18n.translate( 'Could not copy file.' );
+				return translate( 'Could not copy file.' );
 
 			case 'md5_mismatch':
-				return i18n.translate( "The checksum of the files don't match." );
+				return translate( "The checksum of the files don't match." );
 
 			case 'bad_request':
-				return i18n.translate( 'Invalid Data provided.' );
+				return translate( 'Invalid Data provided.' );
 
 			case 'fs_unavailable':
-				return i18n.translate( 'Could not access filesystem.' );
+				return translate( 'Could not access filesystem.' );
 
 			case 'fs_error':
-				return i18n.translate( 'Filesystem error.' );
+				return translate( 'Filesystem error.' );
 
 			case 'fs_no_root_dir':
-				return i18n.translate( 'Unable to locate WordPress Root directory.' );
+				return translate( 'Unable to locate WordPress Root directory.' );
 
 			case 'fs_no_content_dir':
-				return i18n.translate( 'Unable to locate WordPress Content directory (wp-content).' );
+				return translate( 'Unable to locate WordPress Content directory (wp-content).' );
 
 			case 'fs_no_plugins_dir':
-				return i18n.translate( 'Unable to locate WordPress Plugin directory.' );
+				return translate( 'Unable to locate WordPress Plugin directory.' );
 
 			case 'fs_no_folder':
-				return i18n.translate( 'Unable to locate needed folder.' );
+				return translate( 'Unable to locate needed folder.' );
 
 			case 'no_files':
-				return i18n.translate( 'The package contains no files.' );
+				return translate( 'The package contains no files.' );
 
 			case 'folder_exists':
-				return i18n.translate( 'Destination folder already exists.' );
+				return translate( 'Destination folder already exists.' );
 
 			case 'mkdir_failed':
-				return i18n.translate( 'Could not create directory.' );
+				return translate( 'Could not create directory.' );
 
 			case 'files_not_writable':
-				return i18n.translate(
+				return translate(
 					'The update cannot be installed because we will be unable to copy some files. This is usually due to inconsistent file permissions.'
 				);
 		}
@@ -848,7 +797,7 @@ export default {
 			case 'INSTALL_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
-						return i18n.translate(
+						return translate(
 							'Error installing %(plugin)s on %(site)s, remote management is off.',
 							{
 								args: translateArg,
@@ -858,14 +807,14 @@ export default {
 					default:
 						if ( additionalExplanation ) {
 							translateArg.additionalExplanation = additionalExplanation;
-							return i18n.translate(
+							return translate(
 								'Error installing %(plugin)s on %(site)s. %(additionalExplanation)s',
 								{
 									args: translateArg,
 								}
 							);
 						}
-						return i18n.translate( 'An error occurred while installing %(plugin)s on %(site)s.', {
+						return translate( 'An error occurred while installing %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 				}
@@ -873,14 +822,11 @@ export default {
 			case 'REMOVE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
-						return i18n.translate(
-							'Error removing %(plugin)s on %(site)s, remote management is off.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Error removing %(plugin)s on %(site)s, remote management is off.', {
+							args: translateArg,
+						} );
 					default:
-						return i18n.translate( 'An error occurred while removing %(plugin)s on %(site)s.', {
+						return translate( 'An error occurred while removing %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 				}
@@ -888,23 +834,20 @@ export default {
 			case 'UPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
-						return i18n.translate(
-							'Error updating %(plugin)s on %(site)s, remote management is off.',
-							{
-								args: translateArg,
-							}
-						);
+						return translate( 'Error updating %(plugin)s on %(site)s, remote management is off.', {
+							args: translateArg,
+						} );
 					default:
 						if ( additionalExplanation ) {
 							translateArg.additionalExplanation = additionalExplanation;
-							return i18n.translate(
+							return translate(
 								'Error updating %(plugin)s on %(site)s. %(additionalExplanation)s',
 								{
 									args: translateArg,
 								}
 							);
 						}
-						return i18n.translate( 'An error occurred while updating %(plugin)s on %(site)s.', {
+						return translate( 'An error occurred while updating %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 				}
@@ -912,14 +855,14 @@ export default {
 			case 'ACTIVATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
-						return i18n.translate(
+						return translate(
 							'Error activating %(plugin)s on %(site)s, remote management is off.',
 							{
 								args: translateArg,
 							}
 						);
 					default:
-						return i18n.translate( 'An error occurred while activating %(plugin)s on %(site)s.', {
+						return translate( 'An error occurred while activating %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 				}
@@ -927,14 +870,14 @@ export default {
 			case 'DEACTIVATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
-						return i18n.translate(
+						return translate(
 							'Error deactivating %(plugin)s on %(site)s, remote management is off.',
 							{
 								args: translateArg,
 							}
 						);
 					default:
-						return i18n.translate( 'An error occurred while deactivating %(plugin)s on %(site)s.', {
+						return translate( 'An error occurred while deactivating %(plugin)s on %(site)s.', {
 							args: translateArg,
 						} );
 				}
@@ -942,14 +885,14 @@ export default {
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
-						return i18n.translate(
+						return translate(
 							'Error enabling autoupdates for %(plugin)s on %(site)s, remote management is off.',
 							{
 								args: translateArg,
 							}
 						);
 					default:
-						return i18n.translate(
+						return translate(
 							'An error occurred while enabling autoupdates for %(plugin)s on %(site)s.',
 							{
 								args: translateArg,
@@ -960,14 +903,14 @@ export default {
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
-						return i18n.translate(
+						return translate(
 							'Error disabling autoupdates for %(plugin)s on %(site)s, remote management is off.',
 							{
 								args: translateArg,
 							}
 						);
 					default:
-						return i18n.translate(
+						return translate(
 							'An error occurred while disabling autoupdates for %(plugin)s on %(site)s.',
 							{
 								args: translateArg,
@@ -976,7 +919,7 @@ export default {
 				}
 
 			case 'RECEIVE_PLUGINS':
-				return i18n.translate( 'Error fetching plugins on %(site)s.', {
+				return translate( 'Error fetching plugins on %(site)s.', {
 					args: translateArg,
 				} );
 		}
@@ -988,7 +931,7 @@ export default {
 		}
 		log = log.length ? log[ 0 ] : log;
 		if ( log.error.error === 'unauthorized_full_access' ) {
-			return i18n.translate( 'Turn On.' );
+			return translate( 'Turn On.' );
 		}
 		return null;
 	},
@@ -1019,7 +962,7 @@ export default {
 			return null;
 		}
 
-		return i18n.translate( 'Setup' );
+		return translate( 'Setup' );
 	},
 
 	getSuccessHref( log ) {

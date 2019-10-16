@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,7 +23,7 @@ export function sidebar( context, next ) {
 
 export function profile( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( translate( 'My Profile', { textOnly: true } ) ) );
 
 	const ProfileComponent = require( 'me/profile' ).default;
 
@@ -38,7 +36,7 @@ export function profile( context, next ) {
 
 export function apps( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( translate( 'Get Apps', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( AppsComponent, {
 		userSettings: userSettings,

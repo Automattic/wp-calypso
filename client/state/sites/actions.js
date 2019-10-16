@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -131,7 +128,7 @@ export function requestSite( siteFragment ) {
 					return dispatch( {
 						type: SITE_REQUEST_FAILURE,
 						siteId: siteFragment,
-						error: i18n.translate( 'No access to manage the site' ),
+						error: translate( 'No access to manage the site' ),
 					} );
 				}
 

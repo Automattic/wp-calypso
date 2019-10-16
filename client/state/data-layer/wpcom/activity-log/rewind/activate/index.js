@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,7 +20,7 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const fetch = action => {
-	const notice = successNotice( i18n.translate( 'Obtaining your credentials…' ) );
+	const notice = successNotice( translate( 'Obtaining your credentials…' ) );
 	const {
 		notice: { noticeId },
 	} = notice;
@@ -48,7 +45,7 @@ export const storeAndAnnounce = ( { siteId, noticeId }, { rewind_state } ) => [
 		siteId,
 	},
 
-	successNotice( i18n.translate( 'Your credentials have been auto configured.' ), {
+	successNotice( translate( 'Your credentials have been auto configured.' ), {
 		duration: 4000,
 		id: noticeId,
 	} ),
@@ -71,7 +68,7 @@ export const storeAndAnnounce = ( { siteId, noticeId }, { rewind_state } ) => [
 ];
 
 export const announceFailure = ( { noticeId } ) =>
-	errorNotice( i18n.translate( 'Error auto configuring your credentials.' ), {
+	errorNotice( translate( 'Error auto configuring your credentials.' ), {
 		duration: 4000,
 		id: noticeId,
 	} );
