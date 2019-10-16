@@ -233,7 +233,7 @@ class Security2faCodePrompt extends React.Component {
 						{ this.getSubmitButtonLabel() }
 					</FormButton>
 
-					{ this.props.showSMSButton ? (
+					{ twoStepAuthorization.isTwoStepSMSEnabled() && this.props.showSMSButton ? (
 						<FormButton
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }
