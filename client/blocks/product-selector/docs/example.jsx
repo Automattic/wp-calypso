@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
+import SitesDropdown from 'components/sites-dropdown';
 import ProductSelector from '../';
 
 const products = [
@@ -25,6 +26,8 @@ const products = [
 		},
 	},
 ];
+
+let siteId = 0;
 
 class ProductSelectorExample extends Component {
 	state = {
@@ -58,7 +61,13 @@ class ProductSelectorExample extends Component {
 				</SegmentedControl>
 
 				<div style={ { maxWidth: 520, margin: '0 auto' } }>
-					<ProductSelector products={ products } intervalType={ this.state.interval } />
+					<SitesDropdown onSiteSelect={ selectedSiteId => ( siteId = selectedSiteId ) } />
+
+					<ProductSelector
+						products={ products }
+						intervalType={ this.state.interval }
+						siteId={ siteId }
+					/>
 				</div>
 			</Fragment>
 		);
