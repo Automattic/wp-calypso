@@ -150,7 +150,12 @@ export class LanguagePicker extends PureComponent {
 		return (
 			<Fragment>
 				<QueryLanguageNames />
-				<button className="language-picker" onClick={ this.handleClick } disabled={ disabled }>
+				<button
+					type="button"
+					className="language-picker"
+					onClick={ this.handleClick }
+					disabled={ disabled }
+				>
 					<div className="language-picker__icon">
 						<div className="language-picker__icon-inner">
 							{ langCode }
