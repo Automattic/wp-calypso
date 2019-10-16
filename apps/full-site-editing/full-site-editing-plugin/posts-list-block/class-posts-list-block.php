@@ -20,10 +20,10 @@ class Posts_List_Block {
 	private static $instance = null;
 
 	/**
- 	 * Whether we are in the process of rendering the block.
- 	 *
- 	 * @var bool
- 	 */
+	 * Whether we are in the process of rendering the block.
+	 *
+	 * @var bool
+	 */
 	private $rendering_block = false;
 
 	/**
@@ -52,7 +52,7 @@ class Posts_List_Block {
 	 * Enqueue block editor scripts.
 	 */
 	public function enqueue_scripts() {
-		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.assets.php';
+		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.asset.php';
 		$script_dependencies = $asset_file['dependencies'];
 		wp_enqueue_script(
 			'a8c-posts-list-script',
