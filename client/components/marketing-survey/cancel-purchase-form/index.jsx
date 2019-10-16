@@ -46,7 +46,7 @@ import isSurveyFilledIn from './is-survey-filled-in';
 import stepsForProductAndSurvey from './steps-for-product-and-survey';
 import enrichedSurveyData from './enriched-survey-data';
 import { CANCEL_FLOW_TYPE } from './constants';
-import { getIncludedDomainPurchase, getDowngradePlanRawPrice } from 'state/purchases/selectors';
+import { getDowngradePlanRawPrice } from 'state/purchases/selectors';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 
@@ -757,7 +757,6 @@ export default connect(
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
-		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 	} ),
 	{
