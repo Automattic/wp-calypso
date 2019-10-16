@@ -35,8 +35,6 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/wp-checkout#readme",
 	"dependencies": {
 		"prop-types": "^15.7.2",
-		"react": "^16.10.2",
-		"react-dom": "^16.10.2",
-		"styled-components": "^4.4.0"
+		"react": "^16.8.6"
 	}
 }
