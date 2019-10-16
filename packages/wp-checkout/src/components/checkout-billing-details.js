@@ -5,6 +5,10 @@
  */
 import React from 'react';
 
-export default function CheckoutBillingDetails( { localize, billingContactForm } ) {
-	return <div>{ billingContactForm }</div>;
+export default function CheckoutBillingDetails( { localize, BillingContactForm } ) {
+	return (
+		<div>
+			<BillingContactForm />
+		</div>
+	);
 }

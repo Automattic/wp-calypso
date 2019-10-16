@@ -3,12 +3,14 @@
 /**
  * External dependencies
  */
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 export const CheckoutContext = createContext( {} );
 
 export const CheckoutProvider = ( { total, items, paymentMethod, localize, children } ) => {
-	const value = { localize, paymentMethod, total, items };
+	// TODO: validate props
+	const [ paymentMethodData, setPaymentMethodData ] = useState( {} );
+	const value = { localize, paymentMethod, total, items, paymentMethodData, setPaymentMethodData };
 	return <CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>;
 };
 

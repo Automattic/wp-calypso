@@ -141,3 +141,15 @@ export const StepContent = styled.div`
 	color: ${props => props.theme.colors.gray80};
 	padding-left: 35px;
 `;
+
+export const BillingFormFields = styled.div`
+	margin-bottom: 16px;
+`;
+
+// TODO: Field is in its own file so we need to import that
+export const FormField = styled( Field )`
+	margin-top: 16px;
+	:first-child {
+		margin-top: 0;
+	}
+`;

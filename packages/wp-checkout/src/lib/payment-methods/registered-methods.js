@@ -45,8 +45,21 @@ function ApplePayComponent( { isActive } ) {
 	return isActive ? 'Apple Pay' : null;
 }
 
-function ApplePayBillingForm() {
-	return null;
+function ApplePayBillingForm( { setPaymentData, paymentData } ) {
+	// TODO: import these and make them work
+	return (
+		<BillingFormFields>
+			<FormField
+				id="billingName"
+				type="Text"
+				label="Name"
+				error={ this.state.billingNameError }
+				errorMessage="This is a required field"
+				value={ this.state.billingName }
+				onChange={ this.checkForFieldErrors }
+			/>
+		</BillingFormFields>
+	);
 }
 
 function ApplePaySubmitButton() {

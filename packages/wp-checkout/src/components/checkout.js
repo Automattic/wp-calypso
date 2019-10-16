@@ -16,7 +16,7 @@ import { Container, LeftColumn, PageTitle } from './basics';
 import { CheckoutProvider } from './checkout-context';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
-import CheckoutBillingDetails from './checkout-billing-details';
+import { usePaymentMethodData, usePaymentMethod, getPaymentMethods } from '../lib/payment-methods';
 import theme from '../theme';
 
 // TODO: these will all be used eventually
@@ -43,7 +43,6 @@ export default function Checkout( {
 	const localize = localizeFactory( locale );
 	const [ stepNumber, setStepNumber ] = useState( 1 );
 	const [ paymentMethod, setPaymentMethod ] = useState( 'apple-pay' );
-	const [ billingDetails, setBillingDetails ] = useState( {} );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -70,8 +69,6 @@ export default function Checkout( {
 							setStepNumber={ setStepNumber }
 							isActive={ stepNumber === 2 }
 							isComplete={ stepNumber > 2 }
-							billingDetails={ billingDetails }
-							setBillingDetails={ setBillingDetails }
 						/>
 						{ upSell && <div>{ upSell }</div> }
 					</LeftColumn>
@@ -145,23 +142,19 @@ function PaymentMethodsStep( {
 	);
 }
 
-function BillingDetailsStep( {
-	setStepNumber,
-	isActive,
-	isComplete,
-	billingDetailsForm,
-	billingDetails,
-	setBillingDetails,
-} ) {
+function BillingDetailsStep( { isActive, isComplete } ) {
 	const localize = useLocalize();
+	const [ paymentData, setPaymentData ] = usePaymentMethodData();
 
-	const withBillingDetails = WrappedComponent => props => (
-		<WrappedComponent
-			{ ...props }
-			billingDetails={ billingDetails }
-			setBillingDetails={ setBillingDetails }
-		/>
-	);
+	// TODO: put this whole block in a Hook
+	const paymentMethodId = usePaymentMethod();
+	const paymentMethod = getPaymentMethods().find( ( { id } ) => id === paymentMethodId );
+	if ( ! paymentMethod ) {
+		// TODO: should there be a default here that's not a fatal error?
+		throw new Error( `No payment method found matching Id ${ paymentMethodId }` );
+	}
+
+	const { BillingContactComponent } = paymentMethod;
 
 	return (
 		<React.Fragment>
@@ -171,9 +164,14 @@ function BillingDetailsStep( {
 				stepNumber={ 2 }
 				title={ localize( 'Billing details' ) }
 			>
-				<CheckoutBillingDetails>
-					{ withBillingDetails( billingDetailsForm ) }
-				</CheckoutBillingDetails>
+				<div>
+					<BillingContactComponent
+						paymentData={ paymentData }
+						setPaymentData={ setPaymentData }
+						isActive={ isActive }
+						isComplete={ isComplete }
+					/>
+				</div>
 			</CheckoutStep>
 			<CheckoutStep
 				isActive={ ! isActive }
@@ -181,9 +179,14 @@ function BillingDetailsStep( {
 				stepNumber={ 2 }
 				title={ localize( 'Enter your billing details' ) }
 			>
-				<CheckoutBillingDetails>
-					{ withBillingDetails( billingDetailsForm ) }
-				</CheckoutBillingDetails>
+				<div>
+					<BillingContactComponent
+						paymentData={ paymentData }
+						setPaymentData={ setPaymentData }
+						isActive={ isActive }
+						isComplete={ isComplete }
+					/>
+				</div>
 			</CheckoutStep>
 		</React.Fragment>
 	);
@@ -193,7 +196,4 @@ BillingDetailsStep.propTypes = {
 	setStepNumber: PropTypes.func.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
-	billingDetailsForm: PropTypes.element.isRequired,
-	billingDetails: PropTypes.object.isRequired,
-	setBillingDetails: PropTypes.func.isRequired,
 };

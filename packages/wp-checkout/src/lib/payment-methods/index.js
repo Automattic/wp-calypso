@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 /**
  * Internal dependencies
@@ -39,6 +39,15 @@ export function getPaymentMethods() {
 export function usePaymentMethod() {
 	const { paymentMethod } = useContext( CheckoutContext );
 	return paymentMethod;
+}
+
+export function usePaymentMethodData() {
+	// TODO: put initialData in here from paymentMethod defintion? or get rid of it.
+	const { paymentMethodData, setPaymentMethodData } = useContext( CheckoutContext );
+	const paymentMethodId = usePaymentMethod();
+	const setData = newData =>
+		setPaymentMethodData( { ...paymentMethodData, [ paymentMethodId ]: newData } );
+	return [ paymentMethodData[ paymentMethodId ], setData ];
 }
 
 loadPaymentMethods();
