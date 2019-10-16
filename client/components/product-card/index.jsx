@@ -9,6 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 import ProductCardPriceGroup from './price-group';
 import ProductCardOption from './product-option';
 
@@ -33,6 +34,7 @@ class ProductCard extends Component {
 			<div className="product-card__header">
 				{ title && (
 					<div className="product-card__header-primary">
+						{ isPurchased && <Gridicon icon="checkmark" size={ 18 } /> }
 						<h3 className="product-card__title">{ title }</h3>
 					</div>
 				) }

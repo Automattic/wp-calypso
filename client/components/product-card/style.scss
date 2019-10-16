@@ -1,12 +1,12 @@
 // Header
 .product-card__header {
 	margin: -16px -16px 16px;
-	padding: 16px;
+	padding: 16px 40px;
 	border-bottom: solid 2px var( --color-jetpack-plan-free );
 
 	@include breakpoint( '>480px' ) {
 		margin: -24px -24px 24px;
-		padding: 24px;
+		padding: 24px 40px;
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -17,17 +17,29 @@
 }
 
 .product-card__header-primary {
+	display: flex;
 	margin-bottom: 8px;
 
 	@include breakpoint( '>660px' ) {
 		flex-grow: 1;
 		margin-bottom: 0;
 	}
+
+	.gridicon {
+		align-self: center;
+		margin: 0 8px 0 -26px;
+
+		@include breakpoint( '>660px' ) {
+			width: 16px;
+			height: 16px;
+			margin-left: 0;
+		}
+	}
 }
 
 .product-card__title {
 	font-size: 22px;
-	line-height: 22px;
+	line-height: 24px;
 
 	.product-card:not( .is-purchased ) & {
 		color: var( --color-primary-50 );
@@ -48,7 +60,7 @@
 
 .product-card__subtitle {
 	font-size: 12px;
-	line-height: 14px;
+	line-height: 20px;
 	font-style: italic;
 	color: var( --color-text-subtle );
 
@@ -90,6 +102,10 @@
 		width: auto;
 		font-size: 12px;
 	}
+
+	@include breakpoint( '>960px' ) {
+		color: var( --color-success );
+	}
 }
 
 // Description
@@ -128,7 +144,7 @@
 }
 
 .product-card__options-label {
-	margin: 0 0 6px;
+	margin: 8px 0;
 	padding: 6px 0;
 	font-size: 14px;
 	color: var( --color-text-subtle );
@@ -136,7 +152,6 @@
 
 	@include breakpoint( '>960px' ) {
 		flex: 0 0 100%;
-		margin-bottom: 12px;
 	}
 }
 
@@ -146,9 +161,10 @@
 	align-items: center;
 }
 
-.product-card__option {
-	margin: 0;
-	padding: 16px 0;
+// We need a higher specificity here to override .form-label styles
+.product-card__option.form-label {
+	margin: 16px 0 0;
+	padding: 8px 0;
 
 	@include breakpoint( '>960px' ) {
 		flex: 0 0 40%;
@@ -172,5 +188,31 @@
 		flex: 0 0 100%;
 		font-size: 14px;
 		line-height: 20px;
+	}
+}
+
+// Adjust price group styles when part of product option
+.product-card__option {
+	.plan-price,
+	.plan-price__currency-symbol,
+	.plan-price__integer,
+	.plan-price__fraction {
+		font-size: 16px;
+		font-weight: 400;
+		vertical-align: baseline;
+
+		@include breakpoint( '>960px' ) {
+			font-size: 14px;
+		}
+	}
+
+	.product-card__billing-timeframe {
+		width: auto;
+		font-size: 13px;
+		color: var( --color-success );
+
+		@include breakpoint( '>960px' ) {
+			font-size: 12px;
+		}
 	}
 }

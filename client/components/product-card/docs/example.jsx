@@ -28,20 +28,6 @@ function ProductCardExample() {
 				}
 			/>
 
-			<h3>Product Card - with a discount</h3>
-			<ProductCard
-				title="Jetpack Scan"
-				billingTimeFrame="per year"
-				fullPrice={ 25.99 }
-				discountedPrice={ 16.99 }
-				description={
-					<Fragment>
-						Automatic scanning and one-click fixes keep your site one step ahead of security
-						threats. <a href="/plans">More info</a>
-					</Fragment>
-				}
-			/>
-
 			<h3>Product Card - with a discounted price range and options</h3>
 			<ProductCard
 				title="Jetpack Backup"
