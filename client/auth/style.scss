@@ -90,12 +90,6 @@
 		width: calc( 100% - 20px );
 	}
 
-	.form-buttons-bar button,
-	.form-buttons-bar .button.is-primary[disabled] {
-		background: #00a8db;
-		border: #00a8db;
-	}
-
 	.form-buttons-bar .button.is-primary[disabled],
 	.form-fieldset input[type='password']:disabled,
 	.form-fieldset input[type='text']:disabled {
