@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 
 /**
  * Internal dependencies
@@ -9,6 +9,10 @@ import React, { Fragment } from 'react';
 import ProductCard from '../index';
 
 function ProductCardExample() {
+	const [ selectedProductOption, selectProductOption ] = useState(
+		'jetpack_backup_realtime_monthly'
+	);
+
 	return (
 		<Fragment>
 			<h3>Product Card - default</h3>
@@ -38,7 +42,7 @@ function ProductCardExample() {
 				}
 			/>
 
-			<h3>Product Card - with a discounted price range</h3>
+			<h3>Product Card - with a discounted price range and options</h3>
 			<ProductCard
 				title="Jetpack Backup"
 				billingTimeFrame="per year"
@@ -50,6 +54,23 @@ function ProductCardExample() {
 						backups. <a href="/plans">Which one do I need?</a>
 					</Fragment>
 				}
+				optionsLabel="Backup options:"
+				options={ [
+					{
+						discountedPrice: 12,
+						fullPrice: 14,
+						slug: 'jetpack_backup_daily_monthly',
+						title: 'Daily Backups',
+					},
+					{
+						discountedPrice: 16,
+						fullPrice: 25,
+						slug: 'jetpack_backup_realtime_monthly',
+						title: 'Real-Time Backups',
+					},
+				] }
+				selectedSlug={ selectedProductOption }
+				handleSelect={ slug => selectProductOption( slug ) }
 			/>
 
 			<h3>Product Card - already purchased</h3>

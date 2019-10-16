@@ -10,6 +10,7 @@ import classNames from 'classnames';
  */
 import Card from 'components/card';
 import ProductCardPriceGroup from './price-group';
+import ProductCardOption from './product-option';
 
 /**
  * Style dependencies
@@ -17,20 +18,6 @@ import ProductCardPriceGroup from './price-group';
 import './style.scss';
 
 class ProductCard extends Component {
-	static propTypes = {
-		billingTimeFrame: PropTypes.string,
-		currencyCode: PropTypes.string,
-		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-		discountedPrice: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.arrayOf( PropTypes.number ),
-		] ),
-		fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
-		isPurchased: PropTypes.bool,
-		subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-	};
-
 	renderHeader() {
 		const {
 			billingTimeFrame,
@@ -64,6 +51,37 @@ class ProductCard extends Component {
 		);
 	}
 
+	renderOptions() {
+		const {
+			billingTimeFrame,
+			currencyCode,
+			handleSelect,
+			options,
+			optionsLabel,
+			selectedSlug,
+		} = this.props;
+
+		if ( ! options ) {
+			return null;
+		}
+
+		return (
+			<div className="product-card__options">
+				{ optionsLabel && <h4 className="product-card__options-label">{ optionsLabel }</h4> }
+				{ options.map( option => (
+					<ProductCardOption
+						key={ `product-option-${ option.slug }` }
+						billingTimeFrame={ billingTimeFrame }
+						checked={ option.slug === selectedSlug }
+						currencyCode={ currencyCode }
+						onChange={ () => handleSelect( option.slug ) }
+						{ ...option }
+					/>
+				) ) }
+			</div>
+		);
+	}
+
 	render() {
 		const { description, isPurchased } = this.props;
 
@@ -75,9 +93,38 @@ class ProductCard extends Component {
 			<Card className={ cardClassNames }>
 				{ this.renderHeader() }
 				{ description && <p className="product-card__description">{ description }</p> }
+				{ this.renderOptions() }
 			</Card>
 		);
 	}
 }
+
+ProductCard.propTypes = {
+	billingTimeFrame: PropTypes.string,
+	currencyCode: PropTypes.string,
+	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	discountedPrice: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.arrayOf( PropTypes.number ),
+	] ),
+	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+	handleSelect: PropTypes.func,
+	isPurchased: PropTypes.bool,
+	options: PropTypes.arrayOf(
+		PropTypes.shape( {
+			discountedPrice: PropTypes.oneOfType( [
+				PropTypes.number,
+				PropTypes.arrayOf( PropTypes.number ),
+			] ),
+			fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+			slug: PropTypes.string.isRequired,
+			title: PropTypes.string,
+		} )
+	),
+	optionsLabel: PropTypes.string,
+	selectedSlug: PropTypes.string,
+	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+};
 
 export default ProductCard;
