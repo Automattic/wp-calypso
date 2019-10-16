@@ -207,10 +207,6 @@ User.prototype.handleFetchSuccess = function( userData ) {
 		}
 	}
 	this.data = userData;
-	if ( this.settings ) {
-		debug( 'Retaining fetched settings data in new user data' );
-		this.data.settings = this.settings;
-	}
 	this.initialized = true;
 	this.emit( 'change' );
 };
@@ -252,7 +248,6 @@ User.prototype.clear = async function() {
 	 * to discard any user reference that the application may hold
 	 */
 	this.data = [];
-	delete this.settings;
 	store.clearAll();
 	if ( config.isEnabled( 'persist-redux' ) ) {
 		await clearStorage();
