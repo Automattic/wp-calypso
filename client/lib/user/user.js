@@ -88,15 +88,7 @@ User.prototype.initialize = function() {
 		return;
 	}
 
-	this.data = store.get( 'wpcom_user' ) || false;
-	debug( 'User bootstrap disabled, checking localStorage:', this.data );
-
-	if ( this.data ) {
-		this.initialized = true;
-		this.emit( 'change' );
-	}
-
-	// Make sure that the user stored in localStorage matches the logged-in user
+	// fetch the user from the /me endpoint
 	this.fetch();
 };
 
@@ -107,9 +99,9 @@ User.prototype.initialize = function() {
  * @param {Number} userId The new user ID.
  **/
 User.prototype.clearStoreIfChanged = function( userId ) {
-	const storedUser = store.get( 'wpcom_user' );
+	const storedUserId = store.get( 'wpcom_user_id' );
 
-	if ( storedUser && storedUser.ID !== userId ) {
+	if ( storedUserId !== null && storedUserId !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
 		store.clearAll();
 	}
@@ -189,8 +181,9 @@ User.prototype.handleFetchSuccess = function( userData ) {
 	this.fetching = false;
 	this.clearStoreIfChanged( userData.ID );
 
-	// Store user info in `this.data` and localstorage as `wpcom_user`
-	store.set( 'wpcom_user', userData );
+	// Store user ID in local storage so that we can detect a change and clear the storage
+	store.set( 'wpcom_user_id', userData.ID );
+
 	if ( userData.abtests ) {
 		if ( config.isEnabled( 'dev/test-helper' ) || isE2ETest() ) {
 			// This section will preserve the existing localStorage A/B variation values,
@@ -282,7 +275,6 @@ User.prototype.set = function( attributes ) {
 
 	if ( changed ) {
 		Object.assign( this.data, getComputedAttributes( this.data ) );
-		store.set( 'wpcom_user', this.data );
 		this.emit( 'change' );
 	}
 
