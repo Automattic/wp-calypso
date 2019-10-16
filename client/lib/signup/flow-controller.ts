@@ -33,6 +33,7 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { resetSignup, updateDependencies } from 'state/signup/actions';
 import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
+import { abtest } from 'lib/abtest';
 
 interface Dependencies {
 	[ other: string ]: any;
@@ -289,6 +290,25 @@ export default class SignupFlowController {
 			getSignupDependencyStore( this._reduxStore.getState() ),
 			dependencies
 		);
+
+		/*
+			AB Test: passwordlessSignup
+
+			`isPasswordlessSignupForm` in this check is for the `onboarding` flow.
+
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
+		*/
+		if (
+			'passwordless' === abtest( 'passwordlessSignup' ) &&
+			get( step, 'isPasswordlessSignupForm' )
+		) {
+			this._processingSteps.delete( step.stepName );
+			analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', {
+				step: step.stepName,
+			} );
+			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
+			return;
+		}
 
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {

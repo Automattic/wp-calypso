@@ -102,12 +102,7 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * `currentStepName` is the current step in the signup flow. It is used
-	 * to determine if any AB variations should be assigned after it is completed.
-	 * Example use case: To determine if a new signup step should be part of the flow or not.
-	 *
 	 * @param {String} flowName The name of the flow to return
-	 * @param {String} currentStepName The current step. See description above
 	 * @returns {Object} A flow object
 	 */
 	getFlow( flowName ) {

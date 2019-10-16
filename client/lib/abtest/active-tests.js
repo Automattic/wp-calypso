@@ -161,4 +161,12 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	passwordlessSignup: {
+		datestamp: '20191013',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
 };
