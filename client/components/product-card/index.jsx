@@ -9,6 +9,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import ProductCardPriceGroup from './price-group';
 
 /**
@@ -19,6 +21,7 @@ import './style.scss';
 class ProductCard extends Component {
 	static propTypes = {
 		billingTimeFrame: PropTypes.string,
+		checked: PropTypes.bool,
 		currencyCode: PropTypes.string,
 		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		discountedPrice: PropTypes.oneOfType( [
@@ -27,6 +30,7 @@ class ProductCard extends Component {
 		] ),
 		fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		isPurchased: PropTypes.bool,
+		onSelect: PropTypes.func,
 		subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	};
@@ -34,16 +38,28 @@ class ProductCard extends Component {
 	renderHeader() {
 		const {
 			billingTimeFrame,
+			checked,
 			currencyCode,
 			discountedPrice,
 			fullPrice,
 			isPurchased,
+			onSelect,
 			subtitle,
 			title,
 		} = this.props;
 
 		return (
 			<div className="product-card__header">
+				{ checked !== undefined && (
+					<FormLabel>
+						<FormCheckbox
+							className="product-card__checkbox"
+							checked={ checked }
+							onChange={ onSelect }
+							readOnly={ ! onSelect }
+						/>
+					</FormLabel>
+				) }
 				{ title && (
 					<div className="product-card__header-primary">
 						<h3 className="product-card__title">{ title }</h3>
