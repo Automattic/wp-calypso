@@ -33,6 +33,7 @@ import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
+import ProductSelector from 'blocks/product-selector/docs/example';
 import Site from 'blocks/site/docs/example';
 import SitePlaceholder from 'blocks/site/docs/placeholder-example';
 import SitesDropdown from 'components/sites-dropdown/docs/example';
@@ -154,6 +155,7 @@ export default class AppComponents extends React.Component {
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
 					<PostSelector />
+					<ProductSelector />
 					<Site readmeFilePath="site" />
 					<SitePlaceholder />
 					<SitesDropdown />
