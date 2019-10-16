@@ -25,6 +25,20 @@ const products = [
 		},
 		optionsLabel: 'Backup options',
 	},
+	{
+		title: 'Jetpack Plan',
+		description: <Fragment>A Jetpack subscription of your choice.</Fragment>,
+		id: 'jetpack_plan',
+		options: {
+			yearly: [ 'jetpack_personal', 'jetpack_premium', 'jetpack_business' ],
+			monthly: [
+				'jetpack_personal_monthly',
+				'jetpack_premium_monthly',
+				'jetpack_business_monthly',
+			],
+		},
+		optionsLabel: 'Plan options',
+	},
 ];
 
 class ProductSelectorExample extends Component {
