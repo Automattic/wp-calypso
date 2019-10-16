@@ -59,6 +59,16 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo' ],
 		},
 
+		'template-first-themes': {
+			stepName: 'template-first-themes',
+			props: {
+				designType: 'template-first',
+				quantity: 18,
+			},
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'themeSlugWithRepo' ],
+		},
+
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
