@@ -1,0 +1,32 @@
+{
+	"name": "@automattic/standalone-component-catalog",
+	"version": "1.0.0",
+	"description": "A catalog of stand-alone components",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/standalone-component-catalog"
+	},
+	"author": "@automattic",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"dependencies": {}
+}
