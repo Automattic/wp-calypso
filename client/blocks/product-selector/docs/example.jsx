@@ -57,7 +57,9 @@ class ProductSelectorExample extends Component {
 					</SegmentedControl.Item>
 				</SegmentedControl>
 
-				<ProductSelector products={ products } intervalType={ this.state.interval } />
+				<div style={ { maxWidth: 520, margin: '0 auto' } }>
+					<ProductSelector products={ products } intervalType={ this.state.interval } />
+				</div>
 			</Fragment>
 		);
 	}
