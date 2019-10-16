@@ -26,6 +26,7 @@ import { submitSignupStep } from 'state/signup/progress/actions';
 class ThemeSelectionStep extends Component {
 	static propTypes = {
 		designType: PropTypes.string,
+		quantity: PropTypes.number,
 		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 		stepName: PropTypes.string.isRequired,
@@ -66,6 +67,7 @@ class ThemeSelectionStep extends Component {
 				surveyQuestion={ this.props.chosenSurveyVertical }
 				designType={ this.props.designType || this.props.signupDependencies.designType }
 				handleScreenshotClick={ this.pickTheme }
+				quantity={ this.props.quantity }
 			/>
 		);
 	}
