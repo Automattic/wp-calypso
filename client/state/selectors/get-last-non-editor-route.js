@@ -15,7 +15,7 @@ import createSelector from 'lib/create-selector';
  * @param {Object} state  Global state tree
  * @return {string} The last non block editor route -- empty string if none.
  */
-export default createSelector(
+const getLastNonEditorRoute = createSelector(
 	state => {
 		const previousPath = getPreviousPath( state );
 		const blockEditorPattern = /^\/block-editor/;
@@ -38,3 +38,5 @@ export default createSelector(
 	},
 	state => [ getPreviousPath( state ), getRouteHistory( state ) ]
 );
+
+export default getLastNonEditorRoute;
