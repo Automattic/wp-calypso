@@ -107,14 +107,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	placesApiInCheckout: {
-		datestamp: '20190923',
-		variations: {
-			original: 50,
-			placesApi: 50,
-		},
-		defaultVariation: 'original',
-	},
 	prefillDomainStepValue: {
 		datestamp: '20190929',
 		variations: {
