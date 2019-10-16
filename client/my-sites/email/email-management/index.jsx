@@ -139,7 +139,7 @@ class EmailManagement extends React.Component {
 			};
 			if ( isMappedDomain( selectedDomain ) ) {
 				Object.assign( emptyContentProps, {
-					title: translate( 'G Suite is not supported on this domain yet.' ),
+					title: translate( 'G Suite is not supported on this domain' ),
 					line: translate(
 						'To enable G Suite on %(domain)s, please have its name servers changed to that of WordPress.com.',
 						{ args: { domain: selectedDomainName } }
