@@ -2,7 +2,7 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 
 module.exports = {
-	entry: './apps/standalone-component-catalog/public/index.js',
+	entry: './packages/wp-checkout/public/index.js',
 	mode: 'development',
 	module: {
 		rules: [
@@ -20,12 +20,12 @@ module.exports = {
 	},
 	resolve: { extensions: [ '*', '.js', '.jsx' ] },
 	output: {
-		path: path.resolve( __dirname, '/apps/standalone-component-catalog/dist/' ),
+		path: path.resolve( __dirname, '/packages/wp-checkout/dist/' ),
 		publicPath: '/dist/',
 		filename: 'bundle.js',
 	},
 	devServer: {
-		contentBase: path.join( __dirname, '/apps/standalone-component-catalog/public/' ),
+		contentBase: path.join( __dirname, '/packages/wp-checkout/public/' ),
 		port: 3000,
 		publicPath: 'http://localhost:3000/dist/',
 		hotOnly: true,

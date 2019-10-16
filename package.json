@@ -286,7 +286,7 @@
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
 		"whybundled": "whybundled stats.json",
-		"catalog": "webpack-dev-server --config webpack.config.catalog.js --mode development"
+		"wp-checkout-demo": "webpack-dev-server --config webpack.config.wp-checkout.js --mode development"
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
