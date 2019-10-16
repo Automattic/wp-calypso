@@ -615,11 +615,6 @@ class Full_Site_Editing {
 	public function remove_wp_admin_menu_items() {
 		global $submenu;
 
-		// For safety.
-		if ( ! \A8C\FSE\is_full_site_editing_active() ) {
-			return;
-		}
-
 		// Remove widget submenu.
 		remove_submenu_page( 'themes.php', 'widgets.php' );
 
