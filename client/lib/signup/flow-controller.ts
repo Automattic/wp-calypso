@@ -56,6 +56,7 @@ interface Step {
 	dependencies?: string[];
 	providedDependencies?: string[];
 	providesDependencies?: string[];
+	optionalDependencies?: string[];
 	providesToken?: boolean;
 	stepName: string;
 }
@@ -199,7 +200,13 @@ export default class SignupFlowController {
 				return;
 			}
 
-			const dependenciesNotProvided = difference( step.providesDependencies, storedDependencies );
+			const optionalDependencies = step.optionalDependencies || [];
+
+			const dependenciesNotProvided = difference(
+				step.providesDependencies,
+				optionalDependencies,
+				storedDependencies
+			);
 
 			if ( dependenciesNotProvided.length > 0 ) {
 				throw new Error(

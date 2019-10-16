@@ -523,7 +523,13 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	}
 
 	const stepProvidesDependencies = steps[ stepName ].providesDependencies;
-	const dependenciesNotProvided = difference( stepProvidesDependencies, fulfilledDependencies );
+	const stepOptionalDependencies = steps[ stepName ].optionalDependencies;
+
+	const dependenciesNotProvided = difference(
+		stepProvidesDependencies,
+		stepOptionalDependencies,
+		fulfilledDependencies
+	);
 	return isEmpty( dependenciesNotProvided );
 }
 
