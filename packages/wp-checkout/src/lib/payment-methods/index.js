@@ -13,8 +13,22 @@ import loadPaymentMethods from './registered-methods';
 
 const paymentMethods = [];
 
-export function registerPaymentMethod( { id, button, form, billingContactForm, submit } ) {
-	paymentMethods.push( { id, button, form, billingContactForm, submit } );
+export function registerPaymentMethod( {
+	id,
+	initialData,
+	labelComponent,
+	paymentMethodComponent,
+	billingContactComponent,
+	submitButtonComponent,
+} ) {
+	paymentMethods.push( {
+		id,
+		initialData,
+		labelComponent,
+		paymentMethodComponent,
+		billingContactComponent,
+		submitButtonComponent,
+	} );
 }
 
 export function getPaymentMethods() {

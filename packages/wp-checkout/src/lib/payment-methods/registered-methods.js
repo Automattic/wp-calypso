@@ -16,10 +16,11 @@ export default function loadPaymentMethods() {
 	registerPaymentMethod( {
 		id: 'apple-pay',
 		initialData: {},
+		// TODO: rename these s/component/element/
 		labelComponent: <span>Apple Pay</span>,
-		paymentMethodComponent: ApplePayComponent,
-		billingContactComponent: ApplePayBillingForm,
-		submitButtonComponent: ApplePaySubmitButton,
+		paymentMethodComponent: <ApplePayComponent />,
+		billingContactComponent: <ApplePayBillingForm />,
+		submitButtonComponent: <ApplePaySubmitButton />,
 	} );
 
 	registerPaymentMethod( {
@@ -42,10 +43,13 @@ export default function loadPaymentMethods() {
 }
 
 function ApplePayComponent( { isActive } ) {
+	// TODO: how do we get isActive in here?
 	return isActive ? 'Apple Pay' : null;
 }
 
-function ApplePayBillingForm() {}
+function ApplePayBillingForm() {
+	return null;
+}
 
 function ApplePaySubmitButton() {
 	const localize = useLocalize();
