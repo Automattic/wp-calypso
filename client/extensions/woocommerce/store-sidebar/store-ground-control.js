@@ -8,7 +8,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,16 +15,11 @@ import { get } from 'lodash';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Site from 'blocks/site';
-import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
-import { getStatsDefaultSitePage } from 'lib/route/path';
+import { getSiteHomeUrl } from 'state/sites/selectors';
 
-const StoreGroundControl = ( { canUserUseCustomerHome, site, translate } ) => {
+const StoreGroundControl = ( { site, siteHomeUrl, translate } ) => {
 	const isPlaceholder = ! site;
-	const siteSlug = get( site, 'slug', '' );
-	const backDestination = canUserUseCustomerHome
-		? `/home/${ siteSlug }`
-		: getStatsDefaultSitePage( siteSlug );
-	const backUrl = isPlaceholder ? '' : backDestination;
+	const backUrl = isPlaceholder ? '' : siteHomeUrl;
 
 	return (
 		<div className="store-sidebar__ground-control">
@@ -46,13 +40,13 @@ const StoreGroundControl = ( { canUserUseCustomerHome, site, translate } ) => {
 };
 
 StoreGroundControl.propTypes = {
-	canUserUseCustomerHome: PropTypes.bool.isRequired,
 	site: PropTypes.shape( {
 		slug: PropTypes.string,
 	} ).isRequired,
+	siteHomeUrl: PropTypes.string.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
 export default connect( state => ( {
-	canUserUseCustomerHome: canCurrentUserUseCustomerHome( state ),
+	siteHomeUrl: getSiteHomeUrl( state ),
 } ) )( localize( StoreGroundControl ) );
