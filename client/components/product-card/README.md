@@ -15,6 +15,16 @@ has purchase options, they will be listed below the description.
 
 See p1HpG7-7nT-p2 for more details.
 
+## <a name="how-checked-works"></a>How `checked` works
+
+The component header can optionally render and control a checkbox, and supports these cases:
+* `checked` is `true` - the checkbox will be rendered as checked.
+* `checked` is `false` - the checkbox will be rendered as unchecked.
+* `checked` is `null` - the checkbox will be rendered as uncontrolled and will be freely checkable by the user.
+* `checked` is `undefined` or not specified - the checkbox will not be rendered.
+
+Additionally, the `onSelect` prop is used if we need an external component to control what happens when the checkbox is (un)checked.
+
 ## Usage
 
 ```jsx
@@ -40,6 +50,7 @@ export default class extends React.Component {
 The following props can be passed to the Product Card component:
 
 * `billingTimeFrame`: ( string ) Billing time frame label
+* `checked`: ( bool ) Whether the header checkbox is checked. [Read more about the way this prop works](#how-checked-works)
 * `currencyCode`: ( string ) Currency code
 * `description`: ( string | element ) Product description. It can be a string or a React element (e.g. `<Fragment>`)
 * `discountedPrice`: ( number | array ) Discounted price of the product. If an array of 2 numbers is passed, it will be
@@ -48,6 +59,7 @@ The following props can be passed to the Product Card component:
   a price range
 * `isPurchased`: ( bool ) Flag indicating if the product has already been purchased. [Read more about the way this flag
   works](#how-isPurchased-flag-works)
+* `onSelect`: ( func ) Handle the header checkbox clicks (checking and unchecking the checkbox).
 * `subtitle`: ( string | element ) Product subtitle. It's used if the product has already been purchased, but can be
   used also in other use-cases. It can be a string or a React element (e.g. `<Fragment>`)
 * `title`: ( string | element ) Product title. It can be a string or a React element (e.g. `<Fragment>`)
