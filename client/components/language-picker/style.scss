@@ -10,6 +10,8 @@
 	align-items: stretch;
 	cursor: pointer;
 	transition: border-color 150ms ease-in-out;
+	text-align: left;
+	line-height: inherit;
 
 	@include breakpoint( '<660px' ) {
 		width: 100%;
