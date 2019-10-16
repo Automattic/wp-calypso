@@ -15,7 +15,7 @@ import { parse as parseURL } from 'url';
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-import { getSavedVariations } from 'lib/abtest';
+import { abtest, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import {
 	updatePrivacyForDomain,
@@ -143,6 +143,12 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 
+	// flowName isn't always passed in
+	const flowToCheck = flowName || lastKnownFlow;
+
+	const verticalSuggestedThemeTest =
+		flowToCheck === 'onboarding' && abtest( 'verticalSuggestedThemes' ) === 'test';
+
 	const newSiteParams = {
 		blog_title: siteTitle,
 		options: {
@@ -156,6 +162,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 			site_vertical_name: siteVerticalName || undefined,
+			use_demo_content: verticalSuggestedThemeTest,
 			site_information: {
 				title: siteTitle,
 			},
@@ -163,9 +170,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		public: getNewSitePublicSetting( state ),
 		validate: false,
 	};
-
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
 
 	if ( ! siteUrl && isDomainStepSkippable( flowToCheck ) ) {
 		newSiteParams.blog_name =
