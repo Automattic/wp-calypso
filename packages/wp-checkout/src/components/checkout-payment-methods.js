@@ -50,7 +50,15 @@ CheckoutPaymentMethods.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-function PaymentMethod( { id, labelComponent, paymentMethodComponent, checked, onClick } ) {
+function PaymentMethod( {
+	id,
+	LabelComponent,
+	PaymentMethodComponent,
+	checked,
+	onClick,
+	isActive,
+	isComplete,
+} ) {
 	/* eslint-disable jsx-a11y/label-has-associated-control */
 	return (
 		<React.Fragment>
@@ -63,9 +71,15 @@ function PaymentMethod( { id, labelComponent, paymentMethodComponent, checked, o
 					checked={ checked }
 					onChange={ () => onClick( id ) }
 				/>
-				<label htmlFor={ id }>{ labelComponent }</label>
+				<label htmlFor={ id }>
+					<LabelComponent />
+				</label>
 			</div>
-			{ paymentMethodComponent && <div>{ paymentMethodComponent }</div> }
+			{ PaymentMethodComponent && (
+				<div>
+					<PaymentMethodComponent isActive={ isActive } isComplete={ isComplete } />
+				</div>
+			) }
 		</React.Fragment>
 	);
 	/* eslint-enable jsx-a11y/label-has-associated-control */

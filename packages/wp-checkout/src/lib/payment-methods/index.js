@@ -16,18 +16,19 @@ const paymentMethods = [];
 export function registerPaymentMethod( {
 	id,
 	initialData,
-	labelComponent,
-	paymentMethodComponent,
-	billingContactComponent,
-	submitButtonComponent,
+	LabelComponent,
+	PaymentMethodComponent,
+	BillingContactComponent,
+	SubmitButtonComponent,
 } ) {
+	// TODO: add validation
 	paymentMethods.push( {
 		id,
 		initialData,
-		labelComponent,
-		paymentMethodComponent,
-		billingContactComponent,
-		submitButtonComponent,
+		LabelComponent,
+		PaymentMethodComponent,
+		BillingContactComponent,
+		SubmitButtonComponent,
 	} );
 }
 

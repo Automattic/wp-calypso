@@ -429,10 +429,10 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 {
 	id: string,
 	initialData: object,
-	labelComponent: component,
-	paymentMethodComponent: component,
-	billingContactComponent: component,
-	submitButtonComponent: component,
+	LabelComponent: component,
+	PaymentMethodComponent: component,
+	BillingContactComponent: component,
+	SubmitButtonComponent: component,
 }
 ```
 
