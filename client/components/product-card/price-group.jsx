@@ -23,7 +23,9 @@ const ProductCardPriceGroup = props => {
 			{ isDiscounted && (
 				<PlanPrice currencyCode={ currencyCode } rawPrice={ discountedPrice } discounted />
 			) }
-			<span className="product-card__billing-timeframe">{ billingTimeFrame }</span>
+			<div className="product-card__billing-timeframe">
+				<div className="product-card__billing-timeframe-label">{ billingTimeFrame }</div>
+			</div>
 		</div>
 	);
 };

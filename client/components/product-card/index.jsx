@@ -85,9 +85,10 @@ class ProductCard extends Component {
 	}
 
 	render() {
-		const { description, isPurchased } = this.props;
+		const { description, isPlaceholder, isPurchased } = this.props;
 
 		const cardClassNames = classNames( 'product-card', {
+			'is-placeholder': isPlaceholder,
 			'is-purchased': isPurchased,
 		} );
 
@@ -111,6 +112,7 @@ ProductCard.propTypes = {
 	] ),
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 	handleSelect: PropTypes.func,
+	isPlaceholder: PropTypes.bool,
 	isPurchased: PropTypes.bool,
 	options: PropTypes.arrayOf(
 		PropTypes.shape( {

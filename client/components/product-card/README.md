@@ -71,6 +71,8 @@ The following props can be passed to the Product Card component:
   displayed as a price range
 * `fullPrice`: ( number | array ) Full price of the product. If an array of 2 numbers is passed, it will be displayed as
   a price range
+* `isPlaceholder`: ( bool ) Flag indicating if the product price is in a loading state and should be rendered as a
+  placeholder
 * `isPurchased`: ( bool ) Flag indicating if the product has already been purchased. [Read more about the way this flag
   works](#how-is-purchased-flag-works)
 * `handleSelect`: ( func ) Handler function for product option selection. A product `slug` is passed as an argument to

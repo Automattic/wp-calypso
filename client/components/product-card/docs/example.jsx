@@ -7,19 +7,26 @@ import React, { Fragment, useState } from 'react';
  * Internal dependencies
  */
 import ProductCard from '../index';
+import Button from 'components/button';
 
 function ProductCardExample() {
 	const [ selectedProductOption, selectProductOption ] = useState(
 		'jetpack_backup_realtime_monthly'
 	);
+	const [ isPlaceholder, setIsPlaceholder ] = useState( false );
 
 	return (
 		<Fragment>
+			<Button compact onClick={ () => setIsPlaceholder( ! isPlaceholder ) }>
+				Toggle placeholders
+			</Button>
+			<hr />
 			<h3>Product Card - default</h3>
 			<ProductCard
 				title="Jetpack Scan"
-				billingTimeFrame="per year"
-				fullPrice={ 25 }
+				isPlaceholder={ isPlaceholder }
+				billingTimeFrame={ isPlaceholder ? null : 'per year' }
+				fullPrice={ isPlaceholder ? null : 25 }
 				description={
 					<Fragment>
 						Automatic scanning and one-click fixes keep your site one step ahead of security
@@ -31,9 +38,10 @@ function ProductCardExample() {
 			<h3>Product Card - with a discounted price range and options</h3>
 			<ProductCard
 				title="Jetpack Backup"
-				billingTimeFrame="per year"
-				fullPrice={ [ 16, 25 ] }
-				discountedPrice={ [ 12, 16 ] }
+				isPlaceholder={ isPlaceholder }
+				billingTimeFrame={ isPlaceholder ? null : 'per year' }
+				fullPrice={ isPlaceholder ? null : [ 16, 25 ] }
+				discountedPrice={ isPlaceholder ? null : [ 12, 16 ] }
 				description={
 					<Fragment>
 						Always-on backups ensure you never lose your site. Choose from real-time or daily
@@ -43,14 +51,13 @@ function ProductCardExample() {
 				optionsLabel="Backup options:"
 				options={ [
 					{
-						discountedPrice: 12,
-						fullPrice: 14,
+						discountedPrice: isPlaceholder ? null : 12,
+						fullPrice: isPlaceholder ? null : 14,
 						slug: 'jetpack_backup_daily_monthly',
 						title: 'Daily Backups',
 					},
 					{
-						discountedPrice: 16,
-						fullPrice: 25,
+						fullPrice: isPlaceholder ? null : 25,
 						slug: 'jetpack_backup_realtime_monthly',
 						title: 'Real-Time Backups',
 					},
@@ -73,6 +80,7 @@ function ProductCardExample() {
 						you’ll get unlimited backup archives
 					</Fragment>
 				}
+				isPlaceholder={ isPlaceholder }
 				isPurchased
 			/>
 
@@ -89,6 +97,7 @@ function ProductCardExample() {
 					</Fragment>
 				}
 				description="Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives"
+				isPlaceholder={ isPlaceholder }
 				isPurchased
 			/>
 		</Fragment>
