@@ -227,7 +227,7 @@ export default class SignupFlowController {
 	_getFlowProvidesDependencies() {
 		return flatMap( this._flow.steps, stepName =>
 			get( steps, [ stepName, 'providesDependencies' ], [] )
-		).concat( this._flow.providesDependenciesInQuery );
+		).concat( this._flow.providesDependenciesInQuery || [] );
 	}
 
 	_process() {
@@ -349,7 +349,7 @@ export default class SignupFlowController {
 
 	_getStoredDependencies() {
 		const requiredDependencies = flatMap( this._flow.steps, stepName =>
-			get( steps, [ stepName, 'providesDependencies' ], [] )
+			get( steps[ stepName ], 'providesDependencies', [] )
 		);
 
 		return reduce(
