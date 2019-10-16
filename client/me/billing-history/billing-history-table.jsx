@@ -58,7 +58,7 @@ class BillingHistoryTable extends React.Component {
 					href={ billingHistoryReceipt( transaction.id ) }
 					onClick={ this.handleReceiptLinkClick }
 				>
-					{ translate( 'View Receipt' ) }
+					{ translate( 'View Receipt:' ) }
 				</a>
 				{ this.renderEmailAction( transaction.id ) }
 			</div>
@@ -67,13 +67,9 @@ class BillingHistoryTable extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const emptyTableText = translate(
-			'You do not currently have any upgrades. ' +
-				'To see what upgrades we offer visit our {{link}}Plans page{{/link}}.',
-			{
-				components: { link: <a href="/plans" /> },
-			}
-		);
+		const emptyTableText = translate( 'You do no we offer visit our {{link}}Plans page{{/link}}.', {
+			components: { link: <a href="/plans" /> },
+		} );
 		const noFilterResultsText = translate( 'No receipts found.' );
 
 		return (
