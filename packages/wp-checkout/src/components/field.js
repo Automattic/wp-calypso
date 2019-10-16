@@ -12,13 +12,15 @@ import Button from './Button';
 // TODO: fix all these interpolations to be declarative
 // TODO: convert components here to functional Components
 
-const Label = styled.label`
-	display: block;
-	color: ${props => props.color};
-	font-weight: 700;
-	font-size: 14px;
-	margin-bottom: 8px;
-`;
+const Label = ( { color } ) => {
+	return styled.label`
+		display: block;
+		color: ${color};
+		font-weight: 700;
+		font-size: 14px;
+		margin-bottom: 8px;
+	`;
+};
 
 const Input = styled.input`
 	display: block;
@@ -40,16 +42,20 @@ const Input = styled.input`
 	}
 `;
 
-const InputWrapper = styled.div`
-	position: relative;
-`;
+const InputWrapper = () => {
+	return styled.div`
+		position: relative;
+	`;
+};
 
-const FieldIcon = styled.div`
-	position: absolute;
-	top: 50%;
-	transform: translateY( -50% );
-	right: 10px;
-`;
+const FieldIcon = () => {
+	return styled.div`
+		position: absolute;
+		top: 50%;
+		transform: translateY( -50% );
+		right: 10px;
+	`;
+};
 
 const ButtonIconUI = styled.div`
 	position: absolute;
@@ -71,82 +77,98 @@ const ButtonIconUI = styled.div`
 	}
 `;
 
-const Description = styled.p`
-	margin: 8px 0 0 0;
-	color: ${props => props.color};
-	font-style: italic;
-	font-size: 14px;
-`;
+const Description = ( { color } ) => {
+	return styled.p`
+		margin: 8px 0 0 0;
+		color: ${color};
+		font-style: italic;
+		font-size: 14px;
+	`;
+};
 
-export default class Field extends React.Component {
-	renderIcon = () => {
-		if ( ! this.props.isIconVisible ) {
-			return null;
-		}
-
-		if ( this.props.iconAction ) {
-			return (
-				<ButtonIconUI>
-					<Button onClick={ this.props.iconAction } label={ this.props.icon } />
-				</ButtonIconUI>
-			);
-		}
-
-		if ( this.props.icon ) {
-			return <FieldIcon>{ this.props.icon }</FieldIcon>;
-		}
-
+function RenderedIcon( { icon, iconAction, isIconVisible } ) {
+	if ( ! isIconVisible ) {
 		return null;
-	};
+	}
 
-	fieldOnChange = e => {
-		if ( this.props.onChange ) {
-			this.props.onChange( e.target );
-		}
-
-		return null;
-	};
-
-	onBlurField = () => {
-		return null;
-	};
-
-	renderDescription = () => {
-		if ( this.props.description || this.props.error ) {
-			return (
-				<Description color={ this.props.error ? colours.red50 : colours.gray50 }>
-					{ this.props.error ? this.props.errorMessage : this.props.description }
-				</Description>
-			);
-		}
-
-		return null;
-	};
-
-	render() {
+	if ( iconAction ) {
 		return (
-			<div className={ this.props.className }>
-				<Label
-					htmlFor={ this.props.value }
-					color={ this.props.error ? colours.red50 : colours.gray80 }
-				>
-					{ this.props.label }
-				</Label>
-				<InputWrapper>
-					<Input
-						id={ this.props.id }
-						icon={ this.props.icon }
-						value={ this.props.value }
-						type={ this.props.type }
-						onChange={ this.fieldOnChange }
-						onBlur={ this.onBlurField }
-						placeholder={ this.props.placeholder }
-						tabIndex={ this.props.tabIndex }
-					/>
-					{ this.renderIcon() }
-				</InputWrapper>
-				{ this.renderDescription() }
-			</div>
+			<ButtonIconUI>
+				<Button onClick={ iconAction } label={ icon } />
+			</ButtonIconUI>
 		);
 	}
+
+	if ( icon ) {
+		return <FieldIcon>{ icon }</FieldIcon>;
+	}
+
+	return null;
+}
+
+function RenderedDescription( { description, isError, errorMessage, colors } ) {
+	if ( description || isError ) {
+		return (
+			<Description color={ isError ? colors.red50 : colors.gray50 }>
+				{ isError ? errorMessage : description }
+			</Description>
+		);
+	}
+}
+
+export default function Field( {
+	type,
+	id,
+	className,
+	isError,
+	colors,
+	onChange,
+	label,
+	value,
+	icon,
+	iconAction,
+	isIconVisible,
+	placeholder,
+	tabIndex,
+	description,
+	errorMessage,
+} ) {
+	const fieldOnChange = e => {
+		if ( onChange ) {
+			onChange( e.target );
+		}
+
+		return null;
+	};
+
+	const onBlurField = () => {
+		return null;
+	};
+
+	return (
+		<div className={ className }>
+			<Label htmlFor={ value } color={ isError ? colors.red50 : colors.gray80 }>
+				{ label }
+			</Label>
+			<InputWrapper>
+				<Input
+					id={ id }
+					icon={ icon }
+					value={ value }
+					type={ type }
+					onChange={ fieldOnChange }
+					onBlur={ onBlurField }
+					placeholder={ placeholder }
+					tabIndex={ tabIndex }
+				/>
+				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
+			</InputWrapper>
+			<RenderedDescription
+				isError={ isError }
+				description={ description }
+				errorMessage={ errorMessage }
+				colors={ colors }
+			/>
+		</div>
+	);
 }

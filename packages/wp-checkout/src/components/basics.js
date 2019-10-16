@@ -5,6 +5,11 @@
  */
 import styled from 'styled-components';
 
+/**
+ * Internal dependencies
+ */
+import Field from './field';
+
 export const Container = styled.div`
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		display: flex;
@@ -146,7 +151,6 @@ export const BillingFormFields = styled.div`
 	margin-bottom: 16px;
 `;
 
-// TODO: Field is in its own file so we need to import that
 export const FormField = styled( Field )`
 	margin-top: 16px;
 	:first-child {
