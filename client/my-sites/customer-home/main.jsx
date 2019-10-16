@@ -27,11 +27,13 @@ import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCustomizerUrl, getSiteOption } from 'state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteFrontPage,
+	getCustomizerUrl,
+	getSiteOption,
+} from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import isSiteEligibleForCustomerHome from 'state/selectors/is-site-eligible-for-customer-home';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
@@ -41,6 +43,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
 
@@ -80,7 +83,6 @@ class Home extends Component {
 				);
 			}
 		},
-		isSiteEligible: PropTypes.bool.isRequired,
 		expandToolsAndTrack: PropTypes.func.isRequired,
 		trackAction: PropTypes.func.isRequired,
 		isStaticHomePage: PropTypes.bool.isRequired,
@@ -121,9 +123,7 @@ class Home extends Component {
 		const { translate, canUserUseCustomerHome, siteSlug } = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
-			const title = this.props.isSiteEligible
-				? translate( 'You are not authorized to view this page.' )
-				: translate( 'This page is not available on this site.' );
+			const title = translate( 'This page is not available on this site.' );
 			return (
 				<EmptyContent
 					title={ preventWidows( title ) }
@@ -132,7 +132,7 @@ class Home extends Component {
 			);
 		}
 
-		const { siteId, hasChecklistData, isChecklistComplete, checklistMode } = this.props;
+		const { siteId, hasChecklistData, isChecklistComplete, checklistMode, isAtomic } = this.props;
 		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
@@ -152,8 +152,10 @@ class Home extends Component {
 					/>
 				) }
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
-				{ hasChecklistData &&
-					( isChecklistComplete ? (
+				{ /* For now we are hiding the checklist on Atomic sites see pb5gDS-7c-p2 for more information */
+
+				hasChecklistData &&
+					( isAtomic || isChecklistComplete ? (
 						this.renderCustomerHome()
 					) : (
 						<ChecklistWpcom displayMode={ checklistMode } />
@@ -391,7 +393,6 @@ const connectHome = connect(
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const domains = getDomainsBySiteId( state, siteId );
 
 		return {
@@ -402,8 +403,8 @@ const connectHome = connect(
 			menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 			hasChecklistData,
-			isChecklistComplete,
-			isSiteEligible: isSiteEligibleForCustomerHome( state, siteId ),
+			isChecklistComplete: isSiteChecklistComplete( state, siteId ),
+			isAtomic: isAtomicSite( state, siteId ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),

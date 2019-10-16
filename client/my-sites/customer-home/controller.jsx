@@ -10,9 +10,9 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { abtest } from 'lib/abtest';
 import CustomerHome from './main';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
 
 export default function( context, next ) {
 	const siteId = getSelectedSiteId( context.store.getState() );
@@ -27,8 +27,9 @@ export default function( context, next ) {
 }
 
 export function maybeRedirect( context, next ) {
-	const slug = getSelectedSiteSlug( context.store.getState() );
-	if ( 'hide' === abtest( 'customerHomePage' ) ) {
+	const state = context.store.getState();
+	const slug = getSelectedSiteSlug( state );
+	if ( ! canCurrentUserUseCustomerHome( state ) ) {
 		page.redirect( `/stats/day/${ slug }` );
 		return;
 	}
