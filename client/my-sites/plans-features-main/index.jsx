@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
  */
 import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
-import PlansSingleProducts from 'my-sites/plans-single-products';
 import {
 	TYPE_FREE,
 	TYPE_BLOGGER,
@@ -29,7 +28,6 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
-import Header from './header';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
 import CartData from 'components/data/cart';
@@ -381,27 +379,6 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
-	renderSingleProducts() {
-		const { displayJetpackPlans, translate } = this.props;
-		const displayBackup = isEnabled( 'plans/jetpack-backup' );
-
-		if ( ! displayJetpackPlans || ! displayBackup ) {
-			return null;
-		}
-
-		return (
-			<Fragment>
-				<Header
-					heading={ translate( 'Single Products' ) }
-					subhead={ translate(
-						'Get these proven security tools make sure your site stays online and hack-free.'
-					) }
-				/>
-				<PlansSingleProducts className="plans-features-main__single-products" />
-			</Fragment>
-		);
-	}
-
 	render() {
 		const { displayJetpackPlans, isInSignup, siteId, plansWithScroll } = this.props;
 		let faqs = null;
@@ -419,7 +396,6 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
-				{ this.renderSingleProducts() }
 				{ this.getPlanFeatures() }
 				<CartData>
 					<PaymentMethods />
