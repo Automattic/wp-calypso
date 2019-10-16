@@ -7,7 +7,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
-import SingleProductPlans from '../';
+import ProductSelector from '../';
 
 const products = [
 	{
@@ -26,7 +26,7 @@ const products = [
 	},
 ];
 
-class SingleProductPlansExample extends Component {
+class ProductSelectorExample extends Component {
 	state = {
 		interval: 'yearly',
 	};
@@ -57,12 +57,12 @@ class SingleProductPlansExample extends Component {
 					</SegmentedControl.Item>
 				</SegmentedControl>
 
-				<SingleProductPlans products={ products } intervalType={ this.state.interval } />
+				<ProductSelector products={ products } intervalType={ this.state.interval } />
 			</Fragment>
 		);
 	}
 }
 
-SingleProductPlansExample.displayName = 'SingleProductPlans';
+ProductSelectorExample.displayName = 'ProductSelector';
 
-export default SingleProductPlansExample;
+export default ProductSelectorExample;

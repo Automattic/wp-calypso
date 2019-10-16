@@ -1,15 +1,15 @@
-Single Product Plans
+Product Selector
 =======
 
-Single Product Plans is a React component for rendering a block with products that are available for purchase.
+Product Selector is a React component for rendering a block with products that are available for purchase.
 
-It's used on the plans page near the bundle plans grid and is intended to provide an interface for purchasing single-product plans.
+It's used on the plans page near the bundle plans grid and is intended to provide an interface for purchasing specific products.
 
 ## Usage
 
 ```jsx
 import React from 'react';
-import SingleProductPlans from 'blocks/single-product-plans';
+import ProductSelector from 'blocks/product-selector';
 
 const products = [
 	{
@@ -28,7 +28,7 @@ const interval = 'yearly';
 export default class extends React.Component {
 	render() {
 		return (
-			<SingleProductPlans products={ products } intervalType={ interval } />
+			<ProductSelector products={ products } intervalType={ interval } />
 		);
 	}
 }
@@ -36,7 +36,7 @@ export default class extends React.Component {
 
 ## Props
 
-The following props can be passed to the Single Product Plans block:
+The following props can be passed to the Product Selector block:
 
 * `intervalType`: ( string ) Billing interval - `monthly`, `yearly` or `2yearly`.
 * `products`: ( array ) Products to render - see example above for the structure.

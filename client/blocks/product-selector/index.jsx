@@ -16,7 +16,7 @@ import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
-export class SingleProductPlans extends Component {
+export class ProductSelector extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -74,7 +74,7 @@ export class SingleProductPlans extends Component {
 
 	render() {
 		return (
-			<div className="single-product-plans">
+			<div className="product-selector">
 				<QueryProductsList />
 
 				{ this.renderProducts() }
@@ -83,7 +83,7 @@ export class SingleProductPlans extends Component {
 	}
 }
 
-SingleProductPlans.propTypes = {
+ProductSelector.propTypes = {
 	intervalType: PropTypes.string.isRequired,
 	products: PropTypes.arrayOf(
 		PropTypes.shape( {
@@ -109,4 +109,4 @@ export default connect( ( state, { products } ) => {
 		productSlugs,
 		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
 	};
-} )( localize( SingleProductPlans ) );
+} )( localize( ProductSelector ) );
