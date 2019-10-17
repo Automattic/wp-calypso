@@ -233,6 +233,7 @@ export class WebPreviewContent extends Component {
 	setIframeLoaded = () => {
 		if ( ! this.state.loaded ) {
 			window.open( this.state.iframeUrl, '_blank' );
+			this.props.onClose();
 		}
 	};
 
