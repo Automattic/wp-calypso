@@ -230,6 +230,12 @@ export class WebPreviewContent extends Component {
 		}
 	};
 
+	setIframeLoaded = () => {
+		if ( ! this.state.loaded ) {
+			window.location.href = this.state.iframeUrl;
+		}
+	};
+
 	render() {
 		const { translate } = this.props;
 
@@ -279,7 +285,7 @@ export class WebPreviewContent extends Component {
 							ref={ this.setIframeInstance }
 							className="web-preview__frame"
 							src="about:blank"
-							onLoad={ this.setLoaded }
+							onLoad={ this.setIframeLoaded }
 							title={ this.props.iframeTitle || translate( 'Preview' ) }
 						/>
 					</div>
