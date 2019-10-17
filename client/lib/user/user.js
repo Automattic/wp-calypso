@@ -36,8 +36,6 @@ function User() {
 	if ( ! ( this instanceof User ) ) {
 		return new User();
 	}
-
-	this.initialize();
 }
 
 /**
@@ -53,43 +51,39 @@ Emitter( User.prototype );
 /**
  * Initialize the user data depending on the configuration
  **/
-User.prototype.initialize = function() {
+User.prototype.initialize = async function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
-	this.initialized = false;
+	this.data = false;
 
 	this.on( 'change', this.checkVerification.bind( this ) );
 
+	let skipBootstrap = false;
+
 	if ( isSupportUserSession() ) {
-		this.data = false;
-
+		// boot the support session and skip the user bootstrap: the server sent the unwanted
+		// user info there (me) instead of the target SU user.
 		supportUserBoot();
-		this.fetch();
-
-		// We're booting into support user mode, skip initialization of the main user.
-		return;
+		skipBootstrap = true;
 	}
 
 	if ( isSupportNextSession() ) {
-		// boot the support session and proceed with user bootstrap (unlike the SupportUserSession)
+		// boot the support session and proceed with user bootstrap (unlike the SupportUserSession,
+		// the initial GET request includes the right cookies and header and returns a server-generated
+		// page with the right window.currentUser value)
 		supportNextBoot();
 	}
 
-	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		this.data = window.currentUser || false;
+	if ( ! skipBootstrap && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		debug( 'Bootstrapping user data:', this.data );
-
-		// Store the current user in localStorage so that we can use it to determine
-		// if the logged in user has changed when initializing in the future
-		if ( this.data ) {
-			this.handleFetchSuccess( this.data );
+		if ( window.currentUser ) {
+			this.handleFetchSuccess( window.currentUser );
 		}
-		this.initialized = true;
 		return;
 	}
 
-	// fetch the user from the /me endpoint
-	this.fetch();
+	// fetch the user from the /me endpoint if it wasn't bootstrapped
+	await this.fetch();
 };
 
 /**
@@ -113,9 +107,6 @@ User.prototype.clearStoreIfChanged = function( userId ) {
  * @returns {Object} The user data.
  */
 User.prototype.get = function() {
-	if ( ! this.data ) {
-		this.fetch();
-	}
 	return this.data;
 };
 
@@ -125,26 +116,34 @@ User.prototype.get = function() {
  *
  * @uses `wpcom`
  */
-User.prototype.fetch = function() {
+User.prototype.fetch = async function() {
 	if ( this.fetching ) {
-		return;
+		// if already fetching, return the in-flight promise
+		return this.fetching;
 	}
 
-	const me = wpcom.me();
-
 	// Request current user info
-	this.fetching = true;
 	debug( 'Getting user from api' );
-
-	me.get( { meta: 'flags', abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ) } )
+	this.fetching = wpcom
+		.me()
+		.get( {
+			meta: 'flags',
+			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
+		} )
 		.then( data => {
+			debug( 'User successfully retrieved from api:', data );
 			const userData = filterUserObject( data );
 			this.handleFetchSuccess( userData );
-			debug( 'User successfully retrieved' );
 		} )
 		.catch( error => {
+			debug( 'Failed to retrieve user from api:', error );
 			this.handleFetchFailure( error );
+		} )
+		.finally( () => {
+			this.fetching = false;
 		} );
+
+	return this.fetching;
 };
 
 /**
@@ -154,14 +153,9 @@ User.prototype.fetch = function() {
  * @param {Error} error network response error
  */
 User.prototype.handleFetchFailure = function( error ) {
-	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
-		/**
-		 * if the user bootstrap is disabled (in development), we need to rely on a request to
-		 * /me to determine if the user is logged in.
-		 */
+	if ( error.error === 'authorization_required' ) {
 		debug( 'The user is not logged in.' );
-
-		this.initialized = true;
+		this.data = false;
 		this.emit( 'change' );
 	} else {
 		// eslint-disable-next-line no-console
@@ -177,8 +171,6 @@ User.prototype.handleFetchFailure = function( error ) {
  * @param {Object} userData an object containing the user's information.
  */
 User.prototype.handleFetchSuccess = function( userData ) {
-	// Release lock from subsequent fetches
-	this.fetching = false;
 	this.clearStoreIfChanged( userData.ID );
 
 	// Store user ID in local storage so that we can detect a change and clear the storage
@@ -200,7 +192,6 @@ User.prototype.handleFetchSuccess = function( userData ) {
 		}
 	}
 	this.data = userData;
-	this.initialized = true;
 	this.emit( 'change' );
 };
 
@@ -240,7 +231,7 @@ User.prototype.clear = async function() {
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
 	 */
-	this.data = [];
+	this.data = false;
 	store.clearAll();
 	if ( config.isEnabled( 'persist-redux' ) ) {
 		await clearStorage();
