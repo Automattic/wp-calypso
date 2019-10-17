@@ -210,9 +210,11 @@ class SiteImporterInputPane extends React.Component {
 		switch ( this.props.importerData.engine ) {
 			case 'wix':
 				return (
-					<div>
+					<div className="site-importer__site-importer-url-format">
 						<p>
-							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
+							{ this.props.translate(
+								'Please use one of the following formats for the site URL:'
+							) }
 						</p>
 						<ul>
 							<li>
@@ -232,10 +234,8 @@ class SiteImporterInputPane extends React.Component {
 				);
 			case 'godaddy-gocentral':
 				return (
-					<div>
-						<p>
-							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
-						</p>
+					<div className="site-importer__site-importer-url-format">
+						<p>{ this.props.translate( 'Please use the following format for the site URL:' ) }</p>
 						<ul>
 							{ /* TODO(marekhrabe): add free URL format before public launch */ }
 							<li>
