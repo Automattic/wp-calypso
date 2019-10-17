@@ -282,7 +282,7 @@
 		"test-server:coverage": "npm run -s test-server -- --coverage",
 		"test-server:watch": "npm run -s test-server -- --watch",
 		"translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '**/*.ts' '**/*.tsx' '!build/**' '!packages/**/dist/**' '!public/**' '!**/test/**' '!node_modules/**' '!apps/full-site-editing/**' '!**/node_modules/**'",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "node --max_old_space_size=8192 -r typescript/bin/tsc -- --noEmit --incremental",
 		"update-deps": "npx rimraf npm-shrinkwrap.json && npm run -s distclean && npm i && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
 		"validate-fallback-es5": "npx eslint --env=es5 --no-eslintrc --no-ignore ./public/fallback/*.js",
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
