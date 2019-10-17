@@ -3,8 +3,10 @@
 }
 
 .importer-action-buttons__container {
+	clear: both;
 	display: flex;
 	justify-content: flex-end;
+	margin-top: 1.5em;
 	margin-bottom: 16px;
 }
 
