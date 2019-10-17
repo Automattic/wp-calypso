@@ -12,13 +12,16 @@ import { translate } from 'i18n-calypso';
 import { createSiteDomainObject } from './assembler';
 import wp from 'lib/wp';
 import {
-	DOMAIN_PRIVACY_TOGGLE,
+	DOMAIN_PRIVACY_ENABLE,
+	DOMAIN_PRIVACY_DISABLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
 import { requestSite } from 'state/sites/actions';
+
+import 'state/data-layer/wpcom/domains/privacy/index.js';
 
 /**
  * Module vars
@@ -135,9 +138,17 @@ export function fetchSiteDomains( siteId ) {
 	};
 }
 
-export function togglePrivacy( siteId, domain ) {
+export function enableDomainPrivacy( siteId, domain ) {
 	return {
-		type: DOMAIN_PRIVACY_TOGGLE,
+		type: DOMAIN_PRIVACY_ENABLE,
+		siteId,
+		domain,
+	};
+}
+
+export function disableDomainPrivacy( siteId, domain ) {
+	return {
+		type: DOMAIN_PRIVACY_DISABLE,
 		siteId,
 		domain,
 	};

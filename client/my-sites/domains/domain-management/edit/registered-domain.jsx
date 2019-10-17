@@ -20,24 +20,16 @@ import {
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import {
-	disablePrivacyProtection,
-	enablePrivacyProtection,
-} from 'lib/domains/wapi-domain-info/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { togglePrivacy } from 'state/sites/domains/actions';
+import { enableDomainPrivacy, disableDomainPrivacy } from 'state/sites/domains/actions';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { isUpdatingDomainPrivacy } from 'state/sites/domains/selectors';
 
 class RegisteredDomain extends React.Component {
-	state = {
-		submitting: false,
-	};
-
 	getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
 
@@ -79,40 +71,21 @@ class RegisteredDomain extends React.Component {
 	}
 
 	togglePrivacy = () => {
-		const { selectedSite, translate } = this.props;
-		const { privateDomain, name } = this.props.domain;
-
-		this.setState( { submitting: true } );
-
-		const callback = error => {
-			if ( error ) {
-				this.props.errorNotice( error.message );
-			} else {
-				this.props.togglePrivacy( selectedSite.ID, name );
-
-				const notice = privateDomain
-					? translate( 'Privacy has been successfully disabled!' )
-					: translate( 'Yay, privacy has been successfully enabled!' );
-
-				this.props.successNotice( notice, {
-					duration: 5000,
-				} );
-			}
-
-			this.setState( { submitting: false } );
-		};
+		const {
+			selectedSite,
+			domain: { privateDomain, name },
+		} = this.props;
 
 		if ( privateDomain ) {
-			disablePrivacyProtection( name, callback );
+			this.props.disableDomainPrivacy( selectedSite.ID, name );
 		} else {
-			enablePrivacyProtection( name, callback );
+			this.props.enableDomainPrivacy( selectedSite.ID, name );
 		}
 	};
 
 	getPrivacyProtection() {
 		const { privateDomain, privacyAvailable } = this.props.domain;
-		const { translate } = this.props;
-		const { submitting } = this.state;
+		const { translate, isUpdatingPrivacy } = this.props;
 
 		if ( ! privacyAvailable ) {
 			return false;
@@ -124,8 +97,8 @@ class RegisteredDomain extends React.Component {
 					<FormToggle
 						wrapperClassName="edit__privacy-protection-toggle"
 						checked={ privateDomain }
-						toggling={ submitting }
-						disabled={ submitting }
+						toggling={ isUpdatingPrivacy }
+						disabled={ isUpdatingPrivacy }
 						onChange={ this.togglePrivacy }
 					/>
 				}
@@ -277,11 +250,16 @@ const paymentSettingsClick = domain =>
 	);
 
 export default connect(
-	null,
+	( state, ownProps ) => ( {
+		isUpdatingPrivacy: isUpdatingDomainPrivacy(
+			state,
+			ownProps.selectedSite.ID,
+			ownProps.domain.name
+		),
+	} ),
 	{
-		errorNotice,
 		paymentSettingsClick,
-		successNotice,
-		togglePrivacy,
+		enableDomainPrivacy,
+		disableDomainPrivacy,
 	}
 )( localize( RegisteredDomain ) );
