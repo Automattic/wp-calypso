@@ -2,10 +2,6 @@
 	font-family: monospace;
 }
 
-.site-importer__site-importer-description {
-	font-size: 14px;
-}
-
 .site-importer__site-importer-url-format {
 	font-size: 12px;
 }
@@ -17,6 +13,7 @@
 	.form-text-input {
 		flex-grow: 1;
 		flex-shrink: 1;
+		margin-top: 0.5em;
 	}
 
 	button {

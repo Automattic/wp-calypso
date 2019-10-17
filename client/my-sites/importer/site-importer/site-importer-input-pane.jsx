@@ -18,6 +18,7 @@ import config from 'config';
 import wpcom from 'lib/wp';
 import { validateImportUrl } from 'lib/importer/url-validation';
 import TextInput from 'components/forms/form-text-input';
+import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
@@ -257,15 +258,18 @@ class SiteImporterInputPane extends React.Component {
 			<div className="site-importer__site-importer-pane">
 				{ importStage === 'idle' && (
 					<div>
-						<p className="site-importer__site-importer-description">{ this.props.description }</p>
 						<div className="site-importer__site-importer-url-input">
-							<TextInput
-								disabled={ isLoading }
-								onChange={ this.setUrl }
-								onKeyPress={ this.validateOnEnter }
-								value={ this.state.siteURLInput }
-								placeholder="example.com"
-							/>
+							<FormLabel>
+								{ this.props.description }
+								<TextInput
+									label={ this.props.description }
+									disabled={ isLoading }
+									onChange={ this.setUrl }
+									onKeyPress={ this.validateOnEnter }
+									value={ this.state.siteURLInput }
+									placeholder="example.com"
+								/>
+							</FormLabel>
 						</div>
 						{ this.state.availableEndpoints.length > 0 && (
 							<FormSelect
