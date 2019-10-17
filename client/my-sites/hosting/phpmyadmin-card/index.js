@@ -16,7 +16,7 @@ import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const requestId = siteId => `pma-link-request-${ siteId }`;
@@ -41,10 +41,10 @@ export const requestPmaLink = siteId =>
 
 const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
 	useEffect( () => {
-		if ( pmaLink ) {
+		if ( pmaLink && ! loading ) {
 			window.open( pmaLink );
 		}
-	}, [ pmaLink ] );
+	}, [ pmaLink, loading ] );
 
 	return (
 		<Card>
@@ -68,11 +68,19 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	const pmaLinkRequest = getHttpData( requestId( siteId ) );
+	// const pmaLinkRequest = getHttpData( requestId( siteId ) );
+
+	// @TODO Replace below dummy data when endpoint is concretely figured out.
+	const pmaLinkRequest = {
+		status: 'pending',
+		data: {
+			pmaUrl: 'https://fake.phpmyadmin.localhost/',
+		},
+	};
 
 	return {
 		pmaLink: get( pmaLinkRequest, 'data.pmaUrl', null ),
-		loading: get( pmaLinkRequest, 'status', null ) === 'pending',
+		loading: pmaLinkRequest.status === 'pending',
 		siteId,
 	};
 } )( localize( PhpMyAdminCard ) );
