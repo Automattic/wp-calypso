@@ -107,6 +107,7 @@ describe( 'reducer', () => {
 				domain: firstDomain.domain,
 			};
 			const expectedDomain = Object.assign( {}, firstDomain, {
+				contactInfoDisclosed: false,
 				privateDomain: true,
 			} );
 			const expectedState = {
@@ -129,6 +130,7 @@ describe( 'reducer', () => {
 				domain: firstDomain.domain,
 			};
 			const expectedDomain = Object.assign( {}, firstDomain, {
+				contactInfoDisclosed: false,
 				privateDomain: false,
 			} );
 			const expectedState = {
