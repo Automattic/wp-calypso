@@ -69,4 +69,7 @@ describe( 'Phone Validation Library', () => {
 	test( 'should pass a valid myanmar number with 9 digits after leading 9', () => {
 		assert.strictEqual( phoneValidation( '+959426123456' ).info, 'phone_number_valid' );
 	} );
+	test( 'should pass a valid Brazilian number starting with 49', () => {
+		assert.strictEqual( phoneValidation( '+554912345678' ).info, 'phone_number_valid' );
+	} );
 } );
