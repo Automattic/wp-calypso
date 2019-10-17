@@ -48,7 +48,7 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
 
 	return (
 		<Card className="phpmyadmin-card">
-			<div className="phpmyadmin-card__icon-col">
+			<div className="phpmyadmin-card__icon">
 				<MaterialIcon icon="dns" size={ 32 } />
 			</div>
 			<div>
