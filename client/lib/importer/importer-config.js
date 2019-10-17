@@ -79,7 +79,7 @@ function getConfig() {
 		description: translate(
 			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.'
 		),
-		uploadDescription: translate( 'Enter the URL of your existing site' ),
+		uploadDescription: translate( 'Enter the URL of your existing site:' ),
 		weight: 0,
 	};
 
@@ -151,7 +151,7 @@ function getConfig() {
 		title: 'Wix',
 		icon: 'wix',
 		description: translate( 'Import posts, pages, and media from your Wix.com site.' ),
-		uploadDescription: translate( 'Enter the URL of your existing site' ),
+		uploadDescription: translate( 'Enter the URL of your existing site:' ),
 		weight: 0,
 	};
 

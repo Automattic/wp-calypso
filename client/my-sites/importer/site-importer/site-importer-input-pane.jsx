@@ -257,7 +257,7 @@ class SiteImporterInputPane extends React.Component {
 			<div className="site-importer__site-importer-pane">
 				{ importStage === 'idle' && (
 					<div>
-						<p>{ this.props.description }</p>
+						<p className="site-importer__site-importer-description">{ this.props.description }</p>
 						<div className="site-importer__site-importer-url-input">
 							<TextInput
 								disabled={ isLoading }
