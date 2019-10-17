@@ -4,7 +4,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-
 /**
  * Internal dependencies
  */
@@ -25,13 +24,10 @@ import { getPluginKeys, requestPluginKeys } from 'state/data-getters/wpcom/jetpa
 import { SiteId, TimeoutMS } from 'client/types';
 import { logToLogstash } from 'state/logstash/actions';
 
-type PluginStateDescriptor = string;
-type PluginSlug = 'akismet' | 'vaultpress';
-
 /**
  * These are plugin states in the installation lifecycle we consider "non-error" states.
  */
-const NON_ERROR_STATES: PluginStateDescriptor[] = [
+const NON_ERROR_STATES = [
 	'not_active', // Plugin is not installed
 	'option_name_not_in_whitelist', // Plugin is installed but not activated
 	'key_not_set', // Plugin is installed and activated, but not configured
@@ -45,33 +41,27 @@ const NON_ERROR_STATES: PluginStateDescriptor[] = [
  * - Permanent, occurring if there is a failure we can't fix by waiting.
  * We attempt to recover from these errors by retrying status requests.
  */
-const RECOVERABLE_ERROR_STATES: PluginStateDescriptor[] = [ 'vaultpress_error' ];
+const RECOVERABLE_ERROR_STATES = [ 'vaultpress_error' ];
 
 /**
  * The plugins this product installer installs, activates and configures.
  */
-const PLUGINS: PluginSlug[] = [ 'akismet', 'vaultpress' ];
+const PLUGINS = [ 'akismet', 'vaultpress' ];
 
 /**
  * Maximum number of attempts to refetch installation status in the event of a recoverable error.
  */
 const MAX_RETRIES = 6;
 
-const PLUGIN_KEY_REFETCH_INTERVAL: TimeoutMS = 300;
+const PLUGIN_KEY_REFETCH_INTERVAL = 300;
 
-type Props = ReturnType< typeof mapStateToProps > & ConnectedDispatchProps & LocalizeProps;
-
-interface State {
-	initiatedInstalls: Set< PluginSlug >;
-}
-
-export class JetpackProductInstall extends Component< Props, State > {
+export class JetpackProductInstall extends Component {
 	state = {
-		initiatedInstalls: new Set< PluginSlug >(),
+		initiatedInstalls: new Set(),
 	};
 
-	retries: number = 0;
-	tracksEventSent: boolean = false;
+	retries = 0;
+	tracksEventSent = false;
 
 	componentDidMount() {
 		this.requestInstallationStatus();
@@ -82,9 +72,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 		this.maybeStartInstall();
 	}
 
-	fetchPluginKeys = (): void => {
+	fetchPluginKeys = () => {
 		if ( this.shouldRequestKeys() ) {
-			requestPluginKeys( this.props.siteId as SiteId, {
+			requestPluginKeys( this.props.siteId, {
 				freshness: PLUGIN_KEY_REFETCH_INTERVAL - 1,
 			} );
 		}
@@ -98,7 +88,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * - Installation has not finished.
 	 * - We already have the plugin keys.
 	 */
-	maybeStartInstall(): void {
+	maybeStartInstall() {
 		const { pluginKeys, progressComplete, requestedInstalls, siteId } = this.props;
 
 		// We need a valid siteId
@@ -131,7 +121,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return;
 		}
 
-		const installerPositionalArguments: [ 'akismet', 'vaultpress' ] = [ 'akismet', 'vaultpress' ];
+		const installerPositionalArguments = [ 'akismet', 'vaultpress' ];
 		const startJetpackProductInstallArgs = installerPositionalArguments.map( slug =>
 			// Installation hasn't been initiated for the plugin
 			! this.state.initiatedInstalls.has( slug ) &&
@@ -160,11 +150,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 				}
 				return { initiatedInstalls: next };
 			} );
-			this.props.startJetpackProductInstall(
-				siteId,
-				.../* We know this array will include exactly 2 items */
-				( startJetpackProductInstallArgs as [ string | null, string | null ] )
-			);
+			this.props.startJetpackProductInstall( siteId, ...startJetpackProductInstallArgs );
 		}
 	}
 
@@ -174,7 +160,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * @param  pluginStates States to check against.
 	 * @return              True if at least one plugin is in at least one of the given states, false otherwise.
 	 */
-	arePluginsInState( pluginStates: PluginStateDescriptor[] ): boolean {
+	arePluginsInState( pluginStates ) {
 		const { status } = this.props;
 
 		if ( ! status ) {
@@ -191,7 +177,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 *
 	 * @return Whether there are currently any installation errors.
 	 */
-	installationHasErrors(): boolean {
+	installationHasErrors() {
 		if ( this.installationHasRecoverableErrors() ) {
 			return true;
 		}
@@ -205,7 +191,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 *
 	 * @return Whether there are currently any recoverable errors.
 	 */
-	installationHasRecoverableErrors(): boolean {
+	installationHasRecoverableErrors() {
 		return this.arePluginsInState( RECOVERABLE_ERROR_STATES );
 	}
 
@@ -218,7 +204,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 *
 	 * @return Whether to trigger a request to refetch installation status.
 	 */
-	shouldRefetchInstallationStatus(): boolean {
+	shouldRefetchInstallationStatus() {
 		return this.retries < MAX_RETRIES && this.installationHasRecoverableErrors();
 	}
 
@@ -227,14 +213,14 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 *
 	 * @return {undefined} Eslint requires this silly return tag. @TODO get rid of this.
 	 */
-	refreshPage = (): void => void window.location.reload();
+	refreshPage = () => void window.location.reload();
 
 	/**
 	 * Request the current installation status.
 	 * Could be triggered by a timeout as we're waiting for installation to finish,
 	 * or by a retry if we discover we have a recoverable error.
 	 */
-	requestInstallationStatus = (): void => {
+	requestInstallationStatus = () => {
 		const { requestedInstalls, siteId } = this.props;
 
 		// We require a siteId to get install status
@@ -254,7 +240,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 		}
 	};
 
-	shouldRequestKeys(): boolean {
+	shouldRequestKeys() {
 		const { siteId, pluginKeys, requestedInstalls } = this.props;
 
 		if ( ! siteId ) {
@@ -335,19 +321,11 @@ export class JetpackProductInstall extends Component< Props, State > {
 	}
 }
 
-interface ConnectedProps {
-	siteId: SiteId | null;
-	pluginKeys: { [ key in PluginSlug ]: string } | null;
-	progressComplete: ReturnType< typeof getJetpackProductInstallProgress >;
-	requestedInstalls: PluginSlug[];
-	status: ReturnType< typeof getJetpackProductInstallStatus >;
-}
-
-function mapStateToProps( state ): ConnectedProps {
+function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const queryArgs = getCurrentQueryArguments( state );
 
-	const installQuery: string[] =
+	const installQuery =
 		// eslint-disable-next-line no-nested-ternary
 		typeof queryArgs === 'object' && 'install' in queryArgs
 			? Array.isArray( queryArgs.install )
@@ -355,7 +333,7 @@ function mapStateToProps( state ): ConnectedProps {
 				: [ queryArgs.install ]
 			: [];
 
-	const requestedInstalls: PluginSlug[] = installQuery.includes( 'all' )
+	const requestedInstalls = installQuery.includes( 'all' )
 		? /* If we want 'all', clone our known plugins */ [ ...PLUGINS ]
 		: PLUGINS.filter( slug => installQuery.includes( slug ) );
 
@@ -376,8 +354,6 @@ const mapDispatchToProps = {
 	startJetpackProductInstall,
 	logToLogstash,
 };
-
-type ConnectedDispatchProps = typeof mapDispatchToProps;
 
 export default connect(
 	mapStateToProps,
