@@ -17,6 +17,7 @@ import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
+import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 // @TODO derive API request details from props when API is merged & remove component state for dummy data
@@ -152,6 +153,7 @@ const SFTPCard = ( { translate, siteId } ) => {
 					</tbody>
 				</table>
 			) }
+			{ loading && ! errorCode && <Spinner /> }
 		</Card>
 	);
 };

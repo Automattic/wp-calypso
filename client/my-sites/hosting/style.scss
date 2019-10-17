@@ -23,7 +23,11 @@
             &:first-child {
                 width: calc( 60% - 10px );
             }
-		}
+        }
+        
+        .spinner {
+            width: 100%;
+        }
     }
     
     .sftp-card {
