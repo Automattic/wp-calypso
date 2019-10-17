@@ -37,11 +37,11 @@ describe( 'LoginTest', () => {
 		} );
 	} );
 
-	test( 'cannot submit until login details entered', done => {
+	test( 'can submit without login details entered', done => {
 		expect( page.find( FormButton ).props().disabled ).to.be.true;
 		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
 			page.update();
-			expect( page.find( FormButton ).props().disabled ).to.be.false;
+			expect( page.find( FormButton ).props().disabled ).to.be.true;
 			done();
 		} );
 	} );
