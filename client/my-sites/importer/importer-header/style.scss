@@ -9,11 +9,9 @@
 .importer-header__service-title {
 	font-size: 21px;
 	font-weight: 300;
+	line-height: 40px;
 	color: var( --color-text-subtle );
-
-	@include breakpoint( '>480px' ) {
-		clear: none;
-	}
+	clear: none;
 }
 
 

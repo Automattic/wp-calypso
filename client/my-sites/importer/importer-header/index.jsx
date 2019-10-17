@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
  */
 import { appStates } from 'state/imports/constants';
 import ImporterLogo from 'my-sites/importer/importer-logo';
-import StartButton from 'my-sites/importer/importer-header/start-button';
 
 /**
  * Style dependencies
@@ -40,17 +39,16 @@ class ImporterHeader extends React.PureComponent {
 	};
 
 	render() {
-		const { importerStatus, icon, title, description, site } = this.props;
+		const { importerStatus, icon, title, description } = this.props;
 		const { importerState } = importerStatus;
-		const showStartButton = includes( startStates, importerState );
+		const showStart = includes( startStates, importerState );
 
 		return (
 			<header className="importer-header">
 				<ImporterLogo icon={ icon } />
-				{ showStartButton && <StartButton importerStatus={ importerStatus } site={ site } /> }
 				<div className="importer-header__service-info">
 					<h1 className="importer-header__service-title">{ title }</h1>
-					<p>{ description }</p>
+					{ ! showStart && <p>{ description }</p> }
 				</div>
 			</header>
 		);
