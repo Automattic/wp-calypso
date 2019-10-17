@@ -489,7 +489,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	acceptTrademarkClaim = () => {
-		this.props.onAddDomain( this.state.selectedSuggestion, this.state.isInitialQueryActive );
+		this.props.onAddDomain( this.state.selectedSuggestion );
 	};
 
 	renderTrademarkClaimsNotice() {
@@ -1137,11 +1137,11 @@ class RegisterDomainStep extends React.Component {
 							selectedSuggestion: suggestion,
 						} );
 					} else {
-						this.props.onAddDomain( suggestion, this.state.isInitialQueryActive );
+						this.props.onAddDomain( suggestion );
 					}
 				} );
 		} else {
-			this.props.onAddDomain( suggestion, this.state.isInitialQueryActive );
+			this.props.onAddDomain( suggestion );
 		}
 	};
 
