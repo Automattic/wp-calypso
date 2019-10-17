@@ -70,7 +70,7 @@ function CartSynchronizer( cartKey, wpcom ) {
 
 Emitter( CartSynchronizer.prototype );
 
-CartSynchronizer.prototype.handleDispatch = ( { action } ) => {
+CartSynchronizer.prototype.handleDispatch = function( { action } ) {
 	switch ( action.type ) {
 		case TRANSACTION_STEP_SET:
 			if ( action.step.first && ! action.step.last ) {
