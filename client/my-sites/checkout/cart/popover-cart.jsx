@@ -8,8 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { reject } from 'lodash';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import Gridicon from 'components/gridicon';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessages from './cart-messages';
+import HeaderButton from 'components/header-button';
 import CartButtons from './cart-buttons';
 import Count from 'components/count';
 import Popover from 'components/popover';
@@ -94,15 +94,13 @@ class PopoverCart extends React.Component {
 			<div>
 				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
-					<button
-						className="cart-toggle-button"
+					<HeaderButton
+						icon="cart"
+						label={ translate( 'Cart' ) }
 						ref={ this.toggleButtonRef }
 						onClick={ this.onToggle }
-					>
-						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
-						<Gridicon icon="cart" size={ 24 } />
-						{ countBadge }
-					</button>
+					/>
+					{ countBadge }
 				</div>
 
 				{ this.renderCartContent() }
