@@ -3176,9 +3176,9 @@
 			}
 		},
 		"@types/wordpress__editor": {
-			"version": "9.4.0",
-			"resolved": "https://registry.npmjs.org/@types/wordpress__editor/-/wordpress__editor-9.4.0.tgz",
-			"integrity": "sha512-e5INWZ8mb0fzFx6I2xMUAH99ymxM20UsVECBdWRyrrnn/tlU+zuPVdOG4LnGDIaiHOhOhcHhppsHrX1K+LEN9Q==",
+			"version": "9.4.1",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__editor/-/wordpress__editor-9.4.1.tgz",
+			"integrity": "sha512-/633LQRjjqSJdBaq8kEwKB9mRYZ0o4qNlaSHPej8OYedydhNOGdF3YcrOjWRSmftLJcp84UqNqWaqoVGcCvmhg==",
 			"dev": true,
 			"requires": {
 				"@types/wordpress__api-fetch": "*",
