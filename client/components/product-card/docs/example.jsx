@@ -6,8 +6,9 @@ import React, { Fragment, useState } from 'react';
 /**
  * Internal dependencies
  */
-import ProductCard from '../index';
 import Button from 'components/button';
+import ProductCard from '../index';
+import ProductCardOptions from '../options';
 
 function ProductCardExample() {
 	const [ selectedProductOption, selectProductOption ] = useState(
@@ -20,7 +21,9 @@ function ProductCardExample() {
 			<Button compact onClick={ () => setIsPlaceholder( ! isPlaceholder ) }>
 				Toggle placeholders
 			</Button>
+
 			<hr />
+
 			<h3>Product Card - default</h3>
 			<ProductCard
 				title="Jetpack Scan"
@@ -48,23 +51,27 @@ function ProductCardExample() {
 						backups. <a href="/plans">Which one do I need?</a>
 					</Fragment>
 				}
-				optionsLabel="Backup options:"
-				options={ [
-					{
-						discountedPrice: isPlaceholder ? null : 12,
-						fullPrice: isPlaceholder ? null : 14,
-						slug: 'jetpack_backup_daily_monthly',
-						title: 'Daily Backups',
-					},
-					{
-						fullPrice: isPlaceholder ? null : 25,
-						slug: 'jetpack_backup_realtime_monthly',
-						title: 'Real-Time Backups',
-					},
-				] }
-				selectedSlug={ selectedProductOption }
-				handleSelect={ slug => selectProductOption( slug ) }
-			/>
+			>
+				<ProductCardOptions
+					billingTimeFrame={ isPlaceholder ? null : 'per year' }
+					optionsLabel="Backup options:"
+					options={ [
+						{
+							discountedPrice: isPlaceholder ? null : 12,
+							fullPrice: isPlaceholder ? null : 14,
+							slug: 'jetpack_backup_daily_monthly',
+							title: 'Daily Backups',
+						},
+						{
+							fullPrice: isPlaceholder ? null : 25,
+							slug: 'jetpack_backup_realtime_monthly',
+							title: 'Real-Time Backups',
+						},
+					] }
+					selectedSlug={ selectedProductOption }
+					handleSelect={ slug => selectProductOption( slug ) }
+				/>
+			</ProductCard>
 
 			<h3>Product Card - already purchased</h3>
 			<ProductCard
