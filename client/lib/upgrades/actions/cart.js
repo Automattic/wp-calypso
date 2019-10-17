@@ -16,7 +16,6 @@ import {
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
 	CART_ITEMS_REPLACE_ALL,
-	CART_ON_MOBILE_SHOW,
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
 	GOOGLE_APPS_REGISTRATION_DATA_ADD,
@@ -38,13 +37,6 @@ const debug = debugModule( 'calypso:signup:cart' );
 
 export function disableCart() {
 	Dispatcher.handleViewAction( { type: CART_DISABLE } );
-}
-
-export function showCartOnMobile( show ) {
-	Dispatcher.handleViewAction( {
-		type: CART_ON_MOBILE_SHOW,
-		show,
-	} );
 }
 
 export function addPrivacyToAllDomains() {

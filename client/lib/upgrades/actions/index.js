@@ -21,7 +21,6 @@ export {
 	removePrivacyFromAllDomains,
 	replaceCartWithItems,
 	replaceItem,
-	showCartOnMobile,
 } from './cart';
 
 export {
