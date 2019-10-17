@@ -17,20 +17,18 @@ import ProductCardPriceGroup from './price-group';
  */
 import './style.scss';
 
-const ProductCard = props => {
-	const {
-		billingTimeFrame,
-		children,
-		currencyCode,
-		description,
-		discountedPrice,
-		fullPrice,
-		isPlaceholder,
-		isPurchased,
-		subtitle,
-		title,
-	} = props;
-
+const ProductCard = ( {
+	billingTimeFrame,
+	children,
+	currencyCode,
+	description,
+	discountedPrice,
+	fullPrice,
+	isPlaceholder,
+	isPurchased,
+	subtitle,
+	title,
+} ) => {
 	const cardClassNames = classNames( 'product-card', {
 		'is-placeholder': isPlaceholder,
 		'is-purchased': isPurchased,

@@ -11,16 +11,14 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import ProductCardPriceGroup from './price-group';
 
-const ProductCardOptions = props => {
-	const {
-		billingTimeFrame,
-		currencyCode,
-		handleSelect,
-		options,
-		optionsLabel,
-		selectedSlug,
-	} = props;
-
+const ProductCardOptions = ( {
+	billingTimeFrame,
+	currencyCode,
+	handleSelect,
+	options,
+	optionsLabel,
+	selectedSlug,
+} ) => {
 	if ( ! options ) {
 		return null;
 	}
