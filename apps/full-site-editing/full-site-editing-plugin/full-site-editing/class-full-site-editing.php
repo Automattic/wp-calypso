@@ -49,10 +49,16 @@ class Full_Site_Editing {
 		add_action( 'the_post', [ $this, 'merge_template_and_post' ] );
 		add_filter( 'wp_insert_post_data', [ $this, 'remove_template_components' ], 10, 2 );
 		add_filter( 'admin_body_class', [ $this, 'toggle_editor_post_title_visibility' ] );
-		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ] );
+		// NOTE: Priority for block_editor_settings must be set to 11 so that it executes
+		// after the filter set in Jetpack_Copy_Post. If copy_post gets the last say in things,
+		// it entirely removes the template we set in FSE.
+		add_filter( 'block_editor_settings', [ $this, 'set_block_template' ], 11 );
+		// NOTE: Priority for default_content must be set to 11 so that it executes
+		// after the filter set in Jetpack_Copy_Post. If copy_post gets the last say in things,
+		// we would not be able to insert the header/footer data into the default editor content.
+		add_filter( 'default_content', [ $this, 'get_default_copy' ], 11, 2 );
 		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
-
 		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
 		add_filter( 'bulk_actions-edit-wp_template', [ $this, 'remove_trash_bulk_action_for_template_post_type' ] );
 		add_action( 'wp_trash_post', [ $this, 'restrict_template_deletion' ] );
@@ -353,6 +359,31 @@ class Full_Site_Editing {
 		return apply_filters( 'a8c_fse_edit_template_base_url', $edit_post_link );
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+	/**
+	 * Gets the default editor page content for a newly created post.
+	 *
+	 * Note: this filter does not insert this content into the post,
+	 * it just gets the default content which should be populated
+	 * into the editor.
+	 *
+	 * Since Jetpack's copy_post functionality uses this filter to set
+	 * the default content to be the content from the copied page, we
+	 * call it directly after (priority 11) so that we can merge in the
+	 * template parts and post content before sending it to Gutenberg.
+	 *
+	 * @see https://github.com/WordPress/WordPress/blob/abed60bb5111eb46b49a92dc1879ef60a94247ea/wp-admin/includes/post.php#L706-L713
+	 *
+	 * @param string $post_content the post content from the previous filter.
+	 * @param array  $post         the post object to modify.
+	 * @return string The default post content for the editor.
+	 */
+	public function get_default_page_content( $post_content, $post ) {
+		$this->merge_template_and_post( $post );
+		return $post->post_content;
+	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+
 	/** This will merge the post content with the post template, modifiying the $post parameter.
 	 *
 	 * @param \WP_Post $post Post instance.
@@ -370,8 +401,8 @@ class Full_Site_Editing {
 		if ( ! has_block( 'a8c/post-content', $template_content ) ) {
 			return;
 		}
-
 		$post->post_content = preg_replace( '@(<!-- wp:a8c/post-content)(.*?)(/-->)@', "$1$2-->$post->post_content<!-- /wp:a8c/post-content -->", $template_content );
+		l( 'post content replacement' );
 	}
 
 	/**
@@ -448,6 +479,9 @@ class Full_Site_Editing {
 
 	/**
 	 * Sets the block template to be loaded by the editor when creating a new full site page.
+	 *
+	 * Note: this will not work with our default post content until
+	 * https://github.com/WordPress/gutenberg/issues/11681 is fixed.
 	 *
 	 * @param array $editor_settings Default editor settings.
 	 * @return array Editor settings with the updated template setting.
