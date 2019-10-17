@@ -4,7 +4,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { get, includes } from 'lodash';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,7 +24,6 @@ import { getSiteSlug, getCustomizerUrl } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
@@ -38,41 +37,28 @@ import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-i
 import './style.scss';
 import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
 
-interface Props {
-	isPremium: boolean;
-	isProfessional: boolean;
-	isPaidPlan: boolean;
-	taskStatuses:
-		| {
-				id: string;
-				isCompleted: boolean;
-		  }[]
-		| undefined;
-	widgetCustomizerPaneUrl: URL | null;
-}
-
-class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
+class JetpackChecklist extends PureComponent {
 	componentDidMount() {
 		if ( typeof window !== 'undefined' && typeof window.hj === 'function' ) {
 			window.hj( 'trigger', 'plans_myplan_jetpack-checklist' );
 		}
 	}
 
-	isComplete( taskId: string ): boolean {
+	isComplete( taskId ) {
 		return getTaskList( this.props ).isCompleted( taskId );
 	}
 
 	/**
 	 * Returns the localized duration of a task in given minutes.
 	 *
-	 * @param  minutes Number of minutes.
-	 * @return Localized duration.
+	 * @param  {number} minutes Number of minutes.
+	 * @return {string}         Localized duration.
 	 */
-	getDuration( minutes: number ) {
+	getDuration( minutes ) {
 		return this.props.translate( '%d minute', '%d minutes', { count: minutes, args: [ minutes ] } );
 	}
 
-	handleTaskStart = ( { taskId, tourId }: { taskId: string; tourId?: string } ) => () => {
+	handleTaskStart = ( { taskId, tourId } ) => () => {
 		if ( taskId ) {
 			this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 				checklist_name: 'jetpack',
@@ -93,7 +79,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 		} );
 	};
 
-	trackExpandTask = ( { id }: { id: string } ) =>
+	trackExpandTask = ( { id } ) =>
 		void this.props.recordTracksEvent( 'calypso_checklist_task_expand', {
 			step_name: id,
 			product: 'Jetpack',
