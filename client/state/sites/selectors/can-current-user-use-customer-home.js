@@ -17,7 +17,7 @@ import getSite from './get-site';
  * Returns true if the current user should be able to use the customer home screen
  *
  * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {?Number}  siteId Site ID
  * @return {?Boolean}        Whether the site can use the customer home screen
  */
 export default function canCurrentUserUseCustomerHome( state, siteId = null ) {
