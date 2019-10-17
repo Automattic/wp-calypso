@@ -32,7 +32,7 @@ import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import { withStripeProps } from 'lib/stripe';
-import { setStripeObject } from 'lib/upgrades/actions';
+import { setStripeObject } from 'lib/transaction/actions';
 
 function isFormSubmitting( transactionStep ) {
 	if ( ! transactionStep ) {

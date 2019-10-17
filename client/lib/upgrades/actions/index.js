@@ -23,14 +23,7 @@ export {
 	replaceItem,
 } from './cart';
 
-export {
-	resetTransaction,
-	setDomainDetails,
-	setNewCreditCardDetails,
-	setPayment,
-	setStripeObject,
-	submitTransaction,
-} from './checkout';
+export { submitTransaction } from './checkout';
 
 export {
 	acceptTransfer,

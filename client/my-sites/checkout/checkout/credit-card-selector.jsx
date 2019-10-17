@@ -13,7 +13,7 @@ import analytics from 'lib/analytics';
 import CreditCard from 'components/credit-card';
 import NewCardForm from './new-card-form';
 import { newCardPayment, newStripeCardPayment, storedCardPayment } from 'lib/store-transactions';
-import { setPayment } from 'lib/upgrades/actions';
+import { setPayment } from 'lib/transaction/actions';
 import { withStripeProps } from 'lib/stripe';
 
 class CreditCardSelector extends React.Component {
