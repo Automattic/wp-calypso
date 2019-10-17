@@ -17,11 +17,6 @@ import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
-/* import {
-	requestAtomicSFTPDetails,
-	resetAtomicSFTPUserPassword,
-	createAtomicSFTPUser,
-} from 'state/data-getters'; */
 
 // @TODO derive API request details from props when API is merged & remove component state
 const SFTPCard = ( { translate, siteId } ) => {
@@ -126,17 +121,7 @@ const SFTPCard = ( { translate, siteId } ) => {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
-	// @TODO dummy data is added here and in component state; remove when API is merged
-	// const sftpDetails = requestAtomicSFTPDetails( siteId );
-
-	// const username = get( sftpDetails, 'data.username', null );
-	// const errorCode = get( sftpDetails, 'error.status', null );
-
 	return {
 		siteId,
-		// username,
-		// noSftpUser: errorCode === 404,
-		// password: get( sftpDetails, 'data.password', null ),
-		// loading: sftpDetails.status === 'pending' || ! username,
 	};
 } )( localize( SFTPCard ) );

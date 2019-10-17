@@ -68,7 +68,6 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	// const pmaLinkRequest = getHttpData( requestId( siteId ) );
 
 	// @TODO Replace below dummy data when endpoint is concretely figured out.
 	const pmaLinkRequest = {
