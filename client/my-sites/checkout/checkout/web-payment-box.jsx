@@ -27,7 +27,7 @@ import {
 	WEB_PAYMENT_APPLE_PAY_METHOD,
 } from 'lib/web-payment';
 import { webPayment } from 'lib/store-transactions';
-import { setPayment, setStripeObject } from 'lib/upgrades/actions';
+import { setPayment, setStripeObject } from 'lib/transaction/actions';
 import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
 import CartToggle from './cart-toggle';
 import CheckoutTerms from './checkout-terms';

@@ -3,7 +3,7 @@
  */
 import { assign, flowRight, get } from 'lodash';
 import Dispatcher from 'dispatcher';
-import { TRANSACTION_STEP_SET } from 'lib/upgrades/action-types';
+import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
 import debugFactory from 'debug';
 
 /**
@@ -70,23 +70,16 @@ function CartSynchronizer( cartKey, wpcom ) {
 
 Emitter( CartSynchronizer.prototype );
 
-CartSynchronizer.prototype.handleDispatch = function( payload ) {
-	const { action } = payload;
+CartSynchronizer.prototype.handleDispatch = ( { action } ) => {
+	switch ( action.type ) {
+		case TRANSACTION_STEP_SET:
+			if ( action.step.first && ! action.step.last ) {
+				this.pause();
+			}
 
-	if ( action.type !== TRANSACTION_STEP_SET ) {
-		return;
-	}
-
-	const { step } = action;
-
-	if ( step.first && step.last ) {
-		return;
-	}
-
-	if ( step.first ) {
-		this.pause();
-	} else if ( step.last ) {
-		this.resume();
+			if ( action.step.last && ! action.step.first ) {
+				this.resume();
+			}
 	}
 };
 
