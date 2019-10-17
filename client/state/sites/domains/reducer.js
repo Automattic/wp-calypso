@@ -18,24 +18,24 @@ import {
 	DOMAIN_PRIVACY_DISABLE_SUCCESS,
 	DOMAIN_PRIVACY_ENABLE_FAILURE,
 	DOMAIN_PRIVACY_DISABLE_FAILURE,
+	DOMAIN_CONTACT_INFO_DISCLOSE,
+	DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS,
+	DOMAIN_CONTACT_INFO_DISCLOSE_FAILURE,
+	DOMAIN_CONTACT_INFO_REDACT,
+	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
+	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 } from 'state/action-types';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
-const modifyDomainPrivacyImmutable = ( state, siteId, domain, privacyValue ) => {
+const modifyDomainPrivacyImmutable = ( state, siteId, domain, overrideOptions ) => {
 	// Find the domain we want to update
 	const targetDomain = find( state[ siteId ], { domain: domain } );
 	const domainIndex = indexOf( state[ siteId ], targetDomain );
 	// Copy as we shouldn't mutate original state
 	const newDomains = [ ...state[ siteId ] ];
 	// Update privacy
-	newDomains.splice(
-		domainIndex,
-		1,
-		Object.assign( {}, targetDomain, {
-			privateDomain: privacyValue,
-		} )
-	);
+	newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, overrideOptions ) );
 
 	return Object.assign( {}, state, {
 		[ siteId ]: newDomains,
@@ -57,9 +57,25 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				[ siteId ]: action.domains,
 			} );
 		case DOMAIN_PRIVACY_ENABLE_SUCCESS:
-			return modifyDomainPrivacyImmutable( state, siteId, action.domain, true );
+			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+				privateDomain: true,
+				contactInfoDisclosed: false,
+			} );
 		case DOMAIN_PRIVACY_DISABLE_SUCCESS:
-			return modifyDomainPrivacyImmutable( state, siteId, action.domain, false );
+			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+				privateDomain: false,
+				contactInfoDisclosed: false,
+			} );
+		case DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS:
+			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+				privateDomain: false,
+				contactInfoDisclosed: true,
+			} );
+		case DOMAIN_CONTACT_INFO_REDACT_SUCCESS:
+			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+				privateDomain: false,
+				contactInfoDisclosed: false,
+			} );
 	}
 
 	return state;
@@ -73,10 +89,21 @@ export const updatingPrivacy = ( state = {}, action ) => {
 		case DOMAIN_PRIVACY_DISABLE:
 		case DOMAIN_PRIVACY_DISABLE_SUCCESS:
 		case DOMAIN_PRIVACY_DISABLE_FAILURE:
+		case DOMAIN_CONTACT_INFO_DISCLOSE:
+		case DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS:
+		case DOMAIN_CONTACT_INFO_DISCLOSE_FAILURE:
+		case DOMAIN_CONTACT_INFO_REDACT:
+		case DOMAIN_CONTACT_INFO_REDACT_SUCCESS:
+		case DOMAIN_CONTACT_INFO_REDACT_FAILURE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: {
 					[ action.domain ]:
-						[ DOMAIN_PRIVACY_ENABLE, DOMAIN_PRIVACY_DISABLE ].indexOf( action.type ) !== -1,
+						[
+							DOMAIN_PRIVACY_ENABLE,
+							DOMAIN_PRIVACY_DISABLE,
+							DOMAIN_CONTACT_INFO_DISCLOSE,
+							DOMAIN_CONTACT_INFO_REDACT,
+						].indexOf( action.type ) !== -1,
 				},
 			} );
 	}

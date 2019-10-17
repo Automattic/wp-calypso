@@ -20,7 +20,12 @@ import {
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import { enableDomainPrivacy, disableDomainPrivacy } from 'state/sites/domains/actions';
+import {
+	enableDomainPrivacy,
+	disableDomainPrivacy,
+	discloseDomainContactInfo,
+	redactDomainContactInfo,
+} from 'state/sites/domains/actions';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
@@ -83,6 +88,19 @@ class RegisteredDomain extends React.Component {
 		}
 	};
 
+	toggleContactInfo = () => {
+		const {
+			selectedSite,
+			domain: { contactInfoDisclosed, name },
+		} = this.props;
+
+		if ( contactInfoDisclosed ) {
+			this.props.redactDomainContactInfo( selectedSite.ID, name );
+		} else {
+			this.props.discloseDomainContactInfo( selectedSite.ID, name );
+		}
+	};
+
 	getPrivacyProtection() {
 		const { privateDomain, privacyAvailable } = this.props.domain;
 		const { translate, isUpdatingPrivacy } = this.props;
@@ -102,6 +120,35 @@ class RegisteredDomain extends React.Component {
 						onChange={ this.togglePrivacy }
 					/>
 				}
+			</Property>
+		);
+	}
+
+	getContactInfoDisclosed() {
+		const {
+			translate,
+			isUpdatingPrivacy,
+			domain: {
+				privateDomain,
+				privacyAvailable,
+				contactInfoDisclosureAvailable,
+				contactInfoDisclosed,
+			},
+		} = this.props;
+
+		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
+			return false;
+		}
+
+		return (
+			<Property label={ translate( 'Display my contact information in public WHOIS' ) }>
+				<FormToggle
+					wrapperClassName="edit__disclose-contact-information"
+					checked={ contactInfoDisclosed }
+					toggling={ isUpdatingPrivacy }
+					disabled={ isUpdatingPrivacy }
+					onChange={ this.toggleContactInfo }
+				/>
 			</Property>
 		);
 	}
@@ -220,6 +267,8 @@ class RegisteredDomain extends React.Component {
 
 						{ this.getPrivacyProtection() }
 
+						{ this.getContactInfoDisclosed() }
+
 						<SubscriptionSettings
 							type={ domain.type }
 							subscriptionId={ domain.subscriptionId }
@@ -261,5 +310,7 @@ export default connect(
 		paymentSettingsClick,
 		enableDomainPrivacy,
 		disableDomainPrivacy,
+		discloseDomainContactInfo,
+		redactDomainContactInfo,
 	}
 )( localize( RegisteredDomain ) );
