@@ -43,7 +43,6 @@ const SFTPCard = ( { translate, siteId } ) => {
 			status: 'success',
 			data: {
 				username: 'test_user_testsite.wordpress.com_1234',
-				password: 'a.t.e.s.t.p.a.s.s.word',
 			},
 		} );
 	};
