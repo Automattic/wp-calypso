@@ -264,7 +264,7 @@ class SiteImporterInputPane extends React.Component {
 								onChange={ this.setUrl }
 								onKeyPress={ this.validateOnEnter }
 								value={ this.state.siteURLInput }
-								placeholder="https://example.com/"
+								placeholder="example.com"
 							/>
 						</div>
 						{ this.state.availableEndpoints.length > 0 && (
