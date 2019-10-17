@@ -3,7 +3,7 @@
 	position: relative;
 	overflow: hidden;
 	align-self: center;
-	margin: auto 0;
+	margin: 0;
 	text-align: center;
 
 	// Globe icon for sites without an icon
@@ -13,6 +13,11 @@
 			color: var( --color-surface );
 			z-index: z-index( 'root', '.site-icon.is-blank .gridicon' );
 		}
+	}
+
+	// Vertically center site icon in Classic editor
+	.editor-ground-control & {
+		margin: auto 0;
 	}
 }
 
