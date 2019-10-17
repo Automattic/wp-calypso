@@ -56,7 +56,7 @@ class Full_Site_Editing {
 		// NOTE: Priority for default_content must be set to 11 so that it executes
 		// after the filter set in Jetpack_Copy_Post. If copy_post gets the last say in things,
 		// we would not be able to insert the header/footer data into the default editor content.
-		add_filter( 'default_content', [ $this, 'get_default_copy' ], 11, 2 );
+		add_filter( 'default_content', [ $this, 'get_default_page_content' ], 11, 2 );
 		add_action( 'after_switch_theme', [ $this, 'insert_default_data' ] );
 		add_filter( 'body_class', array( $this, 'add_fse_body_class' ) );
 		add_filter( 'post_row_actions', [ $this, 'remove_trash_row_action_for_template_post_types' ], 10, 2 );
@@ -402,7 +402,6 @@ class Full_Site_Editing {
 			return;
 		}
 		$post->post_content = preg_replace( '@(<!-- wp:a8c/post-content)(.*?)(/-->)@', "$1$2-->$post->post_content<!-- /wp:a8c/post-content -->", $template_content );
-		l( 'post content replacement' );
 	}
 
 	/**
