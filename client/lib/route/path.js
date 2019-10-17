@@ -102,12 +102,8 @@ export function sectionify( path, siteFragment ) {
 	return untrailingslashit( basePath );
 }
 
-export function getStatsDefaultPage() {
-	return '/stats/day/';
-}
-
 export function getStatsDefaultSitePage( slug ) {
-	const path = getStatsDefaultPage();
+	const path = '/stats/day/';
 
 	if ( slug ) {
 		return path + slug;

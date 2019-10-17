@@ -12,7 +12,6 @@ import { get, noop, some, startsWith, uniq } from 'lodash';
  */
 import { requestSite } from 'state/sites/actions';
 import {
-	getBaseUrl,
 	getSite,
 	getSiteAdminUrl,
 	getSiteSlug,
@@ -266,11 +265,9 @@ function onSelectedSiteAvailable( context, basePath ) {
  */
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
 
 	// This path sets the URL to be visited once a site is selected
-	const basePath = contextPath === '/sites' ? getBaseUrl( state, siteId ) : contextPath;
+	const basePath = contextPath === '/sites' ? '/home' : contextPath;
 
 	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
 
