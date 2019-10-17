@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { assign, flowRight, get } from 'lodash';
-import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
 import { TRANSACTION_STEP_SET } from 'lib/upgrades/action-types';
 import debugFactory from 'debug';
@@ -34,7 +31,7 @@ function preprocessCartFromServer( cart ) {
 // NOTE: This object has underscored keys to match the rest of the attributes
 //   in the `CartValue object`.
 function createClientMetadata() {
-	return { last_server_response_date: i18n.moment().toISOString() };
+	return { last_server_response_date: new Date().toISOString() };
 }
 
 // FIXME: Temporary fix to cast string product IDs to numbers. There is a bug
