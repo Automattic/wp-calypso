@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { flattenDeep, isEmpty, map, uniq } from 'lodash';
@@ -10,6 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
+import Card from 'components/card';
 import ProductCard from 'components/product-card';
 import QueryProductsList from 'components/data/query-products-list';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
@@ -48,6 +51,14 @@ export class ProductSelector extends Component {
 		}
 	}
 
+	handleProductOptionSelect( stateKey, productSlug ) {
+		return () => {
+			this.setState( {
+				[ stateKey ]: productSlug,
+			} );
+		};
+	}
+
 	renderProducts() {
 		const { currencyCode, intervalType, products, storeProducts } = this.props;
 
@@ -60,16 +71,58 @@ export class ProductSelector extends Component {
 			const productObject = storeProducts[ selectedProductSlug ];
 
 			return (
-				<ProductCard
-					key={ product.id }
-					title={ product.title }
-					billingTimeFrame={ this.getBillingTimeFrameLabel() }
-					fullPrice={ productObject.cost }
-					description={ product.description }
-					currencyCode={ currencyCode }
-				/>
+				<Fragment key={ 'product-' + product.id }>
+					<ProductCard
+						key={ product.id }
+						title={ product.title }
+						billingTimeFrame={ this.getBillingTimeFrameLabel() }
+						fullPrice={ productObject.cost }
+						description={ product.description }
+						currencyCode={ currencyCode }
+					/>
+
+					{ this.renderProductOptions( product ) }
+				</Fragment>
 			);
 		} );
+	}
+
+	renderProductOptions( product ) {
+		const { intervalType, storeProducts } = this.props;
+		const productSlugs = product.options[ intervalType ];
+		const stateKey = this.getStateKey( product.id, intervalType );
+
+		return (
+			<Card>
+				<h4>{ product.optionsLabel }</h4>
+
+				{ productSlugs.map( productSlug => {
+					const productObject = storeProducts[ productSlug ];
+
+					/**
+					 * TODO: Replace with a ProductOption component.
+					 *
+					 * This will eventually render a product options component and we'll pass it some props like:
+					 * - handleSelect={ this.handleProductOptionSelect( stateKey, productSlug ) }
+					 * - checked={ productSlug === this.state[ stateKey ] }
+					 * - product={ productObject }
+					 */
+					return (
+						<Fragment key={ 'product-option-' + productSlug }>
+							<FormLabel>
+								<FormRadio
+									checked={ productSlug === this.state[ stateKey ] }
+									onChange={ this.handleProductOptionSelect( stateKey, productSlug ) }
+								/>
+								<span>
+									{ productObject.product_name } - { productObject.cost_display }
+								</span>
+							</FormLabel>
+						</Fragment>
+					);
+				} ) }
+			</Card>
+		);
 	}
 
 	render() {
