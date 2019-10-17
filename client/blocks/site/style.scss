@@ -39,6 +39,10 @@
 	}
 
 	&.is-compact {
+		.site-icon {
+			align-self: center;
+		}
+
 		.site__content {
 			padding: 0 16px;
 		}
@@ -54,6 +58,8 @@
 		.site__home {
 			top: 11px;
 			line-height: 18px;
+			width: 24px;
+			height: 24px;
 		}
 
 		.site__home .gridicon {
@@ -149,11 +155,6 @@
 	.gridicon {
 		margin-top: 5px;
 		vertical-align: middle;
-	}
-
-	.site.is-compact & {
-		width: 24px;
-		height: 24px;
 	}
 
 	@include breakpoint( '<660px' ) {
