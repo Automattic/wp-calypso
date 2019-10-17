@@ -28,14 +28,23 @@ import {
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
-const modifyDomainPrivacyImmutable = ( state, siteId, domain, overrideOptions ) => {
+/**
+ * Returns a copy of the domains state object with some modifications
+ *
+ * @param {Object} state - current state
+ * @param {int} siteId - site ID
+ * @param {string} domain - domain name
+ * @param {Object} modifyDomainProperties - object with modified site domain properties
+ * @returns {any} - new copy of the state
+ */
+const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainProperties ) => {
 	// Find the domain we want to update
 	const targetDomain = find( state[ siteId ], { domain: domain } );
 	const domainIndex = indexOf( state[ siteId ], targetDomain );
 	// Copy as we shouldn't mutate original state
 	const newDomains = [ ...state[ siteId ] ];
 	// Update privacy
-	newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, overrideOptions ) );
+	newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, modifyDomainProperties ) );
 
 	return Object.assign( {}, state, {
 		[ siteId ]: newDomains,
@@ -57,22 +66,22 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				[ siteId ]: action.domains,
 			} );
 		case DOMAIN_PRIVACY_ENABLE_SUCCESS:
-			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				privateDomain: true,
 				contactInfoDisclosed: false,
 			} );
 		case DOMAIN_PRIVACY_DISABLE_SUCCESS:
-			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				privateDomain: false,
 				contactInfoDisclosed: false,
 			} );
 		case DOMAIN_CONTACT_INFO_DISCLOSE_SUCCESS:
-			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				privateDomain: false,
 				contactInfoDisclosed: true,
 			} );
 		case DOMAIN_CONTACT_INFO_REDACT_SUCCESS:
-			return modifyDomainPrivacyImmutable( state, siteId, action.domain, {
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				privateDomain: false,
 				contactInfoDisclosed: false,
 			} );
@@ -81,6 +90,15 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	return state;
 } );
 
+/**
+ * Updating privacy reducer
+ *
+ * Figure out if we're in the middle of privacy modification command
+ *
+ * @param {Object} state - current state
+ * @param {Object} action - action
+ * @returns {any} - new state
+ */
 export const updatingPrivacy = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case DOMAIN_PRIVACY_ENABLE:
