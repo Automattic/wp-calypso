@@ -225,23 +225,32 @@
 
 // Loading state
 .product-card.is-placeholder .product-card__price-group {
-	@include placeholder( --color-neutral-10 );
 	position: relative;
 	width: 150px;
 	height: 32px;
 	margin-bottom: 17px;
 
 	@include breakpoint( '>660px' ) {
-		height: 22px;
-		margin-bottom: -5px;
+		height: 16px;
+		margin-bottom: 0;
 	}
 
+	&::before,
 	&::after {
 		@include placeholder( --color-neutral-10 );
 		content: '';
 		position: absolute;
-		top: 38px;
 		left: 0;
+	}
+
+	&::before {
+		top: 0;
+		width: 100%;
+		height: calc( 100% + 3px );
+	}
+
+	&::after {
+		top: 38px;
 		width: 100px;
 		height: 11px;
 
@@ -262,6 +271,10 @@
 
 	@include breakpoint( '>660px' ) {
 		margin-top: 3px;
+	}
+
+	&::before {
+		height: 100%;
 	}
 
 	&::after {
