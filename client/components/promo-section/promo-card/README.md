@@ -7,10 +7,11 @@ A [`Card` component](../../components/card) based on [`ActionPanel'](../../compo
 
 ```es6
 import PromoCard from 'my-sites/promo-section/promo-card';
+import referralImage from 'assets/images/earn/referral.svg';
 
 const PromoCardExample = () => {
 	const img = {
-		path: '/calypso/images/earn/referral.svg',
+		path: referralImage,
 		alt: 'Using Props',
 	};
 	const clicked = () => alert( 'Clicked!' );
