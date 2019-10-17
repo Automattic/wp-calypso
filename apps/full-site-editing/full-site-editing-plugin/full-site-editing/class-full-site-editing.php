@@ -549,7 +549,7 @@ class Full_Site_Editing {
 
 		$inner_blocks_template = array();
 		foreach ( $inner_blocks as $inner_block ) {
-			$inner_blocks[] = fse_map_block_to_editor_template_setting( $inner_block );
+			$inner_blocks[] = $this->fse_map_block_to_editor_template_setting( $inner_block );
 		}
 		return array( $block_name, $attrs, $inner_blocks_template );
 	}
