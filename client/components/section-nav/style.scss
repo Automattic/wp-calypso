@@ -5,7 +5,8 @@
 	margin: 0 0 17px;
 	background: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
@@ -59,7 +60,7 @@
 	}
 
 	.section-nav.has-pinned-items & {
-		padding-right: 50px;
+		padding-right: 85px;
 
 		&::after {
 			margin-left: 8px;
@@ -96,7 +97,11 @@
 		.section-nav.is-open & {
 			padding-bottom: 15px;
 			border-top: solid 1px var( --color-neutral-10 );
-			background: linear-gradient( to bottom, var( --color-neutral-0 ) 0%, var( --color-surface ) 4px );
+			background: linear-gradient(
+				to bottom,
+				var( --color-neutral-0 ) 0%,
+				var( --color-surface ) 4px
+			);
 		}
 	}
 
