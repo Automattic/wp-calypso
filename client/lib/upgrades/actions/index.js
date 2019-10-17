@@ -21,17 +21,9 @@ export {
 	removePrivacyFromAllDomains,
 	replaceCartWithItems,
 	replaceItem,
-	showCartOnMobile,
 } from './cart';
 
-export {
-	resetTransaction,
-	setDomainDetails,
-	setNewCreditCardDetails,
-	setPayment,
-	setStripeObject,
-	submitTransaction,
-} from './checkout';
+export { submitTransaction } from './checkout';
 
 export {
 	acceptTransfer,

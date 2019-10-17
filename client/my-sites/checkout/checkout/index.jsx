@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
 import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -60,14 +59,8 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import {
-	addItem,
-	replaceCartWithItems,
-	replaceItem,
-	applyCoupon,
-	resetTransaction,
-	setDomainDetails,
-} from 'lib/upgrades/actions';
+import { addItem, replaceCartWithItems, replaceItem, applyCoupon } from 'lib/upgrades/actions';
+import { resetTransaction, setDomainDetails } from 'lib/transaction/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
@@ -97,6 +90,7 @@ import config from 'config';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { isExternal } from 'lib/url';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -650,8 +644,10 @@ export class Checkout extends React.Component {
 						{
 							args: {
 								productName: renewalItem.product_name,
-								duration: i18n.moment.duration( { days: renewalItem.bill_period } ).humanize(),
-								date: i18n.moment( product.expiry ).format( 'LL' ),
+								duration: this.props.moment
+									.duration( { days: renewalItem.bill_period } )
+									.humanize(),
+								date: this.props.moment( product.expiry ).format( 'LL' ),
 								email: product.user_email,
 							},
 						}
@@ -927,4 +923,4 @@ export default connect(
 		requestSite,
 		loadTrackingTool,
 	}
-)( localize( Checkout ) );
+)( localize( withLocalizedMoment( Checkout ) ) );

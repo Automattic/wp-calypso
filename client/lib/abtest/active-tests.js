@@ -107,15 +107,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	prefillDomainStepValue: {
-		datestamp: '20190929',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	domainSuggestionsEn: {
 		datestamp: '20191003',
 		variations: {

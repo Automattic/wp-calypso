@@ -28,7 +28,8 @@ import {
 	storedCardPayment,
 } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
-import { setPayment, submitTransaction } from 'lib/upgrades/actions';
+import { setPayment } from 'lib/transaction/actions';
+import { submitTransaction } from 'lib/upgrades/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';

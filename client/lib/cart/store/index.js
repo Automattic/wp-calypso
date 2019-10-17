@@ -20,9 +20,11 @@ import {
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
 	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+} from 'lib/upgrades/action-types';
+import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
-} from 'lib/upgrades/action-types';
+} from 'lib/transaction/action-types';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';

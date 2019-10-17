@@ -320,7 +320,9 @@ class ImportingPane extends React.PureComponent {
 							<br />
 						</div>
 					) ) }
-				{ blockingMessage && <div>{ blockingMessage }</div> }
+				{ blockingMessage && (
+					<div className="importer__import-progress-message">{ blockingMessage }</div>
+				) }
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>
 				</div>
