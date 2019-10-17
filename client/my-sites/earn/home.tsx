@@ -31,6 +31,7 @@ import adsImage from 'assets/images/earn/ads.svg';
 import recurringImage from 'assets/images/earn/recurring.svg';
 import referralImage from 'assets/images/earn/referral.svg';
 import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
+
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug;
