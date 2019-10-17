@@ -19,7 +19,7 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
-	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 } from 'lib/upgrades/action-types';
 import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
@@ -148,7 +148,7 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			update( removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case GOOGLE_APPS_REGISTRATION_DATA_ADD:
+		case CART_GOOGLE_APPS_REGISTRATION_DATA_ADD:
 			update( fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
 			break;
 
