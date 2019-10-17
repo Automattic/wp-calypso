@@ -61,7 +61,7 @@ const ProductCard = ( {
 			<div className="product-card__description">
 				{ hasManageSubscriptionLink && (
 					<p>
-						<a href="/my-plan">{ translate( 'Manage subscription' ) }</a>
+						<a href="/my-plan">{ translate( 'Manage Subscription' ) }</a>
 					</p>
 				) }
 				{ description }
