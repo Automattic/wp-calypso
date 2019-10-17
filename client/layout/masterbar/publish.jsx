@@ -22,6 +22,7 @@ import { withRtl } from 'components/rtl';
 import TranslatableString from 'components/translatable/proptype';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getSectionGroup from 'state/ui/selectors/get-section-group';
 import { reduxGetState } from 'lib/redux-bridge';
 import { navigate } from 'state/ui/actions';
 
@@ -31,7 +32,8 @@ class MasterbarItemNew extends React.Component {
 		className: PropTypes.string,
 		tooltip: TranslatableString,
 		// connected props
-		hasMoreThanOneVisibleSite: PropTypes.bool,
+		shouldOpenSiteSelector: PropTypes.bool,
+		editorUrl: PropTypes.string,
 		isRtl: PropTypes.bool,
 	};
 
@@ -52,11 +54,10 @@ class MasterbarItemNew extends React.Component {
 	};
 
 	onClick = event => {
-		// if the user has multiple sites, show site selector
-		if ( this.props.hasMoreThanOneVisibleSite ) {
+		// if the user has multiple sites and none is selected, show site selector
+		if ( this.props.shouldOpenSiteSelector ) {
 			this.toggleSitesPopover();
 			event.preventDefault();
-			return;
 		}
 	};
 
@@ -125,26 +126,29 @@ class MasterbarItemNew extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
-
-	return {
-		hasMoreThanOneVisibleSite: getCurrentUserVisibleSiteCount( state ) > 1,
-		editorUrl: getEditorUrl( state, siteId, null, 'post' ),
-	};
-};
-
-const mapDispatchToProps = dispatch => ( {
-	openEditor: editorUrl =>
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
-				navigate( editorUrl )
-			)
-		),
-} );
+const openEditor = editorUrl =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
+		navigate( editorUrl )
+	);
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+	state => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSitesGroup = getSectionGroup( state ) === 'sites';
+		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount( state ) > 1;
+
+		// the selector is shown only if it's not 100% clear which site we are on.
+		// I.e, when user has more than one site, is outside the My Sites group,
+		// or has one of the All Sites views selected.
+		const shouldOpenSiteSelector =
+			! ( selectedSiteId && isSitesGroup ) && hasMoreThanOneVisibleSite;
+
+		// otherwise start posting to the selected or primary site right away
+		const siteId = selectedSiteId || getPrimarySiteId( state );
+		const editorUrl = getEditorUrl( state, siteId, null, 'post' );
+
+		return { shouldOpenSiteSelector, editorUrl };
+	},
+	{ openEditor }
 )( withRtl( MasterbarItemNew ) );
