@@ -9,8 +9,8 @@
 	.importer-header__service-title {
 		line-height: 40px;
 
-		@include breakpoint( '>660px' ) {
-			line-height: 60px;
+		@include breakpoint( '>960px' ) {
+			line-height: 56px;
 		}
 	}
 
