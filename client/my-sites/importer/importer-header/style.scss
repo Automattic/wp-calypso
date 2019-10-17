@@ -1,15 +1,29 @@
-.importer-header__service-info {
+.importer-header {
+	border-bottom: 1px solid var( --color-border-subtle );
 	margin-bottom: 1.5em;
+}
 
-	@include breakpoint( '>480px' ) {
-		margin-left: 60px;
+.importer-header__is-start {
+	border-bottom: 0;
+
+	.importer-header__service-title {
+		line-height: 40px;
+
+		@include breakpoint( '>660px' ) {
+			line-height: 60px;
+		}
 	}
+
+}
+
+.importer-header__service-info {
+	margin-bottom: 0.5em;
+	margin-left: 60px;
 }
 
 .importer-header__service-title {
 	font-size: 21px;
 	font-weight: 300;
-	line-height: 40px;
 	color: var( --color-text-subtle );
 	clear: none;
 }

@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { get, includes } from 'lodash';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -42,9 +43,12 @@ class ImporterHeader extends React.PureComponent {
 		const { importerStatus, icon, title, description } = this.props;
 		const { importerState } = importerStatus;
 		const showStart = includes( startStates, importerState );
+		const headerClasses = classnames( 'importer-header', {
+			'importer-header__is-start': showStart,
+		} );
 
 		return (
-			<header className="importer-header">
+			<header className={ headerClasses }>
 				<ImporterLogo icon={ icon } />
 				<div className="importer-header__service-info">
 					<h1 className="importer-header__service-title">{ title }</h1>
