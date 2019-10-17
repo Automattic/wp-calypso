@@ -27,6 +27,9 @@ describe( 'Phone Validation Library', () => {
 	test( 'should fail an invalid number', () => {
 		assert.strictEqual( phoneValidation( '+111111111' ).error, 'phone_number_invalid' );
 	} );
+	test( 'should pass a valid number', () => {
+		assert.strictEqual( phoneValidation( '+447941952721' ).info, 'phone_number_valid' );
+	} );
 	test( 'should fail an invalid 9-digit argentine number', () => {
 		assert.strictEqual( phoneValidation( '+54299123456' ).error, 'phone_number_invalid' );
 	} );
