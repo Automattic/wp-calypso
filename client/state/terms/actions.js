@@ -123,19 +123,88 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
  * Avoids an additional request to wp/v2 /taxonomies. The rest_base of a taxonomy slug may not match its slug
  * For example tags have a taxonomy slug of post_tag, but are modifiable at /wp/v2/tags/
  *
+ * @param   {Number} siteId   Site ID
  * @param   {String} taxonomy Taxonomy Slug
- * @returns {String}          A wp/v2 rest base string.
+ * @returns {Promise}         A promise that resolves to a wp/v2 taxonomy rest base string.
  */
-function getTaxonomyRestBase( taxonomy ) {
-	switch ( taxonomy ) {
-		case 'category':
-			return 'categories';
-		case 'post_tag':
-			return 'tags';
-		default:
-			return taxonomy;
+const getTaxonomyRestBase = ( siteId, taxonomy ) => {
+	return new Promise( ( resolve, reject ) => {
+		switch ( taxonomy ) {
+			case 'category':
+				resolve( 'categories' );
+				break;
+			case 'post_tag':
+				resolve( 'tags' );
+				break;
+			default:
+				wpcom.req
+					.get( {
+						path: `/sites/${ siteId }/taxonomies/${ taxonomy }/`,
+						method: 'GET',
+						apiNamespace: 'wp/v2',
+					} )
+					.then(
+						( { rest_base } ) => {
+							resolve( rest_base );
+						},
+						() => {
+							reject( new Error( 'failed to fetch taxonomy rest_base' ) );
+						}
+					);
+		}
+	} );
+};
+
+const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } ) => {
+	const state = getState();
+	const deletedTerm = getTerm( state, siteId, taxonomy, termId );
+	const deletedTermPostCount = get( deletedTerm, 'post_count', 0 );
+
+	// Update the parentId of its children
+	const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), term => {
+		return term.parent === termId;
+	} ).map( term => {
+		return { ...term, parent: deletedTerm.parent };
+	} );
+	if ( termsToUpdate.length ) {
+		dispatch( receiveTerms( siteId, taxonomy, termsToUpdate ) );
 	}
-}
+
+	// Drop the term from posts
+	const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
+	postsToUpdate.forEach( post => {
+		const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
+		dispatch(
+			editPost( siteId, post.ID, {
+				terms: {
+					[ taxonomy ]: newTerms,
+				},
+			} )
+		);
+	} );
+
+	// update default category post count if applicable
+	if ( taxonomy === 'category' && deletedTermPostCount > 0 ) {
+		const siteSettings = getSiteSettings( state, siteId );
+		const defaultCategory = getTerm(
+			state,
+			siteId,
+			taxonomy,
+			get( siteSettings, [ 'default_category' ] )
+		);
+		if ( defaultCategory ) {
+			dispatch(
+				receiveTerm( siteId, taxonomy, {
+					...defaultCategory,
+					post_count: defaultCategory.post_count + deletedTermPostCount,
+				} )
+			);
+		}
+	}
+
+	// remove the term from the store
+	dispatch( removeTerm( siteId, taxonomy, termId ) );
+};
 
 /**
  * Returns an action thunk, deleting a term and removing it from the store
@@ -147,64 +216,23 @@ function getTaxonomyRestBase( taxonomy ) {
  */
 export function deleteTerm( siteId, taxonomy, termId ) {
 	return ( dispatch, getState ) => {
-		// Taxonomy Slugs are not unique! Use wp/v2 for deletion to avoid deleting the wrong term!
-		// https://github.com/Automattic/wp-calypso/issues/36620
-		return wpcom.req
-			.get( {
-				path: `/sites/${ siteId }/${ getTaxonomyRestBase( taxonomy ) }/${ termId }?force=true`,
-				method: 'DELETE',
-				apiNamespace: 'wp/v2',
-			} )
-			.then( () => {
-				const state = getState();
-				const deletedTerm = getTerm( state, siteId, taxonomy, termId );
-				const deletedTermPostCount = get( deletedTerm, 'post_count', 0 );
-
-				// Update the parentId of its children
-				const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), term => {
-					return term.parent === termId;
-				} ).map( term => {
-					return { ...term, parent: deletedTerm.parent };
-				} );
-				if ( termsToUpdate.length ) {
-					dispatch( receiveTerms( siteId, taxonomy, termsToUpdate ) );
-				}
-
-				// Drop the term from posts
-				const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
-				postsToUpdate.forEach( post => {
-					const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
-					dispatch(
-						editPost( siteId, post.ID, {
-							terms: {
-								[ taxonomy ]: newTerms,
-							},
-						} )
-					);
-				} );
-
-				// update default category post count if applicable
-				if ( taxonomy === 'category' && deletedTermPostCount > 0 ) {
-					const siteSettings = getSiteSettings( state, siteId );
-					const defaultCategory = getTerm(
-						state,
-						siteId,
-						taxonomy,
-						get( siteSettings, [ 'default_category' ] )
-					);
-					if ( defaultCategory ) {
-						dispatch(
-							receiveTerm( siteId, taxonomy, {
-								...defaultCategory,
-								post_count: defaultCategory.post_count + deletedTermPostCount,
-							} )
-						);
-					}
-				}
-
-				// remove the term from the store
-				dispatch( removeTerm( siteId, taxonomy, termId ) );
+		//extra promise needed for nock unit testing. Let's get rid of the thunk/promises later
+		return new Promise( ( resolve, reject ) => {
+			// Taxonomy Slugs are not unique! Use wp/v2 for deletion to avoid deleting the wrong term!
+			// https://github.com/Automattic/wp-calypso/issues/36620
+			getTaxonomyRestBase( siteId, taxonomy ).then( taxonomyRestBase => {
+				wpcom.req
+					.get( {
+						path: `/sites/${ siteId }/${ taxonomyRestBase }/${ termId }?force=true`,
+						method: 'DELETE',
+						apiNamespace: 'wp/v2',
+					} )
+					.then( () => {
+						removeTermFromState( { dispatch, getState, siteId, taxonomy, termId } );
+						resolve();
+					}, reject );
 			} );
+		} );
 	};
 }
 
