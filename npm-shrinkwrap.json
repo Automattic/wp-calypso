@@ -7052,9 +7052,9 @@
 			"integrity": "sha1-Z29us8OZl8LuGsOpJP1hJHSPV40="
 		},
 		"core-js": {
-			"version": "2.6.9",
-			"resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
-			"integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A=="
+			"version": "2.6.10",
+			"resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.10.tgz",
+			"integrity": "sha512-I39t74+4t+zau64EN1fE5v2W31Adtc/REhzWN+gWRRXg6WH5qAsZm62DHpQ1+Yhe4047T55jvzz7MUqF/dBBlA=="
 		},
 		"core-js-compat": {
 			"version": "3.3.2",
