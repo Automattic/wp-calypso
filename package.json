@@ -287,7 +287,7 @@
 		"postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
 		"prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
 		"whybundled": "whybundled stats.json",
-		"wp-checkout-demo": "webpack-dev-server --config webpack.config.wp-checkout.js --mode development"
+		"composite-checkout-demo": "webpack-dev-server --config webpack.config.composite-checkout-demo.js --mode development"
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
@@ -296,7 +296,7 @@
 		"@automattic/calypso-color-schemes": "file:./packages/calypso-color-schemes",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "file:./packages/webpack-extensive-lodash-replacement-plugin",
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
-		"@automattic/wp-checkout": "file:./packages/wp-checkout",
+		"@automattic/composite-checkout": "file:./packages/composite-checkout",
 		"@types/classnames": "2.2.9",
 		"@types/debug": "4.1.4",
 		"@types/lodash": "4.14.144",
