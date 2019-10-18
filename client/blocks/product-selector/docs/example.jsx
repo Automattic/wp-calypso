@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
+import SitesDropdown from 'components/sites-dropdown';
 import ProductSelector from '../';
 
 const products = [
@@ -44,6 +45,7 @@ const products = [
 class ProductSelectorExample extends Component {
 	state = {
 		interval: 'yearly',
+		siteId: 0,
 	};
 
 	handleIntervalChange( interval ) {
@@ -73,7 +75,21 @@ class ProductSelectorExample extends Component {
 				</SegmentedControl>
 
 				<div style={ { maxWidth: 520, margin: '0 auto' } }>
-					<ProductSelector products={ products } intervalType={ this.state.interval } />
+					<div style={ { maxWidth: 300, margin: '0 auto 10px' } }>
+						<SitesDropdown onSiteSelect={ siteId => this.setState( { siteId } ) } />
+					</div>
+
+					{ this.state.siteId ? (
+						<ProductSelector
+							products={ products }
+							intervalType={ this.state.interval }
+							siteId={ this.state.siteId }
+						/>
+					) : (
+						<p style={ { textAlign: 'center' } }>
+							Please, select a Jetpack site to experience the full demo.
+						</p>
+					) }
 				</div>
 			</Fragment>
 		);
