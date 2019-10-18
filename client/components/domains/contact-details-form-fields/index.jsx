@@ -466,10 +466,10 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
-		return createElement(
-			componentClass,
-			Object.assign( {}, { ...this.getFieldProps( name, needsChildRef ) }, { ...additionalProps } )
-		);
+		return createElement( componentClass, {
+			...this.getFieldProps( name, needsChildRef ),
+			...additionalProps,
+		} );
 	};
 
 	getCountryCode() {
