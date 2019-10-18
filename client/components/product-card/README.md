@@ -55,8 +55,6 @@ The following props can be passed to the Product Card component:
  displayed as a price range
 * `fullPrice`: ( number | array ) Full price of a product. If an array of 2 numbers is passed, it will be displayed as
  a price range
-* `hasManageSubscriptionLink`: ( bool ) Flag indicating if a "Manage subscription" link should be rendered in the card's
- content area
 * `isPlaceholder`: ( bool ) Flag indicating if a product price is in a loading state and should be rendered as a
   placeholder
 * `purchase`: ( object ) A purchase object, associated with the product. [Read more about the way this flag

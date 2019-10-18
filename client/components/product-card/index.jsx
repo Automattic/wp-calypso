@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import ProductCardPriceGroup from './price-group';
+import { managePurchase } from 'me/purchases/paths';
 
 /**
  * Style dependencies
@@ -25,7 +26,6 @@ const ProductCard = ( {
 	description,
 	discountedPrice,
 	fullPrice,
-	hasManageSubscriptionLink,
 	isPlaceholder,
 	purchase,
 	subtitle,
@@ -59,9 +59,11 @@ const ProductCard = ( {
 				</div>
 			</div>
 			<div className="product-card__description">
-				{ hasManageSubscriptionLink && (
+				{ purchase && (
 					<p>
-						<a href="/my-plan">{ translate( 'Manage Subscriptions' ) }</a>
+						<a href={ managePurchase( purchase.domain, purchase.id ) }>
+							{ translate( 'Manage Subscription' ) }
+						</a>
 					</p>
 				) }
 				{ description }
@@ -80,7 +82,6 @@ ProductCard.propTypes = {
 		PropTypes.arrayOf( PropTypes.number ),
 	] ),
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
-	hasManageSubscriptionLink: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
 	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),

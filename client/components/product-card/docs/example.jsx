@@ -12,6 +12,7 @@ import ProductCardOptions from '../options';
 
 const purchase = {
 	active: true,
+	domain: 'yourjetpack.blog',
 	id: 999999999,
 	productName: 'Jetpack Backup (Daily)',
 	productSlug: 'jetpack_backup_daily',
@@ -95,7 +96,6 @@ function ProductCardExample() {
 						you’ll get unlimited backup archives
 					</p>
 				}
-				hasManageSubscriptionLink
 				isPlaceholder={ isPlaceholder }
 				purchase={ purchase }
 			/>
