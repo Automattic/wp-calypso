@@ -39,7 +39,7 @@ export function login( username, password, authCode ) {
 
 		Dispatcher.handleServerAction( {
 			type: actions.RECEIVE_AUTH_LOGIN,
-			response,
+			data: response,
 			error,
 		} );
 	} );
