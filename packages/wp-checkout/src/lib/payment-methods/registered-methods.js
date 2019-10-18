@@ -23,7 +23,8 @@ export default function loadPaymentMethods() {
 	registerPaymentMethod( {
 		id: 'card',
 		LabelComponent: () => <span>Credit Card</span>,
-		PaymentMethodComponent: () => <div>Enter card info here</div>,
+		PaymentMethodComponent: ( { isActive } ) =>
+			isActive ? <div>Enter card info here</div> : null,
 		BillingContactComponent: ApplePayBillingForm, // TODO: replace this
 		SubmitButtonComponent: () => <button>Pay</button>,
 	} );

@@ -31,12 +31,7 @@ export default function CheckoutPaymentMethods( {
 	if ( summary && isComplete && paymentMethod ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				<PaymentMethod
-					{ ...paymentMethod }
-					isActive={ isActive }
-					isComplete={ isComplete }
-					checked={ true }
-				/>
+				<PaymentMethod { ...paymentMethod } checked={ true } />
 			</div>
 		);
 	}
@@ -72,15 +67,7 @@ CheckoutPaymentMethods.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-function PaymentMethod( {
-	id,
-	LabelComponent,
-	PaymentMethodComponent,
-	checked,
-	onClick,
-	isActive,
-	isComplete,
-} ) {
+function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, onClick } ) {
 	return (
 		<React.Fragment>
 			<RadioButton
@@ -91,9 +78,7 @@ function PaymentMethod( {
 			>
 				<LabelComponent />
 			</RadioButton>
-			{ PaymentMethodComponent && (
-				<PaymentMethodComponent isActive={ isActive } isComplete={ isComplete } />
-			) }
+			{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
 		</React.Fragment>
 	);
 }
@@ -102,8 +87,6 @@ PaymentMethod.propTypes = {
 	id: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	checked: PropTypes.bool.isRequired,
-	isActive: PropTypes.bool.isRequired,
-	isComplete: PropTypes.bool.isRequired,
 	PaymentMethodComponent: PropTypes.func,
 	LabelComponent: PropTypes.func,
 };

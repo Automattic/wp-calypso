@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import Checkout from '@automattic/wp-checkout';
+import Checkout from '../src';
 
 const initialItems = [
 	{
