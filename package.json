@@ -349,7 +349,7 @@
 		"react-test-renderer": "16.10.2",
 		"readline-sync": "1.4.9",
 		"replace": "1.1.0",
-		"rimraf": "2.7.0",
+		"rimraf": "3.0.0",
 		"sinon": "7.4.2",
 		"sinon-chai": "3.3.0",
 		"socket.io": "2.2.0",
