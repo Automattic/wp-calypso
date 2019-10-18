@@ -111,8 +111,7 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 1 }
-				title={ localize( 'Pick a payment method' ) }
-				completedTitle={ localize( 'Payment method' ) }
+				title={ isComplete ? localize( 'Payment method' ) : localize( 'Pick a payment method' ) }
 				onEdit={ () => setStepNumber( 1 ) }
 				stepContent={
 					<React.Fragment>
@@ -172,8 +171,9 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 2 }
-				title={ localize( 'Enter your billing details' ) }
-				completedTitle={ localize( 'Billing details' ) }
+				title={
+					isComplete ? localize( 'Billing details' ) : localize( 'Enter your billing details' )
+				}
 				onEdit={ () => setStepNumber( 2 ) }
 				stepContent={
 					<React.Fragment>
@@ -220,8 +220,7 @@ function ReviewOrderStep( { isActive, isComplete } ) {
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 3 }
-				title={ localize( 'Review your order' ) }
-				completedTitle={ localize( 'Review your order' ) }
+				title={ isComplete ? localize( 'Review your order' ) : localize( 'Review your order' ) }
 				showSummary={ true }
 				stepContent={ <CheckoutReviewOrder isActive={ isActive } /> }
 				stepSummary={ <CheckoutReviewOrder summary isActive={ isActive } /> }

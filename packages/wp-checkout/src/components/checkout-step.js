@@ -17,7 +17,6 @@ export default function CheckoutStep( {
 	className,
 	stepNumber,
 	title,
-	completedTitle,
 	onEdit,
 	isActive,
 	isComplete,
@@ -42,7 +41,6 @@ export default function CheckoutStep( {
 			<CheckoutStepHeader
 				stepNumber={ stepNumber }
 				title={ title }
-				completedTitle={ completedTitle }
 				isActive={ isActive }
 				isComplete={ isComplete }
 				onEdit={ onEdit }
@@ -65,15 +63,7 @@ CheckoutStep.propTypes = {
 	showSummary: PropTypes.bool,
 };
 
-function CheckoutStepHeader( {
-	className,
-	stepNumber,
-	title,
-	completedTitle,
-	isActive,
-	isComplete,
-	onEdit,
-} ) {
+function CheckoutStepHeader( { className, stepNumber, title, isActive, isComplete, onEdit } ) {
 	const localize = useLocalize();
 	return (
 		<StepHeader className={ joinClasses( [ className, 'checkout-step__header' ] ) }>
@@ -81,7 +71,7 @@ function CheckoutStepHeader( {
 				{ isComplete ? <CheckIcon /> : stepNumber }
 			</Stepper>
 			<StepTitle className="checkout-step__title" isActive={ isActive }>
-				{ isComplete ? completedTitle : title }
+				{ title }
 			</StepTitle>
 			{ onEdit && isComplete && ! isActive && (
 				<button className="checkout-step__edit" onClick={ onEdit }>
@@ -96,7 +86,6 @@ CheckoutStepHeader.propTypes = {
 	className: PropTypes.string,
 	stepNumber: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
-	completedTitle: PropTypes.string.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
 	onEdit: PropTypes.func,
