@@ -151,4 +151,13 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
+	prefillSiteTitleWithDomainQuery: {
+		datestamp: '20191017',
+		variations: {
+			variant: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
