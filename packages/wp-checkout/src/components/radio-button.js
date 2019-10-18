@@ -99,9 +99,9 @@ function getGrayscaleValue( { checked } ) {
 	return checked ? 0 : '100%';
 }
 
-function getOutline( { isFocused } ) {
+function getOutline( { isFocused, theme } ) {
 	if ( isFocused ) {
-		return '#5198D9 auto 5px';
+		return theme.colors.outline + ' auto 5px';
 	}
 	return '0';
 }

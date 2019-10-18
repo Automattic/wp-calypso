@@ -23,6 +23,7 @@ const theme = {
 		black: '#000',
 		paypalGold: '#F0C443',
 		paypalGoldHover: '#FFB900',
+		outline: '#5198D9',
 	},
 	breakpoints: {
 		tabletUp: 'min-width: 700px',
