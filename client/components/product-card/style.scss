@@ -126,10 +126,13 @@
 	font-size: 14px;
 	line-height: 20px;
 	color: var( --color-text-subtle );
-	margin: 0;
 
 	a {
 		@extend %product-card-link-plain;
+	}
+
+	p:last-child {
+		margin: 0;
 	}
 }
 

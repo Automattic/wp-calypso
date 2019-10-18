@@ -37,10 +37,7 @@ export default function stepsForProductAndSurvey(
 			return [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];
 		}
 
-		if (
-			includesProduct( PERSONAL_PREMIUM_PLANS, product ) &&
-			abtest( 'ATUpgradeOnCancel' ) === 'show'
-		) {
+		if ( includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) {
 			return [ steps.INITIAL_STEP, steps.UPGRADE_AT_STEP, steps.FINAL_STEP ];
 		}
 	}

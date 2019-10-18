@@ -18,7 +18,6 @@ import { preload } from 'sections-helper';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 import MasterbarDrafts from './drafts';
-import { withRtl } from 'components/rtl';
 import TranslatableString from 'components/translatable/proptype';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
@@ -34,7 +33,6 @@ class MasterbarItemNew extends React.Component {
 		// connected props
 		shouldOpenSiteSelector: PropTypes.bool,
 		editorUrl: PropTypes.string,
-		isRtl: PropTypes.bool,
 	};
 
 	state = {
@@ -64,17 +62,7 @@ class MasterbarItemNew extends React.Component {
 	preloadPostEditor = () => preload( 'post-editor' );
 
 	getPopoverPosition() {
-		const { isRtl } = this.props;
-
-		if ( isMobile() ) {
-			return 'bottom';
-		}
-
-		if ( isRtl ) {
-			return 'bottom right';
-		}
-
-		return 'bottom left';
+		return isMobile() ? 'bottom' : 'bottom left';
 	}
 
 	onSiteSelect = siteId => {
@@ -151,4 +139,4 @@ export default connect(
 		return { shouldOpenSiteSelector, editorUrl };
 	},
 	{ openEditor }
-)( withRtl( MasterbarItemNew ) );
+)( MasterbarItemNew );

@@ -47,6 +47,25 @@ export function getSiteVerticalPreview( state ) {
 	return get( getSiteVerticalData( state ), 'preview', '' );
 }
 
+export function getSiteVerticalPreviewScreenshot( state, viewportDevice ) {
+	const screenshotPropName = getScreenshotPropName( viewportDevice );
+	return get( getSiteVerticalData( state ), [ 'previewScreenshots', screenshotPropName ] );
+}
+
+function getScreenshotPropName( viewportDevice ) {
+	if ( window.devicePixelRatio === 1 ) {
+		if ( viewportDevice === 'phone' ) {
+			return 'phoneLowDpi';
+		}
+		return 'desktopLowDpi';
+	}
+
+	if ( viewportDevice === 'phone' ) {
+		return 'phoneHighDpi';
+	}
+	return 'desktopHighDpi';
+}
+
 export function getSiteVerticalPreviewStyles( state ) {
 	return get( getSiteVerticalData( state ), 'previewStylesUrl', '' );
 }
@@ -66,6 +85,10 @@ export function getSiteVerticalSlug( state ) {
 
 export function getSiteVerticalIsUserInput( state ) {
 	return get( state, 'signup.steps.siteVertical.isUserInput', true );
+}
+
+export function getSiteVerticalSuggestedTheme( state ) {
+	return get( state, 'signup.steps.siteVertical.suggestedTheme' );
 }
 
 // Used to fill `vertical` param to pass to to `/domains/suggestions`
