@@ -28,7 +28,6 @@ import {
 } from 'state/wordads/approve/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import QueryWordadsStatus from 'components/data/query-wordads-status';
 import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
 import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -67,12 +66,10 @@ class AdsWrapper extends Component {
 	};
 
 	renderInstantActivationToggle( component ) {
-		const { siteId, translate, adsProgramName } = this.props;
+		const { translate, adsProgramName } = this.props;
 
 		return (
 			<div>
-				<QueryWordadsStatus siteId={ siteId } />
-
 				{ this.props.wordAdsError && (
 					<Notice
 						classname="ads__activate-notice"
