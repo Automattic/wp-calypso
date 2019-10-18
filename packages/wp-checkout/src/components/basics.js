@@ -55,9 +55,7 @@ export const StepWrapper = styled.div`
 	padding-bottom: 32px;
 	margin-bottom: 8px;
 	position: relative;
-	max-height: ${props => ( isVisible( props ) ? 'initial' : '0' )};
-	overflow: hidden;
-	padding: ${props => ( isVisible( props ) ? 'initial' : '0' )};
+
 	:after {
 		display: block;
 		width: ${props => ( props.finalStep ? '0' : '1px' )};
@@ -73,10 +71,6 @@ export const StepWrapper = styled.div`
 	}
 `;
 
-function isVisible( { isActive, isSummary } ) {
-	return isActive ? ! isSummary : isSummary;
-}
-
 export const StepHeader = styled.h2`
 	font-size: 16px;
 	display: flex;
@@ -88,8 +82,10 @@ export const StepHeader = styled.h2`
 export const StepTitle = styled.span`
 	font-weight: ${props =>
 		props.isActive ? props.theme.weights.normal : props.theme.weights.bold};
-	color: ${props => ( props.isActive ? props.theme.colors.gray80 : props.theme.colors.black )};
+	color: ${props => ( props.isActive ? props.theme.colors.black : props.theme.colors.gray80 )};
 	margin-right: 5px;
+	font-weight: ${props =>
+		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
 `;
 
 function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
@@ -152,8 +148,15 @@ export const StepNumber = styled.span`
 
 export const StepContent = styled.div`
 	color: ${props => props.theme.colors.gray80};
+	display: ${props => ( props.isActive ? 'block' : 'none' )};
 	padding-left: 35px;
-	margin-bottom: 8px;
+`;
+
+export const StepSummary = styled.div`
+	color: ${props => props.theme.colors.gray50};
+	font-size: 14px;
+	display: ${props => ( props.showSummary ? 'block' : 'none' )};
+	padding-left: 35px;
 `;
 
 export const BillingFormFields = styled.div`

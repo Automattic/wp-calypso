@@ -11,18 +11,20 @@ import PropTypes from 'prop-types';
  */
 import joinClasses from '../lib/join-classes';
 import { useLocalize } from '../lib/localize';
-import { StepWrapper, StepTitle, StepHeader, StepNumber, StepContent } from './basics';
+import { StepWrapper, StepTitle, StepHeader, StepNumber, StepContent, StepSummary } from './basics';
 
 export default function CheckoutStep( {
 	className,
 	stepNumber,
 	title,
+	completedTitle,
 	onEdit,
 	isActive,
 	isComplete,
 	finalStep,
-	summary,
-	children,
+	stepSummary,
+	stepContent,
+	showSummary,
 } ) {
 	const classNames = [
 		className,
@@ -32,7 +34,6 @@ export default function CheckoutStep( {
 	];
 	return (
 		<StepWrapper
-			isSummary={ !! summary }
 			isActive={ isActive }
 			isComplete={ isComplete }
 			className={ joinClasses( classNames ) }
@@ -41,11 +42,15 @@ export default function CheckoutStep( {
 			<CheckoutStepHeader
 				stepNumber={ stepNumber }
 				title={ title }
+				completedTitle={ completedTitle }
 				isActive={ isActive }
 				isComplete={ isComplete }
 				onEdit={ onEdit }
 			/>
-			<StepContent>{ children }</StepContent>
+			<StepContent isActive={ isActive }>{ stepContent }</StepContent>
+			<StepSummary showSummary={ ( showSummary && ! isComplete ) || isComplete }>
+				{ stepSummary }
+			</StepSummary>
 		</StepWrapper>
 	);
 }
@@ -55,19 +60,31 @@ CheckoutStep.propTypes = {
 	stepNumber: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
 	finalStep: PropTypes.bool,
-	summary: PropTypes.bool,
+	stepSummary: PropTypes.node,
+	stepContent: PropTypes.node,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
+	showSummary: PropTypes.bool,
 };
 
-function CheckoutStepHeader( { className, stepNumber, title, isActive, isComplete, onEdit } ) {
+function CheckoutStepHeader( {
+	className,
+	stepNumber,
+	title,
+	completedTitle,
+	isActive,
+	isComplete,
+	onEdit,
+} ) {
 	const localize = useLocalize();
 	return (
 		<StepHeader className={ joinClasses( [ className, 'checkout-step__header' ] ) }>
 			<Stepper isComplete={ isComplete } isActive={ isActive }>
 				{ isComplete ? <CheckIcon /> : stepNumber }
 			</Stepper>
-			<StepTitle className="checkout-step__title">{ title }</StepTitle>
+			<StepTitle className="checkout-step__title" isActive={ isActive }>
+				{ isComplete ? completedTitle : title }
+			</StepTitle>
 			{ onEdit && isComplete && ! isActive && (
 				<button className="checkout-step__edit" onClick={ onEdit }>
 					{ localize( 'Edit' ) }
@@ -81,6 +98,7 @@ CheckoutStepHeader.propTypes = {
 	className: PropTypes.string,
 	stepNumber: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
+	completedTitle: PropTypes.string.isRequired,
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
 	onEdit: PropTypes.func,

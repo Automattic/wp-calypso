@@ -105,8 +105,6 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
 
-	// We must always display both the active and inactive version to keep their
-	// data available, using CSS to hide whichever is relevant.
 	return (
 		<React.Fragment>
 			<CheckoutStep
@@ -114,37 +112,35 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 				isComplete={ isComplete }
 				stepNumber={ 1 }
 				title={ localize( 'Pick a payment method' ) }
-			>
-				<CheckoutPaymentMethods
-					isActive={ isActive }
-					isComplete={ isComplete }
-					availablePaymentMethods={ availablePaymentMethods }
-					onChange={ setPaymentMethod }
-					paymentMethod={ paymentMethod }
-				/>
-
-				<CheckoutNextStepButton
-					value={ localize( 'Continue' ) }
-					onClick={ () => setStepNumber( 2 ) }
-				/>
-			</CheckoutStep>
-			<CheckoutStep
-				summary
-				isActive={ isActive }
-				isComplete={ isComplete }
-				stepNumber={ 1 }
-				title={ localize( 'Payment method' ) }
+				completedTitle={ localize( 'Payment method' ) }
 				onEdit={ () => setStepNumber( 1 ) }
-			>
-				<CheckoutPaymentMethods
-					summary
-					isActive={ isActive }
-					isComplete={ isComplete }
-					availablePaymentMethods={ availablePaymentMethods }
-					onChange={ setPaymentMethod }
-					paymentMethod={ paymentMethod }
-				/>
-			</CheckoutStep>
+				stepContent={
+					<React.Fragment>
+						<CheckoutPaymentMethods
+							isActive={ isActive }
+							isComplete={ isComplete }
+							availablePaymentMethods={ availablePaymentMethods }
+							onChange={ setPaymentMethod }
+							paymentMethod={ paymentMethod }
+						/>
+
+						<CheckoutNextStepButton
+							value={ localize( 'Continue' ) }
+							onClick={ () => setStepNumber( 2 ) }
+						/>
+					</React.Fragment>
+				}
+				stepSummary={
+					<CheckoutPaymentMethods
+						summary
+						isActive={ isActive }
+						isComplete={ isComplete }
+						availablePaymentMethods={ availablePaymentMethods }
+						onChange={ setPaymentMethod }
+						paymentMethod={ paymentMethod }
+					/>
+				}
+			/>
 		</React.Fragment>
 	);
 }
@@ -160,19 +156,6 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 	const localize = useLocalize();
 	const [ paymentData, setPaymentData ] = usePaymentMethodData();
 	const paymentMethod = usePaymentMethod();
-	if ( ! paymentMethod ) {
-		return (
-			<React.Fragment>
-				<CheckoutStep
-					summary
-					isActive={ false }
-					isComplete={ isComplete }
-					stepNumber={ 2 }
-					title={ localize( 'Billing details' ) }
-				/>
-			</React.Fragment>
-		);
-	}
 	const { BillingContactComponent } = paymentMethod;
 	// Call onChangeBillingContact as a side effect in case the parent wants to update the items
 	const setBillingData = newData => {
@@ -180,8 +163,6 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 		setPaymentData( newData );
 	};
 
-	// We must always display both the active and inactive version to keep their
-	// data available, using CSS to hide whichever is relevant.
 	return (
 		<React.Fragment>
 			<CheckoutStep
@@ -189,34 +170,32 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 				isComplete={ isComplete }
 				stepNumber={ 2 }
 				title={ localize( 'Enter your billing details' ) }
-			>
-				<BillingContactComponent
-					paymentData={ paymentData }
-					setPaymentData={ setBillingData }
-					isActive={ isActive }
-					isComplete={ isComplete }
-				/>
-				<CheckoutNextStepButton
-					value={ localize( 'Continue' ) }
-					onClick={ () => setStepNumber( 3 ) }
-				/>
-			</CheckoutStep>
-			<CheckoutStep
-				summary
-				isActive={ isActive }
-				isComplete={ isComplete }
-				stepNumber={ 2 }
-				title={ localize( 'Billing details' ) }
+				completedTitle={ localize( 'Billing details' ) }
 				onEdit={ () => setStepNumber( 2 ) }
-			>
-				<BillingContactComponent
-					summary
-					paymentData={ paymentData }
-					setPaymentData={ setBillingData }
-					isActive={ isActive }
-					isComplete={ isComplete }
-				/>
-			</CheckoutStep>
+				stepContent={
+					<React.Fragment>
+						<BillingContactComponent
+							paymentData={ paymentData }
+							setPaymentData={ setBillingData }
+							isActive={ isActive }
+							isComplete={ isComplete }
+						/>
+						<CheckoutNextStepButton
+							value={ localize( 'Continue' ) }
+							onClick={ () => setStepNumber( 3 ) }
+						/>
+					</React.Fragment>
+				}
+				stepSummary={
+					<BillingContactComponent
+						summary
+						paymentData={ paymentData }
+						setPaymentData={ setBillingData }
+						isActive={ isActive }
+						isComplete={ isComplete }
+					/>
+				}
+			/>
 		</React.Fragment>
 	);
 }
@@ -231,8 +210,6 @@ BillingDetailsStep.propTypes = {
 function ReviewOrderStep( { isActive, isComplete } ) {
 	const localize = useLocalize();
 
-	// We must always display both the active and inactive version to keep their
-	// data available, using CSS to hide whichever is relevant.
 	return (
 		<React.Fragment>
 			<CheckoutStep
@@ -241,19 +218,11 @@ function ReviewOrderStep( { isActive, isComplete } ) {
 				isComplete={ isComplete }
 				stepNumber={ 3 }
 				title={ localize( 'Review your order' ) }
-			>
-				<CheckoutReviewOrder isActive={ isActive } />
-			</CheckoutStep>
-			<CheckoutStep
-				finalStep
-				summary
-				isActive={ isActive }
-				isComplete={ isComplete }
-				stepNumber={ 3 }
-				title={ localize( 'Review your order' ) }
-			>
-				<CheckoutReviewOrder summary isActive={ isActive } />
-			</CheckoutStep>
+				completedTitle={ localize( 'Review your order' ) }
+				showSummary={ true }
+				stepContent={ <CheckoutReviewOrder isActive={ isActive } /> }
+				stepSummary={ <CheckoutReviewOrder summary isActive={ isActive } /> }
+			/>
 		</React.Fragment>
 	);
 }
