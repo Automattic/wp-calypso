@@ -1,5 +1,10 @@
 .importer-action-buttons__action-button {
 	margin-left: 10px;
+
+	@include breakpoint( '<660px' ) {
+		margin-right: 10px;
+		margin-left: 0;
+	}
 }
 
 .importer-action-buttons__container {
@@ -8,5 +13,9 @@
 	justify-content: flex-end;
 	margin-top: 1.5em;
 	margin-bottom: 16px;
+
+	@include breakpoint( '<660px' ) {
+		justify-content: flex-start;
+	}
 }
 
