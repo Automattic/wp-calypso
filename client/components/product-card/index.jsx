@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,11 +25,13 @@ const ProductCard = ( {
 	description,
 	discountedPrice,
 	fullPrice,
+	hasManageSubscriptionLink,
 	isPlaceholder,
 	isPurchased,
 	subtitle,
 	title,
 } ) => {
+	const translate = useTranslate();
 	const cardClassNames = classNames( 'product-card', {
 		'is-placeholder': isPlaceholder,
 		'is-purchased': isPurchased,
@@ -55,7 +58,14 @@ const ProductCard = ( {
 					) }
 				</div>
 			</div>
-			{ description && <p className="product-card__description">{ description }</p> }
+			<div className="product-card__description">
+				{ hasManageSubscriptionLink && (
+					<p>
+						<a href="/my-plan">{ translate( 'Manage Subscriptions' ) }</a>
+					</p>
+				) }
+				{ description }
+			</div>
 			{ children }
 		</Card>
 	);
@@ -70,6 +80,7 @@ ProductCard.propTypes = {
 		PropTypes.arrayOf( PropTypes.number ),
 	] ),
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+	hasManageSubscriptionLink: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isPurchased: PropTypes.bool,
 	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
