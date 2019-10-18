@@ -213,7 +213,7 @@ class AdsFormSettings extends Component {
 		}, 0 );
 	}
 
-	jetpckPlacementControls() {
+	jetpackPlacementControls() {
 		const linkHref = '/marketing/traffic/' + this.props.site.slug;
 
 		return <Card href={ linkHref }>Manage Ad Placements in Marketing Settings</Card>;
@@ -541,7 +541,7 @@ class AdsFormSettings extends Component {
 		return (
 			<Fragment>
 				{ this.props.siteIsJetpack && this.props.site.options.wordads
-					? this.jetpckPlacementControls()
+					? this.jetpackPlacementControls()
 					: null }
 
 				<SectionHeader label={ translate( 'Ads Settings' ) }>
