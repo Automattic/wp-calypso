@@ -156,6 +156,9 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 	const localize = useLocalize();
 	const [ paymentData, setPaymentData ] = usePaymentMethodData();
 	const paymentMethod = usePaymentMethod();
+	if ( ! paymentMethod ) {
+		throw new Error( 'Cannot render Billing details without a payment method' );
+	}
 	const { BillingContactComponent } = paymentMethod;
 	// Call onChangeBillingContact as a side effect in case the parent wants to update the items
 	const setBillingData = newData => {
