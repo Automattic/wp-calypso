@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, flattenDeep, includes, isEmpty, map, uniq } from 'lodash';
+import { find, flattenDeep, flowRight as compose, includes, isEmpty, map, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -21,6 +21,7 @@ import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
 	constructor( props ) {
@@ -58,7 +59,29 @@ export class ProductSelector extends Component {
 		const { intervalType, purchases } = this.props;
 		const productSlugs = product.options[ intervalType ];
 
-		return find( purchases, purchase => includes( productSlugs, purchase.productSlug ) );
+		// TODO: Implement logic for plans that contan certain Jetpack products.
+
+		return find(
+			purchases,
+			purchase => purchase.active && includes( productSlugs, purchase.productSlug )
+		);
+	}
+
+	getSubtitleByProduct( product ) {
+		const { moment, translate } = this.props;
+		const purchase = this.getPurchaseByProduct( product );
+
+		if ( ! purchase ) {
+			return;
+		}
+
+		// TODO: Implement logic for plans that contan certain Jetpack products.
+
+		return translate( 'Purchased %(purchaseDate)s', {
+			args: {
+				purchaseDate: moment( purchase.subscribedDate ).format( 'YYYY-MM-DD' ),
+			},
+		} );
 	}
 
 	handleProductOptionSelect( stateKey, productSlug ) {
@@ -90,6 +113,7 @@ export class ProductSelector extends Component {
 						description={ product.description }
 						currencyCode={ currencyCode }
 						purchase={ this.getPurchaseByProduct( product ) }
+						subtitle={ this.getSubtitleByProduct( product ) }
 					/>
 
 					{ this.renderProductOptions( product ) }
@@ -169,9 +193,12 @@ ProductSelector.propTypes = {
 
 	// From localize() HoC
 	translate: PropTypes.func.isRequired,
+
+	// From withLocalizedMoment() HoC
+	moment: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { products, siteId } ) => {
+const connectComponent = connect( ( state, { products, siteId } ) => {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
 	const productSlugs = uniq( flattenDeep( products.map( extractProductSlugs ) ) );
 	const availableProducts = getAvailableProductsList( state );
@@ -183,4 +210,10 @@ export default connect( ( state, { products, siteId } ) => {
 		selectedSiteId,
 		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
 	};
-} )( localize( ProductSelector ) );
+} );
+
+export default compose(
+	connectComponent,
+	localize,
+	withLocalizedMoment
+)( ProductSelector );
