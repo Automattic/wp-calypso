@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
+import { applyCoupon, removeCoupon } from 'lib/cart/actions';
 
 export class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';

@@ -16,7 +16,7 @@ import SiteGround from './siteground';
 import Pressable from './pressable';
 import SectionHeader from 'components/section-header';
 import { guidedTransferItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import page from 'page';
 import { saveHostDetails } from 'state/sites/guided-transfer/actions';
 import {

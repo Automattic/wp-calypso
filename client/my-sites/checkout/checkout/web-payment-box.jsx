@@ -28,7 +28,7 @@ import {
 } from 'lib/web-payment';
 import { webPayment } from 'lib/store-transactions';
 import { setPayment, setStripeObject } from 'lib/transaction/actions';
-import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
+import { setTaxCountryCode, setTaxPostalCode } from 'lib/cart/actions';
 import CartToggle from './cart-toggle';
 import CheckoutTerms from './checkout-terms';
 import PaymentChatButton from './payment-chat-button';

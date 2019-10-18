@@ -22,7 +22,7 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;

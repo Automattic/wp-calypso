@@ -10,7 +10,7 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import { CART_ITEM_REMOVE } from 'lib/upgrades/action-types';
+import { CART_ITEM_REMOVE } from 'lib/cart/action-types';
 import {
 	TRANSACTION_DOMAIN_DETAILS_SET,
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,

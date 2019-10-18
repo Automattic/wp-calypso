@@ -6,22 +6,6 @@
 // export * from './cart';
 // export * from './checkout';
 // etc…
-export {
-	addDomainToCart,
-	addGoogleAppsRegistrationData,
-	addItem,
-	addItems,
-	addPrivacyToAllDomains,
-	applyCoupon,
-	getRememberedCoupon,
-	removeCoupon,
-	disableCart,
-	removeDomainFromCart,
-	removeItem,
-	removePrivacyFromAllDomains,
-	replaceCartWithItems,
-	replaceItem,
-} from './cart';
 
 export { submitTransaction } from './checkout';
 

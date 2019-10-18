@@ -18,7 +18,7 @@ import {
 	domainTransfer,
 	updatePrivacyForDomain,
 } from 'lib/cart-values/cart-items';
-import { addItem, addItems } from 'lib/upgrades/actions';
+import { addItem, addItems } from 'lib/cart/actions';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
