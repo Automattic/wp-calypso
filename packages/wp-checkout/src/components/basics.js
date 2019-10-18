@@ -18,6 +18,10 @@ export const Container = styled.div`
 		max-width: 910px;
 		margin: 0 auto;
 	}
+
+	*:focus {
+		outline: ${props => props.theme.colors.outline} auto 5px;
+	}
 `;
 
 const Column = styled.div`
