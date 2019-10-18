@@ -225,6 +225,23 @@
 	}
 }
 
+// Action
+.product-card__action {
+	margin: 16px auto;
+	text-align: center;
+}
+
+.product-card__action-intro {
+	margin-bottom: 12px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var( --color-neutral-90 );
+}
+
+.product-card__action-button {
+	width: 100%;
+	max-width: 320px;
+}
 
 // Loading state
 .product-card.is-placeholder .product-card__price-group {

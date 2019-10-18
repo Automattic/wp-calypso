@@ -8,6 +8,7 @@ import React, { Fragment, useState } from 'react';
  */
 import Button from 'components/button';
 import ProductCard from '../index';
+import ProductCardAction from '../action';
 import ProductCardOptions from '../options';
 
 const purchase = {
@@ -98,7 +99,12 @@ function ProductCardExample() {
 				}
 				isPlaceholder={ isPlaceholder }
 				purchase={ purchase }
-			/>
+			>
+				<ProductCardAction
+					intro="Get Real-Time Backups $16 /year"
+					label="Upgrade to Real-Time Backups"
+				/>
+			</ProductCard>
 
 			<h3>Product Card - part of Jetpack plan</h3>
 			<ProductCard
@@ -120,7 +126,12 @@ function ProductCardExample() {
 				}
 				isPlaceholder={ isPlaceholder }
 				purchase={ purchase }
-			/>
+			>
+				<ProductCardAction
+					intro="Get Real-Time backups"
+					label="Upgrade to Professional $299/year"
+				/>
+			</ProductCard>
 		</Fragment>
 	);
 }
