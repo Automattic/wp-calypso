@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -25,12 +25,16 @@ const ExpandableSidebarHeading = ( {
 	menuId,
 } ) => {
 	return (
-		<SidebarHeading aria-controls={ menuId } aria-expanded={ expanded } onClick={ onClick }>
-			{ icon ? <Gridicon icon={ icon } /> : null }
-			{ materialIcon ? <MaterialIcon icon={ materialIcon } /> : null }
-			<Gridicon icon="chevron-down" />
-			<span>{ title }</span>
-			{ undefined !== count ? <Count count={ count } /> : null }
+		<SidebarHeading
+			aria-controls={ menuId }
+			aria-expanded={ expanded ? 'true' : 'false' }
+			onClick={ onClick }
+		>
+			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
+			{ materialIcon && <MaterialIcon className="sidebar__menu-icon" icon={ materialIcon } /> }
+			<span className="sidebar__expandable-title">{ title }</span>
+			{ undefined !== count && <Count count={ count } /> }
+			<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
 		</SidebarHeading>
 	);
 };

@@ -13,6 +13,11 @@ import DocumentHead from 'components/data/document-head';
 import ConversationsIntro from './intro';
 import ConversationsEmptyContent from 'blocks/conversations/empty';
 
+/**
+ * Style dependencies
+ */
+import './stream.scss';
+
 export default function( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
 	const emptyContent = <ConversationsEmptyContent />;

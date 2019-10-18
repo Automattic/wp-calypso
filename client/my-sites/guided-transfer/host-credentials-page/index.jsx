@@ -15,7 +15,7 @@ import ErrorNotice from './error-notice';
 import SiteGround from './siteground';
 import Pressable from './pressable';
 import SectionHeader from 'components/section-header';
-import { cartItems } from 'lib/cart-values';
+import { guidedTransferItem } from 'lib/cart-values/cart-items';
 import { addItem } from 'lib/upgrades/actions';
 import page from 'page';
 import { saveHostDetails } from 'state/sites/guided-transfer/actions';
@@ -46,7 +46,7 @@ class HostCredentialsPage extends Component {
 	};
 
 	redirectToCart = () => {
-		addItem( cartItems.guidedTransferItem() );
+		addItem( guidedTransferItem() );
 		page.redirect( `/checkout/${ this.props.siteSlug }` );
 	};
 

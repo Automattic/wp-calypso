@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
@@ -13,7 +10,7 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { billingTransactionsSchema } from './schema';
 import individualTransactions from './individual-transactions/reducer';
 
@@ -25,13 +22,16 @@ import individualTransactions from './individual-transactions/reducer';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
-	{},
-	{
-		[ BILLING_TRANSACTIONS_RECEIVE ]: ( state, { past, upcoming } ) => ( { past, upcoming } ),
-	},
-	billingTransactionsSchema
-);
+export const items = withSchemaValidation( billingTransactionsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case BILLING_TRANSACTIONS_RECEIVE: {
+			const { past, upcoming } = action;
+			return { past, upcoming };
+		}
+	}
+
+	return state;
+} );
 
 /**
  * Returns the updated requests state after an action has been dispatched.
@@ -41,10 +41,17 @@ export const items = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( false, {
-	[ BILLING_TRANSACTIONS_REQUEST ]: () => true,
-	[ BILLING_TRANSACTIONS_REQUEST_FAILURE ]: () => false,
-	[ BILLING_TRANSACTIONS_REQUEST_SUCCESS ]: () => false,
+export const requesting = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case BILLING_TRANSACTIONS_REQUEST:
+			return true;
+		case BILLING_TRANSACTIONS_REQUEST_FAILURE:
+			return false;
+		case BILLING_TRANSACTIONS_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
 } );
 
 /**
@@ -55,23 +62,36 @@ export const requesting = createReducer( false, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const sendingReceiptEmail = createReducer(
-	{},
-	{
-		[ BILLING_RECEIPT_EMAIL_SEND ]: ( state, { receiptId } ) => ( {
-			...state,
-			[ receiptId ]: true,
-		} ),
-		[ BILLING_RECEIPT_EMAIL_SEND_FAILURE ]: ( state, { receiptId } ) => ( {
-			...state,
-			[ receiptId ]: false,
-		} ),
-		[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: ( state, { receiptId } ) => ( {
-			...state,
-			[ receiptId ]: false,
-		} ),
+export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case BILLING_RECEIPT_EMAIL_SEND: {
+			const { receiptId } = action;
+
+			return {
+				...state,
+				[ receiptId ]: true,
+			};
+		}
+		case BILLING_RECEIPT_EMAIL_SEND_FAILURE: {
+			const { receiptId } = action;
+
+			return {
+				...state,
+				[ receiptId ]: false,
+			};
+		}
+		case BILLING_RECEIPT_EMAIL_SEND_SUCCESS: {
+			const { receiptId } = action;
+
+			return {
+				...state,
+				[ receiptId ]: false,
+			};
+		}
 	}
-);
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

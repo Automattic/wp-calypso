@@ -23,6 +23,7 @@ import AddEditProductPage from '../lib/pages/woocommerce/add-edit-product-page';
 import StoreDashboardPage from '../lib/pages/woocommerce/store-dashboard-page';
 
 import LoginFlow from '../lib/flows/login-flow';
+import NoticesComponent from '../lib/components/notices-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -132,7 +133,8 @@ describe( `Can add a new WooCommerce product in Calypso '${ screenSize }' @paral
 		await addProductPage.allowBackorders();
 		await addProductPage.addCategory( 'Art' ); //Adding a category at the end to prevent errors being thrown on save
 		await addProductPage.saveAndPublish();
-		await addProductPage.waitForSuccessNotice();
+		const noticesComponent = await NoticesComponent.Expect( driver );
+		await noticesComponent.isSuccessNoticeDisplayed();
 		let storeProductsPage = await StoreProductsPage.Expect( driver );
 		assert(
 			await storeProductsPage.productDisplayed( productTitle ),
@@ -141,7 +143,7 @@ describe( `Can add a new WooCommerce product in Calypso '${ screenSize }' @paral
 		await storeProductsPage.selectProduct( productTitle );
 		const editProductPage = await AddEditProductPage.Expect( driver );
 		await editProductPage.deleteProduct();
-		await editProductPage.waitForSuccessNotice();
+		await noticesComponent.isSuccessNoticeDisplayed();
 		storeProductsPage = await StoreProductsPage.Expect( driver );
 		assert(
 			! ( await storeProductsPage.productDisplayed( productTitle ) ),

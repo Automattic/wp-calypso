@@ -220,7 +220,7 @@ class PaymentMethodItem extends Component {
 					{ method.informationUrl && (
 						<p className="payments__method-information">
 							<ExternalLink icon href={ method.informationUrl } target="_blank">
-								{ translate( 'More Information' ) }
+								{ translate( 'More information' ) }
 							</ExternalLink>
 						</p>
 					) }

@@ -1,0 +1,39 @@
+$user-mentions-avatar-size: 24px;
+$user-mentions-avatar-margin: 10px;
+
+.user-mentions__avatar {
+	border-radius: 50%;
+	width: $user-mentions-avatar-size;
+	height: $user-mentions-avatar-size;
+	float: left;
+	margin: 0 $user-mentions-avatar-margin 0 0;
+}
+
+.user-mentions__username,
+.user-mentions__fullname {
+	float: left;
+	display: inline-block;
+	font-weight: 400;
+}
+
+.user-mentions__username {
+	padding-top: 10px;
+	margin: -10px 0 0;
+}
+
+.user-mentions__fullname {
+	clear: left;
+	margin-left: $user-mentions-avatar-size + $user-mentions-avatar-margin;
+	font-size: 11px;
+
+	@include breakpoint( '>480px' ) {
+		float: right;
+		clear: none;
+		margin-left: 0;
+	}
+}
+
+.user-mentions__highlight {
+	font-weight: 400;
+	background: rgba( var( --color-primary-light-rgb ), 0.25 );
+}

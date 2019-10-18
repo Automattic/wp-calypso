@@ -17,6 +17,7 @@ export const SITE_REQUEST_FIELDS = [
 	'visible',
 	'lang',
 	'launch_status',
+	'is_fse_active',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -32,7 +33,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'default_sharing_status',
 	'design_type',
 	'frame_nonce',
-	'frame_nonce_site_only',
 	'gmt_offset',
 	'has_pending_automated_transfer',
 	'is_automated_transfer',
@@ -42,6 +42,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_wpcom_atomic',
 	'is_wpcom_store',
 	'woocommerce_is_active',
+	'jetpack_frame_nonce',
 	'jetpack_version',
 	'main_network_site',
 	'permalink_structure',
@@ -53,6 +54,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'show_on_front',
 	'signup_is_store',
 	'site_goals',
+	'site_segment',
 	'software_version',
 	'timezone',
 	'upgraded_filetypes_enabled',

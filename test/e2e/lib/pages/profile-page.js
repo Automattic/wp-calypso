@@ -62,7 +62,7 @@ export default class ProfilePage extends AsyncBaseContainer {
 			await this.driver.executeScript( 'window.scrollTo(0, 0);' );
 			return await driverHelper.clickWhenClickable(
 				this.driver,
-				by.css( 'header.current-section a' )
+				by.css( 'header.current-section button' )
 			);
 		}
 	}

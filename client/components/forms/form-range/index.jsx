@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import { omit, noop } from 'lodash';
 import classnames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'FormRange';
 
@@ -20,14 +25,16 @@ export default class extends React.Component {
 		onChange: noop,
 	};
 
+	rangeRef = React.createRef();
+
 	componentDidMount() {
 		if ( this.shouldNormalizeChange() ) {
-			this.refs.range.addEventListener( 'change', this.onChange );
+			this.rangeRef.current.addEventListener( 'change', this.onChange );
 		}
 	}
 
 	componentWillUnmount() {
-		this.refs.range.removeEventListener( 'change', this.onChange );
+		this.rangeRef.current.removeEventListener( 'change', this.onChange );
 	}
 
 	shouldNormalizeChange = () => {
@@ -48,7 +55,7 @@ export default class extends React.Component {
 
 		return (
 			<input
-				ref="range"
+				ref={ this.rangeRef }
 				type="range"
 				className={ classes }
 				{ ...omit( this.props, 'className' ) }

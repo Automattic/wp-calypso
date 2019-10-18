@@ -1,2 +1,1 @@
-/** @format */
-export SocialItem from './social-item';
+export { default as SocialItem } from './social-item';

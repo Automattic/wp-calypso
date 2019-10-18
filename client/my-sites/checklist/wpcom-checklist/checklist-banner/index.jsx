@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Children, Component } from 'react';
 import { connect } from 'react-redux';
@@ -21,7 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { setNeverShowBannerStatus } from './never-show';
 import { recordTracksEvent } from 'state/analytics/actions';
-import getSiteChecklistIsLoading from 'state/selectors/get-site-checklist-is-loading';
+import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
 
 /**
  * Style dependencies
@@ -31,11 +31,25 @@ import './style.scss';
 export class ChecklistBanner extends Component {
 	static propTypes = {
 		isEligibleForDotcomChecklist: PropTypes.bool,
+		isLoading: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = { closed: false };
+	static defaultProps = {
+		taskList: [],
+		isLoading: true,
+	};
+
+	state = { closed: false, hasLoaded: false };
+
+	componentDidUpdate() {
+		if ( ! this.state.hasLoaded && ! this.props.isLoading ) {
+			this.setLoaded( true );
+		}
+	}
+
+	setLoaded = hasLoaded => this.setState( { hasLoaded } );
 
 	handleClose = () => {
 		const { siteId } = this.props;
@@ -49,27 +63,28 @@ export class ChecklistBanner extends Component {
 	};
 
 	render() {
-		if ( this.state.closed || this.props.isLoading ) {
+		const { translate, taskList } = this.props;
+
+		if ( this.state.closed || ! this.state.hasLoaded ) {
 			return null;
 		}
 
-		const { translate, taskList } = this.props;
-		const childrenArray = Children.toArray( this.props.children );
-		const { total, completed, percentage } = taskList.getCompletionStatus();
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
+		const { total, completed, percentage } = taskList.getCompletionStatus();
+		const childrenArray = Children.toArray( this.props.children );
 
 		return (
 			<Card className="checklist-banner">
 				<div className="checklist-banner__gauge animate__fade-in">
 					<span className="checklist-banner__gauge-additional-text">{ translate( 'setup' ) }</span>
 					<Gauge
-						width={ 152 }
-						height={ 152 }
+						size={ 152 }
 						lineWidth={ 18 }
 						percentage={ percentage }
 						metric={ translate( 'completed' ) }
-						colors={ [ '#ffffff', '#008a00' ] }
+						colorBg="#ffffff"
+						colorFg="#008a00"
 					/>
 				</div>
 				<div className="checklist-banner__progress">
@@ -96,12 +111,7 @@ export class ChecklistBanner extends Component {
 						<ChecklistBannerTask
 							bannerImageSrc="/calypso/images/stats/tasks/ready-to-share.svg"
 							description={ translate(
-								'We did it! You have completed {{a}}all the tasks{{/a}} on our checklist.',
-								{
-									components: {
-										a: <a href={ `/checklist/${ this.props.siteSlug }` } />,
-									},
-								}
+								'You did it! You have completed all the tasks on your checklist.'
 							) }
 							title={ translate( 'Your site is ready to share' ) }
 						>
@@ -127,7 +137,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		isLoading: getSiteChecklistIsLoading( state ),
+		isLoading: isSiteChecklistLoading( state, siteId ),
 	};
 };
 

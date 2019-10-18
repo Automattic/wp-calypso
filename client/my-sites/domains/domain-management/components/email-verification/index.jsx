@@ -5,9 +5,10 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -60,7 +61,8 @@ class EmailVerificationCard extends React.Component {
 
 		resendVerification( selectedDomainName, error => {
 			if ( error ) {
-				this.props.errorNotice( errorMessage );
+				const message = get( error, 'message', errorMessage );
+				this.props.errorNotice( message );
 			} else {
 				this.timer = setTimeout( this.revertToWaitingState, 5000 );
 				this.setState( { emailSent: true } );

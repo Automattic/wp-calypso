@@ -14,5 +14,5 @@ import { get } from 'lodash';
  * @return {Object}        Site settings
  */
 export default function getSiteChecklist( state, siteId ) {
-	return get( state.checklist.items, [ siteId ], null );
+	return get( state.checklist, [ siteId, 'items' ], null );
 }

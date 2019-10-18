@@ -7,13 +7,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
 import Button from 'components/button';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {

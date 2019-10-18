@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -20,6 +20,11 @@ import QueryTaxonomies from 'components/data/query-taxonomies';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
+
+/**
+ * Style dependencies
+ */
+import './add-term.scss';
 
 class TermSelectorAddTerm extends Component {
 	static propTypes = {
@@ -34,15 +39,11 @@ class TermSelectorAddTerm extends Component {
 		onSuccess: noop,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			showDialog: false,
-		};
-	}
+	state = {
+		showDialog: false,
+	};
 
-	openDialog = event => {
-		event.preventDefault();
+	openDialog = () => {
 		this.setState( { showDialog: true } );
 	};
 

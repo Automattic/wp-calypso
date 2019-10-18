@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { filter, map, property, delay, endsWith } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
@@ -13,7 +10,10 @@ import page from 'page';
  */
 import { isExternal } from 'lib/url';
 import wpcom from 'lib/wp';
-import wporg from 'lib/wporg';
+import {
+	fetchThemesList as fetchWporgThemesList,
+	fetchThemeInformation as fetchWporgThemeInformation,
+} from 'lib/wporg';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -71,12 +71,13 @@ import {
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
+import { requestSitePosts } from 'state/posts/actions';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
 import 'state/data-layer/wpcom/theme-filters';
 
-const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:themes:actions' );
 
 // Set destination for 'back' button on theme sheet
 export function setBackPath( path ) {
@@ -165,7 +166,7 @@ export function requestThemes( siteId, query = {} ) {
 		let request;
 
 		if ( siteId === 'wporg' ) {
-			request = () => wporg.fetchThemesList( query );
+			request = () => fetchWporgThemesList( query );
 		} else if ( siteId === 'wpcom' ) {
 			request = () => wpcom.undocumented().themes( null, { ...query, apiVersion: '1.2' } );
 		} else {
@@ -240,8 +241,7 @@ export function requestTheme( themeId, siteId ) {
 		} );
 
 		if ( siteId === 'wporg' ) {
-			return wporg
-				.fetchThemeInformation( themeId )
+			return fetchWporgThemeInformation( themeId )
 				.then( theme => {
 					// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
 					// if a theme can't be found.
@@ -436,6 +436,9 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			search_taxonomies,
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
+
+		// Update pages in case the front page was updated on theme switch.
+		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
 }
@@ -651,7 +654,7 @@ export function clearThemeUpload( siteId ) {
  * @returns {Promise} for testing purposes only
  */
 export function initiateThemeTransfer( siteId, file, plugin ) {
-	const context = !! plugin ? 'plugins' : 'themes';
+	const context = plugin ? 'plugins' : 'themes';
 	return dispatch => {
 		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
@@ -723,7 +726,7 @@ function transferStatusFailure( siteId, transferId, error ) {
 
 // receive a transfer initiation failure
 function transferInitiateFailure( siteId, error, plugin ) {
-	const context = !! plugin ? 'plugin' : 'theme';
+	const context = plugin ? 'plugin' : 'theme';
 	return dispatch => {
 		const themeInitiateFailureAction = {
 			type: THEME_TRANSFER_INITIATE_FAILURE,
@@ -768,7 +771,7 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
-						const context = !! uploaded_theme_slug ? 'themes' : 'plugins';
+						const context = uploaded_theme_slug ? 'themes' : 'plugins';
 						dispatch(
 							recordTracksEvent( 'calypso_automated_transfer_complete', {
 								transfer_id: transferId,

@@ -16,7 +16,7 @@ import moment from 'moment';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import { validateImportUrl } from 'lib/importers/url-validation';
+import { validateImportUrl } from 'lib/importer/url-validation';
 import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -26,6 +26,7 @@ import {
 	validateSiteIsImportable,
 	resetSiteImporterImport,
 	setValidationError,
+	clearSiteImporterImport,
 } from 'state/imports/site-importer/actions';
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
@@ -34,6 +35,11 @@ import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { appStates } from 'state/imports/constants';
 import { cancelImport } from 'lib/importer/actions';
+
+/**
+ * Style dependencies
+ */
+import './site-importer-input-pane.scss';
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
@@ -58,6 +64,12 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	componentDidMount() {
+		const { importStage } = this.props;
+		if ( 'importable' === importStage ) {
+			// Clear any leftover state from previous imports
+			this.props.clearSiteImporterImport();
+		}
+
 		this.validateSite();
 
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
@@ -333,6 +345,7 @@ export default flowRight(
 			importSite,
 			validateSiteIsImportable,
 			resetSiteImporterImport,
+			clearSiteImporterImport,
 			setValidationError,
 		}
 	),

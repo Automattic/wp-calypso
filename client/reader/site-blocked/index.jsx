@@ -56,6 +56,7 @@ class SiteBlocked extends React.Component {
 						components: {
 							em: <em />,
 						},
+						comment: '%s is a site name - for example, "Discover"',
 					} ) }
 					illustration={ '/calypso/images/illustrations/error.svg' }
 					illustrationWidth={ 500 }

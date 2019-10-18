@@ -40,6 +40,7 @@ import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugi
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
 import simplePaymentsPlugin from './plugins/simple-payments/plugin';
+import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
@@ -47,7 +48,6 @@ import embedPlugin from './plugins/embed/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 import mentionsPlugin from './plugins/mentions/plugin';
-import membershipsPlugin from './plugins/simple-payments/memberships-plugin';
 import markdownPlugin from './plugins/markdown/plugin';
 import wpEmojiPlugin from './plugins/wpemoji/plugin';
 
@@ -69,6 +69,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
 	contactFormPlugin,
+	afterTheDeadlinePlugin,
 	wptextpatternPlugin,
 	toolbarPinPlugin,
 	embedPlugin,
@@ -87,7 +88,7 @@ import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getPreference } from 'state/preferences/selectors';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { isLocaleRtl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -135,6 +136,7 @@ const PLUGINS = [
 	'wpcom',
 	'wpeditimage',
 	'wplink',
+	'AtD',
 	'directionality',
 	'wpemoji',
 	'wpcom/autoresize',
@@ -158,11 +160,6 @@ const PLUGINS = [
 	'wpcom/simplepayments',
 ];
 
-if ( config.isEnabled( 'memberships' ) ) {
-	membershipsPlugin();
-	PLUGINS.push( 'wpcom/memberships' );
-}
-
 mentionsPlugin();
 PLUGINS.push( 'wpcom/mentions' );
 
@@ -170,7 +167,7 @@ const CONTENT_CSS = [
 	window.app.staticUrls[ 'tinymce/skins/wordpress/wp-content.css' ],
 	'//s1.wp.com/wp-includes/css/dashicons.css?v=20150727',
 	window.app.staticUrls[ 'editor.css' ],
-	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
+	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap',
 ];
 
 export default class extends React.Component {
@@ -200,6 +197,7 @@ export default class extends React.Component {
 		onUndo: PropTypes.func,
 		onTextEditorChange: PropTypes.func,
 		isGutenbergClassicBlock: PropTypes.bool,
+		isVipSite: PropTypes.bool,
 	};
 
 	static contextTypes = {
@@ -236,7 +234,7 @@ export default class extends React.Component {
 	}
 
 	componentDidMount() {
-		const { isGutenbergClassicBlock } = this.props;
+		const { isGutenbergClassicBlock, isVipSite } = this.props;
 		this.mounted = true;
 
 		const setup = function( editor ) {
@@ -263,8 +261,8 @@ export default class extends React.Component {
 		if ( store ) {
 			const state = store.getState();
 
-			isRtl = isRtlSelector( state );
 			localeSlug = getCurrentLocaleSlug( state );
+			isRtl = isLocaleRtl( localeSlug );
 			colorScheme = getPreference( state, 'colorScheme' );
 		}
 
@@ -272,6 +270,7 @@ export default class extends React.Component {
 
 		const ltrButton = isRtl ? 'ltr,' : '';
 		const gutenbergClassName = isGutenbergClassicBlock ? ' is-gutenberg' : '';
+		const spellchecker = isVipSite ? ',spellchecker' : '';
 
 		tinymce.init( {
 			selector: '#' + this._id,
@@ -336,6 +335,10 @@ export default class extends React.Component {
 			menubar: false,
 			indent: false,
 
+			// AfterTheDeadline Configuration
+			atd_rpc_id: 'https://wordpress.com',
+			atd_ignore_enable: true,
+
 			// Try to find a suitable minimum size based on the viewport height
 			// minus the surrounding editor chrome to avoid scrollbars. In the
 			// future, we should calculate from the rendered editor bounds.
@@ -344,7 +347,7 @@ export default class extends React.Component {
 				: Math.max( document.documentElement.clientHeight - 300, 300 ),
 			autoresize_bottom_margin: isGutenbergClassicBlock || isMobile() ? 10 : 50,
 
-			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,wp_more,${ ltrButton }wpcom_advanced`,
+			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright${ spellchecker },wp_more,${ ltrButton }wpcom_advanced`,
 			toolbar2:
 				'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',

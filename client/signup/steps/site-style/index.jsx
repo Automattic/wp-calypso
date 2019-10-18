@@ -15,17 +15,17 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -38,8 +38,6 @@ export class SiteStyleStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		showSiteMockups: PropTypes.bool,
-		submitSiteStyle: PropTypes.func.isRequired,
-		signupProgress: PropTypes.array,
 		styleOptions: PropTypes.array.isRequired,
 		stepName: PropTypes.string,
 		siteStyle: PropTypes.string,
@@ -47,9 +45,7 @@ export class SiteStyleStep extends Component {
 	};
 
 	componentDidMount() {
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	handleStyleOptionChange = event =>
@@ -58,12 +54,19 @@ export class SiteStyleStep extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		const selectedStyleData = this.getSelectedStyleDataById() || this.props.styleOptions[ 0 ];
-		this.props.submitSiteStyle(
-			selectedStyleData.id,
-			selectedStyleData.theme,
-			selectedStyleData.label
-		);
+		this.submitSiteStyle( selectedStyleData.id, selectedStyleData.theme, selectedStyleData.label );
 	};
+
+	submitSiteStyle( siteStyle, themeSlugWithRepo, styleLabel ) {
+		const { flowName, stepName } = this.props;
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
+			// The untranslated 'product' name of the variation/theme
+			site_style: styleLabel,
+		} );
+		this.props.setSiteStyle( siteStyle );
+		this.props.submitSignupStep( { stepName }, { siteStyle, themeSlugWithRepo } );
+		this.props.goToNextStep( flowName );
+	}
 
 	getSelectedStyleDataById( id ) {
 		return find( this.props.styleOptions, [ 'id', id || this.props.siteStyle ] );
@@ -99,39 +102,29 @@ export class SiteStyleStep extends Component {
 		} );
 	}
 
-	renderContent = () => (
-		<div className="site-style__form-wrapper">
-			<form className="site-style__form" onSubmit={ this.handleSubmit }>
-				<FormFieldset className="site-style__fieldset" role="radiogroup">
-					{ this.renderStyleOptions() }
-				</FormFieldset>
-				<div className="site-style__submit-wrapper">
-					<Button
-						title={ this.props.translate( 'Continue' ) }
-						aria-label={ this.props.translate( 'Continue' ) }
-						type="submit"
-						primary
-					>
-						<Gridicon icon="arrow-right" />
-					</Button>
-				</div>
-			</form>
-		</div>
-	);
+	renderContent() {
+		return (
+			<div className="site-style__form-wrapper">
+				<form className="site-style__form" onSubmit={ this.handleSubmit }>
+					<FormFieldset className="site-style__fieldset" role="radiogroup">
+						{ this.renderStyleOptions() }
+					</FormFieldset>
+					<div className="site-style__submit-wrapper">
+						<Button type="submit" primary>
+							{ this.props.translate( 'Continue' ) }
+						</Button>
+					</div>
+				</form>
+			</div>
+		);
+	}
 
 	render() {
-		const {
-			flowName,
-			positionInFlow,
-			showSiteMockups,
-			signupProgress,
-			stepName,
-			translate,
-		} = this.props;
+		const { flowName, positionInFlow, showSiteMockups, stepName, translate } = this.props;
 		const headerText = translate( 'Choose a style' );
-		const subHeaderText = translate(
-			"Choose a style for your site's theme. Don't worry, you can always change it later."
-		);
+		// for the time being we just want to fall back to the default value.
+		// If we come to add segment specific copy for this item, update the first 2 args.
+		const subHeaderText = getSiteTypePropertyValue( null, null, 'siteStyleSubheader' );
 
 		return (
 			<div>
@@ -143,7 +136,6 @@ export class SiteStyleStep extends Component {
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ signupProgress }
 					stepContent={ this.renderContent() }
 					showSiteMockups={ showSiteMockups }
 				/>
@@ -152,27 +144,15 @@ export class SiteStyleStep extends Component {
 	}
 }
 
-const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteStyle: ( siteStyle, themeSlugWithRepo, styleLabel ) => {
-		const { flowName, stepName, goToNextStep } = ownProps;
-		dispatch( setSiteStyle( siteStyle ) );
-		dispatch(
-			recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
-				// The untranslated 'product' name of the variation/theme
-				site_style: styleLabel,
-			} )
-		);
-		SignupActions.submitSignupStep( { stepName }, { siteStyle, themeSlugWithRepo } );
-
-		goToNextStep( flowName );
-	},
-	setSiteStyle: siteStyle => dispatch( setSiteStyle( siteStyle ) ),
-} );
-
 export default connect(
 	state => ( {
 		siteStyle: getSiteStyle( state ),
 		styleOptions: getSiteStyleOptions( getSiteType( state ) ),
 	} ),
-	mapDispatchToProps
+	{
+		setSiteStyle,
+		saveSignupStep,
+		submitSignupStep,
+		recordTracksEvent,
+	}
 )( localize( SiteStyleStep ) );

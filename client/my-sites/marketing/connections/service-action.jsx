@@ -13,8 +13,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getRemovableConnections } from 'state/sharing/publicize/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 
 const SharingServiceAction = ( {
 	isConnecting,
@@ -25,6 +28,8 @@ const SharingServiceAction = ( {
 	service,
 	status,
 	translate,
+	recordTracksEvent,
+	path,
 } ) => {
 	let warning = false,
 		label;
@@ -88,6 +93,13 @@ const SharingServiceAction = ( {
 					className="connections__signup"
 					compact
 					href="https://public-api.wordpress.com/rest/v1.1/sharing/mailchimp/signup"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_connections_signup_button_click', {
+							service: 'mailchimp',
+							path,
+						} );
+						return true;
+					} }
 					target="_blank"
 					disabled={ isPending }
 				>
@@ -116,6 +128,7 @@ SharingServiceAction.propTypes = {
 	service: PropTypes.object.isRequired,
 	status: PropTypes.string,
 	translate: PropTypes.func,
+	recordTracksEvent: PropTypes.func,
 };
 
 SharingServiceAction.defaultProps = {
@@ -128,6 +141,14 @@ SharingServiceAction.defaultProps = {
 	translate: identity,
 };
 
-export default connect( ( state, { service } ) => ( {
-	removableConnections: getRemovableConnections( state, service.ID ),
-} ) )( localize( SharingServiceAction ) );
+export default connect(
+	( state, { service } ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			removableConnections: getRemovableConnections( state, service.ID ),
+			path: getCurrentRouteParameterized( state, siteId ),
+		};
+	},
+	{ recordTracksEvent: recordTracksEventAction }
+)( localize( SharingServiceAction ) );

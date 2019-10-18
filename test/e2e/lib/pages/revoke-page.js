@@ -23,11 +23,4 @@ export default class RevokePage extends AsyncBaseContainer {
 			By.css( '.people-invite-details__clear-revoke [type]' )
 		);
 	}
-
-	async revokeSent() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '.notice.is-success' )
-		);
-	}
 }

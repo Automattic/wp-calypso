@@ -16,11 +16,11 @@ import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import {
-	hasGSuite,
-	isGSuiteRestricted,
-	hasGSuiteOtherProvidor,
-	hasGSuiteSupportedDomain,
 	getEligibleGSuiteDomain,
+	hasGSuiteSupportedDomain,
+	hasGSuiteWithAnotherProvider,
+	hasGSuiteWithUs,
+	isGSuiteRestricted,
 } from 'lib/gsuite';
 import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
@@ -36,7 +36,6 @@ import EmptyContent from 'components/empty-content';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { isPlanFeaturesEnabled } from 'lib/plans';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -45,6 +44,11 @@ import QuerySiteDomains from 'components/data/query-site-domains';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
 
 class EmailManagement extends React.Component {
 	static propTypes = {
@@ -59,7 +63,7 @@ class EmailManagement extends React.Component {
 	render() {
 		const { selectedSiteId } = this.props;
 		return (
-			<Main className="email-management" wideLayout={ isPlanFeaturesEnabled() }>
+			<Main className="email-management" wideLayout>
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
@@ -95,7 +99,7 @@ class EmailManagement extends React.Component {
 		}
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuite ) ) {
+		if ( domainList.some( hasGSuiteWithUs ) ) {
 			return this.googleAppsUsersCard();
 		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
 			return this.addGSuiteCta();
@@ -119,7 +123,7 @@ class EmailManagement extends React.Component {
 						'to a professional custom domain.'
 				),
 			};
-		} else if ( selectedDomain && hasGSuiteOtherProvidor( selectedDomain ) ) {
+		} else if ( selectedDomain && hasGSuiteWithAnotherProvider( selectedDomain ) ) {
 			emptyContentProps = {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate(
@@ -144,7 +148,7 @@ class EmailManagement extends React.Component {
 			};
 		}
 		Object.assign( emptyContentProps, {
-			illustration: '/calypso/images/illustrations/custom-domain.svg',
+			illustration: customDomainImage,
 			action: translate( 'Add a Custom Domain' ),
 			actionURL: '/domains/add/' + selectedSiteSlug,
 		} );

@@ -13,7 +13,7 @@ import { useFakeTimers } from 'sinon';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import localforage from 'lib/localforage';
+import * as browserStorage from 'lib/browser-storage';
 import userFactory from 'lib/user';
 import { isSupportSession } from 'lib/user/support-user-interop';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
@@ -35,7 +35,6 @@ jest.mock( 'config', () => {
 	return config;
 } );
 
-jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/user', () => () => ( {
 	get: () => ( {
 		ID: 123456789,
@@ -49,7 +48,7 @@ describe( 'initial-state', () => {
 	describe( 'getInitialState', () => {
 		describe( 'persist-redux disabled', () => {
 			describe( 'with recently persisted data and initial server data', () => {
-				let state, consoleErrorSpy, getItemSpy;
+				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
 					currentUser: { id: 123456789 },
@@ -69,14 +68,16 @@ describe( 'initial-state', () => {
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
+					getStoredItemSpy = jest
+						.spyOn( browserStorage, 'getStoredItem' )
+						.mockResolvedValue( savedState );
 					state = await getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
 					window.initialReduxState = null;
 					consoleErrorSpy.mockRestore();
-					getItemSpy.mockRestore();
+					getStoredItemSpy.mockRestore();
 				} );
 
 				test( 'builds initial state without errors', () => {
@@ -100,7 +101,7 @@ describe( 'initial-state', () => {
 		describe( 'persist-redux enabled', () => {
 			describe( 'switched user', () => {
 				describe( 'with recently persisted data and initial server data', () => {
-					let state, consoleErrorSpy, getItemSpy;
+					let state, consoleErrorSpy, getStoredItemSpy;
 
 					const savedState = {
 						currentUser: { id: 123456789 },
@@ -120,7 +121,9 @@ describe( 'initial-state', () => {
 						isSupportSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
 						consoleErrorSpy = jest.spyOn( global.console, 'error' );
-						getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
+						getStoredItemSpy = jest
+							.spyOn( browserStorage, 'getStoredItem' )
+							.mockResolvedValue( savedState );
 						state = await getInitialState( initialReducer );
 					} );
 
@@ -129,7 +132,7 @@ describe( 'initial-state', () => {
 						isSupportSession.mockReturnValue( false );
 						window.initialReduxState = null;
 						consoleErrorSpy.mockRestore();
-						getItemSpy.mockRestore();
+						getStoredItemSpy.mockRestore();
 					} );
 
 					test( 'builds initial state without errors', () => {
@@ -151,7 +154,7 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with recently persisted data and initial server data', () => {
-				let state, consoleErrorSpy, getItemSpy;
+				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
 					currentUser: { id: 123456789 },
@@ -180,7 +183,9 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
+					getStoredItemSpy = jest
+						.spyOn( browserStorage, 'getStoredItem' )
+						.mockResolvedValue( savedState );
 					state = await getInitialState( initialReducer );
 				} );
 
@@ -188,7 +193,7 @@ describe( 'initial-state', () => {
 					window.initialReduxState = null;
 					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
-					getItemSpy.mockRestore();
+					getStoredItemSpy.mockRestore();
 				} );
 
 				test( 'builds initial state without errors', () => {
@@ -209,7 +214,7 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with stale persisted data and initial server data', () => {
-				let state, consoleErrorSpy, getItemSpy;
+				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
 					currentUser: { id: 123456789 },
@@ -238,7 +243,9 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
+					getStoredItemSpy = jest
+						.spyOn( browserStorage, 'getStoredItem' )
+						.mockResolvedValue( savedState );
 					state = await getInitialState( initialReducer );
 				} );
 
@@ -246,7 +253,7 @@ describe( 'initial-state', () => {
 					window.initialReduxState = null;
 					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
-					getItemSpy.mockRestore();
+					getStoredItemSpy.mockRestore();
 				} );
 
 				test( 'builds store without errors', () => {
@@ -267,7 +274,7 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with recently persisted data and no initial server data', () => {
-				let state, consoleErrorSpy, getItemSpy;
+				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
 					currentUser: { id: 123456789 },
@@ -288,7 +295,9 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
+					getStoredItemSpy = jest
+						.spyOn( browserStorage, 'getStoredItem' )
+						.mockResolvedValue( savedState );
 					state = await getInitialState( initialReducer );
 				} );
 
@@ -296,7 +305,7 @@ describe( 'initial-state', () => {
 					window.initialReduxState = null;
 					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
-					getItemSpy.mockRestore();
+					getStoredItemSpy.mockRestore();
 				} );
 
 				test( 'builds initial state without errors', () => {
@@ -314,7 +323,7 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with invalid persisted data and no initial server data', () => {
-				let state, consoleErrorSpy, getItemSpy;
+				let state, consoleErrorSpy, getStoredItemSpy;
 
 				const savedState = {
 					// Create an invalid state by forcing the user ID
@@ -338,7 +347,9 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
+					getStoredItemSpy = jest
+						.spyOn( browserStorage, 'getStoredItem' )
+						.mockResolvedValue( savedState );
 					state = await getInitialState( initialReducer );
 				} );
 
@@ -346,7 +357,7 @@ describe( 'initial-state', () => {
 					window.initialReduxState = null;
 					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
-					getItemSpy.mockRestore();
+					getStoredItemSpy.mockRestore();
 				} );
 
 				test( 'builds initial state without errors', () => {
@@ -361,11 +372,138 @@ describe( 'initial-state', () => {
 					expect( state._timestamp ).toBeUndefined();
 				} );
 			} );
+
+			describe( 'with empty persisted signup state for logged in user, and persisted state for logged out user', () => {
+				let state, consoleErrorSpy, getStoredItemSpy;
+
+				const _timestamp = Date.now();
+				const storedState = {
+					'redux-state-logged-out:signup': {
+						dependencyStore: {
+							siteType: 'blog',
+							siteTitle: 'Logged out test title',
+						},
+						progress: {
+							'logged-out-step': {
+								stepName: 'logged-out-step',
+								status: 'completed',
+							},
+						},
+						_timestamp,
+					},
+				};
+				const serverState = {};
+
+				beforeAll( async () => {
+					isEnabled.enablePersistRedux();
+					window.initialReduxState = serverState;
+					consoleErrorSpy = jest.spyOn( global.console, 'error' );
+					getStoredItemSpy = jest
+						.spyOn( browserStorage, 'getStoredItem' )
+						.mockImplementation( key => storedState[ key ] );
+
+					state = await getInitialState( initialReducer );
+				} );
+
+				afterAll( () => {
+					window.initialReduxState = null;
+					isEnabled.disablePersistRedux();
+					consoleErrorSpy.mockRestore();
+					getStoredItemSpy.mockRestore();
+				} );
+
+				test( 'builds initial state without errors', () => {
+					expect( consoleErrorSpy ).not.toHaveBeenCalled();
+				} );
+
+				test( 'builds initial signup state from logged out state', () => {
+					expect( state.signup.dependencyStore ).toEqual(
+						storedState[ 'redux-state-logged-out:signup' ].dependencyStore
+					);
+					expect( state.signup.progress ).toEqual(
+						storedState[ 'redux-state-logged-out:signup' ].progress
+					);
+				} );
+
+				test( 'does not add timestamp to initial state', () => {
+					expect( state._timestamp ).toBeUndefined();
+				} );
+			} );
+
+			describe( 'with existing persisted signup state for logged in user, and persisted state for logged out user', () => {
+				let state, consoleErrorSpy, getStoredItemSpy;
+
+				const _timestamp = Date.now();
+				const storedState = {
+					'redux-state-123456789:signup': {
+						dependencyStore: {
+							siteType: 'blog',
+							siteTitle: 'Logged in test title',
+						},
+						progress: {
+							'logged-in-step': {
+								stepName: 'logged-in-step',
+								status: 'completed',
+							},
+						},
+						_timestamp,
+					},
+					'redux-state-logged-out:signup': {
+						dependencyStore: {
+							siteType: 'blog',
+							siteTitle: 'Logged out test title',
+						},
+						progress: {
+							'logged-out-step': {
+								stepName: 'logged-out-step',
+								status: 'completed',
+							},
+						},
+						_timestamp,
+					},
+				};
+				const serverState = {};
+
+				beforeAll( async () => {
+					isEnabled.enablePersistRedux();
+					window.initialReduxState = serverState;
+					consoleErrorSpy = jest.spyOn( global.console, 'error' );
+					getStoredItemSpy = jest
+						.spyOn( browserStorage, 'getStoredItem' )
+						.mockImplementation( key => storedState[ key ] );
+
+					state = await getInitialState( initialReducer );
+				} );
+
+				afterAll( () => {
+					window.initialReduxState = null;
+					isEnabled.disablePersistRedux();
+					consoleErrorSpy.mockRestore();
+					getStoredItemSpy.mockRestore();
+				} );
+
+				test( 'builds initial state without errors', () => {
+					expect( consoleErrorSpy ).not.toHaveBeenCalled();
+				} );
+
+				test( 'builds initial signup state from logged in state', () => {
+					expect( state.signup.dependencyStore ).toEqual(
+						storedState[ 'redux-state-123456789:signup' ].dependencyStore
+					);
+					expect( state.signup.progress ).toEqual(
+						storedState[ 'redux-state-123456789:signup' ].progress
+					);
+				} );
+
+				test( 'does not add timestamp to initial state', () => {
+					expect( state._timestamp ).toBeUndefined();
+				} );
+			} );
 		} );
 	} );
 
 	describe( '#persistOnChange()', () => {
-		let store, clock, setItemSpy;
+		let store, clock, setStoredItemSpy;
 
 		const dataReducer = ( state = null, { data } ) => {
 			if ( data && data !== state ) {
@@ -394,8 +532,8 @@ describe( 'initial-state', () => {
 			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
 			// and relies on it returning a mocked value. Jest fake timers don't mock `Date`, Lolex does.
 			clock = useFakeTimers();
-			setItemSpy = jest
-				.spyOn( localforage, 'setItem' )
+			setStoredItemSpy = jest
+				.spyOn( browserStorage, 'setStoredItem' )
 				.mockImplementation( value => Promise.resolve( value ) );
 
 			store = createReduxStore( initialState, reducer );
@@ -405,7 +543,7 @@ describe( 'initial-state', () => {
 		afterEach( () => {
 			isEnabled.enablePersistRedux();
 			clock.restore();
-			setItemSpy.mockRestore();
+			setStoredItemSpy.mockRestore();
 		} );
 
 		test( 'should persist state for first dispatch', () => {
@@ -416,7 +554,7 @@ describe( 'initial-state', () => {
 
 			clock.tick( SERIALIZE_THROTTLE );
 
-			expect( setItemSpy ).toHaveBeenCalledTimes( 1 );
+			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'should not persist invalid state', () => {
@@ -430,7 +568,7 @@ describe( 'initial-state', () => {
 
 			clock.tick( SERIALIZE_THROTTLE );
 
-			expect( setItemSpy ).toHaveBeenCalledTimes( 0 );
+			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 0 );
 		} );
 
 		test( 'should persist state for changed state', () => {
@@ -448,7 +586,7 @@ describe( 'initial-state', () => {
 
 			clock.tick( SERIALIZE_THROTTLE );
 
-			expect( setItemSpy ).toHaveBeenCalledTimes( 2 );
+			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		test( 'should not persist state for unchanged state', () => {
@@ -466,7 +604,7 @@ describe( 'initial-state', () => {
 
 			clock.tick( SERIALIZE_THROTTLE );
 
-			expect( setItemSpy ).toHaveBeenCalledTimes( 1 );
+			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'should throttle', () => {
@@ -499,12 +637,12 @@ describe( 'initial-state', () => {
 
 			clock.tick( SERIALIZE_THROTTLE );
 
-			expect( setItemSpy ).toHaveBeenCalledTimes( 2 );
-			expect( setItemSpy ).toHaveBeenCalledWith(
+			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 2 );
+			expect( setStoredItemSpy ).toHaveBeenCalledWith(
 				'redux-state-123456789',
 				expect.objectContaining( { data: 3 } )
 			);
-			expect( setItemSpy ).toHaveBeenCalledWith(
+			expect( setStoredItemSpy ).toHaveBeenCalledWith(
 				'redux-state-123456789',
 				expect.objectContaining( { data: 5 } )
 			);
@@ -534,7 +672,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 	const currentUserReducer = ( state = { id: null } ) => state;
 	currentUserReducer.hasCustomPersistence = true;
 
-	let getItemSpy;
+	let getStoredItemSpy;
 
 	beforeEach( () => {
 		isEnabled.enablePersistRedux();
@@ -556,17 +694,27 @@ describe( 'loading stored state with dynamic reducers', () => {
 				'B:country': 'France',
 				_timestamp,
 			},
+			'redux-state-123456789:CD': {
+				'CD:city': 'Lisbon',
+				'CD:country': 'Portugal',
+				_timestamp,
+			},
+			'redux-state-123456789:E': {
+				'E:city': 'Madrid',
+				'E:country': 'Spain',
+				_timestamp,
+			},
 		};
 
-		// localforage mock to return mock IndexedDB state
-		getItemSpy = jest
-			.spyOn( localforage, 'getItem' )
+		// `lib/browser-storage` mock to return mock IndexedDB state
+		getStoredItemSpy = jest
+			.spyOn( browserStorage, 'getStoredItem' )
 			.mockImplementation( key => storedState[ key ] );
 	} );
 
 	afterEach( () => {
 		isEnabled.disablePersistRedux();
-		getItemSpy.mockRestore();
+		getStoredItemSpy.mockRestore();
 	} );
 
 	test( 'loads state from multiple storage keys', async () => {
@@ -616,7 +764,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const aReducer = withStorageKey( 'A', withKeyPrefix( 'A' ) );
-		await addReducerToStore( store )( 'a', aReducer );
+		await addReducerToStore( store )( [ 'a' ], aReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -628,5 +776,105 @@ describe( 'loading stored state with dynamic reducers', () => {
 				country: 'UK',
 			},
 		} );
+	} );
+
+	test( 'loads state after adding a nested reducer', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const cdReducer = withStorageKey( 'CD', withKeyPrefix( 'CD' ) );
+		await addReducerToStore( store )( [ 'c', 'd' ], cdReducer );
+
+		// verify that the Redux store contains the stored state for `A` now
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+			c: {
+				d: {
+					city: 'Lisbon',
+					country: 'Portugal',
+				},
+			},
+		} );
+	} );
+
+	test( 'loads state a single time after adding a reducer twice', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const eReducer = withStorageKey( 'E', withKeyPrefix( 'E' ) );
+		await Promise.all( [
+			addReducerToStore( store )( [ 'e' ], eReducer ),
+			addReducerToStore( store )( [ 'e' ], eReducer ),
+		] );
+
+		// verify that the Redux store contains the stored state for `E` now
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+			e: {
+				city: 'Madrid',
+				country: 'Spain',
+			},
+		} );
+	} );
+
+	test( 'throws an error when adding two different reducers to the same key', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const bReducer = withStorageKey( 'B', withKeyPrefix( 'B' ) );
+		const cReducer = withStorageKey( 'C', withKeyPrefix( 'C' ) );
+
+		expect( () => {
+			Promise.all( [
+				addReducerToStore( store )( [ 'b' ], bReducer ),
+				addReducerToStore( store )( [ 'b' ], cReducer ),
+			] );
+		} ).toThrow();
 	} );
 } );

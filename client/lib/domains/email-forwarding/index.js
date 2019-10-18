@@ -7,7 +7,7 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import { hasGSuite } from 'lib/gsuite';
+import { hasGSuiteWithUs } from 'lib/gsuite';
 import { type as domainTypes } from 'lib/domains/constants';
 
 /**
@@ -36,11 +36,11 @@ function getEligibleEmailForwardingDomain( selectedDomainName, domains = [] ) {
  */
 function getEmailForwardingSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		const domainHasGSuite = hasGSuite( domain );
+		const domainHasGSuiteWithUs = hasGSuiteWithUs( domain );
 		const wpcomHosted =
 			includes( [ domainTypes.REGISTERED ], domain.type ) && domain.hasWpcomNameservers;
 		const mapped = includes( [ domainTypes.MAPPED ], domain.type );
-		return ( wpcomHosted || mapped ) && ! domainHasGSuite;
+		return ( wpcomHosted || mapped ) && ! domainHasGSuiteWithUs;
 	} );
 }
 

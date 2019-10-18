@@ -16,6 +16,11 @@ import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KEY_BINDINGS from 'lib/keyboard-shortcuts/key-bindings';
 
+/**
+ * Style dependencies
+ */
+import './menu.scss';
+
 class KeyboardShortcutsMenu extends React.Component {
 	state = {
 		showDialog: false,

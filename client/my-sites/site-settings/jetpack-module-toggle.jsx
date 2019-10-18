@@ -15,12 +15,12 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getJetpackModule from 'state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class JetpackModuleToggle extends Component {
 	static defaultProps = {
@@ -45,18 +45,19 @@ class JetpackModuleToggle extends Component {
 
 	handleChange = () => {
 		if ( ! this.props.checked ) {
-			this.recordTracksEvent( 'calypso_jetpack_module_toggle_activated' );
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle', 'on' );
 			this.props.activateModule( this.props.siteId, this.props.moduleSlug );
 		} else {
-			this.recordTracksEvent( 'calypso_jetpack_module_toggle_deactivated' );
+			this.recordTracksEvent( 'calypso_jetpack_module_toggle', 'off' );
 			this.props.deactivateModule( this.props.siteId, this.props.moduleSlug );
 		}
 	};
 
-	recordTracksEvent = name => {
+	recordTracksEvent = ( name, status ) => {
 		const tracksProps = {
 			module: this.props.moduleSlug,
 			path: this.props.path,
+			toggled: status,
 		};
 
 		this.props.recordTracksEvent( name, tracksProps );
@@ -68,6 +69,7 @@ class JetpackModuleToggle extends Component {
 		}
 
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<span className="jetpack-module-toggle">
 				<CompactFormToggle
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
@@ -100,9 +102,7 @@ export default connect(
 			toggling,
 			toggleDisabled: moduleDetailsNotLoaded || toggling,
 			isJetpackSite: isJetpackSite( state, siteId ),
-			path: getCurrentRoute( state )
-				.replace( getSiteSlug( state, siteId ), ':site' )
-				.replace( siteId, ':siteid' ),
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
 	{

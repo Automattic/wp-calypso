@@ -3,15 +3,11 @@
 
 	.sidebar-banner__link {
 		background-color: var( --color-success );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		display: flex;
 
 		@include breakpoint( '<660px' ) {
-			padding: 0 24px;
-		}
-
-		@include breakpoint( '<960px' ) {
-			margin-right: 5px;
+			padding: 0 19px;
 		}
 
 		.sidebar-banner__icon-wrapper {

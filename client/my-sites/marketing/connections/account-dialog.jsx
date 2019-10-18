@@ -62,7 +62,9 @@ class AccountDialog extends Component {
 	onClose = action => {
 		const accountToConnect = this.getAccountToConnect();
 		const externalUserId =
-			this.props.service.multiple_external_user_ID_support && accountToConnect.isExternal
+			this.props.service.multiple_external_user_ID_support &&
+			accountToConnect &&
+			accountToConnect.isExternal
 				? accountToConnect.ID
 				: 0;
 

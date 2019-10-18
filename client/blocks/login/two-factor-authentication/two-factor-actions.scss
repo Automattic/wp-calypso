@@ -1,0 +1,11 @@
+.two-factor-authentication__actions.card {
+	margin-bottom: 0;
+
+	.button {
+		width: 100%;
+
+		&:not( :first-child ) {
+			margin-top: 20px;
+		}
+	}
+}

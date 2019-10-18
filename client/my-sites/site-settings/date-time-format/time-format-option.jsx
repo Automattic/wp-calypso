@@ -70,7 +70,7 @@ export const TimeFormatOption = ( {
 			</span>
 			<FormSettingExplanation>
 				<ExternalLink
-					href="https://codex.wordpress.org/Formatting_Date_and_Time"
+					href="https://support.wordpress.com/settings/time-settings/"
 					icon
 					target="_blank"
 				>

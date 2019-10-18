@@ -1,43 +1,122 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import SignupActions from 'lib/signup/actions';
+import Button from 'components/button';
 import SiteTypeForm from './form';
 import StepWrapper from 'signup/step-wrapper';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
+import { saveSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+
+const siteTypeToFlowname = {
+	import: 'import-onboarding',
+	'get-started': 'get-started',
+	'online-store': 'ecommerce-onboarding',
+};
 
 class SiteType extends Component {
 	componentDidMount() {
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
+	}
+
+	handleImportFlowClick = () => {
+		this.props.recordTracksEvent( 'calypso_signup_import_cta_click', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
 		} );
+		this.submitStep( 'import' );
+	};
+
+	// This function is to support the A/B test `signupWithBasicSite`
+	// by using a flow that does not include intermediary steps before 'domain'
+	handleBasicSiteButtonClick = () => this.submitStep( 'business', 'get-started' );
+
+	submitStep = ( siteTypeValue, flowName ) => {
+		this.props.submitSiteType( siteTypeValue );
+
+		if ( flowName ) {
+			this.props.goToNextStep( flowName );
+			return;
+		}
+
+		// Modify the flowname if the site type matches an override.
+		if ( 'import-onboarding' === this.props.flowName ) {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
+		} else {
+			flowName = siteTypeToFlowname[ siteTypeValue ] || this.props.flowName;
+		}
+
+		this.props.goToNextStep( flowName );
+	};
+
+	renderImportButton() {
+		if ( ! isEnabled( 'signup/import' ) ) {
+			return null;
+		}
+
+		return (
+			<div className="site-type__import-button">
+				<Button borderless onClick={ this.handleImportFlowClick }>
+					{ this.props.translate( 'Already have a website? Import your content here.' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	renderStartWithBasicSiteButton() {
+		if ( 'variant' !== abtest( 'signupWithBasicSite' ) ) {
+			return null;
+		}
+
+		return (
+			<div className="site-type__basic-site">
+				<Button borderless onClick={ this.handleBasicSiteButtonClick }>
+					{ this.props.translate( 'Skip setup and start with a basic website.' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	renderStepContent() {
+		const { siteType } = this.props;
+
+		return (
+			<Fragment>
+				<SiteTypeForm
+					goToNextStep={ this.props.goToNextStep }
+					submitForm={ this.submitStep }
+					siteType={ siteType }
+				/>
+				{ this.renderStartWithBasicSiteButton() }
+				{ this.renderImportButton() }
+			</Fragment>
+		);
 	}
 
 	render() {
 		const {
 			flowName,
 			positionInFlow,
-			signupProgress,
-			siteType,
 			stepName,
-			submitStep,
 			translate,
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = translate( 'What are we building today?' );
+		const headerText = translate( 'What kind of site are you building?' );
 		const subHeaderText = translate(
-			'Choose the best starting point for your site. You can add or change features later on.'
+			'This is just a starting point. You can add or change features later.'
 		);
 
 		return (
@@ -49,8 +128,7 @@ class SiteType extends Component {
 				fallbackHeaderText={ headerText }
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
-				stepContent={ <SiteTypeForm submitForm={ submitStep } siteType={ siteType } /> }
+				stepContent={ this.renderStepContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
 				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
@@ -64,19 +142,5 @@ export default connect(
 		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
-	( dispatch, { goToNextStep, flowName } ) => ( {
-		submitStep: siteTypeValue => {
-			dispatch( submitSiteType( siteTypeValue ) );
-
-			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 5, 'slug' ) ) {
-				flowName = 'ecommerce-onboarding';
-			}
-
-			if ( 'business' === siteTypeValue ) {
-				flowName = 'onboarding-for-business';
-			}
-
-			goToNextStep( flowName );
-		},
-	} )
+	{ recordTracksEvent, saveSignupStep, submitSiteType, setSiteVertical }
 )( localize( SiteType ) );

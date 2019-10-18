@@ -30,6 +30,7 @@ export default class StartPage extends AsyncBaseContainer {
 	static getStartURL( { culture = 'en', flow = '', query = '' } = {} ) {
 		let route = 'start';
 		const queryStrings = [];
+		queryStrings.push( 'ref=e2e' );
 
 		if ( flow !== '' ) {
 			route += '/' + flow;

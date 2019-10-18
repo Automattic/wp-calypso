@@ -1,0 +1,24 @@
+// If things take a bit to load...
+.layout__loader {
+	background: transparent;
+	border-bottom: 1px solid transparent;
+	height: 46px;
+	margin-left: -10%;
+	position: absolute;
+	left: 50%;
+	top: 0;
+	width: 20%;
+	z-index: z-index( 'root', '.layout__loader' );
+
+	// The transition-delay avoids showing the loader
+	// too often on faster connections.
+	display: none;
+	opacity: 0;
+	transition: opacity 0.1s linear;
+	transition-delay: 0.8s;
+
+	&.is-active {
+		display: block;
+		opacity: 1;
+	}
+}

@@ -1,24 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
  * Internal Dependencies
  */
-import Pages from 'my-sites/pages/main';
+import Pages from './main';
 
-const controller = {
-	pages: function( context, next ) {
-		context.primary = React.createElement( Pages, {
-			status: context.params.status,
-			search: context.query.s,
-		} );
-		next();
-	},
-};
-
-export default controller;
+export function pages( context, next ) {
+	context.primary = <Pages status={ context.params.status } search={ context.query.s } />;
+	next();
+}

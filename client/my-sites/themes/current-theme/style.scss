@@ -1,5 +1,5 @@
 $current-theme-height: 56px;
-$current-theme-border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.25 );
+$current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 
 .current-theme {
 	font-weight: 600;
@@ -106,7 +106,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.25 );
 
 	&:link,
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&.disabled {
@@ -118,12 +118,12 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.25 );
 	}
 
 	&:not( .disabled ):hover {
-		background: var( --color-themes-active-text );
+		background: var( --color-primary-0 );
 		cursor: pointer;
 	}
 
 	&:not( .disabled ):active {
-		background: var( --color-themes-active-text );
+		background: var( --color-primary-0 );
 	}
 
 	.accessible-focus &:focus {
@@ -142,7 +142,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-100-rgb ), 0.25 );
 	}
 
 	.current-theme__button:not( .disabled ):hover &::after {
-		@include long-content-fade( $color: var( --color-themes-active-text-rgb ), $size: 10% );
+		@include long-content-fade( $color: var( --color-primary-0-rgb ), $size: 10% );
 	}
 }
 

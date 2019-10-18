@@ -6,7 +6,6 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
 import i18n from 'i18n-calypso';
-import GridiconPencil from 'gridicons/dist/pencil';
 
 /**
  * Internal dependencies
@@ -15,6 +14,7 @@ import { deserialize } from 'lib/media-serialization';
 import config from 'config';
 import EditorMediaAdvanced from 'post-editor/editor-media-advanced';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import Gridicon from 'components/gridicon';
 
 export default function( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -70,8 +70,8 @@ export default function( editor ) {
 		onPostRender() {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
-					<button type="button" role="presentation" tabIndex="-1">
-						<GridiconPencil size={ 18 } />
+					<button type="button" tabIndex="-1">
+						<Gridicon icon="pencil" size={ 18 } />
 					</button>
 				)
 			);

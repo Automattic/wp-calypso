@@ -1,10 +1,12 @@
 // Mobile Back to Sidebar
 .mobile-back-to-sidebar {
+	display: flex;
+	width: 100%;
+	align-items: center;
 	margin: 0 0 8px;
-	padding: 15px 0 15px 36px;
-	position: relative;
-	background: var( --color-white );
-	border-bottom: 1px solid var( --color-neutral-100 );
+	padding: 14px 0;
+	background: var( --color-surface );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	cursor: pointer;
 
 	@include breakpoint( '>660px' ) {
@@ -13,16 +15,10 @@
 }
 
 .mobile-back-to-sidebar__icon {
-	position: absolute;
-		top: 16px;
-		left: 10px;
 	fill: var( --color-neutral-light );
-	height: 20px;
-	width: 20px;
-	transform: rotate( 180deg );
+	margin: 0 14px 0 8px;
 }
 
 .mobile-back-to-sidebar__content {
-	font-size: 15px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }

@@ -41,6 +41,11 @@ import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function preloadEditor() {
 	preload( 'post-editor' );
 }
@@ -137,6 +142,7 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected,
 			translate,
 			multiSelectEnabled,
+			showPublishedStatus,
 			hasExpandedContent,
 			isTypeWpBlock,
 		} = this.props;
@@ -203,7 +209,7 @@ class PostItem extends React.Component {
 							<span className="post-item__meta-time-status">
 								<a href={ enabledPostLink } className="post-item__time-status-link">
 									<PostTime globalId={ globalId } />
-									<PostStatus globalId={ globalId } />
+									<PostStatus globalId={ globalId } showAll={ showPublishedStatus } />
 								</a>
 							</span>
 							<PostActionCounts globalId={ globalId } />
@@ -241,6 +247,7 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
+	showPublishedStatus: PropTypes.bool,
 	hideActiveSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
 	isTypeWpBlock: PropTypes.bool,

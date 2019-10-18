@@ -24,6 +24,7 @@ const DOMAIN_PURCHASE_EXPIRED = Object.assign( {}, DOMAIN_PURCHASE, {
 	expiryStatus: 'expired',
 	id: 10002,
 	isCancelable: false,
+	isRefundable: false,
 } );
 
 const DOMAIN_PURCHASE_INCLUDED_IN_PLAN = Object.assign( {}, DOMAIN_PURCHASE, {

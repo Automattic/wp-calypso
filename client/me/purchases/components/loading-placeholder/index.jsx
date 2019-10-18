@@ -14,6 +14,11 @@ import React from 'react';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class LoadingPlaceholder extends React.Component {
 	static propTypes = {
 		path: PropTypes.string,

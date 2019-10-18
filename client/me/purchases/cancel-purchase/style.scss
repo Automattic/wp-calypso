@@ -1,13 +1,13 @@
 .cancel-purchase__card {
 	h2 {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 21px;
 		font-weight: 200;
 		margin-bottom: 20px;
 	}
 
 	p {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		font-size: 14px;
 	}
 
@@ -57,7 +57,7 @@
 }
 
 .cancel-purchase__section {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	margin: 0;
 }
 
@@ -111,8 +111,4 @@
 	height: 24px;
 	margin-bottom: 10px;
 	width: 50%;
-}
-
-.cancel-purchase__button-warning-dialog {
-	max-width: 472px;
 }

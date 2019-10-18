@@ -13,7 +13,7 @@ import { includes, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { getDomainPriceRule } from 'lib/cart-values/cart-items';
 import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
@@ -22,7 +22,7 @@ import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormTextInput from 'components/forms/form-text-input';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
@@ -30,6 +30,11 @@ import {
 	recordGoButtonClickInMapDomain,
 } from 'state/domains/actions';
 import Notice from 'components/notice';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {
@@ -49,19 +54,10 @@ class MapDomainStep extends React.Component {
 		initialQuery: '',
 	};
 
-	state = this.getDefaultState();
-
-	getDefaultState() {
-		return {
-			searchQuery: this.props.initialQuery,
-		};
-	}
-
-	UNSAFE_componentWillMount() {
-		if ( this.props.initialState ) {
-			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
-		}
-	}
+	state = {
+		...this.props.initialState,
+		searchQuery: this.props.initialQuery,
+	};
 
 	componentWillUnmount() {
 		this.props.onSave( this.state );
@@ -94,14 +90,14 @@ class MapDomainStep extends React.Component {
 				{ this.notice() }
 				<form className="map-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="map-domain-step__domain-heading">
-						{ translate( "Map this domain to use it as your site's address.", {
+						{ translate( 'Map this domain to use it as your site address.', {
 							context: 'Upgrades: Description in domain registration',
-							comment: "Explains how you could use a new domain name for your site's address.",
+							comment: 'Explains how you could use a new domain name for your site address.',
 						} ) }
 					</div>
 
 					<DomainProductPrice
-						rule={ cartItems.getDomainPriceRule(
+						rule={ getDomainPriceRule(
 							this.props.domainsWithPlansOnly,
 							this.props.selectedSite,
 							this.props.cart,
@@ -113,8 +109,7 @@ class MapDomainStep extends React.Component {
 					/>
 
 					<div className="map-domain-step__add-domain" role="group">
-						<FormTextInputWithAffixes
-							prefix="http://"
+						<FormTextInput
 							className="map-domain-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
@@ -139,7 +134,7 @@ class MapDomainStep extends React.Component {
 
 					<div className="map-domain-step__domain-text">
 						{ translate(
-							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about adding a domain{{/a}}.",
+							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about mapping a domain{{/a}}.",
 							{
 								components: {
 									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,

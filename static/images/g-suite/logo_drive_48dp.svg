@@ -1,55 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 18.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Content" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="48px" height="48px" viewBox="0 0 192 192" enable-background="new 0 0 192 192" xml:space="preserve">
-<g>
-	<g>
-		<g>
-			<defs>
-				<path id="SVGID_1_" d="M126.02,16H65.98L4,124l29.3,52H158.7l29.3-52L126.02,16z M63.43,124L96,67.8l32.57,56.2H63.43z"/>
-			</defs>
-			<clipPath id="SVGID_2_">
-				<use xlink:href="#SVGID_1_"  overflow="visible"/>
-			</clipPath>
-			<g clip-path="url(#SVGID_2_)">
-				<polygon fill="#4285F4" points="33.3,124 33.3,176 158.7,176 188,124 				"/>
-				<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="48.5546" y1="150.1036" x2="93.974" y2="174.7461">
-					<stop  offset="0" style="stop-color:#1A237E;stop-opacity:0.2"/>
-					<stop  offset="1" style="stop-color:#1A237E;stop-opacity:0.02"/>
-				</linearGradient>
-				<polygon fill="url(#SVGID_3_)" points="63.43,124 93.57,176 33.3,176 				"/>
-				<g>
-					<polygon fill="#FFFFFF" fill-opacity="0.2" points="62.85,125 186.29,125 186.29,125 188,124 63.43,124 63.43,124 					"/>
-					<polygon fill="#1A237E" fill-opacity="0.2" points="186.29,125 158.12,175 33.88,175 33.3,176 158.7,176 188,124 					"/>
-					<polygon fill="#1A237E" fill-opacity="0.05" points="64.01,125 63.43,124 33.3,176 34.45,176 					"/>
-				</g>
-			</g>
-			<g clip-path="url(#SVGID_2_)">
-				<polygon fill="#0F9D58" points="65.98,16 4,124 33.3,176 103.99,54.01 				"/>
-				<g>
-					<polygon fill="#263238" fill-opacity="0.1" points="65.98,16 66.53,18.95 94.84,67.8 33.31,173.98 5.15,124 4,124 33.3,176 
-						96,67.8 					"/>
-					<polygon fill="#FFFFFF" fill-opacity="0.2" points="5.15,124 66.56,17 65.98,16 65.98,16 4,124 5.15,124 					"/>
-				</g>
-			</g>
-			<g clip-path="url(#SVGID_2_)">
-				<polygon fill="#FFCD40" points="126.02,16 65.98,16 128.57,124 188,124 				"/>
-				<g>
-					<polygon fill="#FFFFFF" fill-opacity="0.2" points="126.02,16 65.98,16 67.71,17 125.44,17 186.85,124 188,124 					"/>
-					<polygon fill="#BF360C" fill-opacity="0.1" points="129.14,123 67.71,17 67.71,17 65.98,16 128.57,124 129.14,123 					"/>
-				</g>
-			</g>
-			<g clip-path="url(#SVGID_2_)">
-				<defs>
-					<polygon id="SVGID_4_" points="33.3,176 158.7,176 188,124 63.43,124 					"/>
-				</defs>
-				<clipPath id="SVGID_5_">
-					<use xlink:href="#SVGID_4_"  overflow="visible"/>
-				</clipPath>
-				<g clip-path="url(#SVGID_5_)">
-					<g>
-						
-							<image overflow="visible" opacity="0.2" width="517" height="767" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAg0AAAMDCAYAAAAhZSZQAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
+<svg enable-background="new 0 0 192 192" height="48" viewBox="0 0 192 192" width="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><clipPath id="a"><path d="m126.02 16h-60.04l-61.98 108 29.3 52h125.4l29.3-52zm-62.59 108 32.57-56.2 32.57 56.2z"/></clipPath><linearGradient id="b" gradientUnits="userSpaceOnUse" x1="48.5546" x2="93.974" y1="150.1036" y2="174.7461"><stop offset="0" stop-color="#1a237e" stop-opacity=".2"/><stop offset="1" stop-color="#1a237e" stop-opacity=".02"/></linearGradient><clipPath id="c"><path d="m33.3 176h125.4l29.3-52h-124.57z"/></clipPath><clipPath id="d"><path d="m65.98 16-61.98 108 29.3 52 62.7-108.2z"/></clipPath><radialGradient id="e" cx="66.368" cy="17.6166" gradientUnits="userSpaceOnUse" r="183.254"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><g clip-path="url(#a)"><path d="m33.3 124v52h125.4l29.3-52z" fill="#4285f4"/><path d="m63.43 124 30.14 52h-60.27z" fill="url(#b)"/><path d="m62.85 125h123.44l1.71-1h-124.57z" fill="#fff" fill-opacity=".2"/><g fill="#1a237e"><path d="m186.29 125-28.17 50h-124.24l-.58 1h125.4l29.3-52z" fill-opacity=".2"/><path d="m64.01 125-.58-1-30.13 52h1.15z" fill-opacity=".05"/></g></g><g clip-path="url(#a)"><path d="m65.98 16-61.98 108 29.3 52 70.69-121.99z" fill="#0f9d58"/><path d="m65.98 16 .55 2.95 28.31 48.85-61.53 106.18-28.16-49.98h-1.15l29.3 52 62.7-108.2z" fill="#263238" fill-opacity=".1"/><path d="m5.15 124 61.41-107-.58-1-61.98 108z" fill="#fff" fill-opacity=".2"/></g><g clip-path="url(#a)"><path d="m126.02 16h-60.04l62.59 108h59.43z" fill="#ffcd40"/><path d="m126.02 16h-60.04l1.73 1h57.73l61.41 107h1.15z" fill="#fff" fill-opacity=".2"/><path d="m129.14 123-61.43-106-1.73-1 62.59 108z" fill="#bf360c" fill-opacity=".1"/></g><g clip-path="url(#a)"><g clip-path="url(#c)"><image height="767" opacity=".2" overflow="visible" transform="matrix(.24 0 0 .24 -4.0003 8)" width="517" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAg0AAAMDCAYAAAAhZSZQAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
 GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAABublJREFUeNrsvdtuJFmSnmu23D1I
 ZtZpeg492moBAwwG0M3eGGBeoK/03HMl3QrYegABmtnQnhb6UKquSibdl8lOa/lyD48Tj8FMs+4o
 BiOCQSYzw/2L3/7fDCAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
@@ -2034,23 +1983,7 @@ wO/Tz+F3kP9KH+NwOBxOGhyOj/Q79df6feSf6GMdDofDSYPD8SP/bn3I5/pYh7yTBYfD4X/Y/Slw
 +O+YkwWHw+Fw0uDw3zUnCw6Hw+GkweG/d04UHA6Hw/94O/x30ImCw+Fw+B9sh+Mn/510kuBwOBxO
 Ghz+++rEwOFwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8Ph
 cDgcDofD4XA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+Fw
-OBwOh8PhcDgcDofD4XA4HA6Hw+FwOByOzw//vwADALXp0XaMfVQcAAAAAElFTkSuQmCC" transform="matrix(0.24 0 0 0.24 -4.0003 8)">
-						</image>
-						<polygon fill="#0F9D58" points="65.98,16 4,124 33.3,176 103.99,54.01 						"/>
-					</g>
-				</g>
-			</g>
-			<g clip-path="url(#SVGID_2_)">
-				<defs>
-					<polygon id="SVGID_6_" points="65.98,16 4,124 33.3,176 96,67.8 					"/>
-				</defs>
-				<clipPath id="SVGID_7_">
-					<use xlink:href="#SVGID_6_"  overflow="visible"/>
-				</clipPath>
-				<g clip-path="url(#SVGID_7_)">
-					<g>
-						
-							<image overflow="visible" opacity="0.2" width="609" height="550" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAmkAAAImCAYAAAAIfx1rAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
+OBwOh8PhcDgcDofD4XA4HA6Hw+FwOByOzw//vwADALXp0XaMfVQcAAAAAElFTkSuQmCC"/><path d="m65.98 16-61.98 108 29.3 52 70.69-121.99z" fill="#0f9d58"/></g></g><g clip-path="url(#a)"><g clip-path="url(#d)"><image height="550" opacity=".2" overflow="visible" transform="matrix(.24 0 0 .24 53.9772 8)" width="609" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAmkAAAImCAYAAAAIfx1rAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
 GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAABOaJJREFUeNrsvcmOJElyriuiZh5D
 ZlaxbqEaDV70ojbEWXB5cPb9EvWUfIl+gbPtDTeNCwIEyUaz2DVkhruZylUZVE3VBh9iyPDIEiGj
 wsPdwyMzO8z8t19Evh/Ay8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vL
@@ -3460,19 +3393,4 @@ Wvvpju+wAuisrKwOgK6t+nnz4FPMkOFz/TPaAmNlZfWtrk/wsNceQWw/2X8gK6u7A68HA7HHBFj4
 3P+EBtKsrKxeA2B7qvXO1lSr11z4Qn4GvpQ/qC0oVlZWrw2s2TpoZfU6AR++tD+CLU5WVlYG2Gyd
 tLL6FkDYNwHMbPGxsrIywGZlZWUA0BY2KysrK1vbrKysDJjZQmZlZWVl652VlQEyW7SsrKysbC20
 srIyIGYLk5WVlZWtnVZWBrqsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKys
-rKysrKysrKxeev1/AQYACf78AVmE1ZUAAAAASUVORK5CYII=" transform="matrix(0.24 0 0 0.24 53.9772 8)">
-						</image>
-						<polygon fill="#FFCD40" points="126.02,16 65.98,16 128.57,124 188,124 						"/>
-					</g>
-				</g>
-			</g>
-		</g>
-		<radialGradient id="SVGID_8_" cx="66.368" cy="17.6166" r="183.254" gradientUnits="userSpaceOnUse">
-			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0.1"/>
-			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
-		</radialGradient>
-		<path fill="url(#SVGID_8_)" d="M126.02,16H65.98L4,124l29.3,52H158.7l29.3-52L126.02,16z M63.43,124L96,67.8l32.57,56.2H63.43z"/>
-	</g>
-	<rect fill="none" width="192" height="192"/>
-</g>
-</svg>
+rKysrKysrKxeev1/AQYACf78AVmE1ZUAAAAASUVORK5CYII="/><path d="m126.02 16h-60.04l62.59 108h59.43z" fill="#ffcd40"/></g></g><path d="m126.02 16h-60.04l-61.98 108 29.3 52h125.4l29.3-52zm-62.59 108 32.57-56.2 32.57 56.2z" fill="url(#e)"/><path d="m0 0h192v192h-192z" fill="none"/></svg>

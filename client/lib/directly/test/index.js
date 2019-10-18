@@ -23,7 +23,7 @@ describe( 'index', () => {
 	const simulateFailedScriptLoad = error => loadScript.loadScript.callsArgWith( 1, error );
 
 	beforeEach( () => {
-		loadScript = require( 'lib/load-script' );
+		loadScript = require( '@automattic/load-script' );
 		sinon.stub( loadScript, 'loadScript' );
 		directly = require( '..' );
 

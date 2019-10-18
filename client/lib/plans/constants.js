@@ -100,6 +100,7 @@ export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
 export const FEATURE_ADVANCED_SEO_TOOLS = 'advanced-seo-tools';
 export const FEATURE_FREE_THEMES_SIGNUP = 'free-themes-signup';
 export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP = 'unlimited-backup';
+export const FEATURE_MEMBERSHIPS = 'memberships';
 
 // jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';

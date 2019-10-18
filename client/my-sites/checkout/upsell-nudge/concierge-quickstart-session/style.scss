@@ -1,0 +1,120 @@
+main.concierge-quickstart-session.main {
+	margin:auto;
+}
+
+.concierge-quickstart-session {
+	display: flex;
+	flex-direction: column;
+
+	b {
+		font-weight: 700;
+	}
+
+	.card {
+		width: 100%;
+	}
+
+	&__card-header,
+	&__card-footer {
+		width: 100%;
+	}
+
+	&__card-body {
+		overflow: auto;
+		flex: 1;
+	}
+
+	&__column-pane {
+		display: flex;
+		flex-flow: row;
+	}
+
+	&__column-content {
+		padding-right: 10px;
+		@include breakpoint( '<480px' ) {
+			padding-right: 0;
+		}
+	}
+
+	&__column-doodle {
+		width: 120px;
+		flex-shrink: 0;
+		@include breakpoint( '<480px' ) {
+			display: none;
+		}
+	}
+
+	&__doodle {
+		margin-top: 85px;
+	}
+
+	&__header {
+		text-align: center;
+		font-style: italic;
+	}
+
+	&__sub-header {
+		font-size: 23px;
+		text-align: center;
+		font-weight: bold;
+		line-height: 1.4;
+		margin-top: 0.5em;
+		margin-bottom: 1.4em;
+
+		@include breakpoint( '<660px' ) {
+			font-size: 21px;
+		}
+	}
+
+	&__checklist {
+		margin: 0 0 0.75em;
+
+		&-item {
+			display: flex;
+			width: 100%;
+			align-items: flex-start;
+			margin-bottom: 4px;
+
+			@include breakpoint( '<660px' ) {
+				align-items: flex-start;
+			}
+		}
+
+		&-item-icon {
+			width: 18px;
+			fill: var( --studio-jetpack-green-30 );
+			margin-right: 5px;
+		}
+
+		&-item-text {
+			flex: 1;
+		}
+	}
+
+	&__footer &__decline-offer-button {
+		color: var( --color-primary );
+
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+		}
+
+		@include breakpoint( '>480px' ) {
+			float: left;
+		}
+	}
+
+	&__footer &__accept-offer-button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		@include breakpoint( '>480px' ) {
+			float: right;
+		}
+	}
+
+	.concierge-quickstart-session__footer .concierge-quickstart-session__get-started-button {
+		width: 100%;
+	}
+}

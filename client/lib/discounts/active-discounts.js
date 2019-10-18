@@ -56,12 +56,10 @@ export default [
 			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice for one year.',
 	},
 	{
-		name: 'sale_feb_2019',
-		startsAt: new Date( 2019, 2, 4, 0, 0, 0 ),
-		endsAt: new Date( 2019, 2, 8, 0, 0, 0 ),
-		nudgeText: 'Sale! 20% off all plans',
-		ctaText: 'Upgrade',
-		plansPageNoticeText: 'Enter coupon code “MARCH20” at checkout to claim your 20% discount',
+		name: 'sale_wpsave20',
+		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
+		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
+		plansPageNoticeText: 'Enter coupon code “WPSAVE20” at checkout to claim your 20% discount',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_WPCOM },
 			{ type: TYPE_BLOGGER, group: GROUP_WPCOM },
@@ -70,16 +68,27 @@ export default [
 		],
 	},
 	{
-		name: 'sale_feb_2019_jp',
-		startsAt: new Date( 2019, 1, 25, 0, 0, 0 ),
-		endsAt: new Date( 2019, 2, 8, 0, 0, 0 ),
-		nudgeText: 'Sale! 20% off all plans',
-		ctaText: 'Upgrade',
+		name: 'sale_wpsave20_jp',
+		startsAt: new Date( 2019, 1, 1, 0, 0, 0 ),
+		endsAt: new Date( 2099, 1, 1, 0, 0, 0 ), //evergreen
 		plansPageNoticeText: 'Enter coupon code “JPSALE20” at checkout to claim your 20% discount',
 		targetPlans: [
 			{ type: TYPE_FREE, group: GROUP_JETPACK },
 			{ type: TYPE_PERSONAL, group: GROUP_JETPACK },
 			{ type: TYPE_PREMIUM, group: GROUP_JETPACK },
+		],
+	},
+	{
+		name: 'sale_julybusiness40',
+		startsAt: new Date( '2019-07-22 00:00:00' ),
+		endsAt: new Date( '2019-07-25 23:59:59' ),
+		plansPageNoticeText:
+			'Enter coupon code "JULYBUSINESS40" at checkout to save 40% on a Business plan site upgrade',
+		targetPlans: [
+			{ type: TYPE_FREE, group: GROUP_WPCOM },
+			{ type: TYPE_BLOGGER, group: GROUP_WPCOM },
+			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
+			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
 		],
 	},
 	{

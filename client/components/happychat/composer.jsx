@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,11 @@ import { get, isEmpty, throttle } from 'lodash';
  */
 import Button from 'components/button';
 import scrollbleed from './scrollbleed';
+
+/**
+ * Style dependencies
+ */
+import './composer.scss';
 
 const sendThrottledTyping = throttle(
 	( onSendTyping, msg ) => {

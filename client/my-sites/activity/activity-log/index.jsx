@@ -5,7 +5,6 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual } from 'lodash';
@@ -62,6 +61,7 @@ import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
@@ -362,6 +362,7 @@ class ActivityLog extends Component {
 			siteIsOnFreePlan,
 			slug,
 			translate,
+			isAtomic,
 			isJetpack,
 			isIntroDismissed,
 		} = this.props;
@@ -408,9 +409,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 
-				{ config.isEnabled( 'rewind-alerts' ) && siteId && isJetpack && (
-					<RewindAlerts siteId={ siteId } />
-				) }
+				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
@@ -589,6 +588,7 @@ export default connect(
 				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			filter,
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			logs: ( siteId && logs.data ) || emptyList,
 			logLoadingState: logs && logs.state,

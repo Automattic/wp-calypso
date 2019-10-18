@@ -10,6 +10,7 @@ import webdriver from 'selenium-webdriver';
  */
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
+import NoticesComponent from '../components/notices-component';
 
 const by = webdriver.By;
 
@@ -33,11 +34,8 @@ export default class CancelDomainPage extends AsyncBaseContainer {
 			'Cancel Anyway'
 		);
 		await driverHelper.clickWhenClickable( this.driver, this.confirmButtonSelector );
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			by.css( '.notice.is-success.is-dismissable' ),
-			this.explicitWaitMS * 3
-		);
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		return await noticesComponent.isSuccessNoticeDisplayed(); // TODO: Check when signup test is enabled again
 	}
 
 	async waitToDisappear() {

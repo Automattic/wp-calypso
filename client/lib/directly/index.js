@@ -15,8 +15,13 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { loadScript } from 'lib/load-script';
+import { loadScript } from '@automattic/load-script';
 import wpcom from 'lib/wp';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';
 const DIRECTLY_ASSETS_BASE_URL = 'https://www.directly.com';

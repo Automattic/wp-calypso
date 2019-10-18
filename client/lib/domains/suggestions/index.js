@@ -6,7 +6,7 @@ import { abtest, isUsingGivenLocales } from 'lib/abtest';
 
 export const getSuggestionsVendor = () => {
 	if ( isUsingGivenLocales( [ 'en' ] ) ) {
-		if ( abtest( 'domainSuggestionsEnCheck' ) === 'test' ) {
+		if ( abtest( 'domainSuggestionsEn' ) === 'test' ) {
 			return 'variation2_front';
 		}
 

@@ -89,7 +89,9 @@ class PublishingTools extends Component {
 
 		return (
 			<div className="publishing-tools__module-settings site-settings__child-settings">
-				<FormLabel className={ labelClassName }>{ translate( 'Email Address' ) }</FormLabel>
+				<FormLabel className={ labelClassName }>
+					{ translate( 'Send your new posts to this email address:' ) }
+				</FormLabel>
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
 					disabled={

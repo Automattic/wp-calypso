@@ -215,7 +215,7 @@
 
 	.card {
 		&.is-placeholder div {
-			@include placeholder;
+			@include placeholder();
 		}
 	}
 
@@ -410,7 +410,7 @@
 
 	&.is-expanded .foldable-card__content {
 		padding: 8px 24px 24px;
-		border-top: 1px var( --color-neutral-100 ) solid;
+		border-top: 1px var( --color-neutral-10 ) solid;
 	}
 
 	&.is-expanded.is-top-level .foldable-card__content {
@@ -459,7 +459,7 @@
 }
 
 .site-settings__placeholder-item {
-	@include placeholder;
+	@include placeholder();
 
 	& + & {
 		margin-top: 24px;
@@ -500,6 +500,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .site-settings__speed-up-site-settings {
 	p.site-settings__feature-description {
+		margin-top: 0;
 		margin-bottom: 1.5em;
 	}
 }

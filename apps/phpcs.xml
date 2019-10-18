@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ruleset name="full-site-editing">
+	<description>Full Site Editing</description>
+
+	<rule ref="WordPress"/>
+	<rule ref="WordPress-Core"/>
+	<rule ref="WordPress-Docs"/>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+
+	<arg name="extensions" value="php"/>
+
+	<!-- Strip the file paths down to the relevant bit. -->
+	<arg name="basepath" value="./"/>
+
+	<!-- Show sniff codes in all reports. -->
+	<arg value="ps"/>
+
+	<!-- Scan it all! -->
+	<file>.</file>
+</ruleset>

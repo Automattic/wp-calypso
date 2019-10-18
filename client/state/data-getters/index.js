@@ -91,6 +91,55 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 	);
 };
 
+const requestExternalContributorsId = siteId => `site-external-contributors-${ siteId }`;
+
+export const requestExternalContributors = siteId =>
+	requestHttpData(
+		requestExternalContributorsId( siteId ),
+		http( {
+			method: 'GET',
+			path: `/sites/${ siteId }/external-contributors`,
+			apiNamespace: 'wpcom/v2',
+		} ),
+		{
+			fromApi: () => data => [ [ requestExternalContributorsId( siteId ), data ] ],
+		}
+	);
+
+export const requestExternalContributorsAddition = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-addition-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/add`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
+		}
+	);
+};
+
+export const requestExternalContributorsRemoval = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-removal-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/remove`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
+		}
+	);
+};
+
 export const requestGeoLocation = () =>
 	requestHttpData(
 		'geo',
@@ -161,28 +210,61 @@ export const requestSiteAlerts = siteId => {
 	);
 };
 
-/**
- * Request a site's frame nonce from the v1.3 sites endpoint.
- *
- * @param {number} siteId  Site Id.
- * @return {*} Stored data container for request.
- */
-export const requestFrameNonce = siteId => {
-	const id = `frame-nonce-${ siteId }`;
-
-	return requestHttpData(
-		id,
+export const requestAtomicSFTPDetails = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
 		http(
 			{
-				apiVersion: '1.3',
 				method: 'GET',
-				path: `/sites/${ siteId }`,
+				path: `/sites/${ siteId }/hosting/ssh`,
+				apiNamespace: 'wpcom/v2',
 			},
 			{}
 		),
 		{
-			freshness: 5 * 60 * 1000, // TODO this should match iframe nonce expiry
-			fromApi: () => ( { options: { frame_nonce } } ) => [ [ id, frame_nonce ] ],
+			freshness: 5 * 60 * 1000,
+			fromApi: () => ( { username } ) => {
+				return [ `atomic-hosting-data-${ siteId }`, { username } ];
+			},
 		}
 	);
-};
+
+export const resetAtomicSFTPUserPassword = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh/reset-password`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+			},
+			freshness: 0,
+		}
+	);
+
+export const createAtomicSFTPUser = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+			},
+			freshness: 0,
+		}
+	);

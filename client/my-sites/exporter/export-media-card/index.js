@@ -31,7 +31,7 @@ class ExportMediaCard extends Component {
 		const exportMediaButton = (
 			<Button
 				href={ mediaExportUrl }
-				className="export-media-card__download is-primary"
+				className="export-media-card__download"
 				disabled={ ! mediaExportUrl }
 				onClick={ recordMediaExportClick }
 			>

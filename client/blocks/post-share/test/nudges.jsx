@@ -57,12 +57,22 @@ import {
 
 const props = {
 	translate: x => x,
+	canUserUpgrade: true,
 };
 
 describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 	test( 'should not blow up', () => {
 		const comp = shallow( <UpgradeToPremiumNudgePure { ...props } /> );
 		expect( comp.find( 'Banner' ).length ).toBe( 1 );
+	} );
+
+	test( 'hide when user cannot upgrade', () => {
+		const props = {
+			translate: x => x,
+			canUserUpgrade: false,
+		};
+		const comp = shallow( <UpgradeToPremiumNudgePure { ...props } /> );
+		expect( comp.find( 'Banner' ).length ).toBe( 0 );
 	} );
 } );
 

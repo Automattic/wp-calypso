@@ -25,7 +25,6 @@ class CredsCompleteStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -36,7 +35,11 @@ class CredsCompleteStep extends Component {
 		return (
 			<Card className="creds-complete__card">
 				<h3 className="creds-complete__title">{ translate( 'Your site is set up and ready!' ) }</h3>
-				<img className="creds-complete__image" src="/calypso/images/upgrades/thank-you.svg" />
+				<img
+					className="creds-complete__image"
+					alt={ translate( 'Thank You' ) }
+					src="/calypso/images/upgrades/thank-you.svg"
+				/>
 				<p className="creds-complete__description">
 					{ get( signupDependencies, 'rewindconfig', false ) &&
 						translate(
@@ -61,7 +64,6 @@ class CredsCompleteStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderStepContent() }
 				goToNextStep={ this.skipStep }
 				hideFormattedHeader={ true }

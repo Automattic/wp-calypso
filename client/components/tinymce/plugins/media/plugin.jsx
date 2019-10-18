@@ -10,7 +10,6 @@ import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
 import { parse, stringify } from 'lib/shortcode';
 import closest from 'component-closest';
-import GridiconImageMultiple from 'gridicons/dist/image-multiple';
 
 /**
  * Internal dependencies
@@ -33,6 +32,7 @@ import { unblockSave } from 'state/ui/editor/save-blockers/actions';
 import { getEditorRawContent, isEditorSaveBlocked } from 'state/ui/editor/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import Gridicon from 'components/gridicon';
 
 /**
  * Module variables
@@ -52,9 +52,8 @@ function mediaButton( editor ) {
 
 	const { dispatch, getState } = store;
 
-	let nodes = {},
-		resizeEditor,
-		updateMedia; // eslint-disable-line
+	let nodes = {};
+	let updateMedia; // eslint-disable-line
 
 	const getSelectedSiteFromState = () => getSelectedSite( getState() );
 
@@ -453,9 +452,10 @@ function mediaButton( editor ) {
 		onPostRender: function() {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
+					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
 					<button type="button" role="presentation" tabIndex="-1">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						<GridiconImageMultiple size={ 20 } />
+						<Gridicon icon="image-multiple" size={ 20 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</button>
 				)
@@ -753,7 +753,7 @@ function mediaButton( editor ) {
 		);
 	} );
 
-	resizeEditor = debounce(
+	const resizeEditor = debounce(
 		function() {
 			// eslint-disable-line
 			editor.execCommand( 'wpcomAutoResize', null, null, { skip_focus: true } );

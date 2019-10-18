@@ -1,0 +1,57 @@
+.two-factor-authentication__illustration {
+	position: relative;
+	margin-bottom: 1em;
+	width: 100%;
+	height: 180px;
+	pointer-events: none;
+}
+
+.two-factor-authentication__illustration-device {
+	position: absolute;
+	top: 0;
+	left: calc( 50% - 176px ); // (100% - 352px) / 2
+	width: 352px;
+	height: 180px;
+}
+
+.two-factor-authentication__illustration-screen {
+	position: absolute;
+	top: 66px;
+	left: calc( 50% - 126px ); // (100% - 352px) / 2 + 50px
+	color: var( --color-text-inverted );
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1em;
+}
+
+.two-factor-authentication__illustration-notification-container {
+	position: absolute;
+	top: 60px;
+	bottom: 0;
+	left: calc( 50% - 132px ); // (100% - 352px) / 2 + 44px
+	padding-top: 4px;
+	width: 264px;
+	overflow: hidden;
+}
+
+.two-factor-authentication__illustration-notification {
+	position: absolute;
+	top: -57px;
+	width: 264px;
+	height: 57px;
+	will-change: transform;
+	animation: two-factor-authentication__illustration-slide 0.65s ease-out;
+	animation-timing-function: cubic-bezier( 0.35, 0.65, 0.15, 1.15 );
+	animation-fill-mode: forwards;
+	animation-delay: 1s;
+}
+
+@keyframes two-factor-authentication__illustration-slide {
+	0 {
+		transform: translate3d( 0, 0, 0 );
+	}
+
+	100% {
+		transform: translate3d( 0, 61px, 0 );
+	}
+}

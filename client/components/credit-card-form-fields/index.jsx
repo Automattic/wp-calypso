@@ -1,14 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty, noop } from 'lodash';
+import notices from 'notices';
+import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
  * Internal dependencies
@@ -20,6 +20,224 @@ import { Input } from 'my-sites/domains/components/form';
 import InfoPopover from 'components/info-popover';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import { abtest } from 'lib/abtest';
+import { useStripe } from 'lib/stripe';
+
+const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
+const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
+const CardCvcElementWithValidation = withStripeElementValidation( CardCvcElement );
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+function CvvPopover( { translate, card } ) {
+	const brand = getCreditCardType( card.number );
+
+	let popoverText = translate(
+		'This is the 3-digit number printed on the signature panel on the back of your card.'
+	);
+	let popoverImage = '/calypso/images/upgrades/cc-cvv-back.svg';
+
+	if ( brand === 'amex' ) {
+		popoverText = translate(
+			'This is the 4-digit number printed above the account number ' + 'on the front of your card.'
+		);
+		popoverImage = '/calypso/images/upgrades/cc-cvv-front.svg';
+	}
+
+	return (
+		<InfoPopover position="top" className="credit-card-form-fields__cvv-info">
+			<img
+				className="credit-card-form-fields__cvv-illustration"
+				src={ popoverImage }
+				width="42"
+				height="30"
+				alt={ translate( 'Credit card Security Code illustration' ) }
+			/>
+			{ popoverText }
+		</InfoPopover>
+	);
+}
+
+CvvPopover.propTypes = {
+	translate: PropTypes.func.isRequired,
+	card: PropTypes.object.isRequired,
+};
+
+function withStripeElementValidation( ElementComponent ) {
+	return ( { getErrorMessage, fieldName, ...props } ) => {
+		const [ errorMessage, setErrorMessage ] = useState();
+		const onChange = ( { error } ) => setErrorMessage( error ? error.message : null );
+		return (
+			<React.Fragment>
+				<ElementComponent onChange={ onChange } { ...props } />
+				<StripeElementErrors
+					errorMessage={ errorMessage }
+					getErrorMessage={ getErrorMessage }
+					fieldName={ fieldName }
+				/>
+			</React.Fragment>
+		);
+	};
+}
+
+function StripeElementErrors( { errorMessage, getErrorMessage, fieldName } ) {
+	// If `errorMessage` is set, it will be displayed; otherwise the
+	// `getErrorMessage` function will be called for the `fieldName` to determine
+	// the error message.
+	if ( ! errorMessage ) {
+		const errorMessages = getErrorMessage( fieldName ) || [];
+		errorMessage = errorMessages.length ? errorMessages[ 0 ] : null;
+	}
+	if ( ! errorMessage ) {
+		return null;
+	}
+	const id = `validation-field-${ fieldName }`;
+	return <FormInputValidation id={ id } isError text={ errorMessage } />;
+}
+
+StripeElementErrors.propTypes = {
+	errorMessage: PropTypes.string,
+	getErrorMessage: PropTypes.func.isRequired,
+	fieldName: PropTypes.string.isRequired,
+};
+
+function CreditCardNumberField( { translate, createField, getErrorMessage, card } ) {
+	const { stripe, isStripeLoading, stripeLoadingError } = useStripe();
+	const cardNumberLabel = translate( 'Card Number', {
+		comment: 'Card number label on credit card form',
+	} );
+
+	if ( stripe && ! shouldRenderAdditionalCountryFields( card.country ) ) {
+		const elementClasses = {
+			base: 'credit-card-form-fields__element',
+			invalid: 'is-error',
+			focus: 'has-focus',
+		};
+		return (
+			<div className="credit-card-form-fields__field number">
+				<label className="credit-card-form-fields__label form-label">
+					{ cardNumberLabel }
+					<CardNumberElementWithValidation
+						fieldName="card_number"
+						getErrorMessage={ getErrorMessage }
+						classes={ elementClasses }
+					/>
+				</label>
+			</div>
+		);
+	}
+
+	const disabled =
+		isStripeLoading || stripeLoadingError
+			? ! shouldRenderAdditionalCountryFields( card.country )
+			: false;
+
+	return createField( 'number', CreditCardNumberInput, {
+		inputMode: 'numeric',
+		label: cardNumberLabel,
+		placeholder: '•••• •••• •••• ••••',
+		disabled,
+	} );
+}
+
+CreditCardNumberField.propTypes = {
+	translate: PropTypes.func.isRequired,
+	createField: PropTypes.func.isRequired,
+	getErrorMessage: PropTypes.func.isRequired,
+	card: PropTypes.object.isRequired,
+};
+
+function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage, card } ) {
+	const { stripe, isStripeLoading, stripeLoadingError } = useStripe();
+	if ( stripeLoadingError && ! shouldRenderAdditionalCountryFields( card.country ) ) {
+		notices.error( stripeLoadingError.message || 'Error loading Stripe' );
+	}
+
+	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
+		components: {
+			span: <span className="credit-card-form-fields__explainer" />,
+		},
+	} );
+
+	const expiryLabel = translate( 'Expiry Date', {
+		comment: 'Expiry label on credit card form',
+	} );
+
+	if ( stripe && ! shouldRenderAdditionalCountryFields( card.country ) ) {
+		const elementClasses = {
+			base: 'credit-card-form-fields__element',
+			invalid: 'is-error',
+			focus: 'has-focus',
+		};
+
+		return (
+			<React.Fragment>
+				<div className="credit-card-form-fields__field expiration-date">
+					<label className="credit-card-form-fields__label form-label">
+						{ expiryLabel }
+						<CardExpiryElementWithValidation
+							fieldName="card_expiry"
+							getErrorMessage={ getErrorMessage }
+							classes={ elementClasses }
+						/>
+					</label>
+				</div>
+				<div className="credit-card-form-fields__field cvv">
+					<label className="credit-card-form-fields__label form-label">
+						{ cvcLabel }
+						<CardCvcElementWithValidation
+							fieldName="card_cvc"
+							getErrorMessage={ getErrorMessage }
+							classes={ elementClasses }
+						/>
+					</label>
+				</div>
+			</React.Fragment>
+		);
+	}
+
+	const disabled =
+		isStripeLoading || stripeLoadingError
+			? ! shouldRenderAdditionalCountryFields( card.country )
+			: false;
+
+	return (
+		<React.Fragment>
+			{ createField( 'expiration-date', Input, {
+				inputMode: 'numeric',
+				label: expiryLabel,
+				disabled,
+				placeholder: translate( 'MM/YY', {
+					comment: 'Expiry placeholder for Expiry date on credit card form',
+				} ),
+			} ) }
+
+			{ createField( 'cvv', Input, {
+				inputMode: 'numeric',
+				disabled,
+				placeholder: ' ',
+				label: translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}} {{infoPopover/}}', {
+					components: {
+						infoPopover: <CvvPopover translate={ translate } card={ card } />,
+						span: <span className="credit-card-form-fields__explainer" />,
+					},
+				} ),
+			} ) }
+		</React.Fragment>
+	);
+}
+
+CreditCardExpiryAndCvvFields.propTypes = {
+	translate: PropTypes.func.isRequired,
+	createField: PropTypes.func.isRequired,
+	getErrorMessage: PropTypes.func.isRequired,
+	card: PropTypes.object.isRequired,
+};
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
@@ -36,9 +254,14 @@ export class CreditCardFormFields extends React.Component {
 		eventFormName: 'Credit card input',
 		onFieldChange: noop,
 		getErrorMessage: noop,
-		autoFocus: true,
+		autoFocus: false,
 		isNewTransaction: false,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = { userSelectedPhoneCountryCode: '' };
+	}
 
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
@@ -92,35 +315,9 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
-	getCvvPopover = () => {
-		const { translate, card } = this.props;
-		const brand = getCreditCardType( card.number );
-
-		let popoverText = translate(
-			'This is the 3-digit number printed on the signature panel on the back of your card.'
-		);
-		let popoverImage = '/calypso/images/upgrades/cc-cvv-back.svg';
-
-		if ( brand === 'amex' ) {
-			popoverText = translate(
-				'This is the 4-digit number printed above the account number ' +
-					'on the front of your card.'
-			);
-			popoverImage = '/calypso/images/upgrades/cc-cvv-front.svg';
-		}
-
-		return (
-			<InfoPopover position="top" className="credit-card-form-fields__cvv-info">
-				<img
-					className="credit-card-form-fields__cvv-illustration"
-					src={ popoverImage }
-					width="42"
-					height="30"
-					alt={ translate( 'Credit card CVV illustration' ) }
-				/>
-				{ popoverText }
-			</InfoPopover>
-		);
+	handlePhoneFieldChange = ( { value, countryCode } ) => {
+		this.updateFieldValues( 'phone-number', value );
+		this.setState( { userSelectedPhoneCountryCode: countryCode } );
 	};
 
 	shouldRenderCountrySpecificFields() {
@@ -140,45 +337,40 @@ export class CreditCardFormFields extends React.Component {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': countryDetailsRequired,
 		} );
+		const shouldShowPhoneField =
+			! countryDetailsRequired && abtest( 'checkoutCollectPhoneNumber' ) === 'show';
 
 		return (
 			<div className="credit-card-form-fields">
 				{ this.createField( 'name', Input, {
 					autoFocus,
-					label: translate( 'Cardholder Name', {
+					label: translate( 'Cardholder Name {{span}}(as written on card){{/span}}', {
 						comment: 'Cardholder name label on credit card form',
+						components: {
+							span: <span className="credit-card-form-fields__explainer" />,
+						},
 					} ),
+					placeholder: ' ',
 				} ) }
-
-				{ this.createField( 'number', CreditCardNumberInput, {
-					inputMode: 'numeric',
-					label: translate( 'Card Number', {
-						comment: 'Card number label on credit card form',
-					} ),
-				} ) }
+				<div className="credit-card-form-fields__field number">
+					<CreditCardNumberField
+						translate={ this.props.translate }
+						createField={ this.createField }
+						getErrorMessage={ this.props.getErrorMessage }
+						card={ this.props.card }
+					/>
+				</div>
 
 				<div className={ creditCardFormFieldsExtrasClassNames }>
-					{ this.createField( 'expiration-date', Input, {
-						inputMode: 'numeric',
-						label: translate( 'Expiry: MM/YY', {
-							comment: 'Expiry label on credit card form',
-						} ),
-					} ) }
-
-					{ this.createField( 'cvv', Input, {
-						inputMode: 'numeric',
-						placeholder: translate( 'CVV', {
-							comment: '3 digit security number on credit card form',
-						} ),
-						label: translate( 'CVV {{infoPopover/}}', {
-							components: {
-								infoPopover: this.getCvvPopover(),
-							},
-						} ),
-					} ) }
-
+					<CreditCardExpiryAndCvvFields
+						translate={ this.props.translate }
+						createField={ this.createField }
+						getErrorMessage={ this.props.getErrorMessage }
+						card={ this.props.card }
+					/>
 					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
+						placeholder: ' ',
 						countriesList,
 						onChange: noop,
 						onCountrySelected: this.updateFieldValues,
@@ -197,12 +389,45 @@ export class CreditCardFormFields extends React.Component {
 							label: translate( 'Postal Code', {
 								comment: 'Postal code on credit card form',
 							} ),
+							placeholder: ' ',
 						} )
+					) }
+
+					{ shouldShowPhoneField && (
+						<PhoneNumberField
+							countriesList={ countriesList }
+							onChange={ this.handlePhoneFieldChange }
+							createField={ this.createField }
+							countryCode={
+								this.state.userSelectedPhoneCountryCode || this.getFieldValue( 'country' )
+							}
+							translate={ translate }
+						/>
 					) }
 				</div>
 			</div>
 		);
 	}
+}
+
+function PhoneNumberField( { countriesList, translate, createField, onChange, countryCode } ) {
+	const label = (
+		<React.Fragment>
+			{ translate( 'Phone Number' ) }
+			<span className="credit-card-form-fields__explainer">{ translate( 'Optional' ) }</span>
+		</React.Fragment>
+	);
+
+	return (
+		<React.Fragment>
+			{ createField( 'phone-number', FormPhoneMediaInput, {
+				onChange,
+				countriesList,
+				countryCode: countryCode || 'US',
+				label: label,
+			} ) }
+		</React.Fragment>
+	);
 }
 
 export default localize( CreditCardFormFields );

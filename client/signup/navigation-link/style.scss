@@ -1,10 +1,16 @@
 .button.is-borderless.navigation-link {
 	padding: 0;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	font-size: 14px;
 	font-weight: 500;
 
 	svg {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 	}
+}
+
+.navigation-link--has-skip-heading {
+	transform: translateY( -3px );
+	//override unessecary super specificity added by another class
+	padding-top: 0 !important;
 }

@@ -38,7 +38,7 @@ export const fetchPostRevisionsDiffs = action => {
 	const { siteId, postId, postType, comparisons } = action;
 	return http(
 		{
-			apiVersion: '1.1',
+			apiVersion: '1.2',
 			path: `/sites/${ siteId }/${ postType }/${ postId }/diffs`,
 			method: 'GET',
 			query: { comparisons },

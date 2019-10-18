@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -23,7 +24,7 @@ import {
 	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
+import isRequestingWhois from 'state/selectors/is-requesting-whois';
 
 /**
  * Style dependencies
@@ -35,7 +36,6 @@ class ContactsPrivacy extends React.PureComponent {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		whois: PropTypes.object.isRequired,
 	};
 
 	render() {
@@ -43,14 +43,11 @@ class ContactsPrivacy extends React.PureComponent {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { translate, whois } = this.props;
+		const { translate } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const { privateDomain, privacyAvailable } = domain;
 		const canManageConsent =
 			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
-		const contactInformation = privateDomain
-			? findPrivacyServiceWhois( whois.data )
-			: findRegistrantWhois( whois.data );
 
 		return (
 			<Main className="contacts-privacy">
@@ -60,7 +57,6 @@ class ContactsPrivacy extends React.PureComponent {
 
 				<VerticalNav>
 					<ContactsPrivacyCard
-						contactInformation={ contactInformation }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
 						privateDomain={ privateDomain }
@@ -92,7 +88,7 @@ class ContactsPrivacy extends React.PureComponent {
 	}
 
 	isDataLoading() {
-		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
+		return ! getSelectedDomain( this.props ) || this.props.isRequestingWhois;
 	}
 
 	goToEdit = () => {
@@ -100,4 +96,8 @@ class ContactsPrivacy extends React.PureComponent {
 	};
 }
 
-export default localize( ContactsPrivacy );
+export default connect( ( state, ownProps ) => {
+	return {
+		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
+	};
+} )( localize( ContactsPrivacy ) );

@@ -182,7 +182,7 @@ const ShippingZoneLocationDialogSettings = ( {
 	return (
 		<div className="shipping-zone__location-dialog-settings">
 			<FormFieldSet>
-				<FormLegend>{ translate( 'Shipping Zone settings' ) }</FormLegend>
+				<FormLegend>{ translate( 'Shipping zone settings' ) }</FormLegend>
 				{ renderRadios() }
 			</FormFieldSet>
 			{ renderDetailedSettings() }

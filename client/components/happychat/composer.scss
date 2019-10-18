@@ -1,0 +1,51 @@
+.happychat__composer {
+	display: flex;
+	flex: 0 0 auto;
+	background: var( --color-surface );
+	border-top: 1px solid var( --color-neutral-5 );
+	position: relative;
+
+	&.is-disabled {
+		background: var( --color-warning-5 );
+	}
+}
+
+.happychat__message {
+	flex: 1 1 auto;
+	border-radius: 4px;
+	border: 0;
+
+	> textarea {
+		padding: 12px;
+		border: none;
+		background: transparent;
+		font-size: 14px;
+		min-height: initial;
+		align-self: stretch;
+		resize: none;
+		height: 100%;
+
+		&:focus, &:active {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+}
+
+.happychat__submit {
+	align-self: flex-start;
+	flex: 0 0 auto;
+	border-radius: 8px;
+	padding: 4px 8px;
+	margin: 8px 12px 0 0;
+	cursor: pointer;
+
+	> svg {
+		fill: currentColor;
+		display: block;
+	}
+
+	&:disabled {
+		display: none;
+	}
+}

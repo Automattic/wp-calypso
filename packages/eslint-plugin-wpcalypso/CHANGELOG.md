@@ -1,6 +1,11 @@
-#### next (…)
+#### Unreleased
+- Breaking: Removed rule [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
 
-- Enhancement: Update `i18n-ellipsis` rule to catch usage in @wordpress/i18n functions
+#### v4.1.0 (2019-05-07)
+
+- Enhancement: `jsx-classname-namespace` doesn't limit classnames without suffix to root elements
+- Enhancement: `jsx-classname-namespace` accepts both file and directory name when validating class name
+- Enhancement: `i18n-ellipsis` rule updated to catch usage in @wordpress/i18n functions
 
 #### v4.0.2 (2018-08-10)
 
@@ -70,7 +75,7 @@
 
 #### v1.4.1 (2016-08-12)
 
-- Add: String template support for all rules 
+- Add: String template support for all rules
 
 #### v1.4.0 (2016-07-29)
 

@@ -12,7 +12,6 @@ import { find, identity } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import SignupActions from 'lib/signup/actions';
 import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
@@ -22,6 +21,7 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { isEnabled } from 'config';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { submitSignupStep } from 'state/signup/progress/actions';
 
 class ThemeSelectionStep extends Component {
 	static propTypes = {
@@ -47,7 +47,7 @@ class ThemeSelectionStep extends Component {
 			headstart: true,
 		} );
 
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{
 				stepName: this.props.stepName,
 				repoSlug,
@@ -87,7 +87,7 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	render = () => {
+	render() {
 		const storeSignup = this.isStoreSignup();
 		const defaultDependencies = this.props.useHeadstart
 			? { themeSlugWithRepo: 'pub/twentysixteen' }
@@ -116,12 +116,15 @@ class ThemeSelectionStep extends Component {
 				{ ...this.props }
 			/>
 		);
-	};
+	}
 }
 
-export default connect( ( state, props ) => ( {
-	chosenSurveyVertical: getSurveyVertical( state ),
-	currentUser: getCurrentUser( state ),
-	designType: props.designType || getDesignType( state ),
-	dependencyStore: getSignupDependencyStore( state ),
-} ) )( localize( ThemeSelectionStep ) );
+export default connect(
+	( state, props ) => ( {
+		chosenSurveyVertical: getSurveyVertical( state ),
+		currentUser: getCurrentUser( state ),
+		designType: props.designType || getDesignType( state ),
+		dependencyStore: getSignupDependencyStore( state ),
+	} ),
+	{ submitSignupStep }
+)( localize( ThemeSelectionStep ) );

@@ -23,7 +23,6 @@ jest.mock( 'components/main', () => 'MainComponent' );
 jest.mock( 'components/popover', () => 'Popover' );
 jest.mock( 'layout/guided-tours/positioning', () => 'Positioning' );
 jest.mock( 'layout/guided-tours/tours/main-tour', () => 'MainTour' );
-jest.mock( 'layout/guided-tours/tours/jetpack-basic-tour', () => 'JetpackBasicTour' );
 jest.mock( 'layout/masterbar/logged-in', () => 'LoggedIn' );
 jest.mock( 'layout/community-translator/launcher', () => 'Launcher' );
 jest.mock( 'components/banner', () => 'Banner' );

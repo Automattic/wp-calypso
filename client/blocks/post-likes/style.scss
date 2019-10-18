@@ -1,8 +1,4 @@
-/** @format */
-
-$post-like-padding: 3px;
-$post-like-width: 24px + $post-like-padding * 2;
-$post-likes-per-popover-row: 12;
+@import './variables.scss';
 
 .post-likes {
 	font-size: 13px;
@@ -67,20 +63,6 @@ $post-likes-per-popover-row: 12;
 			border-color: transparent;
 			@include placeholder();
 			margin: 5px;
-		}
-	}
-}
-
-.post-likes-popover {
-	.post-likes {
-		padding: $post-like-padding;
-		max-width: $post-like-width * $post-likes-per-popover-row;
-		max-height: 400px;
-		text-align: left;
-
-		&.has-display-names {
-			max-width: 250px;
-			max-height: 340px;
 		}
 	}
 }

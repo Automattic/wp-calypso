@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, isBoolean } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -324,7 +324,7 @@ class ShippingLabels extends Component {
 		return (
 			<FormFieldSet>
 				<FormLabel className="label-settings__cards-label">
-					{ translate( 'Email Receipts' ) }
+					{ translate( 'Email receipts' ) }
 				</FormLabel>
 				<FormLabel>
 					<FormCheckbox

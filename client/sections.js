@@ -251,6 +251,7 @@ const sections = [
 		module: 'my-sites/checkout',
 		secondary: true,
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'plans',
@@ -292,15 +293,6 @@ const sections = [
 		group: 'editor',
 		secondary: true,
 	},
-
-	{
-		name: 'account-recovery',
-		paths: [ '/account-recovery' ],
-		module: 'account-recovery',
-		secondary: false,
-		enableLoggedOut: true,
-	},
-
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
@@ -381,14 +373,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'login',
-		paths: [ '/log-in' ],
-		module: 'login',
-		enableLoggedOut: true,
-		secondary: false,
-		isomorphic: true,
-	},
-	{
 		name: 'auth',
 		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
@@ -437,6 +421,20 @@ const sections = [
 		secondary: false,
 	},
 	{
+		name: 'import',
+		paths: [ '/import' ],
+		module: 'my-sites/importer',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'export',
+		paths: [ '/export' ],
+		module: 'my-sites/exporter',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'devdocs',
 		paths: [ '/devdocs' ],
 		module: 'devdocs',
@@ -448,6 +446,28 @@ const sections = [
 		paths: [ '/devdocs/start' ],
 		module: 'devdocs',
 		secondary: false,
+		enableLoggedOut: true,
+	},
+	{
+		name: 'home',
+		paths: [ '/home' ],
+		module: 'my-sites/customer-home',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'hosting',
+		paths: [ '/hosting' ],
+		module: 'my-sites/hosting',
+		secondary: true,
+		group: 'sites',
+	},
+	{
+		name: 'gutenboarding',
+		paths: [ '/gutenboarding' ],
+		module: 'gutenboarding',
+		secondary: false,
+		group: 'sites',
 		enableLoggedOut: true,
 	},
 ];

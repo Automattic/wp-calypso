@@ -115,7 +115,7 @@ export default function() {
 			'authors',
 			'videoplays',
 			'videodetails',
-			'podcastdownloads',
+			'filedownloads',
 			'searchterms',
 			'annualstats',
 		];

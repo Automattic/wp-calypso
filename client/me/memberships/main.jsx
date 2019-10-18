@@ -18,7 +18,8 @@ import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
 import SectionHeader from 'components/section-header';
-import CompactCard from 'components/card/compact';
+import CompactCard from 'components/card';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Style dependencies
@@ -26,7 +27,7 @@ import CompactCard from 'components/card/compact';
 import './main.scss';
 
 const MembershipItem = ( { translate, subscription, moment } ) => (
-	<CompactCard key={ subscription.ID } href={ '/me/purchases/memberships/' + subscription.ID }>
+	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
 		<div className="memberships__list-subscription">
 			<div className="memberships__list-date">
 				<div>{ moment( subscription.end_date ).format( 'll' ) }</div>
@@ -52,28 +53,47 @@ const MembershipItem = ( { translate, subscription, moment } ) => (
 	</CompactCard>
 );
 
-const MembershipsHistory = ( { translate, subscriptions, moment } ) => (
-	<Main className="memberships">
-		<DocumentHead title={ translate( 'My Memberships' ) } />
-		<PageViewTracker path="/me/purchases/memberships" title="Me > My Memberships" />
-		<MeSidebarNavigation />
-		<QueryMembershipsSubscriptions />
-		<PurchasesHeader section={ 'memberships' } />
-		<SectionHeader label={ translate( 'Active Membership plans' ) } />
-		{ subscriptions &&
-			subscriptions.map(
-				subscription => (
-					<MembershipItem
-						key={ subscription.ID }
-						translate={ translate }
-						subscription={ subscription }
-						moment={ moment }
-					/>
-				),
-				this
-			) }
-	</Main>
-);
+const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
+	let content;
+	if ( subscriptions && subscriptions.length ) {
+		content = (
+			<>
+				<SectionHeader label={ translate( 'Active Recurring Payments plans' ) } />
+				{ subscriptions.map(
+					subscription => (
+						<MembershipItem
+							key={ subscription.ID }
+							translate={ translate }
+							subscription={ subscription }
+							moment={ moment }
+						/>
+					),
+					this
+				) }
+			</>
+		);
+	} else {
+		content = (
+			<CompactCard className="memberships__no-content">
+				<EmptyContent
+					title={ translate( 'No Recurring Payments found.' ) }
+					illustration={ '/calypso/images/illustrations/illustration-nomemberships.svg' }
+				/>
+			</CompactCard>
+		);
+	}
+
+	return (
+		<Main className="memberships">
+			<DocumentHead title={ translate( 'Other Sites' ) } />
+			<PageViewTracker path="/me/purchases/other" title="Me > Other Sites" />
+			<MeSidebarNavigation />
+			<QueryMembershipsSubscriptions />
+			<PurchasesHeader section={ 'memberships' } />
+			{ content }
+		</Main>
+	);
+};
 
 export default connect( state => ( {
 	subscriptions: get( state, 'memberships.subscriptions.items', [] ),

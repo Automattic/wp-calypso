@@ -35,7 +35,7 @@
 		.manage-purchase__settings-link,
 		.manage-purchase__detail-label,
 		.manage-purchase__detail {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 
 			display: block;
 		}
@@ -128,7 +128,7 @@
 		padding: 4px;
 		border-radius: 50%;
 		background: var( --color-accent );
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 	}
 
 	.gridicons-themes {
@@ -151,6 +151,11 @@
 
 .manage-purchase__price .plan-price {
 	clear: none;
+}
+
+.manage-purchase__contact-partner {
+	font-weight: bold;
+	display: block;
 }
 
 .manage-purchase__description {
@@ -177,7 +182,7 @@
 	}
 
 	li {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		font-size: 13px;
 
 		@include breakpoint( '<660px' ) {
@@ -199,6 +204,10 @@
 			&:last-child {
 				padding-right: 0;
 			}
+			&:first-child:nth-last-child( 4 ),
+			&:first-child:nth-last-child( 4 ) ~ li {
+				max-width: 25%;
+			}
 		}
 
 		+ li {
@@ -208,7 +217,7 @@
 		}
 
 		> a {
-			color: var( --color-neutral-600 );
+			color: var( --color-neutral-60 );
 			display: block;
 			text-decoration: none;
 		}
@@ -236,10 +245,10 @@
 
 .manage-purchase__detail {
 	@include breakpoint( '<660px' ) {
-		display: block;
-		float: right;
 		text-align: right;
 	}
+
+	display: block;
 
 	.payment-logo {
 		margin-right: 5px;
@@ -282,9 +291,13 @@
 	border-top: solid 1px var( --color-neutral-0 );
 	margin: 0 auto;
 	padding: 16px;
-	background: var( --color-white );
+	background: var( --color-surface );
 
 	@include breakpoint( '>480px' ) {
 		padding: 16px 24px;
 	}
+}
+
+.manage-purchase__detail-date-span {
+	white-space: nowrap;
 }

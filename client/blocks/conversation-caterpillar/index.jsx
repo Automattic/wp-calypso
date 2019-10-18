@@ -18,6 +18,11 @@ import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import { isAncestor } from 'blocks/comments/utils';
 import GravatarCaterpillar from 'components/gravatar-caterpillar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;
 

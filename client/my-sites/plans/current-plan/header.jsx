@@ -14,14 +14,16 @@ import { invoke } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
-import { isFreeJetpackPlan } from 'lib/products-values';
+import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 import { managePurchase } from 'me/purchases/paths';
+import { shouldAddPaymentSourceInsteadOfRenewingNow } from 'lib/purchases';
 
 export class CurrentPlanHeader extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string,
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
+		isPartnerPlan: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
@@ -31,7 +33,7 @@ export class CurrentPlanHeader extends Component {
 	renderPurchaseInfo() {
 		const { currentPlan, siteSlug, isExpiring, translate } = this.props;
 
-		if ( ! currentPlan || isFreeJetpackPlan( currentPlan ) ) {
+		if ( ! currentPlan || isFreeJetpackPlan( currentPlan ) || isFreePlan( currentPlan ) ) {
 			return null;
 		}
 
@@ -49,12 +51,18 @@ export class CurrentPlanHeader extends Component {
 									args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
 							  } )
 							: translate( 'Expires on %s.', {
-									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
+									args: invoke( currentPlan, 'expiryMoment.format', 'LL' ),
 							  } ) }
 					</span>
 					{ currentPlan.userIsOwner && Boolean( currentPlan.id ) && siteSlug && (
 						<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
-							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
+							{ hasAutoRenew && translate( 'Manage Payment' ) }
+							{ ! hasAutoRenew &&
+								! shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.expiryMoment ) &&
+								translate( 'Renew Now' ) }
+							{ ! hasAutoRenew &&
+								shouldAddPaymentSourceInsteadOfRenewingNow( currentPlan.expiryMoment ) &&
+								translate( 'Manage Payment' ) }
 						</Button>
 					) }
 				</div>
@@ -63,13 +71,22 @@ export class CurrentPlanHeader extends Component {
 	}
 
 	render() {
-		const { currentPlan, isPlaceholder, siteSlug, tagLine, title, translate } = this.props;
+		const {
+			currentPlan,
+			isPartnerPlan,
+			isPlaceholder,
+			siteSlug,
+			tagLine,
+			title,
+			translate,
+		} = this.props;
 
 		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
 		const headerClasses = classNames( 'current-plan__header', {
 			'is-jetpack-free': currentPlan && isFreeJetpackPlan( currentPlan ),
 		} );
+		const isFree = ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan );
 
 		return (
 			<div className={ headerClasses }>
@@ -96,8 +113,8 @@ export class CurrentPlanHeader extends Component {
 							</h2>
 						</div>
 					</div>
-					{ this.renderPurchaseInfo() }
-					{ currentPlan && isFreeJetpackPlan( currentPlan ) && siteSlug && (
+					{ ! isPartnerPlan && this.renderPurchaseInfo() }
+					{ currentPlan && isFree && siteSlug && (
 						<div className="current-plan__compare-plans">
 							<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
 						</div>

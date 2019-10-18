@@ -19,6 +19,11 @@ import Notice from 'components/notice';
 import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
 import { setLocale } from 'state/ui/language/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class LocaleSuggestions extends Component {
 	static propTypes = {
 		locale: PropTypes.string,

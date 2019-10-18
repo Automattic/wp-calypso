@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import moment from 'moment';
 import { format as urlFormat, parse as urlParse } from 'url';
 import { difference, get, includes, pick, values } from 'lodash';
 
@@ -28,11 +27,6 @@ import {
 	GROUP_JETPACK,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
-
-/**
- * Module vars
- */
-const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 export function getPlans() {
 	return PLANS_LIST;
@@ -112,43 +106,6 @@ export function planHasFeature( plan, feature ) {
 	return includes( allFeatures, feature );
 }
 
-export function getCurrentTrialPeriodInDays( plan ) {
-	const { expiryMoment, subscribedDayMoment, userFacingExpiryMoment } = plan;
-
-	if ( isInGracePeriod( plan ) ) {
-		return expiryMoment.diff( userFacingExpiryMoment, 'days' );
-	}
-
-	return userFacingExpiryMoment.diff( subscribedDayMoment, 'days' );
-}
-
-export function getDayOfTrial( plan ) {
-	const { subscribedDayMoment } = plan;
-
-	// we return the difference plus one day so that the first day is day 1 instead of day 0
-	return (
-		moment()
-			.startOf( 'day' )
-			.diff( subscribedDayMoment, 'days' ) + 1
-	);
-}
-
-export function getDaysUntilUserFacingExpiry( plan ) {
-	const { userFacingExpiryMoment } = plan;
-
-	return userFacingExpiryMoment.diff( moment().startOf( 'day' ), 'days' );
-}
-
-export function getDaysUntilExpiry( plan ) {
-	const { expiryMoment } = plan;
-
-	return expiryMoment.diff( moment().startOf( 'day' ), 'days' );
-}
-
-export function isInGracePeriod( plan ) {
-	return getDaysUntilUserFacingExpiry( plan ) <= 0;
-}
-
 export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
 }
@@ -160,6 +117,7 @@ export function filterPlansBySiteAndProps(
 	intervalType,
 	showJetpackFreePlan
 ) {
+	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
 	return plans.filter( function( plan ) {
@@ -416,10 +374,6 @@ export function getBillingMonthsForTerm( term ) {
 	throw new Error( `Unknown term: ${ term }` );
 }
 
-export const isPlanFeaturesEnabled = () => {
-	return isEnabled( 'manage/plan-features' );
-};
-
 export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
 	const parsedUrl = urlParse( url );
 	if ( 'monthly' === intervalType || forceIntervalType ) {
@@ -469,3 +423,83 @@ export function getPlanTermLabel( planName, translate ) {
 			return translate( 'Two year subscription' );
 	}
 }
+
+export const getPopularPlanType = siteType => {
+	switch ( siteType ) {
+		case 'blog':
+			return TYPE_PERSONAL;
+		case 'professional':
+			return TYPE_PREMIUM;
+		default:
+			return TYPE_BUSINESS;
+	}
+};
+
+export const getPopularPlanSpec = ( { customerType, isJetpack, siteType, abtest } ) => {
+	// Jetpack doesn't currently highlight "Popular" plans
+	if ( isJetpack ) {
+		return false;
+	}
+
+	const spec = {
+		type: TYPE_BUSINESS,
+		group: GROUP_WPCOM,
+	};
+
+	// Not sure why, but things break if the abtest lib is imported in this file
+	if ( ! siteType || abtest( 'popularPlanBy' ) === 'customerType' ) {
+		if ( customerType === 'personal' ) {
+			spec.type = TYPE_PREMIUM;
+		}
+		return spec;
+	}
+
+	spec.type = getPopularPlanType( siteType );
+
+	return spec;
+};
+
+export const chooseDefaultCustomerType = ( {
+	currentCustomerType,
+	selectedPlan,
+	currentPlan,
+	siteType,
+	abtest,
+} ) => {
+	if ( currentCustomerType ) {
+		return currentCustomerType;
+	}
+
+	if ( abtest( 'popularPlanBy' ) === 'siteType' ) {
+		// Choose the tab that will make the "POPULAR" label visible when the
+		// page is first loaded.
+		switch ( siteType ) {
+			case 'blog':
+			case 'professional':
+				return 'personal';
+			default:
+				return 'business';
+		}
+	}
+
+	const group = GROUP_WPCOM;
+	const businessPlanSlugs = [
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+	]
+		.map( planKey => getPlan( planKey ) )
+		.map( plan => plan.getStoreSlug() );
+
+	if ( selectedPlan ) {
+		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
+	} else if ( currentPlan ) {
+		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
+		return isPlanInBusinessGroup ? 'business' : 'personal';
+	}
+
+	return 'personal';
+};

@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { REFUNDS } from 'lib/url/support';
-import Gridicon from 'gridicons';
-import { cartItems } from 'lib/cart-values';
+import Gridicon from 'components/gridicon';
+import { hasDomainBeingUsedForPlan, hasDomainRegistration } from 'lib/cart-values/cart-items';
 
 class DomainRegistrationRefundPolicy extends React.Component {
 	static displayName = 'RegistrationRefundPolicy';
@@ -24,7 +24,7 @@ class DomainRegistrationRefundPolicy extends React.Component {
 
 	renderPolicy = () => {
 		let message = this.props.translate(
-			'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration.',
+			'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration.',
 			{
 				components: {
 					refundsSupportPage: (
@@ -39,9 +39,9 @@ class DomainRegistrationRefundPolicy extends React.Component {
 			}
 		);
 
-		if ( cartItems.hasDomainBeingUsedForPlan( this.props.cart ) ) {
+		if ( hasDomainBeingUsedForPlan( this.props.cart ) ) {
 			message = this.props.translate(
-				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{
 					components: {
 						refundsSupportPage: (
@@ -61,7 +61,7 @@ class DomainRegistrationRefundPolicy extends React.Component {
 	};
 
 	render() {
-		if ( ! cartItems.hasDomainRegistration( this.props.cart ) ) {
+		if ( ! hasDomainRegistration( this.props.cart ) ) {
 			return null;
 		}
 

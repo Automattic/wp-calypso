@@ -12,7 +12,7 @@ import { isMonthly, isYearly, isBiennially } from 'lib/products-values';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { hasRenewalItem } from 'lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -23,7 +23,7 @@ class SubscriptionText extends React.Component {
 	render() {
 		const { cart, translate } = this.props;
 
-		if ( cartItems.hasRenewalItem( cart ) ) {
+		if ( hasRenewalItem( cart ) ) {
 			const product = cart.products[ 0 ];
 			let informative_text = '';
 

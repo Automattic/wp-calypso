@@ -5,7 +5,7 @@
 	flex: 2 0 0%;
 	margin: 80px 0 0;
 	background-color: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 
 	@include breakpoint( '>660px' ) {
 		display: block;
@@ -40,7 +40,7 @@
 	}
 
 	.segmented-control__item .segmented-control__link {
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 	}
 
 	.segmented-control__item:first-of-type .segmented-control__link {
@@ -49,7 +49,7 @@
 
 	.segmented-control__item:last-of-type .segmented-control__link {
 		border-bottom-right-radius: 0;
-		border-left-color: var( --color-neutral-100 );
+		border-left-color: var( --color-neutral-10 );
 	}
 
 	.segmented-control__item.is-selected .segmented-control__link {
@@ -84,10 +84,10 @@
 	height: 28px;
 	/*!rtl:ignore*/
 	transform: translate( 25%, -25% );
-	border: 1px solid var( --color-neutral-200 );
+	border: 1px solid var( --color-neutral-20 );
 	border-radius: 50%;
 	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	cursor: pointer;
 }
 
@@ -114,7 +114,7 @@
 }
 
 .editor-media-modal-gallery .sortable-list__navigation-button {
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 
 	&:disabled {
 		opacity: 0.9;
@@ -190,18 +190,18 @@ input.editor-media-modal-gallery__caption[type='text'] {
 		height: 130px;
 		background: linear-gradient(
 			to right,
-			var( --color-neutral-50 ),
-			var( --color-neutral-50 ) 40%,
+			var( --color-neutral-5 ),
+			var( --color-neutral-5 ) 40%,
 			transparent 40%,
 			transparent 42%,
-			var( --color-neutral-100 ) 42%
+			var( --color-neutral-10 ) 42%
 		);
 	}
 
 	&::after {
 		top: calc( 146px + 2% );
 		height: 240px;
-		background: var( --color-neutral-200 );
+		background: var( --color-neutral-20 );
 	}
 
 	&.is-loading::before,
@@ -291,7 +291,7 @@ input[type].editor-media-modal-gallery__input-width-auto {
 
 .editor-media-modal-gallery__preview-individual .wp-caption-dd {
 	background: var( --color-neutral-0 );
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;

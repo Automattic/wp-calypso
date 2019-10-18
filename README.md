@@ -4,7 +4,7 @@
 
 Calypso is the new WordPress.com front-end – a beautiful redesign of the WordPress dashboard using a single-page web application, powered by the WordPress.com REST API. Calypso is built for reading, writing, and managing all of your WordPress sites in one place.
 
-![beautiful screenshot](https://cldup.com/Q74QJCh0Yl.png)
+![beautiful screenshot](https://cldup.com/zBBkP721le.png)
 
 It’s built with JavaScript – a very light [node](https://nodejs.org/) plus [express](https://expressjs.com/) server, [React.js](https://reactjs.org/), [Redux](https://redux.js.org/), [wpcom.js](https://wpcomjs.com/), and many other wonderful libraries on the front-end.
 

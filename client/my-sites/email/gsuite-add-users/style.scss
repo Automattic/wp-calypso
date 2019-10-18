@@ -1,0 +1,18 @@
+.gsuite-add-users__buttons {
+	display: flex;
+	flex-direction: column;
+
+	button {
+		margin: 5px 0 0;
+		width: 100%;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+
+		button {
+			margin: 0 0 0 5px;
+			width: auto;
+		}
+	}
+}

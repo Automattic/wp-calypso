@@ -17,6 +17,11 @@ import ImporterLogo from 'my-sites/importer/importer-logo';
 import StartButton from 'my-sites/importer/importer-header/start-button';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const startStates = [ appStates.DISABLED, appStates.INACTIVE ];

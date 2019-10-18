@@ -1,11 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { noop } from 'lodash';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+export { default as LegendItemPlaceholder } from './placeholder';
 
 const SVG_SIZE = 30;
 

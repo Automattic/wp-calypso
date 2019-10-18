@@ -46,9 +46,10 @@ const Masterbar = ( {
 						moduleSlug="masterbar"
 						label={ translate( 'Enable the WordPress.com toolbar' ) }
 						description={ translate(
-							'The WordPress.com toolbar replaces the default admin bar and offers quick links to ' +
-								'the Reader, all your sites, your WordPress.com profile, and notifications. ' +
-								'Centralize your WordPress experience with a single global toolbar.'
+							'The WordPress.com toolbar replaces the default WordPress admin toolbar. ' +
+								'It offers one-click access to notifications, your WordPress.com profile and ' +
+								'your other Jetpack and WordPress.com websites. You can also catch up on the sites ' +
+								'you follow in the Reader.'
 						) }
 						disabled={ isRequestingSettings || isSavingSettings || masterbarModuleUnavailable }
 					/>

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import getPostSharePublishedActions from 'state/selectors/get-post-share-publish
 
 import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
 import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
-import SocialLogo from 'social-logos';
+import SocialLogo from 'components/social-logo';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { SCHEDULED, PUBLISHED } from './constants';

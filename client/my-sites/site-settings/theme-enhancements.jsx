@@ -116,13 +116,18 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
 				<SupportInfo
 					text={ translate(
 						'Loads the next posts automatically when the reader approaches the bottom of the page.'
 					) }
 					link="https://jetpack.com/support/infinite-scroll/"
 				/>
+				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+				<p>
+					{ translate(
+						'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
+					) }
+				</p>
 				{ this.renderRadio(
 					'infinite_scroll',
 					'default',
@@ -178,7 +183,13 @@ class ThemeEnhancements extends Component {
 					) }
 					link="https://jetpack.com/support/mobile-theme/"
 				/>
-
+				<FormLegend>{ translate( 'Mobile Theme' ) }</FormLegend>
+				<p>
+					{ translate(
+						'Give your site a fast-loading, streamlined look for mobile devices. Visitors will ' +
+							'still see your regular theme on other screen sizes.'
+					) }
+				</p>
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
@@ -190,12 +201,12 @@ class ThemeEnhancements extends Component {
 					{ this.renderToggle(
 						'wp_mobile_excerpt',
 						! minilevenModuleActive,
-						translate( 'Show excerpts on front page and on archive pages instead of full posts' )
+						translate( 'Use excerpts instead of full posts on front page and archive pages' )
 					) }
 					{ this.renderToggle(
 						'wp_mobile_featured_images',
 						! minilevenModuleActive,
-						translate( 'Hide all featured images' )
+						translate( 'Show featured images' )
 					) }
 					{ this.renderToggle(
 						'wp_mobile_app_promos',
@@ -227,9 +238,9 @@ class ThemeEnhancements extends Component {
 						<Fragment>
 							{ this.renderJetpackInfiniteScrollSettings() }
 							<hr />
-							{ this.renderCustomCSSSettings() }
-							<hr />
 							{ this.renderMinilevenSettings() }
+							<hr />
+							{ this.renderCustomCSSSettings() }
 						</Fragment>
 					) : (
 						this.renderSimpleSiteInfiniteScrollSettings()

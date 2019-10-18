@@ -24,11 +24,6 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isMobile } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 export class EditorNotice extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
@@ -241,7 +236,7 @@ export class EditorNotice extends Component {
 		const text = this.getErrorMessage() || this.getText( message );
 
 		return (
-			<GlobalNoticesContainer className="editor-notice is-global">
+			<GlobalNoticesContainer>
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ text && <Notice { ...{ status, text, onDismissClick } } showDismiss /> }
 			</GlobalNoticesContainer>

@@ -15,6 +15,11 @@ import Button from 'components/forms/form-button';
 import { startImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './start-button.scss';
+
 class StartButton extends React.PureComponent {
 	static displayName = 'StartButton';
 
@@ -50,7 +55,7 @@ class StartButton extends React.PureComponent {
 				isPrimary={ false }
 				onClick={ this.handleClick }
 			>
-				{ translate( 'Start Import', { context: 'verb' } ) }
+				{ translate( 'Start import', { context: 'verb' } ) }
 			</Button>
 		);
 	}

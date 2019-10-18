@@ -12,7 +12,6 @@ import React from 'react';
 import ReaderAvatar from 'blocks/reader-avatar';
 
 const AuthorCompactProfilePlaceholder = () => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="author-compact-profile is-placeholder">
 			<div className="author-compact-profile__avatar-link">
@@ -26,7 +25,6 @@ const AuthorCompactProfilePlaceholder = () => {
 			</div>
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default AuthorCompactProfilePlaceholder;

@@ -36,9 +36,7 @@ export async function setOverriddenABTests( driver, name, variation ) {
 		if ( test === name ) {
 			return `"${ test }_${ abTestList[ test ].datestamp }":"${ variation }"`;
 		}
-		return `"${ test }_${ abTestList[ test ].datestamp }":"${
-			abTestList[ test ].defaultVariation
-		}"`;
+		return `"${ test }_${ abTestList[ test ].datestamp }":"${ abTestList[ test ].defaultVariation }"`;
 	} );
 	return await writeABTests( driver, expectedABTestValue );
 }

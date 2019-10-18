@@ -20,11 +20,16 @@ import QueryKeyringServices from 'components/data/query-keyring-services';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
+/**
+ * Types
+ */
+import * as T from 'types';
+
 interface Props {
 	connectedGoogleMyBusinessLocation?: null | any[];
-	recordTracksEvent: () => void;
-	selectedSiteId: number | null;
-	selectedSiteSlug: string | null;
+	recordTracksEvent: typeof recordTracksEventAction;
+	selectedSiteId: T.SiteId | null;
+	selectedSiteSlug: T.SiteSlug | null;
 }
 
 const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
@@ -46,10 +51,13 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 	};
 
 	const handleUpgradeToBusinessPlanClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_google_my_business_upgrade_to_business_button_click', {
-			plan_slug: PLAN_BUSINESS,
-			feature: FEATURE_GOOGLE_MY_BUSINESS,
-		} );
+		recordTracksEvent(
+			'calypso_marketing_tools_google_my_business_upgrade_to_business_button_click',
+			{
+				plan_slug: PLAN_BUSINESS,
+				feature: FEATURE_GOOGLE_MY_BUSINESS,
+			}
+		);
 	};
 
 	const translate = useTranslate();
@@ -64,7 +72,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 				description={ translate(
 					'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
 				) }
-				imagePath="/calypso/images/illustrations/business.svg"
+				imagePath="/calypso/images/marketing/google-my-business-logo.svg"
 				title={ translate( 'Let your customers find you on Google' ) }
 			>
 				{ ! connectedGoogleMyBusinessLocation ? (
@@ -76,7 +84,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 						planSlug={ PLAN_BUSINESS }
 					/>
 				) : (
-					<Button onClick={ handleGoToGoogleMyBusinessClick }>
+					<Button compact onClick={ handleGoToGoogleMyBusinessClick }>
 						{ translate( 'Go To Google My Business' ) }
 					</Button>
 				) }

@@ -3,10 +3,11 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -15,29 +16,17 @@ import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
-import SignupActions from 'lib/signup/actions';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { WPCC } from 'lib/url/support';
 import config from 'config';
-
-function getSocialServiceFromClientId( clientId ) {
-	if ( ! clientId ) {
-		return null;
-	}
-
-	if ( clientId === config( 'google_oauth_client_id' ) ) {
-		return 'google';
-	}
-
-	if ( clientId === config( 'facebook_app_id' ) ) {
-		return 'facebook';
-	}
-
-	return null;
-}
+import AsyncLoad from 'components/async-load';
+import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
+import { getSocialServiceFromClientId } from 'lib/login';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -85,18 +74,29 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-		} );
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	setSubHeaderText( props ) {
-		const { flowName, oauth2Client, translate } = props;
+		const { flowName, oauth2Client, positionInFlow, translate, wccomFrom } = props;
 
 		let subHeaderText = props.subHeaderText;
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
-			if ( isWooOAuth2Client( oauth2Client ) ) {
+			if (
+				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+				isWooOAuth2Client( oauth2Client ) &&
+				wccomFrom
+			) {
+				subHeaderText =
+					'cart' === wccomFrom
+						? translate(
+								"You'll need an account to complete your purchase and manage your subscription"
+						  )
+						: translate(
+								"You'll need an account to connect your store and manage your extensions"
+						  );
+			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
 					components: {
 						a: (
@@ -141,18 +141,19 @@ export class UserStep extends Component {
 		} else if ( 1 === getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
-		} else if ( 'onboarding-dev' === flowName ) {
-			// Displays no sub header for onboarding-dev flow
-			subHeaderText = '';
+		}
+
+		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
+			subHeaderText = translate( 'First, create your WordPress.com account.' );
 		}
 
 		this.setState( { subHeaderText } );
 	}
 
 	save = form => {
-		SignupActions.saveSignupStep( {
+		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
-			form: form,
+			form,
 		} );
 	};
 
@@ -164,7 +165,7 @@ export class UserStep extends Component {
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
 		}
 
-		SignupActions.submitSignupStep(
+		this.props.submitSignupStep(
 			{
 				flowName,
 				stepName,
@@ -202,12 +203,14 @@ export class UserStep extends Component {
 	 * @param {String} access_token An OAuth2 acccess token
 	 * @param {String} id_token     (Optional) a JWT id_token which contains the signed user info
 	 *                              So our server doesn't have to request the user profile on its end.
+	 * @param {Object} userData     (Optional) extra user information that can be used to create a new account
 	 */
-	handleSocialResponse = ( service, access_token, id_token = null ) => {
+	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
 		this.submit( {
 			service,
 			access_token,
 			id_token,
+			userData,
 			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
 		} );
 	};
@@ -225,10 +228,35 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, oauth2Client, translate, headerText } = this.props;
+		const { flowName, oauth2Client, translate, headerText, wccomFrom } = this.props;
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			return translate( 'Sign up for Crowdsignal' );
+		}
+
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+			return (
+				<Fragment>
+					{ 'cart' === wccomFrom ? (
+						<WooCommerceConnectCartHeader />
+					) : (
+						<div className={ classNames( 'signup-form__woocommerce-wrapper' ) }>
+							<div className={ classNames( 'signup-form__woocommerce-logo' ) }>
+								<svg width={ 200 } viewBox={ '0 0 1270 170' }>
+									<AsyncLoad
+										require="components/jetpack-header/woocommerce"
+										darkColorScheme={ false }
+										placeholder={ null }
+									/>
+								</svg>
+							</div>
+						</div>
+					) }
+					<div className={ classNames( 'signup-form__woocommerce-heading' ) }>
+						{ translate( 'Create a WordPress.com account' ) }
+					</div>
+				</Fragment>
+			);
 		}
 
 		if ( includes( [ 'wpcc' ], flowName ) && oauth2Client ) {
@@ -237,10 +265,6 @@ export class UserStep extends Component {
 				comment:
 					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
 			} );
-		}
-
-		if ( 'onboarding-dev' === flowName ) {
-			return translate( 'Make something great' );
 		}
 
 		return headerText;
@@ -285,7 +309,9 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
+		const { oauth2Client, wccomFrom } = this.props;
 		let socialService, socialServiceResponse;
+		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
 			const clientId = hashObject.client_id;
@@ -294,6 +320,14 @@ export class UserStep extends Component {
 			if ( socialService ) {
 				socialServiceResponse = hashObject;
 			}
+		}
+
+		if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			isWooOAuth2Client( oauth2Client ) &&
+			wccomFrom
+		) {
+			isSocialSignupEnabled = true;
 		}
 
 		return (
@@ -307,7 +341,7 @@ export class UserStep extends Component {
 				submitButtonText={ this.submitButtonText() }
 				suggestedUsername={ this.props.suggestedUsername }
 				handleSocialResponse={ this.handleSocialResponse }
-				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
+				isSocialSignupEnabled={ isSocialSignupEnabled }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 			/>
@@ -323,7 +357,6 @@ export class UserStep extends Component {
 				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSignupForm() }
 			/>
 		);
@@ -334,9 +367,12 @@ export default connect(
 	state => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
 		recordTracksEvent,
 		fetchOAuth2ClientData,
+		saveSignupStep,
+		submitSignupStep,
 	}
 )( localize( UserStep ) );

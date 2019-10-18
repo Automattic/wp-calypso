@@ -29,6 +29,7 @@ import { PlanStorage } from '../index';
 
 describe( 'PlanStorage basic tests', () => {
 	const props = {
+		canViewBar: true,
 		mediaStorage: {
 			max_storage_bytes: 1000,
 		},
@@ -88,6 +89,11 @@ describe( 'PlanStorage basic tests', () => {
 
 	test( 'should not render for jetpack sites', () => {
 		const storage = shallow( <PlanStorage { ...props } jetpackSite={ true } /> );
+		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
+	} );
+
+	test( 'should not render for contributors', () => {
+		const storage = shallow( <PlanStorage { ...props } canViewBar={ false } /> );
 		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
 	} );
 

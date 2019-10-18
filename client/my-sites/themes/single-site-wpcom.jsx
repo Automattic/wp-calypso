@@ -22,18 +22,20 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 
 const ConnectedSingleSiteWpcom = connectOptions( props => {
 	const {
 		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
 		siteId,
+		isVip,
 		siteSlug,
 		translate,
 		isJetpack,
 	} = props;
 
-	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes;
+	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes && ! isVip;
 	const bannerLocationBelowSearch = ! isJetpack;
 
 	const upsellUrl = `/plans/${ siteSlug }`;
@@ -43,6 +45,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			upsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
+					customerType="business"
 					className="themes__showcase-banner"
 					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
@@ -66,7 +69,6 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 		}
 	}
 	return (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<Main className="themes">
 			<SidebarNavigation />
 			<CurrentTheme siteId={ siteId } />
@@ -83,12 +85,12 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				<ThanksModal source={ 'list' } />
 			</ThemeShowcase>
 		</Main>
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 } );
 
 export default connect( ( state, { siteId } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
+	isVip: isVipSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),

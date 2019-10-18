@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,36 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import getSitesItems from 'state/selectors/get-sites-items';
 import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
 
-const UPWORK_LOCALES = [ 'es', 'es-cl', 'es-mx', 'fr', 'fr-ca', 'fr-be', 'fr-ch' ];
+export const UPWORK_LOCALES = [
+	'de',
+	'de-at',
+	'de-li',
+	'de-lu',
+	'de-ch',
+	'es',
+	'es-cl',
+	'es-mx',
+	'fr',
+	'fr-ca',
+	'fr-be',
+	'fr-ch',
+	'it',
+	'it-ch',
+	'ja',
+	'nl',
+	'nl-be',
+	'nl-nl',
+	'pt',
+	'pt-pt',
+	'pt-br',
+	'sv',
+	'sv-fi',
+	'sv-se',
+];
 
 /**
- * @param {Object} state Global state tree
- * @return {Boolean} Whether or not this customer should receive Upwork support
+ * @param state Global state tree
+ * @return Whether or not this customer should receive Upwork support
  */
 export default function isEligibleForUpworkSupport( state ): boolean {
 	if ( ! includes( UPWORK_LOCALES, getCurrentUserLocale( state ) ) ) {

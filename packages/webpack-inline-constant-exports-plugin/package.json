@@ -1,0 +1,25 @@
+{
+	"name": "@automattic/webpack-inline-constant-exports-plugin",
+	"version": "0.0.1",
+	"description": "Webpack plugin to inline constant exports from modules",
+	"keywords": [
+		"Webpack"
+	],
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/webpack-inline-constant-exports-plugin",
+	"license": "GPL-2.0-or-later",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/webpack-inline-constant-exports-plugin"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"scripts": {},
+	"peerDependencies": {
+		"webpack": "^4.29.6"
+	}
+}

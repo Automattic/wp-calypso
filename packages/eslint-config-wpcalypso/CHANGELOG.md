@@ -1,6 +1,3 @@
-### next (…)
-- Added: [`require-await`](https://eslint.org/docs/rules/require-await) as error
-
 ### v4.0.1 (2018-09-13)
 - Allow usage of eslint v5 (159e240)
 

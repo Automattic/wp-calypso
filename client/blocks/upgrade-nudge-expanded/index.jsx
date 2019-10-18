@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -54,18 +54,13 @@ class UpgradeNudgeExpanded extends Component {
 	}
 
 	render() {
-		//Display only if upgrade path available
-		if (
-			! this.props.currentPlan ||
-			( this.props.planConstants.availableFor &&
-				! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
-		) {
+		if ( ! this.props.currentPlan && ! this.props.forceDisplay ) {
 			return null;
 		}
 
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
 		const features = this.props.planConstants
-			.getPromotedFeatures()
+			.getPlanCompareFeatures()
 			.filter( feature => feature !== this.props.highlightedFeature )
 			.slice( 0, 6 );
 
@@ -154,6 +149,7 @@ UpgradeNudgeExpanded.propTypes = {
 	eventName: PropTypes.string,
 	event: PropTypes.string,
 	siteSlug: PropTypes.string,
+	forceDisplay: PropTypes.bool,
 	recordTracksEvent: PropTypes.func.isRequired,
 };
 

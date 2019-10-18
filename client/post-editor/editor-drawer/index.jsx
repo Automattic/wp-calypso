@@ -163,9 +163,8 @@ class EditorDrawer extends Component {
 						'An excerpt is a short summary you can add to your posts. ' +
 							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
 					) }
-				>
-					<EditorExcerpt />
-				</EditorDrawerLabel>
+				/>
+				<EditorExcerpt />
 			</AccordionSection>
 		);
 	}

@@ -1,5 +1,6 @@
 .banner.card {
 	border-left: 3px solid;
+	cursor: default;
 	display: flex;
 	padding: 12px 6px 12px 12px;
 	line-height: 29px;
@@ -8,7 +9,11 @@
 		padding-right: 48px;
 	}
 
-	@include banner-color( var( --color-primary ) );
+	&[href] {
+		cursor: pointer;
+	}
+
+	@include banner-color( var( --color-primary-40 ) );
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
@@ -48,7 +53,7 @@
 
 	.card__link-indicator {
 		align-items: center;
-		color: var( --color-primary );
+		color: var( --color-neutral );
 		display: flex;
 	}
 
@@ -56,10 +61,10 @@
 		transition: all 100ms ease-in-out;
 
 		&.is-card-link {
-			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
 		}
 		.card__link-indicator {
-			color: var( --color-primary-dark );
+			color: var( --color-neutral-dark );
 		}
 	}
 
@@ -92,7 +97,7 @@
 
 	.banner__icon {
 		align-self: center;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		display: flex;
 	}
 
@@ -117,6 +122,7 @@
 .banner__icon-plan {
 	display: flex;
 	margin-right: 16px;
+	flex-shrink: 0;
 
 	.plan-icon {
 		height: 32px;
@@ -147,7 +153,7 @@
 	.banner__title,
 	.banner__description,
 	.banner__list {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.banner__title {
@@ -201,7 +207,7 @@
 
 		.plan-price.is-discounted,
 		.plan-price.is-discounted .plan-price__currency-symbol {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		.has-call-to-action & .plan-price {

@@ -1,0 +1,89 @@
+.term-tree-selector {
+	position: relative;
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
+
+	&.is-small {
+		background-color: transparent;
+		border: none;
+	}
+
+	&.is-error {
+		border-color: var( --color-error );
+	}
+
+	&.is-compact .term-tree-selector__search input[type='search'] {
+		font-size: 12px;
+	}
+}
+
+input[type='radio'].term-tree-selector__input,
+input[type='checkbox'].term-tree-selector__input {
+	margin-top: 4px;
+
+	& + label {
+		display: block;
+		margin-left: 24px;
+		transition: all 200ms ease-out;
+		color: var( --color-neutral-70 );
+
+		&:hover {
+			color: var( --color-accent );
+		}
+	}
+}
+
+input[type='checkbox'].term-tree-selector__input {
+	margin-right: 8px;
+}
+
+.term-tree-selector__nested-list {
+	margin-left: 24px;
+}
+
+.term-tree-selector__list-item {
+	position: relative;
+	padding: 4px 8px;
+	font-size: 13px;
+
+	.term-tree-selector.is-compact.is-small & {
+		padding-left: 0;
+	}
+
+	&.is-empty {
+		padding-top: 4px;
+	}
+
+	.term-tree-selector__nested-list & {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.term-tree-selector__label {
+	position: relative;
+	display: block;
+	margin-left: 24px;
+	margin-top: 2px;
+
+	.term-tree-selector.is-compact & {
+		font-size: 12px;
+		margin-top: 0;
+	}
+
+	.term-tree-selector__list-item.is-placeholder & {
+		color: transparent;
+		background-color: var( --color-neutral-0 );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+	.gridicon {
+		position: absolute;
+		margin-left: 3px;
+	}
+}
+
+/* Fix for https://github.com/bvaughn/react-virtualized/issues/454 */
+.term-tree-selector__results {
+	direction: ltr !important;
+}

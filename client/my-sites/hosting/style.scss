@@ -1,0 +1,58 @@
+.hosting__cards {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+	@include breakpoint( '>1280px' ) {
+		flex-direction: row;
+    }
+    
+    .card {
+        display: flex;
+        flex-direction: row;
+        width: calc( 100% - 10px );
+        
+        .card-heading {
+            margin-top: 0;
+        }
+
+		@include breakpoint( '>1280px' ) {
+            width: calc( 40% - 10px );
+            
+            &:first-child {
+                width: calc( 60% - 10px );
+            }
+		}
+	}
+}
+
+.phpmyadmin-card__icon-col, .sftp-card__icon-col {
+    margin-right: 24px;
+    height: 100%;
+}
+
+.sftp-card__info-table {
+    border: 1px solid var( --color-border-subtle );
+    margin-top: 15px;
+
+    th {
+        text-align: right;
+        background-color: var( --color-surface-backdrop );
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    &.is-placeholder span {
+        padding: 0 35%;
+        background-color: var( --color-surface-backdrop );
+    }
+}
+
+.sftp-card__callout-box {
+    border: 1px solid var( --color-accent );
+    padding: 10px;
+    margin: 10px 0;
+}

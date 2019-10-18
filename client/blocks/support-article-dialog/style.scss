@@ -1,5 +1,3 @@
-@import './_content.scss';
-
 .support-article-dialog.dialog.card {
 	position: absolute;
 	top: 0;
@@ -46,7 +44,7 @@
 		display: none;
 	}
 
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 17px;
 	line-height: 28px;
 }
@@ -62,7 +60,7 @@
 .support-article-dialog__header-title a {
 	text-decoration: none;
 	clear: none;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -93,7 +91,7 @@
 	.support-article-dialog__header-title-link,
 	.support-article-dialog__header-title-link:hover {
 		text-decoration: underline;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 

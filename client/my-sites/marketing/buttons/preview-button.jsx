@@ -1,41 +1,39 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import photon from 'photon';
-import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import SocialLogo from 'components/social-logo';
 
-export default createReactClass( {
-	displayName: 'SharingButtonsPreviewButton',
-
-	propsTypes: {
+class SharingButtonsPreviewButton extends React.Component {
+	static propTypes = {
 		button: PropTypes.object.isRequired,
 		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		enabled: PropTypes.bool,
 		onMouseOver: PropTypes.func,
 		onClick: PropTypes.func,
-	},
+		path: PropTypes.string,
+	};
 
-	getDefaultProps: function() {
-		return {
-			style: 'icon',
-			enabled: true,
-			onClick: function() {},
-		};
-	},
+	static defaultProps = {
+		style: 'icon',
+		enabled: true,
+		onClick: function() {},
+	};
 
-	getIcon: function() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	getIcon() {
 		const shortnameToSocialLogo = {
 			email: 'mail',
 			'google-plus-1': 'google-plus-alt',
@@ -60,14 +58,21 @@ export default createReactClass( {
 				/>
 			);
 		}
-	},
+	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-	onClick: function() {
+	onClick = () => {
+		analytics.tracks.recordEvent( 'calypso_sharing_buttons_share_button_click', {
+			service: this.props.button.ID,
+			enabled: ! this.props.enabled, // during onClick enabled is the old state, so negating gives the new state
+			path: this.props.path,
+		} );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
 		this.props.onClick();
-	},
+	};
 
-	render: function() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	render() {
 		const classes = classNames(
 			'sharing-buttons-preview-button',
 			'style-' + this.props.style,
@@ -79,10 +84,23 @@ export default createReactClass( {
 		);
 
 		return (
-			<div className={ classes } onClick={ this.onClick } onMouseOver={ this.props.onMouseOver }>
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			<div
+				className={ classes }
+				onClick={ this.onClick }
+				onMouseOver={ this.props.onMouseOver }
+				role="presentation"
+			>
 				{ this.getIcon() }
 				<span className="sharing-buttons-preview-button__service">{ this.props.button.name }</span>
 			</div>
 		);
-	},
-} );
+	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
+export default connect( state => {
+	return {
+		path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ),
+	};
+} )( SharingButtonsPreviewButton );

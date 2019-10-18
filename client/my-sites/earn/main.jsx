@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
@@ -23,14 +24,17 @@ import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
+import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
-import config from 'config';
+import MembershipsProductsSection from './memberships/products';
+import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {
-		section: PropTypes.string.isRequired,
+		section: PropTypes.string,
 		site: PropTypes.object,
+		query: PropTypes.object,
 	};
 
 	getSelectedText() {
@@ -47,23 +51,19 @@ class EarningsMain extends Component {
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
 
-		tabs.push( {
-			title: translate( 'Ads Earnings' ),
-			path: '/earn/ads-earnings' + pathSuffix,
-			id: 'ads-earnings',
-		} );
-		tabs.push( {
-			title: translate( 'Ads Settings' ),
-			path: '/earn/ads-settings' + pathSuffix,
-			id: 'ads-settings',
-		} );
-		if ( config.isEnabled( 'memberships' ) ) {
+		if ( canAccessAds( this.props.site ) ) {
 			tabs.push( {
-				title: translate( 'Memberships' ),
-				path: '/earn/memberships' + pathSuffix,
-				id: 'memberships',
+				title: translate( 'Earnings' ),
+				path: '/earn/ads-earnings' + pathSuffix,
+				id: 'ads-earnings',
+			} );
+			tabs.push( {
+				title: translate( 'Settings' ),
+				path: '/earn/ads-settings' + pathSuffix,
+				id: 'ads-settings',
 			} );
 		}
+
 		return tabs;
 	}
 
@@ -81,16 +81,90 @@ class EarningsMain extends Component {
 						<AdsSettings />
 					</AdsWrapper>
 				);
-			case 'memberships':
-				return <MembershipsSection section={ this.props.section } />;
+			case 'payments':
+				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
+			case 'payments-plans':
+				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
-				return null;
+				return <Home />;
 		}
 	}
 
 	handleDismissWordAdsError = () => {
 		const { siteId } = this.props;
 		this.props.dismissWordAdsError( siteId );
+	};
+
+	/**
+	 * Remove any query parameters from the path before using it to
+	 * identify which screen the user is seeing.
+	 *
+	 * @returns {String} Path to current screen.
+	 */
+	getCurrentPath = () => {
+		let currentPath = this.props.path;
+		const queryStartPosition = currentPath.indexOf( '?' );
+		if ( queryStartPosition > -1 ) {
+			currentPath = currentPath.substring( 0, queryStartPosition );
+		}
+		return currentPath;
+	};
+
+	/**
+	 * Check the current path and returns an appropriate title.
+	 *
+	 * @returns {String} Header text for current screen.
+	 */
+	getHeaderText = () => {
+		const { translate } = this.props;
+
+		switch ( this.props.section ) {
+			case 'payments':
+				return translate( 'Recurring Payments' );
+
+			case 'ads-earnings':
+			case 'ads-settings':
+				return translate( 'Ads' );
+
+			default:
+				return '';
+		}
+	};
+
+	/**
+	 * Goes back to Earn home.
+	 *
+	 * @returns {string} Path to Earn home. Has site slug append if it exists.
+	 */
+	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
+
+	getHeaderCake = () => {
+		const headerText = this.getHeaderText();
+		return headerText && <HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>;
+	};
+
+	getSectionNav = section => {
+		const currentPath = this.getCurrentPath();
+
+		return (
+			! section.startsWith( 'payments' ) && (
+				<SectionNav selectedText={ this.getSelectedText() }>
+					<NavTabs>
+						{ this.getFilters().map( filterItem => {
+							return (
+								<NavItem
+									key={ filterItem.id }
+									path={ filterItem.path }
+									selected={ filterItem.path === currentPath }
+								>
+									{ filterItem.title }
+								</NavItem>
+							);
+						} ) }
+					</NavTabs>
+				</SectionNav>
+			)
+		);
 	};
 
 	render() {
@@ -100,32 +174,20 @@ class EarningsMain extends Component {
 		const layoutTitles = {
 			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-			memberships: translate( 'Memberships' ),
+			payments: translate( 'Recurring Payments' ),
+			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
 
 		return (
-			<Main className="earn">
+			<Main className="earn is-wide-layout">
 				<PageViewTracker
-					path={ `/earn/${ section }/:site` }
+					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs>
-						{ this.getFilters().map( filterItem => {
-							return (
-								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === this.props.path }
-								>
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-				</SectionNav>
+				{ this.getHeaderCake() }
+				{ section && this.getSectionNav( section ) }
 				{ component }
 			</Main>
 		);

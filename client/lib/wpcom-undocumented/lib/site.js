@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:wpcom-undocumented:site' );
 const resources = [
 	[ 'statsEvents', 'posts/' ],
 	[ 'statsInsights', 'stats/insights', '1.1' ],
-	[ 'statsPodcastDownloads', 'stats/podcast-downloads', '1.1' ],
+	[ 'statsFileDownloads', 'stats/file-downloads', '1.1' ],
 	[ 'statsAds', 'wordads/stats', '1.1' ],
 	[ 'sshCredentialsNew', 'ssh-credentials/new', '1.1', 'post' ],
 	[ 'sshCredentialsMine', 'ssh-credentials/mine', '1.1' ],
@@ -26,10 +26,10 @@ const resources = [
 
 const list = function( resourceOptions ) {
 	return function( query, fn ) {
-		let path,
-			subpath = resourceOptions.subpath;
+		let subpath = resourceOptions.subpath;
 
 		// Handle replacement of '/:var' in the subpath with value from query
+		/* eslint-disable no-useless-escape */
 		subpath = subpath.replace( /\/:([^\/]+)/g, function( match, property ) {
 			let replacement;
 			if ( 'undefined' !== typeof query[ property ] ) {
@@ -39,10 +39,11 @@ const list = function( resourceOptions ) {
 			}
 			return '/';
 		} );
+		/* eslint-enable no-useless-escape */
 
 		query.apiVersion = resourceOptions.apiVersion;
 
-		path = '/sites/' + this._id + '/' + subpath;
+		const path = '/sites/' + this._id + '/' + subpath;
 
 		debug( 'calling undocumented site api path', path );
 		debug( 'query', query );
@@ -57,7 +58,7 @@ const list = function( resourceOptions ) {
 
 // Walk for each resource and create related method
 resources.forEach( function( resource ) {
-	let name = resource[ 0 ],
+	const name = resource[ 0 ],
 		resourceOptions = {
 			subpath: resource[ 1 ],
 			apiVersion: resource[ 2 ] || '1',
@@ -242,9 +243,9 @@ UndocumentedSite.prototype.getGuidedTransferStatus = function() {
 };
 
 /**
- * Requests the status of a guided transfer
+ * Saves guided transfer host details
  *
- * @param {int} siteId  The site ID
+ * @param {Object} hostDetails  Host details
  * @returns {Promise} Resolves to the response containing the transfer status
  */
 UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails ) {

@@ -11,6 +11,7 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 
 import * as DriverHelper from '../driver-helper.js';
+import NoticesComponent from '../components/notices-component';
 
 export default class DisconnectSurveyPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -28,6 +29,7 @@ export default class DisconnectSurveyPage extends AsyncBaseContainer {
 	async skipSurveyAndDisconnectSite() {
 		await this.skipSurvey();
 		await DriverHelper.clickWhenClickable( this.driver, By.css( '.is-primary.is-scary' ) );
-		return await DriverHelper.isElementPresent( this.driver, By.css( '.notice.is-success' ) );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		return await noticesComponent.isSuccessNoticeDisplayed();
 	}
 }

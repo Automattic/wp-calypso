@@ -27,6 +27,11 @@ import {
 import QuerySitePlans from 'components/data/query-site-plans';
 import isEligibleForDomainToPaidPlanUpsell from 'state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainToPlanNudge extends Component {
 	static propTypes = {
 		isEligible: PropTypes.bool,

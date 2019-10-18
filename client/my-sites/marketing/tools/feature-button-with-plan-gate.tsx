@@ -15,10 +15,15 @@ import { getPlan } from 'lib/plans';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
+/**
+ * Types
+ */
+import * as T from 'types';
+
 interface ConnectedProps {
 	hasPlanFeature: boolean;
 	planTitle: string;
-	selectedSiteSlug: string | null;
+	selectedSiteSlug: T.SiteSlug | null;
 }
 
 interface ExternalProps {
@@ -26,10 +31,12 @@ interface ExternalProps {
 	feature: string;
 	onDefaultButtonClick: () => void;
 	onUpgradeButtonClick: () => void;
-	planSlug: string;
+	planSlug: T.PlanSlug;
 }
 
-const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps & ConnectedProps > = ( {
+const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
+	ExternalProps & ConnectedProps
+> = ( {
 	buttonText,
 	hasPlanFeature,
 	onDefaultButtonClick,
@@ -49,11 +56,15 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps 
 	};
 
 	if ( hasPlanFeature ) {
-		return <Button onClick={ onDefaultButtonClick }>{ buttonText }</Button>;
+		return (
+			<Button compact onClick={ onDefaultButtonClick }>
+				{ buttonText }
+			</Button>
+		);
 	}
 
 	return (
-		<Button onClick={ handleUpgradeClick }>
+		<Button compact onClick={ handleUpgradeClick }>
 			{ translate( 'Upgrade To %(plan)s', {
 				args: {
 					plan: planTitle,

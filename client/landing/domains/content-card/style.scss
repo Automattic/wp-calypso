@@ -3,7 +3,7 @@
 	padding-bottom: 50px;
 
 	.content-card__title {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 34px;
 		font-weight: 300;
 		margin-bottom: 1em;
@@ -14,10 +14,15 @@
 	}
 
 	.content-card__message {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		font-size: 22px;
 		font-weight: 300;
 		margin-bottom: 40px;
+		text-align: left;
+
+		&.message_align_center {
+			text-align: center;
+		}
 
 		@include breakpoint( '<660px' ) {
 			font-size: 16px;
@@ -25,7 +30,7 @@
 	}
 
 	.content-card__footer {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		font-size: 18px;
 		font-weight: 300;
 		margin-bottom: 16px;
@@ -35,13 +40,18 @@
 		}
 	}
 
-	.content-card__action-button {
+	.content-card__action-button,
+	content-card__alternate-action-button {
 		margin-bottom: 40px;
+	}
+
+	.content-card__alternate-action-button {
+		margin-left: 16px;
 	}
 
 	&.content-card__loading-placeholder {
 		.content-card__illustration {
-			@include placeholder(23%);
+			@include placeholder( --color-neutral-10 );
 			width: 400px;
 			height: 250px;
 			margin-left: auto;
@@ -53,14 +63,14 @@
 		}
 
 		.content-card__message {
-			@include placeholder(23%);
+			@include placeholder( --color-neutral-10 );
 			height: 24px;
 			margin: 0 auto 10px;
 			width: 50%;
 		}
 
 		.content-card__footer {
-			@include placeholder(23%);
+			@include placeholder( --color-neutral-10 );
 			height: 20px;
 			margin: 40px auto;
 			width: 70%;

@@ -10,25 +10,20 @@ This document will cover how to use icons in Calypso, as well as how to create i
 
 Gridicons are born with a 24px base grid. Strokes are 2px thick and icons are solid. If an icon is hollow, it generally means the "inactive" version of that icon. For example an outline bookmark icon becomes solid once clicked.
 
+Calypso has a specific Gridicon component that should be used instead of the one included in the `gridicons` package, since it offers better loading performance.
+Any usage of `gridicons` gets rewritten to `components/gridicon`.
+You should not use `gridicons/dist/...`, as that will load a legacy gridicon and cause duplication in the bundles.
+
 ### Usage
 
 Import the iconset and decide at run-time which icon to use:
 
 ```
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
+// or `import Gridicon from 'gridicons'`;
 //...
 render() {
   return <Gridicon icon="add-image" />;
-}
-```
-
-If your project is using a small number of icons, the recommendation is to import them individually. By doing so, your JavaScript bundle will be smaller because only the icons you actually use will be added to your bundle.
-
-```
-import GridiconExternal from 'gridicons/dist/external';
-//...
-render() {
-	<GridiconExternal />
 }
 ```
 
@@ -56,7 +51,7 @@ Some icons at 18 and 36px size needs an extra feature in order to look crisp. Th
 
 What this basically does is nudge the pixels up and to the left by half a pixel. In the case of 36px icons (1.5 * 24) what it means is that icons can be **perfectly crisp**. In the case of 18px icons, it means icons will be **crisper**, though not perfect. Just trust me on the math.
 
-The tricky part is that not all icons need this `offset-adjust` hack, only some icons do. We are currently working out how to best roll this feature out.
+The tricky part is that not all icons need this `offset-adjust` hack, only some icons do. A list of icons that need adjustment is kept in the `gridicons` package and used by the Gridicon component at run-time, to determine which icons to adjust and when to do so.
 
 ### Do's and Don'ts
 
@@ -67,16 +62,19 @@ The tricky part is that not all icons need this `offset-adjust` hack, only some 
 
 ## Social Logos
 
-We have a `SocialLogos` component available for use in Calypso. Each logo was pulled from the official branding resource of each service. Branding guidelines were adhered to as much as possible.
+We have a `SocialLogo` component available for use in Calypso. Each logo was pulled from the official branding resource of each service. Branding guidelines were adhered to as much as possible.
 
 The icon grid is based on Gridicons and adheres to the same rules (see above). [View the repository on GitHub](https://github.com/Automattic/social-logos) for more information.
 
 ### Usage
 
+There is a Calypso component for Social Logos, which is implemented differently from the legacy version in the `social-logos` package.
+Please be sure to use the Calypso component, as it provides better loading performance.
+
 Import the iconset and decide at run-time which icon to use:
 
 ```
-import SocialLogo from 'social-logos';
+import SocialLogo from 'components/social-logo';
 //...
 render() {
     return <SocialLogo icon="twitter" size={ 48 } />;

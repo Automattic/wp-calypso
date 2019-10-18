@@ -51,9 +51,7 @@ const Subscriptions = ( {
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="subscriptions"
-						label={ translate(
-							'Allow users to subscribe to your posts and comments and receive notifications via email'
-						) }
+						label={ translate( 'Let visitors subscribe to new posts and comments via email' ) }
 						disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
 					/>
 
@@ -68,7 +66,7 @@ const Subscriptions = ( {
 							}
 							onChange={ handleAutosavingToggle( 'stb_enabled' ) }
 						>
-							{ translate( 'Show a "follow blog" option in the comment form' ) }
+							{ translate( 'Enable the "subscribe to site" option on your comment form' ) }
 						</CompactFormToggle>
 
 						<CompactFormToggle
@@ -81,7 +79,7 @@ const Subscriptions = ( {
 							}
 							onChange={ handleAutosavingToggle( 'stc_enabled' ) }
 						>
-							{ translate( 'Show a "follow comments" option in the comment form' ) }
+							{ translate( 'Enable the "subscribe to comments" option on your comment form' ) }
 						</CompactFormToggle>
 					</div>
 				</FormFieldset>

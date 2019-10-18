@@ -95,13 +95,6 @@ export default class AddEditProductPage extends AsyncBaseContainer {
 		);
 	}
 
-	async waitForSuccessNotice() {
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			by.css( '.notice.is-success' )
-		);
-	}
-
 	async deleteProduct() {
 		const menuSelector = by.css( 'button.split-button__toggle' );
 		if ( await driverHelper.isElementPresent( this.driver, menuSelector ) ) {

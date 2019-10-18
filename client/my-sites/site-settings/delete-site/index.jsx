@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -135,7 +135,7 @@ class DeleteSite extends Component {
 
 	render() {
 		const { isAtomic, siteDomain, siteId, siteSlug, translate } = this.props;
-		const exportLink = '/settings/export/' + siteSlug;
+		const exportLink = '/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
@@ -225,7 +225,7 @@ class DeleteSite extends Component {
 						</p>
 						<p>
 							{ translate(
-								'This content {{strong}}can not{{/strong}} be recovered once your delete this site.',
+								'This content {{strong}}can not{{/strong}} be recovered once you delete this site.',
 								{
 									components: {
 										strong: <strong />,

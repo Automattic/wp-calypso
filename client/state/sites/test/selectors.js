@@ -37,6 +37,7 @@ import {
 	getSiteFrontPageType,
 	hasStaticFrontPage,
 	canCurrentUserUseAds,
+	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -2189,8 +2190,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 									page_on_front: 0,
@@ -2224,8 +2223,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 1,
@@ -2248,8 +2245,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 									page_on_front: 0,
@@ -2270,8 +2265,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 								},
@@ -2304,8 +2297,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 42,
@@ -2328,8 +2319,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'posts',
 									page_on_front: 0,
@@ -2364,8 +2353,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 1,
@@ -2402,8 +2389,6 @@ describe( 'selectors', () => {
 					sites: {
 						items: {
 							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
 								options: {
 									show_on_front: 'page',
 									page_on_front: 1,
@@ -3927,6 +3912,67 @@ describe( 'selectors', () => {
 
 		test( "should return false if site doesn't have WordAds and user can not manage it", () => {
 			expect( canCurrentUserUseAds( createState( false, false, 'free_plan' ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'canCurrentUserUseCustomerHome()', () => {
+		const createState = ( { created_at, manage_options = true, jetpack = false } = {} ) => ( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			currentUser: {
+				capabilities: {
+					1: {
+						manage_options,
+					},
+				},
+			},
+			sites: {
+				items: {
+					1: {
+						jetpack,
+						options: { is_automated_transfer: false, created_at },
+					},
+				},
+			},
+		} );
+
+		test( 'should return true for a simple site created after 2019-08-06', () => {
+			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01' } ) ) ).toBe(
+				true
+			);
+		} );
+
+		test( 'should return false for a simple site created before 2019-08-06', () => {
+			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2019-08-01' } ) ) ).toBe(
+				false
+			);
+		} );
+
+		test( 'should return false for a simple site created on the 2019-08-06', () => {
+			expect( canCurrentUserUseCustomerHome( createState( { created_at: '2019-08-06' } ) ) ).toBe(
+				true
+			);
+		} );
+
+		test( "should return false for site with a zero'd out created_at option", () => {
+			expect(
+				canCurrentUserUseCustomerHome( createState( { created_at: '0000-00-00T00:00:00+00:00' } ) )
+			).toBe( false );
+		} );
+
+		test( "should return false if user can't manage site options", () => {
+			expect(
+				canCurrentUserUseCustomerHome(
+					createState( { created_at: '2020-01-01', manage_options: false } )
+				)
+			).toBe( false );
+		} );
+
+		test( 'should return false for Jetpack site', () => {
+			expect(
+				canCurrentUserUseCustomerHome( createState( { created_at: '2020-01-01', jetpack: true } ) )
+			).toBe( false );
 		} );
 	} );
 } );

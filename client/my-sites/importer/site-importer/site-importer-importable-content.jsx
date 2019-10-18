@@ -7,6 +7,11 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { isEmpty, map } from 'lodash';
 
+/**
+ * Style dependencies
+ */
+import './site-importer-importable-content.scss';
+
 const SiteImporterImportableContent = ( { translate, importData = {} } ) => (
 	<div className="site-importer__site-preview-import-content">
 		{ ! isEmpty( importData.supported ) && (

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,11 +11,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isWordadsInstantActivationEligible, canUpgradeToUseWordAds } from 'lib/ads/utils';
-import { isBusiness } from 'lib/products-values';
+import {
+	isWordadsInstantActivationEligible,
+	canUpgradeToUseWordAds,
+	canAccessAds,
+} from 'lib/ads/utils';
+import { isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
+import EmptyContent from 'components/empty-content';
 import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
 import {
 	isRequestingWordAdsApprovalForSite,
@@ -28,15 +31,18 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
-import { PLAN_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
+import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isPremium } from '../../../lib/products-values';
-import { canAccessEarnSection } from '../../../lib/ads/utils';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+import 'my-sites/stats/stats-module/style.scss';
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -49,25 +55,6 @@ class AdsWrapper extends Component {
 		wordAdsError: PropTypes.string,
 		wordAdsSuccess: PropTypes.bool,
 	};
-
-	componentDidMount() {
-		this.redirectToStats();
-	}
-
-	componentDidUpdate() {
-		this.redirectToStats();
-	}
-
-	redirectToStats() {
-		const { siteSlug, site } = this.props;
-		const siteFragment = getSiteFragment( page.current );
-
-		if ( siteSlug && site && ! canAccessEarnSection( site ) ) {
-			page( '/stats/' + siteSlug );
-		} else if ( ! siteFragment ) {
-			page( '/earn/' );
-		}
-	}
 
 	handleDismissWordAdsError = () => {
 		const { siteId } = this.props;
@@ -175,6 +162,15 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderEmptyContent() {
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ this.props.translate( 'You are not authorized to view this page' ) }
+			/>
+		);
+	}
+
 	renderUpsell() {
 		const { translate } = this.props;
 		return (
@@ -193,18 +189,36 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderjetpackUpsell() {
+		const { translate } = this.props;
+		return (
+			<UpgradeNudgeExpanded
+				plan={ PLAN_JETPACK_PREMIUM }
+				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
+				subtitle={ translate(
+					"By upgrading to the Premium plan, you'll be able to monetize your site through the Jetpack Ads program."
+				) }
+				highlightedFeature={ FEATURE_WORDADS_INSTANT }
+				benefits={ [
+					translate( 'Instantly enroll into the Jetpack Ads network.' ),
+					translate( 'Earn money from your content and traffic.' ),
+				] }
+			/>
+		);
+	}
+
 	render() {
 		const { site, translate } = this.props;
-		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
-
-		if ( ! canAccessEarnSection( site ) ) {
-			return null;
-		}
+		const jetpackPremium =
+			site.jetpack &&
+			( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) );
 
 		let component = this.props.children;
 		let notice = null;
 
-		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
+		if ( ! canAccessAds( site ) ) {
+			component = this.renderEmptyContent();
+		} else if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
@@ -212,6 +226,10 @@ class AdsWrapper extends Component {
 			);
 		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
+		} else if ( ! canAccessAds( site ) ) {
+			component = this.renderEmptyContent();
+		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack && ! jetpackPremium ) {
+			component = this.renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds( site ) ) {
 			component = this.renderUpsell();
 		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {

@@ -74,6 +74,7 @@ class FeedHeader extends Component {
 								{ translate( '%s follower', '%s followers', {
 									count: followerCount,
 									args: [ this.props.numberFormat( followerCount ) ],
+									comment: '%s is the number of followers. For example: "12,000,000"',
 								} ) }
 							</span>
 						) }

@@ -1,28 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 18.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Content" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="48px" height="48px" viewBox="0 0 192 192" enable-background="new 0 0 192 192" xml:space="preserve">
-<g>
-	<g>
-		<g>
-			<defs>
-				<path id="SVGID_1_" d="M172.06,84c0-41.97-34.09-76-76.06-76S20,42.03,20,84c0,39.76,36.24,72,76,72l0,0l0,28
-					C142.18,160.58,172.06,122.89,172.06,84z"/>
-			</defs>
-			<clipPath id="SVGID_2_">
-				<use xlink:href="#SVGID_1_"  overflow="visible"/>
-			</clipPath>
-			<path clip-path="url(#SVGID_2_)" fill="#0F9D58" d="M172.06,84c0-41.97-34.09-76-76.06-76S20,42.03,20,84c0,39.76,36.24,72,76,72
-				l0,0l0,28C142.18,160.58,172.06,122.89,172.06,84z"/>
-			<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="91.22" y1="64.6891" x2="146.4805" y2="144.4215">
-				<stop  offset="0" style="stop-color:#263238;stop-opacity:0.25"/>
-				<stop  offset="1" style="stop-color:#263238;stop-opacity:0"/>
-			</linearGradient>
-			<polygon clip-path="url(#SVGID_2_)" fill="url(#SVGID_3_)" points="146,184 58,96 90,64 112,86 134,64 172,102 172,184 			"/>
-			<g clip-path="url(#SVGID_2_)">
-				<g>
-					
-						<image overflow="visible" opacity="0.2" width="234" height="309" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAAE5CAYAAACXohwBAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
+<svg enable-background="new 0 0 192 192" height="48" viewBox="0 0 192 192" width="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><clipPath id="a"><path d="m172.06 84c0-41.97-34.09-76-76.06-76s-76 34.03-76 76c0 39.76 36.24 72 76 72v28c46.18-23.42 76.06-61.11 76.06-100z"/></clipPath><linearGradient id="b" gradientUnits="userSpaceOnUse" x1="91.22" x2="146.4805" y1="64.6891" y2="144.4215"><stop offset="0" stop-color="#263238" stop-opacity=".25"/><stop offset="1" stop-color="#263238" stop-opacity="0"/></linearGradient><radialGradient id="c" cx="42.5" cy="30.25" gradientUnits="userSpaceOnUse" r="153.9748"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><path clip-path="url(#a)" d="m172.06 84c0-41.97-34.09-76-76.06-76s-76 34.03-76 76c0 39.76 36.24 72 76 72v28c46.18-23.42 76.06-61.11 76.06-100z" fill="#0f9d58"/><path clip-path="url(#a)" d="m146 184-88-88 32-32 22 22 22-22 38 38v82z" fill="url(#b)"/><g clip-path="url(#a)"><image height="309" opacity=".2" overflow="visible" transform="matrix(.24 0 0 .24 94 56)" width="234" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAAE5CAYAAACXohwBAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
 GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAlk9JREFUeNrsvcuS3Ea2LejbgYjM
 pMgqnjLJyk5bDTQp60EPj/W8fkJfqZ+oH7jTM6mJ7JrMyk5LplYVKSYzAvB999MfAOKRycxkJAVI
 yYhAIF6AL19rPz2GdVu3dXtxW1xPwbqt2wrcdVu3dVuBu27rtm4rcNdt3b6QrV9PwckN1lPwLBuu
@@ -699,15 +675,7 @@ f5dbyOwZer//hd/pm8UnvpTMze2l0YD7XAF84OO/vyta7wt8DbQNuM/ib3ROf9v8QJ/7ZE+bOXX+
 J98RiPkBgZwf+PMbcNt59AA+BgZ/ZgBrgG3AbQB+REBpgG3AfXYAPrd4toG1AbedB2DhBtQG3HYe
 GBy+AbUBt52nI0d9A2gDbjstvmznnk9ov4J22mnAbaeddhpw22mnnQbcdtppwG2nnXYacNtpp50G
 3HbaacBtp512GnDbaaedBtx22mnAbaeddhpw22mnnQbcdtppB+ffAgwAqj9n8YEswm0AAAAASUVO
-RK5CYII=" transform="matrix(0.24 0 0 0.24 94 56)">
-					</image>
-					<path fill="#EEEEEE" d="M102,64v32h18v18c7.85,0,14-10,14-20V64H102z"/>
-				</g>
-			</g>
-			<g clip-path="url(#SVGID_2_)">
-				<g>
-					
-						<image overflow="visible" opacity="0.2" width="234" height="309" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAAE5CAYAAACXohwBAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
+RK5CYII="/><path d="m102 64v32h18v18c7.85 0 14-10 14-20v-30z" fill="#eee"/></g><g clip-path="url(#a)"><image height="309" opacity=".2" overflow="visible" transform="matrix(.24 0 0 .24 50 56)" width="234" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAAE5CAYAAACXohwBAAAACXBIWXMAAC4jAAAuIwF4pT92AAAA
 GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAlwdJREFUeNrsvclyJMe1LerbIzIB
 FKukujLSZOeZBprI3uANj725foJfyZ/QD9zpmZwJ7RrNZLqk8VKsBoXMCN93t95ERDZAoa2KkIpA
 tgAyfMVae+3GQ1iP9ViP9ViP9ViP9ViP9ViP9ViP9ViP9ViP9XiiA9aPYP2MnsmB60ewLsr1b16B
@@ -1387,29 +1355,4 @@ Bur9wHpfIOb2QmnnKT4nZ8THR0B8Asz3OnOQToB6NlgbYBtwP8vn5R4ye4beb3/lv/TV4h0fS+bm
 9tJowP1cAXzk8d++L1ofCnwNtA24n8VzdEnPbX6kr20vinae/HPlnwhQG1gbcNtz9pG/V74wwLcX
 QTvtuXtCDN2e/Hba89jA2p7wdtrz2YDagNvOE3p+G1AbcNu54Oe9AbSddtppp5122mmnnXbaaaed
 dtppp5122mmnnXbaaaeddtppp5122mmnnXbaaaeddtppp5122mmnnXbaaaeddtpp5+zz/wIMAMjy
-WmtRYvR1AAAAAElFTkSuQmCC" transform="matrix(0.24 0 0 0.24 50 56)">
-					</image>
-					<path fill="#EEEEEE" d="M58,64v32h18v18c7.85,0,14-10,14-20V64H58z"/>
-				</g>
-			</g>
-			<rect x="102" y="64" clip-path="url(#SVGID_2_)" fill="#FFFFFF" fill-opacity="0.4" width="32" height="1"/>
-			<rect x="58" y="64" clip-path="url(#SVGID_2_)" fill="#FFFFFF" fill-opacity="0.4" width="32" height="1"/>
-			<path clip-path="url(#SVGID_2_)" fill="#263238" fill-opacity="0.2" d="M76,96H58v1h18V96z M76,114l0.95,0.95
-				C84.34,114.19,90,104.59,90,95v-1C90,104,83.85,114,76,114z M120,96h-18v1h18V96z M120,114v1c7.85,0,14-10,14-20v-1
-				C134,104,127.85,114,120,114z"/>
-			<path clip-path="url(#SVGID_2_)" fill="#FFFFFF" fill-opacity="0.2" d="M96,9c41.97,0,76,34.03,76,76h0.04
-				c0-0.33,0.02-0.67,0.02-1H172c0-41.97-34.03-76-76-76S20,42.03,20,84c0,0.16,0.01,0.31,0.01,0.47C20.3,42.74,54.2,9,96,9z"/>
-			<path clip-path="url(#SVGID_2_)" fill="#263238" fill-opacity="0.2" d="M172,84c-0.51,38.53-30.22,75.78-76,99v1
-				C142.18,160.58,172,122.89,172,84L172,84z M96,156v-1l0,0c-39.61,0-75.7-31.98-75.99-71.53c0,0.18-0.01,0.35-0.01,0.53
-				C20,123.76,56.24,156,96,156L96,156z"/>
-		</g>
-		<radialGradient id="SVGID_4_" cx="42.5" cy="30.25" r="153.9748" gradientUnits="userSpaceOnUse">
-			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0.1"/>
-			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
-		</radialGradient>
-		<path fill="url(#SVGID_4_)" d="M172.06,84c0-41.97-34.09-76-76.06-76S20,42.03,20,84c0,39.76,36.24,72,76,72l0,0l0,28
-			C142.18,160.58,172.06,122.89,172.06,84z"/>
-	</g>
-	<rect fill="none" width="192" height="192"/>
-</g>
-</svg>
+WmtRYvR1AAAAAElFTkSuQmCC"/><path d="m58 64v32h18v18c7.85 0 14-10 14-20v-30z" fill="#eee"/></g><path clip-path="url(#a)" d="m102 64h32v1h-32z" fill="#fff" fill-opacity=".4"/><path clip-path="url(#a)" d="m58 64h32v1h-32z" fill="#fff" fill-opacity=".4"/><g fill-opacity=".2"><path clip-path="url(#a)" d="m76 96h-18v1h18zm0 18 .95.95c7.39-.76 13.05-10.36 13.05-19.95v-1c0 10-6.15 20-14 20zm44-18h-18v1h18zm0 18v1c7.85 0 14-10 14-20v-1c0 10-6.15 20-14 20z" fill="#263238"/><path clip-path="url(#a)" d="m96 9c41.97 0 76 34.03 76 76h.04c0-.33.02-.67.02-1h-.06c0-41.97-34.03-76-76-76s-76 34.03-76 76c0 .16.01.31.01.47.29-41.73 34.19-75.47 75.99-75.47z" fill="#fff"/><path clip-path="url(#a)" d="m172 84c-.51 38.53-30.22 75.78-76 99v1c46.18-23.42 76-61.11 76-100zm-76 72v-1c-39.61 0-75.7-31.98-75.99-71.53 0 .18-.01.35-.01.53 0 39.76 36.24 72 76 72z" fill="#263238"/></g><path d="m172.06 84c0-41.97-34.09-76-76.06-76s-76 34.03-76 76c0 39.76 36.24 72 76 72v28c46.18-23.42 76.06-61.11 76.06-100z" fill="url(#c)"/><path d="m0 0h192v192h-192z" fill="none"/></svg>

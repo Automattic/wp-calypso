@@ -73,7 +73,6 @@ describe( 'Checkout', () => {
 		},
 		translate: identity,
 		loadTrackingTool: identity,
-		recordApplePayStatus: identity,
 		transaction: {
 			step: {},
 		},

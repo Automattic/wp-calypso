@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	ACTIVE_PROMOTIONS_RECEIVE,
 	ACTIVE_PROMOTIONS_REQUEST,
 	ACTIVE_PROMOTIONS_REQUEST_SUCCESS,
 	ACTIVE_PROMOTIONS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -22,15 +19,14 @@ import { itemsSchema } from './schema';
  * @param {Object} action - activePromotions action
  * @return {Object} updated state
  */
-export const items = ( state = [], action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case ACTIVE_PROMOTIONS_RECEIVE:
 			return [ ...action.activePromotions ];
 	}
 
 	return state;
-};
-items.schema = itemsSchema;
+} );
 
 /**
  * `Reducer` function which handles request/response actions

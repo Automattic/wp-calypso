@@ -4,6 +4,8 @@
 }
 
 .is-section-signup .domains__step-content {
+	margin-bottom: 50px;
+
 	.search .search__icon-navigation {
 		background: none;
 	}
@@ -25,5 +27,12 @@
 
 	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
 		box-shadow: 0 0 0 3px var( --color-accent-light );
+	}
+
+	@include breakpoint( '<660px' ) {
+		.register-domain-step__search-card,
+		.search.is-open.has-focus {
+			border-radius: 0;
+		}
 	}
 }

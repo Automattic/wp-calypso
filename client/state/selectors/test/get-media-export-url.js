@@ -10,10 +10,8 @@ describe( 'getMediaExportUrl()', () => {
 		const mediaExportUrl = 'https://examples.com/profit';
 		expect(
 			getMediaExportUrl( {
-				siteSettings: {
-					exporter: {
-						mediaExportUrl,
-					},
+				exporter: {
+					mediaExportUrl,
 				},
 			} )
 		).toEqual( mediaExportUrl );

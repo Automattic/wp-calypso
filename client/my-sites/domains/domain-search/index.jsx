@@ -20,7 +20,13 @@ import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
 import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
-import cartItems from 'lib/cart-values/cart-items';
+import {
+	hasDomainInCart,
+	domainMapping,
+	domainTransfer,
+	domainRegistration as domnRegistration,
+	updatePrivacyForDomain,
+} from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
@@ -62,7 +68,7 @@ class DomainSearch extends Component {
 	};
 
 	handleAddRemoveDomain = suggestion => {
-		if ( ! cartItems.hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
+		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.addDomain( suggestion );
 		} else {
 			this.removeDomain( suggestion );
@@ -70,12 +76,12 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = domain => {
-		addItem( cartItems.domainMapping( { domain } ) );
+		addItem( domainMapping( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
 	handleAddTransfer = domain => {
-		addItem( cartItems.domainTransfer( { domain } ) );
+		addItem( domainTransfer( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
@@ -98,14 +104,14 @@ class DomainSearch extends Component {
 	addDomain( suggestion ) {
 		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'domains' );
 
-		let domainRegistration = cartItems.domainRegistration( {
+		let domainRegistration = domnRegistration( {
 			domain: suggestion.domain_name,
 			productSlug: suggestion.product_slug,
 			extra: { privacy_available: suggestion.supports_privacy },
 		} );
 
 		if ( suggestion.supports_privacy ) {
-			domainRegistration = cartItems.updatePrivacyForDomain( domainRegistration, true );
+			domainRegistration = updatePrivacyForDomain( domainRegistration, true );
 		}
 
 		addItems( [ domainRegistration ] );

@@ -1,0 +1,35 @@
+.logged-out-form__link-item {
+	color: var( --color-neutral-50 );
+	display: block;
+	font-family: $sans;
+	font-size: 13px;
+	padding: 8px 16px;
+	cursor: pointer;
+	text-decoration: underline;
+
+	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout:not( .dops ):not( .is-wccom-oauth-flow ) &,
+	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings ) .layout.gravatar & {
+		color: var( --color-text-inverted );
+
+		&:hover {
+			color: var( --color-neutral-10 );
+		}
+	}
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:visited {
+		color: var( --color-neutral-50 );
+	}
+
+	&:hover {
+		color: var( --color-accent );
+	}
+
+	.gridicon {
+		position: relative;
+		top: 3px;
+	}
+}

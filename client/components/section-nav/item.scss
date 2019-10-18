@@ -1,0 +1,142 @@
+.section-nav-tab .count {
+	margin-left: 8px;
+}
+
+.section-nav-tab {
+	@include breakpoint( '>480px' ) {
+		width: auto;
+		flex: none;
+		border-bottom: 2px solid transparent;
+		border-top: none;
+		text-align: center;
+
+		&.is-selected {
+			border-bottom-color: var( --color-neutral-70 );
+		}
+
+		&:hover:not( .is-selected ) {
+			border-bottom-color: var( --color-primary-0 );
+		}
+	}
+}
+
+.section-nav-tab__link,
+.section-nav-tab__text {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.section-nav-tab__link {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 15px;
+	width: 100%;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 18px;
+	color: var( --color-neutral-70 );
+	cursor: pointer;
+
+	&:visited {
+		color: var( --color-neutral-70 );
+	}
+
+	&[disabled],
+	.notouch &[disabled]:hover {
+		color: var( --color-neutral-20 );
+		cursor: default;
+	}
+
+	.is-selected & {
+		color: var( --color-text-inverted );
+		background-color: var( --color-primary );
+
+		@include breakpoint( '<480px' ) {
+			.count {
+				color: var( --color-text-inverted );
+				border-color: var( --color-border-inverted );
+			}
+		}
+	}
+
+	&:focus {
+		outline: none;
+
+		.accessible-focus & {
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
+		}
+	}
+
+	.is-external & {
+		.gridicons-external {
+			vertical-align: text-bottom;
+			margin-left: 3px;
+		}
+	}
+
+	.notouch & {
+		&:hover {
+			background-color: var( --color-primary-0 );
+			color: var( --color-primary );
+		}
+	}
+
+	.notouch .is-selected & {
+		&:hover {
+			color: var( --color-text-inverted );
+		}
+	}
+
+	@include breakpoint( '>480px' ) {
+		display: block;
+		width: auto;
+		padding: 16px 16px 14px;
+		color: var( --color-primary );
+		font-weight: 400;
+
+		&:visited {
+			color: var( --color-primary );
+		}
+
+		.is-selected & {
+			color: var( --color-neutral-70 );
+			background-color: transparent;
+
+			&::after {
+				display: none;
+			}
+		}
+
+		.notouch .is-selected & {
+			&:hover {
+				color: var( --color-neutral-70 );
+			}
+		}
+	}
+}
+
+.section-nav-tab__text {
+	display: block;
+	flex: 1 0 auto;
+	width: 0;
+	color: inherit;
+
+	@include breakpoint( '>480px' ) {
+		display: inline;
+		flex: none;
+		width: auto;
+	}
+}
+
+.section-nav-tab__title {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 15px;
+	width: 100%;
+	font-size: 14px;
+	line-height: 18px;
+	color: var( --color-neutral-70 );
+}

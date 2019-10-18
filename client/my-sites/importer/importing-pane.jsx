@@ -25,6 +25,11 @@ import ImporterDoneButton from 'my-sites/importer/importer-action-buttons/done-b
 import BusyImportingButton from 'my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 
+/**
+ * Style dependencies
+ */
+import './importing-pane.scss';
+
 const sum = ( a, b ) => a + b;
 
 /*
@@ -87,7 +92,7 @@ const hasProgressInfo = progress => {
 };
 
 class ImportingPane extends React.PureComponent {
-	static displayName = 'SiteSettingsImportingPane';
+	static displayName = 'ImportingPane';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
@@ -174,8 +179,8 @@ class ImportingPane extends React.PureComponent {
 		}
 
 		return this.props.translate(
-			'Waiting on %(numResources)s resource to import',
-			'Waiting on %(numResources)s resources to import',
+			'%(numResources)s post, page, or media file left to import',
+			'%(numResources)s posts, pages, and media files left to import',
 			{
 				count: numResources,
 				args: { numResources: numberFormat( numResources ) },
@@ -315,7 +320,9 @@ class ImportingPane extends React.PureComponent {
 							<br />
 						</div>
 					) ) }
-				{ blockingMessage && <div>{ blockingMessage }</div> }
+				{ blockingMessage && (
+					<div className="importer__import-progress-message">{ blockingMessage }</div>
+				) }
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>
 				</div>

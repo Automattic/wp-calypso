@@ -23,7 +23,7 @@ function Orders( { className, params, site, translate } ) {
 	if ( config.isEnabled( 'woocommerce/extension-orders-create' ) ) {
 		addButton = (
 			<Button primary href={ getLink( '/store/order/:site/', site ) }>
-				{ translate( 'New Order' ) }
+				{ translate( 'New order' ) }
 			</Button>
 		);
 	}

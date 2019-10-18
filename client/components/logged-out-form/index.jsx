@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,6 +11,11 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class LoggedOutForm extends React.Component {
 	static propTypes = {

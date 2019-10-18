@@ -1,0 +1,10 @@
+{
+	"name": "a8c/posts-list",
+	"category": "layout",
+	"attributes": {
+		"postsPerPage": {
+			"type": "number",
+			"default": 10
+		}
+	}
+}

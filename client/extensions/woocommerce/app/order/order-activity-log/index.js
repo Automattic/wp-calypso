@@ -25,7 +25,7 @@ class OrderActivityLog extends Component {
 
 		return (
 			<div className="order-activity-log">
-				<SectionHeader label={ translate( 'Activity Log' ) } />
+				<SectionHeader label={ translate( 'Activity log' ) } />
 				<Card>
 					<OrderEvents orderId={ orderId } siteId={ siteId } />
 					<CreateOrderNote orderId={ orderId } siteId={ siteId } />
