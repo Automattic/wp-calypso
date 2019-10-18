@@ -41,3 +41,4 @@ The following props can be passed to the Product Selector block:
 
 * `intervalType`: ( string ) Billing interval - `monthly`, `yearly` or `2yearly`.
 * `products`: ( array ) Products to render - see example above for the structure.
+* `siteId`: ( number ) ID of the site we're retrieving purchases for. Used to fetch information about the associated purchases of the selected products.
