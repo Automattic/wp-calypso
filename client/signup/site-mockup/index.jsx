@@ -19,6 +19,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalName,
 	getSiteVerticalPreview,
+	getSiteVerticalPreviewScreenshot,
 	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'state/signup/steps/site-vertical/selectors';
@@ -65,6 +66,7 @@ class SiteMockups extends Component {
 		title: PropTypes.string,
 		vertical: PropTypes.string,
 		verticalPreviewContent: PropTypes.string,
+		verticalPreviewScreenshot: PropTypes.string,
 		verticalPreviewStyles: PropTypes.string,
 	};
 
@@ -81,7 +83,10 @@ class SiteMockups extends Component {
 	shouldComponentUpdate( nextProps ) {
 		// Debouncing updates to the preview content
 		// prevents the flashing effect.
-		if ( nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ) {
+		if (
+			nextProps.verticalPreviewContent !== this.props.verticalPreviewContent ||
+			nextProps.verticalPreviewScreenshot !== this.props.verticalPreviewScreenshot
+		) {
 			this.updateDebounced();
 			return false;
 		}
@@ -91,7 +96,7 @@ class SiteMockups extends Component {
 
 	updateDebounced = debounce( () => {
 		this.forceUpdate();
-		if ( this.props.verticalPreviewContent ) {
+		if ( this.props.verticalPreviewContent || this.props.verticalPreviewScreenshot ) {
 			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
 				site_type: this.props.siteType,
 				vertical_slug: this.props.verticalSlug,
@@ -150,11 +155,12 @@ class SiteMockups extends Component {
 			title,
 			themeSlug,
 			verticalPreviewContent,
+			verticalPreviewScreenshot,
 			verticalPreviewStyles,
 		} = this.props;
 
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
-			'is-empty': isEmpty( verticalPreviewContent ),
+			'is-empty': isEmpty( verticalPreviewContent ) && ! verticalPreviewScreenshot,
 		} );
 		const langSlug = getLocaleSlug();
 		const language = getLanguage( langSlug );
@@ -209,6 +215,8 @@ export default connect(
 			siteStyle,
 			siteType,
 			verticalPreviewContent,
+			// Used to determine whether content has changed, choose any screenshot
+			verticalPreviewScreenshot: getSiteVerticalPreviewScreenshot( state, 'desktop' ),
 			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
 			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
