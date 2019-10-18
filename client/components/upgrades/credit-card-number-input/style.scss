@@ -1,17 +1,11 @@
+/* 1. `background-image` is set inline by the component logic */
+
 .credit-card-number-input {
-	input {
-		background-image: url( '/calypso/images/upgrades/cc-placeholder.svg' );
-		background-position: calc( 100% - 10px ) center;
-		background-repeat: no-repeat;
-		background-size: 32px auto;
+	input,
+	input[disabled] {
+		background-position: calc( 100% - 10px ) center; /* 1 */
+		background-repeat: no-repeat; /* 1 */
+		background-size: 32px auto; /* 1 */
 		padding-right: 50px;
-	}
-
-	$cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-
-	@each $brand in $cc-brands {
-		.#{$brand} input {
-			background-image: url( '/calypso/images/upgrades/cc-#{$brand}.svg' );
-		}
 	}
 }

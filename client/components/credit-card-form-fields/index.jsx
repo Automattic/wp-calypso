@@ -32,19 +32,25 @@ const CardCvcElementWithValidation = withStripeElementValidation( CardCvcElement
  */
 import './style.scss';
 
+/**
+ * Image assets
+ */
+import creditCardSecurityBackImage from 'assets/images/upgrades/cc-cvv-back.svg';
+import creditCardSecurityFrontImage from 'assets/images/upgrades/cc-cvv-front.svg';
+
 function CvvPopover( { translate, card } ) {
 	const brand = getCreditCardType( card.number );
 
 	let popoverText = translate(
 		'This is the 3-digit number printed on the signature panel on the back of your card.'
 	);
-	let popoverImage = '/calypso/images/upgrades/cc-cvv-back.svg';
+	let popoverImage = creditCardSecurityBackImage;
 
 	if ( brand === 'amex' ) {
 		popoverText = translate(
 			'This is the 4-digit number printed above the account number ' + 'on the front of your card.'
 		);
-		popoverImage = '/calypso/images/upgrades/cc-cvv-front.svg';
+		popoverImage = creditCardSecurityFrontImage;
 	}
 
 	return (
