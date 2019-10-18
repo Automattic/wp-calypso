@@ -274,7 +274,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function() {
 			return await transferDomainPage.clickTransferDomain();
 		} );
 
-		step( 'Can see the transfer precheck page', async function() {
+		step( 'Can see the transfer precheck page ', async function() {
 			return await TransferDomainPrecheckPage.Expect( driver );
 		} );
 	} );
