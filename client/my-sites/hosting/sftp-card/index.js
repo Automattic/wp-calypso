@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, map } from 'lodash';
@@ -17,13 +17,42 @@ import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	requestAtomicSFTPDetails,
-	resetAtomicSFTPUserPassword,
-	createAtomicSFTPUser,
-} from 'state/data-getters';
 
-const SFTPCard = ( { translate, username, password, errorCode, siteId, loading } ) => {
+// @TODO derive API request details from props when API is merged & remove component state
+const SFTPCard = ( { translate, siteId } ) => {
+	// Begin dummy API data/methods
+	const [ dummyApiRequest, setDummyApiRequest ] = useState( {
+		status: 'error',
+		error: {
+			status: 404,
+		},
+	} );
+
+	const username = get( dummyApiRequest, 'data.username', null );
+	const password = get( dummyApiRequest, 'data.password', null );
+	const loading = dummyApiRequest.status === 'pending';
+	const noSftpUser = get( dummyApiRequest, 'error.status', 0 ) === 404;
+
+	const createAtomicSFTPUser = () => {
+		setDummyApiRequest( {
+			status: 'success',
+			data: {
+				username: 'test_user_testsite.wordpress.com_1234',
+			},
+		} );
+	};
+
+	const resetAtomicSFTPUserPassword = () => {
+		setDummyApiRequest( {
+			status: 'success',
+			data: {
+				username: 'test_user_testsite.wordpress.com_1234',
+				password: 'a.reset.p.a.s.s.word',
+			},
+		} );
+	};
+	// End of dummy API data/methods
+
 	const sftpData = {
 		[ translate( 'URL' ) ]: 'sftp1.wordpress.com',
 		[ translate( 'Port' ) ]: 22,
@@ -51,20 +80,22 @@ const SFTPCard = ( { translate, username, password, errorCode, siteId, loading }
 						</strong>
 					</div>
 				) }
-				{ errorCode === 404 && (
-					<Button onClick={ createAtomicSFTPUser } primary>
+				{ noSftpUser && (
+					<Button onClick={ () => createAtomicSFTPUser( siteId ) } primary>
 						Create SFTP User
 					</Button>
 				) }
 				<table
-					className={ classNames( 'sftp-card__info-table', { [ 'is-placeholder' ]: loading } ) }
+					className={ classNames( 'sftp-card__info-table', {
+						[ 'is-placeholder' ]: loading || noSftpUser,
+					} ) }
 				>
 					<tbody>
 						{ map( sftpData, ( data, title ) => (
 							<tr key={ title }>
 								<th>{ title }:</th>
 								<td>
-									<span>{ ! loading && data }</span>
+									<span>{ ! loading && ! noSftpUser && data }</span>
 								</td>
 							</tr>
 						) ) }
@@ -73,7 +104,8 @@ const SFTPCard = ( { translate, username, password, errorCode, siteId, loading }
 							<td>
 								<Button
 									onClick={ () => resetAtomicSFTPUserPassword( siteId ) }
-									disabled={ loading }
+									disabled={ loading || noSftpUser }
+									busy={ loading && ! noSftpUser }
 								>
 									{ translate( 'Reset Password' ) }
 								</Button>
@@ -88,14 +120,8 @@ const SFTPCard = ( { translate, username, password, errorCode, siteId, loading }
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	const sftpDetails = requestAtomicSFTPDetails( siteId );
-	const username = get( sftpDetails, 'data.username', null );
 
 	return {
 		siteId,
-		username,
-		password: get( sftpDetails, 'data.password', null ),
-		errorCode: get( sftpDetails, 'error.status', null ),
-		loading: get( sftpDetails, 'status', null ) === 'pending' || ! username,
 	};
 } )( localize( SFTPCard ) );
