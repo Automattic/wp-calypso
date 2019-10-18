@@ -95,7 +95,7 @@ User.prototype.initialize = async function() {
 User.prototype.clearStoreIfChanged = function( userId ) {
 	const storedUserId = store.get( 'wpcom_user_id' );
 
-	if ( storedUserId !== null && storedUserId !== userId ) {
+	if ( storedUserId != null && storedUserId !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
 		store.clearAll();
 	}
