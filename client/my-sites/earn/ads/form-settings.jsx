@@ -540,7 +540,9 @@ class AdsFormSettings extends Component {
 
 		return (
 			<Fragment>
-				{ this.props.siteIsJetpack ? this.jetpckPlacementControls() : null }
+				{ this.props.siteIsJetpack && this.props.site.options.wordads
+					? this.jetpckPlacementControls()
+					: null }
 
 				<SectionHeader label={ translate( 'Ads Settings' ) }>
 					<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
