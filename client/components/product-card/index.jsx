@@ -27,14 +27,14 @@ const ProductCard = ( {
 	fullPrice,
 	hasManageSubscriptionLink,
 	isPlaceholder,
-	isPurchased,
+	purchase,
 	subtitle,
 	title,
 } ) => {
 	const translate = useTranslate();
 	const cardClassNames = classNames( 'product-card', {
 		'is-placeholder': isPlaceholder,
-		'is-purchased': isPurchased,
+		'is-purchased': !! purchase,
 	} );
 
 	return (
@@ -42,13 +42,13 @@ const ProductCard = ( {
 			<div className="product-card__header">
 				{ title && (
 					<div className="product-card__header-primary">
-						{ isPurchased && <Gridicon icon="checkmark" size={ 18 } /> }
+						{ purchase && <Gridicon icon="checkmark" size={ 18 } /> }
 						<h3 className="product-card__title">{ title }</h3>
 					</div>
 				) }
 				<div className="product-card__header-secondary">
 					{ subtitle && <div className="product-card__subtitle">{ subtitle }</div> }
-					{ ! isPurchased && (
+					{ ! purchase && (
 						<ProductCardPriceGroup
 							billingTimeFrame={ billingTimeFrame }
 							currencyCode={ currencyCode }
@@ -82,7 +82,7 @@ ProductCard.propTypes = {
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 	hasManageSubscriptionLink: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
-	isPurchased: PropTypes.bool,
+	purchase: PropTypes.object,
 	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 };
