@@ -18,6 +18,17 @@
 		}
 	}
 
+	&.is-amex,
+	&.is-diners,
+	&.is-discover,
+	&.is-jcb,
+	&.is-mastercard,
+	&.is-unionpay,
+	&.is-visa {
+		background-size: 30px 19px;
+		width: 30px;
+	}
+
 	&.is-paypal {
 		background-size: 70px;
 		width: 70px;

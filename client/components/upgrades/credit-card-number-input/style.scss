@@ -3,9 +3,9 @@
 .credit-card-number-input {
 	input,
 	input[disabled] {
-		background-position: calc( 100% - 10px ) center; /* 1 */
+		background-position: calc( 100% - 10px ) calc( 50% - 1px ); /* 1 */
 		background-repeat: no-repeat; /* 1 */
-		background-size: 32px auto; /* 1 */
+		background-size: 30px auto; /* 1 */
 		padding-right: 50px;
 	}
 }
