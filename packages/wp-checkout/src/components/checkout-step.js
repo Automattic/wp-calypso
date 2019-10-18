@@ -20,8 +20,8 @@ export default function CheckoutStep( {
 	onEdit,
 	isActive,
 	isComplete,
-	isVisible,
 	finalStep,
+	summary,
 	children,
 } ) {
 	const classNames = [
@@ -32,7 +32,7 @@ export default function CheckoutStep( {
 	];
 	return (
 		<StepWrapper
-			isVisible={ isVisible }
+			isSummary={ !! summary }
 			isActive={ isActive }
 			isComplete={ isComplete }
 			className={ joinClasses( classNames ) }
@@ -55,7 +55,7 @@ CheckoutStep.propTypes = {
 	stepNumber: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
 	finalStep: PropTypes.bool,
-	isVisible: PropTypes.bool.isRequired,
+	summary: PropTypes.bool,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
 };

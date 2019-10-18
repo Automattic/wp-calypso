@@ -110,7 +110,6 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 	return (
 		<React.Fragment>
 			<CheckoutStep
-				isVisible={ isActive }
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 1 }
@@ -130,7 +129,7 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 				/>
 			</CheckoutStep>
 			<CheckoutStep
-				isVisible={ ! isActive }
+				summary
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 1 }
@@ -165,7 +164,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 		return (
 			<React.Fragment>
 				<CheckoutStep
-					isVisible={ true }
+					summary
 					isActive={ false }
 					isComplete={ isComplete }
 					stepNumber={ 2 }
@@ -186,7 +185,6 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 	return (
 		<React.Fragment>
 			<CheckoutStep
-				isVisible={ isActive }
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 2 }
@@ -204,7 +202,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 				/>
 			</CheckoutStep>
 			<CheckoutStep
-				isVisible={ ! isActive }
+				summary
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 2 }
@@ -212,6 +210,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 				onEdit={ () => setStepNumber( 2 ) }
 			>
 				<BillingContactComponent
+					summary
 					paymentData={ paymentData }
 					setPaymentData={ setBillingData }
 					isActive={ isActive }
@@ -238,7 +237,6 @@ function ReviewOrderStep( { isActive, isComplete } ) {
 		<React.Fragment>
 			<CheckoutStep
 				finalStep
-				isVisible={ isActive }
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 3 }
@@ -248,7 +246,7 @@ function ReviewOrderStep( { isActive, isComplete } ) {
 			</CheckoutStep>
 			<CheckoutStep
 				finalStep
-				isVisible={ ! isActive }
+				summary
 				isActive={ isActive }
 				isComplete={ isComplete }
 				stepNumber={ 3 }

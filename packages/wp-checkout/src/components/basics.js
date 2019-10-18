@@ -51,9 +51,9 @@ export const StepWrapper = styled.div`
 	padding-bottom: 32px;
 	margin-bottom: 8px;
 	position: relative;
-	max-height: ${props => ( props.isVisible ? 'initial' : '0' )};
+	max-height: ${props => ( isVisible( props ) ? 'initial' : '0' )};
 	overflow: hidden;
-	padding: ${props => ( props.isVisible ? 'initial' : '0' )};
+	padding: ${props => ( isVisible( props ) ? 'initial' : '0' )};
 	:after {
 		display: block;
 		width: ${props => ( props.finalStep ? '0' : '1px' )};
@@ -68,6 +68,10 @@ export const StepWrapper = styled.div`
 		padding-bottom: 0;
 	}
 `;
+
+function isVisible( { isActive, isSummary } ) {
+	return isActive ? ! isSummary : isSummary;
+}
 
 export const StepHeader = styled.h2`
 	font-size: 16px;
