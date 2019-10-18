@@ -12,15 +12,7 @@ jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'enrichedSurveyData', () => {
 	test( 'should duplicate survey data if no site or purchase are provided', () => {
-		expect( enrichedSurveyData( { key: 'value' }, moment() ) ).toEqual( {
-			key: 'value',
-			purchase: null,
-			purchaseId: null,
-		} );
-	} );
-
-	test( 'should duplicate survey data if no site, purchase, or timestamp are provided', () => {
-		expect( enrichedSurveyData( { key: 'value' }, null ) ).toEqual( {
+		expect( enrichedSurveyData( { key: 'value' } ) ).toEqual( {
 			key: 'value',
 			purchase: null,
 			purchaseId: null,
@@ -30,7 +22,7 @@ describe( 'enrichedSurveyData', () => {
 	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
 		const site = null;
 		const purchase = { id: 'purchase id', productSlug: 'product slug' };
-		expect( enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase ).toEqual(
+		expect( enrichedSurveyData( { key: 'value' }, site, purchase ).purchase ).toEqual(
 			'product slug'
 		);
 	} );
@@ -39,7 +31,7 @@ describe( 'enrichedSurveyData', () => {
 		const site = null;
 		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
 		expect(
-			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase )
+			enrichedSurveyData( {}, site, purchase, moment( '2017-01-19T03:00:00+00:00' ) )
 				.daysSincePurchase
 		).toEqual( 10 );
 	} );
@@ -50,7 +42,7 @@ describe( 'enrichedSurveyData', () => {
 		};
 		const purchase = null;
 		expect(
-			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase )
+			enrichedSurveyData( {}, site, purchase, moment( '2017-01-19T03:00:00+00:00' ) )
 				.daysSinceSiteCreation
 		).toEqual( 10 );
 	} );

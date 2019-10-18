@@ -104,7 +104,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			type: 'remove',
 		};
-		survey.addResponses( enrichedSurveyData( surveyData, null, site, purchase ) );
+		survey.addResponses( enrichedSurveyData( surveyData, site, purchase ) );
 
 		const response = await survey.submit();
 		if ( ! response.success ) {

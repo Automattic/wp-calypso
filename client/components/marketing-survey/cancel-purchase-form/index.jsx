@@ -248,7 +248,7 @@ class CancelPurchaseForm extends React.Component {
 			submitSurvey(
 				'calypso-remove-purchase',
 				selectedSite.ID,
-				enrichedSurveyData( surveyData, null, selectedSite, purchase )
+				enrichedSurveyData( surveyData, selectedSite, purchase )
 			).then( () => {
 				this.setState( {
 					isSubmitting: false,
