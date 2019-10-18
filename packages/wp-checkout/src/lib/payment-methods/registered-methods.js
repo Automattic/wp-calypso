@@ -24,7 +24,7 @@ export default function loadPaymentMethods() {
 		id: 'card',
 		LabelComponent: () => <span>Credit Card</span>,
 		PaymentMethodComponent: () => <div>Enter card info here</div>,
-		BillingContactComponent: () => <div>Put payment info here</div>,
+		BillingContactComponent: ApplePayBillingForm, // TODO: replace this
 		SubmitButtonComponent: () => <button>Pay</button>,
 	} );
 
@@ -32,7 +32,7 @@ export default function loadPaymentMethods() {
 		id: 'paypal',
 		LabelComponent: () => <span>PayPal</span>,
 		PaymentMethodComponent: () => null,
-		BillingContactComponent: () => <div>Put payment info here</div>,
+		BillingContactComponent: ApplePayBillingForm, // TODO: replace this
 		SubmitButtonComponent: () => <button>Pay</button>,
 	} );
 }
