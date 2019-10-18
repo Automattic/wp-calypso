@@ -48,9 +48,7 @@ export default function CheckoutStep( {
 				onEdit={ onEdit }
 			/>
 			<StepContent isActive={ isActive }>{ stepContent }</StepContent>
-			<StepSummary showSummary={ ( showSummary && ! isComplete ) || isComplete }>
-				{ stepSummary }
-			</StepSummary>
+			<StepSummary showSummary={ isComplete || showSummary }>{ stepSummary }</StepSummary>
 		</StepWrapper>
 	);
 }
