@@ -52,7 +52,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/stats/day/${ this.props.siteSlug }` );
+		page.back( `/marketing/tools/${ this.props.siteSlug }` );
 	};
 
 	handleConnect = keyringConnection => {
@@ -167,6 +167,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
@@ -184,6 +185,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
+				{  }
 				<Card className="gmb-select-business-type__explanation">
 					<div className="gmb-select-business-type__explanation-main">
 						<CardHeading tagName="h1" size={ 24 }>
