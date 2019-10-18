@@ -12,7 +12,7 @@ import { requestConciergeInitial } from 'state/concierge/actions';
 class QueryConciergeInitial extends Component {
 	componentDidMount() {
 		const { siteId } = this.props;
-
+		console.log( 'componentDidMount' );
 		this.props.requestConciergeInitial( siteId );
 	}
 

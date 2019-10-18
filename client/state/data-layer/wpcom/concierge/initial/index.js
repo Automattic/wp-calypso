@@ -28,8 +28,11 @@ export const fetchConciergeInitial = action =>
 		action
 	);
 
-export const storeFetchedConciergeInitial = ( action, initial ) =>
+export const storeFetchedConciergeInitial = ( action, initial ) => {
+	console.log( 'initial' );
+	console.log( initial );
 	updateConciergeInitial( initial );
+};
 
 export const conciergeInitialFetchError = () =>
 	errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) );
