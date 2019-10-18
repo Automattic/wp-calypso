@@ -9,10 +9,10 @@ import { getStatsDefaultSitePage } from 'lib/route/path';
  * Determine the default section to show for the specified site.
  *
  * @param  {Object}  state  Global state tree.
- * @param  {?Number} siteId Site ID.
- * @return {String}         Url of the site home.
+ * @param  {?Number} siteId Site ID (fallback to selected site).
+ * @return {String}         Path of the default section for the site.
  */
-export default function getSiteHomeUrl( state: object, siteId?: number ): string {
+export default function getMySitesDefaultPage( state: object, siteId?: number ): string {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, selectedSiteId );
 

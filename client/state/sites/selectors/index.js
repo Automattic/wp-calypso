@@ -16,6 +16,7 @@ export {
 export {
 	default as getJetpackSiteUpdateFilesDisabledReasons,
 } from './get-jetpack-site-update-files-disabled-reasons';
+export { default as getMySitesDefaultPage } from './get-my-sites-default-page';
 export { default as getSeoTitle } from './get-seo-title';
 export { default as getSeoTitleFormats } from './get-seo-title-formats';
 export { default as getSeoTitleFormatsForSite } from './get-seo-title-formats-for-site';
@@ -28,7 +29,6 @@ export { default as getSiteComputedAttributes } from './get-site-computed-attrib
 export { default as getSiteDomain } from './get-site-domain';
 export { default as getSiteFrontPage } from './get-site-front-page';
 export { default as getSiteFrontPageType } from './get-site-front-page-type';
-export { default as getSiteHomeUrl } from './get-site-home-url';
 export { default as getSiteOption } from './get-site-option';
 export { default as getSitePlan } from './get-site-plan';
 export { default as getSitePlanSlug } from './get-site-plan-slug';

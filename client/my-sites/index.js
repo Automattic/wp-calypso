@@ -12,7 +12,7 @@ import { get } from 'lodash';
  */
 import { siteSelection, sites } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
-import { getSiteBySlug, getSiteHomeUrl } from 'state/sites/selectors';
+import { getSiteBySlug, getMySitesDefaultPage } from 'state/sites/selectors';
 
 export default function() {
 	page( '/sites/:site', context => {
@@ -20,7 +20,7 @@ export default function() {
 		const site = getSiteBySlug( state, context.params.site );
 		// The site may not be loaded into state yet.
 		const siteId = get( site, 'ID' );
-		page.redirect( getSiteHomeUrl( state, siteId ) );
+		page.redirect( getMySitesDefaultPage( state, siteId ) );
 	} );
 	page( '/sites', siteSelection, sites, makeLayout, clientRender );
 }

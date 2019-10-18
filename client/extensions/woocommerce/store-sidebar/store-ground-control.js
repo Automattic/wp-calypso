@@ -15,11 +15,11 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Site from 'blocks/site';
-import { getSiteHomeUrl } from 'state/sites/selectors';
+import { getMySitesDefaultPage } from 'state/sites/selectors';
 
-const StoreGroundControl = ( { site, siteHomeUrl, translate } ) => {
+const StoreGroundControl = ( { site, mySitesDefaultPage, translate } ) => {
 	const isPlaceholder = ! site;
-	const backUrl = isPlaceholder ? '' : siteHomeUrl;
+	const backUrl = isPlaceholder ? '' : mySitesDefaultPage;
 
 	return (
 		<div className="store-sidebar__ground-control">
@@ -43,10 +43,10 @@ StoreGroundControl.propTypes = {
 	site: PropTypes.shape( {
 		slug: PropTypes.string,
 	} ).isRequired,
-	siteHomeUrl: PropTypes.string.isRequired,
+	mySitesDefaultPage: PropTypes.string.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
 export default connect( state => ( {
-	siteHomeUrl: getSiteHomeUrl( state ),
+	mySitesDefaultPage: getMySitesDefaultPage( state ),
 } ) )( localize( StoreGroundControl ) );
