@@ -80,8 +80,6 @@ export const StepHeader = styled.h2`
 `;
 
 export const StepTitle = styled.span`
-	font-weight: ${props =>
-		props.isActive ? props.theme.weights.normal : props.theme.weights.bold};
 	color: ${props => ( props.isActive ? props.theme.colors.black : props.theme.colors.gray80 )};
 	margin-right: 5px;
 	font-weight: ${props =>
