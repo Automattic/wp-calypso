@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { flattenDeep, isEmpty, map, uniq } from 'lodash';
+import { find, flattenDeep, flowRight as compose, includes, isEmpty, map, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,9 +15,13 @@ import FormRadio from 'components/forms/form-radio';
 import Card from 'components/card';
 import ProductCard from 'components/product-card';
 import QueryProductsList from 'components/data/query-products-list';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
 	constructor( props ) {
@@ -51,6 +55,35 @@ export class ProductSelector extends Component {
 		}
 	}
 
+	getPurchaseByProduct( product ) {
+		const { intervalType, purchases } = this.props;
+		const productSlugs = product.options[ intervalType ];
+
+		// TODO: Implement logic for plans that contan certain Jetpack products.
+
+		return find(
+			purchases,
+			purchase => purchase.active && includes( productSlugs, purchase.productSlug )
+		);
+	}
+
+	getSubtitleByProduct( product ) {
+		const { moment, translate } = this.props;
+		const purchase = this.getPurchaseByProduct( product );
+
+		if ( ! purchase ) {
+			return;
+		}
+
+		// TODO: Implement logic for plans that contan certain Jetpack products.
+
+		return translate( 'Purchased %(purchaseDate)s', {
+			args: {
+				purchaseDate: moment( purchase.subscribedDate ).format( 'YYYY-MM-DD' ),
+			},
+		} );
+	}
+
 	handleProductOptionSelect( stateKey, productSlug ) {
 		return () => {
 			this.setState( {
@@ -79,6 +112,8 @@ export class ProductSelector extends Component {
 						fullPrice={ productObject.cost }
 						description={ product.description }
 						currencyCode={ currencyCode }
+						purchase={ this.getPurchaseByProduct( product ) }
+						subtitle={ this.getSubtitleByProduct( product ) }
 					/>
 
 					{ this.renderProductOptions( product ) }
@@ -126,9 +161,12 @@ export class ProductSelector extends Component {
 	}
 
 	render() {
+		const { selectedSiteId } = this.props;
+
 		return (
 			<div className="product-selector">
 				<QueryProductsList />
+				<QuerySitePurchases siteId={ selectedSiteId } />
 
 				{ this.renderProducts() }
 			</div>
@@ -144,22 +182,38 @@ ProductSelector.propTypes = {
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
 		} )
 	).isRequired,
+	siteId: PropTypes.number,
 
 	// Connected props
+	currencyCode: PropTypes.string,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
+	purchases: PropTypes.array,
+	selectedSiteId: PropTypes.number,
 	storeProducts: PropTypes.object,
 
 	// From localize() HoC
 	translate: PropTypes.func.isRequired,
+
+	// From withLocalizedMoment() HoC
+	moment: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { products } ) => {
+const connectComponent = connect( ( state, { products, siteId } ) => {
+	const selectedSiteId = siteId || getSelectedSiteId( state );
 	const productSlugs = uniq( flattenDeep( products.map( extractProductSlugs ) ) );
 	const availableProducts = getAvailableProductsList( state );
 
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		productSlugs,
+		purchases: getSitePurchases( state, selectedSiteId ),
+		selectedSiteId,
 		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
 	};
-} )( localize( ProductSelector ) );
+} );
+
+export default compose(
+	connectComponent,
+	localize,
+	withLocalizedMoment
+)( ProductSelector );

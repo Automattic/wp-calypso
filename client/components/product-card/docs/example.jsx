@@ -10,6 +10,15 @@ import Button from 'components/button';
 import ProductCard from '../index';
 import ProductCardOptions from '../options';
 
+const purchase = {
+	active: true,
+	domain: 'yourjetpack.blog',
+	id: 999999999,
+	productName: 'Jetpack Backup (Daily)',
+	productSlug: 'jetpack_backup_daily',
+	subscribedDate: '2019-10-18T10:37:04+00:00',
+};
+
 function ProductCardExample() {
 	const [ selectedProductOption, selectProductOption ] = useState(
 		'jetpack_backup_realtime_monthly'
@@ -87,9 +96,8 @@ function ProductCardExample() {
 						you’ll get unlimited backup archives
 					</p>
 				}
-				hasManageSubscriptionLink
 				isPlaceholder={ isPlaceholder }
-				isPurchased
+				purchase={ purchase }
 			/>
 
 			<h3>Product Card - part of Jetpack plan</h3>
@@ -111,7 +119,7 @@ function ProductCardExample() {
 					</p>
 				}
 				isPlaceholder={ isPlaceholder }
-				isPurchased
+				purchase={ purchase }
 			/>
 		</Fragment>
 	);

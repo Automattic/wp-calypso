@@ -37,12 +37,12 @@ export default class extends React.Component {
 }
 ```
 
-### <a name="how-is-purchased-flag-works"></a>How `isPurchased` flag works
+### <a name="how-purchase-prop-works"></a>How `purchase` prop works
 
 The component can be in two visual and functional states:
-* `isPurchased` flag is not set - the product plan prices will be rendered below the highlighted title. If the product
+* `purchase` prop is not set - the product plan prices will be rendered below the highlighted title. If the product
 has purchase options, they will be listed below the description.
-* `isPurchased` flag is set - the content area will not contain product options (if they exist).
+* `purchase` prop is set - the content area will not contain product options (if they exist).
 
 ### `<ProductCard />` props
 
@@ -55,12 +55,10 @@ The following props can be passed to the Product Card component:
  displayed as a price range
 * `fullPrice`: ( number | array ) Full price of a product. If an array of 2 numbers is passed, it will be displayed as
  a price range
-* `hasManageSubscriptionLink`: ( bool ) Flag indicating if a "Manage subscription" link should be rendered in the card's
- content area
 * `isPlaceholder`: ( bool ) Flag indicating if a product price is in a loading state and should be rendered as a
   placeholder
-* `isPurchased`: ( bool ) Flag indicating if a product has already been purchased. [Read more about the way this flag
- works](#how-is-purchased-flag-works)
+* `purchase`: ( object ) A purchase object, associated with the product. [Read more about the way this flag
+ works](#how-purchase-prop-works)
 * `subtitle`: ( string | element ) Product subtitle. It's used if the product has already been purchased, but can be
  used also in other use-cases. It can be a string or a React element (e.g. `<Fragment>`)
 * `title`: ( string | element ) Product title. It can be a string or a React element (e.g. `<Fragment>`)
