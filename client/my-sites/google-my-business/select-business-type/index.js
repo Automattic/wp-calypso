@@ -185,7 +185,6 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				{  }
 				<Card className="gmb-select-business-type__explanation">
 					<div className="gmb-select-business-type__explanation-main">
 						<CardHeading tagName="h1" size={ 24 }>
