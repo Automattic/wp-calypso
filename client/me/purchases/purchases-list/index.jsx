@@ -20,7 +20,7 @@ import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getPurchasesBySite, isExpired } from 'lib/purchases';
+import { getPurchasesBySite } from 'lib/purchases';
 import getSites from 'state/selectors/get-sites';
 import {
 	getUserPurchases,
@@ -30,7 +30,6 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
-import { isConciergeSession } from 'lib/products-values';
 
 class PurchasesList extends Component {
 	constructor() {
@@ -53,9 +52,7 @@ class PurchasesList extends Component {
 	}
 
 	render() {
-		let content, concierge;
-		console.log( 'nextAppointment ' );
-		console.log( this.props.nextAppointment );
+		let content;
 
 		if ( this.isDataLoading() ) {
 			content = <PurchasesSite isPlaceholder />;
@@ -98,20 +95,6 @@ class PurchasesList extends Component {
 			);
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
-			concierge = getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => {
-				site.purchases.map( purchase => {
-					if ( isConciergeSession( purchase ) ) {
-						if ( ! isExpired( purchase ) ) {
-							console.log( 'has upcoming concierge ' + site.id );
-
-							site.id && <QueryConciergeInitial siteId={ site.id } />;
-						}
-					}
-				} );
-			} );
-		}
-
 		return (
 			<Main className="purchases-list">
 				<QueryUserPurchases userId={ this.props.userId } />
@@ -119,7 +102,7 @@ class PurchasesList extends Component {
 				<MeSidebarNavigation />
 				<PurchasesHeader section="purchases" />
 				{ content }
-				{ concierge }
+				<QueryConciergeInitial />
 			</Main>
 		);
 	}
