@@ -27,6 +27,7 @@ import {
 	redactDomainContactInfo,
 } from 'state/sites/domains/actions';
 import Property from './card/property';
+import Gridicon from 'components/gridicon';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -133,6 +134,7 @@ class RegisteredDomain extends React.Component {
 				privacyAvailable,
 				contactInfoDisclosureAvailable,
 				contactInfoDisclosed,
+				isPendingIcannVerification,
 			},
 		} = this.props;
 
@@ -140,16 +142,30 @@ class RegisteredDomain extends React.Component {
 			return false;
 		}
 
+		const contactVerificationNotice = isPendingIcannVerification ? (
+			<div class="edit__disclose-contact-information-warning">
+				<Gridicon icon="info-outline" size={ 18 } />
+				<p>
+					{ translate(
+						'You need to verify the contact information for the domain before you can disclose it publicly.'
+					) }
+				</p>
+			</div>
+		) : null;
+
 		return (
-			<Property label={ translate( 'Display my contact information in public WHOIS' ) }>
-				<FormToggle
-					wrapperClassName="edit__disclose-contact-information"
-					checked={ contactInfoDisclosed }
-					toggling={ isUpdatingPrivacy }
-					disabled={ isUpdatingPrivacy }
-					onChange={ this.toggleContactInfo }
-				/>
-			</Property>
+			<div>
+				<Property label={ translate( 'Display my contact information in public WHOIS' ) }>
+					<FormToggle
+						wrapperClassName="edit__disclose-contact-information"
+						checked={ contactInfoDisclosed }
+						toggling={ isUpdatingPrivacy }
+						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
+						onChange={ this.toggleContactInfo }
+					/>
+				</Property>
+				{ contactVerificationNotice }
+			</div>
 		);
 	}
 
