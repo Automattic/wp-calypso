@@ -101,7 +101,7 @@ function getGrayscaleValue( { checked } ) {
 
 function getOutline( { isFocused } ) {
 	if ( isFocused ) {
-		return 'blue auto 5px';
+		return '#5198D9 auto 5px';
 	}
 	return '0';
 }
