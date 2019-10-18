@@ -48,6 +48,24 @@ class PhoneInput extends React.PureComponent {
 		freezeSelection: false,
 	};
 
+	numberInput = undefined;
+
+	setNumberInputRef = element => {
+		this.numberInput = element;
+
+		const { inputRef } = this.props;
+
+		if ( ! inputRef ) {
+			return;
+		}
+
+		if ( typeof inputRef === 'function' ) {
+			inputRef( element );
+		} else {
+			inputRef.current = element;
+		}
+	};
+
 	/**
 	 * Returns the country meta with default values for countries with missing metadata. Never returns null.
 	 * @param {string} [countryCode=this.props.countryCode] - The country code
@@ -231,8 +249,6 @@ class PhoneInput extends React.PureComponent {
 		} );
 		this.setState( { freezeSelection: this.props.enableStickyCountry } );
 	};
-
-	setNumberInputRef = c => ( this.numberInput = c );
 
 	render() {
 		return (
