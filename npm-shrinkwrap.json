@@ -5035,6 +5035,11 @@
 					"version": "2.0.0",
 					"resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
 					"integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+				},
+				"qs": {
+					"version": "6.7.0",
+					"resolved": "https://registry.npmjs.org/qs/-/qs-6.7.0.tgz",
+					"integrity": "sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ=="
 				}
 			}
 		},
@@ -18984,9 +18989,9 @@
 			}
 		},
 		"qs": {
-			"version": "6.7.0",
-			"resolved": "https://registry.npmjs.org/qs/-/qs-6.7.0.tgz",
-			"integrity": "sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ=="
+			"version": "6.9.0",
+			"resolved": "https://registry.npmjs.org/qs/-/qs-6.9.0.tgz",
+			"integrity": "sha512-27RP4UotQORTpmNQDX8BHPukOnBP3p1uUJY5UnDhaJB+rMt9iMsok724XL+UHU23bEFOHRMQ2ZhI99qOWUMGFA=="
 		},
 		"query-string": {
 			"version": "4.3.4",
