@@ -340,7 +340,7 @@
 		"jest-junit": "7.0.0",
 		"md5-file": "4.0.0",
 		"mixedindentlint": "1.2.0",
-		"mockdate": "2.0.2",
+		"mockdate": "2.0.5",
 		"moment-timezone-data-webpack-plugin": "1.1.0",
 		"ncp": "2.0.0",
 		"nock": "10.0.6",
