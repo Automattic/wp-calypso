@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { flattenDeep, isEmpty, map, uniq } from 'lodash';
+import { find, flattenDeep, includes, isEmpty, map, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,9 +15,12 @@ import FormRadio from 'components/forms/form-radio';
 import Card from 'components/card';
 import ProductCard from 'components/product-card';
 import QueryProductsList from 'components/data/query-products-list';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
 
 export class ProductSelector extends Component {
 	constructor( props ) {
@@ -51,6 +54,13 @@ export class ProductSelector extends Component {
 		}
 	}
 
+	getPurchaseByProduct( product ) {
+		const { intervalType, purchases } = this.props;
+		const productSlugs = product.options[ intervalType ];
+
+		return find( purchases, purchase => includes( productSlugs, purchase.productSlug ) );
+	}
+
 	handleProductOptionSelect( stateKey, productSlug ) {
 		return () => {
 			this.setState( {
@@ -79,6 +89,7 @@ export class ProductSelector extends Component {
 						fullPrice={ productObject.cost }
 						description={ product.description }
 						currencyCode={ currencyCode }
+						purchase={ this.getPurchaseByProduct( product ) }
 					/>
 
 					{ this.renderProductOptions( product ) }
@@ -126,9 +137,12 @@ export class ProductSelector extends Component {
 	}
 
 	render() {
+		const { selectedSiteId } = this.props;
+
 		return (
 			<div className="product-selector">
 				<QueryProductsList />
+				<QuerySitePurchases siteId={ selectedSiteId } />
 
 				{ this.renderProducts() }
 			</div>
@@ -144,22 +158,29 @@ ProductSelector.propTypes = {
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
 		} )
 	).isRequired,
+	siteId: PropTypes.number,
 
 	// Connected props
+	currencyCode: PropTypes.string,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
+	purchases: PropTypes.array,
+	selectedSiteId: PropTypes.number,
 	storeProducts: PropTypes.object,
 
 	// From localize() HoC
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { products } ) => {
+export default connect( ( state, { products, siteId } ) => {
+	const selectedSiteId = siteId || getSelectedSiteId( state );
 	const productSlugs = uniq( flattenDeep( products.map( extractProductSlugs ) ) );
 	const availableProducts = getAvailableProductsList( state );
 
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		productSlugs,
+		purchases: getSitePurchases( state, selectedSiteId ),
+		selectedSiteId,
 		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
 	};
 } )( localize( ProductSelector ) );
