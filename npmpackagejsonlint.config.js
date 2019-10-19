@@ -21,6 +21,7 @@ module.exports = {
 				'/package.json',
 				'packages/eslint-config-wpcalypso/package.json',
 				'packages/eslint-plugin-wpcalypso/package.json',
+				'packages/i18n-calypso-cli/package.json',
 				'packages/i18n-calypso/package.json',
 				'packages/photon/package.json',
 			],
