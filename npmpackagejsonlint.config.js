@@ -18,29 +18,29 @@ module.exports = {
 	overrides: [
 		{
 			patterns: [
-				'/package.json',
-				'packages/eslint-config-wpcalypso/package.json',
-				'packages/eslint-plugin-wpcalypso/package.json',
-				'packages/i18n-calypso-cli/package.json',
-				'packages/i18n-calypso/package.json',
-				'packages/photon/package.json',
-			],
-			rules: {
-				'valid-values-name-scope': 'off',
-			},
-		},
-		{
-			patterns: [
-				'/apps/full-site-editing/package.json',
-				'/apps/wpcom-block-editor/package.json',
-				'/package.json',
+				'./apps/full-site-editing/package.json',
+				'./apps/wpcom-block-editor/package.json',
+				'./package.json',
 			],
 			rules: {
 				'prefer-no-devDependencies': 'off',
 			},
 		},
 		{
-			patterns: [ 'packages/material-design-icons/package.json' ],
+			patterns: [
+				'./package.json',
+				'./packages/eslint-config-wpcalypso/package.json',
+				'./packages/eslint-plugin-wpcalypso/package.json',
+				'./packages/i18n-calypso-cli/package.json',
+				'./packages/i18n-calypso/package.json',
+				'./packages/photon/package.json',
+			],
+			rules: {
+				'valid-values-name-scope': 'off',
+			},
+		},
+		{
+			patterns: [ './packages/material-design-icons/package.json' ],
 			rules: {
 				'valid-values-license': 'off',
 			},
