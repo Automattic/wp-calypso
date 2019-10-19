@@ -21,6 +21,7 @@ export function ApplePayLabel() {
 }
 
 export function ApplePayBillingForm( { setPaymentData, paymentData, isActive, isComplete } ) {
+	const localize = useLocalize();
 	if ( ! isActive && ! isComplete ) {
 		return null;
 	}
@@ -34,9 +35,9 @@ export function ApplePayBillingForm( { setPaymentData, paymentData, isActive, is
 			<FormField
 				id="billingName"
 				type="Text"
-				label="Name"
+				label={ localize( 'Name' ) }
 				error={ billingNameError }
-				errorMessage="This is a required field"
+				errorMessage={ localize( 'This is a required field' ) }
 				value={ billingName }
 				onChange={ onChange }
 			/>
