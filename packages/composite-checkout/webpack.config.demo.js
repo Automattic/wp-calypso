@@ -20,12 +20,12 @@ module.exports = {
 	},
 	resolve: { extensions: [ '*', '.js', '.jsx' ] },
 	output: {
-		path: path.resolve( __dirname, '/packages/composite-checkout/dist/' ),
+		path: path.resolve( __dirname, '/dist/' ),
 		publicPath: '/dist/',
 		filename: 'bundle.js',
 	},
 	devServer: {
-		contentBase: path.join( __dirname, '/packages/composite-checkout/demo/' ),
+		contentBase: path.join( __dirname, '/demo/' ),
 		port: 3000,
 		publicPath: 'http://localhost:3000/dist/',
 		hotOnly: true,
