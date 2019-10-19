@@ -1,5 +1,3 @@
-/* @format */
-
 const theme = {
 	colors: {
 		blue5: '#BEDAE6',
