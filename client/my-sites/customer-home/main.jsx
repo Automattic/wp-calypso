@@ -139,7 +139,6 @@ class Home extends Component {
 			<Main className="customer-home__main is-wide-layout">
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'Customer Home' ) } />
 				<DocumentHead title={ translate( 'Customer Home' ) } />
-				<SidebarNavigation />
 				<StatsBanners siteId={ siteId } slug={ siteSlug } />
 				{ renderChecklistCompleteBanner && (
 					<Banner
@@ -182,6 +181,7 @@ class Home extends Component {
 			isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
 		return (
 			<div className="customer-home__layout">
+				<SidebarNavigation />
 				<div className="customer-home__layout-col">
 					<Card>
 						<CardHeading>{ translate( 'My Site' ) }</CardHeading>
