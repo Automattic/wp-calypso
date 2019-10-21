@@ -14,6 +14,13 @@ import {
 import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
 import { registerCoreBlocks } from '@wordpress/block-library';
 import '@wordpress/format-library';
+import '@wordpress/edit-post/build-style/style.css';
+import '@wordpress/components/build-style/style.css';
+import '@wordpress/block-editor/build-style/style.css';
+import '@wordpress/block-library/build-style/style.css';
+import '@wordpress/block-library/build-style/editor.css';
+import '@wordpress/block-library/build-style/theme.css';
+import '@wordpress/format-library/build-style/style.css';
 
 /**
  * Internal dependencies
@@ -22,14 +29,7 @@ import { Header } from 'gutenboarding/components/header';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import SettingsButton from './components/settings-button';
-
-import '@wordpress/edit-post/build-style/style.css';
-import '@wordpress/components/build-style/style.css';
-import '@wordpress/block-editor/build-style/style.css';
-import '@wordpress/block-library/build-style/style.css';
-import '@wordpress/block-library/build-style/editor.css';
-import '@wordpress/block-library/build-style/theme.css';
-import '@wordpress/format-library/build-style/style.css';
+import './style.scss';
 
 export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
