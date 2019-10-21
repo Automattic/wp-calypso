@@ -356,7 +356,7 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
 	return new Promise( resolve => {
-		wpcom.transactions( 'POST', transaction, ( error, data ) => {
+		wpcom.transactions( transaction, ( error, data ) => {
 			if ( error ) {
 				this._pushStep( {
 					name: RECEIVED_WPCOM_RESPONSE,

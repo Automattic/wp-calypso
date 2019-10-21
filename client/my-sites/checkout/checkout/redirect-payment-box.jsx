@@ -169,7 +169,7 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 
 		// get the redirect URL from rest endpoint
-		wpcom.undocumented().transactions( 'POST', dataForApi, ( error, result ) => {
+		wpcom.undocumented().transactions( dataForApi, ( error, result ) => {
 			let errorMessage;
 			if ( error ) {
 				if ( error.message ) {
