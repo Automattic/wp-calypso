@@ -94,11 +94,11 @@ export default connect( ( state, ownProps ) => {
 	const siteSegment = get( siteChecklist, 'segment' );
 	const siteVerticals = get( siteChecklist, 'vertical' );
 	const taskStatuses = get( siteChecklist, 'tasks' );
-	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
 	const taskList = getTaskList( {
 		taskStatuses,
 		designType,
-		isSiteUnlaunched,
+		siteIsUnlaunched,
 		siteSegment,
 		siteVerticals,
 	} );

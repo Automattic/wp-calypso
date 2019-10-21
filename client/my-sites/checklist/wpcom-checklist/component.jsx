@@ -188,7 +188,8 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	handleLaunchSite = task => () => {
-		if ( task.isCompleted ) {
+		const { siteIsUnlaunched } = this.props;
+		if ( task.isCompleted && ! siteIsUnlaunched ) {
 			return;
 		}
 
@@ -588,7 +589,7 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { needsVerification, translate } = this.props;
+		const { needsVerification, siteIsUnlaunched, translate } = this.props;
 		const disabled = ! baseProps.completed && needsVerification;
 
 		return (
@@ -596,10 +597,25 @@ class WpcomChecklistComponent extends PureComponent {
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/launch.svg"
 				buttonText={ translate( 'Launch site' ) }
-				completedTitle={ translate( 'You launched your site' ) }
-				description={ translate(
-					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
-				) }
+				completedButtonText={ siteIsUnlaunched && translate( 'Launch site' ) }
+				completedTitle={
+					siteIsUnlaunched
+						? translate( 'You skipped launching your site' )
+						: translate( 'You launched your site' )
+				}
+				description={
+					siteIsUnlaunched
+						? translate(
+								"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+						  )
+						: /*
+						   * This string should not actually show.
+						   * If the site is launched, the `completedButtonText` will be false above.
+						   * That should prevent the task from being expanded.
+						   * Let's go ahead and include it anyway just in case so we aren't incorrectly telling people their site is unlaunched
+						   */
+						  translate( 'Congratulations! Your site is visible to the world.' )
+				}
 				disableIcon={ disabled }
 				isButtonDisabled={ disabled }
 				noticeText={
@@ -607,6 +623,7 @@ class WpcomChecklistComponent extends PureComponent {
 				}
 				onClick={ this.handleLaunchSite( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				showSkip={ true }
 				title={ translate( 'Launch your site' ) }
 			/>
 		);
@@ -1023,7 +1040,7 @@ export default connect(
 			taskList,
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
-			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		};
