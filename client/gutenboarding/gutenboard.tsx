@@ -18,7 +18,7 @@ import '@wordpress/format-library';
 /**
  * Internal dependencies
  */
-import { Header } from 'gutenboarding/header';
+import { Header } from 'gutenboarding/components/header';
 import './style.scss';
 
 import '@wordpress/components/build-style/style.css';
