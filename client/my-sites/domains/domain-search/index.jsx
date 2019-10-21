@@ -20,7 +20,7 @@ import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
 import { addItem, addItems, removeDomainFromCart } from 'lib/cart/actions';
-import { goToDomainCheckout } from 'lib/upgrades/actions';
+import { isGSuiteRestricted, canDomainAddGSuite } from 'lib/gsuite';
 import {
 	hasDomainInCart,
 	domainMapping,
@@ -103,20 +103,31 @@ class DomainSearch extends Component {
 	}
 
 	addDomain( suggestion ) {
-		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'domains' );
+		const {
+			domain_name: domain,
+			product_slug: productSlug,
+			supports_privacy: supportsPrivacy,
+		} = suggestion;
+
+		this.props.recordAddDomainButtonClick( domain, 'domains' );
 
 		let domainRegistration = domnRegistration( {
-			domain: suggestion.domain_name,
-			productSlug: suggestion.product_slug,
-			extra: { privacy_available: suggestion.supports_privacy },
+			domain,
+			productSlug,
+			extra: { privacy_available: supportsPrivacy },
 		} );
 
-		if ( suggestion.supports_privacy ) {
+		if ( supportsPrivacy ) {
 			domainRegistration = updatePrivacyForDomain( domainRegistration, true );
 		}
 
 		addItems( [ domainRegistration ] );
-		goToDomainCheckout( suggestion, this.props.selectedSiteSlug );
+
+		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
+			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
+		} else {
+			page( '/checkout/' + this.props.selectedSiteSlug );
+		}
 	}
 
 	removeDomain( suggestion ) {
