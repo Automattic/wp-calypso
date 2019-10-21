@@ -341,6 +341,16 @@ export const waitForData = < T extends Query >(
 		listener();
 	} );
 
+// Extend window locally to get/set additional properties
+interface HttpDataWindow extends Window {
+	app: { isDebug?: true };
+	getHttpData?: typeof getHttpData;
+	httpData?: typeof httpData;
+	requestHttpData?: typeof requestHttpData;
+	waitForData?: typeof waitForData;
+}
+declare const window: HttpDataWindow;
+
 if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
