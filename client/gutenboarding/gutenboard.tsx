@@ -28,31 +28,29 @@ import '@wordpress/format-library/build-style/style.css';
 import { Header } from 'gutenboarding/components/header';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
-import SettingsButton from './components/settings-button';
 import './style.scss';
 
 export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
-	const [ isSettingsSidebarActive, updateIsSettingsSidebarActive ] = useState( true );
+	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( true );
 
-	function handleToggleSettingsSidebar() {
-		updateIsSettingsSidebarActive( ! isSettingsSidebarActive );
+	function toggleGeneralSidebar() {
+		updateIsEditorSidebarOpened( ! isEditorSidebarOpened );
 	}
 
 	return (
 		<div className="gutenboarding">
-			<Header />
+			<Header
+				isEditorSidebarOpened={ isEditorSidebarOpened }
+				toggleGeneralSidebar={ toggleGeneralSidebar }
+			/>
 			<SlotFillProvider>
 				<DropZoneProvider>
 					<BlockEditorProvider value={ blocks } onInput={ updateBlocks } onChange={ updateBlocks }>
 						<div className="gutenboarding__block-editor">
 							<BlockEditorKeyboardShortcuts />
-							<SettingsButton
-								onClick={ handleToggleSettingsSidebar }
-								isToggled={ isSettingsSidebarActive }
-							/>
 
-							<SettingsSidebar isActive={ isSettingsSidebarActive } />
+							<SettingsSidebar isActive={ isEditorSidebarOpened } />
 							<Sidebar.Slot />
 							<WritingFlow>
 								<ObserveTyping>

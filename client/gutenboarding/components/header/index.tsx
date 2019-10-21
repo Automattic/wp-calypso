@@ -2,15 +2,21 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
+import { Button, IconButton } from '@wordpress/components';
 import React from 'react';
+import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
 
-export function Header() {
+interface Props {
+	isEditorSidebarOpened: boolean;
+	toggleGeneralSidebar: () => void;
+}
+
+export function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -29,6 +35,14 @@ export function Header() {
 				<Button isPrimary isLarge>
 					{ __( 'Continue' ) }
 				</Button>
+				<IconButton
+					icon="admin-generic"
+					label={ 'Site Block Settings' }
+					onClick={ toggleGeneralSidebar }
+					isToggled={ isEditorSidebarOpened }
+					aria-expanded={ isEditorSidebarOpened }
+					shortcut={ shortcuts.toggleSidebar }
+				/>
 			</div>
 		</div>
 	);
