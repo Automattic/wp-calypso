@@ -121,6 +121,11 @@ const exported = {
 		next();
 	},
 
+	sidebarA8C( context, next ) {
+		context.secondary = <div>list of sites here</div>;
+		next();
+	},
+
 	unmountSidebar( context, next ) {
 		next();
 	},
@@ -279,6 +284,7 @@ export const {
 	incompleteUrlRedirects,
 	preloadReaderBundle,
 	sidebar,
+	sidebarA8C,
 	unmountSidebar,
 	following,
 	feedDiscovery,

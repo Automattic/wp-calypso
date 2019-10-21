@@ -19,6 +19,7 @@ import {
 	prettyRedirects,
 	readA8C,
 	sidebar,
+	sidebarA8C,
 	updateLastRoute,
 } from './controller';
 import config from 'config';
@@ -93,5 +94,5 @@ export default function() {
 	}
 
 	// Automattic Employee Posts
-	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
+	page( '/read/a8c', updateLastRoute, sidebarA8C, forceTeamA8C, readA8C, makeLayout, clientRender );
 }
