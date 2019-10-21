@@ -19,11 +19,11 @@ import '@wordpress/format-library';
  * Internal dependencies
  */
 import { Header } from 'gutenboarding/components/header';
-import './style.scss';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import SettingsButton from './components/settings-button';
 
+import '@wordpress/edit-post/build-style/style.css';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/block-editor/build-style/style.css';
 import '@wordpress/block-library/build-style/style.css';

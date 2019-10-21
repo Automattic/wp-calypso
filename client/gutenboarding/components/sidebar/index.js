@@ -11,22 +11,6 @@ import { createSlotFill, Animate } from '@wordpress/components';
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 
-/**
- * Internal dependencies
- */
-
-import './style.scss';
-
-/*
- * Relevant Gutenberg styles:
- * @wordpress/edit-post/src/components/sidebar/style.scss
- * .edit-post-sidebar
- */
-
- /* eslint-disable no-restricted-syntax */
-import '@wordpress/edit-post/build-style/style.css';
-/* eslint-enable no-restricted-syntax */
-
 const { Fill, Slot } = createSlotFill( 'Sidebar' );
 
 function Sidebar( { children, label, className } ) {
