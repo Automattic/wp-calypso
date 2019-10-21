@@ -54,7 +54,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
-import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
+import { recordProductPurchase } from 'lib/cart/store/cart-analytics';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
@@ -314,12 +314,7 @@ export class SecurePaymentForm extends Component {
 						total_cost: cartValue.total_cost,
 					} );
 
-					cartValue.products.forEach( function( cartItem ) {
-						analytics.tracks.recordEvent(
-							'calypso_checkout_product_purchase',
-							removeNestedProperties( cartItem )
-						);
-					} );
+					cartValue.products.forEach( recordProductPurchase );
 
 					this.recordDomainRegistrationAnalytics( {
 						cart: cartValue,
