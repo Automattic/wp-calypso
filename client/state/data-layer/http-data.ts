@@ -304,8 +304,8 @@ export const waitForData = < T extends Query >(
 		let timer: TimerHandle;
 		const names = Object.keys( query );
 
-		const getValues = () =>
-			names.reduce(
+		const getValues = ( ( () =>
+			names.reduce< [ Partial< Results< T > >, boolean, boolean ] >(
 				( [ values, allBad, allDone ], name ) => {
 					const value = query[ name ]();
 
@@ -315,8 +315,12 @@ export const waitForData = < T extends Query >(
 						allDone && ( value.state === DataState.Success || value.state === DataState.Failure ),
 					];
 				},
-				[ {}, true, true ] as [ Results< T >, boolean, boolean ]
-			);
+				[ {}, true, true ]
+			) ) as /**
+		 * The type assertion is necessary so that the reducer can work with intermediate data of type
+		 * `Partial< Results< T > >`, however we can reason that when `reduce` completes
+		 * we should have a full `Results< T >`.
+		 */ unknown ) as () => [ Results< T >, boolean, boolean ];
 
 		const listener = () => {
 			const [ values, allBad, allDone ] = getValues();
