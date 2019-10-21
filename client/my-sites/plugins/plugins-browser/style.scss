@@ -11,15 +11,9 @@
 }
 
 .plugins-browser__main-header .section-nav {
-	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
-	border-width: 0 0 1px;
 	box-shadow: none;
 	flex: auto;
 	margin: 0;
-
-	@include breakpoint( '>480px' ) {
-		border-width: 0 1px 0 0;
-	}
 }
 
 .plugins-browser__main-buttons {
@@ -38,7 +32,7 @@
 		}
 
 		&:last-child {
-			@include breakpoint( '<480px' ) {
+			@include breakpoint( '<660px' ) {
 				margin-right: 15px;
 			}
 		}
