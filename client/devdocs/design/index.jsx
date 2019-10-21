@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -34,9 +33,9 @@ import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from '@automattic/calypso-ui/src/button/docs/example';
+import Buttons from '@automattic/components/src/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
-import Cards from '@automattic/calypso-ui/src/card/docs/example';
+import Cards from '@automattic/components/src/card/docs/example';
 import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
@@ -91,13 +90,13 @@ import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
 import ProductCard from 'components/product-card/docs/example';
-import ProgressBar from '@automattic/calypso-ui/src/progress-bar/docs/example';
+import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import PromoSection from 'components/promo-section/docs/example';
 import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
-import Ribbon from '@automattic/calypso-ui/src/ribbon/docs/example';
-import ScreenReaderTextExample from '@automattic/calypso-ui/src/screen-reader-text/docs/example';
+import Ribbon from '@automattic/components/src/ribbon/docs/example';
+import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
 import SearchDemo from 'components/search/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import SectionNav from 'components/section-nav/docs/example';

@@ -33,7 +33,7 @@
 		]
 	},
 	"dependencies": {
-		"@automattic/calypso-ui": "file:./packages/calypso-ui",
+		"@automattic/components": "file:./packages/components",
 		"@automattic/color-studio": "2.2.0",
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/load-script": "file:./packages/load-script",

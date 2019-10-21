@@ -108,8 +108,8 @@
 			"version": "file:packages/calypso-color-schemes",
 			"dev": true
 		},
-		"@automattic/calypso-ui": {
-			"version": "file:packages/calypso-ui",
+		"@automattic/components": {
+			"version": "file:packages/components",
 			"requires": {
 				"classnames": "2.2.6",
 				"enzyme": "^3.10.0",
