@@ -40,7 +40,7 @@ const EditorTemplateClasses = withSelect( select => {
 		}
 		clearInterval( blockListInception );
 
-		blockList.className = classNames( 'a8c-template-editor fse-template', ...templateClasses );
+		blockList.className = classNames( 'a8c-template-editor fse-template-part', ...templateClasses );
 	} );
 
 	return null;
