@@ -21,7 +21,6 @@ export default function CheckoutStep( {
 	finalStep,
 	stepSummary,
 	stepContent,
-	showSummary,
 } ) {
 	const classNames = [
 		className,
@@ -43,14 +42,11 @@ export default function CheckoutStep( {
 				isComplete={ isComplete }
 				onEdit={ onEdit }
 			/>
-			<StepContent className="checkout-step__content" isActive={ isActive }>
+			<StepContent className="checkout-step__content" isVisible={ isActive }>
 				{ stepContent }
 			</StepContent>
 			{ stepSummary && (
-				<StepSummary
-					className="checkout-step__summary"
-					showSummary={ ( showSummary && ! isActive ) || isComplete }
-				>
+				<StepSummary className="checkout-step__summary" isVisible={ ! isActive }>
 					{ stepSummary }
 				</StepSummary>
 			) }
@@ -67,7 +63,6 @@ CheckoutStep.propTypes = {
 	stepContent: PropTypes.node.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
-	showSummary: PropTypes.bool,
 };
 
 function CheckoutStepHeader( { className, stepNumber, title, isActive, isComplete, onEdit } ) {

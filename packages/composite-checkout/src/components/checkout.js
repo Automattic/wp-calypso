@@ -219,7 +219,6 @@ function ReviewOrderStep( { isActive, isComplete } ) {
 				isComplete={ isComplete }
 				stepNumber={ 3 }
 				title={ isComplete ? localize( 'Review your order' ) : localize( 'Review your order' ) }
-				showSummary={ true }
 				stepContent={ <CheckoutReviewOrder isActive={ isActive } /> }
 				stepSummary={ <CheckoutReviewOrder summary isActive={ isActive } /> }
 			/>
