@@ -231,36 +231,6 @@
 	}
 }
 
-.cart-toggle-button {
-	// Hide the text
-	display: flex;
-	position: relative;
-	height: 48px;
-	width: 48px;
-	white-space: nowrap;
-	cursor: pointer; // Needed for Safari
-
-	.gridicon {
-		color: var( --color-neutral-70 );
-		cursor: pointer;
-		position: absolute;
-		top: 12px;
-		right: 12px;
-
-		&:hover {
-			color: var( --color-primary );
-		}
-	}
-
-	&:focus {
-		outline: none;
-
-		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-		}
-	}
-}
-
 .popover-cart {
 	position: relative;
 	display: inline-block;
