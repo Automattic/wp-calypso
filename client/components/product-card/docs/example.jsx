@@ -62,16 +62,17 @@ function ProductCardExample() {
 				}
 			>
 				<ProductCardOptions
-					billingTimeFrame={ isPlaceholder ? null : 'per year' }
 					optionsLabel="Backup options:"
 					options={ [
 						{
+							billingTimeFrame: isPlaceholder ? null : 'per year',
 							discountedPrice: isPlaceholder ? null : 12,
 							fullPrice: isPlaceholder ? null : 14,
 							slug: 'jetpack_backup_daily_monthly',
 							title: 'Daily Backups',
 						},
 						{
+							billingTimeFrame: isPlaceholder ? null : 'per year',
 							fullPrice: isPlaceholder ? null : 25,
 							slug: 'jetpack_backup_realtime_monthly',
 							title: 'Real-Time Backups',
