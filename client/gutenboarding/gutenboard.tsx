@@ -32,7 +32,7 @@ export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
 
 	return (
-		<>
+		<div className="gutenboarding">
 			<Header />
 			<SlotFillProvider>
 				<DropZoneProvider>
@@ -49,7 +49,7 @@ export function Gutenboard() {
 					</BlockEditorProvider>
 				</DropZoneProvider>
 			</SlotFillProvider>
-		</>
+		</div>
 	);
 }
 
