@@ -50,6 +50,14 @@ export const CheckoutProvider = ( {
 		successRedirectUrl,
 		failureRedirectUrl,
 	};
+	if ( paymentMethod && paymentMethod.CheckoutWrapper ) {
+		const { CheckoutWrapper } = paymentMethod;
+		return (
+			<CheckoutContext.Provider value={ value }>
+				<CheckoutWrapper>{ children }</CheckoutWrapper>
+			</CheckoutContext.Provider>
+		);
+	}
 	return <CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>;
 };
 
