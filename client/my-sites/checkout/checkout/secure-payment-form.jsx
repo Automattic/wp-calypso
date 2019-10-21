@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, defer, pick, isEqual } from 'lodash';
+import { get, defer, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -26,10 +26,10 @@ import {
 	fullCreditsPayment,
 	newStripeCardPayment,
 	storedCardPayment,
+	submit,
 } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
-import { setPayment } from 'lib/transaction/actions';
-import { submitTransaction } from 'lib/upgrades/actions';
+import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -180,32 +180,40 @@ export class SecurePaymentForm extends Component {
 	async submitTransaction( event ) {
 		event && event.preventDefault();
 
-		const params = pick( this.props, [ 'cart', 'transaction' ] );
+		const { cart, transaction } = this.props;
+
 		const origin = getLocationOrigin( window.location );
+		const successUrl = origin + this.props.redirectTo();
+		const cancelUrl = origin + '/checkout/' + get( this.props.selectedSite, 'slug', 'no-site' );
 
-		params.successUrl = origin + this.props.redirectTo();
-		params.cancelUrl = origin + '/checkout/';
-
-		if ( this.props.selectedSite ) {
-			params.cancelUrl += this.props.selectedSite.slug;
-		} else {
-			params.cancelUrl += 'no-site';
-		}
-
-		const cardDetailsCountry = get( params.transaction, 'payment.newCardDetails.country', null );
+		const cardDetailsCountry = get( transaction, 'payment.newCardDetails.country', null );
 		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
-			params.transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
+			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
 		try {
-			await this.maybeSetSiteToPublic( { cart: params.cart } );
+			await this.maybeSetSiteToPublic( { cart } );
 		} catch ( e ) {
 			debug( 'Error setting site to public', e );
 			displayError();
 			return;
 		}
 
-		submitTransaction( params );
+		submit(
+			{
+				cart,
+				payment: transaction.payment,
+				domainDetails: transaction.domainDetails,
+				successUrl,
+				cancelUrl,
+				stripe: transaction.stripe,
+				stripeConfiguration: transaction.stripeConfiguration,
+			},
+			// Execute every step handler in its own event loop tick, so that a complete React
+			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
+			// like the `TransactionStepsMixin` are called with every step.
+			step => defer( () => setTransactionStep( step ) )
+		);
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {

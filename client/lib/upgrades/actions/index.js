@@ -7,8 +7,6 @@
 // export * from './checkout';
 // etc…
 
-export { submitTransaction } from './checkout';
-
 export {
 	acceptTransfer,
 	addDns,
