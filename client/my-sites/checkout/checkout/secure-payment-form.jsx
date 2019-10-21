@@ -296,10 +296,7 @@ export class SecurePaymentForm extends Component {
 						reason: this.formatError( step.error ),
 					} );
 
-					this.recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: false,
-					} );
+					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: false } );
 				} else if ( step.data ) {
 					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 					// zero-value cost and would thus lead to a wrong computation of conversions
@@ -316,10 +313,7 @@ export class SecurePaymentForm extends Component {
 
 					cartValue.products.forEach( recordProductPurchase );
 
-					this.recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: true,
-					} );
+					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: true } );
 				}
 				break;
 
@@ -333,10 +327,7 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	recordDomainRegistrationAnalytics( parameters ) {
-		const cart = parameters.cart,
-			success = parameters.success;
-
+	recordDomainRegistrationAnalytics( { cart, success } ) {
 		getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.ga.recordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
 
