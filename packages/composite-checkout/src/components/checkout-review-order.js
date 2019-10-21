@@ -15,11 +15,11 @@ import {
 	OrderReviewSection,
 } from './order-review-line-items';
 
-export default function CheckoutReviewOrder( { summary } ) {
+export default function CheckoutReviewOrder( { summary, className } ) {
 	const [ items, total ] = useCheckoutLineItems();
 	if ( summary ) {
 		return (
-			<div>
+			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 				<OrderReviewSection>
 					<OrderReviewLineItems items={ items } />
 				</OrderReviewSection>
@@ -30,7 +30,7 @@ export default function CheckoutReviewOrder( { summary } ) {
 		);
 	}
 	return (
-		<div>
+		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<OrderReviewSection withDivider>
 				<OrderReviewLineItems items={ items } />
 			</OrderReviewSection>
@@ -44,6 +44,7 @@ export default function CheckoutReviewOrder( { summary } ) {
 CheckoutReviewOrder.propTypes = {
 	isActive: PropTypes.bool.isRequired,
 	summary: PropTypes.bool,
+	className: PropTypes.string,
 };
 
 function LineItem( { item, className } ) {

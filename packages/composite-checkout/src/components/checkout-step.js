@@ -43,8 +43,12 @@ export default function CheckoutStep( {
 				isComplete={ isComplete }
 				onEdit={ onEdit }
 			/>
-			<StepContent isActive={ isActive }>{ stepContent }</StepContent>
-			<StepSummary showSummary={ isComplete || showSummary }>{ stepSummary }</StepSummary>
+			<StepContent className="checkout-step__content" isActive={ isActive }>
+				{ stepContent }
+			</StepContent>
+			<StepSummary className="checkout-step__summary" showSummary={ isComplete || showSummary }>
+				{ stepSummary }
+			</StepSummary>
 		</StepWrapper>
 	);
 }
