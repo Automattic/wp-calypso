@@ -19,6 +19,12 @@ export function Header() {
 			aria-label={ __( 'Top bar' ) }
 			tabIndex="-1"
 		>
+			<div
+				aria-label={ __( 'Document tools' ) }
+				aria-orientation="horizontal"
+				className="gutenboarding__header-toolbar"
+				role="toolbar"
+			></div>
 			<div className="gutenboarding__header-actions">
 				<Button isPrimary isLarge>
 					{ __( 'Continue' ) }
