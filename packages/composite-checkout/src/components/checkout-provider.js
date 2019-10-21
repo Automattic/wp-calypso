@@ -23,6 +23,7 @@ export const CheckoutProvider = ( {
 	const paymentMethods = getPaymentMethods();
 	const [ paymentMethodId, setPaymentMethodId ] = useState( paymentMethods[ 0 ].id );
 	const [ paymentMethodData, setPaymentMethodData ] = useState( {} );
+	const paymentMethod = getPaymentMethods().find( ( { id } ) => id === paymentMethodId );
 	if (
 		! total ||
 		! items ||
@@ -49,6 +50,14 @@ export const CheckoutProvider = ( {
 		successRedirectUrl,
 		failureRedirectUrl,
 	};
+	if ( paymentMethod && paymentMethod.CheckoutWrapper ) {
+		const { CheckoutWrapper } = paymentMethod;
+		return (
+			<CheckoutContext.Provider value={ value }>
+				<CheckoutWrapper>{ children }</CheckoutWrapper>
+			</CheckoutContext.Provider>
+		);
+	}
 	return <CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>;
 };
 

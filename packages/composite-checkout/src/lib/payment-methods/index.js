@@ -17,6 +17,7 @@ export function registerPaymentMethod( {
 	PaymentMethodComponent,
 	BillingContactComponent,
 	SubmitButtonComponent,
+	CheckoutWrapper,
 } ) {
 	if (
 		! id ||
@@ -33,6 +34,7 @@ export function registerPaymentMethod( {
 		PaymentMethodComponent,
 		BillingContactComponent,
 		SubmitButtonComponent,
+		CheckoutWrapper,
 	} );
 }
 
