@@ -8,9 +8,9 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import registerStore from './store';
-import registerDOMUpdater from './dom-updater';
-import GlobalStylesSidebar from './global-styles-sidebar';
+import registerStore from './src/store';
+import registerDOMUpdater from './src/dom-updater';
+import GlobalStylesSidebar from './src/global-styles-sidebar';
 import {
 	FONT_BASE,
 	FONT_BASE_DEFAULT,
@@ -19,7 +19,7 @@ import {
 	FONT_PAIRINGS,
 	FONT_OPTIONS,
 	SITE_NAME,
-} from './constants';
+} from './src/constants';
 
 // Global variable.
 const { PLUGIN_NAME, STORE_NAME, REST_PATH } = A8C_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
