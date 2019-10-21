@@ -164,7 +164,7 @@
 		"page": "1.11.4",
 		"path-browserify": "1.0.0",
 		"percentage-regex": "3.0.0",
-		"phone": "2.3.22",
+		"phone": "2.4.0",
 		"photon": "file:./packages/photon",
 		"postcss-cli": "6.1.2",
 		"prismjs": "1.16.0",
