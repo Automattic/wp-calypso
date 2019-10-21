@@ -537,15 +537,19 @@ class AdsFormSettings extends Component {
 	render() {
 		const { translate } = this.props;
 		const isPending = this.state.isLoading || this.state.isSubmitting;
+		const isWordAds = this.props.site.options.wordads;
 
 		return (
 			<Fragment>
-				{ this.props.siteIsJetpack && this.props.site.options.wordads
-					? this.jetpackPlacementControls()
-					: null }
+				{ this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null }
 
 				<SectionHeader label={ translate( 'Ads Settings' ) }>
-					<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
+					<Button
+						compact
+						primary
+						onClick={ this.handleSubmit }
+						disabled={ isPending || ! isWordAds }
+					>
 						{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
