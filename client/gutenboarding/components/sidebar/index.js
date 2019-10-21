@@ -3,10 +3,6 @@
  */
 import classnames from 'classnames';
 import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { createSlotFill, Animate } from '@wordpress/components';
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';

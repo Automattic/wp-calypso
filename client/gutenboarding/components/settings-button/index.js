@@ -1,20 +1,9 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { IconButton } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-
-/* eslint-disable no-restricted-syntax */
 import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
-/* eslint-enable no-restricted-syntax */
 
 export default function SettingsButton( { onClick, isToggled } ) {
 	return (

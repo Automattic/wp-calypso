@@ -1,11 +1,7 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { BlockInspector } from '@wordpress/block-editor';
 import { Panel, PanelBody } from '@wordpress/components';
 
@@ -14,23 +10,13 @@ import { Panel, PanelBody } from '@wordpress/components';
  */
 import Sidebar from '../sidebar';
 
-import './style.scss';
-
-/*
- * Relevant Gutenberg styles:
- * @wordpress/edit-post/src/components/sidebar/settings-sidebar/style.scss
- * .edit-post-settings-sidebar__panel-block
- */
-
- /* eslint-disable no-restricted-syntax */
-import '@wordpress/edit-post/build-style/style.css';
-/* eslint-enable no-restricted-syntax */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 export default function SettingsSidebar( { isActive } ) {
 	return (
 		<Sidebar
-			label={ 'SiteBlock Settings' }
-			className={ 'gutenboarding__settings-sidebar' }
+			label="SiteBlock Settings"
+			className="gutenboarding__settings-sidebar"
 			isActive={ isActive }
 		>
 			<Panel>

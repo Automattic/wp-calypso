@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import '@wordpress/editor'; // This shouldn't be necessary
 
