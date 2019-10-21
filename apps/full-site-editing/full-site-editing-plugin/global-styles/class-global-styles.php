@@ -300,7 +300,7 @@ class Global_Styles {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/index.asset.php';
+		$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/global-styles.asset.php';
 		$asset        = file_exists( $asset_file )
 			? require_once $asset_file
 			: null;
@@ -309,11 +309,11 @@ class Global_Styles {
 			[];
 		$version      = isset( $asset['version'] ) ?
 			$asset['version'] :
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/index.js' );
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.js' );
 
 		wp_enqueue_script(
 			'a8c-global-styles-editor',
-			plugins_url( 'dist/index.js', __FILE__ ),
+			plugins_url( 'dist/global-styles.js', __FILE__ ),
 			$dependencies,
 			$version,
 			true
