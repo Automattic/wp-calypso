@@ -13,6 +13,11 @@ import { localize } from 'i18n-calypso';
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SignupThemesList extends Component {
 	static propTypes = {
 		surveyQuestion: PropTypes.string,
@@ -58,13 +63,15 @@ class SignupThemesList extends Component {
 		} );
 
 		return (
-			<ThemesList
-				getButtonOptions={ noop }
-				onScreenshotClick={ this.props.handleScreenshotClick }
-				onMoreButtonClick={ noop }
-				getActionLabel={ getActionLabel }
-				themes={ themes }
-			/>
+			<div className="signup-themes-list">
+				<ThemesList
+					getButtonOptions={ noop }
+					onScreenshotClick={ this.props.handleScreenshotClick }
+					onMoreButtonClick={ noop }
+					getActionLabel={ getActionLabel }
+					themes={ themes }
+				/>
+			</div>
 		);
 	}
 }

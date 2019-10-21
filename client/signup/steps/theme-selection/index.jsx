@@ -22,6 +22,11 @@ import { isEnabled } from 'config';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ThemeSelectionStep extends Component {
 	static propTypes = {
 		designType: PropTypes.string,

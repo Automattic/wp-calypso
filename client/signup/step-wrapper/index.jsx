@@ -12,11 +12,6 @@ import classNames from 'classnames';
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class StepWrapper extends Component {
 	static propTypes = {
 		shouldHideNavButtons: PropTypes.bool,
