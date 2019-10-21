@@ -329,9 +329,9 @@ class Global_Styles {
 		);
 		wp_enqueue_style(
 			'a8c-global-styles-editor',
-			plugins_url( 'dist/editor.css', __FILE__ ),
+			plugins_url( 'dist/global-styles.css', __FILE__ ),
 			[],
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor.css' )
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.css' )
 		);
 	}
 

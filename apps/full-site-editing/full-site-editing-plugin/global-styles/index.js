@@ -21,6 +21,9 @@ import {
 	SITE_NAME,
 } from './src/constants';
 
+// Tell Webpack to compile this into CSS
+import './editor.scss';
+
 // Global variable.
 const { PLUGIN_NAME, STORE_NAME, REST_PATH } = A8C_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
 
