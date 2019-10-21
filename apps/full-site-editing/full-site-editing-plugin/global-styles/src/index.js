@@ -22,7 +22,7 @@ import {
 } from './constants';
 
 // Global variable.
-const { PLUGIN_NAME, STORE_NAME, REST_PATH } = A8C_GLOBAL_STYLES_EDITOR_CONSTANTS;
+const { PLUGIN_NAME, STORE_NAME, REST_PATH } = A8C_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
 
 registerStore( STORE_NAME, REST_PATH );
 registerDOMUpdater( [ FONT_BASE, FONT_HEADINGS ], select( STORE_NAME ).getOption );
@@ -41,6 +41,7 @@ registerPlugin( PLUGIN_NAME, {
 		} ) ),
 		withDispatch( dispatch => ( {
 			updateOptions: dispatch( STORE_NAME ).updateOptions,
+			publishOptions: dispatch( STORE_NAME ).publishOptions,
 			resetLocalChanges: dispatch( STORE_NAME ).resetLocalChanges,
 		} ) )
 	)( GlobalStylesSidebar ),

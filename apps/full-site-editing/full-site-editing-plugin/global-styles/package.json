@@ -1,19 +1,39 @@
 {
-	"name": "a8c-global-styles",
+	"name": "@automattic/global-styles",
 	"version": "1.0.0",
 	"description": "Global Styles",
-	"main": "src/index.js",
 	"author": "Automattic",
-	"license": "GPL-3.0-or-later",
-	"scripts": {
-		"start": "node-sass ./editor.scss -o build && node-sass ./style.scss -o build && wp-scripts start & node-sass --watch editor.scss -o build && node-sass --watch style.scss -o build",
-		"build": "wp-scripts build && node-sass ./editor.scss -o build && node-sass ./style.scss -o build"
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"WordPress"
+	],
+	"homepage": "https://github.com/automattic/global-styles",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/automattic/global-styles.git"
 	},
-	"devDependencies": {
-		"@wordpress/scripts": "^5.0.0",
-		"node-sass": "^4.12.0"
+	"bugs": {
+		"url": "https://github.com/WordPress/automattic/global-styles/issues"
 	},
 	"dependencies": {
-		"classnames": "^2.2.6"
+		"classnames": "2.2.6"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "5.0.0",
+		"node-sass": "4.12.0"
+	},
+	"scripts": {
+		"build": "wp-scripts build src/index.js --output-path=dist/ && node-sass ./src/editor.scss -o dist",
+		"check-licenses": "wp-scripts check-licenses",
+		"env": "wp-scripts env",
+		"lint": "npm run lint:css && npm run lint:js && npm run lint:pkg-json",
+		"lint:css": "wp-scripts lint-style 'src/**/*.scss'",
+		"lint:js": "wp-scripts lint-js ./src",
+		"lint:pkg-json": "wp-scripts lint-pkg-json",
+		"start": "wp-scripts start src/index.js --output-path=dist/ && node-sass ./src/editor.scss -o dist && node-sass --watch ./src/editor.scss -o dist"
+	},
+	"wp-env": {
+		"plugin-dir": "global-styles",
+		"plugin-name": "Global Styles"
 	}
 }

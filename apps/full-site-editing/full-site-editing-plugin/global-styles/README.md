@@ -1,73 +1,147 @@
-# Global Styles plugin
+# Global Styles plugin <!-- omit in toc -->
 
-This plugin enables global styling for the block editor. At the moment it supports setting the base and headings fonts to be applied site-wide. It also comes with a sidebar for the block editor that users can use to change these values.
+This plugin creates a new sidebar for the block editor through which the users can update the styles site-wide, if the active theme has declared support. At the moment, users can set the base and headings fonts.
 
-Read below for learning:
+- [How to develop and build the plugin](#how-to-develop-and-build-the-plugin)
+- [How it works and how themes can use it](#how-it-works-and-how-themes-can-use-it)
+	- [Fallbacks for browsers without support for CSS custom properties](#fallbacks-for-browsers-without-support-for-css-custom-properties)
+	- [How to add a "Theme Default" option to the font list](#how-to-add-a-theme-default-option-to-the-font-list)
+	- [How to use a fallback stylesheet (experimental)](#how-to-use-a-fallback-stylesheet-experimental)
+- [Existing hooks](#existing-hooks)
+	- [global_styles_data_set_get_data filter](#global_styles_data_set_get_data-filter)
+	- [global_styles_data_set_save_data filter](#global_styles_data_set_save_data-filter)
+	- [global_styles_permission_check_additional filter](#global_styles_permission_check_additional-filter)
+	- [global_styles_settings](#global_styles_settings)
+- [FAQ](#faq)
+	- [Which fonts are available?](#which-fonts-are-available)
+	- [What will happen when the user changes to another theme that supports GlobalStyles?](#what-will-happen-when-the-user-changes-to-another-theme-that-supports-globalstyles)
+	- [What will happen when the user changes to a theme that doesn't support Global Styles or the plugin is deactivated?](#what-will-happen-when-the-user-changes-to-a-theme-that-doesnt-support-global-styles-or-the-plugin-is-deactivated)
 
-* How it works
-* How to use it
-* How to use a fallback stylesheet (experimental)
-* FAQ
+## How to develop and build the plugin
 
-## How it works
+You need node and npm installed in your computer. Check the [JavaScript Build Setup](https://developer.wordpress.org/block-editor/tutorials/javascript/js-build-setup/) in the Gutenberg Handbook for more info.
 
-The Global Styles plugin embeds an inline stylesheet into the post/page that adds the available fonts and the following CSS custom properties:
+For **production**:
 
-- `--font-headings`
-- `--font-base`
-- `--font-headings-default`
-- `--font-base-default`
+```bash
+npm install
+npm run build
+```
 
-The values of `--font-base-default` and `--font-headings-default` are set to the system font, unless themes provide values for them using `add_theme_support`. If they do, a new option called "Theme Default" will be shown in the font selector.
+Take the plugin folder and make it available within the plugin directory in your WordPress installation.
 
-Initially, `--font-base` and `--font-headings` value is `unset`. These values change as the user selects new fonts via the sidebar. If the "Theme Default" option is present and is selected by the user, the values of `--font-base` and `--font-headings` will be reset to `unset`.
+If you want to **develop**:
 
-Note that, the Global Styles plugin enqueues the CSS custom properties and the fonts. The theme needs to enqueue a stylesheet that uses them to take any effect.
+```bash
+npm install
+npm run start
+```
 
-## How to use it
+In case you also want a WordPress local installation to test Global Styles, this plugin comes with the docker-based environment provided by WordPress core -- refer to `@wordpress/scripts` for more info. To use this environment you can:
 
-The first step to use Global Styles is to declare support via `add_theme_support`:
+```bash
+npm run env install # Only needed the first time.
+npm run env start # Get WordPress up and running.
+
+// ... whatever you need to work on
+
+npm run env stop # Stop after you're done.
+```
+
+## How it works and how themes can use it
+
+This plugin creates a new sidebar for the block editor through which the users can update the styles site-wide. At the moment, users can set the base and headings fonts. For the sidebar to be shown, the active theme needs to have declared support:
+
+```php
+add_theme_support( 'a8c-global-styles' );
+```
+
+The user choices are stored using the Options API in the WordPress database, and exposed in the block editor and the front end as CSS custom properties. For example, the base and headings fonts are exposed as `--font-base` and `--font-headings`, respectively.
+
+The theme can then use those variables to set its styles:
+
+```css
+body {
+	font-family: var( --font-base, serif );
+}
+
+h1 {
+	font-family: var( --font-headings, sans-serif );
+}
+```
+
+In the above example, the `body`'s font-family will be what the user selected as the base font, or `serif` if `--font-base` is not set. Likewise, the `h1`'s font-family will be what the user selected as the headings font, or `sans-serif` if `--font-headings` is not set.
+
+**Fallback values for CSS Custom Properties**
+
+Note the font-family fallbacks provided for when `--font-base` or `--font-headings` are not set. There are a number of situations where these variables can have the value `unset` or even not being present (which the browsers also consider as being `unset`):
+
+- If the Global Styles plugin is not installed, activated, or the theme didn't declared support.
+- If the Global Styles plugin is activated and the theme has declared support but:
+  - the user hasn't selected and saved any choice yet.
+  - the user has selected _Theme Default_ as the font.
+
+By adding fallbacks for these situations, themes can work with or without Global Styles using the same styles. They also provide a better experience to users with good defaults that are overwritten by user's choices when necessary. This is the recommended way to use the Global Styles plugin.
+
+What would happen if no fallback is provided?
+
+```css
+body {
+	font-family: var( --font-base );
+}
+
+h1 {
+	font-family: var( --font-headings );
+}
+```
+
+In the above example, the `body`'s font-family will be what the user selected as the base font, or `inherit` if `--font-base` is not set. Likewise, the `h1`'s font-family will be what the user selected as the headings font, or `inherit` if `--font-headings` is not set.
+
+For more info on CSS Custom Properties, check out:
+
+- [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/--*).
+- [CSS Working Group specification](https://drafts.csswg.org/css-variables/#defining-variables).
+- The [unset](https://drafts.csswg.org/css-cascade-4/#valdef-all-unset) keyword.
+
+### Fallbacks for browsers without support for CSS custom properties
+
+Browsers that don't support CSS custom properties don't know what to do with the `var` statement (neither the fallback within), so they ignore it. We can leverage this to provide fallbacks for them as well:
+
+```css
+body {
+	font-family: serif; // Fallback for browsers without support.
+	font-family: var( --font-base, serif ); // Variable and fallback for browsers with support.
+}
+
+h1 {
+	font-family: sans-serif; // Fallback for browsers without support.
+	font-family: var( --font-headings, sans-serif ); // Variable and fallback for browsers with support.
+}
+```
+
+### How to add a "Theme Default" option to the font list
+
+Themes can opt-in to add a _Theme Default_ option via the `enable_theme_default` parameter:
 
 ```php
 add_theme_support(
 	'a8c-global-styles',
 	[
-		'font_base'     => 'One of the available font families',
-		'font_headings' => 'One of the available font families',
+		'enable_theme_default' => true,
 	]
-);
+ );
 ```
 
-Note that `font_base` and `font_headings` are optional. If the theme doesn't provide them, the `Theme Default` option won't be shown in the sidebar and its default values will be the system fonts.
+This will add a new option in the font picker called _Theme Default_. If the user hasn't selected any yet, it will be the active option by default (if the theme didn't add this option, the _System Font_ will be picked instead). When _Theme Default_ is active, the corresponding CSS custom property value will be `unset`.
 
+For example, if the user selects:
 
-After declaring support, the theme needs to enqueue the stylesheets that use these variables. For example, it could do:
+- the base font to _Theme Default_, then `--font-base` value will be `unset`
+- the headings font to _Lora_, then `--font-headings` value will be `Lora`
 
-```css
-body {
-	font-family: var(--font-base, var(--font-base-default) );
-}
-```
+Essentially, the _Theme Default_ option is how an user would reset their choices and get back the theme default styles. We recommend adding this option and using fallbacks in the CSS custom properties declarations.
 
-Note how we suggest working with defaults:
-
-- `--font-base` value is going to be what the user selects in the sidebar, or `unset` (initially and when the user chooses "Theme Default").
-- `--font-base-default` value is going to be what the theme declared via `add_theme_support` or the system font if none was provided.
-
-Using the custom properties like this, the base font for the site will be the value of `--font-base` unless it is `unset`, in which case it'll be the value of `--font-base-default`.
-
-**Fallback for browsers that don't support CSS Custom Properties**
-
-If you have to provide fallbacks for browsers that don't support CSS custom properties, you need to create a new rule:
-
-```css
-body {
-	font-family: 'one of the available font families as fallback';
-	font-family: var(--font-base, var(--font-base-default) );
-}
-```
-
-## How to use a fallback stylesheet (experimental)
+### How to use a fallback stylesheet (experimental)
 
 As an experimental feature, the Global Styles plugin can provide a fallback stylesheet that uses the CSS custom properties. This is so themes can use Global Styles without introducing any changes to its own stylesheet.
 
@@ -75,16 +149,74 @@ As an experimental feature, the Global Styles plugin can provide a fallback styl
 add_theme_support(
 	'a8c-global-styles',
 	[
-		'enqueue_styles' => true, // Note this.
-		'font_base'      => 'One of the available font families',
-		'font_headings'  => 'One of the available font families',
+		'enqueue_theme_global_styles' => true,
 	]
 );
 ```
 
-Note the `enqueue_styles` parameter. It's optional. If present and `true`, in addition to the CSS custom properties and fonts, the plugin will enqueue a fallback stylesheet that overrides the theme's.
+If the `enqueue_theme_global_styles` is present and it's `true`, the plugin will enqueue a fallback stylesheet that overrides the theme's. This feature is experimental. The overrides can't take into account all the ways that themes can present information (different tags, classes, etc.), so themes are responsible to check these are enough for its use case.
 
-This feature is experimental. The overrides can't take into account all the ways that themes can present information (different tags, classes, etc.), so themes are responsible to check these are enough for its use case.
+Note that if the theme requests enqueueing the experimental stylesheet, the experimental Global Styles styles will override the theme ones once the plugin is activated. By default, until the user makes a font choice, the _System Font_ will be used.
+
+**_Theme Default_ option**
+
+Themes that use this experimental feature can also add a _Theme Default_ option in the font picker by setting the `enable_theme_default` property to true. Note that when the user selects _Theme Default_ the font to be used is _System Font_. Per se, this isn't very useful, however, themes can also provide fallback fonts for when the font is `unset` (the user selected _Theme Default_ or hasn't made any choice yet):
+
+```php
+add_theme_support(
+	'a8c-global-styles',
+	[
+		'enqueue_theme_global_styles' => true,
+		'enable_theme_default'        => true,
+		'font_base'                   => 'serif',
+		'font_headings'               => 'sans-serif',
+	]
+);
+```
+
+## Existing hooks
+
+### global_styles_data_set_get_data filter
+
+See [README-DATA.md](./README-DATA.md).
+
+### global_styles_data_set_save_data filter
+
+See [README-DATA.md](./README-DATA.md).
+
+### global_styles_permission_check_additional filter
+
+This filter can be used to add _an additional check_ to decide whether 1) the global styles sidebar is enqueued and 2) the REST API endpoint should return the data. Note the existing checks in place:
+
+- The Global Styles sidebar is enqueued if the theme has declared support.
+- The REST API Endpoint return the data if the user is logged in.
+
+```php
+function permission_check_callback( $has_permissions ) {
+	if ( $some_condition ) {
+		return false;
+	}
+	return $has_permissions;
+}
+add_filter( 'global_styles_permission_check_additional', permission_check_callback );
+```
+
+### global_styles_settings
+
+This filter can be used to configure any of the Global Styles settings.
+
+REST API related:
+
+- `rest_namespace`: REST API namespace.
+- `rest_route`: REST API route.
+- `rest_path_client`: the path to be used by the client to query the endpoint.
+
+To white-label Global Styles:
+
+- `theme_support`: the name of the theme support feature.
+- `option_name`: the name of the option to use in the database.
+- `redux_store_name`: the name of the custom Redux store used by the client.
+- `plugin_name`: the name of the registered plugin for the block editor.
 
 ## FAQ
 
@@ -117,9 +249,9 @@ These are the fonts available via the font selector in the sidebar and for the t
 
 Everything will continue to work as expected. If the user had selected:
 
-* A custom font, it'll still be used in the new theme.
-* The "Theme Default" option, the new theme's font will be used instead of the old one.
+- The _Theme Default_ option, the new theme's font will be used instead of the old one.
+- A _custom font_, it'll still be used in the new theme. Note, however, that themes can make different choices as to what they consider base and font selections. For example: a theme can use the headings font for quotes and another theme can use the base font.
 
-### What will happen when the user changes to a theme that doesn't support Global Styles?
+### What will happen when the user changes to a theme that doesn't support Global Styles or the plugin is deactivated?
 
-The new theme's font selection will be used.
+The theme's font will be used.

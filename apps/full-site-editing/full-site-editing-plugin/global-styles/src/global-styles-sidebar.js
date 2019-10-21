@@ -4,6 +4,7 @@
 import { PluginSidebar } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 
 /**
  * Internal dependencies
@@ -35,6 +36,22 @@ const toOptions = ( options, filterProperty ) =>
 				.filter( isNotNull )
 				.filter( isFor( filterProperty ) );
 
+const PanelActionButtons = ( { hasLocalChanges, resetAction, publishAction, className } ) => (
+	<div className={ className }>
+		<Button disabled={ ! hasLocalChanges } isDefault onClick={ resetAction }>
+			{ __( 'Reset' ) }
+		</Button>
+		<Button
+			disabled={ ! hasLocalChanges }
+			style={ { marginLeft: '1em' } }
+			isPrimary
+			onClick={ publishAction }
+		>
+			{ __( 'Publish' ) }
+		</Button>
+	</div>
+);
+
 export default ( {
 	fontHeadings,
 	fontHeadingsDefault,
@@ -43,69 +60,80 @@ export default ( {
 	fontPairings,
 	fontOptions,
 	siteName,
+	publishOptions,
 	updateOptions,
 	hasLocalChanges,
 	resetLocalChanges,
 } ) => {
 	const publish = () =>
-		updateOptions( {
+		publishOptions( {
 			[ FONT_BASE ]: fontBase,
 			[ FONT_HEADINGS ]: fontHeadings,
 		} );
 	return (
-		<PluginSidebar
-			icon={ <GlobalStylesIcon /> }
-			name={ 'global-styles' }
-			title={ __( 'Global Styles' ) }
-			className="global-styles-sidebar"
-		>
-			<PanelBody>
-				<p>
-					{ __( 'You are customizing ' ) }
-					<strong>{ siteName }</strong>.
-				</p>
-				<p>{ __( 'Any change you make here will apply to the entire website.' ) }</p>
-			</PanelBody>
-			<PanelBody title={ __( 'Font Selection' ) }>
-				<FontSelectionPanel
-					fontBase={ fontBase }
-					fontBaseDefault={ fontBaseDefault }
-					fontHeadings={ fontHeadings }
-					fontHeadingsDefault={ fontHeadingsDefault }
-					fontBaseOptions={ toOptions( fontOptions, FONT_BASE ) }
-					fontHeadingsOptions={ toOptions( fontOptions, FONT_HEADINGS ) }
-					updateBaseFont={ value => updateOptions( { [ FONT_BASE ]: value }, false ) }
-					updateHeadingsFont={ value => updateOptions( { [ FONT_HEADINGS ]: value }, false ) }
-				/>
-				<FontPairingsPanel
-					fontHeadings={ fontHeadings }
-					fontBase={ fontBase }
-					fontPairings={ fontPairings }
-					update={ ( { headings, base } ) =>
-						updateOptions( { [ FONT_HEADINGS ]: headings, [ FONT_BASE ]: base }, false )
-					}
-				/>
-			</PanelBody>
-			<PanelBody>
-				{ hasLocalChanges ? (
+		<>
+			<PluginSidebarMoreMenuItem icon={ <GlobalStylesIcon /> } target="global-styles">
+				{ __( 'Global Styles' ) }
+			</PluginSidebarMoreMenuItem>
+			<PluginSidebar
+				icon={ <GlobalStylesIcon /> }
+				name={ 'global-styles' }
+				title={ __( 'Global Styles' ) }
+				className="global-styles-sidebar"
+			>
+				<PanelBody>
 					<p>
-						<em>{ __( 'You have unsaved changes.' ) }</em>
+						{ __( 'You are customizing ' ) }
+						<strong>{ siteName }</strong>.
 					</p>
-				) : null }
-				<div className="global-styles-sidebar__publish-buttons">
-					<Button disabled={ ! hasLocalChanges } isDefault onClick={ resetLocalChanges }>
-						{ __( 'Reset' ) }
-					</Button>
-					<Button
-						disabled={ ! hasLocalChanges }
-						style={ { marginLeft: '1em' } }
-						isPrimary
-						onClick={ publish }
-					>
-						{ __( 'Publish' ) }
-					</Button>
-				</div>
-			</PanelBody>
-		</PluginSidebar>
+					<p>{ __( 'Any change you make here will apply to the entire website.' ) }</p>
+					{ hasLocalChanges ? (
+						<div>
+							<p>
+								<em>{ __( 'You have unsaved changes.' ) }</em>
+							</p>
+							<PanelActionButtons
+								hasLocalChanges={ hasLocalChanges }
+								publishAction={ publish }
+								resetAction={ resetLocalChanges }
+							/>
+						</div>
+					) : null }
+				</PanelBody>
+				<PanelBody title={ __( 'Font Selection' ) }>
+					<FontSelectionPanel
+						fontBase={ fontBase }
+						fontBaseDefault={ fontBaseDefault }
+						fontHeadings={ fontHeadings }
+						fontHeadingsDefault={ fontHeadingsDefault }
+						fontBaseOptions={ toOptions( fontOptions, FONT_BASE ) }
+						fontHeadingsOptions={ toOptions( fontOptions, FONT_HEADINGS ) }
+						updateBaseFont={ value => updateOptions( { [ FONT_BASE ]: value } ) }
+						updateHeadingsFont={ value => updateOptions( { [ FONT_HEADINGS ]: value } ) }
+					/>
+					<FontPairingsPanel
+						fontHeadings={ fontHeadings }
+						fontBase={ fontBase }
+						fontPairings={ fontPairings }
+						update={ ( { headings, base } ) =>
+							updateOptions( { [ FONT_HEADINGS ]: headings, [ FONT_BASE ]: base } )
+						}
+					/>
+				</PanelBody>
+				<PanelBody>
+					{ hasLocalChanges ? (
+						<p>
+							<em>{ __( 'You have unsaved changes.' ) }</em>
+						</p>
+					) : null }
+					<PanelActionButtons
+						hasLocalChanges={ hasLocalChanges }
+						publishAction={ publish }
+						resetAction={ resetLocalChanges }
+						className={ 'global-styles-sidebar__publish-buttons' }
+					/>
+				</PanelBody>
+			</PluginSidebar>
+		</>
 	);
 };

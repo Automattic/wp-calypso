@@ -8,13 +8,17 @@ let cache = {};
 let alreadyFetchedOptions = false;
 
 const actions = {
-	*updateOptions( options, shouldPostToOptions = true ) {
-		if ( shouldPostToOptions ) {
-			yield {
-				type: 'IO_UPDATE_OPTIONS',
-				options,
-			};
-		}
+	*publishOptions( options ) {
+		yield {
+			type: 'IO_PUBLISH_OPTIONS',
+			options,
+		};
+		return {
+			type: 'PUBLISH_OPTIONS',
+			options,
+		};
+	},
+	updateOptions( options ) {
 		return {
 			type: 'UPDATE_OPTIONS',
 			options,
@@ -27,7 +31,7 @@ const actions = {
 	},
 	resetLocalChanges() {
 		return {
-			type: 'UPDATE_OPTIONS',
+			type: 'RESET_OPTIONS',
 			options: cache,
 		};
 	},
@@ -43,17 +47,20 @@ const actions = {
  *
  * Actions under `wp.data.dispatch( STORE_NAME )`:
  *
- * - updateOptions( Object optionsToUpdate, boolean shouldPostToAPI )
+ * - updateOptions( Object optionsToUpdate )
+ * - publishOptions( Object optionsToUpdate )
  * - resetLocalChanges()
  *
- * @param {String} storeName Name of the store.
- * @param {String} optionsPath REST path used to interact with the options API.
+ * @param {string} storeName Name of the store.
+ * @param {string} optionsPath REST path used to interact with the options API.
  */
 export default ( storeName, optionsPath ) => {
 	registerStore( storeName, {
 		reducer( state, action ) {
 			switch ( action.type ) {
 				case 'UPDATE_OPTIONS':
+				case 'RESET_OPTIONS':
+				case 'PUBLISH_OPTIONS':
 					return {
 						...state,
 						...action.options,
@@ -76,6 +83,7 @@ export default ( storeName, optionsPath ) => {
 
 		resolvers: {
 			*getOption( key ) {
+				// eslint-disable-line no-unused-vars
 				if ( alreadyFetchedOptions ) {
 					return; // do nothing
 				}
@@ -99,7 +107,7 @@ export default ( storeName, optionsPath ) => {
 			IO_FETCH_OPTIONS() {
 				return apiFetch( { path: optionsPath } );
 			},
-			IO_UPDATE_OPTIONS( { options } ) {
+			IO_PUBLISH_OPTIONS( { options } ) {
 				cache = options; // optimistically update the cache
 				return apiFetch( {
 					path: optionsPath,

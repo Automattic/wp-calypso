@@ -1,16 +1,14 @@
 <?php
 /**
- * REST API endpoint for Global Styles plugin.
- *
- * @package  A8C\FSE
+ * JSON REST API endpoint for Global Styles plugin.
  */
 
-namespace A8C\FSE;
+namespace A8C\Global_Styles;
 
 /**
  * REST API endpoint for Global Styles plugin.
  */
-class Global_Styles_REST_API extends \WP_REST_Controller {
+class JSON_Endpoint extends \WP_REST_Controller {
 
 	/**
 	 * Namespace for the REST endpoint.
@@ -29,7 +27,7 @@ class Global_Styles_REST_API extends \WP_REST_Controller {
 	/**
 	 * Object holding the data description to work with.
 	 *
-	 * @var A8C\FSE\Global_Styles_Data_Set
+	 * @var A8C\Global_Styles\Data_Set
 	 */
 	private $data_set;
 
@@ -52,7 +50,7 @@ class Global_Styles_REST_API extends \WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function permission_callback() {
-		return is_user_logged_in();
+		return is_user_logged_in() && apply_filters( 'global_styles_permission_check_additional', true );
 	}
 
 	/**

@@ -1,11 +1,11 @@
 <?php
 
-namespace A8C\FSE;
+namespace A8C\Global_Styles;
 
 /**
  * Utility to retrieve data from a description.
  */
-class Global_Styles_Data_Set {
+class Data_Set {
 
 	/**
 	 * Description of the data points to work with.

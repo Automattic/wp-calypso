@@ -7,7 +7,7 @@ import domReady from '@wordpress/dom-ready';
 /**
  * DOM updater
  *
- * @param {String[]} options A list of option names to keep track of.
+ * @param {string[]} options A list of option names to keep track of.
  * @param {Function} getOptionValue A function that given an option name as a string, returns the current option value.
  */
 export default ( options, getOptionValue ) => {
@@ -26,7 +26,9 @@ export default ( options, getOptionValue ) => {
 					current[ key ] = value;
 					// We want to scope this to the root node of the editor.
 					const node = document.getElementsByClassName( 'editor-styles-wrapper' )[ 0 ];
-					node && node.style.setProperty( cssVariables[ key ], value );
+					if ( node ) {
+						node.style.setProperty( cssVariables[ key ], value );
+					}
 				}
 			} );
 		} );

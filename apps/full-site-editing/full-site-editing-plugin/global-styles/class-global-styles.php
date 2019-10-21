@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Global Styles
- *
- * @package A8C\FSE
+ * Description: This plugin enables style your site from the block editor.
+ * Author: Automattic
  */
 
-namespace A8C\FSE;
+namespace A8C\Global_Styles;
 
 /**
  * Class Global_Styles
@@ -15,14 +15,14 @@ class Global_Styles {
 	/**
 	 * Class instance.
 	 *
-	 * @var \A8C\FSE\Global_Styles
+	 * @var \A8C\Global_Styles\Global_Styles
 	 */
 	private static $instance = null;
 
 	/**
 	 * Holds the internal data description to be exposed through REST API.
 	 *
-	 * @var \A8C\FSE\Global_Styles_Data_Set
+	 * @var \A8C\Global_Styles\Data_Set
 	 */
 	private $rest_api_data;
 
@@ -115,7 +115,7 @@ class Global_Styles {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \A8C\FSE\Global_Styles
+	 * @return \A8C\Global_Styles\Global_Styles
 	 */
 	public static function init() {
 		if ( is_null( self::$instance ) ) {
@@ -132,8 +132,8 @@ class Global_Styles {
 		$this->update_plugin_settings();
 
 		// DATA TO EXPOSE THROUGH THE REST API.
-		require_once __DIR__ . '/class-global-styles-data-set.php';
-		$this->rest_api_data = new Global_Styles_Data_Set(
+		require_once __DIR__ . '/includes/class-global-styles-data-set.php';
+		$this->rest_api_data = new Data_Set(
 			[
 				'blogname'              => [
 					'type'    => 'option',
@@ -206,7 +206,7 @@ class Global_Styles {
 		add_filter( 'global_styles_data_set_get_data', [ $this, 'maybe_filter_font_list' ] );
 		add_filter( 'global_styles_data_set_save_data', [ $this, 'filter_and_validate_font_options' ] );
 
-		if ( current_theme_supports( $this->theme_support ) ) {
+		if ( current_theme_supports( $this->theme_support ) && apply_filters( 'global_styles_permission_check_additional', true ) ) {
 			// Setup editor.
 			add_action(
 				'enqueue_block_editor_assets',
@@ -259,8 +259,8 @@ class Global_Styles {
 	 * Initialize REST API endpoint.
 	 */
 	public function rest_api_init() {
-		require_once __DIR__ . '/class-global-styles-rest-api.php';
-		$rest_api = new Global_Styles_REST_API(
+		require_once __DIR__ . '/includes/class-global-styles-json-endpoint.php';
+		$rest_api = new JSON_Endpoint(
 			$this->rest_namespace,
 			$this->rest_route,
 			$this->rest_api_data
@@ -300,7 +300,7 @@ class Global_Styles {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		$asset_file   = plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
+		$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/index.asset.php';
 		$asset        = file_exists( $asset_file )
 			? require_once $asset_file
 			: null;
@@ -309,11 +309,11 @@ class Global_Styles {
 			[];
 		$version      = isset( $asset['version'] ) ?
 			$asset['version'] :
-			filemtime( plugin_dir_path( __FILE__ ) . 'build/index.js' );
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/index.js' );
 
 		wp_enqueue_script(
 			'a8c-global-styles-editor',
-			plugins_url( 'build/index.js', __FILE__ ),
+			plugins_url( 'dist/index.js', __FILE__ ),
 			$dependencies,
 			$version,
 			true
@@ -329,9 +329,9 @@ class Global_Styles {
 		);
 		wp_enqueue_style(
 			'a8c-global-styles-editor',
-			plugins_url( 'build/editor.css', __FILE__ ),
+			plugins_url( 'dist/editor.css', __FILE__ ),
 			[],
-			filemtime( plugin_dir_path( __FILE__ ) . 'build/editor.css' )
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor.css' )
 		);
 	}
 
@@ -346,36 +346,49 @@ class Global_Styles {
 	public function wp_enqueue_scripts() {
 		wp_enqueue_style(
 			'a8c-global-styles-frontend',
-			plugins_url( 'blank.css', __FILE__ ),
+			plugins_url( 'dist/blank.css', __FILE__ ),
 			[],
 			self::VERSION // To bust cache when changes are done to font list, css custom vars, or style.css.
 		);
-		wp_add_inline_style( 'a8c-global-styles-frontend', $this->get_inline_css() );
+		wp_add_inline_style( 'a8c-global-styles-frontend', $this->get_inline_css( true ) );
 	}
 
 	/**
 	 * Prepare the inline CSS.
 	 *
+	 * @param boolean $only_selected_fonts Whether it should load all the fonts or only the selected. False by default.
 	 * @return string
 	 */
-	private function get_inline_css() {
+	private function get_inline_css( $only_selected_fonts = false ) {
 		$result = '';
 
 		$data = $this->rest_api_data->get_data();
 
-		// Add the font list.
-		$fonts = '';
-		$keys  = $data['font_options'];
-		foreach ( $keys as $key ) {
+		/*
+		 * Add the fonts we need:
+		 *
+		 * - all of them for the backend
+		 * - only the selected ones for the frontend
+		 */
+		$font_list = [];
+		// We want $font_list to only contain valid Google Font values, not things like 'unset'.
+		$font_values = array_diff( $this->get_font_values( $data['font_options'] ), [ 'unset' ] );
+		if ( true === $only_selected_fonts ) {
+			foreach ( [ 'font_base', 'font_base_default', 'font_headings', 'font_headings_default' ] as $key ) {
+				if ( in_array( $data[ $key ], $font_values, true ) ) {
+					$font_list[] = $data[ $key ];
+				}
+			}
+		} else {
+			$font_list = $font_values;
+		}
+		$font_list_str = '';
+		foreach ( $font_list as $font ) {
 			// Some fonts lack italic variants,
 			// the API will return only the regular and bold CSS for those.
-			$font = $key;
-			if ( is_array( $key ) ) {
-				$font = $key['value'];
-			}
-			$fonts = $fonts . $font . ':regular,bold,italic,bolditalic|';
+			$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
 		}
-		$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $fonts . "');";
+		$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
 
 		/*
 		 * Add the CSS custom properties.
@@ -398,11 +411,20 @@ class Global_Styles {
 		}
 		$result = $result . '}';
 
-		// Enqueue a default stylesheet that uses the CSS custom properties
-		// if the theme opts-in.
+		/*
+		 * If the theme opts-in, also add a default stylesheet
+		 * that uses the CSS custom properties.
+		 *
+		 * This is a fallback mechanism in case there are themes
+		 * we don't want to / can't migrate to use CSS vars.
+		 */
 		$theme_support = get_theme_support( $this->theme_support )[0];
-		if ( is_array( $theme_support ) && array_key_exists( 'enqueue_styles', $theme_support ) && true === $theme_support['enqueue_styles'] ) {
-			$result = $result . file_get_contents( plugin_dir_path( __FILE__ ) . 'build/style.css', true );
+		if (
+			is_array( $theme_support ) &&
+			array_key_exists( 'enqueue_theme_global_styles', $theme_support ) &&
+			true === $theme_support['enqueue_theme_global_styles']
+		) {
+			$result = $result . file_get_contents( plugin_dir_path( __FILE__ ) . 'dist/style.css', true );
 		}
 
 		return $result;
@@ -418,16 +440,35 @@ class Global_Styles {
 	public function maybe_filter_font_list( $result ) {
 		$theme_defaults = get_theme_support( $this->theme_support )[0];
 		if (
-			! is_array( $theme_defaults ) ||
-			! array_key_exists( 'font_base', $theme_defaults ) ||
-			! array_key_exists( 'font_headings', $theme_defaults )
+			array_key_exists( 'font_options', $result ) &&
+			(
+				! is_array( $theme_defaults ) ||
+				! array_key_exists( 'enable_theme_default', $theme_defaults ) ||
+				true !== $theme_defaults['enable_theme_default']
+			)
 		) {
-			if ( array_key_exists( 'font_options', $result ) ) {
-				$result['font_options'] = array_slice( $result['font_options'], 1 );
-			}
+			$result['font_options'] = array_slice( $result['font_options'], 1 );
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return the list of available font values.
+	 *
+	 * @param array $font_list Array of fonts to process.
+	 * @return array Font values.
+	 */
+	private function get_font_values( $font_list ) {
+		$font_values = [];
+		foreach ( $font_list as $font ) {
+			if ( is_array( $font ) ) {
+				$font_values[] = $font['value'];
+			} else {
+				$font_values[] = $font;
+			}
+		}
+		return $font_values;
 	}
 
 	/**
@@ -439,19 +480,11 @@ class Global_Styles {
 	public function filter_and_validate_font_options( $incoming_data ) {
 		$result = [];
 
-		$available_fonts = [];
-		foreach ( self::AVAILABLE_FONTS as $font ) {
-			if ( is_array( $font ) ) {
-				$available_fonts[] = $font['value'];
-			} else {
-				$available_fonts[] = $font;
-			}
-		}
-
+		$font_values = $this->get_font_values( self::AVAILABLE_FONTS );
 		foreach ( [ 'font_base', 'font_headings' ] as $key ) {
 			if (
 				array_key_exists( $key, $incoming_data ) &&
-				in_array( $incoming_data[ $key ], $available_fonts, true )
+				in_array( $incoming_data[ $key ], $font_values, true )
 			) {
 				$result[ $key ] = $incoming_data[ $key ];
 			}

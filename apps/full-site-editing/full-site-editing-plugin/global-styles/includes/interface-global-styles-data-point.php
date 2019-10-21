@@ -1,6 +1,6 @@
 <?php
 
-namespace A8C\FSE;
+namespace A8C\Global_Styles;
 
 interface Data_Point {
 	/**
