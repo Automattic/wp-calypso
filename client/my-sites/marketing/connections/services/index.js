@@ -2,6 +2,7 @@ export { default as eventbrite } from './eventbrite';
 export { default as instagram } from './instagram';
 export { default as google_photos } from './google-photos';
 export { default as google_my_business } from './google-my-business';
+export { default as google_sheets } from './google-sheets';
 export { default as facebook } from './facebook';
 export { default as mailchimp } from './mailchimp';
 
@@ -12,5 +13,6 @@ const services = new Set( [
 	'google_photos',
 	'google_my_business',
 	'mailchimp',
+	'google_sheets',
 ] );
 export const hasOwnProperty = name => services.has( name );

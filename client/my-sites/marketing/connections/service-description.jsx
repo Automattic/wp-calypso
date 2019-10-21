@@ -66,6 +66,9 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Google+ Publicize when no accounts are connected',
 				} );
 			},
+			google_sheets: function() {
+				return this.props.translate( 'Sync Jetpack form block submissions with Google Sheets.' );
+			},
 			mailchimp: function() {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate(
