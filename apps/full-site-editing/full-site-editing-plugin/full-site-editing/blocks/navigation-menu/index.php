@@ -49,10 +49,10 @@ function render_navigation_menu_block( $attributes ) {
 		$styles .= ' background-color: ' . $attributes['customBackgroundColor'] . ';';
 	}
 
-	if ( isset( $attributes['fontSize'] ) ) {
-		$class .= ' has-' . $attributes['fontSize'] . '-font-size';
-	} elseif ( isset( $attributes['customFontSize'] ) ) {
+	if ( isset( $attributes['customFontSize'] ) ) {
 		$styles .= ' font-size: ' . $attributes['customFontSize'] . 'px;';
+	} elseif ( isset( $attributes['fontSize'] ) ) {
+		$class .= ' has-' . $attributes['fontSize'] . '-font-size';
 	} else {
 		$class .= ' has-small-font-size';
 	}

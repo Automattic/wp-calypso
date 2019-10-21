@@ -33,7 +33,9 @@ const NavigationMenuEdit = ( {
 	setTextColor,
 	textColor,
 } ) => {
-	const { textAlign } = attributes;
+	const { customFontSize, textAlign } = attributes;
+
+	const actualFontSize = customFontSize || fontSize.size;
 
 	return (
 		<Fragment>
@@ -47,7 +49,7 @@ const NavigationMenuEdit = ( {
 			</BlockControls>
 			<InspectorControls>
 				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
-					<FontSizePicker onChange={ setFontSize } value={ fontSize.size } />
+					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
 				</PanelBody>
 				<PanelColorSettings
 					title={ __( 'Color Settings' ) }
@@ -70,7 +72,7 @@ const NavigationMenuEdit = ( {
 							textColor: textColor.color,
 							backgroundColor: backgroundColor.color,
 						} }
-						fontSize={ fontSize.size }
+						fontSize={ actualFontSize }
 					/>
 				</PanelColorSettings>
 			</InspectorControls>

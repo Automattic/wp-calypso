@@ -43,7 +43,9 @@ function SiteTitleEdit( {
 	shouldUpdateSiteOption,
 	textColor,
 } ) {
-	const { textAlign } = attributes;
+	const { customFontSize, textAlign } = attributes;
+
+	const actualFontSize = customFontSize || fontSize.size;
 
 	const inititalTitle = __( 'Site title loading…' );
 
@@ -70,7 +72,7 @@ function SiteTitleEdit( {
 			</BlockControls>
 			<InspectorControls>
 				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
-					<FontSizePicker onChange={ setFontSize } value={ fontSize.size } />
+					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
 				</PanelBody>
 				<PanelColorSettings
 					title={ __( 'Color Settings' ) }
@@ -91,7 +93,7 @@ function SiteTitleEdit( {
 					'has-text-color': textColor.color,
 					[ `has-text-align-${ textAlign }` ]: textAlign,
 					[ textColor.class ]: textColor.class,
-					[ fontSize.class ]: fontSize.class,
+					[ fontSize.class ]: ! customFontSize && fontSize.class,
 				} ) }
 				identifier="content"
 				onChange={ value => handleChange( value ) }
@@ -100,7 +102,7 @@ function SiteTitleEdit( {
 				placeholder={ __( 'Add a Site Title' ) }
 				style={ {
 					color: textColor.color,
-					fontSize: fontSize.size ? fontSize.size + 'px' : undefined,
+					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
 				} }
 				tagName="h1"
 				value={ option }
