@@ -60,6 +60,7 @@
 		"@wordpress/editor": "9.7.2",
 		"@wordpress/element": "2.8.2",
 		"@wordpress/format-library": "1.9.2",
+		"@wordpress/i18n": "3.6.1",
 		"@wordpress/notices": "1.8.2",
 		"@wordpress/nux": "3.7.2",
 		"@wordpress/plugins": "2.7.2",
