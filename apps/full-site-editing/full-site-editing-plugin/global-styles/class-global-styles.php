@@ -346,7 +346,7 @@ class Global_Styles {
 	public function wp_enqueue_scripts() {
 		wp_enqueue_style(
 			'a8c-global-styles-frontend',
-			plugins_url( 'dist/blank.css', __FILE__ ),
+			plugins_url( 'static/blank.css', __FILE__ ),
 			[],
 			self::VERSION // To bust cache when changes are done to font list, css custom vars, or style.css.
 		);
@@ -424,7 +424,7 @@ class Global_Styles {
 			array_key_exists( 'enqueue_theme_global_styles', $theme_support ) &&
 			true === $theme_support['enqueue_theme_global_styles']
 		) {
-			$result = $result . file_get_contents( plugin_dir_path( __FILE__ ) . 'dist/style.css', true );
+			$result = $result . file_get_contents( plugin_dir_path( __FILE__ ) . 'static/style.css', true );
 		}
 
 		return $result;
