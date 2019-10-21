@@ -83,7 +83,7 @@ export default class extends React.Component {
 		return (
 			<ProductCard
 				title="Jetpack Backup"
-				billingTimeFrame={ 'per year' }
+				billingTimeFrame={ 'per month' }
 				fullPrice={ [ 16, 25 ] }
 				discountedPrice={ [ 12, 16 ] }
 				description={
@@ -97,14 +97,14 @@ export default class extends React.Component {
 					optionsLabel="Backup options:"
 					options={ [
 						{
-							billingTimeFrame={ 'per year' }
+							billingTimeFrame={ 'per month' }
 							discountedPrice: 12,
 							fullPrice: 14,
 							slug: 'jetpack_backup_daily_monthly',
 							title: 'Daily Backups',
 						},
 						{
-							billingTimeFrame={ 'per year' }
+							billingTimeFrame={ 'per month' }
 							fullPrice: 25,
 							slug: 'jetpack_backup_realtime_monthly',
 							title: 'Real-Time Backups',
