@@ -41,6 +41,7 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getGSuiteSupportedDomains } from 'lib/gsuite';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
@@ -51,6 +52,7 @@ import StatsBanners from 'my-sites/stats/stats-banners';
  * Style dependencies
  */
 import './style.scss';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 const ActionBox = ( { href, onClick, target, iconSrc, label } ) => {
 	const buttonAction = { href, onClick, target };
@@ -119,6 +121,13 @@ class Home extends Component {
 		return null;
 	}
 
+	onLaunchBannerClick = e => {
+		const { siteId } = this.props;
+		e.preventDefault();
+
+		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
+	};
+
 	render() {
 		const { translate, canUserUseCustomerHome, siteSlug } = this.props;
 
@@ -132,7 +141,14 @@ class Home extends Component {
 			);
 		}
 
-		const { siteId, hasChecklistData, isChecklistComplete, checklistMode, isAtomic } = this.props;
+		const {
+			siteId,
+			hasChecklistData,
+			isChecklistComplete,
+			checklistMode,
+			isAtomic,
+			siteIsUnlaunched,
+		} = this.props;
 		const renderChecklistCompleteBanner = 'render' === this.state.renderChecklistCompleteBanner;
 
 		return (
@@ -148,6 +164,19 @@ class Home extends Component {
 						disableHref
 						title={ translate( 'Congratulations!' ) }
 						description={ translate( "You've completed each item in your checklist." ) }
+					/>
+				) }
+				{ hasChecklistData && isChecklistComplete && siteIsUnlaunched && (
+					<Banner
+						dismissPreferenceName="customer-home-unlaunched-reminder"
+						dismissTemporary={ true }
+						icon="info"
+						callToAction={ translate( 'Launch site' ) }
+						title={ translate( 'Your site is not launched' ) }
+						description={ translate(
+							"If you don't launch your site, it will only be accessbile to specified site members."
+						) }
+						onClick={ this.onLaunchBannerClick }
 					/>
 				) }
 				{ siteId && ! hasChecklistData && <QuerySiteChecklist siteId={ siteId } /> }
@@ -412,6 +441,7 @@ const connectHome = connect(
 			isChecklistComplete: isSiteChecklistComplete( state, siteId ),
 			isAtomic: isAtomicSite( state, siteId ),
 			isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			staticHomePageId: getSiteFrontPage( state, siteId ),
 			showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 			hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
@@ -428,10 +458,14 @@ const connectHome = connect(
 				)
 			),
 		expandToolsSection: () => dispatch( expandSection( SIDEBAR_SECTION_TOOLS ) ),
+		launchSiteOrRedirectToLaunchSignupFlow: siteId =>
+			dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...stateProps,
 		...ownProps,
+		launchSiteOrRedirectToLaunchSignupFlow: () =>
+			dispatchProps.launchSiteOrRedirectToLaunchSignupFlow( stateProps.siteId ),
 		expandToolsAndTrack: ( section, action ) => {
 			dispatchProps.expandToolsSection();
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage );

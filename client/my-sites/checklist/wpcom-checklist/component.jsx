@@ -24,13 +24,13 @@ import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { successNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
-import { launchSite } from 'state/sites/launch/actions';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import getChecklistTaskUrls, {
 	FIRST_TEN_SITE_POSTS_QUERY,
@@ -188,18 +188,11 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	handleLaunchSite = task => () => {
-		const { siteIsUnlaunched } = this.props;
-		if ( task.isCompleted && ! siteIsUnlaunched ) {
+		const { siteId } = this.props;
+		if ( task.isCompleted ) {
 			return;
 		}
-
-		const { siteId, domains, isPaidPlan, siteSlug } = this.props;
-
-		if ( isPaidPlan && domains.length > 1 ) {
-			this.props.launchSite( siteId );
-		} else {
-			location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
-		}
+		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
 	};
 
 	verificationTaskButtonText() {
@@ -1042,7 +1035,6 @@ export default connect(
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
-			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		};
 	},
 	{
@@ -1050,7 +1042,7 @@ export default connect(
 		recordTracksEvent,
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
-		launchSite,
+		launchSiteOrRedirectToLaunchSignupFlow,
 		showInlineHelpPopover,
 		showChecklistPrompt,
 		setChecklistPromptTaskId,
