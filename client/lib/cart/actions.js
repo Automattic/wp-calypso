@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,17 +17,17 @@ import {
 	CART_ITEMS_REPLACE_ALL,
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
-	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
-} from 'lib/upgrades/action-types';
+} from './action-types';
 import Dispatcher from 'dispatcher';
 import { domainRegistration } from 'lib/cart-values/cart-items';
 import { MARKETING_COUPONS_KEY } from 'lib/analytics/utils';
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
-import 'lib/cart/store';
+import './store';
 
 /**
  * Constants
@@ -110,7 +109,7 @@ export function addDomainToCart( domainSuggestion ) {
 
 export function addGoogleAppsRegistrationData( registrationData ) {
 	Dispatcher.handleViewAction( {
-		type: GOOGLE_APPS_REGISTRATION_DATA_ADD,
+		type: CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 		registrationData: registrationData,
 	} );
 }

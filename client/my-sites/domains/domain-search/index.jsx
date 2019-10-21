@@ -19,7 +19,8 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
-import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
+import { addItem, addItems, removeDomainFromCart } from 'lib/cart/actions';
+import { goToDomainCheckout } from 'lib/upgrades/actions';
 import {
 	hasDomainInCart,
 	domainMapping,
