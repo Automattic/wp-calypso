@@ -9,24 +9,18 @@ import PropTypes from 'prop-types';
  */
 import Button from 'components/button';
 
-const ProductCardAction = ( { intro, label, onClick } ) => {
-	if ( ! label ) {
-		return null;
-	}
-
-	return (
-		<div className="product-card__action">
-			{ intro && <h4 className="product-card__action-intro">{ intro }</h4> }
-			<Button className="product-card__action-button" onClick={ onClick } primary>
-				{ label }
-			</Button>
-		</div>
-	);
-};
+const ProductCardAction = ( { intro, label, onClick } ) => (
+	<div className="product-card__action">
+		{ intro && <h4 className="product-card__action-intro">{ intro }</h4> }
+		<Button className="product-card__action-button" onClick={ onClick } primary>
+			{ label }
+		</Button>
+	</div>
+);
 
 ProductCardAction.propTypes = {
 	intro: PropTypes.string,
-	label: PropTypes.string,
+	label: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 };
 

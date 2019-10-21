@@ -14,7 +14,7 @@ passed as a child to the `<ProductCard />`.
 It's used e.g. on `my-plans` page near the bundle plans grid and is intended to render a product card (not a regular
 plan).
 
-See p1HpG7-7nT-p2 for more details.
+See p1HpG7-7ET-p2 for more details.
 
 ### How to use the `<ProductCard />`
 
@@ -171,9 +171,6 @@ export default class extends React.Component {
 						you’ll get unlimited backup archives
 					</p>
 				}
-				hasManageSubscriptionLink
-				isPlaceholder={ isPlaceholder }
-				isPurchased
 			>
 				<ProductCardAction
 					intro="Get Real-Time Backups $16 /year"
@@ -189,7 +186,6 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Action component:
 
-* `billingTimeFrame`: ( string ) Billing time frame label
 * `intro`: ( string ) Intro text to be displayed above the action button
 * `label`: ( string ) Action button text
 * `onClick`: ( func ) Action button click event handler
