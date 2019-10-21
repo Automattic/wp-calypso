@@ -46,9 +46,14 @@ export default function CheckoutStep( {
 			<StepContent className="checkout-step__content" isActive={ isActive }>
 				{ stepContent }
 			</StepContent>
-			<StepSummary className="checkout-step__summary" showSummary={ isComplete || showSummary }>
-				{ stepSummary }
-			</StepSummary>
+			{ stepSummary && (
+				<StepSummary
+					className="checkout-step__summary"
+					showSummary={ ( showSummary && ! isActive ) || isComplete }
+				>
+					{ stepSummary }
+				</StepSummary>
+			) }
 		</StepWrapper>
 	);
 }
@@ -59,7 +64,7 @@ CheckoutStep.propTypes = {
 	title: PropTypes.string.isRequired,
 	finalStep: PropTypes.bool,
 	stepSummary: PropTypes.node,
-	stepContent: PropTypes.node,
+	stepContent: PropTypes.node.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
 	showSummary: PropTypes.bool,
