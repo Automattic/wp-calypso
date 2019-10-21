@@ -85,8 +85,7 @@ class FileImporter extends React.PureComponent {
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
 		const { importerStatus, site } = this.props;
-		const { errorData } = importerStatus;
-		const { importerState } = importerStatus;
+		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
 		const showStart = includes( compactStates, importerState );
 		const cardClasses = classNames( 'importer__file-importer-card', {
