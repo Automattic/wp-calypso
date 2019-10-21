@@ -12,6 +12,7 @@ import Inserter from './inserter';
 import './style.scss';
 
 export function Header() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			className="gutenboarding__header"
@@ -29,4 +30,5 @@ export function Header() {
 			</div>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
