@@ -466,10 +466,10 @@ export class ContactDetailsFormFields extends Component {
 	};
 
 	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
-		return createElement(
-			componentClass,
-			Object.assign( {}, { ...this.getFieldProps( name, needsChildRef ) }, { ...additionalProps } )
-		);
+		return createElement( componentClass, {
+			...this.getFieldProps( name, needsChildRef ),
+			...additionalProps,
+		} );
 	};
 
 	getCountryCode() {
@@ -533,13 +533,18 @@ export class ContactDetailsFormFields extends Component {
 						label: translate( 'Email' ),
 					} ) }
 
-					{ this.createField( 'phone', FormPhoneMediaInput, {
-						label: translate( 'Phone' ),
-						onChange: this.handlePhoneChange,
-						countriesList: this.props.countriesList,
-						countryCode: this.state.phoneCountryCode,
-						enableStickyCountry: false,
-					} ) }
+					{ this.createField(
+						'phone',
+						FormPhoneMediaInput,
+						{
+							label: translate( 'Phone' ),
+							onChange: this.handlePhoneChange,
+							countriesList: this.props.countriesList,
+							countryCode: this.state.phoneCountryCode,
+							enableStickyCountry: false,
+						},
+						true
+					) }
 				</div>
 
 				<div className="contact-details-form-fields__row">
