@@ -216,7 +216,7 @@ class AdsFormSettings extends Component {
 	jetpackPlacementControls() {
 		const linkHref = '/marketing/traffic/' + this.props.site.slug;
 
-		return <Card href={ linkHref }>Manage Ad Placements in Marketing Settings</Card>;
+		return <Card href={ linkHref }>Manage ad placements</Card>;
 	}
 
 	showAdsToOptions() {
