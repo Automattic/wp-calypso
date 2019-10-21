@@ -22,7 +22,6 @@ import {
 	CART_TAX_POSTAL_CODE_SET,
 } from './action-types';
 import Dispatcher from 'dispatcher';
-import { domainRegistration } from 'lib/cart-values/cart-items';
 import { MARKETING_COUPONS_KEY } from 'lib/analytics/utils';
 
 // We need to load the CartStore to make sure the store is registered with the
@@ -98,29 +97,11 @@ export function replaceItem( oldItem, newItem ) {
 	} );
 }
 
-export function addDomainToCart( domainSuggestion ) {
-	addItem(
-		domainRegistration( {
-			domain: domainSuggestion.domain_name,
-			productSlug: domainSuggestion.product_slug,
-		} )
-	);
-}
-
 export function addGoogleAppsRegistrationData( registrationData ) {
 	Dispatcher.handleViewAction( {
 		type: CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 		registrationData: registrationData,
 	} );
-}
-
-export function removeDomainFromCart( domainSuggestion ) {
-	removeItem(
-		domainRegistration( {
-			domain: domainSuggestion.domain_name,
-			productSlug: domainSuggestion.product_slug,
-		} )
-	);
 }
 
 export function applyCoupon( coupon ) {

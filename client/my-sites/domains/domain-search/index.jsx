@@ -19,7 +19,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
-import { addItem, addItems, removeDomainFromCart } from 'lib/cart/actions';
+import { addItem, removeItem } from 'lib/cart/actions';
 import { isGSuiteRestricted, canDomainAddGSuite } from 'lib/gsuite';
 import {
 	hasDomainInCart,
@@ -121,7 +121,7 @@ class DomainSearch extends Component {
 			domainRegistration = updatePrivacyForDomain( domainRegistration, true );
 		}
 
-		addItems( [ domainRegistration ] );
+		addItem( domainRegistration );
 
 		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
 			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
@@ -132,7 +132,12 @@ class DomainSearch extends Component {
 
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
-		removeDomainFromCart( suggestion );
+		removeItem(
+			domnRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug,
+			} )
+		);
 	}
 
 	render() {
