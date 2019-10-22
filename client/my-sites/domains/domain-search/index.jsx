@@ -25,7 +25,7 @@ import {
 	hasDomainInCart,
 	domainMapping,
 	domainTransfer,
-	domainRegistration as domnRegistration,
+	domainRegistration,
 	updatePrivacyForDomain,
 } from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
@@ -111,17 +111,17 @@ class DomainSearch extends Component {
 
 		this.props.recordAddDomainButtonClick( domain, 'domains' );
 
-		let domainRegistration = domnRegistration( {
+		let registration = domainRegistration( {
 			domain,
 			productSlug,
 			extra: { privacy_available: supportsPrivacy },
 		} );
 
 		if ( supportsPrivacy ) {
-			domainRegistration = updatePrivacyForDomain( domainRegistration, true );
+			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		addItem( domainRegistration );
+		addItem( registration );
 
 		if ( ! isGSuiteRestricted() && canDomainAddGSuite( domain ) ) {
 			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
@@ -133,7 +133,7 @@ class DomainSearch extends Component {
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
 		removeItem(
-			domnRegistration( {
+			domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
 			} )
