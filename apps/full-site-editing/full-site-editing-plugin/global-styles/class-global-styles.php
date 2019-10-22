@@ -421,8 +421,8 @@ class Global_Styles {
 		$theme_support = get_theme_support( $this->theme_support )[0];
 		if (
 			is_array( $theme_support ) &&
-			array_key_exists( 'enqueue_theme_global_styles', $theme_support ) &&
-			true === $theme_support['enqueue_theme_global_styles']
+			array_key_exists( 'enqueue_experimental_styles', $theme_support ) &&
+			true === $theme_support['enqueue_experimental_styles']
 		) {
 			$result = $result . file_get_contents( plugin_dir_path( __FILE__ ) . 'static/style.css', true );
 		}

@@ -149,12 +149,12 @@ As an experimental feature, the Global Styles plugin can provide a fallback styl
 add_theme_support(
 	'jetpack-global-styles',
 	[
-		'enqueue_theme_global_styles' => true,
+		'enqueue_experimental_styles' => true,
 	]
 );
 ```
 
-If the `enqueue_theme_global_styles` is present and it's `true`, the plugin will enqueue a fallback stylesheet that overrides the theme's. This feature is experimental. The overrides can't take into account all the ways that themes can present information (different tags, classes, etc.), so themes are responsible to check these are enough for its use case.
+If the `enqueue_experimental_styles` is present and it's `true`, the plugin will enqueue a fallback stylesheet that overrides the theme's. This feature is experimental. The overrides can't take into account all the ways that themes can present information (different tags, classes, etc.), so themes are responsible to check these are enough for its use case.
 
 Note that if the theme requests enqueueing the experimental stylesheet, the experimental Global Styles styles will override the theme ones once the plugin is activated. By default, until the user makes a font choice, the _System Font_ will be used.
 
@@ -166,7 +166,7 @@ Themes that use this experimental feature can also add a _Theme Default_ option 
 add_theme_support(
 	'jetpack-global-styles',
 	[
-		'enqueue_theme_global_styles' => true,
+		'enqueue_experimental_styles' => true,
 		'enable_theme_default'        => true,
 		'font_base'                   => 'serif',
 		'font_headings'               => 'sans-serif',
