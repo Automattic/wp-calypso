@@ -12,6 +12,7 @@ import {
 	ObserveTyping,
 } from '@wordpress/block-editor';
 import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
+import { registerBlockType } from '@wordpress/blocks';
 import { registerCoreBlocks } from '@wordpress/block-library';
 import '@wordpress/format-library';
 import '@wordpress/edit-post/build-style/style.css';
@@ -26,6 +27,7 @@ import '@wordpress/format-library/build-style/style.css';
  * Internal dependencies
  */
 import { Header } from 'gutenboarding/components/header';
+import { name, settings } from './onboarding-block';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import './style.scss';
@@ -67,3 +69,5 @@ export function Gutenboard() {
 }
 
 registerCoreBlocks();
+
+registerBlockType( name, settings );
