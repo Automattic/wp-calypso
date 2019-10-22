@@ -59,8 +59,6 @@ export class ProductSelector extends Component {
 		const { intervalType, purchases } = this.props;
 		const productSlugs = product.options[ intervalType ];
 
-		// TODO: Implement logic for plans that contan certain Jetpack products.
-
 		return find(
 			purchases,
 			purchase => purchase.active && includes( productSlugs, purchase.productSlug )
@@ -74,8 +72,6 @@ export class ProductSelector extends Component {
 		if ( ! purchase ) {
 			return;
 		}
-
-		// TODO: Implement logic for plans that contan certain Jetpack products.
 
 		return translate( 'Purchased %(purchaseDate)s', {
 			args: {
