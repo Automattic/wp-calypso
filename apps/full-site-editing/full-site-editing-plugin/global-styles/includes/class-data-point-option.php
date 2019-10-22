@@ -7,7 +7,7 @@ require_once __DIR__ . '/interface-global-styles-data-point.php';
 /**
  * Option Data Point.
  */
-class Option implements Data_Point {
+class Data_Point_Option implements Data_Point {
 
 	/**
 	 * Option name.
