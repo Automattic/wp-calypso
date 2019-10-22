@@ -308,7 +308,7 @@ class Home extends Component {
 					</Card>
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
-					<Card>
+					<Card className="customer-home__grow-earn">
 						<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
 							{ translate( 'Grow my audience and earn money' ) }
@@ -343,6 +343,8 @@ class Home extends Component {
 							<img
 								src="/calypso/images/customer-home/happiness.png"
 								alt={ translate( 'Support' ) }
+								height="119"
+								width="137"
 							/>
 							<VerticalNav className="customer-home__card-links">
 								<VerticalNavItem
@@ -362,20 +364,12 @@ class Home extends Component {
 							</VerticalNav>
 						</div>
 					</Card>
-					<Card>
+					<Card className="customer-home__go-mobile">
 						<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
 							{ translate( 'Make updates on the go' ) }
 						</h6>
 						<div className="customer-home__card-button-pair customer-home__card-mobile">
-							<AppsBadge
-								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-								storeName={ 'android' }
-								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-								altText={ translate( 'Google Play Store download badge' ) }
-							>
-								<img src="/calypso/images/customer-home/google-play.png" alt="" />
-							</AppsBadge>
 							<AppsBadge
 								storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
 								storeName={ 'ios' }
@@ -383,6 +377,14 @@ class Home extends Component {
 								altText={ translate( 'Apple App Store download badge' ) }
 							>
 								<img src="/calypso/images/customer-home/apple-store.png" alt="" />
+							</AppsBadge>
+							<AppsBadge
+								storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-customer-home%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
+								storeName={ 'android' }
+								titleText={ translate( 'Download the WordPress Android mobile app.' ) }
+								altText={ translate( 'Google Play Store download badge' ) }
+							>
+								<img src="/calypso/images/customer-home/google-play.png" alt="" />
 							</AppsBadge>
 						</div>
 					</Card>
