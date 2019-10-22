@@ -55,7 +55,7 @@ ProductCardOptions.propTypes = {
 			slug: PropTypes.string.isRequired,
 			title: PropTypes.string,
 		} )
-	).isRequired,
+	),
 	optionsLabel: PropTypes.string,
 	selectedSlug: PropTypes.string,
 };
