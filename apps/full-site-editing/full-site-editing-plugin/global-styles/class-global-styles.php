@@ -132,7 +132,7 @@ class Global_Styles {
 		$this->update_plugin_settings();
 
 		// DATA TO EXPOSE THROUGH THE REST API.
-		require_once __DIR__ . '/includes/class-global-styles-data-set.php';
+		require_once __DIR__ . '/includes/class-data-set.php';
 		$this->rest_api_data = new Data_Set(
 			[
 				'blogname'              => [
