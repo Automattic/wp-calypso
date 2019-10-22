@@ -778,6 +778,12 @@ export function conciergeSessionItem() {
 	};
 }
 
+export function jetpackProductItem( slug ) {
+	return {
+		product_slug: slug,
+	};
+}
+
 /**
  * Creates a new shopping cart item for the specified plan.
  *
