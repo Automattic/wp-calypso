@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp, urlToSlug } from '../http-utils';
+import { withoutHttp, urlToSlug, urlToDomainAndPath } from '../http-utils';
 
 describe( 'withoutHttp', () => {
 	test( 'should return null if URL is not provided', () => {
@@ -89,5 +89,37 @@ describe( 'urlToSlug()', () => {
 		const urlWithoutHttp = urlToSlug( urlWithHttp );
 
 		expect( urlWithoutHttp ).toEqual( 'example.com::example::test123' );
+	} );
+} );
+
+describe( 'urlToDomainAndPath', () => {
+	test( 'should return null if URL is not provided', () => {
+		expect( withoutHttp() ).toBeNull;
+	} );
+
+	test( 'should return URL without initial http', () => {
+		const urlWithHttp = 'http://example.com/';
+		const urlWithoutHttp = urlToDomainAndPath( urlWithHttp );
+
+		expect( urlWithoutHttp ).toEqual( 'example.com' );
+	} );
+
+	test( 'should return URL without initial https', () => {
+		const urlWithHttps = 'https://example.com/';
+		const urlWithoutHttps = urlToDomainAndPath( urlWithHttps );
+
+		expect( urlWithoutHttps ).toEqual( 'example.com' );
+	} );
+
+	test( "should return provided URL if it doesn't include http(s)", () => {
+		const urlWithoutHttp = 'example.com/';
+
+		expect( urlToDomainAndPath( urlWithoutHttp ) ).toEqual( 'example.com' );
+	} );
+
+	test( 'should return empty string if URL is empty string', () => {
+		const urlEmptyString = '';
+
+		expect( urlToDomainAndPath( urlEmptyString ) ).toEqual( '' );
 	} );
 } );
