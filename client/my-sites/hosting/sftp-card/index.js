@@ -38,13 +38,16 @@ const SFTPCard = ( { translate, siteId } ) => {
 	const username = get( dummyApiRequest, 'data.username', null );
 	const password = get( dummyApiRequest, 'data.password', null );
 	const loading = dummyApiRequest.status === 'pending';
-	const noSftpUser = get( dummyApiRequest, 'error.status', 0 ) === 404;
+	const noSftpUser = dummyApiRequest.error.status === 404;
 
 	const createAtomicSFTPUser = () => {
 		setDummyApiRequest( {
 			status: 'success',
 			data: {
 				username: 'test_user_testsite.wordpress.com_1234',
+			},
+			error: {
+				status: 0,
 			},
 		} );
 	};
@@ -55,6 +58,9 @@ const SFTPCard = ( { translate, siteId } ) => {
 			data: {
 				username: 'test_user_testsite.wordpress.com_1234',
 				password: 'a.reset.p.a.s.s.word',
+			},
+			error: {
+				status: 0,
 			},
 		} );
 	};
@@ -153,7 +159,7 @@ const SFTPCard = ( { translate, siteId } ) => {
 					</tbody>
 				</table>
 			) }
-			{ loading && ! errorCode && <Spinner /> }
+			{ loading && ! noSftpUser && <Spinner /> }
 		</Card>
 	);
 };
