@@ -11,10 +11,6 @@ import Field from './field';
 import GridRow from './grid-row';
 import { useLocalize } from '../lib/localize';
 
-/**
- * Styles
- */
-
 const CreditCardFieldsWrapper = styled.div`
 	padding: 16px;
 	position: relative;
@@ -53,10 +49,6 @@ const LockIconGraphic = styled.svg`
 	height: 17px;
 	display: block;
 `;
-
-/**
- * Component
- */
 
 export default function CreditCardFields() {
 	const localize = useLocalize();
@@ -99,7 +91,7 @@ export default function CreditCardFields() {
 	);
 }
 
-export function CVV( { className } ) {
+function CVV( { className } ) {
 	const localize = useLocalize();
 
 	return (
@@ -128,7 +120,7 @@ export function CVV( { className } ) {
 	);
 }
 
-export function LockIcon( { className } ) {
+function LockIcon( { className } ) {
 	return (
 		<LockIconGraphic
 			className={ className }

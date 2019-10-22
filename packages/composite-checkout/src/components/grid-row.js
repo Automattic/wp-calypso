@@ -22,8 +22,7 @@ export default function GridRow( { gap, columnWidths, className, children } ) {
 }
 
 GridRow.propTypes = {
-	gap: PropTypes.string,
-	columnWidths: PropTypes.string,
+	gap: PropTypes.string.required,
+	columnWidths: PropTypes.string.required,
 	className: PropTypes.string,
-	children: PropTypes.node,
 };
