@@ -5,7 +5,7 @@ import { assign, flowRight, get } from 'lodash';
 import Dispatcher from 'dispatcher';
 import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
 import debugFactory from 'debug';
-import emitter from '@automattic/emitter';
+import Emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies

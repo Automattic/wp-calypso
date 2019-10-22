@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import emitter from '@automattic/emitter';
+import Emitter from '@automattic/emitter';
 
 const debug = debugFactory( 'calypso:follow-list:site' );
 
