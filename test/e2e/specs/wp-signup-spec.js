@@ -1756,7 +1756,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			await driver.get( activationLink );
 		} );
 
-		after( 'Can delete our newly created account', async function() {
+		after( 'Can delete our newly created account ', async function() {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
 		} );
 	} );
