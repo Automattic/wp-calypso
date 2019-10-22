@@ -13,6 +13,20 @@
 .gutenboarding {
 	@include reset;
 
+	// Reset some Calypso base styles
+	input[type='text'],
+	input[type='search'],
+	input[type='email'],
+	input[type='number'],
+	input[type='password'],
+	input[type='checkbox'],
+	input[type='radio'],
+	input[type='tel'],
+	input[type='url'],
+	textarea {
+		width: auto;
+	}
+
 	// Block editor styles
 	@import '~@wordpress/edit-post/src/style.scss';
 	@import '~@wordpress/components/src/style.scss';
