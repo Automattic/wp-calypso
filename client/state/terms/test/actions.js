@@ -47,7 +47,7 @@ const testTerms = [
 	},
 ];
 const siteId = 2916284;
-const taxonomyName = 'jetpack-testimonials';
+const taxonomyName = 'jetpack-portfolio-tag';
 const categoryTaxonomyName = 'category';
 
 describe( 'actions', () => {
@@ -409,11 +409,11 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:ribs/delete` )
+				.get( `/wp/v2/sites/${ siteId }/taxonomies/${ taxonomyName }/` )
+				.reply( 200, { rest_base: taxonomyName } )
+				.delete( `/wp/v2/sites/${ siteId }/${ taxonomyName }/10?force=true` )
 				.reply( 200, { status: 'ok' } )
-				.post(
-					`/rest/v1.1/sites/${ siteId }/taxonomies/${ categoryTaxonomyName }/terms/slug:ribs/delete`
-				)
+				.delete( `/wp/v2/sites/${ siteId }/categories/10?force=true` )
 				.reply( 200, { status: 'ok' } );
 		} );
 

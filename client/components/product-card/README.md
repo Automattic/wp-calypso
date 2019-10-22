@@ -7,10 +7,14 @@ information.
 It can have a [`<ProductCardOptions />`](#product-card-options) component passed as a child that will render product
 purchase options under the product description.
 
+In some cases, e.g. when a lower-tier product has been already purchased, an upgrade button can be displayed using a
+[`<ProductCardAction />`](#product-card-action) component. Like the `<ProductCardOptions />` component, it should be
+passed as a child to the `<ProductCard />`.
+
 It's used e.g. on `my-plans` page near the bundle plans grid and is intended to render a product card (not a regular
 plan).
 
-See p1HpG7-7nT-p2 for more details.
+See p1HpG7-7ET-p2 for more details.
 
 ### How to use the `<ProductCard />`
 
@@ -26,10 +30,10 @@ export default class extends React.Component {
 				billingTimeFrame={ 'per year' }
 				fullPrice={ 25 }
 				description={
-					<Fragment>
+					<p>
 						Automatic scanning and one-click fixes keep your site one step ahead of security
 						threats. <a href="/plans">More info</a>
-					</Fragment>
+					</p>
 				}
 			/>
 		);
@@ -83,27 +87,28 @@ export default class extends React.Component {
 		return (
 			<ProductCard
 				title="Jetpack Backup"
-				billingTimeFrame={ 'per year' }
+				billingTimeFrame={ 'per month' }
 				fullPrice={ [ 16, 25 ] }
 				discountedPrice={ [ 12, 16 ] }
 				description={
-					<Fragment>
+					<p>
 						Always-on backups ensure you never lose your site. Choose from real-time or daily
 						backups. <a href="/plans">Which one do I need?</a>
-					</Fragment>
+					</p>
 				}
 			>
 				<ProductCardOptions
-					billingTimeFrame={ 'per year' }
 					optionsLabel="Backup options:"
 					options={ [
 						{
+							billingTimeFrame={ 'per month' }
 							discountedPrice: 12,
 							fullPrice: 14,
 							slug: 'jetpack_backup_daily_monthly',
 							title: 'Daily Backups',
 						},
 						{
+							billingTimeFrame={ 'per month' }
 							fullPrice: 25,
 							slug: 'jetpack_backup_realtime_monthly',
 							title: 'Real-Time Backups',
@@ -122,12 +127,12 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Options component:
 
-* `billingTimeFrame`: ( string ) Billing time frame label
-* `currencyCode`: ( string ) Currency code
 * `handleSelect`: ( func ) Handler function for option selection. A product option `slug` is passed as an argument to
  the handler function
 * `options`: ( array ) List of product options to render Each option should be an object. The shape of an option
  object is as follows:
+  * `options.billingTimeFrame`: ( string ) Billing time frame label
+  * `options.currencyCode`: ( string ) Currency code
   * `options.discountedPrice`: ( number | array ) Discounted price of a product option. If an array of 2 numbers is
    passed, it will be displayed as a price range
   * `options.fullPrice`: ( number | array ) Full price of a product option. If an array of 2 numbers is passed, it
@@ -137,3 +142,51 @@ The following props can be passed to the Product Card Options component:
   * `options.slug`: ( string ) Option slug
 * `optionsLabel`: ( string ) Label that is displayed above the list of product options
 * `selectedSlug`: ( string ) Currently selected product option slug
+
+<a name="product-card-action"></a>Product Card Action
+=======
+
+Product Card Action is a Product Card's sub-component for rendering action section. It consists of an intro
+text (optional) and a button.
+
+### How to use the `<ProductCardAction />`
+
+```jsx
+import React from 'react';
+import ProductCard from 'components/product-card';
+import ProductCardAction from 'components/product-card-action';
+
+export default class extends React.Component {
+	render() {
+		return (
+			<ProductCard
+				title={
+					<Fragment>
+						Jetpack Backup <strong>Daily</strong>
+					</Fragment>
+				}
+				subtitle="Purchased 2019-09-13"
+				description={
+					<p>
+						<strong>Looking for more?</strong> With Real-time backups:, we save as you edit and
+						you’ll get unlimited backup archives
+					</p>
+				}
+			>
+				<ProductCardAction
+					intro="Get Real-Time Backups $16 /year"
+					label="Upgrade to Real-Time Backups"
+				/>
+			</ProductCard>
+		);
+	}
+}
+```
+
+### `<ProductCardAction />` Props
+
+The following props can be passed to the Product Card Action component:
+
+* `intro`: ( string ) Intro text to be displayed above the action button
+* `label`: ( string ) Action button text
+* `onClick`: ( func ) Action button click event handler

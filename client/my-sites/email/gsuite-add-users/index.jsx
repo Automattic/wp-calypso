@@ -12,7 +12,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import Button from 'components/button';
 import Card from 'components/card';

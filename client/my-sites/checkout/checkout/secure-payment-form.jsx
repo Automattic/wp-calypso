@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { get, defer, pick, isEqual } from 'lodash';
+import { get, defer, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -26,10 +26,10 @@ import {
 	fullCreditsPayment,
 	newStripeCardPayment,
 	storedCardPayment,
+	submit,
 } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
-import { setPayment } from 'lib/transaction/actions';
-import { submitTransaction } from 'lib/upgrades/actions';
+import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -54,7 +54,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
-import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
+import { recordProductPurchase } from 'lib/cart/store/cart-analytics';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
@@ -180,32 +180,40 @@ export class SecurePaymentForm extends Component {
 	async submitTransaction( event ) {
 		event && event.preventDefault();
 
-		const params = pick( this.props, [ 'cart', 'transaction' ] );
+		const { cart, transaction } = this.props;
+
 		const origin = getLocationOrigin( window.location );
+		const successUrl = origin + this.props.redirectTo();
+		const cancelUrl = origin + '/checkout/' + get( this.props.selectedSite, 'slug', 'no-site' );
 
-		params.successUrl = origin + this.props.redirectTo();
-		params.cancelUrl = origin + '/checkout/';
-
-		if ( this.props.selectedSite ) {
-			params.cancelUrl += this.props.selectedSite.slug;
-		} else {
-			params.cancelUrl += 'no-site';
-		}
-
-		const cardDetailsCountry = get( params.transaction, 'payment.newCardDetails.country', null );
+		const cardDetailsCountry = get( transaction, 'payment.newCardDetails.country', null );
 		if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetailsCountry ) ) {
-			params.transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
+			transaction.payment.paymentMethod = 'WPCOM_Billing_Ebanx';
 		}
 
 		try {
-			await this.maybeSetSiteToPublic( { cart: params.cart } );
+			await this.maybeSetSiteToPublic( { cart } );
 		} catch ( e ) {
 			debug( 'Error setting site to public', e );
 			displayError();
 			return;
 		}
 
-		submitTransaction( params );
+		submit(
+			{
+				cart,
+				payment: transaction.payment,
+				domainDetails: transaction.domainDetails,
+				successUrl,
+				cancelUrl,
+				stripe: transaction.stripe,
+				stripeConfiguration: transaction.stripeConfiguration,
+			},
+			// Execute every step handler in its own event loop tick, so that a complete React
+			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
+			// like the `TransactionStepsMixin` are called with every step.
+			step => defer( () => setTransactionStep( step ) )
+		);
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
@@ -296,10 +304,7 @@ export class SecurePaymentForm extends Component {
 						reason: this.formatError( step.error ),
 					} );
 
-					this.recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: false,
-					} );
+					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: false } );
 				} else if ( step.data ) {
 					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 					// zero-value cost and would thus lead to a wrong computation of conversions
@@ -314,17 +319,9 @@ export class SecurePaymentForm extends Component {
 						total_cost: cartValue.total_cost,
 					} );
 
-					cartValue.products.forEach( function( cartItem ) {
-						analytics.tracks.recordEvent(
-							'calypso_checkout_product_purchase',
-							removeNestedProperties( cartItem )
-						);
-					} );
+					cartValue.products.forEach( recordProductPurchase );
 
-					this.recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: true,
-					} );
+					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: true } );
 				}
 				break;
 
@@ -338,10 +335,7 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	recordDomainRegistrationAnalytics( parameters ) {
-		const cart = parameters.cart,
-			success = parameters.success;
-
+	recordDomainRegistrationAnalytics( { cart, success } ) {
 		getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.ga.recordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
 

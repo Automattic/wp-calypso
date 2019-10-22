@@ -21,7 +21,7 @@ import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
-import { getRememberedCoupon } from 'lib/upgrades/actions';
+import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 
 export function checkout( context, next ) {

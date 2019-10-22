@@ -216,7 +216,7 @@ export const requestAtomicSFTPDetails = siteId =>
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/hosting/ssh`,
+				path: `/sites/${ siteId }/hosting/ssh-user`,
 				apiNamespace: 'wpcom/v2',
 			},
 			{}
@@ -235,7 +235,7 @@ export const resetAtomicSFTPUserPassword = siteId =>
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/hosting/ssh/reset-password`,
+				path: `/sites/${ siteId }/hosting/ssh-user/reset-password`,
 				apiNamespace: 'wpcom/v2',
 				body: {},
 			},
@@ -255,7 +255,7 @@ export const createAtomicSFTPUser = siteId =>
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/hosting/ssh`,
+				path: `/sites/${ siteId }/hosting/ssh-user`,
 				apiNamespace: 'wpcom/v2',
 				body: {},
 			},

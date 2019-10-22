@@ -33,7 +33,6 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { isPartnerPurchase, getPartnerName } from 'lib/purchases';
 import CartData from 'components/data/cart';
 
-
 class Plans extends React.Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
@@ -91,7 +90,7 @@ class Plans extends React.Component {
 					<div id="plans" className="plans plans__has-sidebar">
 						<PlansNavigation path={ context.path } />
 						<EmptyContent
-							illustration="/calypso/images/illustrations/jetpack-header.svg"
+							illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 							title={ translate( 'Your plan is managed by %(partnerName)s', {
 								args: { partnerName },
 							} ) }

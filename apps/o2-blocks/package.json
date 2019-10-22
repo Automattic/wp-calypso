@@ -24,7 +24,7 @@
 	"dependencies": {
 		"@wordpress/blocks": "6.7.2",
 		"@wordpress/components": "8.3.2",
-		"@wordpress/editor": "9.7.2",
+		"@wordpress/editor": "9.7.3",
 		"@wordpress/element": "2.8.2",
 		"@wordpress/i18n": "3.6.1",
 		"classnames": "2.2.6"

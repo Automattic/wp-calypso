@@ -41,7 +41,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-.jetpack-connect__main {
+.jetpack-connect__main.main {
 	max-width: 400px;
 
 	.formatted-header {
@@ -600,17 +600,17 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-top: 11px;
 	}
 
-	.plan-price.is-original {
+	.plan-features .plan-price.is-original {
 		align-self: center;
 		margin-top: 6px;
 	}
 
-	.plan-price.is-original .plan-price__currency-symbol,
-	.plan-price.is-original .plan-price__fraction {
+	.plan-features .plan-price.is-original .plan-price__currency-symbol,
+	.plan-features .plan-price.is-original .plan-price__fraction {
 		font-size: 8px;
 	}
 
-	.plan-price.is-discounted {
+	.plan-features .plan-price.is-discounted {
 		margin-right: 0;
 	}
 
@@ -1094,5 +1094,82 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 	.button .gridicon {
 		padding-left: 4px;
 		margin-right: -5px;
+	}
+}
+
+// <ProductCard /> overrides
+.is-section-jetpack-connect {
+	.product-card {
+		@include breakpoint( '>660px' ) {
+			text-align: left;
+		}
+	}
+
+	.product-card__header {
+		@include breakpoint( '<660px' ) {
+			border-bottom: none;
+		}
+	}
+
+	.product-card__header-primary {
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+
+	.product-card__header-secondary {
+		padding-top: 20px;
+		padding-bottom: 20px;
+
+		@include breakpoint( '<660px' ) {
+			padding-bottom: 8px;
+			border-top: solid 2px var( --color-jetpack-plan-free );
+		}
+
+		&::after {
+			bottom: auto;
+			top: 0;
+		}
+	}
+
+	.product-card__title,
+	.product-card__title:not( .is-purchased ) {
+		font-size: 20px;
+		color: var( --color-neutral-70 );
+
+		@include breakpoint( '>660px' ) {
+			font-size: 22px;
+			font-weight: 600;
+		}
+	}
+
+	.product-card__price-group {
+		justify-content: center;
+	}
+
+	.plan-price.is-discounted,
+	.plan-price.is-discounted .plan-price__currency-symbol,
+	.product-card__price-group.is-discounted .product-card__billing-timeframe,
+	.product-card__option .product-card__price-group.is-discounted .product-card__billing-timeframe {
+		color: var( --color-neutral-70 );
+	}
+
+	@include breakpoint( '>660px' ) {
+		.plan-price,
+		.plan-price__currency-symbol,
+		.plan-price__integer,
+		.plan-price__fraction,
+		.product-card__billing-timeframe {
+			font-size: 14px;
+			font-weight: 600;
+			font-style: normal;
+		}
+
+		.product-card__billing-timeframe {
+			color: var( --color-neutral-70 );
+		}
+	}
+
+	.product-card__option-name {
+		text-align: left;
 	}
 }

@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 import { hasDomainInCart } from 'lib/cart-values/cart-items';
 import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'components/header-cake';

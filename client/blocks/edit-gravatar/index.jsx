@@ -190,7 +190,6 @@ export class EditGravatar extends Component {
 					{ this.state.showEmailVerificationNotice && (
 						<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 					) }
-					{ this.renderImageEditor() }
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
 							data-tip-target="edit-gravatar"
@@ -215,6 +214,7 @@ export class EditGravatar extends Component {
 						</div>
 					</FilePicker>
 				</div>
+				{ this.renderImageEditor() }
 				<div>
 					<p className="edit-gravatar__explanation">
 						{ translate( 'Your profile photo is public.' ) }

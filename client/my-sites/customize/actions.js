@@ -11,7 +11,7 @@ import { defer } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import page from 'page';
-import { addItem } from 'lib/upgrades/actions/cart';
+import { addItem } from 'lib/cart/actions';
 import { trackClick } from '../themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
 

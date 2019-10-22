@@ -30,7 +30,7 @@ import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
 	addGoogleAppsRegistrationData,
-} from 'lib/upgrades/actions';
+} from 'lib/cart/actions';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,

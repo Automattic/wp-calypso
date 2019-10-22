@@ -79,7 +79,7 @@ import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
 import { transferStates } from 'state/atomic-transfer/constants';
 import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
 import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
-import getSiteSlug from 'state/sites/selectors/get-site-slug.js';
+import { getSiteHomeUrl, getSiteSlug } from 'state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getActiveTheme } from 'state/themes/selectors';
@@ -116,6 +116,7 @@ export class CheckoutThankYou extends React.Component {
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		siteHomeUrl: PropTypes.string.isRequired,
 		transferComplete: PropTypes.bool,
 	};
 
@@ -308,7 +309,7 @@ export class CheckoutThankYou extends React.Component {
 			}
 		}
 
-		return page( `/stats/insights/${ this.props.selectedSite.slug }` );
+		return page( this.props.siteHomeUrl );
 	};
 
 	isEligibleForLiveChat = () => {
@@ -623,6 +624,7 @@ export default connect(
 				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			selectedSiteSlug: getSiteSlug( state, siteId ),
+			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
 		};
 	},

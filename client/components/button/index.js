@@ -1,1 +1,1 @@
-export { Button as default } from '@automattic/calypso-ui';
+export { Button as default } from '@automattic/components';

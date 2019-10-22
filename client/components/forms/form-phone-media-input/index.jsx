@@ -24,6 +24,7 @@ export default function FormPhoneMediaInput( {
 	onChange,
 	countriesList,
 	enableStickyCountry,
+	inputRef,
 	children,
 } ) {
 	return (
@@ -31,6 +32,7 @@ export default function FormPhoneMediaInput( {
 			<div>
 				<FormLabel htmlFor={ name }>{ label }</FormLabel>
 				<PhoneInput
+					inputRef={ inputRef }
 					name={ name }
 					onChange={ onChange }
 					value={ value }

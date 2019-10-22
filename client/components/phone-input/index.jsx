@@ -44,16 +44,27 @@ class PhoneInput extends React.PureComponent {
 		enableStickyCountry: true,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		freezeSelection: false,
+	};
 
-		this.state = {
-			freezeSelection: false,
-		};
+	numberInput = undefined;
 
-		this.handleInput = this.handleInput.bind( this );
-		this.handleCountrySelection = this.handleCountrySelection.bind( this );
-	}
+	setNumberInputRef = element => {
+		this.numberInput = element;
+
+		const { inputRef } = this.props;
+
+		if ( ! inputRef ) {
+			return;
+		}
+
+		if ( typeof inputRef === 'function' ) {
+			inputRef( element );
+		} else {
+			inputRef.current = element;
+		}
+	};
 
 	/**
 	 * Returns the country meta with default values for countries with missing metadata. Never returns null.
@@ -175,7 +186,7 @@ class PhoneInput extends React.PureComponent {
 		return formatNumber( value, this.getCountry( countryCode ) );
 	}
 
-	handleInput( event ) {
+	handleInput = event => {
 		const inputValue = event.target.value;
 		if ( inputValue === this.props.value ) {
 			// nothing changed
@@ -190,7 +201,7 @@ class PhoneInput extends React.PureComponent {
 		);
 
 		this.props.onChange( { value, countryCode } );
-	}
+	};
 
 	/**
 	 * Calculates the input and country
@@ -206,7 +217,7 @@ class PhoneInput extends React.PureComponent {
 		return { value: calculatedValue, countryCode: calculatedCountryCode };
 	}
 
-	handleCountrySelection( event ) {
+	handleCountrySelection = event => {
 		const newCountryCode = event.target.value;
 		if ( newCountryCode === this.props.countryCode ) {
 			return;
@@ -237,9 +248,7 @@ class PhoneInput extends React.PureComponent {
 			value: this.format( inputValue, newCountryCode ),
 		} );
 		this.setState( { freezeSelection: this.props.enableStickyCountry } );
-	}
-
-	setNumberInputRef = c => ( this.numberInput = c );
+	};
 
 	render() {
 		return (
