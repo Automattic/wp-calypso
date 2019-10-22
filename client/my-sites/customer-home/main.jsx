@@ -47,12 +47,12 @@ import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sid
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import StatsBanners from 'my-sites/stats/stats-banners';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 const ActionBox = ( { href, onClick, target, iconSrc, label } ) => {
 	const buttonAction = { href, onClick, target };
