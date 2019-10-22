@@ -2,6 +2,15 @@
 
 .gutenboarding {
 	@include reset;
+
+	// Block editor styles
+	@import '~@wordpress/edit-post/src/style.scss';
+	@import '~@wordpress/components/src/style.scss';
+	@import '~@wordpress/block-editor/src/style.scss';
+	@import '~@wordpress/block-library/src/style.scss';
+	@import '~@wordpress/block-library/src/editor.scss';
+	@import '~@wordpress/block-library/src/theme.scss';
+	@import '~@wordpress/format-library/src/style.scss';
 }
 
 .gutenboarding__block-editor *,

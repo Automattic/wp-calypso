@@ -14,10 +14,6 @@ import {
 import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
-import '@wordpress/edit-post/build-style/style.css';
-import '@wordpress/components/build-style/style.css';
-import '@wordpress/block-editor/build-style/style.css';
-import '@wordpress/format-library/build-style/style.css';
 
 /**
  * Internal dependencies
