@@ -1,5 +1,15 @@
 @import './gutenberg-styles/styles';
 
+// Section wrapper resets
+.is-section-gutenboarding {
+	background: $white;
+
+	.layout__content {
+		margin: 0;
+		padding: 0;
+	}
+}
+
 .gutenboarding {
 	@include reset;
 
