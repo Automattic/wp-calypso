@@ -47,7 +47,7 @@ export function Gutenboard() {
 			/>
 			<SlotFillProvider>
 				<DropZoneProvider>
-					<BlockEditorProvider value={ [ onboardingBlock ] }>
+					<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
 						<div className="gutenboarding__block-editor">
 							<BlockEditorKeyboardShortcuts />
 
