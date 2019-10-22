@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -11,54 +10,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isExternal,
-	withoutHttp,
-	addSchemeIfMissing,
-	setUrlScheme,
-	urlToSlug,
-	resemblesUrl,
-	omitUrlParams,
-} from '../';
-
-describe( 'withoutHttp', () => {
-	test( 'should return null if URL is not provided', () => {
-		expect( withoutHttp() ).to.be.null;
-	} );
-
-	test( 'should return URL without initial http', () => {
-		const urlWithHttp = 'http://example.com';
-		const urlWithoutHttp = withoutHttp( urlWithHttp );
-
-		expect( urlWithoutHttp ).to.equal( 'example.com' );
-	} );
-
-	test( 'should return URL without initial https', () => {
-		const urlWithHttps = 'https://example.com';
-		const urlWithoutHttps = withoutHttp( urlWithHttps );
-
-		expect( urlWithoutHttps ).to.equal( 'example.com' );
-	} );
-
-	test( 'should return URL without initial http and query string if has any', () => {
-		const urlWithHttpAndQueryString = 'http://example.com?foo=bar#anchor';
-		const urlWithoutHttpAndQueryString = withoutHttp( urlWithHttpAndQueryString );
-
-		expect( urlWithoutHttpAndQueryString ).to.equal( 'example.com?foo=bar#anchor' );
-	} );
-
-	test( "should return provided URL if it doesn't include http(s)", () => {
-		const urlWithoutHttp = 'example.com';
-
-		expect( withoutHttp( urlWithoutHttp ) ).to.equal( urlWithoutHttp );
-	} );
-
-	test( 'should return empty string if URL is empty string', () => {
-		const urlEmptyString = '';
-
-		expect( withoutHttp( urlEmptyString ) ).to.equal( '' );
-	} );
-} );
+import { isExternal, addSchemeIfMissing, setUrlScheme, resemblesUrl, omitUrlParams } from '../';
 
 describe( 'isExternal', () => {
 	test( 'should return false for relative path-only url', () => {
@@ -241,52 +193,6 @@ describe( 'setUrlScheme()', () => {
 		const actual = setUrlScheme( source, 'http' );
 
 		expect( actual ).to.equal( expected );
-	} );
-} );
-
-describe( 'urlToSlug()', () => {
-	test( 'should return null if URL is not provided', () => {
-		expect( urlToSlug() ).to.be.null;
-	} );
-
-	test( 'should return null if URL is empty string', () => {
-		const urlEmptyString = '';
-
-		expect( urlToSlug( urlEmptyString ) ).to.be.null;
-	} );
-
-	test( 'should return URL without initial http', () => {
-		const urlWithHttp = 'http://example.com';
-		const urlWithoutHttp = urlToSlug( urlWithHttp );
-
-		expect( urlWithoutHttp ).to.equal( 'example.com' );
-	} );
-
-	test( 'should return URL without initial https', () => {
-		const urlWithHttps = 'https://example.com';
-		const urlWithoutHttps = urlToSlug( urlWithHttps );
-
-		expect( urlWithoutHttps ).to.equal( 'example.com' );
-	} );
-
-	test( 'should return URL without initial http and query string if has any', () => {
-		const urlWithHttpAndQueryString = 'http://example.com?foo=bar#anchor';
-		const urlWithoutHttpAndQueryString = urlToSlug( urlWithHttpAndQueryString );
-
-		expect( urlWithoutHttpAndQueryString ).to.equal( 'example.com?foo=bar#anchor' );
-	} );
-
-	test( "should return provided URL if it doesn't include http(s)", () => {
-		const urlWithoutHttp = 'example.com';
-
-		expect( urlToSlug( urlWithoutHttp ) ).to.equal( urlWithoutHttp );
-	} );
-
-	test( 'should return a slug with forward slashes converted to double colons', () => {
-		const urlWithHttp = 'http://example.com/example/test123';
-		const urlWithoutHttp = urlToSlug( urlWithHttp );
-
-		expect( urlWithoutHttp ).to.equal( 'example.com::example::test123' );
 	} );
 } );
 
