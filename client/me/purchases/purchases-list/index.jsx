@@ -29,6 +29,8 @@ import {
 } from 'state/purchases/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
+import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions.js';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id.js';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 
 class PurchasesList extends Component {
@@ -126,6 +128,8 @@ export default connect(
 			purchases: getUserPurchases( state, userId ),
 			sites: getSites( state ),
 			nextAppointment: getConciergeNextAppointment( state ),
+			hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
+			scheduleId: getConciergeScheduleId( state ),
 			userId,
 		};
 	},
