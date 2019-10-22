@@ -19,34 +19,7 @@ This plugin creates a new sidebar for the block editor through which the users c
 
 ## How to develop and build the plugin
 
-You need node and npm installed in your computer. Check the [JavaScript Build Setup](https://developer.wordpress.org/block-editor/tutorials/javascript/js-build-setup/) in the Gutenberg Handbook for more info.
-
-For **production**:
-
-```bash
-npm install
-npm run build
-```
-
-Take the plugin folder and make it available within the plugin directory in your WordPress installation.
-
-If you want to **develop**:
-
-```bash
-npm install
-npm run start
-```
-
-In case you also want a WordPress local installation to test Global Styles, this plugin comes with the docker-based environment provided by WordPress core -- refer to `@wordpress/scripts` for more info. To use this environment you can:
-
-```bash
-npm run env install # Only needed the first time.
-npm run env start # Get WordPress up and running.
-
-// ... whatever you need to work on
-
-npm run env stop # Stop after you're done.
-```
+Refer to instructions in the top-level [Full Site Editing](https://github.com/automattic/wp-calypso/tree/master/apps/full-site-editing) directory.
 
 ## How it works and how themes can use it
 
