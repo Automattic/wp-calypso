@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, flattenDeep, flowRight as compose, includes, isEmpty, map, uniq } from 'lodash';
+import { find, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -200,7 +200,7 @@ ProductSelector.propTypes = {
 
 const connectComponent = connect( ( state, { products, siteId } ) => {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
-	const productSlugs = uniq( flattenDeep( products.map( extractProductSlugs ) ) );
+	const productSlugs = extractProductSlugs( products );
 	const availableProducts = getAvailableProductsList( state );
 
 	return {
