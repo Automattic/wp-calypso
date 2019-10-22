@@ -1,5 +1,12 @@
 @import './gutenberg-styles/styles';
 
+// Override core variables: we don't have wp-admin header and sidebar in Calypso
+$admin-bar-height: 0;
+$admin-bar-height-big: 0;
+$admin-sidebar-width: 0;
+$admin-sidebar-width-big: 0;
+$admin-sidebar-width-collapsed: 0;
+
 // Section wrapper resets
 .is-section-gutenboarding {
 	background: $white;
