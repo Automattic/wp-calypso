@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Attributes } from '.';
+import { Attributes, SiteType } from '.';
 
 export default function OnboardingEdit( {
 	attributes: { siteType },
@@ -20,14 +20,14 @@ export default function OnboardingEdit( {
 			<>
 				<h1>{ __( "Let's set up your website -- it takes only a moment" ) }</h1>
 				{ __( 'I want to create a website ' ) }
-				<SelectControl< Attributes[ 'siteType' ] >
+				<SelectControl< SiteType >
 					onChange={ v => setAttributes( { siteType: v } ) }
 					options={ [
 						{ label: __( 'with a blog.' ), value: 'blog' },
 						{ label: __( 'for a store.' ), value: 'store' },
 						{ label: __( 'to write a story.' ), value: 'story' },
 					] }
-					value={ siteType || 'blog' }
+					value={ siteType || SiteType.BLOG }
 				/>
 			</>
 		);

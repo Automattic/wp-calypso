@@ -11,10 +11,16 @@ import edit from './edit';
 
 export const name = 'automattic/onboarding';
 
+export enum SiteType {
+	BLOG = 'blog',
+	STORE = 'store',
+	STORY = 'story',
+}
+
 export interface Attributes {
-	align: string; // TODO: kind of an enum!
-	siteTitle: 'blog' | 'store' | 'story';
-	siteType: string;
+	align: 'full';
+	siteTitle: string;
+	siteType: undefined | SiteType;
 	theme: string;
 	vertical: string;
 }
