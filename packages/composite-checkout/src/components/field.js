@@ -15,6 +15,10 @@ const Label = styled.label`
 	font-weight: 700;
 	font-size: 14px;
 	margin-bottom: 8px;
+
+	:hover {
+		cursor: pointer;
+	}
 `;
 
 const Input = styled.input`
@@ -132,7 +136,7 @@ export default function Field( {
 
 	return (
 		<div className={ className }>
-			<Label htmlFor={ value } isError={ isError }>
+			<Label htmlFor={ id } isError={ isError }>
 				{ label }
 			</Label>
 			<InputWrapper>
