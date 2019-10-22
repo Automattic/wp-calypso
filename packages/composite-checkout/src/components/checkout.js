@@ -30,8 +30,9 @@ export default function Checkout( {
 	onFailure,
 	successRedirectUrl,
 	failureRedirectUrl,
-	upSell,
-	checkoutHeader,
+	ReviewContent,
+	UpSell,
+	CheckoutHeader,
 	className,
 } ) {
 	const localize = localizeFactory( locale );
@@ -51,7 +52,11 @@ export default function Checkout( {
 				<Container className={ joinClasses( [ className, 'checkout' ] ) }>
 					<LeftColumn>
 						<div>
-							{ checkoutHeader || <PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle> }
+							{ CheckoutHeader ? (
+								<CheckoutHeader />
+							) : (
+								<PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle>
+							) }
 						</div>
 						<PaymentMethodsStep
 							availablePaymentMethods={ availablePaymentMethods }
@@ -69,9 +74,10 @@ export default function Checkout( {
 							setStepNumber={ setStepNumber }
 							isActive={ stepNumber === 3 }
 							isComplete={ stepNumber > 3 }
+							ReviewContent={ ReviewContent }
 						/>
 						<CheckoutSubmitButton isActive={ stepNumber === 3 } />
-						{ upSell && <div>{ upSell }</div> }
+						{ UpSell && <UpSell /> }
 					</LeftColumn>
 				</Container>
 			</CheckoutProvider>
@@ -90,12 +96,9 @@ Checkout.propTypes = {
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
-	reviewContent: PropTypes.element,
-	reviewContentCollapsed: PropTypes.element,
-	upSell: PropTypes.element,
-	checkoutHeader: PropTypes.element,
-	orderReviewTOS: PropTypes.element,
-	orderReviewFeatures: PropTypes.element,
+	ReviewContent: PropTypes.elementType,
+	UpSell: PropTypes.elementType,
+	CheckoutHeader: PropTypes.elementType,
 };
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {
@@ -208,7 +211,7 @@ BillingDetailsStep.propTypes = {
 	onChangeBillingContact: PropTypes.func,
 };
 
-function ReviewOrderStep( { isActive, isComplete } ) {
+function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
 	const localize = useLocalize();
 
 	return (
@@ -219,8 +222,20 @@ function ReviewOrderStep( { isActive, isComplete } ) {
 				isComplete={ isComplete }
 				stepNumber={ 3 }
 				title={ isComplete ? localize( 'Review your order' ) : localize( 'Review your order' ) }
-				stepContent={ <CheckoutReviewOrder isActive={ isActive } /> }
-				stepSummary={ <CheckoutReviewOrder summary isActive={ isActive } /> }
+				stepContent={
+					ReviewContent ? (
+						<ReviewContent isActive={ isActive } />
+					) : (
+						<CheckoutReviewOrder isActive={ isActive } />
+					)
+				}
+				stepSummary={
+					ReviewContent ? (
+						<ReviewContent summary isActive={ isActive } />
+					) : (
+						<CheckoutReviewOrder summary isActive={ isActive } />
+					)
+				}
 			/>
 		</React.Fragment>
 	);
