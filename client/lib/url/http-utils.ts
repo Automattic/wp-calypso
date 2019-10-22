@@ -37,7 +37,7 @@ export function urlToSlug( url: TypedURL | Falsey ): SiteSlug | null {
 }
 
 /**
- * Removes the `http(s)://` part and the trailing slash from an URL.
+ * Removes the `http(s)://` part and the trailing slash from a URL.
  * "http://blog.wordpress.com" will be converted into "blog.wordpress.com".
  * "https://www.wordpress.com/blog/" will be converted into "www.wordpress.com/blog".
  *
