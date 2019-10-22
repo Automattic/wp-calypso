@@ -3216,6 +3216,12 @@
 				"csstype": "^2.2.0"
 			}
 		},
+		"@types/wordpress__i18n": {
+			"version": "3.4.0",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__i18n/-/wordpress__i18n-3.4.0.tgz",
+			"integrity": "sha512-YD/Zh/rof9gAypXXKpfKHOe8w4+deohqwC04q9dt01AyZwSviOFY8mfpa+0gR4t1eyZiYKI8g/Gv6D2ccmYs9g==",
+			"dev": true
+		},
 		"@types/wordpress__keycodes": {
 			"version": "2.3.0",
 			"resolved": "https://registry.npmjs.org/@types/wordpress__keycodes/-/wordpress__keycodes-2.3.0.tgz",

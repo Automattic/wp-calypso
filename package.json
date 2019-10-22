@@ -309,6 +309,7 @@
 		"@types/wordpress__data": "4.6.3",
 		"@types/wordpress__editor": "9.4.1",
 		"@types/wordpress__element": "2.4.0",
+		"@types/wordpress__i18n": "3.4.0",
 		"@typescript-eslint/eslint-plugin": "1.10.2",
 		"@typescript-eslint/parser": "1.10.2",
 		"@wordpress/babel-plugin-makepot": "3.2.1",
