@@ -474,9 +474,9 @@ export class MySitesSidebar extends Component {
 	};
 
 	hosting() {
-		const { translate, path, site, isAtomicSite, siteSuffix } = this.props;
+		const { translate, path, site, siteSuffix } = this.props;
 
-		if ( ! site || ! isAtomicSite || ! isEnabled( 'hosting' ) ) {
+		if ( ! site || ! isBusiness( site.plan ) || ! isEnabled( 'hosting' ) ) {
 			return null;
 		}
 
