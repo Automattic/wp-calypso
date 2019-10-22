@@ -104,14 +104,14 @@ function getOutline( { isFocused, theme } ) {
 	return '0';
 }
 
-export default function RadioButton( { checked, name, value, onChange, children, label } ) {
+export default function RadioButton( { checked, name, value, onChange, children, label, id } ) {
 	const [ isFocused, changeFocus ] = useState( false );
 	return (
 		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
 			<Radio
 				type="radio"
 				name={ name }
-				id={ value }
+				id={ id }
 				value={ value }
 				checked={ checked }
 				onChange={ onChange }
@@ -123,7 +123,7 @@ export default function RadioButton( { checked, name, value, onChange, children,
 				} }
 				readOnly={ ! onChange }
 			/>
-			<Label checked={ checked } htmlFor={ value }>
+			<Label checked={ checked } htmlFor={ id }>
 				{ label }
 			</Label>
 			{ children }
@@ -133,6 +133,7 @@ export default function RadioButton( { checked, name, value, onChange, children,
 
 RadioButton.propTypes = {
 	name: PropTypes.string.isRequired,
+	id: PropTypes.string.isRequired,
 	label: PropTypes.node.isRequired,
 	checked: PropTypes.bool,
 	value: PropTypes.string.isRequired,

@@ -70,6 +70,7 @@ function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, o
 		<RadioButton
 			name="paymentMethod"
 			value={ id }
+			id={ id }
 			checked={ checked }
 			onChange={ onClick ? () => onClick( id ) : null }
 			label={ <LabelComponent /> }
