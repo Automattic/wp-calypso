@@ -32,5 +32,5 @@ export default function OnboardingEdit( {
 			</>
 		);
 	}
-	return sprintf( __( 'Cool, you have a %s' ), siteType );
+	return <div>{ sprintf( __( 'Cool, you have a %s' ), siteType ) }</div>;
 }
