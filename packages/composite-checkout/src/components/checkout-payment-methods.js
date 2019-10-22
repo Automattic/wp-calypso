@@ -73,10 +73,10 @@ function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, o
 				value={ id }
 				checked={ checked }
 				onChange={ onClick ? () => onClick( id ) : null }
+				label={ <LabelComponent /> }
 			>
-				<LabelComponent />
+				{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
 			</RadioButton>
-			{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
 		</React.Fragment>
 	);
 }

@@ -5,25 +5,16 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const Label = styled.label`
+const RadioButtonWrapper = styled.div`
 	position: relative;
-	padding: 16px 14px;
 	margin-top: 8px;
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: center;
 	outline: ${getOutline};
 
 	:first-child {
 		margin: 0;
-	}
-
-	:hover {
-		cursor: pointer;
 	}
 
 	:before {
@@ -53,19 +44,24 @@ const Label = styled.label`
 `;
 
 const Radio = styled.input`
-	margin-right: 7px;
-	position: relative;
-	display: inline-block;
+	position: absolute;
 	opacity: 0;
 `;
 
-const LabelContent = styled.span`
-	flex: 1;
-	display: flex;
-	justify-content: space-between;
+const Label = styled.label`
 	position: relative;
-	font-size: 14px;
-	transform: translateY( -1px );
+	padding: 16px 14px 16px 40px;
+	border-radius: 3px;
+	box-sizing: border-box;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+
+	:hover {
+		cursor: pointer;
+	}
 
 	:after {
 		display: block;
@@ -74,8 +70,9 @@ const LabelContent = styled.span`
 		content: '';
 		border: ${getRadioBorderWidth} solid ${getBorderColor};
 		border-radius: 100%;
-		top: 01px;
-		left: -23px;
+		top: 50%;
+		transform: translateY( -50% );
+		left: 16px;
 		position: absolute;
 		background: ${props => props.theme.colors.white};
 		box-sizing: border-box;
@@ -106,13 +103,14 @@ function getOutline( { isFocused, theme } ) {
 	return '0';
 }
 
-export default function RadioButton( { checked, name, value, onChange, children } ) {
+export default function RadioButton( { checked, name, value, onChange, children, label } ) {
 	const [ isFocused, changeFocus ] = useState( false );
 	return (
-		<Label isFocused={ isFocused } checked={ checked }>
+		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
 			<Radio
 				type="radio"
 				name={ name }
+				id={ value }
 				value={ value }
 				checked={ checked }
 				onChange={ onChange }
@@ -124,13 +122,17 @@ export default function RadioButton( { checked, name, value, onChange, children 
 				} }
 				readOnly={ ! onChange }
 			/>
-			<LabelContent checked={ checked }>{ children }</LabelContent>
-		</Label>
+			<Label checked={ checked } htmlFor={ value }>
+				{ label }
+			</Label>
+			{ children }
+		</RadioButtonWrapper>
 	);
 }
 
 RadioButton.propTypes = {
 	name: PropTypes.string.isRequired,
+	label: PropTypes.node.isRequired,
 	checked: PropTypes.bool,
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
