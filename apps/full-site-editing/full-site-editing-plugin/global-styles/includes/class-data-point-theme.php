@@ -7,7 +7,7 @@ require_once __DIR__ . '/interface-global-styles-data-point.php';
 /**
  * Theme Data Point.
  */
-class Theme implements Data_Point {
+class Data_Point_Theme implements Data_Point {
 
 	/**
 	 * Feature name.
