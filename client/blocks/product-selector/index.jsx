@@ -115,6 +115,7 @@ export class ProductSelector extends Component {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const productObject = storeProducts[ selectedProductSlug ];
 			const stateKey = this.getStateKey( product.id, intervalType );
+			const purchase = this.getPurchaseByProduct( product );
 
 			return (
 				<ProductCard
@@ -124,15 +125,19 @@ export class ProductSelector extends Component {
 					fullPrice={ productObject.cost }
 					description={ <p>{ product.description }</p> }
 					currencyCode={ currencyCode }
-					purchase={ this.getPurchaseByProduct( product ) }
+					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
-					<ProductCardOptions
-						optionsLabel={ product.optionsLabel }
-						options={ this.getProductOptions( product ) }
-						selectedSlug={ this.state[ stateKey ] }
-						handleSelect={ productSlug => this.handleProductOptionSelect( stateKey, productSlug ) }
-					/>
+					{ ! purchase && (
+						<ProductCardOptions
+							optionsLabel={ product.optionsLabel }
+							options={ this.getProductOptions( product ) }
+							selectedSlug={ this.state[ stateKey ] }
+							handleSelect={ productSlug =>
+								this.handleProductOptionSelect( stateKey, productSlug )
+							}
+						/>
+					) }
 				</ProductCard>
 			);
 		} );
