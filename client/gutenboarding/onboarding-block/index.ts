@@ -44,6 +44,9 @@ export const settings: BlockConfiguration< Attributes > = {
 	supports: {
 		align: [ 'full' ],
 		html: false,
+		inserter: true, // @TODO: Should not appear in inserter
+		multiple: false,
+		reusable: false,
 	},
 	icon: 'universal-access-alt',
 	edit,
