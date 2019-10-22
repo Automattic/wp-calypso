@@ -1,6 +1,6 @@
 # Global Styles approach to Data <!-- omit in toc -->
 
-Global Styles adds a new JSON REST API endpoint. It is a thin endpoint that outsources the data processing to the `\A8C\FSE\Global_Styles\Data_Set` class, which implements a declarative approach to data retrieval and persistance.
+Global Styles adds a new JSON REST API endpoint. It is a thin endpoint that outsources the data processing to the `\Automattic\Jetpack\Global_Styles\Data_Set` class, which implements a declarative approach to data retrieval and persistance.
 
 In this document we'll go through the existing API:
 
@@ -17,11 +17,11 @@ In this document we'll go through the existing API:
 
 ## Introduction
 
-The `\A8C\FSE\Global_Styles\Data_Set` takes as input a declarative data format and knows how to process three kinds of data:
+The `\Automattic\Jetpack\Global_Styles\Data_Set` takes as input a declarative data format and knows how to process three kinds of data:
 
 ```php
 // Initialize
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'font_list' => [
 		'type' => 'literal',
 		'default' => [
@@ -32,7 +32,7 @@ $data_set = new \A8C\FSE\Global_Styles\Data_Set( [
 	],
 	'font_base_default' => [
 		'type'    => 'theme',
-		'name'    => [ 'a8c-global-styles', 'font_base' ],
+		'name'    => [ 'jetpack-global-styles', 'font_base' ],
 		'default' => 'Ubuntu',
 	],
 	'site_name' => [
@@ -57,7 +57,7 @@ Data points are considered to be of the *literal* kind if their `type` property 
 For this **input**:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'font_base_default' => [
 		'type'    => 'literal',
 		'default' => 'Libre Baskerville',
@@ -83,7 +83,7 @@ Note that the `default` property can contain any valid PHP data.
 For example, use an array as **input**:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'font_options' => [
 		'type'    => 'literal',
 		'default' => [
@@ -120,7 +120,7 @@ Data points are considered to be of the *option* kind if the value of the `type`
 The simplest use case is to operate with the contents of an option without further processing. This **input** can be expressed as:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'site_name' => [
 		'type' => 'option',
 		'name' => 'blogname',
@@ -143,7 +143,7 @@ If the option does not exist or does not have a value, then the return value wil
 **Input**:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'site_name' => [
 		'type'    => 'option',
 		'name'    => 'some_non_existing_option',
@@ -164,7 +164,7 @@ $data_set = new \A8C\FSE\Global_Styles\Data_Set( [
 
 So far, we've exposed the whole option value. However, sometimes we want to unwrap an option and work with one of its properties instead.
 
-For example, let's say that there is an option called `a8c_global_styles` whose value is an object such as:
+For example, let's say that there is an option called `jetpack_global_styles` whose value is an object such as:
 
 ```php
 [
@@ -175,10 +175,10 @@ For example, let's say that there is an option called `a8c_global_styles` whose 
 
 For this **input**:
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'font_base' => [
 		'type' => 'option',
-		'name' => [ 'a8c_global_styles', 'font_base' ],
+		'name' => [ 'jetpack_global_styles', 'font_base' ],
 	]
 ] );
 ```
@@ -196,7 +196,7 @@ The **output** of `$data_set->get_data()` will be:
 By default, options can't be updated and they won't be processed during the `$data_set->save_data( $new_data )` execution. For example, for this **input**:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'site_name' => [
 		'type' => 'option',
 		'name' => 'blogname',
@@ -214,7 +214,7 @@ By default, the `blogname` option value **won't be processed** so the new value 
 Sometimes, though, we do want to update options. This can done by using the `updatable` key. Following the example above we set the option as updatable:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'site_name' => [
 		'type'      => 'option',
 		'name'      => 'blogname',
@@ -233,10 +233,10 @@ In this case, the `blogname` will be updated with the new value.
 If we were working with specific properties of the option instead:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'font_base' => [
 		'type'      => 'option',
-		'name'      => [ 'a8c_global_styles', 'font_base' ],
+		'name'      => [ 'jetpack_global_styles', 'font_base' ],
 		'updatable' => true,
 	],
 ] );
@@ -247,14 +247,14 @@ $data_set->save_data(
 );
 ```
 
-The result will be that the `a8c_global_styles` option will have its `font_base` property updated, while the rest will keep the same values.
+The result will be that the `jetpack_global_styles` option will have its `font_base` property updated, while the rest will keep the same values.
 
 ### Filters to prepare and sanitize data
 
-**The `\A8C\FSE\Global_Styles\Data_Set` doesn't do any validation or sanitization**, it's the consumer responsibility to do so. There are two filters that can be used to prepare, filter, validate and sanitize your data:
+**The `\Automattic\Jetpack\Global_Styles\Data_Set` doesn't do any validation or sanitization**, it's the consumer responsibility to do so. There are two filters that can be used to prepare, filter, validate and sanitize your data:
 
-- `global_styles_data_set_get_data`: it runs as the last step of `get_data()` and receives the result of processing the data points, so plugins have the opportunity to further processing it to their needs before it's used anywhere else.
-- `global_styles_data_set_save_data`: it runs as the first step of `save_data( $new_data )`, so plugins have the opportunity to validate and sanitize the incoming data to their needs before it's saved to the database.
+- `jetpack_global_styles_data_set_get_data`: it runs as the last step of `get_data()` and receives the result of processing the data points, so plugins have the opportunity to further processing it to their needs before it's used anywhere else.
+- `jetpack_global_styles_data_set_save_data`: it runs as the first step of `save_data( $new_data )`, so plugins have the opportunity to validate and sanitize the incoming data to their needs before it's saved to the database.
 
 ## Theme Data Points
 
@@ -263,10 +263,10 @@ Data points are considered to be of the *theme* kind if the property `type`'s va
 **Input** being:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
-	'global_styles' => [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
+	'jetpack_global_styles' => [
 		'type' => 'theme',
-		'name' => 'a8c-global-styles',
+		'name' => 'jetpack-global-styles',
 	],
 ] );
 ```
@@ -275,7 +275,7 @@ This will pull data added via `add_theme_support` as in:
 
 ```php
 add_theme_support(
-	'a8c-global-styles'
+	'jetpack-global-styles'
 	[
 		'font_headings' => 'Ubuntu',
 	]
@@ -286,7 +286,7 @@ The **output** of `$data_set->get_data()` will be the value taken from theme sup
 
 ```php
 [
-	'global_styles' => [
+	'jetpack_global_styles' => [
 		'font_headings' => 'Ubuntu',
 	],
 ]
@@ -299,10 +299,10 @@ If the theme has declared support for a feature but hasn't provided any value, t
 **Input**:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
-	'global_styles' => [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
+	'jetpack_global_styles' => [
 		'type'    => 'theme',
-		'name'    => 'a8c-global-styles',
+		'name'    => 'jetpack-global-styles',
 		'default' => [
 			'font_headings' => 'Lora',
 		],
@@ -313,14 +313,14 @@ $data_set = new \A8C\FSE\Global_Styles\Data_Set( [
 Being the `add_theme_support` declaration:
 
 ```php
-add_theme_support( 'a8c-global-styles' );
+add_theme_support( 'jetpack-global-styles' );
 ```
 
 The **output** of `$data_set->get_data()` will be:
 
 ```php
 [
-	'global_styles' =>[
+	'jetpack_global_styles' =>[
 		'font_headings' => 'Lora',
 	]
 ]
@@ -333,10 +333,10 @@ It is also possible to work with specific properties, unwrapping the theme suppo
 **Input**:
 
 ```php
-$data_set = new \A8C\FSE\Global_Styles\Data_Set( [
+$data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'font_headings' => [
 		'type'    => 'theme',
-		'name'    => [ 'a8c-global-styles', 'font_headings' ],
+		'name'    => [ 'jetpack-global-styles', 'font_headings' ],
 	],
 ] );
 ```
@@ -345,7 +345,7 @@ Being the `add_theme_support` declaration:
 
 ```php
 add_theme_support(
-	'a8c-global-styles',
+	'jetpack-global-styles',
 	[
 		'font_base'      => 'Chivo',
 		'font_headings'  => 'Ubuntu',

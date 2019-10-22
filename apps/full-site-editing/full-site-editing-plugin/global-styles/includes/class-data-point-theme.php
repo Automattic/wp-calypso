@@ -1,6 +1,6 @@
 <?php
 
-namespace A8C\FSE\Global_Styles;
+namespace Automattic\Jetpack\Global_Styles;
 
 require_once __DIR__ . '/interface-data-point.php';
 
@@ -49,7 +49,7 @@ class Data_Point_Theme implements Data_Point {
 	}
 
 	/**
-	 * Implements the \A8C\FSE\Global_Styles\Data_Point interface.
+	 * Implements the \Automattic\Jetpack\Global_Styles\Data_Point interface.
 	 */
 	public function get_value() {
 		$theme_support = get_theme_support( $this->feature_name )[0];

@@ -1,6 +1,6 @@
 <?php
 
-namespace A8C\FSE\Global_Styles;
+namespace Automattic\Jetpack\Global_Styles;
 
 /**
  * Utility to retrieve data from a description.
@@ -116,7 +116,7 @@ class Data_Set {
 			$result[ $key ] = $data_point->get_value();
 		}
 
-		$result = apply_filters( 'global_styles_data_set_get_data', $result );
+		$result = apply_filters( 'jetpack_global_styles_data_set_get_data', $result );
 
 		return $result;
 	}
@@ -129,7 +129,7 @@ class Data_Set {
 	public function save_data( $incoming_data ) {
 		$to_update = [];
 
-		$incoming_data = apply_filters( 'global_styles_data_set_save_data', $incoming_data );
+		$incoming_data = apply_filters( 'jetpack_global_styles_data_set_save_data', $incoming_data );
 
 		$options_updatable = array_filter(
 			$this->data_meta,

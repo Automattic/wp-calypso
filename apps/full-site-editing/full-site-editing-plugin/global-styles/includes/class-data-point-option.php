@@ -1,6 +1,6 @@
 <?php
 
-namespace A8C\FSE\Global_Styles;
+namespace Automattic\Jetpack\Global_Styles;
 
 require_once __DIR__ . '/interface-data-point.php';
 
@@ -51,7 +51,7 @@ class Data_Point_Option implements Data_Point {
 	}
 
 	/**
-	 * Implements \A8C\FSE\Global_Styles\Data_Point interface.
+	 * Implements \Automattic\Jetpack\Global_Styles\Data_Point interface.
 	 *
 	 * @return any The value to return.
 	 */

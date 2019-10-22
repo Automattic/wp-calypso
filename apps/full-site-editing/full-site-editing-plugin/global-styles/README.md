@@ -8,10 +8,10 @@ This plugin creates a new sidebar for the block editor through which the users c
 	- [How to add a "Theme Default" option to the font list](#how-to-add-a-theme-default-option-to-the-font-list)
 	- [How to use a fallback stylesheet (experimental)](#how-to-use-a-fallback-stylesheet-experimental)
 - [Existing hooks](#existing-hooks)
-	- [global_styles_data_set_get_data filter](#global_styles_data_set_get_data-filter)
-	- [global_styles_data_set_save_data filter](#global_styles_data_set_save_data-filter)
-	- [global_styles_permission_check_additional filter](#global_styles_permission_check_additional-filter)
-	- [global_styles_settings](#global_styles_settings)
+	- [jetpack_global_styles_data_set_get_data filter](#jetpack_global_styles_data_set_get_data-filter)
+	- [jetpack_global_styles_data_set_save_data filter](#jetpack_global_styles_data_set_save_data-filter)
+	- [jetpack_global_styles_permission_check_additional filter](#jetpack_global_styles_permission_check_additional-filter)
+	- [jetpack_global_styles_settings](#jetpack_global_styles_settings)
 - [FAQ](#faq)
 	- [Which fonts are available?](#which-fonts-are-available)
 	- [What will happen when the user changes to another theme that supports GlobalStyles?](#what-will-happen-when-the-user-changes-to-another-theme-that-supports-globalstyles)
@@ -53,7 +53,7 @@ npm run env stop # Stop after you're done.
 This plugin creates a new sidebar for the block editor through which the users can update the styles site-wide. At the moment, users can set the base and headings fonts. For the sidebar to be shown, the active theme needs to have declared support:
 
 ```php
-add_theme_support( 'a8c-global-styles' );
+add_theme_support( 'jetpack-global-styles' );
 ```
 
 The user choices are stored using the Options API in the WordPress database, and exposed in the block editor and the front end as CSS custom properties. For example, the base and headings fonts are exposed as `--font-base` and `--font-headings`, respectively.
@@ -125,7 +125,7 @@ Themes can opt-in to add a _Theme Default_ option via the `enable_theme_default`
 
 ```php
 add_theme_support(
-	'a8c-global-styles',
+	'jetpack-global-styles',
 	[
 		'enable_theme_default' => true,
 	]
@@ -147,7 +147,7 @@ As an experimental feature, the Global Styles plugin can provide a fallback styl
 
 ```php
 add_theme_support(
-	'a8c-global-styles',
+	'jetpack-global-styles',
 	[
 		'enqueue_theme_global_styles' => true,
 	]
@@ -164,7 +164,7 @@ Themes that use this experimental feature can also add a _Theme Default_ option 
 
 ```php
 add_theme_support(
-	'a8c-global-styles',
+	'jetpack-global-styles',
 	[
 		'enqueue_theme_global_styles' => true,
 		'enable_theme_default'        => true,
@@ -176,15 +176,15 @@ add_theme_support(
 
 ## Existing hooks
 
-### global_styles_data_set_get_data filter
+### jetpack_global_styles_data_set_get_data filter
 
 See [README-DATA.md](./README-DATA.md).
 
-### global_styles_data_set_save_data filter
+### jetpack_global_styles_data_set_save_data filter
 
 See [README-DATA.md](./README-DATA.md).
 
-### global_styles_permission_check_additional filter
+### jetpack_global_styles_permission_check_additional filter
 
 This filter can be used to add _an additional check_ to decide whether 1) the global styles sidebar is enqueued and 2) the REST API endpoint should return the data. Note the existing checks in place:
 
@@ -198,10 +198,10 @@ function permission_check_callback( $has_permissions ) {
 	}
 	return $has_permissions;
 }
-add_filter( 'global_styles_permission_check_additional', permission_check_callback );
+add_filter( 'jetpack_global_styles_permission_check_additional', permission_check_callback );
 ```
 
-### global_styles_settings
+### jetpack_global_styles_settings
 
 This filter can be used to configure any of the Global Styles settings.
 

@@ -3,7 +3,7 @@
  * JSON REST API endpoint for Global Styles plugin.
  */
 
-namespace A8C\FSE\Global_Styles;
+namespace Automattic\Jetpack\Global_Styles;
 
 /**
  * REST API endpoint for Global Styles plugin.
@@ -27,7 +27,7 @@ class JSON_Endpoint extends \WP_REST_Controller {
 	/**
 	 * Object holding the data description to work with.
 	 *
-	 * @var A8C\FSE\Global_Styles\Data_Set
+	 * @var Automattic\Jetpack\Global_Styles\Data_Set
 	 */
 	private $data_set;
 
@@ -50,7 +50,7 @@ class JSON_Endpoint extends \WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function permission_callback() {
-		return is_user_logged_in() && apply_filters( 'global_styles_permission_check_additional', true );
+		return is_user_logged_in() && apply_filters( 'jetpack_global_styles_permission_check_additional', true );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 
-namespace A8C\FSE\Global_Styles;
+namespace Automattic\Jetpack\Global_Styles;
 
 interface Data_Point {
 	/**

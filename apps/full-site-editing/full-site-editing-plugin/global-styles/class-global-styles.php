@@ -2,10 +2,10 @@
 /**
  * Global Styles file.
  *
- * @package A8C\FSE\Global_Styles
+ * @package Automattic\Jetpack\Global_Styles
  */
 
-namespace A8C\FSE\Global_Styles;
+namespace Automattic\Jetpack\Global_Styles;
 
 /**
  * Class Global_Styles
@@ -15,14 +15,14 @@ class Global_Styles {
 	/**
 	 * Class instance.
 	 *
-	 * @var \A8C\FSE\Global_Styles\Global_Styles
+	 * @var \Automattic\Jetpack\Global_Styles\Global_Styles
 	 */
 	private static $instance = null;
 
 	/**
 	 * Holds the internal data description to be exposed through REST API.
 	 *
-	 * @var \A8C\FSE\Global_Styles\Data_Set
+	 * @var \Automattic\Jetpack\Global_Styles\Data_Set
 	 */
 	private $rest_api_data;
 
@@ -32,7 +32,7 @@ class Global_Styles {
 	 *
 	 * @var string
 	 */
-	private $rest_namespace = 'a8c-global-styles/v1';
+	private $rest_namespace = 'jetpack-global-styles/v1';
 
 	/**
 	 * Route to use for the REST Route.
@@ -48,35 +48,35 @@ class Global_Styles {
 	 *
 	 * @var string
 	 */
-	private $rest_path_client = 'a8c-global-styles/v1/options';
+	private $rest_path_client = 'jetpack-global-styles/v1/options';
 
 	/**
 	 * Undocumented variable
 	 *
 	 * @var string
 	 */
-	private $theme_support = 'a8c-global-styles';
+	private $theme_support = 'jetpack-global-styles';
 
 	/**
 	 * Undocumented variable
 	 *
 	 * @var string
 	 */
-	private $option_name = 'a8c_global_styles';
+	private $option_name = 'jetpack_global_styles';
 
 	/**
 	 * Undocumented variable
 	 *
 	 * @var string
 	 */
-	private $redux_store_name = 'a8c/global-styles';
+	private $redux_store_name = 'jetpack/global-styles';
 
 	/**
 	 * Undocumented variable
 	 *
 	 * @var string
 	 */
-	private $plugin_name = 'a8c-global-styles';
+	private $plugin_name = 'jetpack-global-styles';
 
 	const VERSION = '1909241817';
 
@@ -115,7 +115,7 @@ class Global_Styles {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \A8C\FSE\Global_Styles\Global_Styles
+	 * @return \Automattic\Jetpack\Global_Styles\Global_Styles
 	 */
 	public static function init() {
 		if ( is_null( self::$instance ) ) {
@@ -142,24 +142,24 @@ class Global_Styles {
 				],
 				'font_base'             => [
 					'type'      => 'option',
-					'name'      => [ 'a8c_global_styles', 'font_base' ],
+					'name'      => [ 'jetpack_global_styles', 'font_base' ],
 					'default'   => 'unset',
 					'updatable' => true,
 				],
 				'font_headings'         => [
 					'type'      => 'option',
-					'name'      => [ 'a8c_global_styles', 'font_headings' ],
+					'name'      => [ 'jetpack_global_styles', 'font_headings' ],
 					'default'   => 'unset',
 					'updatable' => true,
 				],
 				'font_base_default'     => [
 					'type'    => 'theme',
-					'name'    => [ 'a8c-global-styles', 'font_base' ],
+					'name'    => [ 'jetpack-global-styles', 'font_base' ],
 					'default' => self::SYSTEM_FONT,
 				],
 				'font_headings_default' => [
 					'type'    => 'theme',
-					'name'    => [ 'a8c-global-styles', 'font_headings' ],
+					'name'    => [ 'jetpack-global-styles', 'font_headings' ],
 					'default' => self::SYSTEM_FONT,
 				],
 				'font_options'          => [
@@ -203,10 +203,10 @@ class Global_Styles {
 		// so we need to initialize it independently of theme support.
 		add_action( 'rest_api_init', [ $this, 'rest_api_init' ] );
 
-		add_filter( 'global_styles_data_set_get_data', [ $this, 'maybe_filter_font_list' ] );
-		add_filter( 'global_styles_data_set_save_data', [ $this, 'filter_and_validate_font_options' ] );
+		add_filter( 'jetpack_global_styles_data_set_get_data', [ $this, 'maybe_filter_font_list' ] );
+		add_filter( 'jetpack_global_styles_data_set_save_data', [ $this, 'filter_and_validate_font_options' ] );
 
-		if ( current_theme_supports( $this->theme_support ) && apply_filters( 'global_styles_permission_check_additional', true ) ) {
+		if ( current_theme_supports( $this->theme_support ) && apply_filters( 'jetpack_global_styles_permission_check_additional', true ) ) {
 			// Setup editor.
 			add_action(
 				'enqueue_block_editor_assets',
@@ -232,7 +232,7 @@ class Global_Styles {
 	 */
 	private function update_plugin_settings() {
 		$settings = apply_filters(
-			'global_styles_settings',
+			'jetpack_global_styles_settings',
 			[
 				// Server-side settings.
 				'rest_namespace'   => $this->rest_namespace,
@@ -312,15 +312,15 @@ class Global_Styles {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.js' );
 
 		wp_enqueue_script(
-			'a8c-global-styles-editor',
+			'jetpack-global-styles-editor-script',
 			plugins_url( 'dist/global-styles.js', __FILE__ ),
 			$dependencies,
 			$version,
 			true
 		);
 		wp_localize_script(
-			'a8c-global-styles-editor',
-			'A8C_GLOBAL_STYLES_EDITOR_CONSTANTS',
+			'jetpack-global-styles-editor-script',
+			'JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS',
 			[
 				'PLUGIN_NAME' => $this->plugin_name,
 				'REST_PATH'   => $this->rest_path_client,
@@ -328,7 +328,7 @@ class Global_Styles {
 			]
 		);
 		wp_enqueue_style(
-			'a8c-global-styles-editor',
+			'jetpack-global-styles-editor-style',
 			plugins_url( 'dist/global-styles.css', __FILE__ ),
 			[],
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.css' )
@@ -345,12 +345,12 @@ class Global_Styles {
 	 */
 	public function wp_enqueue_scripts() {
 		wp_enqueue_style(
-			'a8c-global-styles-frontend',
+			'jetpack-global-styles-frontend-style',
 			plugins_url( 'static/blank.css', __FILE__ ),
 			[],
 			self::VERSION // To bust cache when changes are done to font list, css custom vars, or style.css.
 		);
-		wp_add_inline_style( 'a8c-global-styles-frontend', $this->get_inline_css( true ) );
+		wp_add_inline_style( 'jetpack-global-styles-frontend-style', $this->get_inline_css( true ) );
 	}
 
 	/**
