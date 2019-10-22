@@ -2,7 +2,7 @@
 
 namespace A8C\FSE\Global_Styles;
 
-require_once __DIR__ . '/interface-global-styles-data-point.php';
+require_once __DIR__ . '/interface-data-point.php';
 
 /**
  * Theme Data Point.
