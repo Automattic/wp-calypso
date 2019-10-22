@@ -187,11 +187,8 @@ class WpcomChecklistComponent extends PureComponent {
 		} );
 	};
 
-	handleLaunchSite = task => () => {
-		const { siteId, siteIsUnlaunched } = this.props;
-		if ( task.isCompleted && ! siteIsUnlaunched ) {
-			return;
-		}
+	handleLaunchSite = () => {
+		const { siteId } = this.props;
 		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
 	};
 
@@ -614,7 +611,7 @@ class WpcomChecklistComponent extends PureComponent {
 				noticeText={
 					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
 				}
-				onClick={ this.handleLaunchSite( task ) }
+				onClick={ this.handleLaunchSite }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				showSkip={ true }
 				title={ translate( 'Launch your site' ) }
