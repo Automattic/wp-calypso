@@ -34,8 +34,8 @@
 		]
 	},
 	"dependencies": {
-		"@automattic/components": "file:./packages/components",
 		"@automattic/color-studio": "2.2.0",
+		"@automattic/components": "file:./packages/components",
 		"@automattic/format-currency": "file:./packages/format-currency",
 		"@automattic/load-script": "file:./packages/load-script",
 		"@automattic/material-design-icons": "file:./packages/material-design-icons",
