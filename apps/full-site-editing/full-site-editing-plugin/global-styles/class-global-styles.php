@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Global Styles
- * Description: This plugin enables style your site from the block editor.
- * Author: Automattic
+ * Global Styles file.
+ *
+ * @package A8C\FSE\Global_Styles
  */
 
-namespace A8C\Global_Styles;
+namespace A8C\FSE\Global_Styles;
 
 /**
  * Class Global_Styles
@@ -15,14 +15,14 @@ class Global_Styles {
 	/**
 	 * Class instance.
 	 *
-	 * @var \A8C\Global_Styles\Global_Styles
+	 * @var \A8C\FSE\Global_Styles\Global_Styles
 	 */
 	private static $instance = null;
 
 	/**
 	 * Holds the internal data description to be exposed through REST API.
 	 *
-	 * @var \A8C\Global_Styles\Data_Set
+	 * @var \A8C\FSE\Global_Styles\Data_Set
 	 */
 	private $rest_api_data;
 
@@ -115,7 +115,7 @@ class Global_Styles {
 	/**
 	 * Creates instance.
 	 *
-	 * @return \A8C\Global_Styles\Global_Styles
+	 * @return \A8C\FSE\Global_Styles\Global_Styles
 	 */
 	public static function init() {
 		if ( is_null( self::$instance ) ) {

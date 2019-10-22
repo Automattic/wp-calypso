@@ -1,6 +1,6 @@
 <?php
 
-namespace A8C\Global_Styles;
+namespace A8C\FSE\Global_Styles;
 
 require_once __DIR__ . '/interface-global-styles-data-point.php';
 
@@ -28,7 +28,7 @@ class Literal implements Data_Point {
 	}
 
 	/**
-	 * Implements \A8C\Global_Styles\Data_Point interface.
+	 * Implements \A8C\FSE\Global_Styles\Data_Point interface.
 	 *
 	 * @return any The literal value.
 	 */

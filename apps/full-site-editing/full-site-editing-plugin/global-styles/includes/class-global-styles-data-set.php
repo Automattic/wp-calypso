@@ -1,6 +1,6 @@
 <?php
 
-namespace A8C\Global_Styles;
+namespace A8C\FSE\Global_Styles;
 
 /**
  * Utility to retrieve data from a description.

@@ -3,7 +3,7 @@
  * JSON REST API endpoint for Global Styles plugin.
  */
 
-namespace A8C\Global_Styles;
+namespace A8C\FSE\Global_Styles;
 
 /**
  * REST API endpoint for Global Styles plugin.
@@ -27,7 +27,7 @@ class JSON_Endpoint extends \WP_REST_Controller {
 	/**
 	 * Object holding the data description to work with.
 	 *
-	 * @var A8C\Global_Styles\Data_Set
+	 * @var A8C\FSE\Global_Styles\Data_Set
 	 */
 	private $data_set;
 
