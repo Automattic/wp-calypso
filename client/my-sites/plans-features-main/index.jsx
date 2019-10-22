@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
@@ -27,6 +27,13 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
+import {
+	PRODUCT_JETPACK_BACKUP,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+} from 'lib/products/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
@@ -48,6 +55,8 @@ import {
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
+import ProductSelector from 'blocks/product-selector';
+import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
@@ -379,6 +388,44 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
+	renderProductsSelector() {
+		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
+			return null;
+		}
+
+		const { intervalType, siteId, translate } = this.props;
+		const products = [
+			{
+				title: 'Jetpack Backup',
+				description: (
+					<p>
+						Automatic scanning and one-click fixes keep your site one step ahead of security
+						threats. <a href="https://jetpack.com/">More info</a>
+					</p>
+				),
+				id: PRODUCT_JETPACK_BACKUP,
+				options: {
+					yearly: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],
+					monthly: [
+						PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+						PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+					],
+				},
+				optionsLabel: 'Backup options',
+			},
+		];
+
+		return (
+			<Fragment>
+				<FormattedHeader
+					headerText={ translate( 'Single Products' ) }
+					subHeaderText={ translate( 'Just looking for a backups? We’ve got you covered.' ) }
+				/>
+				<ProductSelector products={ products } intervalType={ intervalType } siteId={ siteId } />
+			</Fragment>
+		);
+	}
+
 	render() {
 		const { displayJetpackPlans, isInSignup, siteId, plansWithScroll } = this.props;
 		let faqs = null;
@@ -393,6 +440,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 				{ ! plansWithScroll && this.renderToggle() }
 				{ plansWithScroll && this.renderFreePlanBanner() }
+				{ this.renderProductsSelector() }
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
