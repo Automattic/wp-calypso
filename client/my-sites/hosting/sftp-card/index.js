@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, map } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -96,7 +95,7 @@ const SFTPCard = ( { translate, siteId } ) => {
 				) }
 			</div>
 			{ username && (
-				<table className={ classNames( 'sftp-card__info-table' ) }>
+				<table className="sftp-card__info-table">
 					<tbody>
 						{ map( sftpData, ( data, title ) => (
 							<tr key={ title }>
@@ -109,7 +108,7 @@ const SFTPCard = ( { translate, siteId } ) => {
 						<tr>
 							<th>{ translate( 'Username' ) }:</th>
 							<td>
-								<p>{ username }</p>
+								<p className="sftp-card__hidden-overflow">{ username }</p>
 								<ClipboardButton
 									text={ username }
 									onCopy={ () => setIsCopied( 'username' ) }
@@ -126,7 +125,7 @@ const SFTPCard = ( { translate, siteId } ) => {
 							<td>
 								{ password ? (
 									<>
-										<p>{ password }</p>
+										<p className="sftp-card__hidden-overflow">{ password }</p>
 										<ClipboardButton
 											text={ password }
 											onCopy={ () => setIsCopied( 'password' ) }

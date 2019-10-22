@@ -46,11 +46,16 @@
 .sftp-card__info-table {
     border: 1px solid var( --color-border-subtle );
     margin-top: 15px;
+    table-layout: fixed;
 
     th {
         text-align: right;
         width: 20%;
         background-color: var( --color-surface-backdrop );
+
+        @include breakpoint( '<960px' ) {
+            width: 100px;
+        }
     }
 
     th, td {
@@ -59,6 +64,12 @@
 
     p {
         margin-bottom: 0.5em;
+    }
+
+    .sftp-card__hidden-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .sftp-card__password-warning {
