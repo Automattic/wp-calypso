@@ -1,32 +1,34 @@
 .customer-home {
 	&__box-action {
-		margin-bottom: 6%;
-		width: 47%;
+		margin-bottom: 16px;
+		width: 100%;
 
 		.button {
-			align-items: center;
 			border-width: 1px;
-			display: flex;
-			flex-direction: column;
-			height: 100px;
-			justify-content: space-evenly;
-			padding: 1rem 0;
-			width: 100%;
-
-			img {
-				transition: transform 0.3s ease-out;
-			}
+			display: block;
+			min-height: 85px;
+			min-width: 100%;
+			padding: 24px;
+	    text-align: center;
 		}
 		.button:hover {
 			box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
-
-			img {
-				transform: scale( 1.2 );
-			}
 		}
 
 		span {
 			display: block;
+		}
+
+		@include breakpoint('>1280px') {
+			margin-bottom: 24px;
+			width: 50%;
+
+			.button {
+		    margin: 0 12px;
+		    min-height: 105px;
+		    min-width: 90%;
+		    padding: 30px 24px;
+		  }
 		}
 	}
 	&__boxes {
@@ -36,15 +38,53 @@
 	}
 	&__card-boxes {
 		margin-top: rem( -15px );
+		padding: 24px 24px 0;
+
+		@include breakpoint('>1280px') {
+			padding: 24px 12px 0;
+		}
 	}
-	&__card-button-pair {
-		align-items: center;
-		display: flex;
-		justify-content: space-between;
-		
+	&__card-col {
+		display: block;
+
 		.button {
-			width: 49%;
+			display: block;
 			text-align:center;
+			width: 100%;
+		}
+
+		@include breakpoint('>1040px') {
+			align-items: center;
+			display: flex;
+			justify-content: space-between;
+
+			.button {
+				width: auto;
+			}
+		}
+	}
+	&__card-col-left {
+		margin-bottom: 16px;
+		width: 100%;
+
+		@include breakpoint('>1040px') {
+			margin-bottom: 0;
+			width: 50%;
+
+			.button {
+				margin-right: 12px;
+			}
+		}
+	}
+	&__card-col-right {
+		width: 100%;
+
+		@include breakpoint('>1040px') {
+			width: 50%;
+		
+			.button {
+				margin-left: 12px;
+			}
 		}
 	}
 	&__card-mobile {
@@ -77,7 +117,7 @@
 	}
 	&__layout-col {
 		.card-heading {
-			margin-top: 0;
+			margin-top: -8px;
 		}
 
 		.vertical-nav-item {

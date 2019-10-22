@@ -188,31 +188,35 @@ class Home extends Component {
 						<h6 className="customer-home__card-subheader">
 							{ translate( 'Review and update my site' ) }
 						</h6>
-						<div className="customer-home__card-button-pair">
-							<Button
-								href={ site.URL }
-								primary
-								onClick={ () => trackAction( 'my_site', 'view_site' ) }
-							>
-								{ translate( 'View Site' ) }
-							</Button>
-							{ isStaticHomePage ? (
+						<div className="customer-home__card-col">
+							<div className="customer-home__card-col-left">
 								<Button
-									href={ editHomePageUrl }
-									onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
+									href={ site.URL }
+									primary
+									onClick={ () => trackAction( 'my_site', 'view_site' ) }
 								>
-									{ translate( 'Edit Homepage' ) }
+									{ translate( 'View Site' ) }
 								</Button>
-							) : (
-								<Button
-									onClick={ () => {
-										trackAction( 'my_site', 'write_post' );
-										page( `/post/${ siteSlug }` );
-									} }
-								>
-									{ translate( 'Write Blog Post' ) }
-								</Button>
-							) }
+							</div>
+							<div className="customer-home__card-col-right">
+								{ isStaticHomePage ? (
+									<Button
+										href={ editHomePageUrl }
+										onClick={ () => trackAction( 'my_site', 'edit_homepage' ) }
+									>
+										{ translate( 'Edit Homepage' ) }
+									</Button>
+								) : (
+									<Button
+										onClick={ () => {
+											trackAction( 'my_site', 'write_post' );
+											page( `/post/${ siteSlug }` );
+										} }
+									>
+										{ translate( 'Write Blog Post' ) }
+									</Button>
+								) }
+							</div>
 						</div>
 					</Card>
 					<Card className="customer-home__card-boxes">
