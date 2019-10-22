@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { Block } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -10,7 +11,7 @@ import edit from './edit';
 
 export const name = 'automattic/onboarding';
 
-export const settings = {
+export const settings: Block = {
 	title: __( 'Onboarding' ),
 	category: 'layout', // TODO
 	// keywords: [
