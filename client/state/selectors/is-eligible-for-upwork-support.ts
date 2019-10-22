@@ -9,6 +9,7 @@ import { get, includes, some } from 'lodash';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import getSitesItems from 'state/selectors/get-sites-items';
 import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
+import { AppState } from 'client/types';
 
 export const UPWORK_LOCALES = [
 	'de',
@@ -41,7 +42,7 @@ export const UPWORK_LOCALES = [
  * @param state Global state tree
  * @return Whether or not this customer should receive Upwork support
  */
-export default function isEligibleForUpworkSupport( state ): boolean {
+export default function isEligibleForUpworkSupport( state: AppState ): boolean {
 	if ( ! includes( UPWORK_LOCALES, getCurrentUserLocale( state ) ) ) {
 		return false;
 	}
