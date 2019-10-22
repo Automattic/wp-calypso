@@ -32,6 +32,9 @@ import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import './style.scss';
 
+registerCoreBlocks();
+registerBlockType( name, settings );
+
 export function Gutenboard() {
 	const [ blocks, updateBlocks ] = useState( [] );
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( true );
@@ -67,7 +70,3 @@ export function Gutenboard() {
 		</div>
 	);
 }
-
-registerCoreBlocks();
-
-registerBlockType( name, settings );
