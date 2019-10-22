@@ -3018,9 +3018,9 @@
 			"dev": true
 		},
 		"@types/react": {
-			"version": "16.8.16",
-			"resolved": "https://registry.npmjs.org/@types/react/-/react-16.8.16.tgz",
-			"integrity": "sha512-A0+6kS6zwPtvubOLiCJmZ8li5bm3wKIkoKV0h3RdMDOnCj9cYkUnj3bWbE03/lcICdQmwBmUfoFiHeNhbFiyHQ==",
+			"version": "16.9.9",
+			"resolved": "https://registry.npmjs.org/@types/react/-/react-16.9.9.tgz",
+			"integrity": "sha512-L+AudFJkDukk+ukInYvpoAPyJK5q1GanFOINOJnM0w6tUgITuWvJ4jyoBPFL7z4/L8hGLd+K/6xR5uUjXu0vVg==",
 			"dev": true,
 			"requires": {
 				"@types/prop-types": "*",
