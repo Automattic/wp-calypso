@@ -13,7 +13,7 @@ export const name = 'automattic/onboarding';
 
 export interface Attributes {
 	align: string; // TODO: kind of an enum!
-	siteTitle: string;
+	siteTitle: 'blog' | 'store' | 'story';
 	siteType: string;
 	theme: string;
 	vertical: string;
@@ -50,5 +50,5 @@ export const settings: BlockConfiguration< Attributes > = {
 	},
 	icon: 'universal-access-alt',
 	edit,
-	save: edit,
+	save: () => null,
 };
