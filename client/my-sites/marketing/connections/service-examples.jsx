@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
 import ServiceExample from './service-example';
 import GooglePlusDeprication from './google-plus-deprecation';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Module constants
@@ -39,6 +40,7 @@ const SERVICES_WHITELIST = [
 	'tumblr',
 	'twitter',
 	'google_photos',
+	'google_sheets',
 	'mailchimp',
 ];
 
@@ -130,6 +132,33 @@ class SharingServiceExamples extends Component {
 					{
 						components: {
 							strong: <strong />,
+						},
+					}
+				),
+			},
+		];
+	}
+
+	google_sheets() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/google-sheets.png',
+					alt: this.props.translate( 'Connect to Google Sheets to sync contact form data.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					"Customize the {{a}}form block{{/a}} to collect the data you'd like. Submissions are automatically synced to a Google Sheet.",
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl(
+										'https://en.support.wordpress.com/wordpress-editor/blocks/form-block/'
+									) }
+								/>
+							),
 						},
 					}
 				),
