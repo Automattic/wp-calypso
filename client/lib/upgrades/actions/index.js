@@ -31,8 +31,6 @@ export {
 	requestGdprConsentManagementLink,
 } from './domain-management';
 
-export { goToDomainCheckout } from './domain-search';
-
 export {
 	cancelAndRefundPurchase,
 	cancelPurchase,
