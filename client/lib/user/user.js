@@ -115,8 +115,9 @@ User.prototype.get = function() {
  * and stores it in local cache.
  *
  * @uses `wpcom`
+ * @returns {Promise<void>} Promise that resolves (with no value) when fetching is finished
  */
-User.prototype.fetch = async function() {
+User.prototype.fetch = function() {
 	if ( this.fetching ) {
 		// if already fetching, return the in-flight promise
 		return this.fetching;
