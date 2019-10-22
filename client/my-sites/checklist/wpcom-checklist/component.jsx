@@ -188,8 +188,8 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	handleLaunchSite = task => () => {
-		const { siteId } = this.props;
-		if ( task.isCompleted ) {
+		const { siteId, siteIsUnlaunched } = this.props;
+		if ( task.isCompleted && ! siteIsUnlaunched ) {
 			return;
 		}
 		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
