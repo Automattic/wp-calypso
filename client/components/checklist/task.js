@@ -195,16 +195,18 @@ class Task extends PureComponent {
 								) }
 
 								<div className="checklist__task-action-wrapper">
-									<Button
-										className="checklist__task-action"
-										disabled={ isButtonDisabled }
-										href={ href }
-										onClick={ onClick }
-										primary={ ! collapsed }
-										target={ target }
-									>
-										{ taskActionButtonText }
-									</Button>
+									{ !! taskActionButtonText && (
+										<Button
+											className="checklist__task-action"
+											disabled={ isButtonDisabled }
+											href={ href }
+											onClick={ onClick }
+											primary={ ! collapsed }
+											target={ target }
+										>
+											{ taskActionButtonText }
+										</Button>
+									) }
 									{ ! completed && showSkip && (
 										<Button className="checklist__task-skip" onClick={ onDismiss }>
 											{ translate( 'Skip' ) }
