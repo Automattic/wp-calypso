@@ -9,7 +9,7 @@
 			min-height: 85px;
 			min-width: 100%;
 			padding: 24px;
-	    text-align: center;
+			text-align: center;
 		}
 		.button:hover {
 			box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
@@ -24,11 +24,11 @@
 			width: 50%;
 
 			.button {
-		    margin: 0 12px;
-		    min-height: 105px;
-		    min-width: 90%;
-		    padding: 30px 24px;
-		  }
+				margin: 0 12px;
+				min-height: 105px;
+				min-width: 90%;
+				padding: 30px 24px;
+			}
 		}
 	}
 	&__boxes {
@@ -88,7 +88,7 @@
 		}
 	}
 	&__card-mobile {
-	  justify-content: space-around;
+		justify-content: space-around;
 	}
 	&__card-subheader {
 		color: var( --color-text-subtle );
