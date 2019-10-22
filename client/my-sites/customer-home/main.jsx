@@ -182,7 +182,7 @@ class Home extends Component {
 		return (
 			<div className="customer-home__layout">
 				<SidebarNavigation />
-				<div className="customer-home__layout-col">
+				<div className="customer-home__layout-col customer-home__layout-col-left">
 					<Card>
 						<CardHeading>{ translate( 'My Site' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
@@ -303,7 +303,7 @@ class Home extends Component {
 						</div>
 					</Card>
 				</div>
-				<div className="customer-home__layout-col">
+				<div className="customer-home__layout-col customer-home__layout-col-right">
 					<Card>
 						<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">

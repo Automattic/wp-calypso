@@ -95,7 +95,21 @@
 		}
 
 		@include breakpoint('>960px') {
-			width: 49%;
+			width: 50%;
+		}
+	}
+	&__layout-col-left {
+		@include breakpoint('>960px') {
+			.card {
+				margin-right: 8px;
+			}
+		}
+	}
+	&__layout-col-right {
+		@include breakpoint('>960px') {
+			.card {
+				margin-left: 8px;
+			}
 		}
 	}
 }
