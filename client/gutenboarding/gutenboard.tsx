@@ -10,7 +10,6 @@ import {
 	BlockList,
 	WritingFlow,
 	ObserveTyping,
-	EditorSettings,
 } from '@wordpress/block-editor';
 import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
@@ -48,14 +47,7 @@ export function Gutenboard() {
 			/>
 			<SlotFillProvider>
 				<DropZoneProvider>
-					<BlockEditorProvider
-						value={ [ onboardingBlock ] }
-						settings={
-							{ templateLock: 'all' } as Partial<
-								EditorSettings
-							> /* @FIXME: `templateLock` should be in EditorSettings */
-						}
-					>
+					<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
 						<div className="gutenboarding__block-editor">
 							<BlockEditorKeyboardShortcuts />
 
