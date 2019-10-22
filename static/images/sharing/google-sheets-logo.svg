@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="51px" height="65px" viewBox="0 0 51 65" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="99.2293074%" id="linearGradient-1">
+            <stop stop-color="#008A4E" offset="0%"></stop>
+            <stop stop-color="#009950" stop-opacity="0.19692417" offset="100%"></stop>
+        </linearGradient>
+        <path d="M31.7480315,1 L43.7060367,1 C45.9151757,1 47.7060367,2.790861 47.7060367,5 L47.7060367,17.2099738 L47.7060367,17.2099738 L31.7480315,1 Z" id="path-2"></path>
+        <filter x="-40.7%" y="-46.3%" width="168.9%" height="167.9%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="-1" dy="-2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.10279174 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+            <path d="M4.95256034,0.94787444 C17.2675571,0.831025239 26.1993809,0.848400426 31.7480315,1 C33.3849536,2.72730541 38.2211981,7.64349258 46.2567651,15.7485615 C47.1851462,16.6849771 47.7060367,17.9502161 47.7060367,19.2688387 L47.7060367,60 C47.7060367,62.7614237 45.4674605,65 42.7060367,65 L5,65 C2.23857625,65 3.38176876e-16,62.7614237 0,60 L0,5.94764565 C3.73414649e-06,3.20473243 2.20977058,0.973899034 4.95256034,0.94787444 Z" id="Rectangle" fill="#00A252" opacity="0.846749442"></path>
+            <polygon id="Path" fill="url(#linearGradient-1)" points="33.847769 16.5380577 47.7060367 28.8005249 47.7060367 17.2099738"></polygon>
+            <g id="Rectangle" transform="translate(39.727034, 9.104987) scale(-1, -1) translate(-39.727034, -9.104987) ">
+                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                <use fill="#77D3AE" fill-rule="evenodd" xlink:href="#path-2"></use>
+            </g>
+            <path d="M37.0393701,30.3963255 L37.0393701,52.7375328 L10.6666667,52.7375328 L10.6666667,30.3963255 L37.0393701,30.3963255 Z M22.5931759,46.1023622 L13.1863517,46.1023622 L13.1863517,50.4698163 L22.5931759,50.4698163 L22.5931759,46.1023622 Z M34.519685,46.1023622 L25.1128609,46.1023622 L25.1128609,50.4698163 L34.519685,50.4698163 L34.519685,46.1023622 Z M22.5931759,39.3832021 L13.1863517,39.3832021 L13.1863517,43.7506562 L22.5931759,43.7506562 L22.5931759,39.3832021 Z M34.519685,39.3832021 L25.1128609,39.3832021 L25.1128609,43.7506562 L34.519685,43.7506562 L34.519685,39.3832021 Z M22.5931759,32.832021 L13.1863517,32.832021 L13.1863517,37.1994751 L22.5931759,37.1994751 L22.5931759,32.832021 Z M34.519685,32.832021 L25.1128609,32.832021 L25.1128609,37.1994751 L34.519685,37.1994751 L34.519685,32.832021 Z" id="Combined-Shape" fill="#F1F3F4"></path>
+        </g>
+    </g>
+</svg>

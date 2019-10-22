@@ -143,15 +143,16 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/google-sheets.png',
-					alt: this.props.translate( 'Connect to Google Sheets to sync contact form data.', {
+					src: '/calypso/images/sharing/contact-form.png',
+					alt: this.props.translate( 'Connect to Google Sheets to sync contact form data', {
 						textOnly: true,
 					} ),
 				},
 				label: this.props.translate(
-					"Customize the {{a}}form block{{/a}} to collect the data you'd like. Submissions are automatically synced to a Google Sheet.",
+					"{{strong}}Customize{{/strong}} the {{a}}form block{{/a}} to collect the data you'd like.",
 					{
 						components: {
+							strong: <strong />,
 							a: (
 								<a
 									href={ localizeUrl(
@@ -159,6 +160,22 @@ class SharingServiceExamples extends Component {
 									) }
 								/>
 							),
+						},
+					}
+				),
+			},
+			{
+				image: {
+					src: '/calypso/images/sharing/google-sheets.png',
+					alt: this.props.translate( 'Submissions are synched to a Google Sheet', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					'{{strong}}Submissions{{/strong}} are automatically synched to a Google Sheet.',
+					{
+						components: {
+							strong: <strong />,
 						},
 					}
 				),
