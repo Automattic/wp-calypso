@@ -9,6 +9,7 @@ import store from 'store';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:user' );
 import config from 'config';
+import Emitter from '@automattic/emitter';
 import { stringify } from 'qs';
 
 /**
@@ -21,7 +22,6 @@ import {
 	supportNextBoot,
 } from 'lib/user/support-user-interop';
 import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
 import { isE2ETest } from 'lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import { getLanguage } from 'lib/i18n-utils/utils';

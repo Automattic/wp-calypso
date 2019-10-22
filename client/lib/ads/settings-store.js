@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import emitter from '@automattic/emitter';
 
 /**
  * Module variables

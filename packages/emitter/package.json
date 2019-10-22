@@ -1,0 +1,35 @@
+{
+	"name": "@automattic/emitter",
+	"version": "1.0.0",
+	"description": "Event emitter.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"keywords": [
+		"wordpress"
+	],
+	"author": "Automattic",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/emitter"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"dependencies": {
+		"@babel/runtime": "^7.4.4",
+		"debug": "^3.2.6",
+		"events": "3.0.0",
+		"lodash": "4.17.15"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"prepublish": "npm run clean",
+		"prepare": "transpile"
+	}
+}

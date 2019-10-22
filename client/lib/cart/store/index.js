@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { assign, flow, get, has } from 'lodash';
+import emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
@@ -25,7 +26,6 @@ import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
 } from 'lib/transaction/action-types';
-import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
 import { recordEvents, recordUnrecognizedPaymentMethod } from './cart-analytics';

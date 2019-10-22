@@ -8,7 +8,7 @@
  */
 import React from 'react';
 import { mount, shallow } from 'enzyme';
-import emitter from 'lib/mixins/emitter';
+import emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies

@@ -5,6 +5,7 @@
  */
 
 import debugFactory from 'debug';
+import emitter from '@automattic/emitter';
 
 const debug = debugFactory( 'calypso:follow-list:site' );
 
@@ -13,7 +14,6 @@ const debug = debugFactory( 'calypso:follow-list:site' );
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
 
 /**
  * FollowList component

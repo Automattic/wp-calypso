@@ -5,12 +5,12 @@
  */
 
 import { clone } from 'lodash';
+import emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
 import PluginsDataActions from './actions';
 
 let _shortLists = {},

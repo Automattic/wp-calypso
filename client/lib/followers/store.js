@@ -7,13 +7,13 @@
 import { endsWith, omit } from 'lodash';
 import deterministicStringify from 'json-stable-stringify';
 import debugFactory from 'debug';
+import emitter from '@automattic/emitter';
 const debug = debugFactory( 'calypso:wpcom-followers-store' );
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
 
 let _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followersBySite = {}, // store user objects

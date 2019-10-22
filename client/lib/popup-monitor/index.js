@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
+import Emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
 
 /**
  * PopupMonitor component

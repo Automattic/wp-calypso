@@ -4,11 +4,11 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import Emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
 
 const debug = debugFactory( 'calypso:notices' );
 

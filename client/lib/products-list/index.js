@@ -5,14 +5,13 @@
  */
 
 import debugFactory from 'debug';
-
+import Emitter from '@automattic/emitter';
 const debug = debugFactory( 'calypso:ProductsList' );
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
 
 /**
  * Initialize a new list of products.

@@ -4,6 +4,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import emitter from '@automattic/emitter';
 import { replace } from 'lodash';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
@@ -12,7 +13,6 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
 import wp from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';

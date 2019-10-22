@@ -5,11 +5,11 @@
  */
 
 import { isFunction, reduce } from 'lodash';
+import mixinEmitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
  */
-import mixinEmitter from 'lib/mixins/emitter';
 import core from './core';
 import syncInitialize from './sync-initialize';
 import asyncInitialize from './async-initialize';

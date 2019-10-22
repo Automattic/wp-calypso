@@ -4,13 +4,13 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import emitter from '@automattic/emitter';
 import { assign, clone, isArray, sortBy, values, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
 /* eslint-enable no-restricted-imports */
 import PluginsActions from 'lib/plugins/actions';
 import versionCompare from 'lib/version-compare';

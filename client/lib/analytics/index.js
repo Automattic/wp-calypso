@@ -7,12 +7,12 @@ import { parse } from 'qs';
 import url from 'url';
 import { assign, includes, isObjectLike, isUndefined, omit, pickBy, times } from 'lodash';
 import { loadScript } from '@automattic/load-script';
+import emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import emitter from 'lib/mixins/emitter';
 import {
 	doNotTrack,
 	costToUSD,

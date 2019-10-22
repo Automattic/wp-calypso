@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-
 import { assign, cloneDeep, get, merge } from 'lodash';
+import Emitter from '@automattic/emitter';
 import update from 'immutability-helper';
 
 /**
@@ -21,7 +21,6 @@ import {
 } from './action-types';
 import { hasDomainRegistration } from 'lib/cart-values/cart-items';
 import CartStore from 'lib/cart/store';
-import Emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
 import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 import { hasDomainDetails } from 'lib/store-transactions';

@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:password-generator' );
 /**
  * Internal dependencies
  */
-import makeEmitter from 'lib/mixins/emitter';
+import makeEmitter from '@automattic/emitter';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();

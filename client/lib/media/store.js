@@ -5,13 +5,13 @@
  */
 
 import { values } from 'lodash';
+import emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
  */
 import { isItemBeingUploaded } from 'lib/media/utils';
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
 import MediaValidationStore from './validation-store';
 
 /**

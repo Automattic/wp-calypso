@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import Emitter from '@automattic/emitter';
 import i18n from 'i18n-calypso';
 
 /**
@@ -9,7 +10,6 @@ import i18n from 'i18n-calypso';
  */
 import config from 'config';
 import PollerPool from 'lib/data-poller';
-import Emitter from 'lib/mixins/emitter';
 import { connectionLost, connectionRestored } from 'state/application/actions';
 
 const debug = debugFactory( 'calypso:network-connection' );

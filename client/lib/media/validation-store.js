@@ -5,12 +5,12 @@
  */
 
 import { isEmpty, mapValues, pickBy, without } from 'lodash';
+import emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
 import * as MediaUtils from './utils';
 import { ValidationErrors as MediaValidationErrors } from './constants';
 

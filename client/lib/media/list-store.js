@@ -5,6 +5,7 @@
  */
 
 import { assign, isEqual, map, omit } from 'lodash';
+import emitter from '@automattic/emitter';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import { assign, isEqual, map, omit } from 'lodash';
 import Dispatcher from 'dispatcher';
 import MediaStore from './store';
 import { sortItemsByDate as utilSortItemsByDate } from './utils';
-import emitter from 'lib/mixins/emitter';
 
 /**
  * Module variables

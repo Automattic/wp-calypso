@@ -6,13 +6,13 @@
 
 import { clone, find, reject } from 'lodash';
 import debugFactory from 'debug';
+import emitter from '@automattic/emitter';
 const debug = debugFactory( 'calypso:my-sites:people:log-store' );
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
 
 let _errors = [],
 	_inProgress = [],

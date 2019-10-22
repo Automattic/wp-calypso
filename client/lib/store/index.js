@@ -1,9 +1,14 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import emitter from '@automattic/emitter';
+
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
 
 /**
  * Create a traditional Flux store from a Redux-style (`(state, action)`)
