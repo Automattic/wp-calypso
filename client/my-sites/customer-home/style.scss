@@ -19,7 +19,7 @@
 			display: block;
 		}
 
-		@include breakpoint('>1280px') {
+		@mixin box-action-two-col {
 			margin-bottom: 24px;
 			width: 50%;
 
@@ -29,6 +29,12 @@
 				min-width: 90%;
 				padding: 30px 24px;
 			}
+		}
+		@include breakpoint('>1280px') {
+			@include box-action-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include box-action-two-col;
 		}
 	}
 	&__boxes {
@@ -43,6 +49,9 @@
 		@include breakpoint('>1280px') {
 			padding: 24px 12px 0;
 		}
+		@include breakpoint('800px-960px') {
+			padding: 24px 12px 0;
+		}
 	}
 	&__card-col {
 		display: block;
@@ -53,7 +62,7 @@
 			width: 100%;
 		}
 
-		@include breakpoint('>1040px') {
+		@mixin card-col-two-col {
 			align-items: center;
 			display: flex;
 			justify-content: space-between;
@@ -62,24 +71,47 @@
 				width: auto;
 			}
 		}
+		@include breakpoint('>1040px') {
+			@include card-col-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include card-col-two-col;
+		}
 	}
-	&__card-col-left,
-	&__card-col-right {
+	&__card-col-left {
+		margin-bottom: 16px;
 		width: 100%;
 
-		@include breakpoint('>1040px') {
+		@mixin card-col-left-two-col {
+			margin-bottom: 0;
 			width: 50%;
 
 			.button {
 				margin-right: 12px;
 			}
 		}
-	}
-	&__card-col-left {
-		margin-bottom: 16px;
-
 		@include breakpoint('>1040px') {
-			margin-bottom: 0;
+			@include card-col-left-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include card-col-left-two-col;
+		}
+	}
+	&__card-col-right {
+		width: 100%;
+
+		@mixin card-col-right-two-col {
+			width: 50%;
+
+			.button {
+				margin-left: 12px;
+			}
+		}
+		@include breakpoint('>1040px') {
+			@include card-col-right-two-col;
+		}
+		@include breakpoint('800px-960px') {
+			@include card-col-right-two-col;
 		}
 	}
 	&__card-mobile {
