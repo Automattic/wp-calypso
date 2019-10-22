@@ -18,7 +18,7 @@ import '@wordpress/format-library';
 /**
  * Internal dependencies
  */
-import { Header } from 'gutenboarding/components/header';
+import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
