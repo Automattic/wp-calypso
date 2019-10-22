@@ -38,14 +38,14 @@ class Data_Set {
 	 * @return array The data set structure.
 	 */
 	private function build_data_set( $data_meta ) {
-		require_once __DIR__ . '/class-global-styles-data-point-literal.php';
+		require_once __DIR__ . '/class-data-point-literal.php';
 		require_once __DIR__ . '/class-global-styles-data-point-option.php';
 		require_once __DIR__ . '/class-global-styles-data-point-theme.php';
 
 		$result = [];
 		foreach ( $data_meta as $key => $meta ) {
 			if ( $this->is_data_point_literal( $meta ) ) {
-				$result[ $key ] = new Literal( $meta );
+				$result[ $key ] = new Data_Point_Literal( $meta );
 			} elseif ( $this->is_data_point_option( $meta ) ) {
 				$result[ $key ] = new Option( $meta );
 			} elseif ( $this->is_data_point_theme( $meta ) ) {

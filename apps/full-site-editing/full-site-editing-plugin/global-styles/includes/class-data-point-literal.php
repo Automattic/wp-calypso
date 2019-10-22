@@ -7,7 +7,7 @@ require_once __DIR__ . '/interface-global-styles-data-point.php';
 /**
  * Literal Data Point.
  */
-class Literal implements Data_Point {
+class Data_Point_Literal implements Data_Point {
 
 	/**
 	 * Holds the literal value.
