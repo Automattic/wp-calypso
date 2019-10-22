@@ -60,6 +60,12 @@
 				"webpack-rtl-plugin": "1.8.0"
 			},
 			"dependencies": {
+				"acorn": {
+					"version": "6.3.0",
+					"resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
+					"integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA==",
+					"dev": true
+				},
 				"browserslist": {
 					"version": "4.6.6",
 					"resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.6.6.tgz",
@@ -339,6 +345,11 @@
 			"version": "file:packages/calypso-color-schemes",
 			"dev": true
 		},
+		"@automattic/color-studio": {
+			"version": "2.2.0",
+			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
+			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
+		},
 		"@automattic/components": {
 			"version": "file:packages/components",
 			"requires": {
@@ -348,11 +359,6 @@
 				"prop-types": "^15.7.2",
 				"react": "^16.8.3"
 			}
-		},
-		"@automattic/color-studio": {
-			"version": "2.2.0",
-			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
-			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
 		},
 		"@automattic/composite-checkout": {
 			"version": "file:packages/composite-checkout",
@@ -4440,9 +4446,9 @@
 			}
 		},
 		"acorn": {
-			"version": "6.1.1",
-			"resolved": "https://registry.npmjs.org/acorn/-/acorn-6.1.1.tgz",
-			"integrity": "sha512-jPTiwtOxaHNaAPg/dmrJ/beuzLRnXtB0kQPQ8JpotKJgTB6rX6c8mlf315941pyjBSaPg8NHXS9fhP4u17DpGA=="
+			"version": "7.1.0",
+			"resolved": "https://registry.npmjs.org/acorn/-/acorn-7.1.0.tgz",
+			"integrity": "sha512-kL5CuoXA/dgxlBbVrflsflzQ3PAas7RYZB52NOm/6839iVYJgKMJ3cQJD+t2i5+qFa8h3MDpEOJiS64E8JLnSQ=="
 		},
 		"acorn-dynamic-import": {
 			"version": "4.0.0",
@@ -4457,6 +4463,14 @@
 			"requires": {
 				"acorn": "^6.0.1",
 				"acorn-walk": "^6.0.1"
+			},
+			"dependencies": {
+				"acorn": {
+					"version": "6.3.0",
+					"resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
+					"integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA==",
+					"dev": true
+				}
 			}
 		},
 		"acorn-jsx": {
@@ -5578,6 +5592,11 @@
 				"regexpu-core": "^4.5.4"
 			},
 			"dependencies": {
+				"acorn": {
+					"version": "6.3.0",
+					"resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
+					"integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA=="
+				},
 				"minimist": {
 					"version": "1.2.0",
 					"resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz",
@@ -9598,6 +9617,14 @@
 				"acorn": "^6.0.7",
 				"acorn-jsx": "^5.0.0",
 				"eslint-visitor-keys": "^1.0.0"
+			},
+			"dependencies": {
+				"acorn": {
+					"version": "6.3.0",
+					"resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
+					"integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA==",
+					"dev": true
+				}
 			}
 		},
 		"esprima": {
@@ -24562,6 +24589,11 @@
 				"ws": "^6.0.0"
 			},
 			"dependencies": {
+				"acorn": {
+					"version": "6.3.0",
+					"resolved": "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz",
+					"integrity": "sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA=="
+				},
 				"filesize": {
 					"version": "3.6.1",
 					"resolved": "https://registry.npmjs.org/filesize/-/filesize-3.6.1.tgz",
@@ -25245,6 +25277,21 @@
 					"resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
 					"integrity": "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==",
 					"dev": true
+				},
+				"qs": {
+					"version": "6.7.0",
+					"resolved": "https://registry.npmjs.org/qs/-/qs-6.7.0.tgz",
+					"integrity": "sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==",
+					"dev": true
+				},
+				"rimraf": {
+					"version": "2.7.1",
+					"resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz",
+					"integrity": "sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==",
+					"dev": true,
+					"requires": {
+						"glob": "^7.1.3"
+					}
 				},
 				"safe-buffer": {
 					"version": "5.1.2",
