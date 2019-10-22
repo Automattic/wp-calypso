@@ -7,7 +7,7 @@ $admin-sidebar-width: 0;
 $admin-sidebar-width-big: 0;
 $admin-sidebar-width-collapsed: 0;
 
-// Section wrapper resets
+// Calypso section wrapper resets
 .is-section-gutenboarding {
 	background: $white;
 
@@ -18,8 +18,6 @@ $admin-sidebar-width-collapsed: 0;
 }
 
 .gutenboarding {
-	@include reset;
-
 	// Reset some Calypso base styles
 	input[type='text'],
 	input[type='search'],
@@ -34,7 +32,10 @@ $admin-sidebar-width-collapsed: 0;
 		width: auto;
 	}
 
-	// Block editor styles
+	// Gutenberg reset
+	@include reset;
+
+	// Gutenberg styles
 	@import '~@wordpress/edit-post/src/style.scss';
 	@import '~@wordpress/components/src/style.scss';
 	@import '~@wordpress/block-editor/src/style.scss';
