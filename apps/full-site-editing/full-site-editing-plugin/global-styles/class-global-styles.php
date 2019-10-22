@@ -259,7 +259,7 @@ class Global_Styles {
 	 * Initialize REST API endpoint.
 	 */
 	public function rest_api_init() {
-		require_once __DIR__ . '/includes/class-global-styles-json-endpoint.php';
+		require_once __DIR__ . '/includes/class-json-endpoint.php';
 		$rest_api = new JSON_Endpoint(
 			$this->rest_namespace,
 			$this->rest_route,
