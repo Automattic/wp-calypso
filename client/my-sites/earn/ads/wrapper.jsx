@@ -153,7 +153,7 @@ class AdsWrapper extends Component {
 					<ActionCard
 						headerText={ 'Start Earning Income from Your Site' }
 						mainText={ translate(
-							'%(program)s is the leading advertising optimization platform for WordPress sites, ' +
+							'WordAds is the leading advertising optimization platform for WordPress sites, ' +
 								'where the internet’s top ad suppliers bid against each other to deliver their ads to your site, maximizing your revenue.' +
 								'{{br/}}{{br/}}{{em}}Because you have a paid plan, you can skip the review process and activate %(program)s instantly.{{/em}}' +
 								'{{br/}}{{br/}}{{a}}Learn more about the program{{/a}}',
