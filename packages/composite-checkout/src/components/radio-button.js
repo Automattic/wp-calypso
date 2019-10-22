@@ -58,6 +58,7 @@ const Label = styled.label`
 	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
+	font-size: 14px;
 
 	:hover {
 		cursor: pointer;
