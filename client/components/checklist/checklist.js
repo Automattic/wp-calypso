@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isFunction, times } from 'lodash';
+import { get, isFunction, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
 import Card from 'components/card';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 class Checklist extends PureComponent {
 	static propTypes = {
@@ -36,9 +37,18 @@ class Checklist extends PureComponent {
 		this.notifyCompletion();
 	}
 
-	componentWillReceiveProps( { siteId } ) {
+	componentWillReceiveProps( { siteId, siteIsUnlaunched } ) {
 		if ( siteId !== this.props.siteId ) {
 			this.setState( { expandedTaskIndex: undefined } );
+			return;
+		}
+		if ( ! siteIsUnlaunched && this.props.siteIsUnlaunched ) {
+			const { expandedTaskIndex } = this.state;
+			if (
+				'site_launched' === get( this, [ 'props', 'children', expandedTaskIndex, 'props', 'id' ] )
+			) {
+				this.setState( { expandedTaskIndex: undefined } );
+			}
 		}
 	}
 
@@ -155,6 +165,10 @@ class Checklist extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( Checklist ) );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
+		siteId,
+	};
+} )( localize( Checklist ) );
