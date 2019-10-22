@@ -27,8 +27,8 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import WordadsActions from 'lib/ads/actions';
-import SectionHeader from 'components/section-header';
 import SettingsStore from 'lib/ads/settings-store';
+import FoldableCard from 'components/foldable-card';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
@@ -219,12 +219,39 @@ class AdsFormSettings extends Component {
 		return <Card href={ linkHref }>Manage ad placements</Card>;
 	}
 
+	wpcomPlacementControls() {
+		const { translate } = this.props;
+		const isPending = this.state.isLoading || this.state.isSubmitting;
+		const isWordAds = this.props.site.options.wordads;
+
+		return (
+			<FoldableCard
+				expanded={ isWordAds }
+				disabled={ isPending || ! isWordAds }
+				expandedSummary={
+					! this.props.siteIsJetpack && (
+						<Button compact primary onClick={ this.handleSubmit }>
+							{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						</Button>
+					)
+				}
+				header={
+					<div>
+						<div>{ translate( 'Placement Settings' ) }</div>
+					</div>
+				}
+			>
+				{ this.showAdsToOptions() }
+				{ this.displayOptions() }
+			</FoldableCard>
+		);
+	}
+
 	showAdsToOptions() {
 		const { translate } = this.props;
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
 					<FormRadio
 						name="show_to_logged_in"
@@ -541,29 +568,25 @@ class AdsFormSettings extends Component {
 
 		return (
 			<Fragment>
-				{ this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null }
-
-				<SectionHeader label={ translate( 'Ads Settings' ) }>
-					<Button
-						compact
-						primary
-						onClick={ this.handleSubmit }
-						disabled={ isPending || ! isWordAds }
-					>
-						{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
-
-				<Card>
+				<FoldableCard
+					expanded={ ! isWordAds }
+					disabled={ isPending || ! isWordAds }
+					expandedSummary={
+						<Button compact primary onClick={ this.handleSubmit }>
+							{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						</Button>
+					}
+					header={
+						<div>
+							<div>{ translate( 'WordAds Account' ) }</div>
+						</div>
+					}
+				>
 					<form
 						id="wordads-settings"
 						onSubmit={ this.handleSubmit }
 						onChange={ this.props.markChanged }
 					>
-						{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
-
-						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
-
 						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 						{ this.siteOwnerOptions() }
 						{ this.state.us_checked ? this.taxOptions() : null }
@@ -571,7 +594,11 @@ class AdsFormSettings extends Component {
 						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
 						{ this.acceptCheckbox() }
 					</form>
-				</Card>
+				</FoldableCard>
+
+				{ this.props.siteIsJetpack
+					? this.jetpackPlacementControls()
+					: this.wpcomPlacementControls() }
 			</Fragment>
 		);
 	}
