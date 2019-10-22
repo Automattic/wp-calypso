@@ -530,7 +530,7 @@ A React Hook that will return an object containing all the information about the
 
 ### usePaymentMethodData()
 
-A React Hook that will return a two element array. The first element is an object representing the current state stored for the currently selected payment method (or null if none is selected). The second element is a function that will replace the state of the currently selected payment method (the function will be null if no payment method is selected).
+A React Hook that will return a two element array. It can be used to store and share data entered into the payment forms. The first element is an object representing the current state. The second element is a function that will replace the state.
 
 ### usePaymentMethodId()
 

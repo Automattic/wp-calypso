@@ -59,13 +59,7 @@ export function usePaymentMethod() {
 
 export function usePaymentMethodData() {
 	const { paymentMethodData, setPaymentMethodData } = useContext( CheckoutContext );
-	const paymentMethod = usePaymentMethod();
-	if ( ! paymentMethod ) {
-		return [ null, null ];
-	}
-	const setData = newData =>
-		setPaymentMethodData( { ...paymentMethodData, [ paymentMethod.id ]: newData } );
-	return [ paymentMethodData[ paymentMethod.id ], setData ];
+	return [ paymentMethodData, setPaymentMethodData ];
 }
 
 loadPaymentMethods();
