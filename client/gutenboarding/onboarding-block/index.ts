@@ -22,11 +22,6 @@ export interface Attributes {
 export const settings: BlockConfiguration< Attributes > = {
 	title: __( 'Onboarding' ),
 	category: 'layout', // TODO
-	// keywords: [
-	// 	_x( 'image', 'block search term', 'jetpack' ),
-	// 	_x( 'gallery', 'block search term', 'jetpack' ),
-	// 	_x( 'slider', 'block search term', 'jetpack' ),
-	// ],
 	description: __( 'Onboarding wizard block' ),
 	attributes: {
 		align: {
@@ -53,8 +48,4 @@ export const settings: BlockConfiguration< Attributes > = {
 	icon: 'universal-access-alt',
 	edit,
 	save: edit,
-	// transforms,
-	// example: {
-	// 	attributes: exampleAttributes,
-	// },
 };
