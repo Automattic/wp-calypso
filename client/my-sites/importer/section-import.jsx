@@ -264,7 +264,7 @@ class SectionImport extends Component {
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				<SectionHeader label={ sectionHeaderLabel } />
+				<SectionHeader label={ sectionHeaderLabel } className="importer__section-header" />
 				{ this.renderImporters() }
 			</>
 		);
