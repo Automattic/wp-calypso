@@ -172,9 +172,9 @@ class Home extends Component {
 						dismissTemporary={ true }
 						icon="info"
 						callToAction={ translate( 'Launch site' ) }
-						title={ translate( 'Your site is not launched' ) }
+						title={ translate( 'Your site is private' ) }
 						description={ translate(
-							"If you don't launch your site, it will only be accessbile to specified site members."
+							'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
 						) }
 						onClick={ this.onLaunchBannerClick }
 					/>
