@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Block } from '@wordpress/blocks';
+import { BlockConfiguration } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -11,7 +11,15 @@ import edit from './edit';
 
 export const name = 'automattic/onboarding';
 
-export const settings: Block = {
+export interface Attributes {
+	align: string; // TODO: kind of an enum!
+	siteTitle: string;
+	siteType: string;
+	theme: string;
+	vertical: string;
+}
+
+export const settings: BlockConfiguration< Attributes > = {
 	title: __( 'Onboarding' ),
 	category: 'layout', // TODO
 	// keywords: [

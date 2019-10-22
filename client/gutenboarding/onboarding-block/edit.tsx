@@ -2,9 +2,17 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { BlockEditProps } from '@wordpress/blocks';
 import React from 'react';
 
-export default function OnboardingEdit( { attributes: { siteType } } ) {
+/**
+ * Internal dependencies
+ */
+import { Attributes } from '.';
+
+export default function OnboardingEdit( {
+	attributes: { siteType },
+}: BlockEditProps< Attributes > ) {
 	if ( ! siteType ) {
 		return (
 			<>
@@ -13,4 +21,5 @@ export default function OnboardingEdit( { attributes: { siteType } } ) {
 			</>
 		);
 	}
+	return null;
 }
