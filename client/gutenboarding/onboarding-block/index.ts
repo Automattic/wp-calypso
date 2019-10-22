@@ -50,7 +50,7 @@ export const settings: BlockConfiguration< Attributes > = {
 	supports: {
 		align: [ 'full' ],
 		html: false,
-		inserter: true, // @TODO: Should not appear in inserter
+		inserter: false,
 		multiple: false,
 		reusable: false,
 	},
