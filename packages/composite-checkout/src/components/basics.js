@@ -144,14 +144,14 @@ export const StepNumber = styled.span`
 
 export const StepContent = styled.div`
 	color: ${props => props.theme.colors.gray80};
-	display: ${props => ( props.isActive ? 'block' : 'none' )};
+	display: ${props => ( props.isVisible ? 'block' : 'none' )};
 	padding-left: 35px;
 `;
 
 export const StepSummary = styled.div`
 	color: ${props => props.theme.colors.gray50};
 	font-size: 14px;
-	display: ${props => ( props.showSummary ? 'block' : 'none' )};
+	display: ${props => ( props.isVisible ? 'block' : 'none' )};
 	padding-left: 35px;
 `;
 

@@ -20,13 +20,19 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePayBillingForm( { setPaymentData, paymentData, isActive, isComplete } ) {
+export function ApplePayBillingForm( {
+	summary,
+	setPaymentData,
+	paymentData,
+	isActive,
+	isComplete,
+} ) {
 	const localize = useLocalize();
-	if ( ! isActive && ! isComplete ) {
-		return null;
-	}
-	if ( ! isActive && isComplete ) {
+	if ( summary && isComplete ) {
 		return <ApplePayBillingFormSummary paymentData={ paymentData } />;
+	}
+	if ( ! isActive ) {
+		return null;
 	}
 	const { billingName = '', billingNameError = null } = paymentData || {};
 	const onChange = value => setPaymentData( { ...( paymentData || {} ), billingName: value } );
@@ -65,8 +71,13 @@ export function ApplePaySubmitButton() {
 }
 
 function ApplePayBillingFormSummary( { paymentData } ) {
+	const localize = useLocalize();
 	const { billingName = '' } = paymentData || {};
-	return <span>{ billingName }</span>;
+	return (
+		<span>
+			<em>{ localize( 'Name' ) }</em> { billingName }
+		</span>
+	);
 }
 
 function ApplePayIcon() {
