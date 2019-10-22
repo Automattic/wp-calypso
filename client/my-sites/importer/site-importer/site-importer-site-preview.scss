@@ -19,14 +19,7 @@
 
 .site-importer__site-preview-overlay-container {
 	position: relative;
-	display: flex;
-	flex-direction: column;
 	margin-bottom: 24px;
-
-	.site-importer__site-preview-column-container {
-		display: flex;
-		flex-direction: row;
-	}
 }
 
 .site-importer__site-importer-confirm-site-label {
