@@ -20,7 +20,7 @@ export enum SiteType {
 export interface Attributes {
 	align: 'full';
 	siteTitle: string;
-	siteType: undefined | SiteType;
+	siteType?: SiteType;
 	theme: string;
 	vertical: string;
 }
