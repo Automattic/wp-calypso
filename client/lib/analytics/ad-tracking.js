@@ -46,6 +46,7 @@ const isLinkedinEnabled = false;
 const isCriteoEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
+const isAdRollEnabled = true;
 
 // Retargeting events are fired once every `retargetingPeriod` seconds.
 const retargetingPeriod = 60 * 60 * 24;
@@ -75,6 +76,14 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing',
 	ICON_MEDIA_ORDER_PIXEL_URL =
 		'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout',
+	ADROLL_PAGEVIEW_PIXEL_URL_1 =
+		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
+	ADROLL_PAGEVIEW_PIXEL_URL_2 =
+		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=ded132f8',
+	ADROLL_PURCHASE_PIXEL_URL_1 =
+		'https://d.adroll.com/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
+	ADROLL_PURCHASE_PIXEL_URL_2 =
+		'https://d.adroll.com/fb/ipixel/PEJHFPIHPJC2PD3IMTCWTT/WV6A5O5PBJBIBDYGZHVBM5?name=8eb337b5',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
@@ -170,6 +179,11 @@ if ( typeof window !== 'undefined' ) {
 	// Pinterest
 	if ( isPinterestEnabled ) {
 		setupPinterestGlobal();
+	}
+
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		setupAdRollGlobal();
 	}
 }
 
@@ -317,6 +331,21 @@ function setupPinterestGlobal() {
 		const n = window.pintrk;
 		n.queue = [];
 		n.version = '3.0';
+	}
+}
+
+function setupAdRollGlobal() {
+	if ( ! window.adRoll ) {
+		window.adRoll = {
+			trackPageview: function() {
+				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
+				new Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
+			},
+			trackPurchase: function() {
+				new Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
+				new Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
+			},
+		};
 	}
 }
 
@@ -514,6 +543,12 @@ export function retarget( urlPath ) {
 	if ( isPinterestEnabled ) {
 		debug( 'retarget: [Pinterest]' );
 		window.pintrk( 'page' );
+	}
+
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		debug( 'retarget: [AdRoll]' );
+		window.adRoll.trackPageview();
 	}
 
 	// Rate limited retargeting (secondary trackers)
@@ -1115,6 +1150,12 @@ export function recordOrder( cart, orderId ) {
 		];
 		debug( 'recordOrder: [Pinterest]', params );
 		window.pintrk( ...params );
+	}
+
+	// AdRoll
+	if ( isAdRollEnabled ) {
+		debug( 'recordOrder: [AdRoll]' );
+		window.adRoll.trackPurchase();
 	}
 
 	// Uses JSON.stringify() to print the expanded object because during localhost or .live testing after firing this
