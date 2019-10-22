@@ -40,5 +40,16 @@ export default class extends React.Component {
 The following props can be passed to the Product Selector block:
 
 * `intervalType`: ( string ) Billing interval - `monthly`, `yearly` or `2yearly`.
-* `products`: ( array ) Products to render - see example above for the structure.
+* `products`: ( array ) Products to render, each with the following structure:
+	* `title`: ( string ) Product title.
+	* `description`: ( string ) Product description.
+	* `id`: ( string ) Product ID.
+	* `options`: ( object ) Product options. Each option has the billing interval as a key, and the value is an array with corresponding product slugs. Example:
+		```
+		options: {
+			yearly: [ 'jetpack_backup_daily', 'jetpack_backup_realtime' ],
+			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
+		}
+		```
+	* `optionsLabel`: ( string ) Title of the product options section.
 * `siteId`: ( number ) ID of the site we're retrieving purchases for. Used to fetch information about the associated purchases of the selected products.
