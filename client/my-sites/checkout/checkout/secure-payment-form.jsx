@@ -54,7 +54,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import { getTld } from 'lib/domains';
 import { displayError, clear } from 'lib/upgrades/notices';
-import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
+import { recordProductPurchase } from 'lib/cart/store/cart-analytics';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
@@ -296,10 +296,7 @@ export class SecurePaymentForm extends Component {
 						reason: this.formatError( step.error ),
 					} );
 
-					this.recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: false,
-					} );
+					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: false } );
 				} else if ( step.data ) {
 					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 					// zero-value cost and would thus lead to a wrong computation of conversions
@@ -314,17 +311,9 @@ export class SecurePaymentForm extends Component {
 						total_cost: cartValue.total_cost,
 					} );
 
-					cartValue.products.forEach( function( cartItem ) {
-						analytics.tracks.recordEvent(
-							'calypso_checkout_product_purchase',
-							removeNestedProperties( cartItem )
-						);
-					} );
+					cartValue.products.forEach( recordProductPurchase );
 
-					this.recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: true,
-					} );
+					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: true } );
 				}
 				break;
 
@@ -338,10 +327,7 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	recordDomainRegistrationAnalytics( parameters ) {
-		const cart = parameters.cart,
-			success = parameters.success;
-
+	recordDomainRegistrationAnalytics( { cart, success } ) {
 		getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.ga.recordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
 
