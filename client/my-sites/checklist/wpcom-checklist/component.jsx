@@ -600,13 +600,7 @@ class WpcomChecklistComponent extends PureComponent {
 						? translate(
 								"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 						  )
-						: /*
-						   * This string should not actually show.
-						   * If the site is launched, the `completedButtonText` will be false above.
-						   * That should prevent the task from being expanded.
-						   * Let's go ahead and include it anyway just in case so we aren't incorrectly telling people their site is unlaunched
-						   */
-						  translate( 'Congratulations! Your site is visible to the world.' )
+						: null
 				}
 				disableIcon={ disabled }
 				isButtonDisabled={ disabled }
