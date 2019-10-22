@@ -160,9 +160,11 @@ export default class InfiniteList extends React.Component {
 
 		// we may have guessed item heights wrong - now we have real heights
 		if ( ! this.isScrolling ) {
-			this.cancelAnimationFrame();
-			this.updateScroll( {
-				triggeredByScroll: false,
+			setTimeout( () => {
+				this.cancelAnimationFrame();
+				this.updateScroll( {
+					triggeredByScroll: false,
+				} );
 			} );
 		}
 	}
