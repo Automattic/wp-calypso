@@ -127,6 +127,7 @@ class PasswordlessSignupForm extends Component {
 				);
 		}
 	}
+
 	submitStep = data => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
 		submitCreateAccountStep(
@@ -143,12 +144,14 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( true, { action_message: 'Successful login', username: data.username } );
 		goToNextStep();
 	};
+
 	onInputChange = ( { target: { value } } ) =>
 		this.setState( {
 			email: value,
 			errorMessages: null,
 			isEmailAddressValid: emailValidator.validate( value ),
 		} );
+
 	renderNotice() {
 		return (
 			<Notice showDismiss={ false } status="is-error">
@@ -158,12 +161,43 @@ class PasswordlessSignupForm extends Component {
 			</Notice>
 		);
 	}
+
+	userCreationComplete() {
+		return this.props.step && 'completed' === this.props.step.status;
+	}
+
+	formFooter() {
+		const { isSubmitting, isEmailAddressValid } = this.state;
+		if ( this.userCreationComplete() ) {
+			return (
+				<LoggedOutFormFooter>
+					<Button primary onClick={ () => this.props.goToNextStep() }>
+						{ this.props.translate( 'Continue' ) }
+					</Button>
+				</LoggedOutFormFooter>
+			);
+		}
+		const submitButtonText = isSubmitting
+			? this.props.translate( 'Creating Your Account…' )
+			: this.props.translate( 'Create your account' );
+		return (
+			<LoggedOutFormFooter>
+				<Button
+					type="submit"
+					primary
+					busy={ isSubmitting }
+					disabled={ isSubmitting || ! isEmailAddressValid || !! this.props.disabled }
+				>
+					{ submitButtonText }
+				</Button>
+			</LoggedOutFormFooter>
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
-		const { errorMessages, isSubmitting, isEmailAddressValid } = this.state;
-		const submitButtonText = isSubmitting
-			? translate( 'Creating Your Account…' )
-			: translate( 'Create your account' );
+		const { errorMessages, isSubmitting } = this.state;
+
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
@@ -175,20 +209,11 @@ class PasswordlessSignupForm extends Component {
 							type="email"
 							name="email"
 							onChange={ this.onInputChange }
-							disabled={ isSubmitting }
+							disabled={ isSubmitting || !! this.props.disabled }
 						/>
 					</ValidationFieldset>
 					{ this.props.renderTerms() }
-					<LoggedOutFormFooter>
-						<Button
-							type="submit"
-							primary
-							busy={ isSubmitting }
-							disabled={ isSubmitting || ! isEmailAddressValid }
-						>
-							{ submitButtonText }
-						</Button>
-					</LoggedOutFormFooter>
+					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>
 		);

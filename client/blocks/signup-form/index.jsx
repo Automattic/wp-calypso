@@ -940,11 +940,13 @@ class SignupForm extends Component {
 				<div className={ classNames( 'signup-form', this.props.className ) }>
 					{ this.getNotice() }
 					<PasswordlessSignupForm
+						step={ this.props.step }
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
 						logInUrl={ logInUrl }
+						disabled={ this.props.disabled }
 					/>
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm
