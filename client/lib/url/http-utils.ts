@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { URL as TypedURL, SiteSlug } from 'types';
-import { Falsey } from 'utility-types';
+import { Falsy } from 'utility-types';
 
 const urlWithoutHttpRegex = /^https?:\/\//;
 
