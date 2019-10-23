@@ -111,20 +111,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
-	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800,
-	TRACKING_STATE_VALUES = {
-		NOT_LOADED: 0,
-		LOADING: 1,
-		LOADED: 2,
-	};
-
-/**
- * Globals
- */
-
-// Used to enqueue the various events while the trackers are still loading so they can be fired afterwards.
-let trackingState = TRACKING_STATE_VALUES.NOT_LOADED;
-const trackingEventsQueue = [];
+	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 if ( typeof window !== 'undefined' ) {
 	// Facebook
@@ -393,21 +380,38 @@ function initLoadedTrackingScripts() {
 	debug( 'loadTrackingScripts: init done' );
 }
 
-async function loadTrackingScripts( callback ) {
-	debug( `loadTrackingScripts: state is ${ trackingState }` );
+// Returns a function that has the following behavior:
+// - when called, tries to call `loader` and returns a promise that resolves when load is finished
+// - when `loader` is already in progress, don't issue two concurrent calls: wait for the first to finish
+// - when `loader` fails, DON'T return a rejected promise. Instead, leave it unresolved and let the caller
+//   wait, potentially forever. Next call to the loader function has a chance to succeed and resolve the
+//   promise, for the current and all previous callers. That effectively implements a queue.
+function attemptLoad( loader ) {
+	let setLoadResult;
+	let status = 'not-loading';
 
-	trackingEventsQueue.push( callback );
-	if ( TRACKING_STATE_VALUES.LOADING === trackingState ) {
-		debug( 'loadTrackingScripts: [LOADING] enqueue and return', callback );
-		return;
-	} else if ( TRACKING_STATE_VALUES.NOT_LOADED === trackingState ) {
-		debug( 'loadTrackingScripts: [NOT_LOADED] enqueue and load', callback );
-		trackingState = TRACKING_STATE_VALUES.LOADING;
-	} else {
-		debug( `loadTrackingScripts: [ERROR] unexpected state ${ trackingState }` );
-		return;
-	}
+	const loadResult = new Promise( resolve => {
+		setLoadResult = resolve;
+	} );
 
+	return () => {
+		if ( status === 'not-loading' ) {
+			status = 'loading';
+			loader().then(
+				result => {
+					status = 'loaded';
+					setLoadResult( result );
+				},
+				() => {
+					status = 'not-loading';
+				}
+			);
+		}
+		return loadResult;
+	};
+}
+
+const loadTrackingScripts = attemptLoad( async () => {
 	const scripts = getTrackingScriptsToLoad();
 
 	let hasError = false;
@@ -424,7 +428,7 @@ async function loadTrackingScripts( callback ) {
 	}
 
 	if ( hasError ) {
-		return;
+		throw new Error( 'One or more tracking scripts failed to load' );
 	}
 
 	debug( 'loadTrackingScripts: load done' );
@@ -433,12 +437,7 @@ async function loadTrackingScripts( callback ) {
 
 	// uses JSON.stringify for consistency with recordOrder()
 	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
-
-	// call all enqueued event callbacks
-	trackingState = TRACKING_STATE_VALUES.LOADED;
-	trackingEventsQueue.forEach( cb => cb() );
-	debug( 'loadTrackingScripts: event queue done', trackingEventsQueue );
-}
+} );
 
 /**
  * Fire tracking events for the purposes of retargeting on all Calypso pages
