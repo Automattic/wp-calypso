@@ -2,14 +2,15 @@
  * External dependencies
  */
 import React from 'react';
+import styled from 'styled-components';
 
 /**
  * Internal dependencies
  */
 import { useLocalize } from '../../lib/localize';
 import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../../index';
-import { BillingFormFields, FormField } from '../../components/basics';
 import Button from '../../components/button';
+import Field from '../../components/field';
 
 export function ApplePayLabel() {
 	return (
@@ -50,6 +51,17 @@ export function ApplePayBillingForm( {
 		</BillingFormFields>
 	);
 }
+
+const BillingFormFields = styled.div`
+	margin-bottom: 16px;
+`;
+
+const FormField = styled( Field )`
+	margin-top: 16px;
+	:first-child {
+		margin-top: 0;
+	}
+`;
 
 export function ApplePaySubmitButton() {
 	const localize = useLocalize();

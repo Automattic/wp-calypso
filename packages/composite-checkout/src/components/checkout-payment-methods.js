@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
 import { getPaymentMethods } from '../lib/payment-methods';
-import { RadioButtons } from './basics';
 import RadioButton from './radio-button';
 
 export default function CheckoutPaymentMethods( {
@@ -87,3 +87,7 @@ PaymentMethod.propTypes = {
 	PaymentMethodComponent: PropTypes.func,
 	LabelComponent: PropTypes.func,
 };
+
+export const RadioButtons = styled.div`
+	margin-bottom: 16px;
+`;

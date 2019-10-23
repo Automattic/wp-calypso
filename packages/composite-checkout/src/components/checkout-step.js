@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
 import { useLocalize } from '../lib/localize';
-import { StepWrapper, StepTitle, StepHeader, StepNumber, StepContent, StepSummary } from './basics';
 
 export default function CheckoutStep( {
 	className,
@@ -134,3 +134,110 @@ function CheckIcon() {
 		</svg>
 	);
 }
+
+const StepWrapper = styled.div`
+	padding-bottom: 32px;
+	margin-bottom: 8px;
+	position: relative;
+
+	:after {
+		display: block;
+		width: ${props => ( props.finalStep ? '0' : '1px' )};
+		height: calc( 100% - 35px );
+		position: absolute;
+		left: 13px;
+		top: 35px;
+		background: ${props => props.theme.colors.borderColor};
+		content: '';
+	}
+	:nth-child( 5 ) {
+		padding-bottom: 0;
+	}
+`;
+
+const StepTitle = styled.span`
+	color: ${props =>
+		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
+	margin-right: 5px;
+	font-weight: ${props =>
+		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
+`;
+
+const StepHeader = styled.h2`
+	font-size: 16px;
+	display: flex;
+	width: 100%;
+	align-items: center;
+	margin: 0 0 8px;
+`;
+
+const StepNumber = styled.span`
+	background: ${getStepNumberBackgroundColor};
+	font-weight: normal;
+	width: 27px;
+	height: 27px;
+	box-sizing: border-box;
+	padding: 0;
+	text-align: center;
+	display: block;
+	border-radius: 50%;
+	margin-right: 8px;
+	color: ${getStepNumberForegroundColor};
+	position: relative;
+	line-height: 27px;
+	:after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		border: 2px solid ${getStepNumberBorderColor};
+		content: '';
+		display: block;
+		width: 27px;
+		height: 27px;
+		border-radius: 50%;
+		box-sizing: border-box;
+	}
+	svg {
+		margin-top: 4px;
+	}
+`;
+
+function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
+	if ( isActive ) {
+		return theme.colors.highlight;
+	}
+	if ( isComplete ) {
+		return theme.colors.surface;
+	}
+	return theme.colors.upcomingStepBackground;
+}
+
+function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
+	if ( isComplete || isActive ) {
+		return theme.colors.surface;
+	}
+	return theme.colors.textColor;
+}
+
+function getStepNumberBorderColor( { isComplete, isActive, theme } ) {
+	if ( isActive ) {
+		return theme.colors.highlight;
+	}
+	if ( isComplete ) {
+		return theme.colors.success;
+	}
+	return theme.colors.borderColorLight;
+}
+
+const StepContent = styled.div`
+	color: ${props => props.theme.colors.textColor};
+	display: ${props => ( props.isVisible ? 'block' : 'none' )};
+	padding-left: 35px;
+`;
+
+const StepSummary = styled.div`
+	color: ${props => props.theme.colors.textColorLight};
+	font-size: 14px;
+	display: ${props => ( props.isVisible ? 'block' : 'none' )};
+	padding-left: 35px;
+`;
