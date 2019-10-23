@@ -9,7 +9,7 @@ import { withoutHttp, urlToSlug, urlToDomainAndPath } from '../http-utils';
 
 describe( 'withoutHttp', () => {
 	test( 'should return null if URL is not provided', () => {
-		expect( withoutHttp() ).toBeNull;
+		expect( withoutHttp() ).toBeNull();
 	} );
 
 	test( 'should return URL without initial http', () => {
@@ -48,13 +48,13 @@ describe( 'withoutHttp', () => {
 
 describe( 'urlToSlug()', () => {
 	test( 'should return null if URL is not provided', () => {
-		expect( urlToSlug() ).toBeNull;
+		expect( urlToSlug() ).toBeNull();
 	} );
 
 	test( 'should return null if URL is empty string', () => {
 		const urlEmptyString = '';
 
-		expect( urlToSlug( urlEmptyString ) ).toBeNull;
+		expect( urlToSlug( urlEmptyString ) ).toBeNull();
 	} );
 
 	test( 'should return URL without initial http', () => {
@@ -94,7 +94,7 @@ describe( 'urlToSlug()', () => {
 
 describe( 'urlToDomainAndPath', () => {
 	test( 'should return null if URL is not provided', () => {
-		expect( withoutHttp() ).toBeNull;
+		expect( withoutHttp() ).toBeNull();
 	} );
 
 	test( 'should return URL without initial http', () => {
