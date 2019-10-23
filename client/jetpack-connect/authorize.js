@@ -75,8 +75,8 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlacklistedError as isSiteBlacklistedSelector,
 } from 'state/jetpack-connect/selectors';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
+import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
 /**
  * Constants
