@@ -27,6 +27,11 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_BACKUP_PRODUCTS_MONTHLY,
+	PRODUCT_JETPACK_BACKUP,
+} from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
@@ -48,6 +53,8 @@ import {
 import Button from 'components/button';
 import SegmentedControl from 'components/segmented-control';
 import PaymentMethods from 'blocks/payment-methods';
+import ProductSelector from 'blocks/product-selector';
+import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
@@ -64,6 +71,25 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
  * Style dependencies
  */
 import './style.scss';
+
+// @todo: Add translations to `jetpackProducts` once the final copy is provided.
+const jetpackProducts = [
+	{
+		title: 'Jetpack Backup',
+		description: (
+			<p>
+				Automatic scanning and one-click fixes keep your site one step ahead of security threats.{' '}
+				<a href="https://jetpack.com/">More info</a>
+			</p>
+		),
+		id: PRODUCT_JETPACK_BACKUP,
+		options: {
+			yearly: JETPACK_BACKUP_PRODUCTS,
+			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
+		},
+		optionsLabel: 'Backup options',
+	},
+];
 
 export class PlansFeaturesMain extends Component {
 	componentDidUpdate( prevProps ) {
@@ -379,6 +405,25 @@ export class PlansFeaturesMain extends Component {
 		return false;
 	}
 
+	renderProductsSelector() {
+		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
+			return null;
+		}
+
+		const { intervalType } = this.props;
+
+		// @todo: Add translations in FormattedHeader once the final copy is provided.
+		return (
+			<div className="plans-features-main__group is-narrow">
+				<FormattedHeader
+					headerText="Single Products"
+					subHeaderText="Just looking for backups? We’ve got you covered."
+				/>
+				<ProductSelector products={ jetpackProducts } intervalType={ intervalType } />
+			</div>
+		);
+	}
+
 	render() {
 		const { displayJetpackPlans, isInSignup, siteId, plansWithScroll } = this.props;
 		let faqs = null;
@@ -396,6 +441,7 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
+				{ this.renderProductsSelector() }
 				{ this.getPlanFeatures() }
 				<CartData>
 					<PaymentMethods />
