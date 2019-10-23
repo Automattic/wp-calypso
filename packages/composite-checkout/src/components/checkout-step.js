@@ -10,6 +10,7 @@ import styled from 'styled-components';
  */
 import joinClasses from '../lib/join-classes';
 import { useLocalize } from '../lib/localize';
+import Button from './button';
 
 export default function CheckoutStep( {
 	className,
@@ -76,9 +77,9 @@ function CheckoutStepHeader( { className, stepNumber, title, isActive, isComplet
 				{ title }
 			</StepTitle>
 			{ onEdit && isComplete && ! isActive && (
-				<button className="checkout-step__edit" onClick={ onEdit }>
+				<Button buttonState="text-button" className="checkout-step__edit" onClick={ onEdit }>
 					{ localize( 'Edit' ) }
-				</button>
+				</Button>
 			) }
 		</StepHeader>
 	);
