@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { debounce, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,12 +17,12 @@ const trackFullSiteEditingEditTemplatePart = ( event, target ) => {
 };
 
 /**
- * Return the event definition object to track `wpcom_block_editor_close_click`.
+ * Return the event definition object to track `wpcom_block_editor_a8c_fse_edit_template_part`.
  *
  * @return {{handler: function, selector: string, type: string}} event object definition.
  */
 export default () => ( {
 	selector: '.template__block-container .template-block__overlay a',
 	type: 'click',
-	handler: trackFullSiteEditingEditTemplatePart,
+	handler: debounce( trackFullSiteEditingEditTemplatePart, 1000, { leading: true } ),
 } );
