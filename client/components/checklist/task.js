@@ -21,13 +21,14 @@ import Spinner from 'components/spinner';
 class Task extends PureComponent {
 	static propTypes = {
 		buttonText: PropTypes.node,
-		collapsed: PropTypes.bool,
+		collapsed: PropTypes.bool, // derived from ui state
 		completed: PropTypes.bool,
 		completedButtonText: PropTypes.node,
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		disableIcon: PropTypes.bool,
 		duration: PropTypes.string,
+		forceCollapsed: PropTypes.bool, // derived from API state
 		href: PropTypes.string,
 		inProgress: PropTypes.bool,
 		isButtonDisabled: PropTypes.bool,
@@ -134,6 +135,7 @@ class Task extends PureComponent {
 			completedTitle,
 			description,
 			duration,
+			forceCollapsed,
 			href,
 			isButtonDisabled,
 			inProgress,
@@ -147,12 +149,15 @@ class Task extends PureComponent {
 			showSkip,
 		} = this.props;
 
+		const _collapsed = forceCollapsed || collapsed;
+
 		// A task that's being automatically completed ("in progress") cannot be expanded.
 		// An uncompleted task by definition has a call-to-action, which can only be accessed by
 		// expanding it, so an uncompleted task is always expandable.
 		// A completed task may or may not have a call-to-action, which can be best inferred from
 		// the `completedButtonText` prop.
-		const isExpandable = ! inProgress && ( ! completed || completedButtonText );
+		const isExpandable =
+			! forceCollapsed || ( ! inProgress && ( ! completed || completedButtonText ) );
 		const taskActionButtonText = completed
 			? completedButtonText
 			: buttonText || translate( 'Try it' );
@@ -164,7 +169,7 @@ class Task extends PureComponent {
 					'is-completed': completed,
 					'is-in-progress': inProgress,
 					'is-unexpandable': ! isExpandable,
-					'is-collapsed': collapsed,
+					'is-collapsed': _collapsed,
 				} ) }
 			>
 				<div className="checklist__task-wrapper">
@@ -183,7 +188,7 @@ class Task extends PureComponent {
 						) }
 					</h3>
 
-					{ ! collapsed && (
+					{ ! _collapsed && (
 						<div className="checklist__task-content">
 							<p className="checklist__task-description">{ description }</p>
 
@@ -201,7 +206,7 @@ class Task extends PureComponent {
 											disabled={ isButtonDisabled }
 											href={ href }
 											onClick={ onClick }
-											primary={ ! collapsed }
+											primary={ ! _collapsed }
 											target={ target }
 										>
 											{ taskActionButtonText }

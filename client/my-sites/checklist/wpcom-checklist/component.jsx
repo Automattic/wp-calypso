@@ -587,6 +587,7 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				forceCollapsed={ task.isCompleted && ! siteIsUnlaunched }
 				bannerImageSrc="/calypso/images/stats/tasks/launch.svg"
 				buttonText={ translate( 'Launch site' ) }
 				completedButtonText={ siteIsUnlaunched && translate( 'Launch site' ) }
