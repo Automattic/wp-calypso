@@ -67,17 +67,16 @@ CheckoutPaymentMethods.propTypes = {
 
 function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, onClick } ) {
 	return (
-		<React.Fragment>
-			<RadioButton
-				name="paymentMethod"
-				value={ id }
-				checked={ checked }
-				onChange={ onClick ? () => onClick( id ) : null }
-			>
-				<LabelComponent />
-			</RadioButton>
+		<RadioButton
+			name="paymentMethod"
+			value={ id }
+			id={ id }
+			checked={ checked }
+			onChange={ onClick ? () => onClick( id ) : null }
+			label={ <LabelComponent /> }
+		>
 			{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
-		</React.Fragment>
+		</RadioButton>
 	);
 }
 
