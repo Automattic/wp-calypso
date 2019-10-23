@@ -33,6 +33,11 @@ export type TimerHandle = ReturnType< typeof setTimeout >;
 export type IntervalHandle = ReturnType< typeof setInterval >;
 
 /**
+ * Get the Props type from a React component
+ */
+export type GetProps< C > = C extends React.ComponentType< infer P > ? P : never;
+
+/**
  * Calypso application state
  *
  * Calypso application state is not yet well typed.
