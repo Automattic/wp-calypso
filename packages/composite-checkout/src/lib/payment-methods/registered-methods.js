@@ -11,13 +11,14 @@ import { ApplePayBillingForm, ApplePaySubmitButton, ApplePayLabel } from './appl
 import { PaypalLabel, PaypalSubmitButton } from './paypal';
 import { CreditCardLabel, CreditCardSubmitButton } from './credit-card';
 import CreditCardFields from '../../components/credit-card-fields';
+import BillingFields from '../../components/billing-fields';
 
 export default function loadPaymentMethods() {
 	registerPaymentMethod( {
 		id: 'apple-pay',
 		LabelComponent: ApplePayLabel,
 		PaymentMethodComponent: () => null,
-		BillingContactComponent: ApplePayBillingForm,
+		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: ApplePaySubmitButton,
 	} );
 
