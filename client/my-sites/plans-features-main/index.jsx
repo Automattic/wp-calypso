@@ -414,7 +414,7 @@ export class PlansFeaturesMain extends Component {
 
 		// @todo: Add translations in FormattedHeader once the final copy is provided.
 		return (
-			<div className="plans-features-main__group plans-features-main__group--narrow">
+			<div className="plans-features-main__group is-narrow">
 				<FormattedHeader
 					headerText="Single Products"
 					subHeaderText="Just looking for backups? We’ve got you covered."
