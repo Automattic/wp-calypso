@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-build",
-	"version": "4.1.0",
+	"version": "4.2.0",
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
 		"babel",
@@ -60,7 +60,7 @@
 		"jest-config": "24.9.0",
 		"jest-enzyme": "7.1.1",
 		"mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl#v0.7.0-with-rtl",
-		"node-sass": "4.11.0",
+		"node-sass": "4.12.0",
 		"postcss-custom-properties": "8.0.9",
 		"postcss-loader": "3.0.0",
 		"recursive-copy": "2.0.10",
