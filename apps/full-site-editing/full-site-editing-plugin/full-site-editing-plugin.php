@@ -152,6 +152,12 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
  * Load Starter_Page_Templates.
  */
 function load_starter_page_templates() {
+	// We don't want the user to choose a template when copying a post.
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( isset( $_GET['jetpack-copy'] ) ) {
+		return;
+	}
+
 	/**
 	 * Can be used to disable the Starter Page Templates.
 	 *
