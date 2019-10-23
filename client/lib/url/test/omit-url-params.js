@@ -11,8 +11,7 @@ describe( 'omitUrlParams()', () => {
 	describe( 'when no URL is supplied', () => {
 		test( 'should return null if the string is not a URL', () => {
 			const actual = omitUrlParams();
-			const expected = null;
-			expect( actual ).toEqual( expected );
+			expect( actual ).toBeNull();
 		} );
 	} );
 
@@ -22,7 +21,7 @@ describe( 'omitUrlParams()', () => {
 				const url = 'http://example.com/path?query=banana&query2=pineapple&query3=avocado';
 				const actual = omitUrlParams( url );
 				const expected = 'http://example.com/path?query=banana&query2=pineapple&query3=avocado';
-				expect( actual ).toEqual( expected );
+				expect( actual ).toBe( expected );
 			} );
 		} );
 
@@ -32,7 +31,7 @@ describe( 'omitUrlParams()', () => {
 				const param = 'query2';
 				const actual = omitUrlParams( url, param );
 				const expected = 'http://example.com/path?query=banana&query3=avocado';
-				expect( actual ).toEqual( expected );
+				expect( actual ).toBe( expected );
 			} );
 		} );
 
@@ -42,7 +41,7 @@ describe( 'omitUrlParams()', () => {
 				const params = [ 'query', 'query2' ];
 				const actual = omitUrlParams( url, params );
 				const expected = 'http://example.com/path?query3=avocado';
-				expect( actual ).toEqual( expected );
+				expect( actual ).toBe( expected );
 			} );
 		} );
 	} );
