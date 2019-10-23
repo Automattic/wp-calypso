@@ -23,12 +23,12 @@ export const Container = styled.div`
 `;
 
 const Column = styled.div`
-	background: ${props => props.theme.colors.white};
+	background: ${props => props.theme.colors.surface};
 	padding: 16px;
 	width: 100%;
 	box-sizing: border-box;
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
-		border: 1px solid ${props => props.theme.colors.gray5};
+		border: 1px solid ${props => props.theme.colors.borderColorLight};
 		margin-top: 32px;
 		box-sizing: border-box;
 		padding: 24px;
@@ -45,7 +45,7 @@ export const PageTitle = styled.h1`
 	margin: 0;
 	font-weight: normal;
 	font-size: 24px;
-	color: ${props => props.theme.colors.black};
+	color: ${props => props.theme.colors.textColorDark};
 	padding-bottom: 24px;
 `;
 
@@ -61,7 +61,7 @@ export const StepWrapper = styled.div`
 		position: absolute;
 		left: 13px;
 		top: 35px;
-		background: ${props => props.theme.colors.gray20};
+		background: ${props => props.theme.colors.borderColor};
 		content: '';
 	}
 	:nth-child( 5 ) {
@@ -78,7 +78,8 @@ export const StepHeader = styled.h2`
 `;
 
 export const StepTitle = styled.span`
-	color: ${props => ( props.isActive ? props.theme.colors.black : props.theme.colors.gray80 )};
+	color: ${props =>
+		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor};
 	margin-right: 5px;
 	font-weight: ${props =>
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal};
@@ -89,16 +90,16 @@ function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
 		return theme.colors.highlight;
 	}
 	if ( isComplete ) {
-		return theme.colors.white;
+		return theme.colors.surface;
 	}
-	return theme.colors.gray5;
+	return theme.colors.upcomingStepBackground;
 }
 
 function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
 	if ( isComplete || isActive ) {
-		return theme.colors.white;
+		return theme.colors.surface;
 	}
-	return theme.colors.gray80;
+	return theme.colors.textColor;
 }
 
 function getStepNumberBorderColor( { isComplete, isActive, theme } ) {
@@ -106,9 +107,9 @@ function getStepNumberBorderColor( { isComplete, isActive, theme } ) {
 		return theme.colors.highlight;
 	}
 	if ( isComplete ) {
-		return theme.colors.green50;
+		return theme.colors.success;
 	}
-	return theme.colors.gray5;
+	return theme.colors.borderColorLight;
 }
 
 export const StepNumber = styled.span`
@@ -143,13 +144,13 @@ export const StepNumber = styled.span`
 `;
 
 export const StepContent = styled.div`
-	color: ${props => props.theme.colors.gray80};
+	color: ${props => props.theme.colors.textColor};
 	display: ${props => ( props.isVisible ? 'block' : 'none' )};
 	padding-left: 35px;
 `;
 
 export const StepSummary = styled.div`
-	color: ${props => props.theme.colors.gray50};
+	color: ${props => props.theme.colors.textColorLight};
 	font-size: 14px;
 	display: ${props => ( props.isVisible ? 'block' : 'none' )};
 	padding-left: 35px;

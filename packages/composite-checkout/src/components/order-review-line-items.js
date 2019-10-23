@@ -11,36 +11,6 @@ import styled from 'styled-components';
 import joinClasses from '../lib/join-classes';
 import { renderDisplayValueMarkdown } from '../index';
 
-export function OrderReviewTotal( { total, className } ) {
-	return (
-		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
-			<LineItemUI total item={ total } />
-		</div>
-	);
-}
-
-export function OrderReviewLineItems( { items, className } ) {
-	return (
-		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( item => (
-				<LineItemUI key={ item.id } item={ item } />
-			) ) }
-		</div>
-	);
-}
-
-OrderReviewLineItems.propTypes = {
-	className: PropTypes.string,
-	items: PropTypes.arrayOf(
-		PropTypes.shape( {
-			label: PropTypes.string,
-			amount: PropTypes.shape( {
-				displayValue: PropTypes.string,
-			} ),
-		} )
-	),
-};
-
 export function OrderReviewSection( { children, className, withDivider } ) {
 	return (
 		<OrderReviewSectionArea
@@ -88,4 +58,34 @@ LineItem.propTypes = {
 			displayValue: PropTypes.string,
 		} ),
 	} ),
+};
+
+export function OrderReviewTotal( { total, className } ) {
+	return (
+		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
+			<LineItemUI total item={ total } />
+		</div>
+	);
+}
+
+export function OrderReviewLineItems( { items, className } ) {
+	return (
+		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
+			{ items.map( item => (
+				<LineItemUI key={ item.id } item={ item } />
+			) ) }
+		</div>
+	);
+}
+
+OrderReviewLineItems.propTypes = {
+	className: PropTypes.string,
+	items: PropTypes.arrayOf(
+		PropTypes.shape( {
+			label: PropTypes.string,
+			amount: PropTypes.shape( {
+				displayValue: PropTypes.string,
+			} ),
+		} )
+	),
 };
