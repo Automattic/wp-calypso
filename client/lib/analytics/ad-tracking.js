@@ -302,21 +302,7 @@ function setupAdRollGlobal() {
 	}
 }
 
-async function loadTrackingScripts( callback ) {
-	debug( `loadTrackingScripts: state is ${ trackingState }` );
-
-	trackingEventsQueue.push( callback );
-	if ( TRACKING_STATE_VALUES.LOADING === trackingState ) {
-		debug( 'loadTrackingScripts: [LOADING] enqueue and return', callback );
-		return;
-	} else if ( TRACKING_STATE_VALUES.NOT_LOADED === trackingState ) {
-		debug( 'loadTrackingScripts: [NOT_LOADED] enqueue and load', callback );
-		trackingState = TRACKING_STATE_VALUES.LOADING;
-	} else {
-		debug( `loadTrackingScripts: [ERROR] unexpected state ${ trackingState }` );
-		return;
-	}
-
+function getTrackingScriptsToLoad() {
 	const scripts = [];
 
 	if ( isFacebookEnabled ) {
@@ -365,25 +351,10 @@ async function loadTrackingScripts( callback ) {
 		scripts.push( PINTEREST_SCRIPT_URL );
 	}
 
-	let hasError = false;
-	for ( const src of scripts ) {
-		try {
-			// We use `await` to load each script one by one and allow the GUI to load and be responsive while
-			// the trackers get loaded in a user friendly manner.
-			await loadScript( src );
-		} catch ( error ) {
-			hasError = true;
-			debug( 'loadTrackingScripts: [Load Error] a tracking script failed to load: ', error );
-		}
-		debug( 'loadTrackingScripts: [Loaded]', src );
-	}
+	return scripts;
+}
 
-	if ( hasError ) {
-		return;
-	}
-
-	debug( 'loadTrackingScripts: load done' );
-
+function initLoadedTrackingScripts() {
 	// init Facebook
 	if ( isFacebookEnabled ) {
 		initFacebook();
@@ -420,6 +391,45 @@ async function loadTrackingScripts( callback ) {
 	}
 
 	debug( 'loadTrackingScripts: init done' );
+}
+
+async function loadTrackingScripts( callback ) {
+	debug( `loadTrackingScripts: state is ${ trackingState }` );
+
+	trackingEventsQueue.push( callback );
+	if ( TRACKING_STATE_VALUES.LOADING === trackingState ) {
+		debug( 'loadTrackingScripts: [LOADING] enqueue and return', callback );
+		return;
+	} else if ( TRACKING_STATE_VALUES.NOT_LOADED === trackingState ) {
+		debug( 'loadTrackingScripts: [NOT_LOADED] enqueue and load', callback );
+		trackingState = TRACKING_STATE_VALUES.LOADING;
+	} else {
+		debug( `loadTrackingScripts: [ERROR] unexpected state ${ trackingState }` );
+		return;
+	}
+
+	const scripts = getTrackingScriptsToLoad();
+
+	let hasError = false;
+	for ( const src of scripts ) {
+		try {
+			// We use `await` to load each script one by one and allow the GUI to load and be responsive while
+			// the trackers get loaded in a user friendly manner.
+			await loadScript( src );
+		} catch ( error ) {
+			hasError = true;
+			debug( 'loadTrackingScripts: [Load Error] a tracking script failed to load: ', error );
+		}
+		debug( 'loadTrackingScripts: [Loaded]', src );
+	}
+
+	if ( hasError ) {
+		return;
+	}
+
+	debug( 'loadTrackingScripts: load done' );
+
+	initLoadedTrackingScripts();
 
 	// uses JSON.stringify for consistency with recordOrder()
 	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
