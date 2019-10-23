@@ -51,8 +51,8 @@ export function Gutenboard() {
 							isEditorSidebarOpened={ isEditorSidebarOpened }
 							toggleGeneralSidebar={ toggleGeneralSidebar }
 						/>
-						<div className="edit-post-layout__content">
-							<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
+						<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
+							<div className="edit-post-layout__content">
 								<div className="gutenboarding__block-editor">
 									<BlockEditorKeyboardShortcuts />
 									<div
@@ -69,12 +69,12 @@ export function Gutenboard() {
 									</div>
 								</div>
 								<Popover.Slot />
-							</BlockEditorProvider>
-						</div>
-						<div>
-							<SettingsSidebar isActive={ isEditorSidebarOpened } />
-							<Sidebar.Slot />
-						</div>
+							</div>
+							<div>
+								<SettingsSidebar isActive={ isEditorSidebarOpened } />
+								<Sidebar.Slot />
+							</div>
+						</BlockEditorProvider>
 					</div>
 				</DropZoneProvider>
 			</SlotFillProvider>
