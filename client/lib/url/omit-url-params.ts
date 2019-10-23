@@ -24,7 +24,7 @@ export default function omitUrlParams(
 	let toOmit: string[];
 
 	if ( typeof paramsToOmit === 'string' ) {
-		toOmit = [ paramsToOmit as string ];
+		toOmit = [ paramsToOmit ];
 	} else {
 		toOmit = paramsToOmit;
 	}
