@@ -77,7 +77,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 			>
 				{ ! connectedGoogleMyBusinessLocation ? (
 					<MarketingToolsFeatureButtonWithPlanGate
-						buttonText={ translate( 'Connect to Google My Business' ) }
+						buttonText={ translate( 'Connect to Google My Business', { textOnly: true } ) }
 						feature={ FEATURE_GOOGLE_MY_BUSINESS }
 						onDefaultButtonClick={ handleConnectToGoogleMyBusinessClick }
 						onUpgradeButtonClick={ handleUpgradeToBusinessPlanClick }
