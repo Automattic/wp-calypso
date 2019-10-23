@@ -11,10 +11,11 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import SupportInfo from 'components/support-info';
+import { GetProps } from 'types';
 
 interface Props {
 	checked: boolean;
-	onChange: ( event ) => void;
+	onChange: GetProps< typeof FormCheckbox >[ 'onChange' ];
 }
 
 /**
