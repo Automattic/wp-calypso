@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classNames from 'classnames';
@@ -28,12 +28,10 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_BACKUP_PRODUCTS_MONTHLY,
 	PRODUCT_JETPACK_BACKUP,
-	PRODUCT_JETPACK_BACKUP_DAILY,
-	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_REALTIME,
-	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'lib/products/constants';
+} from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
@@ -73,6 +71,25 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
  * Style dependencies
  */
 import './style.scss';
+
+// @todo: Add translations to `jetpackProducts` once the final copy is provided.
+const jetpackProducts = [
+	{
+		title: 'Jetpack Backup',
+		description: (
+			<p>
+				Automatic scanning and one-click fixes keep your site one step ahead of security threats.{' '}
+				<a href="https://jetpack.com/">More info</a>
+			</p>
+		),
+		id: PRODUCT_JETPACK_BACKUP,
+		options: {
+			yearly: JETPACK_BACKUP_PRODUCTS,
+			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
+		},
+		optionsLabel: 'Backup options',
+	},
+];
 
 export class PlansFeaturesMain extends Component {
 	componentDidUpdate( prevProps ) {
@@ -393,36 +410,17 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { intervalType, siteId, translate } = this.props;
-		const products = [
-			{
-				title: 'Jetpack Backup',
-				description: (
-					<p>
-						Automatic scanning and one-click fixes keep your site one step ahead of security
-						threats. <a href="https://jetpack.com/">More info</a>
-					</p>
-				),
-				id: PRODUCT_JETPACK_BACKUP,
-				options: {
-					yearly: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],
-					monthly: [
-						PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-						PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-					],
-				},
-				optionsLabel: 'Backup options',
-			},
-		];
+		const { intervalType } = this.props;
 
+		// @todo: Add translations in FormattedHeader once the final copy is provided.
 		return (
-			<Fragment>
+			<div className="plans-features-main__group plans-features-main__group--narrow">
 				<FormattedHeader
-					headerText={ translate( 'Single Products' ) }
-					subHeaderText={ translate( 'Just looking for a backups? We’ve got you covered.' ) }
+					headerText="Single Products"
+					subHeaderText="Just looking for backups? We’ve got you covered."
 				/>
-				<ProductSelector products={ products } intervalType={ intervalType } siteId={ siteId } />
-			</Fragment>
+				<ProductSelector products={ jetpackProducts } intervalType={ intervalType } />
+			</div>
 		);
 	}
 
@@ -440,10 +438,10 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 				{ ! plansWithScroll && this.renderToggle() }
 				{ plansWithScroll && this.renderFreePlanBanner() }
-				{ this.renderProductsSelector() }
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
+				{ this.renderProductsSelector() }
 				{ this.getPlanFeatures() }
 				<CartData>
 					<PaymentMethods />
