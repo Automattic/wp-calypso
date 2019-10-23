@@ -447,20 +447,15 @@ const loadTrackingScripts = attemptLoad( async () => {
  *
  * @returns {void}
  */
-export function retarget( urlPath ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( retarget.bind( null, urlPath ) ) ) {
-		return;
-	}
+export async function retarget( urlPath ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'retarget: [Skipping] ad tracking is not allowed', urlPath );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( retarget.bind( null, urlPath ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	debug( 'retarget:', urlPath );
 
@@ -617,20 +612,15 @@ function splitWpcomJetpackCartInfo( cart ) {
 	};
 }
 
-export function recordRegistration() {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordRegistration.bind( null ) ) ) {
-		return;
-	}
+export async function recordRegistration() {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordRegistration: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordRegistration.bind( null ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	// Google Ads Gtag
 
@@ -691,20 +681,15 @@ export function recordRegistration() {
  * @param {String} slug - Signup slug.
  * @returns {void}
  */
-export function recordSignup( slug ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordSignup.bind( null, slug ) ) ) {
-		return;
-	}
+export async function recordSignup( slug ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordSignup: [Skipping] ad tracking is disallowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordSignup.bind( null, slug ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	// Synthesize a cart object for signup tracking.
 	const syntheticCart = {
@@ -860,20 +845,15 @@ export function retargetViewPlans() {
  * @param {Object} cartItem - The item added to the cart
  * @returns {void}
  */
-export function recordAddToCart( cartItem ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordAddToCart.bind( null, cartItem ) ) ) {
-		return;
-	}
+export async function recordAddToCart( cartItem ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordAddToCart: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	debug( 'recordAddToCart:', cartItem );
 
@@ -999,20 +979,15 @@ export function recordViewCheckout( cart ) {
  * @param {Number} orderId - the order id
  * @returns {void}
  */
-export function recordOrder( cart, orderId ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordOrder.bind( null, cart, orderId ) ) ) {
-		return;
-	}
+export async function recordOrder( cart, orderId ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrder: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordOrder.bind( null, cart, orderId ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	if ( cart.is_signup ) {
 		return;
@@ -1591,16 +1566,13 @@ function recordPlansViewInCriteo() {
  *
  * @returns {void}
  */
-function recordInCriteo( eventName, eventProps ) {
+async function recordInCriteo( eventName, eventProps ) {
 	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
 		debug( 'recordInCriteo: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordInCriteo.bind( null, eventName, eventProps ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	const events = [];
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
