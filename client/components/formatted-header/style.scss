@@ -37,8 +37,8 @@
 	}
 }
 
-// Responsive header
-.formatted-header.is-responsive {
+// Compact header on small screens
+.formatted-header.is-compact-on-mobile {
 	@include breakpoint( '<660px' ) {
 		text-align: left;
 

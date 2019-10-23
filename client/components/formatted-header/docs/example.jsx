@@ -24,7 +24,7 @@ export default class FormattedHeaderExample extends PureComponent {
 				<FormattedHeader
 					headerText="This is the responsive header."
 					subHeaderText="This is the optional subheader."
-					responsive
+					compactOnMobile
 				/>
 			</Fragment>
 		);

@@ -18,10 +18,10 @@ import { preventWidows } from 'lib/formatting';
  */
 import './style.scss';
 
-function FormattedHeader( { id, headerText, subHeaderText, className, responsive } ) {
+function FormattedHeader( { id, headerText, subHeaderText, className, compactOnMobile } ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
-		'is-responsive': responsive,
+		'is-compact-on-mobile': compactOnMobile,
 	} );
 
 	return (
@@ -37,7 +37,7 @@ function FormattedHeader( { id, headerText, subHeaderText, className, responsive
 FormattedHeader.propTypes = {
 	headerText: PropTypes.node,
 	subHeaderText: PropTypes.node,
-	responsive: PropTypes.bool,
+	compactOnMobile: PropTypes.bool,
 };
 
 export default FormattedHeader;
