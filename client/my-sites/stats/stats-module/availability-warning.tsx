@@ -30,7 +30,7 @@ const StatsModuleAvailabilityWarning: FunctionComponent< Props & LocalizeProps >
 
 	return (
 		<div className="stats-module__availability-warning">
-			<Gridicon icon="info-outline" size="24" />
+			<Gridicon icon="info-outline" size={ 24 } />
 			<p className="stats-module__availability-warning-message">
 				{ translate( 'File download counts were not recorded before July 2019.' ) }
 			</p>
