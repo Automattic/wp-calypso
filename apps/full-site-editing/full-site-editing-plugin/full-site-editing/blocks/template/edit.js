@@ -5,7 +5,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import { endsWith, get, noop, reduce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -40,11 +40,33 @@ const TemplateEdit = compose(
 		} );
 		const selectedBlock = getSelectedBlock();
 
+		const templatePartType = reduce(
+			get( template, 'template_part_types' ),
+			( type, typeId ) => {
+				if ( type ) {
+					return type;
+				}
+				const typeName = get(
+					getEntityRecord( 'taxonomy', 'wp_template_part_type', typeId ),
+					'name',
+					''
+				);
+				if ( endsWith( typeName, '-header' ) ) {
+					return 'header';
+				}
+				if ( endsWith( typeName, '-footer' ) ) {
+					return 'footer';
+				}
+			},
+			undefined
+		);
+
 		return {
 			currentPostId,
 			editTemplateUrl,
 			template,
 			templateBlock: getBlock( templateClientId ),
+			templatePartType,
 			templateTitle: get( template, [ 'title', 'rendered' ], '' ),
 			isDirty: isEditedPostDirty(),
 			isEditorSidebarOpened: !! isEditorSidebarOpened(),
@@ -78,6 +100,7 @@ const TemplateEdit = compose(
 		receiveTemplateBlocks,
 		template,
 		templateBlock,
+		templatePartType,
 		templateTitle,
 		isDirty,
 		savePost,
@@ -177,6 +200,7 @@ const TemplateEdit = compose(
 							) }
 							<Button
 								className={ navigateToTemplate ? 'hidden' : null }
+								data-template-part-type={ templatePartType }
 								href={ editTemplateUrl }
 								onClick={ save }
 								isDefault
