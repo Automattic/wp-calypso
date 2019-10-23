@@ -10,7 +10,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { addSchemeIfMissing, setUrlScheme, resemblesUrl, omitUrlParams } from '../';
+import { addSchemeIfMissing, setUrlScheme, omitUrlParams } from '../';
 
 describe( 'addSchemeIfMissing()', () => {
 	test( 'should add scheme if missing', () => {
@@ -58,48 +58,6 @@ describe( 'setUrlScheme()', () => {
 		const actual = setUrlScheme( source, 'http' );
 
 		expect( actual ).to.equal( expected );
-	} );
-} );
-
-describe( 'resemblesUrl()', () => {
-	test( 'should detect a URL', () => {
-		const source = 'http://example.com/path';
-		expect( resemblesUrl( source ) ).to.equal( true );
-	} );
-
-	test( 'should detect a URL without protocol', () => {
-		const source = 'example.com';
-		expect( resemblesUrl( source ) ).to.equal( true );
-	} );
-
-	test( 'should detect a URL with a query string', () => {
-		const source = 'http://example.com/path?query=banana&query2=pineapple';
-		expect( resemblesUrl( source ) ).to.equal( true );
-	} );
-
-	test( 'should detect a URL with a short suffix', () => {
-		const source = 'http://example.cc';
-		expect( resemblesUrl( source ) ).to.equal( true );
-	} );
-
-	test( 'should return false with adjacent dots', () => {
-		const source = '..com';
-		expect( resemblesUrl( source ) ).to.equal( false );
-	} );
-
-	test( 'should return false with spaced dots', () => {
-		const source = '. . .com';
-		expect( resemblesUrl( source ) ).to.equal( false );
-	} );
-
-	test( 'should return false with a single dot', () => {
-		const source = '.';
-		expect( resemblesUrl( source ) ).to.equal( false );
-	} );
-
-	test( 'should return false if the string is not a URL', () => {
-		const source = 'exampledotcom';
-		expect( resemblesUrl( source ) ).to.equal( false );
 	} );
 } );
 
