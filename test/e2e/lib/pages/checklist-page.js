@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import assert from 'assert';
 import { By } from 'selenium-webdriver';
 
 /**
@@ -25,5 +26,16 @@ export default class ChecklistPage extends AsyncBaseContainer {
 
 	async subheaderExists() {
 		return await driverHelper.isElementPresent( this.driver, this.subheaderSelector );
+	}
+
+	async isEmailverified() {
+		const element = await this.driver.findElement(
+			By.css( '.is-completed .checklist__task-title' )
+		);
+		const emailVerifiedMessage = await element.getText();
+		return assert(
+			emailVerifiedMessage === 'You validated your email address',
+			'Could not locate message that email is verified.'
+		);
 	}
 }
