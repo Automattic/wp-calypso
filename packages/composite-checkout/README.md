@@ -59,19 +59,11 @@ Inside the component, this is a `CheckoutStep` wrapping a `CheckoutReviewOrder` 
 
 ![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/review-step.png 'Review Order Step')
 
-This step's content can be overridden using the `reviewContent` and `reviewContentCollapsed` props, which can be built from a set of building blocks provided by this package. See the example below for how to create a custom review area.
+### Customization slots
 
-The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
+Some content can be overridden using "customization slots" passed as props to the `Checkout` component. Each of these is a React element type (a component class or function) which will be rendered by `Checkout` in a particular place. The slot components can access all the custom hooks in the package and will also be passed props appropriate to that component; see each customization slot for details about what props are provided.
 
-If any event in the form causes the line items to change (for example, deleting something during the review step), the `items` should not be mutated. It is incumbent on the parent component to create a modified line item list and then update `Checkout`.
-
-The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
-
-The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
-
-### Other customizable slots
-
-There are several other optional props aside from `reviewContent` which allow customizing the contents of the form. `upSell` is a section at the bottom of the form, `checkoutHeader` is the header of the form, `orderReviewTOS` is displayed just below the payment button, and `orderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
+There are several other optional props aside from `ReviewContent` which allow customizing the contents of the form. `UpSell` is a section at the bottom of the form, `CheckoutHeader` is the header of the form, `OrderReviewTOS` is displayed just below the payment button, and `OrderReviewFeatures` may be displayed (depending on the available screen space) adjacent to the form.
 
 ![component slots](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/checkout-slots.png 'Highlighted component slots')
 
@@ -85,7 +77,7 @@ If the payment method succeeds, the `onSuccess` prop will be called instead. It'
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-## 💰 Example
+## 💰 Examples
 
 ### Example 1
 
@@ -216,7 +208,7 @@ export default function MyCheckout() {
 	} = useShoppingCart();
 
 	// Some parts of the checkout can be customized
-	const reviewContent = (
+	const ReviewContent = () => (
 		<OrderReview onDeleteItem={ deleteItem } onChangePlanLength={ changePlanLength } />
 	);
 	const reviewContentCollapsed = <OrderReviewCollapsed />;
@@ -242,7 +234,7 @@ export default function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			reviewContent={ reviewContent }
+			ReviewContent={ ReviewContent }
 			reviewContentCollapsed={ reviewContentCollapsed }
 			upSell={ upSell }
 		/>
@@ -430,7 +422,7 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 }
 ```
 
-Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retreieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
+Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
 
 ## 💰 Advanced API
 
@@ -449,12 +441,19 @@ The main component in this package. It has the following props.
 - onFailure: function (required)
 - successRedirectUrl: string (required)
 - failureRedirectUrl: string (required)
-- reviewContent: component
-- reviewContentCollapsed: component
-- upSell: component
-- checkoutHeader: component
-- orderReviewTOS: component
-- orderReviewFeatures: component
+- ReviewContent: component
+- UpSell: component
+- CheckoutHeader: component
+- OrderReviewTOS: component
+- OrderReviewFeatures: component
+
+The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
+
+If any event in a customization slot causes the line items to change (for example, deleting something during the review step), the `items` array should not be mutated. It is incumbent on the parent component to create a modified line item list and then update `Checkout`.
+
+The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
+
+The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
 
 ### CheckoutNextStepButton
 
