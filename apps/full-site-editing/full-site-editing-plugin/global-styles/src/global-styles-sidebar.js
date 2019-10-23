@@ -36,14 +36,19 @@ const toOptions = ( options, filterProperty ) =>
 				.filter( isNotNull )
 				.filter( isFor( filterProperty ) );
 
-const PanelActionButtons = ( { hasLocalChanges, resetAction, publishAction, className } ) => (
+const PanelActionButtons = ( {
+	hasLocalChanges,
+	resetAction,
+	publishAction,
+	className = null,
+} ) => (
 	<div className={ className }>
 		<Button disabled={ ! hasLocalChanges } isDefault onClick={ resetAction }>
 			{ __( 'Reset' ) }
 		</Button>
 		<Button
+			className={ 'global-styles-sidebar__publish-button' }
 			disabled={ ! hasLocalChanges }
-			style={ { marginLeft: '1em' } }
 			isPrimary
 			onClick={ publishAction }
 		>
@@ -130,7 +135,7 @@ export default ( {
 						hasLocalChanges={ hasLocalChanges }
 						publishAction={ publish }
 						resetAction={ resetLocalChanges }
-						className={ 'global-styles-sidebar__publish-buttons' }
+						className={ 'global-styles-sidebar__panel-action-buttons' }
 					/>
 				</PanelBody>
 			</PluginSidebar>

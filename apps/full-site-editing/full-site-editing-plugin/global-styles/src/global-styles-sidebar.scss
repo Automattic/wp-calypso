@@ -11,8 +11,12 @@
 	}
 }
 
-.global-styles-sidebar__publish-buttons {
+.global-styles-sidebar__panel-action-buttons {
 	display: flex;
 	justify-content: flex-end;
 	margin-bottom: 96px;
+}
+
+.global-styles-sidebar__publish-button {
+	margin-left: 1em;
 }
