@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
 export default ( { unsupportedFeature } ) => (
-	<p>{ `Your current theme doesn't support ${ unsupportedFeature } customization.` }</p>
+	<p>{ __( "Your active theme doesn't support this feature: " ) + unsupportedFeature + '.' }</p>
 );

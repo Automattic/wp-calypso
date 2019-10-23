@@ -43,7 +43,7 @@ export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 					} ) }
 				</div>
 			) : (
-				<NoSupport unsupportedFeature="font pairings" />
+				<NoSupport unsupportedFeature={ __( 'font pairings' ) } />
 			) }
 		</>
 	);

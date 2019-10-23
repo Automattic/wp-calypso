@@ -24,7 +24,7 @@ export default ( {
 	updateHeadingsFont,
 } ) => {
 	if ( ! fontBaseOptions || ! fontHeadingsOptions ) {
-		return <NoSupport unsupportedFeature="custom font selection" />;
+		return <NoSupport unsupportedFeature={ __( 'custom font selection' ) } />;
 	}
 
 	return (
