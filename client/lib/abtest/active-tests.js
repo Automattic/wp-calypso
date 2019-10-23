@@ -115,16 +115,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	checkoutCollectPhoneNumber: {
-		datestamp: '20191007',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	verticalSuggestedThemes: {
 		datestamp: '20191011',
 		variations: {
