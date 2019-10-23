@@ -30,7 +30,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -197,11 +197,10 @@ class StatsModule extends Component {
 					{ summary && 'countryviews' === path && (
 						<UpgradeNudge
 							title={ translate( 'Add Google Analytics' ) }
-							message={ translate(
-								'Upgrade to a Business Plan for Google Analytics integration.'
-							) }
+							message={ translate( 'Upgrade to a Premium Plan for Google Analytics integration.' ) }
 							event="googleAnalytics-stats-countries"
 							feature={ FEATURE_GOOGLE_ANALYTICS }
+							plan={ PLAN_PREMIUM }
 						/>
 					) }
 				</Card>

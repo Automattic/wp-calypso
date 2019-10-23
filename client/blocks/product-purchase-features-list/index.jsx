@@ -149,6 +149,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
 				<GoogleVouchers selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
