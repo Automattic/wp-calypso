@@ -3,9 +3,9 @@
 /**
  * WordPress dependencies
  */
-import { compose } from '@wordpress/compose';
+import { compose, withState } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
-import { Fragment } from '@wordpress/element';
+import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -13,11 +13,23 @@ import { __ } from '@wordpress/i18n';
  */
 import useSiteOptions from '../useSiteOptions';
 
+// @TODO: These should probably come from the existing set of options on the backend.
+// They already have translation variations which could be incorporated here.
+const creditOptions = [
+	{ label: 'WordPress.com', value: 'com' },
+	{ label: 'WordPress.com Logo', value: 'svg' },
+	{ label: 'A WordPress.com Website', value: 'acom' },
+	{ label: 'Blog at WordPress.com', value: 'blog' },
+	{ label: 'Powered by WordPress.com', value: 'powered' },
+];
+
 function SiteCreditEdit( {
 	createErrorNotice,
 	isSelected,
 	setAttributes,
 	shouldUpdateSiteOption,
+	creditOption,
+	setState,
 } ) {
 	const inititalDescription = __( 'Site credit loading…' );
 
@@ -32,15 +44,19 @@ function SiteCreditEdit( {
 
 	const { option } = siteOptions;
 
+	const setOption = newOption => setState( { creditOption: newOption } );
+
 	return (
-		<Fragment>
-			<span class="site-name">{ option }</span>
-			<span class="comma">,</span>
-		</Fragment>
+		<div className="site-info">
+			<span className="site-name">{ option }</span>
+			<span className="comma">,</span>
+			<SelectControl onChange={ setOption } value={ creditOption } options={ creditOptions } />
+		</div>
 	);
 }
 
 export default compose( [
+	withState( { creditOption: 'acom' } ),
 	withSelect( ( select, { clientId } ) => {
 		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
 			'core/editor'
