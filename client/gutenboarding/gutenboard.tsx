@@ -15,6 +15,7 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import classnames from 'classnames';
 import React, { useState } from 'react';
+import '@wordpress/components/build-style/style.css';
 
 /**
  * Internal dependencies
