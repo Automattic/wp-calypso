@@ -1,9 +1,6 @@
 /**
  * Externals dependencies
- *
- * @format
  */
-
 import { mapValues } from 'lodash';
 
 /**
@@ -14,11 +11,9 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS } from 'woocommerce/woocommerce-services/state/action-types';
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 
-const reducers = {};
-
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ] = ( state, { data } ) => {
+function handleRequestSuccess( state, { data } ) {
 	const newState = { ...state };
 	data.forEach( method => {
 		newState[ method.id ] = {
@@ -33,9 +28,9 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ] = ( state, { data 
 	} );
 
 	return newState;
-};
+}
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = ( state, { data, originatingAction } ) => {
+function handleMethodUpdated( state, { data, originatingAction } ) {
 	if ( ! data.id ) {
 		// WCS endpoints don't return the data on success, get that info from the originatingAction
 		return {
@@ -48,13 +43,10 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = ( state, { data, originat
 			},
 		};
 	}
-	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ]( state, { data: [ data ] } );
-};
+	return handleRequestSuccess( state, { data: [ data ] } );
+}
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ] = (
-	state,
-	{ instanceId, data }
-) => {
+function handleSettingsRequestSuccess( state, { instanceId, data } ) {
 	return {
 		...state,
 		[ instanceId ]: {
@@ -62,6 +54,16 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ] =
 			...data.formData,
 		},
 	};
-};
+}
 
-export default createReducer( {}, reducers );
+export default withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS:
+			return handleRequestSuccess( state, action );
+		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED:
+			return handleMethodUpdated( state, action );
+		case WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS:
+			return handleSettingsRequestSuccess( state, action );
+	}
+	return state;
+} );
