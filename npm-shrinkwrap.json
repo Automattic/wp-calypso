@@ -339,6 +339,11 @@
 			"version": "file:packages/calypso-color-schemes",
 			"dev": true
 		},
+		"@automattic/color-studio": {
+			"version": "2.2.0",
+			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
+			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
+		},
 		"@automattic/components": {
 			"version": "file:packages/components",
 			"requires": {
@@ -348,11 +353,6 @@
 				"prop-types": "^15.7.2",
 				"react": "^16.8.3"
 			}
-		},
-		"@automattic/color-studio": {
-			"version": "2.2.0",
-			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
-			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
 		},
 		"@automattic/composite-checkout": {
 			"version": "file:packages/composite-checkout",
@@ -3423,9 +3423,9 @@
 			}
 		},
 		"@types/wordpress__data": {
-			"version": "4.6.3",
-			"resolved": "https://registry.npmjs.org/@types/wordpress__data/-/wordpress__data-4.6.3.tgz",
-			"integrity": "sha512-cGcnhrk2c7eb6YDu83elXMgECeYMG5Y/sCVhmE6FVO+U7blkEiHIgqHlfvGPgOP3sYF3UF0tB/0aojNd59ZzsA==",
+			"version": "4.6.4",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__data/-/wordpress__data-4.6.4.tgz",
+			"integrity": "sha512-bFPMcI7o38oclBd/IosemFJ1WcastN5AQz3rYBK8Ki1rCQzdRlozDUYigRy7BveyBoWEI5dbo+GlPCy94Qo7yw==",
 			"dev": true,
 			"requires": {
 				"@types/wordpress__element": "*",
@@ -25245,6 +25245,21 @@
 					"resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
 					"integrity": "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==",
 					"dev": true
+				},
+				"qs": {
+					"version": "6.7.0",
+					"resolved": "https://registry.npmjs.org/qs/-/qs-6.7.0.tgz",
+					"integrity": "sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==",
+					"dev": true
+				},
+				"rimraf": {
+					"version": "2.7.1",
+					"resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz",
+					"integrity": "sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==",
+					"dev": true,
+					"requires": {
+						"glob": "^7.1.3"
+					}
 				},
 				"safe-buffer": {
 					"version": "5.1.2",
