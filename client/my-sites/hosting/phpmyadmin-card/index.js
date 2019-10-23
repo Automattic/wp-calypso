@@ -80,7 +80,7 @@ export default connect( state => {
 
 	return {
 		token: get( pmaTokenRequest.data, 'token', null ),
-		loading: pmaTokenRequest.status === 'pending',
+		loading: pmaTokenRequest.state === 'pending',
 		siteId,
 	};
 } )( localize( PhpMyAdminCard ) );
