@@ -6,6 +6,7 @@
  */
 import * as React from 'react';
 import moment from 'moment';
+import { Falsey } from 'utility-types';
 
 declare namespace i18nCalypso {
 	type NormalizedTranslateArgs =
@@ -27,7 +28,9 @@ declare namespace i18nCalypso {
 		[ placeholder: string ]: React.ReactElement;
 	}
 
-	export interface TranslateOptions {
+	export type TranslateOptions = TranslateOptionsText | TranslateOptionsComponents;
+
+	export interface TranslateOptionsBase {
 		/**
 		 * Arguments you would pass into sprintf to be run against the text for string substitution.
 		 */
@@ -39,15 +42,29 @@ declare namespace i18nCalypso {
 		comment?: string;
 
 		/**
-		 * Components to be interpolated in the translated string.
-		 */
-		components?: ComponentInterpolations;
-
-		/**
 		 * Provides the ability for the translator to provide a different translation for the same text in two locations (dependent on context). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
 		 */
 		context?: string;
 	}
+
+	type TranslateOptionsText = {
+		/**
+		 * `textOnly` indicates
+		 */
+		textOnly: true;
+	} & TranslateoptionsBase;
+
+	type TranslateOptionsComponents = {
+		/**
+		 * For `textOnly` translations, we should never have `components`.
+		 */
+		components?: ComponentInterpolations;
+
+		/**
+		 * `textOnly` indicates
+		 */
+		textOnly?: Falsey;
+	} & TranslateOptionsBase;
 
 	// This deprecated signature is still supported
 	export interface DeprecatedTranslateOptions extends TranslateOptions {
@@ -59,11 +76,20 @@ declare namespace i18nCalypso {
 
 	export function translate( options: DeprecatedTranslateOptions ): TranslateResult;
 	export function translate( original: string ): TranslateResult;
-	export function translate( original: string, options: TranslateOptions ): TranslateResult;
+	export function translate( original: string, options: TranslateOptionsText ): string;
+	export function translate(
+		original: string,
+		options: TranslateOptionsComponents
+	): TranslateResult;
 	export function translate(
 		original: string,
 		plural: string,
-		options: TranslateOptions & { count: number }
+		options: TranslateOptionsText & { count: number }
+	): string;
+	export function translate(
+		original: string,
+		plural: string,
+		options: TranslateOptionsComponents & { count: number }
 	): TranslateResult;
 
 	export function hasTranslation( original: string ): boolean;
@@ -100,10 +126,14 @@ declare namespace i18nCalypso {
 
 	export function useTranslate(): typeof translate;
 
-	export type TranslateHook = (
-		translation: TranslateResult,
-		options: NormalizedTranslateArgs
-	) => TranslateResult;
+	/**
+	 * Hooks have an opportunity to modify the result of `translate`.
+	 *
+	 * `TranslateHook`s must return a `string` if they receive a `string` and `textOnly: true` option
+	 */
+	export type TranslateHook =
+		| ( ( translation: string, options: NormalizedTranslateArgs & { textOnly: true } ) => string )
+		| ( ( translation: TranslateResult, options: NormalizedTranslateArgs ) => TranslateResult );
 
 	export function registerTranslateHook( hook: TranslateHook ): void;
 }
