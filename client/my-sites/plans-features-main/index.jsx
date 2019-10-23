@@ -28,8 +28,8 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 import {
-	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS_MONTHLY,
+	JETPACK_BACKUP_PRODUCTS_YEARLY,
 	PRODUCT_JETPACK_BACKUP,
 } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
@@ -84,7 +84,7 @@ const jetpackProducts = [
 		),
 		id: PRODUCT_JETPACK_BACKUP,
 		options: {
-			yearly: JETPACK_BACKUP_PRODUCTS,
+			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
 			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
 		},
 		optionsLabel: 'Backup options',
