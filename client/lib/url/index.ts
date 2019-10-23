@@ -7,8 +7,6 @@ import { has, isString, omit, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { URL, Scheme } from 'types';
 import { Falsey } from 'utility-types';
 
@@ -17,6 +15,7 @@ import { Falsey } from 'utility-types';
  */
 export { addQueryArgs } from 'lib/route';
 export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
+export { default as isExternal } from './is-external';
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -29,40 +28,6 @@ export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
  */
 export function isOutsideCalypso( url: URL ): boolean {
 	return !! url && ( startsWith( url, '//' ) || ! startsWith( url, '/' ) );
-}
-
-export function isExternal( url: URL ): boolean {
-	// parseURL will return hostname = null if no protocol or double-slashes
-	// the url passed in might be of form `en.support.wordpress.com`
-	// so for this function we'll append double-slashes to fake it
-	// if it is a relative URL the hostname will still be empty from parseURL
-	if (
-		! startsWith( url, 'http://' ) &&
-		! startsWith( url, 'https://' ) &&
-		! startsWith( url, '//' )
-	) {
-		url = '//' + url;
-	}
-
-	const { hostname, path } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
-
-	if ( ! hostname ) {
-		return false;
-	}
-
-	if ( typeof window !== 'undefined' ) {
-		if ( hostname === window.location.hostname ) {
-			// even if hostname matches, the url might be outside calypso
-			// outside calypso should be considered external
-			// double separators are valid paths - but not handled correctly
-			if ( path && isLegacyRoute( path.replace( '//', '/' ) ) ) {
-				return true;
-			}
-			return false;
-		}
-	}
-
-	return hostname !== config( 'hostname' );
 }
 
 export function isHttps( url: URL ): boolean {
