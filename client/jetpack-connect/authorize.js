@@ -283,7 +283,12 @@ export class JetpackAuthorize extends Component {
 		// If the redirect flag is set, then we conditionally redirect the Pressable client to
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
-		return pressableRedirectFlag ? partnerID && 'pressable' !== partnerSlug : partnerID;
+		if ( pressableRedirectFlag ) {
+			return partnerID && 'pressable' !== partnerSlug;
+		}
+
+		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
+		return partnerID;
 	}
 
 	handleSignIn = () => {
