@@ -5,7 +5,7 @@ export const PRODUCT_JETPACK_BACKUP_REALTIME = 'jetpack_backup_realtime';
 export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthly';
 export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
 
-export const JETPACK_BACKUP_PRODUCTS = [
+export const JETPACK_BACKUP_PRODUCTS_YEARLY = [
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 ];
