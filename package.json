@@ -353,7 +353,7 @@
 		"prettier": "npm:wp-prettier@1.18.2",
 		"react-test-renderer": "16.10.2",
 		"readline-sync": "1.4.9",
-		"replace": "1.1.0",
+		"replace": "1.1.1",
 		"rimraf": "3.0.0",
 		"sinon": "7.4.2",
 		"sinon-chai": "3.3.0",
