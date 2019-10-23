@@ -12,26 +12,27 @@ import {
 	ObserveTyping,
 } from '@wordpress/block-editor';
 import { Popover, SlotFillProvider, DropZoneProvider } from '@wordpress/components';
-import { registerCoreBlocks } from '@wordpress/block-library';
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import '@wordpress/edit-post/build-style/style.css';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/block-editor/build-style/style.css';
-import '@wordpress/block-library/build-style/style.css';
-import '@wordpress/block-library/build-style/editor.css';
-import '@wordpress/block-library/build-style/theme.css';
 import '@wordpress/format-library/build-style/style.css';
 
 /**
  * Internal dependencies
  */
 import { Header } from 'gutenboarding/components/header';
+import { name, settings } from './onboarding-block';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
 import './style.scss';
 
+registerBlockType( name, settings );
+
+const onboardingBlock = createBlock( name, {} );
+
 export function Gutenboard() {
-	const [ blocks, updateBlocks ] = useState( [] );
 	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( true );
 
 	function toggleGeneralSidebar() {
@@ -46,7 +47,7 @@ export function Gutenboard() {
 			/>
 			<SlotFillProvider>
 				<DropZoneProvider>
-					<BlockEditorProvider value={ blocks } onInput={ updateBlocks } onChange={ updateBlocks }>
+					<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
 						<div className="gutenboarding__block-editor">
 							<BlockEditorKeyboardShortcuts />
 
@@ -65,5 +66,3 @@ export function Gutenboard() {
 		</div>
 	);
 }
-
-registerCoreBlocks();

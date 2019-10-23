@@ -167,6 +167,7 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -175,7 +176,6 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_THEMES,
-			constants.FEATURE_GOOGLE_ANALYTICS,
 			constants.FEATURE_NO_BRANDING,
 			constants.FEATURE_ACCEPT_PAYMENTS,
 			constants.FEATURE_SHIPPING_CARRIERS,
@@ -226,6 +226,7 @@ const getPlanPremiumDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Freelancers:{{/strong}}' +
 				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.',
 			{
 				components: {
@@ -238,6 +239,7 @@ const getPlanPremiumDetails = () => ( {
 	getShortDescription: () =>
 		i18n.translate(
 			'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
 	getPlanCompareFeatures: () =>
@@ -250,6 +252,7 @@ const getPlanPremiumDetails = () => ( {
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_13GB_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -293,8 +296,7 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, 200 GB' +
-				' storage, and the ability to remove WordPress.com branding.',
+				' 200 GB storage, and the ability to remove WordPress.com branding.',
 			{
 				components: {
 					strong: (
@@ -306,8 +308,7 @@ const getPlanBusinessDetails = () => ( {
 	getShortDescription: () =>
 		i18n.translate(
 			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
-				' Google Analytics support, 200 GB' +
-				' storage, and the ability to remove WordPress.com branding.'
+				' 200 GB storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
 		i18n.translate(
@@ -323,6 +324,7 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_UNLIMITED_STORAGE,
 			constants.FEATURE_NO_ADS,
+			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
 			constants.FEATURE_SIMPLE_PAYMENTS,
 			constants.FEATURE_WORDADS_INSTANT,
@@ -331,7 +333,6 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && constants.FEATURE_UPLOAD_THEMES,
-			constants.FEATURE_GOOGLE_ANALYTICS,
 			constants.FEATURE_NO_BRANDING,
 		] ),
 	getPromotedFeatures: () => [

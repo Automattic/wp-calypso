@@ -37,6 +37,7 @@ import {
 	hasPlan,
 	hasOnlyRenewalItems,
 	hasTransferProduct,
+	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
@@ -293,6 +294,10 @@ export class Checkout extends React.Component {
 
 		if ( startsWith( this.props.product, 'concierge-session' ) ) {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
+		}
+
+		if ( startsWith( this.props.product, 'jetpack_backup' ) ) {
+			cartItem = jetpackProductItem( this.props.product );
 		}
 
 		if ( cartItem ) {

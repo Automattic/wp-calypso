@@ -3,17 +3,17 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import page from 'page';
 import { connect } from 'react-redux';
-import { find, flattenDeep, flowRight as compose, includes, isEmpty, map, uniq } from 'lodash';
+import { find, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import Card from 'components/card';
 import ProductCard from 'components/product-card';
+import ProductCardAction from 'components/product-card/action';
+import ProductCardOptions from 'components/product-card/options';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
@@ -21,6 +21,7 @@ import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
@@ -59,8 +60,6 @@ export class ProductSelector extends Component {
 		const { intervalType, purchases } = this.props;
 		const productSlugs = product.options[ intervalType ];
 
-		// TODO: Implement logic for plans that contan certain Jetpack products.
-
 		return find(
 			purchases,
 			purchase => purchase.active && includes( productSlugs, purchase.productSlug )
@@ -75,8 +74,6 @@ export class ProductSelector extends Component {
 			return;
 		}
 
-		// TODO: Implement logic for plans that contan certain Jetpack products.
-
 		return translate( 'Purchased %(purchaseDate)s', {
 			args: {
 				purchaseDate: moment( purchase.subscribedDate ).format( 'YYYY-MM-DD' ),
@@ -84,12 +81,49 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	handleProductOptionSelect( stateKey, productSlug ) {
+	getProductOptions( product ) {
+		const { intervalType, storeProducts } = this.props;
+		const productSlugs = product.options[ intervalType ];
+
+		return productSlugs.map( productSlug => {
+			const productObject = storeProducts[ productSlug ];
+			return {
+				billingTimeFrame: this.getBillingTimeFrameLabel(),
+				currencyCode: productObject.currency_code,
+				fullPrice: productObject.cost,
+				slug: productSlug,
+				title: productObject.product_name,
+			};
+		} );
+	}
+
+	handleCheckoutForProduct = productObject => {
+		const { selectedSiteSlug } = this.props;
+
 		return () => {
-			this.setState( {
-				[ stateKey ]: productSlug,
-			} );
+			page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
 		};
+	};
+
+	handleProductOptionSelect( stateKey, productSlug ) {
+		this.setState( {
+			[ stateKey ]: productSlug,
+		} );
+	}
+
+	renderCheckoutButton( productObject ) {
+		const { translate } = this.props;
+
+		return (
+			<ProductCardAction
+				onClick={ this.handleCheckoutForProduct( productObject ) }
+				label={ translate( 'Upgrade to %(productName)s', {
+					args: {
+						productName: productObject.product_name,
+					},
+				} ) }
+			/>
+		);
 	}
 
 	renderProducts() {
@@ -102,62 +136,37 @@ export class ProductSelector extends Component {
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const productObject = storeProducts[ selectedProductSlug ];
+			const stateKey = this.getStateKey( product.id, intervalType );
+			const purchase = this.getPurchaseByProduct( product );
 
 			return (
-				<Fragment key={ 'product-' + product.id }>
-					<ProductCard
-						key={ product.id }
-						title={ product.title }
-						billingTimeFrame={ this.getBillingTimeFrameLabel() }
-						fullPrice={ productObject.cost }
-						description={ product.description }
-						currencyCode={ currencyCode }
-						purchase={ this.getPurchaseByProduct( product ) }
-						subtitle={ this.getSubtitleByProduct( product ) }
-					/>
+				<ProductCard
+					key={ product.id }
+					title={ product.title }
+					billingTimeFrame={ this.getBillingTimeFrameLabel() }
+					fullPrice={ productObject.cost }
+					description={ <p>{ product.description }</p> }
+					currencyCode={ currencyCode }
+					purchase={ purchase }
+					subtitle={ this.getSubtitleByProduct( product ) }
+				>
+					{ ! purchase && (
+						<Fragment>
+							<ProductCardOptions
+								optionsLabel={ product.optionsLabel }
+								options={ this.getProductOptions( product ) }
+								selectedSlug={ this.state[ stateKey ] }
+								handleSelect={ productSlug =>
+									this.handleProductOptionSelect( stateKey, productSlug )
+								}
+							/>
 
-					{ this.renderProductOptions( product ) }
-				</Fragment>
+							{ this.renderCheckoutButton( productObject ) }
+						</Fragment>
+					) }
+				</ProductCard>
 			);
 		} );
-	}
-
-	renderProductOptions( product ) {
-		const { intervalType, storeProducts } = this.props;
-		const productSlugs = product.options[ intervalType ];
-		const stateKey = this.getStateKey( product.id, intervalType );
-
-		return (
-			<Card>
-				<h4>{ product.optionsLabel }</h4>
-
-				{ productSlugs.map( productSlug => {
-					const productObject = storeProducts[ productSlug ];
-
-					/**
-					 * TODO: Replace with a ProductOption component.
-					 *
-					 * This will eventually render a product options component and we'll pass it some props like:
-					 * - handleSelect={ this.handleProductOptionSelect( stateKey, productSlug ) }
-					 * - checked={ productSlug === this.state[ stateKey ] }
-					 * - product={ productObject }
-					 */
-					return (
-						<Fragment key={ 'product-option-' + productSlug }>
-							<FormLabel>
-								<FormRadio
-									checked={ productSlug === this.state[ stateKey ] }
-									onChange={ this.handleProductOptionSelect( stateKey, productSlug ) }
-								/>
-								<span>
-									{ productObject.product_name } - { productObject.cost_display }
-								</span>
-							</FormLabel>
-						</Fragment>
-					);
-				} ) }
-			</Card>
-		);
 	}
 
 	render() {
@@ -200,7 +209,7 @@ ProductSelector.propTypes = {
 
 const connectComponent = connect( ( state, { products, siteId } ) => {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
-	const productSlugs = uniq( flattenDeep( products.map( extractProductSlugs ) ) );
+	const productSlugs = extractProductSlugs( products );
 	const availableProducts = getAvailableProductsList( state );
 
 	return {
@@ -208,6 +217,7 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 		productSlugs,
 		purchases: getSitePurchases( state, selectedSiteId ),
 		selectedSiteId,
+		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
 		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
 	};
 } );

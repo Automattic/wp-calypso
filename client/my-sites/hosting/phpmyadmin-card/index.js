@@ -47,8 +47,8 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
 	}, [ pmaLink, loading ] );
 
 	return (
-		<Card>
-			<div className="phpmyadmin-card__icon-col">
+		<Card className="phpmyadmin-card">
+			<div className="phpmyadmin-card__icon">
 				<MaterialIcon icon="dns" size={ 32 } />
 			</div>
 			<div>
@@ -59,7 +59,8 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
 					) }
 				</p>
 				<Button onClick={ () => requestPmaLink( siteId ) } busy={ loading }>
-					{ translate( 'Access PHPMyAdmin' ) }
+					<span>{ translate( 'Open PHPMyAdmin' ) }</span>
+					<MaterialIcon icon="launch" size={ 16 } />
 				</Button>
 			</div>
 		</Card>

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,15 +12,8 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import ProductCardPriceGroup from './price-group';
 
-const ProductCardOptions = ( {
-	billingTimeFrame,
-	currencyCode,
-	handleSelect,
-	options,
-	optionsLabel,
-	selectedSlug,
-} ) => {
-	if ( ! options ) {
+const ProductCardOptions = ( { handleSelect, options, optionsLabel, selectedSlug } ) => {
+	if ( isEmpty( options ) ) {
 		return null;
 	}
 
@@ -35,8 +29,8 @@ const ProductCardOptions = ( {
 					<div className="product-card__option-description">
 						<div className="product-card__option-name">{ option.title }</div>
 						<ProductCardPriceGroup
-							billingTimeFrame={ billingTimeFrame }
-							currencyCode={ currencyCode }
+							billingTimeFrame={ option.billingTimeFrame }
+							currencyCode={ option.currencyCode }
 							discountedPrice={ option.discountedPrice }
 							fullPrice={ option.fullPrice }
 						/>
@@ -48,11 +42,11 @@ const ProductCardOptions = ( {
 };
 
 ProductCardOptions.propTypes = {
-	billingTimeFrame: PropTypes.string,
-	currencyCode: PropTypes.string,
 	handleSelect: PropTypes.func,
 	options: PropTypes.arrayOf(
 		PropTypes.shape( {
+			billingTimeFrame: PropTypes.string,
+			currencyCode: PropTypes.string,
 			discountedPrice: PropTypes.oneOfType( [
 				PropTypes.number,
 				PropTypes.arrayOf( PropTypes.number ),

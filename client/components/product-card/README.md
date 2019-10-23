@@ -87,7 +87,7 @@ export default class extends React.Component {
 		return (
 			<ProductCard
 				title="Jetpack Backup"
-				billingTimeFrame={ 'per year' }
+				billingTimeFrame={ 'per month' }
 				fullPrice={ [ 16, 25 ] }
 				discountedPrice={ [ 12, 16 ] }
 				description={
@@ -98,16 +98,17 @@ export default class extends React.Component {
 				}
 			>
 				<ProductCardOptions
-					billingTimeFrame={ 'per year' }
 					optionsLabel="Backup options:"
 					options={ [
 						{
+							billingTimeFrame={ 'per month' }
 							discountedPrice: 12,
 							fullPrice: 14,
 							slug: 'jetpack_backup_daily_monthly',
 							title: 'Daily Backups',
 						},
 						{
+							billingTimeFrame={ 'per month' }
 							fullPrice: 25,
 							slug: 'jetpack_backup_realtime_monthly',
 							title: 'Real-Time Backups',
@@ -126,12 +127,12 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Options component:
 
-* `billingTimeFrame`: ( string ) Billing time frame label
-* `currencyCode`: ( string ) Currency code
 * `handleSelect`: ( func ) Handler function for option selection. A product option `slug` is passed as an argument to
  the handler function
 * `options`: ( array ) List of product options to render Each option should be an object. The shape of an option
  object is as follows:
+  * `options.billingTimeFrame`: ( string ) Billing time frame label
+  * `options.currencyCode`: ( string ) Currency code
   * `options.discountedPrice`: ( number | array ) Discounted price of a product option. If an array of 2 numbers is
    passed, it will be displayed as a price range
   * `options.fullPrice`: ( number | array ) Full price of a product option. If an array of 2 numbers is passed, it

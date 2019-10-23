@@ -5,7 +5,7 @@ This is a helper component to redirect once it has been detected that the user i
 ## How It Works
 
 On mount, it consults the global state tree. If a user is detected, it kicks off the redirect.
-If a user is not detected, it subscribes to the `storage` event and listens for changes to the `wpcom_user` key.
+If a user is not detected, it subscribes to the `storage` event and listens for changes to the `wpcom_user_id` key.
 
 ## Usage
 ```javascript

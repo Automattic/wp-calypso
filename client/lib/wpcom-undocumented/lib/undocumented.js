@@ -1108,9 +1108,8 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
 };
 
 /**
- * GET/POST transactions
+ * POST create a payment transaction
  *
- * @param {string} [method] The request method
  * @param {object} [data] The REQUEST data
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
@@ -1125,25 +1124,8 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
  *		locale: {string} Locale for translating strings in response data,
  * }
  */
-Undocumented.prototype.transactions = function( method, data, fn ) {
-	debug( '/me/transactions query' );
-
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	} else {
-		data = mapKeysRecursively( data, snakeCase );
-	}
-
-	return this._sendRequest(
-		{
-			path: '/me/transactions',
-			method: method,
-			body: data,
-		},
-		fn
-	);
+Undocumented.prototype.transactions = function( data, fn ) {
+	return this.wpcom.req.post( '/me/transactions', mapKeysRecursively( data, snakeCase ), fn );
 };
 
 Undocumented.prototype.updateCreditCard = function( params, fn ) {

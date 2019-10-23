@@ -272,59 +272,46 @@
 
 // Loading state
 .product-card.is-placeholder .product-card__price-group {
-	position: relative;
-	width: 150px;
-	height: 32px;
-	margin-bottom: 17px;
-
-	@include breakpoint( '>660px' ) {
-		height: 16px;
-		margin-bottom: 0;
-	}
-
-	&::before,
-	&::after {
-		@include placeholder( --color-neutral-10 );
-		content: '';
-		position: absolute;
-		left: 0;
-	}
-
 	&::before {
-		top: 0;
-		width: 100%;
-		height: calc( 100% + 3px );
-	}
-
-	&::after {
-		top: 38px;
-		width: 100px;
-		height: 11px;
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 150px;
+		height: 32px;
+		margin: 0 0 4px;
 
 		@include breakpoint( '>660px' ) {
-			content: none;
+			height: 18px;
+		}
+	}
+
+	.product-card__billing-timeframe {
+		@include breakpoint( '>660px' ) {
+			display: none;
+		}
+	}
+
+	.product-card__billing-timeframe::before {
+		@include placeholder( --color-neutral-10 );
+		content: '\00a0';
+		display: inline-block;
+		width: 100px;
+		height: 11px;
+	}
+}
+
+.product-card.is-placeholder .product-card__option {
+	.product-card__price-group::before {
+		width: 125px;
+		height: 16px;
+		margin: 0;
+
+		@include breakpoint( '>660px' ) {
+			margin: 5px 0 0;
 		}
 	}
 
 	.product-card__billing-timeframe {
 		display: none;
-	}
-}
-
-.product-card.is-placeholder .product-card__option .product-card__price-group {
-	width: 125px;
-	height: 18px;
-	margin: 0;
-
-	@include breakpoint( '>660px' ) {
-		margin-top: 3px;
-	}
-
-	&::before {
-		height: 100%;
-	}
-
-	&::after {
-		content: none;
 	}
 }
