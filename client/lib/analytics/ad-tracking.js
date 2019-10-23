@@ -12,14 +12,13 @@ import { v4 as uuid } from 'uuid';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { loadScript as loadScriptCallback } from '@automattic/load-script';
+import { loadScript } from '@automattic/load-script';
 import {
 	isAdTrackingAllowed,
 	hashPii,
 	costToUSD,
 	getNormalizedHashedUserEmail,
 } from 'lib/analytics/utils';
-import { promisify } from '../../utils';
 import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
 
 /**
@@ -348,8 +347,6 @@ function setupAdRollGlobal() {
 		};
 	}
 }
-
-const loadScript = promisify( loadScriptCallback );
 
 async function loadTrackingScripts( callback ) {
 	debug( `loadTrackingScripts: state is ${ trackingState }` );
