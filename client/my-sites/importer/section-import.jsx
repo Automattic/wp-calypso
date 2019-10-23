@@ -260,7 +260,11 @@ class SectionImport extends Component {
 	};
 
 	renderImportersList() {
-		const sectionHeaderLabel = this.props.translate( 'I want to import content from:' );
+		const { translate } = this.props;
+		const isSpecificImporter = ! isEmpty( this.state.importers );
+		const sectionHeaderLabel = isSpecificImporter
+			? translate( 'Importing content from:' )
+			: translate( 'I want to import content from:' );
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
