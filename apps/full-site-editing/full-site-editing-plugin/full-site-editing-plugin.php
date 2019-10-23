@@ -157,6 +157,7 @@ function load_starter_page_templates() {
 	if ( isset( $_GET['jetpack-copy'] ) ) {
 		return;
 	}
+
 	/**
 	 * Can be used to disable the Starter Page Templates.
 	 *
