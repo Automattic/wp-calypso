@@ -23,7 +23,7 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 				<img
 					className="tools__header-image"
 					src="/calypso/images/illustrations/illustration-404.svg"
-					alt={ translate( 'Your site with Marketing Tools' ) }
+					alt={ translate( 'Your site with Marketing Tools', { textOnly: true } ) }
 				/>
 			</div>
 
