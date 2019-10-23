@@ -75,6 +75,7 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlacklistedError as isSiteBlacklistedSelector,
 } from 'state/jetpack-connect/selectors';
+import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
 /**
@@ -274,15 +275,20 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
-		const { partnerSlug } = props;
-		const partnerRedirectFlag = config.isEnabled(
+		const { partnerSlug, partnerID } = props;
+		const pressableRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
 
 		// If the redirect flag is set, then we conditionally redirect the Pressable client to
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
-		return partnerRedirectFlag ? partnerSlug && 'pressable' !== partnerSlug : partnerSlug;
+		if ( pressableRedirectFlag ) {
+			return partnerID && 'pressable' !== partnerSlug;
+		}
+
+		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
+		return !! partnerID;
 	}
 
 	handleSignIn = () => {
@@ -736,9 +742,10 @@ const connectComponent = connect(
 			isSiteBlacklisted: isSiteBlacklistedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
+			partnerID: getPartnerIdFromQuery( state ),
+			partnerSlug: getPartnerSlugFromQuery( state ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			partnerSlug: getPartnerSlugFromQuery( state ),
 		};
 	},
 	{
