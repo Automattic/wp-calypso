@@ -11,45 +11,6 @@ import Field from './field';
 import GridRow from './grid-row';
 import { useLocalize } from '../lib/localize';
 
-const CreditCardFieldsWrapper = styled.div`
-	padding: 16px;
-	position: relative;
-
-	:after {
-		display: block;
-		width: calc( 100% - 6px );
-		height: 1px;
-		content: '';
-		background: ${props => props.theme.colors.gray5};
-		position: absolute;
-		top: 0;
-		left: 3px;
-	}
-`;
-
-const CreditCardField = styled( Field )`
-	margin-top: 16px;
-
-	:first-child {
-		margin-top: 0;
-	}
-`;
-const FieldRow = styled( GridRow )`
-	margin-top: 16px;
-`;
-
-const CVVImage = styled( CVV )`
-	margin-top: 21px;
-	display: block;
-	width: 100%;
-`;
-
-const LockIconGraphic = styled.svg`
-	width: 17px;
-	height: 17px;
-	display: block;
-`;
-
 export default function CreditCardFields() {
 	const localize = useLocalize();
 
@@ -141,3 +102,42 @@ function LockIcon( { className } ) {
 		</LockIconGraphic>
 	);
 }
+
+const CreditCardFieldsWrapper = styled.div`
+	padding: 16px;
+	position: relative;
+
+	:after {
+		display: block;
+		width: calc( 100% - 6px );
+		height: 1px;
+		content: '';
+		background: ${props => props.theme.colors.borderColorLight};
+		position: absolute;
+		top: 0;
+		left: 3px;
+	}
+`;
+
+const CreditCardField = styled( Field )`
+	margin-top: 16px;
+
+	:first-child {
+		margin-top: 0;
+	}
+`;
+const FieldRow = styled( GridRow )`
+	margin-top: 16px;
+`;
+
+const CVVImage = styled( CVV )`
+	margin-top: 21px;
+	display: block;
+	width: 100%;
+`;
+
+const LockIconGraphic = styled.svg`
+	width: 17px;
+	height: 17px;
+	display: block;
+`;

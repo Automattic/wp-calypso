@@ -3,14 +3,13 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
 import localizeFactory, { useLocalize } from '../lib/localize';
-import { Container, LeftColumn, PageTitle } from './basics';
 import { CheckoutProvider } from './checkout-provider';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
@@ -50,7 +49,7 @@ export default function Checkout( {
 				failureRedirectUrl={ failureRedirectUrl }
 			>
 				<Container className={ joinClasses( [ className, 'checkout' ] ) }>
-					<LeftColumn>
+					<MainContent>
 						<div>
 							{ CheckoutHeader ? (
 								<CheckoutHeader />
@@ -78,7 +77,7 @@ export default function Checkout( {
 						/>
 						<CheckoutSubmitButton isActive={ stepNumber === 3 } />
 						{ UpSell && <UpSell /> }
-					</LeftColumn>
+					</MainContent>
 				</Container>
 			</CheckoutProvider>
 		</ThemeProvider>
@@ -100,6 +99,47 @@ Checkout.propTypes = {
 	UpSell: PropTypes.elementType,
 	CheckoutHeader: PropTypes.elementType,
 };
+
+const Container = styled.div`
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		max-width: 910px;
+		margin: 0 auto;
+	}
+
+	*:focus {
+		outline: ${props => props.theme.colors.outline} auto 5px;
+	}
+`;
+
+const Column = styled.div`
+	background: ${props => props.theme.colors.surface};
+	padding: 16px;
+	width: 100%;
+	box-sizing: border-box;
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${props => props.theme.colors.borderColorLight};
+		margin-top: 32px;
+		box-sizing: border-box;
+		padding: 24px;
+	}
+`;
+
+const MainContent = styled( Column )`
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		max-width: 532px;
+	}
+`;
+
+const PageTitle = styled.h1`
+	margin: 0;
+	font-weight: normal;
+	font-size: 24px;
+	color: ${props => props.theme.colors.textColorDark};
+	padding-bottom: 24px;
+`;
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {
 	const localize = useLocalize();
