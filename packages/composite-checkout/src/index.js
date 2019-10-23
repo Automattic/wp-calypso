@@ -21,18 +21,18 @@ import { usePaymentMethod, usePaymentMethodData, usePaymentMethodId } from './li
 // Re-export the public API
 export {
 	Checkout,
+	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutPaymentMethods,
-	useCheckoutLineItems,
-	usePaymentMethod,
-	usePaymentMethodId,
-	usePaymentMethodData,
-	useCheckoutHandlers,
-	useCheckoutRedirects,
-	renderDisplayValueMarkdown,
 	OrderReviewLineItems,
-	OrderReviewTotal,
 	OrderReviewSection,
+	OrderReviewTotal,
+	renderDisplayValueMarkdown,
+	useCheckoutHandlers,
+	useCheckoutLineItems,
+	useCheckoutRedirects,
+	usePaymentMethod,
+	usePaymentMethodData,
+	usePaymentMethodId,
 };
 export default Checkout;
