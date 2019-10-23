@@ -1,12 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { keys, last, noop, sortBy } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
