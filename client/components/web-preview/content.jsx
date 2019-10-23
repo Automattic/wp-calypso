@@ -104,7 +104,7 @@ export class WebPreviewContent extends Component {
 				this.props.onClose();
 				return;
 			case 'partially-loaded':
-				this.setLoaded();
+				this.setLoaded( 'iframe-message' );
 				return;
 			case 'location-change':
 				this.handleLocationChange( data.payload );
@@ -207,7 +207,7 @@ export class WebPreviewContent extends Component {
 		this.setDeviceViewport( 'seo' );
 	};
 
-	setLoaded = () => {
+	setLoaded = caller => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
@@ -222,18 +222,15 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		this.setState( { loaded: true, isLoadingSubpage: false } );
-
+		if ( caller === 'iframe-onload' && ! this.state.loaded ) {
+			window.open( this.state.iframeUrl, '_blank' );
+			this.props.onClose();
+		} else {
+			this.setState( { loaded: true, isLoadingSubpage: false } );
+		}
 		// Sometimes we force inline help open in the preview. In this case we don't want to hide it when the iframe loads
 		if ( ! this.props.isInlineHelpPopoverVisible ) {
 			this.focusIfNeeded();
-		}
-	};
-
-	setIframeLoaded = () => {
-		if ( ! this.state.loaded ) {
-			window.open( this.state.iframeUrl, '_blank' );
-			this.props.onClose();
 		}
 	};
 
@@ -286,7 +283,7 @@ export class WebPreviewContent extends Component {
 							ref={ this.setIframeInstance }
 							className="web-preview__frame"
 							src="about:blank"
-							onLoad={ this.setIframeLoaded }
+							onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 							title={ this.props.iframeTitle || translate( 'Preview' ) }
 						/>
 					</div>
