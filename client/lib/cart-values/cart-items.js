@@ -42,6 +42,7 @@ import {
 	isFreeWordPressComDomain,
 	isGoogleApps,
 	isJetpackPlan,
+	isJetpackProduct,
 	isNoAds,
 	isPlan,
 	isBlogger,
@@ -151,6 +152,11 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackPlan( cartItem ) ) {
 		// adding a jetpack bundle should replace the cart
+		return true;
+	}
+
+	if ( isJetpackProduct( cartItem ) ) {
+		// adding a Jetpack product should replace the cart
 		return true;
 	}
 
@@ -775,6 +781,12 @@ export function spaceUpgradeItem( slug ) {
 export function conciergeSessionItem() {
 	return {
 		product_slug: 'concierge-session',
+	};
+}
+
+export function jetpackProductItem( slug ) {
+	return {
+		product_slug: slug,
 	};
 }
 

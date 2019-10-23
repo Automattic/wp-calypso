@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, difference, get, isEmpty, pick } from 'lodash';
+import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -199,6 +199,20 @@ export function isVipPlan( product ) {
 
 export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
+}
+
+export function isJetpackProduct( product ) {
+	const jetpackProducts = [
+		'jetpack_backup_daily',
+		'jetpack_backup_realtime',
+		'jetpack_backup_daily_monthly',
+		'jetpack_backup_realtime_monthly',
+	];
+
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return includes( jetpackProducts, product.product_slug );
 }
 
 export function isMonthly( rawProduct ) {
