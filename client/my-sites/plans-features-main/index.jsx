@@ -418,6 +418,7 @@ export class PlansFeaturesMain extends Component {
 				<FormattedHeader
 					headerText="Single Products"
 					subHeaderText="Just looking for backups? We’ve got you covered."
+					compactOnMobile
 				/>
 				<ProductSelector products={ jetpackProducts } intervalType={ intervalType } />
 			</div>
