@@ -16,6 +16,7 @@ import { Falsey } from 'utility-types';
 export { addQueryArgs } from 'lib/route';
 export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
 export { default as isExternal } from './is-external';
+export { default as resemblesUrl } from './resembles-url';
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -55,45 +56,6 @@ export function setUrlScheme( url: URL, scheme: Scheme ) {
 	}
 
 	return url.replace( schemeRegex, schemeWithSlashes );
-}
-
-/**
- * Checks if the supplied string appears to be a URL.
- * Looks only for the absolute basics:
- *  - does it have a .suffix?
- *  - does it have at least two parts separated by a dot?
- *
- * @param  query The string to check
- * @return       Does it appear to be a URL?
- */
-export function resemblesUrl( query: string ): boolean {
-	if ( ! query ) {
-		return false;
-	}
-
-	let parsedUrl = parseUrl( query );
-
-	// Make sure the query has a protocol - hostname ends up blank otherwise
-	if ( ! parsedUrl.protocol ) {
-		parsedUrl = parseUrl( 'http://' + query );
-	}
-
-	if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
-		return false;
-	}
-
-	// Check for a valid-looking TLD
-	if ( parsedUrl.hostname.lastIndexOf( '.' ) > parsedUrl.hostname.length - 3 ) {
-		return false;
-	}
-
-	// Make sure the hostname has at least two parts separated by a dot
-	const hostnameParts = parsedUrl.hostname.split( '.' ).filter( Boolean );
-	if ( hostnameParts.length < 2 ) {
-		return false;
-	}
-
-	return true;
 }
 
 /**
