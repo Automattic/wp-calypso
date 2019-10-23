@@ -161,8 +161,8 @@ See [README-DATA.md](./README-DATA.md).
 
 This filter can be used to add _an additional check_ to decide whether 1) the global styles sidebar is enqueued and 2) the REST API endpoint should return the data. Note the existing checks in place:
 
-- The Global Styles sidebar is enqueued if the theme has declared support.
-- The REST API Endpoint return the data if the user is logged in.
+- The user is logged in and has the `customize` capability.
+- The site uses a theme that has declared support for `jetpack-global-styles`.
 
 ```php
 function permission_check_callback( $has_permissions ) {

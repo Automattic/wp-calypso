@@ -32,16 +32,25 @@ class JSON_Endpoint extends \WP_REST_Controller {
 	private $data_set;
 
 	/**
+	 * Permission check callback.
+	 *
+	 * @var callable
+	 */
+	private $permission_cb;
+
+	/**
 	 * Constructor
 	 *
-	 * @param string $rest_namespace Namespace for the REST endpoint.
-	 * @param string $rest_route Route name.
-	 * @param array  $data_set Description of the data to work with.
+	 * @param string   $rest_namespace Namespace for the REST endpoint.
+	 * @param string   $rest_route Route name.
+	 * @param array    $data_set Description of the data to work with.
+	 * @param callable $permission_cb Permission check callback.
 	 */
-	public function __construct( $rest_namespace, $rest_route, $data_set ) {
+	public function __construct( $rest_namespace, $rest_route, $data_set, $permission_cb ) {
 		$this->rest_namespace = $rest_namespace;
 		$this->rest_route     = $rest_route;
 		$this->data_set       = $data_set;
+		$this->permission_cb  = $permission_cb;
 	}
 
 	/**
@@ -50,7 +59,7 @@ class JSON_Endpoint extends \WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function permission_callback() {
-		return is_user_logged_in() && apply_filters( 'jetpack_global_styles_permission_check_additional', true );
+		return call_user_func( $this->permission_cb );
 	}
 
 	/**

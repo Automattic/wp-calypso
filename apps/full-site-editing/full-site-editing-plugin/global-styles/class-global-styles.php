@@ -206,7 +206,7 @@ class Global_Styles {
 		add_filter( 'jetpack_global_styles_data_set_get_data', [ $this, 'maybe_filter_font_list' ] );
 		add_filter( 'jetpack_global_styles_data_set_save_data', [ $this, 'filter_and_validate_font_options' ] );
 
-		if ( current_theme_supports( $this->theme_support ) && apply_filters( 'jetpack_global_styles_permission_check_additional', true ) ) {
+		if ( $this->can_use_global_styles() ) {
 			// Setup editor.
 			add_action(
 				'enqueue_block_editor_assets',
@@ -263,9 +263,23 @@ class Global_Styles {
 		$rest_api = new JSON_Endpoint(
 			$this->rest_namespace,
 			$this->rest_route,
-			$this->rest_api_data
+			$this->rest_api_data,
+			[ $this, 'can_use_global_styles' ]
 		);
 		$rest_api->setup();
+	}
+
+	/**
+	 * Whether we should load Global Styles
+	 * per this user and site.
+	 *
+	 * @return boolean
+	 */
+	public function can_use_global_styles() {
+		return is_user_logged_in() &&
+			current_user_can( 'customize' ) &&
+			current_theme_supports( $this->theme_support ) &&
+			apply_filters( 'jetpack_global_styles_permission_check_additional', true );
 	}
 
 	/**
