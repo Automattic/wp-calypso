@@ -288,7 +288,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
-		return partnerID;
+		return !! partnerID;
 	}
 
 	handleSignIn = () => {
