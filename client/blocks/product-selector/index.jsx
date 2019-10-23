@@ -130,7 +130,16 @@ export class ProductSelector extends Component {
 		const { currencyCode, intervalType, products, storeProducts } = this.props;
 
 		if ( isEmpty( storeProducts ) ) {
-			return null;
+			return map( products, product => {
+				return (
+					<ProductCard
+						key={ product.id }
+						title={ product.title }
+						isPlaceholder={ true }
+						description={ product.description ? product.description : null }
+					/>
+				);
+			} );
 		}
 
 		return map( products, product => {
@@ -145,7 +154,7 @@ export class ProductSelector extends Component {
 					title={ product.title }
 					billingTimeFrame={ this.getBillingTimeFrameLabel() }
 					fullPrice={ productObject.cost }
-					description={ <p>{ product.description }</p> }
+					description={ product.description }
 					currencyCode={ currencyCode }
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }

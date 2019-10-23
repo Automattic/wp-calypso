@@ -5,6 +5,42 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+export default function RadioButton( { checked, name, value, onChange, children, label, id } ) {
+	const [ isFocused, changeFocus ] = useState( false );
+	return (
+		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
+			<Radio
+				type="radio"
+				name={ name }
+				id={ id }
+				value={ value }
+				checked={ checked }
+				onChange={ onChange }
+				onFocus={ () => {
+					changeFocus( true );
+				} }
+				onBlur={ () => {
+					changeFocus( false );
+				} }
+				readOnly={ ! onChange }
+			/>
+			<Label checked={ checked } htmlFor={ id }>
+				{ label }
+			</Label>
+			{ children }
+		</RadioButtonWrapper>
+	);
+}
+
+RadioButton.propTypes = {
+	name: PropTypes.string.isRequired,
+	id: PropTypes.string.isRequired,
+	label: PropTypes.node.isRequired,
+	checked: PropTypes.bool,
+	value: PropTypes.string.isRequired,
+	onChange: PropTypes.func,
+};
+
 const RadioButtonWrapper = styled.div`
 	position: relative;
 	margin-top: 8px;
@@ -75,14 +111,14 @@ const Label = styled.label`
 		transform: translateY( -50% );
 		left: 16px;
 		position: absolute;
-		background: ${props => props.theme.colors.white};
+		background: ${props => props.theme.colors.surface};
 		box-sizing: border-box;
 		z-index: 2;
 	}
 `;
 
 function getBorderColor( { checked, theme } ) {
-	return checked ? theme.colors.highlight : theme.colors.gray20;
+	return checked ? theme.colors.highlight : theme.colors.borderColor;
 }
 
 function getBorderWidth( { checked } ) {
@@ -103,39 +139,3 @@ function getOutline( { isFocused, theme } ) {
 	}
 	return '0';
 }
-
-export default function RadioButton( { checked, name, value, onChange, children, label, id } ) {
-	const [ isFocused, changeFocus ] = useState( false );
-	return (
-		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
-			<Radio
-				type="radio"
-				name={ name }
-				id={ id }
-				value={ value }
-				checked={ checked }
-				onChange={ onChange }
-				onFocus={ () => {
-					changeFocus( true );
-				} }
-				onBlur={ () => {
-					changeFocus( false );
-				} }
-				readOnly={ ! onChange }
-			/>
-			<Label checked={ checked } htmlFor={ id }>
-				{ label }
-			</Label>
-			{ children }
-		</RadioButtonWrapper>
-	);
-}
-
-RadioButton.propTypes = {
-	name: PropTypes.string.isRequired,
-	id: PropTypes.string.isRequired,
-	label: PropTypes.node.isRequired,
-	checked: PropTypes.bool,
-	value: PropTypes.string.isRequired,
-	onChange: PropTypes.func,
-};

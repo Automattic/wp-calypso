@@ -36,3 +36,20 @@
 		padding: 0 20px 24px;
 	}
 }
+
+// Compact header on small screens
+.formatted-header.is-compact-on-mobile {
+	@include breakpoint( '<660px' ) {
+		text-align: left;
+
+		.formatted-header__title {
+			font-size: 17px;
+			font-weight: 600;
+			padding: 0 24px;
+		}
+
+		.formatted-header__subtitle {
+			padding: 0 24px 12px;
+		}
+	}
+}

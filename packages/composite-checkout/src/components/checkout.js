@@ -3,14 +3,13 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
 import localizeFactory, { useLocalize } from '../lib/localize';
-import { Container, LeftColumn, PageTitle } from './basics';
 import { CheckoutProvider } from './checkout-provider';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
@@ -30,8 +29,9 @@ export default function Checkout( {
 	onFailure,
 	successRedirectUrl,
 	failureRedirectUrl,
-	upSell,
-	checkoutHeader,
+	ReviewContent,
+	UpSell,
+	CheckoutHeader,
 	className,
 } ) {
 	const localize = localizeFactory( locale );
@@ -49,9 +49,13 @@ export default function Checkout( {
 				failureRedirectUrl={ failureRedirectUrl }
 			>
 				<Container className={ joinClasses( [ className, 'checkout' ] ) }>
-					<LeftColumn>
+					<MainContent>
 						<div>
-							{ checkoutHeader || <PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle> }
+							{ CheckoutHeader ? (
+								<CheckoutHeader />
+							) : (
+								<PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle>
+							) }
 						</div>
 						<PaymentMethodsStep
 							availablePaymentMethods={ availablePaymentMethods }
@@ -69,10 +73,11 @@ export default function Checkout( {
 							setStepNumber={ setStepNumber }
 							isActive={ stepNumber === 3 }
 							isComplete={ stepNumber > 3 }
+							ReviewContent={ ReviewContent }
 						/>
 						<CheckoutSubmitButton isActive={ stepNumber === 3 } />
-						{ upSell && <div>{ upSell }</div> }
-					</LeftColumn>
+						{ UpSell && <UpSell /> }
+					</MainContent>
 				</Container>
 			</CheckoutProvider>
 		</ThemeProvider>
@@ -90,13 +95,51 @@ Checkout.propTypes = {
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
 	failureRedirectUrl: PropTypes.string.isRequired,
-	reviewContent: PropTypes.element,
-	reviewContentCollapsed: PropTypes.element,
-	upSell: PropTypes.element,
-	checkoutHeader: PropTypes.element,
-	orderReviewTOS: PropTypes.element,
-	orderReviewFeatures: PropTypes.element,
+	ReviewContent: PropTypes.elementType,
+	UpSell: PropTypes.elementType,
+	CheckoutHeader: PropTypes.elementType,
 };
+
+const Container = styled.div`
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		max-width: 910px;
+		margin: 0 auto;
+	}
+
+	*:focus {
+		outline: ${props => props.theme.colors.outline} auto 5px;
+	}
+`;
+
+const Column = styled.div`
+	background: ${props => props.theme.colors.surface};
+	padding: 16px;
+	width: 100%;
+	box-sizing: border-box;
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		border: 1px solid ${props => props.theme.colors.borderColorLight};
+		margin-top: 32px;
+		box-sizing: border-box;
+		padding: 24px;
+	}
+`;
+
+const MainContent = styled( Column )`
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		max-width: 532px;
+	}
+`;
+
+const PageTitle = styled.h1`
+	margin: 0;
+	font-weight: normal;
+	font-size: 24px;
+	color: ${props => props.theme.colors.textColorDark};
+	padding-bottom: 24px;
+`;
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {
 	const localize = useLocalize();
@@ -208,7 +251,7 @@ BillingDetailsStep.propTypes = {
 	onChangeBillingContact: PropTypes.func,
 };
 
-function ReviewOrderStep( { isActive, isComplete } ) {
+function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
 	const localize = useLocalize();
 
 	return (
@@ -219,8 +262,20 @@ function ReviewOrderStep( { isActive, isComplete } ) {
 				isComplete={ isComplete }
 				stepNumber={ 3 }
 				title={ isComplete ? localize( 'Review your order' ) : localize( 'Review your order' ) }
-				stepContent={ <CheckoutReviewOrder isActive={ isActive } /> }
-				stepSummary={ <CheckoutReviewOrder summary isActive={ isActive } /> }
+				stepContent={
+					ReviewContent ? (
+						<ReviewContent isActive={ isActive } />
+					) : (
+						<CheckoutReviewOrder isActive={ isActive } />
+					)
+				}
+				stepSummary={
+					ReviewContent ? (
+						<ReviewContent summary isActive={ isActive } />
+					) : (
+						<CheckoutReviewOrder summary isActive={ isActive } />
+					)
+				}
 			/>
 		</React.Fragment>
 	);

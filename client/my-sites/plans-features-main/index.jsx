@@ -410,14 +410,17 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { intervalType } = this.props;
-
+		const { intervalType, isJetpack } = this.props;
+		if ( ! isJetpack ) {
+			return null;
+		}
 		// @todo: Add translations in FormattedHeader once the final copy is provided.
 		return (
 			<div className="plans-features-main__group is-narrow">
 				<FormattedHeader
 					headerText="Single Products"
 					subHeaderText="Just looking for backups? We’ve got you covered."
+					compactOnMobile
 				/>
 				<ProductSelector products={ jetpackProducts } intervalType={ intervalType } />
 			</div>
