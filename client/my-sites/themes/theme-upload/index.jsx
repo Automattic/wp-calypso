@@ -262,11 +262,9 @@ class Upload extends React.Component {
 			return this.renderNotAvailableForMultisite();
 		}
 
-		const title = translate( 'Themes > Install' );
-
 		return (
 			<Main>
-				<PageViewTracker path="/themes/upload/:site" title={ title } />
+				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
