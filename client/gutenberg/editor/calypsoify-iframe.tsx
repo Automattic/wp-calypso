@@ -114,7 +114,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	templatePorts: [ T.PostId, MessagePort ][] = [];
-	successfullIframeLoad = false;
+	successfulIframeLoad = false;
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -145,7 +145,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.iframeRef.current &&
 			this.iframeRef.current.contentWindow
 		) {
-			this.successfullIframeLoad = true;
+			this.successfulIframeLoad = true;
 			const { port1: iframePortObject, port2: transferredPortObject } = new MessageChannel();
 
 			this.iframePort = iframePortObject;
@@ -521,7 +521,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	onIframeLoaded = ( iframeUrl: string ) => {
-		if ( ! this.successfullIframeLoad ) {
+		if ( ! this.successfulIframeLoad ) {
 			window.location.href = iframeUrl;
 			return;
 		}
