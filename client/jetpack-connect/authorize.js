@@ -742,10 +742,10 @@ const connectComponent = connect(
 			isSiteBlacklisted: isSiteBlacklistedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
+			partnerID: getPartnerIdFromQuery( state ),
+			partnerSlug: getPartnerSlugFromQuery( state ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			partnerSlug: getPartnerSlugFromQuery( state ),
-			partnerID: getPartnerIdFromQuery( state ),
 		};
 	},
 	{
