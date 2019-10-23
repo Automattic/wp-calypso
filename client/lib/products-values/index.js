@@ -8,6 +8,7 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import { JETPACK_BACKUP_PRODUCTS } from './constants';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -202,12 +203,7 @@ export function isJetpackMonthlyPlan( product ) {
 }
 
 export function isJetpackProduct( product ) {
-	const jetpackProducts = [
-		'jetpack_backup_daily',
-		'jetpack_backup_realtime',
-		'jetpack_backup_daily_monthly',
-		'jetpack_backup_realtime_monthly',
-	];
+	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
