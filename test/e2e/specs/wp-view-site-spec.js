@@ -28,7 +28,7 @@ before( async function() {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] View site from sidebar: (${ screenSize }) @parallel @jetpack`, function() {
+describe( `[${ host }] View  site from sidebar: (${ screenSize }) @parallel @jetpack`, function() {
 	this.timeout( mochaTimeOut );
 	describe.skip( 'View site and close:', function() {
 		step( 'Can Log In and go to My Sites', async function() {
