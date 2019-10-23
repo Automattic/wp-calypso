@@ -18,6 +18,7 @@ import {
 	hashPii,
 	costToUSD,
 	getNormalizedHashedUserEmail,
+	refreshCountryCodeCookieGdpr,
 } from 'lib/analytics/utils';
 import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
 
@@ -184,53 +185,6 @@ if ( typeof window !== 'undefined' ) {
 	if ( isAdRollEnabled ) {
 		setupAdRollGlobal();
 	}
-}
-
-/**
- * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
- *
- * @param {Function} callback - Callback function to call once the `country_code` cookie has been successfully refreshed.
- * @returns {Boolean} Returns `true` if the `country_code` cookie needs to be refreshed.
- */
-function maybeRefreshCountryCodeCookieGdpr( callback ) {
-	const cookieMaxAgeSeconds = 6 * 60 * 60;
-	const cookies = cookie.parse( document.cookie );
-
-	if ( ! cookies.country_code ) {
-		// cache buster
-		const v = new Date().getTime();
-
-		const handleError = err => {
-			document.cookie = cookie.serialize( 'country_code', 'unknown', {
-				path: '/',
-				maxAge: cookieMaxAgeSeconds,
-			} );
-			debug( 'refreshGeoIpCountryCookieGdpr Error: ', err );
-		};
-
-		const makeRequest = async () => {
-			try {
-				const res = await fetch( 'https://public-api.wordpress.com/geo/?v=' + v );
-				if ( res.ok ) {
-					const json = await res.json();
-					document.cookie = cookie.serialize( 'country_code', json.country_short, {
-						path: '/',
-						maxAge: cookieMaxAgeSeconds,
-					} );
-					callback();
-				} else {
-					handleError( new Error( await res.body() ) );
-				}
-			} catch ( err ) {
-				handleError( err );
-			}
-		};
-
-		makeRequest();
-		return true;
-	}
-
-	return false;
 }
 
 /**
