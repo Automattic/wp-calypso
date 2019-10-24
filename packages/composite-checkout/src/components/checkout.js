@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled, { ThemeProvider } from 'styled-components';
 
@@ -25,6 +25,7 @@ export default function Checkout( {
 	total,
 	onChangeBillingContact,
 	availablePaymentMethods,
+	callCheckoutEndpoint,
 	onSuccess,
 	onFailure,
 	successRedirectUrl,
@@ -40,6 +41,7 @@ export default function Checkout( {
 	return (
 		<ThemeProvider theme={ theme }>
 			<CheckoutProvider
+				callCheckoutEndpoint={ callCheckoutEndpoint }
 				localize={ localize }
 				items={ items }
 				total={ total }
@@ -91,6 +93,7 @@ Checkout.propTypes = {
 	total: PropTypes.object.isRequired,
 	onChangeBillingContact: PropTypes.func,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
+	callCheckoutEndpoint: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired,
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
@@ -201,10 +204,13 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 	}
 	const { BillingContactComponent } = paymentMethod;
 	// Call onChangeBillingContact as a side effect in case the parent wants to update the items
-	const setBillingData = newData => {
-		onChangeBillingContact && onChangeBillingContact( newData );
-		setPaymentData( newData );
-	};
+	const setBillingData = useCallback(
+		newData => {
+			onChangeBillingContact && onChangeBillingContact( newData );
+			setPaymentData( newData );
+		},
+		[ onChangeBillingContact, setPaymentData ]
+	);
 
 	return (
 		<React.Fragment>
