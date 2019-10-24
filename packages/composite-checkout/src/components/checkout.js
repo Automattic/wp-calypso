@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled, { ThemeProvider } from 'styled-components';
 
@@ -23,9 +23,9 @@ export default function Checkout( {
 	locale,
 	items,
 	total,
-	onChangeBillingContact,
 	availablePaymentMethods,
-	callCheckoutEndpoint,
+	dispatchPaymentAction,
+	paymentData,
 	onSuccess,
 	onFailure,
 	successRedirectUrl,
@@ -41,7 +41,8 @@ export default function Checkout( {
 	return (
 		<ThemeProvider theme={ theme }>
 			<CheckoutProvider
-				callCheckoutEndpoint={ callCheckoutEndpoint }
+				dispatchPaymentAction={ dispatchPaymentAction }
+				paymentData={ paymentData }
 				localize={ localize }
 				items={ items }
 				total={ total }
@@ -69,7 +70,6 @@ export default function Checkout( {
 							setStepNumber={ setStepNumber }
 							isActive={ stepNumber === 2 }
 							isComplete={ stepNumber > 2 }
-							onChangeBillingContact={ onChangeBillingContact }
 						/>
 						<ReviewOrderStep
 							setStepNumber={ setStepNumber }
@@ -91,9 +91,9 @@ Checkout.propTypes = {
 	locale: PropTypes.string.isRequired,
 	items: PropTypes.array.isRequired,
 	total: PropTypes.object.isRequired,
-	onChangeBillingContact: PropTypes.func,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
-	callCheckoutEndpoint: PropTypes.func.isRequired,
+	paymentData: PropTypes.object.isRequired, // TODO: make this not required
+	dispatchPaymentAction: PropTypes.func.isRequired, // TODO: make this not required
 	onSuccess: PropTypes.func.isRequired,
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
@@ -195,22 +195,14 @@ PaymentMethodsStep.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 };
 
-function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBillingContact } ) {
+function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
 	const localize = useLocalize();
-	const [ paymentData, setPaymentData ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentMethodData();
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
 		throw new Error( 'Cannot render Billing details without a payment method' );
 	}
 	const { BillingContactComponent } = paymentMethod;
-	// Call onChangeBillingContact as a side effect in case the parent wants to update the items
-	const setBillingData = useCallback(
-		newData => {
-			onChangeBillingContact && onChangeBillingContact( newData );
-			setPaymentData( newData );
-		},
-		[ onChangeBillingContact, setPaymentData ]
-	);
 
 	return (
 		<React.Fragment>
@@ -226,7 +218,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 					<React.Fragment>
 						<BillingContactComponent
 							paymentData={ paymentData }
-							setPaymentData={ setBillingData }
+							dispatch={ dispatch }
 							isActive={ isActive }
 							isComplete={ isComplete }
 						/>
@@ -240,7 +232,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 					<BillingContactComponent
 						summary
 						paymentData={ paymentData }
-						setPaymentData={ setBillingData }
+						dispatch={ dispatch }
 						isActive={ isActive }
 						isComplete={ isComplete }
 					/>
@@ -254,7 +246,6 @@ BillingDetailsStep.propTypes = {
 	setStepNumber: PropTypes.func.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
-	onChangeBillingContact: PropTypes.func,
 };
 
 function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
