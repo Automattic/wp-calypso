@@ -1,8 +1,16 @@
 /**
+ * External dependencies
+ */
+import { URL as URLString } from 'types';
+import { Falsey } from 'utility-types';
+
+/**
  * Internal dependencies
  */
-import { URL as TypedURL } from 'types';
-import { Falsey } from 'utility-types';
+import { determineUrlType, URL_TYPE } from './url-type';
+import format from './format';
+
+const BASE_URL = 'http://__domain__.invalid';
 
 /**
  * Removes given params from a url.
@@ -12,12 +20,16 @@ import { Falsey } from 'utility-types';
  * @return Url less the omitted params.
  */
 export default function omitUrlParams( url: Falsey, paramsToOmit: string | string[] ): null;
-export default function omitUrlParams( url: TypedURL, paramsToOmit: string | string[] ): TypedURL;
+export default function omitUrlParams( url: URLString, paramsToOmit: string | string[] ): URLString;
 export default function omitUrlParams(
-	url: TypedURL | Falsey,
+	url: URLString | Falsey,
 	paramsToOmit: string | string[]
-): TypedURL | null {
-	if ( ! url ) {
+): URLString | null {
+	const urlType = determineUrlType( url );
+
+	if ( ! url || urlType === URL_TYPE.INVALID ) {
+		// Note that we return null for the valid empty string URL.
+		// This is done to maintain compatibility with the previous implementation.
 		return null;
 	}
 
@@ -29,13 +41,28 @@ export default function omitUrlParams(
 		toOmit = paramsToOmit;
 	}
 
-	const parsed = new URL( url );
+	const parsed = new URL( url, BASE_URL );
 	const filtered = Array.from( parsed.searchParams.entries() ).filter(
 		( [ key ] ) => ! toOmit || ! toOmit.includes( key )
 	);
 
-	const newUrl = new URL( url );
-	newUrl.search = new URLSearchParams( filtered ).toString();
+	const newUrl = new URL( url, BASE_URL );
 
-	return newUrl.href;
+	if ( urlType !== URL_TYPE.PATH_RELATIVE ) {
+		newUrl.search = new URLSearchParams( filtered ).toString();
+		return format( newUrl, urlType );
+	}
+
+	// Path-relative URLs require special handling, because they cannot be transformed
+	// into an absolute URL without potentially losing path information.
+	// E.g. `../foo?bar=baz` becomes `<base>/foo?bar=baz` when fed to `new URL()`
+	// with a base, losing the traversal into the parent directory.
+	// We need to handle these with a string replace instead.
+	const newSearch = new URLSearchParams( filtered ).toString();
+	if ( parsed.search ) {
+		return url.replace( parsed.search, `?${ newSearch }` );
+	}
+
+	// The path-relative URL didn't have any params, so we can return it unmodified.
+	return url;
 }
