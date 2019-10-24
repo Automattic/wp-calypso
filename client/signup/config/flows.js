@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { assign, get, includes, indexOf, reject } from 'lodash';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -69,17 +68,6 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 } );
-
-if ( flows.onboarding && 'variant' === abtest( 'prefillSiteTitleWithDomainQuery' ) ) {
-	flows.onboarding.steps = [
-		'user',
-		'site-type',
-		'site-topic-with-preview',
-		'domains-with-preview',
-		'site-title-with-preview',
-		'plans',
-	];
-}
 
 function removeUserStepFromFlow( flow ) {
 	if ( ! flow ) {
