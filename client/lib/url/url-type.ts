@@ -33,7 +33,7 @@ const BASE_URL = `http://${ BASE_HOSTNAME }`;
  *
  * @returns the type of the URL
  */
-export function determineUrlType( url: URLString | URL | Falsey ) {
+export function determineUrlType( url: URLString | URL | Falsey ): URL_TYPE {
 	// As a URL, the empty string means "the current resource".
 	if ( url === '' ) {
 		return URL_TYPE.PATH_RELATIVE;
