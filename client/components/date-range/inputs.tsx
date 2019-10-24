@@ -4,7 +4,7 @@
 import React, { FunctionComponent, useRef, useCallback } from 'react';
 import { noop } from 'lodash';
 import uuidv4 from 'uuid/v4';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,8 +26,9 @@ interface Props {
 	onInputChange: ( value: string | null | undefined, startOrEnd: StartOrEnd ) => void;
 }
 
-export const DateRangeInputs: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
+const DateRangeInputs: FunctionComponent< Props & SharedProps > = props => {
 	const uniqueId = useRef( uuidv4() );
+	const translate = useTranslate();
 
 	const startDateID = `startDate-${ uniqueId }`;
 	const endDateID = `endDate-${ uniqueId }`;
@@ -93,7 +94,7 @@ export const DateRangeInputs: FunctionComponent< Props & SharedProps & LocalizeP
 				<div className="date-range__date-input date-range__date-input--from">
 					<FormLabel htmlFor={ startDateID }>
 						{ props.startLabel ||
-							props.translate( 'From', {
+							translate( 'From', {
 								comment: 'DateRange text input label for the start of the date range',
 							} ) }
 					</FormLabel>
@@ -110,7 +111,7 @@ export const DateRangeInputs: FunctionComponent< Props & SharedProps & LocalizeP
 				<div className="date-range__date-input date-range__date-input--to">
 					<FormLabel htmlFor={ endDateID }>
 						{ props.startLabel ||
-							props.translate( 'To', {
+							translate( 'To', {
 								comment: 'DateRange text input label for the end of the date range',
 							} ) }
 					</FormLabel>
@@ -135,4 +136,4 @@ DateRangeInputs.defaultProps = {
 	onInputFocus: noop,
 };
 
-export default localize( DateRangeInputs );
+export default DateRangeInputs;
