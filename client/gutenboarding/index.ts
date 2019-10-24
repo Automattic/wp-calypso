@@ -8,7 +8,16 @@ import page from 'page';
  */
 import { hideMasterbar, main, redirectIfNotEnabled } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { wpDataDebugMiddleware } from './devtools';
 
 export default function() {
-	page( '/gutenboarding', redirectIfNotEnabled, hideMasterbar, main, makeLayout, clientRender );
+	page(
+		'/gutenboarding',
+		redirectIfNotEnabled,
+		wpDataDebugMiddleware,
+		hideMasterbar,
+		main,
+		makeLayout,
+		clientRender
+	);
 }
