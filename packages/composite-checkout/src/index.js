@@ -16,7 +16,12 @@ import {
 } from './components/order-review-line-items';
 import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
-import { usePaymentMethod, usePaymentMethodData, usePaymentMethodId } from './lib/payment-methods';
+import {
+	usePaymentMethod,
+	usePaymentMethodData,
+	usePaymentMethodId,
+	usePaymentState,
+} from './lib/payment-methods';
 
 // Re-export the public API
 export {
@@ -34,5 +39,6 @@ export {
 	usePaymentMethod,
 	usePaymentMethodData,
 	usePaymentMethodId,
+	usePaymentState,
 };
 export default Checkout;
