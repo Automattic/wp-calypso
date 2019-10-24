@@ -14,11 +14,11 @@ import { useLocalize } from '../lib/localize';
 import { useStripe } from '../lib/stripe';
 import { useCheckoutHandlers } from '../index';
 
-export default function StripeCreditCardFields( { isActive } ) {
+export default function StripeCreditCardFields( { isActive, summary } ) {
 	const localize = useLocalize();
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
-	if ( ! isActive ) {
+	if ( ! isActive || summary ) {
 		return null;
 	}
 	if ( stripeLoadingError ) {

@@ -14,7 +14,6 @@ import RadioButton from './radio-button';
 
 export default function CheckoutPaymentMethods( {
 	summary,
-	isActive,
 	isComplete,
 	className,
 	availablePaymentMethods,
@@ -29,7 +28,7 @@ export default function CheckoutPaymentMethods( {
 	if ( summary && isComplete && paymentMethod ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				<PaymentMethod { ...paymentMethod } checked={ true } />
+				<PaymentMethod { ...paymentMethod } checked={ true } summary />
 			</div>
 		);
 	}
@@ -43,8 +42,6 @@ export default function CheckoutPaymentMethods( {
 				{ paymentMethodsToDisplay.map( method => (
 					<PaymentMethod
 						{ ...method }
-						isActive={ isActive }
-						isComplete={ isComplete }
 						key={ method.id }
 						checked={ paymentMethod.id === method.id }
 						onClick={ onChange }
@@ -65,7 +62,14 @@ CheckoutPaymentMethods.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, onClick } ) {
+function PaymentMethod( {
+	id,
+	LabelComponent,
+	PaymentMethodComponent,
+	checked,
+	onClick,
+	summary,
+} ) {
 	return (
 		<RadioButton
 			name="paymentMethod"
@@ -75,7 +79,9 @@ function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, o
 			onChange={ onClick ? () => onClick( id ) : null }
 			label={ <LabelComponent /> }
 		>
-			{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
+			{ PaymentMethodComponent && (
+				<PaymentMethodComponent isActive={ checked } summary={ summary } />
+			) }
 		</RadioButton>
 	);
 }
@@ -84,8 +90,9 @@ PaymentMethod.propTypes = {
 	id: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	checked: PropTypes.bool.isRequired,
-	PaymentMethodComponent: PropTypes.func,
-	LabelComponent: PropTypes.func,
+	PaymentMethodComponent: PropTypes.elementType,
+	LabelComponent: PropTypes.elementType,
+	summary: PropTypes.bool,
 };
 
 export const RadioButtons = styled.div`
