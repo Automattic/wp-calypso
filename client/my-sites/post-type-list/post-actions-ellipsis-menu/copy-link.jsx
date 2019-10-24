@@ -15,10 +15,15 @@ import PopoverMenuItemClipboard from 'components/popover/menu-item-clipboard';
 import { getPost } from 'state/posts/selectors';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
+import { infoNotice } from 'state/notices/actions';
 
-function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink, translate } ) {
+function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink, infoNotice, translate } ) {
+	const onCopy = () => {
+		onCopyLinkClick();
+		infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
+	};
 	return (
-		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopyLinkClick }>
+		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopy }>
 			{ translate( 'Copy Link' ) }
 		</PopoverMenuItemClipboard>
 	);
@@ -41,7 +46,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 	};
 };
 
-const mapDispatchToProps = { bumpStat, recordTracksEvent };
+const mapDispatchToProps = { bumpStat, infoNotice, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpCopyLinkStat = bumpStatGenerator( stateProps.type, 'copyLink', dispatchProps.bumpStat );
