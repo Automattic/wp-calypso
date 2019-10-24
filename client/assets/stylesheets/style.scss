@@ -1,13 +1,6 @@
-// External Dependencies
-@import 'vendor';
-
-// Color Schemes
-@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
-
-// Shared
-@import 'shared/reset'; // css reset before the rest of the styles are defined
-@import 'shared/animation'; // all UI animation
-@import 'shared/forms'; // form styling
-
-// Main
-@import 'main'; // global layout and responsive styles
+@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes'; // Color schemes
+@import 'layout/reset'; // CSS resets
+@import 'layout/animation'; // All UI animation
+@import 'layout/base'; // Calypso base styles for HTML elements
+@import 'layout/vendor'; // Overrides for external dependencies
+@import 'layout/main'; // Global layout and responsive styles

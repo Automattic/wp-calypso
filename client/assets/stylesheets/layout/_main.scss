@@ -1,0 +1,146 @@
+/* stylelint-disable selector-max-id */
+
+/**
+ * General styles
+ */
+.wpcom-site__logo {
+	fill: var( --color-neutral-10 );
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+
+	@include breakpoint( '>960px' ) {
+		width: 100px;
+		height: 100px;
+	}
+}
+
+.wpcom-site__global-noscript {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 6px;
+	color: var( --color-text-inverted );
+	background: rgba( var( --color-neutral-70-rgb ), 0.8 );
+	text-align: center;
+	z-index: z-index( 'root', '.wpcom-site__global-noscript' );
+}
+
+/* =Global
+----------------------------------------------- */
+
+// Viewport rules work only at root level and thus cannot be scoped or placed in a mixin
+@-webkit-viewport {
+	width: device-width;
+}
+@-moz-viewport {
+	width: device-width;
+}
+@-ms-viewport {
+	width: device-width;
+}
+@-o-viewport {
+	width: device-width;
+}
+@viewport {
+	width: device-width;
+}
+
+// make sure layout can fill the viewport
+.wpcom-site {
+	height: 100%;
+}
+
+.button,
+#footer,
+#footer a.readmore {
+	font-family: $sans;
+}
+
+/*!rtl:ignore*/
+body.rtl,
+.rtl button,
+.rtl input,
+.rtl select,
+.rtl textarea,
+.rtl .button,
+.rtl #footer,
+.rtl #footer a.readmore {
+	font-family: $sans-rtl;
+}
+
+/*!rtl:ignore*/
+:lang( he ) body.rtl,
+:lang( he ) .rtl button,
+:lang( he ) .rtl input,
+:lang( he ) .rtl select,
+:lang( he ) .rtl textarea,
+:lang( he ) .rtl .button,
+:lang( he ) .rtl #footer,
+:lang( he ) .rtl #footer a.readmore {
+	font-family: $sans;
+}
+
+/*!rtl:ignore*/
+.rtl {
+	.gridicon {
+		&.gridicons-chevron-left,
+		&.gridicons-chevron-right,
+		&.gridicons-arrow-left,
+		&.gridicons-arrow-right,
+		&.gridicons-external,
+		&.gridicons-cart {
+			transform: scaleX( -1 );
+		}
+	}
+}
+
+.notifications {
+	display: inherit;
+}
+
+.hide,
+.hidden {
+	display: none;
+}
+
+.link--caution,
+.link--caution:visited,
+.is-link.link--caution,
+.is-link.link--caution:visited {
+	&,
+	&:hover,
+	&:focus,
+	&:active {
+		color: var( --color-error );
+	}
+}
+
+html.iframed {
+	overflow: hidden;
+}
+
+/* Emoji and smileys */
+img.emoji,
+img.wp-smiley {
+	height: 1em;
+	max-height: 1em;
+	display: inline;
+	margin: 0;
+	padding: 0 0.2em;
+	vertical-align: -0.1em;
+	width: 1em;
+}
+
+/* Netter min-height for the SoundCloud embeds */
+.wpcom-soundcloud-player,
+.embed-soundcloud iframe {
+	min-height: 150px;
+}
+
+// added to the html element when we don't want the background content to scroll
+html.no-scroll {
+	overflow: hidden;
+}
