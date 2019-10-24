@@ -7,7 +7,7 @@ import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 /**
  * Internal dependencies
  */
-import { useCheckoutEndpoint } from '../index';
+import { usePaymentMethodData } from '../index';
 
 const StripeContext = createContext();
 
@@ -260,22 +260,12 @@ function loadScriptAsync( url ) {
  */
 function useStripeConfiguration( requestArgs ) {
 	const [ currentAttempt, setAttempt ] = useState( 1 );
-	const [ stripeConfiguration, setStripeConfiguration ] = useState();
-	const callCheckoutEndpoint = useCheckoutEndpoint();
+	const [ paymentData, dispatch ] = usePaymentMethodData();
 	useEffect( () => {
-		let isSubscribed = true;
-		callCheckoutEndpoint( '/me/stripe-configuration', requestArgs || {} ).then( configuration => {
-			if ( ! configuration.public_key ) {
-				throw new Error( 'Stripe configuration is missing API key' );
-			}
-			if ( ! configuration.js_url ) {
-				throw new Error( 'Stripe configuration is missing Stripe URL' );
-			}
-			isSubscribed && setStripeConfiguration( configuration );
-		} );
-		return () => ( isSubscribed = false );
-	}, [ requestArgs, currentAttempt, callCheckoutEndpoint ] );
+		dispatch( { type: 'STRIPE_CONFIGURATION_FETCH', payload: requestArgs || {} } );
+	}, [ requestArgs, currentAttempt, dispatch ] );
 	const forceReload = () => setAttempt( currentAttempt + 1 );
+	const stripeConfiguration = paymentData.stripeConfiguration || null;
 	return { stripeConfiguration, forceReload };
 }
 
