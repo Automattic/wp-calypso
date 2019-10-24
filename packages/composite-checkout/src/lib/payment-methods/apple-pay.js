@@ -21,13 +21,7 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePayBillingForm( {
-	summary,
-	setPaymentData,
-	paymentData,
-	isActive,
-	isComplete,
-} ) {
+export function ApplePayBillingForm( { summary, dispatch, paymentData, isActive, isComplete } ) {
 	const localize = useLocalize();
 	if ( summary && isComplete ) {
 		return <ApplePayBillingFormSummary paymentData={ paymentData } />;
@@ -36,7 +30,11 @@ export function ApplePayBillingForm( {
 		return null;
 	}
 	const { billingName = '', billingNameError = null } = paymentData || {};
-	const onChange = value => setPaymentData( { ...( paymentData || {} ), billingName: value } );
+	const onChange = value =>
+		dispatch( {
+			type: 'PAYMENT_DATA_UPDATE',
+			payload: { billingName: value },
+		} );
 	return (
 		<BillingFormFields>
 			<FormField
