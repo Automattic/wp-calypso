@@ -8,6 +8,8 @@ import React from 'react';
  */
 import { registerPaymentMethod } from '../../lib/payment-methods';
 import { ApplePayBillingForm, ApplePaySubmitButton, ApplePayLabel } from './apple-pay';
+import { PaypalLabel, PaypalSubmitButton } from './paypal';
+import { CreditCardLabel, CreditCardSubmitButton } from './credit-card';
 import CreditCardFields from '../../components/credit-card-fields';
 
 export default function loadPaymentMethods() {
@@ -21,17 +23,17 @@ export default function loadPaymentMethods() {
 
 	registerPaymentMethod( {
 		id: 'card',
-		LabelComponent: () => <span>Credit Card</span>,
+		LabelComponent: CreditCardLabel,
 		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
 		BillingContactComponent: ApplePayBillingForm, // TODO: replace this
-		SubmitButtonComponent: () => <button>Pay</button>,
+		SubmitButtonComponent: CreditCardSubmitButton,
 	} );
 
 	registerPaymentMethod( {
 		id: 'paypal',
-		LabelComponent: () => <span>PayPal</span>,
+		LabelComponent: PaypalLabel,
 		PaymentMethodComponent: () => null,
 		BillingContactComponent: ApplePayBillingForm, // TODO: replace this
-		SubmitButtonComponent: () => <button>Pay</button>,
+		SubmitButtonComponent: PaypalSubmitButton,
 	} );
 }
