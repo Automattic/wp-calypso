@@ -73,7 +73,7 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 }
 
 async function getLanguageFile( targetLocaleSlug ) {
-	const url = getLanguageFileUrl( targetLocaleSlug );
+	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
 
 	const response = await dedupedGet( url );
 	if ( response.ok ) {
