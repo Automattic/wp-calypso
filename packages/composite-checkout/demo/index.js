@@ -46,8 +46,21 @@ function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
+			callCheckoutEndpoint={ callCheckoutEndpoint }
 		/>
 	);
+}
+
+async function callCheckoutEndpoint( url ) {
+	switch ( url ) {
+		case '/me/stripe-configuration':
+			return {
+				public_key: '', // TODO: get this
+				js_url: 'https://js.stripe.com/v3/',
+			};
+		default:
+			throw new Error( `No such endpoint: ${ url }` );
+	}
 }
 
 // This is a very simple shopping cart manager which can calculate totals
