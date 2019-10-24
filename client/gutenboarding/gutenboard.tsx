@@ -26,6 +26,7 @@ import { Header } from 'gutenboarding/components/header';
 import { name, settings } from './onboarding-block';
 import Sidebar from './components/sidebar';
 import SettingsSidebar from './components/settings-sidebar';
+import './store';
 import './style.scss';
 
 registerBlockType( name, settings );
