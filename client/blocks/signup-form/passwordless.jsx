@@ -19,7 +19,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import ValidationFieldset from 'signup/validation-fieldset';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -32,7 +32,7 @@ class PasswordlessSignupForm extends Component {
 
 	state = {
 		isSubmitting: false,
-		email: '',
+		email: this.props.step && this.props.step.form ? this.props.step.form.email : '',
 		errorMessages: null,
 	};
 
@@ -59,6 +59,20 @@ class PasswordlessSignupForm extends Component {
 
 		this.setState( {
 			isSubmitting: true,
+		} );
+
+		// Save form state in a format that is compatible with the standard SignupForm used in the user step.
+		const form = {
+			firstName: '',
+			lastName: '',
+			email: this.state.email,
+			username: '',
+			password: '',
+		};
+
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			form,
 		} );
 
 		wpcom
@@ -208,6 +222,7 @@ class PasswordlessSignupForm extends Component {
 							className="signup-form__passwordless-email"
 							type="email"
 							name="email"
+							value={ this.state.email }
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
 						/>
@@ -223,6 +238,7 @@ export default connect(
 	null,
 	{
 		recordTracksEvent,
+		saveSignupStep,
 		submitCreateAccountStep: submitSignupStep,
 	}
 )( localize( PasswordlessSignupForm ) );
