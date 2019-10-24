@@ -19,7 +19,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import ValidationFieldset from 'signup/validation-fieldset';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -32,7 +32,7 @@ class PasswordlessSignupForm extends Component {
 
 	state = {
 		isSubmitting: false,
-		email: '',
+		email: this.props.step && this.props.step.form ? this.props.step.form.email : '',
 		errorMessages: null,
 	};
 
@@ -59,6 +59,20 @@ class PasswordlessSignupForm extends Component {
 
 		this.setState( {
 			isSubmitting: true,
+		} );
+
+		// Save form state in a format that is compatible with the standard SignupForm used in the user step.
+		const form = {
+			firstName: '',
+			lastName: '',
+			email: this.state.email,
+			username: '',
+			password: '',
+		};
+
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			form,
 		} );
 
 		wpcom
@@ -127,6 +141,7 @@ class PasswordlessSignupForm extends Component {
 				);
 		}
 	}
+
 	submitStep = data => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
 		submitCreateAccountStep(
@@ -143,12 +158,14 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( true, { action_message: 'Successful login', username: data.username } );
 		goToNextStep();
 	};
+
 	onInputChange = ( { target: { value } } ) =>
 		this.setState( {
 			email: value,
 			errorMessages: null,
 			isEmailAddressValid: emailValidator.validate( value ),
 		} );
+
 	renderNotice() {
 		return (
 			<Notice showDismiss={ false } status="is-error">
@@ -158,12 +175,43 @@ class PasswordlessSignupForm extends Component {
 			</Notice>
 		);
 	}
+
+	userCreationComplete() {
+		return this.props.step && 'completed' === this.props.step.status;
+	}
+
+	formFooter() {
+		const { isSubmitting, isEmailAddressValid } = this.state;
+		if ( this.userCreationComplete() ) {
+			return (
+				<LoggedOutFormFooter>
+					<Button primary onClick={ () => this.props.goToNextStep() }>
+						{ this.props.translate( 'Continue' ) }
+					</Button>
+				</LoggedOutFormFooter>
+			);
+		}
+		const submitButtonText = isSubmitting
+			? this.props.translate( 'Creating Your Account…' )
+			: this.props.translate( 'Create your account' );
+		return (
+			<LoggedOutFormFooter>
+				<Button
+					type="submit"
+					primary
+					busy={ isSubmitting }
+					disabled={ isSubmitting || ! isEmailAddressValid || !! this.props.disabled }
+				>
+					{ submitButtonText }
+				</Button>
+			</LoggedOutFormFooter>
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
-		const { errorMessages, isSubmitting, isEmailAddressValid } = this.state;
-		const submitButtonText = isSubmitting
-			? translate( 'Creating Your Account…' )
-			: translate( 'Create your account' );
+		const { errorMessages, isSubmitting } = this.state;
+
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
@@ -174,21 +222,13 @@ class PasswordlessSignupForm extends Component {
 							className="signup-form__passwordless-email"
 							type="email"
 							name="email"
+							value={ this.state.email }
 							onChange={ this.onInputChange }
-							disabled={ isSubmitting }
+							disabled={ isSubmitting || !! this.props.disabled }
 						/>
 					</ValidationFieldset>
 					{ this.props.renderTerms() }
-					<LoggedOutFormFooter>
-						<Button
-							type="submit"
-							primary
-							busy={ isSubmitting }
-							disabled={ isSubmitting || ! isEmailAddressValid }
-						>
-							{ submitButtonText }
-						</Button>
-					</LoggedOutFormFooter>
+					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>
 		);
@@ -198,6 +238,7 @@ export default connect(
 	null,
 	{
 		recordTracksEvent,
+		saveSignupStep,
 		submitCreateAccountStep: submitSignupStep,
 	}
 )( localize( PasswordlessSignupForm ) );
