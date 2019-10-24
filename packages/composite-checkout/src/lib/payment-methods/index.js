@@ -60,8 +60,8 @@ export function usePaymentMethod() {
 }
 
 export function usePaymentMethodData() {
-	const { paymentMethodData, setPaymentMethodData } = useContext( CheckoutContext );
-	return [ paymentMethodData, setPaymentMethodData ];
+	const { paymentData, dispatchPaymentAction } = useContext( CheckoutContext );
+	return [ paymentData, dispatchPaymentAction ];
 }
 
 loadPaymentMethods();
