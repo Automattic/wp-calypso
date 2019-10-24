@@ -22,6 +22,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { JETPACK_BACKUP_PRODUCT_NAMES } from 'lib/products-values/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
@@ -81,18 +82,34 @@ export class ProductSelector extends Component {
 		} );
 	}
 
+	getProductName( productSlug ) {
+		if ( JETPACK_BACKUP_PRODUCT_NAMES[ productSlug ] ) {
+			return JETPACK_BACKUP_PRODUCT_NAMES[ productSlug ];
+		}
+
+		const { storeProducts } = this.props;
+		if ( ! storeProducts ) {
+			return null;
+		}
+
+		const productObject = storeProducts[ productSlug ];
+
+		return productObject.product_name;
+	}
+
 	getProductOptions( product ) {
 		const { intervalType, storeProducts } = this.props;
 		const productSlugs = product.options[ intervalType ];
 
 		return productSlugs.map( productSlug => {
 			const productObject = storeProducts[ productSlug ];
+
 			return {
 				billingTimeFrame: this.getBillingTimeFrameLabel(),
 				currencyCode: productObject.currency_code,
 				fullPrice: productObject.cost,
 				slug: productSlug,
-				title: productObject.product_name,
+				title: this.getProductName( productSlug ),
 			};
 		} );
 	}
@@ -117,9 +134,9 @@ export class ProductSelector extends Component {
 		return (
 			<ProductCardAction
 				onClick={ this.handleCheckoutForProduct( productObject ) }
-				label={ translate( 'Upgrade to %(productName)s', {
+				label={ translate( 'Get %(productName)s', {
 					args: {
-						productName: productObject.product_name,
+						productName: this.getProductName( productObject.product_slug ),
 					},
 				} ) }
 			/>
