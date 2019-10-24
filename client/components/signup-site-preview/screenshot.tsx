@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
  */
 import Spinner from 'components/spinner';
 import classNames from 'classnames';
+import photon from 'photon';
 
 interface Props {
 	defaultViewportDevice: string;
@@ -38,12 +39,8 @@ export default function SignupSitePreviewScreenshot( {
 	} );
 
 	const isPhone = defaultViewportDevice === 'phone';
-
-	const { hostname, pathname } = new URL( screenshotUrl );
 	const zoom = window.devicePixelRatio;
-	const w = isPhone ? 280 : 904;
-	const src = `https://i0.wp.com/${ hostname }${ pathname }?w=${ w }`;
-	const srcset = `https://i0.wp.com/${ hostname }${ pathname }?w=${ w }&zoom=${ zoom } ${ zoom }x`;
+	const width = isPhone ? 280 : 904;
 
 	const onLoad = ( event: React.SyntheticEvent< HTMLImageElement > ) => {
 		setWrapperHeight( event.currentTarget.height );
@@ -59,8 +56,8 @@ export default function SignupSitePreviewScreenshot( {
 			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
 			<img
 				style={ isLoading ? { display: 'none' } : undefined }
-				src={ src }
-				srcSet={ srcset }
+				src={ photon( screenshotUrl, { width } ) }
+				srcSet={ photon( screenshotUrl, { width, zoom } ) + ` ${ zoom }x` }
 				onClick={ () => onPreviewClick( defaultViewportDevice ) }
 				onLoad={ onLoad }
 				alt={
