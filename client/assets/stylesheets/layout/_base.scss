@@ -1,5 +1,5 @@
 // @mixin calypso-base {
-	html.gr__calypso_localhost {
+	// html.gr__calypso_localhost {
 		::selection {
 			background: rgba( var( --color-primary-light-rgb ), 0.7 );
 			color: var( --color-text );
@@ -7,10 +7,12 @@
 
 		* {
 			-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+			font-family: $sans;
 		}
 
 		// make sure layout can fill the viewport
-		&,
+		//&,
+		html,
 		body {
 			height: 100%;
 		}
@@ -28,14 +30,6 @@
 			@include breakpoint( '<660px' ) {
 				cursor: pointer;
 			}
-		}
-
-		body,
-		button,
-		input,
-		select,
-		textarea {
-			font-family: $sans;
 		}
 
 		/* Headings */
@@ -203,6 +197,17 @@
 		/* Forms */
 		form {
 			@extend %form;
+		}
+
+		button {
+			background: transparent;
+			border: none;
+			outline: 0;
+			padding: 0;
+			font-size: 14px;
+			-webkit-appearance: none;
+			appearance: none;
+			vertical-align: baseline;
 		}
 
 		input[type='text'],
@@ -404,5 +409,5 @@
 			// See, for example, http://geek.michaelgrace.org/2011/06/webkit-search-input-styling/
 			display: none;
 		}
-	}
+	// }
 // }
