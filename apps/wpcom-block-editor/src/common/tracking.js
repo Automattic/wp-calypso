@@ -93,7 +93,7 @@ const trackGlobalStyles = eventName => options => {
  * @type {object}
  */
 const REDUX_TRACKING = {
-	'a8c/global-styles': {
+	'jetpack/global-styles': {
 		resetLocalChanges: 'wpcom_global_styles_reset',
 		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
 		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
