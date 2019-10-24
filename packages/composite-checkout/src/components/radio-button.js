@@ -5,7 +5,16 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-export default function RadioButton( { checked, name, value, onChange, children, label, id } ) {
+export default function RadioButton( {
+	checked,
+	name,
+	value,
+	onChange,
+	children,
+	label,
+	id,
+	ariaLabel,
+} ) {
 	const [ isFocused, changeFocus ] = useState( false );
 	return (
 		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
@@ -23,6 +32,7 @@ export default function RadioButton( { checked, name, value, onChange, children,
 					changeFocus( false );
 				} }
 				readOnly={ ! onChange }
+				aria-label={ ariaLabel }
 			/>
 			<Label checked={ checked } htmlFor={ id }>
 				{ label }
@@ -39,6 +49,7 @@ RadioButton.propTypes = {
 	checked: PropTypes.bool,
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
+	ariaLabel: PropTypes.string.isRequired,
 };
 
 const RadioButtonWrapper = styled.div`

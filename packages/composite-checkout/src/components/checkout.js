@@ -154,6 +154,7 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 				stepNumber={ 1 }
 				title={ isComplete ? localize( 'Payment method' ) : localize( 'Pick a payment method' ) }
 				onEdit={ () => setStepNumber( 1 ) }
+				editButtonAriaLabel={ localize( 'Edit the payment method' ) }
 				stepContent={
 					<React.Fragment>
 						<CheckoutPaymentMethods
@@ -167,6 +168,7 @@ function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePay
 						<CheckoutNextStepButton
 							value={ localize( 'Continue' ) }
 							onClick={ () => setStepNumber( 2 ) }
+							ariaLabel={ localize( 'Continue with the selected payment method' ) }
 						/>
 					</React.Fragment>
 				}
@@ -216,6 +218,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 					isComplete ? localize( 'Billing details' ) : localize( 'Enter your billing details' )
 				}
 				onEdit={ () => setStepNumber( 2 ) }
+				editButtonAriaLabel={ localize( 'Edit the billing details' ) }
 				stepContent={
 					<React.Fragment>
 						<BillingContactComponent
@@ -227,6 +230,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 						<CheckoutNextStepButton
 							value={ localize( 'Continue' ) }
 							onClick={ () => setStepNumber( 3 ) }
+							ariaLabel={ localize( 'Continue with the entered billing details' ) }
 						/>
 					</React.Fragment>
 				}
