@@ -2,9 +2,10 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import moment from 'moment';
 
-export default function enrichedSurveyData( surveyData, site, purchase, timestamp = moment() ) {
+const DAY_IN_MS = 1000 * 60 * 60 * 24;
+
+export default function enrichedSurveyData( surveyData, site, purchase, timestamp = new Date() ) {
 	const purchaseStartDate = get( purchase, 'subscribedDate', null );
 	const siteStartDate = get( site, 'options.created_at', null );
 	const purchaseId = get( purchase, 'id', null );
@@ -14,10 +15,10 @@ export default function enrichedSurveyData( surveyData, site, purchase, timestam
 		purchase: productSlug,
 		purchaseId,
 		...( purchaseStartDate && {
-			daysSincePurchase: timestamp.diff( purchaseStartDate, 'days', true ),
+			daysSincePurchase: ( new Date( timestamp ) - new Date( purchaseStartDate ) ) / DAY_IN_MS,
 		} ),
 		...( siteStartDate && {
-			daysSinceSiteCreation: timestamp.diff( siteStartDate, 'days', true ),
+			daysSinceSiteCreation: ( new Date( timestamp ) - new Date( siteStartDate ) ) / DAY_IN_MS,
 		} ),
 		...surveyData,
 	};

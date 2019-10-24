@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import moment from 'moment';
-
-/**
  * Internal dependencies
  */
 import enrichedSurveyData from '../enriched-survey-data';
@@ -31,8 +26,7 @@ describe( 'enrichedSurveyData', () => {
 		const site = null;
 		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
 		expect(
-			enrichedSurveyData( {}, site, purchase, moment( '2017-01-19T03:00:00+00:00' ) )
-				.daysSincePurchase
+			enrichedSurveyData( {}, site, purchase, '2017-01-19T03:00:00+00:00' ).daysSincePurchase
 		).toEqual( 10 );
 	} );
 
@@ -42,8 +36,7 @@ describe( 'enrichedSurveyData', () => {
 		};
 		const purchase = null;
 		expect(
-			enrichedSurveyData( {}, site, purchase, moment( '2017-01-19T03:00:00+00:00' ) )
-				.daysSinceSiteCreation
+			enrichedSurveyData( {}, site, purchase, '2017-01-19T03:00:00+00:00' ).daysSinceSiteCreation
 		).toEqual( 10 );
 	} );
 } );
