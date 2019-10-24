@@ -18,6 +18,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuItemClipboard from 'components/popover/menu-item-clipboard';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SiteIcon from 'blocks/site-icon';
@@ -323,6 +324,15 @@ class Page extends Component {
 		);
 	}
 
+	getCopyLinkItem() {
+		const { page, translate } = this.props;
+		return (
+			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink }>
+				{ translate( 'Copy Link', { context: 'verb' } ) }
+			</PopoverMenuItemClipboard>
+		);
+	}
+
 	getRestoreItem() {
 		if ( this.props.page.status !== 'trash' || ! utils.userCan( 'delete_post', this.props.page ) ) {
 			return null;
@@ -422,6 +432,7 @@ class Page extends Component {
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyPageItem = this.getCopyPageItem();
+		const copyLinkItem = this.getCopyLinkItem();
 		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const hasMenuItems =
@@ -445,6 +456,7 @@ class Page extends Component {
 				{ viewItem }
 				{ statsItem }
 				{ copyPageItem }
+				{ copyLinkItem }
 				{ restoreItem }
 				{ frontPageItem }
 				{ postsPageItem }
@@ -651,6 +663,10 @@ class Page extends Component {
 
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
+	};
+
+	copyPageLink = () => {
+		this.props.recordEvent( 'Clicked Copy Page Link' );
 	};
 
 	handleMenuToggle = isVisible => {
