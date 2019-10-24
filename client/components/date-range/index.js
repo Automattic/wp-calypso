@@ -5,9 +5,11 @@ import React, { Component } from 'react';
 import { noop, isNil, isNull, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { withLocalizedMoment } from 'components/localized-moment';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -30,6 +32,33 @@ import './style.scss';
 const NO_DATE_SELECTED_VALUE = null;
 
 export class DateRange extends Component {
+	static propTypes = {
+		selectedStartDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		selectedEndDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		onDateSelect: PropTypes.func,
+		onDateCommit: PropTypes.func,
+		firstSelectableDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		lastSelectableDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		triggerText: PropTypes.func,
+		isCompact: PropTypes.bool,
+		showTriggerClear: PropTypes.bool,
+		renderTrigger: PropTypes.func,
+		renderHeader: PropTypes.func,
+		renderInputs: PropTypes.func,
+	};
+
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
