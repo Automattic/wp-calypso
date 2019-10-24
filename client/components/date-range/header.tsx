@@ -18,7 +18,7 @@ interface Props {
 	cancelButtonText: string | null | undefined;
 }
 
-const DateRangeHeader: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
+const DateRangeHeader: FunctionComponent< Props & SharedProps > = props => {
 	const translate = useTranslate();
 
 	return (
