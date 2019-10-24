@@ -11,7 +11,8 @@ import CheckoutContext from '../lib/checkout-context';
 import { getPaymentMethods } from '../lib/payment-methods';
 
 export const CheckoutProvider = ( {
-	callCheckoutEndpoint,
+	dispatchPaymentAction,
+	paymentData,
 	total,
 	items,
 	localize,
@@ -26,7 +27,8 @@ export const CheckoutProvider = ( {
 	const [ paymentMethodData, setPaymentMethodData ] = useState( {} );
 	const paymentMethod = getPaymentMethods().find( ( { id } ) => id === paymentMethodId );
 	if (
-		! callCheckoutEndpoint ||
+		! paymentData ||
+		! dispatchPaymentAction ||
 		! total ||
 		! items ||
 		! localize ||
@@ -35,12 +37,11 @@ export const CheckoutProvider = ( {
 		! successRedirectUrl ||
 		! failureRedirectUrl
 	) {
-		throw new Error(
-			'CheckoutProvider requires callCheckoutEndpoint, total, items, localize, onSuccess, onFailure, successRedirectUrl, and failureRedirectUrl'
-		);
+		throw new Error( 'CheckoutProvider missing required props' );
 	}
 	const value = {
-		callCheckoutEndpoint,
+		dispatchPaymentAction,
+		paymentData,
 		localize,
 		paymentMethodId,
 		total,
@@ -79,12 +80,9 @@ export const useCheckoutRedirects = () => {
 	return { successRedirectUrl, failureRedirectUrl };
 };
 
-export const useCheckoutEndpoint = () => {
-	const { callCheckoutEndpoint } = useContext( CheckoutContext );
-	return callCheckoutEndpoint;
-};
-
 CheckoutProvider.propTypes = {
+	dispatchPaymentAction: PropTypes.func.isRequired, // TODO: make this not required
+	paymentData: PropTypes.object.isRequired, // TODO: make this not required
 	total: PropTypes.object.isRequired,
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	localize: PropTypes.func.isRequired,
