@@ -1,3 +1,5 @@
+require( '@babel/polyfill' );
+
 /**
  * External dependencies
  */
