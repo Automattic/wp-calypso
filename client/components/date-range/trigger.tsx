@@ -4,7 +4,7 @@
 import React, { FunctionComponent } from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'components/gridicon';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 
 /**
@@ -27,16 +27,10 @@ interface Props {
 	showClearBtn: boolean;
 }
 
-export const DateRangeTrigger: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
-	const {
-		startDate,
-		endDate,
-		showClearBtn,
-		startDateText,
-		endDateText,
-		translate,
-		triggerText,
-	} = props;
+const DateRangeTrigger: FunctionComponent< Props & SharedProps > = props => {
+	const translate = useTranslate();
+
+	const { startDate, endDate, showClearBtn, startDateText, endDateText, triggerText } = props;
 
 	const canReset = startDate || endDate;
 
@@ -74,7 +68,7 @@ export const DateRangeTrigger: FunctionComponent< Props & SharedProps & Localize
 					disabled={ ! canReset }
 					title="Clear date selection"
 				>
-					<ScreenReaderText>{ props.translate( 'Clear date selection' ) }</ScreenReaderText>
+					<ScreenReaderText>{ translate( 'Clear date selection' ) }</ScreenReaderText>
 					<Gridicon aria-hidden="true" icon="cross" />
 				</Button>
 			) }
@@ -89,4 +83,4 @@ DateRangeTrigger.defaultProps = {
 	showClearBtn: true,
 };
 
-export default localize( DateRangeTrigger );
+export default DateRangeTrigger;
