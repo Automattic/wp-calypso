@@ -35,7 +35,7 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import EmptyContent from 'components/empty-content';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
-import { getSelectedDomain, isMappedDomain } from 'lib/domains';
+import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers } from 'lib/domains';
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -101,21 +101,37 @@ class EmailManagement extends React.Component {
 
 		if ( domainList.some( hasGSuiteWithUs ) ) {
 			return this.googleAppsUsersCard();
-		} else if ( hasGSuiteSupportedDomain( domainList ) ) {
+		}
+		if ( hasGSuiteSupportedDomain( domainList ) ) {
 			return this.addGSuiteCta();
-		} else if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
+		}
+		if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
 			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
-		return this.emptyContent();
+		return this.getEmptyContent();
 	}
 
-	emptyContent() {
+	getEmptyContent() {
+		const { selectedSiteSlug, translate } = this.props;
+		const defaultEmptyContentProps = {
+			illustration: customDomainImage,
+			action: translate( 'Add a Custom Domain' ),
+			actionURL: '/domains/add/' + selectedSiteSlug,
+		};
+		const emptyContentProps = { ...defaultEmptyContentProps, ...this.emptyContentProps() };
+		return <EmptyContent { ...emptyContentProps } />;
+	}
+
+	emptyContentProps() {
 		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
-		let emptyContentProps;
 		const selectedDomain = getSelectedDomain( this.props );
+		const emailForwardingAction = {
+			secondaryAction: translate( 'Add Email Forwarding' ),
+			secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
+		};
 
 		if ( isGSuiteRestricted() && ! selectedDomainName ) {
-			emptyContentProps = {
+			return {
 				title: translate( 'Enable powerful email features.' ),
 				line: translate(
 					'To set up email forwarding, and other email ' +
@@ -123,51 +139,52 @@ class EmailManagement extends React.Component {
 						'to a professional custom domain.'
 				),
 			};
-		} else if ( selectedDomain && hasGSuiteWithAnotherProvider( selectedDomain ) ) {
-			emptyContentProps = {
+		}
+
+		if ( selectedDomain && hasGSuiteWithAnotherProvider( selectedDomain ) ) {
+			return {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate(
 					"You're using G Suite with this domain, so you'll use that to create custom email addresses. Visit your G Suite provider to manage your settings."
 				),
 			};
-		} else if ( selectedDomainName ) {
-			emptyContentProps = {
-				title: translate( 'G Suite is not supported on this domain' ),
-				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
-				secondaryAction: translate( 'Add Email Forwarding' ),
-				secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
-			};
-			if ( isMappedDomain( selectedDomain ) ) {
-				Object.assign( emptyContentProps, {
-					title: translate( 'G Suite is not supported on this domain' ),
-					line: translate(
-						'To enable G Suite on %(domain)s, please have its name servers changed to that of WordPress.com.',
-						{ args: { domain: selectedDomainName } }
-					),
-					action: translate( 'How to change your name servers' ),
-					actionURL:
-						'https://en.support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
-					actionTarget: '_blank',
-				} );
-			}
-		} else {
-			emptyContentProps = {
-				title: translate( 'Enable powerful email features.' ),
+		}
+
+		if (
+			selectedDomainName &&
+			isMappedDomain( selectedDomain ) &&
+			! isMappedDomainWithWpcomNameservers( selectedDomain )
+		) {
+			return {
+				title: translate( 'Use the powerful features of G Suite on this domain' ),
 				line: translate(
-					'To set up email forwarding, G Suite, and other email ' +
-						'services for your site, upgrade your site’s web address ' +
-						'to a professional custom domain.'
+					'To enable G Suite on %(domain)s, please configure it to use WordPress.com name servers.',
+					{ args: { domain: selectedDomainName } }
 				),
+				action: translate( 'How to change your name servers' ),
+				actionURL:
+					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionTarget: '_blank',
+				...emailForwardingAction,
 			};
 		}
-		emptyContentProps.action ||
-			Object.assign( emptyContentProps, {
-				illustration: customDomainImage,
-				action: translate( 'Add a Custom Domain' ),
-				actionURL: '/domains/add/' + selectedSiteSlug,
-			} );
 
-		return <EmptyContent { ...emptyContentProps } />;
+		if ( selectedDomainName ) {
+			return {
+				title: translate( 'G Suite is not supported on this domain' ),
+				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
+				...emailForwardingAction,
+			};
+		}
+
+		return {
+			title: translate( 'Enable powerful email features.' ),
+			line: translate(
+				'To set up email forwarding, G Suite, and other email ' +
+					'services for your site, upgrade your site’s web address ' +
+					'to a professional custom domain.'
+			),
+		};
 	}
 
 	googleAppsUsersCard() {
