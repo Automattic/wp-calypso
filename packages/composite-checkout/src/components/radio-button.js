@@ -70,11 +70,11 @@ const RadioButtonWrapper = styled.div`
 		border: 3px solid ${props => props.theme.colors.highlight};
 	}
 
-	img {
+	svg {
 		filter: grayscale( ${getGrayscaleValue} );
 	}
 
-	:hover img {
+	:hover svg {
 		filter: grayscale( 0 );
 	}
 `;
