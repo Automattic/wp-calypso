@@ -61,4 +61,7 @@ The following props can be passed to the Product Selector block:
 		}
 		```
 	* `optionsLabel`: ( string ) Title of the product options section.
+* `productPriceMatrix`: ( object ) Matrix of product price relationships. Each key is a product slug, and each value is an object with the following structure:
+	* `relatedProduct`: ( string ) Slug of the related product.
+	* `ratio`: ( number ) Ratio between original plan and related plan. Example: for a `yearly` to `monthly` plan, this should be `12`.
 * `siteId`: ( number ) ID of the site we're retrieving purchases for. Used to fetch information about the associated purchases of the selected products.
