@@ -69,8 +69,18 @@ export function usePaymentState( handler ) {
 	const dispatch = useCallback(
 		( { type, payload } ) => {
 			console.log( 'dispatch', type, payload ); // eslint-disable-line no-console
-			handler( { type, payload }, dispatch );
-			setPaymentData( currentData => ( { ...currentData, ...payload } ) );
+			const next = () =>
+				setPaymentData( currentData => {
+					const newState = { ...currentData, ...payload };
+					console.log( 'new state', newState ); // eslint-disable-line no-console
+					return newState;
+				} );
+			if ( ! handler ) {
+				next();
+			}
+			if ( handler ) {
+				handler( { type, payload }, dispatch, next );
+			}
 		},
 		[ handler ]
 	);
