@@ -57,6 +57,7 @@ import ProductSelector from 'blocks/product-selector';
 import FormattedHeader from 'components/formatted-header';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { getDiscountByName } from 'lib/discounts';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSiteOption, getSitePlan, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
@@ -410,10 +411,11 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { intervalType, isJetpack } = this.props;
-		if ( ! isJetpack ) {
+		const { intervalType, isAtomicSite, isInSignup, isJetpack } = this.props;
+		if ( ( ! isInSignup && ! isJetpack ) || isAtomicSite ) {
 			return null;
 		}
+
 		// @todo: Add translations in FormattedHeader once the final copy is provided.
 		return (
 			<div className="plans-features-main__group is-narrow">
@@ -526,6 +528,7 @@ export default connect(
 			plansWithScroll: ! props.displayJetpackPlans && props.plansWithScroll,
 			customerType,
 			domains: getDecoratedSiteDomains( state, siteId ),
+			isAtomicSite: isSiteAtomic( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			siteId,
