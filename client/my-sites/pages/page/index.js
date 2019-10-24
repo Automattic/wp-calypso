@@ -306,7 +306,7 @@ class Page extends Component {
 		];
 	}
 
-	getCopyItem() {
+	getCopyPageItem() {
 		const { wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
@@ -318,7 +318,7 @@ class Page extends Component {
 		return (
 			<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
 				<Gridicon icon="clipboard" size={ 18 } />
-				{ this.props.translate( 'Copy' ) }
+				{ this.props.translate( 'Copy Page' ) }
 			</PopoverMenuItem>
 		);
 	}
@@ -421,7 +421,7 @@ class Page extends Component {
 		const postsPageItem = this.getPostsPageItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
-		const copyItem = this.getCopyItem();
+		const copyPageItem = this.getCopyPageItem();
 		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const hasMenuItems =
@@ -444,7 +444,7 @@ class Page extends Component {
 				{ publishItem }
 				{ viewItem }
 				{ statsItem }
-				{ copyItem }
+				{ copyPageItem }
 				{ restoreItem }
 				{ frontPageItem }
 				{ postsPageItem }
