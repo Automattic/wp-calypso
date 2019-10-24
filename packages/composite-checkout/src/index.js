@@ -3,8 +3,9 @@
  */
 import {
 	CheckoutProvider,
-	useCheckoutLineItems,
+	useCheckoutEndpoint,
 	useCheckoutHandlers,
+	useCheckoutLineItems,
 	useCheckoutRedirects,
 } from './components/checkout-provider';
 import CheckoutStep from './components/checkout-step';
@@ -28,6 +29,7 @@ export {
 	OrderReviewSection,
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
+	useCheckoutEndpoint,
 	useCheckoutHandlers,
 	useCheckoutLineItems,
 	useCheckoutRedirects,
