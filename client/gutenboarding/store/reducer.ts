@@ -10,10 +10,13 @@ import { combineReducers } from '@wordpress/data';
 import ActionTypes from './action-types';
 import { SetSiteTypeAction } from './actions';
 
-const siteType: Reducer< null | string, SetSiteTypeAction > = ( state = null, action ) => {
+const siteType: Reducer< null | SetSiteTypeAction[ 'siteType' ], SetSiteTypeAction > = (
+	state = null,
+	action
+) => {
 	switch ( action.type ) {
 		case ActionTypes.SET_SITE_TYPE:
-			return action.payload;
+			return action.siteType;
 	}
 	return state;
 };

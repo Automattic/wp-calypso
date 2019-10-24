@@ -9,9 +9,9 @@ import { Action, ActionCreator } from 'redux';
 import ActionTypes from './action-types';
 
 export interface SetSiteTypeAction extends Action< ActionTypes.SET_SITE_TYPE > {
-	payload: string;
+	siteType: string;
 }
 export const setSiteType: ActionCreator< SetSiteTypeAction > = ( siteType: string ) => ( {
 	type: ActionTypes.SET_SITE_TYPE,
-	payload: siteType,
+	siteType,
 } );
