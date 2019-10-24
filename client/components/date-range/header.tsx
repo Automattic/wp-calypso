@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { noop } from 'lodash';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,14 +18,16 @@ interface Props {
 	cancelButtonText: string | null | undefined;
 }
 
-export const DateRangeHeader: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
+const DateRangeHeader: FunctionComponent< Props & SharedProps & LocalizeProps > = props => {
+	const translate = useTranslate();
+
 	return (
 		<div className="date-range__popover-header">
 			<Button className="date-range__cancel-btn" onClick={ props.onCancelClick } compact>
-				{ props.cancelButtonText || props.translate( 'Cancel' ) }
+				{ props.cancelButtonText || translate( 'Cancel' ) }
 			</Button>
 			<Button className="date-range__apply-btn" onClick={ props.onApplyClick } primary compact>
-				{ props.applyButtonText || props.translate( 'Apply' ) }
+				{ props.applyButtonText || translate( 'Apply' ) }
 			</Button>
 		</div>
 	);
@@ -36,4 +38,4 @@ DateRangeHeader.defaultProps = {
 	onCancelClick: noop,
 };
 
-export default localize( DateRangeHeader );
+export default DateRangeHeader;
