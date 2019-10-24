@@ -14,6 +14,16 @@ describe( 'determineUrlType', () => {
 		expect( determineUrlType( 'http://example.com/bar' ) ).toBe( 'ABSOLUTE' );
 		expect( determineUrlType( 'http://example.com/bar?baz=1' ) ).toBe( 'ABSOLUTE' );
 		expect( determineUrlType( new URL( 'http://example.com' ) ) ).toBe( 'ABSOLUTE' );
+		// From https://url.spec.whatwg.org/#urls
+		expect( determineUrlType( 'https:example.org' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'https://////example.com///' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'https://example.com/././foo' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'hello:world' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'file:///C|/demo' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'file://loc%61lhost/' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'https://user:password@example.org/' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'https://example.org/foo bar' ) ).toBe( 'ABSOLUTE' );
+		expect( determineUrlType( 'https://EXAMPLE.com/../x' ) ).toBe( 'ABSOLUTE' );
 	} );
 
 	test( 'should detect the correct type for protocol-relative URLs', () => {
@@ -39,5 +49,9 @@ describe( 'determineUrlType', () => {
 		expect( determineUrlType( null ) ).toBe( 'INVALID' );
 		expect( determineUrlType( 0 ) ).toBe( 'INVALID' );
 		expect( determineUrlType( '///' ) ).toBe( 'INVALID' );
+		// From https://url.spec.whatwg.org/#urls
+		expect( determineUrlType( 'https://ex ample.org/' ) ).toBe( 'INVALID' );
+		expect( determineUrlType( 'https://example.com:demo' ) ).toBe( 'INVALID' );
+		expect( determineUrlType( 'http://[www.example.com]/' ) ).toBe( 'INVALID' );
 	} );
 } );
