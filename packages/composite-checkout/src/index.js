@@ -3,7 +3,6 @@
  */
 import {
 	CheckoutProvider,
-	useCheckoutEndpoint,
 	useCheckoutHandlers,
 	useCheckoutLineItems,
 	useCheckoutRedirects,
@@ -29,7 +28,6 @@ export {
 	OrderReviewSection,
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
-	useCheckoutEndpoint,
 	useCheckoutHandlers,
 	useCheckoutLineItems,
 	useCheckoutRedirects,
