@@ -23,6 +23,8 @@ import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import { disableSitePreview } from 'state/sites/preview/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -223,6 +225,7 @@ export class WebPreviewContent extends Component {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
 		if ( caller === 'iframe-onload' && ! this.state.loaded ) {
+			this.props.disableSitePreview( this.props.siteId );
 			if ( this.props.showClose ) {
 				window.open( this.state.iframeUrl, '_blank' );
 				this.props.onClose();
@@ -381,9 +384,10 @@ WebPreviewContent.defaultProps = {
 
 const mapState = state => ( {
 	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
+	siteId: getSelectedSiteId( state ),
 } );
 
 export default connect(
 	mapState,
-	{ recordTracksEvent }
+	{ recordTracksEvent, disableSitePreview }
 )( localize( WebPreviewContent ) );

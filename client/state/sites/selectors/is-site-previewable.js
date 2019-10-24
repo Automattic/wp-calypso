@@ -4,6 +4,7 @@
 import { isHttps } from 'lib/url';
 import getRawSite from 'state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
+import { getSitePreviewDisabled } from 'state/sites/preview/selectors';
 
 /**
  * Returns true if the site can be previewed, false if the site cannot be
@@ -15,6 +16,10 @@ import getSiteOption from './get-site-option';
  * @return {?Boolean}        Whether site is previewable
  */
 export default function isSitePreviewable( state, siteId ) {
+	if ( getSitePreviewDisabled( state, siteId ) ) {
+		return false;
+	}
+
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return null;

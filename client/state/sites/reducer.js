@@ -15,6 +15,7 @@ import vouchers from './vouchers/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
+import preview from './preview/reducer';
 import {
 	MEDIA_DELETE,
 	SITE_DELETE,
@@ -354,4 +355,5 @@ export default combineReducers( {
 	sharingButtons,
 	blogStickers,
 	hasAllSitesList,
+	preview,
 } );
