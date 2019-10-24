@@ -47,7 +47,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpCopyLinkStat = bumpStatGenerator( stateProps.type, 'copyLink', dispatchProps.bumpStat );
 	const onCopyLinkClick = () => {
 		bumpCopyLinkStat();
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_permalink' );
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_copy_link' );
 	};
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCopyLinkClick } );
 };
