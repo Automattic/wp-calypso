@@ -81,18 +81,34 @@ export class ProductSelector extends Component {
 		} );
 	}
 
+	getProductName( product, productSlug ) {
+		if ( product.optionNames && product.optionNames[ productSlug ] ) {
+			return product.optionNames[ productSlug ];
+		}
+
+		const { storeProducts } = this.props;
+		if ( ! storeProducts ) {
+			return null;
+		}
+
+		const productObject = storeProducts[ productSlug ];
+
+		return productObject.product_name;
+	}
+
 	getProductOptions( product ) {
 		const { intervalType, storeProducts } = this.props;
 		const productSlugs = product.options[ intervalType ];
 
 		return productSlugs.map( productSlug => {
 			const productObject = storeProducts[ productSlug ];
+
 			return {
 				billingTimeFrame: this.getBillingTimeFrameLabel(),
 				currencyCode: productObject.currency_code,
 				fullPrice: productObject.cost,
 				slug: productSlug,
-				title: productObject.product_name,
+				title: this.getProductName( product, productSlug ),
 			};
 		} );
 	}
@@ -111,15 +127,17 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	renderCheckoutButton( productObject ) {
-		const { translate } = this.props;
+	renderCheckoutButton( product ) {
+		const { intervalType, storeProducts, translate } = this.props;
+		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
+		const productObject = storeProducts[ selectedProductSlug ];
 
 		return (
 			<ProductCardAction
 				onClick={ this.handleCheckoutForProduct( productObject ) }
-				label={ translate( 'Upgrade to %(productName)s', {
+				label={ translate( 'Get %(productName)s', {
 					args: {
-						productName: productObject.product_name,
+						productName: this.getProductName( product, productObject.product_slug ),
 					},
 				} ) }
 			/>
@@ -170,7 +188,7 @@ export class ProductSelector extends Component {
 								}
 							/>
 
-							{ this.renderCheckoutButton( productObject ) }
+							{ this.renderCheckoutButton( product ) }
 						</Fragment>
 					) }
 				</ProductCard>

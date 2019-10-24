@@ -17,3 +17,11 @@ export const JETPACK_BACKUP_PRODUCTS = [
 	...JETPACK_BACKUP_PRODUCTS_YEARLY,
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
+
+// @TODO: Translate those strings once we have confirmed the copy.
+export const JETPACK_BACKUP_PRODUCT_NAMES = {
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: 'Daily Backups',
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 'Daily Backups',
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: 'Real-Time Backups',
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: 'Real-Time Backups',
+};
