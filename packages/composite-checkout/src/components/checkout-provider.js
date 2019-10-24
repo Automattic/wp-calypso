@@ -11,6 +11,7 @@ import CheckoutContext from '../lib/checkout-context';
 import { getPaymentMethods } from '../lib/payment-methods';
 
 export const CheckoutProvider = ( {
+	callCheckoutEndpoint,
 	total,
 	items,
 	localize,
@@ -25,6 +26,7 @@ export const CheckoutProvider = ( {
 	const [ paymentMethodData, setPaymentMethodData ] = useState( {} );
 	const paymentMethod = getPaymentMethods().find( ( { id } ) => id === paymentMethodId );
 	if (
+		! callCheckoutEndpoint ||
 		! total ||
 		! items ||
 		! localize ||
@@ -34,10 +36,11 @@ export const CheckoutProvider = ( {
 		! failureRedirectUrl
 	) {
 		throw new Error(
-			'CheckoutProvider requires total, items, localize, onSuccess, onFailure, successRedirectUrl, and failureRedirectUrl'
+			'CheckoutProvider requires callCheckoutEndpoint, total, items, localize, onSuccess, onFailure, successRedirectUrl, and failureRedirectUrl'
 		);
 	}
 	const value = {
+		callCheckoutEndpoint,
 		localize,
 		paymentMethodId,
 		total,
@@ -74,6 +77,11 @@ export const useCheckoutHandlers = () => {
 export const useCheckoutRedirects = () => {
 	const { successRedirectUrl, failureRedirectUrl } = useContext( CheckoutContext );
 	return { successRedirectUrl, failureRedirectUrl };
+};
+
+export const useCheckoutEndpoint = () => {
+	const { callCheckoutEndpoint } = useContext( CheckoutContext );
+	return callCheckoutEndpoint;
 };
 
 CheckoutProvider.propTypes = {
