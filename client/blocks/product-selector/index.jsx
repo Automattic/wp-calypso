@@ -22,7 +22,6 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { JETPACK_BACKUP_PRODUCT_NAMES } from 'lib/products-values/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
@@ -82,9 +81,9 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	getProductName( productSlug ) {
-		if ( JETPACK_BACKUP_PRODUCT_NAMES[ productSlug ] ) {
-			return JETPACK_BACKUP_PRODUCT_NAMES[ productSlug ];
+	getProductName( product, productSlug ) {
+		if ( product.optionNames && product.optionNames[ productSlug ] ) {
+			return product.optionNames[ productSlug ];
 		}
 
 		const { storeProducts } = this.props;
@@ -109,7 +108,7 @@ export class ProductSelector extends Component {
 				currencyCode: productObject.currency_code,
 				fullPrice: productObject.cost,
 				slug: productSlug,
-				title: this.getProductName( productSlug ),
+				title: this.getProductName( product, productSlug ),
 			};
 		} );
 	}
@@ -128,15 +127,17 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	renderCheckoutButton( productObject ) {
-		const { translate } = this.props;
+	renderCheckoutButton( product ) {
+		const { intervalType, storeProducts, translate } = this.props;
+		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
+		const productObject = storeProducts[ selectedProductSlug ];
 
 		return (
 			<ProductCardAction
 				onClick={ this.handleCheckoutForProduct( productObject ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
-						productName: this.getProductName( productObject.product_slug ),
+						productName: this.getProductName( product, productObject.product_slug ),
 					},
 				} ) }
 			/>
@@ -187,7 +188,7 @@ export class ProductSelector extends Component {
 								}
 							/>
 
-							{ this.renderCheckoutButton( productObject ) }
+							{ this.renderCheckoutButton( product ) }
 						</Fragment>
 					) }
 				</ProductCard>
