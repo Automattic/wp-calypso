@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useContext } from 'react';
+import { useContext, useState, useCallback } from 'react';
 
 /**
  * Internal dependencies
@@ -62,6 +62,19 @@ export function usePaymentMethod() {
 export function usePaymentMethodData() {
 	const { paymentData, dispatchPaymentAction } = useContext( CheckoutContext );
 	return [ paymentData, dispatchPaymentAction ];
+}
+
+export function usePaymentState( handler ) {
+	const [ paymentData, setPaymentData ] = useState( {} );
+	const dispatch = useCallback(
+		( { type, payload } ) => {
+			console.log( 'dispatch', type, payload ); // eslint-disable-line no-console
+			handler( { type, payload }, dispatch );
+			setPaymentData( currentData => ( { ...currentData, ...payload } ) );
+		},
+		[ handler ]
+	);
+	return [ paymentData, dispatch ];
 }
 
 loadPaymentMethods();
