@@ -17,16 +17,16 @@ describe( 'determineUrlType', () => {
 	} );
 
 	test( 'should detect the correct type for protocol-relative URLs', () => {
-		expect( determineUrlType( '//example.com/' ) ).toBe( 'PROTOCOL_RELATIVE' );
-		expect( determineUrlType( '//www.example.com' ) ).toBe( 'PROTOCOL_RELATIVE' );
-		expect( determineUrlType( '//example.com/bar' ) ).toBe( 'PROTOCOL_RELATIVE' );
-		expect( determineUrlType( '//example.com/bar?baz=1' ) ).toBe( 'PROTOCOL_RELATIVE' );
+		expect( determineUrlType( '//example.com/' ) ).toBe( 'SCHEME_RELATIVE' );
+		expect( determineUrlType( '//www.example.com' ) ).toBe( 'SCHEME_RELATIVE' );
+		expect( determineUrlType( '//example.com/bar' ) ).toBe( 'SCHEME_RELATIVE' );
+		expect( determineUrlType( '//example.com/bar?baz=1' ) ).toBe( 'SCHEME_RELATIVE' );
 	} );
 
 	test( 'should detect the correct type for root-relative URLs', () => {
-		expect( determineUrlType( '/' ) ).toBe( 'ROOT_RELATIVE' );
-		expect( determineUrlType( '/bar' ) ).toBe( 'ROOT_RELATIVE' );
-		expect( determineUrlType( '/bar?baz=1' ) ).toBe( 'ROOT_RELATIVE' );
+		expect( determineUrlType( '/' ) ).toBe( 'PATH_ABSOLUTE' );
+		expect( determineUrlType( '/bar' ) ).toBe( 'PATH_ABSOLUTE' );
+		expect( determineUrlType( '/bar?baz=1' ) ).toBe( 'PATH_ABSOLUTE' );
 	} );
 
 	test( 'should detect the correct type for path-relative URLs', () => {

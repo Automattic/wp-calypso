@@ -4,16 +4,18 @@
 import { URL as URLString } from 'types';
 import { Falsey } from 'utility-types';
 
+// For complete definitions of these classifications, see:
+// https://url.spec.whatwg.org/#urls
 export enum URL_TYPE {
 	// A complete URL, with (at least) protocol and host.
 	// E.g. `http://example.com` or `http://example.com/path`
 	ABSOLUTE = 'ABSOLUTE',
 	// A URL with no protocol, but with a host.
 	// E.g. `//example.com` or `//example.com/path`
-	PROTOCOL_RELATIVE = 'PROTOCOL_RELATIVE',
+	SCHEME_RELATIVE = 'SCHEME_RELATIVE',
 	// A URL with no protocol or host, but with a path starting at the root.
 	// E.g. `/` or `/path`
-	ROOT_RELATIVE = 'ROOT_RELATIVE',
+	PATH_ABSOLUTE = 'PATH_ABSOLUTE',
 	// A URL with no protocol or host, but with a path relative to the current resource.
 	// E.g. `../foo` or `bar`
 	PATH_RELATIVE = 'PATH_RELATIVE',
@@ -67,12 +69,12 @@ export function determineUrlType( url: URLString | URL | Falsey ) {
 	// If we couldn't parse it without a base, but it didn't take the hostname we provided, that means
 	// it's a protocol-relative URL.
 	if ( parsed.hostname !== BASE_HOSTNAME ) {
-		return URL_TYPE.PROTOCOL_RELATIVE;
+		return URL_TYPE.SCHEME_RELATIVE;
 	}
 
 	// Otherwise, it's a relative URL of some sort.
 	if ( url.startsWith( '/' ) ) {
-		return URL_TYPE.ROOT_RELATIVE;
+		return URL_TYPE.PATH_ABSOLUTE;
 	}
 	return URL_TYPE.PATH_RELATIVE;
 }
