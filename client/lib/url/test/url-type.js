@@ -43,6 +43,9 @@ describe( 'determineUrlType', () => {
 		expect( determineUrlType( '' ) ).toBe( 'PATH_RELATIVE' );
 		expect( determineUrlType( 'bar' ) ).toBe( 'PATH_RELATIVE' );
 		expect( determineUrlType( 'bar?baz=1' ) ).toBe( 'PATH_RELATIVE' );
+		expect( determineUrlType( 'bar#anchor' ) ).toBe( 'PATH_RELATIVE' );
+		expect( determineUrlType( '?query=param' ) ).toBe( 'PATH_RELATIVE' );
+		expect( determineUrlType( '#fragment' ) ).toBe( 'PATH_RELATIVE' );
 	} );
 
 	test( 'should detect the correct type for invalid URLs', () => {
