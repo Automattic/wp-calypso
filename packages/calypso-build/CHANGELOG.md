@@ -1,3 +1,21 @@
+# 4.3.0
+- Update a number of dependencies
+  - @babel/core@7.6.4
+  - @babel/preset-env@7.6.3
+  - @babel/preset-react@7.6.3
+  - autoprefixer@9.7.0
+  - browserlist@4.7.2
+  - enzyme-adapter-react-16@1.15.1
+  - enzyme-to-json@3.4.3
+  - node-sass@4.13.0 to get Node@12 support
+  - postcss-custom-properties@8.0.11
+  - sass-loader@7.3.1
+  - thread-loader@2.1.3
+  - typescript@3.6.4
+  - webpack@4.41.2
+  - webpack-cli@3.3.9
+  - webpack-rtl-plugin@1.8.2
+
 # 4.2.0
 - Support CommonJS/ESM compilation by adding a `modules` option (and `MODULES` env variable) to the `babel/default` preset.
 - Add `jest-enzyme` assertion library to `jest-preset.js`.
