@@ -5,7 +5,7 @@ require( '@babel/polyfill' );
  */
 import React, { useState, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import Checkout from '../src';
+import Checkout, { usePaymentState } from '../src';
 
 const initialItems = [
 	{
@@ -36,25 +36,22 @@ const failureRedirectUrl = window.location.href;
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const { items, total } = useShoppingCart();
-	const [ paymentData, setPaymentData ] = useState( {} );
-	const dispatch = useCallback( ( { type, payload } ) => {
-		if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
-			// TODO: fetch this from the server and then...
-			return dispatch( {
-				type: 'STRIPE_CONFIGURATION_SET',
-				payload: {
-					stripeConfiguration: {
-						public_key: '',
-						js_url: 'https://js.stripe.com/v3/',
+	const [ paymentData, dispatchPaymentAction ] = usePaymentState(
+		useCallback( ( { type }, dispatch ) => {
+			if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
+				// TODO: fetch this from the server and then...
+				return dispatch( {
+					type: 'STRIPE_CONFIGURATION_SET',
+					payload: {
+						stripeConfiguration: {
+							public_key: '',
+							js_url: 'https://js.stripe.com/v3/',
+						},
 					},
-				},
-			} );
-		}
-		if ( ! payload ) {
-			throw new Error( 'Cannot set paymentData to a falsy value' );
-		}
-		setPaymentData( currentData => ( { ...currentData, ...payload } ) );
-	}, [] );
+				} );
+			}
+		}, [] )
+	);
 
 	return (
 		<Checkout
@@ -66,7 +63,7 @@ function MyCheckout() {
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			paymentData={ paymentData }
-			dispatchPaymentAction={ dispatch }
+			dispatchPaymentAction={ dispatchPaymentAction }
 		/>
 	);
 }
