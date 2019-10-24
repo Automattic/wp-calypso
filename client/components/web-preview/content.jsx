@@ -223,8 +223,12 @@ export class WebPreviewContent extends Component {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
 		if ( caller === 'iframe-onload' && ! this.state.loaded ) {
-			window.open( this.state.iframeUrl, '_blank' );
-			this.props.onClose();
+			if ( this.props.showClose ) {
+				window.open( this.state.iframeUrl, '_blank' );
+				this.props.onClose();
+			} else {
+				window.location.replace( this.state.iframeUrl );
+			}
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
 		}
