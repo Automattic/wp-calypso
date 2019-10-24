@@ -37,10 +37,10 @@ const failureRedirectUrl = window.location.href;
 function MyCheckout() {
 	const { items, total } = useShoppingCart();
 	const [ paymentData, dispatchPaymentAction ] = usePaymentState(
-		useCallback( ( { type }, dispatch ) => {
+		useCallback( ( { type }, dispatch, next ) => {
 			if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
 				// TODO: fetch this from the server and then...
-				return dispatch( {
+				dispatch( {
 					type: 'STRIPE_CONFIGURATION_SET',
 					payload: {
 						stripeConfiguration: {
@@ -49,7 +49,9 @@ function MyCheckout() {
 						},
 					},
 				} );
+				return;
 			}
+			next();
 		}, [] )
 	);
 
