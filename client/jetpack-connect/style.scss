@@ -1145,7 +1145,6 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 
 		@include breakpoint( '>660px' ) {
 			font-size: 22px;
-			font-weight: 600;
 		}
 	}
 
@@ -1167,7 +1166,7 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 		color: var( --color-neutral-light );
 	}
 
-	.product-card__header .product-card__price-group {
+	.product-card__header {
 		.plan-price,
 		.plan-price *,
 		.product-card__billing-timeframe {
@@ -1178,12 +1177,11 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 			@include breakpoint( '>660px' ) {
 				font-size: 20px;
 				font-weight: 600;
-				font-style: normal;
 			}
 		}
 	}
 
-	.product-card__option .product-card__price-group {
+	.product-card__option {
 		.plan-price.is-discounted,
 		.plan-price.is-discounted *,
 		.product-card__billing-timeframe {
