@@ -90,7 +90,8 @@ export class ProductSelector extends Component {
 			return {
 				billingTimeFrame: this.getBillingTimeFrameLabel(),
 				currencyCode: productObject.currency_code,
-				fullPrice: productObject.cost,
+				fullPrice: this.getProductOptionFullPrice( productSlug ),
+				discountedPrice: this.getProductOptionDiscountedPrice( productSlug ),
 				slug: productSlug,
 				title: productObject.product_name,
 			};
@@ -126,6 +127,40 @@ export class ProductSelector extends Component {
 		);
 	}
 
+	getProductOptionFullPrice( productSlug ) {
+		const { productPriceMatrix, storeProducts } = this.props;
+
+		if ( isEmpty( storeProducts ) ) {
+			return null;
+		}
+
+		const productObject = storeProducts[ productSlug ];
+		const relatedProductObject = productPriceMatrix[ productSlug ];
+
+		if ( relatedProductObject ) {
+			return storeProducts[ relatedProductObject.relatedProduct ].cost * relatedProductObject.ratio;
+		}
+
+		return productObject.cost;
+	}
+
+	getProductOptionDiscountedPrice( productSlug ) {
+		const { productPriceMatrix, storeProducts } = this.props;
+
+		if ( isEmpty( storeProducts ) ) {
+			return null;
+		}
+
+		const productObject = storeProducts[ productSlug ];
+		const relatedProductObject = productPriceMatrix[ productSlug ];
+
+		if ( relatedProductObject ) {
+			return productObject.cost;
+		}
+
+		return null;
+	}
+
 	renderProducts() {
 		const { currencyCode, intervalType, products, storeProducts } = this.props;
 
@@ -153,7 +188,8 @@ export class ProductSelector extends Component {
 					key={ product.id }
 					title={ product.title }
 					billingTimeFrame={ this.getBillingTimeFrameLabel() }
-					fullPrice={ productObject.cost }
+					fullPrice={ this.getProductOptionFullPrice( selectedProductSlug ) }
+					discountedPrice={ this.getProductOptionDiscountedPrice( selectedProductSlug ) }
 					description={ product.description }
 					currencyCode={ currencyCode }
 					purchase={ purchase }
@@ -197,9 +233,16 @@ ProductSelector.propTypes = {
 	products: PropTypes.arrayOf(
 		PropTypes.shape( {
 			title: PropTypes.string,
+			id: PropTypes.string,
+			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
+			optionsLabel: PropTypes.string,
 		} )
 	).isRequired,
+	productPriceMatrix: PropTypes.shape( {
+		relatedProduct: PropTypes.string,
+		ratio: PropTypes.number,
+	} ),
 	siteId: PropTypes.number,
 
 	// Connected props
