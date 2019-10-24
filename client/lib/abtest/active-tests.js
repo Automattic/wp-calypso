@@ -90,10 +90,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	passwordlessSignup: {
-		datestamp: '20191029',
+		datestamp: '20291029',
 		variations: {
-			passwordless: 10,
-			default: 90,
+			passwordless: 0,
+			default: 100,
 		},
 		defaultVariation: 'default',
 	},
