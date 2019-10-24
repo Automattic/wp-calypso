@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -23,7 +21,6 @@ import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
 
 /**
  * Style dependencies
@@ -44,24 +41,7 @@ class SiteTitleStep extends Component {
 		siteType: PropTypes.string,
 	};
 
-	getDomainFormLastQuery() {
-		return get(
-			find( this.props.signupProgress, { stepName: 'domains-with-preview' } ),
-			[ 'domainForm', 'lastQuery' ],
-			null
-		);
-	}
-
 	componentDidMount() {
-		if (
-			this.props.flowName === 'onboarding' &&
-			'variant' === abtest( 'prefillSiteTitleWithDomainQuery' )
-		) {
-			const domainLastQuery = this.getDomainFormLastQuery();
-			if ( domainLastQuery && ! this.props.siteTitle ) {
-				this.props.setSiteTitle( domainLastQuery );
-			}
-		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -135,7 +115,6 @@ class SiteTitleStep extends Component {
 
 export default connect(
 	state => ( {
-		signupProgress: getSignupProgress( state ),
 		siteTitle: getSiteTitle( state ),
 		siteType: getSiteType( state ),
 	} ),
