@@ -129,8 +129,8 @@ export default {
 	passwordlessSignup: {
 		datestamp: '20191013',
 		variations: {
-			passwordless: 0,
-			default: 100,
+			passwordless: 10,
+			default: 90,
 		},
 		defaultVariation: 'default',
 	},
