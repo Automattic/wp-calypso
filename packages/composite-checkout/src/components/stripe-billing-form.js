@@ -13,7 +13,7 @@ import Field from './field';
 import { useStripe } from '../lib/stripe';
 import { useCheckoutHandlers } from '../index';
 
-function StripeBillingForm( { summary, isActive, paymentData, setPaymentData } ) {
+function StripeBillingForm( { summary, isActive, paymentData, dispatch } ) {
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const localize = useLocalize();
@@ -31,7 +31,11 @@ function StripeBillingForm( { summary, isActive, paymentData, setPaymentData } )
 		return null;
 	}
 	const { billingName = '', billingNameError = null } = paymentData || {};
-	const onChange = value => setPaymentData( { ...( paymentData || {} ), billingName: value } );
+	const onChange = value =>
+		dispatch( {
+			type: 'PAYMENT_DATA_UPDATE',
+			payload: { billingName: value },
+		} );
 	return (
 		<BillingFormFields>
 			<FormField
