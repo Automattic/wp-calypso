@@ -10,7 +10,9 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-const store = registerStore< State >( 'automattic/onboard', {
+export const STORE_KEY = 'automattic/onboard';
+
+const store = registerStore< State >( STORE_KEY, {
 	reducer,
 	actions,
 	selectors,

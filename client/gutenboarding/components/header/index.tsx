@@ -5,11 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { Button, IconButton } from '@wordpress/components';
 import React from 'react';
 import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
+import { STORE_KEY } from '../../store';
 
 interface Props {
 	isEditorSidebarOpened: boolean;
@@ -17,6 +19,8 @@ interface Props {
 }
 
 export function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
+	const siteType = useSelect( select => select( STORE_KEY ).getSiteType() );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -25,6 +29,7 @@ export function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props )
 			aria-label={ __( 'Top bar' ) }
 			tabIndex="-1"
 		>
+			<div>You have a: { siteType }!</div>
 			<div
 				aria-label={ __( 'Document tools' ) }
 				aria-orientation="horizontal"
