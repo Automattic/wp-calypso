@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,18 +17,9 @@ import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { infoNotice } from 'state/notices/actions';
 
-function PostActionsEllipsisMenuCopyLink( {
-	onCopyLinkClick,
-	copyLink,
-	infoNotice: showInfoNotice,
-	translate,
-} ) {
-	const onCopy = () => {
-		onCopyLinkClick();
-		showInfoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
-	};
+function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink } ) {
 	return (
-		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopy } icon={ 'link' }>
+		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopyLinkClick } icon={ 'link' }>
 			{ translate( 'Copy Link' ) }
 		</PopoverMenuItemClipboard>
 	);
@@ -57,6 +48,7 @@ const mapDispatchToProps = { bumpStat, infoNotice, recordTracksEvent };
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpCopyLinkStat = bumpStatGenerator( stateProps.type, 'copyLink', dispatchProps.bumpStat );
 	const onCopyLinkClick = () => {
+		dispatchProps.infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
 		bumpCopyLinkStat();
 		dispatchProps.recordTracksEvent( 'calypso_post_type_list_copy_link' );
 	};
