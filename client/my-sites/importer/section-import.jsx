@@ -182,7 +182,7 @@ class SectionImport extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ this.props.translate( 'Another service' ) }
+				{ this.props.translate( 'Choose from full list' ) }
 			</CompactCard>
 		);
 
