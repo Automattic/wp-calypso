@@ -327,7 +327,7 @@ class Page extends Component {
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
-			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink }>
+			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon={ 'link' }>
 				{ translate( 'Copy Link' ) }
 			</PopoverMenuItemClipboard>
 		);

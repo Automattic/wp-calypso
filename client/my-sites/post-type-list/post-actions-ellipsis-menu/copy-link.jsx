@@ -23,7 +23,7 @@ function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink, infoNotic
 		infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
 	};
 	return (
-		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopy }>
+		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopy } icon={ 'link' }>
 			{ translate( 'Copy Link' ) }
 		</PopoverMenuItemClipboard>
 	);
