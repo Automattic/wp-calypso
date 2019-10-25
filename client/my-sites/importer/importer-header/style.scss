@@ -17,19 +17,21 @@
 }
 
 .importer-header__service-info {
-	margin-bottom: 0.5em;
-	margin-left: 60px;
+	margin-left: 3.75em;
+
+	p {
+		margin-bottom: 1em;
+	}
 }
 
 .importer-header__service-title {
 	font-size: 21px;
-	font-weight: 300;
 	color: var( --color-text-subtle );
 	clear: none;
 
 	@include breakpoint( '<660px' ) {
 		line-height: 1;
-		margin-bottom: 5px;
+		margin-bottom: 0.25em;
 	}
 }
 
