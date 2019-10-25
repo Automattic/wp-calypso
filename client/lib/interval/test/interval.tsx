@@ -17,7 +17,7 @@ import { Interval, EVERY_SECOND, EVERY_MINUTE } from '../index';
 jest.useFakeTimers();
 
 describe( 'Interval', () => {
-	let container;
+	let container: HTMLDivElement;
 
 	beforeEach( () => {
 		container = document.createElement( 'div' );
@@ -27,7 +27,6 @@ describe( 'Interval', () => {
 	afterEach( () => {
 		unmountComponentAtNode( container );
 		container.remove();
-		container = null;
 	} );
 
 	test( 'Does not run onTick() on mount', () => {
