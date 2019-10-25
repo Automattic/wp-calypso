@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ActionType, SiteType } from '.';
+import { ActionType, SiteType } from './types';
 
 export const setSiteType = ( siteType: SiteType ) => ( {
 	type: ActionType.SET_SITE_TYPE,
