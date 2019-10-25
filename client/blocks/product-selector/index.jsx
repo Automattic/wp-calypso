@@ -197,7 +197,6 @@ export class ProductSelector extends Component {
 
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
-			const productObject = storeProducts[ selectedProductSlug ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const purchase = this.getPurchaseByProduct( product );
 
@@ -275,6 +274,10 @@ ProductSelector.propTypes = {
 
 	// From withLocalizedMoment() HoC
 	moment: PropTypes.func.isRequired,
+};
+
+ProductSelector.defaultProps = {
+	productPriceMatrix: {},
 };
 
 const connectComponent = connect( ( state, { products, siteId } ) => {
