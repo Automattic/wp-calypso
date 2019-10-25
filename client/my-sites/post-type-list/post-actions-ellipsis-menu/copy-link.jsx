@@ -17,10 +17,15 @@ import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { infoNotice } from 'state/notices/actions';
 
-function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink, infoNotice, translate } ) {
+function PostActionsEllipsisMenuCopyLink( {
+	onCopyLinkClick,
+	copyLink,
+	infoNotice: showInfoNotice,
+	translate,
+} ) {
 	const onCopy = () => {
 		onCopyLinkClick();
-		infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
+		showInfoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
 	};
 	return (
 		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopy } icon={ 'link' }>
