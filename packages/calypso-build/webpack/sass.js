@@ -9,19 +9,13 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  *
  * @param  {Object}    _                              Options
- * @param  {boolean}   _.preserveCssCustomProperties  whether Custom Properties and properties using them should be preserved in their original form
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
  * @param  {string}    _.postCssConfigPath            Path to PostCSS config file
  *
  * @return {Object}                                   webpack loader object
  */
-module.exports.loader = ( {
-	preserveCssCustomProperties,
-	includePaths,
-	prelude,
-	postCssConfigPath,
-} ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssConfigPath } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
@@ -35,9 +29,6 @@ module.exports.loader = ( {
 			loader: require.resolve( 'postcss-loader' ),
 			options: {
 				config: {
-					ctx: {
-						preserveCssCustomProperties,
-					},
 					path: postCssConfigPath,
 				},
 			},
