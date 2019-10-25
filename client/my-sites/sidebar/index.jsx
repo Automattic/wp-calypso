@@ -232,6 +232,30 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackMigrateClick = () => {
+		this.trackMenuItemClick( 'migrate' );
+		this.onNavigate();
+	};
+
+	migrate() {
+		const { path, siteSuffix, translate } = this.props;
+
+		if ( ! isEnabled( 'tools/migrate' ) ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Migrate' ) }
+				selected={ itemLinkMatches( '/migrate', path ) }
+				link={ `/migrate${ siteSuffix }` }
+				onNavigate={ this.trackMigrateClick }
+				tipTarget="migrate"
+				expandSection={ this.expandToolsSection }
+			/>
+		);
+	}
+
 	trackCustomizeClick = () => {
 		this.trackMenuItemClick( 'customize' );
 		this.onNavigate();
@@ -705,6 +729,7 @@ export class MySitesSidebar extends Component {
 						materialIcon="build"
 					>
 						{ this.tools() }
+						{ this.migrate() }
 						{ this.marketing() }
 						{ this.earn() }
 						{ this.activity() }
