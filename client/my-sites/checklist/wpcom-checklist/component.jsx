@@ -21,16 +21,17 @@ import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getSiteTaskList from 'state/selectors/get-site-task-list';
 import QueryPosts from 'components/data/query-posts';
+import QuerySites from 'components/data/query-sites';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { successNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteSlug, isCurrentPlanPaid } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
-import { launchSite } from 'state/sites/launch/actions';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import getChecklistTaskUrls, {
 	FIRST_TEN_SITE_POSTS_QUERY,
@@ -187,18 +188,9 @@ class WpcomChecklistComponent extends PureComponent {
 		} );
 	};
 
-	handleLaunchSite = task => () => {
-		if ( task.isCompleted ) {
-			return;
-		}
-
-		const { siteId, domains, isPaidPlan, siteSlug } = this.props;
-
-		if ( isPaidPlan && domains.length > 1 ) {
-			this.props.launchSite( siteId );
-		} else {
-			location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
-		}
+	handleLaunchSite = () => {
+		const { siteId } = this.props;
+		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
 	};
 
 	verificationTaskButtonText() {
@@ -279,6 +271,7 @@ class WpcomChecklistComponent extends PureComponent {
 
 		return (
 			<>
+				{ siteId && <QuerySites siteId={ siteId } /> }
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
 				<ChecklistComponent
@@ -588,25 +581,36 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
-		const { needsVerification, translate } = this.props;
+		const { needsVerification, siteIsUnlaunched, translate } = this.props;
 		const disabled = ! baseProps.completed && needsVerification;
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				forceCollapsed={ task.isCompleted && ! siteIsUnlaunched }
 				bannerImageSrc="/calypso/images/stats/tasks/launch.svg"
 				buttonText={ translate( 'Launch site' ) }
-				completedTitle={ translate( 'You launched your site' ) }
-				description={ translate(
-					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
-				) }
+				completedButtonText={ siteIsUnlaunched && translate( 'Launch site' ) }
+				completedTitle={
+					siteIsUnlaunched
+						? translate( 'You skipped launching your site' )
+						: translate( 'You launched your site' )
+				}
+				description={
+					siteIsUnlaunched
+						? translate(
+								"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+						  )
+						: null
+				}
 				disableIcon={ disabled }
 				isButtonDisabled={ disabled }
 				noticeText={
 					disabled ? translate( 'Confirm your email address before launching your site.' ) : null
 				}
-				onClick={ this.handleLaunchSite( task ) }
+				onClick={ this.handleLaunchSite }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				showSkip={ true }
 				title={ translate( 'Launch your site' ) }
 			/>
 		);
@@ -1023,9 +1027,8 @@ export default connect(
 			taskList,
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
-			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
-			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		};
 	},
 	{
@@ -1033,7 +1036,7 @@ export default connect(
 		recordTracksEvent,
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
-		launchSite,
+		launchSiteOrRedirectToLaunchSignupFlow,
 		showInlineHelpPopover,
 		showChecklistPrompt,
 		setChecklistPromptTaskId,
