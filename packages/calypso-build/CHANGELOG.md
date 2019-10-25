@@ -1,4 +1,9 @@
-# 4.3.0
+# 4.2.1
+
+- Fix a bad file: dependency in the published package.
+
+# 4.2.0
+
 - Update a number of dependencies
   - @babel/core@7.6.4
   - @babel/preset-env@7.6.3
@@ -15,8 +20,6 @@
   - webpack@4.41.2
   - webpack-cli@3.3.9
   - webpack-rtl-plugin@1.8.2
-
-# 4.2.0
 - Support CommonJS/ESM compilation by adding a `modules` option (and `MODULES` env variable) to the `babel/default` preset.
 - Add `jest-enzyme` assertion library to `jest-preset.js`.
 
