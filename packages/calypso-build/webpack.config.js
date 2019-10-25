@@ -112,7 +112,7 @@ function getWebpackConfig(
 					presets,
 					workerCount,
 				} ),
-				SassConfig.loader( { postCssConfigPath } ),
+				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),
 				FileConfig.loader(),
 			],
 		},

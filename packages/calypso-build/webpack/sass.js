@@ -11,17 +11,11 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
  * @param  {Object}    _                              Options
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
- * @param  {Object}    _.postCssConfigContext         PostCSS context
- * @param  {string}    _.postCssConfigPath            Path to PostCSS config file
+ * @param  {Object}    _.postCssConfig                PostCSS config
  *
  * @return {Object}                                   webpack loader object
  */
-module.exports.loader = ( {
-	includePaths,
-	prelude,
-	postCssConfigContext,
-	postCssConfigPath,
-} ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
@@ -34,10 +28,7 @@ module.exports.loader = ( {
 		{
 			loader: require.resolve( 'postcss-loader' ),
 			options: {
-				config: {
-					context: postCssConfigContext,
-					path: postCssConfigPath,
-				},
+				config: postCssConfig,
 			},
 		},
 		{
