@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, identity } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,13 +34,11 @@ class ThemeSelectionStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 		stepName: PropTypes.string.isRequired,
-		translate: PropTypes.func,
 		useHeadstart: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		useHeadstart: true,
-		translate: identity,
 	};
 
 	pickTheme = themeId => {

@@ -12,6 +12,11 @@ import classNames from 'classnames';
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class StepWrapper extends Component {
 	static propTypes = {
 		shouldHideNavButtons: PropTypes.bool,
@@ -66,7 +71,7 @@ class StepWrapper extends Component {
 						flowName={ this.props.flowName }
 						stepName={ this.props.stepName }
 						labelText={ this.props.skipLabelText }
-						cssClass={ !! this.props.skipHeadingText && ' navigation-link--has-skip-heading ' }
+						cssClass={ ! this.props.skipHeadingText && ' navigation-link--has-skip-heading ' }
 					/>
 				</div>
 			);
