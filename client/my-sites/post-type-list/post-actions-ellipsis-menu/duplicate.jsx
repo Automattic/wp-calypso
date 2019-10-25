@@ -41,7 +41,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	return (
 		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="clipboard">
 			<QueryJetpackModules siteId={ siteId } />
-			{ translate( 'Copy Post', { context: 'verb' } ) }
+			{ translate( 'Copy Post' ) }
 		</PopoverMenuItem>
 	);
 }
