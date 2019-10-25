@@ -3,8 +3,9 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
+import moment from 'moment'; // No need for localized moment in this component.
 
 /**
  * Internal dependencies
