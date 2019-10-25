@@ -51,6 +51,15 @@ The following props can be passed to the Product Selector block:
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
 		}
 		```
+	* `optionDescriptions`: ( object ) Optional descriptions of the product options. Each key is a product slug, and the value is the corresponding copy. Example:
+		```
+		optionDescriptions: {
+			jetpack_backup_daily: 'Looking for more? With Real-time backups, we save as you edit and you’ll get unlimited backup archives',
+			jetpack_backup_daily_monthly: 'Looking for more? With Real-time backups, we save as you edit and you’ll get unlimited backup archives',
+			jetpack_backup_realtime: 'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives',
+			jetpack_backup_realtime_monthly: 'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives',
+		}
+		```
 	* `optionNames`: ( object ) Optional names of the product options. Each key is a product slug, and the value is the corresponding title. Example:
 		```
 		optionsNames: {
