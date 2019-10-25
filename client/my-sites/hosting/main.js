@@ -42,8 +42,8 @@ const Hosting = ( { translate, isAtomic } ) => {
 				/>
 			) }
 			<div className="hosting__cards">
-				<SFTPCard />
-				<PhpMyAdminCard />
+				<SFTPCard disabled={ ! isAtomic } />
+				<PhpMyAdminCard disabled={ ! isAtomic } />
 			</div>
 		</Main>
 	);
