@@ -13,11 +13,9 @@ import { useTranslate } from 'i18n-calypso';
  */
 import './style.scss';
 
-export default function NoResults( { text, image = false } ) {
+export default function NoResults( props ) {
 	const translate = useTranslate();
-	if ( text === undefined ) {
-		text = translate( 'No results' );
-	}
+	const { image, text = translate( 'No results.' ) } = props;
 	return (
 		<div className="no-results">
 			{ image && <img className="no-results__img" src={ image } alt="" /> }
