@@ -14,10 +14,10 @@ const products = [
 	{
 		title: 'Jetpack Backup',
 		description: (
-			<Fragment>
+			<p>
 				Automatic scanning and one-click fixes keep your site one step ahead of security threats.{' '}
 				<a href="https://jetpack.com/">More info</a>
-			</Fragment>
+			</p>
 		),
 		id: 'jetpack_backup',
 		options: {
