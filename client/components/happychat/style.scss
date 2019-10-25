@@ -83,7 +83,7 @@
 
 }
 
-@keyframes happychat-disappear {
+@keyframes a8c_happychat-disappear {
 	0% {
 		top: 0;
 	}
@@ -95,7 +95,7 @@
 	}
 }
 
-@keyframes happychat-minimize {
+@keyframes a8c_happychat-minimize {
 	0% {
 		max-height: 220px;
 	}
@@ -115,7 +115,7 @@
 }
 
 @include breakpoint( '>960px' ) {
-	@keyframes happychat-minimize {
+	@keyframes a8c_happychat-minimize {
 		0% {
 			max-height: 100%;
 		}

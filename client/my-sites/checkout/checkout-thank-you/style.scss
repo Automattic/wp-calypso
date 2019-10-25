@@ -309,7 +309,7 @@
 }
 
 /* Gridicon Floaties */
-@keyframes floating {
+@keyframes a8c_floating {
 	0% {
 		opacity: 0;
 		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
@@ -324,7 +324,7 @@
 	}
 }
 
-@keyframes focus {
+@keyframes a8c_focus {
 	0%,
 	100% {
 		opacity: 0.1;
@@ -576,7 +576,7 @@
 }
 
 /* Title */
-@keyframes fade-in {
+@keyframes a8c_fade-in {
 	0% {
 		transform: translateY( 0 );
 		opacity: 0;

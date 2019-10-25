@@ -56,6 +56,8 @@
 		"selector-pseudo-element-colon-notation": "double",
 		"selector-pseudo-element-no-unknown": true,
 		"selector-type-case": "lower",
-		"selector-max-id": [ 0 ]
+		"selector-max-id": [ 0 ],
+
+		"keyframes-name-pattern": "a8c_.+"
 	}
 }
