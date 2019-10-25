@@ -187,6 +187,7 @@ const webpackConfig = {
 		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
+		'entry-gutenbearding': [ path.join( __dirname, 'client', 'landing', 'gutenbearding' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
