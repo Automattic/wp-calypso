@@ -155,7 +155,7 @@ export default class AppComponents extends React.Component {
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
 					<PostSelector />
-					<ProductSelector />
+					<ProductSelector readmeFilePath="product-selector" />
 					<Site readmeFilePath="site" />
 					<SitePlaceholder />
 					<SitesDropdown />
