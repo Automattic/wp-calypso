@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { moment, translate } from 'i18n-calypso';
+import { translate, getLocaleSlug } from 'i18n-calypso';
 import { find, forEach, last, times } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -25,8 +26,12 @@ export default createSelector(
 			return [];
 		}
 
+		const localeSlug = getLocaleSlug();
+
 		const result = times( 6, n => {
-			const month = moment().subtract( n, 'months' );
+			const month = moment()
+				.locale( localeSlug )
+				.subtract( n, 'months' );
 			return {
 				title: month.format( 'MMM YYYY' ),
 				value: { month: month.format( 'YYYY-MM' ), operator: 'equal' },
@@ -41,7 +46,9 @@ export default createSelector(
 		} );
 
 		forEach( transactions, transaction => {
-			const transactionMonth = moment( transaction.date ).format( 'MMM YYYY' );
+			const transactionMonth = moment( transaction.date )
+				.locale( localeSlug )
+				.format( 'MMM YYYY' );
 			const found = find( result, { title: transactionMonth } );
 			if ( found ) {
 				found.count++;

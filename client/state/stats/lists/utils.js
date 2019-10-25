@@ -13,7 +13,8 @@ import {
 	concat,
 	flatten,
 } from 'lodash';
-import { moment, translate } from 'i18n-calypso';
+import { translate, getLocaleSlug } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -271,7 +272,8 @@ export function parseChartData( payload, nullAttributes = [] ) {
 
 		if ( dataRecord.period ) {
 			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
-			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' );
+			const localeSlug = getLocaleSlug();
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
 		}
 		return dataRecord;
@@ -287,21 +289,27 @@ export function parseChartData( payload, nullAttributes = [] ) {
  */
 export function parseUnitPeriods( unit, period ) {
 	let splitYearWeek;
+	const localeSlug = getLocaleSlug();
 
 	switch ( unit ) {
 		case 'week':
 			splitYearWeek = period.split( '-W' );
 			return moment()
+				.locale( localeSlug )
 				.isoWeekYear( splitYearWeek[ 0 ] )
 				.isoWeek( splitYearWeek[ 1 ] )
 				.endOf( 'isoWeek' );
 		case 'month':
-			return moment( period, 'YYYY-MM' ).endOf( 'month' );
+			return moment( period, 'YYYY-MM' )
+				.locale( localeSlug )
+				.endOf( 'month' );
 		case 'year':
-			return moment( period, 'YYYY' ).endOf( 'year' );
+			return moment( period, 'YYYY' )
+				.locale( localeSlug )
+				.endOf( 'year' );
 		case 'day':
 		default:
-			return moment( period, 'YYYY-MM-DD' );
+			return moment( period, 'YYYY-MM-DD' ).locale( localeSlug );
 	}
 }
 
@@ -370,12 +378,16 @@ export const normalizers = {
 			dayOfWeek = 0;
 		}
 
+		const localeSlug = getLocaleSlug();
+
 		return {
 			day: moment()
+				.locale( localeSlug )
 				.day( dayOfWeek )
 				.format( 'dddd' ),
 			percent: Math.round( highest_day_percent ),
 			hour: moment()
+				.locale( localeSlug )
 				.hour( highest_hour )
 				.startOf( 'hour' )
 				.format( 'LT' ),

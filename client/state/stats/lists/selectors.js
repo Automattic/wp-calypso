@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
 import { get, isArray, map, flatten } from 'lodash';
-import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -77,7 +76,7 @@ export const getSiteStatsPostStreakData = treeSelect(
 		// ensure streakData.data exists and it is not an array
 		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
 			Object.keys( streakData.data ).forEach( timestamp => {
-				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
+				const postDay = moment.unix( timestamp ).locale( 'en' );
 				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
 
 				if ( 'undefined' === typeof response[ datestamp ] ) {

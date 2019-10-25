@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { moment } from 'i18n-calypso';
+import { getLocaleSlug } from 'i18n-calypso';
 import { compact, flatten, isDate, omit, slice, some, values } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -18,20 +19,25 @@ const PAGE_SIZE = 5;
  * @param {Date} date date to be formatted
  * @returns {String}  formatted date
  */
-const formatDate = date => moment( date ).format( 'll' );
+function formatDate( date ) {
+	const localeSlug = getLocaleSlug();
+	return moment( date )
+		.locale( localeSlug )
+		.format( 'll' );
+}
 
 /**
  * Utility function extracting searchable strings from a single transaction
  * @param {Object}  transaction transaction object
  * @returns {Array}             list of searchable strings
  */
-const getSearchableStrings = transaction => {
+function getSearchableStrings( transaction ) {
 	const rootStrings = values( omit( transaction, 'items' ) ),
 		transactionItems = transaction.items || [],
 		itemStrings = flatten( transactionItems.map( values ) );
 
 	return compact( rootStrings.concat( itemStrings ) );
-};
+}
 
 /**
  * Utility function to search the transactions by the provided searchQuery
@@ -39,8 +45,8 @@ const getSearchableStrings = transaction => {
  * @param {String} searchQuery search query
  * @returns {Array}            search results
  */
-const search = ( transactions, searchQuery ) =>
-	transactions.filter( transaction =>
+function search( transactions, searchQuery ) {
+	return transactions.filter( transaction =>
 		some( getSearchableStrings( transaction ), val => {
 			if ( isDate( val ) ) {
 				val = formatDate( val );
@@ -52,6 +58,7 @@ const search = ( transactions, searchQuery ) =>
 			return haystack.indexOf( needle ) !== -1;
 		} )
 	);
+}
 
 /**
  * Returns the billing transactions filtered by the filters defined in state.billingTransactions.transactionFilters tree

@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
-import { moment } from 'i18n-calypso';
 import { round } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies

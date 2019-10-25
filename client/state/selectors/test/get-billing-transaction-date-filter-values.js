@@ -4,13 +4,14 @@
 import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
 
 jest.mock( 'i18n-calypso', () => {
-	const moment = require( 'moment' );
-	moment.now = () => new Date( 2018, 4, 24 ); //May 24, 2018
 	return {
 		translate: str => str,
-		moment,
+		getLocaleSlug: () => 'en',
 	};
 } );
+
+const moment = require( 'moment' );
+moment.now = () => new Date( 2018, 4, 24 ); // May 24, 2018
 
 describe( 'getBillingTransactionDateFilterValues()', () => {
 	const state = {

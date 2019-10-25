@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
-import { moment } from 'i18n-calypso';
+import { getLocaleSlug } from 'i18n-calypso';
+import moment from 'moment';
+
 /**
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
@@ -11,6 +12,7 @@ import { moment } from 'i18n-calypso';
  * @return {String|false} time when newly scheduled share action will be published
  */
 export default function getScheduledPublicizeShareActionTime( state, siteId, postId ) {
+	const localeSlug = getLocaleSlug();
 	const date = get(
 		state,
 		[
@@ -25,7 +27,7 @@ export default function getScheduledPublicizeShareActionTime( state, siteId, pos
 		false
 	);
 	if ( date ) {
-		return moment( new Date( date * 1000 ) );
+		return moment( new Date( date * 1000 ) ).locale( localeSlug );
 	}
 	return false;
 }
