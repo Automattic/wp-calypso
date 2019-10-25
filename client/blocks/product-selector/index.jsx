@@ -276,6 +276,10 @@ ProductSelector.propTypes = {
 	moment: PropTypes.func.isRequired,
 };
 
+ProductSelector.defaultProps = {
+	productPriceMatrix: {},
+};
+
 const connectComponent = connect( ( state, { products, siteId } ) => {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
 	const productSlugs = extractProductSlugs( products );
