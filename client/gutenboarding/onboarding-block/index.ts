@@ -19,10 +19,6 @@ export enum SiteType {
 
 export interface Attributes {
 	align: 'full';
-	siteTitle: string;
-	siteType?: SiteType;
-	theme: string;
-	vertical: string;
 }
 
 export const settings: BlockConfiguration< Attributes > = {
@@ -33,18 +29,6 @@ export const settings: BlockConfiguration< Attributes > = {
 		align: {
 			type: 'string',
 			default: 'full',
-		},
-		siteTitle: {
-			type: 'string',
-		},
-		siteType: {
-			type: 'string',
-		},
-		theme: {
-			type: 'string',
-		},
-		vertical: {
-			type: 'string',
 		},
 	},
 	supports: {
