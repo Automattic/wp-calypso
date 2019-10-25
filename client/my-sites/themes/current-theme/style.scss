@@ -37,7 +37,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 	width: 75px;
 	color: transparent;
 	background-color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	height: 100%;
 }
 
@@ -64,7 +64,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 .current-theme__placeholder {
 	color: transparent;
 	background-color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 }
 
 .current-theme__actions {

@@ -228,7 +228,7 @@
 		bottom: 16px;
 		left: 16px;
 		background-color: var( --color-neutral-10 );
-		animation: loading-fade 1.6s ease-in-out infinite;
+		animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
@@ -326,7 +326,7 @@
 .sharing-service.is-placeholder .sharing-service__description {
 	background-color: var( --color-neutral-0 );
 	color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 }
 
 .sharing-service.is-placeholder .sharing-service__name {
@@ -804,7 +804,7 @@
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__buttons {
 	display: block;
 	background-color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 }
 
 .sharing-buttons-preview__label {

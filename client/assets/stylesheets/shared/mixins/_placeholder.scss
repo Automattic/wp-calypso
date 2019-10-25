@@ -5,7 +5,7 @@
 // ==========================================================================
 
 @mixin placeholder( $color-property: --color-neutral-5 ) {
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	background: var( $color-property );
 	color: transparent;
 

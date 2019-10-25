@@ -11,7 +11,7 @@
 	}
 
 	.name-servers__explanation {
-		animation: appear 0.5s ease-in-out;
+		animation: a8c_appear 0.5s ease-in-out;
 		color: var( --color-text-subtle );
 		font-size: 13px;
 		font-style: italic;
@@ -53,7 +53,7 @@
 }
 
 .name-servers__custom-nameservers-form {
-	animation: appear 0.5s ease-in-out;
+	animation: a8c_appear 0.5s ease-in-out;
 }
 
 .name-servers__custom-nameservers-form-explanation {

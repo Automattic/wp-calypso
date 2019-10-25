@@ -173,7 +173,7 @@ ul.module-tabs {
 		&.is-loading a .value,
 		&.is-loading a:hover .value,
 		&.is-loading .no-link .value {
-			animation: loading-fade 1.6s ease-in-out infinite;
+			animation: a8c_loading-fade 1.6s ease-in-out infinite;
 			cursor: default;
 			font-size: 110%;
 			color: var( --color-neutral-light );

@@ -49,7 +49,7 @@
 		height: 48px;
 
 		&.is-placeholder {
-			animation: loading-fade 1.6s ease-in-out infinite;
+			animation: a8c_loading-fade 1.6s ease-in-out infinite;
 		}
 	}
 }
@@ -68,7 +68,7 @@
 	.is-placeholder & {
 		color: transparent;
 		background-color: var( --color-neutral-0 );
-		animation: loading-fade 1.6s ease-in-out infinite;
+		animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
@@ -102,7 +102,7 @@
 	color: var( --color-success );
 	font-size: 12px;
 	font-weight: 500;
-	animation: appear 0.15s ease-in;
+	animation: a8c_appear 0.15s ease-in;
 
 	.gridicon {
 		margin-right: 3px;

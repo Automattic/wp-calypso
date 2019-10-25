@@ -6,7 +6,7 @@
 		width: 38%;
 		height: 22px;
 		background-color: var( --color-neutral-0 );
-		animation: loading-fade 1.6s ease-in-out infinite;
+		animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
@@ -18,7 +18,7 @@
 	&.is-placeholder {
 		margin: 7px 0 0;
 		background-color: var( --color-neutral-0 );
-		animation: loading-fade 1.6s ease-in-out infinite;
+		animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	}
 }
 

@@ -64,7 +64,7 @@
 }
 
 .notification-settings-blog-settings-placeholder__blog__content__icon {
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	background-color: var( --color-neutral-0 );
 	position: relative;
 	background: var( --color-neutral-10 );
@@ -89,7 +89,7 @@
 }
 
 .notification-settings-blog-settings-placeholder__blog__info__title {
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	background-color: var( --color-neutral-0 );
 	width: 150px;
 	display: block;
@@ -98,7 +98,7 @@
 }
 
 .notification-settings-blog-settings-placeholder__blog__info__domain {
-	animation: loading-fade 1.6s ease-in-out infinite;
+	animation: a8c_loading-fade 1.6s ease-in-out infinite;
 	background-color: var( --color-neutral-0 );
 	display: block;
 	width: 250px;
@@ -117,7 +117,7 @@
 	@extend %notification-settings-blog-settings-flexbox;
 
 	em {
-		animation: loading-fade 1.6s ease-in-out infinite;
+		animation: a8c_loading-fade 1.6s ease-in-out infinite;
 		background-color: var( --color-neutral-0 );
 		width: 160px;
 		height: 22px;
