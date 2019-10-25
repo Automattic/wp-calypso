@@ -21,7 +21,7 @@ export default function CheckoutReviewOrder( { summary, className } ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 				<OrderReviewSection>
-					<OrderReviewLineItems items={ items } />
+					<OrderReviewLineItems isSummaryVisible={ summary } items={ items } />
 				</OrderReviewSection>
 				<OrderReviewSection>
 					<OrderReviewTotal total={ total } />
@@ -31,7 +31,7 @@ export default function CheckoutReviewOrder( { summary, className } ) {
 	}
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-			<OrderReviewSection withDivider>
+			<OrderReviewSection>
 				<OrderReviewLineItems items={ items } />
 			</OrderReviewSection>
 			<OrderReviewSection>
