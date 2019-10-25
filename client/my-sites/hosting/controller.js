@@ -6,20 +6,21 @@
 import React from 'react';
 import config from 'config';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import Hosting from './main';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { isBusinessPlan } from 'lib/plans';
+import { getSelectedSite } from 'state/ui/selectors';
 
-export function redirectIfNotAtomic( context, next ) {
+export function redirectIfNotBusiness( context, next ) {
 	const { store } = context;
 	const state = store.getState();
-	const isAtomic = isSiteAutomatedTransfer( state, getSelectedSiteId( state ) );
+	const isBusinessSite = isBusinessPlan( get( getSelectedSite( state ), 'plan.product_slug' ) );
 
-	if ( config.isEnabled( 'hosting' ) && isAtomic ) {
+	if ( config.isEnabled( 'hosting' ) && isBusinessSite ) {
 		next();
 		return;
 	}
