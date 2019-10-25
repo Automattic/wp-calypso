@@ -21,6 +21,10 @@ const products = [
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
 		},
 		optionsLabel: 'Backup options',
+		upgradeProductMap: {
+			jetpack_backup_daily: 'jetpack_backup_realtime',
+			jetpack_backup_daily_monthly: 'jetpack_backup_realtime_monthly'
+		}
 	}
 ];
 

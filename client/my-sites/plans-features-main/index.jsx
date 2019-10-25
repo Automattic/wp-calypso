@@ -36,6 +36,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	JETPACK_BACKUP_UPGRADE_MAP,
 } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
@@ -97,6 +98,7 @@ const jetpackProducts = [
 			...JETPACK_BACKUP_PRODUCT_NAMES,
 		},
 		optionsLabel: 'Backup options',
+		upgradeProductMap: JETPACK_BACKUP_UPGRADE_MAP,
 	},
 ];
 

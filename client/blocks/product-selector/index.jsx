@@ -66,6 +66,19 @@ export class ProductSelector extends Component {
 		);
 	}
 
+	getPurchaseUpgrade( purchase, product ) {
+		const { storeProducts } = this.props;
+		if ( ! purchase.productSlug ) {
+			return false;
+		}
+
+		if ( product.upgradeProductMap && product.upgradeProductMap[ purchase.productSlug ] ) {
+			const upgradeSlug = product.upgradeProductMap[ purchase.productSlug ];
+			return storeProducts[ upgradeSlug ];
+		}
+		return false;
+	}
+
 	getSubtitleByProduct( product ) {
 		const { moment, translate } = this.props;
 		const purchase = this.getPurchaseByProduct( product );
@@ -128,11 +141,8 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	renderCheckoutButton( product ) {
-		const { intervalType, storeProducts, translate } = this.props;
-		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
-		const productObject = storeProducts[ selectedProductSlug ];
-
+	renderCheckoutButton( product, productObject ) {
+		const { translate } = this.props;
 		return (
 			<ProductCardAction
 				onClick={ this.handleCheckoutForProduct( productObject ) }
@@ -143,6 +153,13 @@ export class ProductSelector extends Component {
 				} ) }
 			/>
 		);
+	}
+
+	getSelectedCheckoutButton( product ) {
+		const { intervalType, storeProducts } = this.props;
+		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
+		const productObject = storeProducts[ selectedProductSlug ];
+		return this.renderCheckoutButton( product, productObject );
 	}
 
 	getProductOptionFullPrice( productSlug ) {
@@ -197,9 +214,10 @@ export class ProductSelector extends Component {
 
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
-			const productObject = storeProducts[ selectedProductSlug ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const purchase = this.getPurchaseByProduct( product );
+			const upgrade =
+				product.upgradeProductMap && purchase && this.getPurchaseUpgrade( purchase, product );
 
 			return (
 				<ProductCard
@@ -213,6 +231,16 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
+					{ upgrade && (
+						<Fragment>
+							<strong>
+								{ 'Get ' +
+									this.getProductName( product, upgrade.product_slug ) +
+									' (todo:display price...)' }{' '}
+							</strong>
+							{ this.renderCheckoutButton( product, upgrade ) }
+						</Fragment>
+					) }
 					{ ! purchase && (
 						<Fragment>
 							<ProductCardOptions
@@ -223,8 +251,7 @@ export class ProductSelector extends Component {
 									this.handleProductOptionSelect( stateKey, productSlug )
 								}
 							/>
-
-							{ this.renderCheckoutButton( product ) }
+							{ this.getSelectedCheckoutButton( product ) }
 						</Fragment>
 					) }
 				</ProductCard>
@@ -255,12 +282,14 @@ ProductSelector.propTypes = {
 			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
 			optionsLabel: PropTypes.string,
+			upgradeProductMap: PropTypes.object,
 		} )
 	).isRequired,
 	productPriceMatrix: PropTypes.shape( {
 		relatedProduct: PropTypes.string,
 		ratio: PropTypes.number,
 	} ),
+
 	siteId: PropTypes.number,
 
 	// Connected props
