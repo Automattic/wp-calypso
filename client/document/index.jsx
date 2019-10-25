@@ -85,6 +85,7 @@ class Document extends React.Component {
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
 				className={ classNames( {
+					'is-calypso-base': sectionName !== 'gutenboarding', // @TODO there should be more generic way
 					'is-fluid-width': isFluidWidth,
 					'is-iframe': sectionName === 'gutenberg-editor',
 				} ) }
