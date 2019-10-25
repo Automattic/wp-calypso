@@ -20,6 +20,7 @@ registerBlockType( 'a8c/site-credit', {
 		html: false,
 		multiple: false,
 		reusable: false,
+		removal: false,
 	},
 	edit,
 	save: () => null,
