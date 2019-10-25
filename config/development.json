@@ -155,6 +155,7 @@
 		"signup/wpcc": true,
 		"memberships": true,
 		"support-user": true,
+		"tools/migrate": true,
 		"try/preconnect": true,
 		"try/preload": true,
 		"try/single-cdn": true,
