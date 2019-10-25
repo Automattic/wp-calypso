@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { NO__ } from '../devtools';
 import { BlockConfiguration } from '@wordpress/blocks';
 
 /**
@@ -16,9 +16,9 @@ export interface Attributes {
 }
 
 export const settings: BlockConfiguration< Attributes > = {
-	title: __( 'Onboarding' ),
+	title: NO__( 'Onboarding' ),
 	category: 'layout', // @TODO
-	description: __( 'Onboarding wizard block' ),
+	description: NO__( 'Onboarding wizard block' ),
 	attributes: {
 		align: {
 			type: 'string',
