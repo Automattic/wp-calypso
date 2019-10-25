@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -106,7 +104,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			type: 'remove',
 		};
-		survey.addResponses( enrichedSurveyData( surveyData, moment(), site, purchase ) );
+		survey.addResponses( enrichedSurveyData( surveyData, site, purchase ) );
 
 		const response = await survey.submit();
 		if ( ! response.success ) {
