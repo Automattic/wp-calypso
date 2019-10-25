@@ -17,6 +17,11 @@ import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 
 /**
+ * Image dependencies
+ */
+import charactersImage from 'assets/images/reader/reader-conversations-characters.svg';
+
+/**
  * Style dependencies
  */
 import './intro.scss';
@@ -96,7 +101,7 @@ class ConversationsIntro extends React.Component {
 								  ) }
 						</span>
 					</div>
-					<div className="conversations__intro-character" />
+					<img className="conversations__intro-character" src={ charactersImage } alt="" />
 
 					<button
 						className="conversations__intro-close"
