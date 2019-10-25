@@ -7,7 +7,8 @@
     This was useful when the colors were defined as SCSS variables, but now when they are
     defined as CSS variables included in the CSS output, the prelude no longer makes sense.
 - Use Consumer's `postcss.config.js`, if present.
-- Remove `preserveCssCustomProperties` option; default to `true`.
+- Remove `preserveCssCustomProperties` option from SASS preset; default to `true`.
+- Add `postCssConfigContext` and `postCssConfigPath` options to SASS preset to expose the corresponding PostCSS options.
 
 # 4.2.1
 
