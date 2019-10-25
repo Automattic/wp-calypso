@@ -8,7 +8,7 @@ It supports searching if you have many sites, handles sites with empty titles, s
 #### How to use:
 
 ```js
-import SitesDropdown 'components/sites-dropdown';
+import SitesDropdown from 'components/sites-dropdown';
 
 render() {
 	return (
