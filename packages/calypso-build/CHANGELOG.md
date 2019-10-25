@@ -1,3 +1,15 @@
+# 5.0.0
+
+- Remove `@automattic/calypso-color-schemes` dependency
+  - See the example given at `https://github.com/Automattic/wp-calypso/blob/master/packages/calypso-build/README.md#advanced-usage-use-own-postcss-config` for instructions on how to continue
+    to use color definitions from that file in your project.
+- Remove `calypso-color-schemes` Sass Prelude.
+  - Remove the `calypso-color-schemes` colors prelude from the default webpack config.
+    This was useful when the colors were defined as SCSS variables, but now when they are
+    defined as CSS variables included in the CSS output, the prelude no longer makes sense.
+- Use Consumer's `postcss.config.js`, if present.
+- Remove `preserveCssCustomProperties` option.
+
 # 4.2.1
 
 - Fix a bad file: dependency in the published package.
