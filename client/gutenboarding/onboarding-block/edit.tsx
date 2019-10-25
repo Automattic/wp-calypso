@@ -1,38 +1,39 @@
 /**
  * External dependencies
  */
-import { sprintf, __ } from '@wordpress/i18n';
-import { SelectControl } from '@wordpress/components';
-import { BlockEditProps } from '@wordpress/blocks';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { TextControl, SelectControl } from '@wordpress/components';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { SiteType } from '.';
-import { STORE_KEY } from '../store';
+import { SiteType } from '../store/types';
+import { useOnboardingDispatch, useOnboardingState } from '../store';
 
 export default function OnboardingEdit() {
-	const siteType = useSelect( select => select( STORE_KEY ).getSiteType() );
-	const { setSiteType } = useDispatch( STORE_KEY );
+	const { siteTitle, siteType } = useOnboardingState();
+	const { setSiteType, setSiteTitle } = useOnboardingDispatch();
 
-	if ( true || ! siteType ) {
-		return (
-			<>
-				<h1>{ __( "Let's set up your website -- it takes only a moment" ) }</h1>
-				{ __( 'I want to create a website ' ) }
-				<SelectControl< SiteType >
-					onChange={ setSiteType }
-					options={ [
-						{ label: __( 'with a blog.' ), value: SiteType.BLOG },
-						{ label: __( 'for a store.' ), value: SiteType.STORE },
-						{ label: __( 'to write a story.' ), value: SiteType.STORY },
-					] }
-					value={ siteType || SiteType.BLOG }
-				/>
-			</>
-		);
-	}
-	return <div>{ sprintf( __( 'Cool, you have a %s' ), siteType ) }</div>;
+	return (
+		<>
+			<p>{ __( "Let's set up your website -- it takes only a moment" ) }</p>
+			{ __( 'I want to create a website ' ) }
+			<SelectControl< SiteType >
+				onChange={ setSiteType }
+				options={ [
+					{ label: __( 'with a blog.' ), value: SiteType.BLOG },
+					{ label: __( 'for a store.' ), value: SiteType.STORE },
+					{ label: __( 'to write a story.' ), value: SiteType.STORY },
+				] }
+				value={ siteType }
+			/>
+			{ ( siteType || siteTitle ) && (
+				<>
+					<p>{ __( "It's called" ) }</p>
+					<TextControl onChange={ setSiteTitle } value={ siteTitle } />
+				</>
+			) }
+		</>
+	);
 }

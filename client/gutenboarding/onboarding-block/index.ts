@@ -11,19 +11,13 @@ import edit from './edit';
 
 export const name = 'automattic/onboarding';
 
-export enum SiteType {
-	BLOG = 'blog',
-	STORE = 'store',
-	STORY = 'story',
-}
-
 export interface Attributes {
 	align: 'full';
 }
 
 export const settings: BlockConfiguration< Attributes > = {
 	title: __( 'Onboarding' ),
-	category: 'layout', // TODO
+	category: 'layout', // @TODO
 	description: __( 'Onboarding wizard block' ),
 	attributes: {
 		align: {
