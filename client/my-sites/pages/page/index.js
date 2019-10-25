@@ -36,7 +36,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
-import { withoutNotice } from 'state/notices/actions';
+import { infoNotice, withoutNotice } from 'state/notices/actions';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
@@ -666,6 +666,9 @@ class Page extends Component {
 	};
 
 	copyPageLink = () => {
+		this.props.infoNotice( this.props.translate( 'Link copied to clipboard.' ), {
+			duration: 3000,
+		} );
 		this.props.recordEvent( 'Clicked Copy Page Link' );
 	};
 
@@ -704,6 +707,7 @@ const mapState = ( state, props ) => {
 };
 
 const mapDispatch = {
+	infoNotice,
 	savePost: withoutNotice( savePost ),
 	deletePost: withoutNotice( deletePost ),
 	trashPost: withoutNotice( trashPost ),
