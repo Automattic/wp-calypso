@@ -49,9 +49,9 @@ class CreditCardNumberInput extends React.Component {
 	}
 
 	render() {
-		const inputStyle = this.props.disabled
-			? {}
-			: { backgroundImage: CreditCardNumberInput.getTypeImageURL( this.props.value ) };
+		const inputStyle = {
+			backgroundImage: CreditCardNumberInput.getTypeImageURL( this.props.value ),
+		};
 
 		return (
 			<div className="credit-card-number-input">

@@ -80,9 +80,9 @@ class PaymentLogo extends React.Component {
 		);
 
 		// Credit card images have been migrated to Webpack, while the remaining
-		// images are still referenced in the stylesheets (and to be migrated)
+		// images are still referenced in the stylesheets (they’re still to be migrated)
 		const logoPath = LOGO_PATHS[ type ];
-		const logoStyle = logoPath ? { backgroundImage: `url(${ logoPath })` } : {};
+		const logoStyle = logoPath ? { backgroundImage: `url(${ logoPath })` } : undefined;
 
 		return (
 			<div
