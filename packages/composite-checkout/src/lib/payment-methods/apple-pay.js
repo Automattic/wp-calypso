@@ -70,6 +70,7 @@ export function ApplePaySubmitButton() {
 			onClick={ submitApplePayPayment }
 			buttonState="primary"
 			buttonType="apple-pay"
+			aria-label="Submit payment with Apple Pay"
 			fullWidth
 		>
 			<ButtonApplePayIcon fill="white" />

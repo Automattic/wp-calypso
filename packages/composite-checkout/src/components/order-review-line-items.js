@@ -34,10 +34,13 @@ const OrderReviewSectionArea = styled.div`
 `;
 
 function LineItem( { item, className } ) {
+	const itemSpanId = `checkout-line-item-${ item.id }`;
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<span>{ item.label }</span>
-			<span>{ renderDisplayValueMarkdown( item.amount.displayValue ) }</span>
+			<span id={ itemSpanId }>{ item.label }</span>
+			<span aria-labelledby={ itemSpanId }>
+				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
+			</span>
 		</div>
 	);
 }

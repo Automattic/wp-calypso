@@ -10,7 +10,9 @@ import styled from 'styled-components';
  */
 import joinClasses from '../lib/join-classes';
 import { getPaymentMethods } from '../lib/payment-methods';
+import { getAriaLabelForPaymentMethodSelector } from '../lib/payment-methods/registered-methods';
 import RadioButton from './radio-button';
+import { useLocalize } from '../lib/localize';
 
 export default function CheckoutPaymentMethods( {
 	summary,
@@ -21,6 +23,8 @@ export default function CheckoutPaymentMethods( {
 	paymentMethod,
 	onChange,
 } ) {
+	const localize = useLocalize();
+
 	const paymentMethods = getPaymentMethods();
 	const paymentMethodsToDisplay = availablePaymentMethods
 		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
@@ -48,6 +52,7 @@ export default function CheckoutPaymentMethods( {
 						key={ method.id }
 						checked={ paymentMethod.id === method.id }
 						onClick={ onChange }
+						ariaLabel={ getAriaLabelForPaymentMethodSelector( method.id, localize ) }
 					/>
 				) ) }
 			</RadioButtons>
@@ -65,7 +70,14 @@ CheckoutPaymentMethods.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, onClick } ) {
+function PaymentMethod( {
+	id,
+	LabelComponent,
+	PaymentMethodComponent,
+	checked,
+	onClick,
+	ariaLabel,
+} ) {
 	return (
 		<RadioButton
 			name="paymentMethod"
@@ -73,6 +85,7 @@ function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, o
 			id={ id }
 			checked={ checked }
 			onChange={ onClick ? () => onClick( id ) : null }
+			ariaLabel={ ariaLabel }
 			label={ <LabelComponent /> }
 		>
 			{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
@@ -86,6 +99,7 @@ PaymentMethod.propTypes = {
 	checked: PropTypes.bool.isRequired,
 	PaymentMethodComponent: PropTypes.func,
 	LabelComponent: PropTypes.func,
+	ariaLabel: PropTypes.string.isRequired,
 };
 
 export const RadioButtons = styled.div`

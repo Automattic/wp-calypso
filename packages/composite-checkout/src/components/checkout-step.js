@@ -66,7 +66,15 @@ CheckoutStep.propTypes = {
 	isComplete: PropTypes.bool.isRequired,
 };
 
-function CheckoutStepHeader( { className, stepNumber, title, isActive, isComplete, onEdit } ) {
+function CheckoutStepHeader( {
+	className,
+	stepNumber,
+	title,
+	isActive,
+	isComplete,
+	onEdit,
+	editButtonAriaLabel,
+} ) {
 	const localize = useLocalize();
 	return (
 		<StepHeader className={ joinClasses( [ className, 'checkout-step__header' ] ) }>
@@ -77,7 +85,7 @@ function CheckoutStepHeader( { className, stepNumber, title, isActive, isComplet
 				{ title }
 			</StepTitle>
 			{ onEdit && isComplete && ! isActive && (
-				<Button buttonState="text-button" className="checkout-step__edit" onClick={ onEdit }>
+				<Button buttonState="text-button" className="checkout-step__edit" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
 					{ localize( 'Edit' ) }
 				</Button>
 			) }
