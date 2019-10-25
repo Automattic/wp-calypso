@@ -43,6 +43,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 	return {
 		copyLink: post.URL,
+		type: post.type,
 	};
 };
 
