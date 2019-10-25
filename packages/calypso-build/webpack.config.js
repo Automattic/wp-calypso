@@ -71,6 +71,12 @@ function getWebpackConfig(
 		babelConfig = undefined;
 	}
 
+	let postCssConfigPath = process.cwd();
+	if ( ! fs.existsSync( path.join( postCssConfigPath, 'postcss.config.js' ) ) ) {
+		// Default to this package's PostCSS config
+		postCssConfigPath = __dirname;
+	}
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		entry,
@@ -106,7 +112,7 @@ function getWebpackConfig(
 					presets,
 					workerCount,
 				} ),
-				SassConfig.loader(),
+				SassConfig.loader( { postCssConfigPath } ),
 				FileConfig.loader(),
 			],
 		},
