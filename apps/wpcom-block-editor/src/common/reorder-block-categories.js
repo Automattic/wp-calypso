@@ -11,19 +11,17 @@ domReady( function() {
 	//preserve order of other columns, and split matching
 	const { core: coreCategories, custom: unsorted } = getCategories().reduce(
 		( { core, custom }, category ) => {
-			const matchIndex = categorySlugs.indexOf( category.slug );
-			if ( matchIndex === -1 ) {
-				return {
-					core: [ ...core, category ],
-					custom,
-				};
-			}
-			if ( matchIndex > -1 ) {
+			const isCustomCategory = categorySlugs.includes( category.slug );
+			if ( isCustomCategory ) {
 				return {
 					core,
 					custom: [ ...custom, category ],
 				};
 			}
+			return {
+				core: [ ...core, category ],
+				custom,
+			};
 		},
 		{ custom: [], core: [] }
 	);
