@@ -430,8 +430,9 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { intervalType, isAtomicSite, isInSignup, isJetpack } = this.props;
-		if ( ( ! isInSignup && ! isJetpack ) || isAtomicSite ) {
+		const { intervalType, displayJetpackPlans } = this.props;
+
+		if ( ! displayJetpackPlans ) {
 			return null;
 		}
 
