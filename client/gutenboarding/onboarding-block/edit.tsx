@@ -1,36 +1,39 @@
 /**
  * External dependencies
  */
-import { sprintf, __ } from '@wordpress/i18n';
-import { SelectControl } from '@wordpress/components';
-import { BlockEditProps } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
+import { TextControl, SelectControl } from '@wordpress/components';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { Attributes, SiteType } from '.';
+import { SiteType } from '../store/types';
+import { useOnboardingDispatch, useOnboardingState } from '../store';
 
-export default function OnboardingEdit( {
-	attributes: { siteType },
-	setAttributes,
-}: BlockEditProps< Attributes > ) {
-	if ( ! siteType ) {
-		return (
-			<>
-				<h1>{ __( "Let's set up your website -- it takes only a moment" ) }</h1>
-				{ __( 'I want to create a website ' ) }
-				<SelectControl< SiteType >
-					onChange={ v => setAttributes( { siteType: v } ) }
-					options={ [
-						{ label: __( 'with a blog.' ), value: 'blog' },
-						{ label: __( 'for a store.' ), value: 'store' },
-						{ label: __( 'to write a story.' ), value: 'story' },
-					] }
-					value={ siteType || SiteType.BLOG }
-				/>
-			</>
-		);
-	}
-	return <div>{ sprintf( __( 'Cool, you have a %s' ), siteType ) }</div>;
+export default function OnboardingEdit() {
+	const { siteTitle, siteType } = useOnboardingState();
+	const { setSiteType, setSiteTitle } = useOnboardingDispatch();
+
+	return (
+		<>
+			<p>{ __( "Let's set up your website -- it takes only a moment" ) }</p>
+			{ __( 'I want to create a website ' ) }
+			<SelectControl< SiteType >
+				onChange={ setSiteType }
+				options={ [
+					{ label: __( 'with a blog.' ), value: SiteType.BLOG },
+					{ label: __( 'for a store.' ), value: SiteType.STORE },
+					{ label: __( 'to write a story.' ), value: SiteType.STORY },
+				] }
+				value={ siteType }
+			/>
+			{ ( siteType || siteTitle ) && (
+				<>
+					<p>{ __( "It's called" ) }</p>
+					<TextControl onChange={ setSiteTitle } value={ siteTitle } />
+				</>
+			) }
+		</>
+	);
 }

@@ -9,6 +9,7 @@ import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
 /**
  * Internal dependencies
  */
+import { useOnboardingState } from '../../store';
 import './style.scss';
 
 interface Props {
@@ -17,14 +18,27 @@ interface Props {
 }
 
 export function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
+	const { siteTitle, siteType } = useOnboardingState();
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			className="gutenboarding__header"
 			role="region"
 			aria-label={ __( 'Top bar' ) }
-			tabIndex="-1"
+			tabIndex={ -1 }
 		>
+			<div>
+				<p>
+					You have a: { siteType }!
+					{ siteTitle && (
+						<>
+							<br />
+							It's called <em>{ siteTitle }</em>!
+						</>
+					) }
+				</p>
+			</div>
 			<div
 				aria-label={ __( 'Document tools' ) }
 				aria-orientation="horizontal"

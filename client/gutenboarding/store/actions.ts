@@ -1,17 +1,14 @@
 /**
- * External dependencies
- */
-import { Action, ActionCreator } from 'redux';
-
-/**
  * Internal dependencies
  */
-import ActionTypes from './action-types';
+import { ActionType, SiteType } from './types';
 
-export interface SetSiteTypeAction extends Action< ActionTypes.SET_SITE_TYPE > {
-	siteType: string;
-}
-export const setSiteType: ActionCreator< SetSiteTypeAction > = ( siteType: string ) => ( {
-	type: ActionTypes.SET_SITE_TYPE,
+export const setSiteType = ( siteType: SiteType ) => ( {
+	type: ActionType.SET_SITE_TYPE,
 	siteType,
+} );
+
+export const setSiteTitle = ( siteTitle: string ) => ( {
+	type: ActionType.SET_SITE_TITLE,
+	siteTitle,
 } );

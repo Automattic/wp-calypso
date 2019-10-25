@@ -7,21 +7,32 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import ActionTypes from './action-types';
-import { SetSiteTypeAction } from './actions';
+import { ActionType, SiteType } from './types';
+import * as Actions from './actions';
 
-const siteType: Reducer< null | SetSiteTypeAction[ 'siteType' ], SetSiteTypeAction > = (
-	state = null,
+const siteType: Reducer< SiteType, ReturnType< typeof Actions[ 'setSiteType' ] > > = (
+	state = SiteType.BLOG,
 	action
 ) => {
 	switch ( action.type ) {
-		case ActionTypes.SET_SITE_TYPE:
+		case ActionType.SET_SITE_TYPE:
 			return action.siteType;
 	}
 	return state;
 };
 
-const reducer = combineReducers( { siteType } );
+const siteTitle: Reducer< string, ReturnType< typeof Actions[ 'setSiteTitle' ] > > = (
+	state = '',
+	action
+) => {
+	switch ( action.type ) {
+		case ActionType.SET_SITE_TITLE:
+			return action.siteTitle;
+	}
+	return state;
+};
+
+const reducer = combineReducers( { siteType, siteTitle } );
 
 export type State = ReturnType< typeof reducer >;
 
