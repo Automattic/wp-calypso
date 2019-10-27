@@ -3009,6 +3009,12 @@
 				"@types/istanbul-lib-report": "*"
 			}
 		},
+		"@types/json-schema": {
+			"version": "7.0.3",
+			"resolved": "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.3.tgz",
+			"integrity": "sha512-Il2DtDVRGDcqjDtE+rF8iqg1CArehSK84HZJCT7AMITlyXRBpuPhqGLDQMowraqqu1coEaimg4ZOqggt6L6L+A==",
+			"dev": true
+		},
 		"@types/lodash": {
 			"version": "4.14.144",
 			"resolved": "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.144.tgz",
@@ -9261,10 +9267,42 @@
 			}
 		},
 		"eslint-plugin-jest": {
-			"version": "22.6.4",
-			"resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-22.6.4.tgz",
-			"integrity": "sha512-36OqnZR/uMCDxXGmTsqU4RwllR0IiB/XF8GW3ODmhsjiITKuI0GpgultWFt193ipN3HARkaIcKowpE6HBvRHNg==",
-			"dev": true
+			"version": "22.21.0",
+			"resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-22.21.0.tgz",
+			"integrity": "sha512-OaqnSS7uBgcGiqXUiEnjoqxPNKvR4JWG5mSRkzVoR6+vDwlqqp11beeql1hYs0HTbdhiwrxWLxbX0Vx7roG3Ew==",
+			"dev": true,
+			"requires": {
+				"@typescript-eslint/experimental-utils": "^1.13.0"
+			},
+			"dependencies": {
+				"@typescript-eslint/experimental-utils": {
+					"version": "1.13.0",
+					"resolved": "https://registry.npmjs.org/@typescript-eslint/experimental-utils/-/experimental-utils-1.13.0.tgz",
+					"integrity": "sha512-zmpS6SyqG4ZF64ffaJ6uah6tWWWgZ8m+c54XXgwFtUv0jNz8aJAVx8chMCvnk7yl6xwn8d+d96+tWp7fXzTuDg==",
+					"dev": true,
+					"requires": {
+						"@types/json-schema": "^7.0.3",
+						"@typescript-eslint/typescript-estree": "1.13.0",
+						"eslint-scope": "^4.0.0"
+					}
+				},
+				"@typescript-eslint/typescript-estree": {
+					"version": "1.13.0",
+					"resolved": "https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-1.13.0.tgz",
+					"integrity": "sha512-b5rCmd2e6DCC6tCTN9GSUAuxdYwCM/k/2wdjHGrIRGPSJotWMCe/dGpi66u42bhuh8q3QBzqM4TMA1GUUCJvdw==",
+					"dev": true,
+					"requires": {
+						"lodash.unescape": "4.0.1",
+						"semver": "5.5.0"
+					}
+				},
+				"semver": {
+					"version": "5.5.0",
+					"resolved": "https://registry.npmjs.org/semver/-/semver-5.5.0.tgz",
+					"integrity": "sha512-4SJ3dm0WAwWy/NVeioZh5AntkdJoWKxHxcmyP622fOkgHa4z3R0TdBJICINyaSDE6uNwVc8gZr+ZinwZAH4xIA==",
+					"dev": true
+				}
+			}
 		},
 		"eslint-plugin-jsx-a11y": {
 			"version": "6.2.3",
