@@ -1,20 +1,23 @@
 /**
  * External dependencies
  */
+import { controls } from '@wordpress/data-controls';
 import { registerStore, useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
+import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
-
-export const STORE_KEY = 'automattic/onboard';
+import * as resolvers from './resolvers';
 
 registerStore< State >( STORE_KEY, {
-	reducer,
 	actions,
+	controls,
+	reducer,
+	resolvers,
 	selectors,
 	// persist: [],
 } );

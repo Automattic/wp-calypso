@@ -1,14 +1,25 @@
 /**
  * Internal dependencies
  */
-import { ActionType, SiteType } from './types';
+import { ActionType, SiteType, Vertical } from './types';
 
 export const setSiteType = ( siteType: SiteType ) => ( {
-	type: ActionType.SET_SITE_TYPE,
+	type: ActionType.SET_SITE_TYPE as const,
 	siteType,
 } );
 
 export const setSiteTitle = ( siteTitle: string ) => ( {
-	type: ActionType.SET_SITE_TITLE,
+	type: ActionType.SET_SITE_TITLE as const,
 	siteTitle,
+} );
+
+export const receiveVertical = ( search: string, verticals: Vertical[] ) => ( {
+	type: ActionType.RECEIVE_VERTICAL as const,
+	search,
+	verticals,
+} );
+
+export const searchVertical = ( search: string ) => ( {
+	type: ActionType.SEARCH_VERTICAL as const,
+	search,
 } );
