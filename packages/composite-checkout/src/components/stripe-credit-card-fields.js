@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useContext } from 'react';
+import styled, { ThemeContext } from 'styled-components';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
@@ -13,11 +13,11 @@ import GridRow from './grid-row';
 import { useLocalize } from '../lib/localize';
 import { useStripe } from '../lib/stripe';
 import { useCheckoutHandlers } from '../index';
-import theme from '../theme';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 
 export default function StripeCreditCardFields( { isActive, summary } ) {
 	const localize = useLocalize();
+	const theme = useContext( ThemeContext );
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
 	const [ cardNumberElementData, setCardNumberElementData ] = useState( null );
