@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
@@ -13,11 +13,40 @@ import GridRow from './grid-row';
 import { useLocalize } from '../lib/localize';
 import { useStripe } from '../lib/stripe';
 import { useCheckoutHandlers } from '../index';
+import theme from '../theme';
 
 export default function StripeCreditCardFields( { isActive, summary } ) {
 	const localize = useLocalize();
 	const { onFailure } = useCheckoutHandlers();
 	const { stripeLoadingError, isStripeLoading } = useStripe();
+	const [ cardNumberElementData, setCardNumberElementData ] = useState( null );
+	const [ cardExpiryElementData, setCardExpiryElementData ] = useState( null );
+	const [ cardCvcElementData, setCardCvcElementData ] = useState( null );
+
+	const handleStripeFieldChange = ( error, setCardElementData ) => {
+		if ( error.error && error.error.message ) {
+			setCardElementData( error.error.message );
+			return;
+		}
+
+		setCardElementData( null );
+	};
+
+	const cardNumberStyle = {
+		base: {
+			fontSize: '16px',
+			color: theme.colors.textColor,
+			fontFamily: theme.fonts.body,
+			fontWeight: theme.weights.normal,
+			'::placeholder': {
+				color: theme.colors.textColorLight,
+			},
+		},
+		invalid: {
+			color: theme.colors.textColor,
+		},
+	};
+
 	if ( ! isActive || summary ) {
 		return null;
 	}
@@ -31,11 +60,50 @@ export default function StripeCreditCardFields( { isActive, summary } ) {
 
 	return (
 		<CreditCardFieldsWrapper>
-			<CardNumberElement />
+			<Label>
+				<LabelText>{ localize( 'Card number' ) }</LabelText>
+				<StripeFieldWrapper hasError={ cardNumberElementData }>
+					<CardNumberElement
+						style={ cardNumberStyle }
+						onChange={ error => {
+							handleStripeFieldChange( error, setCardNumberElementData );
+						} }
+					/>
+					{ cardNumberElementData && (
+						<StripeErrorMessage>{ cardNumberElementData }</StripeErrorMessage>
+					) }
+				</StripeFieldWrapper>
+			</Label>
 			<FieldRow gap="4%" columnWidths="48% 48%">
-				<CardExpiryElement />
+				<Label>
+					<LabelText>{ localize( 'Expiry date' ) }</LabelText>
+					<StripeFieldWrapper hasError={ cardExpiryElementData }>
+						<CardExpiryElement
+							style={ cardNumberStyle }
+							onChange={ error => {
+								handleStripeFieldChange( error, setCardExpiryElementData );
+							} }
+						/>
+					</StripeFieldWrapper>
+					{ cardExpiryElementData && (
+						<StripeErrorMessage>{ cardExpiryElementData }</StripeErrorMessage>
+					) }
+				</Label>
 				<GridRow gap="4%" columnWidths="67% 29%">
-					<CardCvcElement />
+					<Label>
+						<LabelText>{ localize( 'Security code' ) }</LabelText>
+						<StripeFieldWrapper hasError={ cardCvcElementData }>
+							<CardCvcElement
+								style={ cardNumberStyle }
+								onChange={ error => {
+									handleStripeFieldChange( error, setCardCvcElementData );
+								} }
+							/>
+						</StripeFieldWrapper>
+						{ cardCvcElementData && (
+							<StripeErrorMessage>{ cardCvcElementData }</StripeErrorMessage>
+						) }
+					</Label>
 					<CVVImage />
 				</GridRow>
 			</FieldRow>
@@ -49,6 +117,50 @@ export default function StripeCreditCardFields( { isActive, summary } ) {
 		</CreditCardFieldsWrapper>
 	);
 }
+
+const Label = styled.label`
+	display: block;
+
+	:hover {
+		cursor: pointer;
+	}
+`;
+
+const LabelText = styled.span`
+	display: block;
+	font-size: 14px;
+	font-weight: ${props => props.theme.weights.bold};
+	margin-bottom: 8px;
+	color: ${props => props.theme.colors.textColor};
+`;
+
+const StripeFieldWrapper = styled.span`
+	.StripeElement {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+		border: 1px solid
+			${props => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor )};
+		padding: 12px 10px;
+	}
+
+	.StripeElement--focus {
+		outline: ${props => props.theme.colors.outline} auto 5px;
+	}
+
+	.StripeElement--focus.StripeElement--invalid {
+		outline: ${props => props.theme.colors.error} auto 5px;
+	}
+`;
+
+const StripeErrorMessage = styled.span`
+	font-size: 14px;
+	margin-top: 8px;
+	font-style: italic;
+	color: ${props => props.theme.colors.error};
+	display: block;
+	font-weight: ${props => props.theme.weights.normal};
+`;
 
 function CVV( { className } ) {
 	const localize = useLocalize();

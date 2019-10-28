@@ -20,7 +20,7 @@ const theme = {
 		textColor: swatches.gray80,
 		textColorLight: swatches.gray50,
 		textColorDark: swatches.black,
-		warning: swatches.red50,
+		error: swatches.red50,
 		warningBackground: swatches.red0,
 		outline: swatches.blue30,
 		applePayButtonColor: swatches.black,
@@ -34,6 +34,10 @@ const theme = {
 	weights: {
 		bold: '600',
 		normal: '400',
+	},
+	fonts: {
+		body:
+			'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
 	},
 };
 
