@@ -1159,6 +1159,10 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 		color: var( --color-neutral-70 );
 		font-style: normal;
 		vertical-align: baseline;
+
+		@include breakpoint( '>660px' ) {
+			font-weight: 600;
+		}
 	}
 
 	.plan-price.is-original,
@@ -1166,28 +1170,15 @@ body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
 		color: var( --color-neutral-light );
 	}
 
-	.product-card__header {
-		.plan-price,
-		.plan-price *,
-		.product-card__billing-timeframe {
-			font-size: 16px;
-			font-weight: 500;
-			line-height: 20px;
-
-			@include breakpoint( '>660px' ) {
-				font-size: 20px;
-				font-weight: 600;
-			}
-		}
+	.product-card__billing-timeframe {
+		font-size: 14px;
 	}
 
-	.product-card__option {
-		.plan-price.is-discounted,
-		.plan-price.is-discounted *,
-		.product-card__billing-timeframe {
-			@include breakpoint( '>660px' ) {
-				font-weight: 600;
-			}
+	.product-card__header {
+		.plan-price,
+		.plan-price * {
+			font-size: 16px;
+			line-height: 21px;
 		}
 	}
 
