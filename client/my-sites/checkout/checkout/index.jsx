@@ -793,7 +793,6 @@ export class Checkout extends React.Component {
 					shouldShowTax={ shouldShowTax( this.props.cart ) }
 					key="picker"
 				/>
-				<hr className="checkout__subscription-length-picker-separator" key="separator" />
 			</React.Fragment>
 		);
 	}
