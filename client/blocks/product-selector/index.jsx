@@ -96,6 +96,21 @@ export class ProductSelector extends Component {
 		return productObject.product_name;
 	}
 
+	getProductDisplayName( product ) {
+		const { title, optionDisplayNames } = product;
+		const purchase = this.getPurchaseByProduct( product );
+
+		if ( ! purchase ) {
+			return title;
+		}
+
+		if ( ! optionDisplayNames || ! optionDisplayNames[ purchase.productSlug ] ) {
+			return title;
+		}
+
+		return optionDisplayNames[ purchase.productSlug ];
+	}
+
 	getProductOptions( product ) {
 		const { intervalType, storeProducts } = this.props;
 		const productSlugs = product.options[ intervalType ];
@@ -203,7 +218,7 @@ export class ProductSelector extends Component {
 			return (
 				<ProductCard
 					key={ product.id }
-					title={ product.title }
+					title={ this.getProductDisplayName( product ) }
 					billingTimeFrame={ this.getBillingTimeFrameLabel() }
 					fullPrice={ this.getProductOptionFullPrice( selectedProductSlug ) }
 					discountedPrice={ this.getProductOptionDiscountedPrice( selectedProductSlug ) }

@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import React, { Fragment } from 'react';
+
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -24,6 +29,28 @@ export const JETPACK_BACKUP_PRODUCT_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 'Daily Backups',
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: 'Real-Time Backups',
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: 'Real-Time Backups',
+};
+export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
+		<Fragment>
+			Jetpack Backup <em>Daily</em>
+		</Fragment>
+	),
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
+		<Fragment>
+			Jetpack Backup <em>Daily</em>
+		</Fragment>
+	),
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
+		<Fragment>
+			Jetpack Backup <em>Real-Time</em>
+		</Fragment>
+	),
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
+		<Fragment>
+			Jetpack Backup <em>Real-Time</em>
+		</Fragment>
+	),
 };
 
 export const JETPACK_PRODUCT_PRICE_MATRIX = {

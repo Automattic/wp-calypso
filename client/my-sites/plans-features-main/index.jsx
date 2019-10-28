@@ -29,6 +29,7 @@ import {
 } from 'lib/plans/constants';
 import {
 	JETPACK_BACKUP_PRODUCT_NAMES,
+	JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
 	JETPACK_BACKUP_PRODUCTS_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS_YEARLY,
 	JETPACK_PRODUCT_PRICE_MATRIX,
@@ -91,6 +92,9 @@ const jetpackProducts = [
 		},
 		optionNames: {
 			...JETPACK_BACKUP_PRODUCT_NAMES,
+		},
+		optionDisplayNames: {
+			...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
 		},
 		optionsLabel: 'Backup options',
 	},

@@ -51,6 +51,17 @@ The following props can be passed to the Product Selector block:
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
 		}
 		```
+	* `optionDisplayNames`: ( object ) Optional display names of the product options.
+	They replace a default `title` in case a given option (represented by the object's key) has been purchased.
+	Each key is a product slug, and the value is the corresponding title. Example:
+		```
+		optionDisplayNames: {
+			jetpack_backup_daily: 'Jetpack Backup Daily',
+			jetpack_backup_daily_monthly: 'Jetpack Backup Daily',
+			jetpack_backup_realtime: 'Jetpack Backup Real-Time',
+			jetpack_backup_realtime_monthly: 'Jetpack Backup Real-Time',
+		}
+		```
 	* `optionNames`: ( object ) Optional names of the product options. Each key is a product slug, and the value is the corresponding title. Example:
 		```
 		optionsNames: {
