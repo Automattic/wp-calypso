@@ -8,6 +8,7 @@ $admin-sidebar-width-big: 0;
 $admin-sidebar-width-collapsed: 0;
 
 // Calypso section wrapper resets
+// @TODO: maybe remove once Calypso main styles aren't loaded for Gutenboarding section.
 .is-section-gutenboarding {
 	background: $white;
 
@@ -19,6 +20,7 @@ $admin-sidebar-width-collapsed: 0;
 
 .gutenboarding {
 	// Reset some Calypso base styles
+	// @TODO: remove once Calypso main styles aren't loaded for Gutenboarding section.
 	input[type='text'],
 	input[type='search'],
 	input[type='email'],
@@ -32,7 +34,8 @@ $admin-sidebar-width-collapsed: 0;
 		width: auto;
 	}
 
-	// Gutenberg reset
+	// Gutenberg resets
+	// Not an actual "CSS reset", but an opiniated base style for HTML elements in Gutenberg views.
 	@include reset;
 
 	// Gutenberg styles
