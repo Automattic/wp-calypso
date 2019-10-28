@@ -44,12 +44,6 @@ $admin-sidebar-width-collapsed: 0;
 	@import '~@wordpress/format-library/src/style.scss';
 }
 
-.gutenboarding__block-editor *,
-.gutenboarding__block-editor ::after,
-.gutenboarding__block-editor ::before {
-	box-sizing: border-box;
-}
-
 // These are default block editor styles in case the theme doesn't provide them.
 .wp-block {
 	max-width: $content-width;

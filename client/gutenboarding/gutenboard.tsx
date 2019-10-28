@@ -54,20 +54,18 @@ export function Gutenboard() {
 						/>
 						<BlockEditorProvider value={ [ onboardingBlock ] } settings={ { templateLock: 'all' } }>
 							<div className="edit-post-layout__content">
-								<div className="gutenboarding__block-editor">
-									<BlockEditorKeyboardShortcuts />
-									<div
-										className="edit-post-visual-editor editor-styles-wrapper"
-										role="region"
-										aria-label={ __( 'Onboarding screen content' ) }
-										tabIndex="-1"
-									>
-										<WritingFlow>
-											<ObserveTyping>
-												<BlockList />
-											</ObserveTyping>
-										</WritingFlow>
-									</div>
+								<BlockEditorKeyboardShortcuts />
+								<div
+									className="edit-post-visual-editor editor-styles-wrapper"
+									role="region"
+									aria-label={ __( 'Onboarding screen content' ) }
+									tabIndex="-1"
+								>
+									<WritingFlow>
+										<ObserveTyping>
+											<BlockList />
+										</ObserveTyping>
+									</WritingFlow>
 								</div>
 								<Popover.Slot />
 							</div>
