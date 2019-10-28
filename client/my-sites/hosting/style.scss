@@ -76,9 +76,20 @@
         color: var( --color-text-subtle );
         margin-top: 1.5em;
     }
+
+    &.is-placeholder span {
+        padding: 0 35%;
+        background-color: var( --color-surface-backdrop );
+    }
 }
 
-.phpmyadmin-card button svg {
-    vertical-align: text-bottom;
-    margin-left: 10px;
+.phpmyadmin-card button {
+    svg {
+        vertical-align: text-bottom;
+        margin-left: 10px;
+    }
+
+    &:disabled svg {
+        opacity: 0.4;
+    }
 }
