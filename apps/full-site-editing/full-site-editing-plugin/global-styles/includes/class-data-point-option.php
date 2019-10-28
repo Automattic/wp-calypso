@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Data Point Option.
+ *
+ * @package Automattic\Jetpack\Global_Styles
+ */
 
 namespace Automattic\Jetpack\Global_Styles;
 

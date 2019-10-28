@@ -1,6 +1,8 @@
 <?php
 /**
  * JSON REST API endpoint for Global Styles plugin.
+ *
+ * @package Automattic\Jetpack\Global_Styles
  */
 
 namespace Automattic\Jetpack\Global_Styles;
