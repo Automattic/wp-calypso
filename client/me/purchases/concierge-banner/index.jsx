@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import ActionCard from 'components/action-card';
-import { recordTracksEvent } from 'state/analytics/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 class ConciergeBanner extends Component {
@@ -33,7 +32,7 @@ class ConciergeBanner extends Component {
 					buttonHref="/me/concierge"
 					buttonTarget={ null }
 					buttonOnClick={ () => {
-						recordTracksEvent( 'calypso_purchases_concierge_banner_click', {
+						this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click', {
 							referer: '/me/purchases',
 						} );
 					} }
