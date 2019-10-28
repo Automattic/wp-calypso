@@ -3,7 +3,7 @@
  */
 import { PluginSidebar } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 
 /**
@@ -88,8 +88,8 @@ export default ( {
 			>
 				<PanelBody>
 					<p>
-						{ __( 'You are customizing ' ) }
-						<strong>{ siteName }</strong>.
+						{ /* translators: %s: Name of site. */
+						sprintf( __( 'You are customizing %s.' ), siteName ) }
 					</p>
 					<p>{ __( 'Any change you make here will apply to the entire website.' ) }</p>
 					{ hasLocalChanges ? (

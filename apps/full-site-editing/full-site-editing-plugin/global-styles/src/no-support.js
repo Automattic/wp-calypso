@@ -1,8 +1,11 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 export default ( { unsupportedFeature } ) => (
-	<p>{ __( "Your active theme doesn't support this feature: " ) + unsupportedFeature + '.' }</p>
+	<p>
+		{ /* translators: %s: feature name (i.e. font pairings, etc) */
+		sprintf( __( "Your active theme doesn't support %s." ), unsupportedFeature ) }
+	</p>
 );
