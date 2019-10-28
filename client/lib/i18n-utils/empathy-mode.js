@@ -9,6 +9,11 @@ import interpolateComponents from 'interpolate-components';
 export function enableLanguageEmpatyhMode() {
 	// wrap translations from i18n
 	i18n.registerTranslateHook( ( translation, options ) => {
+		const locale = i18n.getLocaleSlug();
+		if ( 'en' === locale ) {
+			return translation;
+		}
+
 		if ( i18n.hasTranslation( options.original ) ) {
 			if ( options.components ) {
 				translation = interpolateComponents( {
@@ -21,6 +26,6 @@ export function enableLanguageEmpatyhMode() {
 
 			return translation;
 		}
-		return 'untranslated';
+		return locale + '-untranslated';
 	} );
 }
