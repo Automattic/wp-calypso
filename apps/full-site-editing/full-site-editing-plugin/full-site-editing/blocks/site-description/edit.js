@@ -46,7 +46,9 @@ function SiteDescriptionEdit( {
 	shouldUpdateSiteOption,
 	textColor,
 } ) {
-	const { textAlign } = attributes;
+	const { customFontSize, textAlign } = attributes;
+
+	const actualFontSize = customFontSize || fontSize.size;
 
 	const inititalDescription = __( 'Site description loading…' );
 
@@ -73,7 +75,7 @@ function SiteDescriptionEdit( {
 			</BlockControls>
 			<InspectorControls>
 				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
-					<FontSizePicker onChange={ setFontSize } value={ fontSize.size } />
+					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
 				</PanelBody>
 				<PanelColorSettings
 					title={ __( 'Color Settings' ) }
@@ -96,7 +98,7 @@ function SiteDescriptionEdit( {
 							textColor: textColor.color,
 							backgroundColor: backgroundColor.color,
 						} }
-						fontSize={ fontSize.size }
+						fontSize={ actualFontSize }
 					/>
 				</PanelColorSettings>
 			</InspectorControls>
@@ -109,7 +111,7 @@ function SiteDescriptionEdit( {
 					[ `has-text-align-${ textAlign }` ]: textAlign,
 					[ backgroundColor.class ]: backgroundColor.class,
 					[ textColor.class ]: textColor.class,
-					[ fontSize.class ]: fontSize.class,
+					[ fontSize.class ]: ! customFontSize && fontSize.class,
 				} ) }
 				identifier="content"
 				onChange={ value => handleChange( value ) }
@@ -119,7 +121,7 @@ function SiteDescriptionEdit( {
 				style={ {
 					backgroundColor: backgroundColor.color,
 					color: textColor.color,
-					fontSize: fontSize.size ? fontSize.size + 'px' : undefined,
+					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
 				} }
 				tagName="p"
 				value={ option }
