@@ -12,7 +12,7 @@ import { filter, head, orderBy, values } from 'lodash';
  */
 import ExternalLink from 'components/external-link';
 
-function getConfig() {
+function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
 
 	importerConfig.wordpress = {
@@ -21,7 +21,17 @@ function getConfig() {
 		type: 'file',
 		title: 'WordPress',
 		icon: 'wordpress',
-		description: translate( 'Import posts, pages, and media from a WordPress export\u00A0file.' ),
+		description: translate(
+			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
+		),
 		uploadDescription: translate(
 			'A WordPress export is ' +
 				'an XML file with your page and post content, or a zip archive ' +
@@ -45,10 +55,14 @@ function getConfig() {
 		title: 'Blogger',
 		icon: 'blogger-alt',
 		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
 				args: {
 					importerName: 'Blogger',
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
 				},
 			}
 		),
@@ -77,7 +91,15 @@ function getConfig() {
 		title: 'GoDaddy',
 		icon: 'godaddy-gocentral',
 		description: translate(
-			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.'
+			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
 		),
 		uploadDescription: translate( 'Enter the URL of your existing site' ),
 		weight: 0,
@@ -90,7 +112,16 @@ function getConfig() {
 		title: 'Medium',
 		icon: 'medium',
 		description: translate(
-			'Import posts, tags, images, and videos ' + 'from a Medium export file.'
+			'Import posts, tags, images, and videos ' +
+				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
 		),
 		uploadDescription: translate(
 			'A %(importerName)s export file is a ZIP ' +
@@ -117,10 +148,14 @@ function getConfig() {
 		title: 'Squarespace',
 		icon: 'squarespace',
 		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
 				args: {
 					importerName: 'Squarespace',
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
 				},
 			}
 		),
@@ -150,7 +185,17 @@ function getConfig() {
 		type: 'url',
 		title: 'Wix',
 		icon: 'wix',
-		description: translate( 'Import posts, pages, and media from your Wix.com site.' ),
+		description: translate(
+			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
+		),
 		uploadDescription: translate( 'Enter the URL of your existing site' ),
 		weight: 0,
 	};

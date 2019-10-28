@@ -34,7 +34,7 @@ class ImporterHeader extends React.PureComponent {
 			importerState: PropTypes.string.isRequired,
 			type: PropTypes.string.isRequired,
 		} ),
-		description: PropTypes.string.isRequired,
+		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
 		icon: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 	};

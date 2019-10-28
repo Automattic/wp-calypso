@@ -60,6 +60,7 @@ class SiteImporter extends React.PureComponent {
 			} ),
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
+			siteTitle: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			statusMessage: PropTypes.string,
 			type: PropTypes.string.isRequired,

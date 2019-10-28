@@ -30,7 +30,9 @@ class ImporterWix extends React.PureComponent {
 	};
 
 	render() {
-		const importerData = importerConfig().wix;
+		const importerData = importerConfig( {
+			siteTitle: this.props.siteTitle,
+		} ).wix;
 
 		return <SiteImporter importerData={ importerData } { ...this.props } />;
 	}
