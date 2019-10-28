@@ -1,9 +1,7 @@
-# Next
+# @automattic/components 1.0.0
 
-- Remove global scope CSS reset for `button` element in Button component.
-
-# 2.0.0
-
+- Rename package from `@automattic/calypso-ui` to `@automattic/components`, keep version at 1.0.0
+- Add Button
 - Add Card
 - Add Ribbon
 
