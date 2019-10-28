@@ -16,39 +16,13 @@ const products = [
 		description: (
 			<p>
 				Always-on backups ensure you never lose your site. Choose from real-time or daily backups.{' '}
-				<a href="https://jetpack.com/">Which one do I need?</a>
+				<a href="https://jetpack.com/upgrade/backup/">Which one do I need?</a>
 			</p>
 		),
 		id: 'jetpack_backup',
 		options: {
 			yearly: [ 'jetpack_backup_daily', 'jetpack_backup_realtime' ],
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
-		},
-		optionDescriptions: {
-			jetpack_backup_daily: (
-				<p>
-					<strong>Looking for more?</strong> With Real-time backups, we save as you edit and you’ll
-					get unlimited backup archives
-				</p>
-			),
-			jetpack_backup_daily_monthly: (
-				<p>
-					<strong>Looking for more?</strong> With Real-time backups, we save as you edit and you’ll
-					get unlimited backup archives
-				</p>
-			),
-			jetpack_backup_realtime: (
-				<p>
-					Always-on backups ensure you never lose your site. Your changes are saved as you edit and
-					you have unlimited backup archives
-				</p>
-			),
-			jetpack_backup_realtime_monthly: (
-				<p>
-					Always-on backups ensure you never lose your site. Your changes are saved as you edit and
-					you have unlimited backup archives
-				</p>
-			),
 		},
 		optionNames: {
 			jetpack_backup_daily: 'Daily Backups',

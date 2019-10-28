@@ -51,22 +51,24 @@ The following props can be passed to the Product Selector block:
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
 		}
 		```
-	* `optionDescriptions`: ( object ) Optional descriptions of the product options. Each key is a product slug, and the value is the corresponding copy. Example:
+	* `optionDescriptions`: ( object ) Optional descriptions for the product options.
+	They replace a default `description` in case a given option (represented by the object's key) has been purchased.
+	Each key is a product slug, and the value is the corresponding copy. Example:
 		```
 		optionDescriptions: {
-			jetpack_backup_daily: 'Looking for more? With Real-time backups, we save as you edit and you’ll get unlimited backup archives',
-			jetpack_backup_daily_monthly: 'Looking for more? With Real-time backups, we save as you edit and you’ll get unlimited backup archives',
-			jetpack_backup_realtime: 'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives',
-			jetpack_backup_realtime_monthly: 'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives',
+			jetpack_backup_daily: __( 'Looking for more? Get unlimited real-time backup archives' ),
+			jetpack_backup_daily_monthly: __( 'Looking for more? Get unlimited real-time backup archives' ),
+			jetpack_backup_realtime: __( 'Your changes are saved as you edit and you have unlimited backup archives' ),
+			jetpack_backup_realtime_monthly: __( 'Your changes are saved as you edit and you have unlimited backup archives' ),
 		}
 		```
 	* `optionNames`: ( object ) Optional names of the product options. Each key is a product slug, and the value is the corresponding title. Example:
 		```
 		optionsNames: {
-			jetpack_backup_daily: 'Daily Backups',
-			jetpack_backup_daily_monthly: 'Daily Backups',
-			jetpack_backup_realtime: 'Real-Time Backups',
-			jetpack_backup_realtime_monthly: 'Real-Time Backups',
+			jetpack_backup_daily: __( 'Daily Backups' ),
+			jetpack_backup_daily_monthly: __( 'Daily Backups' ),
+			jetpack_backup_realtime: __( 'Real-Time Backups' ),
+			jetpack_backup_realtime_monthly: __( 'Real-Time Backups' ),
 		}
 		```
 	* `optionsLabel`: ( string ) Title of the product options section.

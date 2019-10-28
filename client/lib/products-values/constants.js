@@ -35,19 +35,19 @@ export const JETPACK_BACKUP_PRODUCT_NAMES = {
 export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = (
 	<p>
 		Always-on backups ensure you never lose your site. Choose from real-time or daily backups.{' '}
-		<a href="https://jetpack.com/">Which one do I need?</a>
+		<a href="https://jetpack.com/upgrade/backup/">Which one do I need?</a>
 	</p>
 );
 export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = (
 	<p>
 		<strong>Looking for more?</strong> With Real-time backups, we save as you edit and you’ll get
-		unlimited backup archives
+		unlimited backup archives.
 	</p>
 );
 export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = (
 	<p>
 		Always-on backups ensure you never lose your site. Your changes are saved as you edit and you
-		have unlimited backup archives
+		have unlimited backup archives.
 	</p>
 );
 

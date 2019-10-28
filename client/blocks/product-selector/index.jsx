@@ -85,7 +85,7 @@ export class ProductSelector extends Component {
 		const { description, optionDescriptions } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
-		if ( ! purchase || ! optionDescriptions ) {
+		if ( ! purchase || ! optionDescriptions || ! optionDescriptions[ purchase.productSlug ] ) {
 			return description;
 		}
 
