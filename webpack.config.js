@@ -237,7 +237,6 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
 				prelude: `@import '${ path.join(
 					__dirname,

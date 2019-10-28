@@ -4,19 +4,18 @@
 const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
 const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
-const path = require( 'path' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  *
  * @param  {Object}    _                              Options
- * @param  {boolean}   _.preserveCssCustomProperties  whether Custom Properties and properties using them should be preserved in their original form
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
+ * @param  {Object}    _.postCssConfig                PostCSS config
  *
  * @return {Object}                                   webpack loader object
  */
-module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude } ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
@@ -29,12 +28,7 @@ module.exports.loader = ( { preserveCssCustomProperties, includePaths, prelude }
 		{
 			loader: require.resolve( 'postcss-loader' ),
 			options: {
-				config: {
-					ctx: {
-						preserveCssCustomProperties,
-					},
-					path: path.join( __dirname, '..' ),
-				},
+				config: postCssConfig,
 			},
 		},
 		{
