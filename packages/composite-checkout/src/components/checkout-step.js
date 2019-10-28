@@ -145,7 +145,7 @@ function CheckIcon() {
 }
 
 const StepWrapper = styled.div`
-	padding-bottom: 32px;
+	padding-bottom: ${props => ( props.finalStep ? '0' : '32px' )};
 	margin-bottom: 8px;
 	position: relative;
 
@@ -158,9 +158,6 @@ const StepWrapper = styled.div`
 		top: 35px;
 		background: ${props => props.theme.colors.borderColor};
 		content: '';
-	}
-	:nth-child( 5 ) {
-		padding-bottom: 0;
 	}
 `;
 

@@ -11,12 +11,9 @@ import styled from 'styled-components';
 import joinClasses from '../lib/join-classes';
 import { renderDisplayValueMarkdown } from '../index';
 
-export function OrderReviewSection( { children, className, withDivider } ) {
+export function OrderReviewSection( { children, className } ) {
 	return (
-		<OrderReviewSectionArea
-			withDivider={ withDivider }
-			className={ joinClasses( [ className, 'order-review-section' ] ) }
-		>
+		<OrderReviewSectionArea className={ joinClasses( [ className, 'order-review-section' ] ) }>
 			{ children }
 		</OrderReviewSectionArea>
 	);
@@ -24,13 +21,10 @@ export function OrderReviewSection( { children, className, withDivider } ) {
 
 OrderReviewSection.propTypes = {
 	className: PropTypes.string,
-	withDivider: PropTypes.bool,
 };
 
 const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
-	padding: ${props => ( props.withDivider ? '24px 0' : 0 )};
-	border-bottom: ${props => ( props.withDivider ? '1px solid rgb(220, 220, 222)' : 'none' )};
 `;
 
 function LineItem( { item, className } ) {
@@ -45,16 +39,10 @@ function LineItem( { item, className } ) {
 	);
 }
 
-const LineItemUI = styled( LineItem )`
-	display: flex;
-	width: 100%;
-	justify-content: space-between;
-	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
-`;
-
 LineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
+	isSummaryVisible: PropTypes.bool,
 	item: PropTypes.shape( {
 		label: PropTypes.string,
 		amount: PropTypes.shape( {
@@ -62,6 +50,18 @@ LineItem.propTypes = {
 		} ),
 	} ),
 };
+
+const LineItemUI = styled( LineItem )`
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
+	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit' )};
+	font-size: ${( { total } ) => ( total ? '1.2em' : '1em' )};
+	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' )};
+	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
+		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
+`;
 
 export function OrderReviewTotal( { total, className } ) {
 	return (
@@ -71,18 +71,27 @@ export function OrderReviewTotal( { total, className } ) {
 	);
 }
 
-export function OrderReviewLineItems( { items, className } ) {
+export function OrderReviewLineItems( { items, className, isSummaryVisible } ) {
 	return (
-		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
+		<ReviewSection
+			isSummaryVisible={ isSummaryVisible }
+			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
+		>
 			{ items.map( item => (
-				<LineItemUI key={ item.id } item={ item } />
+				<LineItemUI isSummaryVisible={ isSummaryVisible } key={ item.id } item={ item } />
 			) ) }
-		</div>
+		</ReviewSection>
 	);
 }
 
+const ReviewSection = styled.div`
+	border-top: ${props =>
+		props.isSummaryVisible ? 0 : '1px solid ' + props.theme.colors.borderColorLight};
+`;
+
 OrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
+	isSummaryVisible: PropTypes.bool,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string,
