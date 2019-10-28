@@ -14,6 +14,7 @@ import { useLocalize } from '../lib/localize';
 import { useStripe } from '../lib/stripe';
 import { useCheckoutHandlers } from '../index';
 import theme from '../theme';
+import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 
 export default function StripeCreditCardFields( { isActive, summary } ) {
 	const localize = useLocalize();
@@ -22,10 +23,15 @@ export default function StripeCreditCardFields( { isActive, summary } ) {
 	const [ cardNumberElementData, setCardNumberElementData ] = useState( null );
 	const [ cardExpiryElementData, setCardExpiryElementData ] = useState( null );
 	const [ cardCvcElementData, setCardCvcElementData ] = useState( null );
+	const [ cardBrand, setCardBrand ] = useState( 'unknown' );
 
-	const handleStripeFieldChange = ( error, setCardElementData ) => {
-		if ( error.error && error.error.message ) {
-			setCardElementData( error.error.message );
+	const handleStripeFieldChange = ( input, setCardElementData ) => {
+		if ( input.elementType === 'cardNumber' ) {
+			setCardBrand( input.brand );
+		}
+
+		if ( input.error && input.error.message ) {
+			setCardElementData( input.error.message );
 			return;
 		}
 
@@ -65,11 +71,12 @@ export default function StripeCreditCardFields( { isActive, summary } ) {
 				<StripeFieldWrapper hasError={ cardNumberElementData }>
 					<CardNumberElement
 						style={ cardNumberStyle }
-						onChange={ error => {
-							handleStripeFieldChange( error, setCardNumberElementData );
+						onChange={ input => {
+							handleStripeFieldChange( input, setCardNumberElementData );
 						} }
 					/>
-					<LockIconGraphic />
+					<CardFieldIcon brand={ cardBrand } />
+
 					{ cardNumberElementData && (
 						<StripeErrorMessage>{ cardNumberElementData }</StripeErrorMessage>
 					) }
@@ -81,8 +88,8 @@ export default function StripeCreditCardFields( { isActive, summary } ) {
 					<StripeFieldWrapper hasError={ cardExpiryElementData }>
 						<CardExpiryElement
 							style={ cardNumberStyle }
-							onChange={ error => {
-								handleStripeFieldChange( error, setCardExpiryElementData );
+							onChange={ input => {
+								handleStripeFieldChange( input, setCardExpiryElementData );
 							} }
 						/>
 					</StripeFieldWrapper>
@@ -96,8 +103,8 @@ export default function StripeCreditCardFields( { isActive, summary } ) {
 						<StripeFieldWrapper hasError={ cardCvcElementData }>
 							<CardCvcElement
 								style={ cardNumberStyle }
-								onChange={ error => {
-									handleStripeFieldChange( error, setCardCvcElementData );
+								onChange={ input => {
+									handleStripeFieldChange( input, setCardCvcElementData );
 								} }
 							/>
 						</StripeFieldWrapper>
@@ -191,6 +198,15 @@ const StripeFieldWrapper = styled.span`
 	}
 `;
 
+const StripeErrorMessage = styled.span`
+	font-size: 14px;
+	margin-top: 8px;
+	font-style: italic;
+	color: ${props => props.theme.colors.error};
+	display: block;
+	font-weight: ${props => props.theme.weights.normal};
+`;
+
 const LockIconGraphic = styled( LockIcon )`
 	display: block;
 	position: absolute;
@@ -200,13 +216,43 @@ const LockIconGraphic = styled( LockIcon )`
 	height: 20px;
 `;
 
-const StripeErrorMessage = styled.span`
-	font-size: 14px;
-	margin-top: 8px;
-	font-style: italic;
-	color: ${props => props.theme.colors.error};
+function CardFieldIcon( { brand } ) {
+	let cardFieldIcon = null;
+
+	switch ( brand ) {
+		case 'visa':
+			cardFieldIcon = (
+				<BrandLogo>
+					<VisaLogo />
+				</BrandLogo>
+			);
+			break;
+		case 'mastercard':
+			cardFieldIcon = (
+				<BrandLogo>
+					<MastercardLogo />
+				</BrandLogo>
+			);
+			break;
+		case 'amex':
+			cardFieldIcon = (
+				<BrandLogo>
+					<AmexLogo />
+				</BrandLogo>
+			);
+			break;
+		default:
+			cardFieldIcon = <LockIconGraphic />;
+	}
+
+	return cardFieldIcon;
+}
+
+const BrandLogo = styled.span`
 	display: block;
-	font-weight: ${props => props.theme.weights.normal};
+	position: absolute;
+	top: 15px;
+	right: 10px;
 `;
 
 function CVV( { className } ) {
