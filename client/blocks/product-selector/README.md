@@ -62,9 +62,10 @@ The following props can be passed to the Product Selector block:
 			jetpack_backup_realtime_monthly: 'Jetpack Backup Real-Time',
 		}
 		```
-	* `optionNames`: ( object ) Optional names of the product options. Each key is a product slug, and the value is the corresponding title. Example:
+	* `optionShortNames`: ( object ) Optional short names of the product options.
+	Each key is a product slug, and the value is the corresponding title. Example:
 		```
-		optionsNames: {
+		optionShortNames: {
 			jetpack_backup_daily: 'Daily Backups',
 			jetpack_backup_daily_monthly: 'Daily Backups',
 			jetpack_backup_realtime: 'Real-Time Backups',

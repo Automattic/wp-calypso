@@ -82,8 +82,8 @@ export class ProductSelector extends Component {
 	}
 
 	getProductName( product, productSlug ) {
-		if ( product.optionNames && product.optionNames[ productSlug ] ) {
-			return product.optionNames[ productSlug ];
+		if ( product.optionShortNames && product.optionShortNames[ productSlug ] ) {
+			return product.optionShortNames[ productSlug ];
 		}
 
 		const { storeProducts } = this.props;
