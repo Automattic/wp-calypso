@@ -48,6 +48,34 @@
 		bottom: 0;
 	}
 
+	// Turn Reset 'buttons' into regular text links
+	input {
+		&[type='reset'],
+		&[type='reset']:hover,
+		&[type='reset']:active,
+		&[type='reset']:focus {
+			background: 0 0;
+			border: 0;
+			padding: 0 2px 1px;
+			width: auto;
+			box-shadow: none;
+		}
+	}
+
+	// Buttons within sentences sit on the text baseline.
+	p .button {
+		vertical-align: baseline;
+	}
+
+	// Firefox Junk
+	button::-moz-focus-inner,
+	input[type='reset']::-moz-focus-inner,
+	input[type='button']::-moz-focus-inner,
+	input[type='submit']::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+	}
+
 	h1 {
 		color: var( --color-neutral-70 );
 		font-size: 1.375em;
