@@ -19,13 +19,22 @@ class ContactsPrivacyCard extends React.PureComponent {
 		privateDomain: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		contactInfoDisclosureAvailable: PropTypes.bool.isRequired,
+		contactInfoDisclosed: PropTypes.bool.isRequired,
 	};
 
 	render() {
-		const { privateDomain, translate, selectedDomainName } = this.props;
+		const {
+			privateDomain,
+			contactInfoDisclosureAvailable,
+			contactInfoDisclosed,
+			translate,
+			selectedDomainName,
+		} = this.props;
+		let contactInfoDisclosedText = null;
 		let privacyText = translate(
 			'{{strong}}Privacy Protection is enabled{{/strong}} so your contact information' +
-				' {{strong}}is not shown{{/strong}}.',
+				' {{strong}}is protected{{/strong}}.',
 			{
 				components: {
 					strong: <strong />,
@@ -35,13 +44,33 @@ class ContactsPrivacyCard extends React.PureComponent {
 		if ( ! privateDomain ) {
 			privacyText = translate(
 				'{{strong}}Privacy Protection is disabled{{/strong}} so your own contact information' +
-					' {{strong}}is shown{{/strong}}.',
+					' {{strong}}is not protected{{/strong}}.',
 				{
 					components: {
 						strong: <strong />,
 					},
 				}
 			);
+			if ( contactInfoDisclosureAvailable ) {
+				contactInfoDisclosedText = translate(
+					'Your contact information is currently {{strong}}not visible{{/strong}} in the public WHOIS.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+				if ( contactInfoDisclosed ) {
+					contactInfoDisclosedText = translate(
+						'Your contact information is {{strong}}visible{{/strong}} in the public WHOIS.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					);
+				}
+			}
 		}
 
 		return (
@@ -49,7 +78,9 @@ class ContactsPrivacyCard extends React.PureComponent {
 				<SectionHeader label={ translate( 'Domain Contacts' ) } />
 
 				<CompactCard className="contacts-privacy__card">
-					<p>{ privacyText }</p>
+					<p>
+						{ privacyText } { contactInfoDisclosedText }
+					</p>
 					<ContactDisplay
 						selectedDomainName={ selectedDomainName }
 						privateDomain={ privateDomain }
