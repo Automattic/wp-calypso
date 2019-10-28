@@ -71,6 +71,41 @@ const SFTPCard = ( { translate, siteId, disabled } ) => {
 		[ translate( 'Port' ) ]: 22,
 	};
 
+	const renderPasswordCell = () => {
+		if ( disabled ) {
+			return <span></span>;
+		}
+
+		if ( password ) {
+			return (
+				<>
+					<p className="sftp-card__hidden-overflow">{ password }</p>
+					<ClipboardButton text={ password } onCopy={ () => setIsCopied( 'password' ) } compact>
+						{ passwordIsCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+					</ClipboardButton>
+					<p className="sftp-card__password-warning">
+						{ translate(
+							"Be sure to save your password somewhere safe. You won't be able to view it again without resetting."
+						) }
+					</p>
+				</>
+			);
+		}
+
+		return (
+			<>
+				<p>{ translate( 'You must reset your password to view it.' ) }</p>
+				<Button
+					onClick={ () => resetAtomicSFTPUserPassword( siteId ) }
+					disabled={ loading }
+					compact
+				>
+					{ translate( 'Reset Password' ) }
+				</Button>
+			</>
+		);
+	};
+
 	return (
 		<Card className="sftp-card">
 			<div className="sftp-card__icon">
@@ -129,43 +164,10 @@ const SFTPCard = ( { translate, siteId, disabled } ) => {
 								) }
 							</td>
 						</tr>
-						{ ! disabled && (
-							<tr>
-								<th>{ translate( 'Password' ) }:</th>
-								<td>
-									{ password ? (
-										<>
-											<p className="sftp-card__hidden-overflow">{ password }</p>
-											<ClipboardButton
-												text={ password }
-												onCopy={ () => setIsCopied( 'password' ) }
-												compact
-											>
-												{ passwordIsCopied
-													? translate( 'Copied!' )
-													: translate( 'Copy', { context: 'verb' } ) }
-											</ClipboardButton>
-											<p className="sftp-card__password-warning">
-												{ translate(
-													"Be sure to save your password somewhere safe. You won't be able to view it again without resetting."
-												) }
-											</p>
-										</>
-									) : (
-										<>
-											<p>{ translate( 'You must reset your password to view it.' ) }</p>
-											<Button
-												onClick={ () => resetAtomicSFTPUserPassword( siteId ) }
-												disabled={ loading }
-												compact
-											>
-												{ translate( 'Reset Password' ) }
-											</Button>
-										</>
-									) }
-								</td>
-							</tr>
-						) }
+						<tr>
+							<th>{ translate( 'Password' ) }:</th>
+							<td>{ renderPasswordCell() }</td>
+						</tr>
 					</tbody>
 				</table>
 			) }

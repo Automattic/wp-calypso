@@ -25,13 +25,13 @@ import PhpMyAdminCard from './phpmyadmin-card';
  */
 import './style.scss';
 
-const Hosting = ( { translate, isAtomic } ) => {
+const Hosting = ( { translate, isDisabled } ) => {
 	return (
 		<Main className="hosting is-wide-layout">
 			<PageViewTracker path="hosting/:site" title="Hosting" />
 			<DocumentHead title={ translate( 'Hosting' ) } />
 			<SidebarNavigation />
-			{ ! isAtomic && (
+			{ isDisabled && (
 				<Banner
 					title={ translate(
 						'Please active SFTP and PHPMyAdmin access to begin using these features.'
@@ -42,8 +42,8 @@ const Hosting = ( { translate, isAtomic } ) => {
 				/>
 			) }
 			<div className="hosting__cards">
-				<SFTPCard disabled={ ! isAtomic } />
-				<PhpMyAdminCard disabled={ ! isAtomic } />
+				<SFTPCard disabled={ isDisabled } />
+				<PhpMyAdminCard disabled={ isDisabled } />
 			</div>
 		</Main>
 	);
@@ -53,6 +53,6 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isAtomic: isSiteAutomatedTransfer( state, siteId ),
+		isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
 	};
 } )( localize( Hosting ) );
