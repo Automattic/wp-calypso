@@ -241,7 +241,7 @@ export const resetAtomicSFTPUserPassword = siteId =>
 		),
 		{
 			fromApi: () => ( { username, password } ) => {
-				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
 			},
 			freshness: 0,
 		}
@@ -261,7 +261,7 @@ export const createAtomicSFTPUser = siteId =>
 		),
 		{
 			fromApi: () => ( { username, password } ) => {
-				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
 			},
 			freshness: 0,
 		}
