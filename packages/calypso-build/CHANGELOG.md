@@ -1,3 +1,7 @@
+# 5.0.1
+
+- Fix PostCSS config path default.
+
 # 5.0.0
 
 - Remove `@automattic/calypso-color-schemes` dependency
