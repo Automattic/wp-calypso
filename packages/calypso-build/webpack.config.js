@@ -74,7 +74,7 @@ function getWebpackConfig(
 	let postCssConfigPath = process.cwd();
 	if ( ! fs.existsSync( path.join( postCssConfigPath, 'postcss.config.js' ) ) ) {
 		// Default to this package's PostCSS config
-		postCssConfigPath = undefined;
+		postCssConfigPath = __dirname;
 	}
 
 	const webpackConfig = {
