@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"module": "commonjs",
+		"outDir": "./dist/cjs",
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"strictNullChecks": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true
+	},
+	"include": [ "src/**/*" ],
+	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
+}

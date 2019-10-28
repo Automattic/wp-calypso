@@ -1,18 +1,21 @@
+require( '@babel/polyfill' );
+
 /**
  * External dependencies
  */
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { createRegistry, createPayPalMethod } from '@automattic/composite-checkout';
-import {
-	WPCOMCheckout,
-	makeShoppingCartHook,
-	mockPayPalExpressRequest,
-} from '@automattic/composite-checkout-wpcom';
 
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import {
+	WPCOMCheckout,
+	makeShoppingCartHook,
+	mockCartEndpoint,
+	mockPayPalExpressRequest,
+} from '../src/index';
 
 const initialCart = {
 	coupon: '',
@@ -29,14 +32,14 @@ const initialCart = {
 				registrar: 'KS_RAM',
 			},
 			free_trial: false,
-			meta: 'asdkfjalsdkjfalsdjkflaksdjflkajsdfffd.com',
+			meta: 'foo.cash',
 			product_id: 106,
 			volume: 1,
 		},
 		{
 			extra: {
 				context: 'signup',
-				domain_to_bundle: 'asdkfjalsdkjfalsdjkflaksdjflkajsdfffd.com',
+				domain_to_bundle: 'foo.cash',
 			},
 			free_trial: false,
 			meta: '',
@@ -54,14 +57,9 @@ const initialCart = {
 const registry = createRegistry();
 const { registerStore } = registry;
 
-const wpcom = wp.undocumented();
+const useShoppingCart = makeShoppingCartHook( mockCartEndpoint, initialCart );
 
-const useShoppingCart = makeShoppingCartHook(
-	( cartKey, cartParam ) => wpcom.setCart( cartKey, cartParam ),
-	initialCart
-);
-
-export default function CompositeCheckoutContainer() {
+function App() {
 	return (
 		<WPCOMCheckout
 			useShoppingCart={ useShoppingCart }
@@ -75,3 +73,5 @@ export default function CompositeCheckoutContainer() {
 		/>
 	);
 }
+
+ReactDOM.render( <App />, document.getElementById( 'root' ) );
