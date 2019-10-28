@@ -24016,9 +24016,9 @@
 			"integrity": "sha1-ihagXURWV6Oupe7MWxKk+lN5dyw="
 		},
 		"utility-types": {
-			"version": "3.8.0",
-			"resolved": "https://registry.npmjs.org/utility-types/-/utility-types-3.8.0.tgz",
-			"integrity": "sha512-UoKivAmVw5TL6AHuILieOJjIK9ajS0l5gyN5LbJglPuVwzfYBniDhe+3A5+ZBtS0TAHQs5qUxTwj9jXurINrcw=="
+			"version": "3.9.0",
+			"resolved": "https://registry.npmjs.org/utility-types/-/utility-types-3.9.0.tgz",
+			"integrity": "sha512-bUUsGr7NuI1p/6GpDCI/PUCJ1y5KWO4xul8RWOcmUwXSjLoi6WoV9YLNqBF7lH4RRy/jgmhYCE49eM0bnaijMQ=="
 		},
 		"utils-merge": {
 			"version": "1.0.1",
