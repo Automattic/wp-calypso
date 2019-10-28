@@ -1,7 +1,7 @@
 # 5.0.0
 
 - Remove `@automattic/calypso-color-schemes` dependency
-  - See the [example in the README](./README.md#advanced-usage-use-own-postcss-config] for instructions on how to continue to use color definitions from that file in your project.
+  - See the [example in the README](./README.md#advanced-usage-use-own-postcss-config) for instructions on how to continue to use color definitions from that file in your project.
 - Remove `calypso-color-schemes` Sass Prelude.
   - Remove the `calypso-color-schemes` colors prelude from the default webpack config.
     This was useful when the colors were defined as SCSS variables, but now when they are
