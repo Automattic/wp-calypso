@@ -105,7 +105,7 @@ class SectionImport extends Component {
 	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
-			[ appStates.UPLOAD_PROCESSING ]: 'calypso_importer_upload_start',
+			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
 			[ appStates.UPLOAD_SUCCESS ]: 'calypso_importer_upload_success',
 			[ appStates.UPLOAD_FAILURE ]: 'calypso_importer_upload_fail',
 			[ appStates.MAP_AUTHORS ]: 'calypso_importer_map_authors_view',
