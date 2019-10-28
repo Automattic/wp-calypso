@@ -26,7 +26,7 @@ export default withoutPersistence( function( state = {}, action ) {
 		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED:
 			return {
 				...state,
-				[ action.data.id ]: true,
+				instanceId: action.data.id,
 			};
 	}
 
