@@ -59,6 +59,8 @@ import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
+import AccountSettingsPage from '../lib/pages/account/account-settings-page';
+import ChecklistPage from '../lib/pages/checklist-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -1758,6 +1760,118 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 
 		after( 'Can delete our newly created account', async function() {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		} );
+	} );
+
+	describe( 'Passwordless signup @parallel', function() {
+		const blogName = dataHelper.getNewBlogName();
+		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
+		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+		let verificationLink;
+
+		before( async function() {
+			await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		step(
+			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
+			async function() {
+				const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
+				await jetpackAddNewSitePage.createNewWordPressDotComSite();
+				return await jetpackAddNewSitePage.overrideABTestInLocalStorage(
+					'passwordlessSignup',
+					'passwordless'
+				);
+			}
+		);
+
+		step( 'Can see passwordless Start page and enter an email', async function() {
+			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			return await createYourAccountPage.enterEmailAndSubmit( emailAddress );
+		} );
+
+		step( 'Can see the "Site Type" page, and enter some site information', async function() {
+			const siteTypePage = await SiteTypePage.Expect( driver );
+			return await siteTypePage.selectBusinessType();
+		} );
+
+		step( 'Can see the "Site Topic" page, and enter the site topic', async function() {
+			const siteTopicPage = await SiteTopicPage.Expect( driver );
+			await siteTopicPage.enterSiteTopic( 'Tech Blog' );
+			return await siteTopicPage.submitForm();
+		} );
+
+		step( 'Can see the "Site title" page, and enter the site title', async function() {
+			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			await siteTitlePage.enterSiteTitle( blogName );
+			return await siteTitlePage.submitForm();
+		} );
+
+		step(
+			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
+			async function() {
+				const findADomainComponent = await FindADomainComponent.Expect( driver );
+				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+					expectedBlogAddresses,
+					blogName
+				);
+				const actualAddress = await findADomainComponent.freeBlogAddress();
+				assert(
+					expectedBlogAddresses.indexOf( actualAddress ) > -1,
+					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+				);
+				return await findADomainComponent.selectFreeAddress();
+			}
+		);
+
+		step( 'Can see the plans page and pick the free plan', async function() {
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			return await pickAPlanPage.selectFreePlan();
+		} );
+
+		step(
+			'Can then see the sign up processing page which will finish automatically move along',
+			async function() {
+				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			}
+		);
+
+		sharedSteps.canSeeTheOnboardingChecklist();
+
+		step( 'Can see email containing verification link', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
+
+			const emailClient = await new EmailClient( signupInboxId );
+			const validator = emails => emails.find( email => email.subject.includes( emailAddress ) );
+			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
+
+			for ( const email of emails ) {
+				if ( email.subject.includes( emailAddress ) ) {
+					return ( verificationLink = email.html.links[ 0 ].href );
+				}
+			}
+			return assert( verificationLink !== undefined, 'Could not locate the login link email.' );
+		} );
+
+		step( 'Can open verification link and verify account', async function() {
+			if ( process.env.HORIZON_TESTS === 'true' ) {
+				return this.skip();
+			}
+			await driver.get( verificationLink );
+			const checklistPage = await ChecklistPage.Expect( this.driver );
+			return await checklistPage.isEmailverified();
+		} );
+
+		after( 'Can delete our newly created account', async function() {
+			// Get username from Account settings page
+			// (it's automatically generated for passwordless signup)
+			const accountSettingsPage = await AccountSettingsPage.Visit( this.driver );
+			const username = await accountSettingsPage.getUsername();
+
+			return await new DeleteAccountFlow( driver ).deleteAccount( username );
 		} );
 	} );
 } );

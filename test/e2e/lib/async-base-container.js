@@ -100,4 +100,10 @@ export default class AsyncBaseContainer {
 		await overrideABTests.setABTestControlGroups( this.driver );
 		return await this.waitForPage();
 	}
+
+	async overrideABTestInLocalStorage( name, variation ) {
+		await overrideABTests.setOverriddenABTests( this.driver, name, variation );
+		await this.waitForPage();
+		return await this.driver.navigate().refresh();
+	}
 }

@@ -23,4 +23,14 @@ export default class AccountSettingsPage extends AsyncBaseContainer {
 			by.css( '.account__settings-close' )
 		);
 	}
+
+	async getUsername() {
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			by.css( '.profile-gravatar__user-display-name' )
+		);
+		return await this.driver
+			.findElement( by.css( '.profile-gravatar__user-display-name' ) )
+			.getText();
+	}
 }
