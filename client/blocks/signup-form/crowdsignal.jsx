@@ -134,7 +134,7 @@ class CrowdsignalSignupForm extends Component {
 									</FormButton>
 
 									<p className="signup-form__crowdsignal-learn-more">
-										{ translate( 'Why WordPress.com? {{a}}Learn more.{{/a}}', {
+										{ translate( 'Why WordPress.com? {{a}}Learn more{{/a}}.', {
 											components: {
 												a: (
 													<a

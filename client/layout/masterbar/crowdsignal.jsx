@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter, map, tap } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
