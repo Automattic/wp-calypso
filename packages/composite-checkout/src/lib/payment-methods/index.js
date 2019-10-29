@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useContext } from 'react';
+import { useState, useContext, useCallback } from 'react';
 
 /**
  * Internal dependencies
