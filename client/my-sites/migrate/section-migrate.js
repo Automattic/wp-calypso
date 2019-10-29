@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
@@ -20,6 +21,16 @@ import SiteSelector from 'components/site-selector';
 import './section-migrate.scss';
 
 class SectionMigrate extends Component {
+	state = {
+		sourceSite: null,
+	};
+
+	setSourceSite = site => {
+		this.setState( {
+			sourceSite: site,
+		} );
+	};
+
 	jetpackSiteFilter( site ) {
 		return site.jetpack;
 	}
@@ -39,7 +50,15 @@ class SectionMigrate extends Component {
 					subHeaderText={ subHeaderText }
 				/>
 				<CompactCard className="migrate__card">
-					<SiteSelector filter={ this.jetpackSiteFilter } />
+					<SiteSelector
+						className="migrate__source-site"
+						selected={ this.state.sourceSite }
+						onSiteSelect={ this.setSourceSite }
+						filter={ this.jetpackSiteFilter }
+					/>
+					<Button primary disabled={ ! this.state.sourceSite }>
+						{ translate( 'Migrate' ) }
+					</Button>
 				</CompactCard>
 			</Main>
 		);
