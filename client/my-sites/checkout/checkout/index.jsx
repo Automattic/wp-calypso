@@ -571,9 +571,7 @@ export class Checkout extends React.Component {
 			displayModeParam = { d: 'concierge' };
 		}
 
-		// pendingOrReceiptId takes a value of ':receiptId' if a redirect payment has been selected,
-		// in which case we want to go to a thank you page.
-		if ( ':receiptId' !== pendingOrReceiptId && this.props.isEligibleForSignupDestination ) {
+		if ( this.props.isEligibleForSignupDestination ) {
 			return this.getUrlWithQueryParam( signupDestination, displayModeParam );
 		}
 
