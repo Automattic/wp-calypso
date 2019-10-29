@@ -1,9 +1,11 @@
+require( '@babel/polyfill' );
+
 /**
  * External dependencies
  */
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import Checkout from '../src';
+import Checkout, { usePaymentState } from '../src';
 
 const initialItems = [
 	{
@@ -31,9 +33,27 @@ const onFailure = error => console.error( 'There was a problem with your payment
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
+function handleCheckoutEvent( { type }, dispatch, next ) {
+	if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
+		// TODO: fetch this from the server and then...
+		dispatch( {
+			type: 'STRIPE_CONFIGURATION_SET',
+			payload: {
+				stripeConfiguration: {
+					public_key: '',
+					js_url: 'https://js.stripe.com/v3/',
+				},
+			},
+		} );
+		return;
+	}
+	next();
+}
+
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const { items, total } = useShoppingCart();
+	const [ paymentData, dispatchPaymentAction ] = usePaymentState( handleCheckoutEvent );
 
 	return (
 		<Checkout
@@ -44,6 +64,8 @@ function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
+			paymentData={ paymentData }
+			dispatchPaymentAction={ dispatchPaymentAction }
 		/>
 	);
 }
