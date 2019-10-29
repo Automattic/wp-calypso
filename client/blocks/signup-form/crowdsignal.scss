@@ -59,7 +59,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 
 	@include breakpoint( '>660px' ) {
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 	    box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 		display: block;
 		margin: 0 auto;
