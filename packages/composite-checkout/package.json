@@ -27,7 +27,7 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/composite-checkout"
 	},
-	"author": "@automattic",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
