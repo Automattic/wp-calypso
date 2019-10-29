@@ -118,7 +118,7 @@ export default {
 	designFirstSignup: {
 		datestamp: '20201029',
 		variations: {
-			defaultFirst: 0,
+			designFirst: 0,
 			default: 100,
 		},
 		defaultVariation: 'default',

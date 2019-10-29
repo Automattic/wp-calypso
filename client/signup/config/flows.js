@@ -12,6 +12,7 @@ import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
+import { abtest } from 'lib/abtest';
 
 const user = userFactory();
 
@@ -88,6 +89,13 @@ function filterDestination( destination, dependencies ) {
 }
 
 function getDefaultFlowName() {
+	if (
+		config.isEnabled( 'signup/onboarding-flow' ) &&
+		abtest( 'designFirstSignup' ) === 'designFirst'
+	) {
+		return 'design-first';
+	}
+
 	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
 }
 
