@@ -418,6 +418,7 @@ A payment method, in the context of this package, consists of the following piec
 - A component that displays that payment method (this can be as simple as the name and an icon or as complex as a credit card form). It will receive the props of the `CheckoutStep`.
 - A component form that displays the required billing contact information. It will receive the props of the `CheckoutStep`.
 - A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
+- (Optional) A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
 
 Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
 
@@ -430,6 +431,7 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 	PaymentMethodComponent: component,
 	BillingContactComponent: component,
 	SubmitButtonComponent: component,
+	CheckoutWrapper: ?component,
 }
 ```
 
