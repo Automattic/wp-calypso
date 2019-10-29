@@ -16609,9 +16609,9 @@
 			}
 		},
 		"npm-package-json-lint": {
-			"version": "4.0.2",
-			"resolved": "https://registry.npmjs.org/npm-package-json-lint/-/npm-package-json-lint-4.0.2.tgz",
-			"integrity": "sha512-xlahvfRgZcsawUPzKaJvcQSs4K0EzDgQ9YEe7VODo1XbLMWwS0IEXiywHlKPAvo1fmWBvovIdoAqhe0Gk4InHA==",
+			"version": "4.0.3",
+			"resolved": "https://registry.npmjs.org/npm-package-json-lint/-/npm-package-json-lint-4.0.3.tgz",
+			"integrity": "sha512-cuvTR2l5dOjjlRR3a1CCp+mh2A2HyQRxydwdcYi0Z77NRlADpf7wF3Jf8XFLGZM7J6afXNRBofBjQ1UWFyOtKA==",
 			"dev": true,
 			"requires": {
 				"ajv": "^6.10.2",
