@@ -56,20 +56,21 @@ The following props can be passed to the Product Selector block:
 	Each key is a product slug, and the value is the corresponding title. Example:
 		```
 		optionDisplayNames: {
-			jetpack_backup_daily: 'Jetpack Backup Daily',
-			jetpack_backup_daily_monthly: 'Jetpack Backup Daily',
-			jetpack_backup_realtime: 'Jetpack Backup Real-Time',
-			jetpack_backup_realtime_monthly: 'Jetpack Backup Real-Time',
+			jetpack_backup_daily: translate( 'Jetpack Backup Daily' ),
+			jetpack_backup_daily_monthly: translate( 'Jetpack Backup Daily' ),
+			jetpack_backup_realtime: translate( 'Jetpack Backup Real-Time' ),
+			jetpack_backup_realtime_monthly: translate( 'Jetpack Backup Real-Time' ),
 		}
 		```
 	* `optionShortNames`: ( object ) Optional short names of the product options.
+	They are used in the product card options listing and in action button (when upgrading).
 	Each key is a product slug, and the value is the corresponding title. Example:
 		```
 		optionShortNames: {
-			jetpack_backup_daily: 'Daily Backups',
-			jetpack_backup_daily_monthly: 'Daily Backups',
-			jetpack_backup_realtime: 'Real-Time Backups',
-			jetpack_backup_realtime_monthly: 'Real-Time Backups',
+			jetpack_backup_daily: translate( 'Daily Backups' ),
+			jetpack_backup_daily_monthly: translate( 'Daily Backups' ),
+			jetpack_backup_realtime: translate( 'Real-Time Backups' ),
+			jetpack_backup_realtime_monthly: translate( 'Real-Time Backups' ),
 		}
 		```
 	* `optionsLabel`: ( string ) Title of the product options section.
