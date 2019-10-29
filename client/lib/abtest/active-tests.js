@@ -99,10 +99,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	verticalSuggestedThemes: {
-		datestamp: '20191011',
+		datestamp: '20191029',
 		variations: {
-			control: 100,
-			test: 0,
+			control: 90,
+			test: 10,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
