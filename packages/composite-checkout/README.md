@@ -43,7 +43,7 @@ Inside the component, this is a `CheckoutStep` wrapping a `CheckoutPaymentMethod
 
 This step contains various form fields to collect billing contact information from the customer.
 
-The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, the optional `onChangeBillingContact` prop will be called with the updated address object so that the parent component can take any necessary actions like updating the line items and total.
+The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, the event handler passed to `usePaymentState` can be used so that the parent component can take any necessary actions like updating the line items and total.
 
 ![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/billing-step.png 'Billing Details Step')
 
@@ -115,6 +115,7 @@ const failureRedirectUrl = window.location.href;
 // This is the parent component which would be included on a host page
 export default function MyCheckout() {
 	const { items, total } = useShoppingCart();
+	const [ paymentData, dispatchPaymentAction ] = usePaymentState();
 
 	return (
 		<Checkout
@@ -125,6 +126,8 @@ export default function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
+			paymentData={ paymentData }
+			dispatchPaymentAction={ dispatchPaymentAction }
 		/>
 	);
 }
@@ -206,12 +209,14 @@ export default function MyCheckout() {
 		changePlanLength,
 		updatePricesForAddress,
 	} = useShoppingCart();
+	const [ paymentData, dispatchPaymentAction ] = usePaymentState(
+		handleCheckoutEvent( { updatePricesForAddress } )
+	);
 
 	// Some parts of the checkout can be customized
 	const ReviewContent = () => (
 		<OrderReview onDeleteItem={ deleteItem } onChangePlanLength={ changePlanLength } />
 	);
-	const reviewContentCollapsed = <OrderReviewCollapsed />;
 
 	// Modification of the line items must be done outside checkout
 	const quickStartItem = {
@@ -221,24 +226,46 @@ export default function MyCheckout() {
 		amount: { currency: 'USD', value: 2500, displayValue: '~~$50~~ $25' },
 	};
 	const addQuickStart = () => addItem( quickStartItem );
-	const upSell = <UpSellCoupon onClick={ addQuickStart } />;
+	const UpSell = () => <UpSellCoupon onClick={ addQuickStart } />;
 
 	return (
 		<Checkout
 			locale={ 'US' }
 			items={ itemsWithTax }
 			total={ total }
-			onChangeBillingContact={ updatePricesForAddress }
 			availablePaymentMethods={ availablePaymentMethods }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			ReviewContent={ ReviewContent }
-			reviewContentCollapsed={ reviewContentCollapsed }
-			upSell={ upSell }
+			UpSell={ UpSell }
+			paymentData={ paymentData }
+			dispatchPaymentAction={ dispatchPaymentAction }
 		/>
 	);
+}
+
+function handleCheckoutEvent( { updatePricesForAddress } ) {
+	return function( { type, payload }, dispatch, next ) {
+		if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
+			fetch( '/stripe-configuration' )
+				.then( res => res.json() )
+				.then( stripeConfiguration => {
+					dispatch( {
+						type: 'STRIPE_CONFIGURATION_SET',
+						payload: {
+							stripeConfiguration,
+						},
+					} );
+				} );
+			return;
+		}
+		if ( type === 'STEP_CHANGED' && payload.prevStep === 2 ) {
+			updatePricesForAddress();
+		}
+		next();
+	};
 }
 
 // This is a simple shopping cart manager which allows CRUD operations
@@ -322,22 +349,6 @@ function OrderReview( { onDeleteItem, onChangePlanLength } ) {
 				<OrderReviewLineItems items={ taxItems } />
 				<OrderReviewTotal total={ total } />
 			</OrderReviewSection>
-		</React.Fragment>
-	);
-}
-
-function OrderReviewCollapsed() {
-	const [ items, total ] = useCheckoutLineItems();
-	const planItems = items.filter( item => item.type === 'plan' );
-	const domainItems = items.filter( item => item.type === 'domain' );
-	const miscItems = items.filter( item => ! [ 'plan', 'domain', 'tax' ].includes( item.type ) );
-
-	return (
-		<React.Fragment>
-			<OrderReviewLineItems collapsed items={ planItems } />
-			<OrderReviewLineItems collapsed items={ miscItems } />
-			<OrderReviewLineItems collapsed items={ domainItems } />
-			<OrderReviewTotal collapsed total={ total } />
 		</React.Fragment>
 	);
 }
@@ -435,7 +446,8 @@ The main component in this package. It has the following props.
 - locale: string (required)
 - items: array (required)
 - total: object (required)
-- onChangeBillingContact: function
+- dispatchPaymentAction: function (required)
+- paymentData: object (required)
 - availablePaymentMethods: array
 - onSuccess: function (required)
 - onFailure: function (required)
@@ -454,6 +466,30 @@ If any event in a customization slot causes the line items to change (for exampl
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
 The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
+
+The value of `paymentData` and `dispatchPaymentAction` should be the values returned by the hook `usePaymentState()`. That hook accepts a single argument which is a callback that can be used to act on various events that occur within the package. The handler function will receive three arguments: `action, dispatch, next`. `action` contains two properties: `type` and `payload`. `dispatch` is the dispatcher function in case your handler wants to dispatch additional actions. `next` is a callback that will call the internal handler, which you should do for any action you don't handle yourself. The following example handler will deal with fetching the stripe configuration and will log whenever the step changes.
+
+```js
+function handleCheckoutEvent( { type, payload }, dispatch, next ) {
+	if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
+		fetch( '/stripe-configuration' )
+			.then( res => res.json() )
+			.then( stripeConfiguration => {
+				dispatch( {
+					type: 'STRIPE_CONFIGURATION_SET',
+					payload: {
+						stripeConfiguration,
+					},
+				} );
+			} );
+		return;
+	}
+	if ( type === 'STEP_CHANGED' ) {
+		console.log( 'step changed from', payload.prevStep, 'to', payload.nextStep );
+	}
+	next();
+}
+```
 
 ### CheckoutNextStepButton
 
@@ -529,11 +565,37 @@ A React Hook that will return an object containing all the information about the
 
 ### usePaymentMethodData()
 
-A React Hook that will return a two element array. It can be used to store and share data entered into the payment forms. The first element is an object representing the current state. The second element is a function that will replace the state.
+A React Hook that will return a two element array. It can be used to store and share data entered into the payment forms. The first element is an object representing the current state. The second element is a "dispatch" function which can be used to update the state (with an implicit merge) or trigger an event for side effects. The dispatch function should be passed an object with two properties: `type` and `payload` following the [flux-standard-action](https://github.com/redux-utilities/flux-standard-action) pattern.
 
 ### usePaymentMethodId()
 
 A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method.
+
+### usePaymentState()
+
+A React Hook that accepts a single argument which is a callback that can be used to act on various events that occur within the package. The handler function will receive three arguments: `action, dispatch, next`. `action` contains two properties: `type` and `payload`. `dispatch` is the dispatcher function in case your handler wants to dispatch additional actions. `next` is a callback that will call the internal handler, which you should do for any action you don't handle yourself. The following example handler will deal with fetching the stripe configuration and will log whenever the step changes.
+
+```js
+function handleCheckoutEvent( { type, payload }, dispatch, next ) {
+	if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
+		fetch( '/stripe-configuration' )
+			.then( res => res.json() )
+			.then( stripeConfiguration => {
+				dispatch( {
+					type: 'STRIPE_CONFIGURATION_SET',
+					payload: {
+						stripeConfiguration,
+					},
+				} );
+			} );
+		return;
+	}
+	if ( type === 'STEP_CHANGED' ) {
+		console.log( 'step changed from', payload.prevStep, 'to', payload.nextStep );
+	}
+	next();
+}
+```
 
 ## 💰 FAQ
 
