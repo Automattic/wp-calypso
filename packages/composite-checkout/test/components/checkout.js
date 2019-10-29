@@ -11,6 +11,7 @@ import '@testing-library/jest-dom/extend-expect';
 import Checkout from '../../src/components/checkout';
 
 test( 'When we enter checkout, the line items and total are rendered', () => {
+	const noop = () => {};
 	const { container } = render(
 		<Checkout
 			locale="en-us"
@@ -42,6 +43,8 @@ test( 'When we enter checkout, the line items and total are rendered', () => {
 			} }
 			successRedirectUrl="#"
 			failureRedirectUrl="#"
+			paymentData={ {} }
+			dispatchPaymentAction={ noop }
 		/>
 	);
 
