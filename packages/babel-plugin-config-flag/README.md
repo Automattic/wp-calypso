@@ -11,7 +11,7 @@ to replace them with, in the `flags` parameter.
 
 Example Babel config file:
 
-```json
+```js
 {
 	"plugins": [
 		[ "@automattic/babel-plugin-config-flag", { flags: { flagName: flagValue } } ]
