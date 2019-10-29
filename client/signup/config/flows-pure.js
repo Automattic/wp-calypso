@@ -99,6 +99,13 @@ export function generateFlows( {
 			lastModified: '2019-08-20',
 		},
 
+		'design-first': {
+			steps: [ 'template-first-themes', 'user', 'domains', 'plans' ],
+			destination: getChecklistThemeDestination,
+			description: 'Start with one of our template-first (Gutenberg) themes.',
+			lastModified: '2019-10-16',
+		},
+
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSignupDestination,

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, identity } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,19 +23,23 @@ import { isEnabled } from 'config';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ThemeSelectionStep extends Component {
 	static propTypes = {
 		designType: PropTypes.string,
+		quantity: PropTypes.number,
 		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 		stepName: PropTypes.string.isRequired,
-		translate: PropTypes.func,
 		useHeadstart: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		useHeadstart: true,
-		translate: identity,
 	};
 
 	pickTheme = themeId => {
@@ -66,6 +70,7 @@ class ThemeSelectionStep extends Component {
 				surveyQuestion={ this.props.chosenSurveyVertical }
 				designType={ this.props.designType || this.props.signupDependencies.designType }
 				handleScreenshotClick={ this.pickTheme }
+				quantity={ this.props.quantity }
 			/>
 		);
 	}

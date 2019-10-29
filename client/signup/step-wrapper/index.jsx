@@ -71,7 +71,7 @@ class StepWrapper extends Component {
 						flowName={ this.props.flowName }
 						stepName={ this.props.stepName }
 						labelText={ this.props.skipLabelText }
-						cssClass={ !! this.props.skipHeadingText && ' navigation-link--has-skip-heading ' }
+						cssClass={ ! this.props.skipHeadingText && ' navigation-link--has-skip-heading ' }
 					/>
 				</>
 			);
