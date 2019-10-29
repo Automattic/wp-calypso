@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -24,11 +24,33 @@ export const JETPACK_BACKUP_PRODUCTS = [
 ];
 
 // @TODO: Translate those strings once we have confirmed the copy.
-export const JETPACK_BACKUP_PRODUCT_NAMES = {
+export const JETPACK_BACKUP_PRODUCT_SHORT_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: 'Daily Backups',
 	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 'Daily Backups',
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: 'Real-Time Backups',
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: 'Real-Time Backups',
+};
+export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
+		<Fragment>
+			Jetpack Backup <em>Daily</em>
+		</Fragment>
+	),
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
+		<Fragment>
+			Jetpack Backup <em>Daily</em>
+		</Fragment>
+	),
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
+		<Fragment>
+			Jetpack Backup <em>Real-Time</em>
+		</Fragment>
+	),
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
+		<Fragment>
+			Jetpack Backup <em>Real-Time</em>
+		</Fragment>
+	),
 };
 
 // @TODO: Translate those strings once we have confirmed the copy.

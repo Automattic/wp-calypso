@@ -24,7 +24,7 @@ const products = [
 			yearly: [ 'jetpack_backup_daily', 'jetpack_backup_realtime' ],
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
 		},
-		optionNames: {
+		optionShortNames: {
 			jetpack_backup_daily: 'Daily Backups',
 			jetpack_backup_daily_monthly: 'Daily Backups',
 			jetpack_backup_realtime: 'Real-Time Backups',
