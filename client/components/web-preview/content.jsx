@@ -222,7 +222,11 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		if ( caller === 'iframe-onload' && ! this.state.loaded ) {
+		if (
+			caller === 'iframe-onload' &&
+			! this.state.loaded &&
+			this.state.iframeUrl !== 'about:blank'
+		) {
 			if ( this.props.showClose ) {
 				window.open( this.state.iframeUrl, '_blank' );
 				this.props.onClose();
