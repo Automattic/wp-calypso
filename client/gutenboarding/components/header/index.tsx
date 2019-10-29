@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __ as NO__ } from '@wordpress/i18n';
 import { Button, IconButton } from '@wordpress/components';
 import React from 'react';
 import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
@@ -25,7 +25,7 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 		<div
 			className="gutenboarding__header"
 			role="region"
-			aria-label={ __( 'Top bar' ) }
+			aria-label={ NO__( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
 			<div>
@@ -40,18 +40,18 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 				</p>
 			</div>
 			<div
-				aria-label={ __( 'Document tools' ) }
+				aria-label={ NO__( 'Document tools' ) }
 				aria-orientation="horizontal"
 				className="gutenboarding__header-toolbar"
 				role="toolbar"
 			></div>
 			<div className="gutenboarding__header-actions">
 				<Button isPrimary isLarge>
-					{ __( 'Continue' ) }
+					{ NO__( 'Continue' ) }
 				</Button>
 				<IconButton
 					icon="admin-generic"
-					label={ 'Site Block Settings' }
+					label={ NO__( 'Site block settings' ) }
 					onClick={ toggleGeneralSidebar }
 					isToggled={ isEditorSidebarOpened }
 					aria-expanded={ isEditorSidebarOpened }

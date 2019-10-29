@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { __ as NO__ } from '@wordpress/i18n';
 import React from 'react';
 import { BlockInspector } from '@wordpress/block-editor';
 import { Panel, PanelBody } from '@wordpress/components';
@@ -15,7 +16,7 @@ import Sidebar from '../sidebar';
 export default function SettingsSidebar( { isActive } ) {
 	return (
 		<Sidebar
-			label="SiteBlock Settings"
+			label={ NO__( 'Site block settings' ) }
 			className="gutenboarding__settings-sidebar"
 			isActive={ isActive }
 		>
