@@ -755,8 +755,10 @@ module.exports = function() {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get( pathRegex, function( req, res, next ) {
-			req.context = getDefaultContext( req, entrypoint );
-			req.context.sectionName = section.name;
+			req.context = {
+				...getDefaultContext( req, entrypoint ),
+				sectionName: section.name,
+			};
 
 			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
 				req.context.chunkFiles = getFilesForChunk( section.name, req );
