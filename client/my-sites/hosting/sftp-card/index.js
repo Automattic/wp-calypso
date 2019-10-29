@@ -19,52 +19,17 @@ import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
 import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	requestAtomicSFTPDetails,
+	resetAtomicSFTPUserPassword,
+	createAtomicSFTPUser,
+} from 'state/data-getters';
 
-// @TODO derive API request details from props when API is merged & remove component state for dummy data
-const SFTPCard = ( { translate, siteId, disabled } ) => {
+const SFTPCard = ( { translate, username, password, siteId, loading, disabled } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
 	const passwordIsCopied = isCopied === 'password';
-
-	// Begin dummy API data/methods
-	const [ dummyApiRequest, setDummyApiRequest ] = useState( {
-		status: 'error',
-		error: {
-			status: 404,
-		},
-	} );
-
-	const username = get( dummyApiRequest, 'data.username', null );
-	const password = get( dummyApiRequest, 'data.password', null );
-	const loading = dummyApiRequest.status === 'pending';
-	const noSftpUser = dummyApiRequest.error.status === 404;
-
-	const createAtomicSFTPUser = () => {
-		setDummyApiRequest( {
-			status: 'success',
-			data: {
-				username: 'test_user_testsite.wordpress.com_1234',
-			},
-			error: {
-				status: 0,
-			},
-		} );
-	};
-
-	const resetAtomicSFTPUserPassword = () => {
-		setDummyApiRequest( {
-			status: 'success',
-			data: {
-				username: 'test_user_testsite.wordpress.com_1234',
-				password: 'a.reset.p.a.s.s.word',
-			},
-			error: {
-				status: 0,
-			},
-		} );
-	};
-	// End of dummy API data/methods
 
 	const sftpData = {
 		[ translate( 'URL' ) ]: 'sftp1.wordpress.com',
@@ -113,7 +78,11 @@ const SFTPCard = ( { translate, siteId, disabled } ) => {
 			</div>
 			<div className="sftp-card__body">
 				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
-				{ ! disabled && noSftpUser ? (
+				{ disabled || username || loading ? (
+					<p>
+						{ translate( "Access and edit your website's files directly using an FTP client." ) }
+					</p>
+				) : (
 					<>
 						<p>
 							{ translate(
@@ -124,10 +93,6 @@ const SFTPCard = ( { translate, siteId, disabled } ) => {
 							{ translate( 'Enable SFTP' ) }
 						</Button>
 					</>
-				) : (
-					<p>
-						{ translate( "Access and edit your website's files directly using an FTP client." ) }
-					</p>
 				) }
 			</div>
 			{ ( username || disabled ) && (
@@ -171,15 +136,28 @@ const SFTPCard = ( { translate, siteId, disabled } ) => {
 					</tbody>
 				</table>
 			) }
-			{ loading && ! noSftpUser && <Spinner /> }
+			{ loading && <Spinner /> }
 		</Card>
 	);
 };
 
-export default connect( state => {
+export default connect( ( state, { disabled } ) => {
 	const siteId = getSelectedSiteId( state );
+	let username = null;
+	let password = null;
+	let loading = null;
+
+	if ( ! disabled ) {
+		const sftpDetails = requestAtomicSFTPDetails( siteId );
+		username = get( sftpDetails, 'data.username' );
+		password = get( sftpDetails, 'data.password' );
+		loading = sftpDetails.state === 'pending';
+	}
 
 	return {
 		siteId,
+		username,
+		password,
+		loading,
 	};
 } )( localize( SFTPCard ) );
