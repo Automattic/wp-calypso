@@ -56,19 +56,19 @@ The following props can be passed to the Product Selector block:
 	Each key is a product slug, and the value is the corresponding copy. Example:
 		```
 		optionDescriptions: {
-			jetpack_backup_daily: __( 'Looking for more? Get unlimited real-time backup archives' ),
-			jetpack_backup_daily_monthly: __( 'Looking for more? Get unlimited real-time backup archives' ),
-			jetpack_backup_realtime: __( 'Your changes are saved as you edit and you have unlimited backup archives' ),
-			jetpack_backup_realtime_monthly: __( 'Your changes are saved as you edit and you have unlimited backup archives' ),
+			jetpack_backup_daily: translate( 'Looking for more? Get unlimited real-time backup archives' ),
+			jetpack_backup_daily_monthly: translate( 'Looking for more? Get unlimited real-time backup archives' ),
+			jetpack_backup_realtime: translate( 'Your changes are saved as you edit and you have unlimited backup archives' ),
+			jetpack_backup_realtime_monthly: translate( 'Your changes are saved as you edit and you have unlimited backup archives' ),
 		}
 		```
 	* `optionNames`: ( object ) Optional names of the product options. Each key is a product slug, and the value is the corresponding title. Example:
 		```
 		optionsNames: {
-			jetpack_backup_daily: __( 'Daily Backups' ),
-			jetpack_backup_daily_monthly: __( 'Daily Backups' ),
-			jetpack_backup_realtime: __( 'Real-Time Backups' ),
-			jetpack_backup_realtime_monthly: __( 'Real-Time Backups' ),
+			jetpack_backup_daily: 'Daily Backups',
+			jetpack_backup_daily_monthly: 'Daily Backups',
+			jetpack_backup_realtime: 'Real-Time Backups',
+			jetpack_backup_realtime_monthly: 'Real-Time Backups',
 		}
 		```
 	* `optionsLabel`: ( string ) Title of the product options section.
