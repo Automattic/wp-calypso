@@ -78,7 +78,11 @@ const SFTPCard = ( { translate, username, password, siteId, loading, disabled } 
 			</div>
 			<div className="sftp-card__body">
 				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
-				{ ! disabled && ! loading ? (
+				{ disabled || username || loading ? (
+					<p>
+						{ translate( "Access and edit your website's files directly using an FTP client." ) }
+					</p>
+				) : (
 					<>
 						<p>
 							{ translate(
@@ -89,10 +93,6 @@ const SFTPCard = ( { translate, username, password, siteId, loading, disabled } 
 							{ translate( 'Enable SFTP' ) }
 						</Button>
 					</>
-				) : (
-					<p>
-						{ translate( "Access and edit your website's files directly using an FTP client." ) }
-					</p>
 				) }
 			</div>
 			{ ( username || disabled ) && (
@@ -141,14 +141,23 @@ const SFTPCard = ( { translate, username, password, siteId, loading, disabled } 
 	);
 };
 
-export default connect( state => {
+export default connect( ( state, { disabled } ) => {
 	const siteId = getSelectedSiteId( state );
-	const sftpDetails = requestAtomicSFTPDetails( siteId );
+	let username = null;
+	let password = null;
+	let loading = null;
+
+	if ( ! disabled ) {
+		const sftpDetails = requestAtomicSFTPDetails( siteId );
+		username = get( sftpDetails, 'data.username' );
+		password = get( sftpDetails, 'data.password' );
+		loading = sftpDetails.state === 'pending';
+	}
 
 	return {
 		siteId,
-		username: get( sftpDetails, 'data.username' ),
-		password: get( sftpDetails, 'data.password' ),
-		loading: sftpDetails.state === 'pending',
+		username,
+		password,
+		loading,
 	};
 } )( localize( SFTPCard ) );
