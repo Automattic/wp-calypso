@@ -1,3 +1,8 @@
+# Unreleased
+
+- Add `overrides` option to `transpile`, to be used in `babel-loader`.
+  This allows for providing e.g. extra plugin configuration, beyond what's in the `configFile`.
+
 # 5.0.1
 
 - Fix PostCSS config path default.

@@ -19,6 +19,7 @@ module.exports.loader = ( {
 	exclude,
 	include,
 	presets,
+	overrides,
 } ) => ( {
 	test: /\.[jt]sx?$/,
 	include,
@@ -38,6 +39,7 @@ module.exports.loader = ( {
 				cacheDirectory,
 				cacheIdentifier,
 				presets,
+				overrides,
 			},
 		},
 	],
