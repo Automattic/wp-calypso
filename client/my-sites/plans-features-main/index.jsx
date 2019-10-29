@@ -152,6 +152,14 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
+				{ /* @todo: Add translations in FormattedHeader once the final copy is provided. */ }
+				{ isEnabled( 'plans/jetpack-backup' ) && displayJetpackPlans && (
+					<FormattedHeader
+						headerText="Plans"
+						subHeaderText="Get everything your site needs, in one package — so you can focus on your business."
+						compactOnMobile
+					/>
+				) }
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
