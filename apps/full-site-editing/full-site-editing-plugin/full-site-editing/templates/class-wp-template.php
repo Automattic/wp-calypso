@@ -161,9 +161,9 @@ class WP_Template {
 			return null;
 		}
 
-		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"label\":\"Header\",\"className\":\"site-header site-branding\"} /-->" .
+		return "<!-- wp:a8c/template {\"templateId\":$header_id,\"label\":\"" . __( 'Header', 'full-site-editing' ) . '","className":"site-header site-branding"} /-->' .
 				'<!-- wp:a8c/post-content /-->' .
-				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"label\":\"Footer\",\"className\":\"site-footer\"} /-->";
+				"<!-- wp:a8c/template {\"templateId\":$footer_id,\"label\":\"" . __( 'Footer', 'full-site-editing' ) . '","className":"site-footer"} /-->';
 	}
 
 	/**
