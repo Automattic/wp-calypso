@@ -207,50 +207,6 @@ class SiteImporterInputPane extends React.Component {
 		} );
 	};
 
-	renderUrlHint = () => {
-		switch ( this.props.importerData.engine ) {
-			case 'wix':
-				return (
-					<div className="site-importer__site-importer-url-format">
-						<p>
-							{ this.props.translate(
-								'Please use one of the following formats for the site URL:'
-							) }
-						</p>
-						<ul>
-							<li>
-								<span className="site-importer__site-importer-example-domain">example.com</span>
-								{ ' - ' }
-								{ this.props.translate( 'a paid custom domain' ) }
-							</li>
-							<li>
-								<span className="site-importer__site-importer-example-domain">
-									example-account.wixsite.com/my-site
-								</span>
-								{ ' - ' }
-								{ this.props.translate( 'a free domain that comes with every site' ) }
-							</li>
-						</ul>
-					</div>
-				);
-			case 'godaddy-gocentral':
-				return (
-					<div className="site-importer__site-importer-url-format">
-						<p>{ this.props.translate( 'Please use the following format for the site URL:' ) }</p>
-						<ul>
-							{ /* TODO(marekhrabe): add free URL format before public launch */ }
-							<li>
-								<span className="site-importer__site-importer-example-domain">example.com</span>
-								{ ' - ' }
-								{ this.props.translate( 'a paid custom domain' ) }
-							</li>
-						</ul>
-					</div>
-				);
-		}
-		return null;
-	};
-
 	render() {
 		const { importerStatus, isEnabled, site, error, isLoading, importStage } = this.props;
 
@@ -307,7 +263,6 @@ class SiteImporterInputPane extends React.Component {
 						retryImport={ this.validateSite }
 					/>
 				) }
-				{ importStage === 'idle' && this.renderUrlHint() }
 				{ importStage === 'idle' && (
 					<ImporterActionButtonContainer>
 						<ImporterCloseButton
