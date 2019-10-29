@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import moment from 'moment';
 import page from 'page';
 import { isEqual } from 'lodash';
 
@@ -56,7 +56,7 @@ function queryFilterToStats( filter ) {
 export function activity( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
+	const startDate = moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
 		? context.query.startDate
 		: undefined;
 
