@@ -1156,7 +1156,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Basic sign up for a free site @parallel @email @ie11canary', function() {
+	describe( 'Basic sign up for a free site @signup @email @ie11canary', function() {
 		const blogName = dataHelper.getNewBlogName();
 
 		before( async function() {
