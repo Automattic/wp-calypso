@@ -15,8 +15,8 @@ const products = [
 		title: 'Jetpack Backup',
 		description: (
 			<p>
-				Automatic scanning and one-click fixes keep your site one step ahead of security threats.{' '}
-				<a href="https://jetpack.com/">More info</a>
+				Always-on backups ensure you never lose your site. Choose from real-time or daily backups.{' '}
+				<a href="https://jetpack.com/upgrade/backup/">Which one do I need?</a>
 			</p>
 		),
 		id: 'jetpack_backup',
