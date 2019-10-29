@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -15,7 +15,8 @@ import Field from './field';
 
 export default function BillingFields( { summary, isActive, isComplete } ) {
 	const [ items ] = useCheckoutLineItems();
-	const [ isDomainContactVisible, setIsDomainContactVisible ] = useState( false );
+	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const { isDomainContactSame = true } = paymentData;
 
 	if ( summary && isComplete ) {
 		return <BillingFormSummary />;
@@ -25,11 +26,10 @@ export default function BillingFields( { summary, isActive, isComplete } ) {
 	}
 
 	function toggleDomainFieldsVisibility() {
-		if ( isDomainContactVisible ) {
-			// TODO: Clear domain data so that it doesn't show in the summary
-		}
-
-		return setIsDomainContactVisible( ! isDomainContactVisible );
+		dispatch( {
+			type: 'PAYMENT_DATA_UPDATE',
+			payload: { isDomainContactSame: ! isDomainContactSame },
+		} );
 	}
 
 	return (
@@ -45,11 +45,11 @@ export default function BillingFields( { summary, isActive, isComplete } ) {
 			{ hasDomainsInCart( items ) && (
 				<DomainFieldsCheckbox
 					toggleVisibility={ toggleDomainFieldsVisibility }
-					isDomainContactVisible={ ! isDomainContactVisible }
+					isDomainContactVisible={ ! isDomainContactSame }
 				/>
 			) }
 
-			{ isDomainContactVisible && hasDomainsInCart( items ) && <DomainFields /> }
+			{ ! isDomainContactSame && hasDomainsInCart( items ) && <DomainFields /> }
 		</BillingFormFields>
 	);
 }
@@ -99,7 +99,7 @@ function DomainFieldsCheckbox( { toggleVisibility, isDomainContactVisible } ) {
 				type="checkbox"
 				id="domain-registration"
 				name="domain-registration"
-				defaultChecked={ isDomainContactVisible }
+				defaultChecked={ ! isDomainContactVisible }
 				onChange={ toggleVisibility }
 			/>
 			<DomainRegistrationLabel htmlFor="domain-registration">
@@ -397,7 +397,7 @@ const DomainContactFieldsDescription = styled.p`
 function BillingFormSummary() {
 	const localize = useLocalize();
 	const [ paymentData ] = usePaymentMethodData();
-	const { billing, domains } = paymentData;
+	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
 
 	//Check if paymentData is empty
 	if ( Object.entries( paymentData ).length === 0 ) {
@@ -432,7 +432,7 @@ function BillingFormSummary() {
 					</BillingSummaryDetails>
 				) }
 			</div>
-			{ domains && (
+			{ domains && ! isDomainContactSame && (
 				<div>
 					<BillingSummaryDetails>
 						<BillingSummaryLine>{ domains.name }</BillingSummaryLine>
