@@ -4,15 +4,10 @@ module.exports = {
 	rules: {
 		'prefer-no-devDependencies': 'error',
 		'prefer-property-order': 'off',
-		'require-author': 'error',
 		'require-bugs': 'off',
 		'require-homepage': 'off',
 		'require-keywords': 'off',
-		'require-license': 'error',
-		'require-name': 'error',
-		'require-version': 'error',
 		'valid-values-author': [ 'error', [ 'Automattic Inc.' ] ],
-		'valid-values-license': [ 'error', [ 'GPL-2.0-or-later' ] ],
 		'valid-values-name-scope': [ 'error', [ '@automattic' ] ],
 	},
 	overrides: [
