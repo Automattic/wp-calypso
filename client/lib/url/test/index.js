@@ -10,56 +10,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { addSchemeIfMissing, setUrlScheme, omitUrlParams } from '../';
-
-describe( 'addSchemeIfMissing()', () => {
-	test( 'should add scheme if missing', () => {
-		const source = 'example.com/path';
-		const expected = 'https://example.com/path';
-
-		const actual = addSchemeIfMissing( source, 'https' );
-
-		expect( actual ).to.equal( expected );
-	} );
-
-	test( 'should skip if scheme exists', () => {
-		const source = 'https://example.com/path';
-		const expected = 'https://example.com/path';
-
-		const actual = addSchemeIfMissing( source, 'https' );
-
-		expect( actual ).to.equal( expected );
-	} );
-} );
-
-describe( 'setUrlScheme()', () => {
-	test( 'should skip if scheme already set', () => {
-		const source = 'http://example.com/path';
-		const expected = 'http://example.com/path';
-
-		const actual = setUrlScheme( source, 'http' );
-
-		expect( actual ).to.equal( expected );
-	} );
-
-	test( 'should add scheme if missing', () => {
-		const source = 'example.com/path';
-		const expected = 'http://example.com/path';
-
-		const actual = setUrlScheme( source, 'http' );
-
-		expect( actual ).to.equal( expected );
-	} );
-
-	test( 'should replace scheme if different', () => {
-		const source = 'https://example.com/path';
-		const expected = 'http://example.com/path';
-
-		const actual = setUrlScheme( source, 'http' );
-
-		expect( actual ).to.equal( expected );
-	} );
-} );
+import { omitUrlParams } from '../';
 
 describe( 'omitUrlParams()', () => {
 	describe( 'when no URL is supplied', () => {
