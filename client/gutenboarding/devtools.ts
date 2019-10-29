@@ -18,11 +18,3 @@ export const wpDataDebugMiddleware: PageJS.Callback = ( context, next ) => {
 	}
 	next();
 };
-
-/**
- * Functions to use instead of `__()` etc from `@wordpress/i18n`.
- * https://developer.wordpress.org/block-editor/packages/packages-i18n/
- *
- * This is to avoid sending strings for translation tool too early.
- */
-export { __ as NO__, _n as NO_n, _nx as NO_nx, _x as NO_x, sprintf } from '@wordpress/i18n';

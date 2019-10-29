@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { NO__ } from '../../devtools';
+import { __ as NO__ } from '@wordpress/i18n';
 import React from 'react';
 import { BlockInspector } from '@wordpress/block-editor';
 import { Panel, PanelBody } from '@wordpress/components';

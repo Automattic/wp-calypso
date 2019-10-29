@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { NO__ } from '../../devtools';
+import { __ as NO__ } from '@wordpress/i18n';
 import { Button, IconButton } from '@wordpress/components';
 import React from 'react';
 import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
