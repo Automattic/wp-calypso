@@ -42,7 +42,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 				<PageViewTracker
 					path={ pageViewTrackerPath }
 					title={ title }
-					properties={ { isLoggedIn: isLoggedIn } }
+					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<DocumentHead title={ title } />
 				{ receiptId ? (
