@@ -28,6 +28,6 @@ const gutenbeard = () => {
 
 window.AppBoot = async () => {
 	await user().initialize();
-	page( '/gutenbearding', gutenbeard );
+	page( '/gutenboarding', gutenbeard );
 	page.start();
 };

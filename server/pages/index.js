@@ -804,12 +804,12 @@ module.exports = function() {
 	// Set up Gutenbearding routing.
 	handleSectionPath(
 		{
-			name: 'gutenbearding',
-			module: 'gutenbearding',
+			name: 'gutenboarding',
+			module: 'gutenboarding',
 			enableLoggedOut: true,
 		},
-		'/gutenbearding',
-		'entry-gutenbearding'
+		'/gutenboarding',
+		'entry-gutenboarding'
 	);
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
