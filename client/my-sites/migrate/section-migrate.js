@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSelector from 'components/site-selector';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -25,15 +27,17 @@ class SectionMigrate extends Component {
 		sourceSite: null,
 	};
 
-	setSourceSite = site => {
-		this.setState( {
-			sourceSite: site,
-		} );
+	jetpackSiteFilter = sourceSite => {
+		const { siteId } = this.props;
+
+		return sourceSite.jetpack && sourceSite.ID !== siteId;
 	};
 
-	jetpackSiteFilter( site ) {
-		return site.jetpack;
-	}
+	setSourceSiteId = sourceSiteId => {
+		this.setState( {
+			sourceSiteId,
+		} );
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -52,11 +56,11 @@ class SectionMigrate extends Component {
 				<CompactCard className="migrate__card">
 					<SiteSelector
 						className="migrate__source-site"
-						selected={ this.state.sourceSite }
-						onSiteSelect={ this.setSourceSite }
+						selected={ this.state.sourceSiteId }
+						onSiteSelect={ this.setSourceSiteId }
 						filter={ this.jetpackSiteFilter }
 					/>
-					<Button primary disabled={ ! this.state.sourceSite }>
+					<Button primary disabled={ ! this.state.sourceSiteId }>
 						{ translate( 'Migrate' ) }
 					</Button>
 				</CompactCard>
@@ -65,4 +69,6 @@ class SectionMigrate extends Component {
 	}
 }
 
-export default localize( SectionMigrate );
+export default connect( state => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( localize( SectionMigrate ) );
