@@ -343,8 +343,6 @@ class Home extends Component {
 							<img
 								src="/calypso/images/customer-home/happiness.png"
 								alt={ translate( 'Support' ) }
-								height="119"
-								width="137"
 							/>
 							<VerticalNav className="customer-home__card-links">
 								<VerticalNavItem
