@@ -40,7 +40,7 @@ class CheckoutPending extends PureComponent {
 
 	componentWillReceiveProps( nextProps ) {
 		const { transaction, error } = nextProps;
-		const { translate, showErrorNotice, siteSlug } = this.props;
+		const { translate, showErrorNotice, siteSlug, redirectTo } = this.props;
 
 		const retryOnError = () => {
 			page( `/checkout/${ siteSlug }` );
@@ -58,11 +58,8 @@ class CheckoutPending extends PureComponent {
 			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
 				const { receiptId } = transaction;
 
-				page(
-					receiptId
-						? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-						: `/checkout/thank-you/${ siteSlug }`
-				);
+				const redirectPath = redirectTo.replace( 'pending', receiptId );
+				page( redirectPath );
 
 				return;
 			}

@@ -81,6 +81,17 @@ export class ProductSelector extends Component {
 		} );
 	}
 
+	getDescriptionByProduct( product ) {
+		const { description, optionDescriptions } = product;
+		const purchase = this.getPurchaseByProduct( product );
+
+		if ( ! purchase || ! optionDescriptions || ! optionDescriptions[ purchase.productSlug ] ) {
+			return description;
+		}
+
+		return optionDescriptions[ purchase.productSlug ];
+	}
+
 	getProductName( product, productSlug ) {
 		if ( product.optionShortNames && product.optionShortNames[ productSlug ] ) {
 			return product.optionShortNames[ productSlug ];
@@ -222,7 +233,7 @@ export class ProductSelector extends Component {
 					billingTimeFrame={ this.getBillingTimeFrameLabel() }
 					fullPrice={ this.getProductOptionFullPrice( selectedProductSlug ) }
 					discountedPrice={ this.getProductOptionDiscountedPrice( selectedProductSlug ) }
-					description={ product.description }
+					description={ this.getDescriptionByProduct( product ) }
 					currencyCode={ currencyCode }
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
@@ -268,6 +279,7 @@ ProductSelector.propTypes = {
 			id: PropTypes.string,
 			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
+			optionDescriptions: PropTypes.objectOf( [ PropTypes.string, PropTypes.element ] ),
 			optionsLabel: PropTypes.string,
 		} )
 	).isRequired,

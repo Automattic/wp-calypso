@@ -39,7 +39,7 @@ export const requestPmaLink = siteId =>
 		}
 	);
 
-const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
+const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading, disabled } ) => {
 	useEffect( () => {
 		if ( pmaLink && ! loading ) {
 			window.open( pmaLink );
@@ -58,7 +58,11 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading } ) => {
 						'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
 					) }
 				</p>
-				<Button onClick={ () => requestPmaLink( siteId ) } busy={ loading }>
+				<Button
+					onClick={ () => requestPmaLink( siteId ) }
+					busy={ ! disabled && loading }
+					disabled={ disabled }
+				>
 					<span>{ translate( 'Open PHPMyAdmin' ) }</span>
 					<MaterialIcon icon="launch" size={ 16 } />
 				</Button>

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, map } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 // @TODO derive API request details from props when API is merged & remove component state for dummy data
-const SFTPCard = ( { translate, siteId } ) => {
+const SFTPCard = ( { translate, siteId, disabled } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
@@ -70,6 +71,41 @@ const SFTPCard = ( { translate, siteId } ) => {
 		[ translate( 'Port' ) ]: 22,
 	};
 
+	const renderPasswordCell = () => {
+		if ( disabled ) {
+			return <span></span>;
+		}
+
+		if ( password ) {
+			return (
+				<>
+					<p className="sftp-card__hidden-overflow">{ password }</p>
+					<ClipboardButton text={ password } onCopy={ () => setIsCopied( 'password' ) } compact>
+						{ passwordIsCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+					</ClipboardButton>
+					<p className="sftp-card__password-warning">
+						{ translate(
+							"Be sure to save your password somewhere safe. You won't be able to view it again without resetting."
+						) }
+					</p>
+				</>
+			);
+		}
+
+		return (
+			<>
+				<p>{ translate( 'You must reset your password to view it.' ) }</p>
+				<Button
+					onClick={ () => resetAtomicSFTPUserPassword( siteId ) }
+					disabled={ loading }
+					compact
+				>
+					{ translate( 'Reset Password' ) }
+				</Button>
+			</>
+		);
+	};
+
 	return (
 		<Card className="sftp-card">
 			<div className="sftp-card__icon">
@@ -77,7 +113,7 @@ const SFTPCard = ( { translate, siteId } ) => {
 			</div>
 			<div className="sftp-card__body">
 				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
-				{ noSftpUser ? (
+				{ ! disabled && noSftpUser ? (
 					<>
 						<p>
 							{ translate(
@@ -94,66 +130,43 @@ const SFTPCard = ( { translate, siteId } ) => {
 					</p>
 				) }
 			</div>
-			{ username && (
-				<table className="sftp-card__info-table">
+			{ ( username || disabled ) && (
+				<table
+					className={ classNames( 'sftp-card__info-table', { [ 'is-placeholder' ]: disabled } ) }
+				>
 					<tbody>
 						{ map( sftpData, ( data, title ) => (
 							<tr key={ title }>
 								<th>{ title }:</th>
 								<td>
-									<span>{ data }</span>
+									<span>{ ! disabled && data }</span>
 								</td>
 							</tr>
 						) ) }
 						<tr>
 							<th>{ translate( 'Username' ) }:</th>
 							<td>
-								<p className="sftp-card__hidden-overflow">{ username }</p>
-								<ClipboardButton
-									text={ username }
-									onCopy={ () => setIsCopied( 'username' ) }
-									compact
-								>
-									{ usernameIsCopied
-										? translate( 'Copied!' )
-										: translate( 'Copy', { context: 'verb' } ) }
-								</ClipboardButton>
+								{ disabled ? (
+									<span></span>
+								) : (
+									<>
+										<p className="sftp-card__hidden-overflow">{ username }</p>
+										<ClipboardButton
+											text={ username }
+											onCopy={ () => setIsCopied( 'username' ) }
+											compact
+										>
+											{ usernameIsCopied
+												? translate( 'Copied!' )
+												: translate( 'Copy', { context: 'verb' } ) }
+										</ClipboardButton>
+									</>
+								) }
 							</td>
 						</tr>
 						<tr>
 							<th>{ translate( 'Password' ) }:</th>
-							<td>
-								{ password ? (
-									<>
-										<p className="sftp-card__hidden-overflow">{ password }</p>
-										<ClipboardButton
-											text={ password }
-											onCopy={ () => setIsCopied( 'password' ) }
-											compact
-										>
-											{ passwordIsCopied
-												? translate( 'Copied!' )
-												: translate( 'Copy', { context: 'verb' } ) }
-										</ClipboardButton>
-										<p className="sftp-card__password-warning">
-											{ translate(
-												"Be sure to save your password somewhere safe. You won't be able to view it again without resetting."
-											) }
-										</p>
-									</>
-								) : (
-									<>
-										<p>{ translate( 'You must reset your password to view it.' ) }</p>
-										<Button
-											onClick={ () => resetAtomicSFTPUserPassword( siteId ) }
-											disabled={ loading }
-											compact
-										>
-											{ translate( 'Reset Password' ) }
-										</Button>
-									</>
-								) }
-							</td>
+							<td>{ renderPasswordCell() }</td>
 						</tr>
 					</tbody>
 				</table>

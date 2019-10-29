@@ -17,7 +17,7 @@ interface Props {
 	toggleGeneralSidebar: () => void;
 }
 
-export function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
+export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
 	const { siteTitle, siteType } = useOnboardingState();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

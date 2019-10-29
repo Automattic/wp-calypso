@@ -30,10 +30,12 @@ import {
 import {
 	JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
 	JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
+	JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
 	JETPACK_BACKUP_PRODUCTS_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS_YEARLY,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	PRODUCT_JETPACK_BACKUP,
+	PRODUCT_JETPACK_BACKUP_DESCRIPTION,
 } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
@@ -79,12 +81,7 @@ import './style.scss';
 const jetpackProducts = [
 	{
 		title: 'Jetpack Backup',
-		description: (
-			<p>
-				Automatic scanning and one-click fixes keep your site one step ahead of security threats.{' '}
-				<a href="https://jetpack.com/">More info</a>
-			</p>
-		),
+		description: PRODUCT_JETPACK_BACKUP_DESCRIPTION,
 		id: PRODUCT_JETPACK_BACKUP,
 		options: {
 			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
@@ -95,6 +92,9 @@ const jetpackProducts = [
 		},
 		optionDisplayNames: {
 			...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
+		},
+		optionDescriptions: {
+			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
 		},
 		optionsLabel: 'Backup options',
 	},

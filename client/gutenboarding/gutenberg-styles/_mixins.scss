@@ -1,3 +1,5 @@
+/* stylelint-disable */
+
 /**
  * Breakpoint mixins
  */
@@ -496,9 +498,7 @@
 				display: inline-block;
 				vertical-align: middle;
 				width: 16px;
-				/* stylelint-disable */
 				font: normal 30px/1 dashicons;
-				/* stylelint-enable */
 				speak: none;
 				-webkit-font-smoothing: antialiased;
 				-moz-osx-font-smoothing: grayscale;
