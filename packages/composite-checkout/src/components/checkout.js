@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled, { ThemeProvider } from 'styled-components';
 
@@ -23,8 +23,9 @@ export default function Checkout( {
 	locale,
 	items,
 	total,
-	onChangeBillingContact,
 	availablePaymentMethods,
+	dispatchPaymentAction,
+	paymentData,
 	onSuccess,
 	onFailure,
 	successRedirectUrl,
@@ -36,10 +37,24 @@ export default function Checkout( {
 } ) {
 	const localize = localizeFactory( locale );
 	const [ stepNumber, setStepNumber ] = useState( 1 );
+	const changeStep = useCallback(
+		nextStep => {
+			setStepNumber( prevStep => {
+				dispatchPaymentAction( {
+					type: 'STEP_CHANGED',
+					payload: { prevStep, nextStep },
+				} );
+				return nextStep;
+			} );
+		},
+		[ dispatchPaymentAction ]
+	);
 
 	return (
 		<ThemeProvider theme={ theme }>
 			<CheckoutProvider
+				dispatchPaymentAction={ dispatchPaymentAction }
+				paymentData={ paymentData }
 				localize={ localize }
 				items={ items }
 				total={ total }
@@ -59,18 +74,17 @@ export default function Checkout( {
 						</div>
 						<PaymentMethodsStep
 							availablePaymentMethods={ availablePaymentMethods }
-							setStepNumber={ setStepNumber }
+							setStepNumber={ changeStep }
 							isActive={ stepNumber === 1 }
 							isComplete={ stepNumber > 1 }
 						/>
 						<BillingDetailsStep
-							setStepNumber={ setStepNumber }
+							setStepNumber={ changeStep }
 							isActive={ stepNumber === 2 }
 							isComplete={ stepNumber > 2 }
-							onChangeBillingContact={ onChangeBillingContact }
 						/>
 						<ReviewOrderStep
-							setStepNumber={ setStepNumber }
+							setStepNumber={ changeStep }
 							isActive={ stepNumber === 3 }
 							isComplete={ stepNumber > 3 }
 							ReviewContent={ ReviewContent }
@@ -89,8 +103,9 @@ Checkout.propTypes = {
 	locale: PropTypes.string.isRequired,
 	items: PropTypes.array.isRequired,
 	total: PropTypes.object.isRequired,
-	onChangeBillingContact: PropTypes.func,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
+	paymentData: PropTypes.object.isRequired,
+	dispatchPaymentAction: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired,
 	onFailure: PropTypes.func.isRequired,
 	successRedirectUrl: PropTypes.string.isRequired,
@@ -194,19 +209,14 @@ PaymentMethodsStep.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 };
 
-function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBillingContact } ) {
+function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
 	const localize = useLocalize();
-	const [ paymentData, setPaymentData ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentMethodData();
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
 		throw new Error( 'Cannot render Billing details without a payment method' );
 	}
 	const { BillingContactComponent } = paymentMethod;
-	// Call onChangeBillingContact as a side effect in case the parent wants to update the items
-	const setBillingData = newData => {
-		onChangeBillingContact && onChangeBillingContact( newData );
-		setPaymentData( newData );
-	};
 
 	return (
 		<React.Fragment>
@@ -223,7 +233,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 					<React.Fragment>
 						<BillingContactComponent
 							paymentData={ paymentData }
-							setPaymentData={ setBillingData }
+							dispatch={ dispatch }
 							isActive={ isActive }
 							isComplete={ isComplete }
 						/>
@@ -238,7 +248,7 @@ function BillingDetailsStep( { isActive, isComplete, setStepNumber, onChangeBill
 					<BillingContactComponent
 						summary
 						paymentData={ paymentData }
-						setPaymentData={ setBillingData }
+						dispatch={ dispatch }
 						isActive={ isActive }
 						isComplete={ isComplete }
 					/>
@@ -252,7 +262,6 @@ BillingDetailsStep.propTypes = {
 	setStepNumber: PropTypes.func.isRequired,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
-	onChangeBillingContact: PropTypes.func,
 };
 
 function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
