@@ -30,27 +30,21 @@ export const JETPACK_BACKUP_PRODUCT_SHORT_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: 'Real-Time Backups',
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: 'Real-Time Backups',
 };
+export const JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME = (
+	<Fragment>
+		Jetpack Backup <em>Daily</em>
+	</Fragment>
+);
+export const JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME = (
+	<Fragment>
+		Jetpack Backup <em>Real-Time</em>
+	</Fragment>
+);
 export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
-	[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
-		<Fragment>
-			Jetpack Backup <em>Daily</em>
-		</Fragment>
-	),
-	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
-		<Fragment>
-			Jetpack Backup <em>Daily</em>
-		</Fragment>
-	),
-	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
-		<Fragment>
-			Jetpack Backup <em>Real-Time</em>
-		</Fragment>
-	),
-	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
-		<Fragment>
-			Jetpack Backup <em>Real-Time</em>
-		</Fragment>
-	),
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME,
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
 };
 
 // @TODO: Translate those strings once we have confirmed the copy.
