@@ -3314,6 +3314,16 @@
 				"redux": "^4.0.1"
 			}
 		},
+		"@types/wordpress__data-controls": {
+			"version": "1.0.1",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__data-controls/-/wordpress__data-controls-1.0.1.tgz",
+			"integrity": "sha512-8q9VmBea/zZMb6dWTAinE+a880XO1+17QZnCVXYakpyf5npdIa/1tunNI/barWel4JJ3OJkw+ABIyDXy8nek0w==",
+			"dev": true,
+			"requires": {
+				"@types/wordpress__api-fetch": "*",
+				"@types/wordpress__data": "*"
+			}
+		},
 		"@types/wordpress__editor": {
 			"version": "9.4.1",
 			"resolved": "https://registry.npmjs.org/@types/wordpress__editor/-/wordpress__editor-9.4.1.tgz",
