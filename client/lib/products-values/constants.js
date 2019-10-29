@@ -90,3 +90,26 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = {
 		ratio: 12,
 	},
 };
+
+// @TODO: Translate those strings once we have confirmed the copy.
+export const JETPACK_PRODUCTS = [
+	{
+		title: 'Jetpack Backup',
+		description: PRODUCT_JETPACK_BACKUP_DESCRIPTION,
+		id: PRODUCT_JETPACK_BACKUP,
+		options: {
+			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
+			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
+		},
+		optionShortNames: {
+			...JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
+		},
+		optionDisplayNames: {
+			...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
+		},
+		optionDescriptions: {
+			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
+		},
+		optionsLabel: 'Backup options',
+	},
+];
