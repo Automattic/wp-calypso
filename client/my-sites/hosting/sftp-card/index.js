@@ -25,7 +25,7 @@ import {
 	createAtomicSFTPUser,
 } from 'state/data-getters';
 
-const SFTPCard = ( { translate, username, password, noSftpUser, siteId, loading, disabled } ) => {
+const SFTPCard = ( { translate, username, password, siteId, loading, disabled } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
@@ -78,7 +78,7 @@ const SFTPCard = ( { translate, username, password, noSftpUser, siteId, loading,
 			</div>
 			<div className="sftp-card__body">
 				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
-				{ ! disabled && noSftpUser ? (
+				{ ! disabled && ! loading ? (
 					<>
 						<p>
 							{ translate(
@@ -149,7 +149,6 @@ export default connect( state => {
 		siteId,
 		username: get( sftpDetails, 'data.username' ),
 		password: get( sftpDetails, 'data.password' ),
-		noSftpUser: get( sftpDetails, 'error.status' ) === 404,
-		loading: get( sftpDetails, 'status' ) === 'pending',
+		loading: sftpDetails.state === 'pending',
 	};
 } )( localize( SFTPCard ) );
