@@ -29,282 +29,282 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 	describe( 'for default imports', () => {
 		test( 'should replace usage of the provided flags at the module level', () => {
 			const code = transform( `
-        import config from 'config';
-        const foo = config.isEnabled('foo');` );
+				import config from 'config';
+				const foo = config.isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import config from 'config';
-        const foo = true;` );
+				import config from 'config';
+				const foo = true;` );
 		} );
 
 		test( 'should replace usage of the provided flags at the function level', () => {
 			const code = transform( `
-        import config from 'config';
+				import config from 'config';
 
-        function fn() {
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn() {
+					const foo = config.isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import config from 'config';
+				import config from 'config';
 
-        function fn() {
-          const foo = true;
-        }` );
+				function fn() {
+					const foo = true;
+				}` );
 		} );
 
 		test( 'should not replace usage of flags that are not provided', () => {
 			const code = transform( `
-        import config from 'config';
-        const bar = config.isEnabled('bar');` );
+				import config from 'config';
+				const bar = config.isEnabled('bar');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import config from 'config';
-        const bar = config.isEnabled('bar');` );
+				import config from 'config';
+				const bar = config.isEnabled('bar');` );
 		} );
 
 		test( 'should replace usage of the provided flags with a different import name', () => {
 			const code = transform( `
-        import configRenamed from 'config';
-        const foo = configRenamed.isEnabled('foo');
-        const foo2 = config.isEnabled('foo');` );
+				import configRenamed from 'config';
+				const foo = configRenamed.isEnabled('foo');
+				const foo2 = config.isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import configRenamed from 'config';
-        const foo = true;
-        const foo2 = config.isEnabled('foo');` );
+				import configRenamed from 'config';
+				const foo = true;
+				const foo2 = config.isEnabled('foo');` );
 		} );
 
 		test( 'should not replace usage of the provided flags with different config module', () => {
 			const code = transform( `
-        import config from './config';
-        const foo = config.isEnabled('foo');` );
+				import config from './config';
+				const foo = config.isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import config from './config';
-        const foo = config.isEnabled('foo');` );
+				import config from './config';
+				const foo = config.isEnabled('foo');` );
 		} );
 
 		test( 'should not replace usage of the provided flags when import is shadowed by parameters', () => {
 			const code = transform( `
-        import config from 'config';
+				import config from 'config';
 
-        function fn(config) {
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn(config) {
+					const foo = config.isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import config from 'config';
+				import config from 'config';
 
-        function fn(config) {
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn(config) {
+					const foo = config.isEnabled('foo');
+				}` );
 		} );
 
 		test( 'should not replace usage of the provided flags when import is shadowed by variables', () => {
 			const code = transform( `
-        import config from 'config';
+				import config from 'config';
 
-        function fn() {
-          const config = somethingElse;
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn() {
+					const config = somethingElse;
+					const foo = config.isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import config from 'config';
+				import config from 'config';
 
-        function fn() {
-          const config = somethingElse;
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn() {
+					const config = somethingElse;
+					const foo = config.isEnabled('foo');
+				}` );
 		} );
 	} );
 
 	describe( 'for namespaced imports', () => {
 		test( 'should replace usage of the provided flags at the module level', () => {
 			const code = transform( `
-        import * as config from 'config';
-        const foo = config.isEnabled('foo');` );
+				import * as config from 'config';
+				const foo = config.isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import * as config from 'config';
-        const foo = true;` );
+				import * as config from 'config';
+				const foo = true;` );
 		} );
 
 		test( 'should replace usage of the provided flags at the function level', () => {
 			const code = transform( `
-        import * as config from 'config';
+				import * as config from 'config';
 
-        function fn() {
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn() {
+					const foo = config.isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import * as config from 'config';
+				import * as config from 'config';
 
-        function fn() {
-          const foo = true;
-        }` );
+				function fn() {
+					const foo = true;
+				}` );
 		} );
 
 		test( 'should not replace usage of flags that are not provided', () => {
 			const code = transform( `
-        import * as config from 'config';
-        const bar = config.isEnabled('bar');` );
+				import * as config from 'config';
+				const bar = config.isEnabled('bar');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import * as config from 'config';
-        const bar = config.isEnabled('bar');` );
+				import * as config from 'config';
+				const bar = config.isEnabled('bar');` );
 		} );
 
 		test( 'should replace usage of the provided flags with a different import name', () => {
 			const code = transform( `
-        import * as configRenamed from 'config';
-        const foo = configRenamed.isEnabled('foo');
-        const foo2 = config.isEnabled('foo');` );
+				import * as configRenamed from 'config';
+				const foo = configRenamed.isEnabled('foo');
+				const foo2 = config.isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import * as configRenamed from 'config';
-        const foo = true;
-        const foo2 = config.isEnabled('foo');` );
+				import * as configRenamed from 'config';
+				const foo = true;
+				const foo2 = config.isEnabled('foo');` );
 		} );
 
 		test( 'should not replace usage of the provided flags with different config module', () => {
 			const code = transform( `
-        import * as config from './config';
-        const foo = config.isEnabled('foo');` );
+				import * as config from './config';
+				const foo = config.isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import * as config from './config';
-        const foo = config.isEnabled('foo');` );
+				import * as config from './config';
+				const foo = config.isEnabled('foo');` );
 		} );
 
 		test( 'should not replace usage of the provided flags when import is shadowed by parameters', () => {
 			const code = transform( `
-        import * as config from 'config';
+				import * as config from 'config';
 
-        function fn(config) {
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn(config) {
+					const foo = config.isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import * as config from 'config';
+				import * as config from 'config';
 
-        function fn(config) {
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn(config) {
+					const foo = config.isEnabled('foo');
+				}` );
 		} );
 
 		test( 'should not replace usage of the provided flags when import is shadowed by variables', () => {
 			const code = transform( `
-        import * as config from 'config';
+				import * as config from 'config';
 
-        function fn() {
-          const config = somethingElse;
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn() {
+					const config = somethingElse;
+					const foo = config.isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import * as config from 'config';
+				import * as config from 'config';
 
-        function fn() {
-          const config = somethingElse;
-          const foo = config.isEnabled('foo');
-        }` );
+				function fn() {
+					const config = somethingElse;
+					const foo = config.isEnabled('foo');
+				}` );
 		} );
 	} );
 
 	describe( 'for named imports', () => {
 		test( 'should replace usage of the provided flags at the module level', () => {
 			const code = transform( `
-        import { isEnabled } from 'config';
-        const foo = isEnabled('foo');` );
+				import { isEnabled } from 'config';
+				const foo = isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import { isEnabled } from 'config';
-        const foo = true;` );
+				import { isEnabled } from 'config';
+				const foo = true;` );
 		} );
 
 		test( 'should replace usage of the provided flags at the function level', () => {
 			const code = transform( `
-        import { isEnabled } from 'config';
+				import { isEnabled } from 'config';
 
-        function fn() {
-          const foo = isEnabled('foo');
-        }` );
+				function fn() {
+					const foo = isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import { isEnabled } from 'config';
+				import { isEnabled } from 'config';
 
-        function fn() {
-          const foo = true;
-        }` );
+				function fn() {
+					const foo = true;
+				}` );
 		} );
 
 		test( 'should not replace usage of flags that are not provided', () => {
 			const code = transform( `
-        import { isEnabled } from 'config';
-        const bar = isEnabled('bar');` );
+				import { isEnabled } from 'config';
+				const bar = isEnabled('bar');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import { isEnabled } from 'config';
-        const bar = isEnabled('bar');` );
+				import { isEnabled } from 'config';
+				const bar = isEnabled('bar');` );
 		} );
 
 		test( 'should replace usage of the provided flags with a different import name', () => {
 			const code = transform( `
-        import { isEnabled as isEnabledRenamed } from 'config';
-        const foo = isEnabledRenamed('foo');
-        const foo2 = isEnabled('foo');` );
+				import { isEnabled as isEnabledRenamed } from 'config';
+				const foo = isEnabledRenamed('foo');
+				const foo2 = isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import { isEnabled as isEnabledRenamed } from 'config';
-        const foo = true;
-        const foo2 = isEnabled('foo');` );
+				import { isEnabled as isEnabledRenamed } from 'config';
+				const foo = true;
+				const foo2 = isEnabled('foo');` );
 		} );
 
 		test( 'should not replace usage of the provided flags with different config module', () => {
 			const code = transform( `
-        import { isEnabled } from './config';
-        const foo = isEnabled('foo');` );
+				import { isEnabled } from './config';
+				const foo = isEnabled('foo');` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import { isEnabled } from './config';
-        const foo = isEnabled('foo');` );
+				import { isEnabled } from './config';
+				const foo = isEnabled('foo');` );
 		} );
 
 		test( 'should not replace usage of the provided flags when import is shadowed by parameters', () => {
 			const code = transform( `
-        import { isEnabled } from 'config';
+				import { isEnabled } from 'config';
 
-        function fn(isEnabled) {
-          const foo = isEnabled('foo');
-        }` );
+				function fn(isEnabled) {
+					const foo = isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import { isEnabled } from 'config';
+				import { isEnabled } from 'config';
 
-        function fn(isEnabled) {
-          const foo = isEnabled('foo');
-        }` );
+				function fn(isEnabled) {
+					const foo = isEnabled('foo');
+				}` );
 		} );
 
 		test( 'should not replace usage of the provided flags when import is shadowed by variables', () => {
 			const code = transform( `
-        import { isEnabled } from 'config'
+				import { isEnabled } from 'config'
 
-        function fn() {
-          const isEnabled = somethingElse;
-          const foo = isEnabled('foo');
-        }` );
+				function fn() {
+					const isEnabled = somethingElse;
+					const foo = isEnabled('foo');
+				}` );
 
 			expect( noIndent( code ) ).toBe( noIndent`
-        import { isEnabled } from 'config';
+				import { isEnabled } from 'config';
 
-        function fn() {
-          const isEnabled = somethingElse;
-          const foo = isEnabled('foo');
-        }` );
+				function fn() {
+					const isEnabled = somethingElse;
+					const foo = isEnabled('foo');
+				}` );
 		} );
 	} );
 } );
