@@ -27,16 +27,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	skipThemesSelectionModal: {
-		datestamp: '20170904',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
@@ -124,5 +114,14 @@ export default {
 		defaultVariation: 'tabs',
 		allowExistingUsers: true,
 		localeTargets: 'any',
+	},
+	designFirstSignup: {
+		datestamp: '20201029',
+		variations: {
+			defaultFirst: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+		allowExistingUsers: true,
 	},
 };
