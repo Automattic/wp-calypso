@@ -111,3 +111,11 @@ input[type='radio'].domain-management-list-item__radio {
 		margin-right: 15px;
 	}
 }
+
+.section-header__actions .button.domain-management-list__add-a-domain {
+	margin-right: 4px;
+
+	@include breakpoint( '>480px' ) {
+		margin-right: 0;
+	}
+}
