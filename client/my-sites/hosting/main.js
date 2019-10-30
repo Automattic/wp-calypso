@@ -6,7 +6,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -54,9 +53,6 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		// We should never hit this case for the development flag, as it is handled on the redirect, but just as an extra layer...
-		isDisabled:
-			config.isEnabled( 'hosting/non-atomic-support' ) &&
-			! isSiteAutomatedTransfer( state, siteId ),
+		isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
 	};
 } )( localize( Hosting ) );
