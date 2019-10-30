@@ -58,8 +58,8 @@ function getCoBlocksLogosExampleImages( settings, name ) {
 			attributes: {
 				...settings.attributes,
 				images: [
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[0]' ), width: 420 },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[1]' ), width: 340 },
+					{ url: get( 'wpcomGutenberg', 'coblocksLogosImages[0]' ), width: 420 },
+					{ url: get( 'wpcomGutenberg', 'coblocksLogosImages[1]' ), width: 340 },
 				],
 			},
 		},
