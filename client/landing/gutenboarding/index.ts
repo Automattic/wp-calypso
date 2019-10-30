@@ -17,15 +17,6 @@ import { wpDataDebugMiddleware } from './devtools';
 import 'assets/stylesheets/style-bare.scss';
 import 'components/environment-badge/style.scss';
 
-export const GUTENBOARDING_SECTION_DEFINITION = {
-	name: 'gutenboarding',
-	paths: [ '/gutenboarding' ],
-	module: 'gutenboarding',
-	secondary: false,
-	group: 'sites',
-	enableLoggedOut: true,
-};
-
 window.AppBoot = async () => {
 	await user().initialize();
 	page(

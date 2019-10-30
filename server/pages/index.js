@@ -46,7 +46,7 @@ import { logSectionResponse } from './analytics';
 import analytics from '../lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { GUTENBOARDING_SECTION_DEFINITION } from '../../client/landing/gutenboarding';
+import { GUTENBOARDING_SECTION_DEFINITION } from '../../client/landing/gutenboarding/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
