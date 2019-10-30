@@ -316,9 +316,9 @@ function LockIcon( { className } ) {
 
 export function StripePayButton() {
 	const localize = useLocalize();
-	const [ , total ] = useCheckoutLineItems();
-	const [ paymentData ] = usePaymentMethodData();
-	const { onSuccess, onFailure } = useCheckoutHandlers();
+	const [ items, total ] = useCheckoutLineItems();
+	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const { onFailure } = useCheckoutHandlers();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
 	// TODO: we need to use a placeholder for the value so the localization string can be generic
@@ -329,11 +329,12 @@ export function StripePayButton() {
 		<Button
 			onClick={ () =>
 				submitStripePayment( {
+					items,
 					total,
 					paymentData,
+					dispatch,
 					stripe,
 					stripeConfiguration,
-					onSuccess,
 					onFailure,
 					successUrl: successRedirectUrl,
 					cancelUrl: failureRedirectUrl,
@@ -349,16 +350,22 @@ export function StripePayButton() {
 }
 
 async function submitStripePayment( {
+	items,
 	total,
 	paymentData,
+	dispatch,
 	stripe,
 	stripeConfiguration,
-	onSuccess,
 	onFailure,
 	successUrl,
 	cancelUrl,
 } ) {
-	const { name, country, postalCode, phone } = paymentData;
+	const { billing = {}, domains = {} } = paymentData;
+	const name = billing.name || '';
+	const country = billing.country || '';
+	const postalCode = billing.postalCode || '';
+	const phone = domains.phone || '';
+	const subdivisionCode = billing.state || billing.province || '';
 	// TODO: validate fields
 	const paymentDetailsForStripe = {
 		name,
@@ -384,29 +391,78 @@ async function submitStripePayment( {
 			successUrl,
 			cancelUrl,
 		};
-		// TODO: use cart manager to create cart object needed for this transaction
+		const siteId = ''; // TODO: get site id
+		const couponId = null; // TODO: get couponId
 		const transaction = {
-			cart,
-			domain_details: domainDetails,
+			cart: createCartFromLineItems( {
+				siteId,
+				couponId,
+				items,
+				total,
+				country,
+				postalCode,
+				subdivisionCode,
+			} ),
+			domain_details: getDomainDetailsFromPaymentData( paymentData ),
 			payment,
 		};
-		const response = await wp.undocumented().transactions( transaction );
-
-		// Authentication via modal screen
-		if ( response && response.message && response.message.payment_intent_client_secret ) {
-			await stripeModalAuth( stripeConfiguration, response );
-		}
-		if ( response && response.redirect_url ) {
-			// TODO: notify user we are going to redirect
-		}
+		dispatch( { type: 'STRIPE_TRANSACTION_BEGIN', payload: transaction } );
 	} catch ( error ) {
-		if ( error instanceof StripeValidationError ) {
-			onFailure( new ValidationError( 'invalid-card-details', error.messagesByField ) );
-			return;
-		}
 		onFailure( error );
+		return;
 	}
-	onSuccess();
+}
+
+function createCartFromLineItems( {
+	siteId,
+	couponId,
+	items,
+	country,
+	postalCode,
+	subdivisionCode,
+} ) {
+	// TODO: use cart manager to create cart object needed for this transaction
+	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
+	return {
+		blog_id: siteId,
+		coupon: couponId || '',
+		currency: currency || '',
+		temporary: false,
+		extra: [],
+		products: items.map( item => ( {
+			product_id: item.id,
+			meta: '', // TODO: get this for domains, etc
+			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
+			currency: item.amount.currency,
+			volume: 1,
+		} ) ),
+		tax: {
+			location: {
+				country_code: country,
+				postal_code: postalCode,
+				subdivision_code: subdivisionCode,
+			},
+		},
+	};
+}
+
+function getDomainDetailsFromPaymentData( paymentData ) {
+	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
+	return {
+		first_name: isDomainContactSame ? billing.name : domains.name || billing.name || '',
+		last_name: isDomainContactSame ? billing.name : domains.name || billing.name || '', // TODO: how do we split up first/last name?
+		address_1: isDomainContactSame ? billing.address : domains.address || billing.address || '',
+		city: isDomainContactSame ? billing.city : domains.city || billing.city || '',
+		state: isDomainContactSame
+			? billing.state || billing.province
+			: domains.state || domains.province || billing.state || billing.province || '',
+		postal_code: isDomainContactSame
+			? billing.postalCode || billing.zipCode
+			: domains.postalCode || domains.zipCode || billing.postalCode || billing.zipCode || '',
+		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
+		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
+		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
+	};
 }
 
 async function stripeModalAuth( stripeConfiguration, response ) {
