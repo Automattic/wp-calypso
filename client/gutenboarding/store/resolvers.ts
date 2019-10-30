@@ -12,9 +12,7 @@ import { STORE_KEY } from './constants';
 import { TailParameters } from './types';
 
 export function* getVertical( search: TailParameters< typeof selectors[ 'getVertical' ] >[ 0 ] ) {
-	const url = `https://public-api.wordpress.com/wpcom/v2/verticals${ addQueryArgs( undefined, {
-		search,
-	} ) }`;
+	const url = addQueryArgs( 'https://public-api.wordpress.com/wpcom/v2/verticals', { search } );
 	const verticals = yield apiFetch( { url } );
 	yield dispatch( STORE_KEY, 'receiveVertical', search, verticals );
 }
