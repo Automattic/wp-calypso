@@ -31,6 +31,7 @@ const user = userModule();
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
 const isGoogleAnalyticsEnabled = true;
+const isGoogleRecaptchaEnabled = true;
 const isFloodlightEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
@@ -59,6 +60,7 @@ let lastRetargetTime = 0;
  */
 const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js',
 	GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=',
+	GOOGLE_RECAPTCHA_SCRIPT_URL = 'https://www.google.com/recaptcha/api.js?render=',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL =
@@ -107,6 +109,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 		wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
+		wpcomGoogleRecaptchaSiteKey: config( 'google_recaptcha_site_key' ),
 		pinterestInit: '2613194105266',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
@@ -380,6 +383,10 @@ async function loadTrackingScripts( callback ) {
 	].filter( id => false !== id );
 	if ( enabledGtags.length > 0 ) {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
+	}
+
+	if ( isGoogleRecaptchaEnabled && TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
+		scripts.push( GOOGLE_RECAPTCHA_SCRIPT_URL + TRACKING_IDS.wpcomGoogleRecaptchaSiteKey );
 	}
 
 	if ( isBingEnabled ) {
@@ -1862,4 +1869,39 @@ function initFacebook() {
 	// See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
 	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
 	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
+}
+
+/**
+ * Initializes Google reCAPTCHA
+ *
+ * @param {Function} callback - a callback function to call with a reCAPTCHA token
+ */
+function initGoogleRecaptcha( callback ) {
+	window.grecaptcha.ready( () => {
+		window.grecaptcha
+			.execute( TRACKING_IDS.wpcomGoogleRecaptchaSiteKey, { action: 'calypso' } )
+			.then( function( token ) {
+				debug( 'initGoogleRecaptcha', token );
+				callback( token );
+			} );
+	} );
+}
+
+/**
+ * Loads Google reCAPTCHA script and records calypso action
+ *
+ * @param {Function} callback - a callback function to call with a reCAPTCHA token
+ *
+ * @returns {String} a reCaptcha token
+ */
+export function recordGoogleRecaptchaCalypso( callback ) {
+	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
+		loadTrackingScripts( recordGoogleRecaptchaCalypso.bind( null, callback ) );
+		return;
+	}
+
+	// init Google reCAPTCHA
+	if ( isGoogleRecaptchaEnabled && TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
+		return initGoogleRecaptcha( callback );
+	}
 }

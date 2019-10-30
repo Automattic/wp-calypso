@@ -78,7 +78,13 @@ class PasswordlessSignupForm extends Component {
 		wpcom
 			.undocumented()
 			.createUserAccountFromEmailAddress(
-				{ email: typeof this.state.email === 'string' ? this.state.email.trim() : '' },
+				{
+					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+					'g-recaptcha-response':
+						this.props.step && this.props.step.recaptchaToken
+							? this.props.step.recaptchaToken
+							: undefined,
+				},
 				null
 			)
 			.then( response =>
