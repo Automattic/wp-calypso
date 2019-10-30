@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled, { ThemeContext } from 'styled-components';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
@@ -318,9 +318,27 @@ export function StripePayButton() {
 	const localize = useLocalize();
 	const [ items, total ] = useCheckoutLineItems();
 	const [ paymentData, dispatch ] = usePaymentMethodData();
-	const { onFailure } = useCheckoutHandlers();
+	const { onSuccess, onFailure } = useCheckoutHandlers();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();
+
+	useEffect( () => {
+		if ( paymentData.stripeTransactionStatus === 'error' ) {
+			onFailure(
+				paymentData.stripeTransactionError || localize( 'An error occurred during the transaction' )
+			);
+		}
+		if ( paymentData.stripeTransactionStatus === 'complete' ) {
+			onSuccess();
+		}
+	}, [
+		onSuccess,
+		onFailure,
+		paymentData.stripeTransactionStatus,
+		paymentData.stripeTransactionError,
+		localize,
+	] );
+
 	// TODO: we need to use a placeholder for the value so the localization string can be generic
 	const buttonString = localize(
 		`Pay ${ renderDisplayValueMarkdown( total.amount.displayValue ) }`
