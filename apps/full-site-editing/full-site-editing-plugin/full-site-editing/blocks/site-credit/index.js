@@ -17,10 +17,17 @@ registerBlockType( 'a8c/site-credit', {
 	icon: 'wordpress-alt',
 	category: 'layout',
 	supports: {
+		align: [ 'right', 'center', 'left' ],
 		html: false,
 		multiple: false,
 		reusable: false,
 		removal: false,
+	},
+	attributes: {
+		align: {
+			type: 'string',
+			default: 'center',
+		},
 	},
 	edit,
 	save: () => null,

@@ -2,16 +2,19 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	// @TODO: Pull these styles from the theme.
+	font-size: 14px;
+	color: gray;
 
-	// Justify all elements based on text alignment.
-	&.has-text-align-right {
+	// Justify all elements based on data alignments.
+	[data-align='left'] & {
+		justify-content: flex-start;
+	}
+	[data-align='right'] & {
 		justify-content: flex-end;
 	}
-	&.has-text-align-center {
+	[data-align='center'] & {
 		justify-content: center;
-	}
-	&.has-text-align-left {
-		justify-content: flex-start;
 	}
 
 	.site-name {
@@ -19,7 +22,7 @@
 	}
 
 	.site-credit__selection {
-		margin-left: 10px;
+		margin-left: 5px;
 
 		// Also align items vertically center in the selection area.
 		display: flex;

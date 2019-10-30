@@ -8,7 +8,6 @@ import classNames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { AlignmentToolbar, BlockControls } from '@wordpress/block-editor';
 import { SelectControl } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -22,7 +21,6 @@ import useSiteOptions from '../useSiteOptions';
 import { RenderedCreditChoice, creditOptions } from './footerCreditChoices';
 
 function SiteCreditEdit( {
-	attributes,
 	createErrorNotice,
 	isSelected,
 	setAttributes,
@@ -52,20 +50,9 @@ function SiteCreditEdit( {
 		setAttributes
 	);
 
-	// Default alignment to center.
-	const { textAlign = 'center' } = attributes;
-	const setTextAlign = nextAlign => setAttributes( { textAlign: nextAlign } );
-
 	return (
 		<Fragment>
-			<BlockControls>
-				<AlignmentToolbar value={ textAlign } onChange={ setTextAlign } />
-			</BlockControls>
-			<div
-				className={ classNames( 'site-info', 'site-credit__block', {
-					[ `has-text-align-${ textAlign }` ]: textAlign,
-				} ) }
-			>
+			<div className={ classNames( 'site-info', 'site-credit__block' ) }>
 				<span className="site-name">{ siteTitle }</span>
 				<span className="comma">,</span>
 				<span className="site-credit__selection">
