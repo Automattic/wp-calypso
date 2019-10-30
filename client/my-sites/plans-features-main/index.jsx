@@ -103,6 +103,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			siteType,
 			plansWithScroll,
+			translate,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -120,11 +121,12 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
-				{ /* @todo: Add translations in FormattedHeader once the final copy is provided. */ }
 				{ isEnabled( 'plans/jetpack-backup' ) && displayJetpackPlans && (
 					<FormattedHeader
-						headerText="Plans"
-						subHeaderText="Get everything your site needs, in one package — so you can focus on your business."
+						headerText={ translate( 'Plans' ) }
+						subHeaderText={ translate(
+							'Get everything your site needs, in one package — so you can focus on your business.'
+						) }
 						compactOnMobile
 					/>
 				) }
@@ -395,18 +397,17 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { intervalType, displayJetpackPlans } = this.props;
+		const { intervalType, displayJetpackPlans, translate } = this.props;
 
 		if ( ! displayJetpackPlans ) {
 			return null;
 		}
 
-		// @todo: Add translations in FormattedHeader once the final copy is provided.
 		return (
 			<div className="plans-features-main__group is-narrow">
 				<FormattedHeader
-					headerText="Single Products"
-					subHeaderText="Just looking for backups? We’ve got you covered."
+					headerText={ translate( 'Single Products' ) }
+					subHeaderText={ translate( 'Just looking for backups? We’ve got you covered.' ) }
 					compactOnMobile
 				/>
 				<ProductSelector
