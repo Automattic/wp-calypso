@@ -1,14 +1,22 @@
+const config = require( './server/config' );
 const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
 // Use commonjs for Node
 const modules = isBrowser ? false : 'commonjs';
-const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
+const codeSplit = config.isEnabled( 'code-splitting' );
 
 // We implicitly use browserslist configuration in package.json for build targets.
 
-const config = {
+const babelConfig = {
 	presets: [ [ '@automattic/calypso-build/babel/default', { modules } ] ],
-	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
+	plugins: [
+		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
+		[
+			'./packages/babel-plugin-config-flag',
+			{ flags: { desktop: config.isEnabled( 'desktop' ) } },
+		],
+	],
+
 	env: {
 		build_pot: {
 			plugins: [
@@ -31,4 +39,4 @@ const config = {
 	},
 };
 
-module.exports = config;
+module.exports = babelConfig;
