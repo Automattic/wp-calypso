@@ -44,6 +44,7 @@ function SiteCreditEdit( {
 		setAttributes
 	);
 
+	// @TODO: Enable block alignment (left/right/center)
 	return (
 		<div className="site-info site-credit__block">
 			<span className="site-name">{ siteTitle }</span>

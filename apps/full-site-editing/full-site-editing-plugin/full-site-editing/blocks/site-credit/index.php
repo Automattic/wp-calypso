@@ -10,6 +10,8 @@ namespace A8C\FSE;
 /**
  * Renders the site credit block.
  *
+ * @TODO: Use the footercredit option to render the block information.
+ *
  * @return string
  */
 function render_site_credit_block() {
