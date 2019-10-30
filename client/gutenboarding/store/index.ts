@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { controls } from '@wordpress/data-controls';
-import { registerStore, useSelect, useDispatch } from '@wordpress/data';
+import { registerStore, useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -12,6 +12,7 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import * as resolvers from './resolvers';
+import { TailParameters } from './types';
 
 registerStore< State >( STORE_KEY, {
 	actions,
@@ -22,12 +23,25 @@ registerStore< State >( STORE_KEY, {
 	// persist: [],
 } );
 
-export function useOnboardingState(): State {
-	return useSelect( select => select( STORE_KEY ).getState() );
+type Select = {
+	[ selector in keyof typeof selectors ]: (
+		...args: TailParameters< typeof selectors[ selector ] >
+	) => ReturnType< typeof selectors[ selector ] >;
+};
+
+type Dispatch = {
+	[ A in keyof typeof actions ]: ( ...args: Parameters< typeof actions[ A ] > ) => void;
+};
+
+declare module '@wordpress/data' {
+	function dispatch( key: typeof STORE_KEY ): Dispatch;
+	function select( key: typeof STORE_KEY ): Select;
+}
+
+export function useOnboardingSelect() {
+	return useSelect( select => select( STORE_KEY ) );
 }
 
 export function useOnboardingDispatch() {
-	return useDispatch( STORE_KEY ) as {
-		[ D in keyof typeof actions ]: ( ...args: Parameters< typeof actions[ D ] > ) => void;
-	};
+	return useDispatch( STORE_KEY );
 }

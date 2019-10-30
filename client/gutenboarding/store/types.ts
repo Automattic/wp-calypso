@@ -35,3 +35,10 @@ export interface ApiVertical {
 	preview: '';
 	preview_styles_url: string;
 }
+
+export type TailParameters< F extends ( head: any, ...tail: any[] ) => any > = F extends (
+	head: any,
+	...tail: infer PS
+) => any
+	? PS
+	: never;
