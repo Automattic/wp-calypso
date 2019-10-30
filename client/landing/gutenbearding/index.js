@@ -22,12 +22,12 @@ import { Gutenboard } from 'gutenboarding/gutenboard';
 import 'assets/stylesheets/style-bare.scss';
 import 'components/environment-badge/style.scss';
 
-const gutenbeard = () => {
+const gutenboard = () => {
 	ReactDom.render( <Gutenboard />, document.getElementById( 'wpcom' ) );
 };
 
 window.AppBoot = async () => {
 	await user().initialize();
-	page( '/gutenboarding', gutenbeard );
+	page( '/gutenboarding', gutenboard );
 	page.start();
 };

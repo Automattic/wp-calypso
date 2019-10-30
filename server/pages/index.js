@@ -801,7 +801,7 @@ module.exports = function() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	// Set up Gutenbearding routing.
+	// Set up Gutenboarding routing.
 	handleSectionPath(
 		{
 			name: 'gutenboarding',
