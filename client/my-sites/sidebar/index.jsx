@@ -512,7 +512,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				label={ translate( 'SFTP & MySQL' ) }
 				selected={ itemLinkMatches( '/sftp-mysql', path ) }
-				link={ `/hosting${ siteSuffix }` }
+				link={ `/sftp-mysql${ siteSuffix }` }
 				onNavigate={ this.trackHostingClick }
 				preloadSectionName="hosting"
 				expandSection={ this.expandManageSection }
