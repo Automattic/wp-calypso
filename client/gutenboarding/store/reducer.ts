@@ -30,6 +30,7 @@ const siteTitle: Reducer< string, ReturnType< typeof Actions[ 'setSiteTitle' ] >
 	return state;
 };
 
+// @TODO Normalize data: searches are lists of ids, ids stored in a map
 const verticalSearches: Reducer<
 	Record< string, Vertical[] >,
 	ReturnType< typeof Actions[ 'receiveVertical' ] >
