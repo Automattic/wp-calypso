@@ -22,6 +22,7 @@ jest.mock( 'i18n-calypso', () => ( {
 		/>
 	),
 	numberFormat: x => x,
+	translate: x => x,
 } ) );
 
 /**
