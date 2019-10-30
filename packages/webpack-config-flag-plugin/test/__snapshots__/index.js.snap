@@ -49,7 +49,7 @@ if ( true ) {
 // CONCATENATED MODULE: ./default-import/wrong-path.js
 
 
- // Should NOT be replaced with true
+// Should NOT be replaced with true
 if ( config.isEnabled( 'foo' ) ) {
 }
 
@@ -92,7 +92,7 @@ if ( true ) {
 
 
 function function_fn() {
-	 // Should be replaced with true
+	// Should be replaced with true
 	if ( true ) {
 	}
 }
