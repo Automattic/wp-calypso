@@ -12,7 +12,7 @@ import Field from './field';
 import GridRow from './grid-row';
 import Button from './button';
 import { useLocalize } from '../lib/localize';
-import { useStripe, createStripePaymentMethod, confirmStripePaymentIntent } from '../lib/stripe';
+import { useStripe, createStripePaymentMethod } from '../lib/stripe';
 import {
 	useCheckoutHandlers,
 	useCheckoutLineItems,
@@ -463,20 +463,4 @@ function getDomainDetailsFromPaymentData( paymentData ) {
 		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
 		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
 	};
-}
-
-async function stripeModalAuth( stripeConfiguration, response ) {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
-
-	if ( authenticationResponse ) {
-		// TODO: what do we do with this?
-		_pushStep( {
-			name: RECEIVED_AUTHORIZATION_RESPONSE,
-			data: { status: authenticationResponse.status, orderId: response.order_id },
-			last: true,
-		} );
-	}
 }
