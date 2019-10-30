@@ -1,0 +1,13 @@
+.footer-credit-block {
+	display: flex;
+	flex-direction: row;
+
+	.site-name {
+		font-weight: bold;
+	}
+
+	.credit-selector {
+		margin-left: 10px;
+		margin-top: 3px;
+	}
+}

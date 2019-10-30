@@ -657,7 +657,9 @@ class Full_Site_Editing {
 			'general',
 			$option_name,
 			[
-				'show_in_rest' => true,
+				'show_in_rest' => [
+					'name' => 'footer_credit',
+				],
 				'type'         => 'string',
 				'description'  => __( 'WordPress Footer Credit' ),
 			]

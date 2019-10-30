@@ -15,7 +15,7 @@ import useSiteOptions from '../useSiteOptions';
 
 // @TODO: These should probably be defined elsewhere
 const creditOptions = [
-	{ label: 'proudly powered by WordPress', value: 'default' },
+	{ label: 'Proudly powered by WordPress', value: 'default' },
 	{ label: 'WordPress Logo', value: 'svg' },
 ];
 
@@ -50,11 +50,15 @@ function SiteCreditEdit( {
 	);
 
 	return (
-		<div className="site-info">
+		<div className="site-info footer-credit-block">
 			<span className="site-name">{ siteTitle }</span>
 			<span className="comma">,</span>
-			<span>{ wpCredit }</span>
-			<SelectControl onChange={ updateCredit } value={ wpCredit } options={ creditOptions } />
+			<SelectControl
+				className="credit-selector"
+				onChange={ updateCredit }
+				value={ wpCredit }
+				options={ creditOptions }
+			/>
 		</div>
 	);
 }
