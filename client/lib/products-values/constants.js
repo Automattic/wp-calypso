@@ -61,7 +61,13 @@ export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = (
 			'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
 			{
 				components: {
-					a: <a href="https://jetpack.com/upgrade/backup/" />,
+					a: (
+						<a
+							href="https://jetpack.com/upgrade/backup/"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		) }
