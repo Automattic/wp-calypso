@@ -1,11 +1,18 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable import/no-extraneous-dependencies */
 /**
+ * External dependencies
+ */
+import classNames from 'classnames';
+
+/**
  * WordPress dependencies
  */
-import { compose, withState } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { AlignmentToolbar, BlockControls } from '@wordpress/block-editor';
 import { SelectControl } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -15,6 +22,7 @@ import useSiteOptions from '../useSiteOptions';
 import { RenderedCreditChoice, creditOptions } from './footerCreditChoices';
 
 function SiteCreditEdit( {
+	attributes,
 	createErrorNotice,
 	isSelected,
 	setAttributes,
@@ -44,24 +52,35 @@ function SiteCreditEdit( {
 		setAttributes
 	);
 
-	// @TODO: Enable block alignment (left/right/center)
+	// Default alignment to center.
+	const { textAlign = 'center' } = attributes;
+	const setTextAlign = nextAlign => setAttributes( { textAlign: nextAlign } );
+
 	return (
-		<div className="site-info site-credit__block">
-			<span className="site-name">{ siteTitle }</span>
-			<span className="comma">,</span>
-			<span className="site-credit__selection">
-				{ isSelected ? (
-					<SelectControl onChange={ updateCredit } value={ wpCredit } options={ creditOptions } />
-				) : (
-					<RenderedCreditChoice choice={ wpCredit } />
-				) }
-			</span>
-		</div>
+		<Fragment>
+			<BlockControls>
+				<AlignmentToolbar value={ textAlign } onChange={ setTextAlign } />
+			</BlockControls>
+			<div
+				className={ classNames( 'site-info', 'site-credit__block', {
+					[ `has-text-align-${ textAlign }` ]: textAlign,
+				} ) }
+			>
+				<span className="site-name">{ siteTitle }</span>
+				<span className="comma">,</span>
+				<span className="site-credit__selection">
+					{ isSelected ? (
+						<SelectControl onChange={ updateCredit } value={ wpCredit } options={ creditOptions } />
+					) : (
+						<RenderedCreditChoice choice={ wpCredit } />
+					) }
+				</span>
+			</div>
+		</Fragment>
 	);
 }
 
 export default compose( [
-	withState( { creditOption: 'acom' } ),
 	withSelect( ( select, { clientId } ) => {
 		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
 			'core/editor'

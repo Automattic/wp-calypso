@@ -3,6 +3,17 @@
 	flex-direction: row;
 	align-items: center;
 
+	// Justify all elements based on text alignment.
+	&.has-text-align-right {
+		justify-content: flex-end;
+	}
+	&.has-text-align-center {
+		justify-content: center;
+	}
+	&.has-text-align-left {
+		justify-content: flex-start;
+	}
+
 	.site-name {
 		font-weight: bold;
 	}
@@ -10,13 +21,13 @@
 	.site-credit__selection {
 		margin-left: 10px;
 
-		// Also align items vertically center in the selection area:
+		// Also align items vertically center in the selection area.
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 
 		.components-base-control .components-base-control__field {
-			// Reset extra margin added by @wordpress/components in the select field
+			// Reset extra margin added by @wordpress/components in the select field.
 			margin-bottom: 0;
 		}
 	}
