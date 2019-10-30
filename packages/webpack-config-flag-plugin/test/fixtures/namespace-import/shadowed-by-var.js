@@ -1,8 +1,8 @@
 import * as config from 'config';
 
-// Should NOT be replaced with true
 function fn() {
 	const config = { isEnabled: () => false };
+	// Should NOT be replaced with true
 	if ( config.isEnabled( 'foo' ) ) {
 	}
 }

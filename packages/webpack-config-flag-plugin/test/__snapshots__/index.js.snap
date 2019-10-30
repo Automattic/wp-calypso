@@ -186,8 +186,8 @@ if ( isEnabled( 'foo' ) ) {
 // CONCATENATED MODULE: ./namespace-import/shadowed-by-param.js
 
 
-// Should NOT be replaced with true
 function namespace_import_shadowed_by_param_fn( config ) {
+	// Should NOT be replaced with true
 	if ( config.isEnabled( 'foo' ) ) {
 	}
 }
@@ -195,9 +195,9 @@ function namespace_import_shadowed_by_param_fn( config ) {
 // CONCATENATED MODULE: ./namespace-import/shadowed-by-var.js
 
 
-// Should NOT be replaced with true
 function namespace_import_shadowed_by_var_fn() {
 	const config = { isEnabled: () => false };
+	// Should NOT be replaced with true
 	if ( config.isEnabled( 'foo' ) ) {
 	}
 }
