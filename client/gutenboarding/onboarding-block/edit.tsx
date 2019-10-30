@@ -9,10 +9,10 @@ import React from 'react';
  * Internal dependencies
  */
 import { SiteType } from '../store/types';
-import { useOnboardingDispatch, useOnboardingSelect } from '../store';
+import { useOnboardingDispatch, useOnboardingState } from '../store';
 
 export default function OnboardingEdit() {
-	const { siteTitle, siteType } = useOnboardingSelect().getState();
+	const { siteTitle, siteType } = useOnboardingState();
 	const { setSiteType, setSiteTitle } = useOnboardingDispatch();
 
 	return (

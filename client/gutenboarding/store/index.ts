@@ -42,6 +42,10 @@ export function useOnboardingSelect() {
 	return useSelect( select => select( STORE_KEY ) );
 }
 
+export function useOnboardingState() {
+	return useOnboardingSelect().getState();
+}
+
 export function useOnboardingDispatch() {
 	return useDispatch( STORE_KEY );
 }

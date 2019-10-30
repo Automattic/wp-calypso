@@ -9,7 +9,7 @@ import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
 /**
  * Internal dependencies
  */
-import { useOnboardingSelect } from '../../store';
+import { useOnboardingState } from '../../store';
 import './style.scss';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const { siteTitle, siteType } = useOnboardingSelect().getState();
+	const { siteTitle, siteType } = useOnboardingState();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
