@@ -33,15 +33,6 @@
 		vertical-align: baseline;
 	}
 
-	// Firefox Junk
-	button::-moz-focus-inner,
-	input[type='reset']::-moz-focus-inner,
-	input[type='button']::-moz-focus-inner,
-	input[type='submit']::-moz-focus-inner {
-		border: 0;
-		padding: 0;
-	}
-
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
 		padding-left: 32px;
