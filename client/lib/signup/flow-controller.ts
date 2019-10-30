@@ -307,6 +307,7 @@ export default class SignupFlowController {
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
 		if (
+			'onboarding' === this._flowName &&
 			'passwordless' === abtest( 'passwordlessSignup' ) &&
 			get( step, 'isPasswordlessSignupForm' )
 		) {
