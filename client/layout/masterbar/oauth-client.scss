@@ -133,7 +133,7 @@
 			padding-bottom: 145px;
 		}
 
-		.card {
+		.card:not(.gdpr-banner) {
 			background: none;
 			box-shadow: none;
 			border: 0;
