@@ -88,7 +88,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
-// import { abtest } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { isExternal } from 'lib/url';
@@ -429,6 +429,18 @@ export class Checkout extends React.Component {
 		return;
 	}
 
+	maybeShowPlanBumpOfferConcierge( receiptId ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasPersonalPlan( cart ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+			}
+		}
+
+		return;
+	}
+
 	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
@@ -443,6 +455,11 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId );
+			if ( upgradePath ) {
+				return upgradePath;
+			}
+
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
