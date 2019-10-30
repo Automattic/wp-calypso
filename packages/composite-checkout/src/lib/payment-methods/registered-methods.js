@@ -57,11 +57,12 @@ export function getAriaLabelForPaymentMethodSelector( methodSlug, localize ) {
 	switch ( methodSlug ) {
 		case 'apple-pay':
 			return localize( 'Check out with Apple Pay' );
+		case 'stripe-card':
 		case 'card':
 			return localize( 'Check out with a credit card' );
 		case 'paypal':
 			return localize( 'Check out with PayPal' );
 		default:
-			throw new Error( `Unrecognized payment method slug ${ methodSlug }` );
+			throw new Error( `Unrecognized payment method slug '${ methodSlug }'` );
 	}
 }
