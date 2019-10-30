@@ -122,6 +122,7 @@ function paymentStateHandler( { type, payload }, dispatch, setPaymentData ) {
 				return;
 			}
 			dispatch( { type: 'STRIPE_TRANSACTION_END', payload } );
+			return;
 		case 'STRIPE_CONFIGURATION_FETCH':
 		case 'STRIPE_TRANSACTION_BEGIN':
 			throw new Error( `The action '${ type }' must be handled by the host page` );
