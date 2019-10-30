@@ -12,6 +12,11 @@ import { PaypalLabel, PaypalSubmitButton } from './paypal';
 import { CreditCardLabel, CreditCardSubmitButton } from './credit-card';
 import CreditCardFields from '../../components/credit-card-fields';
 import BillingFields from '../../components/billing-fields';
+import { StripeHookProvider } from '../../lib/stripe';
+import {
+	StripeCreditCardFields,
+	StripePayButton,
+} from '../../components/stripe-credit-card-fields';
 
 export default function loadPaymentMethods() {
 	registerPaymentMethod( {
@@ -28,6 +33,15 @@ export default function loadPaymentMethods() {
 		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
 		BillingContactComponent: ApplePayBillingForm, // TODO: replace this
 		SubmitButtonComponent: CreditCardSubmitButton,
+	} );
+
+	registerPaymentMethod( {
+		id: 'stripe-card',
+		LabelComponent: CreditCardLabel,
+		PaymentMethodComponent: StripeCreditCardFields,
+		BillingContactComponent: ApplePayBillingForm,
+		SubmitButtonComponent: StripePayButton,
+		CheckoutWrapper: StripeHookProvider,
 	} );
 
 	registerPaymentMethod( {
