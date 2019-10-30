@@ -9,7 +9,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { Gutenboard } from './gutenboard';
-import { hideMasterbar as hideMasterbarAction } from 'state/ui/actions';
 
 export const redirectIfNotEnabled: PageJS.Callback = ( context, next ) => {
 	if ( ! config.isEnabled( 'gutenboarding' ) ) {
@@ -19,12 +18,7 @@ export const redirectIfNotEnabled: PageJS.Callback = ( context, next ) => {
 	next();
 };
 
-export const hideMasterbar: PageJS.Callback = ( context, next ) => {
-	context.store.dispatch( hideMasterbarAction() );
-	next();
-};
-
 export const main: PageJS.Callback = ( context, next ) => {
-	context.primary = <Gutenboard />;
+	context.layout = <Gutenboard />;
 	next();
 };

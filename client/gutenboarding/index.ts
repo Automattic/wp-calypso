@@ -6,8 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { hideMasterbar, main, redirectIfNotEnabled } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { main, redirectIfNotEnabled } from './controller';
+import { render as clientRender } from 'controller';
 import { wpDataDebugMiddleware } from './devtools';
 
 export const GUTENBOARDING_SECTION_DEFINITION = {
@@ -24,9 +24,8 @@ export default function() {
 		'/gutenboarding',
 		redirectIfNotEnabled,
 		wpDataDebugMiddleware,
-		hideMasterbar,
 		main,
-		makeLayout,
+		// No `makeLayout` here, to avoid rendering the `Layout` component (which includes the masterbar)
 		clientRender
 	);
 }
