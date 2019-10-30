@@ -1,4 +1,4 @@
-@import './gutenberg-styles/styles';
+@import 'assets/stylesheets/gutenberg-base-styles/style.scss';
 
 // Override core variables: we don't have wp-admin header and sidebar in Calypso
 $admin-bar-height: 0;
