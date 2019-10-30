@@ -18,6 +18,8 @@ import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-spec
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	numberFormat: x => x,
+	translate: x => x,
 } ) );
 
 jest.mock( 'lib/checkout/processor-specific', () => {
