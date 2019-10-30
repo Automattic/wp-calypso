@@ -23,6 +23,7 @@ import { getSuggestedUsername } from 'state/signup/optional-dependencies/selecto
 import { recordTracksEvent } from 'state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { WPCC } from 'lib/url/support';
+import { recordGoogleRecaptchaCalypso } from 'lib/analytics/ad-tracking';
 import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
@@ -74,7 +75,12 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
+		const token = recordGoogleRecaptchaCalypso( this.saveRecaptchaToken );
+
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			recaptchaToken: typeof token === 'string' ? token : undefined,
+		} );
 	}
 
 	setSubHeaderText( props ) {
@@ -150,6 +156,13 @@ export class UserStep extends Component {
 		this.setState( { subHeaderText } );
 	}
 
+	saveRecaptchaToken = token => {
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			recaptchaToken: typeof token === 'string' ? token : undefined,
+		} );
+	};
+
 	save = form => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -193,6 +206,10 @@ export class UserStep extends Component {
 			userData,
 			form: formWithoutPassword,
 			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			recaptchaToken:
+				this.props.step && this.props.step.recaptchaToken
+					? this.props.step.recaptchaToken
+					: undefined,
 		} );
 	};
 
