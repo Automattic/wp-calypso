@@ -24,7 +24,7 @@ import './section-migrate.scss';
 
 class SectionMigrate extends Component {
 	state = {
-		sourceSite: null,
+		sourceSiteId: null,
 	};
 
 	jetpackSiteFilter = sourceSite => {
