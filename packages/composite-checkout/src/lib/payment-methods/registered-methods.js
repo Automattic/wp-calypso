@@ -31,7 +31,7 @@ export default function loadPaymentMethods() {
 		id: 'card',
 		LabelComponent: CreditCardLabel,
 		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
-		BillingContactComponent: ApplePayBillingForm, // TODO: replace this
+		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
 	} );
 
@@ -39,7 +39,7 @@ export default function loadPaymentMethods() {
 		id: 'stripe-card',
 		LabelComponent: CreditCardLabel,
 		PaymentMethodComponent: StripeCreditCardFields,
-		BillingContactComponent: ApplePayBillingForm,
+		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: StripePayButton,
 		CheckoutWrapper: StripeHookProvider,
 	} );
