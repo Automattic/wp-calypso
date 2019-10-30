@@ -1,0 +1,25 @@
+// External Dependencies
+//@import 'vendor';
+
+// Color Schemes
+//@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+
+// Shared
+@import 'shared/reset'; // css reset before the rest of the styles are defined
+
+// @TODO: import from `@wordpress/base-styles` package once it's available November 12 2019
+@import './gutenberg-base-styles/style';
+
+// Gutenberg resets
+// Not an actual "CSS reset", but an opiniated base style for HTML elements in Gutenberg views.
+:root {
+	@include reset;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	font-family: $default-font;
+	font-size: $default-font-size;
+}

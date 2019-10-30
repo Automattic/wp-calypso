@@ -14,7 +14,7 @@ import { wpDataDebugMiddleware } from './devtools';
 /**
  * Style dependencies
  */
-import 'assets/stylesheets/style-bare.scss';
+import 'assets/stylesheets/gutenboarding.scss';
 import 'components/environment-badge/style.scss';
 
 window.AppBoot = async () => {
