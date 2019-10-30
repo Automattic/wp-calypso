@@ -12,12 +12,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import useSiteOptions from '../useSiteOptions';
-
-// @TODO: These should probably be defined elsewhere
-const creditOptions = [
-	{ label: 'Proudly powered by WordPress', value: 'default' },
-	{ label: 'WordPress Logo', value: 'svg' },
-];
+import { RenderedCreditChoice, creditOptions } from './footerCreditChoices';
 
 function SiteCreditEdit( {
 	createErrorNotice,
@@ -50,15 +45,16 @@ function SiteCreditEdit( {
 	);
 
 	return (
-		<div className="site-info footer-credit-block">
+		<div className="site-info site-credit__block">
 			<span className="site-name">{ siteTitle }</span>
 			<span className="comma">,</span>
-			<SelectControl
-				className="credit-selector"
-				onChange={ updateCredit }
-				value={ wpCredit }
-				options={ creditOptions }
-			/>
+			<span className="site-credit__selection">
+				{ isSelected ? (
+					<SelectControl onChange={ updateCredit } value={ wpCredit } options={ creditOptions } />
+				) : (
+					<RenderedCreditChoice choice={ wpCredit } />
+				) }
+			</span>
 		</div>
 	);
 }

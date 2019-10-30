@@ -1,13 +1,23 @@
-.footer-credit-block {
+.site-credit__block {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 
 	.site-name {
 		font-weight: bold;
 	}
 
-	.credit-selector {
+	.site-credit__selection {
 		margin-left: 10px;
-		margin-top: 3px;
+
+		// Also align items vertically center in the selection area:
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		.components-base-control .components-base-control__field {
+			// Reset extra margin added by @wordpress/components in the select field
+			margin-bottom: 0;
+		}
 	}
 }
