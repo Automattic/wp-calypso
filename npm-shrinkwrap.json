@@ -137,6 +137,10 @@
 		"@automattic/tree-select": {
 			"version": "file:packages/tree-select"
 		},
+		"@automattic/webpack-config-flag-plugin": {
+			"version": "file:packages/webpack-config-flag-plugin",
+			"dev": true
+		},
 		"@automattic/webpack-extensive-lodash-replacement-plugin": {
 			"version": "file:packages/webpack-extensive-lodash-replacement-plugin",
 			"dev": true,

@@ -11,7 +11,7 @@ const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const ConfigFlagPlugin = require( './packages/webpack-config-flag-plugin' );
+const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 // eslint-disable-next-line import/no-extraneous-dependencies
