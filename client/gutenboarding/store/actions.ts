@@ -18,8 +18,3 @@ export const receiveVertical = ( search: string, verticals: Vertical[] ) => ( {
 	search,
 	verticals,
 } );
-
-export const searchVertical = ( search: string ) => ( {
-	type: ActionType.SEARCH_VERTICAL as const,
-	search,
-} );
