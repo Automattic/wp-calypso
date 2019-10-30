@@ -311,7 +311,7 @@
 		"@types/wordpress__block-editor": "2.2.3",
 		"@types/wordpress__block-library": "2.6.0",
 		"@types/wordpress__components": "7.4.5",
-		"@types/wordpress__data": "4.6.3",
+		"@types/wordpress__data": "4.6.4",
 		"@types/wordpress__editor": "9.4.1",
 		"@types/wordpress__element": "2.4.0",
 		"@types/wordpress__i18n": "3.4.0",

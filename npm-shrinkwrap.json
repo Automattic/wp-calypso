@@ -3305,9 +3305,9 @@
 			}
 		},
 		"@types/wordpress__data": {
-			"version": "4.6.3",
-			"resolved": "https://registry.npmjs.org/@types/wordpress__data/-/wordpress__data-4.6.3.tgz",
-			"integrity": "sha512-cGcnhrk2c7eb6YDu83elXMgECeYMG5Y/sCVhmE6FVO+U7blkEiHIgqHlfvGPgOP3sYF3UF0tB/0aojNd59ZzsA==",
+			"version": "4.6.4",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__data/-/wordpress__data-4.6.4.tgz",
+			"integrity": "sha512-bFPMcI7o38oclBd/IosemFJ1WcastN5AQz3rYBK8Ki1rCQzdRlozDUYigRy7BveyBoWEI5dbo+GlPCy94Qo7yw==",
 			"dev": true,
 			"requires": {
 				"@types/wordpress__element": "*",
