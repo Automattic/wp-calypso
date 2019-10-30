@@ -27,7 +27,7 @@ function render_navigation_menu_block( $attributes ) {
 	if ( isset( $attributes['align'] ) ) {
 		$align = empty( $attributes['align'] ) ? '' : ' align' . $attributes['align'];
 	}
-	$class .= $align;
+	$class = $align;
 
 	if ( isset( $attributes['textAlign'] ) ) {
 		$class .= ' has-text-align-' . $attributes['textAlign'];
