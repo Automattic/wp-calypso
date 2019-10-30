@@ -48,20 +48,6 @@
 		bottom: 0;
 	}
 
-	// Turn Reset 'buttons' into regular text links
-	input {
-		&[type='reset'],
-		&[type='reset']:hover,
-		&[type='reset']:active,
-		&[type='reset']:focus {
-			background: 0 0;
-			border: 0;
-			padding: 0 2px 1px;
-			width: auto;
-			box-shadow: none;
-		}
-	}
-
 	// Buttons within sentences sit on the text baseline.
 	p .button {
 		vertical-align: baseline;
