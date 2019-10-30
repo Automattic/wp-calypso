@@ -2,17 +2,20 @@
  * External dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
+import { apiFetch, dispatch } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
-import * as selectors from './selectors';
-import { apiFetch, dispatch } from '@wordpress/data-controls';
 import { STORE_KEY } from './constants';
 import { TailParameters } from './types';
 
-export function* getVertical( search: TailParameters< typeof selectors[ 'getVertical' ] >[ 0 ] ) {
+export function* getVertical(
+	search: TailParameters< typeof import('./selectors').getVertical >[ 0 ]
+) {
 	const url = addQueryArgs( 'https://public-api.wordpress.com/wpcom/v2/verticals', { search } );
 	const verticals = yield apiFetch( { url } );
+
+	// @FIXME Why doesn't `yield receiveVertical( search, verticals );` work?
 	yield dispatch( STORE_KEY, 'receiveVertical', search, verticals );
 }
