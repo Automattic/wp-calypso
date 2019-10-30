@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import './coblocks-preview-images';
 import './disable-nux-tour';
 import './reorder-block-categories';
 import './rich-text';
