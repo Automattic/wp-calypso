@@ -285,7 +285,15 @@ ProductSelector.propTypes = {
 			id: PropTypes.string,
 			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
-			optionDescriptions: PropTypes.objectOf( [ PropTypes.string, PropTypes.element ] ),
+			optionDescriptions: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
+			optionDisplayNames: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
+			optionShortNames: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
 			optionsLabel: PropTypes.string,
 		} )
 	).isRequired,
