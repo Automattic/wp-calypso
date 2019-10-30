@@ -34,23 +34,6 @@ StripeValidationError.prototype = new Error();
 export { StripeValidationError };
 
 /**
- * An error related to a Setup Intent
- *
- * If this error is thrown, the setup intent probably needs to be recreated
- * before being used again.
- *
- * The object will include the original stripe error in the stripeError prop.
- *
- * @param {object} stripeError - The original Stripe error object
- */
-function StripeSetupIntentError( stripeError ) {
-	this.stripeError = stripeError;
-	this.message = stripeError.message;
-}
-StripeSetupIntentError.prototype = new Error();
-export { StripeSetupIntentError };
-
-/**
  * An error related to a Stripe PaymentMethod
  *
  * The object will include the original stripe error in the stripeError prop.
@@ -99,28 +82,6 @@ export async function createStripePaymentMethod( stripe, paymentDetails ) {
 		throw new Error( error.message );
 	}
 	return paymentMethod;
-}
-
-export async function createStripeSetupIntent( stripe, stripeConfiguration, paymentDetails ) {
-	const { setupIntent, error } = await stripe.handleCardSetup(
-		stripeConfiguration.setup_intent_id,
-		{
-			payment_method_data: {
-				billing_details: paymentDetails,
-			},
-		}
-	);
-	if ( error ) {
-		// Note that this is a promise rejection
-		if ( error.type === 'validation_error' ) {
-			throw new StripeValidationError(
-				error.code,
-				getValidationErrorsFromStripeError( error ) || {}
-			);
-		}
-		throw new StripeSetupIntentError( error );
-	}
-	return setupIntent;
 }
 
 /**
@@ -275,6 +236,18 @@ function StripeHookProviderInnerWrapper( { stripe, stripeData, children } ) {
 }
 const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
 
+/**
+ * Custom Provider to access Stripe.js
+ *
+ * First you must wrap a parent component in this Provider. Then you can call
+ * `useStripe()` in any sub-component to get access to the stripe variables and
+ * functions. See `useStripe` for more details.
+ *
+ * This has one optional prop, `configurationArgs`, which is an object that
+ * will be used when fetching the stripe configuration.
+ *
+ * @return {object} React element
+ */
 export function StripeHookProvider( { children, configurationArgs } ) {
 	const { stripeConfiguration, forceReload } = useStripeConfiguration( configurationArgs );
 	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
@@ -324,21 +297,4 @@ export function useStripe() {
 			forceReload: () => {},
 		}
 	);
-}
-
-/**
- * HOC for components that cannot use useStripe
- *
- * Adds several props to the wrapped component. See docs of useStripe for
- * details of the properties it provides.
- *
- * @param {object} WrappedComponent The component to wrap
- * @return {object} WrappedComponent
- */
-export function withStripeProps( WrappedComponent ) {
-	return props => {
-		const stripeData = useStripe();
-		const newProps = { ...props, ...stripeData };
-		return <WrappedComponent { ...newProps } />;
-	};
 }
