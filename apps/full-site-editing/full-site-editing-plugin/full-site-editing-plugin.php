@@ -216,7 +216,7 @@ function enqueue_coblocks_gallery_scripts() {
 		return;
 	}
 
-	// this happens in the Customizer because we try very hard not to load things and we get a fatal
+	// This happens in the Customizer because we try very hard not to load things and we get a fatal
 	// https://github.com/Automattic/wp-calypso/issues/36680
 	if ( ! class_exists( '\A8C\FSE\WP_Template' ) ) {
 		require_once( __DIR__ . '/full-site-editing/templates/class-wp-template.php' );
