@@ -25,10 +25,8 @@ const initialItems = [
 ];
 
 // These are used only for non-redirect payment methods
-/* eslint-disable no-console */
-const onSuccess = () => console.log( 'Payment succeeded!' );
-const onFailure = error => console.error( 'There was a problem with your payment', error );
-/* eslint-enable no-console */
+const onSuccess = () => window.alert( 'Payment succeeded!' );
+const onFailure = error => window.alert( 'There was a problem with your payment: ' + error );
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
