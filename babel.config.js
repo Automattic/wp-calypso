@@ -9,13 +9,7 @@ const codeSplit = config.isEnabled( 'code-splitting' );
 
 const babelConfig = {
 	presets: [ [ '@automattic/calypso-build/babel/default', { modules } ] ],
-	plugins: [
-		[ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ],
-		[
-			'./packages/babel-plugin-config-flag',
-			{ flags: { desktop: config.isEnabled( 'desktop' ) } },
-		],
-	],
+	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
 
 	env: {
 		build_pot: {

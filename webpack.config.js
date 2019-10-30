@@ -11,6 +11,7 @@ const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
+const ConfigFlagPlugin = require( './packages/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -336,6 +337,9 @@ const webpackConfig = {
 				'.moment-timezone-data-webpack-plugin-cache',
 				extraPath
 			),
+		} ),
+		new ConfigFlagPlugin( {
+			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
