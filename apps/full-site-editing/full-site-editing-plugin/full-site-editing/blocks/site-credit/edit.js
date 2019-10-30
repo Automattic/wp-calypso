@@ -13,14 +13,10 @@ import { __ } from '@wordpress/i18n';
  */
 import useSiteOptions from '../useSiteOptions';
 
-// @TODO: These should probably come from the existing set of options on the backend.
-// They already have translation variations which could be incorporated here.
+// @TODO: These should probably be defined elsewhere
 const creditOptions = [
-	{ label: 'WordPress.com', value: 'com' },
-	{ label: 'WordPress.com Logo', value: 'svg' },
-	{ label: 'A WordPress.com Website', value: 'acom' },
-	{ label: 'Blog at WordPress.com', value: 'blog' },
-	{ label: 'Powered by WordPress.com', value: 'powered' },
+	{ label: 'proudly powered by WordPress', value: 'default' },
+	{ label: 'WordPress Logo', value: 'svg' },
 ];
 
 function SiteCreditEdit( {
@@ -28,29 +24,37 @@ function SiteCreditEdit( {
 	isSelected,
 	setAttributes,
 	shouldUpdateSiteOption,
-	creditOption,
-	setState,
 } ) {
-	const inititalDescription = __( 'Site credit loading…' );
-
-	const { siteOptions } = useSiteOptions(
+	// @TODO: Refactor createErrorNotice, shouldUpdateSiteOption, isSelected, and setAttributes into useSiteOptions.
+	const {
+		siteOptions: { option: siteTitle },
+	} = useSiteOptions(
 		'title',
-		inititalDescription,
+		__( 'Site title loading…' ),
 		createErrorNotice,
 		isSelected,
 		shouldUpdateSiteOption,
 		setAttributes
 	);
 
-	const { option } = siteOptions;
-
-	const setOption = newOption => setState( { creditOption: newOption } );
+	const {
+		siteOptions: { option: wpCredit },
+		handleChange: updateCredit,
+	} = useSiteOptions(
+		'footer_credit',
+		__( 'Footer credit loading…' ),
+		createErrorNotice,
+		isSelected,
+		shouldUpdateSiteOption,
+		setAttributes
+	);
 
 	return (
 		<div className="site-info">
-			<span className="site-name">{ option }</span>
+			<span className="site-name">{ siteTitle }</span>
 			<span className="comma">,</span>
-			<SelectControl onChange={ setOption } value={ creditOption } options={ creditOptions } />
+			<span>{ wpCredit }</span>
+			<SelectControl onChange={ updateCredit } value={ wpCredit } options={ creditOptions } />
 		</div>
 	);
 }

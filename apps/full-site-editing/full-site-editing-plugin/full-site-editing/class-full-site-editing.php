@@ -65,6 +65,8 @@ class Full_Site_Editing {
 
 		$this->theme_slug           = $this->normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
+
+		$this->register_footer_credit_setting();
 	}
 
 	/**
@@ -639,5 +641,26 @@ class Full_Site_Editing {
 		if ( isset( $submenu['themes.php'][6] ) ) {
 			unset( $submenu['themes.php'][6] );
 		}
+	}
+
+	/**
+	 * Registers the footer credit option as a site setting so we can access it in the API.
+	 */
+	public function register_footer_credit_setting() {
+		$option_name = 'footercredit';
+
+		// WP will not update the option if it already exists, so this is safe.
+		add_option( $option_name, 'default' );
+
+		// Registers the footercredit option as a site setting so that we can use it from the API.
+		register_setting(
+			'general',
+			$option_name,
+			[
+				'show_in_rest' => true,
+				'type'         => 'string',
+				'description'  => __( 'WordPress Footer Credit' ),
+			]
+		);
 	}
 }
