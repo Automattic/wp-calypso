@@ -170,6 +170,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	if (
 		flowToCheck === 'onboarding' &&
+		siteSegment === 1 &&
 		newSiteParams.options.theme !== defaultSiteTypeTheme &&
 		abtest( 'verticalSuggestedThemes' ) === 'test'
 	) {
