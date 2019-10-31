@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import untrailingslashit from '.';
+import { untrailingslashit } from '.';
 
 const appendQueryString = ( basepath: string, querystring: string ): string =>
 	basepath + ( querystring ? '?' + querystring : '' );
