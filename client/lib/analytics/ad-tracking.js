@@ -309,10 +309,6 @@ function getTrackingScriptsToLoad() {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
 	}
 
-	if ( isGoogleRecaptchaEnabled && TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
-		scripts.push( GOOGLE_RECAPTCHA_SCRIPT_URL + TRACKING_IDS.wpcomGoogleRecaptchaSiteKey );
-	}
-
 	if ( isBingEnabled ) {
 		scripts.push( BING_TRACKING_SCRIPT_URL );
 	}
@@ -1851,12 +1847,21 @@ function initGoogleRecaptcha( callback ) {
  *
  * @param {Function} callback - a callback function to call with a reCAPTCHA token
  *
- * @returns {String} a reCaptcha token
+ * @returns {String} a reCAPTCHA token
  */
-export function recordGoogleRecaptchaCalypso( callback ) {
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordGoogleRecaptchaCalypso.bind( null, callback ) );
-		return;
+export async function recordGoogleRecaptchaCalypso( callback ) {
+	if ( ! window.grecaptcha ) {
+		const src = GOOGLE_RECAPTCHA_SCRIPT_URL + TRACKING_IDS.wpcomGoogleRecaptchaSiteKey;
+
+		// Use loadScript directly instead of the loadTrackingScripts function, to ensure that the
+		// reCAPTCHA script is only loaded when needed.
+		try {
+			await loadScript( src );
+		} catch ( error ) {
+			debug( 'recordGoogleRecaptchaCalypso: [Load Error] the script failed to load: ', error );
+			return;
+		}
+		debug( 'recordGoogleRecaptchaCalypso: [Loaded]', src );
 	}
 
 	// init Google reCAPTCHA
