@@ -6,7 +6,6 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,7 +89,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
 				<SiteActivity />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
 		);
 	}
@@ -113,7 +112,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<BusinessOnboarding
 					isWpcomPlan
-					onClick={ this.props.recordBusinessOnboardingClick }
+					onClick={ this.handleBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
@@ -130,7 +129,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
 				<SiteActivity />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
 		);
@@ -159,7 +158,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
 				<SiteActivity />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
 		);
@@ -174,7 +173,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<SiteActivity />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
 		);
 	}
@@ -192,7 +191,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<SiteActivity />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
 		);
 	}
@@ -202,7 +201,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<SiteActivity />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isJetpackFreePlan
@@ -219,11 +218,11 @@ export class ProductPurchaseFeaturesList extends Component {
 				<MonetizeSite selectedSite={ selectedSite } />
 				<SiteActivity />
 				<JetpackPublicize selectedSite={ selectedSite } />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack />
 				{ isEnabled( 'jetpack/concierge-sessions' ) && (
 					<BusinessOnboarding
-						onClick={ this.props.recordBusinessOnboardingClick }
+						onClick={ this.handleBusinessOnboardingClick }
 						link="https://calendly.com/jetpack/concierge"
 					/>
 				) }
@@ -241,7 +240,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<SiteActivity />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -256,7 +255,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			<Fragment>
 				<SiteActivity />
 				<MonetizeSite selectedSite={ selectedSite } />
-				<MobileApps />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
@@ -265,7 +264,7 @@ export class ProductPurchaseFeaturesList extends Component {
 
 				{ isEnabled( 'jetpack/concierge-sessions' ) && (
 					<BusinessOnboarding
-						onClick={ this.props.recordBusinessOnboardingClick }
+						onClick={ this.handleBusinessOnboardingClick }
 						link="https://calendly.com/jetpack/concierge"
 					/>
 				) }
@@ -308,6 +307,14 @@ export class ProductPurchaseFeaturesList extends Component {
 		return callback ? callback() : null;
 	}
 
+	handleBusinessOnboardingClick = () => {
+		this.props.recordTracksEvent( 'calypso_plan_features_onboarding_click' );
+	};
+
+	handleMobileAppsClick = () => {
+		this.props.recordTracksEvent( 'calypso_plan_features_getapps_click' );
+	};
+
 	render() {
 		return <div className="product-purchase-features-list">{ this.getFeatures() }</div>;
 	}
@@ -327,10 +334,6 @@ export default connect(
 		};
 	},
 	{
-		recordBusinessOnboardingClick: partial(
-			recordTracksEvent,
-			'calypso_plan_features_onboarding_click',
-			{}
-		),
+		recordTracksEvent,
 	}
 )( ProductPurchaseFeaturesList );

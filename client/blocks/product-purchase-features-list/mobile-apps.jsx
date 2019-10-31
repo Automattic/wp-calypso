@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ import { addQueryArgs } from 'lib/route';
  */
 import appsImage from 'assets/images/illustrations/apps.svg';
 
-export default localize( ( { translate } ) => {
+export default localize( ( { translate, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -38,6 +39,7 @@ export default localize( ( { translate } ) => {
 					'https://apps.wordpress.com/get?'
 				) }
 				target="_blank"
+				onClick={ onClick }
 			/>
 		</div>
 	);
