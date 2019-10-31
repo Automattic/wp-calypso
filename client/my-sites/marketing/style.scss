@@ -172,6 +172,10 @@
 		position: relative;
 		overflow: hidden;
 		background: var( --color-surface );
+		
+		&.is-highlighted {
+			border: 2px solid var( --color-primary );
+		}
 
 		&.not-connected .sharing-service-examples {
 			display: block;
