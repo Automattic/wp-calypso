@@ -37,6 +37,7 @@ import {
 } from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
@@ -459,7 +460,12 @@ export class SharingService extends Component {
 	}
 
 	shouldBeExpanded( status ) {
-		if ( this.isMailchimpService() && this.state.justConnected ) {
+		if (
+			this.isMailchimpService() &&
+			( this.state.justConnected ||
+				( this.props.queryArgs && 'mailchimp' in this.props.queryArgs ) )
+		) {
+			window.scrollTo( 0, 9999 );
 			return true;
 		}
 
@@ -490,6 +496,8 @@ export class SharingService extends Component {
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
 		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
+			'is-highlighted':
+				this.isMailchimpService() && this.props.queryArgs && 'mailchimp' in this.props.queryArgs,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 
@@ -616,6 +624,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
 				path: getCurrentRouteParameterized( state, siteId ),
+				queryArgs: getCurrentQueryArguments( state ),
 				service,
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
