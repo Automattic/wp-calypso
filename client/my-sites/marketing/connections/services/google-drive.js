@@ -14,7 +14,7 @@ import { last, isEqual } from 'lodash';
 import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
 
-export class GoogleSheets extends SharingService {
+export class GoogleDrive extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
 		deleteStoredKeyringConnection: PropTypes.func,
@@ -76,7 +76,7 @@ export class GoogleSheets extends SharingService {
 		return (
 			<img
 				className="sharing-service__logo"
-				src="/calypso/images/sharing/google-sheets-logo.svg"
+				src="/calypso/images/sharing/google-drive-logo.svg"
 				width="36"
 				height="36"
 				alt=""
@@ -87,7 +87,7 @@ export class GoogleSheets extends SharingService {
 }
 
 export default connectFor(
-	GoogleSheets,
+	GoogleDrive,
 	( state, props ) => {
 		return {
 			...props,

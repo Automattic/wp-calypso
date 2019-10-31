@@ -40,7 +40,7 @@ const SERVICES_WHITELIST = [
 	'tumblr',
 	'twitter',
 	'google_photos',
-	'google_sheets',
+	'google_drive',
 	'mailchimp',
 ];
 
@@ -139,12 +139,12 @@ class SharingServiceExamples extends Component {
 		];
 	}
 
-	google_sheets() {
+	google_drive() {
 		return [
 			{
 				image: {
 					src: '/calypso/images/sharing/contact-form.png',
-					alt: this.props.translate( 'Connect to Google Sheets to sync contact form data', {
+					alt: this.props.translate( 'Connect to Google Drive to sync contact form data', {
 						textOnly: true,
 					} ),
 				},
@@ -166,13 +166,13 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/google-sheets.png',
-					alt: this.props.translate( 'Submissions are synched to a Google Sheet', {
+					src: '/calypso/images/sharing/google-drive.png',
+					alt: this.props.translate( 'Submissions are synched to a Google Drive', {
 						textOnly: true,
 					} ),
 				},
 				label: this.props.translate(
-					'{{strong}}Submissions{{/strong}} are automatically synched to a Google Sheet.',
+					'{{strong}}Submissions{{/strong}} are automatically synched to a Google Drive.',
 					{
 						components: {
 							strong: <strong />,

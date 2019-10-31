@@ -12,7 +12,7 @@ const services = new Set( [
 	'instagram',
 	'google_photos',
 	'google_my_business',
+	'google_drive',
 	'mailchimp',
-	'google_sheets',
 ] );
 export const hasOwnProperty = name => services.has( name );
