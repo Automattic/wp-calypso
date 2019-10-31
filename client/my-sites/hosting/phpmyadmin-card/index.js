@@ -18,7 +18,7 @@ import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import Dialog from 'components/dialog';
+import RestorePasswordDialog from './restore-db-password';
 
 const requestId = siteId => `pma-link-request-${ siteId }`;
 
@@ -41,33 +41,6 @@ export const requestPmaLink = siteId =>
 			freshness: 0,
 		}
 	);
-
-const RestorePasswordDialog = localize( ( { translate, isVisible, onCancel } ) => {
-	const resetPassword = () => {};
-
-	const buttons = [
-		{
-			action: 'restore',
-			label: translate( 'Restore' ),
-			onClick: resetPassword,
-			isPrimary: true,
-		},
-		{
-			action: 'cancel',
-			label: translate( 'Cancel' ),
-			onClick: onCancel,
-		},
-	];
-	return (
-		<Dialog isVisible={ isVisible } buttons={ buttons } onClose={ onCancel }>
-			<h1>{ translate( 'Restore database password' ) }</h1>
-
-			<p>
-				{ translate( 'Are you sure you want to restore the default password of your database?' ) }
-			</p>
-		</Dialog>
-	);
-} );
 
 const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 	useEffect( () => {
@@ -124,6 +97,9 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 				<RestorePasswordDialog
 					isVisible={ isRestorePasswordDialogVisible }
 					onCancel={ () => {
+						setIsRestorePasswordDialogVisible( false );
+					} }
+					onRestore={ () => {
 						setIsRestorePasswordDialogVisible( false );
 					} }
 				/>
