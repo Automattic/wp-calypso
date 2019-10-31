@@ -3,13 +3,15 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, IconButton } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+
 import React from 'react';
 import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
 
 /**
  * Internal dependencies
  */
-import { useOnboardingSelect } from '../../store';
+import { STORE_KEY } from '../../store';
 import './style.scss';
 
 interface Props {
@@ -18,7 +20,7 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const { siteTitle, siteType } = useOnboardingSelect();
+	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
