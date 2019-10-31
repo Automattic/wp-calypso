@@ -13,7 +13,18 @@
 	}
 }
 
-.ellipsis-menu__menu .button .gridicon {
-	top: inherit;
-	margin-top: inherit;
+.ellipsis-menu__menu .button {
+	border: inherit;
+	border-bottom: inherit;
+	border-radius: inherit;
+	font-weight: inherit;
+
+	&:hover {
+		color: white;
+	}
+
+	.gridicon {
+		top: inherit;
+		margin-top: inherit;
+	}
 }
