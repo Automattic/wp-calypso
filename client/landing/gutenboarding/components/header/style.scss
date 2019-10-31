@@ -20,16 +20,7 @@
 	@include break-small {
 		position: fixed;
 		padding: $grid-size;
-		// Needed at wp-admin but not in Calypso
-		// top: $admin-bar-height-big;
 	}
-
-	// Needed at wp-admin but not in Calypso
-	/*
-	@include break-medium() {
-		top: $admin-bar-height;
-	}
-	*/
 }
 
 .gutenboarding__header-actions {

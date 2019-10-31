@@ -13,15 +13,6 @@ $admin-sidebar-width-collapsed: 0;
 @import '~@wordpress/block-editor/src/style.scss';
 @import '~@wordpress/format-library/src/style.scss';
 
-// These are default block editor styles in case the theme doesn't provide them.
 .wp-block {
-	max-width: $content-width;
-
-	&[data-align='wide'] {
-		max-width: 1100px;
-	}
-
-	&[data-align='full'] {
-		max-width: none;
-	}
+	max-width: 1100px; // Overrides default $content-width
 }
