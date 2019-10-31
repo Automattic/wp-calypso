@@ -1,13 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
+import { URL as URLString, SiteSlug, SiteId } from 'types';
 
 /**
  * Internal Dependencies
  */
 import { trailingslashit, untrailingslashit } from './index';
+
+type SiteFragment = SiteSlug | number | false;
 
 /**
  * Module variables
@@ -21,7 +22,7 @@ const statsLocationsByTab = {
 	googleMyBusiness: '/google-my-business/stats/',
 };
 
-export function getSiteFragment( path ) {
+export function getSiteFragment( path: URLString ): SiteFragment {
 	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
@@ -69,10 +70,10 @@ export function getSiteFragment( path ) {
 	return false;
 }
 
-export function addSiteFragment( path, site ) {
+export function addSiteFragment( path: URLString, site: SiteSlug ): URLString {
 	const pieces = sectionify( path ).split( '/' );
 
-	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
+	if ( [ 'post', 'page', 'edit' ].includes( pieces[ 1 ] ) ) {
 		// Editor-style URL; insert the site as either the 2nd or 3rd piece of
 		// the URL ( '/post/:site' or '/edit/:cpt/:site' )
 		const sitePos = 'edit' === pieces[ 1 ] ? 3 : 2;
@@ -85,7 +86,7 @@ export function addSiteFragment( path, site ) {
 	return pieces.join( '/' );
 }
 
-export function sectionify( path, siteFragment ) {
+export function sectionify( path: URLString, siteFragment?: SiteFragment ): URLString {
 	let basePath = path.split( '?' )[ 0 ];
 
 	// Sometimes the caller knows better than `getSiteFragment` what the `siteFragment` is.
@@ -102,17 +103,20 @@ export function sectionify( path, siteFragment ) {
 	return untrailingslashit( basePath );
 }
 
-export function getStatsDefaultSitePage( slug ) {
+export function getStatsDefaultSitePage( slug?: SiteId | SiteSlug ): URLString {
 	const path = '/stats/day/';
 
 	if ( slug ) {
-		return path + slug;
+		return path + String( slug );
 	}
 
 	return untrailingslashit( path );
 }
 
-export function getStatsPathForTab( tab, siteIdOrSlug ) {
+export function getStatsPathForTab(
+	tab: keyof typeof statsLocationsByTab,
+	siteIdOrSlug: SiteId | SiteSlug
+): URLString {
 	if ( ! tab ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
@@ -135,12 +139,13 @@ export function getStatsPathForTab( tab, siteIdOrSlug ) {
 	return untrailingslashit( path + siteIdOrSlug );
 }
 
+// TODO: Add status enum (see `client/my-sites/pages/main.jsx`).
 /**
  * Post status in our routes mapped to valid API values
- * @param  {string} status  Status param from route
- * @return {string}         mapped status value
+ * @param status  Status param from route
+ * @return        mapped status value
  */
-export function mapPostStatus( status ) {
+export function mapPostStatus( status: string ): string {
 	switch ( status ) {
 		// Drafts
 		case 'drafts':
@@ -156,6 +161,6 @@ export function mapPostStatus( status ) {
 	}
 }
 
-export function externalRedirect( url ) {
-	window.location = url;
+export function externalRedirect( url: URLString ) {
+	window.location.href = url;
 }
