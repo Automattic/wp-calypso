@@ -174,6 +174,7 @@ class Full_Site_Editing {
 				'closeButtonLabel'    => $this->get_close_button_label(),
 				'closeButtonUrl'      => esc_url( $this->get_close_button_url() ),
 				'editTemplateBaseUrl' => esc_url( $this->get_edit_template_base_url() ),
+				'footerCreditOptions' => get_footer_credit_options(),
 			)
 		);
 
