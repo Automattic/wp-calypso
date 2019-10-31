@@ -331,6 +331,9 @@ export function StripePayButton() {
 		if ( paymentData.stripeTransactionStatus === 'complete' ) {
 			onSuccess();
 		}
+		if ( paymentData.stripeTransactionStatus === 'redirect' ) {
+			// TODO: notify user that we are going to redirect
+		}
 		if ( paymentData.stripeTransactionStatus === 'auth' ) {
 			showStripeModalAuth( {
 				stripeConfiguration,
