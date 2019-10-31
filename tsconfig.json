@@ -13,6 +13,7 @@
 		"strict": true,
 		// Disallow features that require cross-file information for emit.
 		"isolatedModules": true,
+		"incremental": true,
 		// Import non-ES modules as default imports.
 		"esModuleInterop": true,
 		"skipLibCheck": true,
