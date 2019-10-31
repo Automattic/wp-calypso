@@ -1,7 +1,9 @@
-.edit-post-fullscreen-mode-close__toolbar {
+.post-type-wp_template_part .edit-post-fullscreen-mode-close__toolbar,
+.post-type-page .edit-post-fullscreen-mode-close__toolbar {
 	display: none;
 }
 
-.edit-post-fullscreen-mode-close__toolbar__override {
+.post-type-wp_template_part .edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-page .edit-post-fullscreen-mode-close__toolbar__override {
 	display: flex;
 }

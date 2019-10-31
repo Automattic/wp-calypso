@@ -10,6 +10,11 @@ import './style.scss';
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
+	// Don't alter anything on the post editor.
+	if ( 'post' === editorPostType ) {
+		return;
+	}
+
 	const editPostHeaderInception = setInterval( () => {
 		// Cycle through interval until header toolbar is found.
 		const toolbar = document.querySelector( '.edit-post-header__toolbar' );
