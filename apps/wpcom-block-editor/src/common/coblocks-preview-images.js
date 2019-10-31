@@ -66,16 +66,17 @@ function getCoBlocksLogosExampleImages( settings, name ) {
 	};
 }
 
-addFilter(
-	'blocks.registerBlockType',
-	'coblocks/gallery-masonry',
-	getCoBlocksMasonryExampleImages
-);
-
-addFilter(
-	'blocks.registerBlockType',
-	'coblocks/gallery-stacked',
-	getCoBlocksStackedExampleImages
-);
-
-addFilter( 'blocks.registerBlockType', 'coblocks/logos', getCoBlocksLogosExampleImages );
+const isSimpleSite = !! window.wpcomGutenberg.pluginVersion;
+if ( isSimpleSite ) {
+	addFilter(
+		'blocks.registerBlockType',
+		'coblocks/gallery-masonry',
+		getCoBlocksMasonryExampleImages
+	);
+	addFilter(
+		'blocks.registerBlockType',
+		'coblocks/gallery-stacked',
+		getCoBlocksStackedExampleImages
+	);
+	addFilter( 'blocks.registerBlockType', 'coblocks/logos', getCoBlocksLogosExampleImages );
+}
