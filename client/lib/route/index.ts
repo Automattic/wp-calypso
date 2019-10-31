@@ -5,6 +5,7 @@ import page from 'page';
 import { Primitive } from 'utility-types';
 
 export * from './path';
+export { default as addQueryArgs } from './add-query-args';
 
 const appendQueryString = ( basepath: string, querystring: string ): string =>
 	basepath + ( querystring ? '?' + querystring : '' );
