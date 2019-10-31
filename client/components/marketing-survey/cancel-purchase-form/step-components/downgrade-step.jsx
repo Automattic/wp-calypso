@@ -39,7 +39,7 @@ export class DowngradeStep extends Component {
 		const { translate, refundAmount, planCost, currencySymbol } = this.props;
 		const canRefund = !! parseFloat( refundAmount );
 		const amount = currencySymbol + ( canRefund ? refundAmount : planCost );
-		const isEnglishLocale = 'en' === userUtils.getLocaleSlug();
+		const isEnglishLocale = [ 'en', 'en-gb' ].indexOf( userUtils.getLocaleSlug() ) >= 0;
 		let refundDetails, refundTitle, refundReason;
 		if ( isEnglishLocale ) {
 			refundTitle = translate( 'Would you rather switch to a more affordable plan?' );
