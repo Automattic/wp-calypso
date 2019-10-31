@@ -1,0 +1,27 @@
+@import 'assets/stylesheets/gutenberg-base-styles/style.scss';
+
+// Override core variables: we don't have wp-admin header and sidebar in Calypso
+// Targetting styles from `@wordpress/edit-post`
+$admin-bar-height: 0;
+$admin-bar-height-big: 0;
+$admin-sidebar-width: 0;
+$admin-sidebar-width-big: 0;
+$admin-sidebar-width-collapsed: 0;
+
+// Gutenberg styles
+@import '~@wordpress/edit-post/src/style.scss';
+@import '~@wordpress/block-editor/src/style.scss';
+@import '~@wordpress/format-library/src/style.scss';
+
+// These are default block editor styles in case the theme doesn't provide them.
+.wp-block {
+	max-width: $content-width;
+
+	&[data-align='wide'] {
+		max-width: 1100px;
+	}
+
+	&[data-align='full'] {
+		max-width: none;
+	}
+}
