@@ -172,7 +172,7 @@ class SharingServiceExamples extends Component {
 					} ),
 				},
 				label: this.props.translate(
-					'{{strong}}Submissions{{/strong}} are automatically synched to a Google Drive.',
+					'{{strong}}Submissions{{/strong}} are automatically synced to a Google Drive.',
 					{
 						components: {
 							strong: <strong />,
