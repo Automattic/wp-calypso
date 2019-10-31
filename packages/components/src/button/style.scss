@@ -286,44 +286,6 @@
 }
 
 // ==========================================================================
-// Resets
-// ==========================================================================
-
-// Turn Reset 'buttons' into regular text links
-.layout__content input,
-.dialog__content input {
-	&[type='reset'],
-	&[type='reset']:hover,
-	&[type='reset']:active,
-	&[type='reset']:focus {
-		background: 0 0;
-		border: 0;
-		padding: 0 2px 1px;
-		width: auto;
-		box-shadow: none;
-	}
-}
-
-// Buttons within sentences sit on the text baseline.
-.layout__content p .button,
-.dialog__content p .button {
-	vertical-align: baseline;
-}
-
-// Firefox Junk
-.layout__content button::-moz-focus-inner,
-.layout__content input[type='reset']::-moz-focus-inner,
-.layout__content input[type='button']::-moz-focus-inner,
-.layout__content input[type='submit']::-moz-focus-inner,
-.dialog__content button::-moz-focus-inner,
-.dialog__content input[type='reset']::-moz-focus-inner,
-.dialog__content input[type='button']::-moz-focus-inner,
-.dialog__content input[type='submit']::-moz-focus-inner {
-	border: 0;
-	padding: 0;
-}
-
-// ==========================================================================
 // Deprecated styles
 // ==========================================================================
 
