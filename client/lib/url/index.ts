@@ -8,7 +8,7 @@ import { has, isString, omit, startsWith } from 'lodash';
  * Internal dependencies
  */
 import { URL, Scheme } from 'types';
-import { Falsey } from 'utility-types';
+import { Falsy } from 'utility-types';
 
 /**
  * Re-exports
@@ -66,9 +66,9 @@ export function setUrlScheme( url: URL, scheme: Scheme ) {
  * @param  {Array|String}  paramsToOmit The collection of params or single param to reject
  * @return {String} Url less the omitted params.
  */
-export function omitUrlParams( url: Falsey, paramsToOmit: string | string[] ): null;
+export function omitUrlParams( url: Falsy, paramsToOmit: string | string[] ): null;
 export function omitUrlParams( url: URL, paramsToOmit: string | string[] ): URL;
-export function omitUrlParams( url: URL | Falsey, paramsToOmit: string | string[] ): URL | null {
+export function omitUrlParams( url: URL | Falsy, paramsToOmit: string | string[] ): URL | null {
 	if ( ! url ) {
 		return null;
 	}
