@@ -7,14 +7,14 @@ import { registerStore } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ONBOARDING_STORE_KEY } from './constants';
+import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import * as resolvers from './resolvers';
 import { TailParameters } from './types';
 
-export const STORE_KEY = ONBOARDING_STORE_KEY;
+export { STORE_KEY };
 
 registerStore< State >( STORE_KEY, {
 	actions,
