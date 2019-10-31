@@ -3,6 +3,6 @@ export const GUTENBOARDING_SECTION_DEFINITION = {
 	paths: [ '/gutenboarding' ],
 	module: 'gutenboarding',
 	secondary: false,
-	group: 'sites',
+	group: 'gutenboarding',
 	enableLoggedOut: true,
 };
