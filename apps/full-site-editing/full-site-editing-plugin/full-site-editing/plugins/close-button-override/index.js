@@ -19,7 +19,7 @@ domReady( () => {
 		}
 		clearInterval( editPostHeaderInception );
 
-		// add components toolbar with override class name (original will be hidden)
+		// add components toolbar with override class name (original will be hidden in ./style.scss)
 		const componentsToolbar = document.createElement( 'div' );
 		componentsToolbar.className =
 			'components-toolbar edit-post-fullscreen-mode-close__toolbar edit-post-fullscreen-mode-close__toolbar__override';
