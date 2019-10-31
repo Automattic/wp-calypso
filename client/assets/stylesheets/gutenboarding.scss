@@ -1,5 +1,5 @@
 // Color Schemes
-// Currently used only by Calypso dev badge in development mode
+// Currently used only by Calypso dev badge shown in development mode
 @import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
 
 // Shared
@@ -14,6 +14,7 @@
 	@include reset;
 }
 
+// Gutenberg default typography
 html,
 body {
 	font-family: $default-font;
