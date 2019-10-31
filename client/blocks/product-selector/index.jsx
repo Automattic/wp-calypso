@@ -283,10 +283,10 @@ ProductSelector.propTypes = {
 		PropTypes.shape( {
 			title: PropTypes.string,
 			id: PropTypes.string,
-			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
 			optionDescriptions: PropTypes.objectOf(
-				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
 			),
 			optionDisplayNames: PropTypes.objectOf(
 				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )

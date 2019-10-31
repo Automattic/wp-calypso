@@ -76,7 +76,7 @@ const ProductCard = ( {
 ProductCard.propTypes = {
 	billingTimeFrame: PropTypes.string,
 	currencyCode: PropTypes.string,
-	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
 	discountedPrice: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.arrayOf( PropTypes.number ),
