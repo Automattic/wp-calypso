@@ -127,20 +127,19 @@ class SiteRedirect extends React.Component {
 					<Card className={ classes }>
 						<form>
 							<FormFieldset>
-								<FormLabel>
-									{ translate( 'Redirect To' ) }
+								<FormLabel htmlFor="site-redirect__input">{ translate( 'Redirect To' ) }</FormLabel>
 
-									<FormTextInputWithAffixes
-										disabled={ isFetching || isUpdating }
-										name="destination"
-										noWrap
-										onChange={ this.handleChange }
-										onFocus={ this.handleFocus }
-										prefix="http://"
-										type="text"
-										value={ this.state.redirectUrl }
-									/>
-								</FormLabel>
+								<FormTextInputWithAffixes
+									disabled={ isFetching || isUpdating }
+									name="destination"
+									noWrap
+									onChange={ this.handleChange }
+									onFocus={ this.handleFocus }
+									prefix="http://"
+									type="text"
+									value={ this.state.redirectUrl }
+									id="site-redirect__input"
+								/>
 
 								<p className="site-redirect__explanation">
 									{ translate( 'All domains on this site will redirect here.' ) }

@@ -3,14 +3,6 @@
 		margin-bottom: 10px;
 	}
 
-	.form-text-input-with-affixes {
-		margin-top: 5px;
-	}
-
-	.form-text-input-with-affixes__prefix {
-		font-weight: normal;
-	}
-
 	&.fetching input[type='text'] {
 		animation: pulse-light 0.8s ease-in-out infinite;
 		background: var( --color-neutral-10 );
