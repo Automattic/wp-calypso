@@ -5,6 +5,7 @@
  */
 import domReady from '@wordpress/dom-ready';
 import { __ } from '@wordpress/i18n';
+import './style.scss';
 
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
@@ -37,9 +38,9 @@ domReady( () => {
 					'.edit-post-fullscreen-mode-close__toolbar'
 				);
 				parentContainer.replaceChild( newCloseButton, closeButton );
-			} else if ( 'page' === editorPostType && window.location.toString().includes( 'wp-admin' ) ) {
+			} else if ( 'page' === editorPostType ) {
 				const newCloseButton = document.createElement( 'a' );
-				newCloseButton.href = 'edit.php?post_type=page'; // wrong href if not using wp-admin
+				newCloseButton.href = 'edit.php?post_type=page';
 				newCloseButton.innerHTML = __( 'Back to Page List' );
 				newCloseButton.className = 'components-button components-icon-button is-button is-default';
 				newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
