@@ -7,17 +7,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { getHttpData, httpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import Dialog from 'components/dialog';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { get } from 'lodash';
 import { successNotice } from 'state/notices/actions';
+
+const requestId = siteId => `restore-db-password-${ siteId }`;
 
 export const restoreDatabasePassword = siteId =>
 	requestHttpData(
-		`restore-db-password-${ siteId }`,
+		requestId( siteId ),
 		http(
 			{
 				method: 'POST',
@@ -28,9 +29,7 @@ export const restoreDatabasePassword = siteId =>
 			{}
 		),
 		{
-			fromApi: () => () => {
-				return [ [ `restore-db-password-${ siteId }`, { restored: true } ] ];
-			},
+			fromApi: () => () => [ [ requestId( siteId ), null ] ],
 			freshness: 0,
 		}
 	);
@@ -44,8 +43,10 @@ const RestorePasswordDialog = ( {
 	siteId,
 	translate,
 	showSuccessNotice,
+	reset,
 } ) => {
 	if ( hasRestored ) {
+		reset();
 		showSuccessNotice( translate( 'Your database password has been restored.' ), {
 			duration: 3000,
 		} );
@@ -76,7 +77,6 @@ const RestorePasswordDialog = ( {
 			shouldCloseOnEsc={ ! isRestoring }
 		>
 			<h1>{ translate( 'Restore database password' ) }</h1>
-
 			<p>
 				{ translate( 'Are you sure you want to restore the default password of your database?' ) }
 			</p>
@@ -86,10 +86,10 @@ const RestorePasswordDialog = ( {
 
 const mapState = state => {
 	const siteId = getSelectedSiteId( state );
-	const request = getHttpData( `restore-db-password-${ siteId }` );
+	const request = getHttpData( requestId( siteId ) );
 	return {
 		isRestoring: request.state === 'pending',
-		hasRestored: get( request.data, 'restored', false ),
+		hasRestored: request.state === 'success',
 		siteId,
 	};
 };
@@ -98,7 +98,15 @@ const mapDispatch = {
 	showSuccessNotice: successNotice,
 };
 
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => ( {
+	...ownProps,
+	...stateProps,
+	...dispatchProps,
+	reset: () => httpData.set( requestId( stateProps.siteId ), httpData.empty ),
+} );
+
 export default connect(
 	mapState,
-	mapDispatch
+	mapDispatch,
+	mergeProps
 )( localize( RestorePasswordDialog ) );
