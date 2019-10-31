@@ -38,4 +38,4 @@ loadScript( REMOTE_SCRIPT_URL )
 
 ### Error handling
 
-The callback should expect a single argument, which will be `null` on success or an object on failure. The object contains the `src` property, which will contain the src url of the script that failed to load.
+If using the callback, it should expect a single argument, which will be `null` on success or an object on failure. This error object contains the `src` property, which will contain the src url of the script that failed to load. If using the Promise form, the error object will be passed to the nearest `catch` handler as a rejection.
