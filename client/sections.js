@@ -464,7 +464,7 @@ const sections = [
 	},
 	{
 		name: 'hosting',
-		paths: [ '/sftp-mysql' ],
+		paths: [ '/wp-hosting' ],
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',

@@ -12,9 +12,9 @@ import { handleHostingPanelRedirect, layout } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/sftp-mysql', siteSelection, sites, makeLayout, clientRender );
+	page( '/wp-hosting', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/sftp-mysql/:site_id',
+		'/wp-hosting/:site_id',
 		siteSelection,
 		navigation,
 		handleHostingPanelRedirect,
