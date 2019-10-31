@@ -1,8 +1,8 @@
 // With a _real_ TypeScript compiler, we could use const enums.
 /* const */ enum ActionType {
-	RECEIVE_VERTICAL,
-	SET_SITE_TITLE,
-	SET_SITE_TYPE,
+	RECEIVE_VERTICAL = 'RECEIVE_VERTICAL',
+	SET_SITE_TITLE = 'SET_SITE_TITLE',
+	SET_SITE_TYPE = 'SET_SITE_TYPE',
 }
 export { ActionType };
 

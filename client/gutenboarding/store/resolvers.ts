@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
-import { apiFetch, dispatch } from '@wordpress/data-controls';
+import { apiFetch } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from './constants';
+import { receiveVertical } from './actions';
 import { TailParameters } from './types';
 
 export function* getVertical(
@@ -18,6 +18,5 @@ export function* getVertical(
 	// @FIXME use generic fetch?
 	const verticals = yield apiFetch( { url } );
 
-	// @FIXME Why doesn't `yield receiveVertical( search, verticals );` work?
-	yield dispatch( STORE_KEY, 'receiveVertical', search, verticals );
+	return receiveVertical( search, verticals );
 }
