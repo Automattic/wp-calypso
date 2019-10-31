@@ -8,7 +8,7 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import { Checkout, CheckoutProvider } from '../../src';
+import { Checkout, CheckoutProvider } from '../../src/public-api';
 
 test( 'When we enter checkout, the line items and total are rendered', () => {
 	const MyCheckout = () => (

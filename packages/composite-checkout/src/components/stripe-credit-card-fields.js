@@ -19,7 +19,7 @@ import {
 	useCheckoutRedirects,
 	usePaymentMethodData,
 	renderDisplayValueMarkdown,
-} from '../index';
+} from '../public-api';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 
 // TODO: move this file to lib/payment-methods/

@@ -5,7 +5,7 @@ require( '@babel/polyfill' );
  */
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Checkout, CheckoutProvider } from '../src';
+import { Checkout, CheckoutProvider } from '../src/public-api';
 import { stripeKey } from './private';
 
 const initialItems = [

@@ -9,7 +9,7 @@ import styled from 'styled-components';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../../index';
+import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../../public-api';
 
 export function CreditCardLabel() {
 	const localize = useLocalize();
