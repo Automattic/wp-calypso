@@ -1,13 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import urlModule from 'url';
 import { pickBy } from 'lodash';
 
-export default function( args, url ) {
+/**
+ * Internal dependencies
+ */
+import { URL } from 'types';
+
+export default ( args: QueryArgs, url: URL ): URL => {
 	if ( 'object' !== typeof args ) {
 		throw new Error( 'addQueryArgs expects the first argument to be an object.' );
 	}
@@ -33,4 +35,4 @@ export default function( args, url ) {
 	} );
 
 	return urlModule.format( updatedUrlObject );
-}
+};
