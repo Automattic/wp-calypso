@@ -308,8 +308,8 @@ export default class SignupFlowController {
 		*/
 		if (
 			'onboarding' === this._flowName &&
-			'passwordless' === abtest( 'passwordlessSignup' ) &&
-			get( step, 'isPasswordlessSignupForm' )
+			get( step, 'isPasswordlessSignupForm' ) &&
+			'passwordless' === abtest( 'passwordlessSignup' )
 		) {
 			this._processingSteps.delete( step.stepName );
 			analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', {
