@@ -67,21 +67,41 @@ const getCreditCardSummary = (
 	type: string,
 	digits?: Props[ 'lastDigits' ]
 ) => {
-	const supportedTypes = {
-		'american express': translate( 'American Express' ),
-		amex: translate( 'American Express' ),
-		diners: translate( 'Diners Club' ),
-		discover: translate( 'Discover' ),
-		jcb: translate( 'JCB' ),
-		mastercard: translate( 'Mastercard' ),
-		unionpay: translate( 'UnionPay' ),
-		visa: translate( 'VISA' ),
-	};
+	let displayType: string;
+	switch ( type && type.toLocaleLowerCase() ) {
+		case 'american express':
+		case 'amex':
+			displayType = translate( 'American Express' );
+			break;
 
-	const displayType =
-		( supportedTypes as typeof supportedTypes & { [ k: string ]: undefined } )[
-			type && type.toLowerCase()
-		] || type;
+		case 'diners':
+			displayType = translate( 'Diners Club' );
+			break;
+
+		case 'discover':
+			displayType = translate( 'Discover' );
+			break;
+
+		case 'jcb':
+			displayType = translate( 'JCB' );
+			break;
+
+		case 'mastercard':
+			displayType = translate( 'Mastercard' );
+			break;
+
+		case 'unionpay':
+			displayType = translate( 'UnionPay' );
+			break;
+
+		case 'visa':
+			displayType = translate( 'VISA' );
+			break;
+
+		default:
+			displayType = type;
+	}
+
 	if ( ! digits ) {
 		return displayType;
 	}
