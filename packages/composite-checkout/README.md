@@ -85,7 +85,7 @@ Here is a very simple example of using the `Checkout` component with default opt
 
 ```js
 import React, { useState } from 'react';
-import Checkout from 'composite-checkout';
+import { Checkout } from '@automattic/composite-checkout';
 import { formatValueForCurrency } from 'composite-checkout/wpcom';
 
 const initialItems = [
@@ -157,13 +157,14 @@ The following bigger example demonstrates a checkout page using many of the opti
 
 ```js
 import React, { useState } from 'react';
-import Checkout, {
+import {
+	Checkout,
 	useCheckoutLineItems,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
-} from 'composite-checkout';
+} from '@automattic/composite-checkout';
 import {
 	PlanLengthSelector,
 	formatValueForCurrency,
