@@ -10,48 +10,36 @@ import './style.scss';
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
-	const editPostHeaderInception = setInterval(
-		() => {
-			const closeButton = document.querySelector( '.edit-post-fullscreen-mode-close__toolbar a' );
+	const editPostHeaderInception = setInterval( () => {
+		// cycle through interval until header toolbar is found
+		const toolbar = document.querySelector( '.edit-post-header__toolbar' );
 
-			if ( ! closeButton ) {
-				// no close Button in window mode, lets create one
-				const toolbar = document.querySelector( '.edit-post-header-toolbar' );
-				const buttonWrapper = document.createElement( 'a' );
-				buttonWrapper.className = 'edit-post-fullscreen-mode-close__toolbar';
-				const placeholderButton = document.createElement( 'a' );
-				buttonWrapper.prepend( placeholderButton );
-				toolbar.prepend( buttonWrapper );
-				return;
-			}
-			clearInterval( editPostHeaderInception );
+		if ( ! toolbar ) {
+			return;
+		}
+		clearInterval( editPostHeaderInception );
 
-			// When closing Template CPT (e.g. header) to navigate back to parent page.
-			if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
-				const newCloseButton = document.createElement( 'a' );
-				newCloseButton.href = closeButtonUrl;
-				newCloseButton.innerHTML = closeButtonLabel;
-				newCloseButton.className = 'components-button components-icon-button is-button is-default';
-				newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
+		// add components toolbar with override class name (original will be hidden)
+		const componentsToolbar = document.createElement( 'div' );
+		componentsToolbar.className =
+			'components-toolbar edit-post-fullscreen-mode-close__toolbar edit-post-fullscreen-mode-close__toolbar__override';
+		toolbar.prepend( componentsToolbar );
 
-				const parentContainer = document.querySelector(
-					'.edit-post-fullscreen-mode-close__toolbar'
-				);
-				parentContainer.replaceChild( newCloseButton, closeButton );
-			} else if ( 'page' === editorPostType ) {
-				const newCloseButton = document.createElement( 'a' );
-				newCloseButton.href = 'edit.php?post_type=page';
-				newCloseButton.innerHTML = __( 'Back to Page List' );
-				newCloseButton.className = 'components-button components-icon-button is-button is-default';
-				newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
+		// create custom close button and append to components toolbar
+		const newCloseButton = document.createElement( 'a' );
+		// When closing Template CPT (e.g. header) to navigate back to parent page.
+		if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
+			newCloseButton.href = closeButtonUrl;
+			newCloseButton.innerHTML = closeButtonLabel;
+			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
+		} else if ( 'page' === editorPostType ) {
+			newCloseButton.href = 'edit.php?post_type=page';
+			const newLabel = __( 'Back to Page List' );
+			newCloseButton.innerHTML = newLabel;
+			newCloseButton.setAttribute( 'aria-label', newLabel );
+		}
 
-				const parentContainer = document.querySelector(
-					'.edit-post-fullscreen-mode-close__toolbar'
-				);
-				parentContainer.replaceChild( newCloseButton, closeButton );
-			}
-		},
-		// set short delay to ensure back button added after + add block button
-		50
-	);
+		newCloseButton.className = 'components-button components-icon-button is-button is-default';
+		componentsToolbar.prepend( newCloseButton );
+	} );
 } );
