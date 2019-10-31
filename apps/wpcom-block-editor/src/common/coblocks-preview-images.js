@@ -8,10 +8,14 @@ const blocksToFilter = [ 'coblocks/masonry-gallery', 'coblocks/gallery-stacked',
 const isSimpleSite = !! window.wpcomGutenberg.pluginVersion;
 
 function updateUrl( url, version ) {
-	const updatedPath = new URL( url ).pathname.replace(
-		/coblocks\/dist/,
-		`coblocks/${ version }/dist`
-	);
+	let updatedPath;
+
+	try {
+		updatedPath = new URL( url ).pathname.replace( /coblocks\/dist/, `coblocks/${ version }/dist` );
+	} catch ( e ) {
+		return false;
+	}
+
 	return `https://s0.wp.com${ updatedPath }`;
 }
 
