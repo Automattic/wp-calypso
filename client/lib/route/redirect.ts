@@ -1,10 +1,9 @@
-/** @format */
 /**
- * Internal dependencies
+ * External dependencies
  */
 import page from 'page';
 
-export default function redirect( path ) {
+export function redirect( path: string ): void {
 	if ( process.env.NODE_ENV === 'development' ) {
 		throw 'route.redirect() is deprecated, use page.redirect()';
 	}
