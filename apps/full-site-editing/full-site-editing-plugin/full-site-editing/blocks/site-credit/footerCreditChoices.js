@@ -6,17 +6,19 @@
  */
 import { Icon } from '@wordpress/components';
 
-const CreditTextRenderer = ( { label } ) => <span>{ label }</span>;
-const CreditIconRenderer = props => <Icon { ...props } />;
-
 export const creditOptions = fullSiteEditing.footerCreditOptions;
 
 export const RenderedCreditChoice = ( { choice } ) => {
 	const selection = creditOptions.find( ( { value } ) => value === choice );
-	if ( selection ) {
-		const { renderType, renderProps, label } = selection;
-		const renderer = renderType === 'icon' ? CreditIconRenderer : CreditTextRenderer;
-		return renderer( { label, ...renderProps } );
+	if ( ! selection ) {
+		return null;
 	}
-	return null;
+
+	const { renderType, renderProps, label } = selection;
+	// Allows label to be overriden by renderProps if needed.
+	const props = { label, ...renderProps };
+	if ( 'icon' === renderType ) {
+		return <Icon { ...props } />;
+	}
+	return <span> { props.label } </span>;
 };
