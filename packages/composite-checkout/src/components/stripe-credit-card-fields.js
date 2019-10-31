@@ -12,7 +12,7 @@ import Field from './field';
 import GridRow from './grid-row';
 import Button from './button';
 import { useLocalize } from '../lib/localize';
-import { useStripe, createStripePaymentMethod } from '../lib/stripe';
+import { useStripe, createStripePaymentMethod, confirmStripePaymentIntent } from '../lib/stripe';
 import {
 	useCheckoutHandlers,
 	useCheckoutLineItems,
@@ -331,11 +331,21 @@ export function StripePayButton() {
 		if ( paymentData.stripeTransactionStatus === 'complete' ) {
 			onSuccess();
 		}
+		if ( paymentData.stripeTransactionStatus === 'auth' ) {
+			showStripeModalAuth( {
+				stripeConfiguration,
+				response: paymentData.stripeTransactionAuthData,
+			} ).catch( error => {
+				onFailure( error.stripeError || error.message );
+			} );
+		}
 	}, [
 		onSuccess,
 		onFailure,
 		paymentData.stripeTransactionStatus,
 		paymentData.stripeTransactionError,
+		paymentData.stripeTransactionAuthData,
+		stripeConfiguration,
 		localize,
 	] );
 
@@ -428,6 +438,17 @@ async function submitStripePayment( {
 	} catch ( error ) {
 		onFailure( error );
 		return;
+	}
+}
+
+async function showStripeModalAuth( { stripeConfiguration, response } ) {
+	const authenticationResponse = await confirmStripePaymentIntent(
+		stripeConfiguration,
+		response.message.payment_intent_client_secret
+	);
+
+	if ( authenticationResponse ) {
+		// TODO: what do we do here?
 	}
 }
 
