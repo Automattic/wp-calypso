@@ -18,7 +18,7 @@ import {
 	cancelTransferRequest,
 	fetchWapiDomainInfo,
 	requestTransferCode,
-} from 'lib/upgrades/actions';
+} from 'lib/domains/wapi-domain-info/actions';
 import notices from 'notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';

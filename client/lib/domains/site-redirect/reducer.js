@@ -17,7 +17,7 @@ import {
 	SITE_REDIRECT_UPDATE,
 	SITE_REDIRECT_UPDATE_COMPLETED,
 	SITE_REDIRECT_UPDATE_FAILED,
-} from 'lib/upgrades/action-types';
+} from './action-types';
 
 function updateStateForSite( state, siteId, data ) {
 	const command = state[ siteId ] ? '$merge' : '$set';

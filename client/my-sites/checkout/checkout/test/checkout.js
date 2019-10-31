@@ -17,7 +17,7 @@ import { Checkout } from '../';
 import { hasPendingPayment } from 'lib/cart-values';
 import { isEnabled } from 'config';
 
-jest.mock( 'lib/upgrades/actions', () => ( {
+jest.mock( 'lib/transaction/actions', () => ( {
 	resetTransaction: jest.fn(),
 } ) );
 jest.mock( 'lib/signup/step-actions', () => ( {} ) );

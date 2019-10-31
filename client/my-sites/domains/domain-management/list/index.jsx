@@ -30,7 +30,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
+import { setPrimaryDomain } from 'state/sites/domains/actions';
 import DomainListNotice from './domain-list-notice';
 import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,

@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { map } from 'lodash';
+import { map, noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -18,6 +18,7 @@ import {
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
+import { requestSite } from 'state/sites/actions';
 
 /**
  * Module vars
@@ -141,3 +142,17 @@ export function togglePrivacy( siteId, domain ) {
 		domain,
 	};
 }
+
+export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch => {
+	debug( 'setPrimaryDomain', siteId, domainName );
+	return wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
+		if ( error ) {
+			return onComplete( error, data );
+		}
+
+		return dispatch( fetchSiteDomains( siteId ) ).then( () => {
+			onComplete( null, data );
+			dispatch( requestSite( siteId ) );
+		} );
+	} );
+};
