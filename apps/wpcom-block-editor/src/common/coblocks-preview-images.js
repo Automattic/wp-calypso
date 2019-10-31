@@ -4,79 +4,46 @@
 import { addFilter } from '@wordpress/hooks';
 import { get } from 'lodash';
 
-function getCoBlocksMasonryExampleImages( settings, name ) {
-	if ( 'coblocks/gallery-masonry' !== name ) {
-		return settings;
-	}
-
-	return {
-		...settings,
-		example: {
-			attributes: {
-				...settings.attributes,
-				images: [
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[0]' ) },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[1]' ) },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[2]' ) },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[3]' ) },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[4]' ) },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[5]' ) },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[6]' ) },
-				],
-			},
-		},
-	};
-}
-
-function getCoBlocksStackedExampleImages( settings, name ) {
-	if ( 'coblocks/gallery-stacked' !== name ) {
-		return settings;
-	}
-
-	return {
-		...settings,
-		example: {
-			attributes: {
-				...settings.attributes,
-				images: [
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[5]' ) },
-					{ url: get( 'wpcomGutenberg', 'coblocksGalleryImages[1]' ) },
-				],
-			},
-		},
-	};
-}
-
-function getCoBlocksLogosExampleImages( settings, name ) {
-	if ( 'coblocks/logos' !== name ) {
-		return settings;
-	}
-
-	return {
-		...settings,
-		example: {
-			attributes: {
-				...settings.attributes,
-				images: [
-					{ url: get( 'wpcomGutenberg', 'coblocksLogosImages[0]' ), width: 420 },
-					{ url: get( 'wpcomGutenberg', 'coblocksLogosImages[1]' ), width: 340 },
-				],
-			},
-		},
-	};
-}
-
+const blocksToFilter = [ 'coblocks/masonry-gallery', 'coblocks/gallery-stacked', 'coblocks/logos' ];
 const isSimpleSite = !! window.wpcomGutenberg.pluginVersion;
+
+function updateUrl( url, version ) {
+	const updatedPath = new URL( url ).pathname.replace(
+		/coblocks\/dist/,
+		`coblocks/${ version }/dist`
+	);
+	return `https://s0.wp.com${ updatedPath }`;
+}
+
+function getCoBlocksExampleImages( settings, name ) {
+	if (
+		! blocksToFilter.includes( name ) ||
+		! get( 'window', 'wpcomGutenberg', 'coblocksVersion' )
+	) {
+		return settings;
+	}
+
+	const images = settings.example.attributes.images.map( image => {
+		return {
+			...image,
+			url: image.url ? updateUrl( image.url, window.wpcomGutenberg.coblocksVersion ) : false,
+		};
+	} );
+
+	return {
+		...settings,
+		example: {
+			...settings.example,
+			attributes: {
+				...settings.example.attributes,
+				images,
+			},
+		},
+	};
+}
+
 if ( isSimpleSite ) {
-	addFilter(
-		'blocks.registerBlockType',
-		'coblocks/gallery-masonry',
-		getCoBlocksMasonryExampleImages
-	);
-	addFilter(
-		'blocks.registerBlockType',
-		'coblocks/gallery-stacked',
-		getCoBlocksStackedExampleImages
-	);
-	addFilter( 'blocks.registerBlockType', 'coblocks/logos', getCoBlocksLogosExampleImages );
+	addFilter( 'blocks.registerBlockType', 'coblocks/gallery-masonry', getCoBlocksExampleImages );
+	addFilter( 'blocks.registerBlockType', 'coblocks/gallery-stacked', getCoBlocksExampleImages );
+	addFilter( 'blocks.registerBlockType', 'coblocks/logos', getCoBlocksExampleImages );
 }
