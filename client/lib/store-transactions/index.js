@@ -547,7 +547,3 @@ export async function getStripeConfiguration( requestArgs ) {
 	debug( 'Stripe configuration', config );
 	return config;
 }
-
-export function hasDomainDetails( transaction ) {
-	return ! isEmpty( transaction.domainDetails );
-}
