@@ -11,7 +11,7 @@ domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
 	const editPostHeaderInception = setInterval( () => {
-		// cycle through interval until header toolbar is found
+		// Cycle through interval until header toolbar is found.
 		const toolbar = document.querySelector( '.edit-post-header__toolbar' );
 
 		if ( ! toolbar ) {
@@ -19,13 +19,13 @@ domReady( () => {
 		}
 		clearInterval( editPostHeaderInception );
 
-		// add components toolbar with override class name (original will be hidden in ./style.scss)
+		// Add components toolbar with override class name (original will be hidden in ./style.scss).
 		const componentsToolbar = document.createElement( 'div' );
 		componentsToolbar.className =
 			'components-toolbar edit-post-fullscreen-mode-close__toolbar edit-post-fullscreen-mode-close__toolbar__override';
 		toolbar.prepend( componentsToolbar );
 
-		// create custom close button and append to components toolbar
+		// Create custom close button and append to components toolbar.
 		const newCloseButton = document.createElement( 'a' );
 		// When closing Template CPT (e.g. header) to navigate back to parent page.
 		if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
