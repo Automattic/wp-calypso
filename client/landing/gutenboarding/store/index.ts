@@ -39,11 +39,7 @@ declare module '@wordpress/data' {
 }
 
 export function useOnboardingSelect() {
-	return useSelect( select => select( STORE_KEY ) );
-}
-
-export function useOnboardingState() {
-	return useOnboardingSelect().getState();
+	return useSelect( select => select( STORE_KEY ).getState() );
 }
 
 export function useOnboardingDispatch() {
