@@ -29,9 +29,10 @@ $admin-sidebar-width-collapsed: 0;
 /**
  * Hide the block UI with CSS overrides
  *
- * Ideally this would be done via JS:
- * https://github.com/WordPress/gutenberg/issues/7469
- * https://github.com/WordPress/gutenberg/pull/18173
+ * @TODO: Remove this once Gutenberg gets support for hiding block UI.
+ *
+ * @see https://github.com/WordPress/gutenberg/issues/7469
+ * @see https://github.com/WordPress/gutenberg/pull/18173
  */
 .block-editor-block-list__layout {
 	.wp-block {
