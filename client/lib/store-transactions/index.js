@@ -551,33 +551,3 @@ export async function getStripeConfiguration( requestArgs ) {
 export function hasDomainDetails( transaction ) {
 	return ! isEmpty( transaction.domainDetails );
 }
-
-export function newCardPayment( newCardDetails ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
-		newCardDetails: newCardDetails || {},
-	};
-}
-
-export function newStripeCardPayment( newCardDetails ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
-		newCardDetails: newCardDetails || {},
-	};
-}
-
-export function storedCardPayment( storedCard ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Stored',
-		storedCard: storedCard,
-	};
-}
-
-export function webPayment( newCardDetails ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_Web_Payment',
-		newCardDetails: newCardDetails || {},
-	};
-}
-
-export const fullCreditsPayment = { paymentMethod: 'WPCOM_Billing_WPCOM' };
