@@ -374,6 +374,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
+					showReCaptchaToS={ true }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
