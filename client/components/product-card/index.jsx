@@ -66,7 +66,7 @@ const ProductCard = ( {
 						</a>
 					</p>
 				) }
-				{ description }
+				{ description && <p>{ description }</p> }
 			</div>
 			{ children }
 		</Card>

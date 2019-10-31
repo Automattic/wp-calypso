@@ -55,42 +55,30 @@ export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
 };
 
-export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = (
-	<p>
-		{ translate(
-			'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
-			{
-				components: {
-					a: (
-						<a
-							href="https://jetpack.com/upgrade/backup/"
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		) }
-	</p>
+export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
+	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
+	{
+		components: {
+			a: (
+				<a
+					href="https://jetpack.com/upgrade/backup/"
+					target="_blank"
+					rel="noopener noreferrer"
+				/>
+			),
+		},
+	}
 );
-export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = (
-	<p>
-		{ translate(
-			'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
-			{
-				components: {
-					strong: <strong />,
-				},
-			}
-		) }
-	</p>
+export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = translate(
+	'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
+	{
+		components: {
+			strong: <strong />,
+		},
+	}
 );
-export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = (
-	<p>
-		{ translate(
-			'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
-		) }
-	</p>
+export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = translate(
+	'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
 );
 
 export const JETPACK_BACKUP_PRODUCT_DESCRIPTIONS = {
