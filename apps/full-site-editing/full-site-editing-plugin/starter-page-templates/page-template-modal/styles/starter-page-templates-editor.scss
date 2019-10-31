@@ -169,6 +169,7 @@ body.is-fullscreen-mode {
 		overflow: hidden;
 		background-color: #fff;
 		position: relative;
+		transform: translate3d( 0, 0, 0 ); // Fix for Safari rounded border overflow (1/2).
 
 		.template-selector-item__template-title {
 			width: 100%;
@@ -224,6 +225,7 @@ body.is-fullscreen-mode {
 		position: relative;
 		pointer-events: none;
 		opacity: 1;
+		transform: translate3d( 0, 0, 0 ); // Fix for Safari rounded border overflow (2/2).
 
 		@media screen and ( max-width: 659px ) {
 			padding-top: 120%;
