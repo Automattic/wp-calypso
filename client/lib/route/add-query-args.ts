@@ -3,11 +3,16 @@
  */
 import urlModule from 'url';
 import { pickBy } from 'lodash';
+import { Primitive } from 'utility-types';
 
 /**
  * Internal dependencies
  */
 import { URL } from 'types';
+
+interface QueryArgs {
+	[ key: string ]: Primitive;
+}
 
 export default ( args: QueryArgs, url: URL ): URL => {
 	if ( 'object' !== typeof args ) {
