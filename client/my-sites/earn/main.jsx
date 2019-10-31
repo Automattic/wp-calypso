@@ -46,7 +46,6 @@ class EarningsMain extends Component {
 	}
 
 	getFilters() {
-		const { siteSlug } = this.props;
 		const tabs = [];
 		return tabs;
 	}
@@ -151,7 +150,7 @@ class EarningsMain extends Component {
 		const component = this.getComponent( this.props.section );
 
 		const layoutTitles = {
-			ads: translate( '%(wordads)s', { args: { wordads: adsProgramName } } ),
+			ads: adsProgramName,
 			payments: translate( 'Recurring Payments' ),
 			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
