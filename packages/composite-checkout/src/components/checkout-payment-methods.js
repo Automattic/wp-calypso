@@ -32,7 +32,12 @@ export default function CheckoutPaymentMethods( {
 	if ( summary && isComplete && paymentMethod ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				<PaymentMethod { ...paymentMethod } checked={ true } summary />
+				<PaymentMethod
+					{ ...paymentMethod }
+					checked={ true }
+					summary
+					ariaLabel={ getAriaLabelForPaymentMethodSelector( paymentMethod.id, localize ) }
+				/>
 			</div>
 		);
 	}
