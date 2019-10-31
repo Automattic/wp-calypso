@@ -63,6 +63,7 @@ function createPurchaseObject( purchase ) {
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
 		refundAmount: Number( purchase.refund_amount ),
+		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
