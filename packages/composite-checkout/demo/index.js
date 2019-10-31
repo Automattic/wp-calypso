@@ -5,7 +5,7 @@ require( '@babel/polyfill' );
  */
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import Checkout, { usePaymentState } from '../src';
+import { Checkout, CheckoutProvider } from '../src';
 import { stripeKey } from './private';
 
 const initialItems = [
@@ -70,10 +70,9 @@ function handleCheckoutEvent( { type, payload }, dispatch, next ) {
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const { items, total } = useShoppingCart();
-	const [ paymentData, dispatchPaymentAction ] = usePaymentState( handleCheckoutEvent );
 
 	return (
-		<Checkout
+		<CheckoutProvider
 			locale={ 'US' }
 			items={ items }
 			total={ total }
@@ -81,9 +80,10 @@ function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			paymentData={ paymentData }
-			dispatchPaymentAction={ dispatchPaymentAction }
-		/>
+			eventHandler={ handleCheckoutEvent }
+		>
+			<Checkout />
+		</CheckoutProvider>
 	);
 }
 
