@@ -37,9 +37,9 @@ domReady( () => {
 					'.edit-post-fullscreen-mode-close__toolbar'
 				);
 				parentContainer.replaceChild( newCloseButton, closeButton );
-			} else if ( 'page' === editorPostType ) {
+			} else if ( 'page' === editorPostType && window.location.toString().includes( 'wp-admin' ) ) {
 				const newCloseButton = document.createElement( 'a' );
-				newCloseButton.href = 'edit.php?post_type=page';
+				newCloseButton.href = 'edit.php?post_type=page'; // wrong href if not using wp-admin
 				newCloseButton.innerHTML = __( 'Back to Page List' );
 				newCloseButton.className = 'components-button components-icon-button is-button is-default';
 				newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
