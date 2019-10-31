@@ -7,7 +7,7 @@ import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 /**
  * Internal dependencies
  */
-import { usePaymentMethodData } from '../index';
+import { usePaymentMethodData } from '../public-api';
 
 const StripeContext = createContext();
 

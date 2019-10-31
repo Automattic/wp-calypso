@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { usePaymentMethod } from '../index';
+import { usePaymentMethod } from '../public-api';
 
 export default function CheckoutSubmitButton( { className, isActive } ) {
 	const paymentMethod = usePaymentMethod();

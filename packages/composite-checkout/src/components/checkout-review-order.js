@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../index';
+import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../public-api';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,

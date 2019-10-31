@@ -9,7 +9,7 @@ import styled from 'styled-components';
  * Internal dependencies
  */
 import { useLocalize } from '../lib/localize';
-import { useCheckoutLineItems, usePaymentMethodData } from '../index';
+import { useCheckoutLineItems, usePaymentMethodData } from '../public-api';
 import GridRow from './grid-row';
 import Field from './field';
 

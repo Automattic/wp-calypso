@@ -3,40 +3,30 @@
  */
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import styled, { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import localizeFactory, { useLocalize } from '../lib/localize';
-import { CheckoutProvider } from './checkout-provider';
+import { useLocalize } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
 import { usePaymentMethodData, usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
-import theme from '../theme';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
 
 export default function Checkout( {
-	locale,
-	items,
-	total,
 	availablePaymentMethods,
-	dispatchPaymentAction,
-	paymentData,
-	onSuccess,
-	onFailure,
-	successRedirectUrl,
-	failureRedirectUrl,
 	ReviewContent,
 	UpSell,
 	CheckoutHeader,
 	className,
 } ) {
-	const localize = localizeFactory( locale );
+	const localize = useLocalize();
 	const [ stepNumber, setStepNumber ] = useState( 1 );
+	const [ , dispatchPaymentAction ] = usePaymentMethodData();
 	const changeStep = useCallback(
 		nextStep => {
 			setStepNumber( prevStep => {
@@ -51,65 +41,42 @@ export default function Checkout( {
 	);
 
 	return (
-		<ThemeProvider theme={ theme }>
-			<CheckoutProvider
-				dispatchPaymentAction={ dispatchPaymentAction }
-				paymentData={ paymentData }
-				localize={ localize }
-				items={ items }
-				total={ total }
-				onSuccess={ onSuccess }
-				onFailure={ onFailure }
-				successRedirectUrl={ successRedirectUrl }
-				failureRedirectUrl={ failureRedirectUrl }
-			>
-				<Container className={ joinClasses( [ className, 'checkout' ] ) }>
-					<MainContent>
-						<div>
-							{ CheckoutHeader ? (
-								<CheckoutHeader />
-							) : (
-								<PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle>
-							) }
-						</div>
-						<PaymentMethodsStep
-							availablePaymentMethods={ availablePaymentMethods }
-							setStepNumber={ changeStep }
-							isActive={ stepNumber === 1 }
-							isComplete={ stepNumber > 1 }
-						/>
-						<BillingDetailsStep
-							setStepNumber={ changeStep }
-							isActive={ stepNumber === 2 }
-							isComplete={ stepNumber > 2 }
-						/>
-						<ReviewOrderStep
-							setStepNumber={ changeStep }
-							isActive={ stepNumber === 3 }
-							isComplete={ stepNumber > 3 }
-							ReviewContent={ ReviewContent }
-						/>
-						<CheckoutSubmitButton isActive={ stepNumber === 3 } />
-						{ UpSell && <UpSell /> }
-					</MainContent>
-				</Container>
-			</CheckoutProvider>
-		</ThemeProvider>
+		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
+			<MainContent>
+				<div>
+					{ CheckoutHeader ? (
+						<CheckoutHeader />
+					) : (
+						<PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle>
+					) }
+				</div>
+				<PaymentMethodsStep
+					availablePaymentMethods={ availablePaymentMethods }
+					setStepNumber={ changeStep }
+					isActive={ stepNumber === 1 }
+					isComplete={ stepNumber > 1 }
+				/>
+				<BillingDetailsStep
+					setStepNumber={ changeStep }
+					isActive={ stepNumber === 2 }
+					isComplete={ stepNumber > 2 }
+				/>
+				<ReviewOrderStep
+					setStepNumber={ changeStep }
+					isActive={ stepNumber === 3 }
+					isComplete={ stepNumber > 3 }
+					ReviewContent={ ReviewContent }
+				/>
+				<CheckoutSubmitButton isActive={ stepNumber === 3 } />
+				{ UpSell && <UpSell /> }
+			</MainContent>
+		</Container>
 	);
 }
 
 Checkout.propTypes = {
 	className: PropTypes.string,
-	locale: PropTypes.string.isRequired,
-	items: PropTypes.array.isRequired,
-	total: PropTypes.object.isRequired,
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
-	paymentData: PropTypes.object.isRequired,
-	dispatchPaymentAction: PropTypes.func.isRequired,
-	onSuccess: PropTypes.func.isRequired,
-	onFailure: PropTypes.func.isRequired,
-	successRedirectUrl: PropTypes.string.isRequired,
-	failureRedirectUrl: PropTypes.string.isRequired,
 	ReviewContent: PropTypes.elementType,
 	UpSell: PropTypes.elementType,
 	CheckoutHeader: PropTypes.elementType,
