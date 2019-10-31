@@ -39,7 +39,7 @@ domReady( () => {
 			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
 		} else if ( 'page' === editorPostType ) {
 			newCloseButton.href = 'edit.php?post_type=page';
-			const newLabel = __( 'Back to Page List' );
+			const newLabel = __( 'Back to Pages' );
 			newCloseButton.innerHTML = newLabel;
 			newCloseButton.setAttribute( 'aria-label', newLabel );
 		}
