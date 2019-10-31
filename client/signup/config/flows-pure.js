@@ -98,7 +98,15 @@ export function generateFlows( {
 		},
 
 		'design-first': {
-			steps: [ 'template-first-themes', 'user', 'domains', 'plans' ],
+			steps: [
+				'template-first-themes',
+				'user',
+				'site-type',
+				'site-topic',
+				'site-title',
+				'domains',
+				'plans',
+			],
 			destination: getChecklistThemeDestination,
 			description: 'Start with one of our template-first (Gutenberg) themes.',
 			lastModified: '2019-10-16',
