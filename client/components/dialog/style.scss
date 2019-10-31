@@ -48,11 +48,6 @@
 		bottom: 0;
 	}
 
-	// Buttons within sentences sit on the text baseline.
-	p .button {
-		vertical-align: baseline;
-	}
-
 	h1 {
 		color: var( --color-neutral-70 );
 		font-size: 1.375em;

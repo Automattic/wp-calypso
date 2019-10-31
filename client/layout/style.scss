@@ -28,11 +28,6 @@
 	box-sizing: border-box;
 	overflow: hidden;
 
-	// Buttons within sentences sit on the text baseline.
-	p .button {
-		vertical-align: baseline;
-	}
-
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
 		padding-left: 32px;
