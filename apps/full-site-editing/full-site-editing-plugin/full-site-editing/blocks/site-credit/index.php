@@ -14,11 +14,7 @@ namespace A8C\FSE;
  * @return string
  */
 function render_site_credit_block( $attributes ) {
-	$align = 'aligncenter';
-	if ( isset( $attributes['align'] ) ) {
-		$align = empty( $attributes['align'] ) ? '' : ' align' . $attributes['align'];
-	}
-	$class = 'site-info ' . $align;
+	$class = get_credit_block_classes( $attributes );
 
 	ob_start();
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -36,6 +32,32 @@ function render_site_credit_block( $attributes ) {
 
 	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	return ob_get_clean();
+}
+
+/**
+ * Gets the class names to wrap around the rendered credit block.
+ *
+ * For example, adds the 'alignfull' class if the block is set to align full.
+ *
+ * @param array $attributes An associative array of block attributes.
+ * @return string The string of classes to add to the block.
+ */
+function get_credit_block_classes( $attributes ) {
+	$class = 'site-info';
+	// Add text Alignment classes.
+	if ( isset( $attributes['textAlign'] ) ) {
+		$class .= ' has-text-align-' . $attributes['textAlign'];
+	} else {
+		$class .= ' has-text-align-center';
+	}
+
+	// Add Block Alignment classes.
+	if ( isset( $attributes['align'] ) ) {
+		$class .= ' align' . $attributes['align'];
+	} else {
+		$class .= ' alignwide';
+	}
+	return $class;
 }
 
 /**

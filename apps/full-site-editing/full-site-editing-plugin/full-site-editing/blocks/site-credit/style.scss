@@ -6,15 +6,15 @@
 	font-size: 14px;
 	color: gray;
 
-	// Justify all elements based on data alignments.
-	[data-align='left'] & {
+	// Justify all elements based on text alignment.
+	&.has-text-align-center {
+		justify-content: center;
+	}
+	&.has-text-align-left {
 		justify-content: flex-start;
 	}
-	[data-align='right'] & {
+	&.has-text-align-right {
 		justify-content: flex-end;
-	}
-	[data-align='center'] & {
-		justify-content: center;
 	}
 
 	.site-name {

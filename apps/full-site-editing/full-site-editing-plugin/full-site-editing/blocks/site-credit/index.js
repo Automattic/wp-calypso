@@ -17,7 +17,7 @@ registerBlockType( 'a8c/site-credit', {
 	icon: 'wordpress-alt',
 	category: 'layout',
 	supports: {
-		align: [ 'right', 'center', 'left' ],
+		align: [ 'wide', 'full' ],
 		html: false,
 		multiple: false,
 		reusable: false,
@@ -25,6 +25,10 @@ registerBlockType( 'a8c/site-credit', {
 	},
 	attributes: {
 		align: {
+			type: 'string',
+			default: 'wide',
+		},
+		textAlign: {
 			type: 'string',
 			default: 'center',
 		},
