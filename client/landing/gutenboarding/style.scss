@@ -7,12 +7,6 @@ $admin-sidebar-width: 0;
 $admin-sidebar-width-big: 0;
 $admin-sidebar-width-collapsed: 0;
 
-// Gutenberg resets
-// Not an actual "CSS reset", but an opiniated base style for HTML elements in Gutenberg views.
-:root {
-	@include reset;
-}
-
 // Gutenberg styles
 @import '~@wordpress/edit-post/src/style.scss';
 @import '~@wordpress/block-editor/src/style.scss';
