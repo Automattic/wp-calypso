@@ -4,6 +4,7 @@
  * External dependencies
  */
 import domReady from '@wordpress/dom-ready';
+import { __ } from '@wordpress/i18n';
 
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
@@ -39,7 +40,7 @@ domReady( () => {
 			} else if ( 'page' === editorPostType ) {
 				const newCloseButton = document.createElement( 'a' );
 				newCloseButton.href = 'edit.php?post_type=page';
-				newCloseButton.innerHTML = 'Back to Pages';
+				newCloseButton.innerHTML = __( 'Back to Page List' );
 				newCloseButton.className = 'components-button components-icon-button is-button is-default';
 				newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
 
@@ -49,7 +50,7 @@ domReady( () => {
 				parentContainer.replaceChild( newCloseButton, closeButton );
 			}
 		},
-		// set short delay to ensure back button added after + add block button (can we listen for this?)
+		// set short delay to ensure back button added after + add block button
 		50
 	);
 } );
