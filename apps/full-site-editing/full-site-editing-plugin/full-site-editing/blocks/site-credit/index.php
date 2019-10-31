@@ -50,9 +50,11 @@ function get_credit_element() {
 	$credit_option = get_option( 'footercredit' );
 
 	/**
-	 * Filter a8c_fse_get_footer_credit_link
+	 * Filter the link which gives credit to whoever powers the site.
 	 *
-	 * Use this filter to change the footer credit link. Defaults to wordpress.org.
+	 * Defaults to wordpress.org.
+	 *
+	 * @param string The URL to filter.
 	 */
 	$credit_link = apply_filters( 'a8c_fse_get_footer_credit_link', 'https://wordpress.org/' );
 
