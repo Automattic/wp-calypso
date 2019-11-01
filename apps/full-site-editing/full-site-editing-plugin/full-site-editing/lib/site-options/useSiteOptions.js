@@ -12,10 +12,6 @@ import { decodeEntities } from '@wordpress/html-entities';
  */
 import { usePrevious } from './usePrevious';
 
-// createErrorNotice
-// isSelected
-// shouldUpdateSiteOption
-// setAttributes
 export function useSiteOptions(
 	siteOption,
 	inititalOption,
