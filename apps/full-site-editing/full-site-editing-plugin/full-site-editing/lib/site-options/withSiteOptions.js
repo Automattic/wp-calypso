@@ -10,6 +10,50 @@ import { useSelect, useDispatch } from '@wordpress/data';
  */
 import { useSiteOptions } from './useSiteOptions';
 
+/**
+ * Higher Order Component used to inject site options.
+ *
+ * The option value is requested from the WordPress API. Note that arbitrary
+ * options can only be retrieved if they have been registered as site settings.
+ *
+ * Updates will be saved to the database when the post is saved or published.
+ *
+ * In the component, every specified `optionName` will be a prop which maps to
+ * an object with the keys `value`, `updateValue`, and `loaded`. `value`
+ * contains the actual value of the WordPress option, and `updateValue` can be
+ * used to update the option. `updateValue` will re-render the component with
+ * the new `value`.
+ *
+ * @param {Object} options An object of site options to retrieve. Keys should be
+ *                         option names you wish to have locally. They can be
+ *                         named whatever makes sense in the context of your
+ *                         component. Any key's value should be another object
+ *                         whih contains `optionName`, the actual name of the
+ *                         WordPress option to fetch, and `defaultValue`, the
+ *                         value to use while the option is fetching.
+ *
+ * @return {Component} The higher order component.
+ *
+ * @example
+ * ```js
+ * function Component( { mySiteOption } ) {
+ *   const { value, updateValue } = mySiteOption;
+ *   // `updateValue( 'foo' )` the component will re-render if called.
+ *   return <span>{ value }</span>;
+ * }
+ *
+ * export default compose( [
+ *   withSiteOptions( {
+ *     mySiteOption: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
+ * 	} ),
+ * ] )( Component );
+ * ```
+ * In the above example, we call withSiteOptions with an object mapping our name
+ * for the option to some information about it. In particular, optionName needs
+ * to match the name of the option in WordPress, and defaultValue is used while
+ * the option is loading from the API.
+ *
+ */
 export const withSiteOptions = options =>
 	createHigherOrderComponent(
 		WrappedComponent =>
