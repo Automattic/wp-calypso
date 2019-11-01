@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, overSome, some } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -31,8 +31,8 @@ import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
-import { injectStripe } from 'react-stripe-elements';
-import { setStripeObject } from 'lib/upgrades/actions';
+import { withStripeProps } from 'lib/stripe';
+import { setStripeObject } from 'lib/transaction/actions';
 
 function isFormSubmitting( transactionStep ) {
 	if ( ! transactionStep ) {
@@ -83,6 +83,8 @@ class CreditCardPaymentBox extends React.Component {
 		onSubmit: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 		stripe: PropTypes.object,
+		isStripeLoading: PropTypes.bool,
+		stripeLoadingError: PropTypes.object,
 		stripeConfiguration: PropTypes.object,
 	};
 
@@ -186,7 +188,17 @@ class CreditCardPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart, cards, countriesList, initialCard, transaction, stripe, translate } = this.props;
+		const {
+			cart,
+			cards,
+			countriesList,
+			initialCard,
+			transaction,
+			stripe,
+			isStripeLoading,
+			stripeLoadingError,
+			translate,
+		} = this.props;
 
 		return (
 			<React.Fragment>
@@ -197,6 +209,8 @@ class CreditCardPaymentBox extends React.Component {
 						initialCard={ initialCard }
 						transaction={ transaction }
 						stripe={ stripe }
+						isStripeLoading={ isStripeLoading }
+						stripeLoadingError={ stripeLoadingError }
 						translate={ translate }
 					/>
 
@@ -221,5 +235,5 @@ class CreditCardPaymentBox extends React.Component {
 
 export { CreditCardPaymentBox };
 
-const InjectedStripeCreditCardPaymentBox = injectStripe( CreditCardPaymentBox );
+const InjectedStripeCreditCardPaymentBox = withStripeProps( CreditCardPaymentBox );
 export default InjectedStripeCreditCardPaymentBox;

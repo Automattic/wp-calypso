@@ -18,8 +18,9 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup.is-crowdsignal {
 	// Crowdsignal color palette
-	--color-link: #384869;
-	--color-text: #384869;
+	--color-link: #001d2d;
+	--color-text: #001d2d;
+	--color-link-hover: #4ccee4;
 
 	.formatted-header {
 		color: var( --color-text );
@@ -49,10 +50,11 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal {
 	// Crowdsignal color palette
-	--color-accent: #fb5457;
-	--color-crowdsignal: #384869;
-	--color-link: #384869;
-	--color-text: #384869;
+	--color-accent: #bd4682;
+	--color-accent-dark: #8d2259;
+	--color-crowdsignal: #001d2d;
+	--color-link: #001d2d;
+	--color-text: #001d2d;
 
 	color: var( --color-text );
 	font-family: 'Muli', $sans;
@@ -63,6 +65,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		box-sizing: border-box;
 		font-family: 'Muli', $sans;
 		padding: 12px 20px;
+
+		&.is-primary {
+			border: 1px solid var( --color-accent-dark );
+		}
 	}
 }
 
@@ -85,8 +91,8 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 
 	@include breakpoint( '>660px' ) {
-		background-color: var( --color-white );
-	    box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+		background-color: var( --color-surface );
+	    box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 		display: block;
 		margin: 0 auto;
 		padding: 35px 55px;
@@ -103,6 +109,8 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		font-weight: normal;
 		letter-spacing: 0.5px;
 		width: 100%;
+		// !important is necessary to get the shadows to match on all buttons
+		box-shadow: 0 2px 3px 0 var( --color-neutral-10 ) !important;
 	}
 
 	.card {
@@ -124,6 +132,18 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 	.signup-form__social {
 		padding: 0;
+
+		p {
+			color: var( --color-text );
+		}
+
+		a {
+			color: var( --color-link );
+
+			&:hover {
+				color: var( --color-link-hover );
+			}
+		}
 	}
 }
 
@@ -173,7 +193,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 .signup-form__crowdsignal-card-subheader {
 	display: none;
 	margin: 0 auto;
-	padding: 35px 0 75px;
+	padding: 20px 0 50px;
 	text-align: center;
 
 	@include breakpoint( '>660px' ) {
@@ -187,9 +207,9 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .button.signup-form__crowdsignal-show-form {
 	background-color: var( --color-crowdsignal );
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	text-align: center;
-	margin-bottom: 0;
+	margin: 20px 0 0;
 
 	@include breakpoint( '>660px' ) {
 		display: none;
@@ -255,7 +275,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	padding: 0;
 
 	&:hover {
-		color: var( --color-text );
+		color: var( --color-link-hover );
 	}
 
 	.signup-form__crowdsignal-back-button-wrapper.is-first-step & {
@@ -282,7 +302,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 
 .signup-form__crowdsignal-tos {
 	text-align: center;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	margin-top: 20px;
 	padding: 0 20px;
 

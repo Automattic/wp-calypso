@@ -93,7 +93,7 @@ class MailChimpSetup extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// No state changes while doing request.
 		if ( nextProps.isBusy ) {
 			return;

@@ -6,15 +6,7 @@
 import domReady from '@wordpress/dom-ready';
 
 domReady( () => {
-	// We only want this override when closing Template Part CPT (e.g. header) to navigate back to parent page.
-	if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
-		return;
-	}
-
-	// Keep the default URL if the override hasn't been provided by the plugin.
-	if ( ! fullSiteEditing.closeButtonUrl ) {
-		return;
-	}
+	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
 	const editPostHeaderInception = setInterval( () => {
 		const closeButton = document.querySelector( '.edit-post-fullscreen-mode-close__toolbar a' );
@@ -24,8 +16,16 @@ domReady( () => {
 		}
 		clearInterval( editPostHeaderInception );
 
-		if ( fullSiteEditing.closeButtonUrl ) {
-			closeButton.href = fullSiteEditing.closeButtonUrl;
+		// When closing Template CPT (e.g. header) to navigate back to parent page.
+		if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
+			const newCloseButton = document.createElement( 'a' );
+			newCloseButton.href = closeButtonUrl;
+			newCloseButton.innerHTML = closeButtonLabel;
+			newCloseButton.className = 'components-button components-icon-button is-button is-default';
+			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
+
+			const parentContainer = document.querySelector( '.edit-post-fullscreen-mode-close__toolbar' );
+			parentContainer.replaceChild( newCloseButton, closeButton );
 		}
 	} );
 } );

@@ -1,5 +1,5 @@
 .masterbar__oauth-client {
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 
 	nav {
 		display: flex;
@@ -89,11 +89,10 @@
 
 .crowdsignal {
 	// Crowdsignal color palette
-	--color-accent: #fb5457;
-	--color-button-primary-background-hover: #fb5457;
-	--color-crowdsignal: #384869;
-	--color-link: #384869;
-	--color-text: #384869;
+	--color-accent: #bd4682;
+	--color-crowdsignal: #001d2d;
+	--color-link: #001d2d;
+	--color-text: #001d2d;
 
 	background: #f2f2f2;
 	color: var( --color-text );
@@ -161,8 +160,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --color-white );
-				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+				background-color: var( --color-surface );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				padding: 35px 55px 20px;
 				width: 550px;
@@ -274,8 +273,8 @@
 			margin: 0;
 
 			&:disabled {
-				background-color: var( --color-neutral-50 );
-				color: var( --color-white );
+				background-color: var( --color-neutral-5 );
+				color: var( --color-text-inverted );
 			}
 		}
 
@@ -297,8 +296,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --color-white );
-				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+				background-color: var( --color-surface );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				max-width: 550px;
 				padding: 40px 55px 30px;
@@ -316,7 +315,10 @@
 		.social-buttons__button {
 			border: 1px solid #cecfd1;
 			border-radius: 0;
-			margin-bottom: 40px;
+
+			&:last-of-type {
+				margin-bottom: 40px;
+			}
 		}
 
 		.translator-invite {
@@ -422,12 +424,17 @@
 		line-height: 83px;
 		margin: 0 auto;
 		z-index: 100;
+	}
 
-		nav {
-			box-sizing: border-box;
-			max-width: 1500px;
-			margin-left: auto;
-			margin-right: auto;
+	.masterbar__oauth-client nav {
+		box-sizing: border-box;
+		max-width: 1500px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 13px;
+		padding-right: 13px;
+
+		@include breakpoint( '>480px' ) {
 			padding-left: 55px;
 			padding-right: 13px;
 		}
@@ -449,10 +456,18 @@
 			color: #999;
 			font-size: 0.9em;
 			font-weight: bold;
-			padding: 32px;
+			padding: 32px 10px;
 			text-decoration: none;
 			text-transform: uppercase;
+
+			@include breakpoint( '>480px' ) {
+				padding: 32px;
+			}
 		}
+	}
+
+	.layout__content {
+		padding-top: 85px;
 	}
 
 	.button.is-primary {
@@ -531,9 +546,26 @@
 	}
 
 	.login__form-action,
-	.login__social-buttons,
 	.magic-login__form-action {
 		text-align: center;
+	}
+
+	.login__social-buttons {
+		margin-top: 0;
+
+		.login__social-tos {
+			margin: 2.5em auto 0;
+			max-width: 90%;
+		}
+
+		@include breakpoint( '>660px' ) {
+			flex-direction: row;
+			flex-wrap: wrap;
+
+			button:not( :first-of-type ) {
+				margin-top: 0;
+			}
+		}
 	}
 
 	.wp-login__main.main,
@@ -549,6 +581,10 @@
 		box-shadow: none;
 		padding-left: 0;
 		padding-right: 0;
+	}
+
+	.wp-login__container {
+		margin-top: 50px;
 	}
 
 	.wp-login__container,

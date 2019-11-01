@@ -159,7 +159,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	clientRender( reactContext );
 }
 
-function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
+function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
 	const allPaths = [
 		domainManagementContactsPrivacy,
 		domainManagementDns,
@@ -177,7 +177,13 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 		emailManagementForwarding,
 	];
 
-	let domainManagementPaths = allPaths.map( pathFactory => pathFactory( slug, slug ) );
+	let domainManagementPaths = allPaths.map( pathFactory => {
+		if ( pathFactory === emailManagementNewGSuiteAccount ) {
+			// `emailManagementNewGSuiteAccount` takes `planType` from `context.params`, otherwise path comparisons won't work well.
+			return emailManagementNewGSuiteAccount( slug, slug, contextParams.planType );
+		}
+		return pathFactory( slug, slug );
+	} );
 
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
@@ -225,7 +231,12 @@ function onSelectedSiteAvailable( context, basePath ) {
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
 	if (
 		isDomainOnlySite( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug, primaryDomain )
+		! isPathAllowedForDomainOnlySite(
+			context.pathname,
+			selectedSite.slug,
+			primaryDomain,
+			context.params
+		)
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
 		return false;
@@ -256,7 +267,7 @@ function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
 
 	// This path sets the URL to be visited once a site is selected
-	const basePath = contextPath === '/sites' ? '/stats' : contextPath;
+	const basePath = contextPath === '/sites' ? '/home' : contextPath;
 
 	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
 

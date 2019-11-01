@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
 import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
-import i18n from 'i18n-calypso';
-import moment from 'moment';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -55,18 +52,37 @@ export const getABTestVariation = name => new ABTest( name ).getVariation();
  */
 export const getSavedVariations = () => store.get( ABTEST_LOCALSTORAGE_KEY ) || {};
 
+/**
+ * Save the variation for a test - useful for testing!
+ *
+ * @param {String} name - The name of the A/B test
+ * @param {String} variation - The test variation to save
+ * @returns {undefined}
+ */
+export const saveABTestVariation = ( name, variation ) =>
+	new ABTest( name ).saveVariation( variation );
+
 export const getAllTests = () => keys( activeTests ).map( ABTest );
 
 const isUserSignedIn = () => user && user.get() !== false;
 
 const parseDateStamp = datestamp => {
-	const date = moment( datestamp, 'YYYYMMDD' );
+	const format = 'YYYYMMDD';
 
-	if ( ! date.isValid() ) {
-		throw new Error( 'The date ' + datestamp + ' should be in the YYYYMMDD format' );
+	if ( datestamp.length === format.length ) {
+		const year = datestamp.substr( 0, 4 );
+		const month = datestamp.substr( 4, 2 );
+		const day = datestamp.substr( 6, 2 );
+		const toParse = `${ year }-${ month }-${ day }`;
+
+		const date = Date.parse( toParse );
+
+		if ( ! isNaN( date ) ) {
+			return date;
+		}
 	}
 
-	return date;
+	throw new Error( `The date ${ datestamp } should be in the ${ format } format` );
 };
 
 const languageSlugs = getLanguageSlugs();
@@ -191,7 +207,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary =
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
-	const localeFromSession = i18n.getLocaleSlug() || 'en';
+	const localeFromSession = getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
 	const userLocale = user.get().localeSlug || 'en';
 
@@ -264,7 +280,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 };
 
 ABTest.prototype.hasTestStartedYet = function() {
-	return moment().isAfter( this.startDate );
+	return new Date() > new Date( this.startDate );
 };
 
 ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
@@ -284,7 +300,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
-	return user && user.get() && moment( user.get().date ).isBefore( this.startDate );
+	return user && user.get() && new Date( user.get().date ) < new Date( this.startDate );
 };
 
 ABTest.prototype.getSavedVariation = function() {

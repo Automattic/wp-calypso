@@ -94,7 +94,7 @@ class DnsAddNew extends React.Component {
 		return assign( {}, dnsRecord.initialFields, { type } );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getFieldsForType( this.state.type ),
 			onNewState: this.setFormState,

@@ -119,6 +119,7 @@ export class UpsellNudge extends React.Component {
 			isLoggedIn,
 			upsellType,
 			translate,
+			siteSlug,
 		} = this.props;
 
 		switch ( upsellType ) {
@@ -131,6 +132,7 @@ export class UpsellNudge extends React.Component {
 						isLoggedIn={ isLoggedIn }
 						receiptId={ receiptId }
 						translate={ translate }
+						siteSlug={ siteSlug }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 					/>
@@ -145,6 +147,7 @@ export class UpsellNudge extends React.Component {
 						isLoggedIn={ isLoggedIn }
 						receiptId={ receiptId }
 						translate={ translate }
+						siteSlug={ siteSlug }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 					/>
@@ -178,7 +181,10 @@ export class UpsellNudge extends React.Component {
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
-		page( `/checkout/${ siteSlug }/${ upgradeItem }` );
+
+		return siteSlug
+			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
+			: page( `/checkout/${ upgradeItem }` );
 	};
 }
 

@@ -17,7 +17,7 @@ import CartAd from './cart-ad';
 import { abtest } from 'lib/abtest';
 import { premiumPlan, getAllCartItems } from 'lib/cart-values/cart-items';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { PLAN_PREMIUM, FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -29,10 +29,10 @@ const eventName = 'cart_theme_to_plan_upsell';
 class CartPlanAdTheme extends Component {
 	addToCartAndRedirect = event => {
 		event.preventDefault();
-		addItem( premiumPlan( PLAN_PREMIUM, {} ) );
 		this.props.recordTracksEvent( 'calypso_banner_cta_click', {
 			cta_name: eventName,
 		} );
+		addItem( premiumPlan( PLAN_PREMIUM, {} ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 

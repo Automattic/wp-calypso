@@ -22,8 +22,8 @@
 		width: 100%;
 
 		&.is-busy:disabled {
-			border-color: var( --color-neutral-100 );
-			color: var( --color-neutral-500 );
+			border-color: var( --color-neutral-10 );
+			color: var( --color-neutral-50 );
 		}
 
 		@include breakpoint( '>480px' ) {

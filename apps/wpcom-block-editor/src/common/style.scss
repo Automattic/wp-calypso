@@ -3,6 +3,10 @@
 	.is-iframed #wpbody {
 		padding-top: 0;
 	}
+
+	.is-iframed .components-editor-notices__snackbar {
+		padding-right: 80px;
+	}
 }
 
 @media ( min-width: 600px ) {
@@ -37,4 +41,8 @@
 
 .components-notice-list {
 	z-index: 29; // Ensure notices are placed behind the editor header (z-index: 30).
+}
+
+.has-text-align-justify {
+	text-align: justify;
 }

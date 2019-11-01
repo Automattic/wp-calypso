@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -45,7 +44,7 @@ import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { viewStream } from 'state/reader/watermarks/actions';
-import Interval, { EVERY_MINUTE } from 'lib/interval';
+import { Interval, EVERY_MINUTE } from 'lib/interval';
 import { PER_FETCH, INITIAL_FETCH } from 'state/data-layer/wpcom/read/streams';
 
 /**
@@ -154,6 +153,7 @@ class ReaderStream extends React.Component {
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
 		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
+		KeyboardShortcuts.on( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
 		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
 		window.addEventListener( 'popstate', this._popstate );
@@ -166,6 +166,7 @@ class ReaderStream extends React.Component {
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
 		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
+		KeyboardShortcuts.off( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
 		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
 		window.removeEventListener( 'popstate', this._popstate );
@@ -173,6 +174,10 @@ class ReaderStream extends React.Component {
 			history.scrollRestoration = 'auto';
 		}
 	}
+
+	handleOpenSelectionNewTab = () => {
+		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+	};
 
 	handleOpenSelection = () => {
 		showSelectedPost( {
@@ -187,7 +192,7 @@ class ReaderStream extends React.Component {
 		// only toggle a like on a x-post if we have the appropriate metadata,
 		// and original post is full screen
 		const xPostMetadata = XPostHelper.getXPostMetadata( post );
-		if ( !! xPostMetadata.postURL ) {
+		if ( xPostMetadata.postURL ) {
 			return;
 		}
 

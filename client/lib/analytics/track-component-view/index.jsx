@@ -32,7 +32,7 @@ class TrackComponentView extends Component {
 		bumpStat: () => {},
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Component will mount.' );
 		const { eventName, eventProperties } = this.props;
 		if ( eventName ) {

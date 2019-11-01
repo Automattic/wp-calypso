@@ -3,12 +3,15 @@
  */
 import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isFunction, times } from 'lodash';
 import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
 import Card from 'components/card';
 
@@ -21,6 +24,7 @@ class Checklist extends PureComponent {
 		showChecklistHeader: PropTypes.bool,
 		checklistFooter: PropTypes.node,
 		updateCompletion: PropTypes.func,
+		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
 
@@ -30,6 +34,12 @@ class Checklist extends PureComponent {
 
 	componentDidMount() {
 		this.notifyCompletion();
+	}
+
+	UNSAFE_componentWillReceiveProps( { siteId } ) {
+		if ( siteId !== this.props.siteId ) {
+			this.setState( { expandedTaskIndex: undefined } );
+		}
 	}
 
 	componentDidUpdate() {
@@ -145,4 +155,6 @@ class Checklist extends PureComponent {
 	}
 }
 
-export default localize( Checklist );
+export default connect( state => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( localize( Checklist ) );

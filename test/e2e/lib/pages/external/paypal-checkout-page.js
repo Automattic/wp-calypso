@@ -13,7 +13,7 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class PaypalCheckoutPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		const priceSelector = by.css( '.formatCurrency' );
+		const priceSelector = by.css( '.paypal-checkout-sandbox-iframe' );
 		super( driver, priceSelector );
 		this.priceSelector = priceSelector;
 	}

@@ -4,7 +4,7 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { identity } from 'lodash';
 import React from 'react';
 

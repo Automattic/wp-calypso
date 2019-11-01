@@ -11,11 +11,11 @@
 		text-align: center;
 
 		&.is-selected {
-			border-bottom-color: var( --color-neutral-700 );
+			border-bottom-color: var( --color-neutral-70 );
 		}
 
 		&:hover:not( .is-selected ) {
-			border-bottom-color: var( --color-section-nav-item-background-hover );
+			border-bottom-color: var( --color-primary-0 );
 		}
 	}
 }
@@ -36,27 +36,27 @@
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 18px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	cursor: pointer;
 
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&[disabled],
 	.notouch &[disabled]:hover {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		cursor: default;
 	}
 
 	.is-selected & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		background-color: var( --color-primary );
 
 		@include breakpoint( '<480px' ) {
 			.count {
-				color: var( --color-white );
-				border-color: var( --color-white );
+				color: var( --color-text-inverted );
+				border-color: var( --color-border-inverted );
 			}
 		}
 	}
@@ -78,14 +78,14 @@
 
 	.notouch & {
 		&:hover {
-			background-color: var( --color-section-nav-item-background-hover );
+			background-color: var( --color-primary-0 );
 			color: var( --color-primary );
 		}
 	}
 
 	.notouch .is-selected & {
 		&:hover {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -101,7 +101,7 @@
 		}
 
 		.is-selected & {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 			background-color: transparent;
 
 			&::after {
@@ -111,7 +111,7 @@
 
 		.notouch .is-selected & {
 			&:hover {
-				color: var( --color-neutral-700 );
+				color: var( --color-neutral-70 );
 			}
 		}
 	}
@@ -138,6 +138,5 @@
 	width: 100%;
 	font-size: 14px;
 	line-height: 18px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
-

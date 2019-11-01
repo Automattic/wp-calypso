@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -15,6 +12,7 @@ import { connect } from 'react-redux';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 import PlanStorageBar from './bar';
@@ -34,9 +32,17 @@ export class PlanStorage extends Component {
 	};
 
 	render() {
-		const { className, jetpackSite, siteId, sitePlanSlug, siteSlug } = this.props;
+		const {
+			canUserUpgrade,
+			canViewBar,
+			className,
+			jetpackSite,
+			siteId,
+			sitePlanSlug,
+			siteSlug,
+		} = this.props;
 
-		if ( jetpackSite || ! sitePlanSlug ) {
+		if ( jetpackSite || ! canViewBar || ! sitePlanSlug ) {
 			return null;
 		}
 
@@ -51,6 +57,7 @@ export class PlanStorage extends Component {
 					siteSlug={ siteSlug }
 					sitePlanSlug={ sitePlanSlug }
 					mediaStorage={ this.props.mediaStorage }
+					displayUpgradeLink={ canUserUpgrade }
 				>
 					{ this.props.children }
 				</PlanStorageBar>
@@ -66,5 +73,7 @@ export default connect( ( state, ownProps ) => {
 		jetpackSite: isJetpackSite( state, siteId ),
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
+		canViewBar: canCurrentUser( state, siteId, 'publish_posts' ),
 	};
 } )( PlanStorage );

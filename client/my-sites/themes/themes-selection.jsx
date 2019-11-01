@@ -237,7 +237,7 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||

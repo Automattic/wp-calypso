@@ -1,13 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="47px" height="47px" viewBox="0 0 47 47" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
-    <title>simple-store</title>
-    <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="simple-store" transform="translate(-5.000000, -5.000000)">
-            <polygon id="Path" points="0 0 56 0 56 56 0 56"></polygon>
-            <path d="M50.6135,27.513 L29.4635,6.363 C28.6175,5.517 27.4425,5 26.15,5 L9.7,5 C7.115,5 5,7.115 5,9.7 L5,26.15 C5,27.4425 5.517,28.6175 6.3865,29.487 L27.5365,50.637 C28.3825,51.483 29.5575,52 30.85,52 C32.1425,52 33.3175,51.483 34.1635,50.6135 L50.6135,34.1635 C51.483,33.3175 52,32.1425 52,30.85 C52,29.5575 51.4595,28.359 50.6135,27.513 Z M30.85,47.3235 L9.7,26.15 L9.7,9.7 L26.15,9.7 L26.15,9.6765 L47.3,30.8265 L30.85,47.3235 L30.85,47.3235 Z" id="Shape" fill="#7EA7BF" fill-rule="nonzero"></path>
-            <circle id="Oval" fill="#7EA7BF" fill-rule="nonzero" cx="15.5" cy="15.5" r="3.5"></circle>
-        </g>
-    </g>
-</svg>
+<svg height="47" viewBox="0 0 47 47" width="47" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" transform="translate(-5 -5)"><path d="m0 0h56v56h-56z"/><g fill="#6ab3d0" fill-rule="nonzero"><path d="m50.6135 27.513-21.15-21.15c-.846-.846-2.021-1.363-3.3135-1.363h-16.45c-2.585 0-4.7 2.115-4.7 4.7v16.45c0 1.2925.517 2.4675 1.3865 3.337l21.15 21.15c.846.846 2.021 1.363 3.3135 1.363s2.4675-.517 3.3135-1.3865l16.45-16.45c.8695-.846 1.3865-2.021 1.3865-3.3135s-.5405-2.491-1.3865-3.337zm-19.7635 19.8105-21.15-21.1735v-16.45h16.45v-.0235l21.15 21.15z"/><circle cx="15.5" cy="15.5" r="3.5"/></g></g></svg>

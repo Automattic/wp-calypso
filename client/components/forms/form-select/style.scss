@@ -10,16 +10,16 @@
 	}
 
 	&:disabled {
-		color: var( --color-neutral-100 );
+		color: var( --color-neutral-10 );
 	}
 
 	&:focus {
 		&.is-error {
-			box-shadow: 0 0 0 2px var( --color-error-100 );
+			box-shadow: 0 0 0 2px var( --color-error-10 );
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px var( --color-error-200 );
+			box-shadow: 0 0 0 2px var( --color-error-20 );
 		}
 	}
 }

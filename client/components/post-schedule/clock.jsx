@@ -15,7 +15,6 @@ import 'moment-timezone'; // monkey patches the existing moment.js
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
 import InfoPopover from 'components/info-popover';
 import { withLocalizedMoment } from 'components/localized-moment';
 import getSiteSetting from 'state/selectors/get-site-setting';
@@ -219,20 +218,20 @@ class PostScheduleClock extends Component {
 							value={ date.format( 'A' ) }
 						/>
 						<SegmentedControl compact>
-							<ControlItem
+							<SegmentedControl.Item
 								value="am"
 								onClick={ this.setAm }
 								selected={ 'AM' === date.format( 'A' ) }
 							>
 								{ translate( 'AM' ) }
-							</ControlItem>
-							<ControlItem
+							</SegmentedControl.Item>
+							<SegmentedControl.Item
 								value="pm"
 								onClick={ this.setPm }
 								selected={ 'PM' === date.format( 'A' ) }
 							>
 								{ translate( 'PM' ) }
-							</ControlItem>
+							</SegmentedControl.Item>
 						</SegmentedControl>
 					</span>
 				) }

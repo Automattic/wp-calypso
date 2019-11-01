@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
 	camelCase,
@@ -26,12 +23,13 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
  */
 import { localizeUrl } from 'lib/i18n-utils';
-import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -52,6 +50,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import PasswordlessSignupForm from './passwordless';
 import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -81,7 +80,7 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		disableEmailExplanation: PropTypes.bool,
+		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
@@ -237,7 +236,7 @@ class SignupForm extends Component {
 		const fieldsForValidation = filter( [
 			'email',
 			this.state.focusPassword && 'password',
-			this.props.displayUsernameInput && this.state.focusUsername && 'username',
+			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -408,6 +407,7 @@ class SignupForm extends Component {
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+			wccomFrom: this.props.wccomFrom,
 		} );
 	}
 
@@ -598,24 +598,38 @@ class SignupForm extends Component {
 		);
 	}
 
+	recordWooCommerceSignupTracks( method ) {
+		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
+				signup_method: method,
+			} );
+		} else if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			isWooOAuth2Client( oauth2Client ) &&
+			'cart' === wccomFrom
+		) {
+			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_payment_create_account', {
+				signup_method: method,
+			} );
+		}
+	}
+
 	handleWooCommerceSocialConnect = ( ...args ) => {
-		analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-			signup_method: 'google',
-		} );
+		this.recordWooCommerceSignupTracks( 'social' );
 		this.props.handleSocialResponse( args );
 	};
 
 	handleWooCommerceSubmit = event => {
 		event.preventDefault();
 		document.activeElement.blur();
+		this.recordWooCommerceSignupTracks( 'email' );
+
 		this.formStateController.handleSubmit( hasErrors => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
 			}
-			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-				signup_method: 'email',
-			} );
 		} );
 		this.handleSubmit( event );
 	};
@@ -702,7 +716,7 @@ class SignupForm extends Component {
 		return localizeUrl( 'https://wordpress.com/tos/' );
 	}
 
-	termsOfServiceLink() {
+	termsOfServiceLink = () => {
 		const tosLink = (
 			<a
 				href={ this.getTermsOfServiceUrl() }
@@ -736,7 +750,7 @@ class SignupForm extends Component {
 		}
 
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
-	}
+	};
 
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
@@ -746,12 +760,16 @@ class SignupForm extends Component {
 			return this.globalNotice( this.state.notice );
 		}
 		if ( this.userCreationComplete() ) {
-			return this.globalNotice( {
-				info: true,
-				message: this.props.translate(
-					'Your account has already been created. You can change your email, username, and password later.'
-				),
-			} );
+			return (
+				<TrackRender eventName="calypso_signup_account_already_created_show">
+					{ this.globalNotice( {
+						info: true,
+						message: this.props.translate(
+							'Your account has already been created. You can change your email, username, and password later.'
+						),
+					} ) }
+				</TrackRender>
+			);
 		}
 		return false;
 	}
@@ -810,10 +828,6 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, translate } = this.props;
 
-		if ( this.props.positionInFlow !== 0 ) {
-			return;
-		}
-
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? this.getLoginLink()
 			: localizeUrl( config( 'login_url' ), this.props.locale );
@@ -871,8 +885,11 @@ class SignupForm extends Component {
 		}
 
 		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			this.props.isJetpackWooCommerceFlow
+			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+				this.props.isJetpackWooCommerceFlow ) ||
+			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+				isWooOAuth2Client( this.props.oauth2Client ) &&
+				this.props.wccomFrom )
 		) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
@@ -899,6 +916,47 @@ class SignupForm extends Component {
 					<LoggedOutFormLinkItem href={ logInUrl }>
 						{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
 					</LoggedOutFormLinkItem>
+				</div>
+			);
+		}
+
+		/*
+
+			AB Test: passwordlessSignup
+
+			`<PasswordlessSignupForm />` is for the `onboarding` flow.
+
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
+		*/
+		if (
+			this.props.flowName === 'onboarding' &&
+			'passwordless' === abtest( 'passwordlessSignup' )
+		) {
+			const logInUrl = config.isEnabled( 'login/native-login-links' )
+				? this.getLoginLink()
+				: localizeUrl( config( 'login_url' ), this.props.locale );
+
+			return (
+				<div className={ classNames( 'signup-form', this.props.className ) }>
+					{ this.getNotice() }
+					<PasswordlessSignupForm
+						step={ this.props.step }
+						stepName={ this.props.stepName }
+						flowName={ this.props.flowName }
+						goToNextStep={ this.props.goToNextStep }
+						renderTerms={ this.termsOfServiceLink }
+						logInUrl={ logInUrl }
+						disabled={ this.props.disabled }
+					/>
+					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						<SocialSignupForm
+							handleResponse={ this.props.handleSocialResponse }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+						/>
+					) }
+
+					{ this.props.footerLink || this.footerLink() }
 				</div>
 			);
 		}
@@ -931,12 +989,21 @@ class SignupForm extends Component {
 	}
 }
 
+function TrackRender( { children, eventName } ) {
+	useEffect( () => {
+		analytics.tracks.recordEvent( eventName );
+	}, [ eventName ] );
+
+	return children;
+}
+
 export default connect(
 	state => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),

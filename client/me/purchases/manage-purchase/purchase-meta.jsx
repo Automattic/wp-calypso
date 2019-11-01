@@ -23,6 +23,7 @@ import {
 	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
+	isRechargeable,
 	isRenewing,
 	isSubscription,
 	paymentLogoType,
@@ -299,8 +300,7 @@ class PurchaseMeta extends Component {
 
 		if (
 			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
-			hasPaymentMethod( purchase ) &&
-			! isPaidWithCredits( purchase ) &&
+			isRechargeable( purchase ) &&
 			! isExpired( purchase )
 		) {
 			const dateSpan = <span className="manage-purchase__detail-date-span" />;
@@ -330,13 +330,15 @@ class PurchaseMeta extends Component {
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
 					<span className="manage-purchase__detail">{ subsRenewText }</span>
 					<span className="manage-purchase__detail">{ subsBillingText }</span>
-					<span className="manage-purchase__detail">
-						<AutoRenewToggle
-							planName={ site.plan.product_name_short }
-							siteDomain={ site.domain }
-							purchase={ purchase }
-						/>
-					</span>
+					{ site && (
+						<span className="manage-purchase__detail">
+							<AutoRenewToggle
+								planName={ site.plan.product_name_short }
+								siteDomain={ site.domain }
+								purchase={ purchase }
+							/>
+						</span>
+					) }
 				</li>
 			);
 		}

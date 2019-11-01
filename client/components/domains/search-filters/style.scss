@@ -1,6 +1,6 @@
 .search-filters__dropdown-filters {
 	align-items: center;
-	border-left: 1px solid var( --color-neutral-100 );
+	border-left: 1px solid var( --color-neutral-10 );
 	height: 51px; // same as .search
 	z-index: z-index( 'root', '.search' );
 
@@ -181,9 +181,9 @@
 	}
 	.token-field__token-text,
 	.token-field__remove-token {
-		background: var( --color-white );
-		color: var( --color-neutral-500 );
-		border: 1px solid var( --color-neutral-100 );
+		background: var( --color-surface );
+		color: var( --color-neutral-50 );
+		border: 1px solid var( --color-neutral-10 );
 	}
 	.token-field__token-text {
 		border-right: none;
@@ -192,8 +192,8 @@
 		border-left: none;
 
 		&:hover {
-			background: var( --color-neutral-100 );
-			color: var( --color-neutral-500 );
+			background: var( --color-neutral-10 );
+			color: var( --color-neutral-50 );
 		}
 	}
 
@@ -216,6 +216,6 @@
 	}
 
 	.token-field__suggestion {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }

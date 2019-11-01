@@ -37,14 +37,14 @@ class ProductCategories extends Component {
 		this.debouncedOnSearch = debounce( this.onSearch, 500 );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteId } = this.props;
 		if ( siteId ) {
 			this.props.fetchProductCategories( siteId, { page: 1 } );
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		if ( siteId !== newSiteId ) {

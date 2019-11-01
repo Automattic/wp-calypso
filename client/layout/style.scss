@@ -18,31 +18,6 @@
 	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
 }
 
-// If things take a bit to load...
-.layout__loader {
-	background: transparent;
-	border-bottom: 1px solid transparent;
-	height: 46px;
-	margin-left: -10%;
-	position: absolute;
-	left: 50%;
-	top: 0;
-	width: 20%;
-	z-index: z-index( 'root', '.layout__loader' );
-
-	// The transition-delay avoids showing the loader
-	// too often on faster connections.
-	display: none;
-	opacity: 0;
-	transition: opacity 0.1s linear;
-	transition-delay: 0.8s;
-
-	&.is-active {
-		display: block;
-		opacity: 1;
-	}
-}
-
 // Setup the content element to adapt to the sidebar,
 // lack of sidebar, or the WebPreview component.
 .layout__content {
@@ -52,11 +27,6 @@
 	padding: 79px 32px 32px ( $sidebar-width-max + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
-
-	// I guess we dont want links to look like links.
-	a {
-		text-decoration: none;
-	}
 
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
@@ -119,9 +89,9 @@
 	top: 47px;
 	left: 0;
 	bottom: 0;
-	color: var( --sidebar-text-color );
-	background: var( --sidebar-background );
-	border-right: 1px solid var( --sidebar-border-color );
+	color: var( --color-sidebar-text );
+	background: var( --color-sidebar-background );
+	border-right: 1px solid var( --color-sidebar-border );
 	width: $sidebar-width-max;
 	overflow: hidden;
 
@@ -160,7 +130,7 @@
 		.site__title,
 		.site__domain {
 			&::after {
-				@include long-content-fade( $color: var( --sidebar-background ) );
+				@include long-content-fade( $color: var( --color-sidebar-background ) );
 			}
 		}
 	}
@@ -174,68 +144,64 @@
 // Secondary Layout overrides
 .layout__secondary {
 	.site__title {
-		color: var( --sidebar-text-color );
+		color: var( --color-sidebar-text );
 	}
-	
+
 	.site__domain {
-		color: var( --sidebar-heading-color );
+		color: var( --color-sidebar-text-alternative );
 	}
-	
+
 	.site__title::after,
 	.site__domain::after {
-		@include long-content-fade( $color: var( --sidebar-background-gradient ) );
+		@include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
 	}
-	
-	.site__badge {
-		color: var( --sidebar-gridicon-fill );
-	}
-	
+
 	.site-selector {
 		&.is-large .site-selector__sites {
-			border-color: var( --sidebar-border-color );
+			border-color: var( --color-sidebar-border );
 		}
-		
+
 		&__sites {
-			background: var( --sidebar-background );
+			background: var( --color-sidebar-background );
 		}
-	
+
 		&__add-new-site {
-			border-color: var( --sidebar-border-color );
-		
+			border-color: var( --color-sidebar-border );
+
 			.button {
-				color: var( --sidebar-heading-color );
+				color: var( --color-sidebar-text-alternative );
 				&:hover {
-					color: var( --sidebar-text-color );
+					color: var( --color-sidebar-text );
 				}
 			}
 		}
-		
+
 		&__recent {
-			border-color: var( --sidebar-border-color );
+			border-color: var( --color-sidebar-border );
 		}
-		
+
 		&__no-results {
-			color: var( --sidebar-heading-color );
+			color: var( --color-sidebar-text-alternative );
 		}
-		
+
 		&__hidden-sites-message,
 		&__manage-hidden-sites {
-			color: var( --sidebar-text-color );
+			color: var( --color-sidebar-text );
 		}
-		
+
 		.all-sites {
-			border-color: var( --sidebar-border-color );
+			border-color: var( --color-sidebar-border );
 		}
 	}
-	
+
 	.all-sites .count {
-		color: var( --sidebar-text-color );
-		border-color: var( --sidebar-text-color );
+		color: var( --color-sidebar-text );
+		border-color: var( --color-sidebar-text );
 	}
-	
+
 	.app-promo .app-promo__link {
-		box-shadow: 0 0 0 1px var( --sidebar-border-color ),
-			0 1px 2px var( --sidebar-border-color );
+		box-shadow: 0 0 0 1px var( --color-sidebar-border ),
+			0 1px 2px var( --color-sidebar-border );
 	}
 }
 
@@ -341,53 +307,3 @@
 		}
 	}
 }
-
-
-// The following is for moving cart contents to the right of payments box.
-div.checkout__container {
-	& .cart__header {
-		border-top: none;
-		border-bottom: 1px solid var( --color-border-subtle );
-	}
-
-	& .secondary-cart .card {
-		box-shadow: none;
-	}
-
-	& .section-header.card {
-		padding-top: 14px;
-		padding-bottom: 13px;
-	}
-
-	& .jetpack-logo {
-		width: 100%;
-	}
-}
-
-@include breakpoint( '>660px' ) {
-	div.checkout__container {
-		display: flex;
-		align-items: flex-start;
-
-		& .main {
-			margin-right: 0;
-			width: 100%;
-		}
-
-		& .secondary-cart {
-			margin: 0 auto;
-			margin-left: 20px;
-			margin-bottom: 16px;
-			width: 272px;
-			box-shadow: 0 1px 0 var( --color-border-subtle );
-		}
-	}
-}
-
-@include breakpoint( '<660px' ) {
-   	.layout__primary .secondary-cart {
-		margin-left: 0;
-	}
-}
-// end of show cart right related CSS changes
-

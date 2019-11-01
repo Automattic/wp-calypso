@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -192,8 +191,7 @@ export default connect( state => {
 		purchasesError: getPurchasesError( state ),
 		cloneUrl,
 		showChangeAddress: ! isJetpack && ! isVip,
-		showClone:
-			'active' === rewindState.state && ! find( rewindState.credentials, { type: 'managed' } ),
+		showClone: 'active' === rewindState.state && ! isAtomic,
 		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 		showDeleteContent: ! isJetpack && ! isVip,
 		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,

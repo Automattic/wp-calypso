@@ -14,7 +14,6 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
-import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
@@ -176,12 +175,18 @@ class SearchStream extends React.Component {
 						/>
 						{ query && (
 							<SegmentedControl compact className="search-stream__sort-picker">
-								<ControlItem selected={ sortOrder !== 'date' } onClick={ this.useRelevanceSort }>
+								<SegmentedControl.Item
+									selected={ sortOrder !== 'date' }
+									onClick={ this.useRelevanceSort }
+								>
 									{ TEXT_RELEVANCE_SORT }
-								</ControlItem>
-								<ControlItem selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+								</SegmentedControl.Item>
+								<SegmentedControl.Item
+									selected={ sortOrder === 'date' }
+									onClick={ this.useDateSort }
+								>
 									{ TEXT_DATE_SORT }
-								</ControlItem>
+								</SegmentedControl.Item>
 							</SegmentedControl>
 						) }
 					</CompactCard>

@@ -101,7 +101,7 @@ class PagesMain extends React.Component {
 			} ),
 		};
 		return (
-			<Main classname="pages">
+			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Site Pages' ) } />
 				<SidebarNavigation />

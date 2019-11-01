@@ -8,7 +8,7 @@ import { partialRight } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 
 /**
- * Internal depencies
+ * Internal dependencies
  */
 import Button from 'components/button';
 import ActionPanelCta from 'components/action-panel/cta';
@@ -18,9 +18,14 @@ import { URL } from 'types';
 
 type ClickCallback = () => void;
 
+interface CtaAction {
+	url: URL;
+	onClick: ClickCallback;
+}
+
 export interface CtaButton {
 	text: string;
-	action: URL | ClickCallback;
+	action: URL | ClickCallback | CtaAction;
 }
 
 export type Cta =
@@ -38,7 +43,7 @@ interface ConnectedProps {
 
 export interface Props {
 	cta: Cta;
-	learnMoreLink?: string;
+	learnMoreLink?: CtaAction;
 	isPrimary?: boolean;
 }
 
@@ -46,11 +51,26 @@ function isCtaButton( cta: Cta ): cta is CtaButton {
 	return undefined !== ( cta as CtaButton ).text;
 }
 
+function isCtaAction( action: any ): action is CtaAction {
+	return undefined !== ( action as CtaAction ).onClick;
+}
+
 function buttonProps( button: CtaButton, isPrimary: boolean ) {
+	const actionProps = isCtaAction( button.action )
+		? {
+				href: button.action.url,
+				onClick: button.action.onClick,
+		  }
+		: {
+				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
+		  };
+	if ( undefined !== actionProps.href ) {
+		actionProps.target = '_blank';
+	}
 	return {
 		className: 'promo-card__cta-button',
 		primary: isPrimary,
-		[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
+		...actionProps,
 	};
 }
 const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
@@ -62,6 +82,20 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
 	let ctaBtn;
 	const translate = useTranslate();
+	let learnMore = null;
+
+	if ( learnMoreLink ) {
+		learnMore = isCtaAction( learnMoreLink )
+			? {
+					href: learnMoreLink.url,
+					target: '_blank',
+					onClick: learnMoreLink.onClick,
+			  }
+			: {
+					target: '_blank',
+					href: learnMoreLink,
+			  };
+	}
 
 	if ( isCtaButton( cta ) ) {
 		ctaBtn = <Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>;
@@ -75,8 +109,8 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	return (
 		<ActionPanelCta>
 			{ ctaBtn }
-			{ learnMoreLink && (
-				<Button borderless className="promo-card__cta-learn-more" href={ learnMoreLink }>
+			{ learnMore && (
+				<Button borderless className="promo-card__cta-learn-more" { ...learnMore }>
 					{ translate( 'Learn more' ) }
 				</Button>
 			) }

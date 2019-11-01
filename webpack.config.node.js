@@ -1,7 +1,5 @@
 /**
  * **** WARNING: No ES6 modules here. Not transpiled! ****
- *
- * @format
  */
 
 /* eslint-disable import/no-nodejs-modules */
@@ -9,8 +7,8 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
 const path = require( 'path' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
 
@@ -23,11 +21,17 @@ const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const nodeExternals = require( 'webpack-node-externals' );
+const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 
 /**
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
+
+const fileLoader = FileConfig.loader( {
+	publicPath: isDevelopment ? '/calypso/evergreen/images/' : '/calypso/images/',
+	emitFile: false, // On the server side, don't actually copy files
+} );
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
@@ -42,9 +46,17 @@ function getExternals() {
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 		// with modules that are incompatible with webpack bundling.
 		//
-		// `@automattic/calypso-ui` is forced to be webpack-ed because it has SCSS and other
-		// non-JS asset imports that couldn't be processed by Node.js at runtime.
-		nodeExternals( { whitelist: [ '@automattic/calypso-ui' ] } ),
+		nodeExternals( {
+			whitelist: [
+				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
+				// non-JS asset imports that couldn't be processed by Node.js at runtime.
+				'@automattic/components',
+
+				// Ensure that file-loader files imported from packages in node_modules are
+				// _not_ externalized and can be processed by the fileLoader.
+				fileLoader.test,
+			],
+		} ),
 		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 		'webpack.config',
 		// Exclude hot-reloader, as webpack will try and resolve this in production builds,
@@ -86,19 +98,7 @@ const webpackConfig = {
 				cacheIdentifier,
 				exclude: /(node_modules|devdocs[/\\]search-index)/,
 			} ),
-			{
-				test: /\.(?:gif|jpg|jpeg|png|svg)$/,
-				use: [
-					{
-						loader: 'file-loader',
-						options: {
-							emitFile: false, // On the server side, don't actually copy files
-							name: '[name].[ext]',
-							outputPath: 'images/',
-						},
-					},
-				],
-			},
+			fileLoader,
 			{
 				test: /\.(sc|sa|c)ss$/,
 				loader: 'ignore-loader',

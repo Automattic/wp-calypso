@@ -12,9 +12,9 @@ import { find, defer } from 'lodash';
 import analytics from 'lib/analytics';
 import CreditCard from 'components/credit-card';
 import NewCardForm from './new-card-form';
-
-import { newCardPayment, newStripeCardPayment, storedCardPayment } from 'lib/store-transactions';
-import { setPayment } from 'lib/upgrades/actions';
+import { newCardPayment, newStripeCardPayment, storedCardPayment } from 'lib/transaction/payments';
+import { setPayment } from 'lib/transaction/actions';
+import { withStripeProps } from 'lib/stripe';
 
 class CreditCardSelector extends React.Component {
 	constructor( props ) {
@@ -81,7 +81,6 @@ class CreditCardSelector extends React.Component {
 					transaction={ this.props.transaction }
 					hasStoredCards={ this.props.cards.length > 0 }
 					selected={ selected }
-					stripe={ this.props.stripe }
 				/>
 			</CreditCard>
 		);
@@ -114,4 +113,4 @@ class CreditCardSelector extends React.Component {
 	};
 }
 
-export default CreditCardSelector;
+export default withStripeProps( CreditCardSelector );

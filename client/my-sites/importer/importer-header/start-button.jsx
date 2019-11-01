@@ -55,7 +55,7 @@ class StartButton extends React.PureComponent {
 				isPrimary={ false }
 				onClick={ this.handleClick }
 			>
-				{ translate( 'Start Import', { context: 'verb' } ) }
+				{ translate( 'Start import', { context: 'verb' } ) }
 			</Button>
 		);
 	}

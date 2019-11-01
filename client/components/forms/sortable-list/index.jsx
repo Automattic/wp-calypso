@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import { assign, findIndex, fromPairs, noop } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -45,7 +45,7 @@ class SortableList extends React.Component {
 	itemsRefs = new Map();
 	itemShadowRefs = new Map();
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
 	}
 

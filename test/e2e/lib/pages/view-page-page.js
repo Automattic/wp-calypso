@@ -66,9 +66,14 @@ export default class ViewPagePage extends AsyncBaseContainer {
 	}
 
 	async paymentButtonDisplayed() {
-		const paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect(
-			this.driver
-		);
+		let paymentButtonFrontEndComponent;
+		try {
+			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+		} catch ( e ) {
+			this.driver.navigate().refresh();
+			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+		}
+
 		return await paymentButtonFrontEndComponent.displayed();
 	}
 

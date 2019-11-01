@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, map } from 'lodash';
@@ -51,11 +51,11 @@ class JetpackSsoForm extends Component {
 		showTermsDialog: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.maybeValidateSSO();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.maybeValidateSSO( nextProps );
 
 		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {

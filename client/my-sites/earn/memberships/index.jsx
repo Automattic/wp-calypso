@@ -96,13 +96,22 @@ class MembershipsSection extends Component {
 					</div>
 					<div className="memberships__earnings-breakdown-notes">
 						{ translate(
-							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Stripe charges are typically %(stripe)s.',
+							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
 							{
 								args: {
 									commission: '' + parseFloat( this.props.commission ) * 100 + '%',
 									stripe: '2.9%+30c',
 								},
-								components: { em: <em />, br: <br /> },
+								components: {
+									em: <em />,
+									br: <br />,
+									a: (
+										<ExternalLink
+											href="https://en.support.wordpress.com/recurring-payments-button/#related-fees"
+											icon={ true }
+										/>
+									),
+								},
 							}
 						) }
 					</div>
@@ -135,7 +144,10 @@ class MembershipsSection extends Component {
 				'renewal_price',
 				'currency',
 				'renew_interval',
-			].join( ',' ),
+				'All time total',
+			]
+				.map( field => '"' + field + '"' )
+				.join( ',' ),
 		]
 			.concat(
 				Object.values( this.props.subscribers ).map( row =>
@@ -151,7 +163,10 @@ class MembershipsSection extends Component {
 						row.plan.renewal_price,
 						row.plan.currency,
 						row.renew_interval,
-					].join( ',' )
+						row.all_time_total,
+					]
+						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.join( ',' )
 				)
 			)
 			.join( '\n' );
@@ -237,19 +252,27 @@ class MembershipsSection extends Component {
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
-			return this.props.translate( 'Paying %(amount)s/year since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
-			return this.props.translate( 'Paying %(amount)s/month since %(formattedDate)s', {
-				args: {
-					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
-				},
-			} );
+			return this.props.translate(
+				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				{
+					args: {
+						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+					},
+				}
+			);
 		}
 	}
 	renderSubscriberActions( subscriber ) {
@@ -258,9 +281,7 @@ class MembershipsSection extends Component {
 				<PopoverMenuItem
 					target="_blank"
 					rel="noopener norefferer"
-					href={ `https://dashboard.stripe.com/test/search?query=metadata%3A${
-						subscriber.user.ID
-					}` }
+					href={ `https://dashboard.stripe.com/test/search?query=metadata%3A${ subscriber.user.ID }` }
 				>
 					<Gridicon size={ 18 } icon={ 'external' } />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
@@ -293,6 +314,35 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
+				{ this.props.query.stripe_connect_success === 'earn' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+						) }
+					>
+						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
+							{ this.props.translate( 'Add a Payment Plan' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				{ this.props.query.stripe_connect_success === 'gutenberg' && (
+					<Notice
+						status="is-success"
+						showDismiss={ false }
+						text={ this.props.translate(
+							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
+						) }
+					>
+						<NoticeAction
+							href={ `https://support.wordpress.com/recurring-payments-button/#stripe-account-connected` }
+							icon="external"
+						>
+							{ this.props.translate( 'Learn how' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderProducts() }
@@ -357,7 +407,7 @@ class MembershipsSection extends Component {
 					/>
 				) }
 				{ this.renderOnboarding(
-					<Button primary={ true } href={ this.props.connectUrl } target="_blank">
+					<Button primary={ true } href={ this.props.connectUrl }>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{' '}
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>

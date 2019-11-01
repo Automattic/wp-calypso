@@ -6,6 +6,7 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
+import { TranslateResult } from 'i18n-calypso';
 import ActionPanel from 'components/action-panel';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelTitle from 'components/action-panel/title';
@@ -20,13 +21,13 @@ import './style.scss';
 
 export interface Image {
 	path: string;
-	alt?: string;
+	alt?: string | TranslateResult;
 	align?: 'left' | 'right';
 }
 
 export interface Props {
 	image?: Image;
-	title: string;
+	title: string | TranslateResult;
 	isPrimary?: boolean;
 }
 

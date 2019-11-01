@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, flow, get, isEmpty, memoize, once } from 'lodash';
+import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
@@ -23,17 +22,12 @@ import WixImporter from 'my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState, startImport } from 'lib/importer/actions';
-import {
-	appStates,
-	WORDPRESS,
-	MEDIUM,
-	BLOGGER,
-	WIX,
-	GODADDY_GOCENTRAL,
-	SQUARESPACE,
-} from 'state/imports/constants';
+import { getImporters, getImporterByKey } from 'lib/importer/importer-config';
+import { appStates } from 'state/imports/constants';
+
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
@@ -41,6 +35,8 @@ import JetpackImporter from 'my-sites/importer/jetpack-importer';
 import ExternalLink from 'components/external-link';
 import canCurrentUser from 'state/selectors/can-current-user';
 import EmptyContent from 'components/empty-content';
+import memoizeLast from 'lib/memoize-last';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -48,53 +44,26 @@ import EmptyContent from 'components/empty-content';
 import './section-import.scss';
 
 /**
- * Configuration for each of the importers to be rendered in this section. If
- * you're adding a new importer, add it here. Importers will be rendered in the
- * order they are listed in this array.
+ * Configuration mapping import engines to associated import components.
+ * The key is the engine, and the value is the component. To add new importers,
+ * add it here and add its configuration to lib/importer/importer-config.
  *
- * @type {Array}
+ * @type {Object}
  */
-const importers = [
-	{
-		type: WORDPRESS,
-		isImporterEnabled: true,
-		component: WordPressImporter,
-	},
-	{
-		type: BLOGGER,
-		isImporterEnabled: true,
-		component: BloggerImporter,
-	},
-	{
-		type: GODADDY_GOCENTRAL,
-		isImporterEnabled: true,
-		component: GoDaddyGoCentralImporter,
-	},
-	{
-		type: MEDIUM,
-		isImporterEnabled: true,
-		component: MediumImporter,
-	},
-	{
-		type: SQUARESPACE,
-		isImporterEnabled: true,
-		component: SquarespaceImporter,
-	},
-	{
-		type: WIX,
-		isImporterEnabled: true,
-		component: WixImporter,
-	},
-];
+const importerComponents = {
+	blogger: BloggerImporter,
+	'godaddy-gocentral': GoDaddyGoCentralImporter,
+	medium: MediumImporter,
+	squarespace: SquarespaceImporter,
+	wix: WixImporter,
+	wordpress: WordPressImporter,
+};
 
 const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => importItem.site.ID === siteID );
 };
 
 const getImporterTypeForEngine = memoize( engine => `importer-type-${ engine }` );
-const getImporterForEngine = memoize( engine =>
-	find( importers, [ 'type', getImporterTypeForEngine( engine ) ] )
-);
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -116,11 +85,39 @@ class SectionImport extends Component {
 			return;
 		}
 
-		if ( ! getImporterForEngine( engine ) ) {
+		if ( ! importerComponents[ engine ] ) {
 			return;
 		}
 
 		startImport( site.ID, getImporterTypeForEngine( engine ) );
+	} );
+
+	handleStateChanges = () => {
+		const { site } = this.props;
+		const { importers: imports } = this.state;
+
+		filterImportsForSite( site.ID, imports ).map( importItem => {
+			const { importerState, type: importerId } = importItem;
+			this.trackImporterStateChange( importerState, importerId );
+		} );
+	};
+
+	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
+		const stateToEventNameMap = {
+			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
+			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
+			[ appStates.UPLOAD_SUCCESS ]: 'calypso_importer_upload_success',
+			[ appStates.UPLOAD_FAILURE ]: 'calypso_importer_upload_fail',
+			[ appStates.MAP_AUTHORS ]: 'calypso_importer_map_authors_view',
+			[ appStates.IMPORTING ]: 'calypso_importer_import_start',
+			[ appStates.IMPORT_SUCCESS ]: 'calypso_importer_import_success',
+			[ appStates.IMPORT_FAILURE ]: 'calypso_importer_import_fail',
+		};
+		if ( stateToEventNameMap[ importerState ] ) {
+			this.props.recordTracksEvent( stateToEventNameMap[ importerState ], {
+				importer_id: importerId,
+			} );
+		}
 	} );
 
 	componentDidMount() {
@@ -136,6 +133,7 @@ class SectionImport extends Component {
 		}
 
 		this.onceAutoStartImport();
+		this.handleStateChanges();
 	}
 
 	componentWillUnmount() {
@@ -151,21 +149,23 @@ class SectionImport extends Component {
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( site, siteTitle, state ) {
-		const importerElements = importers.map( importer => {
-			const { type, isImporterEnabled, component: ImporterComponent } = importer;
+		const importerElements = getImporters().map( importer => {
+			const { engine } = importer;
+			const ImporterComponent = importerComponents[ engine ];
 
-			if ( ! isImporterEnabled ) {
+			if ( ! ImporterComponent ) {
 				return;
 			}
 
 			return (
 				<ImporterComponent
-					key={ type }
+					key={ engine }
 					site={ site }
+					siteTitle={ siteTitle }
 					importerStatus={ {
 						importerState: state,
 						siteTitle,
-						type,
+						type: getImporterTypeForEngine( engine ),
 					} }
 				/>
 			);
@@ -198,23 +198,25 @@ class SectionImport extends Component {
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
 	renderActiveImporters( importsForSite ) {
-		return importers.map( importer => {
-			const { type, isImporterEnabled, component: ImporterComponent } = importer;
-
-			if ( ! isImporterEnabled ) {
+		return importsForSite.map( ( importItem, idx ) => {
+			const importer = getImporterByKey( importItem.type );
+			if ( ! importer ) {
 				return;
 			}
 
-			return importsForSite
-				.filter( importItem => importItem.type === type )
-				.map( ( importItem, idx ) => (
+			const ImporterComponent = importerComponents[ importer.engine ];
+
+			return (
+				ImporterComponent && (
 					<ImporterComponent
-						key={ type + idx }
+						key={ importItem.type + idx }
 						site={ importItem.site }
+						siteTitle={ importItem.siteTitle || this.props.siteTitle }
 						fromSite={ this.props.fromSite }
 						importerStatus={ importItem }
 					/>
-				) );
+				)
+			);
 		} );
 	}
 
@@ -228,11 +230,9 @@ class SectionImport extends Component {
 			api: { isHydrated },
 			importers: imports,
 		} = this.state;
-		const { engine, site } = this.props;
-		const { slug, title } = site;
-		const siteTitle = title.length ? title : slug;
+		const { engine, site, siteTitle } = this.props;
 
-		if ( getImporterForEngine( engine ) ) {
+		if ( engine && importerComponents[ engine ] ) {
 			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
 		}
 
@@ -314,12 +314,19 @@ class SectionImport extends Component {
 }
 
 export default flow(
-	connect( state => ( {
-		engine: getSelectedImportEngine( state ),
-		fromSite: getImporterSiteUrl( state ),
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-		canImport: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
-	} ) ),
+	connect(
+		state => {
+			const siteID = getSelectedSiteId( state );
+			return {
+				engine: getSelectedImportEngine( state ),
+				fromSite: getImporterSiteUrl( state ),
+				site: getSelectedSite( state ),
+				siteSlug: getSelectedSiteSlug( state ),
+				siteTitle: getSiteTitle( state, siteID ),
+				canImport: canCurrentUser( state, siteID, 'manage_options' ),
+			};
+		},
+		{ recordTracksEvent }
+	),
 	localize
 )( SectionImport );

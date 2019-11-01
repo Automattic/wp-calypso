@@ -28,4 +28,16 @@ export default class CreateYourAccountPage extends AsyncBaseContainer {
 			By.css( 'button.signup-form__submit:not([disabled])' )
 		);
 	}
+
+	async enterEmailAndSubmit( email ) {
+		await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '.signup-form__passwordless-email' ),
+			email
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( 'button.is-primary:not([disabled])' )
+		);
+	}
 }

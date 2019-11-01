@@ -28,7 +28,7 @@ export default class D3Base extends Component {
 		this.updateParams();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.updateParams( nextProps );
 	}
 

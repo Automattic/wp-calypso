@@ -52,7 +52,7 @@ export class EmbedDialog extends React.Component {
 		previewMarkup: [],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		/**
 		 * Reset the state to the default state
 		 */
@@ -81,7 +81,7 @@ export class EmbedDialog extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		if ( this.state.embedUrl !== newProps.embedUrl ) {
 			this.setState( {
 				embedUrl: newProps.embedUrl,

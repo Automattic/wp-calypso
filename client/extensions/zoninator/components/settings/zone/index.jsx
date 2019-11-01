@@ -52,7 +52,7 @@ class Zone extends Component {
 		showDeleteDialog: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.lockExpires || nextProps.lockExpires === this.props.lockExpires ) {
 			return;
 		}

@@ -177,7 +177,6 @@ class SiteOrDomain extends Component {
 					positionInFlow={ this.props.positionInFlow }
 					fallbackHeaderText={ headerText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgress={ this.props.signupProgress }
 				/>
 			);
 		}
@@ -191,7 +190,6 @@ class SiteOrDomain extends Component {
 				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderScreen() }
 			/>
 		);

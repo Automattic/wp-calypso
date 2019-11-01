@@ -74,7 +74,7 @@
 	vertical-align: bottom;
 	margin-top: -2px;
 	margin-right: 16px;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 
 	.survey-step__vertical:hover & {
 		color: var( --color-neutral-light );
@@ -108,11 +108,11 @@
 .survey__vertical-label {
 	margin: 10px;
 	font-weight: 400;
-	color: var( --color-neutral-600 );
+	color: var( --color-neutral-60 );
 }
 
 .survey__vertical-chevron {
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 	pointer-events: none;
 }
 
@@ -143,7 +143,7 @@ input.survey__other-write-in {
 
 .survey__other-copy {
 	text-align: center;
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 	padding-top: 0.5em;
 }
 

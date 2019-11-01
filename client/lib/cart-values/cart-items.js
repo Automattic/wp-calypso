@@ -21,6 +21,7 @@ import {
 	toLower,
 	uniq,
 } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -41,6 +42,7 @@ import {
 	isFreeWordPressComDomain,
 	isGoogleApps,
 	isJetpackPlan,
+	isJetpackProduct,
 	isNoAds,
 	isPlan,
 	isBlogger,
@@ -150,6 +152,11 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackPlan( cartItem ) ) {
 		// adding a jetpack bundle should replace the cart
+		return true;
+	}
+
+	if ( isJetpackProduct( cartItem ) ) {
+		// adding a Jetpack product should replace the cart
 		return true;
 	}
 
@@ -683,6 +690,48 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	);
 }
 
+/**
+ * Returns the domain part of an email address.
+ *
+ * @param {String} emailAddress - a valid email address
+ * @returns {String} the domain
+ */
+const getDomainPartFromEmail = emailAddress =>
+	// Domain is any string after `@` character
+	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
+		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
+		: null;
+
+/**
+ * Returns a predicate that determines if a domain matches a product meta.
+ *
+ * @param {String} domain domain to compare.
+ * @returns {function(*=): (boolean)} true if the domain matches.
+ */
+const isSameDomainAsProductMeta = domain => product =>
+	product &&
+	product.meta &&
+	'string' === typeof domain &&
+	'string' === typeof product.meta &&
+	product.meta.trim().toUpperCase() === domain.trim().toUpperCase();
+
+export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
+	return (
+		! emailValidator.validate( contactDetails.email ) ||
+		some(
+			cart.products,
+			isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
+		)
+	);
+}
+
+export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
+	return some(
+		cart.products,
+		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.alternateEmail ) )
+	);
+}
+
 export function hasGoogleApps( cart ) {
 	return some( getAllCartItems( cart ), isGoogleApps );
 }
@@ -732,6 +781,12 @@ export function spaceUpgradeItem( slug ) {
 export function conciergeSessionItem() {
 	return {
 		product_slug: 'concierge-session',
+	};
+}
+
+export function jetpackProductItem( slug ) {
+	return {
+		product_slug: slug,
 	};
 }
 

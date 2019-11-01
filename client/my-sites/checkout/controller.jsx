@@ -5,6 +5,7 @@
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -20,13 +21,26 @@ import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
-import { getRememberedCoupon } from 'lib/upgrades/actions';
+import { getRememberedCoupon } from 'lib/cart/actions';
+import { sites } from 'my-sites/controller';
 
 export function checkout( context, next ) {
-	const { feature, plan, product, purchaseId } = context.params;
+	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+		sites( context, next );
+		return;
+	}
+
+	let product;
+	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
+		product = domainOrProduct;
+	} else {
+		product = context.params.product;
+	}
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -44,6 +58,8 @@ export function checkout( context, next ) {
 			selectedFeature={ feature }
 			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
+			// Are we being redirected from the signup flow?
+			isComingFromSignup={ !! context.query.signup }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ context.store }
@@ -61,7 +77,13 @@ export function checkoutPending( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+	context.primary = (
+		<CheckoutPendingComponent
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ context.query.redirectTo }
+		/>
+	);
 
 	next();
 }
@@ -155,4 +177,14 @@ export function upsellNudge( context, next ) {
 	);
 
 	next();
+}
+
+export function redirectToSupportSession( context ) {
+	const { receiptId, site } = context.params;
+
+	// Redirect the old URL structure to the new URL structure to maintain backwards compatibility.
+	if ( context.params.receiptId ) {
+		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
+	}
+	page.redirect( `/checkout/offer-support-session/${ site }` );
 }

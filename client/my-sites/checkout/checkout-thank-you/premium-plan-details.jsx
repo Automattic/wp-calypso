@@ -10,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import GoogleVoucherDetails from './google-voucher';
@@ -23,20 +22,21 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
 /**
  * Image dependencies
  */
+import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
 import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
 import advertisingRemovedImage from 'assets/images/upgrades/advertising-removed.svg';
 import customizeThemeImage from 'assets/images/upgrades/customize-theme.svg';
 import mediaPostImage from 'assets/images/upgrades/media-post.svg';
 import wordAdsImage from 'assets/images/upgrades/word-ads.svg';
 
-const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
+const PremiumPlanDetails = ( {
+	selectedSite,
+	sitePlans,
+	selectedFeature,
+	purchases,
+	customizeUrl,
+} ) => {
 	const translate = useTranslate();
-	const adminUrl = selectedSite.URL + '/wp-admin/';
-	const customizerInAdmin =
-		adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
-	const customizeLink = config.isEnabled( 'manage/customize' )
-		? '/customize/' + selectedSite.slug
-		: customizerInAdmin;
 	const plan = find( sitePlans.data, isPremium ),
 		isPremiumPlan = isPremium( selectedSite.plan );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
@@ -70,6 +70,16 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 				}
 			/>
 
+			<PurchaseDetail
+				icon={ <img alt="" src={ analyticsImage } /> }
+				title={ translate( 'Connect to Google Analytics' ) }
+				description={ translate(
+					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
+				) }
+				buttonText={ translate( 'Connect Google Analytics' ) }
+				href={ '/settings/analytics/' + selectedSite.slug }
+			/>
+
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<PurchaseDetail
 				id="google-credits"
@@ -99,8 +109,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 							"Change your site's entire look in a few clicks."
 					) }
 					buttonText={ translate( 'Start customizing' ) }
-					href={ customizeLink }
-					target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' }
+					href={ customizeUrl }
 				/>
 			) }
 

@@ -37,17 +37,14 @@ class GuidedToursComponent extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
-			this.props.resetGuidedToursHistory();
+			this.props.dispatch( resetGuidedToursHistory() );
 		}
 	}
 
 	start = ( { step, tour, tourVersion: tour_version } ) => {
 		if ( tour && tour_version ) {
-			this.props.nextGuidedTourStep( { step, tour } );
-			tracks.recordEvent( 'calypso_guided_tours_start', {
-				tour,
-				tour_version,
-			} );
+			this.props.dispatch( nextGuidedTourStep( { step, tour } ) );
+			tracks.recordEvent( 'calypso_guided_tours_start', { tour, tour_version } );
 		}
 	};
 
@@ -61,10 +58,7 @@ class GuidedToursComponent extends Component {
 		}
 
 		defer( () => {
-			this.props.nextGuidedTourStep( {
-				tour,
-				stepName: nextStepName,
-			} );
+			this.props.dispatch( nextGuidedTourStep( { tour, stepName: nextStepName } ) );
 		} );
 	};
 
@@ -83,11 +77,7 @@ class GuidedToursComponent extends Component {
 			tour_version,
 		} );
 
-		this.props.quitGuidedTour( {
-			tour,
-			stepName: step,
-			finished: isLastStep,
-		} );
+		this.props.dispatch( quitGuidedTour( { tour, stepName: step, finished: isLastStep } ) );
 	};
 
 	render() {
@@ -111,6 +101,7 @@ class GuidedToursComponent extends Component {
 						next={ this.next }
 						quit={ this.quit }
 						start={ this.start }
+						dispatch={ this.props.dispatch }
 					/>
 				</div>
 			</RootChild>
@@ -120,22 +111,15 @@ class GuidedToursComponent extends Component {
 
 const getTourWhenState = state => when => !! when( state );
 
-export default connect(
-	state => {
-		const tourState = getGuidedTourState( state );
-		const shouldPause = isSectionLoading( state ) || tourState.isPaused;
-		return {
-			sectionName: getSectionName( state ),
-			shouldPause,
-			tourState,
-			isValid: getTourWhenState( state ),
-			lastAction: getLastAction( state ),
-			requestedTour: getInitialQueryArguments( state ).tour,
-		};
-	},
-	{
-		nextGuidedTourStep,
-		quitGuidedTour,
-		resetGuidedToursHistory,
-	}
-)( GuidedToursComponent );
+export default connect( state => {
+	const tourState = getGuidedTourState( state );
+	const shouldPause = isSectionLoading( state ) || tourState.isPaused;
+	return {
+		sectionName: getSectionName( state ),
+		shouldPause,
+		tourState,
+		isValid: getTourWhenState( state ),
+		lastAction: getLastAction( state ),
+		requestedTour: getInitialQueryArguments( state ).tour,
+	};
+} )( GuidedToursComponent );

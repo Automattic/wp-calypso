@@ -300,20 +300,17 @@ validators.validStreetNumber = {
  * @returns {object} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
-	const rules = paymentFieldRules( paymentDetails, paymentType );
-	let errors = [];
-	if ( rules ) {
-		errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
-			const field = rules[ fieldName ],
-				newErrors = getErrors( field, paymentDetails[ fieldName ], paymentDetails );
+	const rules = paymentFieldRules( paymentDetails, paymentType ) || {};
+	const errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
+		const field = rules[ fieldName ];
+		const newErrors = getErrors( field, paymentDetails[ fieldName ], paymentDetails );
 
-			if ( newErrors.length ) {
-				allErrors[ fieldName ] = newErrors;
-			}
+		if ( newErrors.length ) {
+			allErrors[ fieldName ] = newErrors;
+		}
 
-			return allErrors;
-		}, {} );
-	}
+		return allErrors;
+	}, {} );
 	return { errors };
 }
 

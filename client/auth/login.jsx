@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -75,27 +75,9 @@ export class Auth extends Component {
 		this.setState( { [ name ]: value } );
 	};
 
-	hasLoginDetails() {
-		if ( this.state.login === '' || this.state.password === '' ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	canSubmitForm() {
 		// No submission until the ajax has finished
-		if ( this.state.inProgress ) {
-			return false;
-		}
-
-		// If we have 2fa set then don't allow submission until a code is entered
-		if ( this.state.requires2fa ) {
-			return parseInt( this.state.auth_code, 10 ) > 0;
-		}
-
-		// Don't allow submission until username+password is entered
-		return this.hasLoginDetails();
+		return ! this.state.inProgress;
 	}
 
 	render() {

@@ -7,7 +7,7 @@
  */
 import { connect } from 'react-redux';
 import { find, findIndex, get, identity, noop, times } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -312,10 +312,10 @@ export class List extends React.Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		return (
-			<div>
+			<>
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
-			</div>
+			</>
 		);
 	}
 

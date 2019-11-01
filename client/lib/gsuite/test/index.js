@@ -5,8 +5,8 @@ import {
 	canDomainAddGSuite,
 	getEligibleGSuiteDomain,
 	getGSuiteSupportedDomains,
-	hasGSuite,
 	hasGSuiteSupportedDomain,
+	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
 	isGSuiteRestricted,
 } from 'lib/gsuite';
@@ -88,15 +88,15 @@ describe( 'index', () => {
 		} );
 	} );
 
-	describe( '#hasGSuite', () => {
+	describe( '#hasGSuiteWithUs', () => {
 		test( 'returns true if googleAppsSubscription has a value for status', () => {
-			expect( hasGSuite( { googleAppsSubscription: { status: 'blah' } } ) ).toEqual( true );
+			expect( hasGSuiteWithUs( { googleAppsSubscription: { status: 'blah' } } ) ).toEqual( true );
 		} );
 
 		test( 'returns true if googleAppsSubscription has no_subscription for status', () => {
-			expect( hasGSuite( { googleAppsSubscription: { status: 'no_subscription' } } ) ).toEqual(
-				false
-			);
+			expect(
+				hasGSuiteWithUs( { googleAppsSubscription: { status: 'no_subscription' } } )
+			).toEqual( false );
 		} );
 	} );
 

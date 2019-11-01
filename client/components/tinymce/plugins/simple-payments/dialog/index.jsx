@@ -494,7 +494,13 @@ class SimplePaymentsDialog extends Component {
 					illustration="/calypso/images/illustrations/type-e-commerce.svg"
 					illustrationWidth={ 300 }
 					title={ translate( 'Want to add a payment button to your site?' ) }
-					line={ ! canCurrentUserUpgrade ? translate ( "Contact your site's administrator to upgrade to the Premium, Business, or eCommerce Plan." ) : false }
+					line={
+						! canCurrentUserUpgrade
+							? translate(
+									"Contact your site's administrator to upgrade to the Premium, Business, or eCommerce Plan."
+							  )
+							: false
+					}
 					action={
 						<UpgradeNudge
 							className="editor-simple-payments-modal__nudge-nudge"

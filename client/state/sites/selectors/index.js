@@ -1,6 +1,8 @@
 export { default as buildSeoTitle } from './build-seo-title';
 export { default as canCurrentUserUpgradeSite } from './can-current-user-upgrade-site';
 export { default as canCurrentUserUseAds } from './can-current-user-use-ads';
+export { default as canCurrentUserUseCustomerHome } from './can-current-user-use-customer-home';
+export { default as canCurrentUserUseEarn } from './can-current-user-use-earn';
 export { default as canCurrentUserUseStore } from './can-current-user-use-store';
 export { default as canJetpackSiteAutoUpdateCore } from './can-jetpack-site-auto-update-core';
 export { default as canJetpackSiteAutoUpdateFiles } from './can-jetpack-site-auto-update-files';
@@ -26,6 +28,7 @@ export { default as getSiteComputedAttributes } from './get-site-computed-attrib
 export { default as getSiteDomain } from './get-site-domain';
 export { default as getSiteFrontPage } from './get-site-front-page';
 export { default as getSiteFrontPageType } from './get-site-front-page-type';
+export { default as getSiteHomeUrl } from './get-site-home-url';
 export { default as getSiteOption } from './get-site-option';
 export { default as getSitePlan } from './get-site-plan';
 export { default as getSitePlanSlug } from './get-site-plan-slug';

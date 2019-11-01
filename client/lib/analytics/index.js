@@ -13,12 +13,8 @@ import { loadScript } from '@automattic/load-script';
  */
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import {
-	mayWeTrackCurrentUserGdpr,
 	doNotTrack,
-	isPiiUrl,
-	shouldReportOmitBlogId,
 	costToUSD,
 	urlParseAmpCompatible,
 	saveCouponQueryArgument,
@@ -40,7 +36,6 @@ import {
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
-import { isE2ETest } from 'lib/e2e';
 import { getGoogleAnalyticsDefaultConfig } from './ad-tracking';
 import { affiliateReferral as trackAffiliateReferral } from 'state/refer/actions';
 import { reduxDispatch } from 'lib/redux-bridge';
@@ -54,11 +49,11 @@ const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const referDebug = debug( 'calypso:analytics:refer' );
 const queueDebug = debug( 'calypso:analytics:queue' );
-const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
 
-let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
+let _superProps, _user;
+let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments
 
 /**
  * Tracks uses a bunch of special query params that should not be used as property name
@@ -71,6 +66,8 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wcadmin_storeprofiler_create_jetpack_account',
 	'wcadmin_storeprofiler_connect_store',
 	'wcadmin_storeprofiler_login_jetpack_account',
+	'wcadmin_storeprofiler_payment_login',
+	'wcadmin_storeprofiler_payment_create_account',
 ];
 
 // Load tracking scripts
@@ -101,43 +98,39 @@ function createRandomId( randomBytesLength = 9 ) {
 }
 
 function checkForBlockedTracks() {
-	if ( ! _loadTracksError ) {
-		return;
-	}
+	// proceed only after the tracks script load finished and failed
+	// calling this function from `initialize` ensures that `_user` is already set
+	_loadTracksResult.catch( () => {
+		let _ut, _ui;
 
-	let _ut, _ui;
+		// detect stats blocking, and include identity from URL, user or cookie if possible
+		if ( _user && _user.get() ) {
+			_ut = 'wpcom:user_id';
+			_ui = _user.get().ID;
+		} else {
+			_ut = getUrlParameter( '_ut' ) || 'anon';
+			_ui = getUrlParameter( '_ui' );
 
-	// detect stats blocking, and include identity from URL, user or cookie if possible
-	if ( _user && _user.get() ) {
-		_ut = 'wpcom:user_id';
-		_ui = _user.get().ID;
-	} else {
-		_ut = getUrlParameter( '_ut' ) || 'anon';
-		_ui = getUrlParameter( '_ui' );
-
-		if ( ! _ui ) {
-			const cookies = cookie.parse( document.cookie );
-			if ( cookies.tk_ai ) {
-				_ui = cookies.tk_ai;
-			} else {
-				const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
-				_ui = createRandomId( randomIdLength );
-				document.cookie = cookie.serialize( 'tk_ai', _ui );
+			if ( ! _ui ) {
+				const cookies = cookie.parse( document.cookie );
+				if ( cookies.tk_ai ) {
+					_ui = cookies.tk_ai;
+				} else {
+					const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+					_ui = createRandomId( randomIdLength );
+					document.cookie = cookie.serialize( 'tk_ai', _ui );
+				}
 			}
 		}
-	}
 
-	loadScript(
-		'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
-	);
+		return loadScript(
+			'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
+		);
+	} );
 }
 
 if ( typeof document !== 'undefined' ) {
-	loadScript( '//stats.wp.com/w.js?60', function( error ) {
-		if ( error ) {
-			_loadTracksError = true;
-		}
-	} ); // W_JS_VER
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?60' );
 }
 
 function buildQuerystring( group, name ) {
@@ -187,32 +180,16 @@ if ( typeof window !== 'undefined' ) {
 
 const analytics = {
 	initialize: function( user, superProps ) {
-		analytics.setUser( user );
-		analytics.setSuperProps( superProps );
-		const userData = user.get();
-		analytics.identifyUser( userData.username, userData.ID );
-	},
-
-	setUser: function( user ) {
 		_user = user;
-	},
+		_superProps = superProps;
 
-	setSuperProps: function( superProps ) {
 		// this is called both for anonymous and logged-in users
 		checkForBlockedTracks();
-		_superProps = superProps;
-	},
 
-	setSelectedSite: function( selectedSite ) {
-		_selectedSite = selectedSite;
-	},
-
-	setSiteCount: function( siteCount ) {
-		_siteCount = siteCount;
-	},
-
-	setDispatch: function( dispatch ) {
-		_dispatch = dispatch;
+		if ( user && user.get() ) {
+			const userData = user.get();
+			analytics.identifyUser( userData.username, userData.ID );
+		}
 	},
 
 	mc: {
@@ -377,6 +354,15 @@ const analytics = {
 		recordRegistration();
 	},
 
+	recordPasswordlessRegistration: function( { flow } ) {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_passwordless_complete', { flow } );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
 	recordSocialRegistration: function() {
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
@@ -474,8 +460,6 @@ const analytics = {
 
 	tracks: {
 		recordEvent: function( eventName, eventProperties ) {
-			let superProperties;
-
 			eventProperties = eventProperties || {};
 
 			if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
@@ -525,7 +509,7 @@ const analytics = {
 			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
 			if (
-				eventName.indexOf( 'calypso_' ) !== 0 &&
+				! eventName.startsWith( 'calypso_' ) &&
 				! includes( EVENT_NAME_EXCEPTIONS, eventName )
 			) {
 				tracksDebug(
@@ -535,10 +519,8 @@ const analytics = {
 			}
 
 			if ( _superProps ) {
-				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
-				superProperties = _superProps.getAll( site, _siteCount );
-				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
+				const superProperties = _superProps( eventProperties );
+				eventProperties = { ...eventProperties, ...superProperties }; // assign to a new object so we don't modify the argument
 			}
 
 			// Remove properties that have an undefined value
@@ -597,11 +579,7 @@ const analytics = {
 	},
 
 	statsd: {
-		/* eslint-enable no-unused-vars */
-		recordTiming: function( pageUrl, eventType, duration /* triggerName */ ) {
-			// ignore triggerName for now, it has no obvious place in statsd
-			/* eslint-disable no-unused-vars */
-
+		recordTiming: function( pageUrl, eventType, duration ) {
 			if ( config( 'boom_analytics_enabled' ) ) {
 				const featureSlug = getFeatureSlugFromPageUrl( pageUrl );
 
@@ -723,37 +701,6 @@ const analytics = {
 				referDebug( 'Recording affiliate referral.', { affiliateId, campaignId, subId, referrer } );
 				reduxDispatch( trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } ) );
 			}
-		},
-	},
-
-	// HotJar tracking
-	hotjar: {
-		addHotJarScript: function() {
-			if (
-				! config( 'hotjar_enabled' ) ||
-				isE2ETest() ||
-				doNotTrack() ||
-				isPiiUrl() ||
-				! mayWeTrackCurrentUserGdpr()
-			) {
-				hotjarDebug( 'Not loading HotJar script' );
-				return;
-			}
-
-			( function( h, o, t, j, a, r ) {
-				hotjarDebug( 'Loading HotJar script' );
-				h.hj =
-					h.hj ||
-					function() {
-						( h.hj.q = h.hj.q || [] ).push( arguments );
-					};
-				h._hjSettings = { hjid: 227769, hjsv: 5 };
-				a = o.getElementsByTagName( 'head' )[ 0 ];
-				r = o.createElement( 'script' );
-				r.async = 1;
-				r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-				a.appendChild( r );
-			} )( window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=' );
 		},
 	},
 

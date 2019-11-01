@@ -7,19 +7,7 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 // We implicitly use browserslist configuration in package.json for build targets.
 
 const config = {
-	presets: [
-		[
-			'@babel/env',
-			{
-				modules,
-				useBuiltIns: 'entry',
-				corejs: 2,
-				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
-				exclude: [ 'transform-typeof-symbol' ],
-			},
-		],
-		'@automattic/calypso-build/babel/default',
-	],
+	presets: [ [ '@automattic/calypso-build/babel/default', { modules } ] ],
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser && codeSplit } ] ],
 	env: {
 		build_pot: {

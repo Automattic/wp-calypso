@@ -20,6 +20,7 @@ export { CURRENCIES } from './currencies';
  * @param   {String}     options.grouping    thousands separator
  * @param   {Number}     options.precision   decimal digits
  * @param   {String}     options.symbol      currency symbol e.g. 'A$'
+ * @param   {Boolean}    options.stripZeros  whether to remove trailing zero cents
  * @returns {?String}                        A formatted string.
  */
 export default function formatCurrency( number, code, options = {} ) {
@@ -29,11 +30,16 @@ export default function formatCurrency( number, code, options = {} ) {
 	}
 	const { decimal, grouping, precision, symbol } = { ...currencyDefaults, ...options };
 	const sign = number < 0 ? '-' : '';
-	const value = numberFormat( Math.abs( number ), {
+	let value = numberFormat( Math.abs( number ), {
 		decimals: precision,
 		thousandsSep: grouping,
 		decPoint: decimal,
 	} );
+
+	if ( options.stripZeros ) {
+		value = stripZeros( value, decimal );
+	}
+
 	return `${ sign }${ symbol }${ value }`;
 }
 
@@ -76,4 +82,16 @@ export function getCurrencyObject( number, code, options = {} ) {
 		integer,
 		fraction,
 	};
+}
+
+/**
+ * Remove trailing zero cents
+ * @param {String}  number  formatted number
+ * @param {String}  decimal decimal symbol
+ * @returns {String}
+ */
+
+function stripZeros( number, decimal ) {
+	const regex = new RegExp( `\\${ decimal }0+$` );
+	return number.replace( regex, '' );
 }

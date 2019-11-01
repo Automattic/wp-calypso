@@ -48,7 +48,7 @@ class CreditCard extends React.Component {
 
 		return (
 			<div className={ classes } { ...selectionProps }>
-				{ card ? <StoredCard { ...card } /> : children }
+				{ card ? <StoredCard { ...card } selected={ selected } /> : children }
 			</div>
 		);
 	}

@@ -52,25 +52,31 @@ class MediaLibraryListPlanPromo extends React.Component {
 		switch ( this.props.filter ) {
 			case 'videos':
 				return preventWidows(
-					this.props.canUpgrade ?
-					this.props.translate( 'To upload video files to your site, upgrade your plan.', {
-						textOnly: true,
-						context: 'Media upgrade promo',
-					} )
-					: this.props.translate( "Uploading video requires a paid plan." )
-					+ " " + this.props.translate( 'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.' ),
+					this.props.canUpgrade
+						? this.props.translate( 'To upload video files to your site, upgrade your plan.', {
+								textOnly: true,
+								context: 'Media upgrade promo',
+						  } )
+						: this.props.translate( 'Uploading video requires a paid plan.' ) +
+								' ' +
+								this.props.translate(
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
+								),
 					2
 				);
 
 			case 'audio':
 				return preventWidows(
-					this.props.canUpgrade ?
-					this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
-						textOnly: true,
-						context: 'Media upgrade promo',
-					} )
-					: this.props.translate( "Uploading audio requires a paid plan." )
-					+ " " + this.props.translate( 'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.' ),
+					this.props.canUpgrade
+						? this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
+								textOnly: true,
+								context: 'Media upgrade promo',
+						  } )
+						: this.props.translate( 'Uploading audio requires a paid plan.' ) +
+								' ' +
+								this.props.translate(
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
+								),
 					2
 				);
 
@@ -114,7 +120,7 @@ class MediaLibraryListPlanPromo extends React.Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	return {
 		canUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};

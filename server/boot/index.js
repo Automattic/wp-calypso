@@ -4,7 +4,6 @@
  */
 
 const path = require( 'path' ),
-	build = require( 'build' ),
 	config = require( 'config' ),
 	chalk = require( 'chalk' ),
 	express = require( 'express' ),
@@ -31,12 +30,6 @@ function setup() {
 	app.use( userAgent.express() );
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		// use legacy CSS rebuild system if css-hot-reload is disabled
-		if ( ! config.isEnabled( 'css-hot-reload' ) ) {
-			// only do `build` upon every request in "development"
-			app.use( build() );
-		}
-
 		require( 'bundler' )( app );
 
 		// setup logger
@@ -61,6 +54,20 @@ function setup() {
 					)
 				);
 			}
+
+			// Use try/catch because config() will throw for missing keys in development mode,
+			// and we don't want an exception if `support_session_id_cookie` is undefined.
+			try {
+				const supportSessionIdCookie = config( 'support_session_id_cookie' );
+				if ( supportSessionIdCookie ) {
+					app.use( function( req, res, next ) {
+						if ( ! req.cookies.support_session_id ) {
+							req.cookies.support_session_id = supportSessionIdCookie;
+						}
+						next();
+					} );
+				}
+			} catch ( e ) {}
 		}
 	} else {
 		// setup logger

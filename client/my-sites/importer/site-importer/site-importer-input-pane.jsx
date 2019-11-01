@@ -16,7 +16,7 @@ import moment from 'moment';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import { validateImportUrl } from 'lib/importers/url-validation';
+import { validateImportUrl } from 'lib/importer/url-validation';
 import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -26,6 +26,7 @@ import {
 	validateSiteIsImportable,
 	resetSiteImporterImport,
 	setValidationError,
+	clearSiteImporterImport,
 } from 'state/imports/site-importer/actions';
 import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
@@ -33,7 +34,7 @@ import ImporterActionButtonContainer from 'my-sites/importer/importer-action-but
 import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { appStates } from 'state/imports/constants';
-import { cancelImport } from 'lib/importer/actions';
+import { cancelImport, setUploadStartState } from 'lib/importer/actions';
 
 /**
  * Style dependencies
@@ -63,6 +64,12 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	componentDidMount() {
+		const { importStage } = this.props;
+		if ( 'importable' === importStage ) {
+			// Clear any leftover state from previous imports
+			this.props.clearSiteImporterImport();
+		}
+
 		this.validateSite();
 
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
@@ -176,6 +183,10 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	importSite = () => {
+		// To track an "upload start"
+		const { importerId } = this.props.importerStatus;
+		setUploadStartState( importerId, this.props.validatedSiteUrl );
+
 		this.props.importSite( {
 			engine: this.props.importData.engine,
 			importerStatus: this.props.importerStatus,
@@ -338,6 +349,7 @@ export default flowRight(
 			importSite,
 			validateSiteIsImportable,
 			resetSiteImporterImport,
+			clearSiteImporterImport,
 			setValidationError,
 		}
 	),

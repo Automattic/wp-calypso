@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith, isArray } from 'lodash';
 import url from 'url';
 
 /**
@@ -29,8 +29,8 @@ import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } fr
 import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
-import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import getEditorCloseUrl from 'state/selectors/get-editor-close-url';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
@@ -60,7 +60,7 @@ interface Props {
 	postType: T.PostType;
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
-	fseParentPostId: T.PostId;
+	fseParentPageId: T.PostId;
 }
 
 interface State {
@@ -93,7 +93,9 @@ enum EditorActions {
 	TrashPost = 'trashPost',
 	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
-	GetTemplatePartEditorUrl = 'getTemplatePartEditorUrl',
+	GetTemplateEditorUrl = 'getTemplateEditorUrl',
+	GetCloseButtonUrl = 'getCloseButtonUrl',
+	LogError = 'logError',
 }
 
 class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
@@ -111,7 +113,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
-	templateParts: [T.PostId, MessagePort][] = [];
+	templatePorts: [ T.PostId, MessagePort ][] = [];
+	successfulIframeLoad = false;
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -142,6 +145,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.iframeRef.current &&
 			this.iframeRef.current.contentWindow
 		) {
+			this.successfulIframeLoad = true;
 			const { port1: iframePortObject, port2: transferredPortObject } = new MessageChannel();
 
 			this.iframePort = iframePortObject;
@@ -218,8 +222,8 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			}
 
 			// Update the edit template part links with the ID of the FSE parent page.
-			this.templateParts.forEach( ( [ templatePartId ] ) => {
-				this.sendTemplatePartEditorUrl( templatePartId );
+			this.templatePorts.forEach( ( [ templateId ] ) => {
+				this.sendTemplateEditorUrl( templateId );
 			} );
 		}
 
@@ -231,12 +235,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
 			const { unsavedChanges = false } = payload;
-			if ( unsavedChanges ) {
-				this.props.markChanged();
-			} else {
-				this.props.markSaved();
-			}
-			this.props.navigate( this.props.closeUrl );
+			this.onCloseEditor( unsavedChanges, ports[ 0 ] );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -260,11 +259,58 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.openCustomizer( autofocus, unsavedChanges );
 		}
 
-		if ( EditorActions.GetTemplatePartEditorUrl === action ) {
-			const { templatePartId } = payload;
-			this.templateParts.push( [ templatePartId, ports[ 0 ] ] );
-			this.sendTemplatePartEditorUrl( templatePartId );
+		if ( EditorActions.GetTemplateEditorUrl === action ) {
+			const { templateId } = payload;
+			if ( ! templateId ) {
+				return;
+			}
+			// Update the port if it already exists, otherwise add it:
+			const existingPort = this.templatePorts.findIndex( template => template[ 0 ] === templateId );
+			if ( existingPort >= 0 ) {
+				this.templatePorts[ existingPort ] = [ templateId, ports[ 0 ] ];
+			} else {
+				this.templatePorts.push( [ templateId, ports[ 0 ] ] );
+			}
+			this.sendTemplateEditorUrl( templateId );
 		}
+
+		if ( EditorActions.GetCloseButtonUrl === action ) {
+			const { closeUrl } = this.props;
+			ports[ 0 ].postMessage( `${ window.location.origin }${ closeUrl }` );
+		}
+
+		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
+		if ( EditorActions.LogError === action ) {
+			const { error } = payload;
+			if ( isArray( error ) && error.length > 4 && window.onerror ) {
+				const errorObject = error[ 4 ];
+				error[ 4 ] = errorObject && JSON.parse( errorObject );
+				window.onerror( ...error );
+			}
+		}
+	};
+
+	onCloseEditor = ( hasUnsavedChanges: boolean, messagePort: MessagePort ) => {
+		const { closeUrl } = this.props;
+
+		if ( hasUnsavedChanges ) {
+			this.props.markChanged();
+		} else {
+			this.props.markSaved();
+		}
+
+		if ( this.shouldDoServerBackNav() ) {
+			messagePort.postMessage( `${ window.location.origin }${ closeUrl }` );
+		} else {
+			this.props.navigate( closeUrl );
+		}
+	};
+
+	// If we are on a template part and have a parent page
+	// ID, we want to do a server nav back to that page.
+	shouldDoServerBackNav = () => {
+		const { fseParentPageId, postType } = this.props;
+		return null != fseParentPageId && 'wp_template_part' === postType;
 	};
 
 	loadRevision = ( {
@@ -411,26 +457,23 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		this.props.navigate( customizerUrl );
 	};
 
-	getTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
-		const { getTemplatePartEditorUrl, editedPostId } = this.props;
+	getTemplateEditorUrl = ( templateId: T.PostId ) => {
+		const { getTemplateEditorUrl, editedPostId } = this.props;
 
-		let templatePartEditorUrl = getTemplatePartEditorUrl( templatePartId );
+		let templateEditorUrl = getTemplateEditorUrl( templateId );
 		if ( editedPostId ) {
-			templatePartEditorUrl = addQueryArgs(
-				{ fse_parent_post: editedPostId },
-				templatePartEditorUrl
-			);
+			templateEditorUrl = addQueryArgs( { fse_parent_post: editedPostId }, templateEditorUrl );
 		}
 
-		return templatePartEditorUrl;
+		return templateEditorUrl;
 	};
 
-	sendTemplatePartEditorUrl = ( templatePartId: T.PostId ) => {
-		const templatePartEditorUrl = this.getTemplatePartEditorUrl( templatePartId );
-		const port = this.templateParts.find(
-			( [ portTemplatePartId ] ) => portTemplatePartId === templatePartId
+	sendTemplateEditorUrl = ( templateId: T.PostId ) => {
+		const templateEditorUrl = this.getTemplateEditorUrl( templateId );
+		const port = this.templatePorts.find(
+			( [ portTemplateId ] ) => portTemplateId === templateId
 		)[ 1 ];
-		port.postMessage( `${ window.location.origin }${ templatePartEditorUrl }` );
+		port.postMessage( `${ window.location.origin }${ templateEditorUrl }` );
 	};
 
 	handleConversionResponse = ( confirmed: boolean ) => {
@@ -477,6 +520,14 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
+	onIframeLoaded = ( iframeUrl: string ) => {
+		if ( ! this.successfulIframeLoad ) {
+			window.location.replace( iframeUrl );
+			return;
+		}
+		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
+	};
+
 	render() {
 		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
 		const {
@@ -519,9 +570,9 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
 							// in Jetpack sites
-							onLoad={ () =>
-								this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } )
-							}
+							onLoad={ () => {
+								this.onIframeLoaded( iframeUrl );
+							} }
 						/>
 					) }
 				</div>
@@ -565,6 +616,7 @@ const mapStateToProps = (
 		action: postId && 'edit', // If postId is set, open edit view.
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
+		fse_parent_post: fseParentPageId != null && fseParentPageId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
@@ -584,13 +636,8 @@ const mapStateToProps = (
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
 
-	let closeUrl = getPostTypeAllPostsUrl( state, postType );
-	if ( 'wp_template_part' === postType ) {
-		closeUrl = getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' );
-	}
-
 	return {
-		closeUrl,
+		closeUrl: getEditorCloseUrl( state, siteId, postType, fseParentPageId ),
 		currentRoute,
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
@@ -601,7 +648,7 @@ const mapStateToProps = (
 		siteId,
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getTemplatePartEditorUrl: partial(
+		getTemplateEditorUrl: partial(
 			getGutenbergEditorUrl,
 			state,
 			siteId,

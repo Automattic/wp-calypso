@@ -9,12 +9,32 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+
+// @todo: Convert to import from `components/gridicon`
+// which makes Calypso mysteriously crash at the moment.
+//
+// eslint-disable-next-line no-restricted-imports
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Module constants
+ */
+const GRIDICONS_WITH_DROP = [
+	'add',
+	'cross-circle',
+	'ellipsis-circle',
+	'help',
+	'info',
+	'notice',
+	'pause',
+	'play',
+	'spam',
+];
 
 export class Notice extends Component {
 	static defaultProps = {
@@ -109,10 +129,14 @@ export class Notice extends Component {
 			'is-dismissable': showDismiss,
 		} );
 
+		const iconName = icon || this.getIcon();
+		const iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
+
 		return (
 			<div className={ classes }>
 				<span className="notice__icon-wrapper">
-					<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
+					{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
+					<Gridicon className="notice__icon" icon={ iconName } size={ 24 } />
 				</span>
 				<span className="notice__content">
 					<span className="notice__text">{ text ? text : children }</span>

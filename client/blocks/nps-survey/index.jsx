@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -132,14 +132,14 @@ export class NpsSurvey extends PureComponent {
 		}, 0 );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 	}
 
 	shouldShowPromotion() {
 		return (
-			'en' === getLocaleSlug() &&
+			[ 'en', 'en-gb' ].indexOf( getLocaleSlug() ) >= 0 &&
 			this.props.isBusinessUser &&
 			isNumber( this.state.score ) &&
 			this.state.score < 7
@@ -237,7 +237,7 @@ export class NpsSurvey extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'{{booking}}Reserve a 1:1 Support Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
+								'{{booking}}Reserve a 1:1 Quick Start Session{{/booking}} now or connect with a Happiness Engineer {{contact}}over live chat or email{{/contact}}.',
 								{
 									components: {
 										booking: (

@@ -24,7 +24,6 @@ import EditorTitle from 'post-editor/editor-title';
 import EditorPageSlug from 'post-editor/editor-page-slug';
 import TinyMCE from 'components/tinymce';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
@@ -348,20 +347,20 @@ export class PostEditor extends React.Component {
 									<EditorTitle onChange={ this.onEditorTitleChange } />
 									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
-										<SegmentedControlItem
+										<SegmentedControl.Item
 											selected={ mode === 'tinymce' }
 											onClick={ this.switchEditorVisualMode }
 											title={ this.props.translate( 'Edit with a visual editor' ) }
 										>
 											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
-										</SegmentedControlItem>
-										<SegmentedControlItem
+										</SegmentedControl.Item>
+										<SegmentedControl.Item
 											selected={ mode === 'html' }
 											onClick={ this.switchEditorHtmlMode }
 											title={ this.props.translate( 'Edit the raw HTML code' ) }
 										>
 											HTML
-										</SegmentedControlItem>
+										</SegmentedControl.Item>
 									</SegmentedControl>
 								</div>
 								<hr className="post-editor__header-divider" />

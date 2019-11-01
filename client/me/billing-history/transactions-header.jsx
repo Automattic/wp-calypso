@@ -14,9 +14,6 @@ import { find, isEqual } from 'lodash';
  * Internal dependencies
  */
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownLabel from 'components/select-dropdown/label';
-import DropdownSeparator from 'components/select-dropdown/separator';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setApp, setDate } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
@@ -33,7 +30,7 @@ class TransactionsHeader extends React.Component {
 		event.preventDefault();
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		document.body.addEventListener( 'click', this.closePopoverIfClickedOutside );
 	}
 
@@ -107,7 +104,7 @@ class TransactionsHeader extends React.Component {
 				onClick={ this.handleAppsPopoverLinkClick }
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<DropdownLabel>{ translate( 'Recent Transactions' ) }</DropdownLabel>
+				<SelectDropdown.Label>{ translate( 'Recent Transactions' ) }</SelectDropdown.Label>
 				{ this.renderDatePicker(
 					'Newest',
 					translate( 'Newest' ),
@@ -117,8 +114,8 @@ class TransactionsHeader extends React.Component {
 					},
 					null
 				) }
-				<DropdownSeparator />
-				<DropdownLabel>{ translate( 'By Month' ) }</DropdownLabel>
+				<SelectDropdown.Separator />
+				<SelectDropdown.Label>{ translate( 'By Month' ) }</SelectDropdown.Label>
 				{ dateFilters.map( function( { count, title, value }, index ) {
 					let analyticsEvent = 'Current Month';
 
@@ -151,14 +148,14 @@ class TransactionsHeader extends React.Component {
 		analyticsEvent = 'undefined' === typeof analyticsEvent ? titleKey : analyticsEvent;
 
 		return (
-			<DropdownItem
+			<SelectDropdown.Item
 				key={ titleKey }
 				selected={ isSelected }
 				onClick={ this.getDatePopoverItemClickHandler( analyticsEvent, value ) }
 				count={ count }
 			>
 				{ titleTranslated }
-			</DropdownItem>
+			</SelectDropdown.Item>
 		);
 	}
 
@@ -173,7 +170,7 @@ class TransactionsHeader extends React.Component {
 				onClick={ this.handleAppsPopoverLinkClick }
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<DropdownLabel>{ translate( 'App Name' ) }</DropdownLabel>
+				<SelectDropdown.Label>{ translate( 'App Name' ) }</SelectDropdown.Label>
 				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
 				{ appFilters.map( function( { title, value, count } ) {
 					return this.renderAppPicker( title, value, count, 'Specific App' );
@@ -186,14 +183,14 @@ class TransactionsHeader extends React.Component {
 		const selected = app === this.props.filter.app;
 
 		return (
-			<DropdownItem
+			<SelectDropdown.Item
 				key={ app }
 				selected={ selected }
 				onClick={ this.getAppPopoverItemClickHandler( analyticsEvent, app ) }
 				count={ count }
 			>
 				{ title }
-			</DropdownItem>
+			</SelectDropdown.Item>
 		);
 	}
 }

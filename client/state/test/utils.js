@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,6 +11,7 @@ import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import {
 	cachingActionCreatorFactory,
 	createReducer,
+	createReducerWithValidation,
 	extendAction,
 	keyedReducer,
 	withSchemaValidation,
@@ -155,6 +155,11 @@ describe( 'utils', () => {
 				reducer = createReducer( null, {} );
 			} );
 
+			test( 'should throw when a schema is provided', () => {
+				const initialState = {};
+				expect( () => createReducer( initialState, {}, testSchema ) ).toThrow();
+			} );
+
 			test( 'should return a function', () => {
 				expect( typeof reducer ).toBe( 'function' );
 			} );
@@ -223,29 +228,6 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		describe( 'with schema provided', () => {
-			const initialState = {};
-
-			beforeAll( () => {
-				reducer = createReducer( initialState, {}, testSchema );
-			} );
-
-			test( 'should return current state when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).toBe( currentState );
-				expect( reducer( currentState, actionSerialize ) ).toEqual( currentState );
-			} );
-
-			test( 'should return initial state when valid initial state and deserialize action type passed', () => {
-				expect( reducer( currentState, actionDeserialize ) ).toBe( currentState );
-				expect( reducer( currentState, actionDeserialize ) ).toEqual( currentState );
-			} );
-
-			test( 'should return default state when invalid initial state and deserialize action type passed', () => {
-				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toBe( initialState );
-				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toEqual( initialState );
-			} );
-		} );
-
 		describe( 'with default actions overrides', () => {
 			const overriddenState = { overridden: 'state' };
 
@@ -267,6 +249,39 @@ describe( 'utils', () => {
 			} );
 		} );
 	} );
+
+	describe( '#createReducerWithValidation()', () => {
+		test( 'should throw when no schema is provided', () => {
+			const initialState = {};
+			reducer = createReducer( null, {} );
+
+			expect( () => createReducerWithValidation( initialState, {} ) ).toThrow();
+		} );
+
+		describe( 'with schema provided', () => {
+			const initialState = {};
+
+			beforeAll( () => {
+				reducer = createReducerWithValidation( initialState, {}, testSchema );
+			} );
+
+			test( 'should return current state when serialize action type passed', () => {
+				expect( reducer( currentState, actionSerialize ) ).toBe( currentState );
+				expect( reducer( currentState, actionSerialize ) ).toEqual( currentState );
+			} );
+
+			test( 'should return initial state when valid initial state and deserialize action type passed', () => {
+				expect( reducer( currentState, actionDeserialize ) ).toBe( currentState );
+				expect( reducer( currentState, actionDeserialize ) ).toEqual( currentState );
+			} );
+
+			test( 'should return default state when invalid initial state and deserialize action type passed', () => {
+				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toBe( initialState );
+				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).toEqual( initialState );
+			} );
+		} );
+	} );
+
 	describe( '#keyedReducer', () => {
 		const grow = name => ( { type: 'GROW', name } );
 		const reset = name => ( { type: 'RESET', name } );
@@ -538,9 +553,9 @@ describe( 'utils', () => {
 			minimum: 0,
 		};
 
-		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
-		age.schema = schema;
-
+		const age = withSchemaValidation( schema, ( state = 0, action ) =>
+			'GROW' === action.type ? state + 1 : state
+		);
 		const height = ( state = 160, action ) => ( 'GROW' === action.type ? state + 1 : state );
 		const count = ( state = 1, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
@@ -771,9 +786,9 @@ describe( 'utils', () => {
 			expect( invalid ).toEqual( { height: 160, count: 1 } );
 		} );
 
-		test( 'uses the provided validation from createReducer', () => {
+		test( 'uses the provided validation from createReducerWithValidation', () => {
 			reducers = combineReducers( {
-				height: createReducer( 160, {}, schema ),
+				height: createReducerWithValidation( 160, {}, schema ),
 				count,
 			} );
 

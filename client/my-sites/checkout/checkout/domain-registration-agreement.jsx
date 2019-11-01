@@ -12,7 +12,7 @@ import { get, map, reduce } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,

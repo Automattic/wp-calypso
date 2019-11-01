@@ -11,13 +11,12 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
 import { generateFlows } from 'signup/config/flows-pure';
 
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
-	return '/checkout/' + dependencies.siteSlug;
+	return `/checkout/${ dependencies.siteSlug }?signup=1`;
 }
 
 function dependenciesContainCartItem( dependencies ) {
@@ -58,11 +57,16 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
+function getChecklistThemeDestination( dependencies ) {
+	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getThankYouNoSiteDestination,
+	getChecklistThemeDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -83,12 +87,14 @@ function filterDestination( destination, dependencies ) {
 	return destination;
 }
 
+function getDefaultFlowName() {
+	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+}
+
 const Flows = {
 	filterDestination,
 
-	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
-		? abtest( 'improvedOnboarding' )
-		: 'main',
+	defaultFlowName: getDefaultFlowName(),
 	excludedSteps: [],
 
 	/**
@@ -96,12 +102,7 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * `currentStepName` is the current step in the signup flow. It is used
-	 * to determine if any AB variations should be assigned after it is completed.
-	 * Example use case: To determine if a new signup step should be part of the flow or not.
-	 *
 	 * @param {String} flowName The name of the flow to return
-	 * @param {String} currentStepName The current step. See description above
 	 * @returns {Object} A flow object
 	 */
 	getFlow( flowName ) {
@@ -152,6 +153,10 @@ const Flows = {
 		return assign( {}, flow, {
 			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
 		} );
+	},
+
+	resetExcludedSteps() {
+		Flows.excludedSteps = [];
 	},
 
 	getFlows() {

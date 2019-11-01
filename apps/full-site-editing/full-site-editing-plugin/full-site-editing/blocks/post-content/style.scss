@@ -1,5 +1,9 @@
 .post-content-block.alignfull {
 	padding: 0 12px;
+
+	@media ( max-width: 768px ) {
+		overflow-x: hidden;
+	}
 }
 
 .post-content-block__selector {
@@ -31,5 +35,62 @@
 
 	.post-content-block .editor-post-title {
 		display: block;
+	}
+}
+
+// Fix the size and positioning full-width blocks inside the Post Content block
+// TODO: Replace the magic numbers!
+.post-content-block .block-editor-block-list__layout .block-editor-block-list__block[data-align=full] {
+	@media ( max-width: 768px ) {
+		max-width: 768px;
+		margin-left: 0;
+		margin-right: 0;
+
+		.block-editor-block-mover {
+			left: 60px;
+		}
+	}
+	@media ( min-width: 768px ) {
+		max-width: calc( 100vw - 81px );
+		margin-left: 3px;
+		margin-right: 3px;
+	}
+}
+
+/**
+ * Hide the content slot block UI
+ *
+ * @TODO: Remove this once Gutenberg gets support for hiding block UI.
+ *
+ * @see https://github.com/WordPress/gutenberg/issues/7469
+ * @see https://github.com/WordPress/gutenberg/pull/18173
+ */
+.block-editor-block-list__layout {
+	.post-content__block {
+		&.is-selected {
+			.block-editor-block-contextual-toolbar {
+				display: none;
+			}
+		}
+
+		&.block-editor-block-list__block {
+			// Need to get super specific to override the core css selectors:
+			&,
+			&.has-child-selected,
+			&.is-navigate-mode,
+			&.is-hovered {
+				> .block-editor-block-list__block-edit {
+					&::before {
+						transition: none;
+						border: none;
+						outline: none;
+						box-shadow: none;
+					}
+					> .block-editor-block-list__breadcrumb {
+						display: none;
+					}
+				}
+			}
+		}
 	}
 }

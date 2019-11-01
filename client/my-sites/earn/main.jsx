@@ -24,15 +24,15 @@ import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
+import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
-import config from 'config';
 import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {
-		section: PropTypes.string.isRequired,
+		section: PropTypes.string,
 		site: PropTypes.object,
 		query: PropTypes.object,
 	};
@@ -51,26 +51,14 @@ class EarningsMain extends Component {
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
 
-		if ( config.isEnabled( 'memberships' ) && ! config.isEnabled( 'earn-relayout' ) ) {
-			tabs.push( {
-				title: translate( 'Recurring Payments' ),
-				path: '/earn/payments' + pathSuffix,
-				id: 'payments',
-			} );
-		}
-
 		if ( canAccessAds( this.props.site ) ) {
 			tabs.push( {
-				title: config.isEnabled( 'earn-relayout' )
-					? translate( 'Earnings' )
-					: translate( 'Ads Earnings' ),
+				title: translate( 'Earnings' ),
 				path: '/earn/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
 			} );
 			tabs.push( {
-				title: config.isEnabled( 'earn-relayout' )
-					? translate( 'Settings' )
-					: translate( 'Ads Settings' ),
+				title: translate( 'Settings' ),
 				path: '/earn/ads-settings' + pathSuffix,
 				id: 'ads-settings',
 			} );
@@ -98,7 +86,7 @@ class EarningsMain extends Component {
 			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
 			default:
-				return null;
+				return <Home />;
 		}
 	}
 
@@ -150,6 +138,35 @@ class EarningsMain extends Component {
 	 */
 	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
 
+	getHeaderCake = () => {
+		const headerText = this.getHeaderText();
+		return headerText && <HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>;
+	};
+
+	getSectionNav = section => {
+		const currentPath = this.getCurrentPath();
+
+		return (
+			! section.startsWith( 'payments' ) && (
+				<SectionNav selectedText={ this.getSelectedText() }>
+					<NavTabs>
+						{ this.getFilters().map( filterItem => {
+							return (
+								<NavItem
+									key={ filterItem.id }
+									path={ filterItem.path }
+									selected={ filterItem.path === currentPath }
+								>
+									{ filterItem.title }
+								</NavItem>
+							);
+						} ) }
+					</NavTabs>
+				</SectionNav>
+			)
+		);
+	};
+
 	render() {
 		const { adsProgramName, section, translate } = this.props;
 		const component = this.getComponent( this.props.section );
@@ -161,36 +178,16 @@ class EarningsMain extends Component {
 			'payments-plans': translate( 'Recurring Payments plans' ),
 		};
 
-		const currentPath = this.getCurrentPath();
-
 		return (
-			<Main className="earn">
+			<Main className="earn is-wide-layout">
 				<PageViewTracker
-					path={ `/earn/${ section }/:site` }
+					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
-				{ config.isEnabled( 'earn-relayout' ) && (
-					<HeaderCake backHref={ this.goBack() }>{ this.getHeaderText() }</HeaderCake>
-				) }
-				{ ( 'payments' !== this.props.section || ! config.isEnabled( 'earn-relayout' ) ) && (
-					<SectionNav selectedText={ this.getSelectedText() }>
-						<NavTabs>
-							{ this.getFilters().map( filterItem => {
-								return (
-									<NavItem
-										key={ filterItem.id }
-										path={ filterItem.path }
-										selected={ filterItem.path === currentPath }
-									>
-										{ filterItem.title }
-									</NavItem>
-								);
-							} ) }
-						</NavTabs>
-					</SectionNav>
-				) }
+				{ this.getHeaderCake() }
+				{ section && this.getSectionNav( section ) }
 				{ component }
 			</Main>
 		);

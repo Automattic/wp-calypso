@@ -19,7 +19,7 @@
 	position: relative;
 	text-align: left;
 	@include elevation ( 0 );
-	border-bottom: 1px solid var( --color-neutral-50 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	@include breakpoint( '>660px' ) {
 		padding-right: 24px;
@@ -82,5 +82,19 @@
 	&:focus .card__link-indicator {
 		opacity: 1;
 		transform: translateX( 0 );
+	}
+}
+
+.site-type__basic-site,
+.site-type__import-button {
+	text-align: center;
+	margin-top: 20px;
+
+	.button.is-borderless {
+		padding: 0;
+		color: var( --color-text-inverted );
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: underline;
 	}
 }

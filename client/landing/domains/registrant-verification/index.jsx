@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { get, join } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,11 +35,11 @@ class RegistrantVerificationPage extends Component {
 		this.state = this.getLoadingState();
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
 		wpcom.domainsVerifyRegistrantEmail( domain, email, token ).then(
-			() => {
-				this.setState( this.getVerificationSuccessState() );
+			response => {
+				this.setState( this.getVerificationSuccessState( get( response, 'domains', [ domain ] ) ) );
 			},
 			error => {
 				this.setErrorState( error );
@@ -58,15 +59,18 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getVerificationSuccessState = () => {
-		const { domain, translate } = this.props;
+	getVerificationSuccessState = domains => {
+		const { translate } = this.props;
+
+		const verifiedDomains = join( domains, ', ' );
+
 		return {
 			title: translate( 'Success!' ),
 			message: translate(
 				'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
 				{
 					args: {
-						domain: domain,
+						domain: verifiedDomains,
 					},
 					components: {
 						strong: <strong />,

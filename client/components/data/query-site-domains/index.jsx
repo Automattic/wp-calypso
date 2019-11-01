@@ -20,11 +20,11 @@ class QuerySiteDomains extends Component {
 		this.requestSiteDomains = this.requestSiteDomains.bind( this );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestSiteDomains();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.requestingSiteDomains ||
 			! nextProps.siteId ||

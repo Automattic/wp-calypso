@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -52,7 +52,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/stats/day/${ this.props.siteSlug }` );
+		page.back( `/marketing/tools/${ this.props.siteSlug }` );
 	};
 
 	handleConnect = keyringConnection => {
@@ -167,6 +167,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker

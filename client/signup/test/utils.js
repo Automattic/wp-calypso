@@ -17,6 +17,7 @@ import {
 	getStepName,
 	getLocale,
 	getFlowName,
+	getFilteredSteps,
 } from '../utils';
 import flows from 'signup/config/flows';
 
@@ -32,6 +33,8 @@ jest.mock( 'signup/config/flows-pure', () => ( {
 } ) );
 
 describe( 'utils', () => {
+	const defaultFlowName = flows.defaultFlowName;
+
 	describe( 'getLocale', () => {
 		test( 'should find the locale anywhere in the params', () => {
 			expect( getLocale( { lang: 'fr' } ) ).toBe( 'fr' );
@@ -66,7 +69,72 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should return the default flow if the flow is missing', () => {
-			expect( getFlowName( {} ) ).toBe( 'main' );
+			expect( getFlowName( {} ) ).toBe( defaultFlowName );
+		} );
+	} );
+
+	describe( 'getFilteredSteps', () => {
+		describe( 'when the given flow is found in the config', () => {
+			const exampleFlowName = 'onboarding';
+
+			describe( 'when there are a number of steps in the progress state', () => {
+				describe( 'and some of them match that flow', () => {
+					const userStep = { stepName: 'user' };
+					const siteTypeStep = { stepName: 'site-type' };
+					const someOtherStep = { stepName: 'some-other-step' };
+					const exampleSteps = {
+						user: userStep,
+						'site-type': siteTypeStep,
+						'some-other-step': someOtherStep,
+					};
+
+					const result = getFilteredSteps( exampleFlowName, exampleSteps );
+
+					test( 'it returns an array', () => {
+						expect( Array.isArray( result ) ).toBe( true );
+					} );
+
+					test( 'it should return only the step objects that match the flow', () => {
+						expect( result ).toEqual( [ userStep, siteTypeStep ] );
+					} );
+				} );
+
+				describe( 'but none of them match that flow', () => {
+					const exampleSteps = {
+						'some-step': { stepName: 'some-step' },
+						'some-other-step': { stepName: 'some-other-step' },
+					};
+					const result = getFilteredSteps( exampleFlowName, exampleSteps );
+
+					test( 'it should return an empty array', () => {
+						expect( result ).toHaveLength( 0 );
+						expect( Array.isArray( result ) ).toBe( true );
+					} );
+				} );
+			} );
+
+			describe( 'when there are no steps in the progress state', () => {
+				const result = getFilteredSteps( exampleFlowName, {} );
+
+				test( 'it should return an empty array', () => {
+					expect( result ).toHaveLength( 0 );
+					expect( Array.isArray( result ) ).toBe( true );
+				} );
+			} );
+		} );
+
+		describe( 'when the given flow is not found in the config', () => {
+			const exampleFlowName = 'some-bad-flow';
+			const exampleSteps = {
+				user: { stepName: 'user' },
+				'site-type': { stepName: 'site-type' },
+			};
+			const result = getFilteredSteps( exampleFlowName, exampleSteps );
+
+			test( 'it should return an empty array', () => {
+				expect( result ).toHaveLength( 0 );
+				expect( Array.isArray( result ) ).toBe( true );
+			} );
 		} );
 	} );
 
@@ -80,7 +148,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should redirect to the default flow if the flow is the default', () => {
-			expect( getValidPath( { flowName: 'main' } ) ).toBe( '/start/user' );
+			expect( getValidPath( { flowName: defaultFlowName } ) ).toBe( '/start/user' );
 		} );
 
 		test( 'should redirect invalid steps to the default flow if no flow is present', () => {

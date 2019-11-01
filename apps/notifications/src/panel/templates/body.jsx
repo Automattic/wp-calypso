@@ -46,7 +46,7 @@ export const NoteBody = createReactClass( {
 		this.setState( { reply: data } );
 	},
 
-	componentWillMount: function() {
+	UNSAFE_componentWillMount: function() {
 		var note = this.props.note,
 			hasReplyBlock;
 

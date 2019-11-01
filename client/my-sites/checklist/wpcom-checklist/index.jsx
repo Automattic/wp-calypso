@@ -32,14 +32,6 @@ class WpcomChecklist extends Component {
 		viewMode: 'checklist',
 	};
 
-	componentDidMount() {
-		this.setNotification( this.props.shouldShowNotification );
-	}
-
-	componentDidUpdate() {
-		this.setNotification( this.props.shouldShowNotification );
-	}
-
 	setNotification = value => {
 		if ( this.props.setNotification && this.props.viewMode === 'notification' ) {
 			this.props.setNotification( value );
@@ -47,7 +39,7 @@ class WpcomChecklist extends Component {
 	};
 
 	render() {
-		const { shouldRender, shouldShowNotification, ...ownProps } = this.props;
+		const { shouldRender, ...ownProps } = this.props;
 
 		if ( ! shouldRender ) {
 			return null;
@@ -93,26 +85,6 @@ function shouldChecklistRender(
 	return true;
 }
 
-function shouldChecklistShowNotification(
-	taskList,
-	storedTask,
-	isEligibleForChecklist,
-	isSectionEligible
-) {
-	const firstIncomplete = taskList && taskList.getFirstIncompleteTask();
-
-	if (
-		firstIncomplete &&
-		( storedTask !== firstIncomplete.id || storedTask === null ) &&
-		isEligibleForChecklist &&
-		isSectionEligible
-	) {
-		return true;
-	}
-
-	return false;
-}
-
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
@@ -122,16 +94,16 @@ export default connect( ( state, ownProps ) => {
 	const siteSegment = get( siteChecklist, 'segment' );
 	const siteVerticals = get( siteChecklist, 'vertical' );
 	const taskStatuses = get( siteChecklist, 'tasks' );
-	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
 	const taskList = getTaskList( {
 		taskStatuses,
 		designType,
-		isSiteUnlaunched,
+		siteIsUnlaunched,
 		siteSegment,
 		siteVerticals,
 	} );
 
-	const { viewMode, storedTask } = ownProps;
+	const { viewMode } = ownProps;
 
 	return {
 		shouldRender: shouldChecklistRender(
@@ -140,12 +112,6 @@ export default connect( ( state, ownProps ) => {
 			taskList,
 			isSectionEligible,
 			siteId
-		),
-		shouldShowNotification: shouldChecklistShowNotification(
-			taskList,
-			storedTask,
-			isEligibleForChecklist,
-			isSectionEligible
 		),
 	};
 } )( WpcomChecklist );

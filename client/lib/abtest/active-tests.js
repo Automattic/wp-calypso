@@ -1,15 +1,5 @@
 /** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -29,15 +19,6 @@ export default {
 		allowExistingUsers: true,
 	},
 	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	ATUpgradeOnCancel: {
 		datestamp: '20170515',
 		variations: {
 			hide: 20,
@@ -72,14 +53,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -108,7 +81,7 @@ export default {
 		defaultVariation: 'siteType',
 	},
 	skippableDomainStep: {
-		datestamp: '20190717',
+		datestamp: '20290717',
 		variations: {
 			skippable: 0,
 			notSkippable: 100,
@@ -116,22 +89,49 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	showPlanUpsellNudge: {
-		datestamp: '20190712',
+	signupWithBasicSite: {
+		datestamp: '20190930',
 		variations: {
-			variantShowNudge: 50,
+			variant: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	defaultMonthlyJetpackPlan: {
-		datestamp: '20190722',
+	verticalSuggestedThemes: {
+		datestamp: '20191031',
 		variations: {
-			monthlyPlan: 50,
-			yearlyPlan: 50,
+			control: 90,
+			test: 10,
 		},
-		defaultVariation: 'yearlyPlan',
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	passwordlessSignup: {
+		datestamp: '20191029',
+		variations: {
+			passwordless: 10,
+			default: 90,
+		},
+		defaultVariation: 'default',
+	},
+	checkoutPaymentTypes: {
+		datestamp: '20191028',
+		variations: {
+			tabs: 50,
+			radios: 50,
+		},
+		defaultVariation: 'tabs',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20191029',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 };

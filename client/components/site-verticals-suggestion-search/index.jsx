@@ -94,7 +94,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 */
 	setSearchResults = results => {
 		if ( results && results.length ) {
-			this.setState( { candidateVerticals: results }, () =>
+			const candidateVerticals = this.getSuggestionsWithCategories( results );
+			this.setState( { candidateVerticals }, () =>
 				this.updateVerticalData(
 					this.searchForVerticalMatches( this.state.inputValue ),
 					this.state.inputValue
@@ -107,6 +108,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		id: `${ uuid().replace( /-/g, '' ) }-site-vertical-suggestion`,
 		fetch_algo: '/verticals',
 		action: 'site_vertical_selected',
+		ui_algo: 'signup/site-topic/related_1',
 	} );
 
 	/**
@@ -168,13 +170,26 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * We use the `this.state.candidateVerticals` array instead of `this.props.verticals`
 	 * so `<SuggestionSearch />` has a list to filter in between requests.
 	 *
+	 * @param {Array} verticals verticals to be categorized
 	 * @returns {Array} The array of vertical values.
 	 */
-	getSuggestions = () => this.state.candidateVerticals.map( vertical => vertical.verticalName );
+	getSuggestionsWithCategories( verticals ) {
+		const normalizedInput = this.state.inputValue.toLowerCase().trim();
+		const includeRelated = normalizedInput.length > 2;
+
+		return verticals
+			.map( vertical => ( {
+				label: vertical.verticalName,
+				category: isRelatedVertical( vertical, normalizedInput )
+					? this.props.translate( 'Related' )
+					: undefined,
+			} ) )
+			.filter( suggestion => includeRelated || ! suggestion.category );
+	}
 
 	render() {
 		const { autoFocus, defaultVerticalSearchTerm, placeholder, siteType, translate } = this.props;
-		const { inputValue, railcar } = this.state;
+		const { candidateVerticals, inputValue, railcar } = this.state;
 		const shouldShowPopularTopics = this.shouldShowPopularTopics();
 		const placeholderText = shouldShowPopularTopics
 			? translate( 'Enter a topic or select from below.', {
@@ -185,6 +200,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					comment:
 						'Text input field placeholder. Should be fewer than 35 chars to fit mobile width.',
 			  } );
+
 		return (
 			<>
 				<QueryVerticals
@@ -197,7 +213,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 					id="siteTopic"
 					placeholder={ placeholder || placeholderText }
 					onChange={ this.onSiteTopicChange }
-					suggestions={ this.getSuggestions() }
+					suggestions={ candidateVerticals }
 					value={ inputValue }
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 					isSearching={ this.isVerticalSearchPending() }
@@ -208,6 +224,13 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			</>
 		);
 	}
+}
+
+function isRelatedVertical( vertical, normalizedInput ) {
+	return (
+		! vertical.isUserInputVertical &&
+		! vertical.verticalName.toLowerCase().includes( normalizedInput )
+	);
 }
 
 export default localize(

@@ -90,6 +90,9 @@ class Sites extends Component {
 			case 'settings':
 				path = translate( 'Settings' );
 				break;
+			case 'home':
+				path = translate( 'My Home' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {

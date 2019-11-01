@@ -169,15 +169,7 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate,
-			selectedSite,
-			siteSlug,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 
@@ -198,7 +190,6 @@ export class PlansStep extends Component {
 				headerText={ headerText }
 				fallbackHeaderText={ fallbackHeaderText }
 				subHeaderText={ subHeaderText }
-				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
 				allowBackFirstStep={ !! selectedSite }

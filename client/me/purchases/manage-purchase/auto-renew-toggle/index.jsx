@@ -18,7 +18,7 @@ import { isFetchingUserPurchases } from 'state/purchases/selectors';
 import { fetchUserPurchases } from 'state/purchases/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import { errorNotice } from 'state/notices/actions';
+import { createNotice } from 'state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 
@@ -31,7 +31,6 @@ class AutoRenewToggle extends Component {
 		isAtomicSite: PropTypes.bool.isRequired,
 		fetchingUserPurchases: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
-		errorNotice: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -43,6 +42,18 @@ class AutoRenewToggle extends Component {
 		isTogglingToward: null,
 		isRequesting: false,
 	};
+
+	componentDidUpdate() {
+		if ( ! this.state.showAutoRenewDisablingDialog && this.state.pendingNotice ) {
+			this.props.createNotice( ...this.state.pendingNotice );
+
+			// the blocking condition above will safely block this from causing infinite update loop.
+			/* eslint-disable-next-line react/no-did-update-set-state */
+			this.setState( {
+				pendingNotice: null,
+			} );
+		}
+	}
 
 	onCloseAutoRenewDisablingDialog = () => {
 		this.setState( {
@@ -72,15 +83,30 @@ class AutoRenewToggle extends Component {
 				isRequesting: false,
 			} );
 
-			if ( ! success ) {
-				this.props.errorNotice(
-					isTogglingToward
-						? translate( "We've failed to enable auto-renewal for you. Please try again." )
-						: translate( "We've failed to disable auto-renewal for you. Please try again." )
-				);
+			if ( success ) {
+				this.props.fetchUserPurchases( currentUserId );
+
+				if ( isTogglingToward === false ) {
+					this.setState( {
+						pendingNotice: [
+							'is-success',
+							translate( 'Auto-renewal has been turned off successfully.' ),
+							{ duration: 4000 },
+						],
+					} );
+				}
+
+				return;
 			}
 
-			this.props.fetchUserPurchases( currentUserId );
+			this.setState( {
+				pendingNotice: [
+					'is-error',
+					isTogglingToward
+						? translate( "We've failed to enable auto-renewal for you. Please try again." )
+						: translate( "We've failed to disable auto-renewal for you. Please try again." ),
+				],
+			} );
 		} );
 
 		this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
@@ -148,6 +174,6 @@ export default connect(
 	{
 		fetchUserPurchases,
 		recordTracksEvent,
-		errorNotice,
+		createNotice,
 	}
 )( localize( AutoRenewToggle ) );

@@ -40,10 +40,6 @@ import {
 	WAPI_DOMAIN_INFO_FETCH,
 	WAPI_DOMAIN_INFO_FETCH_COMPLETED,
 	WAPI_DOMAIN_INFO_FETCH_FAILED,
-	WHOIS_FETCH,
-	WHOIS_FETCH_COMPLETED,
-	WHOIS_FETCH_FAILED,
-	WHOIS_UPDATE_COMPLETED,
 } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import DnsStore from 'lib/domains/dns/store';
@@ -51,8 +47,6 @@ import NameserversStore from 'lib/domains/nameservers/store';
 import { requestSite } from 'state/sites/actions';
 import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
-import whoisAssembler from 'lib/domains/whois/assembler';
-import WhoisStore from 'lib/domains/whois/store';
 import wp from 'lib/wp';
 import debugFactory from 'debug';
 import { isBeingProcessed } from 'lib/domains/dns';
@@ -79,71 +73,6 @@ export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dis
 		} );
 	} );
 };
-
-/**
- * Gets the current WHOIS data for `domainName` from the backend
- *
- * @param {String} domainName - current domain name
- */
-export function fetchWhois( domainName ) {
-	const whois = WhoisStore.getByDomainName( domainName );
-
-	if ( ! whois.needsUpdate ) {
-		return;
-	}
-
-	Dispatcher.handleViewAction( {
-		type: WHOIS_FETCH,
-		domainName,
-	} );
-
-	wpcom.fetchWhois( domainName, ( error, data ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: WHOIS_FETCH_FAILED,
-				domainName,
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: WHOIS_FETCH_COMPLETED,
-				domainName,
-				data: whoisAssembler.createDomainWhois( data ),
-			} );
-		}
-	} );
-}
-
-/**
- * Posts new WHOIS contact information data for `domainName` to the backend
- *
- * @param {String} domainName - current domain name
- * @param {Object} registrantContactDetails - registrant contact details to be sent to server
- * @param {Boolean} transferLock - state of opt-out of the 60-day transfer lock checkbox
- * @param {Function} onComplete - callback after HTTP action
- */
-export function updateWhois( domainName, registrantContactDetails, transferLock, onComplete ) {
-	wpcom.updateWhois( domainName, registrantContactDetails, transferLock, ( error, data ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: WHOIS_UPDATE_COMPLETED,
-				domainName,
-				registrantContactDetails,
-			} );
-
-			// For WWD the update may take longer
-			// After 1 minute, we mark the WHOIS as needing updating
-			setTimeout( () => {
-				Dispatcher.handleServerAction( {
-					type: WHOIS_UPDATE_COMPLETED,
-					domainName,
-					registrantContactDetails,
-				} );
-			}, 60000 );
-		}
-
-		onComplete( error, data );
-	} );
-}
 
 export function fetchDns( domainName ) {
 	const dns = DnsStore.getByDomainName( domainName );

@@ -71,12 +71,13 @@ import {
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
+import { requestSitePosts } from 'state/posts/actions';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
 import 'state/data-layer/wpcom/theme-filters';
 
-const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:themes:actions' );
 
 // Set destination for 'back' button on theme sheet
 export function setBackPath( path ) {
@@ -435,6 +436,9 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			search_taxonomies,
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
+
+		// Update pages in case the front page was updated on theme switch.
+		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
 }

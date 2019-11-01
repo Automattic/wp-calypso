@@ -14,7 +14,7 @@
 
 	.promotions__list-placeholder {
 		@include placeholder();
-		background: var( --color-white );
+		background: var( --color-surface );
 		height: 525px;
 		margin-bottom: 16px;
 		margin-top: -15px;

@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import path from 'path';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -190,7 +190,6 @@ export class EditGravatar extends Component {
 					{ this.state.showEmailVerificationNotice && (
 						<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 					) }
-					{ this.renderImageEditor() }
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
 							data-tip-target="edit-gravatar"
@@ -215,6 +214,7 @@ export class EditGravatar extends Component {
 						</div>
 					</FilePicker>
 				</div>
+				{ this.renderImageEditor() }
 				<div>
 					<p className="edit-gravatar__explanation">
 						{ translate( 'Your profile photo is public.' ) }

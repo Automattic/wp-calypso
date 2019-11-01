@@ -17,7 +17,7 @@
 	margin-bottom: 0.35em;
 	font-size: 34px;
 	font-weight: 300;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .jetpack-new-site__header-text {
@@ -55,7 +55,7 @@
 }
 
 .jetpack-new-site__wpcom-site .wordpress-logo {
-	fill: var( --color-wpcom );
+	fill: var( --color-wordpress-com );
 }
 
 .jetpack-new-site__jetpack-site .jetpack-logo {
@@ -70,7 +70,7 @@
 
 .jetpack-new-site__card-description {
 	margin-bottom: 1em;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .jetpack-new-site__button-holder {
@@ -101,7 +101,7 @@
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: var( --color-neutral-100 );
+			color: var( --color-neutral-10 );
 		}
 
 		.form-text-input {
@@ -121,33 +121,31 @@
 
 	input[type='text'] {
 		&:focus {
-			border-color: var( --color-jetpack );
-			box-shadow: 0 0 0 2px var( --color-jetpack-light );
+			border-color: var( --studio-jetpack-green-30 );
+			box-shadow: 0 0 0 2px var( --studio-jetpack-green-20 );
 		}
 	}
 
 	.button {
-		background-color: var( --color-jetpack );
-		border-color: var( --color-jetpack-dark );
+		background-color: var( --studio-jetpack-green-50 );
+		border-color: var( --studio-jetpack-green-70 );
 		margin-top: 16px;
 		width: 100%;
 
 		&:hover,
 		&:focus {
-			background-color: var( --color-jetpack-400 );
-			border-color: var( --color-jetpack-dark );
+			background-color: var( --studio-jetpack-green-60 );
 		}
 
 		.accessible-focus &:focus {
-			box-shadow: 0 0 0 2px var( --color-jetpack-light );
-			border-color: var( --color-jetpack-dark );
+			box-shadow: 0 0 0 2px var( --studio-jetpack-green-30 );
 		}
 
 		&[disabled],
 		&:disabled {
-			background-color: var( --color-white );
-			border-color: var( --color-neutral-50 );
-			color: var( --color-neutral-50 );
+			background-color: var( --color-surface );
+			border-color: var( --color-neutral-5 );
+			color: var( --color-neutral-5 );
 		}
 	}
 }
@@ -189,7 +187,7 @@
 		z-index: 1;
 		width: 100%;
 		height: 1px;
-		background: rgba( var( --color-neutral-100-rgb ), 0.5 );
+		background: rgba( var( --color-neutral-10-rgb ), 0.5 );
 	}
 
 	span {
@@ -197,7 +195,7 @@
 		z-index: 2;
 		padding: 8px;
 		color: var( --color-neutral-light );
-		background: var( --color-white );
+		background: var( --color-surface );
 	}
 
 	@include breakpoint( '<660px' ) {

@@ -1,0 +1,315 @@
+// ==========================================================================
+// Buttons
+// ==========================================================================
+
+.button {
+	background: transparent;
+	border-style: solid;
+	border-width: 1px 1px 2px;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0;
+	outline: 0;
+	overflow: hidden;
+	font-weight: 500;
+	text-overflow: ellipsis;
+	text-decoration: none;
+	vertical-align: top;
+	box-sizing: border-box;
+	font-size: 14px;
+	line-height: 21px;
+	border-radius: 4px;
+	padding: 7px 14px 9px;
+	appearance: none;
+
+	&.hidden {
+		display: none;
+	}
+
+	.gridicon {
+		position: relative;
+		top: 4px;
+		margin-top: -2px;
+		width: 18px;
+		height: 18px;
+
+		&:not( :last-child ) {
+			margin-right: 4px;
+		}
+	}
+
+	&:active,
+	&.is-active {
+		border-width: 2px 1px 1px;
+	}
+
+	background-color: var( --color-surface );
+	color: var( --color-neutral-70 );
+	border-color: var( --color-neutral-10 );
+
+	&:hover {
+		border-color: var( --color-neutral-20 );
+		color: var( --color-neutral-70 );
+	}
+
+	&:visited {
+		color: var( --color-neutral-70 );
+	}
+
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+		cursor: default;
+
+		&:active,
+		&.is-active {
+			border-width: 1px 1px 2px;
+		}
+	}
+
+	.accessible-focus &:focus {
+		border-color: var( --color-primary );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
+	}
+
+	&.is-compact {
+		padding: 7px;
+		color: var( --color-text-subtle );
+		font-size: 12px;
+		line-height: 1;
+
+		&:disabled {
+			color: var( --color-neutral-20 );
+		}
+		.gridicon {
+			top: 5px;
+			margin-top: -8px;
+		}
+		// Make the left margin of the small plus icon visually less huge
+		.gridicons-plus-small {
+			margin-left: -4px;
+		}
+		// Reset the left margin if the button contains only the plus icon
+		.gridicons-plus-small:last-of-type {
+			margin-left: 0;
+		}
+		// Make plus icon nudged closer to adjacent icons for add-people and add-plugin type buttons
+		.gridicons-plus-small + .gridicon {
+			margin-left: -4px;
+		}
+	}
+
+	&.is-busy {
+		animation: button__busy-animation 3000ms infinite linear;
+		background-size: 120px 100%;
+		background-image: linear-gradient(
+			-45deg,
+			var( --color-neutral-0 ) 28%,
+			var( --color-surface ) 28%,
+			var( --color-surface ) 72%,
+			var( --color-neutral-0 ) 72%
+		);
+	}
+}
+
+// Primary buttons
+.button.is-primary {
+	background-color: var( --color-accent );
+	border-color: var( --color-accent-dark );
+	color: var( --color-text-inverted );
+
+	&:hover,
+	&:focus {
+		background-color: var( --color-accent-60 );
+		border-color: var( --color-accent-dark );
+		color: var( --color-text-inverted );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-accent-light );
+	}
+
+	&.is-compact {
+		color: var( --color-text-inverted );
+	}
+
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+
+	&.is-busy {
+		background-image: linear-gradient(
+			-45deg,
+			var( --color-accent ) 28%,
+			var( --color-accent-60 ) 28%,
+			var( --color-accent-60 ) 72%,
+			var( --color-accent ) 72%
+		);
+	}
+}
+
+// Scary buttons
+.button.is-scary {
+	color: var( --color-error );
+
+	&:hover,
+	&:focus {
+		border-color: var( --color-error-40 );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-error-light );
+	}
+
+	&[disabled],
+	&:disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+}
+
+.button.is-primary.is-scary {
+	background-color: var( --color-error );
+	border-color: var( --color-error-dark );
+	color: var( --color-text-inverted );
+
+	&:hover,
+	&:focus {
+		background-color: var( --color-error-60 );
+	}
+
+	&[disabled],
+	&:disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+
+	&.is-busy {
+		background-image: linear-gradient(
+			-45deg,
+			var( --color-error ) 28%,
+			var( --color-error-60 ) 28%,
+			var( --color-error-60 ) 72%,
+			var( --color-error ) 72%
+		);
+	}
+}
+
+.button.is-borderless {
+	border: none;
+	background: none;
+	color: var( --color-text-subtle );
+	padding-left: 0;
+	padding-right: 0;
+
+	&:hover,
+	&:focus {
+		background: none;
+		color: var( --color-neutral-70 );
+	}
+
+	.gridicon {
+		width: 24px;
+		height: 24px;
+		top: 6px;
+	}
+
+	&[disabled],
+	&:disabled {
+		color: var( --color-neutral-20 );
+		cursor: default;
+
+		&:active,
+		&.is-active {
+			border-width: 0;
+		}
+	}
+	&.is-scary {
+		color: var( --color-error );
+
+		&:hover,
+		&:focus {
+			color: var( --color-error-60 );
+		}
+
+		&[disabled] {
+			color: var( --color-error-20 );
+		}
+	}
+
+	&.is-primary {
+		color: var( --color-accent );
+
+		&:focus,
+		&:hover,
+		&:active,
+		&.is-active {
+			color: var( --color-accent-dark );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-accent-light );
+		}
+
+		&[disabled] {
+			color: var( --color-neutral-20 );
+		}
+	}
+
+	&.is-compact {
+		.gridicon {
+			width: 18px;
+			height: 18px;
+			top: 5px;
+		}
+
+		//arrows sit 1px low in their svg bounding box, need a nudge
+		.gridicons-arrow-left {
+			top: 4px;
+			margin-right: 4px;
+		}
+
+		.gridicons-arrow-right {
+			top: 4px;
+			margin-left: 4px;
+		}
+	}
+}
+
+// ==========================================================================
+// Deprecated styles
+// ==========================================================================
+
+.button.is-link {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	padding: 0;
+	color: var( --color-link );
+	font-weight: 400;
+	font-size: inherit;
+	line-height: 1.65;
+
+	&:hover,
+	&:focus,
+	&:active,
+	&.is-active {
+		color: var( --color-link-dark );
+		box-shadow: none;
+	}
+}
+
+@keyframes button__busy-animation {
+	0% {
+		background-position: 240px 0;
+	}
+}

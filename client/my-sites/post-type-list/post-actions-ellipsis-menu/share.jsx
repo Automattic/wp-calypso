@@ -44,7 +44,13 @@ class PostActionsEllipsisMenuShare extends Component {
 	}
 
 	render() {
-		const { canShare, translate, status, type, isPublicizeEnabled: isPublicizeEnabledForSite } = this.props;
+		const {
+			canShare,
+			translate,
+			status,
+			type,
+			isPublicizeEnabled: isPublicizeEnabledForSite,
+		} = this.props;
 		if ( 'publish' !== status || ! isPublicizeEnabledForSite || 'post' !== type || ! canShare ) {
 			return null;
 		}

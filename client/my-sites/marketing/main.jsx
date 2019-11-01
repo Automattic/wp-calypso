@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import canCurrentUser from 'state/selectors/can-current-user';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isVipSite from 'state/selectors/is-vip-site';
 import DocumentHead from 'components/data/document-head';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -38,6 +39,7 @@ export const Sharing = ( {
 	showConnections,
 	showTraffic,
 	siteId,
+	isVip,
 	siteSlug,
 	translate,
 } ) => {
@@ -99,12 +101,14 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			<UpgradeNudge
-				event="sharing_no_ads"
-				feature={ FEATURE_NO_ADS }
-				message={ translate( 'Prevent ads from showing on your site.' ) }
-				title={ translate( 'No Ads with WordPress.com Premium' ) }
-			/>
+			{ ! isVip && (
+				<UpgradeNudge
+					event="sharing_no_ads"
+					feature={ FEATURE_NO_ADS }
+					message={ translate( 'Prevent ads from showing on your site.' ) }
+					title={ translate( 'No Ads with WordPress.com Premium' ) }
+				/>
+			) }
 			{ contentComponent }
 		</Main>
 	);
@@ -112,6 +116,7 @@ export const Sharing = ( {
 
 Sharing.propTypes = {
 	canManageOptions: PropTypes.bool,
+	isVipSite: PropTypes.bool,
 	contentComponent: PropTypes.node,
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
@@ -131,8 +136,9 @@ export default connect( state => {
 
 	return {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
-		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
+		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
+		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};

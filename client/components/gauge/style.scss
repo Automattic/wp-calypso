@@ -4,14 +4,14 @@
 	text-align: center;
 
 	.gauge__number {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		display: block;
 		margin-top: -5px;
 	}
 
 	.gauge__metric {
 		display: block;
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		text-transform: uppercase;
 		font-size: 10px;
 		letter-spacing: 0.1em;

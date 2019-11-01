@@ -18,6 +18,7 @@ import Main from 'components/main';
  *
  * Style dependencies
  */
+import 'assets/stylesheets/style.scss';
 import './style.scss';
 
 class DomainsLandingPage extends Component {

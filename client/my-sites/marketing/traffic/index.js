@@ -48,7 +48,7 @@ const SiteSettingsTraffic = ( {
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<Main className="settings-traffic site-settings" wideLayout>
-    <PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
+		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		{ ! isAdmin && (
 			<EmptyContent
@@ -66,9 +66,9 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		{ isAdmin && ( <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> ) }
-		{ isAdmin && ( <SeoSettingsMain /> ) }
-		{ isAdmin && ( 
+		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
+		{ isAdmin && <SeoSettingsMain /> }
+		{ isAdmin && (
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -76,8 +76,8 @@ const SiteSettingsTraffic = ( {
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-		 ) }
-				
+		) }
+
 		{ isJetpack && (
 			<JetpackSiteStats
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -87,7 +87,7 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		{ isAdmin && ( <AnalyticsSettings /> ) }
+		{ isAdmin && <AnalyticsSettings /> }
 		{ isJetpack && (
 			<Shortlinks
 				handleAutosavingRadio={ handleAutosavingRadio }
@@ -98,14 +98,14 @@ const SiteSettingsTraffic = ( {
 				onSubmitForm={ handleSubmitForm }
 			/>
 		) }
-		{ isAdmin && ( 
+		{ isAdmin && (
 			<Sitemaps
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
-			/> 
+			/>
 		) }
-		{ isAdmin && ( <SiteVerification /> ) }
+		{ isAdmin && <SiteVerification /> }
 	</Main>
 );
 

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -22,17 +22,27 @@ import './style.scss';
 
 export class ConciergeQuickstartSession extends PureComponent {
 	render() {
-		const { receiptId, translate } = this.props;
+		const { receiptId, translate, siteSlug, isLoggedIn } = this.props;
 
 		const title = translate( 'Checkout ‹ Quick Start Session', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
+		let pageViewTrackerPath;
+		if ( receiptId ) {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session/:receipt_id/:site';
+		} else if ( siteSlug ) {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session/:site';
+		} else {
+			pageViewTrackerPath = '/checkout/offer-quickstart-session';
+		}
+
 		return (
 			<>
 				<PageViewTracker
-					path="/checkout/:site/offer-quickstart-session/:receipt_id"
+					path={ pageViewTrackerPath }
 					title={ title }
+					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<DocumentHead title={ title } />
 				{ receiptId ? (
@@ -65,7 +75,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 	}
 
 	body() {
-		const { translate, productCost, productDisplayCost, currencyCode } = this.props;
+		const { translate, productCost, productDisplayCost, currencyCode, receiptId } = this.props;
 		const fullCost = Math.round( productCost * 2.021 );
 		return (
 			<>
@@ -76,7 +86,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 					<div className="concierge-quickstart-session__column-content">
 						<p>
 							{ translate(
-								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their advice to build a great site… in less time you ever thought possible?"
+								"What if you could sit with a true expert, someone who's helped hundreds of people succeed online, and get their advice to build a great site… in less time than you ever thought possible?"
 							) }
 						</p>
 						<p>
@@ -184,7 +194,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 									{
 										components: { del: <del />, em: <em /> },
 										args: {
-											oldPrice: formatCurrency( fullCost, currencyCode ),
+											oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											price: productDisplayCost,
 										},
 									}
@@ -192,15 +202,17 @@ export class ConciergeQuickstartSession extends PureComponent {
 							</b>{' '}
 						</p>
 						<p>
-							{ translate(
-								'Please notice, this is a one-time offer because you just got a new plan and we want you to make the most out of it! Regular price for {{em}}Quick Start{{/em}} sessions is %(oldPrice)s.',
-								{
-									components: { b: <b />, em: <em /> },
-									args: {
-										oldPrice: formatCurrency( fullCost, currencyCode ),
-									},
-								}
-							) }
+							{ receiptId
+								? translate(
+										'Please notice, this is a one-time offer because you just got a new plan and we want you to make the most out of it! Regular price for {{em}}Quick Start{{/em}} sessions is %(oldPrice)s.',
+										{
+											components: { b: <b />, em: <em /> },
+											args: {
+												oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
+											},
+										}
+								  )
+								: '' }
 						</p>
 						<p>
 							<em>

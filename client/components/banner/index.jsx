@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, size } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -58,6 +58,7 @@ export class Banner extends Component {
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
+		customerType: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -69,9 +70,12 @@ export class Banner extends Component {
 	};
 
 	getHref() {
-		const { canUserUpgrade, feature, href, plan, siteSlug } = this.props;
+		const { canUserUpgrade, feature, href, plan, siteSlug, customerType } = this.props;
 
 		if ( ! href && siteSlug && canUserUpgrade ) {
+			if ( customerType ) {
+				return `/plans/${ siteSlug }?customerType=${ customerType }`;
+			}
 			const baseUrl = `/plans/${ siteSlug }`;
 			if ( feature || plan ) {
 				return addQueryArgs(

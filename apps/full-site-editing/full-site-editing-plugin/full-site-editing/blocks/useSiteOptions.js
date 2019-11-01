@@ -4,6 +4,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
@@ -41,8 +42,8 @@ export default function useSiteOptions(
 			.then( result =>
 				setSiteOptions( {
 					...siteOptions,
-					option: result[ siteOption ],
-					previousOption: result[ siteOption ],
+					option: decodeEntities( result[ siteOption ] ),
+					previousOption: decodeEntities( result[ siteOption ] ),
 					loaded: true,
 					error: false,
 				} )

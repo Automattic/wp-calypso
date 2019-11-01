@@ -50,7 +50,7 @@
 	padding: 20px 24px 24px;
 	background-color: #fbfcfd;
 	height: 116px;
-	box-shadow: 0 1px 0 0 var( --color-neutral-100 ),
+	box-shadow: 0 1px 0 0 var( --color-neutral-10 ),
 		0 1px 0 var( --color-neutral-0 );
 }
 
@@ -71,7 +71,7 @@
 }
 
 .google-voucher__dialog-footer {
-	box-shadow: 0 -1px 2px var( --color-neutral-100 );
+	box-shadow: 0 -1px 2px var( --color-neutral-10 );
 	margin-top: 15px;
 	text-align: right;
 	padding: 15px;
@@ -84,7 +84,7 @@
 
 li.google-voucher__terms-and-conditions {
 	line-height: 1.6em;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	margin-bottom: 15px;
 }
 

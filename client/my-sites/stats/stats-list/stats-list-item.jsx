@@ -6,7 +6,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -230,6 +230,12 @@ class StatsListItem extends React.Component {
 				icon = <span className="stats-list__flag-icon" style={ style } />;
 			}
 
+			let labelText = labelItem.label;
+
+			if ( this.props.useShortLabel && labelItem.shortLabel ) {
+				labelText = labelItem.shortLabel;
+			}
+
 			if ( data.link ) {
 				const href = data.link;
 				let onClickHandler = this.preventDefaultOnClick;
@@ -256,13 +262,14 @@ class StatsListItem extends React.Component {
 						page( `/read/blogs/${ siteId }` );
 					};
 				}
+
 				itemLabel = (
-					<a onClick={ onClickHandler } href={ href }>
-						{ decodeEntities( labelItem.label ) }
+					<a onClick={ onClickHandler } href={ href } title={ labelItem.linkTitle }>
+						<Emojify>{ decodeEntities( labelText ) }</Emojify>
 					</a>
 				);
 			} else {
-				itemLabel = <Emojify>{ decodeEntities( labelItem.label ) }</Emojify>;
+				itemLabel = <Emojify>{ decodeEntities( labelText ) }</Emojify>;
 			}
 
 			return (

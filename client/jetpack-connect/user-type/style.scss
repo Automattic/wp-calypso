@@ -21,7 +21,7 @@
 	width: 100%;
 	text-align: left;
 	box-shadow: none;
-	border-bottom: 1px solid var( --color-neutral-50 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	@include breakpoint( '>660px' ) {
 		padding-right: 24px;

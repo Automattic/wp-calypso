@@ -28,6 +28,7 @@ import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
 import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
+import CustomCSS from './custom-css';
 import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
 import BusinessOnboarding from './business-onboarding';
@@ -45,6 +46,7 @@ import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 
 /**
  * Style dependencies
@@ -63,7 +65,13 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	// TODO: Define feature list.
 	getEcommerceFeatures() {
-		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			isPlaceholder,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+			showCustomizerFeature,
+		} = this.props;
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -76,7 +84,8 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
+				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
+				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
@@ -87,7 +96,13 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getBusinessFeatures() {
-		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			isPlaceholder,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+			showCustomizerFeature,
+		} = this.props;
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -108,7 +123,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
+				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
+				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
@@ -120,15 +137,23 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPremiumFeatures() {
-		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			isPlaceholder,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+			showCustomizerFeature,
+		} = this.props;
 
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
 				<GoogleVouchers selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
+				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
+				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
@@ -298,6 +323,7 @@ export default connect(
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
+			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 		};
 	},
 	{

@@ -1,14 +1,15 @@
 === Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl
+Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.2
-Stable tag: 0.4
+Tested up to: 5.3
+Stable tag: 0.13
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Enhances your page creation workflow within the Block Editor.
+
 
 == Description ==
 
@@ -38,7 +39,46 @@ It adds an excerpt! And meta information! It really is much more useful, especia
 
 This plugin is experimental, so we don't provide any support for it outside of websites hosted on WordPress.com at this time.
 
+
 == Changelog ==
+
+= 0.13 =
+
+* Incorporate Global Styles plugin functionality.
+* Side-load images on template insertion.
+* Remove widgets menu from wp-admin.
+
+= 0.12 =
+
+* Change menu order of default pages that FSE creates to 1.
+
+= 0.11 =
+* Add color, background color, font size, and text alignment support to the Site Title, Site Description, and Navigation Menu blocks.
+
+= 0.10 =
+* Update page template selector with template preview.
+
+= 0.9 =
+* Rename wp_template CPT to wp_template_part.
+
+= 0.7 =
+* Change theme support to Maywood instead of Modern Business.
+* Improve style support and UX issues.
+* Remove featured image support for pages.
+* No longer load FSE editor if theme is unsupported.
+* Improve autosave support.
+* Add embed/shortcode support to header and footer.
+* Several other high priority fixes for the FSE editor.
+
+= 0.6.1 =
+* Updates priority of filter so classnames are added properly to the template blocks.
+
+= 0.6 =
+* Fix issues with Edit template and Back to Page functionality.
+
+= 0.5 =
+* Fetch templates data from the API.
+* Improve UX flows and fix styling issues.
 
 = 0.4 =
 * Move template data initialization out of the plugin and delegate it to themes.

@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { first, includes, indexOf, intersection, isEqual, last, map } from 'lodash';
+import { first, includes, indexOf, intersection, isEqual, last, map, merge } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -24,17 +25,19 @@ import ContactDetailsFormFields from 'components/domains/contact-details-form-fi
 import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
+import { setDomainDetails } from 'lib/transaction/actions';
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
-	setDomainDetails,
 	addGoogleAppsRegistrationData,
-} from 'lib/upgrades/actions';
+} from 'lib/cart/actions';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,
 	hasGoogleApps,
 	hasDomainRegistration,
+	hasInvalidAlternateEmailDomain,
+	needsExplicitAlternateEmailForGSuite,
 	hasTransferProduct,
 	getTlds,
 	hasTld,
@@ -84,6 +87,23 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( newState );
 	}
 
+	addAlternateEmailToValidationHandler = ( fieldValues, validationHandler ) => ( error, data ) => {
+		if ( this.needsAlternateEmailForGSuite() ) {
+			let message = null;
+			if ( ! emailValidator.validate( fieldValues.alternateEmail ) ) {
+				message = this.props.translate( 'Please provide a valid email address.' );
+			} else if ( hasInvalidAlternateEmailDomain( this.props.cart, this.props.contactDetails ) ) {
+				message = this.props.translate(
+					'Please provide an email address that does not use the same domain than the G Suite account being purchased.'
+				);
+			}
+			if ( null !== message ) {
+				data = merge( data, { success: false, messages: { alternateEmail: [ message ] } } );
+			}
+		}
+		validationHandler( error, data );
+	};
+
 	validate = ( fieldValues, onComplete ) => {
 		const validationHandler = ( error, data ) => {
 			const messages = ( data && data.messages ) || {};
@@ -91,7 +111,10 @@ export class DomainDetailsForm extends PureComponent {
 		};
 
 		if ( this.needsOnlyGoogleAppsDetails() ) {
-			wpcom.validateGoogleAppsContactInformation( fieldValues, validationHandler );
+			wpcom.validateGoogleAppsContactInformation(
+				fieldValues,
+				this.addAlternateEmailToValidationHandler( fieldValues, validationHandler )
+			);
 			return;
 		}
 
@@ -113,6 +136,13 @@ export class DomainDetailsForm extends PureComponent {
 			[ ...getDomainRegistrations( this.props.cart ), ...getDomainTransfers( this.props.cart ) ],
 			'meta'
 		);
+
+	needsAlternateEmailForGSuite() {
+		return (
+			this.needsOnlyGoogleAppsDetails() &&
+			needsExplicitAlternateEmailForGSuite( this.props.cart, this.props.contactDetails )
+		);
+	}
 
 	needsOnlyGoogleAppsDetails() {
 		return (
@@ -193,6 +223,7 @@ export class DomainDetailsForm extends PureComponent {
 				contactDetails={ contactDetails }
 				needsFax={ this.needsFax() }
 				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }
+				needsAlternateEmailForGSuite={ this.needsAlternateEmailForGSuite() }
 				onContactDetailsChange={ this.handleContactDetailsChange }
 				onSubmit={ this.handleSubmitButtonClick }
 				eventFormName="Checkout Form"

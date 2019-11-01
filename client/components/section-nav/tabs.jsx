@@ -11,7 +11,6 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
 import { getWindowInnerWidth } from 'lib/viewport';
 import afterLayoutFlush from 'lib/after-layout-flush';
@@ -120,9 +119,9 @@ class NavTabs extends Component {
 				return null;
 			}
 			return (
-				<DropdownItem { ...child.props } key={ 'navTabsDropdown-' + index }>
+				<SelectDropdown.Item { ...child.props } key={ 'navTabsDropdown-' + index }>
 					{ child.props.children }
-				</DropdownItem>
+				</SelectDropdown.Item>
 			);
 		} );
 

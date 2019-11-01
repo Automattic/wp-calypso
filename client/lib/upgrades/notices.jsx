@@ -4,8 +4,8 @@
  * External dependencies
  */
 
-import React from 'react'; // eslint-disable-line no-unused-vars
-import { flatten, values } from 'lodash';
+import React from 'react';
+import { flatten, get, values } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -39,10 +39,11 @@ function getErrorFromApi( errorMessage ) {
 }
 
 export function displayError( error ) {
-	if ( typeof error.message === 'object' ) {
-		notices.error( <ValidationErrorList messages={ flatten( values( error.message ) ) } /> );
+	const message = get( error, 'message' );
+	if ( typeof message === 'object' ) {
+		notices.error( <ValidationErrorList messages={ flatten( values( message ) ) } /> );
 	} else {
-		notices.error( getErrorFromApi( error.message ) );
+		notices.error( getErrorFromApi( message ) );
 	}
 }
 
