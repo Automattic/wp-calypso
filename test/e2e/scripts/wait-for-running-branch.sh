@@ -3,8 +3,8 @@
 sha=$CIRCLE_SHA1
 
 COUNT=0
-RESETCOUNT=120 # 5sec retry = Reset the branch after 5 minutes
-MAXCOUNT=240  # 5sec retry = Cancel after 10 minutes
+RESETCOUNT=240 # 5sec retry = Reset the branch after 20 minutes
+MAXCOUNT=480  # 5sec retry = Cancel after 40 minutes
 SITEWAITCOUNT=30 # 5sec retry = Stop waiting after 2.5 minutes
 
 STATUS=$(curl https://hash-$sha.calypso.live/status 2>/dev/null)
