@@ -3,18 +3,20 @@
  */
 import React from 'react';
 import { render } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 
 /**
  * Internal dependencies
  */
+import { CheckoutProvider } from '../../src/components/checkout-provider';
 import { useLocalize } from '../../src/lib/localize';
 
-describe( 'useLocalize', function() {
-	// React writes to console.error when a component throws before re-throwing
-	// but we don't want to see that here so we mock console.error.
-	/* eslint-disable no-console */
-	const original = console.error;
+// React writes to console.error when a component throws before re-throwing
+// but we don't want to see that here so we mock console.error.
+/* eslint-disable no-console */
+const original = console.error;
 
+describe( 'useLocalize', function() {
 	beforeEach( () => {
 		console.error = jest.fn();
 	} );
@@ -22,7 +24,6 @@ describe( 'useLocalize', function() {
 	afterEach( () => {
 		console.error = original;
 	} );
-	/* eslint-enable no-console */
 
 	it( 'throws if outside of a CheckoutProvider', function() {
 		const ThingWithLocalize = () => {
@@ -31,4 +32,26 @@ describe( 'useLocalize', function() {
 		};
 		expect( () => render( <ThingWithLocalize /> ) ).toThrow( /CheckoutProvider/ );
 	} );
+
+	it( 'returns a function that returns a string', function() {
+		const ThingWithLocalize = () => {
+			const localize = useLocalize();
+			return <span data-testid="text">{ localize( 'hello' ) }</span>;
+		};
+		const { getByTestId } = render(
+			<CheckoutProvider
+				locale={ 'US' }
+				total={ { label: 'total', amount: { value: 10, currency: 'USD', displayValue: '10' } } }
+				items={ [ { label: 'total', amount: { value: 10, currency: 'USD', displayValue: '10' } } ] }
+				onSuccess={ () => {} }
+				onFailure={ () => {} }
+				successRedirectUrl={ '#' }
+				failureRedirectUrl={ '#' }
+			>
+				<ThingWithLocalize />
+			</CheckoutProvider>
+		);
+		expect( getByTestId( 'text' ) ).toHaveTextContent( 'hello' );
+	} );
 } );
+/* eslint-enable no-console */
