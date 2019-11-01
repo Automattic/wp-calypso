@@ -610,47 +610,6 @@ function splitWpcomJetpackCartInfo( cart ) {
 	};
 }
 
-export async function recordSignupStart( { flow } ) {
-	await refreshCountryCodeCookieGdpr();
-
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordSignupStart: [Skipping] ad tracking is not allowed' );
-		return;
-	}
-
-	await loadTrackingScripts();
-	const currentUser = getCurrentUser();
-
-	// Floodlight.
-
-	if ( isFloodlightEnabled ) {
-		debug( 'recordSignupStart: [Floodlight]' );
-		recordParamsInFloodlightGtag( {
-			send_to: 'DC-6355556/wordp0/pre-p0+unique',
-		} );
-	}
-	if ( isFloodlightEnabled && ! currentUser && 'onboarding' === flow ) {
-		debug( 'recordSignupStart: [Floodlight]' );
-		recordParamsInFloodlightGtag( {
-			send_to: 'DC-6355556/wordp0/landi00+unique',
-		} );
-	}
-
-	// Google Ads.
-
-	if ( isWpcomGoogleAdsGtagEnabled && ! currentUser && 'onboarding' === flow ) {
-		const params = [
-			'event',
-			'conversion',
-			{
-				send_to: TRACKING_IDS.wpcomGoogleAdsGtagSignupStart,
-			},
-		];
-		debug( 'recordSignupStart: [Google Ads Gtag]', params );
-		window.gtag( ...params );
-	}
-}
-
 export async function recordRegistration() {
 	await refreshCountryCodeCookieGdpr();
 
@@ -1368,6 +1327,22 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 			);
 		}
 	}
+}
+
+/**
+ * Record that a user started sign up in DCM Floodlight
+ *
+ * @returns {void}
+ */
+export function recordSignupStartInFloodlight() {
+	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+		return;
+	}
+
+	debug( 'recordSignupStartInFloodlight:' );
+	recordParamsInFloodlightGtag( {
+		send_to: 'DC-6355556/wordp0/pre-p0+unique',
+	} );
 }
 
 /**
