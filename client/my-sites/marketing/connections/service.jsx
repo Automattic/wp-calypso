@@ -363,6 +363,13 @@ export class SharingService extends Component {
 				this.setState( { isSelectingAccount: true } );
 			}
 		}
+
+		/**
+		 * Scroll to the bottom if connecting Mailchimp.
+		 */
+		if ( this.props.queryArgs && 'mailchimp' in this.props.queryArgs ) {
+			window.scrollTo( 0, 9999 );
+		}
 	}
 
 	/**
@@ -465,7 +472,6 @@ export class SharingService extends Component {
 			( this.state.justConnected ||
 				( this.props.queryArgs && 'mailchimp' in this.props.queryArgs ) )
 		) {
-			window.scrollTo( 0, 9999 );
 			return true;
 		}
 
