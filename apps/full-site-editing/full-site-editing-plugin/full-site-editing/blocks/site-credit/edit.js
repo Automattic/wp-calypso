@@ -18,7 +18,11 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { withSiteOptions } from '../../lib';
-import { RenderedCreditChoice, creditOptions } from './footerCreditChoices';
+import {
+	RenderedCreditChoice,
+	footerCreditOptions,
+	defaultCreditOption,
+} from './footerCreditChoices';
 
 function SiteCreditEdit( {
 	attributes: { textAlign = 'center' },
@@ -27,6 +31,7 @@ function SiteCreditEdit( {
 	footerCreditOption: { value: wpCredit, updateValue: updateCredit },
 	siteTitleOption: { value: siteTitle },
 } ) {
+	const footerCreditChoice = wpCredit || defaultCreditOption;
 	return (
 		<Fragment>
 			<BlockControls>
@@ -46,9 +51,13 @@ function SiteCreditEdit( {
 				<span className="comma">,</span>
 				<span className="site-credit__selection">
 					{ isSelected ? (
-						<SelectControl onChange={ updateCredit } value={ wpCredit } options={ creditOptions } />
+						<SelectControl
+							onChange={ updateCredit }
+							value={ footerCreditChoice }
+							options={ footerCreditOptions }
+						/>
 					) : (
-						<RenderedCreditChoice choice={ wpCredit } />
+						<RenderedCreditChoice choice={ footerCreditChoice } />
 					) }
 				</span>
 			</div>

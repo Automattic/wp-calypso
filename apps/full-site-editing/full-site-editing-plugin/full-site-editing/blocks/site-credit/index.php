@@ -165,6 +165,22 @@ function get_footer_credit_options() {
 }
 
 /**
+ * Gets the default footer credit selection.
+ *
+ * Note: this should match the `value` of one the credit options specified in
+ * get_footer_credit_options.
+ *
+ * @return string The default footer credit option.
+ */
+function get_default_footer_credit_option() {
+	/**
+	 * Filter the default footer credit option. Can be used to override the
+	 * value if the user has not yet chosen a footer credit option.
+	 */
+	return apply_filters( 'a8c_fse_default_footer_credit_option', 'default' );
+}
+
+/**
  * Gets the credit information associated with the selected footer credit option.
  *
  * If no credit information is found, null is returned.
@@ -172,7 +188,11 @@ function get_footer_credit_options() {
  * @return [CreditOption] The info associated with the currently selected option.
  */
 function get_credit_information() {
-	$credit_option  = get_option( 'footercredit' );
+	$credit_option = get_option( 'footercredit' );
+	if ( false === $credit_option ) {
+		$credit_option = get_default_footer_credit_option();
+	}
+
 	$credit_options = get_footer_credit_options();
 	foreach ( $credit_options as $option ) {
 		if ( $credit_option === $option['value'] ) {

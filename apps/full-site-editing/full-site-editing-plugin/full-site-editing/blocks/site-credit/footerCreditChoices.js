@@ -6,10 +6,10 @@
  */
 import { Icon } from '@wordpress/components';
 
-export const creditOptions = fullSiteEditing.footerCreditOptions;
+export const { footerCreditOptions, defaultCreditOption } = fullSiteEditing;
 
 export const RenderedCreditChoice = ( { choice } ) => {
-	const selection = creditOptions.find( ( { value } ) => value === choice );
+	const selection = footerCreditOptions.find( ( { value } ) => value === choice );
 	if ( ! selection ) {
 		return null;
 	}

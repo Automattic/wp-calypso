@@ -175,6 +175,7 @@ class Full_Site_Editing {
 				'closeButtonUrl'      => esc_url( $this->get_close_button_url() ),
 				'editTemplateBaseUrl' => esc_url( $this->get_edit_template_base_url() ),
 				'footerCreditOptions' => get_footer_credit_options(),
+				'defaultCreditOption' => get_default_footer_credit_option(),
 			)
 		);
 
@@ -645,18 +646,19 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Registers the footer credit option as a site setting so we can access it in the API.
+	 * Registers the footer credit option for API use.
 	 */
 	public function register_footer_credit_setting() {
-		$option_name = 'footercredit';
+		/**
+		 * Note: We do not want to create the option if it doesn't exist. This
+		 * way, the default option can theoretically change if the user switches
+		 * site types.
+		 */
 
-		// WP will not update the option if it already exists, so this is safe.
-		add_option( $option_name, 'default' );
-
-		// Registers the footercredit option as a site setting so that we can use it from the API.
+		// Registers the footercredit option for API use.
 		register_setting(
 			'general',
-			$option_name,
+			'footercredit',
 			[
 				'show_in_rest' => [
 					'name' => 'footer_credit',
