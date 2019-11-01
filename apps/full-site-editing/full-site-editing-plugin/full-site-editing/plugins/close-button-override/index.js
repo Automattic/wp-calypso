@@ -10,8 +10,8 @@ import './style.scss';
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
-	// Don't alter anything on the post editor.
-	if ( 'post' === editorPostType ) {
+	// Only alter anything on the page and template part editors.
+	if ( 'wp_template_part' !== editorPostType && 'page' !== editorPostType ) {
 		return;
 	}
 
