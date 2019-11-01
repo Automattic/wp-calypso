@@ -101,7 +101,6 @@
 		"post-editor-github-link": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
-		"post-editor/media-advanced": false,
 		"post-editor/revisions": true,
 		"posts/post-type-list/bulk-edit": false,
 		"press-this": true,
