@@ -46,6 +46,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getSiteTitle } from 'state/sites/selectors';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -163,19 +164,27 @@ export class List extends React.Component {
 			);
 		}
 
-		const headerText = this.props.translate( 'Domains', { context: 'A navigation label.' } );
-
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
-				<DocumentHead title={ headerText } />
+				<DocumentHead
+					title={ this.props.translate( 'Domains', { context: 'A navigation label.' } ) }
+				/>
 				<SidebarNavigation />
 				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 				{ this.domainWarnings() }
 
 				{ this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ headerText }>{ this.headerButtons() }</SectionHeader>
+				<SectionHeader
+					label={ this.props.translate( 'Domains associated with %(siteTitle)s', {
+						args: {
+							siteTitle: this.props.siteTitle,
+						},
+					} ) }
+				>
+					{ this.headerButtons() }
+				</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
@@ -352,7 +361,7 @@ export class List extends React.Component {
 				className="domain-management-list__add-a-domain"
 				onClick={ this.clickAddDomain }
 			>
-				{ this.props.translate( 'Add Domain' ) }
+				{ this.props.translate( 'Add Domain to this Site' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -512,6 +521,7 @@ export default connect(
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			siteTitle: getSiteTitle( state, siteId ),
 			userCanManageOptions,
 		};
 	},
