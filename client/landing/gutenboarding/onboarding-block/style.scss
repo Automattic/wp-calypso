@@ -1,0 +1,32 @@
+@import 'assets/stylesheets/gutenberg-base-styles/style';
+
+.onboarding__questions-heading {
+	font-size: 1.5em;
+	line-height: 2em;
+	margin-bottom: 10px;
+}
+
+.onboarding__question {
+	display: flex;
+	font-size: 2em;
+	line-height: 2.1em;
+	margin-bottom: 10px;
+}
+
+.onboarding__question-input {
+	border: 0;
+	border-bottom: 3px solid $light-gray-500;
+	display: inline-block;
+	font-size: inherit;
+	line-height: inherit;
+	margin: 0 0.5em;
+	padding: 0;
+	&:hover {
+		border-color: $blue-medium-highlight;
+	}
+	&:active,
+	&:focus {
+		outline: 0; // @TODO: needs a11y considerations
+		border-color: $blue-medium-focus;
+	}
+}
