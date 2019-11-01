@@ -50,7 +50,7 @@ domReady( () => {
 			ReactDOM.render(
 				<Button className="components-button components-icon-button">
 					<Dashicon icon="arrow-left-alt2" />
-					{ newLabel }
+					<div className="close-button-override-label">{ newLabel }</div>
 				</Button>,
 				newCloseButton
 			);

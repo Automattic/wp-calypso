@@ -7,3 +7,9 @@
 .post-type-page .edit-post-fullscreen-mode-close__toolbar__override {
 	display: flex;
 }
+
+@media (max-width: 360px) {
+	.close-button-override-label {
+		display: none;
+	}
+}
