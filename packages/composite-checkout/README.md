@@ -2,11 +2,11 @@
 
 A set of React components, custom Hooks, and helper functions that together can be used to create a purchase and checkout flow.
 
-## 💰 Installation
+## Installation
 
 `npm install composite-checkout styled-components`
 
-## 💰 Usage
+## Description
 
 This package provides a context provider, `CheckoutProvider`, and a default component, `Checkout`, which creates a checkout form.
 
@@ -16,20 +16,13 @@ The form has three steps:
 2. Billing details
 3. Review order
 
-The steps can be customized using various props. `Checkout` is actually just a wrapper for other components and functions exported by this package, though, so if these customizations aren't sufficient, it's possible to build a custom form. The only real requirement is that the form be a child of `CheckoutProvider`.
+The steps can be customized using various props.
+
+For more detailed customization, it's possible to build a custom form using the other components exported by this package.
 
 ### Select payment method
 
-The payment methods displayed in the first step are chosen from an optional array called `availablePaymentMethods`, which in turn is selected from the following options:
-
-- 'web-payment'
-- 'apple-pay'
-- 'card'
-- 'paypal'
-- 'ebanx'
-- 'ideal'
-
-The actual payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods in the `availablePaymentMethods` array.
+The payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods listed in the optional `availablePaymentMethods` array. If the array is not set, no appropriate payment methods will be excluded.
 
 ![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/payment-method-step.png 'Payment Method Step')
 
@@ -37,25 +30,19 @@ Any previously stored payment methods (eg: saved credit cards) will be fetched a
 
 The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
 
-Inside the component, this is a `CheckoutStep` wrapping a `CheckoutPaymentMethods` component.
-
 ### Billing details
 
 This step contains various form fields to collect billing contact information from the customer.
 
-The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, an event handler passed to `CheckoutProvider` as the `eventHandler` prop will allow the parent component can take any necessary actions like updating the line items and total.
+The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, an event handler passed to `CheckoutProvider` as the `eventHandler` prop will allow the parent component to take any necessary actions like updating the line items and total.
 
 ![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/billing-step.png 'Billing Details Step')
 
 Any other component can request the information from these form fields by using the `usePaymentData` React Hook.
 
-Inside the component, this is a `CheckoutStep` wrapping whatever `BillingContactComponent` is provided by the payment method.
-
 ### Review order
 
 The third step presents a simple list of line items and a total, followed by a purchase button.
-
-Inside the component, this is a `CheckoutStep` wrapping a `CheckoutReviewOrder` component.
 
 ![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/review-step.png 'Review Order Step')
 
@@ -77,7 +64,7 @@ If the payment method succeeds, the `onSuccess` prop will be called instead. It'
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-## 💰 Examples
+## Examples
 
 ### Example 1
 
@@ -399,7 +386,7 @@ function UpSellCoupon( { onClick } ) {
 }
 ```
 
-## 💰 Styles and Themes
+## Styles and Themes
 
 Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
 
@@ -407,7 +394,7 @@ For style customization beyond what is available in the theme, each component wi
 
 When using the individual API components, you can also pass a `className` prop, which will be applied to that component in addition to the classNames from BEM and styled-components.
 
-## 💰 Payment Methods
+## Payment Methods
 
 A payment method, in the context of this package, consists of the following pieces:
 
@@ -436,7 +423,7 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
 
-## 💰 Advanced API
+## API
 
 While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
 
@@ -573,7 +560,7 @@ A React Hook that will return a two element array. It can be used to store and s
 
 A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method.
 
-## 💰 FAQ
+## FAQ
 
 ### How do I use Credits and Coupons?
 
@@ -591,6 +578,6 @@ The primary properties used in a line item by default are `id` (which must be un
 
 To maintain the integrity of the line item schema, adding custom fields is discouraged, but allowed. If you need specific custom data as part of a line item so that it can be used in another part of the form, it's recommended to pass the line item object through a helper function to collect the extra data rather than serializing it into the line item itself. This will make that data collection more testable. However, if the data collection process is expensive or slow, and caching isn't an option, it may make sense to preload the data into the line items.
 
-## 💰 Development
+## Development
 
 In the root of the monorepo, run `npm run composite-checkout-demo` which will start a local webserver that will display the component.
