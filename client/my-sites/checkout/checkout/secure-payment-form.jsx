@@ -22,14 +22,14 @@ import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
+import { submit } from 'lib/store-transactions';
+import analytics from 'lib/analytics';
+import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import {
 	fullCreditsPayment,
 	newStripeCardPayment,
 	storedCardPayment,
-	submit,
-} from 'lib/store-transactions';
-import analytics from 'lib/analytics';
-import { setPayment, setTransactionStep } from 'lib/transaction/actions';
+} from 'lib/transaction/payments';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -105,7 +105,7 @@ export class SecurePaymentForm extends Component {
 				// FIXME: The endpoint doesn't currently support transactions with no
 				//   payment info, so for now we rely on the credits payment method for
 				//   free carts.
-				newPayment = fullCreditsPayment;
+				newPayment = fullCreditsPayment();
 				break;
 
 			case 'credit-card':
