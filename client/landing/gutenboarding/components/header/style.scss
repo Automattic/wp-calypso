@@ -23,6 +23,14 @@
 	}
 }
 
+.gutenboarding__header-site {
+	display: flex;
+	flex-direction: column;
+}
+.gutenboarding__header-site-heading {
+	font-weight: bold;
+}
+
 .gutenboarding__header-actions {
 	padding: 0 20px;
 

@@ -30,16 +30,12 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 			aria-label={ NO__( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<div>
-				<p>
-					You have a: { siteType }!
-					{ siteTitle && (
-						<>
-							<br />
-							It's called <em>{ siteTitle }</em>!
-						</>
-					) }
-				</p>
+			<div className="gutenboarding__header-site">
+				{ ! siteType && ! siteTitle && (
+					<span className="gutenboarding__header-site-heading">{ NO__( 'Create a website' ) }</span>
+				) }
+				{ siteTitle && <span className="gutenboarding__header-site-heading">{ siteTitle }</span> }
+				{ siteType && <span>{ siteType }</span> }
 			</div>
 			<div
 				aria-label={ NO__( 'Document tools' ) }
