@@ -43,19 +43,17 @@ export default function OnboardingEdit() {
 
 				{ ! siteType && (
 					<ul className="onboarding__multi-question">
-						{ siteTypeOptions.map( siteTypeOption => (
-							<li key={ siteTypeOption.value }>
+						{ siteTypeOptions.map( ( { value, label } ) => (
+							<li key={ value }>
 								<label>
 									<input
-										checked={ siteType === siteTypeOption.value }
+										checked={ siteType === value }
 										name="onboarding_site_type"
 										onChange={ handleSiteTypeChange }
 										type="radio"
-										value={ siteTypeOption.value }
+										value={ value }
 									/>
-									<span className="onboarding__multi-question-choice">
-										{ siteTypeOption.label }
-									</span>
+									<span className="onboarding__multi-question-choice">{ label }</span>
 								</label>
 							</li>
 						) ) }
