@@ -6,6 +6,8 @@
 .post-type-wp_template_part .edit-post-fullscreen-mode-close__toolbar__override,
 .post-type-page .edit-post-fullscreen-mode-close__toolbar__override {
 	display: flex;
+	border: none;
+	border-right: 1px solid #e2e4e7;
 }
 
 @media ( max-width: 360px ) {
