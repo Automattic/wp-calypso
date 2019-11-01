@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+
 /**
  * External dependencies
  */
@@ -9,9 +11,9 @@ import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
-import usePrevious from './usePrevious';
+import { usePrevious } from './use-previous';
 
-export default function useSiteOptions(
+export function useSiteOptions(
 	siteOption,
 	inititalOption,
 	createErrorNotice,
