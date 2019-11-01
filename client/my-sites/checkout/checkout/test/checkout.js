@@ -29,9 +29,6 @@ jest.mock( 'lib/analytics', () => ( {
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	recordViewCheckout: jest.fn(),
 } ) );
-jest.mock( 'lib/store-transactions', () => ( {
-	hasDomainDetails: jest.fn(),
-} ) );
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
