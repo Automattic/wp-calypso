@@ -111,11 +111,11 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
 	}
 

@@ -45,7 +45,7 @@ class SortableList extends React.Component {
 	itemsRefs = new Map();
 	itemShadowRefs = new Map();
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
 	}
 

@@ -13,11 +13,11 @@ import { requestInlineHelpSearchResults } from 'state/inline-help/actions';
 import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
 
 class QueryInlineHelpSearch extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.query === nextProps.query ) {
 			return;
 		}

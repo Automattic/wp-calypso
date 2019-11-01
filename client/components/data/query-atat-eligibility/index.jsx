@@ -19,11 +19,11 @@ export class QueryAutomatedTransferEligibility extends Component {
 		siteId: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}

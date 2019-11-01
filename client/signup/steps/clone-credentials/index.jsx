@@ -71,7 +71,7 @@ class CloneCredentialsStep extends Component {
 		);
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( 'success' === nextProps.updateStatus && ! this.state.gotSuccess ) {
 			this.setState( { gotSuccess: true } );
 			this.goToNextStep();

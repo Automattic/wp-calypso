@@ -55,7 +55,7 @@ class PluginUpload extends React.Component {
 		! inProgress && this.props.clearPluginUpload( siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearPluginUpload( siteId );

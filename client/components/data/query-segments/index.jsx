@@ -20,7 +20,7 @@ export class QuerySegments extends Component {
 		segments: PropTypes.array,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.segments ) {
 			this.props.requestSegments();
 		}

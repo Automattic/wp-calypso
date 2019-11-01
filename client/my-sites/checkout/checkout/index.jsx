@@ -115,7 +115,7 @@ export class Checkout extends React.Component {
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		resetTransaction();
 	}
 
@@ -140,7 +140,7 @@ export class Checkout extends React.Component {
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();

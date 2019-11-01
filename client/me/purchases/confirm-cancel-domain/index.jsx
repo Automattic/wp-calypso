@@ -72,7 +72,7 @@ class ConfirmCancelDomain extends React.Component {
 		this.redirectIfDataIsInvalid( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
 	}
 

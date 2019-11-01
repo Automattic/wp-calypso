@@ -49,11 +49,11 @@ class SiteRedirect extends React.Component {
 		redirectUrl: this.props.location.value || '',
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		fetchSiteRedirect( this.props.selectedSite.domain );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.location.value !== nextProps.location.value ) {
 			this.setState( {
 				redirectUrl: nextProps.location.value,

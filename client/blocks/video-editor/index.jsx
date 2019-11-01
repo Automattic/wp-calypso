@@ -53,7 +53,7 @@ class VideoEditor extends Component {
 		pauseVideo: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.shouldShowError && ! this.props.shouldShowError ) {
 			this.setState( {
 				error: true,

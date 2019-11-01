@@ -32,7 +32,7 @@ import './syntax.scss';
 class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
 			const { dispatchFetchComponentsUsageStats } = this.props;
 			dispatchFetchComponentsUsageStats();

@@ -50,7 +50,7 @@ export class LanguagePicker extends PureComponent {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
 				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value ),

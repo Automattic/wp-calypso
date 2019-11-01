@@ -27,11 +27,11 @@ class QuerySitePlans extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestPlans();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.requestingSitePlans ||
 			! nextProps.siteId ||

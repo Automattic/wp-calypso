@@ -48,7 +48,7 @@ export default class EmailFollowersData extends Component {
 		);
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.fetchOptions ) {
 			return;
 		}

@@ -53,7 +53,7 @@ class EditorVisibility extends React.Component {
 		passwordIsValid: true,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.password === nextProps.password ) {
 			return;
 		}

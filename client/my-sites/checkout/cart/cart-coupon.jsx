@@ -29,7 +29,7 @@ export class CartCoupon extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.state.userChangedCoupon ) {
 			this.setState( { couponInputValue: nextProps.cart.coupon } );
 		}
