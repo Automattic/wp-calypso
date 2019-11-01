@@ -73,24 +73,21 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 				</Button>
 				{ ! disabled && (
 					<div className="phpmyadmin-card__restore-password">
-						{ translate( 'Problems accessing the database?' ) }
-						&nbsp;
-						{ translate( 'Try {{a}}restoring the database password{{/a}}.', {
-							components: {
-								a: (
-									<Button
-										compact
-										borderless
-										onClick={ () => {
-											setIsRestorePasswordDialogVisible( true );
-										} }
-									/>
-								),
-							},
-						} ) }
-						&nbsp;
 						{ translate(
-							'This is useful for cases where the password has accidentally been changed in phpMyAdmin.'
+							'Problems accessing the database? Try {{a}}restoring the database password{{/a}}. This is useful for cases where the password has accidentally been changed in phpMyAdmin.',
+							{
+								components: {
+									a: (
+										<Button
+											compact
+											borderless
+											onClick={ () => {
+												setIsRestorePasswordDialogVisible( true );
+											} }
+										/>
+									),
+								},
+							}
 						) }
 					</div>
 				) }
