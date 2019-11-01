@@ -1,2 +1,2 @@
-export * from './useSiteOptions';
-export * from './withSiteOptions';
+export * from './use-site-options';
+export * from './with-site-options';

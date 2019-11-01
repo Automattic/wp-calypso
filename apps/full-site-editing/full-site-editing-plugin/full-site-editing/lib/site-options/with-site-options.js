@@ -8,7 +8,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { useSiteOptions } from './useSiteOptions';
+import { useSiteOptions } from './use-site-options';
 
 /**
  * Higher Order Component used to inject site options.

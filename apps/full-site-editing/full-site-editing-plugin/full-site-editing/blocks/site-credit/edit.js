@@ -22,7 +22,7 @@ import {
 	RenderedCreditChoice,
 	footerCreditOptions,
 	defaultCreditOption,
-} from './footerCreditChoices';
+} from './footer-credit-choices';
 
 function SiteCreditEdit( {
 	attributes: { textAlign = 'center' },

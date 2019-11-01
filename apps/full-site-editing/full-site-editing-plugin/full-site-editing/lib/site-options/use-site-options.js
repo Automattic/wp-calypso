@@ -10,7 +10,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
-import { usePrevious } from './usePrevious';
+import { usePrevious } from './use-previous';
 
 export function useSiteOptions(
 	siteOption,
