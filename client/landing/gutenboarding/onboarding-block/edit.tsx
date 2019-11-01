@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useCallback } from 'react';
 
@@ -61,7 +62,7 @@ export default function OnboardingEdit() {
 					</ul>
 				) }
 				{ siteType && (
-					<div class="onboarding__multi-question">
+					<div className="onboarding__multi-question">
 						<button className="onboarding__question-answered" onClick={ handleResetSiteType }>
 							{ siteType }
 						</button>
@@ -69,14 +70,21 @@ export default function OnboardingEdit() {
 				) }
 			</div>
 			{ ( siteType || siteTitle ) && (
-				<label className="onboarding__question">
-					<span>{ NO__( "It's called" ) }</span>
-					<input
-						className="onboarding__question-input"
-						onChange={ handleTitleChange }
-						value={ siteTitle }
-					/>
-				</label>
+				<>
+					<label className="onboarding__question">
+						<span>{ NO__( "It's called" ) }</span>
+						<input
+							className="onboarding__question-input"
+							onChange={ handleTitleChange }
+							value={ siteTitle }
+						/>
+					</label>
+					{ ! siteTitle && (
+						<Button className="onboarding__question-skip" isLink>
+							{ NO__( "Don't know yet" ) } →
+						</Button>
+					) }
+				</>
 			) }
 		</div>
 	);

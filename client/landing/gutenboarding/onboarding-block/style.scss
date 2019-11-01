@@ -77,3 +77,11 @@
 		outline: 0; // @TODO: needs a11y considerations
 	}
 }
+
+.components-button.is-link.onboarding__question-skip {
+	color: $dark-gray-500;
+	font-size: 1.5em;
+	line-height: 2em;
+	margin: 10px 0;
+	text-decoration: none;
+}
