@@ -62,7 +62,7 @@ import {
 	SIDEBAR_SECTION_TOOLS,
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
-import isSiteEligibleForAtomicHosting from 'state/selectors/is-site-eligible-for-atomic-hosting';
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 
 /**
  * Style dependencies
@@ -499,22 +499,9 @@ export class MySitesSidebar extends Component {
 	};
 
 	hosting() {
-		const {
-			translate,
-			isAtomicSite,
-			path,
-			site,
-			siteSuffix,
-			isEligibleForAtomicHosting,
-		} = this.props;
+		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
 
-		const invalidSiteType = isEnabled( 'hosting/non-atomic-support' )
-			? ! isBusiness( site.plan )
-			: ! isAtomicSite;
-
-		const isEligible = isEligibleForAtomicHosting;
-
-		if ( ! site || invalidSiteType || ! isEligible || ! isEnabled( 'hosting' ) ) {
+		if ( ! canViewAtomicHosting ) {
 			return null;
 		}
 
@@ -826,7 +813,7 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
-		isEligibleForAtomicHosting: isSiteEligibleForAtomicHosting( state ),
+		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 	};
 }
 
