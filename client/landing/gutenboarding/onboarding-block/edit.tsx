@@ -3,17 +3,19 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { TextControl, SelectControl } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { SiteType } from '../store/types';
-import { useOnboardingDispatch, useOnboardingState } from '../store';
+import { STORE_KEY } from '../store';
 
 export default function OnboardingEdit() {
-	const { siteTitle, siteType } = useOnboardingState();
-	const { setSiteType, setSiteTitle } = useOnboardingDispatch();
+	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
+	const { setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
 
 	return (
 		<>
