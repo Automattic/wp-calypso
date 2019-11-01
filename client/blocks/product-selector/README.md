@@ -85,6 +85,7 @@ The following props can be passed to the Product Selector block:
 		}
 		```
 	* `optionsLabel`: ( string ) Title of the product options section.
+	* `productUpsells`: ( object ) Optional product upsells. Used to create a map of suggested higher-tier products as an up-sell for a purchased product.
 * `productPriceMatrix`: ( object ) Matrix of product price relationships. Each key is a product slug, and each value is an object with the following structure:
 	* `relatedProduct`: ( string ) Slug of the related product.
 	* `ratio`: ( number ) Ratio between original plan and related plan. Example: for a `yearly` to `monthly` plan, this should be `12`.
