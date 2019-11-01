@@ -176,6 +176,8 @@ function get_default_footer_credit_option() {
 	/**
 	 * Filter the default footer credit option. Can be used to override the
 	 * value if the user has not yet chosen a footer credit option.
+	 *
+	 * @param string Default option value.
 	 */
 	return apply_filters( 'a8c_fse_default_footer_credit_option', 'default' );
 }
