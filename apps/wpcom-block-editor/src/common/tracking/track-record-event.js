@@ -53,6 +53,5 @@ export default ( eventName, eventProperties ) => {
 
 	tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
-	// window._tkq.push( [ 'identifyUser', userId, userUsername ] );
 	window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 };
