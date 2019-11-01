@@ -9,7 +9,7 @@ import styled from 'styled-components';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../../public-api';
+import { useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 
 export function CreditCardLabel() {
 	const localize = useLocalize();
@@ -23,7 +23,7 @@ export function CreditCardLabel() {
 
 export function CreditCardSubmitButton() {
 	const localize = useLocalize();
-	const [ , total ] = useCheckoutLineItems();
+	const [ , total ] = useLineItems();
 	// TODO: we need to use a placeholder for the value so the localization string can be generic
 	const buttonString = localize(
 		`Pay ${ renderDisplayValueMarkdown( total.amount.displayValue ) }`

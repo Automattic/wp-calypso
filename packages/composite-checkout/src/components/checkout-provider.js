@@ -77,7 +77,7 @@ CheckoutProvider.propTypes = {
 	failureRedirectUrl: PropTypes.string.isRequired,
 };
 
-export const useCheckoutLineItems = () => {
+export const useLineItems = () => {
 	const { total, items } = useContext( CheckoutContext );
 	return [ items, total ];
 };

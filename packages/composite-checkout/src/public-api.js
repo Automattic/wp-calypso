@@ -3,7 +3,7 @@
  */
 import {
 	CheckoutProvider,
-	useCheckoutLineItems,
+	useLineItems,
 	useCheckoutHandlers,
 	useCheckoutRedirects,
 } from './components/checkout-provider';
@@ -16,7 +16,7 @@ import {
 } from './components/order-review-line-items';
 import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
-import { usePaymentMethod, usePaymentMethodData, usePaymentMethodId } from './lib/payment-methods';
+import { usePaymentMethod, usePaymentData, usePaymentMethodId } from './lib/payment-methods';
 
 // Re-export the public API
 export {
@@ -29,9 +29,9 @@ export {
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
 	useCheckoutHandlers,
-	useCheckoutLineItems,
+	useLineItems,
 	useCheckoutRedirects,
 	usePaymentMethod,
-	usePaymentMethodData,
+	usePaymentData,
 	usePaymentMethodId,
 };
