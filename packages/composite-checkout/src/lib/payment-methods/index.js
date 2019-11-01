@@ -59,7 +59,7 @@ export function usePaymentMethod() {
 	return paymentMethod;
 }
 
-export function usePaymentMethodData() {
+export function usePaymentData() {
 	const { paymentData, dispatchPaymentAction } = useContext( CheckoutContext );
 	return [ paymentData, dispatchPaymentAction ];
 }

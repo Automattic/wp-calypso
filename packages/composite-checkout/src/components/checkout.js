@@ -12,7 +12,7 @@ import joinClasses from '../lib/join-classes';
 import { useLocalize } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
-import { usePaymentMethodData, usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
+import { usePaymentData, usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
@@ -26,7 +26,7 @@ export default function Checkout( {
 } ) {
 	const localize = useLocalize();
 	const [ stepNumber, setStepNumber ] = useState( 1 );
-	const [ , dispatchPaymentAction ] = usePaymentMethodData();
+	const [ , dispatchPaymentAction ] = usePaymentData();
 	const changeStep = useCallback(
 		nextStep => {
 			setStepNumber( prevStep => {
@@ -178,7 +178,7 @@ PaymentMethodsStep.propTypes = {
 
 function BillingDetailsStep( { isActive, isComplete, setStepNumber } ) {
 	const localize = useLocalize();
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentData();
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
 		throw new Error( 'Cannot render Billing details without a payment method' );

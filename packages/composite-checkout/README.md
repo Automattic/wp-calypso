@@ -47,7 +47,7 @@ The billing information may be automatically filled based on data retrieved from
 
 ![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/billing-step.png 'Billing Details Step')
 
-Any other component can request the information from these form fields by using the `usePaymentMethodData` React Hook.
+Any other component can request the information from these form fields by using the `usePaymentData` React Hook.
 
 Inside the component, this is a `CheckoutStep` wrapping whatever `BillingContactComponent` is provided by the payment method.
 
@@ -67,7 +67,7 @@ There are several other optional props aside from `ReviewContent` which allow cu
 
 ![component slots](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/checkout-slots.png 'Highlighted component slots')
 
-Any component within `Checkout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
+Any component within `Checkout` can use the custom React Hook `useLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
 
 ### Submitting the form
 
@@ -159,7 +159,7 @@ The following bigger example demonstrates a checkout page using many of the opti
 import React, { useState } from 'react';
 import {
 	Checkout,
-	useCheckoutLineItems,
+	useLineItems,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
@@ -320,7 +320,7 @@ function useShoppingCart() {
 }
 
 function OrderReview( { onDeleteItem, onChangePlanLength } ) {
-	const [ items, total ] = useCheckoutLineItems();
+	const [ items, total ] = useLineItems();
 	const planItems = items.filter( item => item.type === 'plan' );
 	const domainItems = items.filter( item => item.type === 'domain' );
 	const taxItems = items.filter( item => item.type === 'tax' );
@@ -553,7 +553,7 @@ Takes one argument, a displayValue string, and returns the displayValue with som
 
 A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`.
 
-### useCheckoutLineItems()
+### useLineItems()
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
 
@@ -565,7 +565,7 @@ A React Hook that will return a two element array where the first element is the
 
 A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
 
-### usePaymentMethodData()
+### usePaymentData()
 
 A React Hook that will return a two element array. It can be used to store and share data entered into the payment forms. The first element is an object representing the current state. The second element is a "dispatch" function which can be used to update the state (with an implicit merge) or trigger an event for side effects. The dispatch function should be passed an object with two properties: `type` and `payload` following the [flux-standard-action](https://github.com/redux-utilities/flux-standard-action) pattern.
 

@@ -15,9 +15,9 @@ import { useLocalize } from '../lib/localize';
 import { useStripe, createStripePaymentMethod, confirmStripePaymentIntent } from '../lib/stripe';
 import {
 	useCheckoutHandlers,
-	useCheckoutLineItems,
+	useLineItems,
 	useCheckoutRedirects,
-	usePaymentMethodData,
+	usePaymentData,
 	renderDisplayValueMarkdown,
 } from '../public-api';
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
@@ -316,8 +316,8 @@ function LockIcon( { className } ) {
 
 export function StripePayButton() {
 	const localize = useLocalize();
-	const [ items, total ] = useCheckoutLineItems();
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ items, total ] = useLineItems();
+	const [ paymentData, dispatch ] = usePaymentData();
 	const { onSuccess, onFailure } = useCheckoutHandlers();
 	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
 	const { stripe, stripeConfiguration } = useStripe();

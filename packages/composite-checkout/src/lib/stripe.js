@@ -7,7 +7,7 @@ import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 /**
  * Internal dependencies
  */
-import { usePaymentMethodData } from '../public-api';
+import { usePaymentData } from '../public-api';
 
 const StripeContext = createContext();
 
@@ -221,7 +221,7 @@ function loadScriptAsync( url ) {
  */
 function useStripeConfiguration( requestArgs ) {
 	const [ currentAttempt, setAttempt ] = useState( 1 );
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentData();
 	useEffect( () => {
 		dispatch( { type: 'STRIPE_CONFIGURATION_FETCH', payload: requestArgs || {} } );
 	}, [ requestArgs, currentAttempt, dispatch ] );
