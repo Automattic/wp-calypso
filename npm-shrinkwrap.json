@@ -112,7 +112,19 @@
 			"requires": {
 				"prop-types": "^15.7.2",
 				"react": "^16.8.6",
+				"react-stripe-elements": "^5.1.0",
 				"styled-components": "4.4.0"
+			},
+			"dependencies": {
+				"react-stripe-elements": {
+					"version": "5.1.0",
+					"resolved": "https://registry.npmjs.org/react-stripe-elements/-/react-stripe-elements-5.1.0.tgz",
+					"integrity": "sha512-4UlzOLNdbJsZr4JwbTdJjxhedAfalDDtfEYLHEBo0MKG0KgSLRAeIJup0/6NSpKtBLK4ieOMAwvyln9ICOSilQ==",
+					"dev": true,
+					"requires": {
+						"prop-types": "15.7.2"
+					}
+				}
 			}
 		},
 		"@automattic/format-currency": {
@@ -2930,9 +2942,9 @@
 			}
 		},
 		"@testing-library/jest-dom": {
-			"version": "4.2.0",
-			"resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-4.2.0.tgz",
-			"integrity": "sha512-H61OmRhGPWLrj9emyISx0qjp8jvC9RWyRniuLAq75Ny5XfPiOvWfnY3Wm2Tf0HXusX+PG40I94Gw792IAtSKKg==",
+			"version": "4.2.3",
+			"resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-4.2.3.tgz",
+			"integrity": "sha512-lrsm8OMaOLjh8AJhTNZW85Vur+a2U00ej1r/dNzABN4vfJ2kllsP/eLgkOdfCHuspdXn3/Q6rLt/41dSueVCyg==",
 			"dev": true,
 			"requires": {
 				"@babel/runtime": "^7.5.1",
