@@ -62,7 +62,15 @@ export function useSiteOptions(
 
 	function updateSiteOption() {
 		const { option, previousOption } = siteOptions;
-		const optionUnchanged = option && option.trim() === previousOption.trim();
+
+		/**
+		 * 1. Both `previousOption` and `option` are falsey.
+		 * OR
+		 * 2. Both `previousOption` and `option` are the same value after trim.
+		 */
+		const optionUnchanged =
+			( ! previousOption && ! option ) ||
+			( option && previousOption && option.trim() === previousOption.trim() );
 		const optionIsEmpty = ! option || option.trim().length === 0;
 
 		// Reset to initial value if user de-selects the block with an empty value.
