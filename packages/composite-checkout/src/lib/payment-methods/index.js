@@ -67,7 +67,7 @@ export function usePaymentMethod() {
 
 export function usePaymentData() {
 	const { paymentData, dispatchPaymentAction } = useContext( CheckoutContext );
-	if ( ! paymentData ) {
+	if ( ! dispatchPaymentAction ) {
 		throw new Error( 'usePaymentData can only be used inside a CheckoutProvider' );
 	}
 	return [ paymentData, dispatchPaymentAction ];
