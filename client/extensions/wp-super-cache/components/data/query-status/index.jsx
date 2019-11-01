@@ -15,11 +15,11 @@ import { isRequestingStatus } from '../../../state/status/selectors';
 import { requestStatus } from '../../../state/status/actions';
 
 class QueryStatus extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestStatus( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 
 		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {

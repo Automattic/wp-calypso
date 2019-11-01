@@ -41,7 +41,7 @@ class TransferAwayConfirmationPage extends Component {
 		this.state = this.getLoadingState();
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { domain, recipientId, token } = this.props;
 		const { verifyEmail } = VerifyConfirmationCommand;
 

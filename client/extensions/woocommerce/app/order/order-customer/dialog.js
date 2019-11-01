@@ -106,11 +106,11 @@ class CustomerAddressDialog extends Component {
 		this.maybeFetchLocations();
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.fetchData( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.fetchData( newProps );
 		}

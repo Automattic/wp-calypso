@@ -49,7 +49,7 @@ class LinkDialog extends React.Component {
 		firstLoad: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.visible && ! this.props.visible ) {
 			this.setState( this.getState() );
 		}

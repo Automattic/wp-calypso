@@ -56,11 +56,11 @@ export class TaxonomyManagerList extends Component {
 		requestedPages: [ 1 ],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.termIds = map( this.props.terms, 'ID' );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.terms !== this.props.terms ) {
 			this.termIds = map( newProps.terms, 'ID' );
 		}

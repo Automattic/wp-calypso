@@ -44,7 +44,7 @@ class CompactTinyMCE extends Component {
 	// See this.localize()
 	DUMMY_LANG_URL = '/do-not-load/';
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._id = uniqueId( 'woocommerce-tinymce-' );
 		// Init any plugins we need
 		wplinkPlugin();

@@ -38,7 +38,7 @@ class CheckoutPending extends PureComponent {
 		errorNotice: identity,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { transaction, error } = nextProps;
 		const { translate, showErrorNotice, siteSlug, redirectTo } = this.props;
 

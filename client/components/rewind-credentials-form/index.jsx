@@ -125,7 +125,7 @@ export class RewindCredentialsForm extends Component {
 	toggleAdvancedSettings = () =>
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { rewindState, role, siteSlug } = nextProps;
 		const credentials = find( rewindState.credentials, { role: role } );
 

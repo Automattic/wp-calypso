@@ -83,7 +83,7 @@ class OrderProductDialog extends Component {
 		products: [],
 	};
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		// Dialog is being closed, clear the state
 		if ( this.props.isVisible && ! nextProps.isVisible ) {
 			this.setState( {

@@ -162,7 +162,7 @@ class PostCommentList extends React.Component {
 		}
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
 	}
@@ -171,7 +171,7 @@ class PostCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.initialFetches( nextProps );
 		if (
 			this.props.siteId !== nextProps.siteId ||

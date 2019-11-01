@@ -50,7 +50,7 @@ export class DateTimeFormat extends Component {
 		isLoadingSettings: true,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const {
 			fields: { date_format: dateFormat, time_format: timeFormat },
 		} = nextProps;

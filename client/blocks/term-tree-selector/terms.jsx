@@ -90,7 +90,7 @@ class TermTreeSelectorList extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 		this.list = null;
@@ -103,7 +103,7 @@ class TermTreeSelectorList extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( this.constructor.initialState );
 		}

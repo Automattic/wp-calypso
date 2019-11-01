@@ -120,7 +120,7 @@ class Settings extends React.Component {
 		this.fetchSettings( this.props );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.fetchSettings( nextProps );
 		}

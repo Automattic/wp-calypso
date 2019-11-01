@@ -147,7 +147,7 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			debounceWait: 500,
 			fieldNames: CONTACT_DETAILS_FORM_FIELDS,

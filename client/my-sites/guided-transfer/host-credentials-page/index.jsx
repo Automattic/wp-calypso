@@ -50,7 +50,7 @@ class HostCredentialsPage extends Component {
 		page.redirect( `/checkout/${ this.props.siteSlug }` );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isAwaitingPurchase ) {
 			this.redirectToCart();
 		}

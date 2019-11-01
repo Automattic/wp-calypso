@@ -102,7 +102,7 @@ export class WebPreviewModal extends Component {
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = hasTouch();
 		this._isMobile = isMobile();

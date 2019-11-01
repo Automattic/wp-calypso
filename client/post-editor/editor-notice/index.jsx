@@ -48,7 +48,7 @@ export class EditorNotice extends Component {
 		this.props.recordTracksEvent( 'calypso_editor_notice_add_page_prompt_click' );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			isMobile() &&
 			( ( ! this.props.message && nextProps.message ) || ( ! this.props.error && nextProps.error ) )

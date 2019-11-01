@@ -36,7 +36,7 @@ export default class extends React.Component {
 		MediaValidationStore.off( 'change', this.updateState );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.setState( getStateData( nextProps.siteId ) );
 		}
