@@ -16,7 +16,6 @@ import { useLocalize } from '../lib/localize';
 
 export default function CheckoutPaymentMethods( {
 	summary,
-	isActive,
 	isComplete,
 	className,
 	availablePaymentMethods,
@@ -33,7 +32,12 @@ export default function CheckoutPaymentMethods( {
 	if ( summary && isComplete && paymentMethod ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				<PaymentMethod { ...paymentMethod } checked={ true } />
+				<PaymentMethod
+					{ ...paymentMethod }
+					checked={ true }
+					summary
+					ariaLabel={ getAriaLabelForPaymentMethodSelector( paymentMethod.id, localize ) }
+				/>
 			</div>
 		);
 	}
@@ -47,8 +51,6 @@ export default function CheckoutPaymentMethods( {
 				{ paymentMethodsToDisplay.map( method => (
 					<PaymentMethod
 						{ ...method }
-						isActive={ isActive }
-						isComplete={ isComplete }
 						key={ method.id }
 						checked={ paymentMethod.id === method.id }
 						onClick={ onChange }
@@ -77,6 +79,7 @@ function PaymentMethod( {
 	checked,
 	onClick,
 	ariaLabel,
+	summary,
 } ) {
 	return (
 		<RadioButton
@@ -88,7 +91,9 @@ function PaymentMethod( {
 			ariaLabel={ ariaLabel }
 			label={ <LabelComponent /> }
 		>
-			{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
+			{ PaymentMethodComponent && (
+				<PaymentMethodComponent isActive={ checked } summary={ summary } />
+			) }
 		</RadioButton>
 	);
 }
@@ -97,9 +102,10 @@ PaymentMethod.propTypes = {
 	id: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	checked: PropTypes.bool.isRequired,
-	PaymentMethodComponent: PropTypes.func,
-	LabelComponent: PropTypes.func,
 	ariaLabel: PropTypes.string.isRequired,
+	PaymentMethodComponent: PropTypes.elementType,
+	LabelComponent: PropTypes.elementType,
+	summary: PropTypes.bool,
 };
 
 export const RadioButtons = styled.div`

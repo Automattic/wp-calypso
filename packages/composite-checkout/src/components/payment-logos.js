@@ -2,58 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
-/**
- * Internal dependencies
- */
-import Button from '../../components/button';
-import { useLocalize } from '../../lib/localize';
-import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../../public-api';
-
-export function CreditCardLabel() {
-	const localize = useLocalize();
-	return (
-		<React.Fragment>
-			<span>{ localize( 'Credit or debit card' ) }</span>
-			<CreditCardLogos />
-		</React.Fragment>
-	);
-}
-
-export function CreditCardSubmitButton() {
-	const localize = useLocalize();
-	const [ , total ] = useCheckoutLineItems();
-	// TODO: we need to use a placeholder for the value so the localization string can be generic
-	const buttonString = localize(
-		`Pay ${ renderDisplayValueMarkdown( total.amount.displayValue ) }`
-	);
-	return (
-		<Button onClick={ submitCreditCardPayment } buttonState="primary" fullWidth>
-			{ buttonString }
-		</Button>
-	);
-}
-
-function CreditCardLogos() {
-	//TODO: Determine which logos to show
-
-	return (
-		<LogoWrapper>
-			<VisaLogo />
-			<MasterCardLogo />
-			<AmexLogo />
-		</LogoWrapper>
-	);
-}
-
-const LogoWrapper = styled.div`
-	display: flex;
-`;
-
-function VisaLogo() {
+export function VisaLogo( { className } ) {
 	return (
 		<svg
+			className={ className }
 			width="41"
 			height="17"
 			viewBox="0 0 41 17"
@@ -73,15 +27,20 @@ function VisaLogo() {
 	);
 }
 
-function MasterCardLogo() {
+VisaLogo.propTypes = {
+	className: PropTypes.string,
+};
+
+export function MastercardLogo( { className } ) {
 	return (
 		<svg
+			className={ className }
+			aria-hidden="true"
 			width="41"
 			height="17"
 			viewBox="0 0 41 17"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
-			aria-hidden="true"
 		>
 			<path d="M17.5324 13.7026H23.6991V3.63513H17.5324V13.7026Z" fill="#FF5F00" />
 			<path
@@ -96,9 +55,14 @@ function MasterCardLogo() {
 	);
 }
 
-function AmexLogo() {
+MastercardLogo.propTypes = {
+	className: PropTypes.string,
+};
+
+export function AmexLogo( { className } ) {
 	return (
 		<svg
+			className={ className }
 			width="42"
 			height="16"
 			viewBox="0 0 42 16"
@@ -114,6 +78,6 @@ function AmexLogo() {
 	);
 }
 
-function submitCreditCardPayment() {
-	alert( 'Thank you!' );
-}
+AmexLogo.propTypes = {
+	className: PropTypes.string,
+};

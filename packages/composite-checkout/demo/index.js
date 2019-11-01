@@ -5,7 +5,8 @@ require( '@babel/polyfill' );
  */
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import Checkout, { usePaymentState } from '../src';
+import { Checkout, CheckoutProvider } from '../src/public-api';
+import { stripeKey } from './private';
 
 const initialItems = [
 	{
@@ -24,28 +25,44 @@ const initialItems = [
 ];
 
 // These are used only for non-redirect payment methods
-/* eslint-disable no-console */
-const onSuccess = () => console.log( 'Payment succeeded!' );
-const onFailure = error => console.error( 'There was a problem with your payment', error );
-/* eslint-enable no-console */
+const onSuccess = () => window.alert( 'Payment succeeded!' );
+const onFailure = error => window.alert( 'There was a problem with your payment: ' + error );
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
-function handleCheckoutEvent( { type }, dispatch, next ) {
-	if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
-		// TODO: fetch this from the server and then...
-		dispatch( {
-			type: 'STRIPE_CONFIGURATION_SET',
-			payload: {
-				stripeConfiguration: {
-					public_key: '',
-					js_url: 'https://js.stripe.com/v3/',
-				},
-			},
-		} );
-		return;
+async function fetchStripeConfiguration() {
+	// return await wpcom.req.get( '/me/stripe-configuration', query );
+	return {
+		public_key: stripeKey,
+		js_url: 'https://js.stripe.com/v3/',
+	};
+}
+
+async function sendStripeTransaction() {
+	// return await wpcom.req.post( '/me/transactions', transaction );
+	return {
+		success: true,
+	};
+}
+
+function handleCheckoutEvent( { type, payload }, dispatch, next ) {
+	switch ( type ) {
+		case 'STRIPE_CONFIGURATION_FETCH':
+			fetchStripeConfiguration( payload )
+				.then( stripeConfiguration =>
+					dispatch( { type: 'STRIPE_CONFIGURATION_SET', payload: stripeConfiguration } )
+				)
+				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
+			return;
+		case 'STRIPE_TRANSACTION_BEGIN':
+			sendStripeTransaction( payload )
+				.then( async response => {
+					dispatch( { type: 'STRIPE_TRANSACTION_RESPONSE', payload: response } );
+				} )
+				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
+			return;
 	}
 	next();
 }
@@ -53,10 +70,9 @@ function handleCheckoutEvent( { type }, dispatch, next ) {
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const { items, total } = useShoppingCart();
-	const [ paymentData, dispatchPaymentAction ] = usePaymentState( handleCheckoutEvent );
 
 	return (
-		<Checkout
+		<CheckoutProvider
 			locale={ 'US' }
 			items={ items }
 			total={ total }
@@ -64,9 +80,10 @@ function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			paymentData={ paymentData }
-			dispatchPaymentAction={ dispatchPaymentAction }
-		/>
+			eventHandler={ handleCheckoutEvent }
+		>
+			<Checkout />
+		</CheckoutProvider>
 	);
 }
 
