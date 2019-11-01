@@ -16,6 +16,8 @@ import emitter from 'lib/mixins/emitter';
 import {
 	doNotTrack,
 	costToUSD,
+	getCurrentUser,
+	setCurrentUser,
 	urlParseAmpCompatible,
 	saveCouponQueryArgument,
 } from 'lib/analytics/utils';
@@ -23,7 +25,7 @@ import {
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
 	recordSignupCompletionInFloodlight,
-	recordSignupStartInFloodlight,
+	recordSignupStart,
 	recordRegistration,
 	recordSignup,
 	recordAddToCart,
@@ -52,8 +54,8 @@ const queueDebug = debug( 'calypso:analytics:queue' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
 
-let _superProps, _user;
-let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments
+let _superProps; // Added to all Tracks events.
+let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 /**
  * Tracks uses a bunch of special query params that should not be used as property name
@@ -98,15 +100,16 @@ function createRandomId( randomBytesLength = 9 ) {
 }
 
 function checkForBlockedTracks() {
-	// proceed only after the tracks script load finished and failed
-	// calling this function from `initialize` ensures that `_user` is already set
+	// Proceed only after the tracks script load finished and failed.
+	// Calling this function from `initialize` ensures current user is set.
 	_loadTracksResult.catch( () => {
 		let _ut, _ui;
+		const currentUser = getCurrentUser();
 
-		// detect stats blocking, and include identity from URL, user or cookie if possible
-		if ( _user && _user.get() ) {
+		// Detect stats blocking, and include identity from URL, user or cookie if possible.
+		if ( currentUser && currentUser.ID ) {
 			_ut = 'wpcom:user_id';
-			_ui = _user.get().ID;
+			_ui = currentUser.ID;
 		} else {
 			_ut = getUrlParameter( '_ut' ) || 'anon';
 			_ui = getUrlParameter( '_ui' );
@@ -116,7 +119,7 @@ function checkForBlockedTracks() {
 				if ( cookies.tk_ai ) {
 					_ui = cookies.tk_ai;
 				} else {
-					const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+					const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars).
 					_ui = createRandomId( randomIdLength );
 					document.cookie = cookie.serialize( 'tk_ai', _ui );
 				}
@@ -180,16 +183,16 @@ if ( typeof window !== 'undefined' ) {
 
 const analytics = {
 	initialize: function( user, superProps ) {
-		_user = user;
+		// Update super props.
 		_superProps = superProps;
 
-		// this is called both for anonymous and logged-in users
-		checkForBlockedTracks();
-
+		// Identify current user.
 		if ( user && user.get() ) {
-			const userData = user.get();
-			analytics.identifyUser( userData.username, userData.ID );
+			analytics.identifyUser( user.get() );
 		}
+
+		// Tracks blocked?
+		checkForBlockedTracks();
 	},
 
 	mc: {
@@ -342,7 +345,7 @@ const analytics = {
 		// Google Analytics
 		analytics.ga.recordEvent( 'Signup', 'calypso_signup_start' );
 		// Marketing
-		recordSignupStartInFloodlight();
+		recordSignupStart( { flow } );
 	},
 
 	recordRegistration: function( { flow } ) {
@@ -704,16 +707,20 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function( newUserName, newUserId ) {
-		const anonymousUserId = this.tracks.anonymousUserId();
-
-		// Don't identify the user if we don't have one
-		if ( newUserId && newUserName ) {
-			if ( anonymousUserId ) {
-				recordAliasInFloodlight();
-			}
-			window._tkq.push( [ 'identifyUser', newUserId, newUserName ] );
+	identifyUser: function( { ID, username, email } ) {
+		// Set current user.
+		const currentUser = setCurrentUser( { ID, username, email } );
+		if ( ! currentUser ) {
+			return; // Not possible.
 		}
+
+		// Handle Floodlight alias?
+		if ( this.tracks.anonymousUserId() ) {
+			recordAliasInFloodlight();
+		}
+
+		// Tracks user identification.
+		window._tkq.push( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 	},
 
 	setProperties: function( properties ) {
