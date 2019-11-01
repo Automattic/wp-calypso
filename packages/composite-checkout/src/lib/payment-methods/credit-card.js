@@ -9,7 +9,7 @@ import styled from 'styled-components';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
-import { useLineItems, renderDisplayValueMarkdown } from '../../public-api';
+import { useSelect, useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import CreditCardFields from '../../components/credit-card-fields';
 import BillingFields from '../../components/billing-fields';
@@ -21,6 +21,7 @@ export function createCreditCardMethod() {
 		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: CreditCardSubmitButton,
+		SummaryComponent: CreditCardSummary,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 	};
 }
@@ -48,6 +49,54 @@ export function CreditCardSubmitButton() {
 		</Button>
 	);
 }
+
+export function CreditCardSummary( { id } ) {
+	const localize = useLocalize();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+
+	let PaymentLogo = null;
+
+	if ( paymentData.creditCard && id === 'card' ) {
+		//TODO: Update this with all credit card types we support
+		switch ( Number( paymentData.creditCard.cardNumber[ 0 ] ) ) {
+			case 3:
+				PaymentLogo = <AmexLogo />;
+				break;
+			case 4:
+				PaymentLogo = <VisaLogo />;
+				break;
+			case 5:
+				PaymentLogo = <MastercardLogo />;
+				break;
+			default:
+				PaymentLogo = null;
+		}
+
+		return (
+			<React.Fragment>
+				<div>{ paymentData.creditCard.cardHolderName }</div>
+				<div>
+					<PaymentLogoWrapper>{ PaymentLogo }</PaymentLogoWrapper>
+					<CreditCardDetail>
+						**** { paymentData.creditCard.cardNumber.slice( -4 ) }
+					</CreditCardDetail>
+					{ localize( 'Exp:' ) } { paymentData.creditCard.cardExpiry }
+				</div>
+			</React.Fragment>
+		);
+	}
+
+	return <React.Fragment>{ localize( 'Credit card' ) }</React.Fragment>;
+}
+
+const CreditCardDetail = styled.span`
+	display: inline-block;
+	margin-right: 8px;
+`;
+
+const PaymentLogoWrapper = styled( CreditCardDetail )`
+	transform: translateY( 4px );
+`;
 
 function CreditCardLogos() {
 	//TODO: Determine which logos to show

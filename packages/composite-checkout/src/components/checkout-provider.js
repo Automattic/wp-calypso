@@ -94,6 +94,7 @@ function validatePaymentMethod( {
 	PaymentMethodComponent,
 	BillingContactComponent,
 	SubmitButtonComponent,
+	SummaryComponent,
 	getAriaLabel,
 } ) {
 	validateArg( id, 'Invalid payment method; missing id property' );
@@ -110,6 +111,7 @@ function validatePaymentMethod( {
 		SubmitButtonComponent,
 		`Invalid payment method '${ id }'; missing SubmitButtonComponent`
 	);
+	validateArg( SummaryComponent, `Invalid payment method '${ id }'; missing SummaryComponent` );
 	validateArg( getAriaLabel, `Invalid payment method '${ id }'; missing getAriaLabel` );
 }
 

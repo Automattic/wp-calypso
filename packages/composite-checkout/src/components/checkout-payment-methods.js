@@ -40,6 +40,7 @@ export default function CheckoutPaymentMethods( {
 			</div>
 		);
 	}
+
 	if ( summary ) {
 		return null;
 	}
@@ -75,11 +76,16 @@ function PaymentMethod( {
 	id,
 	LabelComponent,
 	PaymentMethodComponent,
+	SummaryComponent,
 	checked,
 	onClick,
 	ariaLabel,
 	summary,
 } ) {
+	if ( summary ) {
+		return <SummaryComponent id={ id } />;
+	}
+
 	return (
 		<RadioButton
 			name="paymentMethod"
@@ -104,6 +110,7 @@ PaymentMethod.propTypes = {
 	ariaLabel: PropTypes.string.isRequired,
 	PaymentMethodComponent: PropTypes.elementType,
 	LabelComponent: PropTypes.elementType,
+	SummaryComponent: PropTypes.elementType,
 	summary: PropTypes.bool,
 };
 

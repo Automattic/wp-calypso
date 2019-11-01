@@ -139,6 +139,10 @@ export function createStripeMethod( {
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: StripePayButton,
 		CheckoutWrapper: StripeHookProvider,
+		SummaryComponent: () => {
+			const localize = useLocalize();
+			return localize( 'Credit Card' );
+		},
 		getAriaLabel: localize => localize( 'Credit Card' ),
 	};
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 /**
@@ -10,51 +10,112 @@ import styled from 'styled-components';
 import Field from './field';
 import GridRow from './grid-row';
 import { useLocalize } from '../lib/localize';
+import { AmexLogo, VisaLogo, MastercardLogo } from './payment-logos';
+import { useSelect, useDispatch } from '../public-api';
 
 export default function CreditCardFields() {
 	const localize = useLocalize();
+	const [ paymentIcon, setPaymentIcon ] = useState( <LockIcon /> );
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { updatePaymentData } = useDispatch( 'checkout' );
+	const currentCreditCardData = paymentData.creditCard || {};
+	const updateCreditCard = ( key, value ) =>
+		updatePaymentData( 'creditCard', { ...currentCreditCardData, [ key ]: value } );
+
+	const handleCreditCardNumberChange = cardNumber => {
+		switch ( Number( cardNumber[ 0 ] ) ) {
+			//TODO: Update this with all credit card types we support
+			case 3:
+				setPaymentIcon(
+					<PaymentLogo>
+						<AmexLogo />
+					</PaymentLogo>
+				);
+				updateCreditCard( 'brand', 'brand' );
+				break;
+			case 4:
+				setPaymentIcon(
+					<PaymentLogo>
+						<VisaLogo />
+					</PaymentLogo>
+				);
+				break;
+			case 5:
+				setPaymentIcon(
+					<PaymentLogo>
+						<MastercardLogo />
+					</PaymentLogo>
+				);
+				break;
+			default:
+				setPaymentIcon( <LockIcon /> );
+		}
+
+		updateCreditCard( 'cardNumber', cardNumber );
+	};
 
 	return (
 		<CreditCardFieldsWrapper>
 			<CreditCardField
-				id="creditCardNumber"
+				id="credit-card-number"
 				type="Number"
 				label={ localize( 'Card number' ) }
 				placeholder="1234 1234 1234 1234"
-				icon={ <LockIcon /> }
+				icon={ paymentIcon }
 				isIconVisible={ true }
 				autoComplete="cc-number"
+				value={ currentCreditCardData.cardNumber || '' }
+				onChange={ value => {
+					handleCreditCardNumberChange( value );
+				} }
 			/>
 			<FieldRow gap="4%" columnWidths="48% 48%">
 				<Field
-					id="expiryDate"
+					id="card-expiry"
 					type="Number"
 					label={ localize( 'Expiry Date' ) }
 					placeholder="MM / YY"
 					autoComplete="cc-exp"
+					value={ currentCreditCardData.cardExpiry || '' }
+					onChange={ value => {
+						updateCreditCard( 'cardExpiry', value );
+					} }
 				/>
 				<GridRow gap="4%" columnWidths="67% 29%">
 					<Field
-						id="securityCode"
+						id="card-cvc"
 						type="Number"
 						label={ localize( 'Security Code' ) }
 						placeholder="111"
 						autoComplete="cc-csc"
+						value={ currentCreditCardData.cardCvc || '' }
+						onChange={ value => {
+							updateCreditCard( 'cardCvc', value );
+						} }
 					/>
 					<CVVImage />
 				</GridRow>
 			</FieldRow>
 
 			<CreditCardField
-				id="cardholderName"
+				id="card-holder-name"
 				type="Text"
 				label={ localize( 'Cardholder name' ) }
 				description={ localize( 'Enter your name as it’s written on the card' ) }
 				autoComplete="cc-name"
+				value={ currentCreditCardData.cardHolderName || '' }
+				onChange={ value => {
+					updateCreditCard( 'cardHolderName', value );
+				} }
 			/>
 		</CreditCardFieldsWrapper>
 	);
 }
+
+const PaymentLogo = styled.span`
+	display: inline-block;
+	transform: translateY( 2px );
+`;
 
 function CVV( { className } ) {
 	const localize = useLocalize();

@@ -352,6 +352,7 @@ function createMockMethod() {
 		PaymentMethodComponent: () => <span data-testid="mock-payment-details">Mock Details</span>,
 		BillingContactComponent: MockPaymentForm,
 		SubmitButtonComponent: () => <button>Pay Please</button>,
+		SummaryComponent: () => 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
 	};
 }

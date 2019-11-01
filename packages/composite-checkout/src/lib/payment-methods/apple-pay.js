@@ -18,6 +18,7 @@ export function createApplePayMethod() {
 		PaymentMethodComponent: () => null,
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: ApplePaySubmitButton,
+		SummaryComponent: ApplePaySummary,
 		getAriaLabel: localize => localize( 'Apple Pay' ),
 	};
 }
@@ -50,6 +51,21 @@ export function ApplePaySubmitButton() {
 const ButtonApplePayIcon = styled( ApplePayIcon )`
 	transform: translateY( 3px );
 `;
+
+export function ApplePaySummary() {
+	const localize = useLocalize();
+	return <React.Fragment>{ localize( 'Apple Pay' ) }</React.Fragment>;
+}
+
+function ApplePayBillingFormSummary( { paymentData } ) {
+	const localize = useLocalize();
+	const { billingName = '' } = paymentData || {};
+	return (
+		<span>
+			<em>{ localize( 'Name' ) }</em> { billingName }
+		</span>
+	);
+}
 
 function ApplePayIcon( { fill, className } ) {
 	return (
