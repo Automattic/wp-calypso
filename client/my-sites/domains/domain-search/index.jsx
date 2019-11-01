@@ -23,7 +23,6 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { addItem, removeItem } from 'lib/cart/actions';
 import { isGSuiteRestricted, canDomainAddGSuite } from 'lib/gsuite';
-
 import {
 	hasDomainInCart,
 	domainMapping,
