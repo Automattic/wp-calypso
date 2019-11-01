@@ -11,7 +11,7 @@ import { ActionType, SiteType, Vertical } from './types';
 import * as Actions from './actions';
 
 const siteType: Reducer< SiteType, ReturnType< typeof Actions[ 'setSiteType' ] > > = (
-	state = SiteType.BLOG,
+	state = '',
 	action
 ) => {
 	if ( action.type === ActionType.SET_SITE_TYPE ) {
