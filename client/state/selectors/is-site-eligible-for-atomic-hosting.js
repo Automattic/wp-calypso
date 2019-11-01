@@ -16,5 +16,5 @@ export default function isSiteEligibleForAtomicHosting( state ) {
 	const siteId = getSelectedSiteId( state );
 	const atomicSite = isSiteAutomatedTransfer( state, siteId );
 
-	return atomicSite && siteId > 168768859; // ID of site adding 31 Oct 2019, so only sites newer currently eligible
+	return atomicSite && siteId > 168768859; // ID of site added 31 Oct 2019, so only sites newer currently eligible
 }
