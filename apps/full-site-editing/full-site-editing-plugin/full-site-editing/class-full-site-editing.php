@@ -652,7 +652,8 @@ class Full_Site_Editing {
 		/**
 		 * Note: We do not want to create the option if it doesn't exist. This
 		 * way, the default option can theoretically change if the user switches
-		 * site types.
+		 * site types without changing an option in the list at all. As soon as
+		 * they make a change to the selection, however, it will be persisted.
 		 */
 
 		// Registers the footercredit option for API use.
