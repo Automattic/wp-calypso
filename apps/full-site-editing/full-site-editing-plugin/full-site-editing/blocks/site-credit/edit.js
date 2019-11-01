@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable import/no-extraneous-dependencies */
+/* global fullSiteEditing */
 /**
  * External dependencies
  */
@@ -18,11 +19,9 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { withSiteOptions } from '../../lib';
-import {
-	RenderedCreditChoice,
-	footerCreditOptions,
-	defaultCreditOption,
-} from './footer-credit-choices';
+import { RenderedCreditChoice } from './footer-credit-choices';
+
+const { footerCreditOptions, defaultCreditOption } = fullSiteEditing;
 
 function SiteCreditEdit( {
 	attributes: { textAlign = 'center' },

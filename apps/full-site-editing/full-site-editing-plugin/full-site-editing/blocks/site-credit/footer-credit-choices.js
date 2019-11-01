@@ -6,7 +6,7 @@
  */
 import { Icon } from '@wordpress/components';
 
-export const { footerCreditOptions, defaultCreditOption } = fullSiteEditing;
+const { footerCreditOptions } = fullSiteEditing;
 
 export const RenderedCreditChoice = ( { choice } ) => {
 	const selection = footerCreditOptions.find( ( { value } ) => value === choice );
