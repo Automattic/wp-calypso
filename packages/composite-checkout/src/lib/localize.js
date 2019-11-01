@@ -19,5 +19,8 @@ export default function localizeFactory( locale ) {
 
 export function useLocalize() {
 	const { localize } = useContext( CheckoutContext );
+	if ( ! localize ) {
+		throw new Error( 'useLocalize can only be used inside a CheckoutProvider' );
+	}
 	return localize;
 }

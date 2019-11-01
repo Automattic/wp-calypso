@@ -79,16 +79,25 @@ CheckoutProvider.propTypes = {
 
 export const useLineItems = () => {
 	const { total, items } = useContext( CheckoutContext );
+	if ( ! total || ! items ) {
+		throw new Error( 'useLineItems can only be used inside a CheckoutProvider' );
+	}
 	return [ items, total ];
 };
 
 export const useCheckoutHandlers = () => {
 	const { onSuccess, onFailure } = useContext( CheckoutContext );
+	if ( ! onSuccess || ! onFailure ) {
+		throw new Error( 'useCheckoutHandlers can only be used inside a CheckoutProvider' );
+	}
 	return { onSuccess, onFailure };
 };
 
 export const useCheckoutRedirects = () => {
 	const { successRedirectUrl, failureRedirectUrl } = useContext( CheckoutContext );
+	if ( ! successRedirectUrl || ! failureRedirectUrl ) {
+		throw new Error( 'useCheckoutRedirects can only be used inside a CheckoutProvider' );
+	}
 	return { successRedirectUrl, failureRedirectUrl };
 };
 
