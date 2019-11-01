@@ -4,13 +4,15 @@
  * External dependencies
  */
 import domReady from '@wordpress/dom-ready';
+import ReactDOM from 'react-dom';
 import { __ } from '@wordpress/i18n';
+import { Button, Dashicon } from '@wordpress/components';
 import './style.scss';
 
 domReady( () => {
 	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
 
-	// Only alter anything on the page and template part editors.
+	// Only alter for the page and template part editors.
 	if ( 'wp_template_part' !== editorPostType && 'page' !== editorPostType ) {
 		return;
 	}
@@ -37,14 +39,23 @@ domReady( () => {
 			newCloseButton.href = closeButtonUrl;
 			newCloseButton.innerHTML = closeButtonLabel;
 			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
+			newCloseButton.className = 'components-button components-icon-button is-button is-default';
 		} else if ( 'page' === editorPostType ) {
 			newCloseButton.href = 'edit.php?post_type=page';
-			const newLabel = __( 'Back to Pages' );
+			const newLabel = __( 'Pages' );
 			newCloseButton.innerHTML = newLabel;
 			newCloseButton.setAttribute( 'aria-label', newLabel );
+			newCloseButton.className = 'components-button';
+
+			ReactDOM.render(
+				<Button className="components-button components-icon-button">
+					<Dashicon icon="arrow-left-alt2" />
+					{ newLabel }
+				</Button>,
+				newCloseButton
+			);
 		}
 
-		newCloseButton.className = 'components-button components-icon-button is-button is-default';
 		componentsToolbar.prepend( newCloseButton );
 	} );
 } );
