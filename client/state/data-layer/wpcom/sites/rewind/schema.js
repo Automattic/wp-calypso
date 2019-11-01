@@ -151,7 +151,7 @@ export const active = stateSchema( 'active', {
 				threats: { type: threat },
 			},
 		},
-		last_backup_when: { type: 'string' },
+		last_good_backup: { type: 'string' },
 		backup_in_progress: { type: 'boolean' },
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
 	},
