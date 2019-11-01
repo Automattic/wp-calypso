@@ -24,7 +24,6 @@ export default function Checkout( {
 	CheckoutHeader,
 	className,
 } ) {
-	const localize = useLocalize();
 	const [ stepNumber, setStepNumber ] = useState( 1 );
 	const [ , dispatchPaymentAction ] = usePaymentData();
 	const changeStep = useCallback(
@@ -42,14 +41,9 @@ export default function Checkout( {
 
 	return (
 		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
-			<MainContent>
-				<div>
-					{ CheckoutHeader ? (
-						<CheckoutHeader />
-					) : (
-						<PageTitle>{ localize( 'Complete your purchase' ) }</PageTitle>
-					) }
-				</div>
+			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
+				<OrderSummaryStep CheckoutHeader={ CheckoutHeader } />
+
 				<PaymentMethodsStep
 					availablePaymentMethods={ availablePaymentMethods }
 					setStepNumber={ changeStep }
@@ -96,32 +90,48 @@ const Container = styled.div`
 	}
 `;
 
-const Column = styled.div`
+const MainContent = styled.div`
 	background: ${props => props.theme.colors.surface};
-	padding: 16px;
 	width: 100%;
 	box-sizing: border-box;
+
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};
-		margin-top: 32px;
+		margin: 32px auto;
 		box-sizing: border-box;
-		padding: 24px;
+		max-width: 556px;
 	}
 `;
 
-const MainContent = styled( Column )`
-	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
-		max-width: 532px;
-	}
-`;
+function OrderSummaryStep( { CheckoutHeader } ) {
+	const localize = useLocalize();
 
-const PageTitle = styled.h1`
-	margin: 0;
-	font-weight: normal;
-	font-size: 24px;
-	color: ${props => props.theme.colors.textColorDark};
-	padding-bottom: 24px;
-`;
+	return (
+		<CheckoutStep
+			isActive={ false }
+			isComplete={ true }
+			stepNumber={ 0 }
+			title={ localize( 'You are all set to checkout' ) }
+			stepSummary={ <OrderSummaryContent CheckoutHeader={ CheckoutHeader } /> }
+		/>
+	);
+}
+
+OrderSummaryContent.propTypes = {
+	CheckoutHeader: PropTypes.elementType,
+};
+
+function OrderSummaryContent( { CheckoutHeader } ) {
+	return (
+		<React.Fragment>
+			{ CheckoutHeader ? <CheckoutHeader /> : <React.Fragment>Order Summary</React.Fragment> }
+		</React.Fragment>
+	);
+}
+
+OrderSummaryContent.propTypes = {
+	CheckoutHeader: PropTypes.elementType,
+};
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {
 	const localize = useLocalize();
@@ -247,13 +257,6 @@ function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
 						<ReviewContent isActive={ isActive } />
 					) : (
 						<CheckoutReviewOrder isActive={ isActive } />
-					)
-				}
-				stepSummary={
-					ReviewContent ? (
-						<ReviewContent summary isActive={ isActive } />
-					) : (
-						<CheckoutReviewOrder summary isActive={ isActive } />
 					)
 				}
 			/>

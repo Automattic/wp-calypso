@@ -77,7 +77,11 @@ function CheckoutStepHeader( {
 } ) {
 	const localize = useLocalize();
 	return (
-		<StepHeader className={ joinClasses( [ className, 'checkout-step__header' ] ) }>
+		<StepHeader
+			isComplete={ isComplete }
+			isActive={ isActive }
+			className={ joinClasses( [ className, 'checkout-step__header' ] ) }
+		>
 			<Stepper isComplete={ isComplete } isActive={ isActive }>
 				{ isComplete ? <CheckIcon /> : stepNumber }
 			</Stepper>
@@ -85,7 +89,12 @@ function CheckoutStepHeader( {
 				{ title }
 			</StepTitle>
 			{ onEdit && isComplete && ! isActive && (
-				<Button buttonState="text-button" className="checkout-step__edit" onClick={ onEdit } aria-label={ editButtonAriaLabel }>
+				<Button
+					buttonState="text-button"
+					className="checkout-step__edit"
+					onClick={ onEdit }
+					aria-label={ editButtonAriaLabel }
+				>
 					{ localize( 'Edit' ) }
 				</Button>
 			) }
@@ -138,7 +147,7 @@ function CheckIcon() {
 				/>
 			</mask>
 			<g mask="url(#mask1)">
-				<rect width="20" height="20" fill="#008A20" />
+				<rect width="20" height="20" fill="white" />
 			</g>
 		</svg>
 	);
@@ -146,18 +155,13 @@ function CheckIcon() {
 
 const StepWrapper = styled.div`
 	padding-bottom: ${props => ( props.finalStep ? '0' : '32px' )};
-	margin-bottom: 8px;
 	position: relative;
+	border-bottom: ${props => ( props.finalStep ? '0' : '1px' )} solid
+		${props => props.theme.colors.borderColorLight};
+	padding: 16px;
 
-	:after {
-		display: block;
-		width: ${props => ( props.finalStep ? '0' : '1px' )};
-		height: calc( 100% - 35px );
-		position: absolute;
-		left: 13px;
-		top: 35px;
-		background: ${props => props.theme.colors.borderColor};
-		content: '';
+	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+		padding: 24px;
 	}
 `;
 
@@ -174,7 +178,7 @@ const StepHeader = styled.h2`
 	display: flex;
 	width: 100%;
 	align-items: center;
-	margin: 0 0 8px;
+	margin: 0 0 ${props => ( props.isComplete || props.isActive ? '8px' : '0' )};
 `;
 
 const StepNumber = styled.span`
@@ -191,11 +195,11 @@ const StepNumber = styled.span`
 	color: ${getStepNumberForegroundColor};
 	position: relative;
 	line-height: 27px;
+
 	:after {
 		position: absolute;
 		top: 0;
 		left: 0;
-		border: 2px solid ${getStepNumberBorderColor};
 		content: '';
 		display: block;
 		width: 27px;
@@ -203,6 +207,7 @@ const StepNumber = styled.span`
 		border-radius: 50%;
 		box-sizing: border-box;
 	}
+
 	svg {
 		margin-top: 4px;
 	}
@@ -213,7 +218,7 @@ function getStepNumberBackgroundColor( { isComplete, isActive, theme } ) {
 		return theme.colors.highlight;
 	}
 	if ( isComplete ) {
-		return theme.colors.surface;
+		return theme.colors.success;
 	}
 	return theme.colors.upcomingStepBackground;
 }
@@ -223,16 +228,6 @@ function getStepNumberForegroundColor( { isComplete, isActive, theme } ) {
 		return theme.colors.surface;
 	}
 	return theme.colors.textColor;
-}
-
-function getStepNumberBorderColor( { isComplete, isActive, theme } ) {
-	if ( isActive ) {
-		return theme.colors.highlight;
-	}
-	if ( isComplete ) {
-		return theme.colors.success;
-	}
-	return theme.colors.borderColorLight;
 }
 
 const StepContent = styled.div`

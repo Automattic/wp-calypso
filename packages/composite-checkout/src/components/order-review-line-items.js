@@ -61,6 +61,10 @@ const LineItemUI = styled( LineItem )`
 	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' )};
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
+
+	:first-child {
+		padding-top: 0;
+	}
 `;
 
 export function OrderReviewTotal( { total, className } ) {
@@ -73,21 +77,13 @@ export function OrderReviewTotal( { total, className } ) {
 
 export function OrderReviewLineItems( { items, className, isSummaryVisible } ) {
 	return (
-		<ReviewSection
-			isSummaryVisible={ isSummaryVisible }
-			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
-		>
+		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( item => (
 				<LineItemUI isSummaryVisible={ isSummaryVisible } key={ item.id } item={ item } />
 			) ) }
-		</ReviewSection>
+		</div>
 	);
 }
-
-const ReviewSection = styled.div`
-	border-top: ${props =>
-		props.isSummaryVisible ? 0 : '1px solid ' + props.theme.colors.borderColorLight};
-`;
 
 OrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
