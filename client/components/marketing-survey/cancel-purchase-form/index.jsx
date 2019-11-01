@@ -267,8 +267,13 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	downgradeClick = () => {
-		this.props.downgradeClick();
-		this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
+		if ( ! this.state.isSubmitting ) {
+			this.props.downgradeClick();
+			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
+			this.setState( {
+				isSubmitting: true,
+			} );
+		}
 	};
 
 	renderQuestionOne = () => {
