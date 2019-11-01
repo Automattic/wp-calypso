@@ -28,7 +28,7 @@ import { PanelBody } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import useSiteOptions from '../useSiteOptions';
+import { useSiteOptions } from '../../lib';
 
 function SiteTitleEdit( {
 	attributes,

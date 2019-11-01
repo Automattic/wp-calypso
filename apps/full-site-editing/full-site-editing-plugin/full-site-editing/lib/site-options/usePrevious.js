@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -11,7 +12,7 @@ import { useEffect, useRef } from '@wordpress/element';
  * @param  {any}  value state or prop value for which previous value is required
  * @return {any}  previous value of requested state or prop value
  */
-export default function usePrevious( value ) {
+export function usePrevious( value ) {
 	const ref = useRef();
 
 	useEffect( () => {
