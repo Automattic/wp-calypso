@@ -29,7 +29,6 @@ import { PanelBody } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-
 import { withSiteOptions } from '../../lib';
 
 function SiteDescriptionEdit( {
