@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card/compact';
 import Notice from 'components/notice';
-import FormToggle from 'components/forms/form-toggle';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
 import {
@@ -20,20 +19,12 @@ import {
 	domainManagementTransfer,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import {
-	enableDomainPrivacy,
-	disableDomainPrivacy,
-	discloseDomainContactInfo,
-	redactDomainContactInfo,
-} from 'state/sites/domains/actions';
 import Property from './card/property';
-import Gridicon from 'components/gridicon';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { isUpdatingDomainPrivacy } from 'state/sites/domains/selectors';
 
 class RegisteredDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
@@ -73,99 +64,6 @@ class RegisteredDomain extends React.Component {
 					{ message }
 				</Notice>
 			</a>
-		);
-	}
-
-	togglePrivacy = () => {
-		const {
-			selectedSite,
-			domain: { privateDomain, name },
-		} = this.props;
-
-		if ( privateDomain ) {
-			this.props.disableDomainPrivacy( selectedSite.ID, name );
-		} else {
-			this.props.enableDomainPrivacy( selectedSite.ID, name );
-		}
-	};
-
-	toggleContactInfo = () => {
-		const {
-			selectedSite,
-			domain: { contactInfoDisclosed, name },
-		} = this.props;
-
-		if ( contactInfoDisclosed ) {
-			this.props.redactDomainContactInfo( selectedSite.ID, name );
-		} else {
-			this.props.discloseDomainContactInfo( selectedSite.ID, name );
-		}
-	};
-
-	getPrivacyProtection() {
-		const { privateDomain, privacyAvailable } = this.props.domain;
-		const { translate, isUpdatingPrivacy } = this.props;
-
-		if ( ! privacyAvailable ) {
-			return false;
-		}
-
-		return (
-			<Property label={ translate( 'Privacy Protection' ) }>
-				{
-					<FormToggle
-						wrapperClassName="edit__privacy-protection-toggle"
-						checked={ privateDomain }
-						toggling={ isUpdatingPrivacy }
-						disabled={ isUpdatingPrivacy }
-						onChange={ this.togglePrivacy }
-					/>
-				}
-			</Property>
-		);
-	}
-
-	getContactInfoDisclosed() {
-		const {
-			translate,
-			isUpdatingPrivacy,
-			domain: {
-				privateDomain,
-				privacyAvailable,
-				contactInfoDisclosureAvailable,
-				contactInfoDisclosed,
-				isPendingIcannVerification,
-			},
-		} = this.props;
-
-		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
-			return false;
-		}
-
-		const contactVerificationNotice = isPendingIcannVerification ? (
-			<div class="edit__disclose-contact-information-warning">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>
-					{ translate(
-						'You need to verify the contact information for the domain before you can disclose it publicly.'
-					) }
-				</p>
-			</div>
-		) : null;
-
-		return (
-			<div>
-				<Property label={ translate( 'Display my contact information in public WHOIS' ) }>
-					<FormToggle
-						wrapperClassName="edit__disclose-contact-information"
-						checked={ contactInfoDisclosed }
-						toggling={ isUpdatingPrivacy }
-						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
-						onChange={ this.toggleContactInfo }
-					/>
-				</Property>
-				{ contactVerificationNotice }
-			</div>
 		);
 	}
 
@@ -236,7 +134,7 @@ class RegisteredDomain extends React.Component {
 			this.props.domain.name
 		);
 
-		return <VerticalNavItem path={ path }>{ translate( 'Contacts' ) }</VerticalNavItem>;
+		return <VerticalNavItem path={ path }>{ translate( 'Contacts and Privacy' ) }</VerticalNavItem>;
 	}
 
 	transferNavItem() {
@@ -281,10 +179,6 @@ class RegisteredDomain extends React.Component {
 
 						{ this.getAutoRenewalOrExpirationDate() }
 
-						{ this.getPrivacyProtection() }
-
-						{ this.getContactInfoDisclosed() }
-
 						<SubscriptionSettings
 							type={ domain.type }
 							subscriptionId={ domain.subscriptionId }
@@ -315,18 +209,8 @@ const paymentSettingsClick = domain =>
 	);
 
 export default connect(
-	( state, ownProps ) => ( {
-		isUpdatingPrivacy: isUpdatingDomainPrivacy(
-			state,
-			ownProps.selectedSite.ID,
-			ownProps.domain.name
-		),
-	} ),
+	null,
 	{
 		paymentSettingsClick,
-		enableDomainPrivacy,
-		disableDomainPrivacy,
-		discloseDomainContactInfo,
-		redactDomainContactInfo,
 	}
 )( localize( RegisteredDomain ) );

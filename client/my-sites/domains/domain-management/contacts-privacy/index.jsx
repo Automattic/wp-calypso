@@ -50,6 +50,7 @@ class ContactsPrivacy extends React.PureComponent {
 			privacyAvailable,
 			contactInfoDisclosed,
 			contactInfoDisclosureAvailable,
+			isPendingIcannVerification,
 		} = domain;
 
 		const canManageConsent =
@@ -69,6 +70,7 @@ class ContactsPrivacy extends React.PureComponent {
 						privacyAvailable={ privacyAvailable }
 						contactInfoDisclosed={ contactInfoDisclosed }
 						contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
+						isPendingIcannVerification={ isPendingIcannVerification }
 					/>
 
 					<VerticalNavItem
