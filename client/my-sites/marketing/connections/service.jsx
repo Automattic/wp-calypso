@@ -365,10 +365,15 @@ export class SharingService extends Component {
 		}
 
 		/**
-		 * Scroll to the bottom if connecting Mailchimp.
+		 * Scroll directly to the Mailchimp setting if connecting Mailchimp.
 		 */
-		if ( this.props.queryArgs && 'mailchimp' in this.props.queryArgs ) {
-			window.scrollTo( 0, 9999 );
+		if (
+			this.isMailchimpService() &&
+			this.props.queryArgs &&
+			'mailchimp' in this.props.queryArgs
+		) {
+			const mailchimpSetting = document.getElementById( 'mailchimp' );
+			mailchimpSetting.scrollIntoView( { behavior: 'smooth' } );
 		}
 	}
 
@@ -508,7 +513,7 @@ export class SharingService extends Component {
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 
 		const header = (
-			<div>
+			<div id={ this.props.service.ID }>
 				{ ! this.isMailchimpService( connectionStatus ) && this.renderLogo() }
 				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
