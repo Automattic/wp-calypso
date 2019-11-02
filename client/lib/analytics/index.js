@@ -26,7 +26,7 @@ import {
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
 	recordSignupCompletionInFloodlight,
-	recordSignupStartInFloodlight,
+	recordSignupStart,
 	recordRegistration,
 	recordSignup,
 	recordAddToCart,
@@ -354,7 +354,7 @@ const analytics = {
 		// Google Analytics
 		analytics.ga.recordEvent( 'Signup', 'calypso_signup_start' );
 		// Marketing
-		recordSignupStartInFloodlight();
+		recordSignupStart( { flow } );
 	},
 
 	recordRegistration: function( { flow } ) {
