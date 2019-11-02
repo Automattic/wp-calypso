@@ -20,7 +20,7 @@ import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
+import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -206,9 +206,15 @@ export class ProductSelector extends Component {
 	}
 
 	renderProducts() {
-		const { currencyCode, intervalType, products, storeProducts } = this.props;
+		const {
+			currencyCode,
+			fetchingSitePurchases,
+			intervalType,
+			products,
+			storeProducts,
+		} = this.props;
 
-		if ( isEmpty( storeProducts ) ) {
+		if ( isEmpty( storeProducts ) || fetchingSitePurchases ) {
 			return map( products, product => {
 				return (
 					<ProductCard
@@ -279,7 +285,15 @@ ProductSelector.propTypes = {
 			id: PropTypes.string,
 			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 			options: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ).isRequired,
-			optionDescriptions: PropTypes.objectOf( [ PropTypes.string, PropTypes.element ] ),
+			optionDescriptions: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
+			optionDisplayNames: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
+			optionShortNames: PropTypes.objectOf(
+				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+			),
 			optionsLabel: PropTypes.string,
 		} )
 	).isRequired,
@@ -291,6 +305,7 @@ ProductSelector.propTypes = {
 
 	// Connected props
 	currencyCode: PropTypes.string,
+	fetchingSitePurchases: PropTypes.bool,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
 	purchases: PropTypes.array,
 	selectedSiteId: PropTypes.number,
@@ -314,6 +329,7 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		fetchingSitePurchases: isFetchingSitePurchases( state ),
 		productSlugs,
 		purchases: getSitePurchases( state, selectedSiteId ),
 		selectedSiteId,

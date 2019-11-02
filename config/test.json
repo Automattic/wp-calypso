@@ -39,6 +39,7 @@
 		"google-my-business": false,
 		"help": true,
 		"hosting": false,
+		"hosting/non-atomic-support": false,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/site-questions": false,

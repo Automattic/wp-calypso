@@ -43,7 +43,7 @@ export class Eventbrite extends SharingService {
 		this.props.deleteKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts, saveRequests } ) {
+	UNSAFE_componentWillReceiveProps( { availableExternalAccounts, saveRequests } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,

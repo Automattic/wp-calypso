@@ -1,4 +1,4 @@
-@import '../../gutenberg-styles/styles';
+@import 'assets/stylesheets/gutenberg-base-styles/style';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -20,16 +20,7 @@
 	@include break-small {
 		position: fixed;
 		padding: $grid-size;
-		// Needed at wp-admin but not in Calypso
-		// top: $admin-bar-height-big;
 	}
-
-	// Needed at wp-admin but not in Calypso
-	/*
-	@include break-medium() {
-		top: $admin-bar-height;
-	}
-	*/
 }
 
 .gutenboarding__header-actions {

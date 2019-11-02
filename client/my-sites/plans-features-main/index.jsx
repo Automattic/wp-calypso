@@ -27,16 +27,7 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
-import {
-	JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
-	JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
-	JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
-	JETPACK_BACKUP_PRODUCTS_MONTHLY,
-	JETPACK_BACKUP_PRODUCTS_YEARLY,
-	JETPACK_PRODUCT_PRICE_MATRIX,
-	PRODUCT_JETPACK_BACKUP,
-	PRODUCT_JETPACK_BACKUP_DESCRIPTION,
-} from 'lib/products-values/constants';
+import { JETPACK_PRODUCT_PRICE_MATRIX, JETPACK_PRODUCTS } from 'lib/products-values/constants';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
@@ -77,29 +68,6 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
  */
 import './style.scss';
 
-// @todo: Add translations to `jetpackProducts` once the final copy is provided.
-const jetpackProducts = [
-	{
-		title: 'Jetpack Backup',
-		description: PRODUCT_JETPACK_BACKUP_DESCRIPTION,
-		id: PRODUCT_JETPACK_BACKUP,
-		options: {
-			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
-			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
-		},
-		optionShortNames: {
-			...JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
-		},
-		optionDisplayNames: {
-			...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
-		},
-		optionDescriptions: {
-			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
-		},
-		optionsLabel: 'Backup options',
-	},
-];
-
 export class PlansFeaturesMain extends Component {
 	componentDidUpdate( prevProps ) {
 		/**
@@ -135,6 +103,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			siteType,
 			plansWithScroll,
+			translate,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -152,11 +121,12 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
-				{ /* @todo: Add translations in FormattedHeader once the final copy is provided. */ }
 				{ isEnabled( 'plans/jetpack-backup' ) && displayJetpackPlans && (
 					<FormattedHeader
-						headerText="Plans"
-						subHeaderText="Get everything your site needs, in one package — so you can focus on your business."
+						headerText={ translate( 'Plans' ) }
+						subHeaderText={ translate(
+							'Get everything your site needs, in one package — so you can focus on your business.'
+						) }
 						compactOnMobile
 					/>
 				) }
@@ -427,22 +397,21 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { intervalType, displayJetpackPlans } = this.props;
+		const { intervalType, displayJetpackPlans, translate } = this.props;
 
 		if ( ! displayJetpackPlans ) {
 			return null;
 		}
 
-		// @todo: Add translations in FormattedHeader once the final copy is provided.
 		return (
 			<div className="plans-features-main__group is-narrow">
 				<FormattedHeader
-					headerText="Single Products"
-					subHeaderText="Just looking for backups? We’ve got you covered."
+					headerText={ translate( 'Single Products' ) }
+					subHeaderText={ translate( 'Just looking for backups? We’ve got you covered.' ) }
 					compactOnMobile
 				/>
 				<ProductSelector
-					products={ jetpackProducts }
+					products={ JETPACK_PRODUCTS }
 					intervalType={ intervalType }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
 				/>

@@ -354,6 +354,15 @@ const analytics = {
 		recordRegistration();
 	},
 
+	recordPasswordlessRegistration: function( { flow } ) {
+		// Tracks
+		analytics.tracks.recordEvent( 'calypso_user_registration_passwordless_complete', { flow } );
+		// Google Analytics
+		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
+		// Marketing
+		recordRegistration();
+	},
+
 	recordSocialRegistration: function() {
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );

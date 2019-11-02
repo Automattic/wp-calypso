@@ -312,10 +312,10 @@ export class List extends React.Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		return (
-			<div>
+			<>
 				{ this.changePrimaryButton() }
 				{ this.addDomainButton() }
-			</div>
+			</>
 		);
 	}
 

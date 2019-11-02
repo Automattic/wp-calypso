@@ -59,7 +59,7 @@ class ProductSearchRow extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		// Short out if we know the new product doesn't need variations
 		if ( ! newProps.product || 'variable' !== newProps.product.type ) {
 			return;

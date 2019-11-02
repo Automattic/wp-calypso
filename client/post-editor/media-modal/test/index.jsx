@@ -85,7 +85,7 @@ describe( 'EditorMediaModal', () => {
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 			/>
 		).instance();
-		tree.componentWillMount();
+		tree.UNSAFE_componentWillMount();
 		expect( setLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 

@@ -227,7 +227,7 @@ function useStripeJs( stripeConfiguration ) {
 				return;
 			}
 			debug( 'loading stripe.js...' );
-			await loadScriptAsync( stripeConfiguration.js_url );
+			await loadScript( stripeConfiguration.js_url );
 			debug( 'stripe.js loaded!' );
 			isSubscribed && setStripeLoading( false );
 			isSubscribed && setStripeLoadingError();
@@ -243,12 +243,6 @@ function useStripeJs( stripeConfiguration ) {
 		return () => ( isSubscribed = false );
 	}, [ stripeConfiguration, stripeJs ] );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
-}
-
-function loadScriptAsync( url ) {
-	return new Promise( ( resolve, reject ) => {
-		loadScript( url, loadError => ( loadError ? reject( loadError ) : resolve() ) );
-	} );
 }
 
 /**

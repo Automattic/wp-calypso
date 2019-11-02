@@ -16,7 +16,7 @@ import { useSiteOptions } from './use-site-options';
  * The option value is requested from the WordPress API. Note that arbitrary
  * options can only be retrieved if they have been registered as site settings.
  *
- * Updates are persisted to the database as they change.
+ * Updates are persisted to the database when the post is saved.
  *
  * In the component, every specified `optionName` will be a prop which maps to
  * an object with the keys `value`, `updateValue`, and `loaded`. `value`

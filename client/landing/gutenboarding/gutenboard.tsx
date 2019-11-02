@@ -32,7 +32,7 @@ registerBlockType( name, settings );
 const onboardingBlock = createBlock( name, {} );
 
 export function Gutenboard() {
-	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( true );
+	const [ isEditorSidebarOpened, updateIsEditorSidebarOpened ] = useState( false );
 
 	function toggleGeneralSidebar() {
 		updateIsEditorSidebarOpened( ! isEditorSidebarOpened );
@@ -40,7 +40,7 @@ export function Gutenboard() {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="gutenboarding block-editor__container">
+		<div className="block-editor__container">
 			<SlotFillProvider>
 				<DropZoneProvider>
 					<div

@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
@@ -81,12 +82,7 @@ class PasswordlessSignupForm extends Component {
 				{ email: typeof this.state.email === 'string' ? this.state.email.trim() : '' },
 				null
 			)
-			.then( response =>
-				this.createUserAccountFromEmailAddressCallback( null, {
-					username: response.username,
-					bearer_token: response.token.access_token,
-				} )
-			)
+			.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
 			.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
 	};
 
@@ -106,7 +102,19 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: false,
 		} );
 
-		this.submitStep( response );
+		const username =
+			( response && response.signup_sandbox_username ) || ( response && response.username );
+
+		const userId =
+			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
+
+		analytics.recordPasswordlessRegistration( { flow: this.props.flowName } );
+		analytics.identifyUser( username, userId );
+
+		this.submitStep( {
+			username: response.username,
+			bearer_token: response.token.access_token,
+		} );
 	};
 
 	getErrorMessage( errorObj = { error: null, message: null } ) {

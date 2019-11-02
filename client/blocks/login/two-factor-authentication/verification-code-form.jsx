@@ -69,7 +69,7 @@ class VerificationCodeForm extends Component {
 		}
 	}
 
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = nextProps => {
 		// Resets the verification code input field when switching pages
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.setState( { twoStepCode: '' } );

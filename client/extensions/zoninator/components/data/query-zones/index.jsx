@@ -14,11 +14,11 @@ import { isRequestingZones } from '../../../state/zones/selectors';
 import { requestZones } from '../../../state/zones/actions';
 
 class QueryZones extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestZones( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
 			return;
 		}

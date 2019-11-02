@@ -89,7 +89,7 @@ export class ImageEditorCanvas extends Component {
 		this.isVisible = true;
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( this.props.src !== newProps.src ) {
 			this.getImage( newProps.src );
 		}

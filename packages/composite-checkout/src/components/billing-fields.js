@@ -9,13 +9,13 @@ import styled from 'styled-components';
  * Internal dependencies
  */
 import { useLocalize } from '../lib/localize';
-import { useCheckoutLineItems, usePaymentMethodData } from '../index';
+import { useLineItems, usePaymentData } from '../public-api';
 import GridRow from './grid-row';
 import Field from './field';
 
 export default function BillingFields( { summary, isActive, isComplete } ) {
-	const [ items ] = useCheckoutLineItems();
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ items ] = useLineItems();
+	const [ paymentData, dispatch ] = usePaymentData();
 	const { isDomainContactSame = true } = paymentData;
 
 	if ( summary && isComplete ) {
@@ -171,7 +171,7 @@ const DomainRegistrationCheckbox = styled.input`
 
 function AddressFields( { fieldType } ) {
 	const localize = useLocalize();
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updatePaymentData = ( key, value ) =>
 		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
@@ -248,7 +248,7 @@ function isStateorProvince() {
 
 function PhoneNumberField( { fieldType } ) {
 	const localize = useLocalize();
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updatePaymentData = ( key, value ) =>
 		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
@@ -277,7 +277,7 @@ PhoneNumberField.propTypes = {
 function VatIdField() {
 	const localize = useLocalize();
 	const fieldType = 'billing';
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updatePaymentData = ( key, value ) =>
 		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
@@ -299,7 +299,7 @@ function VatIdField() {
 
 function TaxFields( { fieldType } ) {
 	const localize = useLocalize();
-	const [ paymentData, dispatch ] = usePaymentMethodData();
+	const [ paymentData, dispatch ] = usePaymentData();
 	const currentLocationData = paymentData[ fieldType ] || {};
 	const updatePaymentData = ( key, value ) =>
 		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
@@ -396,7 +396,7 @@ const DomainContactFieldsDescription = styled.p`
 
 function BillingFormSummary() {
 	const localize = useLocalize();
-	const [ paymentData ] = usePaymentMethodData();
+	const [ paymentData ] = usePaymentData();
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
 
 	//Check if paymentData is empty

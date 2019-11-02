@@ -35,7 +35,7 @@ export class AddLinkDialog extends Component {
 		linkUrl: '',
 	};
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.setState( {
 			linkUrl: this.inferUrl( newProps.selectedText ),
 			linkText: newProps.selectedText,

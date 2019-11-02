@@ -54,7 +54,7 @@ class RequestLoginEmailForm extends React.Component {
 		usernameOrEmail: this.props.userEmail || '',
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.requestError && nextProps.requestError ) {
 			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}

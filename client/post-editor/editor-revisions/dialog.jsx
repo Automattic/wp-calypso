@@ -41,12 +41,12 @@ class PostRevisionsDialog extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.toggleBodyClass( { isVisible: this.props.isVisible } );
 		this.props.selectPostRevision( null );
 	}
 
-	componentWillUpdate( { isVisible } ) {
+	UNSAFE_componentWillUpdate( { isVisible } ) {
 		this.toggleBodyClass( { isVisible } );
 	}
 

@@ -42,7 +42,7 @@ class InputChrono extends React.Component {
 
 	focused = false;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
 		}

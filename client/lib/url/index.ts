@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { format as formatUrl, parse as parseUrl } from 'url';
-import { has, isString, omit, startsWith } from 'lodash';
+import { has, isString, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { URL, Scheme } from 'types';
-import { Falsey } from 'utility-types';
+import { URL } from 'types';
+import { Falsy } from 'utility-types';
 
 /**
  * Re-exports
@@ -18,46 +18,9 @@ export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
 export { default as isExternal } from './is-external';
 export { default as resemblesUrl } from './resembles-url';
 export { URL_TYPE, determineUrlType } from './url-type';
-
-/**
- * Check if a URL is located outside of Calypso.
- * Note that the check this function implements is incomplete --
- * it only returns false for absolute URLs, so it misses
- * relative URLs, or pure query strings, or hashbangs.
- *
- * @param  url URL to check
- * @return     true if the given URL is located outside of Calypso
- */
-export function isOutsideCalypso( url: URL ): boolean {
-	return !! url && ( startsWith( url, '//' ) || ! startsWith( url, '/' ) );
-}
-
-export function isHttps( url: URL ): boolean {
-	return !! url && startsWith( url, 'https://' );
-}
-
-const schemeRegex = /^\w+:\/\//;
-
-export function addSchemeIfMissing( url: URL, scheme: Scheme ): URL {
-	if ( false === schemeRegex.test( url ) ) {
-		return scheme + '://' + url;
-	}
-	return url;
-}
-
-export function setUrlScheme( url: URL, scheme: Scheme ) {
-	const schemeWithSlashes = scheme + '://';
-	if ( startsWith( url, schemeWithSlashes ) ) {
-		return url;
-	}
-
-	const newUrl = addSchemeIfMissing( url, scheme );
-	if ( newUrl !== url ) {
-		return newUrl;
-	}
-
-	return url.replace( schemeRegex, schemeWithSlashes );
-}
+export { default as isOutsideCalypso } from './is-outside-calypso';
+export { default as isHttps } from './is-https';
+export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 
 /**
  * Removes given params from a url.
@@ -66,9 +29,9 @@ export function setUrlScheme( url: URL, scheme: Scheme ) {
  * @param  {Array|String}  paramsToOmit The collection of params or single param to reject
  * @return {String} Url less the omitted params.
  */
-export function omitUrlParams( url: Falsey, paramsToOmit: string | string[] ): null;
+export function omitUrlParams( url: Falsy, paramsToOmit: string | string[] ): null;
 export function omitUrlParams( url: URL, paramsToOmit: string | string[] ): URL;
-export function omitUrlParams( url: URL | Falsey, paramsToOmit: string | string[] ): URL | null {
+export function omitUrlParams( url: URL | Falsy, paramsToOmit: string | string[] ): URL | null {
 	if ( ! url ) {
 		return null;
 	}

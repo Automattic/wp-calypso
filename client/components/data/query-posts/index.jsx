@@ -21,11 +21,11 @@ import { requestSitePosts, requestSitePost, requestAllSitesPosts } from 'state/p
 const log = debug( 'calypso:query-posts' );
 
 class QueryPosts extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&

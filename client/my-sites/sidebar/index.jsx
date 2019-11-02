@@ -232,6 +232,30 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackMigrateClick = () => {
+		this.trackMenuItemClick( 'migrate' );
+		this.onNavigate();
+	};
+
+	migrate() {
+		const { path, siteSuffix, translate } = this.props;
+
+		if ( ! isEnabled( 'tools/migrate' ) ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Migrate' ) }
+				selected={ itemLinkMatches( '/migrate', path ) }
+				link={ `/migrate${ siteSuffix }` }
+				onNavigate={ this.trackMigrateClick }
+				tipTarget="migrate"
+				expandSection={ this.expandToolsSection }
+			/>
+		);
+	}
+
 	trackCustomizeClick = () => {
 		this.trackMenuItemClick( 'customize' );
 		this.onNavigate();
@@ -474,9 +498,13 @@ export class MySitesSidebar extends Component {
 	};
 
 	hosting() {
-		const { translate, path, site, siteSuffix } = this.props;
+		const { translate, isAtomicSite, path, site, siteSuffix } = this.props;
 
-		if ( ! site || ! isBusiness( site.plan ) || ! isEnabled( 'hosting' ) ) {
+		const invalidSiteType = isEnabled( 'hosting/non-atomic-support' )
+			? ! isBusiness( site.plan )
+			: ! isAtomicSite;
+
+		if ( ! site || invalidSiteType || ! isEnabled( 'hosting' ) ) {
 			return null;
 		}
 
@@ -705,6 +733,7 @@ export class MySitesSidebar extends Component {
 						materialIcon="build"
 					>
 						{ this.tools() }
+						{ this.migrate() }
 						{ this.marketing() }
 						{ this.earn() }
 						{ this.activity() }

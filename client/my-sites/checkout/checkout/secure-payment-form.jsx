@@ -22,14 +22,14 @@ import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
+import { submit } from 'lib/store-transactions';
+import analytics from 'lib/analytics';
+import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import {
 	fullCreditsPayment,
 	newStripeCardPayment,
 	storedCardPayment,
-	submit,
-} from 'lib/store-transactions';
-import analytics from 'lib/analytics';
-import { setPayment, setTransactionStep } from 'lib/transaction/actions';
+} from 'lib/transaction/payments';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -40,24 +40,17 @@ import {
 	getLocationOrigin,
 	isPaymentMethodEnabled,
 } from 'lib/cart-values';
-import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
+import { hasFreeTrial } from 'lib/cart-values/cart-items';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
-import {
-	INPUT_VALIDATION,
-	MODAL_AUTHORIZATION,
-	RECEIVED_AUTHORIZATION_RESPONSE,
-	REDIRECTING_FOR_AUTHORIZATION,
-	RECEIVED_WPCOM_RESPONSE,
-} from 'lib/store-transactions/step-types';
-import { getTld } from 'lib/domains';
+import { INPUT_VALIDATION, RECEIVED_WPCOM_RESPONSE } from 'lib/store-transactions/step-types';
 import { displayError, clear } from 'lib/upgrades/notices';
-import { recordProductPurchase } from 'lib/cart/store/cart-analytics';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { recordTransactionAnalytics } from 'lib/store-transactions/analytics';
 
 /**
  * Module variables
@@ -105,7 +98,7 @@ export class SecurePaymentForm extends Component {
 				// FIXME: The endpoint doesn't currently support transactions with no
 				//   payment info, so for now we rely on the credits payment method for
 				//   free carts.
-				newPayment = fullCreditsPayment;
+				newPayment = fullCreditsPayment();
 				break;
 
 			case 'credit-card':
@@ -250,101 +243,20 @@ export class SecurePaymentForm extends Component {
 		debug( 'transaction step: ' + step.name );
 
 		this.displayNotices( cart, step );
-		this.recordAnalytics( step );
+		recordTransactionAnalytics( cart, step, transaction.payment.paymentMethod );
 
 		this.finishIfLastStep( cart, selectedSite, step );
 	}
 
 	displayNotices( cart, step ) {
-		if ( step.error ) {
-			step.name !== INPUT_VALIDATION && displayError( step.error );
+		if ( step.error && step.name !== INPUT_VALIDATION ) {
+			displayError( step.error );
 			return;
 		}
 
-		switch ( step.name ) {
-			case 'received-wpcom-response':
-				clear();
-				break;
+		if ( step.name === RECEIVED_WPCOM_RESPONSE ) {
+			clear();
 		}
-	}
-
-	recordAnalytics( step ) {
-		const cartValue = this.props.cart;
-
-		switch ( step.name ) {
-			case 'input-validation':
-				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.error,
-						reason: step.error.code,
-					} );
-				} else {
-					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
-						credits: cartValue.credits,
-						payment_method: this.props.transaction.payment.paymentMethod,
-					} );
-				}
-				break;
-
-			case MODAL_AUTHORIZATION:
-				analytics.tracks.recordEvent( 'calypso_checkout_modal_authorization' );
-				break;
-
-			case REDIRECTING_FOR_AUTHORIZATION:
-				// TODO: wire in payment method
-				analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
-				break;
-
-			case RECEIVED_AUTHORIZATION_RESPONSE:
-			case RECEIVED_WPCOM_RESPONSE:
-				if ( step.error ) {
-					debug( 'authorization error', step.error );
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.code || step.error.error,
-						reason: this.formatError( step.error ),
-					} );
-
-					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: false } );
-				} else if ( step.data ) {
-					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
-					// zero-value cost and would thus lead to a wrong computation of conversions
-					if ( ! hasFreeTrial( cartValue ) ) {
-						analytics.recordPurchase( { cart: cartValue, orderId: step.data.receipt_id } );
-					}
-
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
-						coupon_code: cartValue.coupon,
-						currency: cartValue.currency,
-						payment_method: this.props.transaction.payment.paymentMethod,
-						total_cost: cartValue.total_cost,
-					} );
-
-					cartValue.products.forEach( recordProductPurchase );
-
-					this.recordDomainRegistrationAnalytics( { cart: cartValue, success: true } );
-				}
-				break;
-
-			default:
-				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.error,
-						reason: this.formatError( step.error ),
-					} );
-				}
-		}
-	}
-
-	recordDomainRegistrationAnalytics( { cart, success } ) {
-		getDomainRegistrations( cart ).forEach( function( cartItem ) {
-			analytics.ga.recordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
-
-			analytics.tracks.recordEvent( 'calypso_domain_registration', {
-				domain_name: cartItem.meta,
-				domain_tld: getTld( cartItem.meta ),
-				success: success,
-			} );
-		} );
 	}
 
 	finishIfLastStep( cart, selectedSite, step ) {
@@ -360,30 +272,6 @@ export class SecurePaymentForm extends Component {
 				this.props.handleCheckoutCompleteRedirect();
 			} );
 		}
-	}
-
-	formatError( error ) {
-		let formatedMessage = '';
-
-		if ( typeof error.message === 'object' ) {
-			formatedMessage += Object.keys( error.message ).join( ', ' );
-		} else if ( typeof error.message === 'string' ) {
-			formatedMessage += error.message;
-		}
-
-		if ( error.error ) {
-			formatedMessage = error.error + ': ' + formatedMessage;
-		}
-
-		if ( error.decline_code ) {
-			formatedMessage = error.decline_code + ': ' + formatedMessage;
-		}
-
-		if ( error.code ) {
-			formatedMessage = error.code + ': ' + formatedMessage;
-		}
-
-		return formatedMessage;
 	}
 
 	renderCreditsPaymentBox() {

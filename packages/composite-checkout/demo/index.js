@@ -5,7 +5,8 @@ require( '@babel/polyfill' );
  */
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import Checkout, { usePaymentState } from '../src';
+import { Checkout, CheckoutProvider } from '../src/public-api';
+import { stripeKey } from './private';
 
 const initialItems = [
 	{
@@ -24,28 +25,44 @@ const initialItems = [
 ];
 
 // These are used only for non-redirect payment methods
-/* eslint-disable no-console */
-const onSuccess = () => console.log( 'Payment succeeded!' );
-const onFailure = error => console.error( 'There was a problem with your payment', error );
-/* eslint-enable no-console */
+const onSuccess = () => window.alert( 'Payment succeeded!' );
+const onFailure = error => window.alert( 'There was a problem with your payment: ' + error );
 
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
-function handleCheckoutEvent( { type }, dispatch, next ) {
-	if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
-		// TODO: fetch this from the server and then...
-		dispatch( {
-			type: 'STRIPE_CONFIGURATION_SET',
-			payload: {
-				stripeConfiguration: {
-					public_key: '',
-					js_url: 'https://js.stripe.com/v3/',
-				},
-			},
-		} );
-		return;
+async function fetchStripeConfiguration() {
+	// return await wpcom.req.get( '/me/stripe-configuration', query );
+	return {
+		public_key: stripeKey,
+		js_url: 'https://js.stripe.com/v3/',
+	};
+}
+
+async function sendStripeTransaction() {
+	// return await wpcom.req.post( '/me/transactions', transaction );
+	return {
+		success: true,
+	};
+}
+
+function handleCheckoutEvent( { type, payload }, dispatch, next ) {
+	switch ( type ) {
+		case 'STRIPE_CONFIGURATION_FETCH':
+			fetchStripeConfiguration( payload )
+				.then( stripeConfiguration =>
+					dispatch( { type: 'STRIPE_CONFIGURATION_SET', payload: stripeConfiguration } )
+				)
+				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
+			return;
+		case 'STRIPE_TRANSACTION_BEGIN':
+			sendStripeTransaction( formatDataForStripeTransaction( payload ) )
+				.then( async response => {
+					dispatch( { type: 'STRIPE_TRANSACTION_RESPONSE', payload: response } );
+				} )
+				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
+			return;
 	}
 	next();
 }
@@ -53,10 +70,9 @@ function handleCheckoutEvent( { type }, dispatch, next ) {
 // This is the parent component which would be included on a host page
 function MyCheckout() {
 	const { items, total } = useShoppingCart();
-	const [ paymentData, dispatchPaymentAction ] = usePaymentState( handleCheckoutEvent );
 
 	return (
-		<Checkout
+		<CheckoutProvider
 			locale={ 'US' }
 			items={ items }
 			total={ total }
@@ -64,9 +80,10 @@ function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			paymentData={ paymentData }
-			dispatchPaymentAction={ dispatchPaymentAction }
-		/>
+			eventHandler={ handleCheckoutEvent }
+		>
+			<Checkout />
+		</CheckoutProvider>
 	);
 }
 
@@ -95,6 +112,97 @@ function formatValueForCurrency( currency, value ) {
 	}
 	const floatValue = value / 100;
 	return '$' + floatValue.toString();
+}
+
+function formatDataForStripeTransaction( {
+	items,
+	total,
+	country,
+	postalCode,
+	subdivisionCode,
+	paymentData,
+	stripePaymentMethod,
+	stripeConfiguration,
+	successUrl,
+	cancelUrl,
+} ) {
+	const siteId = ''; // TODO: get site id
+	const couponId = null; // TODO: get couponId
+	const payment = {
+		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+		payment_key: stripePaymentMethod.id,
+		payment_partner: stripeConfiguration.processor_id,
+		name,
+		zip: postalCode,
+		country,
+		successUrl,
+		cancelUrl,
+	};
+	return {
+		cart: createCartFromLineItems( {
+			siteId,
+			couponId,
+			items,
+			total,
+			country,
+			postalCode,
+			subdivisionCode,
+		} ),
+		domain_details: getDomainDetailsFromPaymentData( paymentData ),
+		payment,
+	};
+}
+
+function createCartFromLineItems( {
+	siteId,
+	couponId,
+	items,
+	country,
+	postalCode,
+	subdivisionCode,
+} ) {
+	// TODO: use cart manager to create cart object needed for this transaction
+	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
+	return {
+		blog_id: siteId,
+		coupon: couponId || '',
+		currency: currency || '',
+		temporary: false,
+		extra: [],
+		products: items.map( item => ( {
+			product_id: item.id,
+			meta: '', // TODO: get this for domains, etc
+			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
+			currency: item.amount.currency,
+			volume: 1,
+		} ) ),
+		tax: {
+			location: {
+				country_code: country,
+				postal_code: postalCode,
+				subdivision_code: subdivisionCode,
+			},
+		},
+	};
+}
+
+function getDomainDetailsFromPaymentData( paymentData ) {
+	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
+	return {
+		first_name: isDomainContactSame ? billing.name : domains.name || billing.name || '',
+		last_name: isDomainContactSame ? billing.name : domains.name || billing.name || '', // TODO: how do we split up first/last name?
+		address_1: isDomainContactSame ? billing.address : domains.address || billing.address || '',
+		city: isDomainContactSame ? billing.city : domains.city || billing.city || '',
+		state: isDomainContactSame
+			? billing.state || billing.province
+			: domains.state || domains.province || billing.state || billing.province || '',
+		postal_code: isDomainContactSame
+			? billing.postalCode || billing.zipCode
+			: domains.postalCode || domains.zipCode || billing.postalCode || billing.zipCode || '',
+		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
+		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
+		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
+	};
 }
 
 ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );

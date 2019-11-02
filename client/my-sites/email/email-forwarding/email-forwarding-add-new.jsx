@@ -58,7 +58,7 @@ class EmailForwardingAddNew extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,

@@ -40,9 +40,7 @@ export default function Field( {
 
 	return (
 		<div className={ className }>
-			<Label htmlFor={ id } isError={ isError }>
-				{ label }
-			</Label>
+			<Label htmlFor={ id }>{ label }</Label>
 			<InputWrapper>
 				<Input
 					id={ id }
@@ -53,6 +51,7 @@ export default function Field( {
 					onBlur={ onBlurField }
 					placeholder={ placeholder }
 					tabIndex={ tabIndex }
+					isError={ isError }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -84,8 +83,8 @@ Field.propTypes = {
 
 const Label = styled.label`
 	display: block;
-	color: ${props => ( props.isError ? props.theme.colors.warning : props.theme.colors.textColor )};
-	font-weight: 700;
+	color: ${props => props.theme.colors.textColor};
+	font-weight: ${props => props.theme.weights.bold};
 	font-size: 14px;
 	margin-bottom: 8px;
 
@@ -99,8 +98,14 @@ const Input = styled.input`
 	width: 100%;
 	box-sizing: border-box;
 	font-size: 16px;
-	border: 1px solid ${props => props.theme.colors.borderColor};
+	border: 1px solid
+		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
 	padding: 12px ${props => ( props.icon ? '40px' : '10px' )} 12px 10px;
+
+	:focus {
+		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+			auto 5px !important;
+	}
 
 	::-webkit-inner-spin-button,
 	::-webkit-outer-spin-button {
@@ -148,7 +153,7 @@ const ButtonIconUI = styled.div`
 const Description = styled.p`
 	margin: 8px 0 0 0;
 	color: ${props =>
-		props.isError ? props.theme.colors.warning : props.theme.colors.textColorLight};
+		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight};
 	font-style: italic;
 	font-size: 14px;
 `;

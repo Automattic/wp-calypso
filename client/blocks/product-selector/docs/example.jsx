@@ -16,7 +16,9 @@ const products = [
 		description: (
 			<p>
 				Always-on backups ensure you never lose your site. Choose from real-time or daily backups.{' '}
-				<a href="https://jetpack.com/upgrade/backup/">Which one do I need?</a>
+				<a href="https://jetpack.com/upgrade/backup/" target="_blank" rel="noopener noreferrer">
+					Which one do I need?
+				</a>
 			</p>
 		),
 		id: 'jetpack_backup',

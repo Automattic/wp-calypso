@@ -115,7 +115,7 @@ class Popover extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// update context (target) reference into a property
 		this.domContext = ReactDom.findDOMNode( nextProps.context );
 

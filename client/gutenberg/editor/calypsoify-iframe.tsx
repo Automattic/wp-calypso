@@ -114,6 +114,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	mediaSelectPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	templatePorts: [ T.PostId, MessagePort ][] = [];
+	successfulIframeLoad = false;
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
@@ -144,6 +145,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.iframeRef.current &&
 			this.iframeRef.current.contentWindow
 		) {
+			this.successfulIframeLoad = true;
 			const { port1: iframePortObject, port2: transferredPortObject } = new MessageChannel();
 
 			this.iframePort = iframePortObject;
@@ -518,6 +520,14 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
+	onIframeLoaded = ( iframeUrl: string ) => {
+		if ( ! this.successfulIframeLoad ) {
+			window.location.replace( iframeUrl );
+			return;
+		}
+		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
+	};
+
 	render() {
 		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
 		const {
@@ -560,9 +570,9 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
 							// in Jetpack sites
-							onLoad={ () =>
-								this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } )
-							}
+							onLoad={ () => {
+								this.onIframeLoaded( iframeUrl );
+							} }
 						/>
 					) }
 				</div>

@@ -71,7 +71,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		const oldSiteId = siteId || null;

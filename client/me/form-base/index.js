@@ -30,13 +30,13 @@ export default {
 		return this.state.submittingForm;
 	},
 
-	componentWillReceiveProps: function( nextProp ) {
+	UNSAFE_componentWillReceiveProps: function( nextProp ) {
 		if ( nextProp.showNoticeInitially ) {
 			this.setState( { showNotice: nextProp.showNoticeInitially } );
 		}
 	},
 
-	componentWillUpdate: function() {
+	UNSAFE_componentWillUpdate: function() {
 		this.showNotice();
 	},
 

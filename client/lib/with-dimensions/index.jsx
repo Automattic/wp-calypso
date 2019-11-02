@@ -72,7 +72,7 @@ export default EnhancedComponent =>
 			this.handleResize();
 		}
 
-		componentWillReceiveProps( nextProps ) {
+		UNSAFE_componentWillReceiveProps( nextProps ) {
 			this.handleResize( nextProps );
 		}
 

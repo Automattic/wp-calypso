@@ -41,7 +41,7 @@ export class VirtualList extends Component {
 
 	state = {};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.rowHeights = {};
 		this.list = null;
 

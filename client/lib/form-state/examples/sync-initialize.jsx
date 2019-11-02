@@ -19,7 +19,7 @@ const { isFieldDisabled } = FormStateStore;
 const debug = debugModule( 'calypso:lib:form-state:examples:sync-initialize' );
 
 class SyncInitialize extends React.Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStore = createFormStore( {
 			syncInitialize: {
 				fieldNames: [ 'firstName', 'lastName' ],

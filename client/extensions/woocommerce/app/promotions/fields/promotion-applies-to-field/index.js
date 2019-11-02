@@ -32,14 +32,14 @@ class PromotionAppliesToField extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { selectionTypes, value } = this.props;
 		const initialType = this.getInitialType( selectionTypes, value );
 
 		this.setState( () => ( { appliesToType: initialType } ) );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { selectionTypes, value } = nextProps;
 		const initialType = this.getInitialType( selectionTypes, value );
 

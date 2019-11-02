@@ -26,7 +26,7 @@ class PostTypeListMaxPagesNotice extends Component {
 		totalPosts: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
 	}
 

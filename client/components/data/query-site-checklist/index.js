@@ -19,11 +19,11 @@ class QuerySiteChecklist extends Component {
 		siteId: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props.siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
 			return;
 		}

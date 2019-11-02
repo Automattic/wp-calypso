@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { redirectIfNotBusiness, layout } from './controller';
+import { handleHostingPanelRedirect, layout } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
@@ -17,7 +17,7 @@ export default function() {
 		'/hosting/:site_id',
 		siteSelection,
 		navigation,
-		redirectIfNotBusiness,
+		handleHostingPanelRedirect,
 		layout,
 		makeLayout,
 		clientRender
