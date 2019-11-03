@@ -39,6 +39,43 @@ describe( 'useLineItems', function() {
 		expect( () => render( <ThingWithHook /> ) ).toThrow( /CheckoutProvider/ );
 	} );
 
+	it( 'does not throw if there are no items', function() {
+		const ThingWithHook = () => {
+			const [ items, total ] = useLineItems();
+			return (
+				<div>
+					{ items.map( item => (
+						<span data-testid={ item.id } key={ item.id }>
+							{ item.label }
+						</span>
+					) ) }
+					<span data-testid="total" key={ total.id }>
+						{ total.label }
+					</span>
+				</div>
+			);
+		};
+		const renderThing = () =>
+			render(
+				<CheckoutProvider
+					locale={ 'US' }
+					total={ {
+						id: 'total',
+						label: 'total',
+						amount: { value: 40, currency: 'USD', displayValue: '40' },
+					} }
+					items={ [] }
+					onSuccess={ () => {} }
+					onFailure={ () => {} }
+					successRedirectUrl={ '#' }
+					failureRedirectUrl={ '#' }
+				>
+					<ThingWithHook />
+				</CheckoutProvider>
+			);
+		expect( renderThing ).not.toThrow( /CheckoutProvider/ );
+	} );
+
 	it( 'returns the items list', function() {
 		const ThingWithHook = () => {
 			const [ items, total ] = useLineItems();
