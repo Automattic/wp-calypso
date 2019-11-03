@@ -78,11 +78,10 @@ CheckoutProvider.propTypes = {
 };
 
 export const useLineItems = () => {
-	const context = useContext( CheckoutContext );
-	if ( ! context ) {
+	const { items, total } = useContext( CheckoutContext );
+	if ( ! items || ! total ) {
 		throw new Error( 'useLineItems can only be used inside a CheckoutProvider' );
 	}
-	const { total, items } = context;
 	return [ items, total ];
 };
 
