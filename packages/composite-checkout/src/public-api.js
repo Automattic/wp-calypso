@@ -3,7 +3,6 @@
  */
 import {
 	CheckoutProvider,
-	useLineItems,
 	useCheckoutHandlers,
 	useCheckoutRedirects,
 } from './components/checkout-provider';
@@ -16,10 +15,22 @@ import {
 } from './components/order-review-line-items';
 import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
-import { usePaymentMethod, usePaymentData, usePaymentMethodId } from './lib/payment-methods';
+import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
+import { useLineItems } from './lib/line-items';
+import { useLocalize } from './lib/localize';
+import {
+	createRegistry,
+	useSelect,
+	useDispatch,
+	registerStore,
+	subscribe,
+	dispatch,
+	select,
+} from './lib/registry';
 
 // Re-export the public API
 export {
+	createRegistry,
 	Checkout,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
@@ -28,10 +39,17 @@ export {
 	OrderReviewSection,
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
+	useAllPaymentMethods,
 	useCheckoutHandlers,
 	useLineItems,
 	useCheckoutRedirects,
 	usePaymentMethod,
-	usePaymentData,
 	usePaymentMethodId,
+	useSelect,
+	useDispatch,
+	registerStore,
+	subscribe,
+	dispatch,
+	select,
+	useLocalize,
 };

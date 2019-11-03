@@ -1,11 +1,16 @@
+// This is required to fix the "regeneratorRuntime is not defined" error
 require( '@babel/polyfill' );
 
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { Checkout, CheckoutProvider } from '../src/public-api';
+import { Checkout, CheckoutProvider, registerStore, subscribe, select } from '../src/public-api';
+import { createStripeMethod } from '../src/components/stripe-credit-card-fields';
+import { createApplePayMethod } from '../src/lib/payment-methods/apple-pay';
+import { createPayPalMethod } from '../src/lib/payment-methods/paypal';
+import { createCreditCardMethod } from '../src/lib/payment-methods/credit-card';
 import { stripeKey } from './private';
 
 const initialItems = [
@@ -47,29 +52,52 @@ async function sendStripeTransaction() {
 	};
 }
 
-function handleCheckoutEvent( { type, payload }, dispatch, next ) {
-	switch ( type ) {
-		case 'STRIPE_CONFIGURATION_FETCH':
-			fetchStripeConfiguration( payload )
-				.then( stripeConfiguration =>
-					dispatch( { type: 'STRIPE_CONFIGURATION_SET', payload: stripeConfiguration } )
-				)
-				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
-			return;
-		case 'STRIPE_TRANSACTION_BEGIN':
-			sendStripeTransaction( formatDataForStripeTransaction( payload ) )
-				.then( async response => {
-					dispatch( { type: 'STRIPE_TRANSACTION_RESPONSE', payload: response } );
-				} )
-				.catch( error => dispatch( { type: 'STRIPE_TRANSACTION_ERROR', payload: error } ) );
-			return;
-	}
-	next();
+async function makePayPalExpressRequest() {
+	// return this.wpcom.req.post( '/me/paypal-express-url', data );
+	return window.location.href;
 }
+
+const stripeMethod = createStripeMethod( {
+	registerStore,
+	fetchStripeConfiguration,
+	sendStripeTransaction,
+} );
+
+const creditCardMethod = createCreditCardMethod();
+
+const applePayMethod = createApplePayMethod();
+
+const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+
+const handleEvent = setItems => () => {
+	const cardholderName = select( 'stripe' ).getCardholderName();
+	if ( cardholderName === 'admin' ) {
+		setItems( items =>
+			items.map( item => ( { ...item, amount: { ...item.amount, value: 0, displayValue: '0' } } ) )
+		);
+	}
+};
+
+const getTotal = items => {
+	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
+	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
+	return {
+		label: 'Total',
+		amount: {
+			currency,
+			value: lineItemTotal,
+			displayValue: formatValueForCurrency( currency, lineItemTotal ),
+		},
+	};
+};
 
 // This is the parent component which would be included on a host page
 function MyCheckout() {
-	const { items, total } = useShoppingCart();
+	const [ items, setItems ] = useState( initialItems );
+	useEffect( () => {
+		subscribe( handleEvent( setItems ) );
+	}, [] );
+	const total = useMemo( () => getTotal( items ), [ items ] );
 
 	return (
 		<CheckoutProvider
@@ -80,30 +108,11 @@ function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			eventHandler={ handleCheckoutEvent }
+			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ] }
 		>
 			<Checkout />
 		</CheckoutProvider>
 	);
-}
-
-// This is a very simple shopping cart manager which can calculate totals
-function useShoppingCart() {
-	const [ items ] = useState( initialItems );
-
-	// The total must be calculated outside checkout and need not be related to line items
-	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
-	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
-	const total = {
-		label: 'Total',
-		amount: {
-			currency,
-			value: lineItemTotal,
-			displayValue: formatValueForCurrency( currency, lineItemTotal ),
-		},
-	};
-
-	return { items, total };
 }
 
 function formatValueForCurrency( currency, value ) {
@@ -112,97 +121,6 @@ function formatValueForCurrency( currency, value ) {
 	}
 	const floatValue = value / 100;
 	return '$' + floatValue.toString();
-}
-
-function formatDataForStripeTransaction( {
-	items,
-	total,
-	country,
-	postalCode,
-	subdivisionCode,
-	paymentData,
-	stripePaymentMethod,
-	stripeConfiguration,
-	successUrl,
-	cancelUrl,
-} ) {
-	const siteId = ''; // TODO: get site id
-	const couponId = null; // TODO: get couponId
-	const payment = {
-		payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-		payment_key: stripePaymentMethod.id,
-		payment_partner: stripeConfiguration.processor_id,
-		name,
-		zip: postalCode,
-		country,
-		successUrl,
-		cancelUrl,
-	};
-	return {
-		cart: createCartFromLineItems( {
-			siteId,
-			couponId,
-			items,
-			total,
-			country,
-			postalCode,
-			subdivisionCode,
-		} ),
-		domain_details: getDomainDetailsFromPaymentData( paymentData ),
-		payment,
-	};
-}
-
-function createCartFromLineItems( {
-	siteId,
-	couponId,
-	items,
-	country,
-	postalCode,
-	subdivisionCode,
-} ) {
-	// TODO: use cart manager to create cart object needed for this transaction
-	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
-	return {
-		blog_id: siteId,
-		coupon: couponId || '',
-		currency: currency || '',
-		temporary: false,
-		extra: [],
-		products: items.map( item => ( {
-			product_id: item.id,
-			meta: '', // TODO: get this for domains, etc
-			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
-			currency: item.amount.currency,
-			volume: 1,
-		} ) ),
-		tax: {
-			location: {
-				country_code: country,
-				postal_code: postalCode,
-				subdivision_code: subdivisionCode,
-			},
-		},
-	};
-}
-
-function getDomainDetailsFromPaymentData( paymentData ) {
-	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
-	return {
-		first_name: isDomainContactSame ? billing.name : domains.name || billing.name || '',
-		last_name: isDomainContactSame ? billing.name : domains.name || billing.name || '', // TODO: how do we split up first/last name?
-		address_1: isDomainContactSame ? billing.address : domains.address || billing.address || '',
-		city: isDomainContactSame ? billing.city : domains.city || billing.city || '',
-		state: isDomainContactSame
-			? billing.state || billing.province
-			: domains.state || domains.province || billing.state || billing.province || '',
-		postal_code: isDomainContactSame
-			? billing.postalCode || billing.zipCode
-			: domains.postalCode || domains.zipCode || billing.postalCode || billing.zipCode || '',
-		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
-		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
-		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
-	};
 }
 
 ReactDOM.render( <MyCheckout />, document.getElementById( 'root' ) );

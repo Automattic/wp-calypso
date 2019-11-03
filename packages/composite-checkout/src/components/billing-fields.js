@@ -9,13 +9,14 @@ import styled from 'styled-components';
  * Internal dependencies
  */
 import { useLocalize } from '../lib/localize';
-import { useLineItems, usePaymentData } from '../public-api';
+import { useLineItems, useSelect, useDispatch } from '../public-api';
 import GridRow from './grid-row';
 import Field from './field';
 
 export default function BillingFields( { summary, isActive, isComplete } ) {
 	const [ items ] = useLineItems();
-	const [ paymentData, dispatch ] = usePaymentData();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { updatePaymentData } = useDispatch( 'checkout' );
 	const { isDomainContactSame = true } = paymentData;
 
 	if ( summary && isComplete ) {
@@ -26,10 +27,7 @@ export default function BillingFields( { summary, isActive, isComplete } ) {
 	}
 
 	function toggleDomainFieldsVisibility() {
-		dispatch( {
-			type: 'PAYMENT_DATA_UPDATE',
-			payload: { isDomainContactSame: ! isDomainContactSame },
-		} );
+		updatePaymentData( 'isDomainContactSame', ! isDomainContactSame );
 	}
 
 	return (
@@ -171,10 +169,9 @@ const DomainRegistrationCheckbox = styled.input`
 
 function AddressFields( { fieldType } ) {
 	const localize = useLocalize();
-	const [ paymentData, dispatch ] = usePaymentData();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
-	const updatePaymentData = ( key, value ) =>
-		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
@@ -278,10 +275,9 @@ function isStateorProvince() {
 
 function PhoneNumberField( { fieldType } ) {
 	const localize = useLocalize();
-	const [ paymentData, dispatch ] = usePaymentData();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
-	const updatePaymentData = ( key, value ) =>
-		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
@@ -308,10 +304,9 @@ PhoneNumberField.propTypes = {
 function VatIdField() {
 	const localize = useLocalize();
 	const fieldType = 'billing';
-	const [ paymentData, dispatch ] = usePaymentData();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
-	const updatePaymentData = ( key, value ) =>
-		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
@@ -330,10 +325,9 @@ function VatIdField() {
 
 function TaxFields( { fieldType } ) {
 	const localize = useLocalize();
-	const [ paymentData, dispatch ] = usePaymentData();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { updatePaymentData } = useDispatch( 'checkout' );
 	const currentLocationData = paymentData[ fieldType ] || {};
-	const updatePaymentData = ( key, value ) =>
-		dispatch( { type: 'PAYMENT_DATA_UPDATE', payload: { [ key ]: value } } );
 	const updateLocationData = ( key, value ) =>
 		updatePaymentData( fieldType, { ...currentLocationData, [ key ]: value } );
 
@@ -430,7 +424,7 @@ const DomainContactFieldsDescription = styled.p`
 
 function BillingFormSummary() {
 	const localize = useLocalize();
-	const [ paymentData ] = usePaymentData();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
 
 	//Check if paymentData is empty
@@ -510,3 +504,22 @@ const BillingSummaryLine = styled.li`
 const BillingSummarySpacerLine = styled( BillingSummaryLine )`
 	margin-bottom: 8px;
 `;
+
+export function getDomainDetailsFromPaymentData( paymentData ) {
+	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;
+	return {
+		first_name: isDomainContactSame ? billing.name : domains.name || billing.name || '',
+		last_name: isDomainContactSame ? billing.name : domains.name || billing.name || '', // TODO: how do we split up first/last name?
+		address_1: isDomainContactSame ? billing.address : domains.address || billing.address || '',
+		city: isDomainContactSame ? billing.city : domains.city || billing.city || '',
+		state: isDomainContactSame
+			? billing.state || billing.province
+			: domains.state || domains.province || billing.state || billing.province || '',
+		postal_code: isDomainContactSame
+			? billing.postalCode || billing.zipCode
+			: domains.postalCode || domains.zipCode || billing.postalCode || billing.zipCode || '',
+		country_code: isDomainContactSame ? billing.country : domains.country || billing.country || '',
+		email: isDomainContactSame ? billing.email : domains.email || billing.email || '', // TODO: we need to get email address
+		phone: isDomainContactSame ? '' : domains.phoneNumber || '',
+	};
+}

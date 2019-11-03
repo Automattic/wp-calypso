@@ -11,6 +11,19 @@ import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
 import { useLineItems, renderDisplayValueMarkdown } from '../../public-api';
 import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
+import CreditCardFields from '../../components/credit-card-fields';
+import BillingFields from '../../components/billing-fields';
+
+export function createCreditCardMethod() {
+	return {
+		id: 'card',
+		LabelComponent: CreditCardLabel,
+		PaymentMethodComponent: ( { isActive } ) => ( isActive ? <CreditCardFields /> : null ),
+		BillingContactComponent: BillingFields,
+		SubmitButtonComponent: CreditCardSubmitButton,
+		getAriaLabel: localize => localize( 'Credit Card' ),
+	};
+}
 
 export function CreditCardLabel() {
 	const localize = useLocalize();

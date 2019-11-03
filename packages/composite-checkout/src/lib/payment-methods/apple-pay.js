@@ -9,7 +9,18 @@ import styled from 'styled-components';
  */
 import { useLocalize } from '../../lib/localize';
 import Button from '../../components/button';
-import Field from '../../components/field';
+import BillingFields from '../../components/billing-fields';
+
+export function createApplePayMethod() {
+	return {
+		id: 'apple-pay',
+		LabelComponent: ApplePayLabel,
+		PaymentMethodComponent: () => null,
+		BillingContactComponent: BillingFields,
+		SubmitButtonComponent: ApplePaySubmitButton,
+		getAriaLabel: localize => localize( 'Apple Pay' ),
+	};
+}
 
 export function ApplePayLabel() {
 	const localize = useLocalize();
@@ -21,46 +32,6 @@ export function ApplePayLabel() {
 		</React.Fragment>
 	);
 }
-
-export function ApplePayBillingForm( { summary, dispatch, paymentData, isActive, isComplete } ) {
-	const localize = useLocalize();
-	if ( summary && isComplete ) {
-		return <ApplePayBillingFormSummary paymentData={ paymentData } />;
-	}
-	if ( ! isActive ) {
-		return null;
-	}
-	const { billingName = '', billingNameError = null } = paymentData || {};
-	const onChange = value =>
-		dispatch( {
-			type: 'PAYMENT_DATA_UPDATE',
-			payload: { billingName: value },
-		} );
-	return (
-		<BillingFormFields>
-			<FormField
-				id="billingName"
-				type="Text"
-				label={ localize( 'Name' ) }
-				error={ billingNameError }
-				errorMessage={ localize( 'This is a required field' ) }
-				value={ billingName }
-				onChange={ onChange }
-			/>
-		</BillingFormFields>
-	);
-}
-
-const BillingFormFields = styled.div`
-	margin-bottom: 16px;
-`;
-
-const FormField = styled( Field )`
-	margin-top: 16px;
-	:first-child {
-		margin-top: 0;
-	}
-`;
 
 export function ApplePaySubmitButton() {
 	return (
@@ -79,16 +50,6 @@ export function ApplePaySubmitButton() {
 const ButtonApplePayIcon = styled( ApplePayIcon )`
 	transform: translateY( 3px );
 `;
-
-function ApplePayBillingFormSummary( { paymentData } ) {
-	const localize = useLocalize();
-	const { billingName = '' } = paymentData || {};
-	return (
-		<span>
-			<em>{ localize( 'Name' ) }</em> { billingName }
-		</span>
-	);
-}
 
 function ApplePayIcon( { fill, className } ) {
 	return (

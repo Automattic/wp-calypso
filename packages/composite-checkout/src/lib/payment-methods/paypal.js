@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 /**
@@ -9,6 +9,83 @@ import styled from 'styled-components';
  */
 import Button from '../../components/button';
 import { useLocalize } from '../../lib/localize';
+import BillingFields, { getDomainDetailsFromPaymentData } from '../../components/billing-fields';
+import { useDispatch, useSelect } from '../../lib/registry';
+import { useCheckoutHandlers, useCheckoutRedirects, useLineItems } from '../../public-api';
+
+export function createPayPalMethod( { registerStore, makePayPalExpressRequest } ) {
+	registerStore( 'paypal', {
+		controls: {
+			PAYPAL_TRANSACTION_BEGIN( action ) {
+				const {
+					items,
+					country,
+					subdivisionCode,
+					successUrl,
+					cancelUrl,
+					domainDetails,
+					postalCode,
+				} = action.payload;
+				const siteId = ''; // TODO: get site id
+				const couponId = null; // TODO: get couponId
+				const dataForApi = {
+					successUrl,
+					cancelUrl,
+					cart: createCartFromLineItems( {
+						siteId,
+						couponId,
+						items,
+						country,
+						postalCode,
+						subdivisionCode,
+					} ),
+					domainDetails,
+					'postal-code': postalCode,
+				};
+				return makePayPalExpressRequest( dataForApi );
+			},
+		},
+		actions: {
+			*submitPaypalPayment( payload ) {
+				try {
+					const paypalResponse = yield { type: 'PAYPAL_TRANSACTION_BEGIN', payload };
+					return { type: 'PAYPAL_TRANSACTION_END', payload: paypalResponse };
+				} catch ( error ) {
+					return { type: 'PAYPAL_TRANSACTION_ERROR', payload: error };
+				}
+			},
+		},
+		reducer( state = {}, action ) {
+			switch ( action.type ) {
+				case 'PAYPAL_TRANSACTION_END':
+					return { ...state, paypalStatus: 'complete', paypalExpressUrl: action.payload };
+				case 'PAYPAL_TRANSACTION_ERROR':
+					return { ...state, paypalStatus: 'error', paypalError: action.payload };
+			}
+			return state;
+		},
+		selectors: {
+			getTransactionStatus( state ) {
+				return state.paypalStatus;
+			},
+			getTransactionError( state ) {
+				return state.paypalError;
+			},
+			getRedirectUrl( state ) {
+				return state.paypalExpressUrl;
+			},
+		},
+	} );
+
+	return {
+		id: 'paypal',
+		LabelComponent: PaypalLabel,
+		PaymentMethodComponent: () => null,
+		BillingContactComponent: BillingFields,
+		SubmitButtonComponent: PaypalSubmitButton,
+		getAriaLabel: localize => localize( 'PayPal' ),
+	};
+}
 
 export function PaypalLabel() {
 	const localize = useLocalize();
@@ -22,11 +99,43 @@ export function PaypalLabel() {
 }
 
 export function PaypalSubmitButton() {
+	const { submitPaypalPayment } = useDispatch( 'paypal' );
+	const [ items ] = useLineItems();
+	const { successRedirectUrl, failureRedirectUrl } = useCheckoutRedirects();
+	const paymentData = useSelect( select => select( 'checkout' ).getPaymentData() );
+	const { billing = {} } = paymentData;
+	useTransactionStatusHandler();
+	const onClick = () =>
+		submitPaypalPayment( {
+			items,
+			country: billing.country || '',
+			subdivisionCode: billing.state || billing.province || '',
+			successUrl: successRedirectUrl,
+			cancelUrl: failureRedirectUrl,
+			postalCode: billing.zipCode || billing.postalCode,
+			domainDetails: getDomainDetailsFromPaymentData( paymentData ),
+		} );
 	return (
-		<Button onClick={ submitPaypalPayment } buttonState="primary" buttonType="paypal" fullWidth>
+		<Button onClick={ onClick } buttonState="primary" buttonType="paypal" fullWidth>
 			{ <ButtonPayPalIcon /> }
 		</Button>
 	);
+}
+
+function useTransactionStatusHandler() {
+	const localize = useLocalize();
+	const { onSuccess, onFailure } = useCheckoutHandlers();
+	const transactionStatus = useSelect( select => select( 'paypal' ).getTransactionStatus() );
+	const transactionError = useSelect( select => select( 'paypal' ).getTransactionError() );
+
+	useEffect( () => {
+		if ( transactionStatus === 'complete' ) {
+			onSuccess();
+		}
+		if ( transactionStatus === 'error' ) {
+			onFailure( transactionError || localize( 'An error occurred during the transaction' ) );
+		}
+	}, [ localize, onSuccess, onFailure, transactionStatus, transactionError ] );
 }
 
 const ButtonPayPalIcon = styled( PaypalLogo )`
@@ -85,6 +194,36 @@ function PaypalLogo( { className } ) {
 	);
 }
 
-function submitPaypalPayment() {
-	alert( 'Thank you!' );
+// TODO: this is duplicated in stripe-credit-card-fields also
+function createCartFromLineItems( {
+	siteId,
+	couponId,
+	items,
+	country,
+	postalCode,
+	subdivisionCode,
+} ) {
+	// TODO: use cart manager to create cart object needed for this transaction
+	const currency = items.reduce( ( value, item ) => value || item.amount.currency );
+	return {
+		blog_id: siteId,
+		coupon: couponId || '',
+		currency: currency || '',
+		temporary: false,
+		extra: [],
+		products: items.map( item => ( {
+			product_id: item.id,
+			meta: '', // TODO: get this for domains, etc
+			cost: item.amount.value, // TODO: how to convert this from 3500 to 35?
+			currency: item.amount.currency,
+			volume: 1,
+		} ) ),
+		tax: {
+			location: {
+				country_code: country,
+				postal_code: postalCode,
+				subdivision_code: subdivisionCode,
+			},
+		},
+	};
 }

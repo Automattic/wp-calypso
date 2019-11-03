@@ -18,7 +18,7 @@ export default function CheckoutSubmitButton( { className, isActive } ) {
 	const { SubmitButtonComponent } = paymentMethod;
 	return (
 		<div className={ joinClasses( [ className, 'checkout-submit-button' ] ) }>
-			{ isActive && <SubmitButtonComponent /> }
+			<SubmitButtonComponent isActive={ isActive } />
 		</div>
 	);
 }
