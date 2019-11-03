@@ -36,10 +36,6 @@ class SiteType extends Component {
 		this.submitStep( 'import' );
 	};
 
-	// This function is to support the A/B test `signupWithBasicSite`
-	// by using a flow that does not include intermediary steps before 'domain'
-	handleBasicSiteButtonClick = () => this.submitStep( 'business', 'get-started' );
-
 	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
 
