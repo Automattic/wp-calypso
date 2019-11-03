@@ -1213,6 +1213,7 @@
 		border: 0;
 		margin: 8px 0 0;
 		position: relative;
+		z-index: z-index( 'root', '.payment-box__pm-wrapper .section-nav-tab' );
 
 		&:first-child {
 			margin-top: 0 !important;
@@ -1230,6 +1231,7 @@
 			border: 1px solid var( --color-neutral-10 );
 			border-radius: 50%;
 			box-sizing: border-box;
+			z-index: z-index( 'root', '.payment-box__pm-wrapper .section-nav-tab::after' );
 		}
 
 		&::before {
