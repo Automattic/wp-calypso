@@ -1829,43 +1829,57 @@ function initFacebook() {
 /**
  * Initializes Google reCAPTCHA
  *
- * @param {Function} callback - a callback function to call with a reCAPTCHA token
+ * @returns {Boolean} false if the script failed to load
  */
-function initGoogleRecaptcha( callback ) {
-	window.grecaptcha.ready( () => {
-		window.grecaptcha
-			.execute( TRACKING_IDS.wpcomGoogleRecaptchaSiteKey, { action: 'calypso' } )
-			.then( function( token ) {
-				debug( 'initGoogleRecaptcha', token );
-				callback( token );
-			} );
-	} );
+async function initGoogleRecaptcha() {
+	if ( window.grecaptcha ) {
+		// reCAPTCHA already loaded
+		return true;
+	}
+
+	// Use loadScript directly instead of the loadTrackingScripts function, to ensure that the
+	// reCAPTCHA script is only loaded when needed.
+	try {
+		const src = GOOGLE_RECAPTCHA_SCRIPT_URL + TRACKING_IDS.wpcomGoogleRecaptchaSiteKey;
+		await loadScript( src );
+		debug( 'initGoogleRecaptcha: [Loaded]', src );
+	} catch ( error ) {
+		debug( 'initGoogleRecaptcha: [Load Error] the script failed to load: ', error );
+		return false;
+	}
+
+	return true;
 }
 
 /**
- * Loads Google reCAPTCHA script and records calypso action
+ * Records reCAPTCHA action, loading Google script if necessary.
  *
- * @param {Function} callback - a callback function to call with a reCAPTCHA token
+ * @param {String} action - name of action to record in reCAPTCHA
  *
- * @returns {String} a reCAPTCHA token
+ * @returns {String|null} a reCAPTCHA token or null if the function fails
  */
-export async function recordGoogleRecaptchaCalypso( callback ) {
-	if ( ! window.grecaptcha ) {
-		const src = GOOGLE_RECAPTCHA_SCRIPT_URL + TRACKING_IDS.wpcomGoogleRecaptchaSiteKey;
-
-		// Use loadScript directly instead of the loadTrackingScripts function, to ensure that the
-		// reCAPTCHA script is only loaded when needed.
-		try {
-			await loadScript( src );
-		} catch ( error ) {
-			debug( 'recordGoogleRecaptchaCalypso: [Load Error] the script failed to load: ', error );
-			return;
-		}
-		debug( 'recordGoogleRecaptchaCalypso: [Loaded]', src );
+export async function recordGoogleRecaptchaAction( action ) {
+	if ( ! ( await initGoogleRecaptcha() ) ) {
+		return null;
 	}
 
-	// init Google reCAPTCHA
-	if ( isGoogleRecaptchaEnabled && TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
-		return initGoogleRecaptcha( callback );
+	if ( ! isGoogleRecaptchaEnabled || ! TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
+		return null;
+	}
+
+	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
+
+	try {
+		const token = await window.grecaptcha.execute( TRACKING_IDS.wpcomGoogleRecaptchaSiteKey, {
+			action,
+		} );
+
+		debug( 'recordGoogleRecaptchaAction: [Success]', action, token );
+		return token;
+	} catch ( error ) {
+		// We don't want errors interrupting our flow, so convert any exceptions
+		// into return values.
+		debug( 'recordGoogleRecaptchaAction: [Error]', action, error );
+		return null;
 	}
 }
