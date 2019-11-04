@@ -12,7 +12,6 @@ import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../store';
-import { EMPTY_FORM_VALUE } from '../../store/types';
 import './style.scss';
 
 interface Props {
@@ -21,7 +20,7 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -32,10 +31,9 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 			tabIndex={ -1 }
 		>
 			<div className="gutenboarding__header-site">
-				{ siteType === EMPTY_FORM_VALUE && ! siteTitle && (
-					<span className="gutenboarding__header-site-heading">{ NO__( 'Create a website' ) }</span>
-				) }
-				{ siteTitle && <span className="gutenboarding__header-site-heading">{ siteTitle }</span> }
+				<span className="gutenboarding__header-site-heading">
+					{ siteTitle ? siteTitle : NO__( 'Create a website' ) }
+				</span>
 			</div>
 			<div
 				aria-label={ NO__( 'Document tools' ) }
