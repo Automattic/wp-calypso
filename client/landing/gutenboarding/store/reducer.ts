@@ -10,10 +10,13 @@ import { combineReducers } from '@wordpress/data';
 import { ActionType, FormValue, SiteType, UNKNOWN_FORM_VALUE, Vertical } from './types';
 import * as Actions from './actions';
 
-const siteType: Reducer< FormValue< SiteType >, ReturnType< typeof Actions[ 'setSiteType' ] > > = (
-	state = UNKNOWN_FORM_VALUE,
-	action
-) => {
+const siteType: Reducer<
+	FormValue< SiteType >,
+	ReturnType< typeof Actions[ 'resetSiteType' ] > | ReturnType< typeof Actions[ 'setSiteType' ] >
+> = ( state = UNKNOWN_FORM_VALUE, action ) => {
+	if ( action.type === ActionType.RESET_SITE_TYPE ) {
+		return UNKNOWN_FORM_VALUE;
+	}
 	if ( action.type === ActionType.SET_SITE_TYPE ) {
 		return action.siteType;
 	}
