@@ -10,7 +10,8 @@ import { Button, Dashicon } from '@wordpress/components';
 import './style.scss';
 
 domReady( () => {
-	const { closeButtonLabel, closeButtonUrl, editorPostType } = fullSiteEditing;
+	const { closeButtonUrl, editorPostType } = fullSiteEditing;
+	let { closeButtonLabel } = fullSiteEditing;
 
 	// Only alter for the page and template part editors.
 	if ( 'wp_template_part' !== editorPostType && 'page' !== editorPostType ) {
@@ -37,24 +38,21 @@ domReady( () => {
 		// When closing Template CPT (e.g. header) to navigate back to parent page.
 		if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
 			newCloseButton.href = closeButtonUrl;
-			newCloseButton.innerHTML = closeButtonLabel;
-			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
-			newCloseButton.className = 'components-button components-icon-button is-button is-default';
 		} else if ( 'page' === editorPostType ) {
 			newCloseButton.href = 'edit.php?post_type=page';
-			const newLabel = __( 'Pages' );
-			newCloseButton.innerHTML = newLabel;
-			newCloseButton.setAttribute( 'aria-label', newLabel );
-			newCloseButton.className = 'components-button';
-
-			ReactDOM.render(
-				<Button className="components-button components-icon-button">
-					<Dashicon icon="arrow-left-alt2" />
-					<div className="close-button-override-label">{ newLabel }</div>
-				</Button>,
-				newCloseButton
-			);
+			closeButtonLabel = __( 'Pages' );
 		}
+
+		newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
+		newCloseButton.className = 'components-button';
+
+		ReactDOM.render(
+			<Button className="components-button components-icon-button">
+				<Dashicon icon="arrow-left-alt2" />
+				<div className="close-button-override-label">{ closeButtonLabel }</div>
+			</Button>,
+			newCloseButton
+		);
 
 		componentsToolbar.prepend( newCloseButton );
 	} );
