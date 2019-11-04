@@ -14,6 +14,12 @@ import { SiteType, UNKNOWN_FORM_VALUE } from '../store/types';
 import { STORE_KEY } from '../store';
 import './style.scss';
 
+const siteTypeOptions = {
+	[ SiteType.BLOG ]: NO__( 'with a blog.' ),
+	[ SiteType.STORE ]: NO__( 'for a store.' ),
+	[ SiteType.STORY ]: NO__( 'to write a story.' ),
+};
+
 export default function OnboardingEdit() {
 	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
 	const { resetSiteType, setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
@@ -25,12 +31,6 @@ export default function OnboardingEdit() {
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value as SiteType ),
 		[ setSiteType ]
 	);
-
-	const siteTypeOptions = {
-		[ SiteType.BLOG ]: NO__( 'with a blog.' ),
-		[ SiteType.STORE ]: NO__( 'for a store.' ),
-		[ SiteType.STORY ]: NO__( 'to write a story.' ),
-	};
 
 	return (
 		<div className="onboarding-block__questions">
