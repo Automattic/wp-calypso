@@ -14,7 +14,7 @@ import { SiteType, EMPTY_FORM_VALUE } from '../store/types';
 import { STORE_KEY } from '../store';
 import './style.scss';
 
-const siteTypeOptions = {
+const siteTypeOptions: Record< SiteType, string > = {
 	[ SiteType.BLOG ]: NO__( 'with a blog.' ),
 	[ SiteType.STORE ]: NO__( 'for a store.' ),
 	[ SiteType.STORY ]: NO__( 'to write a story.' ),
