@@ -186,16 +186,17 @@ if ( typeof window !== 'undefined' ) {
 }
 
 const analytics = {
-	initialize: function( user, superProps ) {
+	initialize: function( currentUser, superProps ) {
 		// Update super props.
-		initializeDebug( 'superProps', superProps );
-		_superProps = superProps;
+		if ( 'object' === typeof superProps ) {
+			initializeDebug( 'superProps', superProps );
+			_superProps = superProps;
+		}
 
 		// Identify current user.
-		if ( user && user.get() ) {
-			const userData = user.get();
-			initializeDebug( 'identifyUser', userData );
-			analytics.identifyUser( userData );
+		if ( 'object' === typeof currentUser ) {
+			initializeDebug( 'identifyUser', currentUser );
+			analytics.identifyUser( currentUser );
 		}
 
 		// Tracks blocked?
