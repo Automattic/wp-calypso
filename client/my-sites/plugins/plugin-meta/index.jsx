@@ -358,6 +358,7 @@ export class PluginMeta extends Component {
 			'wp-optimize-by-xtraffic',
 			'wp-phpmyadmin-extension',
 			'wpematico',
+			'yellow-pencil-visual-theme-customizer',
 			'yuzo-related-post',
 			'zapp-proxy-server',
 		];
