@@ -345,6 +345,14 @@ function getDomainSuggestionSearch( search, minLength = 2 ) {
 	return cleanedSearch;
 }
 
+function resendIcannVerification( domainName, onComplete ) {
+	return wpcom.undocumented().resendIcannVerification( domainName, onComplete );
+}
+
+function requestGdprConsentManagementLink( domainName, onComplete ) {
+	return wpcom.undocumented().requestGdprConsentManagementLink( domainName, onComplete );
+}
+
 export {
 	canRedirect,
 	checkAuthCode,
@@ -373,4 +381,6 @@ export {
 	startInboundTransfer,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
+	resendIcannVerification,
+	requestGdprConsentManagementLink,
 };

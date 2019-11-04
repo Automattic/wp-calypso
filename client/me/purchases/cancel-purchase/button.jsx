@@ -13,7 +13,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * Internal Dependencies
  */
 import Button from 'components/button';
-import { cancelAndRefundPurchase, cancelPurchase } from 'lib/upgrades/actions';
+import { cancelAndRefundPurchase, cancelPurchase } from 'lib/purchases/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';

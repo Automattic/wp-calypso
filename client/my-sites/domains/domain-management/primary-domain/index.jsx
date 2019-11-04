@@ -20,7 +20,7 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import Notice from 'components/notice';
 import { domainManagementEdit } from 'my-sites/domains/paths';
-import { setPrimaryDomain } from 'lib/upgrades/actions';
+import { setPrimaryDomain } from 'state/sites/domains/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
 import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';

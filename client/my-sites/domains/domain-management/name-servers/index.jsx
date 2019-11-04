@@ -22,7 +22,7 @@ import DnsTemplates from './dns-templates';
 import { domainManagementEdit, domainManagementDns } from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { updateNameservers } from 'lib/upgrades/actions';
+import { updateNameservers } from 'lib/domains/nameservers/actions';
 import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
 import { errorNotice, successNotice } from 'state/notices/actions';
