@@ -84,7 +84,7 @@ class Plans extends React.Component {
 
 		return (
 			<div>
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				<DocumentHead title={ translate( 'Compare Plans', { textOnly: true } ) } />
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
 					<div id="plans" className="plans plans__has-sidebar">
@@ -107,7 +107,7 @@ class Plans extends React.Component {
 	renderPlaceholder = () => {
 		return (
 			<div>
-				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
+				<DocumentHead title={ this.props.translate( 'Compare Plans', { textOnly: true } ) } />
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
 
@@ -131,8 +131,8 @@ class Plans extends React.Component {
 		return (
 			<div>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
-				<PageViewTracker path="/plans/:site" title="Plans" />
+				<DocumentHead title={ translate( 'Compare Plans', { textOnly: true } ) } />
+				<PageViewTracker path="/plans/:site" title="Compare Plans" />
 				<QueryContactDetailsCache />
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout={ true }>

@@ -298,7 +298,7 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Import' ) } />
+				<DocumentHead title={ translate( 'Import Your Content' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
 					className="importer__section-header"

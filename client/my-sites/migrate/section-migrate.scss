@@ -1,3 +1,15 @@
+.migrate__section-header {
+	&.formatted-header {
+		margin: 0 auto;
+		text-align: left;
+		
+	}
+
+	.formatted-header__title {
+		text-transform: capitalize;
+		display: none;
+	}
+}
 .migrate__card {
 	min-height: 400px;
 }

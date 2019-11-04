@@ -93,7 +93,7 @@ class StatsOverview extends Component {
 
 		return (
 			<Main wideLayout>
-				<DocumentHead title={ translate( 'Stats' ) } />
+				<DocumentHead title={ translate( 'Traffic Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
@@ -112,7 +112,7 @@ class StatsOverview extends Component {
 
 		// TODO: a separate StatsSectionTitle component should be created
 		items.push(
-			<h3 key="header-placeholder" className="stats-section-title">
+			<h3 key="header-placeholder" className="stats__section-title">
 				&nbsp;
 			</h3>
 		); // eslint-disable-line wpcalypso/jsx-classname-namespace

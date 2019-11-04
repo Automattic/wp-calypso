@@ -149,7 +149,7 @@ class StatsSite extends Component {
 			<Main wideLayout={ true }>
 				<QueryKeyringConnections />
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Stats' ) } />
+				<DocumentHead title={ translate( 'Traffic Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }

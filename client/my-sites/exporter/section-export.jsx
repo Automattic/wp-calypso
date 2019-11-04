@@ -59,7 +59,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 
 	return (
 		<Main>
-			<DocumentHead title={ translate( 'Export' ) } />
+			<DocumentHead title={ translate( 'Export your content' ) } />
 			<SidebarNavigation />
 			{ sectionContent }
 		</Main>

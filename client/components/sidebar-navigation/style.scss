@@ -44,6 +44,14 @@
 		font-size: 24px;
 		margin: 24px 12px 12px;
 		@include breakpoint( '>660px' ) {
-      		margin-top: -8px;
+      		margin: -8px 0 12px 12px;
       	}
 	}
+
+.is-section-migrate .test-page-heading,
+.is-section-import .test-page-heading,
+.is-section-export .test-page-heading {
+	@include breakpoint( '>660px' ) {
+      		margin-left: 0;
+    }
+}

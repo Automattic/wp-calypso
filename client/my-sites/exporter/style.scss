@@ -1,11 +1,12 @@
 .exporter__section-header {
 	&.formatted-header {
 		margin: 0 auto;
-		max-width: 500px;
+		text-align: left;
 	}
 
 	.formatted-header__title {
 		text-transform: capitalize;
+		display:	none;
 	}
 
 	.formatted-header__subtitle {
