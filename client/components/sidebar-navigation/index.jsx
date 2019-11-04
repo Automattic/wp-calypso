@@ -24,16 +24,18 @@ import './style.scss';
 function SidebarNavigation( { title, sectionTitle, children, toggleSidebar } ) {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<header className="current-section">
-			<button onClick={ toggleSidebar }>
-				<Gridicon icon="chevron-left" />
-				{ children }
-				<div>
-					<p className="current-section__group-title">{ sectionTitle }</p>
-					<h1 className="current-section__section-title">{ title }</h1>
-				</div>
-			</button>
-		</header>
+		<div>
+			<header className="current-section">
+				<button onClick={ toggleSidebar }>
+					<Gridicon icon="chevron-left" />
+					{ children }
+					<div>
+						<h1 className="current-section__section-title">{ sectionTitle }</h1>
+					</div>
+				</button>
+			</header>
+			<h1 className="test-page-heading">{ title }</h1>
+		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 }

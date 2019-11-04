@@ -34,4 +34,16 @@
 		color: var( --color-neutral-40 );
 		margin: 2px 0 -3px;
 	}
+
+	.current-section__section-title {
+		margin-top: 4px;
+	}
+	
 }
+.test-page-heading {
+		font-size: 24px;
+		margin: 24px 12px 12px;
+		@include breakpoint( '>660px' ) {
+      		margin-top: -8px;
+      	}
+	}
