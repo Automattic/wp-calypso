@@ -41,16 +41,17 @@ class TransferRestrictionMessage extends React.PureComponent {
 			transferEligibleDate,
 			transferRestrictionStatus,
 			translate,
+			moment,
 		} = this.props;
 
-		const transferEligibleMoment = this.props.moment( transferEligibleDate );
+		const transferEligibleMoment = moment( transferEligibleDate );
 
 		const heading = translate(
 			'{{strong}}%(domain)s{{/strong}} can be transferred in %(transferDelayInDays)s days.',
 			{
 				args: {
 					domain,
-					transferDelayInDays: transferEligibleMoment.diff( this.props.moment(), 'days' ),
+					transferDelayInDays: transferEligibleMoment.diff( moment(), 'days' ),
 				},
 				components: {
 					strong: <strong />,
