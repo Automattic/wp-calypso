@@ -17,23 +17,21 @@ import './style.scss';
 export default function OnboardingEdit() {
 	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
-	const handleTitleChange = useCallback(
+	const updateTitle = useCallback(
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteTitle( e.target.value ),
 		[ setSiteTitle ]
 	);
-	const handleSiteTypeChange = useCallback(
+	const updateSiteType = useCallback(
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value as SiteType ),
 		[ setSiteType ]
 	);
+	const resetSiteType = useCallback( () => setSiteType( UNKNOWN_FORM_VALUE ), [ setSiteType ] );
+
 	const siteTypeOptions = {
 		[ SiteType.BLOG ]: NO__( 'with a blog.' ),
 		[ SiteType.STORE ]: NO__( 'for a store.' ),
 		[ SiteType.STORY ]: NO__( 'to write a story.' ),
 	};
-
-	const handleResetSiteType = useCallback( () => setSiteType( UNKNOWN_FORM_VALUE ), [
-		setSiteType,
-	] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -53,7 +51,7 @@ export default function OnboardingEdit() {
 									<input
 										checked={ siteType === value }
 										name="onboarding_site_type"
-										onChange={ handleSiteTypeChange }
+										onChange={ updateSiteType }
 										type="radio"
 										value={ value }
 									/>
@@ -65,7 +63,7 @@ export default function OnboardingEdit() {
 				) }
 				{ siteType !== UNKNOWN_FORM_VALUE && (
 					<div className="onboarding__multi-question">
-						<button className="onboarding__question-answered" onClick={ handleResetSiteType }>
+						<button className="onboarding__question-answered" onClick={ resetSiteType }>
 							{ siteTypeOptions[ siteType ] }
 						</button>
 					</div>
@@ -77,7 +75,7 @@ export default function OnboardingEdit() {
 						<span>{ NO__( "It's called" ) }</span>
 						<input
 							className="onboarding__question-input"
-							onChange={ handleTitleChange }
+							onChange={ updateTitle }
 							value={ siteTitle }
 						/>
 					</label>
