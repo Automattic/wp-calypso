@@ -4,7 +4,7 @@
  * The script looks for all colors used in the SVG images found in the repository
  * and suggests Color Studio replacements for all non-standard values it finds.
  *
- * Please note that the suggestions are automattic and therefore not perfect
+ * Please note that the suggestions are automatic and therefore not perfect
  * in some edge cases. Make sure to manually review the files you edit.
  *
  * List all non-standard color values by image path:
