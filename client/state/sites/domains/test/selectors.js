@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -58,42 +57,42 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#decorateSiteDomains()', () => {
-		test( 'should return decorated site domains with autoRenewalMoment', () => {
+		test( 'should return decorated site domains with autoRenewalDate', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
 			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
 
-			const domainAutoRenewalMoment = moment( domains[ 0 ].autoRenewalDate );
+			const domainAutoRenewalDate = new Date( domains[ 0 ].autoRenewalDate );
 
-			expect( decoratedDomains[ 0 ].autoRenewalMoment.date() ).to.equal(
-				domainAutoRenewalMoment.date()
+			expect( decoratedDomains[ 0 ].autoRenewalDate.valueOf() ).to.equal(
+				domainAutoRenewalDate.valueOf()
 			);
 		} );
 
-		test( 'should return decorated site domains with registrationMoment', () => {
+		test( 'should return decorated site domains with registrationDate', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
 			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
 
-			const domainRegistrationMoment = moment( domains[ 0 ].registrationDate );
+			const domainRegistrationDate = new Date( domains[ 0 ].registrationDate );
 
-			expect( decoratedDomains[ 0 ].registrationMoment.date() ).to.equal(
-				domainRegistrationMoment.date()
+			expect( decoratedDomains[ 0 ].registrationDate.valueOf() ).to.equal(
+				domainRegistrationDate.valueOf()
 			);
 		} );
 
-		test( 'should return decorated site domains with expirationMoment', () => {
+		test( 'should return decorated site domains with expirationDate', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
 			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
 
-			const domainExpirationMoment = moment( domains[ 0 ].expiry );
+			const domainExpirationDate = new Date( domains[ 0 ].expiry );
 
-			expect( decoratedDomains[ 0 ].expirationMoment.date() ).to.equal(
-				domainExpirationMoment.date()
+			expect( decoratedDomains[ 0 ].expirationDate.valueOf() ).to.equal(
+				domainExpirationDate.valueOf()
 			);
 		} );
 

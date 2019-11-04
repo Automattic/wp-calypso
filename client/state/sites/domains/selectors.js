@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { getLocaleSlug } from 'i18n-calypso';
 import { get, has } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -85,28 +83,24 @@ export const getDecoratedSiteDomains = treeSelect(
 			return null;
 		}
 
-		const localeSlug = getLocaleSlug();
+		return domains.map( domain => {
+			let transferEndDate;
 
-		return domains.map( domain => ( {
-			...domain,
-			// TODO: Remove moment dependency.
-			// For now, since it's unclear whether locales are needed by any subscribers to this selector,
-			// return moment instances with current locale information from `i18n-calypso` applied.
-			autoRenewalMoment: domain.autoRenewalDate
-				? moment( domain.autoRenewalDate ).locale( localeSlug )
-				: null,
-			registrationMoment: domain.registrationDate
-				? moment( domain.registrationDate ).locale( localeSlug )
-				: null,
-			expirationMoment: domain.expiry ? moment( domain.expiry ).locale( localeSlug ) : null,
-			transferAwayEligibleAtMoment: domain.transferAwayEligibleAt
-				? moment( domain.transferAwayEligibleAt ).locale( localeSlug )
-				: null,
-			transferEndDateMoment: domain.transferStartDate
-				? moment( domain.transferStartDate )
-						.locale( localeSlug )
-						.add( 7, 'days' )
-				: null,
-		} ) );
+			if ( domain.transferStartDate ) {
+				transferEndDate = new Date( domain.transferStartDate );
+				transferEndDate.setDate( transferEndDate.getDate() + 7 ); // Add 7 days.
+			}
+
+			return {
+				...domain,
+				autoRenewalDate: domain.autoRenewalDate ? new Date( domain.autoRenewalDate ) : null,
+				registrationDate: domain.registrationDate ? new Date( domain.registrationDate ) : null,
+				expirationDate: domain.expiry ? new Date( domain.expiry ) : null,
+				transferAwayEligibleAtDate: domain.transferAwayEligibleAt
+					? new Date( domain.transferAwayEligibleAt )
+					: null,
+				transferEndDate: domain.transferStartDate ? transferEndDate : null,
+			};
+		} );
 	}
 );

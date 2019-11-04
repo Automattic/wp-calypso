@@ -11,6 +11,7 @@ import page from 'page';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { withLocalizedMoment } from 'components/localized-moment';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
@@ -28,7 +29,7 @@ import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
 class Transfer extends React.PureComponent {
 	render() {
-		const { domain, selectedSite, translate } = this.props;
+		const { domain, selectedSite, translate, moment } = this.props;
 		const content = this.getDomainDetailsCard();
 
 		let transferNotice;
@@ -43,7 +44,7 @@ class Transfer extends React.PureComponent {
 				</Notice>
 			);
 
-			if ( domain.transferEndDateMoment ) {
+			if ( domain.transferEndDate ) {
 				transferNotice = (
 					<Notice status={ 'is-info' } showDismiss={ false }>
 						{ translate(
@@ -52,7 +53,7 @@ class Transfer extends React.PureComponent {
 								'If you need to cancel the transfer, please contact them for assistance.',
 							{
 								args: {
-									transferFinishDate: domain.transferEndDateMoment.format( 'LL' ),
+									transferFinishDate: moment( domain.transferEndDate ).format( 'LL' ),
 								},
 							}
 						) }
@@ -169,4 +170,4 @@ export default connect( null, {
 	fetchSiteDomains,
 	recordPaymentSettingsClick,
 	successNotice,
-} )( localize( Transfer ) );
+} )( localize( withLocalizedMoment( Transfer ) ) );

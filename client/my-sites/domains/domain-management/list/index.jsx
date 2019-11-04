@@ -201,11 +201,11 @@ export class List extends React.Component {
 
 		return (
 			domain &&
-			domain.registrationMoment &&
+			domain.registrationDate &&
 			this.props
 				.moment()
 				.subtract( 1, 'day' )
-				.isBefore( domain.registrationMoment )
+				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
 

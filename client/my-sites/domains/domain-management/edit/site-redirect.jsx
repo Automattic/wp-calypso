@@ -14,24 +14,25 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { domainManagementRedirectSettings } from 'my-sites/domains/paths';
 import { recordPaymentSettingsClick } from './payment-settings-analytics';
 
 class SiteRedirect extends React.Component {
 	getAutoRenewalOrExpirationDate() {
-		const { domain, translate } = this.props;
+		const { domain, translate, moment } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
 				<Property label={ translate( 'Redirect renews on' ) }>
-					{ domain.autoRenewalMoment.format( 'LL' ) }
+					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
 				</Property>
 			);
 		}
 
 		return (
 			<Property label={ translate( 'Redirect expires on' ) }>
-				{ domain.expirationMoment.format( 'LL' ) }
+				{ moment( domain.expirationDate ).format( 'LL' ) }
 			</Property>
 		);
 	}
@@ -46,6 +47,7 @@ class SiteRedirect extends React.Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
 				<div className="domain-details-card">
 					<Header { ...this.props } />
 
@@ -85,4 +87,6 @@ class SiteRedirect extends React.Component {
 	}
 }
 
-export default connect( null, { recordPaymentSettingsClick } )( localize( SiteRedirect ) );
+export default connect( null, { recordPaymentSettingsClick } )(
+	localize( withLocalizedMoment( SiteRedirect ) )
+);
