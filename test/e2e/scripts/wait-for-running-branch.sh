@@ -1,6 +1,14 @@
 #!/bin/bash
 
-sha=$CIRCLE_SHA1
+if [ "" == "$sha" ]; then
+  echo "sha envvar not set";
+  exit;
+fi
+
+if [ "$sha" != "$calypsoSha" ]; then
+    echo "Using calypsoSha envvar"
+    sha=$calypsoSha
+fi
 
 COUNT=0
 RESETCOUNT=240 # 5sec retry = Reset the branch after 20 minutes
