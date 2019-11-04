@@ -3,7 +3,7 @@
  */
 import page from 'page';
 
-export function redirect( path: string ): void {
+export default function redirect( path: string ): void {
 	if ( process.env.NODE_ENV === 'development' ) {
 		throw 'route.redirect() is deprecated, use page.redirect()';
 	}
