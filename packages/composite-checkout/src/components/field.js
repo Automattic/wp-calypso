@@ -25,6 +25,7 @@ export default function Field( {
 	tabIndex,
 	description,
 	errorMessage,
+	autoComplete,
 } ) {
 	const fieldOnChange = event => {
 		if ( onChange ) {
@@ -52,6 +53,7 @@ export default function Field( {
 					placeholder={ placeholder }
 					tabIndex={ tabIndex }
 					isError={ isError }
+					autoComplete={ autoComplete }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -79,6 +81,7 @@ Field.propTypes = {
 	tabIndex: PropTypes.string,
 	description: PropTypes.string,
 	errorMessage: PropTypes.string,
+	autoComplete: PropTypes.string,
 };
 
 const Label = styled.label`
