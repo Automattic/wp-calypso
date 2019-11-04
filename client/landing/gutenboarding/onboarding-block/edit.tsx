@@ -2,56 +2,87 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { SelectControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { map } from 'lodash';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useCallback } from 'react';
 
 /**
  * Internal dependencies
  */
-import { SiteType } from '../store/types';
+import { SiteType, EMPTY_FORM_VALUE } from '../store/types';
 import { STORE_KEY } from '../store';
 import './style.scss';
 
+const siteTypeOptions: Record< SiteType, string > = {
+	[ SiteType.BLOG ]: NO__( 'with a blog.' ),
+	[ SiteType.STORE ]: NO__( 'for a store.' ),
+	[ SiteType.STORY ]: NO__( 'to write a story.' ),
+};
+
 export default function OnboardingEdit() {
 	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
-	const handleTitleChange = useCallback(
+	const { resetSiteType, setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
+	const updateTitle = useCallback(
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteTitle( e.target.value ),
 		[ setSiteTitle ]
 	);
+	const updateSiteType = useCallback(
+		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value as SiteType ),
+		[ setSiteType ]
+	);
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="onboarding__questions">
-			<h2 className="onboarding__questions-heading">
+		<div className="onboarding-block__questions">
+			<h2 className="onboarding-block__questions-heading">
 				{ NO__( "Let's set up your website – it takes only a moment." ) }
 			</h2>
 
-			<label className="onboarding__question">
+			<div className="onboarding-block__question">
 				<span>{ NO__( 'I want to create a website ' ) }</span>
-				<SelectControl< SiteType >
-					onChange={ setSiteType }
-					options={ [
-						{ label: NO__( 'with a blog.' ), value: SiteType.BLOG },
-						{ label: NO__( 'for a store.' ), value: SiteType.STORE },
-						{ label: NO__( 'to write a story.' ), value: SiteType.STORY },
-					] }
-					value={ siteType }
-					className="onboarding__question-input"
-				/>
-			</label>
-			{ ( siteType || siteTitle ) && (
-				<label className="onboarding__question">
-					<span>{ NO__( "It's called" ) }</span>
-					<input
-						className="onboarding__question-input"
-						onChange={ handleTitleChange }
-						value={ siteTitle }
-					/>
-				</label>
+
+				{ siteType === EMPTY_FORM_VALUE ? (
+					<ul className="onboarding-block__multi-question">
+						{ map( siteTypeOptions, ( label, value ) => (
+							<li key={ value }>
+								<label>
+									<input
+										checked={ siteType === value }
+										name="onboarding_site_type"
+										onChange={ updateSiteType }
+										type="radio"
+										value={ value }
+									/>
+									<span className="onboarding-block__multi-question-choice">{ label }</span>
+								</label>
+							</li>
+						) ) }
+					</ul>
+				) : (
+					<div className="onboarding-block__multi-question">
+						<button className="onboarding-block__question-answered" onClick={ resetSiteType }>
+							{ siteTypeOptions[ siteType ] }
+						</button>
+					</div>
+				) }
+			</div>
+			{ ( siteType !== EMPTY_FORM_VALUE || siteTitle ) && (
+				<>
+					<label className="onboarding-block__question">
+						<span>{ NO__( "It's called" ) }</span>
+						<input
+							className="onboarding-block__question-input"
+							onChange={ updateTitle }
+							value={ siteTitle }
+						/>
+					</label>
+					{ ! siteTitle && (
+						<Button className="onboarding-block__question-skip" isLink>
+							{ NO__( "Don't know yet" ) } →
+						</Button>
+					) }
+				</>
 			) }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
