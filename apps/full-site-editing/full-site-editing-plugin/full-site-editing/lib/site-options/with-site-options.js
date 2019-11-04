@@ -34,8 +34,12 @@ import { useSiteOptions } from './use-site-options';
  *
  * @return {Component} The higher order component.
  *
+ * In the following example, withSiteOptions is called with an object mapping a
+ * name for the option to some information about it. In particular, optionName
+ * needs to match the name of the option in WordPress, and defaultValue is used
+ * while the option is loading from the API.
+ *
  * @example
- * ```js
  * function Component( { mySiteOption } ) {
  *   const { value, updateValue } = mySiteOption;
  *   // `updateValue( 'foo' )` the component will re-render if called.
@@ -47,11 +51,6 @@ import { useSiteOptions } from './use-site-options';
  *     mySiteOption: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
  * 	} ),
  * ] )( Component );
- * ```
- * In the above example, we call withSiteOptions with an object mapping our name
- * for the option to some information about it. In particular, optionName needs
- * to match the name of the option in WordPress, and defaultValue is used while
- * the option is loading from the API.
  *
  */
 export const withSiteOptions = options =>
