@@ -41,7 +41,7 @@ export default function OnboardingEdit() {
 			<div className="onboarding-block__question">
 				<span>{ NO__( 'I want to create a website ' ) }</span>
 
-				{ siteType === EMPTY_FORM_VALUE && (
+				{ siteType === EMPTY_FORM_VALUE ? (
 					<ul className="onboarding-block__multi-question">
 						{ map( siteTypeOptions, ( label, value ) => (
 							<li key={ value }>
@@ -58,8 +58,7 @@ export default function OnboardingEdit() {
 							</li>
 						) ) }
 					</ul>
-				) }
-				{ siteType !== EMPTY_FORM_VALUE && (
+				) : (
 					<div className="onboarding-block__multi-question">
 						<button className="onboarding-block__question-answered" onClick={ resetSiteType }>
 							{ siteTypeOptions[ siteType ] }
