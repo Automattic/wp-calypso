@@ -34,19 +34,16 @@ const moduleTypes = [ 'javascript/auto', 'javascript/dynamic', 'javascript/esm' 
 class ConfigFlagPlugin {
 	constructor( options ) {
 		this.flags = options && options.flags;
+		this.moduleName = {};
+		this.methodName = {};
 	}
 
 	apply( compiler ) {
 		const handleParser = parser => {
-			// Hook into file changes.
-			parser.hooks.program.tap( 'ConfigFlagPlugin', () => {
-				// Reset imports on new file.
-				this.moduleName = undefined;
-				this.methodName = undefined;
-			} );
-
 			// Hook into imports.
 			parser.hooks.import.tap( 'ConfigFlagPlugin', ( statement, source ) => {
+				const currentModule = parser.state.current.resource;
+
 				if ( source === 'config' ) {
 					if ( ! statement.specifiers ) return;
 
@@ -56,17 +53,17 @@ class ConfigFlagPlugin {
 					for ( const sp of specifiers ) {
 						// Default import (`import config from 'config'`)
 						if ( sp.type === 'ImportDefaultSpecifier' ) {
-							this.moduleName = sp.local.name;
+							this.moduleName[ currentModule ] = sp.local.name;
 						}
 
 						// Namespaced import (`import * as foo from 'config'`)
 						if ( sp.type === 'ImportNamespaceSpecifier' ) {
-							this.moduleName = sp.local.name;
+							this.moduleName[ currentModule ] = sp.local.name;
 						}
 
 						// Named import (`import { foo } from 'config'`)
 						if ( sp.type === 'ImportSpecifier' && sp.imported.name === 'isEnabled' ) {
-							this.methodName = sp.local.name;
+							this.methodName[ currentModule ] = sp.local.name;
 						}
 					}
 				}
@@ -74,11 +71,13 @@ class ConfigFlagPlugin {
 
 			// Hook into every call expression.
 			parser.hooks.evaluate.for( 'CallExpression' ).tap( 'ConfigFlagPlugin', expr => {
+				const currentModule = parser.state.current.resource;
+
 				// Check to see if this is a call to `config.isEnabled('flag')` or `isEnabled('flag')`, and
 				// that these are what we expect them to be (the right module and the right method).
 				const flag =
-					isCallOnDefaultOrNamespace( parser, this.moduleName, expr ) ||
-					isNamedCall( parser, this.methodName, expr );
+					isCallOnDefaultOrNamespace( parser, this.moduleName[ currentModule ], expr ) ||
+					isNamedCall( parser, this.methodName[ currentModule ], expr );
 
 				if ( flag && flag in this.flags ) {
 					return new BasicEvaluatedExpression()
