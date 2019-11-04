@@ -8,8 +8,6 @@ import { URL as URLString, SiteSlug, SiteId } from 'types';
  */
 import { trailingslashit, untrailingslashit } from './index';
 
-type SiteFragment = SiteSlug | number | false;
-
 /**
  * Module variables
  */
@@ -22,7 +20,7 @@ const statsLocationsByTab = {
 	googleMyBusiness: '/google-my-business/stats/',
 };
 
-export function getSiteFragment( path: URLString ): SiteFragment {
+export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
@@ -86,19 +84,20 @@ export function addSiteFragment( path: URLString, site: SiteSlug ): URLString {
 	return pieces.join( '/' );
 }
 
-export function sectionify( path: URLString, siteFragment?: SiteFragment ): URLString {
+export function sectionify( path: URLString, siteFragment?: SiteSlug | SiteId ): URLString {
 	let basePath = path.split( '?' )[ 0 ];
+	let fragment: SiteSlug | SiteId | false | undefined = siteFragment;
 
 	// Sometimes the caller knows better than `getSiteFragment` what the `siteFragment` is.
 	// For example, when the `:site` parameter is not the last or second-last part of the route
 	// and is retrieved from `context.params.site`. In that case, it can pass the `siteFragment`
 	// explicitly as the second parameter. We call `getSiteFragment` only as a fallback.
-	if ( ! siteFragment ) {
-		siteFragment = getSiteFragment( basePath );
+	if ( ! fragment ) {
+		fragment = getSiteFragment( basePath );
 	}
 
-	if ( siteFragment ) {
-		basePath = trailingslashit( basePath ).replace( '/' + siteFragment + '/', '/' );
+	if ( fragment ) {
+		basePath = trailingslashit( basePath ).replace( '/' + fragment + '/', '/' );
 	}
 	return untrailingslashit( basePath );
 }
