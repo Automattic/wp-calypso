@@ -5,7 +5,7 @@ if [ "" == "$sha" ]; then
   sha=$CIRCLE_SHA1
 fi
 
-if [ "$sha" != "$calypsoSha" ]; then
+if [[ "$calypsoSha" != "" ] && ["$sha" != "$calypsoSha" ]]; then
     echo "Using calypsoSha envvar"
     sha=$calypsoSha
 fi
