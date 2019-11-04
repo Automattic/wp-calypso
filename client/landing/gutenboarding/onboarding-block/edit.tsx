@@ -10,7 +10,7 @@ import React, { useCallback } from 'react';
 /**
  * Internal dependencies
  */
-import { SiteType } from '../store/types';
+import { SiteType, UNKNOWN_FORM_VALUE } from '../store/types';
 import { STORE_KEY } from '../store';
 import './style.scss';
 
@@ -31,7 +31,9 @@ export default function OnboardingEdit() {
 		[ SiteType.STORY ]: NO__( 'to write a story.' ),
 	};
 
-	const handleResetSiteType = useCallback( () => setSiteType( '' ), [ setSiteType ] );
+	const handleResetSiteType = useCallback( () => setSiteType( UNKNOWN_FORM_VALUE ), [
+		setSiteType,
+	] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -43,7 +45,7 @@ export default function OnboardingEdit() {
 			<div className="onboarding__question">
 				<span>{ NO__( 'I want to create a website ' ) }</span>
 
-				{ ! siteType && (
+				{ siteType === UNKNOWN_FORM_VALUE && (
 					<ul className="onboarding__multi-question">
 						{ map( siteTypeOptions, ( label, value ) => (
 							<li key={ value }>
@@ -61,7 +63,7 @@ export default function OnboardingEdit() {
 						) ) }
 					</ul>
 				) }
-				{ siteType && (
+				{ siteType !== UNKNOWN_FORM_VALUE && (
 					<div className="onboarding__multi-question">
 						<button className="onboarding__question-answered" onClick={ handleResetSiteType }>
 							{ siteTypeOptions[ siteType ] }

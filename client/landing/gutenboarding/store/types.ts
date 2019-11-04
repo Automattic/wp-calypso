@@ -12,6 +12,9 @@ export enum SiteType {
 	STORY = 'story',
 }
 
+export const UNKNOWN_FORM_VALUE = '';
+export type FormValue< T > = T | typeof UNKNOWN_FORM_VALUE;
+
 export type Vertical = ApiVertical | UserVertical;
 
 export interface UserVertical {

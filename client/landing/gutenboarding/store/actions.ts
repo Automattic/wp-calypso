@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { ActionType, SiteType, Vertical } from './types';
+import { ActionType, FormValue, SiteType, Vertical } from './types';
 
-export const setSiteType = ( siteType: SiteType ) => ( {
+export const setSiteType = ( siteType: FormValue< SiteType > ) => ( {
 	type: ActionType.SET_SITE_TYPE as const,
 	siteType,
 } );
