@@ -48,8 +48,10 @@ class ConfigFlagPlugin {
 			// Hook into imports.
 			parser.hooks.import.tap( 'ConfigFlagPlugin', ( statement, source ) => {
 				if ( source === 'config' ) {
+					if ( ! statement.specifiers ) return;
+
 					// We have an import of 'config'.
-					const specifiers = statement.specifiers || [];
+					const specifiers = statement.specifiers;
 
 					for ( const sp of specifiers ) {
 						// Default import (`import config from 'config'`)
