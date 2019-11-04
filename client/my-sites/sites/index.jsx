@@ -93,7 +93,7 @@ class Sites extends Component {
 			case 'home':
 				path = translate( 'My Home' );
 				break;
-			case 'wp-hosting':
+			case 'hosting-admin':
 				path = translate( 'SFTP & MySQL' );
 				break;
 		}
