@@ -212,11 +212,15 @@ export class ProductSelector extends Component {
 	}
 
 	getProductUpsell( product ) {
-		const { currentPlanSlug } = this.props;
+		const { currentPlanSlug, intervalType } = this.props;
+		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 
-		return find( product.productUpsells, ( upsellSlug, currentProductSlug ) => {
-			return planHasFeature( currentPlanSlug, currentProductSlug );
-		} );
+		return find(
+			product.productUpsells,
+			( upsellSlug, currentProductSlug ) =>
+				selectedProductSlug === currentProductSlug &&
+				planHasFeature( currentPlanSlug, currentProductSlug )
+		);
 	}
 
 	getProductUpsellPlan( product ) {
