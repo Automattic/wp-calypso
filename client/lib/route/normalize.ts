@@ -1,21 +1,23 @@
-/** @format */
+/**
+ * External dependencies
+ */
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-
 import untrailingslashit from './untrailingslashit';
-import page from 'page';
 
-function appendQueryString( basepath, querystring ) {
-	return basepath + ( querystring ? '?' + querystring : '' );
-}
+const appendQueryString = ( basepath: string, querystring: string ): string =>
+	basepath + ( querystring ? '?' + querystring : '' );
 
-export default function normalize( context, next ) {
+const normalize: PageJS.Callback = ( context, next ) => {
 	const normalizedPathName = untrailingslashit( context.pathname );
 	if ( normalizedPathName !== context.pathname ) {
 		page.redirect( appendQueryString( normalizedPathName, context.querystring ) );
 	} else {
 		next();
 	}
-}
+};
+
+export default normalize;
