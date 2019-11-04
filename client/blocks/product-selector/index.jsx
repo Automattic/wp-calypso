@@ -364,7 +364,7 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ subtitle }
 				>
-					{ ! purchase && ! productUpsellPlan && (
+					{ ! purchase && ! productUpsellPlan && ! currentPlanIncludesProduct && (
 						<Fragment>
 							<ProductCardOptions
 								optionsLabel={ product.optionsLabel }
