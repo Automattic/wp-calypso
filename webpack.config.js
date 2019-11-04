@@ -41,7 +41,7 @@ const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
-const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldEmitStats = true; //process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
@@ -315,7 +315,8 @@ const webpackConfig = {
 				allowAsyncCycles: false,
 				cwd: process.cwd(),
 			} ),
-		shouldEmitStats &&
+		false &&
+			shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'disabled', // just write the stats.json file
 				generateStatsFile: true,
