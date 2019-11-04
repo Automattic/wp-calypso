@@ -64,7 +64,7 @@ The following props can be passed to the Product Card component:
 * `purchase`: ( object ) A purchase object, associated with the product. [Read more about the way this flag
  works](#how-purchase-prop-works)
 * `subtitle`: ( string | element | node ) Product subtitle. It's used if the product has already been purchased, but can be
- used also in other use-cases. It can be a string or a React element (e.g. `<Fragment>`)
+ used also in other use-cases. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `title`: ( string | element ) Product title. It can be a string or a React element (e.g. `<Fragment>`)
 
 <a name="product-card-options"></a>Product Card Options
