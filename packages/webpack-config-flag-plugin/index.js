@@ -54,17 +54,17 @@ class ConfigFlagPlugin {
 					for ( const sp of specifiers ) {
 						// Default import (`import config from 'config'`)
 						if ( sp.type === 'ImportDefaultSpecifier' ) {
-							this.moduleName = sp.local && sp.local.name;
+							this.moduleName = sp.local.name;
 						}
 
 						// Namespaced import (`import * as foo from 'config'`)
 						if ( sp.type === 'ImportNamespaceSpecifier' ) {
-							this.moduleName = sp.local && sp.local.name;
+							this.moduleName = sp.local.name;
 						}
 
 						// Named import (`import { foo } from 'config'`)
 						if ( sp.type === 'ImportSpecifier' && sp.imported.name === 'isEnabled' ) {
-							this.methodName = sp.local && sp.local.name;
+							this.methodName = sp.local.name;
 						}
 					}
 				}
