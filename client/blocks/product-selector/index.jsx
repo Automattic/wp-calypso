@@ -20,7 +20,7 @@ import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlansBySiteId, getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getCurrentPlan, getPlansBySiteId, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { planHasFeature } from 'lib/plans';
@@ -311,10 +311,12 @@ export class ProductSelector extends Component {
 	renderProducts() {
 		const {
 			currencyCode,
+			currentPlan,
 			currentPlanSlug,
 			fetchingSitePurchases,
 			intervalType,
 			products,
+			selectedSiteSlug,
 			storeProducts,
 			translate,
 		} = this.props;
@@ -344,7 +346,15 @@ export class ProductSelector extends Component {
 				billingTimeFrame = null;
 				fullPrice = null;
 				discountedPrice = null;
-				subtitle = translate( 'Included in your plan' );
+				subtitle = translate( 'Included in your {{planLink/}} plan', {
+					components: {
+						planLink: (
+							<a href={ `/plans/my-plan/${ selectedSiteSlug }` }>
+								{ this.getShortPlanName( currentPlan.productName ) }
+							</a>
+						),
+					},
+				} );
 			} else {
 				billingTimeFrame = this.getBillingTimeFrameLabel();
 				fullPrice = this.getProductOptionFullPrice( selectedProductSlug );
@@ -429,6 +439,7 @@ ProductSelector.propTypes = {
 	// Connected props
 	availableProducts: PropTypes.object,
 	currencyCode: PropTypes.string,
+	currentPlan: PropTypes.object,
 	currentPlanSlug: PropTypes.string,
 	fetchingSitePurchases: PropTypes.bool,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
@@ -457,6 +468,7 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 	return {
 		availableProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
 		productSlugs,
