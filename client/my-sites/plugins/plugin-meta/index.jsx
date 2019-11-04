@@ -342,7 +342,6 @@ export class PluginMeta extends Component {
 			'fast-velocity-minify',
 			'nginx-helper',
 			'p3',
-			'popup-builder',
 			'porn-embed',
 			'propellerads-official',
 			'speed-contact-bar',
