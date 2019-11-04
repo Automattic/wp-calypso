@@ -87,7 +87,7 @@ export const Sharing = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Sharing' ) } />
+			<DocumentHead title={ translate( 'Marketing Tools' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
 			{ filters.length > 0 && (
