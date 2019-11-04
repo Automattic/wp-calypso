@@ -22,7 +22,7 @@ export default function OnboardingEdit() {
 		[ setSiteTitle ]
 	);
 	const handleSiteTypeChange = useCallback(
-		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value ),
+		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value as SiteType ),
 		[ setSiteType ]
 	);
 	const siteTypeOptions = {
