@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { URL as URLString } from 'types';
-import { Falsey } from 'utility-types';
+import { Falsy } from 'utility-types';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ const BASE_URL = `http://__domain__.invalid/`;
  *
  * @returns The formatted URL.
  */
-export default function format( url: URLString | URL | Falsey, urlType?: URL_TYPE ): URLString {
+export default function format( url: URLString | URL | Falsy, urlType?: URL_TYPE ): URLString {
 	let parsed: URL;
 	let originalType: URL_TYPE;
 
