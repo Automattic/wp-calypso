@@ -3,6 +3,7 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
+import { map } from 'lodash';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useCallback } from 'react';
 
@@ -24,11 +25,12 @@ export default function OnboardingEdit() {
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value ),
 		[ setSiteType ]
 	);
-	const siteTypeOptions = [
-		{ label: NO__( 'with a blog.' ), value: SiteType.BLOG },
-		{ label: NO__( 'for a store.' ), value: SiteType.STORE },
-		{ label: NO__( 'to write a story.' ), value: SiteType.STORY },
-	];
+	const siteTypeOptions = {
+		[ SiteType.BLOG ]: NO__( 'with a blog.' ),
+		[ SiteType.STORE ]: NO__( 'for a store.' ),
+		[ SiteType.STORY ]: NO__( 'to write a story.' ),
+	};
+
 	const handleResetSiteType = useCallback( () => setSiteType( '' ), [ setSiteType ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -43,7 +45,7 @@ export default function OnboardingEdit() {
 
 				{ ! siteType && (
 					<ul className="onboarding__multi-question">
-						{ siteTypeOptions.map( ( { value, label } ) => (
+						{ map( siteTypeOptions, ( label, value ) => (
 							<li key={ value }>
 								<label>
 									<input
@@ -62,7 +64,7 @@ export default function OnboardingEdit() {
 				{ siteType && (
 					<div className="onboarding__multi-question">
 						<button className="onboarding__question-answered" onClick={ handleResetSiteType }>
-							{ siteType }
+							{ siteTypeOptions[ siteType ] }
 						</button>
 					</div>
 				) }
