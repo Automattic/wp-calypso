@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { ActionType, FormValue, SiteType, Vertical, UNKNOWN_FORM_VALUE } from './types';
+import { ActionType, SiteType, Vertical, UNKNOWN_FORM_VALUE } from './types';
 
 export const resetSiteType = () => ( {
 	type: ActionType.SET_SITE_TYPE as const,
 	siteType: UNKNOWN_FORM_VALUE,
 } );
 
-export const setSiteType = ( siteType: FormValue< SiteType > ) => ( {
+export const setSiteType = ( siteType: SiteType ) => ( {
 	type: ActionType.SET_SITE_TYPE as const,
 	siteType,
 } );
