@@ -4,6 +4,11 @@
 import React, { Fragment } from 'react';
 import { translate } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import ExternalLink from 'components/external-link';
+
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -59,13 +64,7 @@ export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
 	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
 	{
 		components: {
-			a: (
-				<a
-					href="https://jetpack.com/upgrade/backup/"
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
-			),
+			a: <ExternalLink href="https://jetpack.com/upgrade/backup/" icon />,
 		},
 	}
 );
