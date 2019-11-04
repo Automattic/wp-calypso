@@ -16,16 +16,18 @@ namespace A8C\FSE;
 function render_navigation_menu_block( $attributes ) {
 	$styles = '';
 
-	$class = 'menu-primary-container';
+	$container_class = 'menu-primary-container';
+	$toggle_class    = 'button';
 	if ( isset( $attributes['className'] ) ) {
-		$class .= ' ' . $attributes['className'];
+		$container_class .= ' ' . $attributes['className'];
+		$toggle_class    .= ' ' . $attributes['className'];
 	}
 
 	$align = ' alignwide';
 	if ( isset( $attributes['align'] ) ) {
 		$align = empty( $attributes['align'] ) ? '' : ' align' . $attributes['align'];
 	}
-	$class .= $align;
+	$class = $align;
 
 	if ( isset( $attributes['textAlign'] ) ) {
 		$class .= ' has-text-align-' . $attributes['textAlign'];
@@ -57,6 +59,9 @@ function render_navigation_menu_block( $attributes ) {
 		$class .= ' has-small-font-size';
 	}
 
+	$container_class .= $class;
+	$toggle_class    .= $class;
+
 	$menu = wp_nav_menu(
 		[
 			'echo'           => false,
@@ -73,14 +78,14 @@ function render_navigation_menu_block( $attributes ) {
 	?>
 	<nav class="main-navigation wp-block-a8c-navigation-menu<?php echo esc_attr( $align ); ?>">
 		<input type="checkbox" role="button" aria-haspopup="true" id="toggle" class="hide-visually">
-		<label for="toggle" id="toggle-menu" class="button">
+		<label for="toggle" id="toggle-menu" class="<?php echo esc_attr( $toggle_class ); ?>" style="<?php echo esc_attr( $styles ); ?>">
 			<?php esc_html_e( 'Menu', 'full-site-editing' ); ?>
 			<span class="dropdown-icon open">+</span>
 			<span class="dropdown-icon close">&times;</span>
 			<span class="hide-visually expanded-text"><?php esc_html_e( 'expanded', 'full-site-editing' ); ?></span>
 			<span class="hide-visually collapsed-text"><?php esc_html_e( 'collapsed', 'full-site-editing' ); ?></span>
 		</label>
-		<div class="<?php echo esc_attr( $class ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+		<div class="<?php echo esc_attr( $container_class ); ?>" style="<?php echo esc_attr( $styles ); ?>">
 			<?php echo $menu ? $menu : get_fallback_navigation_menu(); ?>
 		</div>
 	</nav>
