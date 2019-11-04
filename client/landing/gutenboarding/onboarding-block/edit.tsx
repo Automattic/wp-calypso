@@ -32,18 +32,17 @@ export default function OnboardingEdit() {
 		[ SiteType.STORY ]: NO__( 'to write a story.' ),
 	};
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="onboarding__questions">
-			<h2 className="onboarding__questions-heading">
+		<div className="onboarding-block__questions">
+			<h2 className="onboarding-block__questions-heading">
 				{ NO__( "Let's set up your website – it takes only a moment." ) }
 			</h2>
 
-			<div className="onboarding__question">
+			<div className="onboarding-block__question">
 				<span>{ NO__( 'I want to create a website ' ) }</span>
 
 				{ siteType === UNKNOWN_FORM_VALUE && (
-					<ul className="onboarding__multi-question">
+					<ul className="onboarding-block__multi-question">
 						{ map( siteTypeOptions, ( label, value ) => (
 							<li key={ value }>
 								<label>
@@ -54,15 +53,15 @@ export default function OnboardingEdit() {
 										type="radio"
 										value={ value }
 									/>
-									<span className="onboarding__multi-question-choice">{ label }</span>
+									<span className="onboarding-block__multi-question-choice">{ label }</span>
 								</label>
 							</li>
 						) ) }
 					</ul>
 				) }
 				{ siteType !== UNKNOWN_FORM_VALUE && (
-					<div className="onboarding__multi-question">
-						<button className="onboarding__question-answered" onClick={ resetSiteType }>
+					<div className="onboarding-block__multi-question">
+						<button className="onboarding-block__question-answered" onClick={ resetSiteType }>
 							{ siteTypeOptions[ siteType ] }
 						</button>
 					</div>
@@ -70,16 +69,16 @@ export default function OnboardingEdit() {
 			</div>
 			{ ( siteType !== UNKNOWN_FORM_VALUE || siteTitle ) && (
 				<>
-					<label className="onboarding__question">
+					<label className="onboarding-block__question">
 						<span>{ NO__( "It's called" ) }</span>
 						<input
-							className="onboarding__question-input"
+							className="onboarding-block__question-input"
 							onChange={ updateTitle }
 							value={ siteTitle }
 						/>
 					</label>
 					{ ! siteTitle && (
-						<Button className="onboarding__question-skip" isLink>
+						<Button className="onboarding-block__question-skip" isLink>
 							{ NO__( "Don't know yet" ) } →
 						</Button>
 					) }
@@ -87,5 +86,4 @@ export default function OnboardingEdit() {
 			) }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
