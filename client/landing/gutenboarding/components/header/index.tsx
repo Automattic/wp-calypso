@@ -36,7 +36,6 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 					<span className="gutenboarding__header-site-heading">{ NO__( 'Create a website' ) }</span>
 				) }
 				{ siteTitle && <span className="gutenboarding__header-site-heading">{ siteTitle }</span> }
-				{ siteType !== UNKNOWN_FORM_VALUE && <span>{ siteType }</span> }
 			</div>
 			<div
 				aria-label={ NO__( 'Document tools' ) }
