@@ -464,7 +464,7 @@ const sections = [
 	},
 	{
 		name: 'hosting',
-		paths: [ '/hosting' ],
+		paths: [ '/hosting-admin' ],
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
