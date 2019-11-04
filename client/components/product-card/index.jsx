@@ -84,7 +84,7 @@ ProductCard.propTypes = {
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
-	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 };
 
