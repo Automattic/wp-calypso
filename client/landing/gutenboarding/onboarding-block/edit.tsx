@@ -16,7 +16,7 @@ import './style.scss';
 
 export default function OnboardingEdit() {
 	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
-	const { setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
+	const { resetSiteType, setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
 	const updateTitle = useCallback(
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteTitle( e.target.value ),
 		[ setSiteTitle ]
@@ -25,7 +25,6 @@ export default function OnboardingEdit() {
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value as SiteType ),
 		[ setSiteType ]
 	);
-	const resetSiteType = useCallback( () => setSiteType( UNKNOWN_FORM_VALUE ), [ setSiteType ] );
 
 	const siteTypeOptions = {
 		[ SiteType.BLOG ]: NO__( 'with a blog.' ),
