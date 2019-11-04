@@ -5,49 +5,41 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { localize } from 'i18n-calypso';
-import config from 'config';
-import Gridicon from 'gridicons';
 import debugFactory from 'debug';
-import { concat, rearg } from 'lodash';
+import { overSome, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
+import Gridicon from 'components/gridicon';
 import PaymentCountrySelect from 'components/payment-country-select';
+import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
-import { getTaxCountryCode, getTaxPostalCode } from 'lib/cart-values';
-import wpcom from 'lib/wp';
-import { newCardPayment } from 'lib/store-transactions';
-import { setPayment } from 'lib/upgrades/actions';
+import analytics from 'lib/analytics';
+import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
+import { hasRenewalItem } from 'lib/cart-values/cart-items';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import {
-	BEFORE_SUBMIT,
-	INPUT_VALIDATION,
-	RECEIVED_PAYMENT_KEY_RESPONSE,
-	RECEIVED_WPCOM_RESPONSE,
-	SUBMITTING_PAYMENT_KEY_REQUEST,
-	SUBMITTING_WPCOM_REQUEST,
-} from 'lib/store-transactions/step-types';
-import RecentRenewals from './recent-renewals';
+	detectWebPaymentMethod,
+	WEB_PAYMENT_BASIC_CARD_METHOD,
+	WEB_PAYMENT_APPLE_PAY_METHOD,
+} from 'lib/web-payment';
+import { webPayment } from 'lib/transaction/payments';
+import { setPayment, setStripeObject } from 'lib/transaction/actions';
+import { setTaxCountryCode, setTaxPostalCode } from 'lib/cart/actions';
+import CartToggle from './cart-toggle';
 import CheckoutTerms from './checkout-terms';
-import { setTaxCountryCode, setTaxPostalCode } from 'lib/upgrades/actions/cart';
+import PaymentChatButton from './payment-chat-button';
+import RecentRenewals from './recent-renewals';
+import PaymentRequestButton from './payment-request-button';
+import SubscriptionText from './subscription-text';
+import { useDebounce } from 'blocks/credit-card-form/helpers';
+import { useStripe, StripeHookProvider } from 'lib/stripe';
 
-const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
+const debug = debugFactory( 'calypso:checkout:payment:web-payment-box' );
 
-/**
- * Web Payment method identifier.
- */
-export const WEB_PAYMENT_BASIC_CARD_METHOD = 'basic-card';
-export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
-
-/**
- * Supported card types.
- */
-const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'discover', 'amex', 'jcb', 'maestro' ];
-const APPLE_PAY_MERCHANT_IDENTIFIER = config( 'apple_pay_merchant_id' );
 const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerName: true,
 	requestPayerPhone: false,
@@ -55,426 +47,47 @@ const PAYMENT_REQUEST_OPTIONS = {
 	requestShipping: false,
 };
 
-/**
- * Returns an available Web Payment method.
- *
- * Web Payments (`PaymentRequest` API) are available only if the
- * document is served through HTTPS.
- *
- * The configuration features `my-sites/checkout/web-payment/*` must
- * also be enabled.
- *
- * @returns {string|null}  One of the `WEB_PAYMENT_*_METHOD` or `null`
- *                         if none can be detected.
- */
-export function detectWebPaymentMethod() {
-	if ( ! config.isEnabled( 'my-sites/checkout/web-payment' ) ) {
-		return null;
-	}
+export function WebPaymentBox( {
+	cart,
+	countriesList,
+	onSubmit,
+	presaleChatAvailable,
+	translate,
+	disablePostalCodeDebounce,
+	children,
+} ) {
+	const paymentMethod = detectWebPaymentMethod();
 
-	if (
-		config.isEnabled( 'my-sites/checkout/web-payment/apple-pay' ) &&
-		window.ApplePaySession &&
-		window.ApplePaySession.canMakePayments()
-	) {
-		return WEB_PAYMENT_APPLE_PAY_METHOD;
-	}
+	const countryCode = getTaxCountryCode( cart );
+	const postalCode = getTaxPostalCode( cart );
 
-	if ( config.isEnabled( 'my-sites/checkout/web-payment/basic-card' ) && window.PaymentRequest ) {
-		return WEB_PAYMENT_BASIC_CARD_METHOD;
-	}
-
-	return null;
-}
-
-/**
- * Returns a user-friendly Web Payment method name.
- *
- * @param {string|null} webPaymentMethod  The payment method identifier
- *                                        (expecting one of the
- *                                        `WEB_PAYMENT_*_METHOD`
- *                                        constant).
- * @param {function} translate            Localization function to translate the label.
- * @returns {string|null}                 A user-friendly payment name
- *                                        or the given payment method
- *                                        if none matches.
- */
-export function getWebPaymentMethodName( webPaymentMethod, translate ) {
-	switch ( webPaymentMethod ) {
-		case WEB_PAYMENT_BASIC_CARD_METHOD:
-			return translate( 'Browser wallet' );
-
-		case WEB_PAYMENT_APPLE_PAY_METHOD:
-			return 'Apple Pay';
-
-		default:
-			return webPaymentMethod;
-	}
-}
-
-/**
- * The `<WebPaymentBox />` component.
- */
-export class WebPaymentBox extends React.Component {
-	static propTypes = {
-		cart: PropTypes.shape( {
-			currency: PropTypes.string.isRequired,
-			total_cost: PropTypes.number.isRequired,
-			products: PropTypes.array.isRequired,
-		} ).isRequired,
-		transaction: PropTypes.shape( {
-			payment: PropTypes.object,
-		} ).isRequired,
-		transactionStep: PropTypes.shape( {
-			name: PropTypes.string.isRequired,
-			error: PropTypes.object,
-		} ).isRequired,
-		countriesList: PropTypes.array.isRequired,
-		onSubmit: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-	};
-
-	constructor() {
-		super();
-		this.detectedPaymentMethod = detectWebPaymentMethod();
-	}
-
-	/**
-	 * @return {object} A dictionnary containing `default`, `disabled` and `text` keys.
-	 */
-	getButtonState = () => {
-		const { transactionStep, translate } = this.props;
-
-		const defaultState = () => {
-			return {
-				default: true,
-				disabled: false,
-				text: translate( 'Select a payment card', {
-					context: 'Loading state on /checkout',
-				} ),
-			};
-		};
-		const ongoingState = () => {
-			return {
-				default: false,
-				disabled: true,
-				text: translate( 'Sending your purchase', {
-					context: 'Loading state on /checkout',
-				} ),
-			};
-		};
-		const completingState = () => {
-			return {
-				default: false,
-				disabled: true,
-				text: translate( 'Completing your purchase', {
-					context: 'Loading state on /checkout',
-				} ),
-			};
-		};
-
-		switch ( transactionStep.name ) {
-			case BEFORE_SUBMIT:
-				return defaultState();
-
-			case INPUT_VALIDATION:
-				if ( transactionStep.error ) {
-					return defaultState();
-				}
-
-				return ongoingState();
-
-			case SUBMITTING_PAYMENT_KEY_REQUEST:
-				return ongoingState();
-
-			case RECEIVED_PAYMENT_KEY_RESPONSE:
-				if ( transactionStep.error ) {
-					return defaultState();
-				}
-
-				return ongoingState();
-
-			case SUBMITTING_WPCOM_REQUEST:
-				return completingState();
-
-			case RECEIVED_WPCOM_RESPONSE:
-				if ( transactionStep.error || ! transactionStep.data.success ) {
-					return defaultState();
-				}
-
-				return completingState();
-
-			default:
-				throw new Error( `Unknown transaction step: ${ transactionStep.name }.` );
-		}
-	};
-
-	/**
-	 * @return {PaymentRequest} A configured payment request object.
-	 */
-	getPaymentRequestForApplePay = () => {
-		const { cart, translate } = this.props;
-		const { currency, total_tax } = cart;
-
-		const supportedPaymentMethods = [
-			{
-				supportedMethods: WEB_PAYMENT_APPLE_PAY_METHOD,
-				data: {
-					version: 3,
-					merchantIdentifier: APPLE_PAY_MERCHANT_IDENTIFIER,
-					merchantCapabilities: [ 'supports3DS', 'supportsCredit', 'supportsDebit' ],
-					supportedNetworks: SUPPORTED_NETWORKS,
-					countryCode: 'US',
-				},
-			},
-		];
-		let displayItems = cart.products.map( product => {
-			return {
-				label: product.product_name,
-				amount: {
-					currency: product.currency,
-					value: product.cost,
-				},
-			};
-		} );
-
-		if ( total_tax ) {
-			displayItems = concat( displayItems, {
-				label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
-				amount: { currency: currency, value: total_tax },
-			} );
-		}
-
-		const paymentDetails = {
-			total: {
-				label: translate( 'Total' ),
-				amount: {
-					currency: cart.currency,
-					value: cart.total_cost.toString(),
-				},
-			},
-			displayItems,
-		};
-
-		const paymentRequest = new PaymentRequest(
-			supportedPaymentMethods,
-			paymentDetails,
-			PAYMENT_REQUEST_OPTIONS
-		);
-
-		paymentRequest.onmerchantvalidation = event => {
-			wpcom
-				.undocumented()
-				.applePayMerchantValidation( event.validationURL )
-				.then( json => event.complete( json ) )
-				.catch( error => {
-					debug( 'onmerchantvalidation error', error );
-				} );
-		};
-
-		return paymentRequest;
-	};
-
-	/**
-	 * @return {PaymentRequest} A configured payment request object.
-	 */
-	getPaymentRequestForBasicCard = () => {
-		const { cart, translate } = this.props;
-		const { currency, total_tax } = cart;
-
-		const supportedPaymentMethods = [
-			{
-				supportedMethods: WEB_PAYMENT_BASIC_CARD_METHOD,
-				data: {
-					supportedNetworks: SUPPORTED_NETWORKS,
-				},
-			},
-		];
-		let displayItems = cart.products.map( product => {
-			return {
-				label: product.product_name,
-				amount: {
-					currency: product.currency,
-					value: product.cost,
-				},
-			};
-		} );
-		if ( total_tax ) {
-			displayItems = concat( displayItems, {
-				label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
-				amount: { currency, value: total_tax },
-			} );
-		}
-
-		const paymentDetails = {
-			total: {
-				label: translate( 'Total' ),
-				amount: {
-					currency: cart.currency,
-					value: cart.total_cost,
-				},
-			},
-			displayItems,
-		};
-
-		return new PaymentRequest( supportedPaymentMethods, paymentDetails, PAYMENT_REQUEST_OPTIONS );
-	};
-
-	/**
-	 * @param {string} paymentMethod  Payment method.
-	 * @param {DOMEvent} event        Button even.
-	 */
-	submit = ( paymentMethod, event ) => {
-		event.persist();
-		event.preventDefault();
-
-		switch ( paymentMethod ) {
-			case WEB_PAYMENT_APPLE_PAY_METHOD:
-				{
-					const paymentRequest = this.getPaymentRequestForApplePay();
-
-					try {
-						paymentRequest
-							.show()
-							.then( paymentResponse => {
-								const { payerName, details } = paymentResponse;
-								const { token } = details;
-
-								if ( 'EC_v1' !== token.paymentData.version ) {
-									return; // Not supported yet.
-								}
-
-								const cardRawDetails = {
-									tokenized_payment_data: token.paymentData,
-									name: payerName,
-									country: getTaxCountryCode( this.props.cart ),
-									'postal-code': getTaxPostalCode( this.props.cart ),
-									card_brand: token.paymentMethod.network,
-									card_display_name: token.paymentMethod.displayName,
-								};
-
-								setPayment( newCardPayment( cardRawDetails ) );
-								this.props.onSubmit( event );
-								paymentResponse.complete( 'success' );
-							} )
-							.catch( error => {
-								debug( 'Error while showing the payment request', error );
-							} );
-					} catch ( error ) {
-						debug( 'Error while running the payment request', error );
-					}
-				}
-				break;
-
-			case WEB_PAYMENT_BASIC_CARD_METHOD:
-				{
-					const paymentRequest = this.getPaymentRequestForBasicCard();
-
-					try {
-						paymentRequest
-							.show()
-							.then( paymentResponse => {
-								const { details } = paymentResponse;
-								const { billingAddress } = details;
-
-								const cardRawDetails = {
-									number: details.cardNumber,
-									cvv: details.cardSecurityCode,
-									'expiration-date': details.expiryMonth + '/' + details.expiryYear.substr( 2 ),
-									name: details.cardholderName,
-									country: billingAddress.country,
-									'postal-code': billingAddress.postalCode,
-								};
-
-								setPayment( newCardPayment( cardRawDetails ) );
-								this.props.onSubmit( event );
-								paymentResponse.complete();
-							} )
-							.catch( error => {
-								debug( 'Error while showing the payment request', error );
-							} );
-					} catch ( error ) {
-						debug( 'Error while running the payment request', error );
-					}
-				}
-				break;
-
-			default:
-				debug( `Unknown or unhandled payment method ${ paymentMethod }.` );
-		}
-	};
-
-	/**
-	 * @param {object} event  Event object.
-	 */
-	updateSelectedPostalCode = event => {
-		const { name: key, value } = event.target;
-
-		if ( 'postal-code' === key ) {
+	const [ postalCodeInputValue, setPostalCodeInputValue ] = useState( postalCode );
+	const [ debouncedPostalCode ] = useDebounce( postalCodeInputValue, 400 );
+	useEffect( () => {
+		setTaxPostalCode( debouncedPostalCode );
+	}, [ debouncedPostalCode ] );
+	const updatePostalCode = event => {
+		const value = event.target.value;
+		if ( disablePostalCodeDebounce ) {
 			setTaxPostalCode( value );
 		}
+		setPostalCodeInputValue( value );
 	};
 
-	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		const paymentMethod = this.detectedPaymentMethod;
-		const { cart, translate, countriesList } = this.props;
-		const countryCode = getTaxCountryCode( cart );
-		const postalCode = getTaxPostalCode( cart );
+	if ( ! paymentMethod ) {
+		return null;
+	}
+	const paymentType = getPaymentTypeFromPaymentMethod( paymentMethod );
 
-		if ( ! paymentMethod ) {
-			return null;
-		}
+	const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
+		overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+	);
+	const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
 
-		const buttonState = this.getButtonState();
-		const buttonDisabled = buttonState.disabled || ! countryCode || ! postalCode;
-		let button;
-
-		switch ( paymentMethod ) {
-			case WEB_PAYMENT_APPLE_PAY_METHOD:
-				if ( buttonState.default ) {
-					button = (
-						<button
-							type="submit"
-							onClick={ event => this.submit( paymentMethod, event ) }
-							disabled={ buttonDisabled }
-							className="web-payment-box__apple-pay-button"
-						/>
-					);
-				} else {
-					button = (
-						<Button
-							type="button"
-							className="button is-primary button-pay pay-button__button"
-							busy={ buttonState.disabled }
-							disabled={ buttonDisabled }
-						>
-							{ buttonState.text }
-						</Button>
-					);
-				}
-				break;
-
-			case WEB_PAYMENT_BASIC_CARD_METHOD:
-				button = (
-					<Button
-						type="submit"
-						className="button is-primary button-pay pay-button__button"
-						onClick={ event => this.submit( paymentMethod, event ) }
-						busy={ buttonState.disabled }
-						disabled={ buttonDisabled }
-					>
-						{ buttonState.text }
-					</Button>
-				);
-				break;
-
-			default:
-				debug( `Unknown payment method ${ paymentMethod }.` );
-		}
-
-		return (
-			<form autoComplete="off">
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<React.Fragment>
+			<form>
 				<div className="checkout__payment-box-sections">
 					<div className="checkout__payment-box-section">
 						<PaymentCountrySelect
@@ -482,7 +95,9 @@ export class WebPaymentBox extends React.Component {
 							name="country"
 							label={ translate( 'Country', { textOnly: true } ) }
 							countriesList={ countriesList }
-							onCountrySelected={ rearg( setTaxCountryCode, [ 1 ] ) }
+							onCountrySelected={ ( fieldName, selectedCountryCode ) =>
+								setTaxCountryCode( selectedCountryCode )
+							}
 							value={ countryCode }
 							eventFormName="Checkout Form"
 						/>
@@ -490,22 +105,29 @@ export class WebPaymentBox extends React.Component {
 							additionalClasses="checkout-field"
 							name="postal-code"
 							label={ translate( 'Postal Code', { textOnly: true } ) }
-							onChange={ this.updateSelectedPostalCode }
-							value={ postalCode }
+							onChange={ updatePostalCode }
+							value={ getPostalCodeStringFromPostalCode( postalCodeInputValue ) }
 							eventFormName="Checkout Form"
 						/>
 					</div>
 				</div>
-
-				{ this.props.children }
-
+				{ children }
 				<RecentRenewals cart={ cart } />
-
 				<CheckoutTerms cart={ cart } />
-
-				<span className="payment-box__payment-buttons">
+				<span className={ 'payment-box__payment-buttons' }>
 					<span className="pay-button">
-						<span className="payment-request-button">{ button }</span>
+						<span className="payment-request-button">
+							<StripeHookProvider>
+								<WebPayButton
+									countryCode={ countryCode }
+									postalCode={ disablePostalCodeDebounce ? postalCode : debouncedPostalCode }
+									cart={ cart }
+									onSubmit={ onSubmit }
+									paymentType={ paymentType }
+									translate={ translate }
+								/>
+							</StripeHookProvider>
+						</span>
 						<SubscriptionText cart={ cart } />
 					</span>
 					<div className="checkout__secure-payment">
@@ -514,11 +136,251 @@ export class WebPaymentBox extends React.Component {
 							{ translate( 'Secure Payment' ) }
 						</div>
 					</div>
+
+					{ showPaymentChatButton && (
+						<PaymentChatButton paymentType={ paymentType } cart={ cart } />
+					) }
 				</span>
 			</form>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+			<CartCoupon cart={ cart } />
+			<CartToggle />
+		</React.Fragment>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
+WebPaymentBox.propTypes = {
+	cart: PropTypes.shape( {
+		currency: PropTypes.string.isRequired,
+		total_cost: PropTypes.number.isRequired,
+		products: PropTypes.array.isRequired,
+	} ).isRequired,
+	countriesList: PropTypes.array.isRequired,
+	onSubmit: PropTypes.func.isRequired,
+	presaleChatAvailable: PropTypes.bool,
+	translate: PropTypes.func.isRequired,
+	disablePostalCodeDebounce: PropTypes.bool,
+};
+
+function WebPayButton( { countryCode, postalCode, cart, onSubmit, paymentType, translate } ) {
+	const { currency, total_cost_integer, sub_total_integer, total_tax_integer } = cart;
+	const isRenewal = hasRenewalItem( cart );
+	const shouldDisplayItems = shouldShowTax( cart );
+	const { stripe, stripeConfiguration, isStripeLoading } = useStripe();
+	useEffect( () => {
+		stripe && setStripeObject( stripe, stripeConfiguration );
+	}, [ stripe, stripeConfiguration ] );
+
+	const paymentRequestOptions = usePaymentRequestOptions( {
+		translate,
+		sub_total_integer,
+		total_tax_integer,
+		total_cost_integer,
+		countryCode: getProcessorCountryFromStripeConfiguration( stripeConfiguration ),
+		currency,
+		shouldDisplayItems,
+	} );
+	const { paymentRequest, canMakePayment } = useStripePaymentRequest( {
+		stripe,
+		paymentRequestOptions,
+		countryCode,
+		postalCode,
+		onSubmit,
+		isRenewal,
+	} );
+
+	if ( ! stripe && ! isStripeLoading ) {
+		throw new Error( 'Stripe is required but not available' );
 	}
+	const disabledReason = getDisabledReason( {
+		isStripeLoading,
+		canMakePayment,
+		postalCode,
+		countryCode,
+		translate,
+	} );
+	return (
+		<PaymentRequestButton
+			paymentRequest={ paymentRequest }
+			isRenewal={ isRenewal }
+			paymentType={ paymentType }
+			translate={ translate }
+			disabled={ !! disabledReason }
+			disabledReason={ disabledReason }
+		/>
+	);
+}
+
+WebPayButton.propTypes = {
+	countryCode: PropTypes.string,
+	postalCode: PropTypes.string,
+	cart: PropTypes.shape( {
+		currency: PropTypes.string.isRequired,
+		total_cost: PropTypes.number.isRequired,
+		products: PropTypes.array.isRequired,
+	} ).isRequired,
+	onSubmit: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
+};
+
+function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
+	return stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+}
+
+function getDisabledReason( {
+	isStripeLoading,
+	canMakePayment,
+	postalCode,
+	countryCode,
+	translate,
+} ) {
+	if ( isStripeLoading ) {
+		return translate( 'Loading…' );
+	}
+	if ( ! canMakePayment ) {
+		return translate( 'This payment method is unavailable' );
+	}
+	if ( ! postalCode || ! countryCode ) {
+		return translate( 'Please specify a country and postal code' );
+	}
+	return null;
+}
+
+function getPostalCodeStringFromPostalCode( postalCode ) {
+	return typeof postalCode === 'undefined' || postalCode === null ? '' : postalCode;
+}
+
+function usePaymentRequestOptions( {
+	translate,
+	sub_total_integer,
+	total_tax_integer,
+	total_cost_integer,
+	countryCode,
+	currency,
+	shouldDisplayItems,
+} ) {
+	const displayItems = useMemo(
+		() => getDisplayItems( { translate, sub_total_integer, total_tax_integer } ),
+		[ translate, sub_total_integer, total_tax_integer ]
+	);
+	const paymentRequestOptions = useMemo(
+		() => ( {
+			country: countryCode || 'US',
+			currency: currency.toLowerCase(),
+			displayItems: shouldDisplayItems ? displayItems : [],
+			total: getPaymentRequestTotalFromCart( { total_cost_integer }, translate ),
+			...PAYMENT_REQUEST_OPTIONS,
+		} ),
+		[ translate, countryCode, currency, total_cost_integer, displayItems, shouldDisplayItems ]
+	);
+	return paymentRequestOptions;
+}
+
+function useStripePaymentRequest( {
+	stripe,
+	paymentRequestOptions,
+	countryCode,
+	postalCode,
+	onSubmit,
+	isRenewal,
+} ) {
+	const [ canMakePayment, setCanMakePayment ] = useState( false );
+	const [ paymentRequest, setPaymentRequest ] = useState();
+
+	// We have to memoize this to prevent re-creating the paymentRequest
+	const callback = useMemo(
+		() => paymentMethodResponse => {
+			analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
+				is_renewal: isRenewal,
+			} );
+			completePaymentMethodTransaction( {
+				countryCode,
+				postalCode,
+				onSubmit,
+				...paymentMethodResponse,
+			} );
+		},
+		[ countryCode, postalCode, onSubmit, isRenewal ]
+	);
+
+	useEffect( () => {
+		let isSubscribed = true;
+		if ( ! stripe ) {
+			return;
+		}
+		debug( 'creating paymentRequest', paymentRequestOptions );
+		setCanMakePayment( false );
+		const request = stripe.paymentRequest( paymentRequestOptions );
+		request.canMakePayment().then( result => {
+			isSubscribed && setCanMakePayment( !! result );
+		} );
+		request.on( 'paymentmethod', callback );
+		setPaymentRequest( request );
+		return () => ( isSubscribed = false );
+	}, [ stripe, paymentRequestOptions, callback ] );
+
+	return { paymentRequest, canMakePayment };
+}
+
+function completePaymentMethodTransaction( {
+	countryCode,
+	postalCode,
+	onSubmit,
+	complete,
+	paymentMethod,
+	payerName,
+} ) {
+	const { id } = paymentMethod;
+
+	const newCardDetails = {
+		payment_key: id,
+		name: payerName,
+		country: countryCode,
+		'postal-code': postalCode,
+	};
+	debug( 'setting newCardDetails', newCardDetails );
+	setPayment( webPayment( newCardDetails ) );
+
+	// setStripeObject and setPayment use the Flux Dispatcher so they are
+	// deferred.  This defers the submit so it will occur after the Flux actions
+	// take effect.
+	setTimeout( () => onSubmit(), 0 );
+
+	complete( 'success' );
+}
+
+function getPaymentTypeFromPaymentMethod( paymentMethod ) {
+	switch ( paymentMethod ) {
+		case WEB_PAYMENT_APPLE_PAY_METHOD:
+			return 'apple-pay';
+
+		case WEB_PAYMENT_BASIC_CARD_METHOD:
+			return 'web-payment';
+
+		default:
+			debug( `Unknown payment method ${ paymentMethod }.` );
+			return '';
+	}
+}
+
+function getPaymentRequestTotalFromCart( cart, translate ) {
+	return {
+		label: translate( 'WordPress.com' ),
+		amount: cart.total_cost_integer ? cart.total_cost_integer : 0,
+	};
+}
+
+function getDisplayItems( { translate, sub_total_integer, total_tax_integer } ) {
+	return [
+		{
+			label: translate( 'Subtotal' ),
+			amount: sub_total_integer,
+		},
+		{
+			label: translate( 'Tax', { comment: 'The tax amount line-item in payment request' } ),
+			amount: total_tax_integer,
+		},
+	];
 }
 
 export default localize( WebPaymentBox );

@@ -6,6 +6,7 @@
  */
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies.
@@ -299,13 +300,21 @@ Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	);
 };
 
-Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, message, fn ) {
+Undocumented.prototype.sendInvites = function(
+	siteId,
+	usernamesOrEmails,
+	role,
+	message,
+	isExternal,
+	fn
+) {
 	debug( '/sites/:site_id:/invites/new query' );
 	return this.wpcom.req.post(
 		'/sites/' + siteId + '/invites/new',
 		{},
 		{
 			invitees: usernamesOrEmails,
+			is_external: isExternal,
 			role: role,
 			message: message,
 			source: 'calypso',
@@ -332,6 +341,14 @@ Undocumented.prototype.createInviteValidation = function( siteId, usernamesOrEma
 	);
 };
 
+// Used to preserve backslash in some known settings fields like custom time and date formats.
+function encode_backslash( value ) {
+	if ( typeof value !== 'string' || value.indexOf( '\\' ) === -1 ) {
+		return value;
+	}
+	return value.replace( /\\/g, '\\\\' );
+}
+
 /**
  * GET/POST site settings
  *
@@ -356,6 +373,14 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 
 	if ( 'get' === method ) {
 		return this.wpcom.req.get( path, { apiVersion }, fn );
+	}
+
+	// special treatment to preserve backslash in date_format
+	if ( body.date_format ) {
+		body.date_format = encode_backslash( body.date_format );
+	}
+	if ( body.time_format ) {
+		body.time_format = encode_backslash( body.time_format );
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
@@ -1083,46 +1108,36 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
 };
 
 /**
- * GET/POST transactions
+ * POST create a payment transaction
  *
- * @param {string} [method] The request method
  * @param {object} [data] The REQUEST data
  * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
  * @api public
  *
  * The post data format is: {
  *		payment_method: {string} The payment gateway,
  *		payment_key: {string} Either the cc token from the gateway, or the mp_ref from /me/stored_cards,
- *		products: {array} An array of products from the card,
- *		coupon: {string} A coupon code,
- *		currency: {string} The three letter currency code,
+ *		payment: {object} Payment details, including payment_method and payment_key,
+ *		cart: {object>shopping_cart} A Shopping cart object
+ *		domain_details: {object>contact_information} Optional set of domain contact information
+ *		locale: {string} Locale for translating strings in response data,
  * }
  */
-Undocumented.prototype.transactions = function( method, data, fn ) {
-	debug( '/me/transactions query' );
-
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	} else {
-		data = mapKeysRecursively( data, snakeCase );
-	}
-
-	return this._sendRequest(
-		{
-			path: '/me/transactions',
-			method: method,
-			body: data,
-		},
-		fn
-	);
+Undocumented.prototype.transactions = function( data, fn ) {
+	return this.wpcom.req.post( '/me/transactions', mapKeysRecursively( data, snakeCase ), fn );
 };
 
 Undocumented.prototype.updateCreditCard = function( params, fn ) {
-	const data = pick( params, [ 'country', 'zip', 'month', 'year', 'name' ] );
-	data.paygate_token = params.cardToken;
-
+	const data = pick( params, [
+		'country',
+		'zip',
+		'month',
+		'year',
+		'name',
+		'payment_partner',
+		'paygate_token',
+	] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
@@ -1137,6 +1152,19 @@ Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 	debug( '/me/paygate-configuration query' );
 
 	return this.wpcom.req.get( '/me/paygate-configuration', query, fn );
+};
+
+/**
+ * GET stripe configuration
+ *
+ * @param {Object} query - query parameters
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.stripeConfiguration = function( query, fn ) {
+	debug( '/me/stripe-configuration query' );
+
+	return this.wpcom.req.get( '/me/stripe-configuration', query, fn );
 };
 
 /**
@@ -1388,6 +1416,64 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
 	data.locale = getLocaleSlug();
 
 	return this.wpcom.req.post( '/signups/validation/user/', null, data, fn );
+};
+
+/**
+ * Sign up for a new passwordless user account
+ *
+ * @param {object} query - an object with the following values: email
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.usersEmailNew = function( query, fn ) {
+	debug( '/users/email/new' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	const args = {
+		path: '/users/email/new',
+		body: query,
+	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Sign up for a new user account and login immediately
+ * Onboard a new user
+ *
+ * @param {object} query - an object with the following values: email
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.createUserAccountFromEmailAddress = function( query, fn ) {
+	debug( '/users/email/onboard' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	const args = {
+		path: '/users/email/onboard',
+		body: query,
+	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Verify a new passwordless user account
+ *
+ * @param {object} query - an object with the following values: email, code
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.usersEmailVerification = function( query, fn ) {
+	debug( '/users/email/verification' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	const args = {
+		path: '/users/email/verification',
+		body: query,
+	};
+	return this.wpcom.req.post( args, fn );
 };
 
 /**
@@ -1818,10 +1904,10 @@ Undocumented.prototype.resetPasswordForMailbox = function( domainName, mailbox, 
 };
 
 Undocumented.prototype.isSiteImportable = function( site_url ) {
-	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
+	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
 	return this.wpcom.req.get(
-		{ path: '/site-importer-global/is-site-importable', apiNamespace: 'wpcom/v2' },
+		{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
 		{ site_url }
 	);
 };
@@ -1838,6 +1924,21 @@ Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
+	} );
+};
+
+Undocumented.prototype.importWithSiteImporter = function(
+	siteId,
+	importerStatus,
+	params,
+	targetUrl
+) {
+	debug( `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }` );
+
+	return this.wpcom.req.post( {
+		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
+		apiNamespace: 'wpcom/v2',
+		formData: [ [ 'import_status', JSON.stringify( importerStatus ) ], [ 'site_url', targetUrl ] ],
 	} );
 };
 
@@ -1888,12 +1989,35 @@ Undocumented.prototype.getQandA = function( query, site, fn ) {
 	);
 };
 
+// TODO: remove this once the auto-renewal toggle has been fully rolled out.
 Undocumented.prototype.cancelPurchase = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
 
 	return this.wpcom.req.post(
 		{
 			path: `/upgrades/${ purchaseId }/disable-auto-renew`,
+		},
+		fn
+	);
+};
+
+Undocumented.prototype.disableAutoRenew = function( purchaseId, fn ) {
+	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
+
+	return this.wpcom.req.post(
+		{
+			path: `/upgrades/${ purchaseId }/disable-auto-renew`,
+		},
+		fn
+	);
+};
+
+Undocumented.prototype.enableAutoRenew = function( purchaseId, fn ) {
+	debug( 'upgrades/{purchaseId}/enable-auto-renew' );
+
+	return this.wpcom.req.post(
+		{
+			path: `/upgrades/${ purchaseId }/enable-auto-renew`,
 		},
 		fn
 	);
@@ -2378,6 +2502,19 @@ Undocumented.prototype.applePayMerchantValidation = function( validationURL ) {
 
 Undocumented.prototype.domainsVerifyRegistrantEmail = function( domain, email, token ) {
 	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { email, token } );
+};
+
+Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function(
+	domain,
+	recipientId,
+	token,
+	command
+) {
+	return this.wpcom.req.get( `/domains/${ domain }/outbound-transfer-confirmation-check`, {
+		recipient_id: recipientId,
+		token,
+		command,
+	} );
 };
 
 export default Undocumented;

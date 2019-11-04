@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 
@@ -120,24 +120,42 @@ class PeopleInvites extends React.PureComponent {
 		}
 
 		const hasAcceptedInvites = acceptedInvites && acceptedInvites.length > 0;
-		const acceptedInviteCount = hasAcceptedInvites ? acceptedInvites.length : null;
+		const acceptedInviteCount = hasAcceptedInvites ? acceptedInvites.length : 0;
 
 		const hasPendingInvites = pendingInvites && pendingInvites.length > 0;
-		const pendingInviteCount = hasPendingInvites ? pendingInvites.length : null;
+		const pendingInviteCount = hasPendingInvites ? pendingInvites.length : 0;
 
 		if ( ! hasPendingInvites && ! hasAcceptedInvites ) {
 			return requesting ? this.renderPlaceholder() : this.renderEmptyContent();
 		}
 
+		const pendingLabel = translate(
+			'You have a pending invite for %(numberPeople)d user',
+			'You have pending invites for %(numberPeople)d users',
+			{
+				args: {
+					numberPeople: pendingInviteCount,
+				},
+				count: pendingInviteCount,
+			}
+		);
+
+		const acceptedLabel = translate(
+			'%(numberPeople)d user has accepted your invite',
+			'%(numberPeople)d users have accepted your invites',
+			{
+				args: {
+					numberPeople: acceptedInviteCount,
+				},
+				count: acceptedInviteCount,
+			}
+		);
+
 		return (
 			<React.Fragment>
 				{ hasPendingInvites ? (
 					<div className="people-invites__pending">
-						<PeopleListSectionHeader
-							label={ translate( 'Pending' ) }
-							count={ pendingInviteCount }
-							site={ site }
-						/>
+						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
 						<Card className="people-invites__invites-list">
 							{ pendingInvites.map( this.renderInvite ) }
 						</Card>
@@ -149,8 +167,7 @@ class PeopleInvites extends React.PureComponent {
 				{ hasAcceptedInvites && (
 					<div className="people-invites__accepted">
 						<PeopleListSectionHeader
-							label={ translate( 'Accepted' ) }
-							count={ acceptedInviteCount }
+							label={ acceptedLabel }
 							// Excluding `site=` hides the "Invite user" link.
 						>
 							{ this.renderClearAll() }
@@ -197,22 +214,20 @@ class PeopleInvites extends React.PureComponent {
 	}
 
 	renderEmptyContent() {
-		return <EmptyContent title={ null } action={ this.renderInviteUsersAction() } />;
+		const emptyTitle = this.props.translate(
+			'Invite people to follow your site or help you manage it.'
+		);
+		return <EmptyContent title={ emptyTitle } action={ this.renderInviteUsersAction() } />;
 	}
 
 	renderInviteUsersAction( isPrimary = true ) {
 		const { site, translate } = this.props;
 
 		return (
-			<div className="people-invites__invite-users-action">
-				<div className="people-invites__invite-users-message">
-					{ translate( 'Invite people to follow your site or help you manage it.' ) }
-				</div>
-				<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
-					<Gridicon icon="user-add" />
-					{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
-				</Button>
-			</div>
+			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
+				<Gridicon icon="user-add" />
+				<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+			</Button>
 		);
 	}
 

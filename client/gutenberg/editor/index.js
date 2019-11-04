@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'my-sites/controller';
-import { post, redirect } from './controller';
+import { authenticate, post, redirect } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -20,6 +20,7 @@ export default function() {
 		'/block-editor/post/:site/:post?',
 		siteSelection,
 		redirect,
+		authenticate,
 		post,
 		makeLayout,
 		clientRender
@@ -31,6 +32,7 @@ export default function() {
 		'/block-editor/page/:site/:post?',
 		siteSelection,
 		redirect,
+		authenticate,
 		post,
 		makeLayout,
 		clientRender
@@ -43,6 +45,7 @@ export default function() {
 			'/block-editor/edit/:customPostType/:site/:post?',
 			siteSelection,
 			redirect,
+			authenticate,
 			post,
 			makeLayout,
 			clientRender

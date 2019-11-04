@@ -50,7 +50,7 @@ class ProductSearch extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { siteId: oldSiteId } = this.props;
 		const { siteId: newSiteId, query } = newProps;
 

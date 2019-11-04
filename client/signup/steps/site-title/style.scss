@@ -10,7 +10,7 @@
 	// Mimic a card
 	.form-fieldset {
 		border-radius: 4px;
-		background: var( --color-white );
+		background: var( --color-surface );
 		@include elevation ( 2dp );
 	}
 
@@ -22,7 +22,7 @@
 
 	input {
 		// Extra padding to account for the button
-		padding: 10px 100px 12px 16px;
+		padding: 10px 90px 12px 16px;
 
 		// Match the radious of the fieldset
 		border-radius: 4px;
@@ -35,6 +35,7 @@
 		@include breakpoint( '<660px' ) {
 			padding-top: 15px;
 			padding-bottom: 15px;
+			padding-right: 100px;
 
 			// The rounded borders look strange on
 			// smaller screens.
@@ -44,10 +45,6 @@
 		&:focus {
 			box-shadow: 0 0 0 3px var( --color-accent-light );
 		}
-	}
-
-	button {
-		@include elevation ( 1dp );
 	}
 
 	.card {
@@ -64,7 +61,7 @@
 
 	.gridicon {
 		margin-bottom: -3px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -87,7 +84,7 @@
 		top: 3px;
 		right: 3px;
 		width: auto;
-		padding: 5px 8px;
+		padding: 8px;
 		transition: none;
 
 		.gridicon {
@@ -101,7 +98,7 @@
 body.is-section-signup {
 	.site-title__wrapper .site-title__field-control button.button {
 		@include breakpoint( '<660px' ) {
-			padding: 9px 12px;
+			padding: 12px;
 		}
 	}
 }

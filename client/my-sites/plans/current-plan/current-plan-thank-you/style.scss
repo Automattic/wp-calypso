@@ -1,0 +1,46 @@
+.current-plan-thank-you {
+	display: flex;
+	flex-direction: row;
+	max-width: 720px;
+
+	@include breakpoint( '>800px' ) {
+		font-size: 16px;
+		padding: 20px 0;
+	}
+
+	&__title {
+		font-size: 24px;
+
+		@include breakpoint( '<660px' ) {
+			text-align: center;
+		}
+	}
+
+	&__link {
+		font-size: 14px;
+	}
+
+	.progress-bar {
+		@include breakpoint( '>660px' ) {
+			max-width: 80%;
+		}
+	}
+
+	.button {
+		padding-right: 80px;
+		padding-left: 80px;
+
+		@include breakpoint( '<660px' ) {
+			text-align: center;
+			width: 100%;
+		}
+	}
+}
+
+.current-plan-thank-you__illustration {
+	margin-right: 32px;
+
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
+}

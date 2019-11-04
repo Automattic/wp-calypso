@@ -30,6 +30,7 @@
 		flex-direction: column;
 		flex: auto;
 		min-height: 0; // permits the .language-picker__modal-list to shrink below its min height
+		overflow: inherit;
 		padding: 0;
 	}
 
@@ -42,6 +43,13 @@
 		flex: none;
 		margin-bottom: 0;
 		z-index: 10;
+
+		@include breakpoint( '<660px' ) {
+			.search.has-focus {
+				margin: 0 4px;
+				width: calc( 100% - 8px );
+			}
+		}
 	}
 }
 
@@ -86,7 +94,7 @@
 
 	&.is-selected {
 		background: var( --color-primary );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 

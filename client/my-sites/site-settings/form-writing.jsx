@@ -65,16 +65,6 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__general-settings"
 			>
-				{ isMasterbarSectionVisible && (
-					<div>
-						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
-						<Masterbar
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-						/>
-					</div>
-				) }
-
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
 						<QueryTaxonomies siteId={ siteId } postType="post" />
@@ -128,7 +118,7 @@ class SiteSettingsFormWriting extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Content types' ) }
+					title={ translate( 'Content Types' ) }
 				/>
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -184,6 +174,16 @@ class SiteSettingsFormWriting extends Component {
 							title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
 						/>
 						<PressThis />
+					</div>
+				) }
+
+				{ isMasterbarSectionVisible && (
+					<div>
+						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
+						<Masterbar
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+						/>
 					</div>
 				) }
 			</form>

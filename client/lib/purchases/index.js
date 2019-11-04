@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
+import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -22,7 +22,7 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/upgrades/actions';
+import { addItems } from 'lib/cart/actions';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -71,6 +71,13 @@ function getName( purchase ) {
 	return purchase.productName;
 }
 
+function getPartnerName( purchase ) {
+	if ( isPartnerPurchase( purchase ) ) {
+		return purchase.partnerName;
+	}
+	return null;
+}
+
 function getSubscriptionEndDate( purchase ) {
 	return purchase.expiryMoment.format( 'LL' );
 }
@@ -82,7 +89,7 @@ function getSubscriptionEndDate( purchase ) {
  * @param {string} siteSlug - the site slug to renew the purchase for
  */
 function handleRenewNowClick( purchase, siteSlug ) {
-	const renewItem = cartItems.getRenewalItemFromProduct( purchase, {
+	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
 	const renewItems = [ renewItem ];
@@ -135,10 +142,7 @@ function isExpired( purchase ) {
 }
 
 function isExpiring( purchase ) {
-	return includes(
-		[ 'cardExpired', 'cardExpiring', 'manualRenew', 'expiring' ],
-		purchase.expiryStatus
-	);
+	return includes( [ 'manualRenew', 'expiring' ], purchase.expiryStatus );
 }
 
 function isIncludedWithPlan( purchase ) {
@@ -155,6 +159,10 @@ function isPaidWithPaypal( purchase ) {
 
 function isPaidWithCredits( purchase ) {
 	return 'undefined' !== typeof purchase.payment && 'credits' === purchase.payment.type;
+}
+
+function hasPaymentMethod( purchase ) {
+	return 'undefined' !== typeof purchase.payment && null != purchase.payment.type;
 }
 
 function isPendingTransfer( purchase ) {
@@ -217,9 +225,20 @@ function maybeWithinRefundPeriod( purchase ) {
 }
 
 /**
+ * Checks if a purchase have a bound payment method that we can recharge.
+ * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} if the purchase can be recharged by us through the bound payment method.
+ */
+function isRechargeable( purchase ) {
+	return purchase.isRechargeable;
+}
+
+/**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
  * Purchases usually can be refunded up to 30 days after purchase.
- * Domains and domain mappings can be refunded up to 48 hours.
+ * Domains and domain mappings can be refunded up to 96 hours.
  * Purchases included with plan can't be refunded.
  *
  * If this function returns false but you want to see if the subscription may
@@ -241,6 +260,10 @@ function isRefundable( purchase ) {
  * @return {boolean} true if the purchase can be removed, false otherwise
  */
 function isRemovable( purchase ) {
+	if ( isRefundable( purchase ) ) {
+		return false;
+	}
+
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
@@ -253,10 +276,12 @@ function isRemovable( purchase ) {
 		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
-		( isDomainTransfer( purchase ) &&
-			! isRefundable( purchase ) &&
-			isPurchaseCancelable( purchase ) )
+		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) )
 	);
+}
+
+function isPartnerPurchase( purchase ) {
+	return !! purchase.partnerName;
 }
 
 /**
@@ -306,6 +331,10 @@ function isPaidWithPayPalDirect( purchase ) {
 
 function hasCreditCardData( purchase ) {
 	return Boolean( purchase.payment.creditCard.expiryMoment );
+}
+
+function shouldAddPaymentSourceInsteadOfRenewingNow( expiryMoment ) {
+	return expiryMoment > moment().add( 3, 'months' );
 }
 
 /**
@@ -367,6 +396,10 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 
+	if ( isPartnerPurchase( purchase ) ) {
+		return i18n.translate( 'Host Managed Plan' );
+	}
+
 	if ( isPlan( purchase ) ) {
 		return i18n.translate( 'Site Plan' );
 	}
@@ -405,6 +438,7 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
@@ -415,10 +449,13 @@ export {
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isPaidWithCredits,
+	isPartnerPurchase,
+	hasPaymentMethod,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isRechargeable,
 	isRefundable,
 	isRemovable,
 	isRenewable,
@@ -431,4 +468,5 @@ export {
 	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
 };

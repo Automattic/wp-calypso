@@ -19,8 +19,11 @@ import analytics from 'lib/analytics';
 import compareProps from 'lib/compare-props';
 import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 
 class ToolsMenu extends PureComponent {
 	static propTypes = {
@@ -35,28 +38,22 @@ class ToolsMenu extends PureComponent {
 	};
 
 	getPluginItem() {
-		const { isAtomicSite, siteSlug, translate } = this.props;
-		const buttonLink = siteSlug ? `/plugins/manage/${ siteSlug }` : '/plugins/manage';
+		const { canManagePlugins, isAtomicSite, translate } = this.props;
 
 		return {
 			name: 'plugins',
 			label: translate( 'Plugins' ),
 			capability: 'manage_options',
-			queryable: ! isAtomicSite,
+			queryable: ! config.isEnabled( 'calypsoify/plugins' ) || ! isAtomicSite,
 			config: 'manage/plugins',
 			link: '/plugins',
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
-			showOnAllMySites: true,
-			buttonLink: ! isAtomicSite ? buttonLink : '',
-			buttonText: translate( 'Manage' ),
-			extraIcon: isAtomicSite ? 'chevron-right' : null,
-			customClassName: isAtomicSite ? 'sidebar__plugins-item' : '',
-			forceInternalLink: isAtomicSite,
+			showOnAllMySites: canManagePlugins,
 		};
 	}
 
-	getImportItem = () => {
+	getImportItem() {
 		const { isJetpack, translate } = this.props;
 
 		return {
@@ -64,14 +61,25 @@ class ToolsMenu extends PureComponent {
 			label: translate( 'Import' ),
 			capability: 'manage_options',
 			queryable: ! isJetpack,
-			config: 'manage/import-in-sidebar',
-			link: '/settings/import', // @TODO make it a top level section & add a redirect
-			paths: [ '/settings/import' ],
+			link: '/import',
+			paths: [ '/import' ],
 			wpAdminLink: 'import.php',
-			showOnAllMySites: false,
-			forceInternalLink: ! isJetpack,
 		};
-	};
+	}
+
+	getExportItem() {
+		const { isJetpack, translate } = this.props;
+
+		return {
+			name: 'export',
+			label: translate( 'Export' ),
+			capability: 'manage_options',
+			queryable: ! isJetpack,
+			link: '/export',
+			paths: [ '/export' ],
+			wpAdminLink: 'export.php',
+		};
+	}
 
 	onNavigate = postType => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
@@ -82,6 +90,8 @@ class ToolsMenu extends PureComponent {
 		} );
 		this.props.onNavigate();
 	};
+
+	expandToolsSection = () => this.props.expandSection( SIDEBAR_SECTION_TOOLS );
 
 	renderMenuItem( menuItem ) {
 		const { canCurrentUser, siteId, siteAdminUrl } = this.props;
@@ -106,7 +116,6 @@ class ToolsMenu extends PureComponent {
 
 		return (
 			<SidebarItem
-				className={ menuItem.customClassName }
 				key={ menuItem.name }
 				label={ menuItem.label }
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
@@ -114,21 +123,13 @@ class ToolsMenu extends PureComponent {
 				onNavigate={ this.onNavigate( menuItem.name ) }
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
-				forceInternalLink={ menuItem.forceInternalLink }
+				expandSection={ this.expandToolsSection }
 			/>
 		);
 	}
 
 	render() {
-		const menuItems = [];
-
-		if ( config.isEnabled( 'calypsoify/plugins' ) ) {
-			menuItems.push( this.getPluginItem() );
-		}
-
-		if ( config.isEnabled( 'manage/import-in-sidebar' ) ) {
-			menuItems.push( this.getImportItem() );
-		}
+		const menuItems = [ this.getPluginItem(), this.getImportItem(), this.getExportItem() ];
 
 		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
 	}
@@ -136,6 +137,7 @@ class ToolsMenu extends PureComponent {
 
 export default connect(
 	( state, { siteId } ) => ( {
+		canManagePlugins: canCurrentUserManagePlugins( state ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
@@ -143,7 +145,7 @@ export default connect(
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	} ),
-	{ recordTracksEvent },
+	{ expandSection, recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser' ] } ) }
 )( localize( ToolsMenu ) );

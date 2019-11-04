@@ -12,6 +12,7 @@ import AsyncBaseContainer from '../async-base-container';
 import DisconnectSurveyPage from './disconnect-survey-page.js';
 
 import * as DriverHelper from '../driver-helper.js';
+import NoticesComponent from '../components/notices-component';
 
 export default class SettingsPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -81,7 +82,8 @@ export default class SettingsPage extends AsyncBaseContainer {
 		);
 		if ( present ) {
 			await DriverHelper.clickWhenClickable( this.driver, By.css( '.is-primary.is-scary' ) );
-			return await DriverHelper.isElementPresent( this.driver, By.css( '.notice.is-success' ) );
+			const noticesComponent = await NoticesComponent.Expect( this.driver );
+			return await noticesComponent.isSuccessNoticeDisplayed();
 		}
 		const surveyPage = await DisconnectSurveyPage.Expect( this.driver );
 		return await surveyPage.skipSurveyAndDisconnectSite();

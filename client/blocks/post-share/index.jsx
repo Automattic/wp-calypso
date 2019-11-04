@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { current as currentPage } from 'page';
 
 /**

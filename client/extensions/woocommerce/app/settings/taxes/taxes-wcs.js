@@ -71,7 +71,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		const oldSiteId = siteId || null;
@@ -144,7 +144,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		return (
 			<div className="taxes__nexus">
 				<ExtendedHeader
-					label={ translate( 'Store Address' ) }
+					label={ translate( 'Store address' ) }
 					description={ translate(
 						'The address of where your business is located for tax purposes.'
 					) }

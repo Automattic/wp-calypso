@@ -38,13 +38,6 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 		);
 	}
 
-	async inviteSent() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '.notice__text' )
-		);
-	}
-
 	async backToPeopleMenu() {
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickMySites();

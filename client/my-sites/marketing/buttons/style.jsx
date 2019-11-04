@@ -7,11 +7,14 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SharingButtonsStyle extends React.Component {
 	static displayName = 'SharingButtonsStyle';
@@ -28,7 +31,13 @@ class SharingButtonsStyle extends React.Component {
 	};
 
 	onChange = value => {
+		const { path } = this.props;
+
 		this.props.onChange( value );
+		analytics.tracks.recordEvent( 'calypso_sharing_buttons_style_radio_button_click', {
+			value,
+			path,
+		} );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
 	};
 
@@ -88,4 +97,6 @@ class SharingButtonsStyle extends React.Component {
 	}
 }
 
-export default localize( SharingButtonsStyle );
+export default connect( state => {
+	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
+} )( localize( SharingButtonsStyle ) );

@@ -1,6 +1,6 @@
 .diff-viewer__filename {
 	padding: 2px 4px;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	font-weight: 500;
 }
 
@@ -18,7 +18,7 @@
 	display: flex;
 	flex-direction: column;
 	text-align: right;
-	background-color: var( --color-neutral-100 );
+	background-color: var( --color-neutral-10 );
 	color: var( --color-text-subtle );
 }
 
@@ -35,11 +35,13 @@
 	}
 
 	& del {
-		background-color: var( --color-error-200 );
+		background-color: var( --color-error-10 );
+		color: var( --color-error-80 );
 		text-decoration: none;
 	}
 
 	& ins {
-		background-color: var( --color-success-200 );
+		background-color: var( --color-success-10 );
+		color: var( --color-success-80 );
 	}
 }

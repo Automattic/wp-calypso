@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
 import { map, includes } from 'lodash';
+import { parse as parseUrl, format as formatUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -14,6 +12,23 @@ import { map, includes } from 'lodash';
 import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
+
+const getPromises = {};
+
+/**
+ * De-duplicates repeated GET fetches of the same URL while one is taking place.
+ * Once it's finished, it'll allow for the same request to be done again.
+ * @param {string} url The URL to fetch
+ *
+ * @returns {Promise} The fetch promise.
+ */
+function dedupedGet( url ) {
+	if ( ! ( url in getPromises ) ) {
+		getPromises[ url ] = fetch( url ).finally( () => delete getPromises[ url ] );
+	}
+
+	return getPromises[ url ];
+}
 
 /**
  * Get the protocol, domain, and path part of the language file URL.
@@ -54,12 +69,25 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 	document.body.classList[ isRTL ? 'add' : 'remove' ]( 'rtl' );
 
-	const directionFlag = isRTL ? '-rtl' : '';
-	const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
-	const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
-
-	switchCSS( 'main-css', cssUrl );
 	switchWebpackCSS( isRTL );
+}
+
+async function getLanguageFile( targetLocaleSlug ) {
+	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
+
+	const response = await dedupedGet( url );
+	if ( response.ok ) {
+		if ( response.bodyUsed ) {
+			// If the body was already used, we assume that we already parsed the
+			// response and set the locale in the DOM, so we don't need to do anything
+			// else here.
+			return;
+		}
+		return await response.json();
+	}
+
+	// Invalid response.
+	throw new Error();
 }
 
 let lastRequestedLocale = null;
@@ -88,51 +116,89 @@ export default function switchLocale( localeSlug ) {
 		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
 		setLocaleInDOM( domLocaleSlug, !! language.rtl );
 	} else {
-		request.get( getLanguageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
-			if ( error ) {
+		getLanguageFile( targetLocaleSlug ).then(
+			// Success.
+			body => {
+				if ( body ) {
+					// Handle race condition when we're requested to switch to a different
+					// locale while we're in the middle of request, we should abandon result
+					if ( targetLocaleSlug !== lastRequestedLocale ) {
+						return;
+					}
+
+					i18n.setLocale( body );
+
+					setLocaleInDOM( domLocaleSlug, !! language.rtl );
+
+					loadUserUndeployedTranslations( targetLocaleSlug );
+				}
+			},
+			// Failure.
+			() => {
 				debug(
-					'Encountered an error loading locale file for ' +
-						localeSlug +
-						'. Falling back to English.'
+					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
 				);
-				return;
 			}
-
-			// Handle race condition when we're requested to switch to a different
-			// locale while we're in the middle of request, we should abondon result
-			if ( targetLocaleSlug !== lastRequestedLocale ) {
-				return;
-			}
-
-			i18n.setLocale( response.body );
-
-			setLocaleInDOM( domLocaleSlug, !! language.rtl );
-		} );
+		);
 	}
 }
 
-const bundles = {};
-
-async function switchCSS( elementId, cssUrl ) {
-	if ( bundles.hasOwnProperty( elementId ) && bundles[ elementId ] === cssUrl ) {
+export function loadUserUndeployedTranslations( currentLocaleSlug ) {
+	if ( ! location || ! location.search ) {
 		return;
 	}
 
-	bundles[ elementId ] = cssUrl;
+	const parsedURL = parseUrl( location.search, true );
 
-	const currentLink = document.getElementById( elementId );
+	const {
+		'load-user-translations': username,
+		project = 'wpcom',
+		translationSet = 'default',
+		translationStatus = 'current',
+		locale = currentLocaleSlug,
+	} = parsedURL.query;
 
-	if ( currentLink && currentLink.getAttribute( 'href' ) === cssUrl ) {
+	if ( ! username ) {
 		return;
 	}
 
-	const newLink = await loadCSS( cssUrl, currentLink );
-
-	if ( currentLink && currentLink.parentElement ) {
-		currentLink.parentElement.removeChild( currentLink );
+	if ( ! includes( [ 'current', 'waiting' ], translationStatus ) ) {
+		return;
 	}
 
-	newLink.id = elementId;
+	if ( 'waiting' === translationStatus ) {
+		// TODO only allow loading your own waiting translations. Disallow loading them for now.
+		return;
+	}
+
+	const pathname = [
+		'api',
+		'projects',
+		project,
+		locale,
+		translationSet,
+		'export-translations',
+	].join( '/' );
+
+	const query = {
+		'filters[user_login]': username,
+		'filters[status]': translationStatus,
+		format: 'json',
+	};
+
+	const requestUrl = formatUrl( {
+		protocol: 'https:',
+		host: 'translate.wordpress.com',
+		pathname,
+		query,
+	} );
+
+	return fetch( requestUrl, {
+		headers: { Accept: 'application/json' },
+		credentials: 'include',
+	} )
+		.then( res => res.json() )
+		.then( translations => i18n.addTranslations( translations ) );
 }
 
 /*

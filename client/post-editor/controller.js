@@ -27,8 +27,8 @@ import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -174,10 +174,9 @@ async function redirectIfBlockEditor( context, next ) {
 	// URLs with a set-editor=<editorName> param are used for indicating that the user wants to use always the given
 	// editor, so we update the selected editor for the current user/site pair.
 	const newEditorChoice = get( context.query, 'set-editor' );
-	const oldEditorChoice = getSelectedEditor( state, siteId );
 	const allowedEditors = [ 'classic', 'gutenberg' ];
 
-	if ( allowedEditors.indexOf( newEditorChoice ) !== -1 && newEditorChoice !== oldEditorChoice ) {
+	if ( allowedEditors.indexOf( newEditorChoice ) > -1 ) {
 		context.store.dispatch( setSelectedEditor( siteId, newEditorChoice ) );
 	}
 
@@ -186,11 +185,7 @@ async function redirectIfBlockEditor( context, next ) {
 		return next();
 	}
 
-	if ( ! isGutenbergEnabled( state, siteId ) ) {
-		return next();
-	}
-
-	if ( 'gutenberg' !== getSelectedEditor( state, siteId ) ) {
+	if ( ! shouldLoadGutenberg( state, siteId ) ) {
 		return next();
 	}
 

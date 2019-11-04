@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
@@ -100,9 +100,9 @@ class OrderPaymentCard extends Component {
 		if ( 'refunded' === order.status || codProcessing ) {
 			return null;
 		} else if ( isOrderWaitingPayment( order.status ) ) {
-			return <Button onClick={ this.markAsPaid }>{ translate( 'Mark as Paid' ) }</Button>;
+			return <Button onClick={ this.markAsPaid }>{ translate( 'Mark as paid' ) }</Button>;
 		}
-		return <Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>;
+		return <Button onClick={ this.toggleDialog }>{ translate( 'Submit refund' ) }</Button>;
 	};
 
 	markAsPaid = () => {

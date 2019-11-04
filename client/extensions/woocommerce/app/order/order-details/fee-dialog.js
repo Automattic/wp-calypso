@@ -42,7 +42,7 @@ class OrderFeeDialog extends Component {
 		total: 0,
 	};
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		// Dialog is being closed, clear the state
 		if ( this.props.isVisible && ! nextProps.isVisible ) {
 			this.setState( {
@@ -107,7 +107,7 @@ class OrderFeeDialog extends Component {
 		const dialogButtons = [
 			<Button onClick={ closeDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary onClick={ this.handleFeeSave } disabled={ ! canSave }>
-				{ translate( 'Add Fee' ) }
+				{ translate( 'Add fee' ) }
 			</Button>,
 		];
 

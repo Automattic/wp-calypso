@@ -83,7 +83,7 @@ class OrderProductDialog extends Component {
 		products: [],
 	};
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		// Dialog is being closed, clear the state
 		if ( this.props.isVisible && ! nextProps.isVisible ) {
 			this.setState( {
@@ -128,7 +128,7 @@ class OrderProductDialog extends Component {
 
 		// Fake 1 so the string is already at singular when the first item is selected
 		const productsCount = this.state.products.length ? this.state.products.length : 1;
-		const buttonLabel = translate( 'Add Product', 'Add Products', {
+		const buttonLabel = translate( 'Add product', 'Add products', {
 			count: productsCount,
 		} );
 

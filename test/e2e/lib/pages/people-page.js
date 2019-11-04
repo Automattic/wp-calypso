@@ -19,7 +19,6 @@ export default class PeoplePage extends AsyncBaseContainer {
 		this.searchInputSelector = By.css( '.section-nav__panel input.search__input' );
 		this.searchResultsLoadingSelector = By.css( '.people-profile.is-placeholder' );
 		this.peopleListItemSelector = By.css( '.people-list-item' );
-		this.successNoticeSelector = By.css( '.people-notices__notice.notice.is-success' );
 	}
 
 	async selectTeam() {
@@ -128,13 +127,6 @@ export default class PeoplePage extends AsyncBaseContainer {
 
 	async selectOnlyPersonDisplayed() {
 		return await DriverHelper.clickWhenClickable( this.driver, this.peopleListItemSelector );
-	}
-
-	async successNoticeDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			this.successNoticeSelector
-		);
 	}
 
 	async inviteUser() {

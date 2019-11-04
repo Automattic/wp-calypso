@@ -10,11 +10,6 @@ import React from 'react';
 import moment from 'moment';
 import { shallow } from 'enzyme';
 
-// Avoids a couple of warnings/errors from localforage and a network request:
-// - Unhandled promise rejection: Error: No available storage method found.
-// - superagent/lib/node/index.js:575 double callback!
-jest.mock( 'lib/user', () => () => {} );
-
 const mockGoBack = jest.fn();
 jest.mock( 'page', () => ( { back: mockGoBack } ) );
 

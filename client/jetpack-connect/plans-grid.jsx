@@ -28,7 +28,6 @@ class JetpackPlansGrid extends Component {
 		isLanding: PropTypes.bool,
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
-		countryCode: PropTypes.string,
 
 		// Connected
 		translate: PropTypes.func.isRequired,
@@ -53,6 +52,9 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
+		const { interval } = this.props;
+		const defaultInterval = 'yearly';
+
 		return (
 			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
@@ -64,10 +66,9 @@ class JetpackPlansGrid extends Component {
 							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
-							intervalType={ this.props.interval }
+							intervalType={ interval ? interval : defaultInterval }
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
-							countryCode={ this.props.countryCode }
 						/>
 
 						<PlansSkipButton onClick={ this.handleSkipButtonClick } />

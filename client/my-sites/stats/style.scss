@@ -46,20 +46,6 @@
 	}
 }
 
-// Welcome Stats message
-// -- extends .welcome-message /assets/stylesheets/shared/welcome.scss
-
-.stats-message {
-
-	// Container for 'Visit the old stats layout' link
-	@include breakpoint( '<480px' ) {
-		&.switch-stats {
-			text-align: center;
-		}
-	}
-}
-
-
 .stats__sticky-navigation.is-sticky .sticky-panel__content {
 	background: white;
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),

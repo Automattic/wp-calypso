@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, merge, omit, pick } from 'lodash';
 
 /**
@@ -20,7 +17,7 @@ import {
 	POST_SAVE,
 	POSTS_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { countsSchema } from './schema';
 
 /**
@@ -136,21 +133,20 @@ export const counts = ( () => {
 		} );
 	}
 
-	return createReducer(
-		{},
-		{
-			[ POST_COUNTS_RESET_INTERNAL_STATE ]: state => {
+	return withSchemaValidation( countsSchema, ( state = {}, action ) => {
+		switch ( action.type ) {
+			case POST_COUNTS_RESET_INTERNAL_STATE: {
 				currentUserId = undefined;
 				postStatuses = {};
 
 				return state;
-			},
-			[ CURRENT_USER_RECEIVE ]: ( state, action ) => {
+			}
+			case CURRENT_USER_RECEIVE: {
 				currentUserId = action.user.ID;
 
 				return state;
-			},
-			[ POSTS_RECEIVE ]: ( state, action ) => {
+			}
+			case POSTS_RECEIVE: {
 				action.posts.forEach( post => {
 					const postStatusKey = getPostStatusKey( post.site_ID, post.ID );
 					const postStatus = postStatuses[ postStatusKey ];
@@ -166,28 +162,29 @@ export const counts = ( () => {
 				} );
 
 				return state;
-			},
-			[ POST_SAVE ]: ( state, action ) => {
+			}
+			case POST_SAVE: {
 				const { siteId, postId, post } = action;
 				if ( ! post.status ) {
 					return state;
 				}
 
 				return transitionPostStateToStatus( state, siteId, postId, post.status );
-			},
-			[ POST_DELETE ]: ( state, action ) => {
+			}
+			case POST_DELETE: {
 				return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
-			},
-			[ POST_COUNTS_RECEIVE ]: ( state, action ) => {
+			}
+			case POST_COUNTS_RECEIVE: {
 				return merge( {}, state, {
 					[ action.siteId ]: {
 						[ action.postType ]: action.counts,
 					},
 				} );
-			},
-		},
-		countsSchema
-	);
+			}
+		}
+
+		return state;
+	} );
 } )();
 
 export default combineReducers( {

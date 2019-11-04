@@ -40,7 +40,6 @@ const StoreStatsPeriodNav = ( {
 	statType,
 	queryParams,
 } ) => {
-	// eslint-disable-next-line no-unused-vars
 	const { startDate, ...intervalQuery } = queryParams;
 	const intervalQueryString = qs.stringify( intervalQuery, { addQueryPrefix: true } );
 	return (

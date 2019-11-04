@@ -44,7 +44,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 		inviteKey: PropTypes.string.isRequired,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.deleteSuccess && ! this.props.deleteSuccess ) {
 			this.goBack();
 		}

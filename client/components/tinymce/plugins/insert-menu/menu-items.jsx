@@ -12,6 +12,15 @@ import i18n from 'i18n-calypso';
  */
 import config from 'config';
 import Gridicon from 'components/gridicon';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+
+const canUserUploadFiles = editor => {
+	const store = editor.getParam( 'redux_store' );
+	const state = store ? store.getState() : null;
+	const siteId = state ? getSelectedSiteId( state ) : null;
+	return state && siteId ? canCurrentUser( state, siteId, 'upload_files' ) : false;
+};
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const GridiconButton = ( { icon, label, e2e } ) => (
@@ -50,6 +59,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 				/>
 			),
 			cmd: 'googleAddMedia',
+			condition: canUserUploadFiles,
 		} );
 	}
 	if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
@@ -63,6 +73,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 				/>
 			),
 			cmd: 'pexelsAddMedia',
+			condition: canUserUploadFiles,
 		} );
 	}
 }
@@ -90,17 +101,3 @@ menuItems.push( {
 	),
 	cmd: 'simplePaymentsButton',
 } );
-
-if ( config.isEnabled( 'memberships' ) ) {
-	menuItems.push( {
-		name: 'insert_memberships_button',
-		item: (
-			<GridiconButton
-				icon={ <Gridicon icon="money" /> }
-				label={ i18n.translate( 'Recurring Payment' ) }
-				e2e="memberships"
-			/>
-		),
-		cmd: 'membershipsButton',
-	} );
-}

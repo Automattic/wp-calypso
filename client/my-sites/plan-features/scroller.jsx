@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { clamp, inRange, range, round } from 'lodash';
 import classNames from 'classnames';
 
@@ -221,7 +221,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		};
 	}
 
-	renderStyle( { styleWeights, borderSpacing, paneWidth, visibleIndex, visibleCount } ) {
+	renderStyle( { styleWeights, visibleIndex, visibleCount } ) {
 		const { cellSelector, planCount } = this.props;
 
 		if ( ! styleWeights ) {
@@ -230,9 +230,6 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 		return (
 			<>
-				<style>
-					{ `.plan-features__header::before { left: ${ -paneWidth - borderSpacing / 2 }px }` }
-				</style>
 				{ styleWeights.map( ( weight, index ) => {
 					const selector = `${ cellSelector }:nth-child(${ index + 1 })`;
 					const opacity = round( weight * ( 1 - MIN_PLAN_OPACITY ) + MIN_PLAN_OPACITY, 2 );
@@ -290,7 +287,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		const disabledLeft = 0 === vars.visibleIndex;
 		const disabledRight = planCount === vars.visibleIndex + vars.visibleCount;
 		const containerClass = classNames( 'plan-features__scroller-container', {
-			'scroll-snap-disabled': this.state.scrollSnapDisabled,
+			'scroll-snap-enabled': ! this.state.scrollSnapDisabled,
 		} );
 
 		return (
@@ -312,7 +309,11 @@ export default class PlanFeaturesScroller extends PureComponent {
 						<Gridicon icon="arrow-left" size={ 24 } />
 					</Button>
 				</div>
-				<div className="plan-features__scroller-wrapper" ref={ this.setWrapperRef }>
+				<div
+					className="plan-features__scroller-wrapper"
+					style={ { scrollPadding: `0 ${ vars.paneWidth + vars.borderSpacing / 2 }px` } }
+					ref={ this.setWrapperRef }
+				>
 					<div
 						className="plan-features__scroller"
 						style={ { width: vars.scrollerWidth, padding: vars.scrollerPadding } }

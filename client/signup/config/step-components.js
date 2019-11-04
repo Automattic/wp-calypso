@@ -16,14 +16,19 @@ const stepNameToModuleName = {
 	'domains-theme-preselected': 'domains',
 	'domains-launch': 'domains',
 	'from-url': 'import-url',
+	'import-preview': 'import-preview',
+	/* import-url will eventually replace from-url step. Forgive temporary naming. */
+	'import-url': 'import-url-onboarding',
 	launch: 'launch-site',
 	plans: 'plans',
+	'plans-business': 'plans',
+	'plans-ecommerce': 'plans',
+	'plans-import': 'plans',
 	'plans-launch': 'plans',
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
-	'plans-business': 'plans',
+	'plans-site-selected': 'plans',
 	'plans-store-nux': 'plans-atomic-store',
-	'plans-site-selected': 'plans-without-free',
 	site: 'site',
 	'rebrand-cities-welcome': 'rebrand-cities-welcome',
 	'rewind-migrate': 'rewind-migrate',
@@ -41,8 +46,6 @@ const stepNameToModuleName = {
 	'survey-user': 'survey-user',
 	test: 'test-step',
 	themes: 'theme-selection',
-	'website-themes': 'theme-selection',
-	'blog-themes': 'theme-selection',
 	'themes-site-selected': 'theme-selection',
 	user: 'user',
 	'oauth2-user': 'user',
@@ -54,6 +57,7 @@ const stepNameToModuleName = {
 	'site-topic-with-preview': 'site-topic',
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
+	passwordless: 'passwordless',
 };
 
 export async function getStepComponent( stepName ) {

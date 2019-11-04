@@ -26,7 +26,7 @@ export default function( ...propNames ) {
 			}, this );
 		},
 
-		componentWillReceiveProps: function( nextProps ) {
+		UNSAFE_componentWillReceiveProps: function( nextProps ) {
 			propNames.forEach( function( propName ) {
 				if ( this.props[ propName ] !== nextProps[ propName ] ) {
 					// unbind the change event from the existing property instance

@@ -158,16 +158,16 @@ class StatsSummary extends Component {
 				);
 				break;
 
-			case 'podcastdownloads':
-				title = translate( 'Podcasts' );
+			case 'filedownloads':
+				title = translate( 'File Downloads' );
 				summaryView = (
 					<StatsModule
-						key="podcastdownloads-summary"
-						path="podcastdownloads"
-						moduleStrings={ StatsStrings.podcastdownloads }
+						key="filedownloads-summary"
+						path="filedownloads"
+						moduleStrings={ StatsStrings.filedownloads }
 						period={ this.props.period }
 						query={ query }
-						statType="statsPodcastDownloads"
+						statType="statsFileDownloads"
 						summary
 					/>
 				);

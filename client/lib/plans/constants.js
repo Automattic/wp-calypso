@@ -1,4 +1,12 @@
-/** @format */
+/**
+ * Internal dependencies
+ */
+import {
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+} from 'lib/products-values/constants';
 
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
@@ -100,6 +108,7 @@ export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
 export const FEATURE_ADVANCED_SEO_TOOLS = 'advanced-seo-tools';
 export const FEATURE_FREE_THEMES_SIGNUP = 'free-themes-signup';
 export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP = 'unlimited-backup';
+export const FEATURE_MEMBERSHIPS = 'memberships';
 
 // jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -149,6 +158,10 @@ export const FEATURE_UNLIMITED_PRODUCTS_SERVICES = 'unlimited-products-service';
 export const FEATURE_ECOMMERCE_MARKETING = 'ecommerce-marketing';
 export const FEATURE_PREMIUM_CUSTOMIZABE_THEMES = 'premium-customizable-themes';
 export const FEATURE_ALL_BUSINESS_FEATURES = 'all-business-features';
+export const FEATURE_JETPACK_BACKUP_DAILY = PRODUCT_JETPACK_BACKUP_DAILY;
+export const FEATURE_JETPACK_BACKUP_DAILY_MONTHLY = PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY;
+export const FEATURE_JETPACK_BACKUP_REALTIME = PRODUCT_JETPACK_BACKUP_REALTIME;
+export const FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY = PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY;
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';

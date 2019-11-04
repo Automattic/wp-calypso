@@ -1,3 +1,7 @@
+.jetpack-checklist {
+	margin-bottom: 80px;
+}
+
 .jetpack-checklist__header {
 	display: flex;
 }
@@ -23,5 +27,26 @@
 		max-width: 80%;
 		display: block;
 		margin: 20px auto;
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
+	}
+}
+
+.jetpack-checklist__footer {
+	order: 2;
+	margin: 0;
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	@include breakpoint( '>660px' ) {
+		flex-direction: row;
+		justify-content: flex-end;
+		text-align: left;
+		p {
+			flex: 1;
+			margin: 0 20px 0 0;
+		}
 	}
 }

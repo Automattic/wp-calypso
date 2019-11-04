@@ -1,7 +1,5 @@
 /**
  * **** WARNING: No ES6 modules here. Not transpiled! ****
- *
- * @format
  */
 
 /* eslint-disable import/no-nodejs-modules */
@@ -9,8 +7,8 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
 const path = require( 'path' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
 
@@ -22,11 +20,18 @@ const config = require( 'config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const nodeExternals = require( 'webpack-node-externals' );
+const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 
 /**
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
+
+const fileLoader = FileConfig.loader( {
+	publicPath: isDevelopment ? '/calypso/evergreen/images/' : '/calypso/images/',
+	emitFile: false, // On the server side, don't actually copy files
+} );
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
@@ -34,40 +39,37 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
  *
- * @returns { object } list of externals
+ * @returns {Array} list of externals
  */
 function getExternals() {
-	const externals = {};
+	return [
+		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
+		// with modules that are incompatible with webpack bundling.
+		//
+		nodeExternals( {
+			whitelist: [
+				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
+				// non-JS asset imports that couldn't be processed by Node.js at runtime.
+				'@automattic/components',
 
-	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
-	// with modules that are incompatible with webpack bundling.
-	fs.readdirSync( 'node_modules' )
-		.filter( function( module ) {
-			return [ '.bin' ].indexOf( module ) === -1;
-		} )
-		.forEach( function( module ) {
-			externals[ module ] = 'commonjs ' + module;
-		} );
-
-	// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
-	externals[ 'webpack.config' ] = 'commonjs webpack.config';
-	// Exclude hot-reloader, as webpack will try and resolve this in production builds,
-	// and error.
-	externals[ 'bundler/hot-reloader' ] = 'commonjs bundler/hot-reloader';
-	// Exclude the devdocs search-index, as it's huge.
-	externals[ 'devdocs/search-index' ] = 'commonjs devdocs/search-index';
-	// Exclude the devdocs components usage stats data
-	externals[ 'devdocs/components-usage-stats.json' ] =
-		'commonjs devdocs/components-usage-stats.json';
-	// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
-	externals[ 'bundler/assets' ] = 'commonjs bundler/assets';
-	// Map React and redux to the minimized version in production
-	if ( config( 'env' ) === 'production' ) {
-		externals.react = 'commonjs react/umd/react.production.min.js';
-		externals.redux = 'commonjs redux/dist/redux.min';
-	}
-
-	return externals;
+				// Ensure that file-loader files imported from packages in node_modules are
+				// _not_ externalized and can be processed by the fileLoader.
+				fileLoader.test,
+			],
+		} ),
+		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
+		'webpack.config',
+		// Exclude hot-reloader, as webpack will try and resolve this in production builds,
+		// and error.
+		'bundler/hot-reloader',
+		// Exclude the devdocs search-index, as it's huge.
+		'devdocs/search-index',
+		// Exclude the devdocs components usage stats data
+		'devdocs/components-usage-stats.json',
+		'devdocs/components-usage-stats.json',
+		// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
+		'bundler/assets',
+	];
 }
 
 const webpackConfig = {
@@ -96,27 +98,7 @@ const webpackConfig = {
 				cacheIdentifier,
 				exclude: /(node_modules|devdocs[/\\]search-index)/,
 			} ),
-			{
-				test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
-				loader: 'babel-loader',
-				options: {
-					babelrc: false,
-					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
-				},
-			},
-			{
-				test: /\.(?:gif|jpg|jpeg|png|svg)$/,
-				use: [
-					{
-						loader: 'file-loader',
-						options: {
-							emitFile: false, // On the server side, don't actually copy files
-							name: '[name].[ext]',
-							outputPath: 'images/',
-						},
-					},
-				],
-			},
+			fileLoader,
 			{
 				test: /\.(sc|sa|c)ss$/,
 				loader: 'ignore-loader',
@@ -146,6 +128,7 @@ const webpackConfig = {
 			raw: true,
 			entryOnly: false,
 		} ),
+		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
@@ -163,7 +146,6 @@ const webpackConfig = {
 			'components/empty-component'
 		), // Depends on BOM
 	] ),
-	externals: getExternals(),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {

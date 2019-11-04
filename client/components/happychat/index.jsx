@@ -41,6 +41,11 @@ import { Composer } from './composer';
 import { Notices } from './notices';
 import { Timeline } from './timeline';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 /*
  * Main chat UI component
  */

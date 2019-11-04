@@ -41,7 +41,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 	const handleConnectToGoogleMyBusinessClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_connect_to_google_my_business_button_click' );
 
-		page( `/google-my-business/new/${ selectedSiteSlug || '' }` );
+		page( `/google-my-business/${ selectedSiteSlug || '' }` );
 	};
 
 	const handleGoToGoogleMyBusinessClick = () => {
@@ -72,7 +72,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 				description={ translate(
 					'Get ahead of your competition. Be there when customers search businesses like yours on Google Search and Maps by connecting to Google My Business.'
 				) }
-				imagePath="/calypso/images/illustrations/business.svg"
+				imagePath="/calypso/images/marketing/google-my-business-logo.svg"
 				title={ translate( 'Let your customers find you on Google' ) }
 			>
 				{ ! connectedGoogleMyBusinessLocation ? (
@@ -84,7 +84,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 						planSlug={ PLAN_BUSINESS }
 					/>
 				) : (
-					<Button onClick={ handleGoToGoogleMyBusinessClick }>
+					<Button compact onClick={ handleGoToGoogleMyBusinessClick }>
 						{ translate( 'Go To Google My Business' ) }
 					</Button>
 				) }

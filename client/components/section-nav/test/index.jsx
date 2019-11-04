@@ -84,7 +84,10 @@ describe( 'section-nav', () => {
 				<p>mmyellow</p>
 			);
 
-			assert.notEqual( component.props.children[ 0 ].className, 'section-nav__mobile-header' );
+			const header = component.props.children.find(
+				child => child && child.className === 'section-nav__mobile-header'
+			);
+			assert.equal( header, null );
 		} );
 	} );
 

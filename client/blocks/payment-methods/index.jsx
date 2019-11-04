@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -14,6 +14,11 @@ import PropTypes from 'prop-types';
  */
 import PaymentLogo, { POSSIBLE_TYPES } from 'components/payment-logo';
 import { getEnabledPaymentMethods } from 'lib/cart-values';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function PaymentMethods( { translate, cart } ) {
 	if ( ! cart.hasLoadedFromServer ) {
@@ -24,6 +29,15 @@ function PaymentMethods( { translate, cart } ) {
 
 	if ( methods.includes( 'credit-card' ) ) {
 		methods.splice( methods.indexOf( 'credit-card' ), 1, 'mastercard', 'visa', 'amex', 'discover' );
+	}
+
+	// The web-payment method technically supports multiple digital wallets,
+	// but only Apple Pay is used for now. To enable other wallets, we'd need
+	// to split web-payment up into multiple methods anyway (so that each
+	// wallet is a separate payment choice for the user), so it's fine to just
+	// hardcode this to Apple Pay in the meantime.
+	if ( methods.includes( 'web-payment' ) ) {
+		methods.splice( methods.indexOf( 'web-payment' ), 1, 'apple-pay' );
 	}
 
 	methods = intersection( methods, POSSIBLE_TYPES );

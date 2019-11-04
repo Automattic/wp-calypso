@@ -16,7 +16,7 @@ import { getNewMessages } from 'lib/cart-values';
 class CartMessages extends PureComponent {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
 
 		// connected
 		translate: PropTypes.func.isRequired,
@@ -30,7 +30,7 @@ class CartMessages extends PureComponent {
 		this.displayCartMessages( this.props.cart );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.cart.hasLoadedFromServer ) {
 			return;
 		}

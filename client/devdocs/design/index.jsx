@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -34,9 +33,9 @@ import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Buttons from 'components/button/docs/example';
+import Buttons from '@automattic/components/src/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
-import Cards from 'components/card/docs/example';
+import Cards from '@automattic/components/src/card/docs/example';
 import Chart from 'components/chart/docs/example';
 import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
@@ -68,6 +67,7 @@ import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
 import GravatarCaterpillar from 'components/gravatar-caterpillar/docs/example';
 import Gridicon from 'components/gridicon/docs/example';
+import GSuiteExamples from 'components/gsuite/docs/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
@@ -89,11 +89,14 @@ import PieChart from 'components/pie-chart/docs/example';
 import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'components/podcast-indicator/docs/example';
 import Popovers from 'components/popover/docs/example';
-import ProgressBar from 'components/progress-bar/docs/example';
+import ProductCard from 'components/product-card/docs/example';
+import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
+import PromoSection from 'components/promo-section/docs/example';
+import PromoCard from 'components/promo-section/promo-card/docs/example';
 import Ranges from 'components/forms/range/docs/example';
 import Rating from 'components/rating/docs/example';
-import Ribbon from 'components/ribbon/docs/example';
-import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import Ribbon from '@automattic/components/src/ribbon/docs/example';
+import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
 import SearchDemo from 'components/search/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
@@ -227,6 +230,7 @@ class DesignAssets extends React.Component {
 					<Gravatar readmeFilePath="gravatar" />
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
 					<Gridicon />
+					<GSuiteExamples readmeFilePath="gsuite" />
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
@@ -249,6 +253,8 @@ class DesignAssets extends React.Component {
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
 					<ProgressBar readmeFilePath="progress-bar" />
+					<PromoSection readmeFilePath="promo-section" />
+					<PromoCard readmeFilePath="promo-section/promo-card" />
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
 					<Ribbon readmeFilePath="ribbon" />
@@ -259,6 +265,7 @@ class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
+					<ProductCard readmeFilePath="product-card" />
 					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />

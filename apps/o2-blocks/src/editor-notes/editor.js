@@ -36,7 +36,7 @@ const save = () => null;
 registerBlockType( 'a8c/editor-notes', {
 	title: "Editor's Notes",
 	icon: 'welcome-write-blog',
-	category: 'common',
+	category: 'a8c',
 	attributes,
 	edit,
 	save,

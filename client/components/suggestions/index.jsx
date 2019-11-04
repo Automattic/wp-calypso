@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { findIndex, isEqual, map } from 'lodash';
+import { find, groupBy, isEqual, partition, property } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,24 +36,34 @@ class Suggestions extends Component {
 	};
 
 	state = {
+		lastSuggestions: null,
 		suggestionPosition: 0,
 	};
 
 	refsCollection = {};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEqual( nextProps.suggestions, this.props.suggestions ) ) {
-			return;
+	static getDerivedStateFromProps( props, state ) {
+		if ( isEqual( props.suggestions, state.lastSuggestions ) ) {
+			return null;
 		}
 
-		this.setState( { suggestionPosition: 0 } );
+		return {
+			lastSuggestions: props.suggestions,
+			suggestionPosition: 0,
+		};
 	}
 
 	getSuggestionsCount = () => this.props.suggestions.length;
 
-	getPositionForSuggestion = label => findIndex( this.props.suggestions, { label } );
+	getOriginalIndexFromPosition = index =>
+		this.getCategories().reduce( ( foundIndex, category ) => {
+			if ( foundIndex !== -1 ) return foundIndex;
 
-	suggest = position => this.props.suggest( this.props.suggestions[ position ] );
+			const suggestion = find( category.suggestions, { index } );
+			return suggestion ? suggestion.originalIndex : -1;
+		}, -1 );
+
+	suggest = originalIndex => this.props.suggest( this.props.suggestions[ originalIndex ] );
 
 	moveSelectionDown = () => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
@@ -97,17 +107,55 @@ class Suggestions extends Component {
 				break;
 
 			case 'Enter':
-				this.state.suggestionPosition >= 0 && this.suggest( this.state.suggestionPosition );
+				this.state.suggestionPosition >= 0 &&
+					this.suggest( this.getOriginalIndexFromPosition( this.state.suggestionPosition ) );
 				break;
 		}
 	};
 
-	handleMouseDown = label => this.suggest( this.getPositionForSuggestion( label ) );
+	handleMouseDown = originalIndex => this.suggest( originalIndex );
 
-	handleMouseOver = label =>
-		this.setState( {
-			suggestionPosition: this.getPositionForSuggestion( label ),
+	handleMouseOver = suggestionPosition => this.setState( { suggestionPosition } );
+
+	getCategories() {
+		// We need to remember the original index of the suggestion according to the
+		// `suggestions` prop for tracks and firing callbacks.
+		const withOriginalIndex = this.props.suggestions.map( ( suggestion, originalIndex ) => ( {
+			...suggestion,
+			originalIndex,
+		} ) );
+
+		const [ withCategory, withoutCategory ] = partition(
+			withOriginalIndex,
+			suggestion => !! suggestion.category
+		);
+
+		// For all intents and purposes `groupBy` keeps the order stable
+		// https://github.com/lodash/lodash/issues/2212
+		const byCategory = groupBy( withCategory, property( 'category' ) );
+
+		const categories = Object.entries( byCategory ).map( ( [ category, suggestions ] ) => ( {
+			category,
+			categoryKey: category,
+			suggestions,
+		} ) );
+
+		// Add uncategorised suggestions to the front, they always appear at
+		// the top of the list.
+		categories.unshift( {
+			categoryKey: '## Uncategorized ##',
+			suggestions: withoutCategory,
 		} );
+
+		let order = 0;
+		for ( const category of categories ) {
+			for ( const suggestion of category.suggestions ) {
+				suggestion.index = order++;
+			}
+		}
+
+		return categories;
+	}
 
 	render() {
 		const { query, railcar } = this.props;
@@ -117,27 +165,39 @@ class Suggestions extends Component {
 			<div>
 				{ showSuggestions && (
 					<div className="suggestions__wrapper">
-						{ map( this.props.suggestions, ( { label }, index ) => (
-							// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-							<Item
-								key={ index }
-								hasHighlight={ index === this.state.suggestionPosition }
-								query={ query }
-								onMouseDown={ this.handleMouseDown }
-								onMouseOver={ this.handleMouseOver }
-								label={ label }
-								railcar={
-									railcar && {
-										...railcar,
-										railcar: `${ railcar.id }-${ index }`,
-										fetch_position: index,
-									}
-								}
-								ref={ suggestion => {
-									this.refsCollection[ 'suggestion_' + index ] = suggestion;
-								} }
-							/>
-						) ) }
+						{ this.getCategories().map(
+							( { category, categoryKey, suggestions }, categoryIndex ) => (
+								<React.Fragment key={ categoryKey }>
+									{ ! categoryIndex ? null : (
+										<div className="suggestions__category-heading">{ category }</div>
+									) }
+									{ suggestions.map( ( { index, label, originalIndex } ) => (
+										// The parent component should handle key events and forward them to
+										// this component. See ./README.md for details.
+										// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+										<Item
+											key={ originalIndex }
+											hasHighlight={ index === this.state.suggestionPosition }
+											query={ query }
+											onMouseDown={ () => this.handleMouseDown( originalIndex ) }
+											onMouseOver={ () => this.handleMouseOver( index ) }
+											label={ label }
+											railcar={
+												railcar && {
+													...railcar,
+													railcar: `${ railcar.id }-${ originalIndex }`,
+													fetch_position: originalIndex,
+													ui_position: index,
+												}
+											}
+											ref={ suggestion => {
+												this.refsCollection[ 'suggestion_' + index ] = suggestion;
+											} }
+										/>
+									) ) }
+								</React.Fragment>
+							)
+						) }
 					</div>
 				) }
 			</div>

@@ -15,7 +15,7 @@ $theme-info-height: 54px;
 		}
 
 		.theme__info-title {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 
 			&::before {
 				@include long-content-fade( $color: var( --color-primary-rgb ) );
@@ -23,7 +23,7 @@ $theme-info-height: 54px;
 		}
 
 		button {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 
 			&:hover {
 				color: var( --color-primary-light );
@@ -31,7 +31,7 @@ $theme-info-height: 54px;
 		}
 
 		.price {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -41,12 +41,12 @@ $theme-info-height: 54px;
 		}
 
 		&:hover {
-			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		}
 	}
 
 	&.is-placeholder {
-		background-color: var( --color-neutral-100 );
+		background-color: var( --color-neutral-10 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -58,13 +58,13 @@ $theme-info-height: 54px;
 	right: 0;
 	height: $theme-info-height;
 	display: flex;
-	background: var( --color-white );
+	background: var( --color-surface );
 }
 
 .theme__info-title {
 	flex: 1 1 auto;
 	position: relative;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 	font-weight: 600;
 	padding: 16px 14px;
@@ -98,7 +98,7 @@ $theme-info-height: 54px;
 
 .theme__upsell-icon svg {
 	transform: scale( 0.8 );
-	border: 2px solid var( --color-neutral-200 );
+	border: 2px solid var( --color-neutral-20 );
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -128,7 +128,7 @@ $theme-info-height: 54px;
 .theme__badge-active {
 	flex: 0 0 auto;
 	padding: 18px 10px 0;
-	color: var( --color-themes-active-text );
+	color: var( --color-primary-0 );
 	text-transform: uppercase;
 	font-size: 12px;
 	font-weight: 600;
@@ -161,11 +161,11 @@ $theme-info-height: 54px;
 		padding: 6px 9px;
 		margin-bottom: -54px;
 
-		background: var( --color-white );
+		background: var( --color-surface );
 		border: 1px solid var( --color-neutral-0 );
 		border-radius: 2px;
 
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 600;
@@ -202,7 +202,7 @@ $theme-info-height: 54px;
 	bottom: 54px;
 	width: 100%;
 	padding-top: 36%;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 
 	.gridicon {
 		display: block;
@@ -240,7 +240,7 @@ $theme-info-height: 54px;
 		font-weight: bold;
 
 		.is-active & {
-			color: rgba( var( --color-white-rgb ), 0.2 );
+			color: rgba( var( --color-surface-rgb ), 0.2 );
 		}
 
 		.accessible-focus &:focus {
@@ -265,7 +265,7 @@ $theme-info-height: 54px;
 		}
 
 		&.is-active .gridicon {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 

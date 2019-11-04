@@ -11,8 +11,8 @@ import { isEmpty, join, merge, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
-import { cartItems } from 'lib/cart-values';
+import Gridicon from 'components/gridicon';
+import { getDomainRegistrations, getDomainTransfers } from 'lib/cart-values/cart-items';
 import { HTTPS_SSL } from 'lib/url/support';
 import { getProductsList } from 'state/products-list/selectors';
 import { getTld, isHstsRequired } from 'lib/domains';
@@ -20,10 +20,7 @@ import { getTld, isHstsRequired } from 'lib/domains';
 class DomainRegistrationHsts extends React.PureComponent {
 	getHstsTlds = () => {
 		const { cart, productsList } = this.props;
-		const domains = merge(
-			cartItems.getDomainRegistrations( cart ),
-			cartItems.getDomainTransfers( cart )
-		);
+		const domains = merge( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
 
 		if ( isEmpty( domains ) ) {
 			return null;
@@ -33,7 +30,11 @@ class DomainRegistrationHsts extends React.PureComponent {
 			domains,
 			( tlds, domain ) => {
 				if ( isHstsRequired( domain.product_slug, productsList ) ) {
-					tlds.push( '.' + getTld( domain.meta ) );
+					const tld = '.' + getTld( domain.meta );
+
+					if ( tlds.indexOf( tld ) === -1 ) {
+						tlds.push( tld );
+					}
 				}
 
 				return tlds;

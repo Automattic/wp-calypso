@@ -1,37 +1,37 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { TIMEZONES_RECEIVE } from 'state/action-types';
 
 import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 
-export const rawOffsets = createReducer(
-	{},
-	{
-		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.rawOffsets,
-	},
-	rawOffsetsSchema
-);
+export const rawOffsets = withSchemaValidation( rawOffsetsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case TIMEZONES_RECEIVE:
+			return action.rawOffsets;
+	}
 
-export const labels = createReducer(
-	{},
-	{
-		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.labels,
-	},
-	labelsSchema
-);
+	return state;
+} );
 
-export const byContinents = createReducer(
-	{},
-	{
-		[ TIMEZONES_RECEIVE ]: ( state, actions ) => actions.byContinents,
-	},
-	continentsSchema
-);
+export const labels = withSchemaValidation( labelsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case TIMEZONES_RECEIVE:
+			return action.labels;
+	}
+
+	return state;
+} );
+
+export const byContinents = withSchemaValidation( continentsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case TIMEZONES_RECEIVE:
+			return action.byContinents;
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	rawOffsets,

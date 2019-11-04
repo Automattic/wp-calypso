@@ -35,9 +35,7 @@ export default class PlanIcon extends Component {
 		/* eslint-disable jsx-a11y/alt-text */
 		return (
 			<img
-				src={ `/calypso/images/plans/${
-					isJetpack ? 'jetpack' : 'wpcom'
-				}/plan-${ planName }-circle.svg` }
+				src={ `/calypso/images/plans/${ isJetpack ? 'jetpack' : 'wpcom' }/plan-${ planName }.svg` }
 				className={ classNames( 'plan-icon', `plan-icon__${ planName }`, planClass, className ) }
 			/>
 		);
@@ -46,6 +44,7 @@ export default class PlanIcon extends Component {
 
 	render() {
 		const { plan } = this.props;
+
 		if ( isBloggerPlan( plan ) ) {
 			return this.getIcon( 'blogger' );
 		}

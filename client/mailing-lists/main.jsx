@@ -6,7 +6,7 @@
 
 import page from 'page';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -112,6 +112,16 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Community' );
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
+		} else if ( 'news' === category ) {
+			return this.props.translate( 'Newsletter' );
+		} else if ( 'jetpack_marketing' === category ) {
+			return this.props.translate( 'Jetpack Suggestions' );
+		} else if ( 'jetpack_research' === category ) {
+			return this.props.translate( 'Jetpack Research' );
+		} else if ( 'jetpack_promotion' === category ) {
+			return this.props.translate( 'Jetpack Promotions' );
+		} else if ( 'jetpack_news' === category ) {
+			return this.props.translate( 'Jetpack Newsletter' );
 		}
 
 		return category;
@@ -133,6 +143,18 @@ class MainComponent extends React.Component {
 			return this.props.translate(
 				'Popular content from the blogs you follow, and reports on your own site and its performance.'
 			);
+		} else if ( 'news' === category ) {
+			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
+		} else if ( 'jetpack_marketing' === category ) {
+			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
+		} else if ( 'jetpack_research' === category ) {
+			return this.props.translate(
+				'Opportunities to participate in Jetpack research and surveys.'
+			);
+		} else if ( 'jetpack_promotion' === category ) {
+			return this.props.translate( 'Promotions and deals on upgrades.' );
+		} else if ( 'jetpack_news' === category ) {
+			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		}
 
 		return null;
@@ -157,6 +179,14 @@ class MainComponent extends React.Component {
 				return 'promotion';
 			case '20785':
 				return 'news';
+			case '22504':
+				return 'jetpack_marketing';
+			case '22507':
+				return 'jetpack_research';
+			case '22506':
+				return 'jetpack_promotion';
+			case '22505':
+				return 'jetpack_news';
 			default:
 				return this.props.category;
 		}

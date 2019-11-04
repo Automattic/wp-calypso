@@ -1,26 +1,27 @@
 .post-relative-time-status {
 	.gridicon {
 		display: inline-block;
-		margin: -4px 8px 0 0;
+		margin: 0 4px 0 0;
 		vertical-align: middle;
 	}
 
 	// Apply colors on /posts/* cards
-	.pages__page-list &,
-	.posts__list & {
-		.is-sticky {
-			color: var( --color-primary );
-		}
-		.is-pending {
-			color: var( --color-warning );
-		}
-		.is-scheduled {
-			color: var( --color-accent );
-		}
-		.is-trash {
-			color: var( --color-error );
-		}
+	.is-sticky {
+		color: var( --color-primary );
 	}
+	.is-pending {
+		color: var( --color-warning );
+	}
+	.is-scheduled {
+		color: var( --color-accent );
+	}
+	.is-trash {
+		color: var( --color-error );
+	}
+}
+
+a.post-relative-time-status__link {
+	color: var( --color-text-subtle );
 }
 
 .post-relative-time-status__time,
@@ -29,14 +30,12 @@
 	margin-right: ( 11 / 12 ) * 1em;
 }
 
-.post-relative-time-status__time-text {
-	display: inline-block;
+.post-relative-time-status__time-text,
+.post-relative-time-status__status-text {
+	vertical-align: middle;
+	display: inline-block; // makes the ::first-letter apply
 
 	&::first-letter {
 		text-transform: capitalize;
 	}
-}
-
-.post-relative-time-status__status-text {
-	text-transform: capitalize;
 }

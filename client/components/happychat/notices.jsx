@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,6 +19,11 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 } from 'state/happychat/constants';
+
+/**
+ * Style dependencies
+ */
+import './notices.scss';
 
 /*
  * Renders any notices about the chat session to the user

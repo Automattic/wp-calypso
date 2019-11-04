@@ -17,10 +17,12 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
 	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
+	getPartnerName,
 } from 'lib/purchases';
 import {
 	isDomainProduct,
@@ -32,10 +34,15 @@ import {
 } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getPlanTermLabel } from 'lib/plans';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const eventProperties = warning => ( { warning, position: 'purchase-list' } );
 
@@ -178,16 +185,32 @@ class PurchaseItem extends Component {
 		);
 	}
 
+	getLabelText() {
+		const { purchase, translate } = this.props;
+
+		if ( purchase && isPartnerPurchase( purchase ) ) {
+			return translate( 'This plan is managed by %(partnerName)s', {
+				args: {
+					partnerName: getPartnerName( purchase ),
+				},
+			} );
+		} else if ( purchase && purchase.productSlug ) {
+			return getPlanTermLabel( purchase.productSlug, translate );
+		}
+
+		return null;
+	}
+
 	render() {
-		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack, translate } = this.props;
+		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
 		const classes = classNames(
 			'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
 		);
-		const termLabel =
-			purchase && purchase.productSlug ? getPlanTermLabel( purchase.productSlug, translate ) : null;
+
+		const label = this.getLabelText();
 
 		let content;
 		if ( isPlaceholder ) {
@@ -199,8 +222,10 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__details">
 						<div className="purchase-item__title">{ getName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
-						{ termLabel ? <div className="purchase-item__term-label">{ termLabel }</div> : null }
-						<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+						{ label && <div className="purchase-item__term-label">{ label }</div> }
+						{ ! isPartnerPurchase( purchase ) && (
+							<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+						) }
 					</div>
 				</span>
 			);

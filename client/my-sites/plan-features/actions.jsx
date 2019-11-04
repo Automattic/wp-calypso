@@ -6,7 +6,7 @@
 
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -25,7 +25,7 @@ const PlanFeaturesActions = ( {
 	availableForPurchase = true,
 	canPurchase,
 	className,
-	currentSitePlan,
+	currentSitePlanSlug,
 	current = false,
 	forceDisplayButton = false,
 	freePlan = false,
@@ -93,21 +93,21 @@ const PlanFeaturesActions = ( {
 				},
 			} );
 		}
-		const isCurrentPlanMonthly = currentSitePlan && isMonthly( currentSitePlan.productSlug );
+
 		if (
-			isCurrentPlanMonthly &&
-			getPlanClass( planType ) === getPlanClass( currentSitePlan.productSlug )
+			isMonthly( currentSitePlanSlug ) &&
+			getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
 		) {
 			buttonText = translate( 'Upgrade to Yearly' );
 		}
 
 		const handleUpgradeButtonClick = () => {
 			if ( isPlaceholder ) {
-				return noop();
+				return;
 			}
 
 			trackTracksEvent( 'calypso_plan_features_upgrade_click', {
-				current_plan: currentSitePlan && currentSitePlan.productSlug,
+				current_plan: currentSitePlanSlug,
 				upgrading_to: planType,
 			} );
 
@@ -140,6 +140,7 @@ PlanFeaturesActions.propTypes = {
 	canPurchase: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	current: PropTypes.bool,
+	currentSitePlanSlug: PropTypes.string,
 	forceDisplayButton: PropTypes.bool,
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
@@ -152,15 +153,15 @@ PlanFeaturesActions.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => {
-		const { isInSignup } = ownProps;
-		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+	( state, { isInSignup } ) => {
+		if ( isInSignup ) {
+			return { currentSitePlanSlug: null };
+		}
+
+		const selectedSiteId = getSelectedSiteId( state );
 		const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-		return {
-			currentSitePlan,
-		};
+		const currentSitePlanSlug = get( currentSitePlan, 'productSlug', null );
+		return { currentSitePlanSlug };
 	},
-	{
-		recordTracksEvent,
-	}
+	{ recordTracksEvent }
 )( localize( PlanFeaturesActions ) );

@@ -17,7 +17,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { applyDnsTemplate } from 'lib/upgrades/actions';
+import { applyDnsTemplate } from 'lib/domains/dns/actions';
 
 class EmailProvider extends Component {
 	state = {

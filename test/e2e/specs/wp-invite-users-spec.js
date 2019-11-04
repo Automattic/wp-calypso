@@ -68,7 +68,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'editor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -107,7 +108,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await PostsPage.Expect( driver );
 
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
+			const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Editor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Editor'`
@@ -130,7 +131,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 			await peoplePage.selectOnlyPersonDisplayed();
 			const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 			await editTeamMemberPage.removeUserAndDeleteContent();
-			const displayed = await peoplePage.successNoticeDisplayed();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 			return assert.strictEqual(
 				displayed,
 				true,
@@ -167,7 +169,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'editor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -178,7 +181,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 			const revokePage = await RevokePage.Expect( driver );
 			await revokePage.revokeUser();
-			const sent = await revokePage.revokeSent();
+			const sent = await noticesComponent.isSuccessNoticeDisplayed();
 			return assert( sent, 'The sent confirmation message was not displayed' );
 		} );
 
@@ -231,7 +234,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'viewer',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -269,7 +273,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 		step( 'Can see user has been added as a Viewer', async function() {
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const followMessageDisplayed = await noticesComponent.followMessageTitle();
+			const followMessageDisplayed = await noticesComponent.getNoticeContent();
 			assert.strictEqual(
 				true,
 				followMessageDisplayed.includes( 'viewer' ),
@@ -325,7 +329,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		} );
 	} );
 
-	xdescribe( 'Inviting New User as an Contributor, then change them to Author: @parallel @jetpack', function() {
+	describe.skip( 'Inviting New User as an Contributor, then change them to Author: @parallel @jetpack', function() {
 		const newUserName = 'e2eflowtestingcontributor' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		const reviewPostTitle = dataHelper.randomPhrase();
@@ -347,7 +351,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'contributor',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -385,7 +390,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 		step( 'Can see a notice welcoming the new user as an contributor', async function() {
 			await PostsPage.Expect( driver );
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const invitesMessageTitleDisplayed = await noticesComponent.inviteMessageTitle();
+			const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 			return assert(
 				invitesMessageTitleDisplayed.includes( 'Contributor' ),
 				`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Contributor'`
@@ -439,7 +444,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				await peoplePage.selectOnlyPersonDisplayed();
 				const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 				await editTeamMemberPage.changeToNewRole( 'author' );
-				const displayed = await editTeamMemberPage.successNoticeDisplayed();
+				const noticesComponent = await NoticesComponent.Expect( driver );
+				const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 				return assert(
 					displayed,
 					'The update successful notice was not shown on the edit team member page.'
@@ -463,7 +469,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 	} );
 
 	// Disabled pending wp-calypso issue 26178
-	xdescribe( 'Inviting New User as a Follower: @parallel @jetpack', function() {
+	describe.skip( 'Inviting New User as a Follower: @parallel @jetpack', function() {
 		const newUserName = 'e2eflowtestingfollower' + new Date().getTime().toString();
 		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
@@ -480,7 +486,8 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 				'follower',
 				'Automated e2e testing'
 			);
-			await invitePeoplePage.inviteSent();
+			const noticesComponent = await NoticesComponent.Expect( driver );
+			await noticesComponent.isSuccessNoticeDisplayed();
 			await invitePeoplePage.backToPeopleMenu();
 
 			const peoplePage = await PeoplePage.Expect( driver );
@@ -517,7 +524,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function() {
 
 		step( 'User has been added as a Follower', async function() {
 			const noticesComponent = await NoticesComponent.Expect( driver );
-			const followMessageDisplayed = noticesComponent.followMessageTitle();
+			const followMessageDisplayed = noticesComponent.getNoticeContent();
 			assert(
 				followMessageDisplayed.includes( 'following' ),
 				`The follow message '${ followMessageDisplayed }' does not include 'following'`

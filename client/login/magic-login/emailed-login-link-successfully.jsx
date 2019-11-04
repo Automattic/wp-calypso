@@ -23,7 +23,7 @@ import {
 	enhanceWithSiteType,
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {

@@ -20,6 +20,11 @@ import InfiniteList from 'components/infinite-list';
 import Placeholder from './placeholder';
 import config from 'config';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const createPlaceholder = () => <Placeholder />;
 
 const getItemRef = ( { ID } ) => `blog-${ ID }`;

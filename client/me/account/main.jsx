@@ -21,6 +21,7 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import config from 'config';
+import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
 import Card from 'components/card';
 import Button from 'components/button';
@@ -50,7 +51,7 @@ import isRequestingMissingSites from 'state/selectors/is-requesting-missing-site
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
-import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
+import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -81,7 +82,7 @@ const Account = createReactClass( {
 		showNoticeInitially: PropTypes.bool,
 	},
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
@@ -595,7 +596,7 @@ const Account = createReactClass( {
 					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						onClick={ this.getClickHandler( 'Interface Language Field' ) }
 						valueKey="langSlug"
 						value={

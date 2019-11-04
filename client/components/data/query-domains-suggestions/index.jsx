@@ -21,7 +21,7 @@ function getQueryObject( props ) {
 		query: props.query,
 		recommendation_context: props.recommendationContext,
 		vendor: props.vendor,
-		vertical: props.surveyVertical,
+		vertical: props.vertical,
 	};
 }
 

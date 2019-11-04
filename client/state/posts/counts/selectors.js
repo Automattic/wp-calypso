@@ -7,9 +7,10 @@
 import { get } from 'lodash';
 
 /**
- * Constants
+ * Internal dependencies
  */
-const POST_STATUSES = [ 'publish', 'draft', 'pending', 'private', 'future', 'trash' ];
+
+import { POST_STATUSES } from '../constants';
 
 /**
  * Returns true if post counts request is in progress, or false otherwise.

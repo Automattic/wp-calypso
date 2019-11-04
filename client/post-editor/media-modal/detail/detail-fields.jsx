@@ -33,7 +33,7 @@ class EditorMediaModalDetailFields extends Component {
 		this.persistChange = debounce( this.persistChange, 1000 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.item && nextProps.item && nextProps.item.ID !== this.props.item.ID ) {
 			this.setState( { modifiedItem: null } );
 			this.persistChange.cancel();

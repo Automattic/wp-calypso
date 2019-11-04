@@ -7,15 +7,20 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
+import { preventWidows } from 'lib/formatting';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default class PurchaseDetail extends PureComponent {
 	static propTypes = {
@@ -103,17 +108,10 @@ export default class PurchaseDetail extends PureComponent {
 			'is-placeholder': this.props.isPlaceholder,
 		} );
 
-		// When removing the abtest, remove the associated mocks in tests
-		// See https://github.com/Automattic/wp-calypso/pull/30771
-		const requiredClass =
-			'enhanced' === abtest( 'gSuitePostCheckoutNotice' )
-				? 'purchase-detail__required-error'
-				: 'purchase-detail__required-notice';
-
 		return (
 			<div className={ classes } id={ id }>
 				{ requiredText && (
-					<div className={ requiredClass }>
+					<div className="purchase-detail__required-notice">
 						<em>{ requiredText }</em>
 					</div>
 				) }
@@ -121,7 +119,7 @@ export default class PurchaseDetail extends PureComponent {
 					<div className="purchase-detail__image">{ this.renderIcon() }</div>
 					<div className="purchase-detail__text">
 						<h3 className="purchase-detail__title">{ title }</h3>
-						<div className="purchase-detail__description">{ description }</div>
+						<div className="purchase-detail__description">{ preventWidows( description ) }</div>
 						{ this.renderBody() }
 					</div>
 				</div>

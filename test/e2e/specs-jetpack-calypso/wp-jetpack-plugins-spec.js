@@ -17,6 +17,7 @@ import PluginsBrowserPage from '../lib/pages/plugins-browser-page';
 
 import PluginDetailsPage from '../lib/pages/plugin-details-page';
 import LoginFlow from '../lib/flows/login-flow';
+import NoticesComponent from '../lib/components/notices-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -59,9 +60,9 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 
 	step( 'Can see a success message contains Hello Dolly', async function() {
 		const expectedPartialText = 'Successfully activated Hello Dolly';
-		const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
-		await pluginDetailsPage.waitForSuccessNotice();
-		const successMessageText = await pluginDetailsPage.getSuccessNoticeText();
+		const noticesComponent = await NoticesComponent.Expect( driver );
+		await noticesComponent.isSuccessNoticeDisplayed();
+		const successMessageText = await noticesComponent.getNoticeContent();
 		return assert.strictEqual(
 			successMessageText.indexOf( expectedPartialText ) > -1,
 			true,

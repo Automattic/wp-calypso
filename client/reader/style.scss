@@ -1,7 +1,3 @@
-.is-reader-page .layout__content {
-	padding-top: 47px;
-}
-
 .is-group-reader .async-load {
 	margin: 30px auto;
 	width: 50%;
@@ -41,7 +37,7 @@
 
 .reader__site-name {
 	clear: none;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 14px;
 	line-height: 1.3;
 	display: inline-block;
@@ -72,7 +68,7 @@
 	font-weight: 700;
 	font-size: 28px;
 	line-height: 1.416;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	margin: 24px 0 8px;
 	max-width: 750px;
 	overflow-wrap: break-word;
@@ -84,7 +80,7 @@
 	}
 
 	.reader__post-title-link, .reader__post-title-link:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -155,7 +151,7 @@
 		font-size: 15px;
 		font-weight: bold;
 		line-height: 1.6;
-		border-top: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
 		background: linear-gradient( to bottom,
 						rgba( var( --color-neutral-0-rgb ), 1 ) 0%,
 						rgba( var( --color-neutral-0-rgb ), 0 ) 100% );
@@ -171,7 +167,7 @@
 		font-family: $sans;
 		font-size: 15px;
 		padding-top: 5px;
-		border-top: 1px solid var( --color-neutral-100 );
+		border-top: 1px solid var( --color-neutral-10 );
 
 		a {
 			padding: 5px 10px;
@@ -285,7 +281,7 @@
 	background: #222;
 	background: rgba( 0, 0, 0, 0.3 );
 	background: linear-gradient( to bottom, transparent, rgba( 0, 0, 0, 0.2 ) 73%, rgba( 0, 0, 0, 0.5 ) 100% );
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	font-family: $sans;
 	font-size: 14px;
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
@@ -336,8 +332,8 @@
 	opacity: 0;
 }
 
-.is-group-reader .main .empty-content,
-.is-reader-page .main .empty-content {
+.is-group-reader .main .empty-content:not( .conversations__empty-content ),
+.is-reader-page .main .empty-content:not( .conversations__empty-content ) {
 
 	padding-top: 0;
 

@@ -19,6 +19,11 @@ import { followConversation, muteConversation } from 'state/reader/conversations
 import { getTracksPropertiesForPost } from 'reader/stats';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,

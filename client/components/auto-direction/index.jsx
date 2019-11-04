@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 
 /**
@@ -14,7 +13,7 @@ import { get } from 'lodash';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 import Emojify from 'components/emojify';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { useRtl } from 'components/rtl';
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
@@ -210,11 +209,7 @@ const setChildDirection = ( child, isRtl ) => {
  * @param {Object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
-export const AutoDirection = props => {
-	const { children, isRtl } = props;
-	const directionedChild = setChildDirection( children, isRtl );
-
-	return directionedChild;
-};
-
-export default connect( state => ( { isRtl: isRtlSelector( state ) } ) )( AutoDirection );
+export default function AutoDirection( { children } ) {
+	const isRtl = useRtl();
+	return setChildDirection( children, isRtl );
+}

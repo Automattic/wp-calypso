@@ -21,28 +21,30 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
+	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
 	getName,
+	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
+	hasPaymentMethod,
 	isCancelable,
 	isExpired,
-	isExpiring,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isPartnerPurchase,
 	isRefundable,
 	isRenewable,
 	isRenewal,
 	isRenewing,
 	isSubscription,
 	purchaseType,
-	cardProcessorSupportsUpdates,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import {
 	isPersonal,
@@ -139,14 +141,7 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// This is hidden for expired and expiring subscriptions because they
-		// will get a PurchaseNotice will a renewal call-to-action instead.
-		if (
-			! isRenewable( purchase ) ||
-			isExpired( purchase ) ||
-			isExpiring( purchase ) ||
-			! this.props.site
-		) {
+		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -164,10 +159,11 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// Unlike renderRenewButton(), this shows the link even for expired or
-		// expiring subscriptions (as long as they are renewable), which keeps
-		// the nav items consistent.
 		if ( ! isRenewable( purchase ) || ! this.props.site ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -185,6 +181,10 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
+		if ( isPartnerPurchase( purchase ) ) {
+			return null;
+		}
+
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getEditCardDetailsPath( this.props.siteSlug, purchase );
 			const renewing = isRenewing( purchase );
@@ -197,19 +197,38 @@ class ManagePurchase extends Component {
 				return null;
 			}
 
-			const text = renewing ? translate( 'Edit Payment Method' ) : translate( 'Add Credit Card' );
-
-			return <CompactCard href={ path }>{ text }</CompactCard>;
+			return (
+				<CompactCard href={ path }>
+					{ hasPaymentMethod( purchase )
+						? translate( 'Change Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</CompactCard>
+			);
 		}
 
 		return null;
+	}
+
+	renderRemovePurchaseNavItem() {
+		if ( isPartnerPurchase( this.props.purchase ) ) {
+			return null;
+		}
+
+		return (
+			<RemovePurchase
+				hasLoadedSites={ this.props.hasLoadedSites }
+				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
+				site={ this.props.site }
+				purchase={ this.props.purchase }
+			/>
+		);
 	}
 
 	renderCancelPurchaseNavItem() {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || ! this.props.site ) {
+		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -328,7 +347,9 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					<ProductLink purchase={ purchase } selectedSite={ site } />
+					{ ! isPartnerPurchase( purchase ) && (
+						<ProductLink purchase={ purchase } selectedSite={ site } />
+					) }
 				</span>
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
@@ -368,7 +389,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId, site } = this.props;
+		const { purchase, siteId, translate } = this.props;
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
@@ -387,30 +408,35 @@ class ManagePurchase extends Component {
 						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
-							<PlanPrice
-								rawPrice={ getRenewalPrice( purchase ) }
-								currencyCode={ purchase.currencyCode }
-								taxText={ purchase.taxText }
-								isOnSale={ !! purchase.saleAmount }
-							/>
+							{ isPartnerPurchase( purchase ) ? (
+								<div className="manage-purchase__contact-partner">
+									{ translate( 'Please contact your site host %(partnerName)s for details', {
+										args: {
+											partnerName: getPartnerName( purchase ),
+										},
+									} ) }
+								</div>
+							) : (
+								<PlanPrice
+									rawPrice={ getRenewalPrice( purchase ) }
+									currencyCode={ purchase.currencyCode }
+									taxText={ purchase.taxText }
+									isOnSale={ !! purchase.saleAmount }
+								/>
+							) }
 						</div>
 					</header>
 					{ this.renderPlanDescription() }
-
-					<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
-
+					{ ! isPartnerPurchase( purchase ) && (
+						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
+					) }
 					{ this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
 				{ this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
-				<RemovePurchase
-					hasLoadedSites={ this.props.hasLoadedSites }
-					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
-					site={ site }
-					purchase={ purchase }
-				/>
+				{ this.renderRemovePurchaseNavItem() }
 			</Fragment>
 		);
 	}

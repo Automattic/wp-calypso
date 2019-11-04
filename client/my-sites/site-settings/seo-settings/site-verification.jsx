@@ -23,6 +23,7 @@ import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -49,7 +50,7 @@ class SiteVerification extends Component {
 		invalidatedSiteObject: this.props.site,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
 		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
 		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
@@ -60,7 +61,7 @@ class SiteVerification extends Component {
 		this.refreshSite();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId: prevSiteId, translate } = this.props;
 		const { site: nextSite, siteId: nextSiteId } = nextProps;
 		const { dirtyFields } = this.state;
@@ -205,7 +206,7 @@ class SiteVerification extends Component {
 	}
 
 	handleFormSubmit = event => {
-		const { siteId, translate, trackSiteVerificationUpdated } = this.props;
+		const { path, siteId, translate, trackSiteVerificationUpdated } = this.props;
 		const { dirtyFields } = this.state;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -241,22 +242,22 @@ class SiteVerification extends Component {
 		};
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
-		this.props.trackFormSubmitted();
+		this.props.trackFormSubmitted( { path } );
 
 		if ( dirtyFields.has( 'googleCode' ) ) {
-			trackSiteVerificationUpdated( 'google' );
+			trackSiteVerificationUpdated( 'google', path );
 		}
 
 		if ( dirtyFields.has( 'bingCode' ) ) {
-			trackSiteVerificationUpdated( 'bing' );
+			trackSiteVerificationUpdated( 'bing', path );
 		}
 
 		if ( dirtyFields.has( 'pinterestCode' ) ) {
-			trackSiteVerificationUpdated( 'pinterest' );
+			trackSiteVerificationUpdated( 'pinterest', path );
 		}
 
 		if ( dirtyFields.has( 'yandexCode' ) ) {
-			trackSiteVerificationUpdated( 'yandex' );
+			trackSiteVerificationUpdated( 'yandex', path );
 		}
 	};
 
@@ -305,7 +306,7 @@ class SiteVerification extends Component {
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="verification-tools"
-								label={ translate( 'Enable Site Verification Services.' ) }
+								label={ translate( 'Verify site ownership with third-party services' ) }
 								disabled={ isDisabled }
 							/>
 						</FormFieldset>
@@ -441,15 +442,17 @@ export default connect(
 			site,
 			siteId,
 			siteIsJetpack: isJetpackSite( state, siteId ),
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
 	{
 		requestSite,
 		requestSiteSettings,
 		saveSiteSettings,
-		trackSiteVerificationUpdated: service =>
+		trackSiteVerificationUpdated: ( service, path ) =>
 			recordTracksEvent( 'calypso_seo_tools_site_verification_updated', {
 				service,
+				path,
 			} ),
 		trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
 	},

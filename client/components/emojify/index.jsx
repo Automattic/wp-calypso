@@ -71,7 +71,7 @@ export default class Emojify extends PureComponent {
 			tagName: WrapperTagName,
 			twemojiUrl,
 			...other
-		} = this.props; // eslint-disable-line no-unused-vars
+		} = this.props;
 		const classes = classNames( className, 'emojify' );
 
 		return (

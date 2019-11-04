@@ -25,6 +25,8 @@ import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { hideSitePreview } from 'state/signup/preview/actions';
+import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 
 /**
  * Style dependencies
@@ -61,6 +63,13 @@ class DomainSearchResults extends React.Component {
 		unavailableDomains: PropTypes.array,
 	};
 
+	componentDidUpdate() {
+		// If the signup site preview is showing, turn it off when domain search results are visible
+		if ( this.props.isSignupStep && this.props.isSitePreviewVisible ) {
+			this.props.hideSitePreview();
+		}
+	}
+
 	renderDomainAvailability() {
 		const {
 			availableDomain,
@@ -80,6 +89,7 @@ class DomainSearchResults extends React.Component {
 			MAPPABLE,
 			MAPPED,
 			TLD_NOT_SUPPORTED,
+			TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 			TLD_NOT_SUPPORTED_TEMPORARILY,
 			TRANSFERRABLE,
 			UNKNOWN,
@@ -98,6 +108,7 @@ class DomainSearchResults extends React.Component {
 					MAPPABLE,
 					MAPPED,
 					TLD_NOT_SUPPORTED,
+					TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 					TLD_NOT_SUPPORTED_TEMPORARILY,
 					UNKNOWN,
 				],
@@ -108,21 +119,24 @@ class DomainSearchResults extends React.Component {
 			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
-					{ args: { domain }, components }
-				);
-			} else if ( ! domainsWithPlansOnly ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
-				);
-			} else {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
-					{ args: { domain }, components }
-				);
+			// If the domain is available we shouldn't offer to let people purchase mappings for it.
+			if ( TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE === lastDomainStatus ) {
+				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+						{ args: { domain }, components }
+					);
+				} else if ( ! domainsWithPlansOnly ) {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
+						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
+					);
+				} else {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+						{ args: { domain }, components }
+					);
+				}
 			}
 
 			// Domain Mapping not supported for Store NUX yet.
@@ -311,7 +325,11 @@ const mapStateToProps = ( state, ownProps ) => {
 	return {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
+		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible( state ),
 	};
 };
 
-export default connect( mapStateToProps )( localize( DomainSearchResults ) );
+export default connect(
+	mapStateToProps,
+	{ hideSitePreview }
+)( localize( DomainSearchResults ) );

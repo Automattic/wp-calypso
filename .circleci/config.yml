@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.5.0
+  slack: circleci/slack@2.6.0
 
 references:
   shared-environment: &shared-environment
@@ -9,7 +9,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:10.15.2-browsers
+    - image: circleci/node:10.16.3-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -49,13 +49,13 @@ references:
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
     keys:
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
-    key: v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
 
@@ -65,13 +65,13 @@ references:
   restore-terser-cache: &restore-terser-cache
     name: Restore Terser cache
     keys:
-      - v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v0-terser-{{ .Branch }}
-      - v0-terser-master
-      - v0-terser
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
   save-terser-cache: &save-terser-cache
     name: Save Terser cache
-    key: v0-terser-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/terser-cache
 
@@ -87,16 +87,16 @@ references:
   restore-git-cache: &restore-git-cache
     name: Restore git cache
     keys:
-      - v2-git-{{ .Branch }}-{{ .Revision }}
-      - v2-git-{{ .Branch }}
-      - v2-git-master
-      - v2-git
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git
   update-git-master: &update-git-master
     name: Update master branch
     command: git fetch --force origin master
   save-git-cache: &save-git-cache
     name: Save git cache
-    key: v2-git-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
     paths:
       - '.git'
 
@@ -115,8 +115,8 @@ references:
   restore-npm-cache: &restore-npm-cache
     name: 'Restore npm cache'
     keys:
-      - v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-      - v3-npm-modules-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}
 
   npm-install: &npm-install
     name: Install npm dependencies
@@ -124,25 +124,27 @@ references:
 
   save-npm-cache: &save-npm-cache
     name: 'Save node_modules cache'
-    key: v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
     paths:
       - ~/.npm
   npm-e2e-install: &npm-e2e-install
     name: Install e2e npm dependencies
-    command: cd test/e2e && npm ci
+    command: |
+      cd test/e2e &&
+      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-babel-client-cache: &restore-babel-client-cache
     name: Restore Babel Client Cache
     keys:
-      - v1-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v1-babel-client-{{ .Branch }}
-      - v1-babel-client-master
-      - v1-babel-client
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
   save-babel-client-cache: &save-babel-client-cache
     name: Save Babel Client Cache
-    key: v1-babel-client-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
     paths:
       - 'build/.babel-client-cache'
 
@@ -150,7 +152,8 @@ references:
     name: Set e2e environment variables
     command: |
       echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
-      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
+      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
+      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
 
   move-e2e-artifacts: &move-e2e-artifacts
     name: Move report and screenshots
@@ -210,7 +213,7 @@ jobs:
       - run:
           name: TypeScript typecheck
           # Report but don't fail the build (`|| exit 0`)
-          command: ./node_modules/.bin/tsc --noEmit || exit 0
+          command: npm run typecheck || exit 0
 
 
   lint-and-translate:
@@ -319,10 +322,22 @@ jobs:
           name: Build the Full Site Editing plugin and theme
           command: |
             npx lerna run build --scope='@automattic/full-site-editing'
-            cp -R apps/full-site-editing/blank-theme $CIRCLE_ARTIFACTS/full-site-editing/
             cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
       - store-artifacts-and-test-results
-
+  test-full-site-editing:
+    <<: *defaults
+    parallelism: 1
+    working_directory: ~/wp-calypso/apps/full-site-editing
+    steps:
+      - prepare
+      - run:
+          name: Install Full Site Editing specific test deps
+          command: |
+            npm ci
+      - run:
+          name: Run Full Site Editing client tests
+          command: |
+            npm run test:unit
   test-client:
     <<: *defaults
     parallelism: 6
@@ -630,6 +645,9 @@ workflows:
       - build-full-site-editing:
           requires:
             - setup
+      - test-full-site-editing:
+          requires:
+            - setup
       - build-notifications:
           requires:
             - setup
@@ -668,10 +686,10 @@ workflows:
                 - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
-      - test-e2e-canary:
-          requires:
-            - wait-calypso-live
-          test-flags: '-C -S $CIRCLE_SHA1'
+#      - test-e2e-canary:
+#          requires:
+#            - wait-calypso-live
+#          test-flags: '-C -S $CIRCLE_SHA1'
       - test-e2e-canary:
           name: test-e2e-canary-ie
           requires:
@@ -747,7 +765,7 @@ workflows:
           slack-webhook: '$SLACK_WOO'
     triggers:
       - schedule:
-          cron: '0 12,20 * * *'
+          cron: '0 12 * * *'
           filters:
             branches:
               only: master

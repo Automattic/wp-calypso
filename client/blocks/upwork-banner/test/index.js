@@ -13,7 +13,7 @@ import { createReduxStore } from 'state';
 import UpworkBanner from '../';
 
 describe( 'UpworkBanner', () => {
-	test( 'renders GSuitePurchaseCta with basic plan', () => {
+	test( 'renders correctly', () => {
 		const store = createReduxStore();
 		const tree = renderer
 			.create(

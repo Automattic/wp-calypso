@@ -20,7 +20,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { isMonthly } from 'lib/plans/constants';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -33,11 +33,11 @@ class PlanBillingPeriod extends Component {
 		const { purchase } = this.props;
 		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
 
-		addItem( planItem( yearlyPlanSlug ) );
 		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
 		} );
+		addItem( planItem( yearlyPlanSlug ) );
 		page( '/checkout/' + purchase.domain );
 	};
 
@@ -51,12 +51,14 @@ class PlanBillingPeriod extends Component {
 		if ( isRenewing( purchase ) && purchase.renewMoment ) {
 			return translate( 'Billed yearly, renews on %s', {
 				args: purchase.renewMoment.format( 'LL' ),
+				comment: '%s is the renewal date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
 		if ( isExpiring( purchase ) && purchase.expiryMoment ) {
 			return translate( 'Billed yearly, expires on %s', {
 				args: purchase.expiryMoment.format( 'LL' ),
+				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 

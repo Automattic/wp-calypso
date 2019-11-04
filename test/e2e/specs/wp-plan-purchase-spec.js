@@ -63,6 +63,14 @@ describe( `[${ host }] Plans: (${ screenSize }) @parallel @jetpack`, function() 
 				const present = await plansPage.confirmCurrentPlan( planName );
 				return assert( present, `Failed to detect correct plan (${ planName })` );
 			} );
+
+			step( 'Can See Exactly One Primary CTA Button', async function() {
+				const plansPage = await PlansPage.Expect( driver );
+				return assert(
+					await plansPage.onePrimaryButtonShown(),
+					'Incorrect number of primary buttons'
+				);
+			} );
 		} else {
 			step( 'Can Verify Current Plan', async function() {
 				// Jetpack

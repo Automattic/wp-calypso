@@ -4,7 +4,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
 <div>
   <Localized(StepWrapper)
     fallbackHeaderText="Choose a style"
-    fallbackSubHeaderText="Choose a style for your site's theme. Don't worry, you can always change it later."
+    fallbackSubHeaderText="This will help you get started with a theme you might like. You can change it later."
     headerText="Choose a style"
     stepContent={
       <div
@@ -49,21 +49,16 @@ exports[`<SiteStyleStep /> should render 1`] = `
             className="site-style__submit-wrapper"
           >
             <Button
-              aria-label="Continue"
               primary={true}
-              title="Continue"
               type="submit"
             >
-              <t
-                icon="arrow-right"
-                size={24}
-              />
+              Continue
             </Button>
           </div>
         </form>
       </div>
     }
-    subHeaderText="Choose a style for your site's theme. Don't worry, you can always change it later."
+    subHeaderText="This will help you get started with a theme you might like. You can change it later."
   />
 </div>
 `;

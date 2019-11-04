@@ -1,15 +1,23 @@
-.domain-suggestion {
-	box-sizing: border-box;
-
-	@include clear-fix;
+.domain-suggestion:not( .featured-domain-suggestion ) {
+	display: flex;
+	flex-direction: column;
 
 	@include breakpoint( '>660px' ) {
 		padding: 15px 20px;
 	}
 
-	@include breakpoint( '>480px' ) {
-		display: flex;
-		align-items: center;
+	.is-section-signup & {
+		@include breakpoint( '>480px' ) {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			flex-direction: row;
+			align-items: center;
+		}
 	}
 
 	&.is-clickable {
@@ -58,7 +66,7 @@
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		&.is-success {
 			background: var( --color-success );
@@ -125,6 +133,7 @@
 
 	.domain-registration-suggestion__title {
 		width: auto;
+		max-width: 100%;
 		padding-right: 0.2em;
 	}
 
@@ -140,22 +149,20 @@
 }
 
 .domain-registration-suggestion__title {
-	font-size: 1.3em;
+	font-size: 16px;
+	word-break: break-all;
 
 	@include breakpoint( '>480px' ) {
 		align-self: center;
 		padding-right: 2em;
-		font-size: 1em;
-		line-height: 1.25;
 	}
 }
 
 .button.domain-suggestion__action {
 	min-width: 66px;
 	text-align: center;
-	margin-top: 0.5em;
+	margin-top: 16px;
 	padding: 0.25em 3em;
-	float: right;
 	transition: all 0.1s linear;
 
 	&.is-primary {
@@ -177,18 +184,29 @@
 
 	&.is-borderless {
 		color: var( --color-primary );
-		padding: 0.25em;
+		margin-top: 0;
+		padding: 0;
 	}
 
-	@include breakpoint( '>480px' ) {
-		flex: 1 0 auto;
-		float: none;
-		margin-left: 1em;
-		margin-top: 0;
+	.is-section-signup & {
+		@include breakpoint( '>480px' ) {
+			flex: 1 0 auto;
+			margin-left: 1em;
+			margin-top: 0;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			flex: 1 0 auto;
+			margin-left: 1em;
+			margin-top: 0;
+		}
 	}
 }
 
 .domain-suggestion__chevron {
+	display: none;
 	margin-left: 10px;
 	flex: 1 0 auto;
 	color: var( --color-neutral-light );
@@ -196,5 +214,17 @@
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		color: var( --color-neutral-0 );
+	}
+
+	.is-section-signup & {
+		@include breakpoint( '>480px' ) {
+			display: block;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			display: block;
+		}
 	}
 }

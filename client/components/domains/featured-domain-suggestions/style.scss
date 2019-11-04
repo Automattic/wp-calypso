@@ -1,5 +1,6 @@
 .featured-domain-suggestions {
 	display: flex;
+	flex-direction: column;
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
 		.domain-registration-suggestion__match-reasons {
@@ -12,19 +13,33 @@
 			font-size: 16px;
 		}
 	}
+
+	.is-section-signup & {
+		@include breakpoint( '>480px' ) {
+			flex-direction: row;
+		}
+	}
+
+	.is-section-domains & {
+		@include breakpoint( '>800px' ) {
+			flex-direction: row;
+		}
+	}
 }
 
 .featured-domain-suggestion {
+	display: flex;
 	flex-direction: column;
+	justify-content: space-between;
 	margin-top: 0;
 	width: 100%;
 
 	.button.domain-suggestion__action {
-		min-width: 66px;
-		margin-top: 0.5em;
+		flex-grow: 0;
+		margin-left: 0;
+		margin-top: 1em;
 		text-align: center;
-		padding: 0.25em 3em;
-		float: right;
+		padding: 0.5em 3em;
 		transition: all 0.1s linear;
 		width: 100%;
 
@@ -37,19 +52,14 @@
 			margin-left: 40px;
 			min-height: 26px;
 		}
-
-		@include breakpoint( '>480px' ) {
-			flex: 1 0 auto;
-			float: none;
-			margin-left: 1em;
-		}
 	}
 
 	.domain-suggestion__content {
 		display: flex;
+		flex-basis: auto;
 		flex-direction: column;
 		justify-content: flex-start;
-		flex-grow: 2;
+		flex-grow: 1;
 		margin-top: 0;
 	}
 
@@ -67,13 +77,13 @@
     }
 
     .domain-registration-suggestion__title {
-		font-size: 1.6em;
-		font-weight: 600;
+		font-size: 20px;
+		font-weight: 400;
 		line-height: 1.2;
 		margin-bottom: 0.25em;
 
 		@include breakpoint( '>480px' ) {
-			font-size: 2em;
+			font-size: 24px;
 			margin-bottom: 0.125em;
 		}
 	}
@@ -94,12 +104,13 @@
 	.domain-registration-suggestion__progress-bar {
 		align-items: center;
 		display: flex;
+		font-size: 12px;
+		margin-top: 16px;
 		order: 2;
 
 		.progress-bar {
 			width: 25%;
 			margin-right: 1em;
-			height: 10px;
 		}
 	}
 
@@ -109,6 +120,7 @@
 
 	.domain-registration-suggestion__match-reason {
 		color: var( --color-text-subtle );
+		font-size: 12px;
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;
@@ -119,19 +131,6 @@
 		}
 	}
 
-	// .card increases specificity
-	&.card .domain-suggestion__action {
-		margin-top: 1em;
-
-		// Increase specificity
-		&.button {
-			width: 100%;
-			align-self: flex-start;
-			margin-left: 0;
-			flex-grow: 0;
-			padding: 0.5em 3em;
-		}
-	}
 	&.is-unavailable {
 		.domain-registration-suggestion__progress-bar,
 		.domain-registration-suggestion__match-reasons {

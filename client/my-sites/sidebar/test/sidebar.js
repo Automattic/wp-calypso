@@ -8,7 +8,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { MySitesSidebar } from '../sidebar';
+import { MySitesSidebar } from '..';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
@@ -21,7 +21,6 @@ jest.mock( 'lib/abtest', () => ( {
 	} ),
 } ) );
 jest.mock( 'lib/cart/store/index', () => null );
-jest.mock( 'my-sites/sidebar/manage-menu', () => null );
 jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),

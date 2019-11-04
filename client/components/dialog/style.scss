@@ -1,4 +1,5 @@
 .dialog__backdrop {
+	background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
 	align-items: center;
 	bottom: 0;
 	left: 0;
@@ -12,17 +13,6 @@
 		'root',
 		'.dialog__backdrop'
 	); // try to ensure that dialogs are on top of everything else
-
-	&.dialog-enter,
-	&.dialog-leave.dialog-leave-active {
-		background-color: rgba( var( --color-neutral-0-rgb ), 0 );
-	}
-
-	&,
-	&.dialog-enter.dialog-enter-active,
-	&.dialog-leave {
-		background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
-	}
 
 	// covers the masterbar as well
 	&.is-full-screen {
@@ -44,17 +34,6 @@
 	padding: 0;
 	opacity: 1;
 	transition: opacity 0.2s ease-in;
-
-	.dialog-enter &,
-	.dialog-leave.dialog-leave-active & {
-		opacity: 0;
-	}
-
-	&,
-	.dialog-enter.dialog-enter-active &,
-	.dialog-leave & {
-		opacity: 1;
-	}
 }
 
 .dialog__content {
@@ -70,7 +49,7 @@
 	}
 
 	h1 {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-size: 1.375em;
 		font-weight: 600;
 		line-height: 2em;

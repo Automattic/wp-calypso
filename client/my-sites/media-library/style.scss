@@ -30,6 +30,7 @@
 		border-bottom-right-radius: 0;
 	}
 }
+
 .media-library__header .button.media-library__upload-more {
 	margin-left: 0;
 }
@@ -39,6 +40,18 @@
 
 	@include breakpoint( '>480px' ) {
 		margin-bottom: 16px;
+	}
+}
+
+.media-library__content.has-no-upload-button .media-library {
+	&__header.card {
+		padding-bottom: 36px;
+	}
+
+	&__scale-range.range {
+		right: 50%;
+		margin: 0;
+		transform: translateX( 50% );
 	}
 }
 
@@ -59,15 +72,27 @@
 		@include breakpoint( '<480px' ) {
 			width: auto;
 		}
+
+		.search {
+			&.is-expanded-to-container {
+				height: 100%;
+			}
+
+			&.has-focus {
+				@include breakpoint( '<660px' ) {
+					margin-right: 4px;
+				}
+			}
+		}
 	}
 
 	.plan-storage {
 		display: none;
 		margin-bottom: 9px;
 		box-shadow:
-		  0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+		  0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		  0 1px 2px var( --color-neutral-0 );
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 		padding-left: 24px;
 		padding-right: 24px;
 		box-sizing: border-box;
@@ -89,9 +114,9 @@
 
 	.media-library__datasource {
 		box-shadow:
-		  0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+		  0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		  0 1px 2px var( --color-neutral-0 );
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 		box-sizing: border-box;
 		display: flex;
 		align-items: center;
@@ -131,7 +156,7 @@
 
 .media-library__source-button.is-borderless {
 	padding: 5px;
-	padding-left: 12px;
+	padding-left: 9px;
 	height: 38px;
 
 	img {
@@ -186,10 +211,10 @@
 	}
 }
 
-.media-library__scale-toggle {
+.media-library__scale-toggle.segmented-control {
 	position: absolute;
 	right: 16px;
-	&.segmented-control.is-compact .segmented-control__link {
+	&.is-compact .segmented-control__link {
 		padding: 2px 4px;
 	}
 
@@ -240,6 +265,11 @@
 	position: absolute;
 	top: 50px;
 	bottom: 72px;
+
+	.empty-content__line {
+		margin-right: 20px;
+		margin-left: 20px;
+	}
 }
 
 .empty-content .media-library__videopress-nudge-regular.card.upgrade-nudge {

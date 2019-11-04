@@ -1,17 +1,10 @@
 /** @format */
 
-export function isSiteMenuOpen( state ) {
-	return state.mySites.isSiteOpen;
-}
+/**
+ * External dependencies
+ */
 
-export function isDesignMenuOpen( state ) {
-	return state.mySites.isDesignOpen;
-}
+import { get } from 'lodash';
 
-export function isToolsMenuOpen( state ) {
-	return state.mySites.isToolsOpen;
-}
-
-export function isManageMenuOpen( state ) {
-	return state.mySites.isManageOpen;
-}
+export const isSidebarSectionOpen = ( state, section ) =>
+	get( state, `mySites.sidebarSections.${ section }.isOpen` );

@@ -13,7 +13,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import { loadScript, removeScriptCallback } from 'lib/load-script';
+import { loadScript, removeScriptCallback } from '@automattic/load-script';
 
 /**
  * Module variables
@@ -48,7 +48,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		this.destroy();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
 			this.pause();
 		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {

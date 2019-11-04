@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import request from 'superagent';
 import { find, isEmpty, startsWith, toUpper } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -39,10 +36,9 @@ class SelectIpsTag extends Component {
 	};
 
 	componentDidMount() {
-		request
-			.get( SelectIpsTag.ipsTagListUrl )
-			.then( response => {
-				this.receiveIpsTagList( response.body );
+		fetch( SelectIpsTag.ipsTagListUrl )
+			.then( async response => {
+				this.receiveIpsTagList( await response.json() );
 			} )
 			.catch( error => {
 				debug( 'Failed to load IPS tag list! ' + error );

@@ -26,28 +26,36 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @param  {object}  env                           environment options
  * @param  {object}  argv                          options map
- * @param  {object}  argv.source                   "plugin" or "theme"
+ * @param  {string}  argv.source                   plugin slug
+ * @param  {string}  argv.entry                    entry path
  * @return {object}                                webpack config
  */
 function getWebpackConfig( env = {}, argv = {} ) {
 	env.WP = true;
 
-	if ( 'theme' === argv.source ) {
-		argv.entry = path.join( __dirname, 'blank-theme' );
-		argv[ 'output-path' ] = path.join( __dirname, 'blank-theme', 'dist' );
-		argv[ 'output-filename' ] = 'blank-theme.js';
-	} else {
-		argv.entry = path.join( __dirname, 'full-site-editing-plugin' );
-		argv[ 'output-path' ] = path.join( __dirname, 'full-site-editing-plugin', 'dist' );
-		argv[ 'output-filename' ] = 'full-site-editing-plugin.js';
-	}
+	const source = argv.source;
+
+	// object provides ability to name the entry point
+	// which enables dynamic file names
+	const entry = {
+		[ source ]: path.join( __dirname, 'full-site-editing-plugin', source ),
+	};
+
+	const outputPath = path.join( __dirname, 'full-site-editing-plugin', source, 'dist' );
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
 	return {
 		...webpackConfig,
+		entry,
+		output: {
+			...webpackConfig.output,
+			path: outputPath,
+			filename: '[name].js', // dynamic filename
+		},
 		watch: isDevelopment,
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
+		stats: 'minimal',
 	};
 }
 

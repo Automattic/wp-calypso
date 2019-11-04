@@ -1,4 +1,4 @@
-/** @format */
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
@@ -36,7 +36,7 @@ export function seen( state = {}, action ) {
 }
 // @TODO: evaluate serialization later
 // import { itemsSchema } from './schema';
-// items.schema = itemsSchema;
+// export const items = withSchemaValidation( itemsSchema, itemsReducer );
 
 export default combineReducers( {
 	items,

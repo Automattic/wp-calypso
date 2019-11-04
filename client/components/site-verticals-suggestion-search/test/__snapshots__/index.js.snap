@@ -2,12 +2,14 @@
 
 exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
 <Fragment>
-  <Connect(QueryVerticals)
+  <QueryVerticals
     debounceTime={300}
     searchTerm=""
+    siteType="blog"
   />
-  <Connect(QueryVerticals)
-    searchTerm="business"
+  <QueryVerticals
+    searchTerm="eeek"
+    siteType="blog"
   />
   <SuggestionSearch
     autoFocus={false}
@@ -21,6 +23,7 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
         "action": "site_vertical_selected",
         "fetch_algo": "/verticals",
         "id": "fakeuuid-site-vertical-suggestion",
+        "ui_algo": "signup/site-topic/related_1",
       }
     }
     suggestions={Array []}

@@ -21,6 +21,7 @@ import {
 	toLower,
 	uniq,
 } from 'lodash';
+import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
@@ -41,6 +42,7 @@ import {
 	isFreeWordPressComDomain,
 	isGoogleApps,
 	isJetpackPlan,
+	isJetpackProduct,
 	isNoAds,
 	isPlan,
 	isBlogger,
@@ -73,7 +75,7 @@ import { getTermDuration } from 'lib/plans/constants';
  * @param {Object} newCartItem - new item as `CartItemValue` object
  * @returns {Function} the function that adds the item to a shopping cart
  */
-export function add( newCartItem ) {
+export function addCartItem( newCartItem ) {
 	function appendItem( products ) {
 		products = products || [];
 
@@ -105,7 +107,7 @@ export function clearCart() {
  * @param {Object} newCartItem - new item as `CartItemValue` object
  * @returns {Function} the function that adds the item to a shopping cart
  */
-export function addWithoutReplace( newCartItem ) {
+export function addCartItemWithoutReplace( newCartItem ) {
 	function appendItem( products ) {
 		products = products || [];
 
@@ -150,6 +152,11 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackPlan( cartItem ) ) {
 		// adding a jetpack bundle should replace the cart
+		return true;
+	}
+
+	if ( isJetpackProduct( cartItem ) ) {
+		// adding a Jetpack product should replace the cart
 		return true;
 	}
 
@@ -215,7 +222,7 @@ export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPl
  */
 export function replaceItem( oldItem, newItem ) {
 	return function( cart ) {
-		return flow( [ remove( oldItem ), add( newItem ) ] )( cart );
+		return flow( [ remove( oldItem ), addCartItem( newItem ) ] )( cart );
 	};
 }
 
@@ -228,7 +235,7 @@ export function replaceItem( oldItem, newItem ) {
  * @returns {Object[]} the list of dependency items in the shopping cart
  */
 export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
-	const dependentProducts = getAll( cart ).filter( function( existingCartItem ) {
+	const dependentProducts = getAllCartItems( cart ).filter( function( existingCartItem ) {
 		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
 	} );
 
@@ -247,7 +254,7 @@ export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
  * @param {Object} cart - cart as `CartValue` object
  * @returns {Object[]} the list of items in the shopping cart as `CartItemValue` objects
  */
-export function getAll( cart ) {
+export function getAllCartItems( cart ) {
 	return ( cart && cart.products ) || [];
 }
 
@@ -258,8 +265,8 @@ export function getAll( cart ) {
  *
  * @returns {Object[]} the sorted list of items in the shopping cart
  */
-export function getAllSorted( cart ) {
-	return sortProducts( getAll( cart ) );
+export function getAllCartItemsSorted( cart ) {
+	return sortProducts( getAllCartItems( cart ) );
 }
 
 /**
@@ -269,7 +276,7 @@ export function getAllSorted( cart ) {
  * @returns {Array} an array of renewal items
  */
 export function getRenewalItems( cart ) {
-	return getAll( cart ).filter( isRenewal );
+	return getAllCartItems( cart ).filter( isRenewal );
 }
 
 /**
@@ -279,7 +286,7 @@ export function getRenewalItems( cart ) {
  * @returns {boolean} true if there is at least one item with free trial, false otherwise
  */
 export function hasFreeTrial( cart ) {
-	return some( getAll( cart ), 'free_trial' );
+	return some( getAllCartItems( cart ), 'free_trial' );
 }
 
 /**
@@ -289,7 +296,7 @@ export function hasFreeTrial( cart ) {
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasPlan( cart ) {
-	return cart && some( getAll( cart ), isPlan );
+	return cart && some( getAllCartItems( cart ), isPlan );
 }
 
 /**
@@ -299,7 +306,7 @@ export function hasPlan( cart ) {
  * @returns {boolean} true if there is at least one Jetpack plan, false otherwise
  */
 export function hasJetpackPlan( cart ) {
-	return some( getAll( cart ), isJetpackPlan );
+	return some( getAllCartItems( cart ), isJetpackPlan );
 }
 
 /**
@@ -309,7 +316,7 @@ export function hasJetpackPlan( cart ) {
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasEcommercePlan( cart ) {
-	return cart && some( getAll( cart ), isEcommerce );
+	return cart && some( getAllCartItems( cart ), isEcommerce );
 }
 
 /**
@@ -325,15 +332,15 @@ export function hasOnlyBundledDomainProducts( cart ) {
 }
 
 export function hasBloggerPlan( cart ) {
-	return some( getAll( cart ), isBlogger );
+	return some( getAllCartItems( cart ), isBlogger );
 }
 
 export function hasPersonalPlan( cart ) {
-	return some( getAll( cart ), isPersonal );
+	return some( getAllCartItems( cart ), isPersonal );
 }
 
 export function hasPremiumPlan( cart ) {
-	return some( getAll( cart ), isPremium );
+	return some( getAllCartItems( cart ), isPremium );
 }
 
 export function hasDomainCredit( cart ) {
@@ -368,7 +375,7 @@ export function getTlds( cart ) {
  * @todo This will fail when a domain is purchased with a plan, as the domain will be included in the free trial
  */
 export function hasOnlyFreeTrial( cart ) {
-	return cart.products && findFreeTrial( cart ) && every( getAll( cart ), { cost: 0 } );
+	return cart.products && findFreeTrial( cart ) && every( getAllCartItems( cart ), { cost: 0 } );
 }
 
 /**
@@ -379,7 +386,7 @@ export function hasOnlyFreeTrial( cart ) {
  * @returns {boolean} true if there is at least one item of the specified product type, false otherwise
  */
 export function hasProduct( cart, productSlug ) {
-	return getAll( cart ).some( function( cartItem ) {
+	return getAllCartItems( cart ).some( function( cartItem ) {
 		return cartItem.product_slug === productSlug;
 	} );
 }
@@ -393,7 +400,7 @@ export function hasProduct( cart, productSlug ) {
  * @returns {boolean} true if all the products in the cart are of the productSlug type
  */
 export function hasOnlyProductsOf( cart, productSlug ) {
-	return cart.products && every( getAll( cart ), { product_slug: productSlug } );
+	return cart.products && every( getAllCartItems( cart ), { product_slug: productSlug } );
 }
 
 /**
@@ -403,7 +410,7 @@ export function hasOnlyProductsOf( cart, productSlug ) {
  * @returns {boolean} true if there is at least one domain registration item, false otherwise
  */
 export function hasDomainRegistration( cart ) {
-	return some( getAll( cart ), isDomainRegistration );
+	return some( getAllCartItems( cart ), isDomainRegistration );
 }
 
 export function hasOnlyDomainProductsWithPrivacySupport( cart ) {
@@ -414,7 +421,7 @@ export function hasOnlyDomainProductsWithPrivacySupport( cart ) {
 }
 
 export function hasDomainMapping( cart ) {
-	return some( getAll( cart ), isDomainMapping );
+	return some( getAllCartItems( cart ), isDomainMapping );
 }
 
 export function hasDomainBeingUsedForPlan( cart ) {
@@ -430,7 +437,7 @@ export function hasDomainBeingUsedForPlan( cart ) {
  * @returns {boolean} true if there is at least one renewal item, false otherwise
  */
 export function hasRenewalItem( cart ) {
-	return some( getAll( cart ), isRenewal );
+	return some( getAllCartItems( cart ), isRenewal );
 }
 
 /**
@@ -440,7 +447,7 @@ export function hasRenewalItem( cart ) {
  * @returns {boolean} true if there is at least one domain transfer item, false otherwise
  */
 export function hasTransferProduct( cart ) {
-	return some( getAll( cart ), isDomainTransfer );
+	return some( getAllCartItems( cart ), isDomainTransfer );
 }
 
 /**
@@ -450,7 +457,7 @@ export function hasTransferProduct( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainTransfers( cart ) {
-	return filter( getAll( cart ), { product_slug: domainProductSlugs.TRANSFER_IN } );
+	return filter( getAllCartItems( cart ), { product_slug: domainProductSlugs.TRANSFER_IN } );
 }
 
 /**
@@ -460,7 +467,7 @@ export function getDomainTransfers( cart ) {
  * @returns {boolean} true if there are only renewal items, false otherwise
  */
 export function hasOnlyRenewalItems( cart ) {
-	return every( getAll( cart ), isRenewal );
+	return every( getAllCartItems( cart ), isRenewal );
 }
 
 /**
@@ -470,7 +477,7 @@ export function hasOnlyRenewalItems( cart ) {
  * @returns {boolean} true if there is at least one concierge session item, false otherwise
  */
 export function hasConciergeSession( cart ) {
-	return some( getAll( cart ), isConciergeSession );
+	return some( getAllCartItems( cart ), isConciergeSession );
 }
 
 /**
@@ -498,7 +505,10 @@ export function getCartItemBillPeriod( cartItem ) {
  * @returns {boolean} true if any product in the cart renews
  */
 export function hasRenewableSubscription( cart ) {
-	return cart.products && some( getAll( cart ), cartItem => getCartItemBillPeriod( cartItem ) > 0 );
+	return (
+		cart.products &&
+		some( getAllCartItems( cart ), cartItem => getCartItemBillPeriod( cartItem ) > 0 )
+	);
 }
 
 /**
@@ -652,11 +662,11 @@ export function domainTransfer( properties ) {
  * @param {Object} cart - cart as `CartValue` object
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
-function getGoogleApps( cart ) {
-	return filter( getAll( cart ), isGoogleApps );
+export function getGoogleApps( cart ) {
+	return filter( getAllCartItems( cart ), isGoogleApps );
 }
 
-function googleApps( properties ) {
+export function googleApps( properties ) {
 	const productSlug = properties.product_slug || 'gapps',
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
@@ -670,18 +680,60 @@ export function googleAppsExtraLicenses( properties ) {
 }
 
 export function fillGoogleAppsRegistrationData( cart, registrationData ) {
-	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
+	const googleAppsItems = filter( getAllCartItems( cart ), isGoogleApps );
 	return flow.apply(
 		null,
 		googleAppsItems.map( function( item ) {
 			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-			return add( item );
+			return addCartItem( item );
 		} )
 	);
 }
 
+/**
+ * Returns the domain part of an email address.
+ *
+ * @param {String} emailAddress - a valid email address
+ * @returns {String} the domain
+ */
+const getDomainPartFromEmail = emailAddress =>
+	// Domain is any string after `@` character
+	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
+		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
+		: null;
+
+/**
+ * Returns a predicate that determines if a domain matches a product meta.
+ *
+ * @param {String} domain domain to compare.
+ * @returns {function(*=): (boolean)} true if the domain matches.
+ */
+const isSameDomainAsProductMeta = domain => product =>
+	product &&
+	product.meta &&
+	'string' === typeof domain &&
+	'string' === typeof product.meta &&
+	product.meta.trim().toUpperCase() === domain.trim().toUpperCase();
+
+export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
+	return (
+		! emailValidator.validate( contactDetails.email ) ||
+		some(
+			cart.products,
+			isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
+		)
+	);
+}
+
+export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
+	return some(
+		cart.products,
+		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.alternateEmail ) )
+	);
+}
+
 export function hasGoogleApps( cart ) {
-	return some( getAll( cart ), isGoogleApps );
+	return some( getAllCartItems( cart ), isGoogleApps );
 }
 
 export function customDesignItem() {
@@ -732,6 +784,12 @@ export function conciergeSessionItem() {
 	};
 }
 
+export function jetpackProductItem( slug ) {
+	return {
+		product_slug: slug,
+	};
+}
+
 /**
  * Creates a new shopping cart item for the specified plan.
  *
@@ -764,7 +822,7 @@ export function getItemForPlan( plan, properties ) {
  * @returns {Object} the corresponding item in the shopping cart as `CartItemValue` object
  */
 export function findFreeTrial( cart ) {
-	return find( getAll( cart ), { free_trial: true } );
+	return find( getAllCartItems( cart ), { free_trial: true } );
 }
 
 /**
@@ -774,7 +832,7 @@ export function findFreeTrial( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainRegistrations( cart ) {
-	return filter( getAll( cart ), { is_domain_registration: true } );
+	return filter( getAllCartItems( cart ), { is_domain_registration: true } );
 }
 
 /**
@@ -784,7 +842,7 @@ export function getDomainRegistrations( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainMappings( cart ) {
-	return filter( getAll( cart ), { product_slug: 'domain_map' } );
+	return filter( getAllCartItems( cart ), { product_slug: 'domain_map' } );
 }
 
 /**
@@ -871,11 +929,11 @@ export function getRenewalItemFromCartItem( cartItem, properties ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getSiteRedirects( cart ) {
-	return filter( getAll( cart ), { product_slug: 'offsite_redirect' } );
+	return filter( getAllCartItems( cart ), { product_slug: 'offsite_redirect' } );
 }
 
 export function hasDomainInCart( cart, domain ) {
-	return some( getAll( cart ), { is_domain_registration: true, meta: domain } );
+	return some( getAllCartItems( cart ), { is_domain_registration: true, meta: domain } );
 }
 
 /**
@@ -1159,7 +1217,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
  * @returns {boolean} true if there is at least one cart item added more than X time ago, false otherwise
  */
 export function hasStaleItem( cart ) {
-	return some( getAll( cart ), function( cartItem ) {
+	return some( getAllCartItems( cart ), function( cartItem ) {
 		// time_added_to_cart is in seconds, Date.now() returns milliseconds
 		return (
 			cartItem.time_added_to_cart &&
@@ -1167,81 +1225,3 @@ export function hasStaleItem( cart ) {
 		);
 	} );
 }
-
-export default {
-	add,
-	addPrivacyToAllDomains,
-	addWithoutReplace,
-	businessPlan,
-	clearCart,
-	customDesignItem,
-	domainMapping,
-	domainRegistration,
-	domainTransfer,
-	fillGoogleAppsRegistrationData,
-	findFreeTrial,
-	getAll,
-	getAllSorted,
-	getDomainMappings,
-	getDomainPriceRule,
-	getDomainRegistrations,
-	getDomainRegistrationsWithoutPrivacy,
-	getDomainTransfers,
-	getDomainTransfersWithoutPrivacy,
-	getGoogleApps,
-	getIncludedDomain,
-	getItemForPlan,
-	getRenewalItemFromCartItem,
-	getRenewalItemFromProduct,
-	getRenewalItems,
-	getSiteRedirects,
-	getTlds,
-	googleApps,
-	googleAppsExtraLicenses,
-	guidedTransferItem,
-	isDomainBeingUsedForPlan,
-	isNextDomainFree,
-	hasDomainBeingUsedForPlan,
-	hasDomainCredit,
-	hasDomainInCart,
-	hasDomainMapping,
-	hasDomainRegistration,
-	hasEcommercePlan,
-	hasOnlyDomainProductsWithPrivacySupport,
-	hasFreeTrial,
-	hasGoogleApps,
-	hasOnlyFreeTrial,
-	hasOnlyProductsOf,
-	hasOnlyRenewalItems,
-	hasPlan,
-	hasJetpackPlan,
-	hasOnlyBundledDomainProducts,
-	hasBloggerPlan,
-	hasPersonalPlan,
-	hasPremiumPlan,
-	hasProduct,
-	hasRenewableSubscription,
-	hasRenewalItem,
-	hasTld,
-	hasConciergeSession,
-	isPaidDomain,
-	noAdsItem,
-	planItem,
-	premiumPlan,
-	remove,
-	removeItemAndDependencies,
-	removePrivacyFromAllDomains,
-	replaceItem,
-	siteRedirect,
-	shouldBundleDomainWithPlan,
-	spaceUpgradeItem,
-	supportsPrivacyProtectionPurchase,
-	themeItem,
-	unlimitedSpaceItem,
-	unlimitedThemesItem,
-	updatePrivacyForDomain,
-	videoPressItem,
-	hasStaleItem,
-	hasTransferProduct,
-	conciergeSessionItem,
-};

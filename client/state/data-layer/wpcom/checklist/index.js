@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,12 +15,17 @@ import { receiveSiteChecklist } from 'state/checklist/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
+// The checklist API requests use the http_envelope query param, however on
+// desktop the envelope is not being unpacked for some reason. This conversion
+// ensures the payload has been unpacked.
+const fromApi = payload => get( payload, 'body', payload );
+
 export const fetchChecklist = action =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'GET',
-			apiNamespace: 'rest/v1',
+			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
 			},
@@ -29,13 +33,32 @@ export const fetchChecklist = action =>
 		action
 	);
 
-export const receiveChecklistSuccess = ( action, checklist ) =>
-	receiveSiteChecklist( action.siteId, checklist );
+export const receiveChecklistSuccess = ( action, receivedChecklist ) => {
+	let checklist = receivedChecklist;
+
+	// Legacy object-based data format, let's convert it to the new array-based format and ultimately remove it.
+	if ( ! Array.isArray( receivedChecklist.tasks ) ) {
+		checklist = {
+			...receivedChecklist,
+			tasks: Object.keys( receivedChecklist.tasks ).map( taskId => {
+				const { completed, ...rest } = receivedChecklist.tasks[ taskId ];
+				return {
+					id: taskId,
+					isCompleted: completed,
+					...rest,
+				};
+			} ),
+		};
+	}
+
+	return receiveSiteChecklist( action.siteId, checklist );
+};
 
 const dispatchChecklistRequest = dispatchRequest( {
 	fetch: fetchChecklist,
 	onSuccess: receiveChecklistSuccess,
 	onError: noop,
+	fromApi,
 } );
 
 export const updateChecklistTask = action =>
@@ -43,7 +66,7 @@ export const updateChecklistTask = action =>
 		{
 			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
-			apiNamespace: 'rest/v1',
+			apiNamespace: 'rest/v1.1',
 			query: {
 				http_envelope: 1,
 			},
@@ -56,6 +79,7 @@ const dispatchChecklistTaskUpdate = dispatchRequest( {
 	fetch: updateChecklistTask,
 	onSuccess: receiveChecklistSuccess,
 	onError: noop,
+	fromApi,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/checklist/index.js', {

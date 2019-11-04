@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
@@ -17,6 +17,7 @@ import {
 	isKeyringServicesFetching,
 } from 'state/sharing/services/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import Service from './service';
 import * as Components from './services';
@@ -31,6 +32,18 @@ import './services-group.scss';
  * Module constants
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
+
+const serviceWarningLevelToNoticeStatus = level => {
+	switch ( level ) {
+		case 'error':
+			return 'is-error';
+		case 'warning':
+			return 'is-warning';
+		case 'info':
+		default:
+			return 'is-info';
+	}
+};
 
 const SharingServicesGroup = ( { isFetching, services, title } ) => {
 	if ( ! services.length && ! isFetching ) {
@@ -47,6 +60,23 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 							const Component = Components.hasOwnProperty( service.ID )
 								? Components[ service.ID ]
 								: Service;
+
+							if ( service.warnings ) {
+								return (
+									<Fragment key={ service.ID }>
+										<Component service={ service } />
+										{ service.warnings.map( ( warning, index ) => (
+											<Notice
+												key={ `warning-${ index }` }
+												showDismiss={ false }
+												status={ serviceWarningLevelToNoticeStatus( warning.level ) }
+											>
+												{ warning.message }
+											</Notice>
+										) ) }
+									</Fragment>
+								);
+							}
 
 							return <Component key={ service.ID } service={ service } />;
 					  } )

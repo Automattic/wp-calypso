@@ -129,7 +129,8 @@ class Search extends Component {
 		} = this.props;
 
 		return (
-			<FormFieldset>
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+			<FormFieldset className="jetpack-search-settings">
 				{ this.renderInfoLink( 'https://jetpack.com/support/search/' ) }
 
 				<JetpackModuleToggle

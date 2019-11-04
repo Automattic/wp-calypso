@@ -35,6 +35,11 @@ export function receiveSiteChecklist( siteId, checklist ) {
 export const requestSiteChecklist = siteId => ( {
 	type: SITE_CHECKLIST_REQUEST,
 	siteId,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 /**

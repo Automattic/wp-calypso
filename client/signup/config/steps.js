@@ -23,6 +23,7 @@ import {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 } from 'lib/signup/step-actions';
+import { abtest } from 'lib/abtest';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
@@ -40,3 +41,7 @@ export default generateSteps( {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 } );
+
+export function isDomainStepSkippable( flowName ) {
+	return flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable';
+}

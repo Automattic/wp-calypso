@@ -2,28 +2,40 @@
 /**
  * External dependencies
  */
-import { get, memoize, omit, pick, isBoolean } from 'lodash';
+import { get, isBoolean, memoize, omit, pick, size } from 'lodash';
 import debugModule from 'debug';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getVerticalTaskList } from './vertical-task-list';
-import { abtest } from 'lib/abtest';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
-function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, siteVerticals } ) {
+function getTasks( {
+	designType,
+	siteIsUnlaunched,
+	phase2,
+	siteSegment,
+	siteVerticals,
+	taskStatuses,
+} ) {
+	// The getTasks function can be removed when we make a full switch to "phase 2"
+	if ( phase2 && size( taskStatuses ) ) {
+		// Use the server response, Luke
+		return taskStatuses;
+	}
+
 	const tasks = [];
 	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
 
-	const getTask = taskId => get( taskStatuses, taskId );
+	const getTask = taskId =>
+		taskStatuses ? taskStatuses.filter( task => task.id === taskId )[ 0 ] : undefined;
 	const hasTask = taskId => getTask( taskId ) !== undefined;
-	const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
+	const isCompleted = taskId => get( getTask( taskId ), 'isCompleted', false );
 	const addTask = ( taskId, completed ) => {
-		const task = Object.assign( omit( getTask( taskId ), [ 'completed' ] ), {
+		const task = Object.assign( omit( getTask( taskId ), [ 'isCompleted' ] ), {
 			id: taskId,
 			isCompleted: isBoolean( completed ) ? completed : isCompleted( taskId ),
 		} );
@@ -54,35 +66,26 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 			addTask( 'post_published' );
 		}
 
-		// If there is a site segment and
-		// the user has already completed the logo task or
-		// if it's the AB variant
-		if ( hasTask( 'site_logo_set' ) && segmentSlug && 'logo' === abtest( 'checklistSiteLogo' ) ) {
-			addTask( 'site_logo_set' );
-		} else {
-			addTask( 'site_icon_set' );
-		}
+		addTask( 'site_icon_set' );
 	}
 
 	addTask( 'custom_domain_registered' );
 	addTask( 'mobile_app_installed' );
 
-	if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
+	if ( get( taskStatuses, 'email_verified.completed' ) && siteIsUnlaunched ) {
 		addTask( 'site_launched' );
 	}
 
-	if ( config.isEnabled( 'onboarding-checklist/email-setup' ) ) {
-		if ( hasTask( 'email_setup' ) ) {
-			addTask( 'email_setup' );
-		}
+	if ( hasTask( 'email_setup' ) ) {
+		addTask( 'email_setup' );
+	}
 
-		if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
-			addTask( 'email_forwarding_upgraded_to_gsuite' );
-		}
+	if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
+		addTask( 'email_forwarding_upgraded_to_gsuite' );
+	}
 
-		if ( hasTask( 'gsuite_tos_accepted' ) ) {
-			addTask( 'gsuite_tos_accepted' );
-		}
+	if ( hasTask( 'gsuite_tos_accepted' ) ) {
+		addTask( 'gsuite_tos_accepted' );
 	}
 
 	debug( 'Site info: ', { designType, segmentSlug, siteVerticals } );
@@ -104,6 +107,15 @@ class WpcomTaskList {
 		return this.tasks.find( task => task.id === taskId );
 	}
 
+	getIds() {
+		return this.getAll().map( ( { id } ) => id );
+	}
+
+	isCompleted( taskId ) {
+		const task = this.get( taskId );
+		return task ? task.isCompleted : false;
+	}
+
 	has( taskId ) {
 		return !! this.get( taskId );
 	}
@@ -115,6 +127,12 @@ class WpcomTaskList {
 		}
 		this.tasks = this.tasks.filter( task => task.id !== taskId );
 		return found;
+	}
+
+	removeTasksWithoutUrls( taskUrls ) {
+		const hasUrl = task => ! ( task.id in taskUrls ) || taskUrls[ task.id ];
+
+		this.tasks = this.tasks.filter( hasUrl );
 	}
 
 	getFirstIncompleteTask() {
@@ -139,7 +157,7 @@ export const getTaskList = memoize(
 		const key = pick( params, [
 			'taskStatuses',
 			'designType',
-			'isSiteUnlaunched',
+			'siteIsUnlaunched',
 			'siteSegment',
 			'siteVerticals',
 		] );

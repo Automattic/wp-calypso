@@ -21,9 +21,16 @@ import { ReactComponent as SvgExample } from './test.svg';
 
 ## Adding icons
 
-To add icons to this package, download using the Material icon tool:
+To add more Material Design icons, you'll have to download individual icons to appropriate directories
+then rebuild and checkin updated `material-icons.svg` file.
 
-https://material.io/tools/icons/
+Select and download individual icon's SVG file from https://material.io/tools/icons/,
+minding the style (like `outline`) and size.
 
-Store the SVG files in the sub-folder matching the category used on
-material.io.
+Move the SVG files in the sub-folder matching the category used on material.io.
+
+Rebuild `material-icons.svg` by running:
+
+	lerna run build --scope @automattic/material-design-icons
+
+Beware that default style and size for `MaterialIcon` class is `outline` and `24`.

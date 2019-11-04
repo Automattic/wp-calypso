@@ -9,6 +9,42 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
+const getSiteTypePropertyDefaults = propertyKey =>
+	get(
+		{
+			// General copy
+			siteMockupHelpTipCopy: i18n.translate(
+				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
+			),
+			siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll back up to continue.' ),
+			siteMockupTitleFallback: i18n.translate( 'Your New Website' ),
+			// Site title step
+			siteTitleLabel: i18n.translate( 'Give your site a name' ),
+			siteTitleSubheader: i18n.translate(
+				'This will appear at the top of your site and can be changed at anytime.'
+			),
+			siteTitlePlaceholder: i18n.translate( 'default siteTitlePlaceholder' ),
+			// Site topic step
+			siteTopicHeader: i18n.translate( 'What is your site about?' ),
+			siteTopicLabel: i18n.translate( 'What is your site about?' ),
+			siteTopicSubheader: i18n.translate(
+				"We'll add relevant content to your site to help you get started."
+			),
+			siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
+			// Domains step
+			domainsStepHeader: i18n.translate( 'Give your site an address' ),
+			domainsStepSubheader: i18n.translate(
+				'Enter a keyword that describes your site to get started.'
+			),
+			// Site styles step
+			siteStyleSubheader: i18n.translate(
+				'This will help you get started with a theme you might like. You can change it later.'
+			),
+		},
+		propertyKey,
+		null
+	);
+
 /**
  * Looks up site types array for item match and returns a property value
  *
@@ -24,7 +60,8 @@ import { find, get } from 'lodash';
  */
 export function getSiteTypePropertyValue( key, value, property, siteTypes = getAllSiteTypes() ) {
 	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
-	return get( siteTypeProperties, property, null );
+
+	return get( siteTypeProperties, property ) || getSiteTypePropertyDefaults( property );
 }
 
 /**
@@ -33,50 +70,77 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  * A user who comes in via a landing page will not see the Site Topic dropdown.
  * Do note that id's per site type should not be changed as we add/remove site-types.
  *
- * @return {array} current list of site types
+ * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
+ *
+ * @return {Array} current list of site types
  */
 export function getAllSiteTypes() {
 	return [
 		{
-			id: 2,
+			id: 2, // This value must correspond with its sibling in the /segments API results
 			slug: 'blog',
+			defaultVertical: 'blogging', // used to conduct a vertical search and grab a default vertical for the segment
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
-			theme: 'pub/independent-publisher-2',
+			theme: 'pub/maywood',
 			designType: 'blog',
-			siteTitleLabel: i18n.translate( 'What would you like to call your blog?' ),
+			siteTitleLabel: i18n.translate( "Tell us your blog's name" ),
 			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),
+			siteTitleSubheader: i18n.translate(
+				'This will appear at the top of your blog and can be changed at anytime.'
+			),
 			siteTopicHeader: i18n.translate( 'What is your blog about?' ),
 			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
+			siteTopicSubheader: i18n.translate(
+				"We'll add relevant content to your blog to help you get started."
+			),
+			siteMockupHelpTipCopy: i18n.translate(
+				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
+			),
+			siteMockupTitleFallback: i18n.translate( 'Your New Blog' ),
+			domainsStepHeader: i18n.translate( 'Give your blog an address' ),
+			domainsStepSubheader: i18n.translate(
+				"Enter your blog's name or some keywords that describe it to get started."
+			),
 		},
 		{
-			id: 1,
+			id: 1, // This value must correspond with its sibling in the /segments API results
 			slug: 'business',
+			defaultVertical: 'business',
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
-			theme: 'pub/professional-business',
+			theme: 'pub/maywood',
 			designType: 'page',
-			siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
+			siteTitleLabel: i18n.translate( 'Tell us your business’s name' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
 			siteTopicHeader: i18n.translate( 'What does your business do?' ),
 			siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
+			domainsStepSubheader: i18n.translate(
+				"Enter your business's name or some keywords that describe it to get started."
+			),
 			customerType: 'business',
 		},
 		{
-			id: 3,
+			id: 4, // This value must correspond with its sibling in the /segments API results
 			slug: 'professional',
+			defaultVertical: 'designer',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
-			theme: 'pub/altofocus',
+			theme: 'pub/maywood',
 			designType: 'portfolio',
 			siteTitleLabel: i18n.translate( 'What is your name?' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
 			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
+			siteTopicInputPlaceholder: i18n.translate( 'Enter your job title or choose one from below.' ),
+			domainsStepSubheader: i18n.translate(
+				'Enter your name or some keywords that describe yourself to get started.'
+			),
 		},
 		{
-			id: 5,
+			id: 3, // This value must correspond with its sibling in the /segments API results
 			slug: 'online-store',
+			defaultVertical: 'business',
 			label: i18n.translate( 'Online store' ),
 			description: i18n.translate( 'Sell your collection of products online.' ),
 			theme: 'pub/dara',
@@ -86,6 +150,8 @@ export function getAllSiteTypes() {
 			siteTopicHeader: i18n.translate( 'What type of products do you sell?' ),
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
+			purchaseRequired: true,
+			forcePublicSite: true,
 		},
 	];
 }

@@ -5,17 +5,64 @@
  */
 import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
-import { dispatch, select, subscribe } from '@wordpress/data';
-import { createBlock, parse } from '@wordpress/blocks';
+import { dispatch, select, subscribe, use } from '@wordpress/data';
+import { createBlock, parse, rawHandler } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { Component } from 'react';
 import tinymce from 'tinymce/tinymce';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { inIframe, sendMessage } from './utils';
+
+const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
+
+/**
+ * Monitors Gutenberg for when an editor is opened with content originally authored in the classic editor.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function triggerConversionPrompt( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+
+	const unsubscribe = subscribe( () => {
+		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const initialized = currentPost && currentPost.id;
+
+		if ( ! initialized ) {
+			return;
+		}
+
+		unsubscribe();
+
+		const blocks = select( 'core/editor' ).getBlocks();
+		const eligible = blocks.length === 1 && blocks[ 0 ].name === 'core/freeform';
+
+		if ( ! eligible ) {
+			return;
+		}
+
+		calypsoPort.postMessage( { action: 'triggerConversionRequest' }, [ port2 ] );
+
+		port1.onmessage = ( { data: confirmed } ) => {
+			port1.close();
+
+			if ( confirmed !== true ) {
+				return;
+			}
+
+			dispatch( 'core/editor' ).replaceBlock(
+				blocks[ 0 ].clientId,
+				rawHandler( {
+					HTML: blocks[ 0 ].originalContent,
+				} )
+			);
+		};
+	} );
+}
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
@@ -48,10 +95,19 @@ function transmitDraftId( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.editor-post-trash', e => {
-		e.preventDefault();
-
-		calypsoPort.postMessage( { action: 'trashPost' } );
+	use( registry => {
+		return {
+			dispatch: namespace => {
+				const actions = { ...registry.dispatch( namespace ) };
+				if ( namespace === 'core/editor' && actions.trashPost ) {
+					actions.trashPost = () => {
+						debug( 'override core/editor trashPost action to use postlist trash' );
+						calypsoPort.postMessage( { action: 'trashPost' } );
+					};
+				}
+				return actions;
+			},
+		};
 	} );
 }
 
@@ -101,11 +157,13 @@ function handlePressThis( calypsoPort ) {
 		const unsubscribe = subscribe( () => {
 			// Calypso sends the message as soon as the iframe is loaded, so we
 			// need to be sure that the editor is initialized and the core blocks
-			// registered. There is no specific hook or selector for that, so we use
-			// `isCleanNewPost` which is triggered when everything is initialized if
-			// the post is new.
-			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
-			if ( ! isCleanNewPost ) {
+			// registered. There is an unstable selector for that, so we use
+			// `isCleanNewPost` otherwise which is triggered when everything is
+			// initialized if the post is new.
+			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
+				? select( 'core/editor' ).__unstableIsEditorReady()
+				: select( 'core/editor' ).isCleanNewPost();
+			if ( ! editorIsReady ) {
 				return;
 			}
 
@@ -142,7 +200,7 @@ function handlePressThis( calypsoPort ) {
 				);
 			}
 
-			dispatch( 'core/editor' ).resetBlocks( blocks );
+			dispatch( 'core/editor' ).resetEditorBlocks( blocks );
 			dispatch( 'core/editor' ).editPost( { title: title } );
 		} );
 	}
@@ -415,8 +473,8 @@ function handlePreview( calypsoPort ) {
 			dispatch( 'core/editor' ).autosave( { isPreview: true } );
 		}
 		const unsubscribe = subscribe( () => {
-			const isSavingPost = select( 'core/editor' ).isSavingPost();
-			if ( ! isSavingPost ) {
+			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+			if ( previewUrl ) {
 				unsubscribe();
 				sendPreviewData();
 			}
@@ -477,15 +535,29 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function handleGoToAllPosts( calypsoPort ) {
+function handleCloseEditor( calypsoPort ) {
 	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
 		e.preventDefault();
-		calypsoPort.postMessage( {
-			action: 'goToAllPosts',
-			payload: {
-				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+
+		const { port1, port2 } = new MessageChannel();
+		calypsoPort.postMessage(
+			{
+				action: 'closeEditor',
+				payload: {
+					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				},
 			},
-		} );
+			[ port2 ]
+		);
+
+		// We only want to navigate back if the client tells us to.
+		// We need to give it a chance to set if the post is dirty
+		// before we can navigate away.
+		port1.onmessage = ( { data } ) => {
+			port1.close(); // We only want to recieve this once.
+			// data is the URL to which we go back:
+			window.open( data, '_top' );
+		};
 	} );
 }
 
@@ -494,7 +566,8 @@ function handleGoToAllPosts( calypsoPort ) {
  */
 function openLinksInParentFrame() {
 	const viewPostLinkSelectors = [
-		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice
+		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
+		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
@@ -513,6 +586,133 @@ function openLinksInParentFrame() {
 			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
 		} );
 	}
+}
+
+/**
+ * Ensures the Calypso Customizer is opened when clicking on the FSE blocks' edit buttons.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function openCustomizer( calypsoPort ) {
+	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
+	$( '#editor' ).on( 'click', customizerLinkSelector, e => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'openCustomizer',
+			payload: {
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				autofocus: getQueryArg( e.currentTarget.href, 'autofocus' ),
+			},
+		} );
+	} );
+}
+
+/**
+ * Ensures the Calypso block editor is opened when editing a template part.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function setupEditTemplateLinks( calypsoPort ) {
+	// We only want this when editing an FSE page.
+	if ( ! window.fullSiteEditing || 'page' !== window.fullSiteEditing.editorPostType ) {
+		return;
+	}
+
+	const handledLinks = [];
+	const handleNewTemplateLinks = link => {
+		// Don't do anything if we already saw this link:
+		if ( handledLinks.some( existingLink => existingLink.isSameNode( link ) ) ) {
+			return;
+		}
+
+		handledLinks.push( link );
+		const templateId = parseInt( getQueryArg( link.getAttribute( 'href' ), 'post' ), 10 );
+
+		const { port1, port2 } = new MessageChannel();
+
+		port1.onmessage = ( { data } ) => {
+			link.setAttribute( 'target', '_parent' );
+			link.setAttribute( 'href', data );
+		};
+
+		// Ask for an updated URL for the button:
+		calypsoPort.postMessage(
+			{
+				action: 'getTemplateEditorUrl',
+				payload: { templateId },
+			},
+			[ port2 ]
+		);
+	};
+
+	const unsubscribe = subscribe( () => {
+		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const initialized = currentPost && currentPost.id;
+
+		if ( ! initialized ) {
+			return;
+		}
+
+		unsubscribe();
+
+		const getImpendingLinks = setInterval( () => {
+			const editTemplateLinks = document.querySelectorAll(
+				'.template__block-container .template-block__overlay a'
+			);
+
+			// We want to stop looking after the header/footer have been handled:
+			if ( handledLinks.length === 2 ) {
+				clearInterval( getImpendingLinks );
+			}
+
+			// Handle the links:
+			editTemplateLinks.forEach( handleNewTemplateLinks );
+		} );
+	} );
+}
+
+/**
+ * Ensures the calypsoifyGutenberg close URL matches the one on the client.
+ * This is important because we modify the close URL client side in the
+ * context of template part blocks in FSE.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getCloseButtonUrl( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCloseButtonUrl',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		// data is the closeUrl:
+		calypsoifyGutenberg.closeUrl = data;
+	};
+}
+
+/**
+ * Passes uncaught errors in window.onerror to Calypso for logging.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleUncaughtErrors( calypsoPort ) {
+	window.onerror = ( ...error ) => {
+		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
+		// We therefore stringify the error with a custom replacer containing the object's properties.
+		const errorObject = error[ 4 ]; // the 5th argument is the error object
+		error[ 4 ] =
+			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
+
+		// The other parameters don't need encoded since they are numbers or strings.
+		calypsoPort.postMessage( {
+			action: 'logError',
+			payload: { error },
+		} );
+	};
 }
 
 function initPort( message ) {
@@ -567,6 +767,9 @@ function initPort( message ) {
 		// Transmit draft ID to parent window once it has been assigned.
 		transmitDraftId( calypsoPort );
 
+		// Check if the "Convert to Blocks" prompt should be opened for this content.
+		triggerConversionPrompt( calypsoPort );
+
 		handlePostTrash( calypsoPort );
 
 		overrideRevisions( calypsoPort );
@@ -585,9 +788,17 @@ function initPort( message ) {
 
 		handlePreview( calypsoPort );
 
-		handleGoToAllPosts( calypsoPort );
+		handleCloseEditor( calypsoPort );
 
 		openLinksInParentFrame();
+
+		openCustomizer( calypsoPort );
+
+		setupEditTemplateLinks( calypsoPort );
+
+		getCloseButtonUrl( calypsoPort );
+
+		handleUncaughtErrors( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

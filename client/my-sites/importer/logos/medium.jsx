@@ -7,9 +7,8 @@ import React from 'react';
 
 export default () => (
 	<svg
-		/*eslint-disable wpcalypso/jsx-classname-namespace */
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		className="medium-logo social-logo importer__service-icon"
-		/*eslint-enable wpcalypso/jsx-classname-namespace */
 		width="48px"
 		height="48px"
 		viewBox="0 0 195 195"

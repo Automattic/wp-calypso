@@ -7,6 +7,11 @@
 import React from 'react';
 import classNames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class FormSelect extends React.Component {
 	static defaultProps = {
 		isError: false,

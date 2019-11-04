@@ -28,3 +28,13 @@ export default function MyComponent() {
 </table>
 
 The post type for which posts should be queried.
+
+### `showPublishedStatus`
+
+<table>
+	<tr><th>Type</th><td>Bool</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>false</td></tr>
+</table>
+
+If true, statuses will be shown for scheduled, trashed, drafted, and published posts.

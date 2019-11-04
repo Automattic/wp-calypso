@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
 import debugFactory from 'debug';
@@ -17,7 +18,6 @@ import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { login } from 'lib/paths';
-import SignupActions from 'lib/signup/actions';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
@@ -25,6 +25,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import StepWrapper from 'signup/step-wrapper';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -52,7 +53,7 @@ class Site extends React.Component {
 		submitting: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {
@@ -167,7 +168,7 @@ class Site extends React.Component {
 
 				this.resetAnalyticsData();
 
-				SignupActions.submitSignupStep( {
+				this.props.submitSignupStep( {
 					stepName: this.props.stepName,
 					form: this.state.form,
 					site,
@@ -185,7 +186,7 @@ class Site extends React.Component {
 	};
 
 	save = () => {
-		SignupActions.saveSignupStep( {
+		this.props.saveSignupStep( {
 			stepName: 'site',
 			form: this.state.form,
 		} );
@@ -248,7 +249,7 @@ class Site extends React.Component {
 			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 				<FormTextInput
-					autoFocus={ true }
+					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 					autoCapitalize={ 'off' }
 					className="site__site-url"
 					disabled={ fieldDisabled }
@@ -298,11 +299,13 @@ class Site extends React.Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your site.' ) }
-				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSiteForm() }
 			/>
 		);
 	}
 }
 
-export default localize( Site );
+export default connect(
+	null,
+	{ saveSignupStep, submitSignupStep }
+)( localize( Site ) );

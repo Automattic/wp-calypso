@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
 
@@ -12,7 +12,8 @@ import { getCurrencyObject } from '@automattic/format-currency';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { canRemoveFromCart, cartItems } from 'lib/cart-values';
+import { canRemoveFromCart } from 'lib/cart-values';
+import { getIncludedDomain } from 'lib/cart-values/cart-items';
 import {
 	isCredits,
 	isGoogleApps,
@@ -26,11 +27,9 @@ import {
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { removeItem } from 'lib/upgrades/actions';
+import { removeItem } from 'lib/cart/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
-
-const getIncludedDomain = cartItems.getIncludedDomain;
 
 export class CartItem extends React.Component {
 	removeFromCart = event => {

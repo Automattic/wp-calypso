@@ -23,11 +23,29 @@ export class JetpackHeader extends PureComponent {
 	static propTypes = {
 		darkColorScheme: PropTypes.bool,
 		partnerSlug: PropTypes.string,
+		isWoo: PropTypes.bool,
 		width: PropTypes.number,
 	};
 
 	renderLogo() {
-		const { darkColorScheme, partnerSlug, width } = this.props;
+		const { darkColorScheme, partnerSlug, width, isWoo } = this.props;
+
+		if ( isWoo ) {
+			// @todo Implement WooCommerce + partner co-branding in the future.
+			return (
+				<JetpackPartnerLogoGroup
+					width={ width || 662.5 }
+					viewBox="0 0 1270 170"
+					partnerName="WooCommerce"
+				>
+					<AsyncLoad
+						require="components/jetpack-header/woocommerce"
+						darkColorScheme={ darkColorScheme }
+						placeholder={ null }
+					/>
+				</JetpackPartnerLogoGroup>
+			);
+		}
 
 		switch ( partnerSlug ) {
 			case 'dreamhost':
@@ -109,6 +127,20 @@ export class JetpackHeader extends PureComponent {
 					>
 						<AsyncLoad
 							require="components/jetpack-header/liquidweb"
+							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
+						/>
+					</JetpackPartnerLogoGroup>
+				);
+			case 'eurodns':
+				return (
+					<JetpackPartnerLogoGroup
+						width={ width || 488 }
+						viewBox="0 0 1034 150"
+						partnerName="EuroDNS"
+					>
+						<AsyncLoad
+							require="components/jetpack-header/eurodns"
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>

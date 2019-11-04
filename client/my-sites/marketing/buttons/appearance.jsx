@@ -16,10 +16,12 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
+import SupportInfo from 'components/support-info';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isPrivateSite from 'state/selectors/is-private-site';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class SharingButtonsAppearance extends Component {
 	static propTypes = {
@@ -56,19 +58,31 @@ class SharingButtonsAppearance extends Component {
 
 	onReblogsLikesCheckboxClicked = event => {
 		this.props.onChange( event.target.name, ! event.target.checked );
+
+		const { path } = this.props;
+		const checked = event.target.checked ? 1 : 0;
+
 		if ( 'disabled_reblogs' === event.target.name ) {
+			this.props.recordTracksEvent( 'calypso_sharing_buttons_show_reblog_checkbox_click', {
+				checked,
+				path,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Show Reblog Button Checkbox',
 				'checked',
-				event.target.checked ? 1 : 0
+				checked
 			);
 		} else if ( 'disabled_likes' === event.target.name ) {
+			this.props.recordTracksEvent( 'calypso_sharing_buttons_show_like_checkbox_click', {
+				checked,
+				path,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Show Like Button Checkbox',
 				'checked',
-				event.target.checked ? 1 : 0
+				checked
 			);
 		}
 	};
@@ -137,6 +151,14 @@ class SharingButtonsAppearance extends Component {
 					<span>
 						{ translate( 'Show like button', { context: 'Sharing options: Checkbox label' } ) }
 					</span>
+					<SupportInfo
+						text={ translate(
+							'Give your readers the ability to show appreciation for your posts.'
+						) }
+						link="https://support.wordpress.com/likes/"
+						privacyLink={ false }
+						position={ 'bottom left' }
+					/>
 				</label>
 			</fieldset>
 		);
@@ -186,9 +208,10 @@ const connectComponent = connect(
 		return {
 			isJetpack,
 			isPrivate,
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent, recordTracksEvent }
 );
 
 export default flowRight(

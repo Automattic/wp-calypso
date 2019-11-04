@@ -13,7 +13,7 @@ import { includes, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { getDomainPriceRule } from 'lib/cart-values/cart-items';
 import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
@@ -90,14 +90,14 @@ class MapDomainStep extends React.Component {
 				{ this.notice() }
 				<form className="map-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="map-domain-step__domain-heading">
-						{ translate( "Map this domain to use it as your site's address.", {
+						{ translate( 'Map this domain to use it as your site address.', {
 							context: 'Upgrades: Description in domain registration',
-							comment: "Explains how you could use a new domain name for your site's address.",
+							comment: 'Explains how you could use a new domain name for your site address.',
 						} ) }
 					</div>
 
 					<DomainProductPrice
-						rule={ cartItems.getDomainPriceRule(
+						rule={ getDomainPriceRule(
 							this.props.domainsWithPlansOnly,
 							this.props.selectedSite,
 							this.props.cart,
@@ -134,7 +134,7 @@ class MapDomainStep extends React.Component {
 
 					<div className="map-domain-step__domain-text">
 						{ translate(
-							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about adding a domain{{/a}}.",
+							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about mapping a domain{{/a}}.",
 							{
 								components: {
 									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,

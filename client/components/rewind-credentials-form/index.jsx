@@ -1,5 +1,3 @@
-/** @format */
-/* eslint-disable */
 /**
  * External dependendies
  */
@@ -21,12 +19,18 @@ import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
-import Gridicon from 'gridicons';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Gridicon from 'components/gridicon';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
 import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'state/selectors/get-rewind-state';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class RewindCredentialsForm extends Component {
 	static propTypes = {
@@ -38,15 +42,15 @@ export class RewindCredentialsForm extends Component {
 		onComplete: PropTypes.func,
 		siteUrl: PropTypes.string,
 		labels: PropTypes.object,
+		requirePath: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labels: {},
-		requirePath: PropTypes.bool,
+		requirePath: false,
 	};
 
 	state = {
-		showPrivateKeyField: false,
 		form: {
 			protocol: 'ssh',
 			host: '',
@@ -82,7 +86,7 @@ export class RewindCredentialsForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { requirePath, role, siteId, siteUrl, translate, updateCredentials } = this.props;
+		const { requirePath, role, siteId, siteUrl, translate } = this.props;
 
 		const payload = {
 			role,
@@ -112,7 +116,7 @@ export class RewindCredentialsForm extends Component {
 		);
 
 		return isEmpty( errors )
-			? updateCredentials( siteId, payload )
+			? this.props.updateCredentials( siteId, payload )
 			: this.setState( { formErrors: errors } );
 	};
 
@@ -121,7 +125,7 @@ export class RewindCredentialsForm extends Component {
 	toggleAdvancedSettings = () =>
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { rewindState, role, siteSlug } = nextProps;
 		const credentials = find( rewindState.credentials, { role: role } );
 
@@ -148,6 +152,16 @@ export class RewindCredentialsForm extends Component {
 		return (
 			<div className="rewind-credentials-form">
 				<QueryRewindState siteId={ siteId } />
+				<div className="rewind-credentials-form__instructions">
+					{ translate(
+						'Please get your credentials from your hosting provider. Their website should explain how to get or create the credentials you need. {{link}}Check out our handy guide{{/link}}',
+						{
+							components: {
+								link: <a href="https://jetpack.com/support/activating-jetpack-backups/" />,
+							},
+						}
+					) }
+				</div>
 				<FormFieldset>
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
 					<FormSelect
@@ -209,6 +223,8 @@ export class RewindCredentialsForm extends Component {
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.user }
+							// Hint to LastPass not to attempt autofill
+							data-lpignore="true"
 						/>
 						{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
 					</FormFieldset>
@@ -225,6 +241,8 @@ export class RewindCredentialsForm extends Component {
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.pass }
+							// Hint to LastPass not to attempt autofill
+							data-lpignore="true"
 						/>
 						{ formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> }
 					</FormFieldset>
@@ -233,12 +251,14 @@ export class RewindCredentialsForm extends Component {
 				<FormFieldset>
 					{ ! requirePath && (
 						<Button
+							borderless
 							disabled={ formIsSubmitting }
 							onClick={ this.toggleAdvancedSettings }
-							borderless={ true }
-							primary={ true }
-							className="rewind-credentials-form__advanced-button"
+							className={ classNames( 'rewind-credentials-form__advanced-button', {
+								'is-expanded': showAdvancedSettings,
+							} ) }
 						>
+							<Gridicon icon="chevron-down" />
 							{ translate( 'Advanced settings' ) }
 						</Button>
 					) }
@@ -278,9 +298,9 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									className="rewind-credentials-form__private-key"
 								/>
-								<p className="form-setting-explanation">
+								<FormSettingExplanation>
 									{ translate( 'Only non-encrypted private keys are supported.' ) }
-								</p>
+								</FormSettingExplanation>
 							</FormFieldset>
 						</div>
 					) }
@@ -301,7 +321,8 @@ export class RewindCredentialsForm extends Component {
 					) }
 					{ this.props.allowDelete && (
 						<Button
-							borderless={ true }
+							borderless
+							scary
 							disabled={ formIsSubmitting }
 							onClick={ this.handleDelete }
 							className="rewind-credentials-form__delete-button"

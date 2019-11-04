@@ -6,12 +6,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { escapeRegExp, noop } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
+import Gridicon from 'components/gridicon';
 import Suggestions from 'components/suggestions';
 import Spinner from 'components/spinner';
 
@@ -26,10 +26,16 @@ class SuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
 		onSelect: PropTypes.func,
-		suggestions: PropTypes.array,
+		suggestions: PropTypes.arrayOf(
+			PropTypes.shape( {
+				label: PropTypes.string.isRequired,
+				category: PropTypes.string,
+			} )
+		),
 		value: PropTypes.string,
 		autoFocus: PropTypes.bool,
 		railcar: PropTypes.object,
+		'aria-label': PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -68,40 +74,8 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionKeyDown = event => {
-		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
-			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
-
-			switch ( event.key ) {
-				case 'ArrowRight':
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'ArrowUp':
-					if ( suggestionPosition === 0 ) {
-						suggestionPosition = this.suggestionsRef.props.suggestions.length;
-					}
-
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition - 1 ) );
-
-					break;
-				case 'ArrowDown':
-					suggestionPosition++;
-
-					if ( suggestionPosition === this.suggestionsRef.props.suggestions.length ) {
-						suggestionPosition = 0;
-					}
-
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'Tab':
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'Enter':
-					event.preventDefault();
-					break;
-			}
+		if ( this.suggestionsRef.props.suggestions.length > 0 && event.key === 'Enter' ) {
+			event.preventDefault();
 		}
 
 		this.suggestionsRef.handleKeyEvent( event );
@@ -118,7 +92,7 @@ class SuggestionSearch extends Component {
 			return [];
 		}
 
-		return this.props.suggestions.map( hint => ( { label: hint } ) );
+		return this.props.suggestions;
 	}
 
 	getSuggestionLabel( suggestionPosition ) {
@@ -145,6 +119,7 @@ class SuggestionSearch extends Component {
 					onKeyDown={ this.handleSuggestionKeyDown }
 					autoComplete="off"
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					aria-label={ this.props[ 'aria-label' ] }
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }

@@ -61,7 +61,7 @@ class Shortlinks extends Component {
 						<JetpackModuleToggle
 							siteId={ selectedSiteId }
 							moduleSlug="shortlinks"
-							label={ translate( 'Create short and simple links for all posts and pages' ) }
+							label={ translate( 'Generate shortened URLs for simpler sharing.' ) }
 							disabled={ formPending }
 						/>
 					</FormFieldset>

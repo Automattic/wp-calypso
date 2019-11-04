@@ -54,18 +54,19 @@
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 1.4;
+	margin-top: -4px;
 	padding-left: 1px;
 	position: relative;
 }
 
 .reader-combined-card__post-title-link,
 .reader-combined-card__post-title-link:visited {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	cursor: pointer;
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -231,7 +232,7 @@
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;

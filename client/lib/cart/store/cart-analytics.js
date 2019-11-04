@@ -10,17 +10,17 @@ import { differenceWith, get, isEqual, each, omit } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
+import { getAllCartItems } from 'lib/cart-values/cart-items';
 
 export function recordEvents( previousCart, nextCart ) {
-	const previousItems = cartItems.getAll( previousCart ),
-		nextItems = cartItems.getAll( nextCart );
+	const previousItems = getAllCartItems( previousCart );
+	const nextItems = getAllCartItems( nextCart );
 
 	each( differenceWith( nextItems, previousItems, isEqual ), recordAddEvent );
 	each( differenceWith( previousItems, nextItems, isEqual ), recordRemoveEvent );
 }
 
-export function removeNestedProperties( cartItem ) {
+function removeNestedProperties( cartItem ) {
 	return omit( cartItem, [ 'extra' ] );
 }
 

@@ -15,7 +15,7 @@ import ExternalLink from 'components/external-link';
 /*
  * Constants
  */
-const expirationDate = '2017-10-31';
+const expirationDate = '2020-06-30';
 
 const googleTermsAndConditions = ( { translate } ) => (
 	<div>

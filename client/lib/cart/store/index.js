@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, flow, flowRight, get, has, partialRight } from 'lodash';
+import { assign, flow, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import {
 	CART_COUPON_APPLY,
 	CART_COUPON_REMOVE,
 	CART_DISABLE,
+	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
@@ -19,10 +20,11 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
-	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+} from 'lib/cart/action-types';
+import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
-} from 'lib/upgrades/action-types';
+} from 'lib/transaction/action-types';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
@@ -33,14 +35,25 @@ import Dispatcher from 'dispatcher';
 import {
 	applyCoupon,
 	removeCoupon,
-	cartItems,
 	fillInAllCartItemAttributes,
 	setTaxCountryCode,
 	setTaxPostalCode,
 	setTaxLocation,
 } from 'lib/cart-values';
+import {
+	addPrivacyToAllDomains,
+	removePrivacyFromAllDomains,
+	fillGoogleAppsRegistrationData,
+	addCartItem,
+	addCartItemWithoutReplace,
+	removeItemAndDependencies,
+	clearCart,
+	replaceItem as replaceCartItem,
+} from 'lib/cart-values/cart-items';
 import wp from 'lib/wp';
-
+import { getReduxStore } from 'lib/redux-bridge';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
 
 const wpcom = wp.undocumented();
@@ -50,7 +63,7 @@ let _synchronizer = null;
 let _poller = null;
 
 const CartStore = {
-	get: function() {
+	get() {
 		const value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
 		return assign( {}, value, {
@@ -58,16 +71,18 @@ const CartStore = {
 			hasPendingServerUpdates: hasPendingServerUpdates(),
 		} );
 	},
-	setSelectedSiteId( selectedSiteId ) {
-		if ( selectedSiteId && _cartKey === selectedSiteId ) {
+	setSelectedSiteId( selectedSiteId, userLoggedIn = true ) {
+		if ( ! userLoggedIn ) {
 			return;
 		}
 
-		if ( ! selectedSiteId ) {
-			_cartKey = 'no-site';
-		} else {
-			_cartKey = selectedSiteId;
+		const newCartKey = selectedSiteId || 'no-site';
+
+		if ( _cartKey === newCartKey ) {
+			return;
 		}
+
+		_cartKey = newCartKey;
 
 		if ( _synchronizer && _poller ) {
 			PollerPool.remove( _poller );
@@ -96,10 +111,8 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	const wrappedFunction = flowRight(
-		partialRight( fillInAllCartItemAttributes, productsList.get() ),
-		changeFunction
-	);
+	const wrappedFunction = cart =>
+		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
 	const previousCart = CartStore.get();
 	const nextCart = wrappedFunction( previousCart );
@@ -128,28 +141,26 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			break;
 
 		case CART_PRIVACY_PROTECTION_ADD:
-			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
+			update( addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
 		case CART_PRIVACY_PROTECTION_REMOVE:
-			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
+			update( removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case GOOGLE_APPS_REGISTRATION_DATA_ADD:
-			update(
-				cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData )
-			);
+		case CART_GOOGLE_APPS_REGISTRATION_DATA_ADD:
+			update( fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
 			break;
 
 		case CART_ITEMS_ADD:
-			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
+			update( flow( ...action.cartItems.map( cartItem => addCartItem( cartItem ) ) ) );
 			break;
 
 		case CART_ITEMS_REPLACE_ALL:
 			update(
 				flow(
-					cartItems.clearCart(),
-					...action.cartItems.map( cartItem => cartItems.addWithoutReplace( cartItem ) )
+					clearCart(),
+					...action.cartItems.map( cartItem => addCartItemWithoutReplace( cartItem ) )
 				)
 			);
 			break;
@@ -164,16 +175,12 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 		case CART_ITEM_REMOVE:
 			update(
-				cartItems.removeItemAndDependencies(
-					action.cartItem,
-					CartStore.get(),
-					action.domainsWithPlansOnly
-				)
+				removeItemAndDependencies( action.cartItem, CartStore.get(), action.domainsWithPlansOnly )
 			);
 			break;
 
 		case CART_ITEM_REPLACE:
-			update( cartItems.replaceItem( action.oldItem, action.newItem ) );
+			update( replaceCartItem( action.oldItem, action.newItem ) );
 			break;
 
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
@@ -196,16 +203,18 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
 						countryCode = extractStoredCardMetaValue( action, 'country_code' );
 						break;
-					case 'WPCOM_Billing_MoneyPress_Paygate': {
+					case 'WPCOM_Billing_WPCOM':
+						postalCode = null;
+						countryCode = null;
+						break;
+					case 'WPCOM_Billing_Ebanx':
+					case 'WPCOM_Billing_Web_Payment':
+					case 'WPCOM_Billing_Stripe_Payment_Method': {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];
 						countryCode = paymentDetails.country;
 						break;
 					}
-					case 'WPCOM_Billing_WPCOM':
-						postalCode = null;
-						countryCode = null;
-						break;
 					default:
 						recordUnrecognizedPaymentMethod( action );
 						postalCode = null;
@@ -226,3 +235,23 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 } );
 
 export default CartStore;
+
+function createListener( store, selector, callback ) {
+	let prevValue = selector( store.getState() );
+	return () => {
+		const nextValue = selector( store.getState() );
+
+		if ( nextValue !== prevValue ) {
+			prevValue = nextValue;
+			callback( nextValue );
+		}
+	};
+}
+
+// Subscribe to the Redux store to get updates about the selected site
+getReduxStore().then( store => {
+	const userLoggedIn = isUserLoggedIn( store.getState() );
+	const selectedSiteId = getSelectedSiteId( store.getState() );
+	CartStore.setSelectedSiteId( selectedSiteId, userLoggedIn );
+	store.subscribe( createListener( store, getSelectedSiteId, CartStore.setSelectedSiteId ) );
+} );

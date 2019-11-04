@@ -4,7 +4,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -132,7 +132,7 @@ class OrderActionHeader extends Component {
 
 		const buttons = [
 			<Button key="edit" primary onClick={ this.toggleEditing }>
-				{ translate( 'Edit Order' ) }
+				{ translate( 'Edit order' ) }
 			</Button>,
 		];
 
@@ -144,7 +144,7 @@ class OrderActionHeader extends Component {
 					busy={ isInvoiceSending }
 					disabled={ isInvoiceSending }
 				>
-					{ translate( 'Resend Invoice' ) }
+					{ translate( 'Resend invoice' ) }
 				</Button>
 			);
 		}
@@ -184,11 +184,11 @@ class OrderActionHeader extends Component {
 		const breadcrumbs = [
 			<a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a>,
 			<span>
-				{ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ orderId }` } } ) }
+				{ translate( 'Order %(orderId)s details', { args: { orderId: `#${ orderId }` } } ) }
 			</span>,
 		];
 
-		const primaryLabel = isEditing ? translate( 'Update' ) : translate( 'Edit Order' );
+		const primaryLabel = isEditing ? translate( 'Update' ) : translate( 'Edit order' );
 
 		return (
 			<ActionHeader breadcrumbs={ breadcrumbs } primaryLabel={ primaryLabel }>

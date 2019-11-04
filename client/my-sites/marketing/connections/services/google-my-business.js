@@ -73,7 +73,7 @@ export class GoogleMyBusiness extends SharingService {
 		} );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestKeyrings( this.props );
 	}
 
@@ -84,7 +84,7 @@ export class GoogleMyBusiness extends SharingService {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId && this.props.siteId !== nextProps.siteId ) {
 			this.requestKeyrings( nextProps );
 		}

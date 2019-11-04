@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 
-const JetpackChecklistHeader = ( { translate } ) => (
+const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (
 	<Card compact className="jetpack-checklist__header">
 		<img
 			className="jetpack-checklist__header-illustration"
@@ -22,9 +22,11 @@ const JetpackChecklistHeader = ( { translate } ) => (
 			<CardHeading>
 				{ translate( "Let's start by securing your site with a few essential security features" ) }
 			</CardHeading>
-			<p>
-				{ translate( 'These security features ensure that your site is secured and backed up.' ) }
-			</p>
+			{ isPaidPlan && (
+				<p>
+					{ translate( 'These security features ensure that your site is secured and backed up.' ) }
+				</p>
+			) }
 		</div>
 	</Card>
 );

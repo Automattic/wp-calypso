@@ -5,12 +5,10 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import debugModule from 'debug';
-import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
-import urlUtils from 'url';
 
 /**
  * Internal dependencies
@@ -24,6 +22,7 @@ import Disclaimer from './disclaimer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
 import HelpButton from './help-button';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
@@ -76,8 +75,8 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlacklistedError as isSiteBlacklistedSelector,
 } from 'state/jetpack-connect/selectors';
+import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { affiliateReferral } from 'state/refer/actions';
 
 /**
  * Constants
@@ -118,12 +117,20 @@ export class JetpackAuthorize extends Component {
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
-		const { from, clientId } = this.props.authQuery;
+		const { from, clientId, closeWindowAfterLogin } = this.props.authQuery;
 		const tracksProperties = {
 			from,
 			is_mobile_app_flow: isMobileAppFlow,
 			site: clientId,
 		};
+
+		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the login step within a popup window.
+			// In these cases, we'll want to automatically close the window when the login
+			// step is complete, and continue authorization in the parent window.
+			debug( 'Closing window after login' );
+			window.close();
+		}
 
 		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
 		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
@@ -168,31 +175,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1 );
-		}
-	}
-
-	componentDidMount() {
-		this.trackAffiliate();
-	}
-
-	/**
-	 * Track affiliate code based on the aff and cid URL params.
-	 */
-	trackAffiliate() {
-		const urlPath = location.href;
-		const parsedUrl = urlUtils.parse( urlPath, true );
-		const affiliateId = parsedUrl.query.aff;
-		const campaignId = parsedUrl.query.cid;
-		const subId = parsedUrl.query.sid;
-
-		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			const hostPath = `${ parsedUrl.host }${ parsedUrl.pathname }`;
-			this.props.recordTracksEvent( 'calypso_jpc_refer_visit', {
-				flow: this.props.flowName,
-				page: hostPath,
-			} );
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, hostPath } );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
 		}
 	}
 
@@ -256,11 +239,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldAutoAuthorize() {
-		const { alreadyAuthorized, authApproved } = this.props.authQuery;
-
+		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			this.isWoo() ||
+			( 'woocommerce-services-auto-authorize' === from ||
+				( ! config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+					'woocommerce-setup-wizard' === from ) ) ||
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -291,20 +275,45 @@ export class JetpackAuthorize extends Component {
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
-		const { partnerSlug } = props;
-		const partnerRedirectFlag = config.isEnabled(
+		const { partnerSlug, partnerID } = props;
+		const pressableRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
 
 		// If the redirect flag is set, then we conditionally redirect the Pressable client to
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
-		return partnerRedirectFlag ? partnerSlug && 'pressable' !== partnerSlug : partnerSlug;
+		if ( pressableRedirectFlag ) {
+			return partnerID && 'pressable' !== partnerSlug;
+		}
+
+		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
+		return !! partnerID;
 	}
+
+	handleSignIn = () => {
+		const { recordTracksEvent } = this.props;
+		const { from } = this.props.authQuery;
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
+		}
+	};
 
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
+		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
+
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
+		}
+
 		userUtilities.logout( window.location.href );
 	};
 
@@ -328,7 +337,7 @@ export class JetpackAuthorize extends Component {
 	handleSubmit = () => {
 		const { recordTracksEvent } = this.props;
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
-		const { alreadyAuthorized, redirectAfterAuth } = this.props.authQuery;
+		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
@@ -354,6 +363,14 @@ export class JetpackAuthorize extends Component {
 		}
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
+
+		if (
+			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+			'woocommerce-setup-wizard' === from
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+		}
+
 		return this.authorize();
 	};
 
@@ -589,7 +606,10 @@ export class JetpackAuthorize extends Component {
 
 		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
 		const nextRoute =
-			isJetpackVersionSupported && canManageOptions && ! isAtomic
+			config.isEnabled( 'jetpack/connect/site-questions' ) &&
+			isJetpackVersionSupported &&
+			canManageOptions &&
+			! isAtomic
 				? JPC_PATH_SITE_TYPE
 				: JPC_PATH_PLANS;
 
@@ -624,7 +644,9 @@ export class JetpackAuthorize extends Component {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
+						isWoo: this.isWoo(),
 					} ) }
+					onClick={ this.handleSignIn }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
@@ -676,14 +698,14 @@ export class JetpackAuthorize extends Component {
 
 	render() {
 		return (
-			<MainWrapper>
+			<MainWrapper isWoo={ this.isWoo() }>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection
 							siteId={ this.props.authQuery.clientId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<AuthFormHeader authQuery={ this.props.authQuery } />
+						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
 						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
@@ -720,16 +742,16 @@ const connectComponent = connect(
 			isSiteBlacklisted: isSiteBlacklistedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
+			partnerID: getPartnerIdFromQuery( state ),
+			partnerSlug: getPartnerSlugFromQuery( state ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			partnerSlug: getPartnerSlugFromQuery( state ),
 		};
 	},
 	{
 		authorize: authorizeAction,
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
-		trackAffiliateReferral: affiliateReferral,
 	}
 );
 

@@ -444,10 +444,6 @@ class SimplePaymentsDialog extends Component {
 		);
 	}
 
-	returnTrue() {
-		return true;
-	}
-
 	render() {
 		const {
 			showDialog,
@@ -460,6 +456,7 @@ class SimplePaymentsDialog extends Component {
 			planHasSimplePaymentsFeature,
 			shouldQuerySitePlans,
 			canCurrentUserAddButtons,
+			canCurrentUserUpgrade,
 		} = this.props;
 		const { activeTab, initialFormValues, errorMessage } = this.state;
 
@@ -497,6 +494,13 @@ class SimplePaymentsDialog extends Component {
 					illustration="/calypso/images/illustrations/type-e-commerce.svg"
 					illustrationWidth={ 300 }
 					title={ translate( 'Want to add a payment button to your site?' ) }
+					line={
+						! canCurrentUserUpgrade
+							? translate(
+									"Contact your site's administrator to upgrade to the Premium, Business, or eCommerce Plan."
+							  )
+							: false
+					}
 					action={
 						<UpgradeNudge
 							className="editor-simple-payments-modal__nudge-nudge"
@@ -506,7 +510,6 @@ class SimplePaymentsDialog extends Component {
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							event="editor_simple_payments_modal_nudge"
-							shouldDisplay={ this.returnTrue }
 						/>
 					}
 					secondaryAction={
@@ -617,5 +620,6 @@ export default connect( ( state, { siteId } ) => {
 		currentUserEmail: getCurrentUserEmail( state ),
 		featuredImageId: get( getFormValues( REDUX_FORM_NAME )( state ), 'featuredImageId' ),
 		canCurrentUserAddButtons: canCurrentUser( state, siteId, 'publish_posts' ),
+		canCurrentUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } )( localize( SimplePaymentsDialog ) );

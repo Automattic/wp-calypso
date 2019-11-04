@@ -8,17 +8,21 @@
  */
 const _ = require( 'lodash' );
 const path = require( 'path' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+// eslint-disable-next-line import/no-extraneous-dependencies
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
+const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
+const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 
 /**
  * Internal dependencies
@@ -40,9 +44,8 @@ const shouldMinify =
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
-const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
-const isDesktop = calypsoEnv === 'desktop';
+const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
 const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -104,9 +107,18 @@ const nodeModulesToTranspile = [
 	// general form is <package-name>/.
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
+	'@github/webauthn-json/',
+	'acorn-jsx/',
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
+	'filesize/',
+	'prismjs/',
+	'react-spring/',
+	'regenerate-unicode-properties/',
+	'regexpu-core/',
+	'unicode-match-property-ecmascript/',
+	'unicode-match-property-value-ecmascript/',
 ];
 /**
  * Check to see if we should transpile certain files in node_modules
@@ -143,7 +155,7 @@ let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
 // also we don't minify so dont name them .min.js
 //
 // Desktop: no chunks or dll here, just one big file for the desktop app
-if ( isDevelopment || calypsoEnv === 'desktop' ) {
+if ( isDevelopment || isDesktop ) {
 	outputFilename = '[name].js';
 	outputChunkFilename = '[name].js';
 }
@@ -151,12 +163,31 @@ if ( isDevelopment || calypsoEnv === 'desktop' ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const fileLoader = FileConfig.loader(
+	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
+	// This is required so that running calypso via `npm start` doesn't break.
+	isDevelopment
+		? {
+				outputPath: 'images',
+				publicPath: '/calypso/evergreen/images/',
+		  }
+		: {
+				// File-loader does not understand absolute paths so __dirname won't work.
+				// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
+				outputPath: path.join( '..', 'images' ),
+				publicPath: '/calypso/images/',
+				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
+		  }
+);
+
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
 	entry: {
-		build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
-		domainsLanding: [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
+		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
+		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
+		'entry-gutenboarding': [ path.join( __dirname, 'client', 'landing', 'gutenboarding' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
@@ -170,12 +201,12 @@ const webpackConfig = {
 	},
 	optimization: {
 		splitChunks: {
-			chunks: codeSplit ? 'all' : 'async',
+			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
+		runtimeChunk: isDesktop ? false : { name: 'manifest' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
@@ -186,12 +217,11 @@ const webpackConfig = {
 			parallel: workerCount,
 			sourceMap: Boolean( process.env.SOURCEMAP ),
 			terserOptions: {
-				mangle: calypsoEnv !== 'desktop',
+				mangle: ! isDesktop,
 			},
 		} ),
 	},
 	module: {
-		noParse: /[/\\]node_modules[/\\]localforage[/\\]dist[/\\]localforage\.js$/,
 		rules: [
 			TranspileConfig.loader( {
 				workerCount,
@@ -207,18 +237,12 @@ const webpackConfig = {
 				cacheIdentifier,
 				include: shouldTranspileDependency,
 			} ),
-			{
-				test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
-				loader: 'babel-loader',
-				options: {
-					babelrc: false,
-					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
-				},
-			},
 			SassConfig.loader( {
-				preserveCssCustomProperties: true,
 				includePaths: [ path.join( __dirname, 'client' ) ],
-				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				prelude: `@import '${ path.join(
+					__dirname,
+					'client/assets/stylesheets/shared/_utils.scss'
+				) }';`,
 			} ),
 			{
 				include: path.join( __dirname, 'client/sections.js' ),
@@ -231,7 +255,7 @@ const webpackConfig = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			FileConfig.loader(),
+			fileLoader,
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
 				use: 'exports-loader?window=tinymce',
@@ -259,9 +283,12 @@ const webpackConfig = {
 	},
 	node: false,
 	plugins: _.compact( [
-		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
+			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
+				!! process.env.FORCE_REDUCED_MOTION || false
+			),
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
@@ -304,19 +331,36 @@ const webpackConfig = {
 		shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
+			cacheDir: path.join(
+				__dirname,
+				'build',
+				'.moment-timezone-data-webpack-plugin-cache',
+				extraPath
+			),
 		} ),
+		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	] ),
 	externals: [ 'electron' ],
 };
 
-if ( isDevelopment ) {
-	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
-}
-
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' )
+	);
+}
+
+// Replace `lodash` with `lodash-es`.
+if ( isCalypsoClient ) {
+	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
+}
+
+// Don't bundle `wpcom-xhr-request` for the browser.
+// Even though it's requested, we don't need it on the browser, because we're using
+// `wpcom-proxy-request` instead. Keep it for desktop and server, though.
+if ( isCalypsoClient && ! isDesktop ) {
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
 	);
 }
 
@@ -327,12 +371,18 @@ const polyfillsSkippedInEvergreen = [
 	/^lib[/\\]local-storage-polyfill$/,
 	// The SVG external content polyfill (svg4everybody) isn't needed for evergreen browsers.
 	/^svg4everybody$/,
+	// The fetch polyfill isn't needed for evergreen browsers, as they all support it.
+	/^isomorphic-fetch$/,
+	// All modern browsers support the URL API.
+	/^@webcomponents[/\\]url$/,
+	// All evergreen browsers support the URLSearchParams API.
+	/^@ungap[/\\]url-search-params$/,
 ];
 
 if ( browserslistEnv === 'evergreen' ) {
 	for ( const polyfill of polyfillsSkippedInEvergreen ) {
 		webpackConfig.plugins.push(
-			new webpack.NormalModuleReplacementPlugin( polyfill, 'lodash/noop' )
+			new webpack.NormalModuleReplacementPlugin( polyfill, 'lodash-es/noop' )
 		);
 	}
 }

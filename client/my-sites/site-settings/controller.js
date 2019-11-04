@@ -4,12 +4,10 @@
  */
 import page from 'page';
 import React from 'react';
-import { get, isEmpty, omit, pick } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
@@ -25,9 +23,6 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
 import { setSection } from 'state/ui/actions';
-import { setImportingFromSignupFlow, setImportOriginSiteDetails } from 'state/importer-nux/actions';
-import { decodeURIComponentIfValid } from 'lib/url';
-import { addQueryArgs } from 'lib/route';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -62,51 +57,6 @@ export function redirectIfCantDeleteSite( context, next ) {
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
-	next();
-}
-
-export function importSite( context, next ) {
-	const { query } = context;
-	const argsToExtract = [ 'engine', 'isFromSignup', 'from-site' ];
-
-	// Pull supported query arguments into state (& out of the address bar)
-	const extractedArgs = pick( query, argsToExtract );
-
-	if ( ! isEmpty( extractedArgs ) ) {
-		const destination = addQueryArgs( omit( query, argsToExtract ), context.pathname );
-
-		page.replace( destination, {
-			engine: query.engine,
-			isFromSignup: query.signup,
-			siteUrl: query[ 'from-site' ],
-		} );
-		return;
-	}
-
-	context.store.dispatch(
-		setImportOriginSiteDetails( {
-			engine: get( context, 'state.engine' ),
-			siteUrl: decodeURIComponentIfValid( get( context, 'state.siteUrl' ) ),
-		} )
-	);
-
-	if ( get( context, 'state.isFromSignup' ) ) {
-		context.store.dispatch( setImportingFromSignupFlow() );
-	}
-
-	context.primary = <AsyncLoad require="my-sites/site-settings/section-import" />;
-	next();
-}
-
-export function exportSite( context, next ) {
-	context.primary = <AsyncLoad require="my-sites/site-settings/section-export" />;
-	next();
-}
-
-export function guidedTransfer( context, next ) {
-	context.primary = (
-		<AsyncLoad require="my-sites/guided-transfer" hostSlug={ context.params.host_slug } />
-	);
 	next();
 }
 
@@ -154,7 +104,7 @@ export function manageConnection( context, next ) {
 }
 
 export function legacyRedirects( context, next ) {
-	const section = context.params.section;
+	const { section } = context.params;
 	const redirectMap = {
 		account: '/me/account',
 		password: '/me/security',
@@ -166,12 +116,11 @@ export function legacyRedirects( context, next ) {
 		'billing-history-v2': billingHistory,
 		'connected-apps': '/me/security/connected-applications',
 	};
-	if ( ! context ) {
-		return page( '/me/public-profile' );
-	}
+
 	if ( redirectMap[ section ] ) {
 		return page.redirect( redirectMap[ section ] );
 	}
+
 	next();
 }
 

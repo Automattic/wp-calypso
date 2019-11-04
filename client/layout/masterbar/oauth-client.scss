@@ -1,5 +1,5 @@
 .masterbar__oauth-client {
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 
 	nav {
 		display: flex;
@@ -74,7 +74,6 @@
 		color: rgba( 255, 255, 255, 0.8 );
 	}
 
-
 	.gridicon {
 		margin-bottom: 5px;
 		margin-right: 5px;
@@ -90,11 +89,10 @@
 
 .crowdsignal {
 	// Crowdsignal color palette
-	--color-accent: #fb5457;
-	--color-button-primary-background-hover: #fb5457;
-	--color-crowdsignal: #384869;
-	--color-link: #384869;
-	--color-text: #384869;
+	--color-accent: #bd4682;
+	--color-crowdsignal: #001d2d;
+	--color-link: #001d2d;
+	--color-text: #001d2d;
 
 	background: #f2f2f2;
 	color: var( --color-text );
@@ -162,8 +160,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --color-white );
-				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+				background-color: var( --color-surface );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				padding: 35px 55px 20px;
 				width: 550px;
@@ -201,8 +199,8 @@
 			display: none;
 		}
 
-		.login__form-social-divider {
-			margin: 30px auto;
+		.login__divider {
+			margin: 10px auto;
 			text-transform: lowercase;
 
 			span {
@@ -230,9 +228,9 @@
 			color: var( --color-text );
 			margin: 0;
 			position: absolute;
-				left: 0;
-				right: 0;
-				top: 84px;
+			left: 0;
+			right: 0;
+			top: 84px;
 			text-align: center;
 
 			@include breakpoint( '>480px' ) {
@@ -249,6 +247,7 @@
 				@include breakpoint( '>660px' ) {
 					display: block;
 					position: initial;
+					margin-bottom: 30px;
 				}
 			}
 
@@ -274,8 +273,8 @@
 			margin: 0;
 
 			&:disabled {
-				background-color: var( --color-neutral-50 );
-				color: var( --color-white );
+				background-color: var( --color-neutral-5 );
+				color: var( --color-text-inverted );
 			}
 		}
 
@@ -297,8 +296,8 @@
 			display: block;
 
 			@include breakpoint( '>660px' ) {
-				background-color: var( --color-white );
-				box-shadow: 0 2px 3px 0 var( --color-neutral-100 );
+				background-color: var( --color-surface );
+				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
 				margin: 0 auto;
 				max-width: 550px;
 				padding: 40px 55px 30px;
@@ -316,7 +315,10 @@
 		.social-buttons__button {
 			border: 1px solid #cecfd1;
 			border-radius: 0;
-			margin-bottom: 40px;
+
+			&:last-of-type {
+				margin-bottom: 40px;
+			}
 		}
 
 		.translator-invite {
@@ -333,9 +335,9 @@
 			height: 58px;
 			padding: 20px 40px;
 			position: absolute;
-				bottom: 0;
-				left: 0;
-				right: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
 		}
 
 		.wp-login__crowdsignal-footer-text {
@@ -387,22 +389,25 @@
 
 		.wp-login__links {
 			padding: 20px 0 15px;
-		}
 
-		.wp-login__links a {
-			border: 0;
-			color: var( --color-text );
-			line-height: 21px;
-			padding: 10px 16px;
-			text-align: center;
-
-			&:hover {
+			a,
+			button {
+				border: 0;
 				color: var( --color-text );
+				line-height: 21px;
+				padding: 10px 16px;
+				text-align: center;
+
+				&:hover,
+				&:active {
+					color: var( --color-text );
+				}
 			}
 		}
 
 		.wp-login__main.main {
 			max-width: 550px;
+			margin-bottom: 80px;
 		}
 	}
 }
@@ -419,12 +424,17 @@
 		line-height: 83px;
 		margin: 0 auto;
 		z-index: 100;
+	}
 
-		nav {
-			box-sizing: border-box;
-			max-width: 1500px;
-			margin-left: auto;
-			margin-right: auto;
+	.masterbar__oauth-client nav {
+		box-sizing: border-box;
+		max-width: 1500px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 13px;
+		padding-right: 13px;
+
+		@include breakpoint( '>480px' ) {
 			padding-left: 55px;
 			padding-right: 13px;
 		}
@@ -446,10 +456,18 @@
 			color: #999;
 			font-size: 0.9em;
 			font-weight: bold;
-			padding: 32px;
+			padding: 32px 10px;
 			text-decoration: none;
 			text-transform: uppercase;
+
+			@include breakpoint( '>480px' ) {
+				padding: 32px;
+			}
 		}
+	}
+
+	.layout__content {
+		padding-top: 85px;
 	}
 
 	.button.is-primary {
@@ -462,7 +480,7 @@
 		text-decoration: none;
 		text-transform: capitalize;
 		width: auto;
-		
+
 		@include breakpoint( '>480px' ) {
 			width: 100%;
 		}
@@ -478,10 +496,13 @@
 	}
 
 	.login__form,
-	.login__form-social,
-	.logged-out-form {
+	.login__social,
+	.logged-out-form,
+	.two-factor-authentication__actions {
 		.button {
 			max-width: 300px;
+			margin-left: auto;
+			margin-right: auto;
 		}
 	}
 
@@ -508,7 +529,8 @@
 		transition: all ease-in-out 0.2s;
 		width: 100%;
 
-		&:focus, &.is-error:hover {
+		&:focus,
+		&.is-error:hover {
 			border: 1px solid #e6e6e6;
 			box-shadow: 0 0 5px 0 rgba( 113, 176, 47, 0.8 );
 			outline: 0;
@@ -524,9 +546,26 @@
 	}
 
 	.login__form-action,
-	.login__social-buttons,
 	.magic-login__form-action {
 		text-align: center;
+	}
+
+	.login__social-buttons {
+		margin-top: 0;
+
+		.login__social-tos {
+			margin: 2.5em auto 0;
+			max-width: 90%;
+		}
+
+		@include breakpoint( '>660px' ) {
+			flex-direction: row;
+			flex-wrap: wrap;
+
+			button:not( :first-of-type ) {
+				margin-top: 0;
+			}
+		}
 	}
 
 	.wp-login__main.main,
@@ -542,6 +581,10 @@
 		box-shadow: none;
 		padding-left: 0;
 		padding-right: 0;
+	}
+
+	.wp-login__container {
+		margin-top: 50px;
 	}
 
 	.wp-login__container,
@@ -582,38 +625,35 @@
 		font-size: 15px;
 	}
 
-	.login__form-social {
+	.login__social,
+	.two-factor-authentication__actions {
 		border-top: 1px solid #e6e6e6;
-		margin: 10px -16px 0;
-		padding-top: 30px;
-		width: calc( 100% + ( #{ $woo-form-whitespace } * 2 ) );
+		margin: 0 -16px;
+		padding-top: 44px;
+		width: calc( 100% + ( #{$woo-form-whitespace} * 2 ) );
 
 		@include breakpoint( '>480px' ) {
-			margin: 10px -24px 0;
-			width: calc( 100% + ( #{ $woo-form-whitespace-480 } * 2 ) );
+			margin: 0 -24px;
+			width: calc( 100% + ( #{$woo-form-whitespace-480} * 2 ) );
 		}
 
 		@include breakpoint( '>660px' ) {
-			margin: 20px -100px 0;
-			width: calc( 100% + ( #{ $woo-form-whitespace-660 } * 2 ) );
+			margin: 0 -100px;
+			width: calc( 100% + ( #{$woo-form-whitespace-660} * 2 ) );
 		}
-	}
-
-	.login__form-social-divider {
-		margin-bottom: 0;
-		margin-top: -41px;
 	}
 
 	.wp-login__links {
 		margin-top: 20px;
-	}
 
-	.wp-login__links a {
-		border: none;
-		font-size: 16px;
-		font-weight: normal;
-		line-height: 3em;
-		text-align: center;
+		a,
+		button {
+			border: none;
+			font-size: 16px;
+			font-weight: normal;
+			line-height: 3em;
+			text-align: center;
+		}
 	}
 
 	.logged-out-form__footer {
@@ -643,7 +683,7 @@
 		font-family: $sans;
 		margin: 0 0 8px;
 		padding: 0;
-		
+
 		@include breakpoint( '>480px' ) {
 			font-size: 2em;
 			margin: 2em 0 0;

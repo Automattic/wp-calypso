@@ -22,7 +22,6 @@ import {
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
 	getAllCountries,
@@ -90,7 +89,7 @@ class StoreLocationSetupView extends Component {
 		} ),
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { contactDetails, storeLocation } = newProps;
 
 		if ( ! this.state.userBeganEditing ) {
@@ -153,10 +152,8 @@ class StoreLocationSetupView extends Component {
 
 	onNext = event => {
 		const {
-			adminURL,
 			countries,
 			currentUserEmailVerified,
-			onRequestRedirect,
 			pushDefaultsForCountry,
 			siteId,
 			translate,
@@ -185,14 +182,6 @@ class StoreLocationSetupView extends Component {
 
 			// mc stat 32 char max :P
 			this.props.bumpStat( 'calypso_woo_store_setup_country', this.state.address.country );
-
-			// If we don't support a calypso experience yet for this country, let
-			// them complete setup with the wp-admin WooCommerce wizard
-			if ( ! isStoreManagementSupportedInCalypsoForCountry( this.state.address.country ) ) {
-				const storeSetupURL =
-					adminURL + 'admin.php?page=wc-setup&step=store_setup&activate_error=false&from=calypso';
-				onRequestRedirect( storeSetupURL );
-			}
 
 			return setSetStoreAddressDuringInitialSetup( siteId, true );
 		};

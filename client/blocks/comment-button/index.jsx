@@ -11,7 +11,7 @@ import { isNull, noop, omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
 /**

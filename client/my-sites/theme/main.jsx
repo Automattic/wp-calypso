@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import titlecase from 'to-title-case';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { head, split } from 'lodash';
 import photon from 'photon';
 import page from 'page';
@@ -29,6 +29,7 @@ import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -119,7 +120,7 @@ class ThemeSheet extends React.Component {
 		this.scrollToTop();
 	}
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.id !== this.props.id ) {
 			this.scrollToTop();
 		}
@@ -228,21 +229,18 @@ class ThemeSheet extends React.Component {
 		return demo_uri && ! retired;
 	}
 
+	// Render "Open Live Demo" pseudo-button for mobiles.
+	// This is a legacy hack that shows the button under the preview screenshot for mobiles
+	// but not for desktop (becomes hidden behind the screenshot).
 	renderPreviewButton() {
 		return (
-			<a
-				className="theme__sheet-preview-link"
-				onClick={ this.previewAction }
-				data-tip-target="theme-sheet-preview"
-				href={ this.props.demo_uri }
-				rel="noopener noreferrer"
-			>
+			<div className="theme__sheet-preview-link">
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', {
 						context: 'Individual theme live preview button',
 					} ) }
 				</span>
-			</a>
+			</div>
 		);
 	}
 
@@ -507,8 +505,13 @@ class ThemeSheet extends React.Component {
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
 		if ( isActive ) {
-			// Customize size
-			return i18n.translate( 'Customize site' );
+			// Customize site
+			return (
+				<span className="theme__sheet-customize-button">
+					<Gridicon icon="external" />
+					{ i18n.translate( 'Customize site' ) }
+				</span>
+			);
 		} else if ( isLoggedIn ) {
 			if ( isPremium && ! isPurchased ) {
 				// purchase
@@ -573,6 +576,7 @@ class ThemeSheet extends React.Component {
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
 				primary={ isActive }
+				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.props.isWpcomTheme && this.renderPrice() }
@@ -594,9 +598,11 @@ class ThemeSheet extends React.Component {
 		const {
 			id,
 			siteId,
+			siteSlug,
 			retired,
 			isPremium,
 			isJetpack,
+			isVip,
 			translate,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
@@ -608,6 +614,8 @@ class ThemeSheet extends React.Component {
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
+
+		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title =
@@ -640,7 +648,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes;
+		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip;
 		if ( hasUpsellBanner ) {
 			pageUpsellBanner = (
 				<Banner
@@ -653,6 +661,7 @@ class ThemeSheet extends React.Component {
 					event="themes_plan_particular_free_with_plan"
 					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
+					href={ plansUrl }
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
@@ -777,6 +786,7 @@ export default connect(
 			isLoggedIn: !! currentUserId,
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
+			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),

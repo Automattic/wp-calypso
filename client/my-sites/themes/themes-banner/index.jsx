@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -79,18 +79,7 @@ class ThemesBanner extends PureComponent {
 		}
 		const backgroundStyle = backgroundColor ? { backgroundColor } : {};
 		return (
-			<a
-				className="themes-banner"
-				role="button"
-				style={ backgroundStyle }
-				onClick={ this.recordEvent }
-				href={ themeUrl }
-			>
-				<h1 className="themes-banner__title">{ title }</h1>
-				<p className="themes-banner__description">{ description }</p>
-				<Button className="themes-banner__cta" compact primary>
-					{ translate( 'See the theme' ) }
-				</Button>
+			<div className="themes-banner" style={ backgroundStyle }>
 				<Button
 					className="themes-banner__close"
 					onClick={ this.handleBannerClose }
@@ -100,18 +89,25 @@ class ThemesBanner extends PureComponent {
 				>
 					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
-				{ image && (
-					<img
-						alt={ translate( '%(themeName)s Theme', {
-							args: { themeName },
-						} ) }
-						width={ imageWidth }
-						className="themes-banner__image"
-						src={ safeImageUrl( image ) }
-						style={ { transform: imageTransform } }
-					/>
-				) }
-			</a>
+				<a role="button" onClick={ this.recordEvent } href={ themeUrl }>
+					<h1 className="themes-banner__title">{ title }</h1>
+					<p className="themes-banner__description">{ description }</p>
+					<Button className="themes-banner__cta" compact primary>
+						{ translate( 'See the theme' ) }
+					</Button>
+					{ image && (
+						<img
+							alt={ translate( '%(themeName)s Theme', {
+								args: { themeName },
+							} ) }
+							width={ imageWidth }
+							className="themes-banner__image"
+							src={ safeImageUrl( image ) }
+							style={ { transform: imageTransform } }
+						/>
+					) }
+				</a>
+			</div>
 		);
 	}
 }

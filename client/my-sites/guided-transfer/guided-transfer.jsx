@@ -18,6 +18,11 @@ import Main from 'components/main';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import TransferUnavailableCard from './transfer-unavailable-card';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const guidedTransferHosts = {
 	bluehost: {
 		label: i18n.translate( 'Bluehost' ),
@@ -46,15 +51,15 @@ class GuidedTransfer extends React.Component {
 	};
 
 	showExporter = () => {
-		page( `/settings/export/${ this.props.siteSlug }` );
+		page( `/export/${ this.props.siteSlug }` );
 	};
 
 	showHostSelection = () => {
-		page( `/settings/export/guided/${ this.props.siteSlug }` );
+		page( `/export/guided/${ this.props.siteSlug }` );
 	};
 
 	showHost = hostSlug => {
-		page( `/settings/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
+		page( `/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
 	};
 
 	goBack = () => {

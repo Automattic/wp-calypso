@@ -1,40 +1,77 @@
-
 .memberships__module-header {
-	background: var( --color-white );
+	background: var( --color-surface );
 	height: 40px;
 	line-height: 40px;
 	padding-left: 24px;
 	position: relative;
 }
 
-
 .memberships__module-header-title {
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
 	width: auto;
 }
 
-.memberships__earnings-breakdown-list {
-	margin: 0;
-	border-top: 1px solid var( --color-neutral-0 );
+.memberships__onboarding-wrapper {
+	flex-direction: row;
+	display: flex;
+	padding-top: 30px;
 }
 
+.memberships__onboarding-column-info {
+	flex: 1;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.memberships__onboarding-column-image {
+	display: none;
+	@include breakpoint( '>800px' ) {
+		display: block;
+		flex: 1;
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+
+.memberships__onboarding-header {
+	font-size: 24px;
+	margin-bottom: 24px;
+}
+.memberships__onboarding-paragraph {
+	font-size: 15px;
+	margin-bottom: 24px;
+	color: var( --color-text-subtle );
+}
+.memberships__onboarding-benefits {
+	color: var( --color-text-subtle );
+	margin-top: 24px;
+}
+.memberships__onboarding-benefits > div {
+	line-height: 24px;
+}
+.memberships__onboarding-benefits > div > svg {
+	margin-right: 12px;
+}
+
+.memberships__earnings-breakdown-list {
+	margin: 0;
+}
 
 .memberships__earnings-breakdown-label {
-	color: var( --color-neutral-600 );
-	font-size: 10px;
+	color: var( --color-neutral-60 );
+	font-size: 14px;
 	letter-spacing: 0.1em;
-	line-height: 1.6;
+	line-height: 1.8;
 	text-transform: uppercase;
 
-	@include breakpoint( '<480px' ) {
-		font-size: 14px;
-		line-height: 1.8;
+	@include breakpoint( '>480px' ) {
+		font-size: 10px;
+		line-height: 1.6;
 	}
 }
 
@@ -44,35 +81,27 @@
 	padding: 5px 0 10px;
 	list-style-type: none;
 	text-align: center;
-	border-left: 1px solid var( --color-neutral-0 );
 
 	@include breakpoint( '<480px' ) {
 		width: auto;
 		float: none;
 		padding: 10px 24px;
 		text-align: left;
-		border: 0;
-		border-top: 1px solid var( --color-neutral-0 );
-	}
-
-	&:first-child {
-		border: 0;
 	}
 }
 
 .memberships__earnings-breakdown-label {
-	color: var( --color-neutral-600 );
-	font-size: 10px;
+	color: var( --color-neutral-60 );
+	font-size: 14px;
 	letter-spacing: 0.1em;
-	line-height: 1.6;
+	line-height: 1.8;
 	text-transform: uppercase;
 
-	@include breakpoint( '<480px' ) {
-		font-size: 14px;
-		line-height: 1.8;
+	@include breakpoint( '>480px' ) {
+		font-size: 10px;
+		line-height: 1.6;
 	}
 }
-
 
 .memberships__earnings-breakdown-value {
 	width: 100%;
@@ -130,7 +159,7 @@
 }
 
 .memberships__subscriber-username {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 16px;
 	font-weight: 600;
 	white-space: pre;
@@ -156,7 +185,6 @@
 	}
 }
 
-
 .memberships__subscriber-subscribed {
 	color: var( --color-text-subtle );
 	font-size: 12px;
@@ -165,4 +193,49 @@
 
 .memberships__module-footer {
 	margin-top: 20px;
+}
+
+.memberships__module-products-title {
+	margin-bottom: 10px;
+	color: var( --color-neutral-100 );
+}
+
+.memberships__module-products-list {
+	color: var( --color-neutral );
+	font-size: 14px;
+}
+.memberships__module-products-list-icon {
+	margin-right: 6px;
+}
+
+.memberships__products-product-card {
+	display: flex;
+}
+.memberships__products-product-details {
+	flex-grow: 1;
+}
+.memberships__products-product-price {
+	color: var( --color-neutral-70 );
+	font-size: 16px;
+	line-height: 1.5;
+}
+.memberships__products-product-title {
+	color: var( --color-text-subtle );
+	font-size: 14px;
+}
+.memberships__earnings-breakdown-notes {
+	clear: both;
+	color: var( --color-neutral-30 );
+	padding-bottom: 12px;
+	padding-top: 24px;
+	font-size: 12px;
+	line-height: 1.6;
+	font-style: italic;
+	text-align: center;
+}
+.memberships__earnings-breakdown-notes em {
+	font-weight: bold;
+}
+.memberships__subscriber-actions {
+	float: right;
 }

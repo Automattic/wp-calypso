@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -45,8 +45,7 @@ class EditorMoreOptionsCopyPost extends Component {
 
 	isPost = () => 'post' === this.props.type;
 
-	openDialog = event => {
-		event.preventDefault();
+	openDialog = () => {
 		this.setState( {
 			showDialog: true,
 		} );
@@ -100,14 +99,13 @@ class EditorMoreOptionsCopyPost extends Component {
 							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
 							: translate( "Pick a page and we'll copy the title and content." )
 					}
-				>
-					<Button borderless compact onClick={ this.openDialog }>
-						<Gridicon icon="clipboard" />
-						{ this.isPost()
-							? translate( 'Select a post to copy' )
-							: translate( 'Select a page to copy' ) }
-					</Button>
-				</EditorDrawerLabel>
+				/>
+				<Button borderless compact onClick={ this.openDialog }>
+					<Gridicon icon="clipboard" />
+					{ this.isPost()
+						? translate( 'Select a post to copy' )
+						: translate( 'Select a page to copy' ) }
+				</Button>
 				<Dialog
 					isVisible={ showDialog }
 					buttons={ buttons }

@@ -1,4 +1,3 @@
-
 .checklist-banner {
 	display: flex;
 	flex-direction: row;
@@ -14,8 +13,6 @@
 	position: relative;
 
 	.gauge__label {
-		color: var( --color-success ) !important; /* important overrides inline style with CSS var */
-
 		/* this has to nest under .gauge__label to override the specificity for the stock styles */
 		.gauge__metric {
 			text-transform: none;
@@ -36,7 +33,7 @@
 	text-align: center;
 	font-size: 10px;
 	font-weight: bold;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 }
 
 .checklist-banner__progress {

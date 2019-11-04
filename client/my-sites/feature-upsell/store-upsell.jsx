@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -123,7 +123,7 @@ class StoreUpsellComponent extends Component {
 							body={
 								<div className="google-voucher__initial-step">
 									<TipInfo
-										info={ 'Offer valid in US after spending the first $25 on Google Ads.' }
+										info={ 'Offer valid in US and CA after spending the first $25 on Google Ads.' }
 									/>
 								</div>
 							}

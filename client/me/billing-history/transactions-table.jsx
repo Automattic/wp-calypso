@@ -168,7 +168,7 @@ class TransactionsTable extends React.Component {
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">
-					<td>{ transactionDate }</td>
+					<td className="billing-history__date">{ transactionDate }</td>
 					<td className="billing-history__trans-app">
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">

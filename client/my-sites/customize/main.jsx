@@ -31,6 +31,11 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:my-sites:customize' );
 
 // Used to allow timing-out the iframe loading process
@@ -64,7 +69,7 @@ class Customize extends React.Component {
 		prevPath: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
@@ -83,7 +88,7 @@ class Customize extends React.Component {
 		this.cancelWaitingTimer();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 
@@ -267,11 +272,12 @@ class Customize extends React.Component {
 				case 'activated':
 					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
 					break;
-				case 'purchased':
+				case 'purchased': {
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
 					Actions.purchase( themeSlug, site );
 					break;
-				case 'navigateTo':
+				}
+				case 'navigateTo': {
 					const destination = message.destination;
 					if ( ! destination ) {
 						debug( 'missing destination' );
@@ -279,6 +285,7 @@ class Customize extends React.Component {
 					}
 					this.navigateTo( destination );
 					break;
+				}
 			}
 		}
 	};

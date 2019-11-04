@@ -17,6 +17,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
+import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
@@ -32,16 +33,18 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import { getDiscountByName } from 'lib/discounts';
+import { addQueryArgs } from 'lib/url';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
 	getPlanPath,
 	isFreePlan,
-	getBiennialPlan,
 	getPlanClass,
+	planHasFeature,
 } from 'lib/plans';
 import {
+	getCurrentPlan,
 	getPlanDiscountedRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
@@ -54,11 +57,13 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
+import isPrivateSite from 'state/selectors/is-private-site';
 import {
 	isBestValue,
 	isMonthly,
 	isNew,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_THEMES,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -69,9 +74,33 @@ import {
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+import Dialog from 'components/dialog';
+
+const defaultState = {
+	checkoutUrl: '/checkout',
+	showingSiteLaunchDialog: false,
+	choosingPlanSlug: '',
+};
+
 export class PlanFeatures extends Component {
+	state = { ...defaultState };
+
+	setDefaultState = () => {
+		this.setState( defaultState );
+	};
+
+	UNSAFE_componentWillReceiveProps( { siteId } ) {
+		if ( siteId !== this.props.siteId ) {
+			this.setDefaultState();
+		}
+	}
+
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll } = this.props;
+		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -101,27 +130,29 @@ export class PlanFeatures extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
+					{ this.renderSiteLaunchDialog() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
-						{ ! this.props.isRequestingActivePromotions && (
-							<PlanFeaturesScroller
-								withScroll={ withScroll }
-								planCount={ planProperties.length }
-								cellSelector=".plan-features__table-item"
-								initialSelectedIndex={ initialSelectedIndex }
-							>
-								<table className={ tableClasses }>
-									<tbody>
-										<tr>{ this.renderPlanHeaders() }</tr>
-										{ ! withScroll && planDescriptions }
-										<tr>{ this.renderTopButtons() }</tr>
-										{ withScroll && planDescriptions }
-										{ this.renderPlanFeatureRows() }
-										{ ! withScroll && ! isInSignup && bottomButtons }
-									</tbody>
-								</table>
-							</PlanFeaturesScroller>
-						) }
+						<PlanFeaturesScroller
+							withScroll={ withScroll }
+							planCount={ planProperties.length }
+							cellSelector=".plan-features__table-item"
+							initialSelectedIndex={ initialSelectedIndex }
+						>
+							<table className={ tableClasses }>
+								<caption className="plan-features__screen-reader-text screen-reader-text">
+									{ translate( 'Available plans to choose from' ) }
+								</caption>
+								<tbody>
+									<tr>{ this.renderPlanHeaders() }</tr>
+									{ ! withScroll && planDescriptions }
+									<tr>{ this.renderTopButtons() }</tr>
+									{ withScroll && planDescriptions }
+									{ this.renderPlanFeatureRows() }
+									{ ! withScroll && ! isInSignup && bottomButtons }
+								</tbody>
+							</table>
+						</PlanFeaturesScroller>
 					</div>
 				</div>
 			</div>
@@ -143,7 +174,7 @@ export class PlanFeatures extends Component {
 		if ( ! bannerContainer ) {
 			return false;
 		}
-		const activeDiscount = getDiscountByName( this.props.withDiscount );
+		const activeDiscount = getDiscountByName( this.props.withDiscount, this.props.discountEndDate );
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
@@ -163,14 +194,60 @@ export class PlanFeatures extends Component {
 		);
 	}
 
+	renderSiteLaunchDialog() {
+		const { currentSitePlanSlug, translate } = this.props;
+		const { checkoutUrl, choosingPlanSlug, showingSiteLaunchDialog } = this.state;
+
+		if ( ! showingSiteLaunchDialog ) {
+			return null;
+		}
+
+		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_shown', {
+			current_plan: currentSitePlanSlug,
+			upgrading_to: choosingPlanSlug,
+		} );
+
+		return (
+			<Dialog
+				additionalClassNames="plan-features__upgrade-launch-dialog"
+				isVisible
+				buttons={ [
+					{ action: 'cancel', label: translate( 'Cancel' ) },
+					{
+						action: 'continue',
+						label: translate( "Let's do it!" ),
+						isPrimary: true,
+						onClick: () => {
+							this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
+								current_plan: currentSitePlanSlug,
+								upgrading_to: choosingPlanSlug,
+							} );
+							page( checkoutUrl );
+						},
+					},
+				] }
+				onClose={ this.setDefaultState }
+			>
+				<h1>{ translate( 'Site Privacy' ) }</h1>
+				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
+				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
+				<InlineSupportLink
+					showIcon={ false }
+					supportLink="https://support.wordpress.com/settings/privacy-settings/"
+					supportPostId={ 1507 }
+				/>
+			</Dialog>
+		);
+	}
+
 	hasDiscountNotice() {
-		const { canPurchase, hasPlaceholders, withDiscount } = this.props;
+		const { canPurchase, hasPlaceholders, withDiscount, discountEndDate } = this.props;
 		const bannerContainer = this.getBannerContainer();
 		if ( ! bannerContainer ) {
 			return false;
 		}
 
-		const activeDiscount = getDiscountByName( withDiscount );
+		const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
 		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
 			return false;
 		}
@@ -286,7 +363,6 @@ export class PlanFeatures extends Component {
 				currencyCode,
 				current,
 				features,
-				onUpgradeClick,
 				planConstantObj,
 				planName,
 				popular,
@@ -296,7 +372,6 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
-				countryCode,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
@@ -321,7 +396,6 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						countryCode={ countryCode }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -335,7 +409,7 @@ export class PlanFeatures extends Component {
 						isLaunchPage={ isLaunchPage }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
-						onUpgradeClick={ onUpgradeClick }
+						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
@@ -366,7 +440,6 @@ export class PlanFeatures extends Component {
 			selectedPlan,
 			siteType,
 			showPlanCreditsApplied,
-			countryCode,
 			withScroll,
 		} = this.props;
 
@@ -417,7 +490,7 @@ export class PlanFeatures extends Component {
 			}
 
 			return (
-				<td key={ planName } className={ classes }>
+				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
 						availableForPurchase={ availableForPurchase }
@@ -439,10 +512,9 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
-						countryCode={ countryCode }
 						plansWithScroll={ withScroll }
 					/>
-				</td>
+				</th>
 			);
 		} );
 	}
@@ -475,6 +547,42 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
+	handleUpgradeClick( singlePlanProperties ) {
+		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
+
+		const {
+			availableForPurchase,
+			cartItemForPlan,
+			checkoutUrl,
+			siteIsPrivateAndGoingAtomic,
+			productSlug,
+		} = singlePlanProperties;
+
+		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
+			ownPropsOnUpgradeClick( cartItemForPlan );
+			return;
+		}
+
+		if ( ! availableForPurchase ) {
+			return;
+		}
+
+		if ( siteIsPrivateAndGoingAtomic ) {
+			if ( isInSignup ) {
+				// Let signup do its thing
+				return;
+			}
+			this.setState( {
+				checkoutUrl,
+				choosingPlanSlug: productSlug,
+				showingSiteLaunchDialog: true,
+			} );
+			return;
+		}
+
+		page( checkoutUrl );
+	}
+
 	renderTopButtons() {
 		const {
 			canPurchase,
@@ -492,7 +600,6 @@ export class PlanFeatures extends Component {
 			let { availableForPurchase } = properties;
 			const {
 				current,
-				onUpgradeClick,
 				planName,
 				primaryUpgrade,
 				isPlaceholder,
@@ -533,7 +640,7 @@ export class PlanFeatures extends Component {
 						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
 						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
-						onUpgradeClick={ onUpgradeClick }
+						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
@@ -629,7 +736,6 @@ export class PlanFeatures extends Component {
 			let { availableForPurchase } = properties;
 			const {
 				current,
-				onUpgradeClick,
 				planName,
 				primaryUpgrade,
 				isPlaceholder,
@@ -665,7 +771,7 @@ export class PlanFeatures extends Component {
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
-						onUpgradeClick={ onUpgradeClick }
+						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						selectedPlan={ selectedPlan }
 					/>
 				</td>
@@ -740,18 +846,6 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 const hasPlaceholders = planProperties =>
 	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
 
-const maybeGetBiennialPlanSlugVersion = planSlug => {
-	// Test defaulting to the 2 year option for wpcom plans
-	if (
-		planMatches( planSlug, { group: GROUP_WPCOM } ) &&
-		'twoYearFlavor' === abtest( 'twoYearPlanByDefault' )
-	) {
-		planSlug = getBiennialPlan( planSlug ) || planSlug;
-	}
-
-	return planSlug;
-};
-
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
@@ -759,18 +853,20 @@ export default connect(
 			isInSignup,
 			placeholder,
 			plans,
-			onUpgradeClick,
 			isLandingPage,
 			siteId,
 			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
+			withDiscount,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
+		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
+		const currentPlanObj = getCurrentPlan( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -796,6 +892,17 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
+				const planPath = getPlanPath( plan ) || '';
+
+				const checkoutUrlArgs = {};
+				// Auto-apply the coupon code to the cart for WPCOM sites
+				if ( ! displayJetpackPlans && withDiscount ) {
+					checkoutUrlArgs.coupon = withDiscount;
+				}
+				const checkoutUrl = addQueryArgs(
+					checkoutUrlArgs,
+					`/checkout/${ selectedSiteSlug }/${ planPath }`
+				);
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
@@ -836,9 +943,15 @@ export default connect(
 				if ( displayJetpackPlans ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 				}
+				const siteIsPrivateAndGoingAtomic =
+					siteIsPrivate &&
+					( planHasFeature( plan, FEATURE_UPLOAD_PLUGINS ) ||
+						planHasFeature( plan, FEATURE_UPLOAD_THEMES ) );
 
 				return {
 					availableForPurchase,
+					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
+					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
@@ -847,27 +960,11 @@ export default connect(
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
-					onUpgradeClick: onUpgradeClick
-						? () => {
-								const planSlug = maybeGetBiennialPlanSlugVersion(
-									getPlanSlug( state, planProductId )
-								);
-
-								onUpgradeClick( getCartItemForPlan( planSlug ) );
-						  }
-						: () => {
-								if ( ! availableForPurchase ) {
-									return;
-								}
-
-								const planSlug = maybeGetBiennialPlanSlugVersion( plan );
-
-								page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( planSlug ) || '' }` );
-						  },
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,
 					popular: popular,
+					productSlug: get( planObject, 'product_slug' ),
 					newPlan: newPlan,
 					bestValue: bestValue,
 					hideMonthly: false,
@@ -879,6 +976,7 @@ export default connect(
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan,
+					siteIsPrivateAndGoingAtomic,
 				};
 			} )
 		);
@@ -891,13 +989,14 @@ export default connect(
 
 		return {
 			canPurchase,
+			currentSitePlanSlug: get( currentPlanObj, 'productSlug', null ),
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
+			siteIsPrivate,
 			sitePlan,
 			siteType,
 			planCredits,
-			isRequestingActivePromotions: isRequestingActivePromotions( state ),
 			hasPlaceholders: hasPlaceholders( planProperties ),
 			showPlanCreditsApplied:
 				sitePlan &&

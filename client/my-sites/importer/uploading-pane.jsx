@@ -10,7 +10,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { defer, flow, get, includes, noop, truncate } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -21,6 +21,11 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+
+/**
+ * Style dependencies
+ */
+import './uploading-pane.scss';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -129,10 +134,14 @@ class UploadingPane extends React.PureComponent {
 	render() {
 		const { importerStatus, site, isEnabled } = this.props;
 		const isReadyForImport = this.isReadyForImport();
+		const importerStatusClasses = classNames(
+			'importer__upload-content',
+			this.props.importerStatus.importerState
+		);
 
 		return (
 			<div>
-				<p>{ this.props.description }</p>
+				<p className="importer__uploading-pane-description">{ this.props.description }</p>
 				<div
 					className="importer__uploading-pane"
 					role="button"
@@ -140,7 +149,7 @@ class UploadingPane extends React.PureComponent {
 					onClick={ isReadyForImport ? this.openFileSelector : null }
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
-					<div className="importer__upload-content">
+					<div className={ importerStatusClasses }>
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>

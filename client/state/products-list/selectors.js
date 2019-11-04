@@ -100,14 +100,28 @@ export const planSlugToPlanProduct = ( products, planSlug ) => {
  * @param {Number} siteId Site ID to consider
  * @param {Object} planObject Plan object returned by getPlan() from lib/plans
  * @param {Number} credits The number of free credits in cart
+ * @param {Object} couponDiscounts Absolute values of any discounts coming from a discount coupon
  * @return {Object} Object with a full and monthly price
  */
-export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject, credits ) => ( {
-	priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
-	priceFull: getPlanPrice( state, siteId, planObject, false ),
-	priceMinusCredits: max( [ getPlanPrice( state, siteId, planObject, false ) - credits, 0 ] ),
-	priceMonthly: getPlanPrice( state, siteId, planObject, true ),
-} );
+export const computeFullAndMonthlyPricesForPlan = (
+	state,
+	siteId,
+	planObject,
+	credits,
+	couponDiscounts
+) => {
+	const couponDiscount = couponDiscounts[ planObject.getProductId() ] || 0;
+
+	return {
+		priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
+		priceFull: getPlanPrice( state, siteId, planObject, false ),
+		priceFinal: max( [
+			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
+			0,
+		] ),
+		priceMonthly: getPlanPrice( state, siteId, planObject, true ),
+	};
+};
 
 /**
  * Turns a list of plan slugs into a list of plan objects, corresponding
@@ -117,9 +131,10 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject, c
  * @param {Number} siteId Site ID to consider
  * @param {String[]} planSlugs Plans constants
  * @param {Number} credits The number of free credits in cart
+ * @param {Object} couponDiscounts Absolute values of any discounts coming from a discount coupon
  * @return {Array} A list of objects as described above
  */
-export const computeProductsWithPrices = ( state, siteId, planSlugs, credits ) => {
+export const computeProductsWithPrices = ( state, siteId, planSlugs, credits, couponDiscounts ) => {
 	const products = getProductsList( state );
 
 	return planSlugs
@@ -127,7 +142,13 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs, credits ) =
 		.filter( planProduct => planProduct.plan && get( planProduct, [ 'product', 'available' ] ) )
 		.map( availablePlanProduct => ( {
 			...availablePlanProduct,
-			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan, credits ),
+			...computeFullAndMonthlyPricesForPlan(
+				state,
+				siteId,
+				availablePlanProduct.plan,
+				credits,
+				couponDiscounts
+			),
 		} ) )
 		.filter( availablePlanProduct => availablePlanProduct.priceFull )
 		.sort( ( a, b ) => getTermDuration( a.plan.term ) - getTermDuration( b.plan.term ) );

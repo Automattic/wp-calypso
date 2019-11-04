@@ -72,7 +72,7 @@ They run daily on continuous integration (CircleCI), because they can use networ
 
 ### End-to-end tests
 
-All those tests now live in the [test/e2e](/test/e2e) directory. For details on how to run them, see the [e2e documentation](/test/e2e/README.md).
+All those tests now live in the [test/e2e](https://github.com/Automattic/wp-calypso/blob/master/test/e2e) directory. For details on how to run them, see the [e2e documentation](https://github.com/Automattic/wp-calypso/blob/master/test/e2e/README.md).
 
 ## FAQ
 

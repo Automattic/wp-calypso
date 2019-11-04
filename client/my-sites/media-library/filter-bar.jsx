@@ -23,7 +23,7 @@ import DataSource from './data-source';
 // These source supply very large images, and there are instances such as
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
-const largeImageSources = [ 'pexels' ];
+const largeImageSources = [ 'pexels', 'google_photos' ];
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -108,15 +108,27 @@ export class MediaLibraryFilterBar extends Component {
 		this.props.onFilterChange( filter );
 	};
 
-	renderTabItems() {
-		if ( this.props.source !== '' ) {
-			return null;
+	getFiltersForSource( source ) {
+		if ( source === 'pexels' ) {
+			return [];
 		}
 
-		const tabs = [ '', 'this-post', 'images', 'documents', 'videos', 'audio' ];
+		if ( source === 'google_photos' ) {
+			return [ '', 'images', 'videos' ];
+		}
+
+		return [ '', 'this-post', 'images', 'documents', 'videos', 'audio' ];
+	}
+
+	renderTabItems() {
+		const tabs = this.getFiltersForSource( this.props.source );
 
 		if ( ! this.props.post ) {
 			pull( tabs, 'this-post' );
+		}
+
+		if ( tabs.length === 0 ) {
+			return null;
 		}
 
 		return (

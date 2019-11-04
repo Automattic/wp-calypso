@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -19,9 +19,12 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
-class PlanCompareCard extends React.Component {
-	static displayName = 'PlanCompareCard';
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
+class PlanCompareCard extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
 		onClick: PropTypes.func,

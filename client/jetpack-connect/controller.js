@@ -11,7 +11,6 @@ import { get, isEmpty, some, dropRight } from 'lodash';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import CheckoutData from 'components/data/checkout';
 import config from 'config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
@@ -282,18 +281,16 @@ export function plansSelection( context, next ) {
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
-		<CheckoutData>
-			<Plans
-				basePlansPath={
-					context.query.redirect
-						? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
-						: JPC_PATH_PLANS
-				}
-				context={ context }
-				interval={ context.params.interval }
-				queryRedirect={ context.query.redirect }
-			/>
-		</CheckoutData>
+		<Plans
+			basePlansPath={
+				context.query.redirect
+					? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
+					: JPC_PATH_PLANS
+			}
+			context={ context }
+			interval={ context.params.interval }
+			queryRedirect={ context.query.redirect }
+		/>
 	);
 	next();
 }

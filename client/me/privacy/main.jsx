@@ -80,9 +80,33 @@ const Privacy = createReactClass( {
 				<SectionHeader label={ translate( 'Usage Information' ) } />
 				<Card className="privacy__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
-						<p>{ translate( 'We are committed to your privacy and security.' ) }</p>
-
 						<FormFieldset>
+							<p>{ translate( 'We are committed to your privacy and security.' ) }</p>
+							<p>
+								{ translate(
+									'The information you choose to share helps us improve our products, make marketing to you more ' +
+										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
+										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
+									{
+										components: {
+											privacyPolicyLink,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'In addition to our analytics tool, we use other tracking tools, including some from third parties. ' +
+										'{{cookiePolicyLink}}Read about these{{/cookiePolicyLink}} and how to ' +
+										'control them.',
+									{
+										components: {
+											cookiePolicyLink,
+										},
+									}
+								) }
+							</p>
+							<hr />
 							<p>
 								<FormToggle
 									id="tracks_opt_out"
@@ -100,32 +124,6 @@ const Privacy = createReactClass( {
 										}
 									) }
 								</FormToggle>
-							</p>
-
-							<p>
-								{ translate(
-									'This information helps us improve our products, make marketing to you more ' +
-										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
-										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
-									{
-										components: {
-											privacyPolicyLink,
-										},
-									}
-								) }
-							</p>
-
-							<p>
-								{ translate(
-									'We use other tracking tools, including some from third parties. ' +
-										'{{cookiePolicyLink}}Read about these{{/cookiePolicyLink}} and how to ' +
-										'control them.',
-									{
-										components: {
-											cookiePolicyLink,
-										},
-									}
-								) }
 							</p>
 						</FormFieldset>
 

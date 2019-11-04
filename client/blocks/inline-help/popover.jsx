@@ -8,12 +8,11 @@ import { flowRight as compose, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import { abtest } from 'lib/abtest';
 import {
 	VIEW_CONTACT,
 	VIEW_RICH_RESULT,
@@ -44,7 +43,6 @@ import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
@@ -54,15 +52,12 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
-import { isEnabled } from 'config';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import QueryActiveTheme from 'components/data/query-active-theme';
-import { getActiveTheme } from 'state/themes/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { withLocalizedMoment } from 'components/localized-moment';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
+import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -195,26 +190,6 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
-	renderUpworkNudge = () => {
-		const { upworkNudgeViewed, upworkNudgeClicked } = this.props;
-		if ( abtest( 'builderReferralHelpPopover' ) === 'original' ) {
-			return null;
-		}
-		upworkNudgeViewed();
-		return (
-			<div className="inline-help__upwork">
-				<a
-					onClick={ upworkNudgeClicked }
-					href={ '/experts/upwork?source=help-menu' }
-					title="Link to Upwork where you can hire a WordPress expert"
-				>
-					Need a designer to build your site?
-				</a>
-				<p>Hire a WordPress design expert from Upwork.</p>
-			</div>
-		);
-	};
-
 	renderPopoverContent = () => {
 		return (
 			<Fragment>
@@ -224,7 +199,6 @@ class InlineHelpPopover extends Component {
 						openResult={ this.openResultView }
 						query={ this.props.searchQuery }
 					/>
-					{ this.renderUpworkNudge() }
 					<InlineHelpSearchResults
 						openResult={ this.openResultView }
 						searchQuery={ this.props.searchQuery }
@@ -380,55 +354,17 @@ const optIn = ( siteId, gutenbergUrl ) => {
 	);
 };
 
-const upworkNudgeViewed = () => {
-	return composeAnalytics(
-		recordGoogleEvent(
-			'Upwork Link Viewed',
-			'Viewed "Need a designer to build your site?" in the help popover.',
-			'View',
-			false
-		),
-		recordTracksEvent( 'calypso_upwork_help_popover_view' )
-	);
-};
-
-const upworkNudgeClicked = () => {
-	return composeAnalytics(
-		recordGoogleEvent(
-			'Upwork Clicked',
-			'Clicked "Need a designer to build your site?" in the help popover.',
-			'Click',
-			false
-		),
-		recordTracksEvent( 'calypso_upwork_help_popover_clicked' )
-	);
-};
-
-function mapStateToProps( state, { moment } ) {
+function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
 	const classicRoute = currentRoute.replace( '/block-editor/', '' );
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
-	const isGutenbergEditor = section.group && section.group === 'gutenberg';
-	const optInEnabled =
-		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
-
-	const isUsingGutenbergPageTemplates =
-		[
-			'twentynineteen',
-			'calm-business',
-			'elegant-business',
-			'friendly-business',
-			'modern-business',
-			'professional-business',
-			'sophisticated-business',
-		].includes( getActiveTheme( state, siteId ) ) &&
-		moment( getSiteOption( state, siteId, 'created_at' ) ).isAfter( '20190314' );
 
 	return {
 		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
@@ -437,10 +373,9 @@ function mapStateToProps( state, { moment } ) {
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		selectedEditor: getSelectedEditor( state, siteId ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: optInEnabled && isGutenbergEditor && ! isUsingGutenbergPageTemplates,
+		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
 		showOptIn: optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 	};
@@ -454,13 +389,10 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
-	upworkNudgeViewed,
-	upworkNudgeClicked,
 };
 
 export default compose(
 	localize,
-	withLocalizedMoment,
 	connect(
 		mapStateToProps,
 		mapDispatchToProps

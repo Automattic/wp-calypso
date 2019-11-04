@@ -4,17 +4,20 @@
  * External dependencies
  */
 import { noop } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isEnabled } from 'config';
 import { addQueryArgs } from 'lib/route';
 
 export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
-	getChecklistDestination = noop,
+	getSignupDestination = noop,
+	getThankYouNoSiteDestination = noop,
+	getChecklistThemeDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -22,54 +25,62 @@ export function generateFlows( {
 			destination: '/',
 			description: 'Create an account without a blog.',
 			lastModified: '2015-07-07',
+			pageTitle: translate( 'Create an account' ),
 		},
 
 		business: {
-			steps: [ 'user', 'about', 'plans-business', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans-business',
+			],
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2019-03-04',
-			meta: {
-				skipBundlingPlan: true,
-			},
+			lastModified: '2019-08-05',
 		},
 
 		premium: {
-			steps: [ 'user', 'about', 'plans-premium', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans-premium',
+			],
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
-			lastModified: '2019-03-04',
-			meta: {
-				skipBundlingPlan: true,
-			},
+			lastModified: '2019-08-05',
 		},
 
 		personal: {
-			steps: [ 'user', 'about', 'plans-personal', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans-personal',
+			],
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2019-03-04',
+			lastModified: '2019-08-05',
 		},
 
 		free: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
-			destination: getSiteDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+			],
+			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
-			lastModified: '2018-01-24',
-		},
-
-		blog: {
-			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with blog themes',
-			lastModified: '2017-09-01',
-		},
-
-		website: {
-			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with website themes',
-			lastModified: '2017-09-01',
+			lastModified: '2019-08-05',
 		},
 
 		'rebrand-cities': {
@@ -78,95 +89,42 @@ export function generateFlows( {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
 			description: 'Create an account for REBRAND cities partnership',
-			lastModified: '2017-07-01',
-			meta: {
-				skipBundlingPlan: true,
-			},
+			lastModified: '2019-06-17',
 		},
 
 		'with-theme': {
 			steps: [ 'domains-theme-preselected', 'plans', 'user' ],
-			destination: getSiteDestination,
+			destination: getChecklistThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2016-01-27',
+			lastModified: '2019-08-20',
 		},
 
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-04-30',
+			lastModified: '2019-06-20',
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
-			destination: getChecklistDestination,
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getSignupDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2019-04-30',
-		},
-
-		'onboarding-for-business': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'The improved onboarding flow for business site types.',
-			lastModified: '2019-04-30',
-		},
-
-		'onboarding-dev': {
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'site-style-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getChecklistDestination,
-			description: 'A temporary flow for holding under-development steps',
-			lastModified: '2019-04-30',
-		},
-
-		'delta-discover': {
-			steps: [ 'user' ],
-			destination: '/',
-			description:
-				'A copy of the `account` flow for the Delta email campaigns. Half of users who ' +
-				'go through this flow receive a reader-specific drip email series.',
-			lastModified: '2016-05-03',
-		},
-
-		'delta-blog': {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description:
-				'A copy of the `blog` flow for the Delta email campaigns. Half of users who go ' +
-				'through this flow receive a blogging-specific drip email series.',
-			lastModified: '2018-01-24',
-		},
-
-		'delta-site': {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description:
-				'A copy of the `website` flow for the Delta email campaigns. Half of users who go ' +
-				'through this flow receive a website-specific drip email series.',
-			lastModified: '2018-01-24',
+			lastModified: '2019-06-20',
 		},
 
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getChecklistDestination,
+			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2019-04-30',
+			lastModified: '2019-06-20',
 		},
 
 		developer: {
@@ -205,6 +163,7 @@ export function generateFlows( {
 			disallowResume: true,
 			allowContinue: false,
 			hideFlowProgress: true,
+			forceLogin: true,
 		},
 
 		'rewind-auto-config': {
@@ -217,9 +176,16 @@ export function generateFlows( {
 			allowContinue: false,
 			hideFlowProgress: true,
 		},
+
+		simple: {
+			steps: [ 'passwordless' ],
+			destination: '/',
+			description: 'A very simple signup flow',
+			lastModified: '2019-05-09',
+		},
 	};
 
-	if ( config.isEnabled( 'rewind/clone-site' ) ) {
+	if ( isEnabled( 'rewind/clone-site' ) ) {
 		flows[ 'clone-site' ] = {
 			steps: [
 				'clone-start',
@@ -237,7 +203,7 @@ export function generateFlows( {
 		};
 	}
 
-	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
+	if ( isEnabled( 'signup/atomic-store-flow' ) ) {
 		// Important: For any changes done to the ecommerce flow,
 		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
@@ -248,21 +214,14 @@ export function generateFlows( {
 		};
 
 		flows[ 'ecommerce-onboarding' ] = {
-			steps: [ 'user', 'site-type', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'domains', 'plans-ecommerce' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-11-21',
 		};
-
-		flows[ 'store-woo' ] = {
-			steps: [ 'domains-store', 'plans-store-nux', 'user' ],
-			destination: getSiteDestination,
-			description: 'Short signup flow for creating an online store with an Atomic site',
-			lastModified: '2018-03-15',
-		};
 	}
 
-	if ( config.isEnabled( 'signup/wpcc' ) ) {
+	if ( isEnabled( 'signup/wpcc' ) ) {
 		flows.wpcc = {
 			steps: [ 'oauth2-user' ],
 			destination: getRedirectDestination,
@@ -281,10 +240,10 @@ export function generateFlows( {
 			'plans-site-selected',
 			'user',
 		],
-		destination: getSiteDestination,
+		destination: getThankYouNoSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		disallowResume: true,
-		lastModified: '2017-05-09',
+		lastModified: '2019-06-21',
 	};
 
 	flows[ 'site-selected' ] = {
@@ -295,35 +254,43 @@ export function generateFlows( {
 		lastModified: '2017-01-19',
 	};
 
-	flows.private = {
-		steps: [ 'user', 'site' ],
-		destination: getChecklistDestination,
-		description: 'Test private site signup',
-		lastModified: '2018-10-22',
-	};
-
 	flows[ 'launch-site' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
 		destination: getSiteDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
 		lastModified: '2019-01-16',
+		pageTitle: translate( 'Launch your site' ),
 	};
 
+	const importSteps = [ 'domains', 'plans-import' ];
+
+	const importDestination = ( { importSiteEngine, importSiteUrl, siteSlug } ) =>
+		addQueryArgs(
+			{
+				engine: importSiteEngine || null,
+				'from-site': importSiteUrl ? encodeURIComponent( importSiteUrl ) : null,
+				signup: 1,
+			},
+			`/import/${ siteSlug }`
+		);
+
 	flows.import = {
-		steps: [ 'from-url', 'user', 'domains' ],
-		destination: ( { importEngine, importSiteUrl, siteSlug } ) =>
-			addQueryArgs(
-				{
-					engine: importEngine || null,
-					'from-site': ( importSiteUrl && encodeURIComponent( importSiteUrl ) ) || null,
-					signup: 1,
-				},
-				`/settings/import/${ siteSlug }`
-			),
+		steps: [ 'user', 'from-url', ...importSteps ],
+		destination: importDestination,
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
-		lastModified: '2018-09-12',
+		lastModified: '2019-07-30',
+	};
+
+	flows[ 'import-onboarding' ] = {
+		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
+		// when switching from the onboarding flow.
+		steps: [ 'user', 'site-type', 'import-url', 'import-preview', ...importSteps ],
+		destination: importDestination,
+		description: 'Import flow that can be used from the onboarding flow',
+		disallowResume: true,
+		lastModified: '2019-08-01',
 	};
 
 	flows.reader = {
@@ -342,19 +309,28 @@ export function generateFlows( {
 		autoContinue: true,
 	};
 
-	flows.name = {
-		steps: [ 'displayname', 'about', 'domains', 'plans' ],
-		destination: getSiteDestination,
-		description: 'Ask for a display name not a user name',
-		lastModified: '2018-12-12',
-	};
-
 	flows[ 'plan-no-domain' ] = {
 		steps: [ 'user', 'site', 'plans' ],
 		destination: getSiteDestination,
 		description: 'Allow users to select a plan without a domain',
 		lastModified: '2018-12-12',
 	};
+
+	if ( isEnabled( 'signup/full-site-editing' ) ) {
+		flows[ 'test-fse' ] = {
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-title-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getSignupDestination,
+			description: 'A copy of `onboarding` for testing Full Site Editing',
+			lastModified: '2019-08-08',
+		};
+	}
 
 	return flows;
 }

@@ -12,7 +12,6 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
@@ -31,7 +30,6 @@ import { localizeUrl } from 'lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
-import UpworkBanner from 'blocks/upwork-banner';
 
 /**
  * Style dependencies
@@ -245,9 +243,6 @@ class Help extends React.PureComponent {
 
 		return (
 			<Main className="help">
-				{ abtest( 'builderReferralHelpBanner' ) === 'builderReferralBanner' && (
-					<UpworkBanner location={ 'help-home' } />
-				) }
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
 				<HelpSearch />

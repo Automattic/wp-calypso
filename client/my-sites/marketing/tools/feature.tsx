@@ -11,11 +11,11 @@ import CardHeading from 'components/card-heading';
 
 interface Props {
 	children: ReactNode;
-	description: string;
-	disclaimer?: string;
+	description: ReactNode;
+	disclaimer?: ReactNode;
 	imageAlt?: string;
 	imagePath?: string;
-	title: string;
+	title: ReactNode;
 }
 
 const MarketingToolsFeature: FunctionComponent< Props > = ( {

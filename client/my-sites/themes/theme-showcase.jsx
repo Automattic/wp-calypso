@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { compact, omit, pickBy } from 'lodash';
-import Gridicon from 'gridicons';
+import { compact, pickBy } from 'lodash';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -22,7 +19,7 @@ import SubMasterbarNav from 'components/sub-masterbar-nav';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import buildUrl from 'lib/build-url';
+import { buildRelativeSearchUrl } from 'lib/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
@@ -35,9 +32,6 @@ import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
-import PhotoBlogBanner from './themes-banner/photo-blog';
-import SmallBusinessBanner from './themes-banner/small-business';
-import RandomThemesBanner from './themes-banner/random-themes-banner';
 import { getActiveTheme } from 'state/themes/selectors';
 import UpworkBanner from 'blocks/upwork-banner';
 
@@ -138,7 +132,7 @@ class ThemeShowcase extends React.Component {
 		filterSection = filterSection.replace( /\s/g, '+' );
 
 		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
-		return buildUrl( url, searchString );
+		return buildRelativeSearchUrl( url, searchString );
 	};
 
 	onTierSelect = ( { value: tier } ) => {
@@ -214,15 +208,6 @@ class ThemeShowcase extends React.Component {
 
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
-		// We don't want to advertise the theme that's already active.
-		const themeBanners = omit(
-			{
-				'photo-blog': PhotoBlogBanner,
-				'small-business': SmallBusinessBanner,
-			},
-			currentThemeId
-		);
-
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -240,12 +225,11 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'original' && (
-						<RandomThemesBanner banners={ themeBanners } />
-					) }
-					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-						<UpworkBanner location={ 'theme-banner' } />
-					) }
+					{ showBanners &&
+						abtest &&
+						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+							<UpworkBanner location={ 'theme-banner' } />
+						) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
@@ -262,7 +246,7 @@ class ThemeShowcase extends React.Component {
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>
 							<Gridicon icon="cloud-upload" />
-							{ translate( 'Upload Theme' ) }
+							{ translate( 'Install Theme' ) }
 						</Button>
 					) }
 					<ThemesSelection

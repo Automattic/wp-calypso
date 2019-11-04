@@ -11,7 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems, shouldShowTax } from 'lib/cart-values';
+import { shouldShowTax } from 'lib/cart-values';
+import { hasOnlyFreeTrial } from 'lib/cart-values/cart-items';
 
 class CartTotal extends React.Component {
 	static propTypes = {
@@ -70,7 +71,7 @@ class CartTotal extends React.Component {
 	totalLabel = () => {
 		const cart = this.props.cart;
 
-		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
+		if ( hasOnlyFreeTrial( cart ) ) {
 			return this.props.translate( 'Total Due Now:', {
 				context: 'Upgrades: Total cart cost in checkout when buying a free trial',
 			} );

@@ -82,7 +82,7 @@ class ImageEditor extends React.Component {
 
 	editCanvasRef = React.createRef();
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { media: currentMedia } = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
@@ -257,8 +257,6 @@ class ImageEditor extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ noticeText && this.renderNotice() }
-
 				<CloseOnEscape onEscape={ this.onCancel } />
 				<QuerySites siteId={ siteId } />
 
@@ -277,6 +275,8 @@ class ImageEditor extends React.Component {
 						/>
 					</div>
 				</figure>
+
+				{ noticeText && this.renderNotice() }
 			</div>
 		);
 	}

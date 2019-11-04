@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import Dispatcher from 'dispatcher';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -18,7 +17,6 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import { isMobile } from 'lib/viewport';
-import { CART_POPUP_CLOSE, CART_POPUP_OPEN } from 'lib/upgrades/action-types';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
@@ -36,25 +34,7 @@ class PlansNavigation extends React.Component {
 
 	state = {
 		cartVisible: false,
-		cartShowKeepSearching: false,
 	};
-
-	componentDidMount() {
-		this.dispatchToken = Dispatcher.register( payload => {
-			if ( payload.action.type === CART_POPUP_OPEN ) {
-				this.setState( {
-					cartVisible: true,
-					cartShowKeepSearching: payload.action.options.showKeepSearching,
-				} );
-			} else if ( payload.action.type === CART_POPUP_CLOSE ) {
-				this.setState( { cartVisible: false } );
-			}
-		} );
-	}
-
-	componentWillUnmount() {
-		Dispatcher.unregister( this.dispatchToken );
-	}
 
 	getSectionTitle( path ) {
 		switch ( path ) {
@@ -84,11 +64,13 @@ class PlansNavigation extends React.Component {
 		const sectionTitle = this.getSectionTitle( path );
 		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
 		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
+		const cartToggleButton = this.cartToggleButton();
+		const hasPinnedItems = isMobile() && cartToggleButton != null;
 
 		return (
 			site && (
 				<SectionNav
-					hasPinnedItems={ isMobile() }
+					hasPinnedItems={ hasPinnedItems }
 					selectedText={ sectionTitle }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
@@ -123,25 +105,17 @@ class PlansNavigation extends React.Component {
 							</NavItem>
 						) }
 					</NavTabs>
-					{ this.cartToggleButton() }
+					{ cartToggleButton }
 				</SectionNav>
 			)
 		);
 	}
 
-	toggleCartVisibility = event => {
-		if ( event ) {
-			event.preventDefault();
-		}
-
+	toggleCartVisibility = () => {
 		this.setState( { cartVisible: ! this.state.cartVisible } );
 	};
 
 	onMobileNavPanelOpen = () => {
-		this.setState( { cartVisible: false } );
-	};
-
-	onKeepSearchingClick = () => {
 		this.setState( { cartVisible: false } );
 	};
 
@@ -157,8 +131,6 @@ class PlansNavigation extends React.Component {
 				onToggle={ this.toggleCartVisibility }
 				pinned={ isMobile() }
 				visible={ this.state.cartVisible }
-				showKeepSearching={ this.state.cartShowKeepSearching }
-				onKeepSearchingClick={ this.onKeepSearchingClick }
 				path={ this.props.path }
 			/>
 		);

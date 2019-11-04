@@ -5,6 +5,7 @@
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -14,21 +15,32 @@ import { setSection } from 'state/ui/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
-import Checkout from './checkout';
-import CheckoutData from 'components/data/checkout';
+import CheckoutContainer from './checkout/checkout-container';
 import CartData from 'components/data/cart';
-import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import ConciergeSessionNudge from './concierge-session-nudge';
-import ConciergeQuickstartSession from './concierge-quickstart-session';
+import UpsellNudge from './upsell-nudge';
 import { isGSuiteRestricted } from 'lib/gsuite';
+import { getRememberedCoupon } from 'lib/cart/actions';
+import { sites } from 'my-sites/controller';
 
 export function checkout( context, next ) {
-	const { feature, plan, product } = context.params;
+	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+		sites( context, next );
+		return;
+	}
+
+	let product;
+	if ( selectedSite && selectedSite.slug !== domainOrProduct && domainOrProduct ) {
+		product = domainOrProduct;
+	} else {
+		product = context.params.product;
+	}
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -37,41 +49,25 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	context.primary = (
-		<CheckoutData>
-			<Checkout
-				product={ product }
-				purchaseId={ context.params.purchaseId }
-				selectedFeature={ feature }
-				couponCode={ context.query.code }
-				plan={ plan }
-			/>
-		</CheckoutData>
-	);
-
-	context.secondary = (
-		<CartData>
-			<SecondaryCart selectedSite={ selectedSite } />
-		</CartData>
-	);
-	next();
-}
-
-export function sitelessCheckout( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
 
 	context.primary = (
-		<CheckoutData>
-			<Checkout reduxStore={ context.store } />
-		</CheckoutData>
+		<CheckoutContainer
+			product={ product }
+			purchaseId={ purchaseId }
+			selectedFeature={ feature }
+			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
+			// Are we being redirected from the signup flow?
+			isComingFromSignup={ !! context.query.signup }
+			plan={ plan }
+			selectedSite={ selectedSite }
+			reduxStore={ context.store }
+			redirectTo={ context.query.redirect_to }
+			clearTransaction={ false }
+		/>
 	);
 
-	context.secondary = (
-		<CartData>
-			<SecondaryCart />
-		</CartData>
-	);
 	next();
 }
 
@@ -81,7 +77,13 @@ export function checkoutPending( context, next ) {
 
 	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+	context.primary = (
+		<CheckoutPendingComponent
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ context.query.redirectTo }
+		/>
+	);
 
 	next();
 }
@@ -142,49 +144,47 @@ export function gsuiteNudge( context, next ) {
 	next();
 }
 
-export function conciergeSessionNudge( context, next ) {
-	const { receiptId } = context.params;
-	context.store.dispatch(
-		setSection( { name: 'concierge-session-nudge' }, { hasSidebar: false } )
-	);
+export function upsellNudge( context, next ) {
+	const { receiptId, site } = context.params;
 
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
+	let upsellType, upgradeItem;
 
-	if ( ! selectedSite ) {
-		return null;
+	if ( context.path.includes( 'offer-quickstart-session' ) ) {
+		upsellType = 'concierge-quickstart-session';
+		upgradeItem = 'concierge-session';
+	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
+		upsellType = 'concierge-support-session';
+		upgradeItem = 'concierge-session';
+	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
+		upsellType = 'plan-upgrade-upsell';
+		upgradeItem = context.params.upgradeItem;
 	}
+	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
 
 	context.primary = (
-		<CartData>
-			<ConciergeSessionNudge receiptId={ Number( receiptId ) } selectedSiteId={ selectedSite.ID } />
-		</CartData>
+		<CheckoutContainer
+			shouldShowCart={ false }
+			clearTransaction={ true }
+			purchaseId={ Number( receiptId ) }
+		>
+			<UpsellNudge
+				siteSlugParam={ site }
+				receiptId={ Number( receiptId ) }
+				upsellType={ upsellType }
+				upgradeItem={ upgradeItem }
+			/>
+		</CheckoutContainer>
 	);
 
 	next();
 }
 
-export function conciergeQuickstartSession( context, next ) {
-	const { receiptId } = context.params;
-	context.store.dispatch(
-		setSection( { name: 'concierge-quickstart-session' }, { hasSidebar: false } )
-	);
+export function redirectToSupportSession( context ) {
+	const { receiptId, site } = context.params;
 
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
-	if ( ! selectedSite ) {
-		return null;
+	// Redirect the old URL structure to the new URL structure to maintain backwards compatibility.
+	if ( context.params.receiptId ) {
+		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
-
-	context.primary = (
-		<CartData>
-			<ConciergeQuickstartSession
-				receiptId={ Number( receiptId ) }
-				selectedSiteId={ selectedSite.ID }
-			/>
-		</CartData>
-	);
-
-	next();
+	page.redirect( `/checkout/offer-support-session/${ site }` );
 }

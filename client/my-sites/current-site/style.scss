@@ -16,7 +16,7 @@
 		}
 
 		.site__title {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 			line-height: 35px;
 		}
 
@@ -46,15 +46,15 @@
 .current-site {
 	.site,
 	.all-sites {
-		background: var( --sidebar-background );
-		border-bottom: 1px solid var( --sidebar-border-color );
+		background: var( --color-sidebar-background );
+		border-bottom: 1px solid var( --color-sidebar-border );
 	}
 }
 
 .current-site__switch-sites {
 	display: block;
-	background: var( --sidebar-background );
-	border-bottom: 1px solid var( --sidebar-border-color );
+	background: var( --color-sidebar-background );
+	border-bottom: 1px solid var( --color-sidebar-border );
 
 	.button.is-borderless {
 		display: block;
@@ -68,7 +68,7 @@
 		.gridicon {
 			height: 24px;
 			width: 24px;
-			fill: var( --sidebar-gridicon-fill );
+			fill: var( --color-sidebar-gridicon-fill );
 			position: absolute;
 			top: 12px;
 			left: 14px;
@@ -76,15 +76,15 @@
 	}
 
 	&:hover {
-		background-color: var( --sidebar-menu-hover-background );
+		background-color: var( --color-sidebar-menu-hover-background );
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			background-color: var( --sidebar-menu-hover-background );
-			color: var( --sidebar-menu-hover-color );
+			background-color: var( --color-sidebar-menu-hover-background );
+			color: var( --color-sidebar-menu-hover-text );
 
 			.gridicon {
-				fill: var( --sidebar-menu-hover-color );
+				fill: var( --color-sidebar-menu-hover-text );
 			}
 		}
 	}
@@ -102,5 +102,6 @@
 
 	.notice__action {
 		margin-left: auto;
+		white-space: normal;
 	}
 }

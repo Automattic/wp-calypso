@@ -1,0 +1,29 @@
+.user-mentions__suggestions {
+	width: 70%;
+
+	.popover__arrow {
+		display: none;
+	}
+
+	@include breakpoint( '>480px' ) {
+		width: 20%;
+		min-width: 29em;
+	}
+}
+
+.user-mentions__suggestion {
+	padding: 8px 10px;
+
+	&.is-selected .user-mentions__highlight,
+	&:hover .user-mentions__highlight {
+		color: white;
+	}
+
+	.rtl & {
+		direction: ltr; // Required to get the '@' on the correct side.
+	}
+
+	@include breakpoint( '>480px' ) {
+		line-height: 24px;
+	}
+}

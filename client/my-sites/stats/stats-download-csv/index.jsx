@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -65,7 +65,7 @@ class StatsDownloadCsv extends Component {
 	render() {
 		const { data, siteId, statType, query, translate, isLoading, borderless } = this.props;
 		try {
-			const isFileSaverSupported = !! new Blob(); // eslint-disable-line no-unused-vars
+			new Blob(); // eslint-disable-line no-new
 		} catch ( e ) {
 			return null;
 		}
@@ -73,7 +73,7 @@ class StatsDownloadCsv extends Component {
 
 		return (
 			<Button
-				className="download-csv"
+				className="stats-download-csv"
 				compact
 				onClick={ this.downloadCsv }
 				disabled={ disabled }

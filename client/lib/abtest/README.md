@@ -34,6 +34,7 @@ There are also several optional configuration settings available:
 
 * `localeTargets` - By default, tests only run on users where the locale is set to English. You can also run for all locales by setting `localeTargets` to 'any', or to an array of a specific locale or locales  `localeTargets: ['de']`
 Don't forget: any test that runs for locales other than English means strings will need to be translated.
+* `localeExceptions` - Allow tests to run for all locales except the specified. `localeTargets: ['en']`
 * `countryCodeTargets` - (array) Only run tests for users from specific countries. You'll need to pass the current user country to the abtest method when calling it.
 * `assignmentMethod` - By default, test variations are assigned using a random number generator. You can also assign test variations using the 'userId'. Using the userId to assign test variations will still assign a random assignment; however, it ensures the user is assigned the same assignment in the event their local storage gets cleared or is compromised. This includes cases where they manually clear their local storage, use multiple devices, or use an incognito window (storageless browser). This assignment method should not be used if a user does not have a userId by the time the AB test starts.
 

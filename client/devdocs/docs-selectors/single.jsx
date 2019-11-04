@@ -1,14 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import request from 'superagent';
 import { find } from 'lodash';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -25,24 +22,29 @@ export default class DocsSelectorsSingle extends Component {
 
 	state = {};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.request( this.props.selector );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selector !== this.props.selector ) {
-			this.request( nextProps.selector );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.selector !== this.props.selector ) {
+			this.request( this.props.selector );
 		}
 	}
 
-	request = selector => {
-		request
-			.get( '/devdocs/service/selectors' )
-			.query( { search: selector } )
-			.then( ( { body } ) => {
-				const result = find( body, { name: selector } );
+	request = async selector => {
+		const query = stringify( { search: selector } );
+
+		try {
+			const res = await fetch( `/devdocs/service/selectors?${ query }` );
+			if ( res.ok ) {
+				const results = await res.json();
+				const result = find( results, { name: selector } );
 				this.setState( { result } );
-			} );
+			}
+		} catch ( error ) {
+			// Do nothing.
+		}
 	};
 
 	onReturnToSearch = () => {

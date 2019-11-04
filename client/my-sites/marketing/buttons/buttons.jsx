@@ -27,12 +27,13 @@ import {
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 } from 'state/site-settings/selectors';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import getSharingButtons from 'state/selectors/get-sharing-buttons';
 import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
 import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
 import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { protectForm } from 'lib/protect-form';
@@ -56,7 +57,7 @@ class SharingButtons extends Component {
 	};
 
 	saveChanges = event => {
-		const { isJetpack, isLikesModuleActive, siteId } = this.props;
+		const { isJetpack, isLikesModuleActive, siteId, path } = this.props;
 
 		event.preventDefault();
 
@@ -64,6 +65,7 @@ class SharingButtons extends Component {
 		if ( this.state.buttonsPendingSave ) {
 			this.props.saveSharingButtons( this.props.siteId, this.state.buttonsPendingSave );
 		}
+		this.props.recordTracksEvent( 'calypso_sharing_buttons_save_changes_click', { path } );
 		this.props.recordGoogleEvent( 'Sharing', 'Clicked Save Changes Button' );
 
 		if ( ! isJetpack || isLikesModuleActive !== false ) {
@@ -91,7 +93,7 @@ class SharingButtons extends Component {
 		this.setState( { buttonsPendingSave: buttons } );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Save request has been performed
 		if ( this.props.isSaving && ! nextProps.isSaving ) {
 			if (
@@ -134,7 +136,7 @@ class SharingButtons extends Component {
 			<form
 				onSubmit={ this.saveChanges }
 				id="sharing-buttons"
-				className="sharing-settings sharing-buttons"
+				className="buttons__sharing-settings buttons__sharing-buttons"
 			>
 				<PageViewTracker
 					path="/marketing/sharing-buttons/:site"
@@ -172,6 +174,7 @@ const connectComponent = connect(
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
+		const path = getCurrentRouteParameterized( state, siteId );
 
 		return {
 			isJetpack,
@@ -182,12 +185,14 @@ const connectComponent = connect(
 			settings,
 			buttons,
 			siteId,
+			path,
 		};
 	},
 	{
 		activateModule,
 		errorNotice,
 		recordGoogleEvent,
+		recordTracksEvent,
 		saveSharingButtons,
 		saveSiteSettings,
 		successNotice,

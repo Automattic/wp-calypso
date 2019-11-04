@@ -23,6 +23,12 @@ export default class PostsPage extends AsyncBaseContainer {
 		return await driverHelper.waitTillNotPresent( this.driver, resultsLoadingSelector );
 	}
 
+	async addNewPost() {
+		const addNewPostSelector = By.css( '.post-type-list__add-post' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, addNewPostSelector );
+		return await driverHelper.clickWhenClickable( this.driver, addNewPostSelector );
+	}
+
 	async waitForPostTitled( title ) {
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
@@ -42,13 +48,6 @@ export default class PostsPage extends AsyncBaseContainer {
 			this.driver,
 			PostsPage.getPostTitleSelector( title ),
 			this.explicitWaitMS * 2
-		);
-	}
-
-	async successNoticeDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '.notice.is-success' )
 		);
 	}
 

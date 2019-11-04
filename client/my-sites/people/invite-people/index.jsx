@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ContractorSelect from 'my-sites/people/contractor-select';
 import RoleSelect from 'my-sites/people/role-select';
 import TokenField from 'components/token-field';
 import FormButton from 'components/forms/form-button';
@@ -70,12 +71,13 @@ class InvitePeople extends React.Component {
 		InvitesSentStore.off( 'change', this.refreshFormState );
 	}
 
-	componentWillReceiveProps() {
+	UNSAFE_componentWillReceiveProps() {
 		this.setState( this.resetState() );
 	}
 
 	resetState = () => {
 		return {
+			isExternal: false,
 			usernamesOrEmails: [],
 			role: 'follower',
 			message: '',
@@ -154,6 +156,11 @@ class InvitePeople extends React.Component {
 		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
+	onExternalChange = event => {
+		const isExternal = event.target.checked;
+		this.setState( { isExternal } );
+	};
+
 	refreshValidation = () => {
 		const errors =
 				InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {},
@@ -214,10 +221,17 @@ class InvitePeople extends React.Component {
 		}
 
 		const formId = uniqueId();
-		const { usernamesOrEmails, message, role } = this.state;
+		const { usernamesOrEmails, message, role, isExternal } = this.state;
 
 		this.setState( { sendingInvites: true, formId } );
-		this.props.sendInvites( this.props.siteId, usernamesOrEmails, role, message, formId );
+		this.props.sendInvites(
+			this.props.siteId,
+			usernamesOrEmails,
+			role,
+			message,
+			formId,
+			isExternal
+		);
 
 		const groupedInvitees = groupBy( usernamesOrEmails, invitee => {
 			return includes( invitee, '@' ) ? 'email' : 'username';
@@ -225,13 +239,16 @@ class InvitePeople extends React.Component {
 
 		this.props.recordTracksEventAction( 'calypso_invite_people_form_submit', {
 			role,
+			is_external: isExternal,
 			number_invitees: usernamesOrEmails.length,
 			number_username_invitees: groupedInvitees.username ? groupedInvitees.username.length : 0,
 			number_email_invitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
 
-		page( `/people/new/${ this.props.site.slug }/sent` );
+		if ( includes( [ 'administrator', 'editor', 'author', 'contributor' ], role ) ) {
+			page( `/people/new/${ this.props.site.slug }/sent` );
+		}
 	};
 
 	isSubmitDisabled = () => {
@@ -285,6 +302,11 @@ class InvitePeople extends React.Component {
 
 	enableSSO = () => this.props.activateModule( this.props.siteId, 'sso' );
 
+	isExternalRole = role => {
+		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
+		return includes( roles, role );
+	};
+
 	renderInviteForm = () => {
 		const {
 			site,
@@ -322,9 +344,7 @@ class InvitePeople extends React.Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'Want to invite new users to your site? The more the merrier! ' +
-										'Invite as many as you want, up to 10 at a time, by adding ' +
-										'their email addresses or WordPress.com usernames.'
+									'Enter up to 10 WordPress.com usernames or email addresses at a time.'
 								) }
 							</FormSettingExplanation>
 						</div>
@@ -341,6 +361,13 @@ class InvitePeople extends React.Component {
 							explanation={ this.renderRoleExplanation() }
 						/>
 
+						{ this.isExternalRole( this.state.role ) && (
+							<ContractorSelect
+								onChange={ this.onExternalChange }
+								checked={ this.state.isExternal }
+							/>
+						) }
+
 						<FormFieldset>
 							<FormLabel htmlFor="message">{ translate( 'Custom Message' ) }</FormLabel>
 							<CountedTextarea
@@ -356,8 +383,7 @@ class InvitePeople extends React.Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'(Optional) You can enter a custom message of up to 500 characters ' +
-										'that will be included in the invitation to the user(s).'
+									'(Optional) Enter a custom message to be sent with your invitation.'
 								) }
 							</FormSettingExplanation>
 						</FormFieldset>

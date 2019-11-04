@@ -84,7 +84,7 @@ const SecurityAccountRecovery = props => (
 				deleteEmail={ props.deleteAccountRecoveryEmail }
 				isLoading={ props.accountRecoveryEmailActionInProgress }
 			/>
-			{ props.shouldPromptEmailValidationNotice && (
+			{ props.shouldPromptEmailValidationNotice && ! props.hasSentEmailValidation && (
 				<RecoveryEmailValidationNotice
 					onResend={ props.resendAccountRecoveryEmailValidation }
 					hasSent={ props.hasSentEmailValidation }

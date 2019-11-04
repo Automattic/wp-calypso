@@ -12,6 +12,11 @@ import { Provider } from 'react-redux';
  */
 import PreferenceList from './preference-list';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function injectPreferenceHelper( element, store ) {
 	ReactDom.render(
 		<Provider store={ store }>

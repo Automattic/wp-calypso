@@ -59,6 +59,7 @@ class OrderTotalRow extends Component {
 						onChange={ onChange }
 						initialValue={ initialValue }
 						value={ total }
+						noWrap="true"
 					/>
 				</TableItem>
 			</TableRow>

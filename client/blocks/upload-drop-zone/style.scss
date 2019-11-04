@@ -10,7 +10,7 @@
 	}
 
 	.file-picker {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -19,12 +19,12 @@
 	}
 
 	&:hover {
-		border-color: var( --color-neutral-700 );
+		border-color: var( --color-neutral-70 );
 		transform: translate3d( 0, -1px, 0 );
-		box-shadow: 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 2px 4px var( --color-neutral-10 );
 
 		.upload-drop-zone__icon {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 }

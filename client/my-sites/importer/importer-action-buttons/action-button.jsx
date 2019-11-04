@@ -10,6 +10,11 @@ import classnames from 'classnames';
  */
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './action-button.scss';
+
 const ImporterActionButton = ( { className, ...props } ) => (
 	<Button
 		className={ classnames( 'importer-action-buttons__action-button', className ) }

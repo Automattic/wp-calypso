@@ -26,6 +26,22 @@
 	p {
 		margin-bottom: 0;
 	}
+
+	.logged-out-form {
+		border-radius: 0;
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		margin: 0 auto;
+		max-width: 400px;
+		padding: 16px;
+
+		@include breakpoint( '>480px' ) {
+			padding: 24px;
+		}
+
+		p {
+			margin-bottom: 20px;
+		}
+	}
 }
 
 .magic-login__form-header {
@@ -35,16 +51,16 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
 .magic-login__email-fields {
-	margin: 10px 0;
+	margin: 0;
 }
 
 .magic-login__form-label {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	display: block;
 	font-size: 14px;
 	line-height: 1.5;
@@ -64,12 +80,13 @@
 .magic-login__footer {
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 		display: block;
 		line-height: 4em;
 		font-size: 14px;
 		font-weight: 500;
 		padding: 0 24px;
+		text-align: center;
 		text-decoration: none;
 
 		&:hover {
@@ -80,7 +97,7 @@
 		}
 
 		body.is-section-signup & {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 	.gridicon {

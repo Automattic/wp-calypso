@@ -36,7 +36,8 @@ import {
 	isFetchingConnections,
 } from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
@@ -70,6 +71,7 @@ export class SharingService extends Component {
 		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
+		recordTracksEvent: PropTypes.func,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
 		service: PropTypes.object.isRequired, // The single service object
 		siteId: PropTypes.number, // The site ID for which connections are created
@@ -104,6 +106,7 @@ export class SharingService extends Component {
 	 */
 	performAction = () => {
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const { path } = this.props;
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
@@ -112,12 +115,24 @@ export class SharingService extends Component {
 			'must-disconnect' === connectionStatus
 		) {
 			this.removeConnection();
+			this.props.recordTracksEvent( 'calypso_connections_disconnect_button_click', {
+				service: this.props.service.ID,
+				path,
+			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
 			this.refresh();
+			this.props.recordTracksEvent( 'calypso_connections_reconnect_button_click', {
+				service: this.props.service.ID,
+				path,
+			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
 			this.addConnection( this.props.service, this.state.newKeyringId );
+			this.props.recordTracksEvent( 'calypso_connections_connect_button_click', {
+				service: this.props.service.ID,
+				path,
+			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
 	};
@@ -139,11 +154,17 @@ export class SharingService extends Component {
 	addConnection = ( service, keyringConnectionId, externalUserId = 0 ) => {
 		this.setState( { isConnecting: true } );
 
+		const { path } = this.props;
+
 		if ( service ) {
 			if ( keyringConnectionId ) {
 				// Since we have a Keyring connection to work with, we can immediately
 				// create or update the connection
 				this.createOrUpdateConnection( keyringConnectionId, externalUserId );
+				this.props.recordTracksEvent( 'calypso_connections_connect_button_in_modal_click', {
+					service: this.props.service.ID,
+					path,
+				} );
 				this.props.recordGoogleEvent(
 					'Sharing',
 					'Clicked Connect Button in Modal',
@@ -152,7 +173,7 @@ export class SharingService extends Component {
 			} else {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
-				requestExternalAccess( service.connect_URL, newKeyringId => {
+				requestExternalAccess( service.connect_URL, ( { keyring_id: newKeyringId } ) => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
 					this.props.requestKeyringConnections();
@@ -174,6 +195,10 @@ export class SharingService extends Component {
 				{ id: 'publicize' }
 			);
 			this.setState( { isConnecting: false } );
+			this.props.recordTracksEvent( 'calypso_connections_cancel_button_in_modal_click', {
+				service: this.props.service.ID,
+				path,
+			} );
 			this.props.recordGoogleEvent(
 				'Sharing',
 				'Clicked Cancel Button in Modal',
@@ -207,6 +232,12 @@ export class SharingService extends Component {
 	};
 
 	connectAnother = () => {
+		const { path } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_connections_connect_another_button_click', {
+			service: this.props.service.ID,
+			path,
+		} );
 		this.props.recordGoogleEvent(
 			'Sharing',
 			'Clicked Connect Another Account Button',
@@ -584,6 +615,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
+				path: getCurrentRouteParameterized( state, siteId ),
 				service,
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
@@ -600,6 +632,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			failCreateConnection,
 			fetchConnection,
 			recordGoogleEvent,
+			recordTracksEvent,
 			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,

@@ -22,7 +22,6 @@ import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/doma
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
 import { isSubdomain } from 'lib/domains';
 import {
-	ALL_ABOUT_DOMAINS,
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
 	DOMAIN_HELPER_PREFIX,
@@ -46,9 +45,6 @@ import './style.scss';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
-const allAboutDomainsLink = (
-	<a href={ ALL_ABOUT_DOMAINS } target="_blank" rel="noopener noreferrer" />
-);
 const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
 const pNode = <p />;
 
@@ -562,8 +558,8 @@ export class DomainWarnings extends React.PureComponent {
 				text = translate(
 					'We are setting up your new domains for you. They should start working immediately, ' +
 						'but may be unreliable during the first 72 hours. ' +
-						'{{allAboutDomainsLink}}Learn more{{/allAboutDomainsLink}}.',
-					{ components: { allAboutDomainsLink } }
+						'{{domainsLink}}Learn more{{/domainsLink}}.',
+					{ components: { domainsLink } }
 				);
 			}
 		} else {
@@ -592,12 +588,12 @@ export class DomainWarnings extends React.PureComponent {
 				text = translate(
 					'We are setting up {{strong}}%(domainName)s{{/strong}} for you. ' +
 						'It should start working immediately, but may be unreliable during the first 72 hours. ' +
-						'{{allAboutDomainsLink}}Learn more{{/allAboutDomainsLink}} about your new domain, or ' +
+						'{{domainsLink}}Learn more{{/domainsLink}} about your new domain, or ' +
 						'{{tryNowLink}} try it now{{/tryNowLink}}.',
 					{
 						args: { domainName: domain.name },
 						components: {
-							allAboutDomainsLink,
+							domainsLink,
 							tryNowLink: (
 								<a href={ `http://${ domain.name }` } target="_blank" rel="noopener noreferrer" />
 							),
@@ -1082,7 +1078,7 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
 		}

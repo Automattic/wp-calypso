@@ -91,6 +91,55 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 	);
 };
 
+const requestExternalContributorsId = siteId => `site-external-contributors-${ siteId }`;
+
+export const requestExternalContributors = siteId =>
+	requestHttpData(
+		requestExternalContributorsId( siteId ),
+		http( {
+			method: 'GET',
+			path: `/sites/${ siteId }/external-contributors`,
+			apiNamespace: 'wpcom/v2',
+		} ),
+		{
+			fromApi: () => data => [ [ requestExternalContributorsId( siteId ), data ] ],
+		}
+	);
+
+export const requestExternalContributorsAddition = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-addition-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/add`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
+		}
+	);
+};
+
+export const requestExternalContributorsRemoval = ( siteId, userId ) => {
+	const requestId = requestExternalContributorsId( siteId );
+	const id = `${ requestId }-removal-${ userId }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'POST',
+			path: `/sites/${ siteId }/external-contributors/remove`,
+			apiNamespace: 'wpcom/v2',
+			body: { user_id: userId },
+		} ),
+		{
+			fromApi: () => data => [ [ requestId, data ] ],
+		}
+	);
+};
+
 export const requestGeoLocation = () =>
 	requestHttpData(
 		'geo',
@@ -160,3 +209,62 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+export const requestAtomicSFTPDetails = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/hosting/ssh-user`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{
+			freshness: 5 * 60 * 1000,
+			fromApi: () => ( { username } ) => [
+				[ `atomic-hosting-data-${ siteId }`, username ? { username } : {} ],
+			],
+		}
+	);
+
+export const resetAtomicSFTPUserPassword = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh-user/reset-password`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
+			},
+			freshness: 0,
+		}
+	);
+
+export const createAtomicSFTPUser = siteId =>
+	requestHttpData(
+		`atomic-hosting-data-${ siteId }`,
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/ssh-user`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			{}
+		),
+		{
+			fromApi: () => ( { username, password } ) => {
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
+			},
+			freshness: 0,
+		}
+	);

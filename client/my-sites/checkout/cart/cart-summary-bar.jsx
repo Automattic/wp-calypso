@@ -28,7 +28,7 @@ class CartSummaryBar extends React.Component {
 		return (
 			<div>
 				<SectionHeader className="cart__header" label={ text }>
-					<Gridicon icon="cart" size="18" />
+					<Gridicon icon="cart" size={ 18 } />
 				</SectionHeader>
 			</div>
 		);
