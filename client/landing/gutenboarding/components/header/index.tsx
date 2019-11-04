@@ -12,6 +12,7 @@ import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
  * Internal dependencies
  */
 import { STORE_KEY } from '../../store';
+import { UNKNOWN_FORM_VALUE } from '../../store/types';
 import './style.scss';
 
 interface Props {
@@ -31,11 +32,11 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 			tabIndex={ -1 }
 		>
 			<div className="gutenboarding__header-site">
-				{ ! siteType && ! siteTitle && (
+				{ siteType === UNKNOWN_FORM_VALUE && ! siteTitle && (
 					<span className="gutenboarding__header-site-heading">{ NO__( 'Create a website' ) }</span>
 				) }
 				{ siteTitle && <span className="gutenboarding__header-site-heading">{ siteTitle }</span> }
-				{ siteType && <span>{ siteType }</span> }
+				{ siteType !== UNKNOWN_FORM_VALUE && <span>{ siteType }</span> }
 			</div>
 			<div
 				aria-label={ NO__( 'Document tools' ) }

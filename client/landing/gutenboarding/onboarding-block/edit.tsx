@@ -68,7 +68,7 @@ export default function OnboardingEdit() {
 					</div>
 				) }
 			</div>
-			{ ( siteType || siteTitle ) && (
+			{ ( siteType !== UNKNOWN_FORM_VALUE || siteTitle ) && (
 				<>
 					<label className="onboarding__question">
 						<span>{ NO__( "It's called" ) }</span>
