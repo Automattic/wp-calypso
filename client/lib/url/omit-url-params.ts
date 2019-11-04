@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { URL as URLString } from 'types';
-import { Falsey } from 'utility-types';
+import { Falsy } from 'utility-types';
 
 /**
  * Internal dependencies
@@ -19,10 +19,10 @@ const BASE_URL = 'http://__domain__.invalid';
  * @param  paramsToOmit The collection of params or single param to reject
  * @return Url less the omitted params.
  */
-export default function omitUrlParams( url: Falsey, paramsToOmit: string | string[] ): null;
+export default function omitUrlParams( url: Falsy, paramsToOmit: string | string[] ): null;
 export default function omitUrlParams( url: URLString, paramsToOmit: string | string[] ): URLString;
 export default function omitUrlParams(
-	url: URLString | Falsey,
+	url: URLString | Falsy,
 	paramsToOmit: string | string[]
 ): URLString | null {
 	const urlType = determineUrlType( url );
