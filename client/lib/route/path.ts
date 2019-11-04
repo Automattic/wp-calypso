@@ -102,11 +102,11 @@ export function sectionify( path: URLString, siteFragment?: SiteSlug | SiteId ):
 	return untrailingslashit( basePath );
 }
 
-export function getStatsDefaultSitePage( slug?: SiteId | SiteSlug ): URLString {
+export function getStatsDefaultSitePage( siteFragment?: SiteId | SiteSlug ): URLString {
 	const path = '/stats/day/';
 
-	if ( slug ) {
-		return path + String( slug );
+	if ( siteFragment ) {
+		return path + String( siteFragment );
 	}
 
 	return untrailingslashit( path );
