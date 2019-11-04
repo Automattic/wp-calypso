@@ -296,7 +296,6 @@ export class PluginMeta extends Component {
 			'another-wordpress-classifieds-plugin',
 			'broken-link-checker',
 			'leads',
-			'mycred',
 			'native-ads-adnow',
 			'ol_scrapes',
 			'page-visit-counter',
