@@ -41,10 +41,10 @@ function ProductCardExample() {
 				billingTimeFrame={ isPlaceholder ? null : 'per year' }
 				fullPrice={ isPlaceholder ? null : 25 }
 				description={
-					<p>
+					<Fragment>
 						Automatic scanning and one-click fixes keep your site one step ahead of security
 						threats. <a href="/plans">More info</a>
-					</p>
+					</Fragment>
 				}
 			/>
 
@@ -56,10 +56,10 @@ function ProductCardExample() {
 				fullPrice={ isPlaceholder ? null : [ 16, 25 ] }
 				discountedPrice={ isPlaceholder ? null : [ 12, 16 ] }
 				description={
-					<p>
+					<Fragment>
 						Always-on backups ensure you never lose your site. Choose from real-time or daily
 						backups. <a href="/plans">Which one do I need?</a>
-					</p>
+					</Fragment>
 				}
 			>
 				<ProductCardOptions
@@ -93,10 +93,10 @@ function ProductCardExample() {
 				}
 				subtitle="Purchased 2019-09-13"
 				description={
-					<p>
+					<Fragment>
 						<strong>Looking for more?</strong> With Real-time backups:, we save as you edit and
 						you’ll get unlimited backup archives
-					</p>
+					</Fragment>
 				}
 				isPlaceholder={ isPlaceholder }
 				purchase={ purchase }
@@ -119,12 +119,7 @@ function ProductCardExample() {
 						Included in your <a href="/my-plan">Personal Plan</a>
 					</Fragment>
 				}
-				description={
-					<p>
-						Always-on backups ensure you never lose your site. Your changes are saved as you edit
-						and you have unlimited backup archives
-					</p>
-				}
+				description="Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives"
 				isPlaceholder={ isPlaceholder }
 				purchase={ purchase }
 			>
