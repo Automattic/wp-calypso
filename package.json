@@ -211,8 +211,8 @@
 		"yargs": "13.2.2"
 	},
 	"engines": {
-		"node": "^10.16.3",
-		"npm": "^6.9.0"
+		"node": "^12.13.0",
+		"npm": "^6.12.0"
 	},
 	"scripts": {
 		"preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true NODE_ARGS=--max_old_space_size=8192 npm run -s build-client-evergreen",
