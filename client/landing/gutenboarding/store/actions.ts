@@ -17,8 +17,7 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const receiveVertical = ( search: string, verticals: Vertical[] ) => ( {
-	type: ActionType.RECEIVE_VERTICAL as const,
-	search,
+export const receiveVerticals = ( verticals: Vertical[] ) => ( {
+	type: ActionType.RECEIVE_VERTICALS as const,
 	verticals,
 } );
