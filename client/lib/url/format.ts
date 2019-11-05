@@ -9,7 +9,7 @@ import { Falsy } from 'utility-types';
  */
 import { determineUrlType, URL_TYPE } from './url-type';
 
-const BASE_URL = `http://__domain__.invalid/`;
+const BASE_URL = 'http://__domain__.invalid/';
 
 /**
  * Format a URL as a particular type.
