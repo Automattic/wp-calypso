@@ -3,7 +3,7 @@
  */
 import { __ as NO__ } from '@wordpress/i18n';
 import { Button, FormTokenField } from '@wordpress/components';
-import { map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useCallback, useState } from 'react';
 
@@ -100,7 +100,7 @@ export default function OnboardingEdit() {
 				) }
 			</div>
 			{ /* FormTokenField sufficient for first round, but not ideal. Simpler component for single autocomplete is needed */ }
-			{ ( siteType !== EMPTY_FORM_VALUE || verticalLabel.length ) && (
+			{ ( siteType !== EMPTY_FORM_VALUE || ! isEmpty( verticalLabel ) ) && (
 				<FormTokenField
 					label={ NO__( 'My site is about' ) }
 					maxLength={ 1 }
@@ -109,7 +109,7 @@ export default function OnboardingEdit() {
 					value={ verticalLabel }
 				/>
 			) }
-			{ ( verticalLabel.length || siteTitle ) && (
+			{ ( ! isEmpty( verticalLabel ) || siteTitle ) && (
 				<>
 					<label className="onboarding-block__question">
 						<span>{ NO__( "It's called" ) }</span>
