@@ -79,17 +79,8 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	signupWithBasicSite: {
-		datestamp: '20190930',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	verticalSuggestedThemes: {
-		datestamp: '20191029',
+		datestamp: '20191031',
 		variations: {
 			control: 90,
 			test: 10,
@@ -98,7 +89,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	passwordlessSignup: {
-		datestamp: '20191013',
+		datestamp: '20191029',
 		variations: {
 			passwordless: 10,
 			default: 90,
@@ -122,6 +113,15 @@ export default {
 			default: 100,
 		},
 		defaultVariation: 'default',
+		allowExistingUsers: true,
+	},
+	showPlanUpsellConcierge: {
+		datestamp: '20191029',
+		variations: {
+			variantShowPlanBump: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 };

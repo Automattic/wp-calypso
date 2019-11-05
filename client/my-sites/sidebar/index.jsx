@@ -62,6 +62,7 @@ import {
 	SIDEBAR_SECTION_TOOLS,
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 
 /**
  * Style dependencies
@@ -227,6 +228,30 @@ export class MySitesSidebar extends Component {
 				link={ '/earn' + this.props.siteSuffix }
 				onNavigate={ this.trackEarnClick }
 				tipTarget="earn"
+				expandSection={ this.expandToolsSection }
+			/>
+		);
+	}
+
+	trackMigrateClick = () => {
+		this.trackMenuItemClick( 'migrate' );
+		this.onNavigate();
+	};
+
+	migrate() {
+		const { path, siteSuffix, translate } = this.props;
+
+		if ( ! isEnabled( 'tools/migrate' ) ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Migrate' ) }
+				selected={ itemLinkMatches( '/migrate', path ) }
+				link={ `/migrate${ siteSuffix }` }
+				onNavigate={ this.trackMigrateClick }
+				tipTarget="migrate"
 				expandSection={ this.expandToolsSection }
 			/>
 		);
@@ -474,17 +499,17 @@ export class MySitesSidebar extends Component {
 	};
 
 	hosting() {
-		const { translate, path, site, siteSuffix } = this.props;
+		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
 
-		if ( ! site || ! isBusiness( site.plan ) || ! isEnabled( 'hosting' ) ) {
+		if ( ! canViewAtomicHosting ) {
 			return null;
 		}
 
 		return (
 			<SidebarItem
 				label={ translate( 'SFTP & MySQL' ) }
-				selected={ itemLinkMatches( '/hosting', path ) }
-				link={ `/hosting${ siteSuffix }` }
+				selected={ itemLinkMatches( '/hosting-admin', path ) }
+				link={ `/hosting-admin${ siteSuffix }` }
 				onNavigate={ this.trackHostingClick }
 				preloadSectionName="hosting"
 				expandSection={ this.expandManageSection }
@@ -705,6 +730,7 @@ export class MySitesSidebar extends Component {
 						materialIcon="build"
 					>
 						{ this.tools() }
+						{ this.migrate() }
 						{ this.marketing() }
 						{ this.earn() }
 						{ this.activity() }
@@ -787,6 +813,7 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
+		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 	};
 }
 

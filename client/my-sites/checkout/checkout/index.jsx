@@ -46,7 +46,7 @@ import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
-import { hasDomainDetails } from 'lib/store-transactions';
+import { hasDomainDetails } from 'lib/transaction/selectors';
 import notices from 'notices';
 import { managePurchase } from 'me/purchases/paths';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
@@ -88,7 +88,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
-// import { abtest } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
 import { isExternal } from 'lib/url';
@@ -115,7 +115,7 @@ export class Checkout extends React.Component {
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		resetTransaction();
 	}
 
@@ -140,7 +140,7 @@ export class Checkout extends React.Component {
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
@@ -429,6 +429,18 @@ export class Checkout extends React.Component {
 		return;
 	}
 
+	maybeShowPlanBumpOfferConcierge( receiptId ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasPersonalPlan( cart ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPlanUpsellConcierge' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+			}
+		}
+
+		return;
+	}
+
 	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
@@ -443,6 +455,11 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId );
+			if ( upgradePath ) {
+				return upgradePath;
+			}
+
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
@@ -827,8 +844,7 @@ export class Checkout extends React.Component {
 	}
 
 	needsDomainDetails() {
-		const cart = this.props.cart;
-		const transaction = this.props.transaction;
+		const { cart, transaction } = this.props;
 
 		if ( cart && hasOnlyRenewalItems( cart ) ) {
 			return false;

@@ -39,7 +39,7 @@ class EditorStatusLabel extends React.Component {
 		this.currentTimeTimer = setInterval( this.updateCurrentTime, 60000 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.post !== this.props.post ) {
 			// the post has been updated, so update the current time so that
 			// it will be the most up-to-date when re-rendering

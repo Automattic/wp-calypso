@@ -35,7 +35,7 @@ class EditorFeaturedImagePreview extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const currentSrc = this.src();
 		if ( ! currentSrc || currentSrc === this.src( nextProps ) ) {
 			return;

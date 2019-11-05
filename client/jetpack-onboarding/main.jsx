@@ -65,7 +65,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 		this.setSelectedSite();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isRequestingWhetherConnected && ! nextProps.isRequestingWhetherConnected ) {
 			this.setState( { hasFinishedRequestingSite: true } );
 		}

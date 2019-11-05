@@ -43,10 +43,3 @@ export function recordUnrecognizedPaymentMethod( action ) {
 
 	analytics.tracks.recordEvent( 'calypso_cart_unrecognized_payment_method', eventArgs );
 }
-
-export function recordProductPurchase( cartItem ) {
-	analytics.tracks.recordEvent(
-		'calypso_checkout_product_purchase',
-		removeNestedProperties( cartItem )
-	);
-}

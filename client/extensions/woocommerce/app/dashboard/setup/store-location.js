@@ -89,7 +89,7 @@ class StoreLocationSetupView extends Component {
 		} ),
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { contactDetails, storeLocation } = newProps;
 
 		if ( ! this.state.userBeganEditing ) {

@@ -30,7 +30,7 @@ class TransactionsHeader extends React.Component {
 		event.preventDefault();
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		document.body.addEventListener( 'click', this.closePopoverIfClickedOutside );
 	}
 

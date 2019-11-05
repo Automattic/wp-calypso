@@ -24,7 +24,9 @@ import { abtest } from 'lib/abtest';
 // case don't send a site_type param to the API.
 export const requestVerticals = action => {
 	const verticalSuggestedThemeTest =
-		action.flowName === 'onboarding' && abtest( 'verticalSuggestedThemes' ) === 'test';
+		action.flowName === 'onboarding' &&
+		action.siteTypeId === 1 &&
+		abtest( 'verticalSuggestedThemes' ) === 'test';
 
 	return http(
 		{

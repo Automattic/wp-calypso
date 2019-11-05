@@ -57,7 +57,14 @@
 	}
 }
 
-/* Hide the content slot block UI */
+/**
+ * Hide the content slot block UI
+ *
+ * @TODO: Remove this once Gutenberg gets support for hiding block UI.
+ *
+ * @see https://github.com/WordPress/gutenberg/issues/7469
+ * @see https://github.com/WordPress/gutenberg/pull/18173
+ */
 .block-editor-block-list__layout {
 	.post-content__block {
 		&.is-selected {

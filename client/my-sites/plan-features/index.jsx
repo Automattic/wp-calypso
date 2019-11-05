@@ -93,7 +93,7 @@ export class PlanFeatures extends Component {
 		this.setState( defaultState );
 	};
 
-	componentWillReceiveProps( { siteId } ) {
+	UNSAFE_componentWillReceiveProps( { siteId } ) {
 		if ( siteId !== this.props.siteId ) {
 			this.setDefaultState();
 		}

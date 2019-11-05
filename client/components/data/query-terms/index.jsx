@@ -16,11 +16,11 @@ import { requestSiteTerms } from 'state/terms/actions';
 import { isRequestingTermsForQuery } from 'state/terms/selectors';
 
 class QueryTerms extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.taxonomy === nextProps.taxonomy &&

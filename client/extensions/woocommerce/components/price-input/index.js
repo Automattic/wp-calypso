@@ -42,7 +42,7 @@ class PriceInput extends Component {
 		};
 	}
 
-	componentWillReceiveProps( { value } ) {
+	UNSAFE_componentWillReceiveProps( { value } ) {
 		this.setState( { value } );
 	}
 

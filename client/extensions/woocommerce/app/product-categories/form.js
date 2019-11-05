@@ -56,7 +56,7 @@ class ProductCategoryForm extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.category.image !== this.props.category.image ) {
 			const image = ( nextProps.category && nextProps.category.image ) || {};
 			this.setState( {

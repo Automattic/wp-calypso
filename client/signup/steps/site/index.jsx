@@ -53,7 +53,7 @@ class Site extends React.Component {
 		submitting: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {

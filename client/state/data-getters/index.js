@@ -223,9 +223,9 @@ export const requestAtomicSFTPDetails = siteId =>
 		),
 		{
 			freshness: 5 * 60 * 1000,
-			fromApi: () => ( { username } ) => {
-				return [ `atomic-hosting-data-${ siteId }`, { username } ];
-			},
+			fromApi: () => ( { username } ) => [
+				[ `atomic-hosting-data-${ siteId }`, username ? { username } : {} ],
+			],
 		}
 	);
 
@@ -243,7 +243,7 @@ export const resetAtomicSFTPUserPassword = siteId =>
 		),
 		{
 			fromApi: () => ( { username, password } ) => {
-				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
 			},
 			freshness: 0,
 		}
@@ -263,7 +263,7 @@ export const createAtomicSFTPUser = siteId =>
 		),
 		{
 			fromApi: () => ( { username, password } ) => {
-				return [ `atomic-hosting-data-${ siteId }`, { username, password } ];
+				return [ [ `atomic-hosting-data-${ siteId }`, { username, password } ] ];
 			},
 			freshness: 0,
 		}

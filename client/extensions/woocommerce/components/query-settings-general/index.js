@@ -41,7 +41,7 @@ class QuerySettingsGeneral extends Component {
 		);
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteId, loaded, error } = this.props;
 
 		if ( siteId ) {
@@ -53,7 +53,7 @@ class QuerySettingsGeneral extends Component {
 		}
 	}
 
-	componentWillReceiveProps( { siteId, loaded, error } ) {
+	UNSAFE_componentWillReceiveProps( { siteId, loaded, error } ) {
 		if ( ! siteId ) {
 			return;
 		}

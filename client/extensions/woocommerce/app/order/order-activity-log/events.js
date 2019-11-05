@@ -41,11 +41,11 @@ class OrderEvents extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setState( { openDay: last( keys( this.props.eventsByDay ) ) } );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const newOpenDay = last( keys( nextProps.eventsByDay ) );
 		//if a new latest day has been appended, open it
 		if ( ! this.props.eventsByDay[ newOpenDay ] ) {

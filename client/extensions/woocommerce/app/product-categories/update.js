@@ -73,7 +73,7 @@ class ProductCategoryUpdate extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
 		const categoryId = Number( params.category_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;

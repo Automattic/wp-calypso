@@ -16,7 +16,7 @@ import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestHttpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const requestId = siteId => `pma-link-request-${ siteId }`;
@@ -26,25 +26,27 @@ export const requestPmaLink = siteId =>
 		requestId( siteId ),
 		http(
 			{
-				method: 'GET',
-				path: `/sites/${ siteId }/hosting/pma`,
+				method: 'POST',
+				path: `/sites/${ siteId }/hosting/pma/token`,
 				apiNamespace: 'wpcom/v2',
+				body: {},
 			},
 			{}
 		),
 		{
-			fromApi: () => ( { pmaUrl } ) => {
-				return [ [ requestId( siteId ), { pmaUrl } ] ];
+			fromApi: () => ( { token } ) => {
+				return [ [ requestId( siteId ), { token } ] ];
 			},
+			freshness: 0,
 		}
 	);
 
-const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading, disabled } ) => {
+const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 	useEffect( () => {
-		if ( pmaLink && ! loading ) {
-			window.open( pmaLink );
+		if ( token && ! loading ) {
+			window.open( `https://wordpress.com/pma-login?token=${ token }` );
 		}
-	}, [ pmaLink, loading ] );
+	}, [ token, loading ] );
 
 	return (
 		<Card className="phpmyadmin-card">
@@ -55,7 +57,7 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading, disabled } ) => 
 				<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
 				<p>
 					{ translate(
-						'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
+						'Manage your databases with phpMyAdmin and run a wide range of operations with MySQL.'
 					) }
 				</p>
 				<Button
@@ -63,7 +65,7 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading, disabled } ) => 
 					busy={ ! disabled && loading }
 					disabled={ disabled }
 				>
-					<span>{ translate( 'Open PHPMyAdmin' ) }</span>
+					<span>{ translate( 'Open phpMyAdmin' ) }</span>
 					<MaterialIcon icon="launch" size={ 16 } />
 				</Button>
 			</div>
@@ -74,17 +76,11 @@ const PhpMyAdminCard = ( { translate, siteId, pmaLink, loading, disabled } ) => 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
-	// @TODO Replace below dummy data when endpoint is concretely figured out.
-	const pmaLinkRequest = {
-		status: 'pending',
-		data: {
-			pmaUrl: 'https://fake.phpmyadmin.localhost/',
-		},
-	};
+	const pmaTokenRequest = getHttpData( requestId( siteId ) );
 
 	return {
-		pmaLink: get( pmaLinkRequest, 'data.pmaUrl', null ),
-		loading: pmaLinkRequest.status === 'pending',
+		token: get( pmaTokenRequest.data, 'token', null ),
+		loading: pmaTokenRequest.state === 'pending',
 		siteId,
 	};
 } )( localize( PhpMyAdminCard ) );

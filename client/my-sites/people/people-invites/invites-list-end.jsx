@@ -30,7 +30,7 @@ class InvitesListEnd extends React.PureComponent {
 		this.bumpedStat = false;
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.found > nextProps.shown && ! this.bumpedStat ) {
 			this.props.bumpStat( 'calypso_people_invite_list', 'displayed_max' );
 			this.bumpedStat = true;

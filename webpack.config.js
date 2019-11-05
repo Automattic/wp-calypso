@@ -11,6 +11,7 @@ const path = require( 'path' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
+const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -187,6 +188,7 @@ const webpackConfig = {
 		'entry-main': [ path.join( __dirname, 'client', 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'client', 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'client', 'landing', 'login' ) ],
+		'entry-gutenboarding': [ path.join( __dirname, 'client', 'landing', 'gutenboarding' ) ],
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
@@ -336,6 +338,9 @@ const webpackConfig = {
 				'.moment-timezone-data-webpack-plugin-cache',
 				extraPath
 			),
+		} ),
+		new ConfigFlagPlugin( {
+			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),

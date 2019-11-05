@@ -64,7 +64,7 @@ const PostScheduleExample = localize(
 			};
 		}
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.setState( {
 				isFuture: true,
 			} );

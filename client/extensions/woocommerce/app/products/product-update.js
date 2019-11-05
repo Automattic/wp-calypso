@@ -89,7 +89,7 @@ class ProductUpdate extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { params, site } = this.props;
 		const productId = Number( params.product_id );
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;

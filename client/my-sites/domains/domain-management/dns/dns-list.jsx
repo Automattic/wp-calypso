@@ -16,7 +16,7 @@ import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
+import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/domains/dns/actions';
 import { isDeletingLastMXRecord } from 'lib/domains/dns';
 import { domainConnect } from 'lib/domains/constants';
 

@@ -88,7 +88,6 @@
 /client/lib/store-transactions/ @Automattic/payments
 /client/lib/stripe/ @Automattic/payments
 /client/lib/transaction/ @Automattic/payments
-/client/lib/upgrades/ @Automattic/payments
 /client/me/billing-history/ @Automattic/payments
 /client/me/memberships/ @Automattic/payments
 /client/me/pending-payments/ @Automattic/payments
@@ -127,6 +126,7 @@
 /apps/full-site-editing/full-site-editing-plugin/full-site-editing @Automattic/serenity @Automattic/cylon
 /apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
 /apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
+/apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
 
 # WPcom Block Editor
 /apps/wpcom-block-editor @Automattic/serenity @Automattic/cylon @Automattic/ajax

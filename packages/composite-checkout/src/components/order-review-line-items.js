@@ -9,7 +9,7 @@ import styled from 'styled-components';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { renderDisplayValueMarkdown } from '../index';
+import { renderDisplayValueMarkdown } from '../public-api';
 
 export function OrderReviewSection( { children, className } ) {
 	return (

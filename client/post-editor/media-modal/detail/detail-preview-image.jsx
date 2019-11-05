@@ -34,7 +34,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		this.state = { loading: false };
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.item.URL === nextProps.item.URL ) {
 			return null;
 		}

@@ -52,7 +52,7 @@ class AdsFormSettings extends Component {
 		this.state = store;
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		SettingsStore.on( 'change', this.updateSettings );
 		this.fetchIfEmpty();
 	}
@@ -62,7 +62,7 @@ class AdsFormSettings extends Component {
 		SettingsStore.clearNotices();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { site } = this.props;
 		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
 			return;

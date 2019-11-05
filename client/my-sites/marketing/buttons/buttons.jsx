@@ -93,7 +93,7 @@ class SharingButtons extends Component {
 		this.setState( { buttonsPendingSave: buttons } );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Save request has been performed
 		if ( this.props.isSaving && ! nextProps.isSaving ) {
 			if (

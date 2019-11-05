@@ -6,12 +6,13 @@ import React from 'react';
 import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
  */
 import config from 'config';
-import { submitSurvey } from 'lib/upgrades/actions';
+import { submitSurvey } from 'lib/purchases/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -31,7 +32,8 @@ import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
-import { getName } from 'lib/purchases';
+import DowngradeStep from './step-components/downgrade-step';
+import { getName, isRefundable } from 'lib/purchases';
 import { isGoogleApps } from 'lib/products-values';
 import { radioOption } from './radio-option';
 import {
@@ -44,6 +46,9 @@ import isSurveyFilledIn from './is-survey-filled-in';
 import stepsForProductAndSurvey from './steps-for-product-and-survey';
 import enrichedSurveyData from './enriched-survey-data';
 import { CANCEL_FLOW_TYPE } from './constants';
+import { getDowngradePlanRawPrice } from 'state/purchases/selectors';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 
 /**
  * Style dependencies
@@ -259,6 +264,16 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onClickFinalConfirm();
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
+	};
+
+	downgradeClick = () => {
+		if ( ! this.state.isSubmitting ) {
+			this.props.downgradeClick();
+			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
+			this.setState( {
+				isSubmitting: true,
+			} );
+		}
 	};
 
 	renderQuestionOne = () => {
@@ -513,8 +528,20 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
+	getRefundAmount = () => {
+		const { purchase } = this.props;
+		const { refundOptions, currencyCode } = purchase;
+		const { precision } = getCurrencyDefaults( currencyCode );
+		const refundAmount =
+			isRefundable( purchase ) && refundOptions[ 0 ] && refundOptions[ 0 ].refund_amount
+				? refundOptions[ 0 ].refund_amount
+				: 0;
+
+		return parseFloat( refundAmount ).toFixed( precision );
+	};
+
 	surveyContent() {
-		const { translate, isImport, showSurvey } = this.props;
+		const { translate, isImport, showSurvey, purchase } = this.props;
 		const { surveyStep } = this.state;
 
 		if ( showSurvey ) {
@@ -560,6 +587,18 @@ class CancelPurchaseForm extends React.Component {
 
 			if ( surveyStep === steps.UPGRADE_AT_STEP ) {
 				return <UpgradeATStep />;
+			}
+
+			if ( surveyStep === steps.DOWNGRADE_STEP ) {
+				const { precision } = getCurrencyDefaults( purchase.currencyCode );
+				const planCost = parseFloat( this.props.downgradePlanPrice ).toFixed( precision );
+				return (
+					<DowngradeStep
+						currencySymbol={ purchase.currencySymbol }
+						planCost={ planCost }
+						refundAmount={ this.getRefundAmount() }
+					/>
+				);
 			}
 
 			return (
@@ -644,6 +683,13 @@ class CancelPurchaseForm extends React.Component {
 				onClick: this.onSubmit,
 				isPrimary: true,
 			},
+			downgrade = {
+				action: 'downgrade',
+				disabled: this.state.isSubmitting,
+				label: translate( 'Switch to Personal' ),
+				onClick: this.downgradeClick,
+				isPrimary: true,
+			},
 			remove = {
 				action: 'remove',
 				disabled,
@@ -669,6 +715,10 @@ class CancelPurchaseForm extends React.Component {
 			}
 		}
 
+		if ( this.state.surveyStep === steps.DOWNGRADE_STEP ) {
+			return firstButtons.concat( [ prev, downgrade, next ] );
+		}
+
 		return firstButtons.concat(
 			this.state.surveyStep === steps.INITIAL_STEP ? [ next ] : [ prev, next ]
 		);
@@ -689,6 +739,7 @@ class CancelPurchaseForm extends React.Component {
 	}
 
 	render() {
+		const { selectedSite } = this.props;
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -697,6 +748,8 @@ class CancelPurchaseForm extends React.Component {
 				className="cancel-purchase-form__dialog"
 			>
 				{ this.surveyContent() }
+				<QueryPlans />
+				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 			</Dialog>
 		);
 	}
@@ -709,6 +762,7 @@ export default connect(
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
+		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 	} ),
 	{
 		recordTracksEvent,

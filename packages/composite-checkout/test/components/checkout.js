@@ -8,12 +8,11 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import Checkout from '../../src/components/checkout';
+import { Checkout, CheckoutProvider } from '../../src/public-api';
 
 test( 'When we enter checkout, the line items and total are rendered', () => {
-	const noop = () => {};
-	const { container } = render(
-		<Checkout
+	const MyCheckout = () => (
+		<CheckoutProvider
 			locale="en-us"
 			items={ [
 				{
@@ -43,10 +42,11 @@ test( 'When we enter checkout, the line items and total are rendered', () => {
 			} }
 			successRedirectUrl="#"
 			failureRedirectUrl="#"
-			paymentData={ {} }
-			dispatchPaymentAction={ noop }
-		/>
+		>
+			<Checkout />
+		</CheckoutProvider>
 	);
+	const { container } = render( <MyCheckout /> );
 
 	// Product line items show the correct price
 	getAllByLabelText( container, 'Illudium Q-36 Explosive Space Modulator' ).map( element =>

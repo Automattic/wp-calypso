@@ -11,6 +11,7 @@ import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
@@ -30,9 +31,7 @@ import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/u
 import { getSiteTitle } from 'state/sites/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
 import JetpackImporter from 'my-sites/importer/jetpack-importer';
-import ExternalLink from 'components/external-link';
 import canCurrentUser from 'state/selectors/can-current-user';
 import EmptyContent from 'components/empty-content';
 import memoizeLast from 'lib/memoize-last';
@@ -183,7 +182,7 @@ class SectionImport extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ this.props.translate( 'Other importers' ) }
+				{ this.props.translate( 'Choose from full list' ) }
 			</CompactCard>
 		);
 
@@ -261,9 +260,21 @@ class SectionImport extends Component {
 	};
 
 	renderImportersList() {
+		const { translate } = this.props;
+		const isSpecificImporter = ! isEmpty( this.state.importers );
+		const sectionHeaderLabel = isSpecificImporter
+			? translate( 'Importing content from:', {
+					comment:
+						"This text appears above the icon of another service (e.g. Wix, Squarespace) indicating that the process of importing the user's data from that service is ongoing",
+			  } )
+			: translate( 'I want to import content from:', {
+					comment:
+						'This text appears above a list of service icons (e.g. Wix, Squarespace) asking the user to choose one.',
+			  } );
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
+				<SectionHeader label={ sectionHeaderLabel } className="importer__section-header" />
 				{ this.renderImporters() }
 			</>
 		);
@@ -285,26 +296,11 @@ class SectionImport extends Component {
 		}
 
 		const { jetpack: isJetpack } = site;
-		const headerText = translate( 'Import your content' );
-		const subHeaderText = translate(
-			'Bring content hosted elsewhere over to WordPress.com. ' +
-				'{{a}}Find out what we currently support.{{/a}}',
-			{
-				components: {
-					a: <ExternalLink href="https://en.support.wordpress.com/import/" />,
-				},
-			}
-		);
 
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Import' ) } />
 				<SidebarNavigation />
-				<FormattedHeader
-					className="importer__section-header"
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-				/>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>

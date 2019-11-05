@@ -435,6 +435,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'migrate',
+		paths: [ '/migrate' ],
+		module: 'my-sites/migrate',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'devdocs',
 		paths: [ '/devdocs' ],
 		module: 'devdocs',
@@ -457,18 +464,10 @@ const sections = [
 	},
 	{
 		name: 'hosting',
-		paths: [ '/hosting' ],
+		paths: [ '/hosting-admin' ],
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
-	},
-	{
-		name: 'gutenboarding',
-		paths: [ '/gutenboarding' ],
-		module: 'gutenboarding',
-		secondary: false,
-		group: 'sites',
-		enableLoggedOut: true,
 	},
 ];
 

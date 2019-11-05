@@ -15,7 +15,7 @@ import { isRequestingActivePromotions } from 'state/active-promotions/selectors'
 import { requestActivePromotions } from 'state/active-promotions/actions';
 
 class QueryActivePromotions extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.requestingActivePromotions ) {
 			this.props.requestActivePromotions();
 		}

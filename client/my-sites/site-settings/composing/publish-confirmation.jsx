@@ -31,7 +31,7 @@ class PublishConfirmation extends Component {
 		this.handleToggle = this.handleToggle.bind( this );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.publishConfirmationEnabled !== this.state.isToggleOn ) {
 			this.setState( { isToggleOn: nextProps.publishConfirmationEnabled } );
 		}

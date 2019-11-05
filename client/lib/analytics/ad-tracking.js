@@ -12,14 +12,14 @@ import { v4 as uuid } from 'uuid';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { loadScript as loadScriptCallback } from '@automattic/load-script';
+import { loadScript } from '@automattic/load-script';
 import {
 	isAdTrackingAllowed,
 	hashPii,
 	costToUSD,
 	getNormalizedHashedUserEmail,
+	refreshCountryCodeCookieGdpr,
 } from 'lib/analytics/utils';
-import { promisify } from '../../utils';
 import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
 
 /**
@@ -111,20 +111,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
-	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800,
-	TRACKING_STATE_VALUES = {
-		NOT_LOADED: 0,
-		LOADING: 1,
-		LOADED: 2,
-	};
-
-/**
- * Globals
- */
-
-// Used to enqueue the various events while the trackers are still loading so they can be fired afterwards.
-let trackingState = TRACKING_STATE_VALUES.NOT_LOADED;
-const trackingEventsQueue = [];
+	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 if ( typeof window !== 'undefined' ) {
 	// Facebook
@@ -185,53 +172,6 @@ if ( typeof window !== 'undefined' ) {
 	if ( isAdRollEnabled ) {
 		setupAdRollGlobal();
 	}
-}
-
-/**
- * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
- *
- * @param {Function} callback - Callback function to call once the `country_code` cookie has been successfully refreshed.
- * @returns {Boolean} Returns `true` if the `country_code` cookie needs to be refreshed.
- */
-function maybeRefreshCountryCodeCookieGdpr( callback ) {
-	const cookieMaxAgeSeconds = 6 * 60 * 60;
-	const cookies = cookie.parse( document.cookie );
-
-	if ( ! cookies.country_code ) {
-		// cache buster
-		const v = new Date().getTime();
-
-		const handleError = err => {
-			document.cookie = cookie.serialize( 'country_code', 'unknown', {
-				path: '/',
-				maxAge: cookieMaxAgeSeconds,
-			} );
-			debug( 'refreshGeoIpCountryCookieGdpr Error: ', err );
-		};
-
-		const makeRequest = async () => {
-			try {
-				const res = await fetch( 'https://public-api.wordpress.com/geo/?v=' + v );
-				if ( res.ok ) {
-					const json = await res.json();
-					document.cookie = cookie.serialize( 'country_code', json.country_short, {
-						path: '/',
-						maxAge: cookieMaxAgeSeconds,
-					} );
-					callback();
-				} else {
-					handleError( new Error( await res.body() ) );
-				}
-			} catch ( err ) {
-				handleError( err );
-			}
-		};
-
-		makeRequest();
-		return true;
-	}
-
-	return false;
 }
 
 /**
@@ -349,23 +289,7 @@ function setupAdRollGlobal() {
 	}
 }
 
-const loadScript = promisify( loadScriptCallback );
-
-async function loadTrackingScripts( callback ) {
-	debug( `loadTrackingScripts: state is ${ trackingState }` );
-
-	trackingEventsQueue.push( callback );
-	if ( TRACKING_STATE_VALUES.LOADING === trackingState ) {
-		debug( 'loadTrackingScripts: [LOADING] enqueue and return', callback );
-		return;
-	} else if ( TRACKING_STATE_VALUES.NOT_LOADED === trackingState ) {
-		debug( 'loadTrackingScripts: [NOT_LOADED] enqueue and load', callback );
-		trackingState = TRACKING_STATE_VALUES.LOADING;
-	} else {
-		debug( `loadTrackingScripts: [ERROR] unexpected state ${ trackingState }` );
-		return;
-	}
-
+function getTrackingScriptsToLoad() {
 	const scripts = [];
 
 	if ( isFacebookEnabled ) {
@@ -414,25 +338,10 @@ async function loadTrackingScripts( callback ) {
 		scripts.push( PINTEREST_SCRIPT_URL );
 	}
 
-	let hasError = false;
-	for ( const src of scripts ) {
-		try {
-			// We use `await` to load each script one by one and allow the GUI to load and be responsive while
-			// the trackers get loaded in a user friendly manner.
-			await loadScript( src );
-		} catch ( error ) {
-			hasError = true;
-			debug( 'loadTrackingScripts: [Load Error] a tracking script failed to load: ', error );
-		}
-		debug( 'loadTrackingScripts: [Loaded]', src );
-	}
+	return scripts;
+}
 
-	if ( hasError ) {
-		return;
-	}
-
-	debug( 'loadTrackingScripts: load done' );
-
+function initLoadedTrackingScripts() {
 	// init Facebook
 	if ( isFacebookEnabled ) {
 		initFacebook();
@@ -469,15 +378,66 @@ async function loadTrackingScripts( callback ) {
 	}
 
 	debug( 'loadTrackingScripts: init done' );
+}
+
+// Returns a function that has the following behavior:
+// - when called, tries to call `loader` and returns a promise that resolves when load is finished
+// - when `loader` is already in progress, don't issue two concurrent calls: wait for the first to finish
+// - when `loader` fails, DON'T return a rejected promise. Instead, leave it unresolved and let the caller
+//   wait, potentially forever. Next call to the loader function has a chance to succeed and resolve the
+//   promise, for the current and all previous callers. That effectively implements a queue.
+function attemptLoad( loader ) {
+	let setLoadResult;
+	let status = 'not-loading';
+
+	const loadResult = new Promise( resolve => {
+		setLoadResult = resolve;
+	} );
+
+	return () => {
+		if ( status === 'not-loading' ) {
+			status = 'loading';
+			loader().then(
+				result => {
+					status = 'loaded';
+					setLoadResult( result );
+				},
+				() => {
+					status = 'not-loading';
+				}
+			);
+		}
+		return loadResult;
+	};
+}
+
+const loadTrackingScripts = attemptLoad( async () => {
+	const scripts = getTrackingScriptsToLoad();
+
+	let hasError = false;
+	for ( const src of scripts ) {
+		try {
+			// We use `await` to load each script one by one and allow the GUI to load and be responsive while
+			// the trackers get loaded in a user friendly manner.
+			await loadScript( src );
+		} catch ( error ) {
+			hasError = true;
+			debug( 'loadTrackingScripts: [Load Error] a tracking script failed to load: ', error );
+		}
+		debug( 'loadTrackingScripts: [Loaded]', src );
+	}
+
+	if ( hasError ) {
+		throw new Error( 'One or more tracking scripts failed to load' );
+	}
+
+	debug( 'loadTrackingScripts: load done' );
+
+	initLoadedTrackingScripts();
 
 	// uses JSON.stringify for consistency with recordOrder()
 	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
-
-	// call all enqueued event callbacks
-	trackingState = TRACKING_STATE_VALUES.LOADED;
-	trackingEventsQueue.forEach( cb => cb() );
-	debug( 'loadTrackingScripts: event queue done', trackingEventsQueue );
-}
+} );
 
 /**
  * Fire tracking events for the purposes of retargeting on all Calypso pages
@@ -487,20 +447,15 @@ async function loadTrackingScripts( callback ) {
  *
  * @returns {void}
  */
-export function retarget( urlPath ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( retarget.bind( null, urlPath ) ) ) {
-		return;
-	}
+export async function retarget( urlPath ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'retarget: [Skipping] ad tracking is not allowed', urlPath );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( retarget.bind( null, urlPath ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	debug( 'retarget:', urlPath );
 
@@ -657,20 +612,15 @@ function splitWpcomJetpackCartInfo( cart ) {
 	};
 }
 
-export function recordRegistration() {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordRegistration.bind( null ) ) ) {
-		return;
-	}
+export async function recordRegistration() {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordRegistration: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordRegistration.bind( null ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	// Google Ads Gtag
 
@@ -731,20 +681,15 @@ export function recordRegistration() {
  * @param {String} slug - Signup slug.
  * @returns {void}
  */
-export function recordSignup( slug ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordSignup.bind( null, slug ) ) ) {
-		return;
-	}
+export async function recordSignup( slug ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordSignup: [Skipping] ad tracking is disallowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordSignup.bind( null, slug ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	// Synthesize a cart object for signup tracking.
 	const syntheticCart = {
@@ -900,20 +845,15 @@ export function retargetViewPlans() {
  * @param {Object} cartItem - The item added to the cart
  * @returns {void}
  */
-export function recordAddToCart( cartItem ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordAddToCart.bind( null, cartItem ) ) ) {
-		return;
-	}
+export async function recordAddToCart( cartItem ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordAddToCart: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordAddToCart.bind( null, cartItem ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	debug( 'recordAddToCart:', cartItem );
 
@@ -1039,20 +979,15 @@ export function recordViewCheckout( cart ) {
  * @param {Number} orderId - the order id
  * @returns {void}
  */
-export function recordOrder( cart, orderId ) {
-	if ( maybeRefreshCountryCodeCookieGdpr( recordOrder.bind( null, cart, orderId ) ) ) {
-		return;
-	}
+export async function recordOrder( cart, orderId ) {
+	await refreshCountryCodeCookieGdpr();
 
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrder: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordOrder.bind( null, cart, orderId ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	if ( cart.is_signup ) {
 		return;
@@ -1631,16 +1566,13 @@ function recordPlansViewInCriteo() {
  *
  * @returns {void}
  */
-function recordInCriteo( eventName, eventProps ) {
+async function recordInCriteo( eventName, eventProps ) {
 	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
 		debug( 'recordInCriteo: [Skipping] ad tracking is not allowed' );
 		return;
 	}
 
-	if ( TRACKING_STATE_VALUES.LOADED !== trackingState ) {
-		loadTrackingScripts( recordInCriteo.bind( null, eventName, eventProps ) );
-		return;
-	}
+	await loadTrackingScripts();
 
 	const events = [];
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );

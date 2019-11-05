@@ -37,7 +37,7 @@ export default class AsyncLoad extends Component {
 		this.require();
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.mounted && this.props.require !== nextProps.require ) {
 			this.setState( { component: null } );
 		}

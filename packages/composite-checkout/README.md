@@ -2,13 +2,13 @@
 
 A set of React components, custom Hooks, and helper functions that together can be used to create a purchase and checkout flow.
 
-## 💰 Installation
+## Installation
 
 `npm install composite-checkout styled-components`
 
-## 💰 Usage
+## Description
 
-This package provides a primary component, `Checkout`, which creates a checkout form.
+This package provides a context provider, `CheckoutProvider`, and a default component, `Checkout`, which creates a checkout form.
 
 The form has three steps:
 
@@ -16,20 +16,13 @@ The form has three steps:
 2. Billing details
 3. Review order
 
-The steps can be customized using various props. `Checkout` is actually just a wrapper for other components and functions exported by this package, though, so if these customizations aren't sufficient, it's possible to build a custom form.
+The steps can be customized using various props.
+
+For more detailed customization, it's possible to build a custom form using the other components exported by this package.
 
 ### Select payment method
 
-The payment methods displayed in the first step are chosen from an optional array called `availablePaymentMethods`, which in turn is selected from the following options:
-
-- 'web-payment'
-- 'apple-pay'
-- 'card'
-- 'paypal'
-- 'ebanx'
-- 'ideal'
-
-The actual payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods in the `availablePaymentMethods` array.
+The payment method options displayed on the form are chosen automatically by the component based on the environment, locale, and possibly other factors, but they will include only methods listed in the optional `availablePaymentMethods` array. If the array is not set, no appropriate payment methods will be excluded.
 
 ![payment method step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-assets/payment-method-step.png 'Payment Method Step')
 
@@ -37,25 +30,19 @@ Any previously stored payment methods (eg: saved credit cards) will be fetched a
 
 The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
 
-Inside the component, this is a `CheckoutStep` wrapping a `CheckoutPaymentMethods` component.
-
 ### Billing details
 
 This step contains various form fields to collect billing contact information from the customer.
 
-The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, the event handler passed to `usePaymentState` can be used so that the parent component can take any necessary actions like updating the line items and total.
+The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, an event handler passed to `CheckoutProvider` as the `eventHandler` prop will allow the parent component to take any necessary actions like updating the line items and total.
 
 ![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/billing-step.png 'Billing Details Step')
 
-Any other component can request the information from these form fields by using the `usePaymentMethodData` React Hook.
-
-Inside the component, this is a `CheckoutStep` wrapping whatever `BillingContactComponent` is provided by the payment method.
+Any other component can request the information from these form fields by using the `usePaymentData` React Hook.
 
 ### Review order
 
 The third step presents a simple list of line items and a total, followed by a purchase button.
-
-Inside the component, this is a `CheckoutStep` wrapping a `CheckoutReviewOrder` component.
 
 ![review order step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/review-step.png 'Review Order Step')
 
@@ -67,7 +54,7 @@ There are several other optional props aside from `ReviewContent` which allow cu
 
 ![component slots](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/checkout-slots.png 'Highlighted component slots')
 
-Any component within `Checkout` can use the custom React Hook `useCheckoutLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
+Any component within `Checkout` can use the custom React Hook `useLineItems`, which returns a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), the second element is the current total (matching the `total` prop).
 
 ### Submitting the form
 
@@ -77,7 +64,7 @@ If the payment method succeeds, the `onSuccess` prop will be called instead. It'
 
 Some payment methods may require a redirect to an external site. If that occurs, the `failureRedirectUrl` and `successRedirectUrl` props on `Checkout` will be used instead of the `onFailure` and `onSuccess` callbacks. All four props are required.
 
-## 💰 Examples
+## Examples
 
 ### Example 1
 
@@ -85,7 +72,7 @@ Here is a very simple example of using the `Checkout` component with default opt
 
 ```js
 import React, { useState } from 'react';
-import Checkout from 'composite-checkout';
+import { Checkout } from '@automattic/composite-checkout';
 import { formatValueForCurrency } from 'composite-checkout/wpcom';
 
 const initialItems = [
@@ -115,10 +102,9 @@ const failureRedirectUrl = window.location.href;
 // This is the parent component which would be included on a host page
 export default function MyCheckout() {
 	const { items, total } = useShoppingCart();
-	const [ paymentData, dispatchPaymentAction ] = usePaymentState();
 
 	return (
-		<Checkout
+		<CheckoutProvider
 			locale={ 'US' }
 			items={ items }
 			total={ total }
@@ -126,9 +112,9 @@ export default function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			paymentData={ paymentData }
-			dispatchPaymentAction={ dispatchPaymentAction }
-		/>
+		>
+			<Checkout />
+		</CheckoutProvider>
 	);
 }
 
@@ -158,13 +144,14 @@ The following bigger example demonstrates a checkout page using many of the opti
 
 ```js
 import React, { useState } from 'react';
-import Checkout, {
-	useCheckoutLineItems,
+import {
+	Checkout,
+	useLineItems,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
-} from 'composite-checkout';
+} from '@automattic/composite-checkout';
 import {
 	PlanLengthSelector,
 	formatValueForCurrency,
@@ -209,9 +196,6 @@ export default function MyCheckout() {
 		changePlanLength,
 		updatePricesForAddress,
 	} = useShoppingCart();
-	const [ paymentData, dispatchPaymentAction ] = usePaymentState(
-		handleCheckoutEvent( { updatePricesForAddress } )
-	);
 
 	// Some parts of the checkout can be customized
 	const ReviewContent = () => (
@@ -229,20 +213,22 @@ export default function MyCheckout() {
 	const UpSell = () => <UpSellCoupon onClick={ addQuickStart } />;
 
 	return (
-		<Checkout
+		<CheckoutProvider
 			locale={ 'US' }
 			items={ itemsWithTax }
 			total={ total }
-			availablePaymentMethods={ availablePaymentMethods }
 			onSuccess={ onSuccess }
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			ReviewContent={ ReviewContent }
-			UpSell={ UpSell }
-			paymentData={ paymentData }
-			dispatchPaymentAction={ dispatchPaymentAction }
-		/>
+			eventHandler={ handleCheckoutEvent( { updatePricesForAddress } ) }
+		>
+			<Checkout
+				availablePaymentMethods={ availablePaymentMethods }
+				ReviewContent={ ReviewContent }
+				UpSell={ UpSell }
+			/>
+		</CheckoutProvider>
 	);
 }
 
@@ -321,7 +307,7 @@ function useShoppingCart() {
 }
 
 function OrderReview( { onDeleteItem, onChangePlanLength } ) {
-	const [ items, total ] = useCheckoutLineItems();
+	const [ items, total ] = useLineItems();
 	const planItems = items.filter( item => item.type === 'plan' );
 	const domainItems = items.filter( item => item.type === 'domain' );
 	const taxItems = items.filter( item => item.type === 'tax' );
@@ -400,15 +386,15 @@ function UpSellCoupon( { onClick } ) {
 }
 ```
 
-## 💰 Styles and Themes
+## Styles and Themes
 
-Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by wrapping checkout in a `ThemeProvider` from that package.
+Each component will be styled using [styled-components](https://www.styled-components.com/) (included in this package as a [peer dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) and many of the styles will be editable by passing a `theme` object to the `CheckoutProvider`.
 
 For style customization beyond what is available in the theme, each component will also include a unique static className using BEM syntax.
 
 When using the individual API components, you can also pass a `className` prop, which will be applied to that component in addition to the classNames from BEM and styled-components.
 
-## 💰 Payment Methods
+## Payment Methods
 
 A payment method, in the context of this package, consists of the following pieces:
 
@@ -437,7 +423,7 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
 
-## 💰 Advanced API
+## API
 
 While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
 
@@ -445,21 +431,36 @@ While the `Checkout` component takes care of most everything, there are many sit
 
 The main component in this package. It has the following props.
 
-- locale: string (required)
-- items: array (required)
-- total: object (required)
-- dispatchPaymentAction: function (required)
-- paymentData: object (required)
 - availablePaymentMethods: array
-- onSuccess: function (required)
-- onFailure: function (required)
-- successRedirectUrl: string (required)
-- failureRedirectUrl: string (required)
 - ReviewContent: component
 - UpSell: component
 - CheckoutHeader: component
 - OrderReviewTOS: component
 - OrderReviewFeatures: component
+
+### CheckoutNextStepButton
+
+Renders a button to move to the next `CheckoutStep` component. Its `value` prop can be used to customize the text which by default will be "Continue".
+
+### CheckoutPaymentMethods
+
+Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected. When the `isComplete` prop is true and `isActive` is false, it will display a summary of the current choice.
+
+### CheckoutProvider
+
+Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this.
+
+It has the following props.
+
+- locale: string (required)
+- items: array (required)
+- total: object (required)
+- theme: object (optional)
+- eventHandler: function (optional)
+- onSuccess: function (required)
+- onFailure: function (required)
+- successRedirectUrl: string (required)
+- failureRedirectUrl: string (required)
 
 The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
 
@@ -469,7 +470,7 @@ The line items are for display purposes only. They should also include subtotals
 
 The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
 
-The value of `paymentData` and `dispatchPaymentAction` should be the values returned by the hook `usePaymentState()`. That hook accepts a single argument which is a callback that can be used to act on various events that occur within the package. The handler function will receive three arguments: `action, dispatch, next`. `action` contains two properties: `type` and `payload`. `dispatch` is the dispatcher function in case your handler wants to dispatch additional actions. `next` is a callback that will call the internal handler, which you should do for any action you don't handle yourself. The following example handler will deal with fetching the stripe configuration and will log whenever the step changes.
+The `eventHandler` prop accepts a callback that can be used to act on various events that occur within the package. The handler function will receive three arguments: `action, dispatch, next`. `action` contains two properties: `type` and `payload`. `dispatch` is the dispatcher function in case your handler wants to dispatch additional actions. `next` is a callback that will call the internal handler, which you should do for any action you don't handle yourself. The following example handler will deal with fetching the stripe configuration and will log whenever the step changes.
 
 ```js
 function handleCheckoutEvent( { type, payload }, dispatch, next ) {
@@ -492,20 +493,6 @@ function handleCheckoutEvent( { type, payload }, dispatch, next ) {
 	next();
 }
 ```
-
-### CheckoutNextStepButton
-
-Renders a button to move to the next `CheckoutStep` component. Its `value` prop can be used to customize the text which by default will be "Continue".
-
-### CheckoutPaymentMethods
-
-Renders buttons for each payment method that can be used out of the array in the `availablePaymentMethods` prop. The `onChange` callback prop can be used to determine which payment method has been selected. When the `isComplete` prop is true and `isActive` is false, it will display a summary of the current choice.
-
-### CheckoutProvider
-
-Renders its `children` prop and acts as a React Context provider. All of checkout should be wrapped in this, but using the `Checkout` component will do so automatically.
-
-Requires `localize`, `paymentMethod`, `total`, `items`.
 
 ### CheckoutReviewOrder
 
@@ -553,7 +540,7 @@ Takes one argument, a displayValue string, and returns the displayValue with som
 
 A React Hook that will return a two element array where the first element is the `onSuccess` handler and the second is the `onFailure` handler as passed to `Checkout`.
 
-### useCheckoutLineItems()
+### useLineItems()
 
 A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` prop on `Checkout`), and the second element is the current total (matching the `total` prop).
 
@@ -563,9 +550,9 @@ A React Hook that will return a two element array where the first element is the
 
 ### usePaymentMethod()
 
-A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step. Must only be used inside `CheckoutProvider`.
+A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
 
-### usePaymentMethodData()
+### usePaymentData()
 
 A React Hook that will return a two element array. It can be used to store and share data entered into the payment forms. The first element is an object representing the current state. The second element is a "dispatch" function which can be used to update the state (with an implicit merge) or trigger an event for side effects. The dispatch function should be passed an object with two properties: `type` and `payload` following the [flux-standard-action](https://github.com/redux-utilities/flux-standard-action) pattern.
 
@@ -573,33 +560,7 @@ A React Hook that will return a two element array. It can be used to store and s
 
 A React Hook that will return a two element array. The first element is a string representing the currently selected payment method (or null if none is selected). The second element is a function that will replace the currently selected payment method.
 
-### usePaymentState()
-
-A React Hook that accepts a single argument which is a callback that can be used to act on various events that occur within the package. The handler function will receive three arguments: `action, dispatch, next`. `action` contains two properties: `type` and `payload`. `dispatch` is the dispatcher function in case your handler wants to dispatch additional actions. `next` is a callback that will call the internal handler, which you should do for any action you don't handle yourself. The following example handler will deal with fetching the stripe configuration and will log whenever the step changes.
-
-```js
-function handleCheckoutEvent( { type, payload }, dispatch, next ) {
-	if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
-		fetch( '/stripe-configuration' )
-			.then( res => res.json() )
-			.then( stripeConfiguration => {
-				dispatch( {
-					type: 'STRIPE_CONFIGURATION_SET',
-					payload: {
-						stripeConfiguration,
-					},
-				} );
-			} );
-		return;
-	}
-	if ( type === 'STEP_CHANGED' ) {
-		console.log( 'step changed from', payload.prevStep, 'to', payload.nextStep );
-	}
-	next();
-}
-```
-
-## 💰 FAQ
+## FAQ
 
 ### How do I use Credits and Coupons?
 
@@ -617,6 +578,6 @@ The primary properties used in a line item by default are `id` (which must be un
 
 To maintain the integrity of the line item schema, adding custom fields is discouraged, but allowed. If you need specific custom data as part of a line item so that it can be used in another part of the form, it's recommended to pass the line item object through a helper function to collect the extra data rather than serializing it into the line item itself. This will make that data collection more testable. However, if the data collection process is expensive or slow, and caching isn't an option, it may make sense to preload the data into the line items.
 
-## 💰 Development
+## Development
 
 In the root of the monorepo, run `npm run composite-checkout-demo` which will start a local webserver that will display the component.

@@ -2,6 +2,12 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
+import { translate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import ExternalLink from 'components/external-link';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -23,54 +29,55 @@ export const JETPACK_BACKUP_PRODUCTS = [
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
 
-// @TODO: Translate those strings once we have confirmed the copy.
 export const JETPACK_BACKUP_PRODUCT_SHORT_NAMES = {
-	[ PRODUCT_JETPACK_BACKUP_DAILY ]: 'Daily Backups',
-	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 'Daily Backups',
-	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: 'Real-Time Backups',
-	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: 'Real-Time Backups',
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Daily Backups' ),
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Daily Backups' ),
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Real-Time Backups' ),
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
 };
+export const JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME = (
+	<Fragment>
+		{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+			components: {
+				em: <em />,
+			},
+		} ) }
+	</Fragment>
+);
+export const JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME = (
+	<Fragment>
+		{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
+			components: {
+				em: <em />,
+			},
+		} ) }
+	</Fragment>
+);
 export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
-	[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
-		<Fragment>
-			Jetpack Backup <em>Daily</em>
-		</Fragment>
-	),
-	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
-		<Fragment>
-			Jetpack Backup <em>Daily</em>
-		</Fragment>
-	),
-	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
-		<Fragment>
-			Jetpack Backup <em>Real-Time</em>
-		</Fragment>
-	),
-	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
-		<Fragment>
-			Jetpack Backup <em>Real-Time</em>
-		</Fragment>
-	),
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME,
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: JETPACK_BACKUP_PRODUCT_DAILY_DISPLAY_NAME,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
 };
 
-// @TODO: Translate those strings once we have confirmed the copy.
-export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = (
-	<p>
-		Always-on backups ensure you never lose your site. Choose from real-time or daily backups.{' '}
-		<a href="https://jetpack.com/upgrade/backup/">Which one do I need?</a>
-	</p>
+export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
+	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
+	{
+		components: {
+			a: <ExternalLink href="https://jetpack.com/upgrade/backup/" icon />,
+		},
+	}
 );
-export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = (
-	<p>
-		<strong>Looking for more?</strong> With Real-time backups, we save as you edit and you’ll get
-		unlimited backup archives.
-	</p>
+export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = translate(
+	'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
+	{
+		components: {
+			strong: <strong />,
+		},
+	}
 );
-export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = (
-	<p>
-		Always-on backups ensure you never lose your site. Your changes are saved as you edit and you
-		have unlimited backup archives.
-	</p>
+export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = translate(
+	'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
 );
 
 export const JETPACK_BACKUP_PRODUCT_DESCRIPTIONS = {
@@ -90,3 +97,29 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = {
 		ratio: 12,
 	},
 };
+
+export const JETPACK_PRODUCTS = [
+	{
+		title: translate( 'Jetpack Backup' ),
+		description: PRODUCT_JETPACK_BACKUP_DESCRIPTION,
+		id: PRODUCT_JETPACK_BACKUP,
+		options: {
+			yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
+			monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
+		},
+		optionShortNames: {
+			...JETPACK_BACKUP_PRODUCT_SHORT_NAMES,
+		},
+		optionDisplayNames: {
+			...JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES,
+		},
+		optionDescriptions: {
+			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
+		},
+		optionsLabel: translate( 'Backup Options' ),
+		productUpsells: {
+			[ PRODUCT_JETPACK_BACKUP_DAILY ]: PRODUCT_JETPACK_BACKUP_REALTIME,
+			[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+		},
+	},
+];

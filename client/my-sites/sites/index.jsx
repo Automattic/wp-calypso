@@ -93,6 +93,9 @@ class Sites extends Component {
 			case 'home':
 				path = translate( 'My Home' );
 				break;
+			case 'hosting-admin':
+				path = translate( 'SFTP & MySQL' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {

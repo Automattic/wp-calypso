@@ -21,18 +21,24 @@ function getConfig( { siteTitle = '' } = {} ) {
 		type: 'file',
 		title: 'WordPress',
 		icon: 'wordpress',
-		description: translate( 'Import posts, pages, and media from a WordPress export\u00A0file.' ),
+		description: translate(
+			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
+		),
 		uploadDescription: translate(
-			'Upload a {{b}}WordPress export file{{/b}} to start ' +
-				'importing into {{b2}}%(title)s{{/b2}}. A WordPress export is ' +
+			'A WordPress export is ' +
 				'an XML file with your page and post content, or a zip archive ' +
 				'containing several XML files. ' +
 				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
-				args: { title: siteTitle },
 				components: {
-					b: <strong />,
-					b2: <strong />,
 					ExternalLink: (
 						<ExternalLink href="https://en.support.wordpress.com/coming-from-self-hosted/" />
 					),
@@ -49,19 +55,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		title: 'Blogger',
 		icon: 'blogger-alt',
 		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
-			{
-				args: {
-					importerName: 'Blogger',
-				},
-			}
-		),
-		uploadDescription: translate(
-			'Upload a {{b}}%(importerName)s export file{{/b}} ' +
-				'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
-				'A %(importerName)s export file is an XML file ' +
-				'containing your page and post content. ' +
-				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
 				args: {
 					importerName: 'Blogger',
@@ -69,6 +63,18 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A %(importerName)s export file is an XML file ' +
+				'containing your page and post content. ' +
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+			{
+				args: {
+					importerName: 'Blogger',
+				},
+				components: {
 					ExternalLink: (
 						<ExternalLink href="https://en.support.wordpress.com/import/coming-from-blogger/" />
 					),
@@ -85,9 +91,17 @@ function getConfig( { siteTitle = '' } = {} ) {
 		title: 'GoDaddy',
 		icon: 'godaddy-gocentral',
 		description: translate(
-			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.'
+			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
 		),
-		uploadDescription: translate( 'Type your existing site URL to start the import.' ),
+		uploadDescription: translate( 'Enter the URL of your existing site' ),
 		weight: 0,
 	};
 
@@ -98,20 +112,26 @@ function getConfig( { siteTitle = '' } = {} ) {
 		title: 'Medium',
 		icon: 'medium',
 		description: translate(
-			'Import posts, tags, images, and videos ' + 'from a Medium export file.'
+			'Import posts, tags, images, and videos ' +
+				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
 		),
 		uploadDescription: translate(
-			'Upload your {{b}}%(importerName)s export file{{/b}} to start importing into ' +
-				'{{b}}%(siteTitle)s{{/b}}. A %(importerName)s export file is a ZIP ' +
+			'A %(importerName)s export file is a ZIP ' +
 				'file containing several HTML files with your stories. ' +
 				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
 			{
 				args: {
 					importerName: 'Medium',
-					siteTitle,
 				},
 				components: {
-					b: <strong />,
 					ExternalLink: (
 						<ExternalLink href={ 'https://en.support.wordpress.com/import/import-from-medium/' } />
 					),
@@ -128,19 +148,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		title: 'Squarespace',
 		icon: 'squarespace',
 		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
-			{
-				args: {
-					importerName: 'Squarespace',
-				},
-			}
-		),
-		uploadDescription: translate(
-			'Upload a {{b}}%(importerName)s export file{{/b}} ' +
-				'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
-				'A %(importerName)s export file is an XML file ' +
-				'containing your page and post content. ' +
-				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
 				args: {
 					importerName: 'Squarespace',
@@ -148,6 +156,18 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A %(importerName)s export file is an XML file ' +
+				'containing your page and post content. ' +
+				'Need help {{ExternalLink}}exporting your content{{/ExternalLink}}?',
+			{
+				args: {
+					importerName: 'Squarespace',
+				},
+				components: {
 					ExternalLink: (
 						<ExternalLink
 							href={ 'https://en.support.wordpress.com/import/import-from-squarespace' }
@@ -165,8 +185,18 @@ function getConfig( { siteTitle = '' } = {} ) {
 		type: 'url',
 		title: 'Wix',
 		icon: 'wix',
-		description: translate( 'Import posts, pages, and media from your Wix.com site.' ),
-		uploadDescription: translate( 'Type your existing site URL to start the import.' ),
+		description: translate(
+			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
+		),
+		uploadDescription: translate( 'Enter the URL of your existing site' ),
 		weight: 0,
 	};
 

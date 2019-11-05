@@ -14,10 +14,12 @@ const products = [
 	{
 		title: 'Jetpack Backup',
 		description: (
-			<p>
+			<Fragment>
 				Always-on backups ensure you never lose your site. Choose from real-time or daily backups.{' '}
-				<a href="https://jetpack.com/upgrade/backup/">Which one do I need?</a>
-			</p>
+				<a href="https://jetpack.com/upgrade/backup/" target="_blank" rel="noopener noreferrer">
+					Which one do I need?
+				</a>
+			</Fragment>
 		),
 		id: 'jetpack_backup',
 		options: {

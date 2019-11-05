@@ -21,11 +21,11 @@ class QuerySitePurchases extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestSitePurchases();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.requesting || ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
 			return;
 		}

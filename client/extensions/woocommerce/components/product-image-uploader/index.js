@@ -51,7 +51,7 @@ class ProductImageUploader extends Component {
 		errors: [],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._isMounted = true;
 	}
 	componentWillUnmount() {

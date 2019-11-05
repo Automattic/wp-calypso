@@ -37,7 +37,7 @@ export default class Quit extends Component {
 		this.removeTargetListener();
 	}
 
-	componentWillUpdate() {
+	UNSAFE_componentWillUpdate() {
 		this.removeTargetListener();
 	}
 

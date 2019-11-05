@@ -46,7 +46,7 @@ class EditorMediaModalGallery extends React.Component {
 		invalidItemDropped: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.settings ) {
 			this.maybeUpdateColumnsSetting();
 			this.reconcileSettingsItems( this.props.settings, this.props.items );

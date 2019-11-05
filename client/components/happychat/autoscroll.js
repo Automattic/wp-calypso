@@ -12,7 +12,7 @@
  */
 
 export default {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._autoscroll_enabled = true;
 		window.addEventListener( 'resize', this.scrollToBottom );
 	},
