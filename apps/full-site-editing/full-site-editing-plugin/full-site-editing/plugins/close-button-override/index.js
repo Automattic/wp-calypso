@@ -38,21 +38,22 @@ domReady( () => {
 		// When closing Template CPT (e.g. header) to navigate back to parent page.
 		if ( 'wp_template_part' === editorPostType && closeButtonUrl ) {
 			newCloseButton.href = closeButtonUrl;
+			newCloseButton.innerHTML = closeButtonLabel;
+			newCloseButton.className = 'components-button components-icon-button is-button is-default';
+			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
 		} else if ( 'page' === editorPostType ) {
 			newCloseButton.href = 'edit.php?post_type=page';
-			closeButtonLabel = __( 'Pages' );
+			closeButtonLabel = __( 'Back to Page List' );
+			newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
+			newCloseButton.className = 'components-button';
+
+			ReactDOM.render(
+				<Button className="components-button components-icon-button">
+					<Dashicon icon="arrow-left-alt2" />
+				</Button>,
+				newCloseButton
+			);
 		}
-
-		newCloseButton.setAttribute( 'aria-label', closeButtonLabel );
-		newCloseButton.className = 'components-button';
-
-		ReactDOM.render(
-			<Button className="components-button components-icon-button">
-				<Dashicon icon="arrow-left-alt2" />
-				<div className="close-button-override-label">{ closeButtonLabel }</div>
-			</Button>,
-			newCloseButton
-		);
 
 		componentsToolbar.prepend( newCloseButton );
 	} );
