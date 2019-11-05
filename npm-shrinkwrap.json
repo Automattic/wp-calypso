@@ -112,7 +112,19 @@
 			"requires": {
 				"prop-types": "^15.7.2",
 				"react": "^16.8.6",
+				"react-stripe-elements": "^5.1.0",
 				"styled-components": "4.4.0"
+			},
+			"dependencies": {
+				"react-stripe-elements": {
+					"version": "5.1.0",
+					"resolved": "https://registry.npmjs.org/react-stripe-elements/-/react-stripe-elements-5.1.0.tgz",
+					"integrity": "sha512-4UlzOLNdbJsZr4JwbTdJjxhedAfalDDtfEYLHEBo0MKG0KgSLRAeIJup0/6NSpKtBLK4ieOMAwvyln9ICOSilQ==",
+					"dev": true,
+					"requires": {
+						"prop-types": "15.7.2"
+					}
+				}
 			}
 		},
 		"@automattic/format-currency": {
@@ -3235,9 +3247,9 @@
 			"dev": true
 		},
 		"@types/wordpress__block-editor": {
-			"version": "2.2.3",
-			"resolved": "https://registry.npmjs.org/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.3.tgz",
-			"integrity": "sha512-MGHhL80BiRm1KvlG4Vj2gdhwmSRErEVyb5NFgEDrUuUAkj8QknV8MQIQecmmV15WdmSqdvfrdgTm+zGeMe84Ng==",
+			"version": "2.2.4",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.4.tgz",
+			"integrity": "sha512-K2LTrzgnAGDDCQPkVEiK3wj/o4eyffxFhdG7gUBHTLqtJlqasRn9ekXM4GuGz2+uJp3vCEHGXlDDO1fuKA8VAg==",
 			"dev": true,
 			"requires": {
 				"@types/wordpress__blocks": "*",
