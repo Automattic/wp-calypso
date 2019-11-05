@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import moment from 'moment';
 import page from 'page';
 import { isEqual } from 'lodash';
 
@@ -56,9 +55,6 @@ function queryFilterToStats( filter ) {
 export function activity( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const startDate = moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
-		? context.query.startDate
-		: undefined;
 
 	const filter = siteId && getActivityLogFilter( state, siteId );
 	const queryFilter = queryToFilterState( context.query );
@@ -71,7 +67,7 @@ export function activity( context, next ) {
 	}
 
 	recordTrack( 'calypso_activitylog_view', queryFilterToStats( queryFilter ) );
-	context.primary = <ActivityLog siteId={ siteId } context={ context } startDate={ startDate } />;
+	context.primary = <ActivityLog siteId={ siteId } context={ context } />;
 
 	next();
 }
