@@ -99,7 +99,7 @@ export default function OnboardingEdit() {
 					</div>
 				) }
 			</div>
-			{ /* FormTokenField sufficient for first rount, but not ideal. Simpler component for single autocomplete is needed */ }
+			{ /* FormTokenField sufficient for first round, but not ideal. Simpler component for single autocomplete is needed */ }
 			<FormTokenField
 				label={ NO__( 'My site is about' ) }
 				maxLength={ 1 }
