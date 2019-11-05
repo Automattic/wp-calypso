@@ -58,7 +58,7 @@ const CallToAction = styled.button`
 		box-shadow: ${ getBoxShadowHover }
 		text-decoration: none;
 		color: ${ props =>
-			props.buttonState === 'default' ? props.theme.color.surface : getTextColor( props ) }
+			props.buttonState === 'default' ? props.theme.colors.surface : getTextColor( props ) }
 		cursor: ${ ( { buttonState } ) =>
 			buttonState && buttonState.includes( 'disabled' ) ? 'not-allowed' : 'pointer' }
 	}
@@ -158,7 +158,7 @@ function getTextColor( { buttonState, theme } ) {
 		case 'disabled':
 			return colors.disabledButtons;
 		default:
-			return colors.highlight;
+			return colors.textColor;
 	}
 }
 
@@ -201,7 +201,7 @@ function getBorderColor( { buttonType, buttonState, theme } ) {
 			}
 			return colors.disabledButtons;
 		default:
-			return colors.highlight;
+			return colors.borderColor;
 	}
 }
 

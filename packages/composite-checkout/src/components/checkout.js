@@ -16,6 +16,7 @@ import { usePaymentData, usePaymentMethod, usePaymentMethodId } from '../lib/pay
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
+import CheckoutModal from './checkout-modal';
 
 export default function Checkout( {
 	availablePaymentMethods,
@@ -42,6 +43,8 @@ export default function Checkout( {
 
 	return (
 		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
+			<CheckoutModal />
+
 			<MainContent>
 				<div>
 					{ CheckoutHeader ? (
