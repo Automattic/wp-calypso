@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { once } from 'lodash';
+import { once, defer } from 'lodash';
 import debugFactory from 'debug';
 import notices from 'notices';
 import page from 'page';
@@ -29,7 +26,7 @@ import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-au
 import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
@@ -52,11 +49,7 @@ if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
-const desktopEnabled = config.isEnabled( 'desktop' );
-let desktop;
-if ( desktopEnabled ) {
-	desktop = require( 'lib/desktop' ).default;
-}
+const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default : null;
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -89,15 +82,13 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 	if ( ! action.query.immediate_login_success ) {
 		return;
 	}
-	const currentUser = getCurrentUser( getState() );
-	if ( ! currentUser ) {
+	const email = getCurrentUserEmail( getState() );
+	if ( ! email ) {
 		return;
 	}
-	const { email } = currentUser;
 
 	// Let redux process all dispatches that are currently queued and show the message
-	const delay = typeof setImmediate !== 'undefined' ? setImmediate : setTimeout;
-	delay( () => {
+	defer( () => {
 		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
 	} );
 } );
@@ -210,7 +201,7 @@ const handler = ( dispatch, action, getState ) => {
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
-				if ( desktopEnabled ) {
+				if ( config.isEnabled( 'desktop' ) ) {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 
