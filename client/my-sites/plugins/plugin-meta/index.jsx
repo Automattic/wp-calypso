@@ -357,7 +357,6 @@ export class PluginMeta extends Component {
 			'wp-monero-miner-using-coin-hive',
 			'wp-optimize-by-xtraffic',
 			'wpematico',
-			'yellow-pencil-visual-theme-customizer',
 			'yuzo-related-post',
 			'zapp-proxy-server',
 		];
