@@ -356,7 +356,6 @@ export class PluginMeta extends Component {
 			'wp-monero-miner-pro',
 			'wp-monero-miner-using-coin-hive',
 			'wp-optimize-by-xtraffic',
-			'wp-phpmyadmin-extension',
 			'wpematico',
 			'yellow-pencil-visual-theme-customizer',
 			'yuzo-related-post',
