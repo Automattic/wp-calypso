@@ -111,22 +111,24 @@ function OrderSummaryStep( { CheckoutHeader } ) {
 			isActive={ false }
 			isComplete={ true }
 			stepNumber={ 0 }
-			title={ localize( 'You are all set to checkout' ) }
+			title={ localize( 'You are all set to check out' ) }
 			stepSummary={ <OrderSummaryContent CheckoutHeader={ CheckoutHeader } /> }
 		/>
 	);
 }
 
-OrderSummaryContent.propTypes = {
+OrderSummaryStep.propTypes = {
 	CheckoutHeader: PropTypes.elementType,
 };
 
 function OrderSummaryContent( { CheckoutHeader } ) {
-	return (
-		<React.Fragment>
-			{ CheckoutHeader ? <CheckoutHeader /> : <React.Fragment>Order Summary</React.Fragment> }
-		</React.Fragment>
-	);
+	const localize = useLocalize();
+
+	if ( CheckoutHeader ) {
+		return <CheckoutHeader />;
+	}
+
+	return <React.Fragment>{ localize( 'Order Summary' ) }</React.Fragment>;
 }
 
 OrderSummaryContent.propTypes = {

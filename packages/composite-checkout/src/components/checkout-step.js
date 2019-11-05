@@ -61,7 +61,7 @@ CheckoutStep.propTypes = {
 	title: PropTypes.string.isRequired,
 	finalStep: PropTypes.bool,
 	stepSummary: PropTypes.node,
-	stepContent: PropTypes.node.isRequired,
+	stepContent: PropTypes.node,
 	isActive: PropTypes.bool.isRequired,
 	isComplete: PropTypes.bool.isRequired,
 };
@@ -154,13 +154,13 @@ function CheckIcon() {
 }
 
 const StepWrapper = styled.div`
-	padding-bottom: ${props => ( props.finalStep ? '0' : '32px' )};
+	padding-bottom: ${ props => ( props.finalStep ? '0' : '32px' ) };
 	position: relative;
-	border-bottom: ${props => ( props.finalStep ? '0' : '1px' )} solid
-		${props => props.theme.colors.borderColorLight};
+	border-bottom: ${ ( { finalStep, theme } ) =>
+		finalStep ? '0' : '1px solid ' + theme.colors.borderColorLight }
 	padding: 16px;
 
-	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
+	@media ( ${ props => props.theme.breakpoints.tabletUp } ) {
 		padding: 24px;
 	}
 `;
