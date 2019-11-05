@@ -13,7 +13,7 @@ const BASE_URL = 'http://__domain__.invalid/';
 
 /**
  * Format a URL as a particular type.
- * Does not support formatting path-relative URLs.
+ * Does not support formatting invalid or path-relative URLs.
  *
  * @param url The URL to format.
  * @param urlType The URL type into which to format. If not provided, defaults to the same type as
@@ -21,7 +21,10 @@ const BASE_URL = 'http://__domain__.invalid/';
  *
  * @returns The formatted URL.
  */
-export default function format( url: URLString | URL | Falsy, urlType?: URL_TYPE ): URLString {
+export default function format(
+	url: URLString | URL | Falsy,
+	urlType?: Exclude< URL_TYPE, URL_TYPE.INVALID | URL_TYPE.PATH_RELATIVE >
+): URLString {
 	let parsed: URL;
 	let originalType: URL_TYPE;
 
@@ -47,7 +50,7 @@ export default function format( url: URLString | URL | Falsy, urlType?: URL_TYPE
 		urlType = originalType;
 	}
 
-	switch ( urlType ) {
+	switch ( urlType as URL_TYPE ) {
 		case URL_TYPE.PATH_RELATIVE:
 			throw new Error( 'Cannot format into path-relative URLs.' );
 
