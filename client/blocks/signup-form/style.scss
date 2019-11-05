@@ -75,17 +75,25 @@
 
 .signup-form__recaptcha-tos {
 	display: none;
-	padding: 40px 10px 10px;
+	padding: 20px 10px 10px;
 	font-size: 13px;
-	color: var( --color-text-inverted );
+	//  Opacity choosen to stay within WCAG contrast guidelines
+	color: rgba( var( --color-text-inverted-rgb ), 0.74 );
 	text-align: center;
 
+	p {
+		margin: 0;
+		padding-top: 9px;
+	}
+
 	a {
-		color: var( --color-text-inverted );
+		color: rgba( var( --color-text-inverted-rgb ), 0.74 );
 		text-decoration: underline;
 	}
 }
 
+// Replace recaptcha badge with ToS text and space
+// everything out a little more.
 @media ( max-width: 660px ) {
 	.signup-form__recaptcha-tos {
 		display: block;
@@ -93,5 +101,15 @@
 
 	.grecaptcha-badge {
 		visibility: hidden;
+	}
+
+	.signup-form.is-showing-recaptcha-tos {
+		.signup-form__social {
+			padding-bottom: 28px;
+		}
+
+		.logged-out-form__links::before {
+			margin-bottom: 16px;
+		}
 	}
 }

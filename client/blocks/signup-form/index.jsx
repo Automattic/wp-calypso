@@ -856,17 +856,19 @@ class SignupForm extends Component {
 				{ showReCaptchaToS && (
 					<div className="signup-form__recaptcha-tos">
 						<LoggedOutFormLinks>
-							{ translate(
-								'This site is protected by reCAPTCHA and the Google {{a1}}Privacy Policy{{/a1}} and {{a2}}Terms of Service{{/a2}} apply.',
-								{
-									components: {
-										a1: <a href="https://policies.google.com/privacy" />,
-										a2: <a href="https://policies.google.com/terms" />,
-									},
-									comment:
-										'English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed',
-								}
-							) }
+							<p>
+								{ translate(
+									'This site is protected by reCAPTCHA and the Google {{a1}}Privacy Policy{{/a1}} and {{a2}}Terms of Service{{/a2}} apply.',
+									{
+										components: {
+											a1: <a href="https://policies.google.com/privacy" />,
+											a2: <a href="https://policies.google.com/terms" />,
+										},
+										comment:
+											'English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed',
+									}
+								) }
+							</p>
 						</LoggedOutFormLinks>
 					</div>
 				) }
@@ -962,7 +964,11 @@ class SignupForm extends Component {
 				: localizeUrl( config( 'login_url' ), this.props.locale );
 
 			return (
-				<div className={ classNames( 'signup-form', this.props.className ) }>
+				<div
+					className={ classNames( 'signup-form', this.props.className, {
+						'is-showing-recaptcha-tos': this.props.showReCaptchaToS,
+					} ) }
+				>
 					{ this.getNotice() }
 					<PasswordlessSignupForm
 						step={ this.props.step }
@@ -989,7 +995,11 @@ class SignupForm extends Component {
 		}
 
 		return (
-			<div className={ classNames( 'signup-form', this.props.className ) }>
+			<div
+				className={ classNames( 'signup-form', this.props.className, {
+					'is-showing-recaptcha-tos': this.props.showReCaptchaToS,
+				} ) }
+			>
 				{ this.getNotice() }
 
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
