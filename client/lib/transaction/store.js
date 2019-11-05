@@ -19,12 +19,12 @@ import {
 	TRANSACTION_STEP_SET,
 	TRANSACTION_STRIPE_SET,
 } from './action-types';
+import { hasDomainDetails } from './selectors';
 import { hasDomainRegistration } from 'lib/cart-values/cart-items';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
 import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
-import { hasDomainDetails } from 'lib/store-transactions';
 
 let _transaction = createInitialTransaction();
 

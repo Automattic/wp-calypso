@@ -57,7 +57,7 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 				<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
 				<p>
 					{ translate(
-						'Manage your databases with PHPMyAdmin and run a wide range of operations with MySQL.'
+						'Manage your databases with phpMyAdmin and run a wide range of operations with MySQL.'
 					) }
 				</p>
 				<Button
@@ -65,7 +65,7 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 					busy={ ! disabled && loading }
 					disabled={ disabled }
 				>
-					<span>{ translate( 'Open PHPMyAdmin' ) }</span>
+					<span>{ translate( 'Open phpMyAdmin' ) }</span>
 					<MaterialIcon icon="launch" size={ 16 } />
 				</Button>
 			</div>

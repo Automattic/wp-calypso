@@ -25,11 +25,11 @@ class QuerySimplePayments extends Component {
 		productId: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId || nextProps.productId !== this.props.productId ) {
 			this.request( nextProps );
 		}

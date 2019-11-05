@@ -22,7 +22,7 @@ const InputChronoExample = localize(
 			date: this.props.moment(),
 		};
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			var self = this;
 			this.interval = setInterval( function() {
 				var date = self.props.moment( self.state.date );

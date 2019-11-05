@@ -1,0 +1,60 @@
+@import 'assets/stylesheets/gutenberg-base-styles/style';
+
+// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
+.gutenboarding__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid $light-gray-500;
+	height: $header-height;
+	background: $white;
+	z-index: z-index( '.edit-post-header' );
+
+	left: 0;
+	right: 0;
+	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
+	top: 0;
+	position: sticky;
+
+	// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
+	@include break-small {
+		position: fixed;
+		padding: $grid-size;
+	}
+}
+
+.gutenboarding__header-site {
+	display: flex;
+	flex-direction: column;
+}
+.gutenboarding__header-site-heading {
+	font-weight: bold;
+}
+
+.gutenboarding__header-actions {
+	padding: 0 20px;
+
+	// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+// Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
+.gutenboarding__header .components-button {
+	// Header toggle buttons.
+	&.is-toggled {
+		color: $white;
+		background: $dark-gray-500;
+		margin: 1px;
+		padding: 7px;
+	}
+
+	// The !important in this ruleset need to override the pile of :not() selectors used in the icon-button.
+	&.is-toggled:hover,
+	&.is-toggled:focus {
+		box-shadow: 0 0 0 $border-width $dark-gray-500, inset 0 0 0 $border-width $white !important;
+		color: $white !important;
+		background: $dark-gray-500 !important;
+	}
+}

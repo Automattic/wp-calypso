@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useContext, useCallback } from 'react';
+import { useContext } from 'react';
 
 /**
  * Internal dependencies
@@ -44,11 +44,17 @@ export function getPaymentMethods() {
 
 export function usePaymentMethodId() {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+	if ( ! setPaymentMethodId ) {
+		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
+	}
 	return [ paymentMethodId, setPaymentMethodId ];
 }
 
 export function usePaymentMethod() {
-	const { paymentMethodId } = useContext( CheckoutContext );
+	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+	if ( ! setPaymentMethodId ) {
+		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
+	}
 	if ( ! paymentMethodId ) {
 		return null;
 	}
@@ -59,32 +65,12 @@ export function usePaymentMethod() {
 	return paymentMethod;
 }
 
-export function usePaymentMethodData() {
+export function usePaymentData() {
 	const { paymentData, dispatchPaymentAction } = useContext( CheckoutContext );
+	if ( ! dispatchPaymentAction ) {
+		throw new Error( 'usePaymentData can only be used inside a CheckoutProvider' );
+	}
 	return [ paymentData, dispatchPaymentAction ];
-}
-
-export function usePaymentState( handler ) {
-	const [ paymentData, setPaymentData ] = useState( {} );
-	const dispatch = useCallback(
-		( { type, payload } ) => {
-			console.log( 'dispatch', type, payload ); // eslint-disable-line no-console
-			const next = () =>
-				setPaymentData( currentData => {
-					const newState = { ...currentData, ...payload };
-					console.log( 'new state', newState ); // eslint-disable-line no-console
-					return newState;
-				} );
-			if ( ! handler ) {
-				next();
-			}
-			if ( handler ) {
-				handler( { type, payload }, dispatch, next );
-			}
-		},
-		[ handler ]
-	);
-	return [ paymentData, dispatch ];
 }
 
 loadPaymentMethods();

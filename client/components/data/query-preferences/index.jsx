@@ -15,7 +15,7 @@ import { isFetchingPreferences } from 'state/preferences/selectors';
 import { fetchPreferences } from 'state/preferences/actions';
 
 class QueryPreferences extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.fetchingPreferences ) {
 			this.props.fetchPreferences();
 		}

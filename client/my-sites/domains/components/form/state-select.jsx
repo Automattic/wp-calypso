@@ -37,7 +37,7 @@ class StateSelect extends Component {
 		}
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.instance = ++this.constructor.instances;
 	}
 

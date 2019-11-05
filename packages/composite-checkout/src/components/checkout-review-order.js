@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../index';
+import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
@@ -16,7 +16,7 @@ import {
 } from './order-review-line-items';
 
 export default function CheckoutReviewOrder( { summary, className } ) {
-	const [ items, total ] = useCheckoutLineItems();
+	const [ items, total ] = useLineItems();
 	if ( summary ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>

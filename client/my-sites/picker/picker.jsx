@@ -38,7 +38,7 @@ class SitePicker extends React.Component {
 		isRendered: this.props.currentLayoutFocus === 'sites',
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.currentLayoutFocus === 'sites' && ! this.state.isRendered ) {
 			this.setState( { isRendered: true } );
 		}

@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isEnabled } from 'config';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import Button from 'components/button';
@@ -18,11 +17,9 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { saveSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
-	'get-started': 'get-started',
 	'online-store': 'ecommerce-onboarding',
 };
 
@@ -39,19 +36,11 @@ class SiteType extends Component {
 		this.submitStep( 'import' );
 	};
 
-	// This function is to support the A/B test `signupWithBasicSite`
-	// by using a flow that does not include intermediary steps before 'domain'
-	handleBasicSiteButtonClick = () => this.submitStep( 'business', 'get-started' );
-
-	submitStep = ( siteTypeValue, flowName ) => {
+	submitStep = siteTypeValue => {
 		this.props.submitSiteType( siteTypeValue );
 
-		if ( flowName ) {
-			this.props.goToNextStep( flowName );
-			return;
-		}
-
 		// Modify the flowname if the site type matches an override.
+		let flowName;
 		if ( 'import-onboarding' === this.props.flowName ) {
 			flowName = siteTypeToFlowname[ siteTypeValue ] || 'onboarding';
 		} else {
@@ -75,20 +64,6 @@ class SiteType extends Component {
 		);
 	}
 
-	renderStartWithBasicSiteButton() {
-		if ( 'variant' !== abtest( 'signupWithBasicSite' ) ) {
-			return null;
-		}
-
-		return (
-			<div className="site-type__basic-site">
-				<Button borderless onClick={ this.handleBasicSiteButtonClick }>
-					{ this.props.translate( 'Skip setup and start with a basic website.' ) }
-				</Button>
-			</div>
-		);
-	}
-
 	renderStepContent() {
 		const { siteType } = this.props;
 
@@ -99,7 +74,6 @@ class SiteType extends Component {
 					submitForm={ this.submitStep }
 					siteType={ siteType }
 				/>
-				{ this.renderStartWithBasicSiteButton() }
 				{ this.renderImportButton() }
 			</Fragment>
 		);
@@ -142,5 +116,5 @@ export default connect(
 		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
-	{ recordTracksEvent, saveSignupStep, submitSiteType, setSiteVertical }
+	{ recordTracksEvent, saveSignupStep, submitSiteType }
 )( localize( SiteType ) );

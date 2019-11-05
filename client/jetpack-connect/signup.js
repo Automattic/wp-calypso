@@ -69,7 +69,7 @@ export class JetpackSignup extends Component {
 		this.setState( this.constructor.initialState );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
 			from,

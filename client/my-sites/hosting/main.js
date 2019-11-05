@@ -34,7 +34,7 @@ const Hosting = ( { translate, isDisabled } ) => {
 			{ isDisabled && (
 				<Banner
 					title={ translate(
-						'Please active SFTP and PHPMyAdmin access to begin using these features.'
+						'Please active SFTP and phpMyAdmin access to begin using these features.'
 					) }
 					icon="info"
 					callToAction={ translate( 'Activate' ) }

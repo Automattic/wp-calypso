@@ -141,7 +141,7 @@ class UploadingPane extends React.PureComponent {
 
 		return (
 			<div>
-				<p>{ this.props.description }</p>
+				<p className="importer__uploading-pane-description">{ this.props.description }</p>
 				<div
 					className="importer__uploading-pane"
 					role="button"

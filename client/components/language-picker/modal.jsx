@@ -73,7 +73,7 @@ export class LanguagePickerModal extends PureComponent {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selected !== this.state.selectedLanguageSlug ) {
 			this.setState( {
 				selectedLanguageSlug: nextProps.selected,

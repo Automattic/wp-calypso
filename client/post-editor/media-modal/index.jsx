@@ -118,7 +118,7 @@ export class EditorMediaModal extends Component {
 		this.state = this.getDefaultState( props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
 			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
 		}
@@ -143,7 +143,7 @@ export class EditorMediaModal extends Component {
 		this.statsTracking = {};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { view, mediaLibrarySelectedItems, site, single } = this.props;
 		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );

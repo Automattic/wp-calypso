@@ -131,7 +131,7 @@ class HandleEmailedLinkForm extends React.Component {
 		} );
 	};
 
-	componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		const { authError, isAuthenticated, isFetching } = nextProps;
 
 		if ( ! nextState.hasSubmitted || isFetching ) {

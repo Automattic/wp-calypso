@@ -11,7 +11,7 @@ import { pick } from 'lodash';
  */
 import { reducer } from '../reducer';
 import { DOMAIN_NAME, RECORD_A, RECORD_NS, RECORD_TXT } from './data';
-import { DNS_DELETE_COMPLETED } from 'lib/upgrades/action-types';
+import { DNS_DELETE_COMPLETED } from '../action-types';
 
 describe( 'reducer', () => {
 	test( 'should return the same state when no matching record passed in the delete action', () => {

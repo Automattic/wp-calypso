@@ -32,7 +32,7 @@ const SFTPCard = ( { translate, username, password, siteId, loading, disabled } 
 	const passwordIsCopied = isCopied === 'password';
 
 	const sftpData = {
-		[ translate( 'URL' ) ]: 'sftp1.wordpress.com',
+		[ translate( 'URL' ) ]: 'sftp.wp.com',
 		[ translate( 'Port' ) ]: 22,
 	};
 

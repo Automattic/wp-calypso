@@ -48,7 +48,7 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 export class SiteSettingsFormGeneral extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._showWarning( this.props.site );
 	}
 

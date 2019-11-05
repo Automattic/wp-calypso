@@ -53,7 +53,7 @@ class Orders extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const hasAnythingChanged =
 			newProps.currentPage !== this.props.currentPage ||
 			newProps.currentSearch !== this.props.currentSearch ||

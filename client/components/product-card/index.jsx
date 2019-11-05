@@ -66,7 +66,7 @@ const ProductCard = ( {
 						</a>
 					</p>
 				) }
-				{ description }
+				{ description && <p>{ description }</p> }
 			</div>
 			{ children }
 		</Card>
@@ -76,7 +76,7 @@ const ProductCard = ( {
 ProductCard.propTypes = {
 	billingTimeFrame: PropTypes.string,
 	currencyCode: PropTypes.string,
-	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
 	discountedPrice: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.arrayOf( PropTypes.number ),
@@ -84,7 +84,7 @@ ProductCard.propTypes = {
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
-	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 };
 

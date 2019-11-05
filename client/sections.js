@@ -464,18 +464,10 @@ const sections = [
 	},
 	{
 		name: 'hosting',
-		paths: [ '/hosting' ],
+		paths: [ '/hosting-admin' ],
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
-	},
-	{
-		name: 'gutenboarding',
-		paths: [ '/gutenboarding' ],
-		module: 'gutenboarding',
-		secondary: false,
-		group: 'sites',
-		enableLoggedOut: true,
 	},
 ];
 

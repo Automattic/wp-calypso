@@ -47,7 +47,7 @@ export class NoteList extends React.Component {
 		statusMessage: '',
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.resetStatusBar = this.resetStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
@@ -66,7 +66,7 @@ export class NoteList extends React.Component {
 		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPanelOpen && ! nextProps.isPanelOpen ) {
 			// scroll to top, from toggling frame
 			this.setState( { lastSelectedIndex: 0, scrollY: 0 } );

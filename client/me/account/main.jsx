@@ -82,7 +82,7 @@ const Account = createReactClass( {
 		showNoticeInitially: PropTypes.bool,
 	},
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );

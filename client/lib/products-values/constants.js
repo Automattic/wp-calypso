@@ -4,6 +4,11 @@
 import React, { Fragment } from 'react';
 import { translate } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import ExternalLink from 'components/external-link';
+
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -55,36 +60,24 @@ export const JETPACK_BACKUP_PRODUCT_DISPLAY_NAMES = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: JETPACK_BACKUP_PRODUCT_REALTIME_DISPLAY_NAME,
 };
 
-export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = (
-	<p>
-		{ translate(
-			'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
-			{
-				components: {
-					a: <a href="https://jetpack.com/upgrade/backup/" />,
-				},
-			}
-		) }
-	</p>
+export const PRODUCT_JETPACK_BACKUP_DESCRIPTION = translate(
+	'Always-on backups ensure you never lose your site. Choose from real-time or daily backups. {{a}}Which one do I need?{{/a}}',
+	{
+		components: {
+			a: <ExternalLink href="https://jetpack.com/upgrade/backup/" icon />,
+		},
+	}
 );
-export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = (
-	<p>
-		{ translate(
-			'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
-			{
-				components: {
-					strong: <strong />,
-				},
-			}
-		) }
-	</p>
+export const PRODUCT_JETPACK_BACKUP_DAILY_DESCRIPTION = translate(
+	'{{strong}}Looking for more?{{/strong}} With Real-time backups, we save as you edit and you’ll get unlimited backup archives.',
+	{
+		components: {
+			strong: <strong />,
+		},
+	}
 );
-export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = (
-	<p>
-		{ translate(
-			'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
-		) }
-	</p>
+export const PRODUCT_JETPACK_BACKUP_REALTIME_DESCRIPTION = translate(
+	'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives.'
 );
 
 export const JETPACK_BACKUP_PRODUCT_DESCRIPTIONS = {
@@ -124,5 +117,9 @@ export const JETPACK_PRODUCTS = [
 			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
 		},
 		optionsLabel: translate( 'Backup Options' ),
+		productUpsells: {
+			[ PRODUCT_JETPACK_BACKUP_DAILY ]: PRODUCT_JETPACK_BACKUP_REALTIME,
+			[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+		},
 	},
 ];

@@ -16,7 +16,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import { submitSurvey } from 'lib/upgrades/actions';
+import { submitSurvey } from 'lib/purchases/actions';
 import { isDomainRegistration, isPlan } from 'lib/products-values';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';

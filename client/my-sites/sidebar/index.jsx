@@ -62,6 +62,7 @@ import {
 	SIDEBAR_SECTION_TOOLS,
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 
 /**
  * Style dependencies
@@ -498,17 +499,17 @@ export class MySitesSidebar extends Component {
 	};
 
 	hosting() {
-		const { translate, path, site, siteSuffix } = this.props;
+		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
 
-		if ( ! site || ! isBusiness( site.plan ) || ! isEnabled( 'hosting' ) ) {
+		if ( ! canViewAtomicHosting ) {
 			return null;
 		}
 
 		return (
 			<SidebarItem
 				label={ translate( 'SFTP & MySQL' ) }
-				selected={ itemLinkMatches( '/hosting', path ) }
-				link={ `/hosting${ siteSuffix }` }
+				selected={ itemLinkMatches( '/hosting-admin', path ) }
+				link={ `/hosting-admin${ siteSuffix }` }
 				onNavigate={ this.trackHostingClick }
 				preloadSectionName="hosting"
 				expandSection={ this.expandManageSection }
@@ -812,6 +813,7 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
+		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 	};
 }
 

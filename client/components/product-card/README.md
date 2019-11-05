@@ -19,7 +19,7 @@ See p1HpG7-7ET-p2 for more details.
 ### How to use the `<ProductCard />`
 
 ```jsx
-import React from 'react';
+import React, { Fragment } from 'react';
 import ProductCard from 'components/product-card';
 
 export default class extends React.Component {
@@ -27,13 +27,13 @@ export default class extends React.Component {
 		return (
 			<ProductCard
 				title="Jetpack Scan"
-				billingTimeFrame={ 'per year' }
+				billingTimeFrame="per year"
 				fullPrice={ 25 }
 				description={
-					<p>
+					<Fragment>
 						Automatic scanning and one-click fixes keep your site one step ahead of security
 						threats. <a href="/plans">More info</a>
-					</p>
+					</Fragment>
 				}
 			/>
 		);
@@ -54,7 +54,7 @@ The following props can be passed to the Product Card component:
 
 * `billingTimeFrame`: ( string ) Billing time frame label
 * `currencyCode`: ( string ) Currency code
-* `description`: ( string | element ) Product description. It can be a string or a React element (e.g. `<Fragment>`)
+* `description`: ( string | element | node ) Product description. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `discountedPrice`: ( number | array ) Discounted price of the product. If an array of 2 numbers is passed, it will be
  displayed as a price range
 * `fullPrice`: ( number | array ) Full price of a product. If an array of 2 numbers is passed, it will be displayed as
@@ -63,8 +63,8 @@ The following props can be passed to the Product Card component:
   placeholder
 * `purchase`: ( object ) A purchase object, associated with the product. [Read more about the way this flag
  works](#how-purchase-prop-works)
-* `subtitle`: ( string | element ) Product subtitle. It's used if the product has already been purchased, but can be
- used also in other use-cases. It can be a string or a React element (e.g. `<Fragment>`)
+* `subtitle`: ( string | element | node ) Product subtitle. It's used if the product has already been purchased, but can be
+ used also in other use-cases. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `title`: ( string | element ) Product title. It can be a string or a React element (e.g. `<Fragment>`)
 
 <a name="product-card-options"></a>Product Card Options
@@ -87,15 +87,10 @@ export default class extends React.Component {
 		return (
 			<ProductCard
 				title="Jetpack Backup"
-				billingTimeFrame={ 'per month' }
+				billingTimeFrame="per month"
 				fullPrice={ [ 16, 25 ] }
 				discountedPrice={ [ 12, 16 ] }
-				description={
-					<p>
-						Always-on backups ensure you never lose your site. Choose from real-time or daily
-						backups. <a href="/plans">Which one do I need?</a>
-					</p>
-				}
+				description="Always-on backups ensure you never lose your site. Choose from real-time or daily backups."
 			>
 				<ProductCardOptions
 					optionsLabel="Backup options:"
@@ -160,18 +155,9 @@ export default class extends React.Component {
 	render() {
 		return (
 			<ProductCard
-				title={
-					<Fragment>
-						Jetpack Backup <strong>Daily</strong>
-					</Fragment>
-				}
+				title="Jetpack Backup Daily"
 				subtitle="Purchased 2019-09-13"
-				description={
-					<p>
-						<strong>Looking for more?</strong> With Real-time backups:, we save as you edit and
-						you’ll get unlimited backup archives
-					</p>
-				}
+				description="Looking for more? With Real-time backups we save as you edit and you’ll get unlimited backup archives"
 			>
 				<ProductCardAction
 					intro="Get Real-Time Backups $16 /year"
@@ -187,6 +173,6 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Action component:
 
-* `intro`: ( string ) Intro text to be displayed above the action button
+* `intro`: ( string | element | node ) Intro text to be displayed above the action button. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `label`: ( string ) Action button text
 * `onClick`: ( func ) Action button click event handler

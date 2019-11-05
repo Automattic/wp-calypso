@@ -37,7 +37,7 @@ export class Mailchimp extends SharingService {
 		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts } ) {
+	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,

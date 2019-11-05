@@ -33,13 +33,13 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { createAddDefultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
 
 class ShippingZoneList extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.loaded ) {
 			this.props.actions.createAddDefultShippingZoneActionList();
 		}
 	}
 
-	componentWillReceiveProps( { loaded } ) {
+	UNSAFE_componentWillReceiveProps( { loaded } ) {
 		if ( ! this.props.loaded && loaded && ! this.props.savingZones ) {
 			this.props.actions.createAddDefultShippingZoneActionList();
 		}

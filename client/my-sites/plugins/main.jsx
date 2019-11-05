@@ -61,7 +61,7 @@ export class PluginsMain extends Component {
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
 
 		if ( this.props.isRequestingSites && ! nextProps.isRequestingSites ) {

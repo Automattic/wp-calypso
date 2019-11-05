@@ -110,7 +110,7 @@ export class HelpContactForm extends React.PureComponent {
 		qanda: [],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { npsSurveyFeedback, translate } = this.props;
 
 		if ( npsSurveyFeedback ) {
@@ -125,7 +125,7 @@ export class HelpContactForm extends React.PureComponent {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}

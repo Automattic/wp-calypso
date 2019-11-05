@@ -127,7 +127,7 @@ class KeyringConnectButton extends Component {
 		}
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.isAwaitingConnections ) {
 			this.setState( {
 				isAwaitingConnections: false,

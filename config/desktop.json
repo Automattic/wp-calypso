@@ -36,6 +36,7 @@
 		"help": true,
 		"help/courses": true,
 		"hosting": false,
+		"hosting/non-atomic-support": false,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,

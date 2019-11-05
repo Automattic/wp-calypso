@@ -13,11 +13,11 @@ import { requestSiteInvites } from 'state/invites/actions';
 import { isRequestingInvitesForSite } from 'state/invites/selectors';
 
 class QuerySiteInvites extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}

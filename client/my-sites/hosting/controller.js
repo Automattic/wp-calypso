@@ -4,28 +4,24 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
 import page from 'page';
-import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import Hosting from './main';
-import { isBusinessPlan } from 'lib/plans';
-import { getSelectedSite } from 'state/ui/selectors';
+import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
 
-export function redirectIfNotBusiness( context, next ) {
+export function handleHostingPanelRedirect( context, next ) {
 	const { store } = context;
 	const state = store.getState();
-	const isBusinessSite = isBusinessPlan( get( getSelectedSite( state ), 'plan.product_slug' ) );
 
-	if ( config.isEnabled( 'hosting' ) && isBusinessSite ) {
+	if ( canSiteViewAtomicHosting( state ) ) {
 		next();
 		return;
 	}
 
-	page.redirect( '/' );
+	page.redirect( `/stats/day/${ context.params.siteId || '' }` );
 }
 
 export function layout( context, next ) {

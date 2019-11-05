@@ -15,7 +15,7 @@ import { isProductsListFetching as isFetching } from 'state/products-list/select
 import { requestProductsList } from 'state/products-list/actions';
 
 class QueryProductsList extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.isFetching ) {
 			this.props.requestProductsList();
 		}

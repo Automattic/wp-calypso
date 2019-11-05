@@ -23,11 +23,11 @@ import {
 import { shouldShowProgress, getSelectedPostType, isExporting } from 'state/exporter/selectors';
 
 class ExportCard extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.advancedSettingsFetch( this.props.siteId );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.props.advancedSettingsFetch( newProps.siteId );
 		}

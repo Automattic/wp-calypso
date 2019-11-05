@@ -51,11 +51,11 @@ class JetpackSsoForm extends Component {
 		showTermsDialog: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.maybeValidateSSO();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.maybeValidateSSO( nextProps );
 
 		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {

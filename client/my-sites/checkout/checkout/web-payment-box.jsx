@@ -26,7 +26,7 @@ import {
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
 } from 'lib/web-payment';
-import { webPayment } from 'lib/store-transactions';
+import { webPayment } from 'lib/transaction/payments';
 import { setPayment, setStripeObject } from 'lib/transaction/actions';
 import { setTaxCountryCode, setTaxPostalCode } from 'lib/cart/actions';
 import CartToggle from './cart-toggle';

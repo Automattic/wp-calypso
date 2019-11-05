@@ -1,7 +1,7 @@
 .importer__import-progress {
 	&.progress-bar {
 		display: block;
-		margin-bottom: 5px;
+		margin-bottom: 0.25em;
 		margin-left: auto;
 		margin-right: auto;
 		width: 80%;
@@ -32,6 +32,7 @@
 }
 
 .importer__status-message {
+	font-size: 14px;
 	color: var( --color-text-subtle );
 	text-align: center;
 }

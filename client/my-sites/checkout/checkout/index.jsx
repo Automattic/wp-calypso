@@ -46,7 +46,7 @@ import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
-import { hasDomainDetails } from 'lib/store-transactions';
+import { hasDomainDetails } from 'lib/transaction/selectors';
 import notices from 'notices';
 import { managePurchase } from 'me/purchases/paths';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
@@ -115,7 +115,7 @@ export class Checkout extends React.Component {
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		resetTransaction();
 	}
 
@@ -140,7 +140,7 @@ export class Checkout extends React.Component {
 
 	// TODO: update this component to not use deprecated life cycle methods
 	/* eslint-disable-next-line react/no-deprecated */
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
@@ -844,8 +844,7 @@ export class Checkout extends React.Component {
 	}
 
 	needsDomainDetails() {
-		const cart = this.props.cart;
-		const transaction = this.props.transaction;
+		const { cart, transaction } = this.props;
 
 		if ( cart && hasOnlyRenewalItems( cart ) ) {
 			return false;
