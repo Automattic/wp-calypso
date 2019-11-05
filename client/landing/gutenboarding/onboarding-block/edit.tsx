@@ -24,6 +24,8 @@ export default function OnboardingEdit() {
 	const [ verticalId, setVerticalId ] = useState< string >();
 
 	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
+
+	// This is a difficult section for working with FormToken field. Not ideal for our use case.
 	const [ verticalLabels, verticalLabelToId ] = useSelect( select => {
 		const vs = select( STORE_KEY ).getVerticals();
 		if ( ! vs ) {
@@ -47,6 +49,12 @@ export default function OnboardingEdit() {
 		},
 		[ verticalId ]
 	);
+	const updateVerticalId = useCallback(
+		( [ nextLabel ] ) => setVerticalId( verticalLabelToId[ nextLabel ] ),
+		[ setVerticalId, verticalLabels, verticalLabelToId ]
+	);
+	// END: FormTokenField difficult section
+
 	const { resetSiteType, setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
 
 	const updateTitle = useCallback(
@@ -56,10 +64,6 @@ export default function OnboardingEdit() {
 	const updateSiteType = useCallback(
 		( e: React.ChangeEvent< HTMLInputElement > ) => setSiteType( e.target.value as SiteType ),
 		[ setSiteType ]
-	);
-	const updateVerticalId = useCallback(
-		( [ nextLabel ] ) => setVerticalId( verticalLabelToId[ nextLabel ] ),
-		[ setVerticalId, verticalLabels, verticalLabelToId ]
 	);
 
 	return (
