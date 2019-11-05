@@ -9,6 +9,15 @@
 			margin-bottom: 24px;
 		}
 	}
+
+	&.is-left-align {
+		text-align: left;
+		margin: 16px;
+
+		@include breakpoint( '>660px' ) {
+			margin: 0 0 16px;
+		}
+	}
 }
 
 .formatted-header__title {

@@ -18,10 +18,18 @@ import { preventWidows } from 'lib/formatting';
  */
 import './style.scss';
 
-function FormattedHeader( { id, headerText, subHeaderText, className, compactOnMobile } ) {
+function FormattedHeader( {
+	id,
+	headerText,
+	subHeaderText,
+	className,
+	compactOnMobile,
+	leftAlign,
+} ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
 		'is-compact-on-mobile': compactOnMobile,
+		'is-left-align': leftAlign,
 	} );
 
 	return (
