@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { isBeingProcessed } from 'lib/domains/dns';
 import DnsRecordsListItem from '../dns-records/item';
 
 class DnsRecord extends React.Component {
@@ -119,7 +118,7 @@ class DnsRecord extends React.Component {
 
 	render() {
 		const { dnsRecord } = this.props;
-		const disabled = isBeingProcessed( dnsRecord );
+		const disabled = dnsRecord.isBeingDeleted || dnsRecord.isBeingAdded;
 		const isAllowedToBeRemoved = ! dnsRecord.protected_field || 'MX' === dnsRecord.type;
 
 		return (

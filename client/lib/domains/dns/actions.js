@@ -16,7 +16,6 @@ import {
 	DNS_FETCH_FAILED,
 } from './action-types';
 import DnsStore from './store';
-import { isBeingProcessed } from '.';
 
 export function fetchDns( domainName ) {
 	const dns = DnsStore.getByDomainName( domainName );
@@ -30,23 +29,27 @@ export function fetchDns( domainName ) {
 		domainName,
 	} );
 
-	wpcom.undocumented().fetchDns( domainName, ( error, data ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: DNS_FETCH_COMPLETED,
-				records: data && data.records,
-				domainName,
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: DNS_FETCH_FAILED,
-				domainName,
-			} );
-		}
-	} );
+	wpcom
+		.undocumented()
+		.fetchDns( domainName )
+		.then(
+			data => {
+				Dispatcher.handleServerAction( {
+					type: DNS_FETCH_COMPLETED,
+					records: data && data.records,
+					domainName,
+				} );
+			},
+			() => {
+				Dispatcher.handleServerAction( {
+					type: DNS_FETCH_FAILED,
+					domainName,
+				} );
+			}
+		);
 }
 
-export function addDns( domainName, record, onComplete ) {
+export function addDns( domainName, record ) {
 	Dispatcher.handleServerAction( {
 		type: DNS_ADD,
 		domainName,
@@ -55,23 +58,28 @@ export function addDns( domainName, record, onComplete ) {
 
 	const dns = DnsStore.getByDomainName( domainName );
 
-	wpcom.undocumented().updateDns( domainName, dns.records, error => {
-		const type = ! error ? DNS_ADD_COMPLETED : DNS_ADD_FAILED;
-		Dispatcher.handleServerAction( {
-			type,
-			domainName,
-			record,
-		} );
+	const addResult = wpcom.undocumented().updateDns( domainName, dns.records );
+	addResult.then(
+		() => {
+			Dispatcher.handleServerAction( {
+				type: DNS_ADD_COMPLETED,
+				domainName,
+				record,
+			} );
+		},
+		() => {
+			Dispatcher.handleServerAction( {
+				type: DNS_ADD_FAILED,
+				domainName,
+				record,
+			} );
+		}
+	);
 
-		onComplete( error );
-	} );
+	return addResult;
 }
 
-export function deleteDns( domainName, record, onComplete ) {
-	if ( isBeingProcessed( record ) ) {
-		return;
-	}
-
+export function deleteDns( domainName, record ) {
 	Dispatcher.handleServerAction( {
 		type: DNS_DELETE,
 		domainName,
@@ -80,30 +88,41 @@ export function deleteDns( domainName, record, onComplete ) {
 
 	const dns = DnsStore.getByDomainName( domainName );
 
-	wpcom.undocumented().updateDns( domainName, dns.records, error => {
-		const type = ! error ? DNS_DELETE_COMPLETED : DNS_DELETE_FAILED;
+	const updateResult = wpcom.undocumented().updateDns( domainName, dns.records );
+	updateResult.then(
+		() => {
+			Dispatcher.handleServerAction( {
+				type: DNS_DELETE_COMPLETED,
+				domainName,
+				record,
+			} );
+		},
+		() => {
+			Dispatcher.handleServerAction( {
+				type: DNS_DELETE_FAILED,
+				domainName,
+				record,
+			} );
+		}
+	);
 
-		Dispatcher.handleServerAction( {
-			type,
-			domainName,
-			record,
-		} );
-
-		onComplete( error );
-	} );
+	return updateResult;
 }
 
-export function applyDnsTemplate( domainName, provider, service, variables, onComplete ) {
-	wpcom
+export function applyDnsTemplate( domainName, provider, service, variables ) {
+	const applyResult = wpcom
 		.undocumented()
-		.applyDnsTemplate( domainName, provider, service, variables, ( error, data ) => {
-			if ( ! error ) {
-				Dispatcher.handleServerAction( {
-					type: DNS_APPLY_TEMPLATE_COMPLETED,
-					records: data && data.records,
-					domainName,
-				} );
-			}
-			onComplete( error );
-		} );
+		.applyDnsTemplate( domainName, provider, service, variables );
+	applyResult.then(
+		data => {
+			Dispatcher.handleServerAction( {
+				type: DNS_APPLY_TEMPLATE_COMPLETED,
+				records: data && data.records,
+				domainName,
+			} );
+		},
+		() => {} // swallow the error to avoid unhandled promise warnings. Caller will handle it.
+	);
+
+	return applyResult;
 }
