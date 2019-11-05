@@ -55,7 +55,13 @@ import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getDiscountByName } from 'lib/discounts';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getSiteOption, getSitePlan, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	getSitePlan,
+	getSiteSlug,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'state/sites/selectors';
 import { getSiteType as getSignupSiteType } from 'state/signup/steps/site-type/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
@@ -82,6 +88,27 @@ export class PlansFeaturesMain extends Component {
 		if ( siteId && siteId !== prevSiteId ) {
 			this.props.selectHappychatSiteId( siteId );
 		}
+	}
+
+	isJetpackBackupAvailable() {
+		const { displayJetpackPlans, jetpackSupportsBackupProducts, siteId } = this.props;
+
+		// Jetpack Backup products are currently under a feature flag
+		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
+			return false;
+		}
+
+		// Only for Jetpack, non-atomic sites
+		if ( ! displayJetpackPlans ) {
+			return false;
+		}
+
+		// Only for sites with Jetpack >= 7.9alpha
+		if ( siteId && ! jetpackSupportsBackupProducts ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	getPlanFeatures() {
@@ -121,7 +148,7 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
-				{ isEnabled( 'plans/jetpack-backup' ) && displayJetpackPlans && (
+				{ this.isJetpackBackupAvailable() && (
 					<FormattedHeader
 						headerText={ translate( 'Plans' ) }
 						subHeaderText={ translate(
@@ -393,15 +420,11 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderProductsSelector() {
-		if ( ! isEnabled( 'plans/jetpack-backup' ) ) {
+		if ( ! this.isJetpackBackupAvailable() ) {
 			return null;
 		}
 
-		const { intervalType, displayJetpackPlans, translate } = this.props;
-
-		if ( ! displayJetpackPlans ) {
-			return null;
-		}
+		const { intervalType, translate } = this.props;
 
 		return (
 			<div className="plans-features-main__group is-narrow">
@@ -520,6 +543,7 @@ export default connect(
 			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
+			jetpackSupportsBackupProducts: isJetpackMinimumVersion( state, siteId, '7.9-alpha' ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
