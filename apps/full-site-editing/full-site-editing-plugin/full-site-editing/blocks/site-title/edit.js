@@ -28,37 +28,24 @@ import { PanelBody } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import useSiteOptions from '../useSiteOptions';
+import { withSiteOptions } from '../../lib';
 
 function SiteTitleEdit( {
 	attributes,
 	className,
-	createErrorNotice,
 	fontSize,
 	insertDefaultBlock,
-	isSelected,
 	setAttributes,
 	setFontSize,
 	setTextColor,
-	shouldUpdateSiteOption,
+	siteTitle,
 	textColor,
 } ) {
 	const { customFontSize, textAlign } = attributes;
 
 	const actualFontSize = customFontSize || fontSize.size;
 
-	const inititalTitle = __( 'Site title loading…' );
-
-	const { siteOptions, handleChange } = useSiteOptions(
-		'title',
-		inititalTitle,
-		createErrorNotice,
-		isSelected,
-		shouldUpdateSiteOption,
-		setAttributes
-	);
-
-	const { option } = siteOptions;
+	const { value, updateValue } = siteTitle;
 
 	return (
 		<Fragment>
@@ -96,7 +83,7 @@ function SiteTitleEdit( {
 					[ fontSize.class ]: ! customFontSize && fontSize.class,
 				} ) }
 				identifier="content"
-				onChange={ value => handleChange( value ) }
+				onChange={ updateValue }
 				onReplace={ insertDefaultBlock }
 				onSplit={ noop }
 				placeholder={ __( 'Add a Site Title' ) }
@@ -105,7 +92,7 @@ function SiteTitleEdit( {
 					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
 				} }
 				tagName="h1"
-				value={ option }
+				value={ value }
 			/>
 		</Fragment>
 	);
@@ -115,9 +102,6 @@ export default compose( [
 	withColors( { textColor: 'color' } ),
 	withFontSizes( 'fontSize' ),
 	withSelect( ( select, { clientId } ) => {
-		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
-			'core/editor'
-		);
 		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select( 'core/block-editor' );
 		const rootClientId = getBlockRootClientId( clientId );
 
@@ -125,14 +109,13 @@ export default compose( [
 			blockIndex: getBlockIndex( clientId, rootClientId ),
 			isLocked: !! getTemplateLock( rootClientId ),
 			rootClientId,
-			shouldUpdateSiteOption:
-				( ( isSavingPost() && isCurrentPostPublished() ) || isPublishingPost() ) &&
-				! isAutosavingPost(),
 		};
 	} ),
 	withDispatch( ( dispatch, { blockIndex, rootClientId } ) => ( {
-		createErrorNotice: dispatch( 'core/notices' ).createErrorNotice,
 		insertDefaultBlock: () =>
 			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
 	} ) ),
+	withSiteOptions( {
+		siteTitle: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
+	} ),
 ] )( SiteTitleEdit );

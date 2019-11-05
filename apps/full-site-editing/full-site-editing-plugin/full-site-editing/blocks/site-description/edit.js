@@ -29,39 +29,26 @@ import { PanelBody } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import useSiteOptions from '../useSiteOptions';
+import { withSiteOptions } from '../../lib';
 
 function SiteDescriptionEdit( {
 	attributes,
 	backgroundColor,
 	className,
-	createErrorNotice,
 	fontSize,
 	insertDefaultBlock,
-	isSelected,
 	setAttributes,
 	setBackgroundColor,
 	setFontSize,
 	setTextColor,
-	shouldUpdateSiteOption,
+	siteDescription,
 	textColor,
 } ) {
 	const { customFontSize, textAlign } = attributes;
 
 	const actualFontSize = customFontSize || fontSize.size;
 
-	const inititalDescription = __( 'Site description loading…' );
-
-	const { siteOptions, handleChange } = useSiteOptions(
-		'description',
-		inititalDescription,
-		createErrorNotice,
-		isSelected,
-		shouldUpdateSiteOption,
-		setAttributes
-	);
-
-	const { option } = siteOptions;
+	const { value, updateValue } = siteDescription;
 
 	return (
 		<Fragment>
@@ -114,7 +101,7 @@ function SiteDescriptionEdit( {
 					[ fontSize.class ]: ! customFontSize && fontSize.class,
 				} ) }
 				identifier="content"
-				onChange={ value => handleChange( value ) }
+				onChange={ updateValue }
 				onReplace={ insertDefaultBlock }
 				onSplit={ noop }
 				placeholder={ __( 'Add a Site Description' ) }
@@ -124,7 +111,7 @@ function SiteDescriptionEdit( {
 					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
 				} }
 				tagName="p"
-				value={ option }
+				value={ value }
 			/>
 		</Fragment>
 	);
@@ -134,9 +121,6 @@ export default compose( [
 	withColors( 'backgroundColor', { textColor: 'color' } ),
 	withFontSizes( 'fontSize' ),
 	withSelect( ( select, { clientId } ) => {
-		const { isSavingPost, isPublishingPost, isAutosavingPost, isCurrentPostPublished } = select(
-			'core/editor'
-		);
 		const { getBlockIndex, getBlockRootClientId, getTemplateLock } = select( 'core/block-editor' );
 		const rootClientId = getBlockRootClientId( clientId );
 
@@ -144,14 +128,13 @@ export default compose( [
 			blockIndex: getBlockIndex( clientId, rootClientId ),
 			isLocked: !! getTemplateLock( rootClientId ),
 			rootClientId,
-			shouldUpdateSiteOption:
-				( ( isSavingPost() && isCurrentPostPublished() ) || isPublishingPost() ) &&
-				! isAutosavingPost(),
 		};
 	} ),
 	withDispatch( ( dispatch, { blockIndex, rootClientId } ) => ( {
-		createErrorNotice: dispatch( 'core/notices' ).createErrorNotice,
 		insertDefaultBlock: () =>
 			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
 	} ) ),
+	withSiteOptions( {
+		siteDescription: { optionName: 'description', defaultValue: __( 'Site description loading…' ) },
+	} ),
 ] )( SiteDescriptionEdit );
