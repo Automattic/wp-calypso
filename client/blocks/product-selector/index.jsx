@@ -20,10 +20,10 @@ import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentPlan, getPlansBySiteId, getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getPlansBySiteId, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { planHasFeature } from 'lib/plans';
+import { getPlan, planHasFeature } from 'lib/plans';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
@@ -107,10 +107,6 @@ export class ProductSelector extends Component {
 		const productObject = storeProducts[ productSlug ];
 
 		return productObject.product_name;
-	}
-
-	getShortPlanName( planName ) {
-		return planName.replace( 'Jetpack ', '' );
 	}
 
 	getProductDisplayName( product ) {
@@ -289,7 +285,7 @@ export class ProductSelector extends Component {
 			return null;
 		}
 
-		const planName = this.getShortPlanName( planUpsellProduct.product_name );
+		const planName = getPlan( planUpsellProduct.product_slug ).getTitle();
 		const productUpsellSlug = this.getProductUpsell( product );
 		const productUpsellObject = storeProducts[ productUpsellSlug ];
 		const productUpsellName = this.getProductName( product, productUpsellObject.product_slug );
@@ -315,7 +311,6 @@ export class ProductSelector extends Component {
 	renderProducts() {
 		const {
 			currencyCode,
-			currentPlan,
 			currentPlanSlug,
 			fetchingSitePurchases,
 			intervalType,
@@ -338,6 +333,8 @@ export class ProductSelector extends Component {
 			} );
 		}
 
+		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
@@ -350,13 +347,12 @@ export class ProductSelector extends Component {
 				billingTimeFrame = null;
 				fullPrice = null;
 				discountedPrice = null;
-				subtitle = translate( 'Included in your {{planLink/}} plan', {
+				subtitle = translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
+					args: {
+						planName: currentPlan.getTitle(),
+					},
 					components: {
-						planLink: (
-							<a href={ `/plans/my-plan/${ selectedSiteSlug }` }>
-								{ this.getShortPlanName( currentPlan.productName ) }
-							</a>
-						),
+						planLink: <a href={ `/plans/my-plan/${ selectedSiteSlug }` } />,
 					},
 				} );
 			} else {
@@ -472,7 +468,6 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 	return {
 		availableProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
 		productSlugs,
