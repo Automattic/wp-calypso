@@ -20,3 +20,8 @@ export function useLineItems() {
 	}
 	return [ items, total ];
 }
+
+export function useTotal() {
+	const [ , total ] = useLineItems();
+	return total;
+}

@@ -16,7 +16,7 @@ import {
 import Checkout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems } from './lib/line-items';
+import { useLineItems, useTotal } from './lib/line-items';
 import { useLocalize } from './lib/localize';
 import {
 	createRegistry,
@@ -52,4 +52,5 @@ export {
 	dispatch,
 	select,
 	useLocalize,
+	useTotal,
 };
