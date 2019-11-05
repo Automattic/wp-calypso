@@ -424,7 +424,7 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { intervalType, translate } = this.props;
+		const { basePlansPath, intervalType, translate } = this.props;
 
 		return (
 			<div className="plans-features-main__group is-narrow">
@@ -436,6 +436,7 @@ export class PlansFeaturesMain extends Component {
 				<ProductSelector
 					products={ JETPACK_PRODUCTS }
 					intervalType={ intervalType }
+					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
 				/>
 			</div>
