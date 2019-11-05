@@ -62,6 +62,7 @@ class EmailManagement extends React.Component {
 
 	render() {
 		const { selectedSiteId } = this.props;
+
 		return (
 			<Main className="email-management" wideLayout>
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
@@ -76,6 +77,7 @@ class EmailManagement extends React.Component {
 
 	headerOrPlansNavigation() {
 		const { cart, selectedSiteSlug, selectedDomainName, translate } = this.props;
+
 		if ( selectedDomainName ) {
 			return (
 				<Header onClick={ this.goToEditOrList } selectedDomainName={ selectedDomainName }>
@@ -83,6 +85,7 @@ class EmailManagement extends React.Component {
 				</Header>
 			);
 		}
+
 		return (
 			<PlansNavigation
 				cart={ cart }
@@ -119,6 +122,7 @@ class EmailManagement extends React.Component {
 
 	emptyContent() {
 		const { selectedSiteSlug, translate } = this.props;
+
 		const defaultEmptyContentProps = {
 			illustration: customDomainImage,
 			action: translate( 'Add a Custom Domain' ),
@@ -135,17 +139,6 @@ class EmailManagement extends React.Component {
 
 		const selectedDomain = getSelectedDomain( this.props );
 
-		if ( isGSuiteRestricted() && ! selectedDomainName ) {
-			return {
-				title: translate( 'Enable powerful email features.' ),
-				line: translate(
-					'To set up email forwarding, and other email ' +
-						'services for your site, upgrade your site’s web address ' +
-						'to a professional custom domain.'
-				),
-			};
-		}
-
 		if ( selectedDomain && hasGSuiteWithAnotherProvider( selectedDomain ) ) {
 			return {
 				title: translate( 'G Suite is not supported on this domain' ),
@@ -161,7 +154,7 @@ class EmailManagement extends React.Component {
 		};
 
 		if (
-			selectedDomainName &&
+			selectedDomain &&
 			isMappedDomain( selectedDomain ) &&
 			! isMappedDomainWithWpcomNameservers( selectedDomain )
 		) {
@@ -198,6 +191,7 @@ class EmailManagement extends React.Component {
 
 	googleAppsUsersCard() {
 		const { domains, gsuiteUsers, selectedDomainName } = this.props;
+
 		return (
 			<GSuiteUsersCard
 				domains={ domains }
@@ -211,6 +205,7 @@ class EmailManagement extends React.Component {
 		const { domains, selectedDomainName } = this.props;
 		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
 		const gsuiteDomainName = getEligibleGSuiteDomain( selectedDomainName, domains );
+
 		return (
 			<Fragment>
 				<GSuitePurchaseCta domainName={ gsuiteDomainName } />
@@ -221,6 +216,7 @@ class EmailManagement extends React.Component {
 
 	addEmailForwardingCard( domain ) {
 		const { selectedSiteSlug, translate } = this.props;
+
 		return (
 			<VerticalNav>
 				<VerticalNavItem path={ emailManagementForwarding( selectedSiteSlug, domain ) }>
@@ -232,6 +228,7 @@ class EmailManagement extends React.Component {
 
 	goToEditOrList = () => {
 		const { selectedDomainName, selectedSiteSlug } = this.props;
+
 		if ( selectedDomainName ) {
 			page( domainManagementEdit( selectedSiteSlug, selectedDomainName ) );
 		} else {
