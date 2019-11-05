@@ -84,6 +84,12 @@
 					"requires": {
 						"lodash": "^4.17.15"
 					}
+				},
+				"typescript": {
+					"version": "3.6.4",
+					"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.6.4.tgz",
+					"integrity": "sha512-unoCll1+l+YK4i4F8f22TaNVPRHcD9PA3yCuZ8g5e0qGqlVlJ/8FSateOLLSagn+Yg5+ZwuPkL8LFUc0Jcvksg==",
+					"dev": true
 				}
 			}
 		},
@@ -112,7 +118,19 @@
 			"requires": {
 				"prop-types": "^15.7.2",
 				"react": "^16.8.6",
+				"react-stripe-elements": "^5.1.0",
 				"styled-components": "4.4.0"
+			},
+			"dependencies": {
+				"react-stripe-elements": {
+					"version": "5.1.0",
+					"resolved": "https://registry.npmjs.org/react-stripe-elements/-/react-stripe-elements-5.1.0.tgz",
+					"integrity": "sha512-4UlzOLNdbJsZr4JwbTdJjxhedAfalDDtfEYLHEBo0MKG0KgSLRAeIJup0/6NSpKtBLK4ieOMAwvyln9ICOSilQ==",
+					"dev": true,
+					"requires": {
+						"prop-types": "15.7.2"
+					}
+				}
 			}
 		},
 		"@automattic/format-currency": {
@@ -23660,9 +23678,9 @@
 			"integrity": "sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c="
 		},
 		"typescript": {
-			"version": "3.6.4",
-			"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.6.4.tgz",
-			"integrity": "sha512-unoCll1+l+YK4i4F8f22TaNVPRHcD9PA3yCuZ8g5e0qGqlVlJ/8FSateOLLSagn+Yg5+ZwuPkL8LFUc0Jcvksg==",
+			"version": "3.7.2",
+			"resolved": "https://registry.npmjs.org/typescript/-/typescript-3.7.2.tgz",
+			"integrity": "sha512-ml7V7JfiN2Xwvcer+XAf2csGO1bPBdRbFCkYBczNZggrBZ9c7G3riSUeJmqEU5uOtXNPMhE3n+R4FA/3YOAWOQ==",
 			"dev": true
 		},
 		"ua-parser-js": {
