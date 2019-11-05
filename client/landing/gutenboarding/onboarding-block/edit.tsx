@@ -100,14 +100,16 @@ export default function OnboardingEdit() {
 				) }
 			</div>
 			{ /* FormTokenField sufficient for first round, but not ideal. Simpler component for single autocomplete is needed */ }
-			<FormTokenField
-				label={ NO__( 'My site is about' ) }
-				maxLength={ 1 }
-				onChange={ updateVerticalId }
-				suggestions={ verticalLabels }
-				value={ verticalLabel }
-			/>
-			{ ( siteType !== EMPTY_FORM_VALUE || siteTitle ) && (
+			{ ( siteType !== EMPTY_FORM_VALUE || verticalLabel.length ) && (
+				<FormTokenField
+					label={ NO__( 'My site is about' ) }
+					maxLength={ 1 }
+					onChange={ updateVerticalId }
+					suggestions={ verticalLabels }
+					value={ verticalLabel }
+				/>
+			) }
+			{ ( verticalLabel.length || siteTitle ) && (
 				<>
 					<label className="onboarding-block__question">
 						<span>{ NO__( "It's called" ) }</span>
