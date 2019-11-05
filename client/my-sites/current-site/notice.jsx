@@ -17,7 +17,6 @@ import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import getActiveDiscount from 'state/selectors/get-active-discount';
-import { clickUpgradeNudge } from 'state/marketing/actions';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit, isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -32,7 +31,6 @@ import {
 } from 'state/plugins/premium/selectors';
 import CartData from 'components/data/cart';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 import PendingPaymentNotice from './pending-payment-notice';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
@@ -42,8 +40,8 @@ import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/do
 import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
-import { CTA_FREE_TO_PAID } from './constants';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import AsyncLoad from 'components/async-load';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -200,25 +198,6 @@ export class SiteNotice extends React.Component {
 		);
 	}
 
-	freeToPaidPlanNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell || this.props.isDomainOnly ) {
-			return null;
-		}
-
-		const { site, translate } = this.props;
-
-		return (
-			<SidebarBanner
-				ctaName={ CTA_FREE_TO_PAID }
-				ctaText={ translate( 'Upgrade' ) }
-				href={ '/plans/' + site.slug }
-				icon="info-outline"
-				text={ translate( 'Free domain with a plan' ) }
-				onClick={ () => this.props.clickFreeToPaidPlanNotice( site.ID ) }
-			/>
-		);
-	}
-
 	activeDiscountNotice() {
 		if ( ! this.props.activeDiscount ) {
 			return null;
@@ -297,7 +276,7 @@ export class SiteNotice extends React.Component {
 			return <div className="current-site__notices" />;
 		}
 
-		const discountOrFreeToPaid = this.activeDiscountNotice() || this.freeToPaidPlanNotice();
+		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 		const domainCreditNotice = this.domainCreditNotice();
 		const jetpackPluginsSetupNotice = this.jetpackPluginsSetupNotice();
@@ -306,7 +285,14 @@ export class SiteNotice extends React.Component {
 			<div className="current-site__notices">
 				<QueryProductsList />
 				<QueryActivePromotions />
-				{ discountOrFreeToPaid || <DomainToPaidPlanNotice /> }
+				{ discountOrFreeToPaid ||
+					( config.isEnabled( 'jitms' ) && (
+						<AsyncLoad
+							require="blocks/jitm"
+							messagePath={ `calypso:sidebar_notice` }
+							template="sidebar-banner"
+						/>
+					) ) }
 				{ siteRedirectNotice }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.pendingPaymentNotice() }
@@ -360,8 +346,6 @@ export default connect(
 					} )
 				);
 			},
-			clickFreeToPaidPlanNotice: siteId =>
-				dispatch( clickUpgradeNudge( siteId, CTA_FREE_TO_PAID ) ),
 		};
 	}
 )( localize( SiteNotice ) );

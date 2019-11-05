@@ -42,7 +42,6 @@ import DocumentHead from 'components/data/document-head';
 import AppBanner from 'blocks/app-banner';
 import GdprBanner from 'blocks/gdpr-banner';
 import { getPreference } from 'state/preferences/selectors';
-import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
@@ -147,7 +146,13 @@ class Layout extends Component {
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
-					{ config.isEnabled( 'jitms' ) && <JITM /> }
+					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
+						<AsyncLoad
+							require="blocks/jitm"
+							messagePath={ `calypso:${ this.props.sectionName }:admin_notices` }
+							sectionName={ this.props.sectionName }
+						/>
+					) }
 					<GlobalNotices id="notices" notices={ notices.list } />
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
@@ -198,6 +203,7 @@ export default connect( state => {
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
+	const isEligibleForJITM = [ 'stats', 'plans' ].indexOf( sectionName ) >= 0;
 
 	return {
 		masterbarIsHidden:
@@ -206,6 +212,7 @@ export default connect( state => {
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,
 		isJetpackMobileFlow,
+		isEligibleForJITM,
 		oauth2Client,
 		wccomFrom,
 		isSupportSession: isSupportSession( state ),
