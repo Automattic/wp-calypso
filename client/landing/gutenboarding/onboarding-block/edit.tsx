@@ -10,7 +10,7 @@ import React, { useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { SiteType, EMPTY_FORM_VALUE } from '../store/types';
+import { SiteType, hasValue } from '../store/types';
 import { STORE_KEY } from '../store';
 import './style.scss';
 
@@ -74,7 +74,7 @@ export default function OnboardingEdit() {
 
 			<div className="onboarding-block__question">
 				<span>{ NO__( 'I want to create a website ' ) }</span>
-				{ siteType === EMPTY_FORM_VALUE ? (
+				{ ! hasValue( siteType ) ? (
 					<ul className="onboarding-block__multi-question">
 						{ map( siteTypeOptions, ( label, value ) => (
 							<li key={ value }>
@@ -100,7 +100,7 @@ export default function OnboardingEdit() {
 				) }
 			</div>
 			{ /* FormTokenField sufficient for first round, but not ideal. Simpler component for single autocomplete is needed */ }
-			{ ( siteType !== EMPTY_FORM_VALUE || ! isEmpty( verticalLabel ) ) && (
+			{ ( hasValue( siteType ) || ! isEmpty( verticalLabel ) ) && (
 				<FormTokenField
 					label={ NO__( 'My site is about' ) }
 					maxLength={ 1 }
