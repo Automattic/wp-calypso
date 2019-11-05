@@ -5,12 +5,13 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, flowRight as compose, includes, isEmpty, map } from 'lodash';
+import { find, findKey, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
 import ProductCardOptions from 'components/product-card/options';
@@ -168,12 +169,60 @@ export class ProductSelector extends Component {
 		return (
 			<ProductCardAction
 				onClick={ this.handleCheckoutForProduct( productObject ) }
+				intro={ this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
 						productName: this.getProductName( product, productObject.product_slug ),
 					},
 				} ) }
 			/>
+		);
+	}
+
+	getIntervalDiscount( selectedProductSlug ) {
+		const { basePlansPath, currencyCode, intervalType, siteSlug } = this.props;
+
+		if ( ! basePlansPath ) {
+			return null;
+		}
+
+		const isYearly = 'yearly' === intervalType;
+		const discountedProductSlug = isYearly
+			? selectedProductSlug
+			: this.getRelatedYearlyProductSlug( selectedProductSlug );
+
+		if ( ! discountedProductSlug ) {
+			return null;
+		}
+
+		const discountedPrice = this.getProductOptionDiscountedPrice( discountedProductSlug );
+		const fullPrice = this.getProductOptionFullPrice( discountedProductSlug );
+
+		return (
+			discountedPrice &&
+			fullPrice && (
+				<PlanIntervalDiscount
+					basePlansPath={ basePlansPath }
+					currencyCode={ currencyCode }
+					discountPrice={ discountedPrice }
+					isYearly={ isYearly }
+					originalPrice={ fullPrice }
+					siteSlug={ siteSlug }
+				/>
+			)
+		);
+	}
+
+	getRelatedYearlyProductSlug( monthlyProductSlug ) {
+		const { productPriceMatrix } = this.props;
+
+		if ( ! productPriceMatrix ) {
+			return null;
+		}
+
+		return findKey(
+			productPriceMatrix,
+			relatedMonthlyProduct => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
 		);
 	}
 
@@ -414,6 +463,7 @@ export class ProductSelector extends Component {
 }
 
 ProductSelector.propTypes = {
+	basePlansPath: PropTypes.string,
 	intervalType: PropTypes.string.isRequired,
 	products: PropTypes.arrayOf(
 		PropTypes.shape( {

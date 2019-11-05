@@ -19,7 +19,7 @@ const ProductCardAction = ( { intro, label, onClick } ) => (
 );
 
 ProductCardAction.propTypes = {
-	intro: PropTypes.string,
+	intro: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
 	label: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 };

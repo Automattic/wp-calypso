@@ -173,6 +173,6 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Card Action component:
 
-* `intro`: ( string ) Intro text to be displayed above the action button
+* `intro`: ( string | element | node ) Intro text to be displayed above the action button. It can be a string, a node or a React element (e.g. `<Fragment>`)
 * `label`: ( string ) Action button text
 * `onClick`: ( func ) Action button click event handler
