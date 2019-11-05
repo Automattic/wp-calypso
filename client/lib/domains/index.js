@@ -163,13 +163,13 @@ function isMappedDomain( domain ) {
 }
 
 /**
- * Checks if the supplied `domain` is a mapped domain and has WP.com name servers.
+ * Checks if the supplied domain is a mapped domain and has WordPress.com name servers.
  *
- * @param {Object} domain domain object
- * @returns {boolean} true if condition is met.
+ * @param {Object} domain - domain object
+ * @returns {Boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
  */
 function isMappedDomainWithWpcomNameservers( domain ) {
-	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false ) === true;
+	return isMappedDomain( domain ) && get( domain, 'hasWpcomNameservers', false );
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {

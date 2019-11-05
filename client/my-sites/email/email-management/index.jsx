@@ -93,42 +93,47 @@ class EmailManagement extends React.Component {
 
 	content() {
 		const { domains, gsuiteUsers, isRequestingDomains, selectedDomainName } = this.props;
-		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
+
 		if ( isRequestingDomains || ! gsuiteUsers ) {
 			return <Placeholder />;
 		}
+
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
 		if ( domainList.some( hasGSuiteWithUs ) ) {
 			return this.googleAppsUsersCard();
 		}
+
 		if ( hasGSuiteSupportedDomain( domainList ) ) {
 			return this.addGSuiteCta();
 		}
+
+		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
+
 		if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
 			return this.addEmailForwardingCard( emailForwardingDomain );
 		}
-		return this.getEmptyContent();
+
+		return this.emptyContent();
 	}
 
-	getEmptyContent() {
+	emptyContent() {
 		const { selectedSiteSlug, translate } = this.props;
 		const defaultEmptyContentProps = {
 			illustration: customDomainImage,
 			action: translate( 'Add a Custom Domain' ),
 			actionURL: '/domains/add/' + selectedSiteSlug,
 		};
-		const emptyContentProps = { ...defaultEmptyContentProps, ...this.emptyContentProps() };
+
+		const emptyContentProps = { ...defaultEmptyContentProps, ...this.getEmptyContentProps() };
+
 		return <EmptyContent { ...emptyContentProps } />;
 	}
 
-	emptyContentProps() {
+	getEmptyContentProps() {
 		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
+
 		const selectedDomain = getSelectedDomain( this.props );
-		const emailForwardingAction = {
-			secondaryAction: translate( 'Add Email Forwarding' ),
-			secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
-		};
 
 		if ( isGSuiteRestricted() && ! selectedDomainName ) {
 			return {
@@ -150,6 +155,11 @@ class EmailManagement extends React.Component {
 			};
 		}
 
+		const emailForwardingAction = {
+			secondaryAction: translate( 'Add Email Forwarding' ),
+			secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
+		};
+
 		if (
 			selectedDomainName &&
 			isMappedDomain( selectedDomain ) &&
@@ -162,8 +172,7 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL:
-					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL: 'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};

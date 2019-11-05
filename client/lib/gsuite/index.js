@@ -96,10 +96,10 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 }
 
 /**
- * Filters a list of domains by the domains that eligible for G Suite
+ * Filters a list of domains by the domains that eligible for G Suite.
  *
  * @param {Array} domains - list of domain objects
- * @returns {Array} - Array of G Suite supported domans
+ * @returns {Array} - the list of domains that are eligible for G Suite
  */
 function getGSuiteSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
@@ -107,13 +107,13 @@ function getGSuiteSupportedDomains( domains ) {
 			return false;
 		}
 
-		const isHostedOnWpcom =
-			isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuiteWithUs( domain ) );
+		const isHostedOnWpcom = isRegisteredDomain( domain ) && ( domain.hasWpcomNameservers || hasGSuiteWithUs( domain ) );
 
-		return (
-			( isHostedOnWpcom || isMappedDomainWithWpcomNameservers( domain ) ) &&
-			canDomainAddGSuite( domain.name )
-		);
+		if ( ! isHostedOnWpcom && ! isMappedDomainWithWpcomNameservers( domain ) ) {
+			return false;
+		}
+
+		return canDomainAddGSuite( domain.name );
 	} );
 }
 
