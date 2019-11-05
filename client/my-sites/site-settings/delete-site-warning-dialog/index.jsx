@@ -17,7 +17,7 @@ import { purchasesRoot } from 'me/purchases/paths';
  */
 import './style.scss';
 
-const DeleteSiteWarningDialog = ( { isVisible, onClose } ) => {
+function DeleteSiteWarningDialog( { isVisible, onClose } ) {
 	const translate = useTranslate();
 	const buttons = [
 		{ action: 'dismiss', label: translate( 'Dismiss' ) },
@@ -42,7 +42,7 @@ const DeleteSiteWarningDialog = ( { isVisible, onClose } ) => {
 			</p>
 		</Dialog>
 	);
-};
+}
 
 DeleteSiteWarningDialog.propTypes = {
 	isVisible: PropTypes.bool.isRequired,
