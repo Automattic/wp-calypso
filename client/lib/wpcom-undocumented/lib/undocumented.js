@@ -871,6 +871,25 @@ Undocumented.prototype.metaKeyring = function( fn ) {
 };
 
 /**
+ * Return a list of third-party services that WordPress.com can integrate with for a specific site
+ *
+ * @param {int|string} siteId The site ID or domain
+ * @param {Function} fn The callback function
+ * @return {Promise} A Promise to resolve when complete
+ * @api public
+ */
+Undocumented.prototype.sitesExternalServices = function( siteId, fn ) {
+	debug( '/sites/:site-id:/external-services query' );
+	return this.wpcom.req.get(
+		{
+			path: '/sites/' + siteId + '/external-services/',
+			apiVersion: '1.1',
+		},
+		fn
+	);
+};
+
+/**
  * Return a list of happiness engineers gravatar urls
  *
  * @param {Function} fn The callback function
