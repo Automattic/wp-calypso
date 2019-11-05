@@ -80,7 +80,6 @@ export default function OnboardingEdit() {
 							<li key={ value }>
 								<label>
 									<input
-										checked={ siteType === value }
 										name="onboarding_site_type"
 										onChange={ updateSiteType }
 										type="radio"
