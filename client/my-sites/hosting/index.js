@@ -12,9 +12,9 @@ import { handleHostingPanelRedirect, layout } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/hosting', siteSelection, sites, makeLayout, clientRender );
+	page( '/hosting-admin', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/hosting/:site_id',
+		'/hosting-admin/:site_id',
 		siteSelection,
 		navigation,
 		handleHostingPanelRedirect,

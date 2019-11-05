@@ -39,6 +39,7 @@ export default class extends React.Component {
 
 The following props can be passed to the Product Selector block:
 
+* `basePlansPath`: ( string ) Plans page base path.
 * `intervalType`: ( string ) Billing interval - `monthly`, `yearly` or `2yearly`.
 * `products`: ( array ) Products to render, each with the following structure:
 	* `title`: ( string ) Product title.
@@ -85,6 +86,14 @@ The following props can be passed to the Product Selector block:
 		}
 		```
 	* `optionsLabel`: ( string ) Title of the product options section.
+	* `productUpsells`: ( object ) Optional product upsells. Used to create a map of suggested higher-tier products as an up-sell for a purchased product.
+	Each key is a product slug, and the value is a slug of a product that we want to upsell when the key product has been purchased. Example:
+		```
+		productUpsells: {
+			jetpack_backup_daily: 'jetpack_backup_realtime',
+			jetpack_backup_daily_monthly: 'jetpack_backup_realtime_monthly',
+		}
+		```
 * `productPriceMatrix`: ( object ) Matrix of product price relationships. Each key is a product slug, and each value is an object with the following structure:
 	* `relatedProduct`: ( string ) Slug of the related product.
 	* `ratio`: ( number ) Ratio between original plan and related plan. Example: for a `yearly` to `monthly` plan, this should be `12`.

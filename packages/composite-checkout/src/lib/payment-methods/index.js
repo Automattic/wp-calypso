@@ -44,11 +44,17 @@ export function getPaymentMethods() {
 
 export function usePaymentMethodId() {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+	if ( ! setPaymentMethodId ) {
+		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
+	}
 	return [ paymentMethodId, setPaymentMethodId ];
 }
 
 export function usePaymentMethod() {
-	const { paymentMethodId } = useContext( CheckoutContext );
+	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+	if ( ! setPaymentMethodId ) {
+		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
+	}
 	if ( ! paymentMethodId ) {
 		return null;
 	}
@@ -61,6 +67,9 @@ export function usePaymentMethod() {
 
 export function usePaymentData() {
 	const { paymentData, dispatchPaymentAction } = useContext( CheckoutContext );
+	if ( ! dispatchPaymentAction ) {
+		throw new Error( 'usePaymentData can only be used inside a CheckoutProvider' );
+	}
 	return [ paymentData, dispatchPaymentAction ];
 }
 

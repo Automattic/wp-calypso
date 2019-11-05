@@ -20,7 +20,7 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -30,16 +30,10 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 			aria-label={ NO__( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<div>
-				<p>
-					You have a: { siteType }!
-					{ siteTitle && (
-						<>
-							<br />
-							It's called <em>{ siteTitle }</em>!
-						</>
-					) }
-				</p>
+			<div className="gutenboarding__header-site">
+				<span className="gutenboarding__header-site-heading">
+					{ siteTitle ? siteTitle : NO__( 'Create a website' ) }
+				</span>
 			</div>
 			<div
 				aria-label={ NO__( 'Document tools' ) }

@@ -1,0 +1,223 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`webpack-config-flag-plugin should produce expected output: Output bundle should match snapshot 1`] = `
+"(window[\\"webpackJsonp\\"] = window[\\"webpackJsonp\\"] || []).push([[\\"main\\"],{
+
+/***/ \\"./main.js\\":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+\\"use strict\\";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: ./config.js
+function isEnabled( flag ) {
+	return 'argh';
+}
+
+/* harmony default export */ var config = ({ isEnabled });
+
+// CONCATENATED MODULE: ./default-import/module.js
+
+
+// Should be replaced with true
+if ( true ) {
+}
+
+// CONCATENATED MODULE: ./default-import/function.js
+
+
+function fn() {
+	// Should be replaced with true
+	if ( true ) {
+	}
+}
+
+// CONCATENATED MODULE: ./default-import/wrong-flag.js
+
+
+// Should NOT be replaced with true.
+if ( config.isEnabled( 'bar' ) ) {
+}
+
+// CONCATENATED MODULE: ./default-import/rename.js
+
+
+// Should be replaced with true
+if ( true ) {
+}
+
+// CONCATENATED MODULE: ./default-import/wrong-path.js
+
+
+// Should NOT be replaced with true
+if ( config.isEnabled( 'foo' ) ) {
+}
+
+// CONCATENATED MODULE: ./default-import/shadowed-by-param.js
+
+
+function shadowed_by_param_fn( config ) {
+	// Should NOT be replaced with true
+	if ( config.isEnabled( 'foo' ) ) {
+	}
+}
+
+// CONCATENATED MODULE: ./default-import/shadowed-by-var.js
+
+
+function shadowed_by_var_fn() {
+	const config = { isEnabled: () => false };
+	// Should NOT be replaced with true
+	if ( config.isEnabled( 'foo' ) ) {
+	}
+}
+
+// CONCATENATED MODULE: ./default-import/index.js
+
+
+
+
+
+
+
+
+// CONCATENATED MODULE: ./named-import/module.js
+
+
+// Should be replaced with true
+if ( true ) {
+}
+
+// CONCATENATED MODULE: ./named-import/function.js
+
+
+function function_fn() {
+	// Should be replaced with true
+	if ( true ) {
+	}
+}
+
+// CONCATENATED MODULE: ./named-import/wrong-flag.js
+
+
+// Should NOT be replaced with true.
+if ( isEnabled( 'bar' ) ) {
+}
+
+// CONCATENATED MODULE: ./named-import/rename.js
+
+
+// Should be replaced with true
+if ( true ) {
+}
+
+// CONCATENATED MODULE: ./named-import/wrong-path.js
+
+
+// Should NOT be replaced with true
+if ( isEnabled( 'foo' ) ) {
+}
+
+// CONCATENATED MODULE: ./named-import/shadowed-by-param.js
+
+
+function named_import_shadowed_by_param_fn( isEnabled ) {
+	// Should NOT be replaced with true
+	if ( isEnabled( 'foo' ) ) {
+	}
+}
+
+// CONCATENATED MODULE: ./named-import/shadowed-by-var.js
+
+
+function named_import_shadowed_by_var_fn() {
+	const isEnabled = () => false;
+	// Should NOT be replaced with true
+	if ( isEnabled( 'foo' ) ) {
+	}
+}
+
+// CONCATENATED MODULE: ./named-import/index.js
+
+
+
+
+
+
+
+
+// CONCATENATED MODULE: ./namespace-import/module.js
+
+
+// Should be replaced with true
+if ( true ) {
+}
+
+// CONCATENATED MODULE: ./namespace-import/function.js
+
+
+function namespace_import_function_fn() {
+	// Should be replaced with true
+	if ( true ) {
+	}
+}
+
+// CONCATENATED MODULE: ./namespace-import/wrong-flag.js
+
+
+// Should NOT be replaced with true.
+if ( isEnabled( 'bar' ) ) {
+}
+
+// CONCATENATED MODULE: ./namespace-import/rename.js
+
+
+// Should be replaced with true
+if ( true ) {
+}
+
+// CONCATENATED MODULE: ./namespace-import/wrong-path.js
+
+
+// Should NOT be replaced with true
+if ( isEnabled( 'foo' ) ) {
+}
+
+// CONCATENATED MODULE: ./namespace-import/shadowed-by-param.js
+
+
+function namespace_import_shadowed_by_param_fn( config ) {
+	// Should NOT be replaced with true
+	if ( config.isEnabled( 'foo' ) ) {
+	}
+}
+
+// CONCATENATED MODULE: ./namespace-import/shadowed-by-var.js
+
+
+function namespace_import_shadowed_by_var_fn() {
+	const config = { isEnabled: () => false };
+	// Should NOT be replaced with true
+	if ( config.isEnabled( 'foo' ) ) {
+	}
+}
+
+// CONCATENATED MODULE: ./namespace-import/index.js
+
+
+
+
+
+
+
+
+// CONCATENATED MODULE: ./main.js
+
+
+
+
+
+/***/ })
+
+},[[\\"./main.js\\",\\"runtime~main\\"]]]);"
+`;

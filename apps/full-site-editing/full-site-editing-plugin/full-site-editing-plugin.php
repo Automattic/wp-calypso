@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Full Site Editing
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 0.13
+ * Version: 0.14
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -20,7 +20,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '0.13' );
+define( 'PLUGIN_VERSION', '0.14' );
 
 // Themes which are supported by Full Site Editing (not the same as the SPT themes).
 const SUPPORTED_THEMES = [ 'maywood' ];
@@ -154,7 +154,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
  */
 function load_starter_page_templates() {
 	// We don't want the user to choose a template when copying a post.
-	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 	if ( isset( $_GET['jetpack-copy'] ) ) {
 		return;
 	}
@@ -218,9 +218,9 @@ function enqueue_coblocks_gallery_scripts() {
 	}
 
 	// This happens in the Customizer because we try very hard not to load things and we get a fatal
-	// https://github.com/Automattic/wp-calypso/issues/36680
+	// https://github.com/Automattic/wp-calypso/issues/36680.
 	if ( ! class_exists( '\A8C\FSE\WP_Template' ) ) {
-		require_once( __DIR__ . '/full-site-editing/templates/class-wp-template.php' );
+		require_once __DIR__ . '/full-site-editing/templates/class-wp-template.php';
 	}
 	$template = new WP_Template();
 	$header   = $template->get_template_content( 'header' );

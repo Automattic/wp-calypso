@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns, addDns } from 'lib/upgrades/actions';
+import { deleteDns, addDns } from 'lib/domains/dns/actions';
 import Toggle from 'components/forms/form-toggle';
 import { domainConnect } from 'lib/domains/constants';
 import { getNormalizedData } from 'lib/domains/dns';

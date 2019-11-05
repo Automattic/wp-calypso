@@ -89,15 +89,6 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	signupWithBasicSite: {
-		datestamp: '20190930',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	verticalSuggestedThemes: {
 		datestamp: '20191031',
 		variations: {

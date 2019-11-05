@@ -180,56 +180,86 @@ function AddressFields( { fieldType } ) {
 
 	return (
 		<React.Fragment>
+			<FieldRow gap="4%" columnWidths="48% 48%">
+				<Field
+					id={ fieldType + '-first-name' }
+					type="text"
+					label={ localize( 'First name' ) }
+					value={ currentLocationData.firstName || '' }
+					onChange={ value => {
+						updateLocationData( 'firstName', value );
+					} }
+					autoComplete="given-name"
+				/>
+
+				<Field
+					id={ fieldType + '-last-name' }
+					type="text"
+					label={ localize( 'Last name' ) }
+					value={ currentLocationData.lastName || '' }
+					onChange={ value => {
+						updateLocationData( 'lastName', value );
+					} }
+					autoComplete="family-name"
+				/>
+			</FieldRow>
+
 			<FormField
-				id={ fieldType + '-name' }
-				type="Text"
-				label={ localize( 'Name' ) }
-				value={ currentLocationData.name || '' }
+				id={ fieldType + '-email-address' }
+				type="email"
+				label={ localize( 'Email address' ) }
+				placeholder={ localize( 'name@example.com' ) }
+				value={ currentLocationData.email || '' }
 				onChange={ value => {
-					updateLocationData( 'name', value );
+					updateLocationData( 'email', value );
 				} }
+				autoComplete="email"
 			/>
 
 			<FormField
 				id={ fieldType + '-address' }
-				type="Text"
+				type="text"
 				label={ localize( 'Address' ) }
 				value={ currentLocationData.address || '' }
 				onChange={ value => {
 					updateLocationData( 'address', value );
 				} }
+				autoComplete={ fieldType + ' street-address' }
 			/>
 
 			<FieldRow gap="4%" columnWidths="48% 48%">
 				<Field
 					id={ fieldType + '-city' }
-					type="Text"
+					type="text"
 					label={ localize( 'City' ) }
 					value={ currentLocationData.city || '' }
 					onChange={ value => {
 						updateLocationData( 'city', value );
 					} }
+					autoComplete={ fieldType + ' address-level2' }
 				/>
 
 				{ isStateorProvince() === 'state' ? (
 					<Field
 						id={ fieldType + '-state' }
-						type="Text"
+						type="text"
 						label={ localize( 'State' ) }
 						value={ currentLocationData.state || '' }
 						onChange={ value => {
 							updateLocationData( 'state', value );
 						} }
+						autoComplete={ fieldType + ' address-level1' }
 					/>
 				) : (
 					<Field
 						id={ fieldType + '-province' }
-						type="Text"
+						type="text"
 						label={ localize( 'Province' ) }
 						value={ currentLocationData.province || '' }
 						onChange={ value => {
 							updateLocationData( 'province', value );
 						} }
+						autoComplete={ fieldType + ' address-level1' }
 					/>
 				) }
 			</FieldRow>
@@ -266,6 +296,7 @@ function PhoneNumberField( { fieldType } ) {
 			onChange={ value => {
 				updateLocationData( 'phoneNumber', value );
 			} }
+			autoComplete="tel"
 		/>
 	);
 }
@@ -312,33 +343,36 @@ function TaxFields( { fieldType } ) {
 				{ isZipOrPostal() === 'zip' ? (
 					<Field
 						id={ fieldType + '-zip-code' }
-						type="Text"
+						type="text"
 						label={ localize( 'Zip code' ) }
 						value={ currentLocationData.zipCode || '' }
 						onChange={ value => {
 							updateLocationData( 'zipCode', value );
 						} }
+						autoComplete={ fieldType + ' postal-code' }
 					/>
 				) : (
 					<Field
 						id={ fieldType + '-postal-code' }
-						type="Text"
+						type="text"
 						label={ localize( 'Postal code' ) }
 						value={ currentLocationData.postalCode || '' }
 						onChange={ value => {
 							updateLocationData( 'postalCode', value );
 						} }
+						autoComplete={ fieldType + ' postal-code' }
 					/>
 				) }
 
 				<Field
 					id={ fieldType + '-country' }
-					type="Text"
+					type="text"
 					label={ localize( 'Country' ) }
 					value={ currentLocationData.country || '' }
 					onChange={ value => {
 						updateLocationData( 'country', value );
 					} }
+					autoComplete={ fieldType + ' country' }
 				/>
 			</FieldRow>
 		</React.Fragment>
@@ -410,7 +444,10 @@ function BillingFormSummary() {
 		<GridRow gap="4%" columnWidths="48% 48%">
 			<div>
 				<BillingSummaryDetails>
-					<BillingSummaryLine>{ billing.name || '' } </BillingSummaryLine>
+					<BillingSummaryLine>
+						{ billing.firstName || '' } { billing.lastName || '' }
+					</BillingSummaryLine>
+					<BillingSummarySpacerLine>{ billing.email || '' }</BillingSummarySpacerLine>
 					<BillingSummaryLine>{ billing.address || '' } </BillingSummaryLine>
 					<BillingSummaryLine>
 						{ billing.city && billing.city + ', ' } { billing.state || billing.province || '' }
@@ -435,7 +472,8 @@ function BillingFormSummary() {
 			{ domains && ! isDomainContactSame && (
 				<div>
 					<BillingSummaryDetails>
-						<BillingSummaryLine>{ domains.name }</BillingSummaryLine>
+						<BillingSummaryLine>{ domains.firstName + ' ' + domains.lastName }</BillingSummaryLine>
+						<BillingSummarySpacerLine>{ domains.email }</BillingSummarySpacerLine>
 						<BillingSummaryLine>{ domains.address }</BillingSummaryLine>
 						<BillingSummaryLine>
 							{ domains.city && domains.city + ', ' } { domains.state || domains.province }
@@ -467,4 +505,8 @@ const BillingSummaryLine = styled.li`
 	margin: 0;
 	padding: 0;
 	list-style: none;
+`;
+
+const BillingSummarySpacerLine = styled( BillingSummaryLine )`
+	margin-bottom: 8px;
 `;

@@ -12,7 +12,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * Internal Dependencies
  */
 import config from 'config';
-import { submitSurvey } from 'lib/upgrades/actions';
+import { submitSurvey } from 'lib/purchases/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';

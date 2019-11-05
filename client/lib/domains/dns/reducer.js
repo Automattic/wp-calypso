@@ -21,7 +21,7 @@ import {
 	DNS_FETCH,
 	DNS_FETCH_COMPLETED,
 	DNS_FETCH_FAILED,
-} from 'lib/upgrades/action-types';
+} from './action-types';
 import { addMissingWpcomRecords, removeDuplicateWpcomRecords } from './';
 
 function updateDomainState( state, domainName, dns ) {

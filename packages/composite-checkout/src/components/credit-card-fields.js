@@ -23,6 +23,7 @@ export default function CreditCardFields() {
 				placeholder="1234 1234 1234 1234"
 				icon={ <LockIcon /> }
 				isIconVisible={ true }
+				autoComplete="cc-number"
 			/>
 			<FieldRow gap="4%" columnWidths="48% 48%">
 				<Field
@@ -30,6 +31,7 @@ export default function CreditCardFields() {
 					type="Number"
 					label={ localize( 'Expiry Date' ) }
 					placeholder="MM / YY"
+					autoComplete="cc-exp"
 				/>
 				<GridRow gap="4%" columnWidths="67% 29%">
 					<Field
@@ -37,6 +39,7 @@ export default function CreditCardFields() {
 						type="Number"
 						label={ localize( 'Security Code' ) }
 						placeholder="111"
+						autoComplete="cc-csc"
 					/>
 					<CVVImage />
 				</GridRow>
@@ -47,6 +50,7 @@ export default function CreditCardFields() {
 				type="Text"
 				label={ localize( 'Cardholder name' ) }
 				description={ localize( 'Enter your name as it’s written on the card' ) }
+				autoComplete="cc-name"
 			/>
 		</CreditCardFieldsWrapper>
 	);

@@ -7,13 +7,16 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, SiteType, Vertical } from './types';
+import { ActionType, FormValue, SiteType, EMPTY_FORM_VALUE, Vertical } from './types';
 import * as Actions from './actions';
 
-const siteType: Reducer< SiteType, ReturnType< typeof Actions[ 'setSiteType' ] > > = (
-	state = SiteType.BLOG,
-	action
-) => {
+const siteType: Reducer<
+	FormValue< SiteType >,
+	ReturnType< typeof Actions[ 'resetSiteType' ] > | ReturnType< typeof Actions[ 'setSiteType' ] >
+> = ( state = EMPTY_FORM_VALUE, action ) => {
+	if ( action.type === ActionType.RESET_SITE_TYPE ) {
+		return EMPTY_FORM_VALUE;
+	}
 	if ( action.type === ActionType.SET_SITE_TYPE ) {
 		return action.siteType;
 	}
@@ -30,21 +33,17 @@ const siteTitle: Reducer< string, ReturnType< typeof Actions[ 'setSiteTitle' ] >
 	return state;
 };
 
-// @TODO Normalize data: searches are lists of ids, ids stored in a map
-const verticalSearches: Reducer<
-	Record< string, Vertical[] >,
-	ReturnType< typeof Actions[ 'receiveVertical' ] >
-> = ( state = {}, action ) => {
-	if ( action.type === ActionType.RECEIVE_VERTICAL ) {
-		return {
-			...state,
-			[ action.search ]: action.verticals,
-		};
+const verticals: Reducer< Vertical[], ReturnType< typeof Actions[ 'receiveVerticals' ] > > = (
+	state = [],
+	action
+) => {
+	if ( action.type === ActionType.RECEIVE_VERTICALS ) {
+		return action.verticals;
 	}
 	return state;
 };
 
-const reducer = combineReducers( { siteType, siteTitle, verticalSearches } );
+const reducer = combineReducers( { siteType, siteTitle, verticals } );
 
 export type State = ReturnType< typeof reducer >;
 
