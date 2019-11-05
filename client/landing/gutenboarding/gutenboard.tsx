@@ -63,7 +63,7 @@ export function Gutenboard() {
 								>
 									<WritingFlow>
 										<ObserveTyping>
-											<BlockList />
+											<BlockList className="gutenboarding-block-list" />
 										</ObserveTyping>
 									</WritingFlow>
 								</div>
