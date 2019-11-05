@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 
 /**
