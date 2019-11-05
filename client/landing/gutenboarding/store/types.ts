@@ -15,7 +15,7 @@ export enum SiteType {
 
 export const EMPTY_FORM_VALUE = Object.freeze( {} );
 export type FormValue< T > = T | typeof EMPTY_FORM_VALUE;
-export function hasValue< T >( value: FormValue< T > ): value is T {
+export function isFilledFormValue< T >( value: FormValue< T > ): value is T {
 	return value !== EMPTY_FORM_VALUE;
 }
 
