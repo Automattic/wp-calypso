@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -57,7 +57,7 @@ class DisconnectJetpackButton extends Component {
 		];
 
 		return (
-			<>
+			<Fragment>
 				<QuerySitePlans siteId={ site.ID } />
 				<Button
 					{ ...pick( this.props, buttonPropsList ) }
@@ -80,7 +80,7 @@ class DisconnectJetpackButton extends Component {
 					siteId={ site.ID }
 					disconnectHref={ this.props.redirect }
 				/>
-			</>
+			</Fragment>
 		);
 	}
 }
