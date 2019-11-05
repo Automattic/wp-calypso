@@ -1,11 +1,19 @@
 @import 'assets/stylesheets/gutenberg-base-styles/style';
 
+// FormTokenField doesn't provide top-level className (className is set on input parent, label is outside)
+.gutenboarding-block-list .components-form-token-field {
+	.components-form-token-field__help {
+		display: none;
+	}
+}
+
 .onboarding-block__questions-heading {
 	font-size: 1.5em;
 	line-height: 2em;
 	margin-bottom: 10px;
 }
 
+.gutenboarding-block-list .components-form-token-field,
 .onboarding-block__question {
 	display: flex;
 	font-size: 2em;
