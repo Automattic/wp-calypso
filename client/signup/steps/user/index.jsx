@@ -345,20 +345,23 @@ export class UserStep extends Component {
 		}
 
 		return (
-			<SignupForm
-				{ ...omit( this.props, [ 'translate' ] ) }
-				redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
-				disabled={ this.userCreationStarted() }
-				submitting={ this.userCreationStarted() }
-				save={ this.save }
-				submitForm={ this.submitForm }
-				submitButtonText={ this.submitButtonText() }
-				suggestedUsername={ this.props.suggestedUsername }
-				handleSocialResponse={ this.handleSocialResponse }
-				isSocialSignupEnabled={ isSocialSignupEnabled }
-				socialService={ socialService }
-				socialServiceResponse={ socialServiceResponse }
-			/>
+			<>
+				<SignupForm
+					{ ...omit( this.props, [ 'translate' ] ) }
+					redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
+					disabled={ this.userCreationStarted() }
+					submitting={ this.userCreationStarted() }
+					save={ this.save }
+					submitForm={ this.submitForm }
+					submitButtonText={ this.submitButtonText() }
+					suggestedUsername={ this.props.suggestedUsername }
+					handleSocialResponse={ this.handleSocialResponse }
+					isSocialSignupEnabled={ isSocialSignupEnabled }
+					socialService={ socialService }
+					socialServiceResponse={ socialServiceResponse }
+				/>
+				<div id="g-recaptcha"></div>
+			</>
 		);
 	}
 
