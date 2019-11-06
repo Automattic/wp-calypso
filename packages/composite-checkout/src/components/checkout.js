@@ -124,11 +124,7 @@ OrderSummaryStep.propTypes = {
 function OrderSummaryContent( { CheckoutHeader } ) {
 	const localize = useLocalize();
 
-	if ( CheckoutHeader ) {
-		return <CheckoutHeader />;
-	}
-
-	return <React.Fragment>{ localize( 'Order Summary' ) }</React.Fragment>;
+	return CheckoutHeader ? <CheckoutHeader /> : localize( 'Order Summary' );
 }
 
 OrderSummaryContent.propTypes = {
