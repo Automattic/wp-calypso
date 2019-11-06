@@ -27,10 +27,19 @@ interface Props {
 	showClearBtn: boolean;
 }
 
-const DateRangeTrigger: FunctionComponent< Props & SharedProps > = props => {
+const DateRangeTrigger: FunctionComponent< Props & SharedProps > = ( {
+	onTriggerClick = noop,
+	onClearClick = noop,
+	isCompact = false,
+	showClearBtn = true,
+	startDate,
+	endDate,
+	startDateText,
+	endDateText,
+	triggerText,
+	buttonRef,
+} ) => {
 	const translate = useTranslate();
-
-	const { startDate, endDate, showClearBtn, startDateText, endDateText, triggerText } = props;
 
 	const canReset = startDate || endDate;
 
@@ -51,9 +60,9 @@ const DateRangeTrigger: FunctionComponent< Props & SharedProps > = props => {
 		<ButtonGroup className="date-range__trigger">
 			<Button
 				className="date-range__trigger-btn"
-				ref={ props.buttonRef }
-				onClick={ props.onTriggerClick }
-				compact={ props.isCompact }
+				ref={ buttonRef }
+				onClick={ onTriggerClick }
+				compact={ isCompact }
 				aria-haspopup={ true }
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" aria-hidden="true" />
@@ -63,8 +72,8 @@ const DateRangeTrigger: FunctionComponent< Props & SharedProps > = props => {
 			{ showClearBtn && (
 				<Button
 					className="date-range__clear-btn"
-					compact={ props.isCompact }
-					onClick={ props.onClearClick }
+					compact={ isCompact }
+					onClick={ onClearClick }
 					disabled={ ! canReset }
 					title="Clear date selection"
 				>
@@ -74,13 +83,6 @@ const DateRangeTrigger: FunctionComponent< Props & SharedProps > = props => {
 			) }
 		</ButtonGroup>
 	);
-};
-
-DateRangeTrigger.defaultProps = {
-	onTriggerClick: noop,
-	onClearClick: noop,
-	isCompact: false,
-	showClearBtn: true,
 };
 
 export default DateRangeTrigger;

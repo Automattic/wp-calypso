@@ -18,24 +18,24 @@ interface Props {
 	cancelButtonText: string | null | undefined;
 }
 
-const DateRangeHeader: FunctionComponent< Props & SharedProps > = props => {
+const DateRangeHeader: FunctionComponent< Props & SharedProps > = ( {
+	onCancelClick = noop,
+	onApplyClick = noop,
+	cancelButtonText,
+	applyButtonText,
+} ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="date-range__popover-header">
-			<Button className="date-range__cancel-btn" onClick={ props.onCancelClick } compact>
-				{ props.cancelButtonText || translate( 'Cancel' ) }
+			<Button className="date-range__cancel-btn" onClick={ onCancelClick } compact>
+				{ cancelButtonText || translate( 'Cancel' ) }
 			</Button>
-			<Button className="date-range__apply-btn" onClick={ props.onApplyClick } primary compact>
-				{ props.applyButtonText || translate( 'Apply' ) }
+			<Button className="date-range__apply-btn" onClick={ onApplyClick } primary compact>
+				{ applyButtonText || translate( 'Apply' ) }
 			</Button>
 		</div>
 	);
-};
-
-DateRangeHeader.defaultProps = {
-	onApplyClick: noop,
-	onCancelClick: noop,
 };
 
 export default DateRangeHeader;

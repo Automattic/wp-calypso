@@ -26,14 +26,17 @@ interface Props {
 	onInputChange: ( value: string | null | undefined, startOrEnd: StartOrEnd ) => void;
 }
 
-const DateRangeInputs: FunctionComponent< Props & SharedProps > = props => {
+const DateRangeInputs: FunctionComponent< Props & SharedProps > = ( {
+	onInputFocus = noop,
+	onInputBlur = noop,
+	onInputChange = noop,
+	...props
+} ) => {
 	const uniqueId = useRef( uuidv4() );
 	const translate = useTranslate();
 
 	const startDateID = `startDate-${ uniqueId }`;
 	const endDateID = `endDate-${ uniqueId }`;
-
-	const { onInputFocus, onInputBlur, onInputChange } = props;
 
 	/**
 	 * Handles input focus events with fixed arguments
@@ -128,12 +131,6 @@ const DateRangeInputs: FunctionComponent< Props & SharedProps > = props => {
 			</div>
 		</fieldset>
 	);
-};
-
-DateRangeInputs.defaultProps = {
-	onInputChange: noop,
-	onInputBlur: noop,
-	onInputFocus: noop,
 };
 
 export default DateRangeInputs;
