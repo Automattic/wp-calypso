@@ -7,6 +7,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { find, findKey, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Internal dependencies
@@ -143,10 +144,21 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	handleCheckoutForProduct = productObject => {
-		const { selectedSiteSlug } = this.props;
+	handleCheckoutForProduct = ( productObject, product ) => {
+		const { currentPlanSlug, selectedSiteSlug } = this.props;
+
+		const tracksEventProps = {
+			upgrading_to: productObject.product_slug,
+			current_plan: currentPlanSlug,
+		};
+
+		const productPurchase = this.getPurchaseByProduct( product );
+		if ( productPurchase && productPurchase.productSlug ) {
+			tracksEventProps.current_product = productPurchase.productSlug;
+		}
 
 		return () => {
+			this.props.recordTracksEvent( 'calypso_product_feature_upgrade_click', tracksEventProps );
 			page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
 		};
 	};
@@ -164,7 +176,7 @@ export class ProductSelector extends Component {
 
 		return (
 			<ProductCardAction
-				onClick={ this.handleCheckoutForProduct( productObject ) }
+				onClick={ this.handleCheckoutForProduct( productObject, product ) }
 				intro={ this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
@@ -312,7 +324,7 @@ export class ProductSelector extends Component {
 
 			return (
 				<ProductCardAction
-					onClick={ this.handleCheckoutForProduct( productObject ) }
+					onClick={ this.handleCheckoutForProduct( productObject, product ) }
 					label={ translate( 'Upgrade to %(productName)s', {
 						args: {
 							productName,
@@ -341,7 +353,7 @@ export class ProductSelector extends Component {
 
 		return (
 			<ProductCardAction
-				onClick={ this.handleCheckoutForProduct( planUpsellProduct ) }
+				onClick={ this.handleCheckoutForProduct( planUpsellProduct, product ) }
 				label={ translate( 'Upgrade to %(planName)s %(price)s', {
 					args: {
 						planName,
@@ -510,24 +522,29 @@ ProductSelector.defaultProps = {
 	productPriceMatrix: {},
 };
 
-const connectComponent = connect( ( state, { products, siteId } ) => {
-	const selectedSiteId = siteId || getSelectedSiteId( state );
-	const productSlugs = extractProductSlugs( products );
-	const availableProducts = getAvailableProductsList( state );
+const connectComponent = connect(
+	( state, { products, siteId } ) => {
+		const selectedSiteId = siteId || getSelectedSiteId( state );
+		const productSlugs = extractProductSlugs( products );
+		const availableProducts = getAvailableProductsList( state );
 
-	return {
-		availableProducts,
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
-		fetchingSitePurchases: isFetchingSitePurchases( state ),
-		productSlugs,
-		purchases: getSitePurchases( state, selectedSiteId ),
-		selectedSiteId,
-		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-		sitePlans: getPlansBySiteId( state, selectedSiteId ),
-		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
-	};
-} );
+		return {
+			availableProducts,
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
+			fetchingSitePurchases: isFetchingSitePurchases( state ),
+			productSlugs,
+			purchases: getSitePurchases( state, selectedSiteId ),
+			selectedSiteId,
+			selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
+			sitePlans: getPlansBySiteId( state, selectedSiteId ),
+			storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
+		};
+	},
+	{
+		recordTracksEvent,
+	}
+);
 
 export default compose(
 	connectComponent,
