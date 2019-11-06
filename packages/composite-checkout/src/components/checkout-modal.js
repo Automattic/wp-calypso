@@ -17,19 +17,32 @@ export default function CheckoutModal( {
 	title,
 	copy,
 	primaryAction,
+	closeModal,
 	isVisible,
 	buttonCTA,
+	cancelButtonCTA,
 } ) {
 	const localize = useLocalize();
+	useEffect( () => {
+		if ( isVisible ) {
+			document.body.style = 'overflow: hidden';
+			document.addEventListener(
+				'keydown',
+				key => {
+					handleKeyPress( key, closeModal );
+				},
+				false
+			);
+
+			return;
+		}
+
+		document.body.style = 'overflow: scroll';
+	} );
 
 	if ( ! isVisible ) {
-		//return null;
+		return null;
 	}
-
-	useEffect( () => {
-		document.body.style = 'overflow:hidden';
-		document.addEventListener( 'keydown', handleKeyPress, false );
-	} );
 
 	return (
 		<CheckoutModalWrapper
@@ -37,21 +50,17 @@ export default function CheckoutModal( {
 			onClick={ closeModal }
 		>
 			<CheckoutModalContent className="checkout-modal__content" onClick={ preventClose }>
-				<CheckoutModalTitle className="checkout-modal__title">
-					{ title || 'Modal Title' }
-				</CheckoutModalTitle>
-				<CheckoutModalCopy className="checkout-modal__copy">
-					{ copy || 'Copy goes here' }
-				</CheckoutModalCopy>
+				<CheckoutModalTitle className="checkout-modal__title">{ title }</CheckoutModalTitle>
+				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
 					<Button buttonState="default" onClick={ closeModal }>
-						Cancel
+						{ cancelButtonCTA || localize( 'Cancel' ) }
 					</Button>
 					<Button
 						buttonState="primary"
 						onClick={ () => {
-							handlePrimaryAction( primaryAction );
+							handlePrimaryAction( primaryAction, closeModal );
 						} }
 					>
 						{ buttonCTA || localize( 'Continue' ) }
@@ -63,12 +72,14 @@ export default function CheckoutModal( {
 }
 
 CheckoutModal.propTypes = {
+	closeModal: PropTypes.func.isRequired,
+	title: PropTypes.string.isRequired,
+	copy: PropTypes.string.isRequired,
+	primaryAction: PropTypes.func.isRequired,
+	isVisible: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	title: PropTypes.string,
-	copy: PropTypes.string,
-	primaryAction: PropTypes.func,
-	isVisible: PropTypes.bool,
 	buttonCTA: PropTypes.string,
+	cancelButtonCTA: PropTypes.string,
 };
 
 const fadeIn = keyframes`
@@ -142,25 +153,16 @@ const CheckoutModalActions = styled.div`
 	}
 `;
 
-function closeModal() {
-	alert( 'close' );
-
-	//TODO: set isVisible to false
-}
-
-function handlePrimaryAction( primaryAction ) {
-	alert( 'Action' );
-
-	if ( primaryAction ) {
-		primaryAction();
-	}
+function handlePrimaryAction( primaryAction, closeModal ) {
+	primaryAction();
+	closeModal();
 }
 
 function preventClose( event ) {
 	event.stopPropagation();
 }
 
-function handleKeyPress( key ) {
+function handleKeyPress( key, closeModal ) {
 	if ( key.keyCode === 27 ) {
 		closeModal();
 	}
