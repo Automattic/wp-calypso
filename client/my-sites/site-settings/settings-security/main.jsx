@@ -20,6 +20,7 @@ import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -66,6 +67,11 @@ const SiteSettingsSecurity = ( {
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
+			<FormattedHeader
+				className="settings-security__page-heading"
+				headerText={ translate( 'Settings' ) }
+				leftAlign
+			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showRewindCredentials && <JetpackCredentials /> }
 			<JetpackMonitor />

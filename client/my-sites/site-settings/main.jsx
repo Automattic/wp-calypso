@@ -16,6 +16,7 @@ import Main from 'components/main';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from './navigation';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -32,6 +33,11 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
+			<FormattedHeader
+				className="site-settings__page-heading"
+				headerText={ translate( 'Settings' ) }
+				leftAlign
+			/>
 			<SiteSettingsNavigation section={ 'general' } />
 			<GeneralSettings />
 		</Main>
