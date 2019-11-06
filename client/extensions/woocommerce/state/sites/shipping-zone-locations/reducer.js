@@ -11,7 +11,7 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 import { withoutPersistence } from 'state/utils';
 
-function handleRequest( state, { zoneId } ) {
+function handleLocationsRequest( state, { zoneId } ) {
 	return {
 		...state,
 		[ zoneId ]: LOADING,
@@ -61,7 +61,7 @@ function handleZoneDeleted( state, { originatingAction: { zone } } ) {
 export default withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST:
-			return handleRequest( state, action );
+			return handleLocationsRequest( state, action );
 
 		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS:
 			return handleLocationsRequestSuccess( state, action );
