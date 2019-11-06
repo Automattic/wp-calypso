@@ -71,35 +71,33 @@ export default function VerticalSelect( { inputClass }: Props ) {
 		[ setInputValue ]
 	);
 
-	const handleSelect = ( vertical: SiteVertical ) => {
-		setSiteVertical( vertical );
-		hideSuggestions();
-		if ( inputRef && inputRef.current ) {
-			inputRef.current.blur();
-		}
-	};
+	const handleSelect = useCallback(
+		( vertical: SiteVertical ) => {
+			setSiteVertical( vertical );
+			hideSuggestions();
+			if ( inputRef && inputRef.current ) {
+				inputRef.current.blur();
+			}
+		},
+		[ setSiteVertical, hideSuggestions ]
+	);
 
-	const getInputValue = () =>
+	const value =
 		suggestionsVisibility || ! isFilledFormValue( siteVertical ) ? inputValue : siteVertical.label;
 
-	const getSuggestions = () => {
-		if ( ! verticals.length ) {
-			return [
-				{
-					label: '',
-					category: NO__( 'Loading, please wait...' ),
-				},
-			];
-		}
-		if ( ! inputValue.length ) {
-			return popular.map( label => ( {
+	const loadingMessage = [
+		{
+			label: '',
+			category: NO__( 'Loading, please wait...' ),
+		},
+	];
+
+	const suggestions = ! inputValue.length
+		? popular.map( label => ( {
 				...verticals.find( vertical => vertical.label.includes( label ) ),
 				category: NO__( 'Popular' ),
-			} ) );
-		}
-
-		return verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
-	};
+		  } ) )
+		: verticals.filter( x => x.label.toLowerCase().includes( inputValue.toLowerCase() ) );
 
 	return (
 		<div className="vertical-select">
@@ -112,13 +110,13 @@ export default function VerticalSelect( { inputClass }: Props ) {
 				onBlur={ hideSuggestions }
 				onKeyDown={ handleSuggestionKeyDown }
 				autoComplete="off"
-				value={ getInputValue() }
+				value={ value }
 			/>
 			{ suggestionsVisibility && (
 				<Suggestions
 					ref={ suggestionRef }
 					query={ inputValue }
-					suggestions={ getSuggestions() }
+					suggestions={ ! verticals.length ? loadingMessage : suggestions }
 					suggest={ handleSelect }
 				/>
 			) }
