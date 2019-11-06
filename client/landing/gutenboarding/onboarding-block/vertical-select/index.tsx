@@ -9,7 +9,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import Suggestions from '../../../../components/suggestions';
+import Suggestions from 'components/suggestions';
 import { STORE_KEY } from '../../store';
 
 /**
