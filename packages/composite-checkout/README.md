@@ -13,7 +13,7 @@ This package provides a context provider, `CheckoutProvider`, and a default comp
 The form has three steps:
 
 1. Payment method
-2. Billing details
+2. Billing contact
 3. Review order
 
 The steps can be customized using various props.
@@ -30,15 +30,11 @@ Any previously stored payment methods (eg: saved credit cards) will be fetched a
 
 The content of the second and third step vary based on the payment method chosen in the first step. For example, the second step may only request a postal code if the payment method is 'apple-pay', but it may request the full address for the 'card' method.
 
-### Billing details
+### Billing contact
 
 This step contains various form fields to collect billing contact information from the customer.
 
-The billing information may be automatically filled based on data retrieved from the server. If the billing address is set or changed during this step, the updated address will be used for the checkout. However, as a side effect, an event handler passed to `CheckoutProvider` as the `eventHandler` prop will allow the parent component to take any necessary actions like updating the line items and total.
-
 ![billing details step](https://raw.githubusercontent.com/Automattic/wp-calypso/add/wp-checkout-component/packages/composite-checkout/doc-asset/billing-step.png 'Billing Details Step')
-
-Any other component can request the information from these form fields by using the `usePaymentData` React Hook.
 
 ### Review order
 
@@ -72,7 +68,7 @@ Here is a very simple example of using the `Checkout` component with default opt
 
 ```js
 import React, { useState } from 'react';
-import { Checkout } from '@automattic/composite-checkout';
+import { Checkout, registerStore } from '@automattic/composite-checkout';
 import { formatValueForCurrency } from 'composite-checkout/wpcom';
 
 const initialItems = [
@@ -99,6 +95,12 @@ const onFailure = error => console.error( 'There was a problem with your payment
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
 
+async function makePayPalExpressRequest() {
+	return 'https://paypal.com';
+}
+
+const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
+
 // This is the parent component which would be included on a host page
 export default function MyCheckout() {
 	const { items, total } = useShoppingCart();
@@ -112,6 +114,7 @@ export default function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
+			paymentMethods={ [ paypalMethod ] }
 		>
 			<Checkout />
 		</CheckoutProvider>
@@ -151,6 +154,7 @@ import {
 	OrderReviewSection,
 	OrderReviewTotal,
 	renderDisplayValueMarkdown,
+	registerStore,
 } from '@automattic/composite-checkout';
 import {
 	PlanLengthSelector,
@@ -185,6 +189,12 @@ const onFailure = error => console.error( 'There was a problem with your payment
 // These are used only for redirect payment methods
 const successRedirectUrl = window.location.href;
 const failureRedirectUrl = window.location.href;
+
+async function makePayPalExpressRequest() {
+	return 'https://paypal.com';
+}
+
+const paypalMethod = createPayPalMethod( { registerStore, makePayPalExpressRequest } );
 
 // This is the parent component which would be included on a host page
 export default function MyCheckout() {
@@ -221,7 +231,7 @@ export default function MyCheckout() {
 			onFailure={ onFailure }
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
-			eventHandler={ handleCheckoutEvent( { updatePricesForAddress } ) }
+			paymentMethods={ [ paypalMethod ] }
 		>
 			<Checkout
 				availablePaymentMethods={ availablePaymentMethods }
@@ -230,28 +240,6 @@ export default function MyCheckout() {
 			/>
 		</CheckoutProvider>
 	);
-}
-
-function handleCheckoutEvent( { updatePricesForAddress } ) {
-	return function( { type, payload }, dispatch, next ) {
-		if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
-			fetch( '/stripe-configuration' )
-				.then( res => res.json() )
-				.then( stripeConfiguration => {
-					dispatch( {
-						type: 'STRIPE_CONFIGURATION_SET',
-						payload: {
-							stripeConfiguration,
-						},
-					} );
-				} );
-			return;
-		}
-		if ( type === 'STEP_CHANGED' && payload.prevStep === 2 ) {
-			updatePricesForAddress();
-		}
-		next();
-	};
 }
 
 // This is a simple shopping cart manager which allows CRUD operations
@@ -405,10 +393,11 @@ A payment method, in the context of this package, consists of the following piec
 - A component form that displays the required billing contact information. It will receive the props of the `CheckoutStep`.
 - A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
 - (Optional) A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
+- A function to return the name of the Payment Method. It will receive the localize function as an argument.
 
 Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
 
-Each payment method is registered by calling `registerPaymentMethod()` and passing an object with the following properties:
+Each payment method has the following schema:
 
 ```
 {
@@ -418,10 +407,15 @@ Each payment method is registered by calling `registerPaymentMethod()` and passi
 	BillingContactComponent: component,
 	SubmitButtonComponent: component,
 	CheckoutWrapper: ?component,
+	getAriaLabel: function,
 }
 ```
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the function `getPaymentMethods()` will return an array that contains them all.
+
+## Data Stores
+
+Each Payment Method (or anything at all, really) can access a Redux-like data store by using the `registerStore` function. Code can then access that data by using `dispatch`, `select`, and `subscribe`. Components can most easily use the data with the `useDispatch` and `useSelect` hooks. Read the [@wordpress/data](https://wordpress.org/gutenberg/handbook/packages/packages-data/) docs to learn more about the details of this system.
 
 ## API
 
@@ -456,11 +450,11 @@ It has the following props.
 - items: array (required)
 - total: object (required)
 - theme: object (optional)
-- eventHandler: function (optional)
 - onSuccess: function (required)
 - onFailure: function (required)
 - successRedirectUrl: string (required)
 - failureRedirectUrl: string (required)
+- paymentMethods: array (required)
 
 The line items must be passed to `Checkout` using the required `items` array prop. Each item is an object of the form `{ label: string, subLabel: string, id: string, type: string, amount: { currency: string, value: int, displayValue: string } }`. All the properties are required except for `subLabel`, and `id` must be unique. The `type` property is not used internally but can be used to organize the line items.
 
@@ -470,29 +464,7 @@ The line items are for display purposes only. They should also include subtotals
 
 The `displayValue` property of both the items and the total can use limited Markdown formatting, including the `~~` characters for strike-through text. If customizing this component, the property should be passed through the `renderDisplayValueMarkdown()` helper.
 
-The `eventHandler` prop accepts a callback that can be used to act on various events that occur within the package. The handler function will receive three arguments: `action, dispatch, next`. `action` contains two properties: `type` and `payload`. `dispatch` is the dispatcher function in case your handler wants to dispatch additional actions. `next` is a callback that will call the internal handler, which you should do for any action you don't handle yourself. The following example handler will deal with fetching the stripe configuration and will log whenever the step changes.
-
-```js
-function handleCheckoutEvent( { type, payload }, dispatch, next ) {
-	if ( type === 'STRIPE_CONFIGURATION_FETCH' ) {
-		fetch( '/stripe-configuration' )
-			.then( res => res.json() )
-			.then( stripeConfiguration => {
-				dispatch( {
-					type: 'STRIPE_CONFIGURATION_SET',
-					payload: {
-						stripeConfiguration,
-					},
-				} );
-			} );
-		return;
-	}
-	if ( type === 'STEP_CHANGED' ) {
-		console.log( 'step changed from', payload.prevStep, 'to', payload.nextStep );
-	}
-	next();
-}
-```
+`paymentMethods` is an array of Payment Method objects.
 
 ### CheckoutReviewOrder
 
@@ -551,10 +523,6 @@ A React Hook that will return a two element array where the first element is the
 ### usePaymentMethod()
 
 A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
-
-### usePaymentData()
-
-A React Hook that will return a two element array. It can be used to store and share data entered into the payment forms. The first element is an object representing the current state. The second element is a "dispatch" function which can be used to update the state (with an implicit merge) or trigger an event for side effects. The dispatch function should be passed an object with two properties: `type` and `payload` following the [flux-standard-action](https://github.com/redux-utilities/flux-standard-action) pattern.
 
 ### usePaymentMethodId()
 
