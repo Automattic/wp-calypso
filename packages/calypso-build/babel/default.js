@@ -38,7 +38,8 @@ module.exports = ( api, opts ) => ( {
 				useESModules: false,
 				// Needed so that helpers aren't duplicated.
 				// This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
-				version: '7.5.5',
+				// eslint-disable-next-line import/no-extraneous-dependencies
+				version: require( '@babel/helpers/package.json' ).version,
 			},
 		],
 	],
