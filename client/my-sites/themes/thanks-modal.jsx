@@ -24,6 +24,7 @@ import {
 	isActivatingTheme,
 	hasActivatedTheme,
 	isWpcomTheme,
+	shouldEditThemeWithGutenberg as isThemeGutenbergFirst,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -182,30 +183,23 @@ class ThanksModal extends Component {
 	};
 
 	getEditSiteLabel = () => {
-		const { shouldUseGutenbergFlows } = this.props;
-		return (
+		const { shouldEditThemeWithGutenberg, hasActivated } = this.props;
+		return hasActivated ? (
 			<span className="thanks-modal__button-customize">
 				<Gridicon icon="external" />
-				{ shouldUseGutenbergFlows ? translate( 'Edit Site' ) : translate( 'Customize site' ) }
+				{ shouldEditThemeWithGutenberg ? translate( 'Edit Site' ) : translate( 'Customize site' ) }
 			</span>
+		) : (
+			translate( 'Activating theme…' )
 		);
 	};
 
 	getButtons = () => {
-		const { shouldUseGutenbergFlows, hasActivated } = this.props;
+		const { shouldEditThemeWithGutenberg, hasActivated } = this.props;
 
-		if ( ! hasActivated ) {
-			return [
-				{
-					label: translate( 'Activating theme…' ),
-					disabled: ! hasActivated,
-				},
-			];
-		}
-
-		const firstButton = shouldUseGutenbergFlows
+		const firstButton = shouldEditThemeWithGutenberg
 			? {
-					action: 'view', // @TODO: What to use here?
+					action: 'view',
 					label: translate( 'View Site' ),
 					onClick: this.visitSite,
 			  }
@@ -221,6 +215,7 @@ class ThanksModal extends Component {
 				action: 'customizeSite',
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
+				disabled: ! hasActivated,
 				onClick: this.goToCustomizer,
 			},
 		];
@@ -249,17 +244,18 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
+		const shouldEditThemeWithGutenberg = isThemeGutenbergFirst( state, currentThemeId );
 
 		return {
 			siteId,
 			currentTheme,
+			shouldEditThemeWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
-			shouldUseGutenbergFlows: true,
 		};
 	},
 	dispatch => {

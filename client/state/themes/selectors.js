@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
+import { find, includes, intersection, isEqual, omit, some, get, uniq } from 'lodash';
 import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 
@@ -28,6 +28,7 @@ import {
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
 	getSerializedThemesQueryWithoutPage,
+	getThemeTaxonomySlugs,
 	isPremium,
 	oldShowcaseUrl,
 } from './utils';
@@ -740,4 +741,23 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
 
 	const theme = getTheme( state, 'wpcom', themeId );
 	return get( theme, 'price' );
+}
+
+/**
+ * Checks if a theme should be customized primarily with Gutenberg.
+ *
+ * Examples include Template First Themes, which can be determined by the feature
+ * global-styles or auto-loading-homepage.
+ *
+ * @param {Object} state   Global state tree
+ * @param {String} themeId An identifier for the theme - like
+ *                         `independent-publisher-2` or `maywood`.
+ * @return {Boolean} True if the theme should be edited with gutenberg.
+ */
+export function shouldEditThemeWithGutenberg( state, themeId ) {
+	const theme = getTheme( state, 'wpcom', themeId );
+	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
+	const neededFeatures = [ 'global-styles', 'auto-loading-homepage' ];
+	// The theme should have a positive number of matching features to qualify.
+	return !! intersection( themeFeatures, neededFeatures ).length;
 }

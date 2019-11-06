@@ -3,7 +3,11 @@
 /**
  * Internal dependencies
  */
-import { getThemeCustomizeUrl, isThemeActive } from 'state/themes/selectors';
+import {
+	getThemeCustomizeUrl,
+	isThemeActive,
+	shouldEditThemeWithGutenberg,
+} from 'state/themes/selectors';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import getFrontPageEditorUrl from 'state/selectors/get-front-page-editor-url';
 
@@ -20,13 +24,13 @@ import getFrontPageEditorUrl from 'state/selectors/get-front-page-editor-url';
  * @return {String}           Customizer or Block Editor URL
  */
 export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId ) {
-	let shouldUseGutenbergFlows = true;
+	const shouldUseGutenberg =
+		shouldEditThemeWithGutenberg( state, themeId ) || isSiteUsingFullSiteEditing( state, siteId );
 
-	shouldUseGutenbergFlows =
-		true ||
-		( isSiteUsingFullSiteEditing( state, siteId ) && ! isThemeActive( state, themeId, siteId ) );
-	if ( ! shouldUseGutenbergFlows ) {
-		return getThemeCustomizeUrl( state, themeId, siteId );
+	// If the theme is not active, use the other function to preview customization with the theme.
+	if ( shouldUseGutenberg && isThemeActive( state, themeId, siteId ) ) {
+		return getFrontPageEditorUrl( state, siteId );
 	}
-	return getFrontPageEditorUrl( state, siteId );
+
+	return getThemeCustomizeUrl( state, themeId, siteId );
 }
