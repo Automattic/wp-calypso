@@ -37,7 +37,7 @@
 		"prop-types": "^15.7.2",
 		"react": "^16.8.6",
 		"react-stripe-elements": "^5.1.0",
-		"styled-components": "4.4.0"
+		"styled-components": "4.4.1"
 	},
 	"private": true
 }
