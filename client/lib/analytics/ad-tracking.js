@@ -1859,11 +1859,11 @@ async function initGoogleRecaptcha() {
  * @returns {String|null} a reCAPTCHA token or null if the function fails
  */
 export async function recordGoogleRecaptchaAction( action ) {
-	if ( ! ( await initGoogleRecaptcha() ) ) {
+	if ( ! isGoogleRecaptchaEnabled || ! TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
 		return null;
 	}
 
-	if ( ! isGoogleRecaptchaEnabled || ! TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
+	if ( ! ( await initGoogleRecaptcha() ) ) {
 		return null;
 	}
 
