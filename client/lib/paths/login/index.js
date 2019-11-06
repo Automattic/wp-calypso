@@ -23,24 +23,26 @@ export function login( {
 	site,
 	useMagicLink,
 } = {} ) {
-	let url = config( 'login_url' );
+	let url = '';
 
 	if ( isNative && isEnabled( 'login/wp-login' ) ) {
-		url = '/log-in';
-
 		if ( socialService ) {
-			url += '/' + socialService + '/callback';
+			url = `/${ socialService === 'apple' ? 'sign-in' : 'log-in' }/${ socialService }/callback`;
 		} else if ( twoFactorAuthType && isJetpack ) {
-			url += '/jetpack/' + twoFactorAuthType;
+			url = '/log-in/jetpack/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
-			url += '/' + twoFactorAuthType;
+			url = '/log-in/' + twoFactorAuthType;
 		} else if ( socialConnect ) {
-			url += '/social-connect';
+			url = '/log-in/social-connect';
 		} else if ( isJetpack ) {
-			url += '/jetpack';
+			url = '/log-in/jetpack';
 		} else if ( useMagicLink ) {
-			url += '/link';
+			url = '/log-in/link';
+		} else {
+			url = '/log-in';
 		}
+	} else {
+		url = config( 'login_url' );
 	}
 
 	if ( locale && locale !== 'en' ) {

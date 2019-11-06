@@ -26,11 +26,17 @@ function loginWithApple( request, response, next ) {
 	}
 
 	const idToken = request.body.id_token;
-	const user = request.body.user || {};
+	const user = JSON.parse( request.body.user || '{}' );
 	const userEmail = user.email;
 	const userName = user.name
 		? `${ user.name.firstName || '' } ${ user.name.lastName || '' }`.trim()
 		: undefined;
+
+	request.user_openid_data = {
+		id_token: idToken,
+		user_email: userEmail,
+		user_name: userName,
+	};
 
 	// An `id_token` is not enough to log a user in (one might have 2FA enabled or an existing account with the same email)
 	// Thus we need to return `id_token` to the front-end so it can handle all sign-up/sign-in cases.
@@ -41,31 +47,43 @@ function loginWithApple( request, response, next ) {
 			.undocumented()
 			.usersSocialNew( {
 				...loginEndpointData(),
-				id_token: idToken,
-				user_email: userEmail,
-				user_name: userName,
+				...request.user_openid_data,
 			} )
 			.catch( () => {
 				// ignore errors
-			} );
+			} )
+			.finally( next );
+	} else {
+		next();
+	}
+}
+
+function redirectToCalypso( request, response, next ) {
+	if ( ! request.user_openid_data ) {
+		return next();
 	}
 
 	const originalUrlPath = request.originalUrl.split( '#' )[ 0 ];
 	const hashString = qs.stringify( {
-		id_token: idToken,
-		user_email: userEmail,
-		user_name: userName,
+		...request.user_openid_data,
 		client_id: config( 'apple_oauth_client_id' ),
 		state: request.body.state,
 	} );
 
-	response.redirect( originalUrlPath + '#' + hashString );
+	// `POST /log-in` is blacklisted, let's use `POST /sign-in` and redirect to `/log-in`
+	const newLocation = originalUrlPath.replace(
+		'/sign-in/apple/callback',
+		'/log-in/apple/callback'
+	);
+
+	response.redirect( newLocation + '#' + hashString );
 }
 
 module.exports = function( app ) {
 	return app.post(
-		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
+		[ '/sign-in/apple/callback', '/start/user', '/me/security/social-login' ],
 		bodyParser.urlencoded(),
-		loginWithApple
+		loginWithApple,
+		redirectToCalypso
 	);
 };
