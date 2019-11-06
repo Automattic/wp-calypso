@@ -157,7 +157,7 @@ class HandleEmailedLinkForm extends React.Component {
 		const action = (
 			<Button primary disabled={ this.state.hasSubmitted } onClick={ this.handleSubmit }>
 				{ this.props.isImmediateLoginAttempt
-					? translate( 'Confirm Login' )
+					? translate( 'Confirm Login to WordPress.com' )
 					: translate( 'Continue to WordPress.com' ) }
 			</Button>
 		);
