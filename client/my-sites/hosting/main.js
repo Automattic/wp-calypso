@@ -28,8 +28,8 @@ import './style.scss';
 const Hosting = ( { translate, isDisabled } ) => {
 	return (
 		<Main className="hosting is-wide-layout">
-			<PageViewTracker path="hosting/:site" title="Hosting" />
-			<DocumentHead title={ translate( 'Hosting' ) } />
+			<PageViewTracker path="/hosting-admin/:site" title="SFTP & MySQL" />
+			<DocumentHead title={ translate( 'SFTP & MySQL' ) } />
 			<SidebarNavigation />
 			{ isDisabled && (
 				<Banner
