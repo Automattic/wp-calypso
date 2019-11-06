@@ -88,15 +88,42 @@
 }
 
 .crowdsignal {
-	// Crowdsignal color palette
-	--color-accent: #bd4682;
-	--color-crowdsignal: #001d2d;
-	--color-link: #001d2d;
-	--color-text: #001d2d;
+	background: var( --color-surface );
+	color: var( --studio-gray-100 );
 
-	background: #f2f2f2;
-	color: var( --color-text );
-	font-family: 'Muli', $sans;
+	@include breakpoint( '>660px' ) {
+		background: var( --studio-gray-0 );
+	}
+
+	a, a:visited {
+		color: inherit;
+	}
+
+	.button {
+		background-color: var( --studio-gray-0 );
+		border-radius: 5px;
+		border-width: 1px 1px 2px;
+		box-shadow: none;
+		box-sizing: border-box;
+		font-size: 14px;
+		font-weight: 500;
+		height: 45px;
+		line-height: normal;
+		padding: 13px 40px 12px;
+
+		&.is-borderless {
+			background-color: transparent;
+		}
+
+		&.is-primary {
+			background-color: var( --color-accent );
+			border-color: var( --color-accent-dark );
+		}
+	}
+
+	.card {
+		--color-link-hover: #4ccee4;
+	}
 
 	&.is-section-login {
 		padding-bottom: 100px;
@@ -106,17 +133,7 @@
 			padding-bottom: 145px;
 		}
 
-		.button {
-			border: 0;
-			border-radius: 0;
-			box-sizing: border-box;
-			font-family: 'Muli', $sans;
-			font-weight: normal;
-			letter-spacing: 0.5px;
-			padding: 12px 20px;
-		}
-
-		.card {
+		.card:not(.gdpr-banner) {
 			background: none;
 			box-shadow: none;
 			border: 0;
@@ -155,13 +172,37 @@
 			position: relative;
 		}
 
+		.login__social-buttons {
+			.button {
+				display: none;
+				margin-bottom: 40px;
+				text-align: left;
+
+				&:first-child {
+					display: block;
+				}
+
+				@include breakpoint( '<660px' ) {
+					margin-bottom: 20px;
+				}
+			}
+
+			.social-buttons__service-name {
+				margin-left: 15px;
+			}
+
+			.login__social-tos {
+				display: none;
+			}
+		}
+
 		.login form {
 			box-sizing: border-box;
 			display: block;
 
 			@include breakpoint( '>660px' ) {
 				background-color: var( --color-surface );
-				box-shadow: 0 2px 3px 0 var( --color-neutral-10 );
+				box-shadow: 0 2px 3px 0 var(--color-neutral-10);
 				margin: 0 auto;
 				padding: 35px 55px 20px;
 				width: 550px;
@@ -184,10 +225,12 @@
 		}
 
 		.login__form-header {
+			font-family: 'Recoleta', serif;
 			font-size: 25px;
 			color: var( --color-text );
 			font-weight: 600;
 			margin-bottom: 80px;
+			margin-top: 0;
 
 			@include breakpoint( '>480px' ) {
 				font-size: 32px;
@@ -215,7 +258,6 @@
 			display: none;
 
 			@include breakpoint( '>660px' ) {
-				color: var( --color-text );
 				display: block;
 				font-size: 20px;
 				font-weight: 600;
@@ -225,30 +267,16 @@
 		}
 
 		.login__form-terms {
-			color: var( --color-text );
 			margin: 0;
 			position: absolute;
 			left: 0;
 			right: 0;
-			top: 84px;
+			top: 60px;
 			text-align: center;
 
-			@include breakpoint( '>480px' ) {
-				top: 106px;
-			}
-
 			@include breakpoint( '>660px' ) {
-				display: none;
-			}
-
-			&.login__form-terms-bottom {
-				display: none;
-
-				@include breakpoint( '>660px' ) {
-					display: block;
-					position: initial;
-					margin-bottom: 30px;
-				}
+				position: static;
+				margin-bottom: 30px;
 			}
 
 			a {
@@ -312,15 +340,6 @@
 			margin: 0 0 24px;
 		}
 
-		.social-buttons__button {
-			border: 1px solid #cecfd1;
-			border-radius: 0;
-
-			&:last-of-type {
-				margin-bottom: 40px;
-			}
-		}
-
 		.translator-invite {
 			display: none;
 		}
@@ -328,10 +347,10 @@
 		.wp-login__crowdsignal-footer {
 			background-color: var( --color-crowdsignal );
 			box-sizing: border-box;
-			color: var( --color-neutral-0 );
+			color: var( --color-text-inverted );
 			display: flex;
 			flex-direction: row;
-			fill: var( --color-neutral-0 );
+			fill: var( --color-text-inverted );
 			height: 58px;
 			padding: 20px 40px;
 			position: absolute;

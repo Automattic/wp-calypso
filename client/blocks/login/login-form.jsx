@@ -573,28 +573,6 @@ export class LoginForm extends Component {
 						</p>
 					) }
 
-					{ config.isEnabled( 'signup/social' ) && isCrowdsignalOAuth2Client( oauth2Client ) && (
-						<p className="login__form-terms login__form-terms-bottom">
-							{ preventWidows(
-								this.props.translate(
-									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								),
-								5
-							) }
-						</p>
-					) }
-
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isFormDisabled }>
 							{ this.isPasswordView() || this.isFullView()
