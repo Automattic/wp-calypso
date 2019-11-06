@@ -878,12 +878,13 @@ Undocumented.prototype.metaKeyring = function( fn ) {
  * @return {Promise} A Promise to resolve when complete
  * @api public
  */
+
 Undocumented.prototype.sitesExternalServices = function( siteId, fn ) {
 	debug( '/sites/:site-id:/external-services query' );
 	return this.wpcom.req.get(
 		{
 			path: '/sites/' + siteId + '/external-services/',
-			apiVersion: '1.1',
+			apiNamespace: 'wpcom/v2',
 		},
 		fn
 	);
