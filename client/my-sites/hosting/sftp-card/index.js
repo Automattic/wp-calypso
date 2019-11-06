@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, map } from 'lodash';
@@ -24,12 +24,32 @@ import {
 	resetAtomicSFTPUserPassword,
 	createAtomicSFTPUser,
 } from 'state/data-getters';
+import { errorNotice } from 'state/notices/actions';
 
-const SFTPCard = ( { translate, username, password, siteId, loading, disabled } ) => {
+const SFTPCard = ( {
+	translate,
+	username,
+	password,
+	siteId,
+	loading,
+	disabled,
+	error,
+	showErrorNotice,
+} ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
 	const passwordIsCopied = isCopied === 'password';
+
+	useEffect( () => {
+		if ( error ) {
+			showErrorNotice(
+				translate(
+					'For some reason your SFTP Information could not be loaded. Please refresh the page and try again'
+				)
+			);
+		}
+	}, [ error ] );
 
 	const sftpData = {
 		[ translate( 'URL' ) ]: 'sftp.wp.com',
@@ -141,23 +161,29 @@ const SFTPCard = ( { translate, username, password, siteId, loading, disabled } 
 	);
 };
 
-export default connect( ( state, { disabled } ) => {
-	const siteId = getSelectedSiteId( state );
-	let username = null;
-	let password = null;
-	let loading = null;
+export default connect(
+	( state, { disabled } ) => {
+		const siteId = getSelectedSiteId( state );
+		let username = null;
+		let password = null;
+		let loading = null;
+		let error = null;
 
-	if ( ! disabled ) {
-		const sftpDetails = requestAtomicSFTPDetails( siteId );
-		username = get( sftpDetails, 'data.username' );
-		password = get( sftpDetails, 'data.password' );
-		loading = sftpDetails.state === 'pending';
-	}
+		if ( ! disabled ) {
+			const sftpDetails = requestAtomicSFTPDetails( siteId );
+			username = get( sftpDetails, 'data.username' );
+			password = get( sftpDetails, 'data.password' );
+			loading = sftpDetails.state === 'pending';
+			error = sftpDetails.state === 'failure';
+		}
 
-	return {
-		siteId,
-		username,
-		password,
-		loading,
-	};
-} )( localize( SFTPCard ) );
+		return {
+			siteId,
+			username,
+			password,
+			loading,
+			error,
+		};
+	},
+	{ showErrorNotice: errorNotice }
+)( localize( SFTPCard ) );
