@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,6 +12,7 @@ import { flowRight } from 'lodash';
  */
 import SummaryChart from '../stats-summary';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
@@ -85,4 +85,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsVideoSummary );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsVideoSummary );

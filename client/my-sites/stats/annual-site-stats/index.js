@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,6 +18,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -212,4 +212,4 @@ export default connect( state => {
 		siteId,
 		siteSlug,
 	};
-} )( localize( AnnualSiteStats ) );
+} )( localize( withLocalizedMoment( AnnualSiteStats ) ) );

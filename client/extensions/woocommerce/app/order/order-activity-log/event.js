@@ -14,6 +14,7 @@ import { EVENT_TYPES } from 'woocommerce/state/sites/orders/activity-log/selecto
 import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/label-item';
 import LabelItemInProgress from 'woocommerce/woocommerce-services/views/shipping-label/label-item-in-progress';
 import { decodeEntities, stripHTML } from 'lib/formatting';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 class OrderEvent extends Component {
 	static propTypes = {
@@ -178,4 +179,4 @@ class OrderEvent extends Component {
 	}
 }
 
-export default localize( OrderEvent );
+export default localize( withLocalizedMoment( OrderEvent ) );

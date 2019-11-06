@@ -17,6 +17,7 @@ import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import Tooltip from 'components/tooltip';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import getSiteComment from 'state/selectors/get-site-comment';
@@ -149,4 +150,4 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentAuthor ) );
+export default connect( mapStateToProps )( localize( withLocalizedMoment( CommentAuthor ) ) );
