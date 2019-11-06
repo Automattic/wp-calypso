@@ -77,8 +77,7 @@
 	display: none;
 	padding: 20px 10px 10px;
 	font-size: 13px;
-	//  Opacity choosen to stay within WCAG contrast guidelines
-	color: rgba( var( --color-text-inverted-rgb ), 0.74 );
+	color: var( --studio-blue-5 );
 	text-align: center;
 
 	p {
@@ -87,7 +86,7 @@
 	}
 
 	a {
-		color: rgba( var( --color-text-inverted-rgb ), 0.74 );
+		color: var( --studio-blue-5 );
 		text-decoration: underline;
 	}
 }
