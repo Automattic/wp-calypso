@@ -20,10 +20,12 @@ import getFrontPageEditorUrl from 'state/selectors/get-front-page-editor-url';
  * @return {String}           Customizer or Block Editor URL
  */
 export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId ) {
-	if (
-		! isSiteUsingFullSiteEditing( state, siteId ) ||
-		! isThemeActive( state, themeId, siteId )
-	) {
+	let shouldUseGutenbergFlows = true;
+
+	shouldUseGutenbergFlows =
+		true ||
+		( isSiteUsingFullSiteEditing( state, siteId ) && ! isThemeActive( state, themeId, siteId ) );
+	if ( ! shouldUseGutenbergFlows ) {
 		return getThemeCustomizeUrl( state, themeId, siteId );
 	}
 	return getFrontPageEditorUrl( state, siteId );

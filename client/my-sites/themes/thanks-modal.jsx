@@ -181,36 +181,61 @@ class ThanksModal extends Component {
 		);
 	};
 
-	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
-		const customizeSiteText = hasActivated ? (
+	getEditSiteLabel = () => {
+		const { shouldUseGutenbergFlows } = this.props;
+		return (
 			<span className="thanks-modal__button-customize">
 				<Gridicon icon="external" />
-				{ translate( 'Customize site' ) }
+				{ shouldUseGutenbergFlows ? translate( 'Edit Site' ) : translate( 'Customize site' ) }
 			</span>
-		) : (
-			translate( 'Activating theme…' )
 		);
-		const buttons = [
-			{
-				action: 'learn',
-				label: translate( 'Learn about this theme' ),
-				onClick: this.learnThisTheme,
-			},
+	};
+
+	getButtons = () => {
+		const { shouldUseGutenbergFlows, hasActivated } = this.props;
+
+		if ( ! hasActivated ) {
+			return [
+				{
+					label: translate( 'Activating theme…' ),
+					disabled: ! hasActivated,
+				},
+			];
+		}
+
+		const firstButton = shouldUseGutenbergFlows
+			? {
+					action: 'view', // @TODO: What to use here?
+					label: translate( 'View Site' ),
+					onClick: this.visitSite,
+			  }
+			: {
+					action: 'learn',
+					label: translate( 'Learn about this theme' ),
+					onClick: this.learnThisTheme,
+			  };
+
+		return [
+			firstButton,
 			{
 				action: 'customizeSite',
-				label: customizeSiteText,
+				label: this.getEditSiteLabel(),
 				isPrimary: true,
-				disabled: ! hasActivated,
 				onClick: this.goToCustomizer,
 			},
 		];
+	};
+
+	render() {
+		const { currentTheme, hasActivated, isActivating } = this.props;
+
+		// const buttons = ! hasActivated ? activationButtons : this.getButtons();
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
 				isVisible={ isActivating || hasActivated }
-				buttons={ buttons }
+				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
 				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
@@ -234,6 +259,7 @@ export default connect(
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
+			shouldUseGutenbergFlows: true,
 		};
 	},
 	dispatch => {
