@@ -3253,9 +3253,9 @@
 			"dev": true
 		},
 		"@types/wordpress__block-editor": {
-			"version": "2.2.3",
-			"resolved": "https://registry.npmjs.org/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.3.tgz",
-			"integrity": "sha512-MGHhL80BiRm1KvlG4Vj2gdhwmSRErEVyb5NFgEDrUuUAkj8QknV8MQIQecmmV15WdmSqdvfrdgTm+zGeMe84Ng==",
+			"version": "2.2.4",
+			"resolved": "https://registry.npmjs.org/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.4.tgz",
+			"integrity": "sha512-K2LTrzgnAGDDCQPkVEiK3wj/o4eyffxFhdG7gUBHTLqtJlqasRn9ekXM4GuGz2+uJp3vCEHGXlDDO1fuKA8VAg==",
 			"dev": true,
 			"requires": {
 				"@types/wordpress__blocks": "*",

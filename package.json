@@ -309,7 +309,7 @@
 		"@types/react-redux": "5.0.21",
 		"@types/webpack-env": "1.14.1",
 		"@types/wordpress__api-fetch": "3.2.2",
-		"@types/wordpress__block-editor": "2.2.3",
+		"@types/wordpress__block-editor": "2.2.4",
 		"@types/wordpress__block-library": "2.6.0",
 		"@types/wordpress__components": "7.4.5",
 		"@types/wordpress__data": "4.6.4",
