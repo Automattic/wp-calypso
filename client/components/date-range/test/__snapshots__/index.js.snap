@@ -4,7 +4,7 @@ exports[`DateRange should render 1`] = `
 <div
   className="date-range"
 >
-  <Localized(DateRangeTrigger)
+  <DateRangeTrigger
     buttonRef={
       Object {
         "current": null,
@@ -32,7 +32,7 @@ exports[`DateRange should render 1`] = `
       <div
         className="date-range__controls"
       >
-        <Localized(DateRangeHeader)
+        <DateRangeHeader
           onApplyClick={[Function]}
           onCancelClick={[Function]}
         />
@@ -55,7 +55,7 @@ exports[`DateRange should render 1`] = `
            day.
         </div>
       </div>
-      <Localized(DateRangeInputs)
+      <DateRangeInputs
         endDateValue="MM/DD/YYYY"
         onInputBlur={[Function]}
         onInputChange={[Function]}
