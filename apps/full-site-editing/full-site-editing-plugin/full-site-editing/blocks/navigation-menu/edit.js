@@ -91,9 +91,8 @@ export default compose( [
 	withColors( 'backgroundColor', { textColor: 'color' } ),
 	withFontSizes( 'fontSize' ),
 	withSelect( select => {
-		const { isCurrentPostPublished } = select( 'core/editor' );
 		return {
-			isPublished: isCurrentPostPublished(),
+			isPublished: select( 'core/editor' ).isCurrentPostPublished(),
 		};
 	} ),
 ] )( NavigationMenuEdit );
