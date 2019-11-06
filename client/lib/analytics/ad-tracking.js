@@ -1840,7 +1840,7 @@ async function initGoogleRecaptcha() {
 	// Use loadScript directly instead of the loadTrackingScripts function, to ensure that the
 	// reCAPTCHA script is only loaded when needed.
 	try {
-		const src = GOOGLE_RECAPTCHA_SCRIPT_URL + TRACKING_IDS.wpcomGoogleRecaptchaSiteKey;
+		const src = GOOGLE_RECAPTCHA_SCRIPT_URL + 'explicit';
 		await loadScript( src );
 		debug( 'initGoogleRecaptcha: [Loaded]', src );
 	} catch ( error ) {
@@ -1870,6 +1870,12 @@ export async function recordGoogleRecaptchaAction( action ) {
 	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
 
 	try {
+		// Render to an explicit DOM id 'g-recaptcha' that should already be on the page.
+		window.grecaptcha.render( 'g-recaptcha', {
+			sitekey: TRACKING_IDS.wpcomGoogleRecaptchaSiteKey,
+			size: 'invisible',
+		} );
+
 		const token = await window.grecaptcha.execute( TRACKING_IDS.wpcomGoogleRecaptchaSiteKey, {
 			action,
 		} );
