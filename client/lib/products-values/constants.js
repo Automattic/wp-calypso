@@ -116,7 +116,7 @@ export const JETPACK_PRODUCTS = [
 		optionDescriptions: {
 			...JETPACK_BACKUP_PRODUCT_DESCRIPTIONS,
 		},
-		optionsLabel: translate( 'Backup Options' ),
+		optionsLabel: translate( 'Backup Options:' ),
 		productUpsells: {
 			[ PRODUCT_JETPACK_BACKUP_DAILY ]: PRODUCT_JETPACK_BACKUP_REALTIME,
 			[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
