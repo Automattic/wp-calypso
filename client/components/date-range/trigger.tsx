@@ -41,7 +41,7 @@ const DateRangeTrigger: FunctionComponent< Props & SharedProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const canReset = startDate || endDate;
+	const canReset = Boolean( startDate || endDate );
 
 	let dateRangeText;
 	if ( triggerText ) {
