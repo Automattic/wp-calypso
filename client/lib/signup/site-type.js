@@ -129,7 +129,9 @@ export function getAllSiteTypes() {
 			theme: 'pub/maywood',
 			designType: 'portfolio',
 			siteTitleLabel: i18n.translate( 'What is your name?' ),
-			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
+			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed', {
+				comment: "An example of a person's name, use something appropriate for the locale",
+			} ),
 			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter your job title or choose one from below.' ),
