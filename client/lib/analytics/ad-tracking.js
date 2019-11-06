@@ -1912,12 +1912,12 @@ export async function recordGoogleRecaptchaAction( action ) {
 
 	try {
 		// Render to an explicit DOM id 'g-recaptcha' that should already be on the page.
-		window.grecaptcha.render( 'g-recaptcha', {
+		const clientId = await window.grecaptcha.render( 'g-recaptcha', {
 			sitekey: TRACKING_IDS.wpcomGoogleRecaptchaSiteKey,
 			size: 'invisible',
 		} );
 
-		const token = await window.grecaptcha.execute( TRACKING_IDS.wpcomGoogleRecaptchaSiteKey, {
+		const token = await window.grecaptcha.execute( clientId, {
 			action,
 		} );
 
