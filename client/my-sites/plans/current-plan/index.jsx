@@ -34,6 +34,7 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
@@ -128,6 +129,11 @@ class CurrentPlan extends Component {
 			<Main className="current-plan" wideLayout>
 				<SidebarNavigation />
 				<DocumentHead title={ translate( 'My Plan' ) } />
+				<FormattedHeader
+					className="current-plan__page-heading"
+					headerText={ translate( 'Plans' ) }
+					leftAlign
+				/>
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
