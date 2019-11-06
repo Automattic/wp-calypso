@@ -24,6 +24,7 @@ import NavTabs from 'components/section-nav/tabs';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
@@ -87,9 +88,14 @@ export const Sharing = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Sharing' ) } />
+			<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
+			<FormattedHeader
+				className="marketing__page-heading"
+				headerText={ translate( 'Marketing and Integrations' ) }
+				leftAlign
+			/>
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
