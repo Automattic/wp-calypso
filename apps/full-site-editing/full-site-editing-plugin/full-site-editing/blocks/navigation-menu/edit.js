@@ -18,6 +18,7 @@ import {
 	withFontSizes,
 } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
+import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -32,6 +33,7 @@ const NavigationMenuEdit = ( {
 	setFontSize,
 	setTextColor,
 	textColor,
+	isPublished,
 } ) => {
 	const { customFontSize, textAlign } = attributes;
 
@@ -76,7 +78,11 @@ const NavigationMenuEdit = ( {
 					/>
 				</PanelColorSettings>
 			</InspectorControls>
-			<ServerSideRender block="a8c/navigation-menu" attributes={ attributes } />
+			<ServerSideRender
+				isPublished={ isPublished }
+				block="a8c/navigation-menu"
+				attributes={ attributes }
+			/>
 		</Fragment>
 	);
 };
@@ -84,4 +90,9 @@ const NavigationMenuEdit = ( {
 export default compose( [
 	withColors( 'backgroundColor', { textColor: 'color' } ),
 	withFontSizes( 'fontSize' ),
+	withSelect( select => {
+		return {
+			isPublished: select( 'core/editor' ).isCurrentPostPublished(),
+		};
+	} ),
 ] )( NavigationMenuEdit );
