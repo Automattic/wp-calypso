@@ -66,12 +66,8 @@ class DnsList extends React.Component {
 			return;
 		}
 
-		deleteDnsAction( selectedDomainName, record, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The DNS record has not been deleted.' )
-				);
-			} else {
+		deleteDnsAction( selectedDomainName, record ).then(
+			() => {
 				const successNoticeId = 'dns-list-success-notice';
 				this.props.successNotice( translate( 'The DNS record has been deleted.' ), {
 					id: successNoticeId,
@@ -83,24 +79,30 @@ class DnsList extends React.Component {
 						this.addDns( record );
 					},
 				} );
+			},
+			error => {
+				this.props.errorNotice(
+					error.message || translate( 'The DNS record has not been deleted.' )
+				);
 			}
-		} );
+		);
 	};
 
 	addDns( record ) {
 		const { translate } = this.props;
 
-		addDnsAction( this.props.selectedDomainName, record, error => {
-			if ( error ) {
-				this.props.errorNotice(
-					error.message || translate( 'The DNS record could not be restored.' )
-				);
-			} else {
+		addDnsAction( this.props.selectedDomainName, record ).then(
+			() => {
 				this.props.successNotice( translate( 'The DNS record has been restored.' ), {
 					duration: 5000,
 				} );
+			},
+			error => {
+				this.props.errorNotice(
+					error.message || translate( 'The DNS record could not be restored.' )
+				);
 			}
-		} );
+		);
 	}
 
 	isDomainConnectRecord( dnsRecord ) {
