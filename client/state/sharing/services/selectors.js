@@ -119,6 +119,14 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		if (
+			'google_drive' === service.ID &&
+			( ! config.isEnabled( 'google-drive' ) ||
+				! canCurrentUser( state, siteId, 'manage_options' ) )
+		) {
+			return false;
+		}
+
 		return true;
 	} );
 }
