@@ -32,7 +32,8 @@ const DateRangeInputs: FunctionComponent< Props & SharedProps > = ( {
 	onInputChange = noop,
 	...props
 } ) => {
-	const uniqueId = useRef( uuidv4() );
+	const uniqueIdRef = useRef( uuidv4() );
+	const uniqueId = uniqueIdRef.current;
 	const translate = useTranslate();
 
 	const startDateID = `startDate-${ uniqueId }`;
