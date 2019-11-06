@@ -21,14 +21,14 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	let spy;
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
-	const getState = () => ( {} );
+	const getState = () => ( { ui: { selectedSiteId: '2916284' } } );
 
 	describe( 'requestKeyringServices()', () => {
 		describe( 'successful requests', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/meta/external-services/' )
+					.get( '/wpcom/v2/sites/2916284/external-services' )
 					.reply( 200, {
 						services: {
 							facebook: { ID: 'facebook' },
@@ -70,7 +70,7 @@ describe( 'actions', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/meta/external-services/' )
+					.get( '/wpcom/v2/sites/2916284/external-services' )
 					.reply( 500, {
 						error: 'server_error',
 						message: 'A server error occurred',
