@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -18,6 +18,7 @@ import Button from 'components/button';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import RestorePasswordDialog from './restore-db-password';
 
 const requestId = siteId => `pma-link-request-${ siteId }`;
 
@@ -48,6 +49,8 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 		}
 	}, [ token, loading ] );
 
+	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
+
 	return (
 		<Card className="phpmyadmin-card">
 			<div className="phpmyadmin-card__icon">
@@ -68,6 +71,35 @@ const PhpMyAdminCard = ( { translate, siteId, token, loading, disabled } ) => {
 					<span>{ translate( 'Open phpMyAdmin' ) }</span>
 					<MaterialIcon icon="launch" size={ 16 } />
 				</Button>
+				{ ! disabled && (
+					<div className="phpmyadmin-card__restore-password">
+						{ translate(
+							'Problems accessing the database? Try {{a}}restoring the database password{{/a}}. This is useful for cases where the password has accidentally been changed in phpMyAdmin.',
+							{
+								components: {
+									a: (
+										<Button
+											compact
+											borderless
+											onClick={ () => {
+												setIsRestorePasswordDialogVisible( true );
+											} }
+										/>
+									),
+								},
+							}
+						) }
+					</div>
+				) }
+				<RestorePasswordDialog
+					isVisible={ isRestorePasswordDialogVisible }
+					onCancel={ () => {
+						setIsRestorePasswordDialogVisible( false );
+					} }
+					onRestore={ () => {
+						setIsRestorePasswordDialogVisible( false );
+					} }
+				/>
 			</div>
 		</Card>
 	);
