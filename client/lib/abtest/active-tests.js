@@ -117,7 +117,7 @@ export default {
 		localeTargets: 'any',
 	},
 	showPlanUpsellConcierge: {
-		datestamp: '20191029',
+		datestamp: '20191106',
 		variations: {
 			variantShowPlanBump: 50,
 			control: 50,
