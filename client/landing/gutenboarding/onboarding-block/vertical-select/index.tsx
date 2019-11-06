@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -11,12 +10,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 import Suggestions from 'components/suggestions';
 import { STORE_KEY } from '../../store';
+import { SiteVertical, isFilledFormValue } from '../../store/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { SiteVertical, isFilledFormValue } from '../../store/types';
 
 interface Props {
 	inputClass: string;
