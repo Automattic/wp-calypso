@@ -101,8 +101,8 @@ export function generateFlows( {
 			steps: [
 				'template-first-themes',
 				'user',
-				'site-type',
-				'site-topic',
+				'site-type-with-theme',
+				'site-topic-with-theme',
 				'site-title',
 				'domains',
 				'plans',

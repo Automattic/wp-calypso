@@ -471,10 +471,22 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
+		'site-type-with-theme': {
+			stepName: 'site-type',
+			providesDependencies: [ 'siteType' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
+		},
+
 		'site-topic': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
+		},
+
+		'site-topic-with-theme': {
+			stepName: 'site-topic',
+			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
