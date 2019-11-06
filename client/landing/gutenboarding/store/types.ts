@@ -4,6 +4,7 @@
 	RESET_SITE_TYPE = 'RESET_SITE_TYPE',
 	SET_SITE_TITLE = 'SET_SITE_TITLE',
 	SET_SITE_TYPE = 'SET_SITE_TYPE',
+	SET_SITE_VERTICAL = 'SET_SITE_VERTICAL',
 }
 export { ActionType };
 
@@ -11,6 +12,11 @@ export enum SiteType {
 	BLOG = 'blog',
 	STORE = 'store',
 	STORY = 'story',
+}
+
+export interface SiteVertical {
+	label: string;
+	id: string;
 }
 
 export const EMPTY_FORM_VALUE = Object.freeze( {} );
