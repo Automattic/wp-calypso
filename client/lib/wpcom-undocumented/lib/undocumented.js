@@ -883,7 +883,7 @@ Undocumented.prototype.sitesExternalServices = function( siteId, fn ) {
 	debug( '/sites/:site-id:/external-services query' );
 	return this.wpcom.req.get(
 		{
-			path: '/sites/' + siteId + '/external-services/',
+			path: '/sites/' + siteId + '/external-services',
 			apiNamespace: 'wpcom/v2',
 		},
 		fn
