@@ -135,11 +135,10 @@ describe( 'Checkout', () => {
 			</CheckoutProvider>
 		);
 		const { getAllByText } = render( <MyCheckout /> );
-		// Each has a length of two because of the summary
-		expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 2 );
-		expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 2 );
-		expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 2 );
-		expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 2 );
+		expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 1 );
+		expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 1 );
+		expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 1 );
+		expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
 	} );
 
 	it( 'renders the payment method SubmitButtonComponent', () => {
