@@ -150,7 +150,7 @@ class StatsSite extends Component {
 			<Main wideLayout={ true }>
 				<QueryKeyringConnections />
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Traffic Stats' ) } />
+				<DocumentHead title={ translate( 'Stats and Insights' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
@@ -159,8 +159,8 @@ class StatsSite extends Component {
 				<SidebarNavigation />
 				<FormattedHeader
 					className="stats__section-header"
-					headerText={ translate( 'Traffic Stats' ) }
-					leftAlign={ true }
+					headerText={ translate( 'Stats and Insights' ) }
+					leftAlign
 				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }

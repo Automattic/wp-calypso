@@ -55,12 +55,12 @@ const StatsInsights = props => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ translate( 'Traffic Stats' ) } />
+			<DocumentHead title={ translate( 'Stats and Insights' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<SidebarNavigation />
 			<FormattedHeader
 				className="stats__section-header"
-				headerText={ translate( 'Traffic Stats' ) }
+				headerText={ translate( 'Stats and Insights' ) }
 				leftAlign={ true }
 			/>
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
