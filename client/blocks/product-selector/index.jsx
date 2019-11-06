@@ -62,10 +62,19 @@ export class ProductSelector extends Component {
 	getPurchaseByProduct( product ) {
 		const { intervalType, purchases } = this.props;
 		const productSlugs = product.options[ intervalType ];
+		let relatedProductSlugs = {};
+
+		// When viewing monthly tab, we want to consider existing yearly purchases.
+		if ( 'monthly' === intervalType ) {
+			relatedProductSlugs = { ...product.options.yearly };
+		}
 
 		return find(
 			purchases,
-			purchase => purchase.active && includes( productSlugs, purchase.productSlug )
+			purchase =>
+				purchase.active &&
+				( includes( productSlugs, purchase.productSlug ) ||
+					includes( relatedProductSlugs, purchase.productSlug ) )
 		);
 	}
 
@@ -295,7 +304,7 @@ export class ProductSelector extends Component {
 	}
 
 	renderUpsellSection( product ) {
-		const { storeProducts, translate } = this.props;
+		const { intervalType, productPriceMatrix, storeProducts, translate } = this.props;
 		let upsellProductSlug;
 
 		const productPurchase = this.getPurchaseByProduct( product );
@@ -306,6 +315,11 @@ export class ProductSelector extends Component {
 			product.productUpsells[ productPurchase.productSlug ]
 		) {
 			upsellProductSlug = product.productUpsells[ productPurchase.productSlug ];
+
+			// If we have yearly plan, don't show yearly upsell in monthly view.
+			if ( 'monthly' === intervalType && productPriceMatrix[ upsellProductSlug ] ) {
+				return null;
+			}
 
 			const productObject = storeProducts[ upsellProductSlug ];
 			const productName = this.getProductName( product, productObject.product_slug );
