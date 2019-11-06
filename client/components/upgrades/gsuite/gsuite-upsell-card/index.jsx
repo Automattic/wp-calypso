@@ -121,7 +121,7 @@ const GSuiteUpsellCard = ( {
 				>
 					<div className="gsuite-upsell-card__buttons">
 						<Button className="gsuite-upsell-card__skip-button" onClick={ handleSkipClick }>
-							{ translate( 'Skip' ) }
+							{ translate( 'Skip for now' ) }
 						</Button>
 
 						<Button
