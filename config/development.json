@@ -58,6 +58,7 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
+		"google-drive": true,
 		"gutenboarding": true,
 		"help": true,
 		"help/courses": true,
