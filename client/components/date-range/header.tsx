@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import SharedProps from './shared-props';
 
 interface Props {
 	onApplyClick: () => void;
@@ -18,7 +17,7 @@ interface Props {
 	cancelButtonText: string | null | undefined;
 }
 
-const DateRangeHeader: FunctionComponent< Props & SharedProps > = ( {
+const DateRangeHeader: FunctionComponent< Props > = ( {
 	onCancelClick = noop,
 	onApplyClick = noop,
 	cancelButtonText,

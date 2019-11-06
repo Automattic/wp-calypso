@@ -12,7 +12,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'components/localized-moment';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import SharedProps from './shared-props';
 
 type StartOrEnd = 'Start' | 'End';
 
@@ -26,7 +25,7 @@ interface Props {
 	onInputChange: ( value: string | null | undefined, startOrEnd: StartOrEnd ) => void;
 }
 
-const DateRangeInputs: FunctionComponent< Props & SharedProps > = ( {
+const DateRangeInputs: FunctionComponent< Props > = ( {
 	onInputFocus = noop,
 	onInputBlur = noop,
 	onInputChange = noop,

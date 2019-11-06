@@ -13,7 +13,6 @@ import { Moment } from 'moment';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import ScreenReaderText from 'components/screen-reader-text';
-import SharedProps from './shared-props';
 
 interface Props {
 	startDate: Date | Moment | null | undefined;
@@ -25,9 +24,10 @@ interface Props {
 	onClearClick: () => void;
 	triggerText: ( startDateText: string, endDateText: string ) => string;
 	showClearBtn: boolean;
+	isCompact: boolean;
 }
 
-const DateRangeTrigger: FunctionComponent< Props & SharedProps > = ( {
+const DateRangeTrigger: FunctionComponent< Props > = ( {
 	onTriggerClick = noop,
 	onClearClick = noop,
 	isCompact = false,
