@@ -57,7 +57,6 @@ export default function Checkout( {
 	CheckoutHeader,
 	className,
 } ) {
-	const localize = useLocalize();
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
 	const { changeStep } = useDispatch( 'checkout' );
 
