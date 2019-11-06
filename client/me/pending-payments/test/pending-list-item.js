@@ -1,16 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import { shallow } from 'enzyme';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import { PendingListItem } from '../pending-list-item';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
+import * as localizedMoment from 'components/localized-moment';
+
+jest.mock( 'components/localized-moment' );
+localizedMoment.useLocalizedMoment.mockReturnValue( moment );
 
 describe( 'PendingListItem', () => {
 	const defaultProps = {
