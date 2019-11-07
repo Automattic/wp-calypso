@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { format as formatUrl, parse as parseUrl } from 'url';
-import { has, isString, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ export { URL_TYPE, determineUrlType } from './url-type';
 export { default as isOutsideCalypso } from './is-outside-calypso';
 export { default as isHttps } from './is-https';
 export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
+export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 
 /**
  * Removes given params from a url.
@@ -41,38 +42,4 @@ export function omitUrlParams( url: URL | Falsy, paramsToOmit: string | string[]
 
 	delete parsed.search;
 	return formatUrl( parsed );
-}
-
-/**
- * Wrap decodeURI in a try / catch block to prevent `URIError` on invalid input
- * Passing a non-string value will return an empty string.
- * @param  encodedURI URI to attempt to decode
- * @return            Decoded URI (or passed in value on error)
- */
-export function decodeURIIfValid( encodedURI: string ): URL {
-	if ( ! ( isString( encodedURI ) || has( encodedURI, 'toString' ) ) ) {
-		return '';
-	}
-	try {
-		return decodeURI( encodedURI );
-	} catch ( e ) {
-		return encodedURI;
-	}
-}
-
-/**
- * Wrap decodeURIComponent in a try / catch block to prevent `URIError` on invalid input
- * Passing a non-string value will return an empty string.
- * @param  encodedURIComponent URI component to attempt to decode
- * @return                     Decoded URI component (or passed in value on error)
- */
-export function decodeURIComponentIfValid( encodedURIComponent: string ): string {
-	if ( ! ( isString( encodedURIComponent ) || has( encodedURIComponent, 'toString' ) ) ) {
-		return '';
-	}
-	try {
-		return decodeURIComponent( encodedURIComponent );
-	} catch ( e ) {
-		return encodedURIComponent;
-	}
 }
