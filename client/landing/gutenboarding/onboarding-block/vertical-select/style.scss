@@ -3,7 +3,13 @@
 .vertical-select {
 	.onboarding-block__question-input {
 		width: 100%;
+		min-width: 180px;
 	}
+
+	span.onboarding-block__question-input {
+		height: 1.3em;
+	}
+
 	.suggestions__category-heading {
 		padding: 12px 16px;
 		color: $dark-gray-300;
@@ -11,6 +17,10 @@
 		border: 1px solid $light-gray-500;
 	}
 	.suggestions__wrapper {
+		background: $white;
+		position: fixed;
+		margin-left: 8px;
+		max-width: 440px;
 		max-height: 440px;
 		overflow: auto;
 		border: 1px solid $blue-medium-focus;

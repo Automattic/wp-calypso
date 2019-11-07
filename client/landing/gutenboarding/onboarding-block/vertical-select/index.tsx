@@ -21,7 +21,7 @@ interface Props {
 	inputClass: string;
 }
 
-export default function VerticalSelect( { inputClass }: Props ) {
+export default function VerticalSelect( { inputClass, forceHideSuggestions, onClick }: Props ) {
 	const popular = [
 		NO__( 'Travel Agency' ),
 		NO__( 'Digital Marketing' ),
@@ -101,24 +101,44 @@ export default function VerticalSelect( { inputClass }: Props ) {
 
 	return (
 		<div className="vertical-select">
-			<input
-				ref={ inputRef }
-				className={ inputClass }
-				placeholder={ NO__( 'enter a topic' ) }
-				onChange={ handleSuggestionChangeEvent }
-				onFocus={ showSuggestions }
-				onBlur={ hideSuggestions }
-				onKeyDown={ handleSuggestionKeyDown }
-				autoComplete="off"
-				value={ value }
-			/>
-			{ suggestionsVisibility && (
-				<Suggestions
-					ref={ suggestionRef }
-					query={ inputValue }
-					suggestions={ ! verticals.length ? loadingMessage : suggestions }
-					suggest={ handleSelect }
-				/>
+			{ suggestionsVisibility || ! value ? (
+				<>
+					<input
+						ref={ inputRef }
+						className={ inputClass }
+						placeholder={ NO__( 'enter a topic' ) }
+						onChange={ handleSuggestionChangeEvent }
+						onFocus={ showSuggestions }
+						onBlur={ hideSuggestions }
+						onKeyDown={ handleSuggestionKeyDown }
+						onMouseDown={ onClick }
+						autoComplete="off"
+						value={ value }
+					/>
+					{ ! forceHideSuggestions && (
+						<Suggestions
+							ref={ suggestionRef }
+							query={ inputValue }
+							suggestions={ ! verticals.length ? loadingMessage : suggestions }
+							suggest={ handleSelect }
+						/>
+					) }
+				</>
+			) : (
+				<span
+					ref={ inputRef }
+					className={ inputClass }
+					onClick={ showSuggestions }
+					onMouseDown={ onClick }
+					onFocus={ onClick }
+					onKeyDown={ onClick }
+					onKeyPress={ showSuggestions }
+					autoComplete="off"
+					role="button"
+					tabIndex="0"
+				>
+					{ value ? value : NO__( 'enter a topic' ) }
+				</span>
 			) }
 		</div>
 	);
