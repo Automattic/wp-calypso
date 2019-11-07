@@ -7,9 +7,9 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { HOSTING_REQUEST_SFTP_USER } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
-import { receiveSFTPUser, receiveSFTPUserError } from 'state/hosting/actions.js';
+import { receiveAtomicSFTPUser, receiveAtomicSFTPUserError } from 'state/hosting/actions.js';
 
-const requestSFTPUser = action => {
+const requestAtomicSFTPUser = action => {
 	return http(
 		{
 			method: 'GET',
@@ -20,11 +20,11 @@ const requestSFTPUser = action => {
 	);
 };
 
-const receiveSFTPUserSuccess = ( action, response ) =>
-	receiveSFTPUser( action.siteId, action.userId, response );
+const receiveAtomicSFTPUserSuccess = ( action, response ) =>
+	receiveAtomicSFTPUser( action.siteId, action.userId, response );
 
 const sFTPUserError = ( { siteId, userId } ) => dispatch => {
-	dispatch( receiveSFTPUserError( siteId, userId ) );
+	dispatch( receiveAtomicSFTPUserError( siteId, userId ) );
 	dispatch(
 		errorNotice(
 			translate( 'Sorry, we had a problem retrieving your sftp user details. Please try again.' ),
@@ -38,8 +38,8 @@ const sFTPUserError = ( { siteId, userId } ) => dispatch => {
 registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
 	[ HOSTING_REQUEST_SFTP_USER ]: [
 		dispatchRequest( {
-			fetch: requestSFTPUser,
-			onSuccess: receiveSFTPUserSuccess,
+			fetch: requestAtomicSFTPUser,
+			onSuccess: receiveAtomicSFTPUserSuccess,
 			onError: sFTPUserError,
 		} ),
 	],

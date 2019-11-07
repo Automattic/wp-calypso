@@ -21,8 +21,8 @@ import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { resetAtomicSFTPUserPassword, createAtomicSFTPUser } from 'state/data-getters';
-import { requestSFTPUser } from 'state/hosting/actions';
-import { getUserSFTPDetails, isUserSFTPDetailsLoading } from 'state/hosting/selectors';
+import { requestAtomicSFTPUser } from 'state/hosting/actions';
+import { getUserSFTPDetails, isSFTPUserLoading } from 'state/hosting/selectors';
 
 const SFTPCard = ( {
 	translate,
@@ -32,7 +32,7 @@ const SFTPCard = ( {
 	loading,
 	loaded,
 	disabled,
-	requestSFTPUserDetails,
+	requestAtomicSFTPUserDetails,
 	currentUserId,
 } ) => {
 	// State for clipboard copy button for both username and password data
@@ -42,9 +42,9 @@ const SFTPCard = ( {
 
 	useEffect( () => {
 		if ( ! loaded ) {
-			requestSFTPUserDetails( siteId, currentUserId );
+			requestAtomicSFTPUserDetails( siteId, currentUserId );
 		}
-	}, [ username ] );
+	}, [ loaded ] );
 	const sftpData = {
 		[ translate( 'URL' ) ]: 'sftp.wp.com',
 		[ translate( 'Port' ) ]: 22,
@@ -166,7 +166,7 @@ export default connect(
 
 		if ( ! disabled ) {
 			const sftpDetails = getUserSFTPDetails( state, siteId, currentUserId );
-			loading = isUserSFTPDetailsLoading( state, siteId, currentUserId );
+			loading = isSFTPUserLoading( state, siteId, currentUserId );
 			username = get( sftpDetails, 'username' );
 			password = get( sftpDetails, 'password' );
 			loaded = sftpDetails !== null;
@@ -181,5 +181,5 @@ export default connect(
 			loading,
 		};
 	},
-	{ requestSFTPUserDetails: requestSFTPUser }
+	{ requestAtomicSFTPUserDetails: requestAtomicSFTPUser }
 )( localize( SFTPCard ) );
