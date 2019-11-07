@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
-
+import { get } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -253,7 +253,7 @@ class ThanksModal extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const siteUrl = getSelectedSite( state ).URL;
+		const siteUrl = get( getSelectedSite( state ), 'URL', null );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 		const shouldEditThemeWithGutenberg = isThemeGutenbergFirst( state, currentThemeId );
