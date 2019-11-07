@@ -484,12 +484,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
-		'site-topic-with-theme': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
 		'site-title-without-domains': {
 			stepName: 'site-title-without-domains',
 			apiRequestFunction: createSiteWithCart,

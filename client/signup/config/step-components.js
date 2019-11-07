@@ -40,7 +40,6 @@ const stepNameToModuleName = {
 	'site-title': 'site-title',
 	'site-title-without-domains': 'site-title',
 	'site-topic': 'site-topic',
-	'site-topic-with-theme': 'site-topic',
 	'site-type': 'site-type',
 	'site-type-with-theme': 'site-type',
 	survey: 'survey',

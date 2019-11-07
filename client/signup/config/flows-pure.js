@@ -102,7 +102,7 @@ export function generateFlows( {
 				'template-first-themes',
 				'user',
 				'site-type-with-theme',
-				'site-topic-with-theme',
+				'site-topic',
 				'site-title',
 				'domains',
 				'plans',
