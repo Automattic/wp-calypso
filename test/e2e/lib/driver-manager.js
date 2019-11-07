@@ -88,6 +88,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
 		const sauceConfig = config.get( 'sauceConfig' );
 		const caps = config.get( 'sauceConfigurations' )[ sauceConfig ];
+		builder = new webdriver.Builder();
 
 		caps.username = config.get( 'sauceUsername' );
 		caps.accessKey = config.get( 'sauceAccessKey' );
@@ -108,13 +109,17 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		if ( process.env.CIRCLE_BUILD_NUM ) {
 			caps.name += ' - CircleCI Build #' + process.env.CIRCLE_BUILD_NUM;
 		}
+		if ( browser.toLowerCase() === 'chrome' ) {
+			options = new chrome.Options();
+			options.addArguments( '--app=https://www.wordpress.com' );
+			builder.setChromeOptions( options );
+		}
 
 		global._sauceLabs = new SauceLabs( {
 			username: caps.username,
 			password: caps.accessKey,
 		} );
 
-		builder = new webdriver.Builder();
 		global.browserName = caps.browserName;
 		global.__BROWSER__ = driver = builder
 			.usingServer( sauceURL )
