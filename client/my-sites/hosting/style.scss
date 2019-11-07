@@ -1,97 +1,98 @@
 .hosting__cards {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	align-items: flex-start;
 
 	@include breakpoint( '>1280px' ) {
 		flex-direction: row;
-    }
+	}
 
-    .card {
-        display: flex;
-        flex-direction: row;
-        width: calc( 100% - 10px );
+	.card {
+		display: flex;
+		flex-direction: row;
+		width: calc( 100% - 10px );
 
-        .card-heading {
-            margin-top: 0;
-        }
+		.card-heading {
+			margin-top: 0;
+		}
 
 		@include breakpoint( '>1280px' ) {
-            width: calc( 40% - 10px );
+			width: calc( 40% - 10px );
 
-            &:first-child {
-                width: calc( 60% - 10px );
-            }
-        }
+			&:first-child {
+				width: calc( 60% - 10px );
+			}
+		}
 
-        .spinner {
-            width: 100%;
-        }
-    }
+		.spinner {
+			width: 100%;
+		}
+	}
 
-    .sftp-card {
-        flex-wrap: wrap;
+	.sftp-card {
+		flex-wrap: wrap;
 
-        .sftp-card__body {
-            width: calc( 100% - 24px - 32px );
-        }
-    }
+		.sftp-card__body {
+			width: calc( 100% - 24px - 32px );
+		}
+	}
 }
 
 .phpmyadmin-card__icon, .sftp-card__icon {
-    margin-right: 24px;
+	margin-right: 24px;
 }
 
 .sftp-card__info-table {
-    border: 1px solid var( --color-border-subtle );
-    margin-top: 15px;
-    table-layout: fixed;
+	border: 1px solid var( --color-border-subtle );
+	margin-top: 15px;
+	table-layout: fixed;
 
-    th {
-        text-align: right;
-        width: 20%;
-        background-color: var( --color-surface-backdrop );
+	th {
+		text-align: right;
+		width: 20%;
+		background-color: var( --color-surface-backdrop );
 
-        @include breakpoint( '<960px' ) {
-            width: 100px;
-        }
-    }
+		@include breakpoint( '<960px' ) {
+			width: 100px;
+		}
+	}
 
-    th, td {
-        padding: 10px;
-    }
+	th, td {
+		padding: 10px;
+	}
 
-    p {
-        margin-bottom: 0.5em;
-    }
+	p {
+		margin-bottom: 0.5em;
+	}
 
-    .sftp-card__hidden-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+	.sftp-card__hidden-overflow {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 
-    .sftp-card__password-warning {
-        color: var( --color-text-subtle );
-        margin-top: 1.5em;
-    }
+	.sftp-card__password-warning {
+		color: var( --color-text-subtle );
+		margin-top: 1.5em;
+	}
 
-    &.is-placeholder span {
-        padding: 0 35%;
-        background-color: var( --color-surface-backdrop );
-    }
+	&.is-placeholder span {
+		padding: 0 35%;
+		background-color: var( --color-surface-backdrop );
+	}
 }
 
 .phpmyadmin-card button {
-    svg {
-        vertical-align: text-bottom;
-        margin-left: 10px;
-    }
+	svg {
+		vertical-align: text-bottom;
+		margin-left: 10px;
+	}
 
-    &:disabled svg {
-        opacity: 0.4;
-    }
+	&:disabled svg {
+		opacity: 0.4;
+	}
 }
 
 .phpmyadmin-card__restore-password {
