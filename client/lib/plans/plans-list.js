@@ -721,7 +721,10 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -780,7 +783,10 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL ]: {
@@ -822,7 +828,10 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -863,7 +872,10 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_DAILY,
+			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS ]: {
@@ -924,7 +936,10 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_REALTIME ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
 	},
 
 	[ constants.PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -984,7 +999,10 @@ export const PLANS_LIST = {
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [ constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_JETPACK_BACKUP_REALTIME,
+			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		],
 	},
 };
 
