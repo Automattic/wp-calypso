@@ -105,7 +105,7 @@ class ContactsPrivacyCard extends React.Component {
 		) : null;
 
 		return (
-			<div>
+			<React.Fragment>
 				<div className="contacts-privacy__settings">
 					<FormToggle
 						wrapperClassName="edit__disclose-contact-information"
@@ -118,7 +118,7 @@ class ContactsPrivacyCard extends React.Component {
 					</FormToggle>
 				</div>
 				{ contactVerificationNotice }
-			</div>
+			</React.Fragment>
 		);
 	}
 
