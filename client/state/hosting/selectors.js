@@ -27,5 +27,9 @@ export function getUserSFTPDetails( state, siteId, userId ) {
  * @return {Object} SFTP user details for selected user
  */
 export function isSFTPUserLoading( state, siteId, userId ) {
-	return get( state, [ 'atomicHosting', 'sites', siteId, 'sftpUsers', userId, 'loading' ], false );
+	return get(
+		state,
+		[ 'atomicHosting', 'sites', siteId, 'sftpUsers', userId, 'isLoading' ],
+		false
+	);
 }

@@ -16,7 +16,7 @@ const sites = ( state = {}, action ) => {
 		case HOSTING_REQUEST_SFTP_USER: {
 			const { siteId, userId } = action;
 			const site = state[ siteId ] ? state[ siteId ] : {};
-			const sftpUsers = { ...site.sftpUsers, [ userId ]: { loading: true } };
+			const sftpUsers = { ...site.sftpUsers, [ userId ]: { isLoading: true } };
 			const updatedSite = { ...site, sftpUsers };
 
 			return { ...state, [ siteId ]: updatedSite };
