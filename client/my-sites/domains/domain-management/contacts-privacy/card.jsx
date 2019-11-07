@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
  */
 import CompactCard from 'components/card/compact';
 import ContactDisplay from './contact-display';
-import Property from 'my-sites/domains/domain-management/edit/card/property';
 import SectionHeader from 'components/section-header';
 import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 import FormToggle from 'components/forms/form-toggle';
@@ -65,17 +64,17 @@ class ContactsPrivacyCard extends React.Component {
 		}
 
 		return (
-			<Property label={ translate( 'Privacy Protection' ) }>
-				{
-					<FormToggle
-						wrapperClassName="edit__privacy-protection-toggle"
-						checked={ privateDomain }
-						toggling={ isUpdatingPrivacy }
-						disabled={ isUpdatingPrivacy }
-						onChange={ this.togglePrivacy }
-					/>
-				}
-			</Property>
+			<div className="contacts-privacy__settings">
+				<FormToggle
+					wrapperClassName="edit__privacy-protection-toggle"
+					checked={ privateDomain }
+					toggling={ isUpdatingPrivacy }
+					disabled={ isUpdatingPrivacy }
+					onChange={ this.togglePrivacy }
+				>
+					{ translate( 'Privacy Protection' ) }
+				</FormToggle>
+			</div>
 		);
 	}
 
@@ -95,7 +94,7 @@ class ContactsPrivacyCard extends React.Component {
 		}
 
 		const contactVerificationNotice = isPendingIcannVerification ? (
-			<div class="edit__disclose-contact-information-warning">
+			<div class="edit__disclose-contact-information-warning contacts-privacy__settings">
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>
 					{ translate(
@@ -107,15 +106,17 @@ class ContactsPrivacyCard extends React.Component {
 
 		return (
 			<div>
-				<Property label={ translate( 'Display my contact information in public WHOIS' ) }>
+				<div className="contacts-privacy__settings">
 					<FormToggle
 						wrapperClassName="edit__disclose-contact-information"
 						checked={ contactInfoDisclosed }
 						toggling={ isUpdatingPrivacy }
 						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
 						onChange={ this.toggleContactInfo }
-					/>
-				</Property>
+					>
+						{ translate( 'Display my contact information in public WHOIS' ) }
+					</FormToggle>
+				</div>
 				{ contactVerificationNotice }
 			</div>
 		);
