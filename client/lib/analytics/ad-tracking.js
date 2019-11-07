@@ -102,6 +102,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
 		wpcomFloodlightGtag: 'DC-6355556',
 		wpcomGoogleAdsGtag: 'AW-946162814',
+		wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
 		wpcomGoogleAdsGtagRegistration: 'AW-946162814/_6cKCK6miZYBEP6YlcMD', // "WordPress.com Registration"
 		wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 		wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
@@ -609,6 +610,47 @@ function splitWpcomJetpackCartInfo( cart ) {
 		wpcomCostUSD: costToUSD( wpcomCost, cart.currency ),
 		totalCostUSD: costToUSD( cart.total_cost, cart.currency ),
 	};
+}
+
+export async function recordSignupStart( { flow } ) {
+	await refreshCountryCodeCookieGdpr();
+
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordSignupStart: [Skipping] ad tracking is not allowed' );
+		return;
+	}
+
+	await loadTrackingScripts();
+	const currentUser = getCurrentUser();
+
+	// Floodlight.
+
+	if ( isFloodlightEnabled ) {
+		debug( 'recordSignupStart: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			send_to: 'DC-6355556/wordp0/pre-p0+unique',
+		} );
+	}
+	if ( isFloodlightEnabled && ! currentUser && 'onboarding' === flow ) {
+		debug( 'recordSignupStart: [Floodlight]' );
+		recordParamsInFloodlightGtag( {
+			send_to: 'DC-6355556/wordp0/landi00+unique',
+		} );
+	}
+
+	// Google Ads.
+
+	if ( isWpcomGoogleAdsGtagEnabled && ! currentUser && 'onboarding' === flow ) {
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.wpcomGoogleAdsGtagSignupStart,
+			},
+		];
+		debug( 'recordSignupStart: [Google Ads Gtag]', params );
+		window.gtag( ...params );
+	}
 }
 
 export async function recordRegistration() {
@@ -1328,22 +1370,6 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 			);
 		}
 	}
-}
-
-/**
- * Record that a user started sign up in DCM Floodlight
- *
- * @returns {void}
- */
-export function recordSignupStartInFloodlight() {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
-		return;
-	}
-
-	debug( 'recordSignupStartInFloodlight:' );
-	recordParamsInFloodlightGtag( {
-		send_to: 'DC-6355556/wordp0/pre-p0+unique',
-	} );
 }
 
 /**
