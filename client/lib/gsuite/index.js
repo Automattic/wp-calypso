@@ -2,7 +2,7 @@
  * External dependencies
  */
 import formatCurrency from '@automattic/format-currency';
-import { get, includes, some, endsWith, find } from 'lodash';
+import { endsWith, get, includes, some, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -74,27 +74,25 @@ function getAnnualPrice( cost, currencyCode ) {
 }
 
 /**
- * Retrieves the first domain that is eligible to G Suite in the order:
+ * Retrieves the first domain that is eligible to G Suite in this order:
  *
- *   - The domain from the site currently selected i.e. `selectedDomainName`
+ *   - The domain from the site currently selected, if eligible
  *   - The primary domain of the site, if eligible
- *   - The first eligible domain
+ *   - The first non-primary domain eligible found
  *
  * @param {String} selectedDomainName - domain name for the site currently selected by the user
  * @param {Array} domains - list of domain objects
- * @returns {String} - Eligible domain name
+ * @returns {String} - the name of the first eligible domain found
  */
 function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	if ( selectedDomainName && canDomainAddGSuite( selectedDomainName ) ) {
 		return selectedDomainName;
 	}
-	const supportedDomains = getGSuiteSupportedDomains( domains );
-	const primaryDomain = find( supportedDomains, 'isPrimary' );
-	const primaryDomainName = get( primaryDomain, 'name', '' );
-	if ( ! primaryDomainName && supportedDomains.length ) {
-		return get( supportedDomains[ 0 ], 'name', '' );
-	}
-	return primaryDomainName;
+
+	// Orders domains with the primary domain in first position, if any
+	const supportedDomains = sortBy( getGSuiteSupportedDomains( domains ), ( domain ) => ! domain.isPrimary );
+
+	return get( supportedDomains, '[0].name', '' );
 }
 
 /**
