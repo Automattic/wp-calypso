@@ -132,7 +132,7 @@ class CurrentPlan extends Component {
 				<FormattedHeader
 					className="current-plan__page-heading"
 					headerText={ translate( 'Plans' ) }
-					leftAlign
+					align="left"
 				/>
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />

@@ -36,7 +36,7 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 			<FormattedHeader
 				className="site-settings__page-heading"
 				headerText={ translate( 'Settings' ) }
-				leftAlign
+				align="left"
 			/>
 			<SiteSettingsNavigation section={ 'general' } />
 			<GeneralSettings />

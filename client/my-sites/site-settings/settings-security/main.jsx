@@ -70,7 +70,7 @@ const SiteSettingsSecurity = ( {
 			<FormattedHeader
 				className="settings-security__page-heading"
 				headerText={ translate( 'Settings' ) }
-				leftAlign
+				align="left"
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showRewindCredentials && <JetpackCredentials /> }

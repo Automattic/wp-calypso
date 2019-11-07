@@ -25,7 +25,7 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 		<FormattedHeader
 			className="settings-writing__page-heading"
 			headerText={ translate( 'Settings' ) }
-			leftAlign
+			align="left"
 		/>
 		<SiteSettingsNavigation site={ site } section="writing" />
 		<WritingForm />

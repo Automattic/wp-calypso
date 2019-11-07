@@ -94,7 +94,7 @@ export const Sharing = ( {
 			<FormattedHeader
 				className="marketing__page-heading"
 				headerText={ translate( 'Marketing and Integrations' ) }
-				leftAlign
+				align="left"
 			/>
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>

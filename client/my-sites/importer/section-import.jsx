@@ -305,7 +305,7 @@ class SectionImport extends Component {
 				<FormattedHeader
 					className="importer__page-heading"
 					headerText={ translate( 'Import Your Content' ) }
-					leftAlign
+					align="left"
 				/>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }

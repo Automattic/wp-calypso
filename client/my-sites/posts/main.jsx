@@ -87,7 +87,7 @@ class PostsMain extends React.Component {
 				<FormattedHeader
 					className="posts__page-heading"
 					headerText={ translate( 'Posts' ) }
-					leftAlign
+					align="left"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				{ siteId && <PostTypeBulkEditBar /> }

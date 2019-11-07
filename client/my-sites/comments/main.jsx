@@ -104,7 +104,7 @@ export class CommentsManagement extends Component {
 					<FormattedHeader
 						className="comments__page-heading"
 						headerText={ translate( 'Comments' ) }
-						leftAlign
+						align="left"
 					/>
 				) }
 				{ ! showJetpackUpdateScreen && showPermissionError && (

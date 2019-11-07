@@ -42,7 +42,7 @@ function Types( {
 			<FormattedHeader
 				className="types__page-heading"
 				headerText={ get( postType, 'label' ) }
-				leftAlign
+				align="left"
 			/>
 			{ false !== userCanEdit &&
 				false !== postTypeSupported && [

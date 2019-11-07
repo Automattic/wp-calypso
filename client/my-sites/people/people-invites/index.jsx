@@ -98,7 +98,7 @@ class PeopleInvites extends React.PureComponent {
 				<FormattedHeader
 					className="people-invites__page-heading"
 					headerText={ translate( 'People' ) }
-					leftAlign
+					align="left"
 				/>
 				<PeopleSectionNav
 					filter="invites"

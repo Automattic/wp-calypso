@@ -10,13 +10,21 @@
 		}
 	}
 
-	&.is-left-align {
-		text-align: left;
+	&.is-left-align,
+	&.is-right-align {
 		margin: 16px;
 
 		@include breakpoint( '>660px' ) {
 			margin: 0 0 16px;
 		}
+	}
+
+	&.is-left-align {
+		text-align: left;
+	}
+
+	&.is-right-align {
+		text-align: right;
 	}
 }
 
@@ -31,7 +39,8 @@
 		margin: 0 0 5px;
 	}
 
-	.is-left-align & {
+	.is-left-align &,
+	.is-right-align & {
 		margin-top: 0;
 		padding: 0;
 	}
@@ -46,7 +55,8 @@
 		padding: 0;
 	}
 
-	.is-left-align & {
+	.is-left-align &,
+	.is-right-align & {
 		padding: 0;
 	}
 }

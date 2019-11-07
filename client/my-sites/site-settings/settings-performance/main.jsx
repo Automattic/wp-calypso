@@ -54,7 +54,7 @@ class SiteSettingsPerformance extends Component {
 				<FormattedHeader
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Settings' ) }
-					leftAlign
+					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 

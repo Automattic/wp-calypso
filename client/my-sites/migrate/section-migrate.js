@@ -52,7 +52,7 @@ class SectionMigrate extends Component {
 					className="migrate__section-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
-					leftAlign={ true }
+					align="left"
 				/>
 				<CompactCard className="migrate__card">
 					<SiteSelector

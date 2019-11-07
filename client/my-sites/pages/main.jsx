@@ -109,7 +109,7 @@ class PagesMain extends React.Component {
 				<FormattedHeader
 					className="pages__page-heading"
 					headerText={ translate( 'Pages' ) }
-					leftAlign
+					align="left"
 				/>
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>

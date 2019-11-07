@@ -614,7 +614,7 @@ export class PluginsBrowser extends Component {
 				<FormattedHeader
 					className="plugins-browser__page-heading"
 					headerText={ this.props.translate( 'Plugin Browser' ) }
-					leftAlign
+					align="left"
 				/>
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }

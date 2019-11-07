@@ -61,7 +61,7 @@ const StatsInsights = props => {
 			<FormattedHeader
 				className="stats__section-header"
 				headerText={ translate( 'Stats and Insights' ) }
-				leftAlign={ true }
+				align="left"
 			/>
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
 			<div>

@@ -93,7 +93,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 			<FormattedHeader
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
-				leftAlign
+				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && ! hasUnlimitedPremiumThemes && (

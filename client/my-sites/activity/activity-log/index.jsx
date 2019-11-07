@@ -413,7 +413,7 @@ class ActivityLog extends Component {
 				<FormattedHeader
 					className="activity-log__page-heading"
 					headerText={ translate( 'Activity' ) }
-					leftAlign
+					align="left"
 				/>
 
 				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }

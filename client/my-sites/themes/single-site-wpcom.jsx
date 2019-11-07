@@ -75,7 +75,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			<FormattedHeader
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
-				leftAlign
+				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />
 			{ bannerLocationBelowSearch ? null : upsellBanner }

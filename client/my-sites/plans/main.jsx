@@ -149,7 +149,7 @@ class Plans extends React.Component {
 							<FormattedHeader
 								className="plans__page-heading"
 								headerText={ translate( 'Plans' ) }
-								leftAlign
+								align="left"
 							/>
 							<CartData>
 								<PlansNavigation path={ this.props.context.path } />

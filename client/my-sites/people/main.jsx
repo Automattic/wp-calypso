@@ -82,7 +82,7 @@ class People extends React.Component {
 				<FormattedHeader
 					className="people__page-heading"
 					headerText={ translate( 'People' ) }
-					leftAlign
+					align="left"
 				/>
 				<div>
 					{

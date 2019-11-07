@@ -25,7 +25,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 		<FormattedHeader
 			className="settings-discussion__page-heading"
 			headerText={ translate( 'Settings' ) }
-			leftAlign
+			align="left"
 		/>
 		<SiteSettingsNavigation site={ site } section="discussion" />
 		<DiscussionForm />

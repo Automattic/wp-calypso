@@ -160,7 +160,7 @@ class StatsSite extends Component {
 				<FormattedHeader
 					className="stats__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
-					leftAlign
+					align="left"
 				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }

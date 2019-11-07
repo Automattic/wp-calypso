@@ -373,7 +373,7 @@ class Media extends Component {
 				<FormattedHeader
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
-					leftAlign
+					align="left"
 				/>
 				{ this.showDialog() && (
 					<EditorMediaModalDialog

@@ -174,7 +174,7 @@ export class List extends React.Component {
 				<FormattedHeader
 					className="domain-management__page-heading"
 					headerText={ this.props.translate( 'Domains' ) }
-					leftAlign
+					align="left"
 				/>
 				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 				{ this.domainWarnings() }
