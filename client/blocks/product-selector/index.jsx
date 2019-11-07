@@ -21,7 +21,7 @@ import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlan, planHasFeature } from 'lib/plans';
@@ -306,6 +306,7 @@ export class ProductSelector extends Component {
 		const {
 			currencyCode,
 			currentPlanSlug,
+			fetchingSitePlans,
 			fetchingSitePurchases,
 			intervalType,
 			products,
@@ -314,7 +315,7 @@ export class ProductSelector extends Component {
 			translate,
 		} = this.props;
 
-		if ( isEmpty( storeProducts ) || fetchingSitePurchases ) {
+		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans ) {
 			return map( products, product => {
 				return (
 					<ProductCard
@@ -459,6 +460,7 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 		availableProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
+		fetchingSitePlans: isRequestingSitePlans( state ),
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
 		productSlugs,
 		purchases: getSitePurchases( state, selectedSiteId ),
