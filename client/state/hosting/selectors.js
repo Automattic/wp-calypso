@@ -26,6 +26,6 @@ export function getUserSFTPDetails( state, siteId, userId ) {
  * @param  {Number}  userId  The ID of the user we're querying
  * @return {Object} SFTP user details for selected user
  */
-export function isUserSFTPDetailsLoading( state, siteId, userId ) {
+export function isSFTPUserLoading( state, siteId, userId ) {
 	return get( state, [ 'atomicHosting', 'sites', siteId, 'sftpUsers', userId, 'loading' ], false );
 }
