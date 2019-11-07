@@ -26,10 +26,11 @@ import {
 	isWpcomTheme,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
+import getSiteUrl from 'state/selectors/get-site-url';
 
 /**
  * Style dependencies
@@ -252,7 +253,7 @@ class ThanksModal extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const siteUrl = get( getSelectedSite( state ), 'URL', null );
+		const siteUrl = getSiteUrl( state, siteId );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 

@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import { getSiteFrontPageType } from 'state/selectors/get-site-front-page-type';
-import { getActiveTheme, isThemeGutenbergFirst } from 'state/themes/selectors';
+import getSiteFrontPageType from 'state/sites/selectors/get-site-front-page-type';
+import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
 
 /**
  * Returns whether the homepage should be customized with Gutenberg.
@@ -15,11 +15,9 @@ import { getActiveTheme, isThemeGutenbergFirst } from 'state/themes/selectors';
  * @param {String} siteId The ID of the selected site.
  * @return {Boolean} True if Gutenberg should be opened.
  */
-export const shouldCustomizeHomepageWithGutenberg = ( state, siteId ) => {
+export default function shouldCustomizeHomepageWithGutenberg( state, siteId ) {
 	const theme = getActiveTheme( state, siteId );
 	const isGutenbergTheme = isThemeGutenbergFirst( theme );
 	const isHomepageAPage = 'page' === getSiteFrontPageType( state, siteId );
 	return isGutenbergTheme && isHomepageAPage;
-};
-
-export default shouldCustomizeHomepageWithGutenberg;
+}
