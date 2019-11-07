@@ -11,22 +11,21 @@ import { v4 as uuid } from 'uuid';
  */
 import config from 'config';
 import productsValues from 'lib/products-values';
-import userModule from 'lib/user';
 import { loadScript } from '@automattic/load-script';
 import {
-	isAdTrackingAllowed,
-	hashPii,
+	isPiiUrl,
 	costToUSD,
-	getNormalizedHashedUserEmail,
+	doNotTrack,
+	getCurrentUser,
+	isAdTrackingAllowed,
+	mayWeTrackCurrentUserGdpr,
 	refreshCountryCodeCookieGdpr,
 } from 'lib/analytics/utils';
-import { doNotTrack, isPiiUrl, mayWeTrackCurrentUserGdpr } from './utils';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-const user = userModule();
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
@@ -372,8 +371,8 @@ function initLoadedTrackingScripts() {
 
 	// init Pinterest
 	if ( isPinterestEnabled ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-		const params = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+		const currentUser = getCurrentUser();
+		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
 	}
 
@@ -692,6 +691,7 @@ export async function recordSignup( slug ) {
 	await loadTrackingScripts();
 
 	// Synthesize a cart object for signup tracking.
+
 	const syntheticCart = {
 		is_signup: true,
 		currency: 'USD',
@@ -709,12 +709,10 @@ export async function recordSignup( slug ) {
 		],
 	};
 
-	// 35-byte signup tracking ID.
-	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' );
+	// Prepare a few more variables.
 
-	const currentUser = user.get();
-	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
-
+	const currentUser = getCurrentUser();
+	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' ); // 35-byte signup tracking ID.
 	const usdCost = costToUSD( syntheticCart.total_cost, syntheticCart.currency );
 
 	// Google Ads Gtag
@@ -760,7 +758,7 @@ export async function recordSignup( slug ) {
 				product_slug: syntheticCart.products.map( product => product.product_slug ).join( ', ' ),
 				value: syntheticCart.total_cost,
 				currency: syntheticCart.currency,
-				user_id: userId,
+				user_id: currentUser ? currentUser.hashedPii.ID : 0,
 				order_id: syntheticOrderId,
 			},
 		];
@@ -1229,8 +1227,7 @@ function recordOrderInFacebook( cart, orderId ) {
 		return;
 	}
 
-	const currentUser = user.get();
-	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
+	const currentUser = getCurrentUser();
 
 	// Fire both WPCom and Jetpack pixels
 
@@ -1244,7 +1241,7 @@ function recordOrderInFacebook( cart, orderId ) {
 			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
-			user_id: userId,
+			user_id: currentUser ? currentUser.hashedPii.ID : 0,
 			order_id: orderId,
 		},
 	];
@@ -1261,7 +1258,7 @@ function recordOrderInFacebook( cart, orderId ) {
 			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
-			user_id: userId,
+			user_id: currentUser ? currentUser.hashedPii.ID : 0,
 			order_id: orderId,
 		},
 	];
@@ -1426,13 +1423,13 @@ function floodlightSessionId() {
  */
 function floodlightUserParams() {
 	const params = {};
+	const currentUser = getCurrentUser();
+	const anonymousUserId = tracksAnonymousUserId();
 
-	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = hashPii( currentUser.ID );
+		params.u4 = currentUser.hashedPii.ID;
 	}
 
-	const anonymousUserId = tracksAnonymousUserId();
 	if ( anonymousUserId ) {
 		params.u5 = anonymousUserId;
 	}
@@ -1575,12 +1572,13 @@ async function recordInCriteo( eventName, eventProps ) {
 	await loadTrackingScripts();
 
 	const events = [];
+	const currentUser = getCurrentUser();
+
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
-	const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-	if ( normalizedHashedEmail ) {
-		events.push( { event: 'setEmail', email: [ normalizedHashedEmail ] } );
+	if ( currentUser ) {
+		events.push( { event: 'setEmail', email: [ currentUser.hashedPii.email ] } );
 	}
 
 	const conversionEvent = clone( eventProps );
@@ -1712,8 +1710,10 @@ export function isGoogleAnalyticsAllowed() {
  * @return {Object} GA's default config
  */
 export function getGoogleAnalyticsDefaultConfig() {
+	const currentUser = getCurrentUser();
+
 	return {
-		...( user.get() && { user_id: hashPii( user.get().ID ) } ),
+		...( currentUser && { user_id: currentUser.hashedPii.ID } ),
 		anonymize_ip: true,
 		transport_type: 'function' === typeof navigator.sendBeacon ? 'beacon' : 'xhr',
 		use_amp_client_id: true,
@@ -1778,9 +1778,10 @@ export function fireGoogleAnalyticsTiming( name, value, event_category, event_la
  */
 function initFacebook() {
 	let advancedMatching = {};
-	if ( user.get() ) {
-		const normalizedHashedEmail = getNormalizedHashedUserEmail( user );
-		advancedMatching = normalizedHashedEmail ? { em: normalizedHashedEmail } : {};
+	const currentUser = getCurrentUser();
+
+	if ( currentUser ) {
+		advancedMatching = { em: currentUser.hashedPii.email };
 	}
 
 	debug( 'initFacebook', advancedMatching );
