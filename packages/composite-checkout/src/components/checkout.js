@@ -13,7 +13,6 @@ import { useLocalize } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
 import { usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
-import CheckoutOrderSummary from './checkout-order-summary';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
@@ -55,7 +54,7 @@ export default function Checkout( {
 	availablePaymentMethods,
 	ReviewContent,
 	UpSell,
-	CheckoutHeader,
+	OrderSummary,
 	className,
 } ) {
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
@@ -64,7 +63,7 @@ export default function Checkout( {
 	return (
 		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
 			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
-				<OrderSummaryStep CheckoutHeader={ CheckoutHeader } />
+				{ OrderSummary && <OrderSummaryStep OrderSummary={ OrderSummary } /> }
 
 				<PaymentMethodsStep
 					availablePaymentMethods={ availablePaymentMethods }
@@ -98,7 +97,7 @@ Checkout.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 	ReviewContent: PropTypes.elementType,
 	UpSell: PropTypes.elementType,
-	CheckoutHeader: PropTypes.elementType,
+	OrderSummary: PropTypes.elementType,
 };
 
 const Container = styled.div`
@@ -133,7 +132,7 @@ const CheckoutWrapper = styled.div`
 	padding: 24px;
 `;
 
-function OrderSummaryStep( { CheckoutHeader } ) {
+function OrderSummaryStep( { OrderSummary } ) {
 	const localize = useLocalize();
 
 	return (
@@ -142,13 +141,13 @@ function OrderSummaryStep( { CheckoutHeader } ) {
 			isComplete={ true }
 			stepNumber={ 0 }
 			title={ localize( 'You are all set to check out' ) }
-			stepSummary={ <CheckoutOrderSummary CheckoutHeader={ CheckoutHeader } /> }
+			stepSummary={ <OrderSummary /> }
 		/>
 	);
 }
 
 OrderSummaryStep.propTypes = {
-	CheckoutHeader: PropTypes.elementType,
+	OrderSummary: PropTypes.elementType,
 };
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {

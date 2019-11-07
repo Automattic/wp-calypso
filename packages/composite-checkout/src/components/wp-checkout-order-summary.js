@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 /**
@@ -12,15 +11,11 @@ import { useLocalize } from '../lib/localize';
 import Button from './button';
 import Coupon from './coupon';
 
-export default function CheckoutOrderSummary( { CheckoutHeader } ) {
+export default function WPCheckoutOrderSummary() {
 	const localize = useLocalize();
 	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
 	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
 	const [ hasCouponBeenApplied, setHasCouponBeenApplied ] = useState( false );
-
-	if ( CheckoutHeader ) {
-		return <CheckoutHeader />;
-	}
 
 	return (
 		<div>
@@ -48,10 +43,6 @@ export default function CheckoutOrderSummary( { CheckoutHeader } ) {
 	);
 }
 
-CheckoutOrderSummary.propTypes = {
-	CheckoutHeader: PropTypes.elementType,
-};
-
 const CouponField = styled( Coupon )`
 	margin-top: 16px;
 `;
@@ -64,5 +55,4 @@ const AddCouponButton = styled( Button )`
 function handleCouponAdded( setIsCouponFieldVisible, setHasCouponBeenApplied ) {
 	setIsCouponFieldVisible( false );
 	setHasCouponBeenApplied( true );
-	return;
 }

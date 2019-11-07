@@ -41,7 +41,8 @@ export default function Field( {
 
 	return (
 		<div className={ className }>
-			<Label htmlFor={ id }>{ label }</Label>
+			{ label && <Label htmlFor={ id }>{ label }</Label> }
+
 			<InputWrapper>
 				<Input
 					id={ id }

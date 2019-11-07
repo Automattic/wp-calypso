@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
 
@@ -12,35 +12,31 @@ import { useLocalize } from '../lib/localize';
 import joinClasses from '../lib/join-classes';
 import Field from './field';
 import Button from './button';
-import Notice from './notice';
 
 export default function Coupon( { id, couponAdded, className, isCouponFieldVisible } ) {
 	const localize = useLocalize();
 	const [ isApplyButtonActive, setIsApplyButtonActive ] = useState( false );
 	const [ couponFieldValue, setCouponFieldValue ] = useState( '' );
 	const [ hasCouponError, setHasCouponError ] = useState( false );
-	const [ isNoticeVisible, setIsNoticeVisible ] = useState( false );
 	const [ isCouponApplied, setIsCouponApplied ] = useState( false );
 
-	useCouponField(
-		id,
-		couponFieldValue,
-		setHasCouponError,
-		couponAdded,
-		setIsCouponApplied,
-		setIsNoticeVisible
-	);
-
 	if ( ! isCouponFieldVisible || isCouponApplied ) {
-		if ( isNoticeVisible ) {
-			return <NoticeComponent />;
-		}
-
 		return null;
 	}
 
 	return (
-		<CouponWrapper className={ joinClasses( [ className, 'coupon' ] ) }>
+		<CouponWrapper
+			className={ joinClasses( [ className, 'coupon' ] ) }
+			onSubmit={ event => {
+				handleFormSubmit(
+					event,
+					couponFieldValue,
+					setHasCouponError,
+					couponAdded,
+					setIsCouponApplied
+				);
+			} }
+		>
 			<Field
 				id={ id }
 				placeholder={ localize( 'Enter your coupon code' ) }
@@ -56,23 +52,8 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 			/>
 
 			{ isApplyButtonActive && (
-				<ApplyButton
-					buttonState="secondary"
-					onClick={ value => {
-						handleApplyButtonClick(
-							value,
-							setHasCouponError,
-							couponAdded,
-							setIsCouponApplied,
-							setIsNoticeVisible
-						);
-					} }
-				>
-					{ localize( 'Apply' ) }
-				</ApplyButton>
+				<ApplyButton buttonState="secondary">{ localize( 'Apply' ) }</ApplyButton>
 			) }
-
-			{ isNoticeVisible && <NoticeComponent /> }
 		</CouponWrapper>
 	);
 }
@@ -94,7 +75,7 @@ const animateIn = keyframes`
   }
 `;
 
-const CouponWrapper = styled.div`
+const CouponWrapper = styled.form`
 	margin: ${props => props.marginTop} 0 0 0;
 	padding-top: 0;
 	position: relative;
@@ -109,42 +90,6 @@ const ApplyButton = styled( Button )`
 	animation: ${animateIn} 0.2s ease-out;
 `;
 
-function NoticeComponent() {
-	const localize = useLocalize();
-
-	return (
-		<Notice type="success">
-			{ localize( 'Your coupon for $20 has been applied to your cart' ) }
-		</Notice>
-	);
-}
-
-function handleApplyButtonClick(
-	value,
-	setHasCouponError,
-	couponAdded,
-	setIsCouponApplied,
-	setIsNoticeVisible
-) {
-	//TODO: Validate coupon field and replace couponAdded in the following if statement
-	if ( couponAdded ) {
-		setIsNoticeVisible( true );
-		setIsCouponApplied( true );
-		setTimeout( () => {
-			setIsNoticeVisible( false );
-		}, 2000 );
-
-		if ( couponAdded ) {
-			couponAdded();
-		}
-
-		return;
-	}
-
-	setHasCouponError( true );
-	return;
-}
-
 function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, setHasCouponError ) {
 	if ( input.length > 0 ) {
 		setCouponFieldValue( input );
@@ -154,50 +99,27 @@ function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, s
 	}
 
 	setIsApplyButtonActive( false );
-	return;
 }
 
-function useCouponField(
-	id,
+function handleFormSubmit(
+	event,
 	couponFieldValue,
 	setHasCouponError,
 	couponAdded,
-	setIsCouponApplied,
-	setIsNoticeVisible
+	setIsCouponApplied
 ) {
-	useEffect( () => {
-		const keyPressHandler = makeHandleKeyPress(
-			couponFieldValue,
-			setHasCouponError,
-			couponAdded,
-			setIsCouponApplied,
-			setIsNoticeVisible
-		);
-		if ( document.getElementById( id ) === document.activeElement ) {
-			document.addEventListener( 'keydown', keyPressHandler, false );
+	event.preventDefault();
+
+	//TODO: Validate coupon field and replace condition in the following if statement
+	if ( couponFieldValue === 'Add' ) {
+		setIsCouponApplied( true );
+
+		if ( couponAdded ) {
+			couponAdded();
 		}
 
-		return () => document.removeEventListener( 'keydown', keyPressHandler, false );
-	}, [ couponFieldValue ] );
-}
+		return;
+	}
 
-function makeHandleKeyPress(
-	couponFieldValue,
-	setHasCouponError,
-	couponAdded,
-	setIsCouponApplied,
-	setIsNoticeVisible
-) {
-	const enterKey = 13;
-	return key => {
-		if ( key.keyCode === enterKey ) {
-			handleApplyButtonClick(
-				couponFieldValue,
-				setHasCouponError,
-				couponAdded,
-				setIsCouponApplied,
-				setIsNoticeVisible
-			);
-		}
-	};
+	setHasCouponError( true );
 }
