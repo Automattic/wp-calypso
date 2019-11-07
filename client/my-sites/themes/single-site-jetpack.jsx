@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import Main from 'components/main';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import config from 'config';
 import JetpackReferrerMessage from './jetpack-referrer-message';
@@ -89,6 +90,11 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	return (
 		<Main className="themes">
 			<SidebarNavigation />
+			<FormattedHeader
+				className="themes__page-heading"
+				headerText={ translate( 'WordPress Themes' ) }
+				leftAlign
+			/>
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && ! hasUnlimitedPremiumThemes && (
 				<Banner
