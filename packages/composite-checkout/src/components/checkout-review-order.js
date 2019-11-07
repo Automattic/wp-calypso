@@ -126,7 +126,9 @@ const TermsAndConditionsWrapper = styled.div`
 const TermsParagraph = styled.p`
 	margin: 16px 0 0;
 	font-size: 14px;
-	color: ${props => props.theme.colors.textColor} a {
+	color: ${props => props.theme.colors.textColor};
+
+	a {
 		color: ${props => props.theme.colors.textColor};
 	}
 
