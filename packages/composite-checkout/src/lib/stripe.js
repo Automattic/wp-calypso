@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState, useContext, createContext } from 'react';
+import React, { useEffect, useState, useCallback, useContext, createContext } from 'react';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 
 /**
  * Internal dependencies
  */
-import { usePaymentData } from '../public-api';
+import { useSelect, useDispatch } from '../public-api';
 
 const StripeContext = createContext();
 
@@ -221,12 +221,13 @@ function loadScriptAsync( url ) {
  */
 function useStripeConfiguration( requestArgs ) {
 	const [ currentAttempt, setAttempt ] = useState( 1 );
-	const [ paymentData, dispatch ] = usePaymentData();
+	const stripeConfiguration = useSelect( select => select( 'stripe' ).getStripeConfiguration() );
+	const { getConfiguration } = useDispatch( 'stripe' );
+	const getConfigurationMemo = useCallback( getConfiguration, [ currentAttempt, requestArgs ] );
 	useEffect( () => {
-		dispatch( { type: 'STRIPE_CONFIGURATION_FETCH', payload: requestArgs || {} } );
-	}, [ requestArgs, currentAttempt, dispatch ] );
+		getConfigurationMemo( requestArgs );
+	}, [ requestArgs, currentAttempt, getConfigurationMemo ] );
 	const forceReload = () => setAttempt( currentAttempt + 1 );
-	const stripeConfiguration = paymentData.stripeConfiguration || null;
 	return { stripeConfiguration, forceReload };
 }
 

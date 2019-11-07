@@ -9,10 +9,9 @@ import styled from 'styled-components';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { getPaymentMethods } from '../lib/payment-methods';
-import { getAriaLabelForPaymentMethodSelector } from '../lib/payment-methods/registered-methods';
 import RadioButton from './radio-button';
 import { useLocalize } from '../lib/localize';
+import { useAllPaymentMethods } from '../public-api';
 
 export default function CheckoutPaymentMethods( {
 	summary,
@@ -24,7 +23,7 @@ export default function CheckoutPaymentMethods( {
 } ) {
 	const localize = useLocalize();
 
-	const paymentMethods = getPaymentMethods();
+	const paymentMethods = useAllPaymentMethods();
 	const paymentMethodsToDisplay = availablePaymentMethods
 		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
 		: paymentMethods;
@@ -36,7 +35,7 @@ export default function CheckoutPaymentMethods( {
 					{ ...paymentMethod }
 					checked={ true }
 					summary
-					ariaLabel={ getAriaLabelForPaymentMethodSelector( paymentMethod.id, localize ) }
+					ariaLabel={ paymentMethod.getAriaLabel( localize ) }
 				/>
 			</div>
 		);
@@ -54,7 +53,7 @@ export default function CheckoutPaymentMethods( {
 						key={ method.id }
 						checked={ paymentMethod.id === method.id }
 						onClick={ onChange }
-						ariaLabel={ getAriaLabelForPaymentMethodSelector( method.id, localize ) }
+						ariaLabel={ method.getAriaLabel( localize ) }
 					/>
 				) ) }
 			</RadioButtons>

@@ -8,8 +8,7 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import { CheckoutProvider } from '../../src/components/checkout-provider';
-import { useLocalize } from '../../src/lib/localize';
+import { useLocalize, LocalizeProvider } from '../../src/lib/localize';
 
 // React writes to console.error when a component throws before re-throwing
 // but we don't want to see that here so we mock console.error.
@@ -39,17 +38,9 @@ describe( 'useLocalize', function() {
 			return <span data-testid="text">{ localize( 'hello' ) }</span>;
 		};
 		const { getByTestId } = render(
-			<CheckoutProvider
-				locale={ 'US' }
-				total={ { label: 'total', amount: { value: 10, currency: 'USD', displayValue: '10' } } }
-				items={ [ { label: 'total', amount: { value: 10, currency: 'USD', displayValue: '10' } } ] }
-				onSuccess={ () => {} }
-				onFailure={ () => {} }
-				successRedirectUrl={ '#' }
-				failureRedirectUrl={ '#' }
-			>
+			<LocalizeProvider locale={ 'US' }>
 				<ThingWithLocalize />
-			</CheckoutProvider>
+			</LocalizeProvider>
 		);
 		expect( getByTestId( 'text' ) ).toHaveTextContent( 'hello' );
 	} );

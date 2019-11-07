@@ -8,7 +8,7 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import { CheckoutProvider, useLineItems } from '../../src/components/checkout-provider';
+import { LineItemsProvider, useLineItems } from '../../src/lib/line-items';
 
 // React writes to console.error when a component throws before re-throwing
 // but we don't want to see that here so we mock console.error.
@@ -57,21 +57,16 @@ describe( 'useLineItems', function() {
 		};
 		const renderThing = () =>
 			render(
-				<CheckoutProvider
-					locale={ 'US' }
+				<LineItemsProvider
 					total={ {
 						id: 'total',
 						label: 'total',
 						amount: { value: 40, currency: 'USD', displayValue: '40' },
 					} }
 					items={ [] }
-					onSuccess={ () => {} }
-					onFailure={ () => {} }
-					successRedirectUrl={ '#' }
-					failureRedirectUrl={ '#' }
 				>
 					<ThingWithHook />
-				</CheckoutProvider>
+				</LineItemsProvider>
 			);
 		expect( renderThing ).not.toThrow( /CheckoutProvider/ );
 	} );
@@ -93,8 +88,7 @@ describe( 'useLineItems', function() {
 			);
 		};
 		const { getByTestId } = render(
-			<CheckoutProvider
-				locale={ 'US' }
+			<LineItemsProvider
 				total={ {
 					id: 'total',
 					label: 'total',
@@ -112,13 +106,9 @@ describe( 'useLineItems', function() {
 						amount: { value: 20, currency: 'USD', displayValue: '20' },
 					},
 				] }
-				onSuccess={ () => {} }
-				onFailure={ () => {} }
-				successRedirectUrl={ '#' }
-				failureRedirectUrl={ '#' }
 			>
 				<ThingWithHook />
-			</CheckoutProvider>
+			</LineItemsProvider>
 		);
 		expect( getByTestId( 'one' ) ).toHaveTextContent( 'thing1' );
 		expect( getByTestId( 'two' ) ).toHaveTextContent( 'thing2' );
@@ -141,8 +131,7 @@ describe( 'useLineItems', function() {
 			);
 		};
 		const { getByTestId } = render(
-			<CheckoutProvider
-				locale={ 'US' }
+			<LineItemsProvider
 				total={ {
 					id: 'total',
 					label: 'total',
@@ -160,13 +149,9 @@ describe( 'useLineItems', function() {
 						amount: { value: 20, currency: 'USD', displayValue: '20' },
 					},
 				] }
-				onSuccess={ () => {} }
-				onFailure={ () => {} }
-				successRedirectUrl={ '#' }
-				failureRedirectUrl={ '#' }
 			>
 				<ThingWithHook />
-			</CheckoutProvider>
+			</LineItemsProvider>
 		);
 		expect( getByTestId( 'total' ) ).toHaveTextContent( 'total' );
 	} );
