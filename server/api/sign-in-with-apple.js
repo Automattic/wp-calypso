@@ -70,18 +70,12 @@ function redirectToCalypso( request, response, next ) {
 		state: request.body.state,
 	} );
 
-	// `POST /log-in` is blacklisted, let's use `POST /sign-in` and redirect to `/log-in`
-	const newLocation = originalUrlPath.replace(
-		'/sign-in/apple/callback',
-		'/log-in/apple/callback'
-	);
-
-	response.redirect( newLocation + '#' + hashString );
+	response.redirect( originalUrlPath + '#' + hashString );
 }
 
 module.exports = function( app ) {
 	return app.post(
-		[ '/sign-in/apple/callback', '/start/user', '/me/security/social-login' ],
+		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
 		bodyParser.urlencoded(),
 		loginWithApple,
 		redirectToCalypso
