@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 /* eslint-disable import/no-extraneous-dependencies */
 import { isEmpty, isArray, debounce } from 'lodash';
 /* eslint-enable import/no-extraneous-dependencies */
@@ -24,7 +23,6 @@ import BlockPreview from './block-preview';
 const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 	const THRESHOLD_RESIZE = 300;
 
-	const previewElClasses = classnames( 'template-selector-preview', 'editor-styles-wrapper' );
 	const [ visibility, setVisibility ] = useState( 'hidden' );
 	const ref = useRef( null );
 
@@ -106,7 +104,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 
 	if ( isEmpty( blocks ) || ! isArray( blocks ) ) {
 		return (
-			<div className={ previewElClasses }>
+			<div className="template-selector-preview">
 				<div className="template-selector-preview__placeholder">
 					{ __( 'Select a page template to preview.', 'full-site-editing' ) }
 				</div>
@@ -116,7 +114,7 @@ const TemplateSelectorPreview = ( { blocks, viewportWidth, title } ) => {
 
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className={ previewElClasses }>
+		<div className="template-selector-preview">
 			<Disabled>
 				<div ref={ ref } className="edit-post-visual-editor">
 					<div className="editor-styles-wrapper" style={ { visibility } }>

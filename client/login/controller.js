@@ -53,7 +53,7 @@ const enhanceContextWithLogin = context => {
 // the way that `server/bundler/loader` expects only a default export and nothing else.
 export const lang = `:lang(${ getLanguageSlugs().join( '|' ) })?`;
 
-export function login( context, next ) {
+export async function login( context, next ) {
 	const {
 		query: { client_id, redirect_to },
 	} = context;
@@ -83,19 +83,16 @@ export function login( context, next ) {
 			return next( error );
 		}
 
-		context.store
-			.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
-			.then( () => {
-				enhanceContextWithLogin( context );
-
-				next();
-			} )
-			.catch( error => next( error ) );
-	} else {
-		enhanceContextWithLogin( context );
-
-		next();
+		try {
+			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+		} catch ( error ) {
+			return next( error );
+		}
 	}
+
+	enhanceContextWithLogin( context );
+
+	next();
 }
 
 export function magicLogin( context, next ) {

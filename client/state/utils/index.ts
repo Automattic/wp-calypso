@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-export { cachingActionCreatorFactory } from './caching-action-creator-factory';
 export { createReducer } from './create-reducer';
 export { createReducerWithValidation } from './create-reducer-with-validation';
 export { extendAction } from './extend-action';
