@@ -55,7 +55,9 @@ const sFTPUserError = ( { siteId, userId } ) => dispatch => {
 	dispatch( receiveAtomicSFTPUserError( siteId, userId ) );
 	dispatch(
 		errorNotice(
-			translate( 'Sorry, we had a problem retrieving your sftp user details. Please try again.' ),
+			translate(
+				'Sorry, we had a problem retrieving your sftp user details. Please refresh the page and try again.'
+			),
 			{
 				duration: 5000,
 			}
