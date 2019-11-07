@@ -55,6 +55,7 @@ export default function Checkout( {
 	ReviewContent,
 	UpSell,
 	OrderSummary,
+	TermsAndConditions,
 	className,
 } ) {
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
@@ -81,6 +82,7 @@ export default function Checkout( {
 					isActive={ stepNumber === 3 }
 					isComplete={ stepNumber > 3 }
 					ReviewContent={ ReviewContent }
+					TermsAndConditions={ TermsAndConditions }
 				/>
 				<CheckoutWrapper>
 					<CheckoutSubmitButton isActive={ stepNumber === 3 } />
@@ -244,7 +246,7 @@ BillingDetailsStep.propTypes = {
 	isComplete: PropTypes.bool.isRequired,
 };
 
-function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
+function ReviewOrderStep( { isActive, isComplete, ReviewContent, TermsAndConditions } ) {
 	const localize = useLocalize();
 
 	return (
@@ -259,7 +261,7 @@ function ReviewOrderStep( { isActive, isComplete, ReviewContent } ) {
 				ReviewContent ? (
 					<ReviewContent isActive={ isActive } />
 				) : (
-					<CheckoutReviewOrder isActive={ isActive } />
+					<CheckoutReviewOrder isActive={ isActive } TermsAndConditions={ TermsAndConditions } />
 				)
 			}
 		/>

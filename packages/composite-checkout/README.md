@@ -522,6 +522,10 @@ A React Hook that will return a two element array where the first element is the
 
 A React Hook that will return a two element array where the first element is the `successRedirectUrl` handler and the second is the `failureRedirectUrl` handler as passed to `Checkout`.
 
+### useHasDomainsInCart()
+
+A React Hook that will return whether there is a domain in the cart.
+
 ### usePaymentMethod()
 
 A React Hook that will return an object containing all the information about the currently selected payment method (or null if none is selected). The most relevant property is probably `id`, which is a string identifying whatever payment method was entered in the payment method step.
