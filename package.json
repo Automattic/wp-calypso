@@ -302,7 +302,7 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "file:./packages/webpack-extensive-lodash-replacement-plugin",
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
 		"@testing-library/jest-dom": "4.2.3",
-		"@testing-library/react": "9.3.0",
+		"@testing-library/react": "9.3.2",
 		"@types/classnames": "2.2.9",
 		"@types/debug": "4.1.4",
 		"@types/lodash": "4.14.146",
