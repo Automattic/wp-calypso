@@ -97,7 +97,12 @@ PopupMonitor.prototype.isOpen = function( name ) {
 PopupMonitor.prototype.checkStatus = function() {
 	for ( const name in this.intervals ) {
 		if ( this.intervals.hasOwnProperty( name ) && ! this.isOpen( name ) ) {
-			this.emit( 'close', name );
+			setTimeout(
+				function() {
+					this.emit( 'close', name );
+				}.bind( this ),
+				0
+			);
 			delete this.intervals[ name ];
 		}
 	}
@@ -105,7 +110,12 @@ PopupMonitor.prototype.checkStatus = function() {
 	if ( 0 === Object.keys( this.intervals ).length ) {
 		clearInterval( this.monitorInterval );
 		delete this.monitorInterval;
-		window.removeEventListener( 'message', this.onMessage );
+		setTimeout(
+			function() {
+				window.removeEventListener( 'message', this.onMessage );
+			}.bind( this ),
+			0
+		);
 	}
 };
 
