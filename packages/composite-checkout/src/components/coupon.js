@@ -22,24 +22,14 @@ export default function Coupon( { id, couponAdded, className, isCouponFieldVisib
 	const [ isNoticeVisible, setIsNoticeVisible ] = useState( false );
 	const [ isCouponApplied, setIsCouponApplied ] = useState( false );
 
-	useEffect( () => {
-		if ( document.getElementById( id ) === document.activeElement ) {
-			document.addEventListener(
-				'keydown',
-				key => {
-					handleKeyPress(
-						key,
-						couponFieldValue,
-						setHasCouponError,
-						couponAdded,
-						setIsCouponApplied,
-						setIsNoticeVisible
-					);
-				},
-				false
-			);
-		}
-	} );
+	useCouponField(
+		id,
+		couponFieldValue,
+		setHasCouponError,
+		couponAdded,
+		setIsCouponApplied,
+		setIsNoticeVisible
+	);
 
 	if ( ! isCouponFieldVisible || isCouponApplied ) {
 		if ( isNoticeVisible ) {
@@ -91,25 +81,6 @@ Coupon.propTypes = {
 	id: PropTypes.string.isRequired,
 	couponAdded: PropTypes.func,
 };
-
-function handleKeyPress(
-	key,
-	value,
-	setHasCouponError,
-	couponAdded,
-	setIsCouponApplied,
-	setIsNoticeVisible
-) {
-	if ( key.keyCode === 13 ) {
-		handleApplyButtonClick(
-			value,
-			setHasCouponError,
-			couponAdded,
-			setIsCouponApplied,
-			setIsNoticeVisible
-		);
-	}
-}
 
 const animateIn = keyframes`
   from {
@@ -184,4 +155,49 @@ function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, s
 
 	setIsApplyButtonActive( false );
 	return;
+}
+
+function useCouponField(
+	id,
+	couponFieldValue,
+	setHasCouponError,
+	couponAdded,
+	setIsCouponApplied,
+	setIsNoticeVisible
+) {
+	useEffect( () => {
+		const keyPressHandler = makeHandleKeyPress(
+			couponFieldValue,
+			setHasCouponError,
+			couponAdded,
+			setIsCouponApplied,
+			setIsNoticeVisible
+		);
+		if ( document.getElementById( id ) === document.activeElement ) {
+			document.addEventListener( 'keydown', keyPressHandler, false );
+		}
+
+		return () => document.removeEventListener( 'keydown', keyPressHandler, false );
+	}, [ couponFieldValue ] );
+}
+
+function makeHandleKeyPress(
+	couponFieldValue,
+	setHasCouponError,
+	couponAdded,
+	setIsCouponApplied,
+	setIsNoticeVisible
+) {
+	const enterKey = 13;
+	return key => {
+		if ( key.keyCode === enterKey ) {
+			handleApplyButtonClick(
+				couponFieldValue,
+				setHasCouponError,
+				couponAdded,
+				setIsCouponApplied,
+				setIsNoticeVisible
+			);
+		}
+	};
 }
