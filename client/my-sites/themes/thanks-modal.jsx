@@ -24,12 +24,12 @@ import {
 	isActivatingTheme,
 	hasActivatedTheme,
 	isWpcomTheme,
-	isThemeGutenbergFirst,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
+import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
 
 /**
  * Style dependencies
@@ -252,7 +252,9 @@ export default connect(
 		const siteUrl = get( getSelectedSite( state ), 'URL', null );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
-		const shouldEditHomepageWithGutenberg = isThemeGutenbergFirst( state, currentThemeId );
+
+		// Note: Gutenberg buttons will only show if the homepage is a page.
+		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
 
 		return {
 			siteId,
