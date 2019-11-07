@@ -23,22 +23,7 @@ export default function CheckoutModal( {
 	cancelButtonCTA,
 } ) {
 	const localize = useLocalize();
-	useEffect( () => {
-		if ( isVisible ) {
-			document.body.style = 'overflow: hidden';
-			document.addEventListener(
-				'keydown',
-				key => {
-					handleKeyPress( key, closeModal );
-				},
-				false
-			);
-
-			return;
-		}
-
-		document.body.style = 'overflow: scroll';
-	} );
+	useModalScreen( isVisible, closeModal );
 
 	if ( ! isVisible ) {
 		return null;
@@ -95,7 +80,7 @@ const fadeIn = keyframes`
 const animateIn = keyframes`
   from {
     opacity: 0;
-    transform: scale(1.08);
+    transform: scale(1.05);
   }
 
   to {
@@ -162,8 +147,22 @@ function preventClose( event ) {
 	event.stopPropagation();
 }
 
-function handleKeyPress( key, closeModal ) {
-	if ( key.keyCode === 27 ) {
-		closeModal();
-	}
+function useModalScreen( isVisible, closeModal ) {
+	useEffect( () => {
+		document.body.style = isVisible ? 'overflow: hidden' : 'overflow: scroll';
+		const keyPressHandler = makeHandleKeyPress( closeModal );
+		if ( isVisible ) {
+			document.addEventListener( 'keydown', keyPressHandler, false );
+		}
+		return () => document.removeEventListener( 'keydown', keyPressHandler, false );
+	}, [ isVisible, closeModal ] );
+}
+
+function makeHandleKeyPress( closeModal ) {
+	const escapeKey = 27;
+	return key => {
+		if ( key.keyCode === escapeKey ) {
+			closeModal();
+		}
+	};
 }
