@@ -24,6 +24,7 @@ import {
 	requestAtomicSFTPUser,
 	createAtomicSFTPUser,
 	resetAtomicSFTPPassword,
+	receiveAtomicSFTPUser,
 } from 'state/hosting/actions';
 import { getUserSFTPDetails, isSFTPUserLoading } from 'state/hosting/selectors';
 
@@ -39,17 +40,26 @@ const SFTPCard = ( {
 	requestSFTPUser,
 	createSFTPUser,
 	resetSFTPPassword,
+	removePasswordFromState,
 } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
 	const passwordIsCopied = isCopied === 'password';
 
+	const onDestroy = () => {
+		if ( password ) {
+			removePasswordFromState( siteId, currentUserId, { username } );
+		}
+	};
+
 	useEffect( () => {
 		if ( ! loaded ) {
 			requestSFTPUser( siteId, currentUserId );
 		}
+		return onDestroy();
 	}, [ loaded ] );
+
 	const sftpData = {
 		[ translate( 'URL' ) ]: 'sftp.wp.com',
 		[ translate( 'Port' ) ]: 22,
@@ -190,5 +200,6 @@ export default connect(
 		requestSFTPUser: requestAtomicSFTPUser,
 		createSFTPUser: createAtomicSFTPUser,
 		resetSFTPPassword: resetAtomicSFTPPassword,
+		removePasswordFromState: receiveAtomicSFTPUser,
 	}
 )( localize( SFTPCard ) );
