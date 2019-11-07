@@ -17,7 +17,7 @@ import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
  */
 export default function shouldCustomizeHomepageWithGutenberg( state, siteId ) {
 	const theme = getActiveTheme( state, siteId );
-	const isGutenbergTheme = isThemeGutenbergFirst( theme );
+	const isGutenbergTheme = isThemeGutenbergFirst( state, theme );
 	const isHomepageAPage = 'page' === getSiteFrontPageType( state, siteId );
 	return isGutenbergTheme && isHomepageAPage;
 }
