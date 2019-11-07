@@ -89,13 +89,13 @@ class ContactsPrivacyCard extends React.Component {
 
 	getContactInfoDisclosed() {
 		const {
-			translate,
-			isUpdatingPrivacy,
-			privateDomain,
-			privacyAvailable,
-			contactInfoDisclosureAvailable,
 			contactInfoDisclosed,
+			contactInfoDisclosureAvailable,
 			isPendingIcannVerification,
+			isUpdatingPrivacy,
+			privacyAvailable,
+			privateDomain,
+			translate,
 		} = this.props;
 
 		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
