@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, map } from 'lodash';
@@ -20,12 +20,9 @@ import ClipboardButton from 'components/forms/clipboard-button';
 import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import {
-	requestAtomicSFTPDetails,
-	resetAtomicSFTPUserPassword,
-	createAtomicSFTPUser,
-} from 'state/data-getters';
+import { resetAtomicSFTPUserPassword, createAtomicSFTPUser } from 'state/data-getters';
 import { requestSFTPUser } from 'state/hosting/actions';
+import { getUserSFTPDetails, isUserSFTPDetailsLoading } from 'state/hosting/selectors';
 
 const SFTPCard = ( {
 	translate,
@@ -33,6 +30,7 @@ const SFTPCard = ( {
 	password,
 	siteId,
 	loading,
+	loaded,
 	disabled,
 	requestSFTPUserDetails,
 	currentUserId,
@@ -42,6 +40,11 @@ const SFTPCard = ( {
 	const usernameIsCopied = isCopied === 'username';
 	const passwordIsCopied = isCopied === 'password';
 
+	useEffect( () => {
+		if ( ! loaded ) {
+			requestSFTPUserDetails( siteId, currentUserId );
+		}
+	}, [ username ] );
 	const sftpData = {
 		[ translate( 'URL' ) ]: 'sftp.wp.com',
 		[ translate( 'Port' ) ]: 22,
@@ -103,10 +106,6 @@ const SFTPCard = ( {
 						<Button onClick={ () => createAtomicSFTPUser( siteId ) } primary>
 							{ translate( 'Enable SFTP' ) }
 						</Button>
-
-						<Button onClick={ () => requestSFTPUserDetails( siteId, currentUserId ) } primary>
-							{ translate( 'test button' ) }
-						</Button>
 					</>
 				) }
 			</div>
@@ -162,13 +161,15 @@ export default connect(
 		const currentUserId = getCurrentUserId( state );
 		let username = null;
 		let password = null;
-		let loading = null;
+		let loaded = null;
+		let loading = false;
 
 		if ( ! disabled ) {
-			const sftpDetails = requestAtomicSFTPDetails( siteId );
-			username = get( sftpDetails, 'data.username' );
-			password = get( sftpDetails, 'data.password' );
-			loading = sftpDetails.state === 'pending';
+			const sftpDetails = getUserSFTPDetails( state, siteId, currentUserId );
+			loading = isUserSFTPDetailsLoading( state, siteId, currentUserId );
+			username = get( sftpDetails, 'username' );
+			password = get( sftpDetails, 'password' );
+			loaded = sftpDetails !== null;
 		}
 
 		return {
@@ -176,6 +177,7 @@ export default connect(
 			currentUserId,
 			username,
 			password,
+			loaded,
 			loading,
 		};
 	},
