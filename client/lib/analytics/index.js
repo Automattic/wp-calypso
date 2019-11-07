@@ -357,29 +357,11 @@ const analytics = {
 		recordSignupStartInFloodlight();
 	},
 
-	recordRegistration: function( { flow } ) {
+	recordRegistration: function( { flow, type } ) {
 		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
+		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow, type } );
 		// Google Analytics
 		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-		// Marketing
-		recordRegistration();
-	},
-
-	recordPasswordlessRegistration: function( { flow } ) {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_passwordless_complete', { flow } );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
-		// Marketing
-		recordRegistration();
-	},
-
-	recordSocialRegistration: function() {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_social_complete' );
 		// Marketing
 		recordRegistration();
 	},
