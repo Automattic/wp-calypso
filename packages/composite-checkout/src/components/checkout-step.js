@@ -156,8 +156,7 @@ function CheckIcon() {
 const StepWrapper = styled.div`
 	padding-bottom: ${ props => ( props.finalStep ? '0' : '32px' ) };
 	position: relative;
-	border-bottom: ${ ( { finalStep, theme } ) =>
-		finalStep ? '0' : '1px solid ' + theme.colors.borderColorLight }
+	border-bottom: 1px solid ${ props => props.theme.colors.borderColorLight }
 	padding: 16px;
 
 	@media ( ${ props => props.theme.breakpoints.tabletUp } ) {

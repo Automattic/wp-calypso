@@ -82,7 +82,10 @@ export default function Checkout( {
 					isComplete={ stepNumber > 3 }
 					ReviewContent={ ReviewContent }
 				/>
-				<CheckoutSubmitButton isActive={ stepNumber === 3 } />
+				<CheckoutWrapper>
+					<CheckoutSubmitButton isActive={ stepNumber === 3 } />
+				</CheckoutWrapper>
+
 				{ UpSell && <UpSell /> }
 			</MainContent>
 		</Container>
@@ -122,6 +125,11 @@ const MainContent = styled.div`
 		box-sizing: border-box;
 		max-width: 556px;
 	}
+`;
+
+const CheckoutWrapper = styled.div`
+	background: ${props => props.theme.colors.background};
+	padding: 24px;
 `;
 
 function OrderSummaryStep( { CheckoutHeader } ) {
