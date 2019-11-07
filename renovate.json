@@ -14,13 +14,15 @@
 	],
 	"statusCheckVerify": true,
 	"ignoreDeps": [ "jquery" ],
-	"labels": [ "Framework", "[Type] Task", "[Status] Needs Review" ],
+	"labels": [ "Framework", "[Type] Task" ],
 	"lockFileMaintenance": {
 		"enabled": true,
 		"schedule": "every weekday"
 	},
 	"prConcurrentLimit": 0,
-	"prHourlyLimit": 50,
+	"prHourlyLimit": 6,
 	"semanticCommits": true,
-	"semanticCommitType": "chore"
+	"semanticCommitType": "chore",
+	"masterIssue": true,
+	"masterIssueTitle": "Outstanding Dependency Updates"
 }
