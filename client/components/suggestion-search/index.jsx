@@ -111,7 +111,7 @@ class SuggestionSearch extends Component {
 		this.props.onChange( newValue, true );
 	}
 
-	onSuggestionItemRender = ( { index, suggestionIndex } ) => {
+	onSuggestionItemMount = ( { index, suggestionIndex } ) => {
 		const { railcar } = this.props;
 		if ( railcar ) {
 			const { fetch_algo, id, ui_algo } = railcar;
@@ -148,7 +148,7 @@ class SuggestionSearch extends Component {
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
 					railcar={ this.props.railcar }
-					onSuggestionItemRender={ this.onSuggestionItemRender }
+					onSuggestionItemMount={ this.onSuggestionItemMount }
 				/>
 			</div>
 		);

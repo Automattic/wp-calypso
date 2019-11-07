@@ -30,7 +30,7 @@ class Suggestions extends Component {
 
 	static defaultProps = {
 		query: '',
-		onSuggestionItemRender: () => {},
+		onSuggestionItemMount: () => {},
 	};
 
 	state = {
@@ -181,7 +181,7 @@ class Suggestions extends Component {
 											hasHighlight={ index === this.state.suggestionPosition }
 											query={ query }
 											onMount={ () =>
-												this.props.onSuggestionItemRender( {
+												this.props.onSuggestionItemMount( {
 													suggestionIndex: originalIndex,
 													index,
 												} )
