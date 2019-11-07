@@ -187,9 +187,6 @@ export class EditGravatar extends Component {
 				) }
 			>
 				<div onClick={ this.handleUnverifiedUserClick }>
-					{ this.state.showEmailVerificationNotice && (
-						<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
-					) }
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
 							data-tip-target="edit-gravatar"
@@ -214,6 +211,9 @@ export class EditGravatar extends Component {
 						</div>
 					</FilePicker>
 				</div>
+				{ this.state.showEmailVerificationNotice && (
+					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
+				) }
 				{ this.renderImageEditor() }
 				<div>
 					<p className="edit-gravatar__explanation">

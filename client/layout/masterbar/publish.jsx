@@ -106,9 +106,9 @@ class MasterbarItemNew extends React.Component {
 					preloadSection={ this.preloadPostEditor }
 				>
 					{ this.props.children }
-					{ this.renderPopover() }
 				</MasterbarItem>
 				<MasterbarDrafts />
+				{ this.renderPopover() }
 			</div>
 		);
 	}

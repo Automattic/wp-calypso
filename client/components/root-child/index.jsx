@@ -1,67 +1,47 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { MomentProvider } from 'components/localized-moment/context';
+import ReactDOM from 'react-dom';
 
 export default class RootChild extends React.Component {
-	static contextTypes = {
-		store: PropTypes.object,
-	};
+	// we can render the children only after the container DOM element has been created and added
+	// to the DOM tree. And we can't create and append the element in component constructor because
+	// there is no corresponding destructor that would safely remove it in case the render is not
+	// committed by React.
+	//
+	// A seemingly possible approach is to create the element in constructor, render the portal into
+	// it and then add it to `document.body` in `componentDidMount`. But that creates another subtle
+	// bug: the portal is rendered into a DOM element that's not part of the DOM tree and therefore
+	// is not part of layout and painting, and has no dimensions. Many component's lifecycles and
+	// effect hooks rightfully assume that the element can be measured in `componentDidMount` or
+	// `useEffect`.
+	//
+	// Another thing that fails inside a detached DOM element is accessing `iframe.contentWindow`.
+	// The `contentWindow` is `null` until the `iframe` becomes active, i.e., is added to the DOM
+	// tree. We access the `contentWindow` in `WebPreview`, for example.
+	state = { containerEl: null };
 
 	componentDidMount() {
-		this.container = document.createElement( 'div' );
-		document.body.appendChild( this.container );
-		this.renderChildren();
-	}
-
-	componentDidUpdate() {
-		this.renderChildren();
+		// create the container element and immediately trigger a rerender
+		const containerEl = document.createElement( 'div' );
+		document.body.appendChild( containerEl );
+		this.setState( { containerEl } ); // eslint-disable-line react/no-did-mount-set-state
 	}
 
 	componentWillUnmount() {
-		if ( ! this.container ) {
-			return;
+		if ( this.state.containerEl ) {
+			document.body.removeChild( this.state.containerEl );
 		}
-
-		ReactDom.unmountComponentAtNode( this.container );
-		document.body.removeChild( this.container );
-		delete this.container;
 	}
 
-	renderChildren = () => {
-		let content;
-
-		if ( this.props && ( Object.keys( this.props ).length > 1 || ! this.props.children ) ) {
-			content = <div { ...this.props }>{ this.props.children }</div>;
-		} else {
-			content = this.props.children;
-		}
-
-		// Context is lost when creating a new render hierarchy, so ensure that
-		// we preserve the context that we care about
-		if ( this.context.store ) {
-			content = (
-				<ReduxProvider store={ this.context.store }>
-					<MomentProvider>{ content }</MomentProvider>
-				</ReduxProvider>
-			);
-		}
-
-		ReactDom.render( content, this.container );
-	};
-
 	render() {
-		return null;
+		// don't render anything until the `containerEl` is created. That's the correct behavior
+		// in SSR (no portals there, `RootChild` renders as empty).
+		if ( ! this.state.containerEl ) {
+			return null;
+		}
+
+		return ReactDOM.createPortal( this.props.children, this.state.containerEl );
 	}
 }
