@@ -207,8 +207,9 @@ class Starter_Page_Templates {
 			$vertical_id = get_option( 'site_vertical', 'default' );
 			$request_url = add_query_arg(
 				[
-					'_locale' => $this->get_iso_639_locale(),
-					'theme'   => get_stylesheet(),
+					'_locale'       => $this->get_iso_639_locale(),
+					'theme'         => get_stylesheet(),
+					'all_templates' => true,
 				],
 				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
 			);

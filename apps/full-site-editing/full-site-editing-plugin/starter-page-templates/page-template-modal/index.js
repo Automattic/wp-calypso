@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, reduce, get, keyBy, mapValues } from 'lodash';
+import { isEmpty, reduce, get, keyBy, mapValues, partition } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -170,6 +170,11 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
+		const [ additional_homepage_templates, default_templates ] = partition(
+			templates,
+			'is_additional_homepage_template'
+		);
+
 		return (
 			<Modal
 				title={ __( 'Select Page Layout', 'full-site-editing' ) }
@@ -211,7 +216,22 @@ class PageTemplateModal extends Component {
 									</legend>
 									<TemplateSelectorControl
 										label={ __( 'Layout', 'full-site-editing' ) }
-										templates={ templates }
+										templates={ default_templates }
+										blocksByTemplates={ blocksByTemplateSlug }
+										onTemplateSelect={ this.previewTemplate }
+										useDynamicPreview={ false }
+										siteInformation={ siteInformation }
+										selectedTemplate={ previewedTemplate }
+										handleTemplateConfirmation={ this.handleConfirmation }
+									/>
+								</fieldset>
+								<fieldset className="page-template-modal__list">
+									<legend className="page-template-modal__form-title">
+										{ __( 'Or choose a homepage layout from another theme…', 'full-site-editing' ) }
+									</legend>
+									<TemplateSelectorControl
+										label={ __( 'Layout', 'full-site-editing' ) }
+										templates={ additional_homepage_templates }
 										blocksByTemplates={ blocksByTemplateSlug }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
