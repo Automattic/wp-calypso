@@ -183,12 +183,6 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	currentPlanIncludesProduct = productSlug => {
-		const { currentPlanSlug } = this.props;
-
-		return planHasFeature( currentPlanSlug, productSlug );
-	};
-
 	renderCheckoutButton( product ) {
 		const { intervalType, storeProducts, translate } = this.props;
 		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
@@ -334,7 +328,7 @@ export class ProductSelector extends Component {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const purchase = this.getPurchaseByProduct( product );
-			const currentPlanIncludesProduct = this.currentPlanIncludesProduct( selectedProductSlug );
+			const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
 			if ( currentPlanIncludesProduct ) {
