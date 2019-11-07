@@ -38,6 +38,7 @@ import QuerySiteSettings from 'components/data/query-site-settings'; // For site
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -408,6 +409,12 @@ class ActivityLog extends Component {
 				) }
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
+
+				<FormattedHeader
+					className="activity-log__page-heading"
+					headerText={ translate( 'Activity' ) }
+					leftAlign
+				/>
 
 				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
 				{ siteId && 'unavailable' === rewindState.state && (

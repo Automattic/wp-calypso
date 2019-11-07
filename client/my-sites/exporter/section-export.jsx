@@ -51,6 +51,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 					className="exporter__section-header"
 					headerText={ translate( 'Export your content' ) }
 					subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+					leftAlign
 				/>
 				<ExporterContainer />
 			</Fragment>
