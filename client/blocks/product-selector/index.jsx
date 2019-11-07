@@ -65,7 +65,11 @@ export class ProductSelector extends Component {
 
 		return find(
 			purchases,
-			purchase => purchase.active && includes( productSlugs, purchase.productSlug )
+			purchase =>
+				purchase.active &&
+				( includes( productSlugs, purchase.productSlug ) ||
+					includes( productSlugs, this.getRelatedYearlyProductSlug( purchase.productSlug ) ) ||
+					includes( productSlugs, this.getRelatedMonthlyProductSlug( purchase.productSlug ) ) )
 		);
 	}
 
@@ -220,6 +224,20 @@ export class ProductSelector extends Component {
 			productPriceMatrix,
 			relatedMonthlyProduct => relatedMonthlyProduct.relatedProduct === monthlyProductSlug
 		);
+	}
+
+	getRelatedMonthlyProductSlug( yearlyProductSlug ) {
+		const { productPriceMatrix } = this.props;
+
+		if ( ! productPriceMatrix ) {
+			return null;
+		}
+
+		if ( ! productPriceMatrix[ yearlyProductSlug ] ) {
+			return null;
+		}
+
+		return productPriceMatrix[ yearlyProductSlug ].relatedProduct;
 	}
 
 	getProductOptionFullPrice( productSlug ) {
