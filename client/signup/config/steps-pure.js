@@ -209,8 +209,12 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			props: {
 				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you." ),
-				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
+				subHeaderText: i18n.translate(
+					"Pick a plan that's right for you. Upgrade it as you grow."
+				),
+				fallbackHeaderText: i18n.translate(
+					"Almost there, pick a plan that's right for you. Upgrade it as you grow."
+				),
 				isLaunchPage: true,
 			},
 		},
