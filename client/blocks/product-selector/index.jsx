@@ -73,6 +73,16 @@ export class ProductSelector extends Component {
 		);
 	}
 
+	getProductSlugByCurrentPlan() {
+		const { currentPlanSlug, productSlugs } = this.props;
+
+		if ( ! currentPlanSlug ) {
+			return null;
+		}
+
+		return find( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+	}
+
 	getSubtitleByProduct( product ) {
 		const { moment, translate } = this.props;
 		const purchase = this.getPurchaseByProduct( product );
@@ -92,11 +102,19 @@ export class ProductSelector extends Component {
 		const { description, optionDescriptions } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
-		if ( ! purchase || ! optionDescriptions || ! optionDescriptions[ purchase.productSlug ] ) {
-			return description;
+		// Description, obtained from a purchased product
+		if ( purchase && optionDescriptions && optionDescriptions[ purchase.productSlug ] ) {
+			return optionDescriptions[ purchase.productSlug ];
 		}
 
-		return optionDescriptions[ purchase.productSlug ];
+		// Description, obtained from a product that's included in a purchased plan
+		const planProductSlug = this.getProductSlugByCurrentPlan();
+		if ( planProductSlug && optionDescriptions[ planProductSlug ] ) {
+			return optionDescriptions[ planProductSlug ];
+		}
+
+		// Default product description
+		return description;
 	}
 
 	getProductName( product, productSlug ) {
@@ -118,15 +136,19 @@ export class ProductSelector extends Component {
 		const { title, optionDisplayNames } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
-		if ( ! purchase ) {
-			return title;
+		// Product display name, obtained from a purchased product
+		if ( purchase && optionDisplayNames && optionDisplayNames[ purchase.productSlug ] ) {
+			return optionDisplayNames[ purchase.productSlug ];
 		}
 
-		if ( ! optionDisplayNames || ! optionDisplayNames[ purchase.productSlug ] ) {
-			return title;
+		// Product display name, obtained from a product that's included in a purchased plan
+		const planProductSlug = this.getProductSlugByCurrentPlan();
+		if ( planProductSlug && optionDisplayNames[ planProductSlug ] ) {
+			return optionDisplayNames[ planProductSlug ];
 		}
 
-		return optionDisplayNames[ purchase.productSlug ];
+		// Default product display name
+		return title;
 	}
 
 	getProductOptions( product ) {
@@ -160,6 +182,12 @@ export class ProductSelector extends Component {
 			[ stateKey ]: productSlug,
 		} );
 	}
+
+	currentPlanIncludesProduct = productSlug => {
+		const { currentPlanSlug } = this.props;
+
+		return planHasFeature( currentPlanSlug, productSlug );
+	};
 
 	renderCheckoutButton( product ) {
 		const { intervalType, storeProducts, translate } = this.props;
@@ -305,7 +333,7 @@ export class ProductSelector extends Component {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const purchase = this.getPurchaseByProduct( product );
-			const currentPlanIncludesProduct = planHasFeature( currentPlanSlug, selectedProductSlug );
+			const currentPlanIncludesProduct = this.currentPlanIncludesProduct( selectedProductSlug );
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
 			if ( currentPlanIncludesProduct ) {
@@ -400,6 +428,7 @@ ProductSelector.propTypes = {
 	siteId: PropTypes.number,
 
 	// Connected props
+	availableProducts: PropTypes.object,
 	currencyCode: PropTypes.string,
 	currentPlan: PropTypes.object,
 	currentPlanSlug: PropTypes.string,
@@ -427,6 +456,7 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 	const availableProducts = getAvailableProductsList( state );
 
 	return {
+		availableProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
