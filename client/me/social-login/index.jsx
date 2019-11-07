@@ -41,7 +41,9 @@ class SocialLogin extends Component {
 	};
 
 	renderContent() {
-		const { translate, errorUpdatingSocialConnection } = this.props;
+		const { translate, errorUpdatingSocialConnection, path } = this.props;
+
+		const redirectUri = typeof window !== 'undefined' ? window.location.origin + path : null;
 
 		return (
 			<div>
@@ -64,6 +66,7 @@ class SocialLogin extends Component {
 					<SocialLoginService
 						service="apple"
 						icon={ <AppleIcon /> }
+						redirectUri={ redirectUri }
 						socialServiceResponse={
 							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 						}

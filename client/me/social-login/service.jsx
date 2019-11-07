@@ -16,6 +16,7 @@ const SocialLoginService = ( {
 	service,
 	icon,
 	isConnected,
+	redirectUri,
 	socialConnectionEmail,
 	socialServiceResponse,
 } ) => (
@@ -29,6 +30,7 @@ const SocialLoginService = ( {
 
 			<div className="social-login__header-action">
 				<SocialLoginActionButton
+					redirectUri={ redirectUri }
 					service={ service }
 					isConnected={ isConnected }
 					socialServiceResponse={ socialServiceResponse }
