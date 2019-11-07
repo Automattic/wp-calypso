@@ -92,7 +92,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 			<SidebarNavigation />
 			<FormattedHeader
 				className="themes__page-heading"
-				headerText={ translate( 'WordPress Themes' ) }
+				headerText={ translate( 'Themes' ) }
 				leftAlign
 			/>
 			<CurrentTheme siteId={ siteId } />
