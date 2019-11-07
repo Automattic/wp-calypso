@@ -415,7 +415,7 @@ export function createAccount(
 					);
 				}
 
-				analytics.recordSocialRegistration();
+				analytics.recordRegistration( { flow: flowName, type: 'social' } );
 
 				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 			}
@@ -479,8 +479,8 @@ export function createAccount(
 					userData.ID;
 
 				// Fire after a new user registers.
-				analytics.recordRegistration( { flow: flowName } );
-				analytics.identifyUser( { ID: userId, username, email: userData.email } );
+				analytics.recordRegistration( { flow: flowName, type: 'default' } );
+				analytics.identifyUser( username, userId );
 
 				const providedDependencies = assign( { username }, bearerToken );
 
