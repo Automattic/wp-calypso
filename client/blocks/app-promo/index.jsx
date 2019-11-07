@@ -17,7 +17,7 @@ import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import wpcom from 'lib/wp';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { fetchUserSettings } from 'state/user-settings/actions';
 import getUserSettings from 'state/selectors/get-user-settings';
 

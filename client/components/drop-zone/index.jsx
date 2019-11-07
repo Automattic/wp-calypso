@@ -9,14 +9,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { identity, includes, noop, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
+import Gridicon from 'components/gridicon';
 import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
 import TranslatableString from 'components/translatable/proptype';
 

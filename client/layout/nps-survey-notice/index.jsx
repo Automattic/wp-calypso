@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import QuerySites from 'components/data/query-sites';
 import NpsSurvey from 'blocks/nps-survey';
 import {

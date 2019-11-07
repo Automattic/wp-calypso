@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import Main from 'components/main';
 import {
 	getCurrentPlan,

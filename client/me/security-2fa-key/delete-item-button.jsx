@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import Button from 'components/button';
 import { successNotice } from '../../state/notices/actions';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 class Security2faKeyDeleteButton extends Component {

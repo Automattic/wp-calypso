@@ -14,7 +14,7 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import { getSite } from 'state/sites/selectors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {

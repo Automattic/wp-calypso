@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

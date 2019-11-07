@@ -22,7 +22,7 @@ import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
 import Button from 'components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';

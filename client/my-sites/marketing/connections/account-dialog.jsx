@@ -16,7 +16,7 @@ import Notice from 'components/notice';
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { warningNotice } from 'state/notices/actions';
 
 /**

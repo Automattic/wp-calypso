@@ -19,7 +19,7 @@ import {
 	clearError,
 	oauthConnect,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import {
 	getError,
 	getIsOAuthConnecting,

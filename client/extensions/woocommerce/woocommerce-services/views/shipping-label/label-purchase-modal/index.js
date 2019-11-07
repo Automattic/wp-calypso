@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
 import CustomsStep from './customs-step';

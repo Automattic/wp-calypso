@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { restoreDatabasePassword } from 'state/hosting/actions';

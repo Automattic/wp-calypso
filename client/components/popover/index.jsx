@@ -14,7 +14,7 @@ import { defer, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
 import { withRtl } from 'components/rtl';
 import {
 	bindWindowListeners,

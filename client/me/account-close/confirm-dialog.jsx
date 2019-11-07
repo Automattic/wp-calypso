@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import Button from 'components/button';
 import { getCurrentUser } from 'state/current-user/selectors';

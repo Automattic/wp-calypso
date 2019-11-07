@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { getSiteTitle } from 'state/sites/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';

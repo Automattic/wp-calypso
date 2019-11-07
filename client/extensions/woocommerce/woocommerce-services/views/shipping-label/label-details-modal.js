@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import { userCanManagePayments } from 'woocommerce/woocommerce-services/state/label-settings/selectors';

@@ -16,7 +16,7 @@ import { noop } from 'lodash';
 import { hasTouch } from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
 import { setPreviewShowing } from 'state/ui/actions';
 import WebPreviewContent from './content';
 

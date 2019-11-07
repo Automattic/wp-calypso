@@ -78,7 +78,7 @@ import PlanFeaturesScroller from './scroller';
  * Style dependencies
  */
 import './style.scss';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 
 const defaultState = {
 	checkoutUrl: '/checkout',

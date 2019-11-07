@@ -22,7 +22,7 @@ import {
 	createAccount,
 	oauthInit,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import {
 	getError,
