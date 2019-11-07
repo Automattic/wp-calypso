@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { URL as TypedURL, SiteSlug } from 'types';
-import { Falsy } from 'utility-types';
+import { Falsey } from 'utility-types';
 
 const urlWithoutHttpRegex = /^https?:\/\//;
 
@@ -12,9 +12,9 @@ const urlWithoutHttpRegex = /^https?:\/\//;
  * @return     URL without the initial http(s)
  */
 export function withoutHttp( url: '' ): '';
-export function withoutHttp( url: Falsy ): null;
+export function withoutHttp( url: Falsey ): null;
 export function withoutHttp( url: TypedURL ): TypedURL;
-export function withoutHttp( url: TypedURL | Falsy ): TypedURL | null {
+export function withoutHttp( url: TypedURL | Falsey ): TypedURL | null {
 	if ( url === '' ) {
 		return '';
 	}
@@ -26,9 +26,9 @@ export function withoutHttp( url: TypedURL | Falsy ): TypedURL | null {
 	return url.replace( urlWithoutHttpRegex, '' );
 }
 
-export function urlToSlug( url: Falsy ): null;
+export function urlToSlug( url: Falsey ): null;
 export function urlToSlug( url: TypedURL ): SiteSlug;
-export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
+export function urlToSlug( url: TypedURL | Falsey ): SiteSlug | null {
 	if ( ! url ) {
 		return null;
 	}

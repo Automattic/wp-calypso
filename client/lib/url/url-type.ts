@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { URL as URLString } from 'types';
-import { Falsy } from 'utility-types';
+import { Falsey } from 'utility-types';
 
 // For complete definitions of these classifications, see:
 // https://url.spec.whatwg.org/#urls
@@ -33,13 +33,13 @@ const BASE_URL = `http://${ BASE_HOSTNAME }`;
  *
  * @returns the type of the URL
  */
-export function determineUrlType( url: URLString | URL | Falsy ): URL_TYPE {
+export function determineUrlType( url: URLString | URL | Falsey ): URL_TYPE {
 	// As a URL, the empty string means "the current resource".
 	if ( url === '' ) {
 		return URL_TYPE.PATH_RELATIVE;
 	}
 
-	// Any other falsy value is an invalid URL.
+	// Any other falsey value is an invalid URL.
 	if ( ! url ) {
 		return URL_TYPE.INVALID;
 	}
@@ -55,13 +55,13 @@ export function determineUrlType( url: URLString | URL | Falsy ): URL_TYPE {
 		// If we can parse the URL without a base, it's an absolute URL.
 		parsed = new URL( url );
 		return URL_TYPE.ABSOLUTE;
-	} catch {
+	} catch ( e ) {
 		// Do nothing.
 	}
 
 	try {
 		parsed = new URL( url, BASE_URL );
-	} catch {
+	} catch ( e ) {
 		// If it can't be parsed even with a base URL, it's an invalid URL.
 		return URL_TYPE.INVALID;
 	}
