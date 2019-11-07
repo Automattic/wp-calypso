@@ -19,13 +19,24 @@ import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
 import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	requestAtomicSFTPDetails,
 	resetAtomicSFTPUserPassword,
 	createAtomicSFTPUser,
 } from 'state/data-getters';
+import { requestSFTPUser } from 'state/hosting/actions';
 
-const SFTPCard = ( { translate, username, password, siteId, loading, disabled } ) => {
+const SFTPCard = ( {
+	translate,
+	username,
+	password,
+	siteId,
+	loading,
+	disabled,
+	requestSFTPUserDetails,
+	currentUserId,
+} ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
@@ -92,6 +103,10 @@ const SFTPCard = ( { translate, username, password, siteId, loading, disabled } 
 						<Button onClick={ () => createAtomicSFTPUser( siteId ) } primary>
 							{ translate( 'Enable SFTP' ) }
 						</Button>
+
+						<Button onClick={ () => requestSFTPUserDetails( siteId, currentUserId ) } primary>
+							{ translate( 'test button' ) }
+						</Button>
 					</>
 				) }
 			</div>
@@ -141,23 +156,28 @@ const SFTPCard = ( { translate, username, password, siteId, loading, disabled } 
 	);
 };
 
-export default connect( ( state, { disabled } ) => {
-	const siteId = getSelectedSiteId( state );
-	let username = null;
-	let password = null;
-	let loading = null;
+export default connect(
+	( state, { disabled } ) => {
+		const siteId = getSelectedSiteId( state );
+		const currentUserId = getCurrentUserId( state );
+		let username = null;
+		let password = null;
+		let loading = null;
 
-	if ( ! disabled ) {
-		const sftpDetails = requestAtomicSFTPDetails( siteId );
-		username = get( sftpDetails, 'data.username' );
-		password = get( sftpDetails, 'data.password' );
-		loading = sftpDetails.state === 'pending';
-	}
+		if ( ! disabled ) {
+			const sftpDetails = requestAtomicSFTPDetails( siteId );
+			username = get( sftpDetails, 'data.username' );
+			password = get( sftpDetails, 'data.password' );
+			loading = sftpDetails.state === 'pending';
+		}
 
-	return {
-		siteId,
-		username,
-		password,
-		loading,
-	};
-} )( localize( SFTPCard ) );
+		return {
+			siteId,
+			currentUserId,
+			username,
+			password,
+			loading,
+		};
+	},
+	{ requestSFTPUserDetails: requestSFTPUser }
+)( localize( SFTPCard ) );
