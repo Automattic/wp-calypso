@@ -10,11 +10,9 @@ positioning may impact the child's style.
 
 ```jsx
 import React from 'react';
-import RootChild from 'components/root-child';
+import { RootChild } from '@automattic/components';
 
 export default class extends React.Component {
-	static displayName ='MyComponent';
-
 	render() {
 		return (
 			<div className="my-component">
@@ -30,7 +28,5 @@ export default class extends React.Component {
 
 ## Notes
 
-The `<RootChild />` children are wrapped in a single `<div />` element,
-so they are not truly direct descendants of the `<body>` element.
-Passing props to a `<RootChild />` will further nest the child in 
-another `<div />` element to which the props are applied.
+The `<RootChild />` children are wrapped in a single `<div />` element, so they are not truly
+direct descendants of the `<body>` element.
