@@ -1893,13 +1893,32 @@ async function initGoogleRecaptcha() {
 }
 
 /**
+ * @param {string} elementId - render client to this existing DOM node
+ * @returns {number} reCAPTCHA clientId
+ */
+async function renderReCaptchaClient( elementId ) {
+	// Render to an explicit DOM id that should already be on the page.
+	return await window.grecaptcha.render( elementId, {
+		sitekey: TRACKING_IDS.wpcomGoogleRecaptchaSiteKey,
+		size: 'invisible',
+	} );
+}
+
+/**
+ * @typedef RecaptchaActionResult
+ * @prop {string} token
+ * @prop {number} clientId
+ */
+
+/**
  * Records reCAPTCHA action, loading Google script if necessary.
  *
  * @param {String} action - name of action to record in reCAPTCHA
+ * @param {string|number} elementOrClientId - either a DOM id in which to render the reCAPTCHA client, or the clientId of an existing reCAPTCHA token
  *
- * @returns {String|null} a reCAPTCHA token or null if the function fails
+ * @returns {RecaptchaActionResult|null} either the reCAPTCHA token and clientId, or null if the function fails
  */
-export async function recordGoogleRecaptchaAction( action ) {
+export async function recordGoogleRecaptchaAction( action, elementOrClientId = -1 ) {
 	if ( ! isGoogleRecaptchaEnabled || ! TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
 		return null;
 	}
@@ -1911,18 +1930,17 @@ export async function recordGoogleRecaptchaAction( action ) {
 	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
 
 	try {
-		// Render to an explicit DOM id 'g-recaptcha' that should already be on the page.
-		const clientId = await window.grecaptcha.render( 'g-recaptcha', {
-			sitekey: TRACKING_IDS.wpcomGoogleRecaptchaSiteKey,
-			size: 'invisible',
-		} );
+		const clientId =
+			typeof elementOrClientId !== 'string'
+				? elementOrClientId
+				: await renderReCaptchaClient( elementOrClientId );
 
 		const token = await window.grecaptcha.execute( clientId, {
 			action,
 		} );
 
 		debug( 'recordGoogleRecaptchaAction: [Success]', action, token );
-		return token;
+		return { token, clientId };
 	} catch ( error ) {
 		// We don't want errors interrupting our flow, so convert any exceptions
 		// into return values.

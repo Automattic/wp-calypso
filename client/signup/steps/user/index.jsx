@@ -75,7 +75,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		recordGoogleRecaptchaAction( 'calypso' ).then( this.saveRecaptchaToken );
+		recordGoogleRecaptchaAction( 'calypso', 'g-recaptcha' ).then( this.saveRecaptchaToken );
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
@@ -153,7 +153,9 @@ export class UserStep extends Component {
 		this.setState( { subHeaderText } );
 	}
 
-	saveRecaptchaToken = token => {
+	saveRecaptchaToken = ( { token, clientId } ) => {
+		this.recaptchaClientId = clientId;
+
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			recaptchaToken: typeof token === 'string' ? token : undefined,
