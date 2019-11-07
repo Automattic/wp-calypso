@@ -13,7 +13,6 @@ import AppleLoginButton from 'components/social-buttons/apple';
 import config from 'config';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import GoogleLoginButton from 'components/social-buttons/google';
-import { localizeUrl } from 'lib/i18n-utils';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -86,7 +85,11 @@ class SocialSignupForm extends Component {
 		return (
 			<div className="signup-form__social">
 				{ ! this.props.compact && (
-					<p>{ preventWidows( this.props.translate( 'Or connect your existing profile to get started faster.' ) ) }</p>
+					<p>
+						{ preventWidows(
+							this.props.translate( 'Or connect your existing profile to get started faster.' )
+						) }
+					</p>
 				) }
 
 				<div className="signup-form__social-buttons">
