@@ -17,9 +17,17 @@ export function submitSiteType( siteType, stepName = 'site-type' ) {
 	return dispatch => {
 		dispatch( setSiteType( siteType ) );
 
-		const themeSlugWithRepo =
-			getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
+		let themeSlugWithRepo = undefined;
+		if ( 'site-type-with-theme' !== stepName ) {
+			themeSlugWithRepo =
+				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
+		}
 
-		dispatch( submitSignupStep( { stepName }, { siteType, themeSlugWithRepo } ) );
+		dispatch(
+			submitSignupStep(
+				{ stepName },
+				{ siteType, ...( themeSlugWithRepo && { themeSlugWithRepo } ) }
+			)
+		);
 	};
 }
