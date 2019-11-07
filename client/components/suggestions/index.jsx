@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
@@ -33,6 +30,8 @@ class Suggestions extends Component {
 
 	static defaultProps = {
 		query: '',
+		onSuggestionItemRender: () => {},
+		onSuggestionItemMouseDown: () => {},
 	};
 
 	state = {
@@ -63,7 +62,8 @@ class Suggestions extends Component {
 			return suggestion ? suggestion.originalIndex : -1;
 		}, -1 );
 
-	suggest = originalIndex => this.props.suggest( this.props.suggestions[ originalIndex ] );
+	suggest = originalIndex =>
+		this.props.suggest( this.props.suggestions[ originalIndex ], originalIndex );
 
 	moveSelectionDown = () => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
@@ -113,7 +113,10 @@ class Suggestions extends Component {
 		}
 	};
 
-	handleMouseDown = originalIndex => this.suggest( originalIndex );
+	handleMouseDown = originalIndex => {
+		this.suggest( originalIndex );
+		this.onSuggestionItemMouseDown( originalIndex );
+	};
 
 	handleMouseOver = suggestionPosition => this.setState( { suggestionPosition } );
 
@@ -158,7 +161,7 @@ class Suggestions extends Component {
 	}
 
 	render() {
-		const { query, railcar } = this.props;
+		const { query } = this.props;
 		const showSuggestions = this.getSuggestionsCount() > 0;
 
 		return (
@@ -179,17 +182,15 @@ class Suggestions extends Component {
 											key={ originalIndex }
 											hasHighlight={ index === this.state.suggestionPosition }
 											query={ query }
+											onMount={ () =>
+												this.props.onSuggestionItemRender( {
+													suggestionIndex: originalIndex,
+													index,
+												} )
+											}
 											onMouseDown={ () => this.handleMouseDown( originalIndex ) }
 											onMouseOver={ () => this.handleMouseOver( index ) }
 											label={ label }
-											railcar={
-												railcar && {
-													...railcar,
-													railcar: `${ railcar.id }-${ originalIndex }`,
-													fetch_position: originalIndex,
-													ui_position: index,
-												}
-											}
 											ref={ suggestion => {
 												this.refsCollection[ 'suggestion_' + index ] = suggestion;
 											} }

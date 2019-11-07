@@ -1,26 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { tracks } from 'lib/analytics';
 
 class Item extends PureComponent {
 	static propTypes = {
 		label: PropTypes.string.isRequired,
 		hasHighlight: PropTypes.bool,
 		query: PropTypes.string,
+		onMount: PropTypes.func.isRequired,
 		onMouseDown: PropTypes.func.isRequired,
 		onMouseOver: PropTypes.func.isRequired,
-		railcar: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -29,13 +21,7 @@ class Item extends PureComponent {
 	};
 
 	componentDidMount() {
-		const { railcar } = this.props;
-		if ( railcar ) {
-			tracks.recordEvent(
-				'calypso_traintracks_render',
-				pick( railcar, [ 'railcar', 'fetch_algo', 'fetch_position', 'ui_algo', 'ui_position' ] )
-			);
-		}
+		this.props.onMount();
 	}
 
 	/**
@@ -64,18 +50,9 @@ class Item extends PureComponent {
 	}
 
 	handleMouseDown = event => {
-		const { railcar } = this.props;
-
 		event.stopPropagation();
 		event.preventDefault();
-
 		this.props.onMouseDown();
-		if ( railcar ) {
-			tracks.recordEvent(
-				'calypso_traintracks_interact',
-				pick( railcar, [ 'railcar', 'action' ] )
-			);
-		}
 	};
 
 	handleMouseOver = () => {
