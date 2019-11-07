@@ -7,6 +7,7 @@ import {
 	HOSTING_RECEIVE_SFTP_USER_ERROR,
 	HOSTING_RESTORE_DATABASE_PASSWORD,
 	HOSTING_CREATE_SFTP_USER,
+	HOSTING_RESET_SFTP_PASSWORD,
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/hosting/restore-database-password';
 import 'state/data-layer/wpcom/sites/hosting/sftp-user';
@@ -37,6 +38,12 @@ export const receiveAtomicSFTPUser = ( siteId, userId, sftpUser ) => ( {
 
 export const createAtomicSFTPUser = ( siteId, userId ) => ( {
 	type: HOSTING_CREATE_SFTP_USER,
+	siteId,
+	userId,
+} );
+
+export const resetAtomicSFTPPassword = ( siteId, userId ) => ( {
+	type: HOSTING_RESET_SFTP_PASSWORD,
 	siteId,
 	userId,
 } );

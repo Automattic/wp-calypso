@@ -20,8 +20,11 @@ import ClipboardButton from 'components/forms/clipboard-button';
 import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { resetAtomicSFTPUserPassword, createAtomicSFTPUser } from 'state/data-getters';
-import { requestAtomicSFTPUser } from 'state/hosting/actions';
+import {
+	requestAtomicSFTPUser,
+	createAtomicSFTPUser,
+	resetAtomicSFTPPassword,
+} from 'state/hosting/actions';
 import { getUserSFTPDetails, isSFTPUserLoading } from 'state/hosting/selectors';
 
 const SFTPCard = ( {
@@ -29,11 +32,13 @@ const SFTPCard = ( {
 	username,
 	password,
 	siteId,
-	loading,
+	isLoading,
 	loaded,
 	disabled,
-	requestAtomicSFTPUserDetails,
 	currentUserId,
+	requestSFTPUser,
+	createSFTPUser,
+	resetSFTPPassword,
 } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
@@ -42,7 +47,7 @@ const SFTPCard = ( {
 
 	useEffect( () => {
 		if ( ! loaded ) {
-			requestAtomicSFTPUserDetails( siteId, currentUserId );
+			requestSFTPUser( siteId, currentUserId );
 		}
 	}, [ loaded ] );
 	const sftpData = {
@@ -75,8 +80,8 @@ const SFTPCard = ( {
 			<>
 				<p>{ translate( 'You must reset your password to view it.' ) }</p>
 				<Button
-					onClick={ () => resetAtomicSFTPUserPassword( siteId ) }
-					disabled={ loading }
+					onClick={ () => resetSFTPPassword( siteId, currentUserId ) }
+					disabled={ isLoading }
 					compact
 				>
 					{ translate( 'Reset Password' ) }
@@ -92,7 +97,7 @@ const SFTPCard = ( {
 			</div>
 			<div className="sftp-card__body">
 				<CardHeading>{ translate( 'SFTP Information' ) }</CardHeading>
-				{ disabled || username || loading ? (
+				{ disabled || username || isLoading ? (
 					<p>
 						{ translate( "Access and edit your website's files directly using an FTP client." ) }
 					</p>
@@ -103,7 +108,7 @@ const SFTPCard = ( {
 								"Enable SFTP access to generate a username and password so you can access your website's files."
 							) }
 						</p>
-						<Button onClick={ () => createAtomicSFTPUser( siteId ) } primary>
+						<Button onClick={ () => createSFTPUser( siteId, currentUserId ) } primary>
 							{ translate( 'Enable SFTP' ) }
 						</Button>
 					</>
@@ -150,7 +155,7 @@ const SFTPCard = ( {
 					</tbody>
 				</table>
 			) }
-			{ loading && <Spinner /> }
+			{ isLoading && <Spinner /> }
 		</Card>
 	);
 };
@@ -162,11 +167,11 @@ export default connect(
 		let username = null;
 		let password = null;
 		let loaded = null;
-		let loading = false;
+		let isLoading = false;
 
 		if ( ! disabled ) {
 			const sftpDetails = getUserSFTPDetails( state, siteId, currentUserId );
-			loading = isSFTPUserLoading( state, siteId, currentUserId );
+			isLoading = isSFTPUserLoading( state, siteId, currentUserId );
 			username = get( sftpDetails, 'username' );
 			password = get( sftpDetails, 'password' );
 			loaded = sftpDetails !== null;
@@ -178,8 +183,12 @@ export default connect(
 			username,
 			password,
 			loaded,
-			loading,
+			isLoading,
 		};
 	},
-	{ requestAtomicSFTPUserDetails: requestAtomicSFTPUser }
+	{
+		requestSFTPUser: requestAtomicSFTPUser,
+		createSFTPUser: createAtomicSFTPUser,
+		resetSFTPPassword: resetAtomicSFTPPassword,
+	}
 )( localize( SFTPCard ) );
