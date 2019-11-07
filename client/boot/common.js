@@ -259,7 +259,7 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
-	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	analytics.initialize( currentUser, getSuperProps( reduxStore ) );
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.

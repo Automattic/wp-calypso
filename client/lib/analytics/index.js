@@ -16,13 +16,10 @@ import emitter from 'lib/mixins/emitter';
 import {
 	doNotTrack,
 	costToUSD,
-	getCurrentUser,
-	setCurrentUser,
 	urlParseAmpCompatible,
 	saveCouponQueryArgument,
 } from 'lib/analytics/utils';
 import {
-	getGoogleAnalyticsDefaultConfig,
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
 	recordSignupCompletionInFloodlight,
@@ -39,6 +36,7 @@ import {
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
+import { getGoogleAnalyticsDefaultConfig } from './ad-tracking';
 import { affiliateReferral as trackAffiliateReferral } from 'state/refer/actions';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
@@ -46,10 +44,7 @@ import { getFeatureSlugFromPageUrl } from './feature-slug';
 /**
  * Module variables
  */
-const initializeDebug = debug( 'calypso:analytics:initialize' );
-const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
-const blockedTracksDebug = debug( 'calypso:analytics:blockedTracks' );
-const pageViewDebug = debug( 'calypso:analytics:pageview' );
+const pvDebug = debug( 'calypso:analytics:pv' );
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const referDebug = debug( 'calypso:analytics:refer' );
@@ -57,8 +52,8 @@ const queueDebug = debug( 'calypso:analytics:queue' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
 
-let _superProps; // Added to all Tracks events.
-let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
+let _superProps, _user;
+let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments
 
 /**
  * Tracks uses a bunch of special query params that should not be used as property name
@@ -103,16 +98,15 @@ function createRandomId( randomBytesLength = 9 ) {
 }
 
 function checkForBlockedTracks() {
-	// Proceed only after the tracks script load finished and failed.
-	// Calling this function from `initialize` ensures current user is set.
-	// This detects stats blocking, and identifies by `getCurrentUser()`, URL, or cookie.
+	// proceed only after the tracks script load finished and failed
+	// calling this function from `initialize` ensures that `_user` is already set
 	_loadTracksResult.catch( () => {
 		let _ut, _ui;
-		const currentUser = getCurrentUser();
 
-		if ( currentUser && currentUser.ID ) {
+		// detect stats blocking, and include identity from URL, user or cookie if possible
+		if ( _user && _user.get() ) {
 			_ut = 'wpcom:user_id';
-			_ui = currentUser.ID;
+			_ui = _user.get().ID;
 		} else {
 			_ut = getUrlParameter( '_ut' ) || 'anon';
 			_ui = getUrlParameter( '_ui' );
@@ -122,14 +116,13 @@ function checkForBlockedTracks() {
 				if ( cookies.tk_ai ) {
 					_ui = cookies.tk_ai;
 				} else {
-					const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars).
+					const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
 					_ui = createRandomId( randomIdLength );
 					document.cookie = cookie.serialize( 'tk_ai', _ui );
 				}
 			}
 		}
 
-		blockedTracksDebug( 'Loading /nostats.js', { _ut, _ui } );
 		return loadScript(
 			'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
 		);
@@ -186,22 +179,17 @@ if ( typeof window !== 'undefined' ) {
 }
 
 const analytics = {
-	initialize: function( currentUser, superProps ) {
-		// Update super props.
-		if ( 'object' === typeof superProps ) {
-			initializeDebug( 'superProps', superProps );
-			_superProps = superProps;
-		}
+	initialize: function( user, superProps ) {
+		_user = user;
+		_superProps = superProps;
 
-		// Identify current user.
-		if ( 'object' === typeof currentUser ) {
-			initializeDebug( 'identifyUser', currentUser );
-			analytics.identifyUser( currentUser );
-		}
-
-		// Tracks blocked?
-		initializeDebug( 'checkForBlockedTracks' );
+		// this is called both for anonymous and logged-in users
 		checkForBlockedTracks();
+
+		if ( user && user.get() ) {
+			const userData = user.get();
+			analytics.identifyUser( userData.username, userData.ID );
+		}
 	},
 
 	mc: {
@@ -254,7 +242,7 @@ const analytics = {
 					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
 				params.this_pageview_path_with_count = urlPath + '(' + ( pathCounter + 1 ).toString() + ')';
 
-				pageViewDebug( 'Recording pageview.', urlPath, pageTitle, params );
+				pvDebug( 'Recording pageview.', urlPath, pageTitle, params );
 
 				// Tracks, Google Analytics, Refer platform.
 				analytics.tracks.recordPageView( urlPath, params );
@@ -716,29 +704,16 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function( userData ) {
-		// Ensure object.
-		if ( 'object' !== typeof userData ) {
-			identifyUserDebug( 'Invalid userData.', userData );
-			return; // Not possible.
-		}
+	identifyUser: function( newUserName, newUserId ) {
+		const anonymousUserId = this.tracks.anonymousUserId();
 
-		// Set current user.
-		const currentUser = setCurrentUser( userData );
-		if ( ! currentUser ) {
-			identifyUserDebug( 'Insufficient userData.', userData );
-			return; // Not possible.
+		// Don't identify the user if we don't have one
+		if ( newUserId && newUserName ) {
+			if ( anonymousUserId ) {
+				recordAliasInFloodlight();
+			}
+			window._tkq.push( [ 'identifyUser', newUserId, newUserName ] );
 		}
-
-		// Handle Floodlight alias?
-		if ( this.tracks.anonymousUserId() ) {
-			identifyUserDebug( 'recordAliasInFloodlight', currentUser );
-			recordAliasInFloodlight();
-		}
-
-		// Tracks user identification.
-		identifyUserDebug( 'Tracks identifyUser.', currentUser );
-		window._tkq.push( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 	},
 
 	setProperties: function( properties ) {

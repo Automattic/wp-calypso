@@ -103,7 +103,7 @@ const setRouteMiddleware = reduxStore => {
 };
 
 const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
-	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	analytics.initialize( currentUser, getSuperProps( reduxStore ) );
 };
 
 export function setupMiddlewares( currentUser, reduxStore ) {
