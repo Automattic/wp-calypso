@@ -24,7 +24,7 @@ import {
 	isActivatingTheme,
 	hasActivatedTheme,
 	isWpcomTheme,
-	shouldEditThemeWithGutenberg as isThemeGutenbergFirst,
+	isThemeGutenbergFirst,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -183,11 +183,11 @@ class ThanksModal extends Component {
 	};
 
 	getEditSiteLabel = () => {
-		const { shouldEditThemeWithGutenberg, hasActivated } = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
 		return hasActivated ? (
 			<span className="thanks-modal__button-customize">
 				<Gridicon icon="external" />
-				{ shouldEditThemeWithGutenberg
+				{ shouldEditHomepageWithGutenberg
 					? translate( 'Edit Homepage' )
 					: translate( 'Customize site' ) }
 			</span>
@@ -204,9 +204,9 @@ class ThanksModal extends Component {
 	);
 
 	getButtons = () => {
-		const { shouldEditThemeWithGutenberg, hasActivated } = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
 
-		const firstButton = shouldEditThemeWithGutenberg
+		const firstButton = shouldEditHomepageWithGutenberg
 			? {
 					action: 'view',
 					label: this.getViewSiteLabel(),
@@ -233,8 +233,6 @@ class ThanksModal extends Component {
 	render() {
 		const { currentTheme, hasActivated, isActivating } = this.props;
 
-		// const buttons = ! hasActivated ? activationButtons : this.getButtons();
-
 		return (
 			<Dialog
 				className="themes__thanks-modal"
@@ -254,13 +252,13 @@ export default connect(
 		const siteUrl = get( getSelectedSite( state ), 'URL', null );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
-		const shouldEditThemeWithGutenberg = isThemeGutenbergFirst( state, currentThemeId );
+		const shouldEditHomepageWithGutenberg = isThemeGutenbergFirst( state, currentThemeId );
 
 		return {
 			siteId,
 			siteUrl,
 			currentTheme,
-			shouldEditThemeWithGutenberg,
+			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),

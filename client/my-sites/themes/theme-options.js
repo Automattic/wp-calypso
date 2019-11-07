@@ -30,7 +30,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isThemeAvailableOnJetpackSite,
-	shouldEditThemeWithGutenberg,
+	isThemeGutenbergFirst,
 } from 'state/themes/selectors';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -135,7 +135,7 @@ const tryandcustomize = {
 			! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
 		( isJetpackSite( state, siteId ) &&
 			! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ) ||
-		shouldEditThemeWithGutenberg( state, themeId ),
+		isThemeGutenbergFirst( state, themeId ),
 };
 
 const preview = {

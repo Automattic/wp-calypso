@@ -754,7 +754,7 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
  *                         `independent-publisher-2` or `maywood`.
  * @return {Boolean} True if the theme should be edited with gutenberg.
  */
-export function shouldEditThemeWithGutenberg( state, themeId ) {
+export function isThemeGutenbergFirst( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
 	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
 	const neededFeatures = [ 'global-styles', 'auto-loading-homepage' ];
