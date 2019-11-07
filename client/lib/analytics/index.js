@@ -355,7 +355,8 @@ const analytics = {
 		recordSignupStart( { flow } );
 	},
 
-	recordRegistration: function( { flow, type } ) {
+	recordRegistration: function( { username, userId, flow, type } ) {
+		analytics.identifyUser( username, userId );
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow, type } );
 		// Google Analytics

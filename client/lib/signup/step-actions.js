@@ -415,7 +415,17 @@ export function createAccount(
 					);
 				}
 
-				analytics.recordRegistration( { flow: flowName, type: 'social' } );
+				const username =
+					( response && response.signup_sandbox_username ) ||
+					( response && response.username ) ||
+					userData.username;
+
+				const userId =
+					( response && response.signup_sandbox_user_id ) ||
+					( response && response.user_id ) ||
+					userData.ID;
+
+				analytics.recordRegistration( { username, userId, flow: flowName, type: 'social' } );
 
 				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 			}
@@ -479,8 +489,7 @@ export function createAccount(
 					userData.ID;
 
 				// Fire after a new user registers.
-				analytics.recordRegistration( { flow: flowName, type: 'default' } );
-				analytics.identifyUser( username, userId );
+				analytics.recordRegistration( { username, userId, flow: flowName, type: 'default' } );
 
 				const providedDependencies = assign( { username }, bearerToken );
 

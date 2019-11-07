@@ -130,8 +130,12 @@ class PasswordlessSignupForm extends Component {
 		const userId =
 			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
 
-		analytics.recordRegistration( { flow: this.props.flowName, type: 'passwordless' } );
-		analytics.identifyUser( username, userId );
+		analytics.recordRegistration( {
+			username,
+			userId,
+			flow: this.props.flowName,
+			type: 'passwordless',
+		} );
 
 		this.submitStep( {
 			username,
