@@ -25,10 +25,18 @@
 
 .gutenboarding__header-site {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	margin-left: 20px;
+	font-size: 14px;
+	align-items: center;
+
+	span {
+		margin-left: 20px;
+	}
 }
 .gutenboarding__header-site-heading {
 	font-weight: bold;
+
 }
 
 .gutenboarding__header-actions {
@@ -38,6 +46,10 @@
 	display: inline-flex;
 	align-items: center;
 	flex-wrap: wrap;
+
+	> * {
+		margin-left: 20px;
+	}
 }
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-post/src/style.scss
