@@ -219,7 +219,10 @@ class ThanksModal extends Component {
 			  };
 
 		return [
-			firstButton,
+			{
+				...firstButton,
+				disabled: ! hasActivated,
+			},
 			{
 				action: 'customizeSite',
 				label: this.getEditSiteLabel(),
