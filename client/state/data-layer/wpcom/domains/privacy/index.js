@@ -81,7 +81,7 @@ const handleDomainPrivacySettingsFailure = type => ( { siteId, domain }, data ) 
 			id: 'domain-privacy-settings-save-failure-notice',
 			isPersistent: true,
 			href: 'https://wordpress.com/help/contact',
-			button: 'Get Help',
+			button: translate( 'Get Help' ),
 			showDismiss: false,
 		} ),
 	];
