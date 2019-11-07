@@ -2,6 +2,14 @@
  * Internal dependencies
  */
 import { CurrencyCode, minorUnitsPerMajorUnit, hasUniqueLocalSymbol } from './currency-code';
+import {
+	CheckedNumber,
+	validateInteger,
+	NonNegativeInteger,
+	Sign,
+	signOf,
+	absoluteValue,
+} from './number';
 
 /**
  * Format a monetary amount according to the custom of a given linguistic
@@ -130,37 +138,37 @@ import { CurrencyCode, minorUnitsPerMajorUnit, hasUniqueLocalSymbol } from './cu
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
  * @param {CurrencyCode} currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @param {number} amount
+ * @param {Number< Raw >} amount
  *   Integer amount in minor currency units. Examples: $1.00 USD and ¥100 JPY
  *   are both passed as 100.
- * @returns {string}
+ * @returns {LocalizedMonetaryAmount}
  *   Localized monetary amount
  */
 export function localizeMonetaryAmount(
 	rawLocaleCode: LocaleCode< Raw >,
 	currencyCode: CurrencyCode,
-	amount: number
+	amount: CheckedNumber< Raw >
 ): LocalizedMonetaryAmount {
 	// Validate arguments
-	if ( ! ( typeof amount === 'number' && Number.isInteger( amount ) ) ) {
-		throw 'amount parameter must be an integer.';
-	}
-
 	const localeCode = normalizeLocaleCode( rawLocaleCode );
+	const validatedAmount = validateInteger( amount );
 
 	return localizeCurrencyWithSchema(
-		Math.sign( amount ),
-		Math.abs( amount ),
+		signOf( validatedAmount ),
+		absoluteValue( validatedAmount ),
 		localeCode,
 		currencyCode,
 		currencyFormattingSchema( localeCode, currencyCode )
 	);
 }
 
+/**
+ * Type alias for localized currency strings
+ */
 export type LocalizedMonetaryAmount = string;
 
 /**
- * Representation of the possible currency schemas.
+ * Representation of the possible currency schemas
  */
 enum CurrencyFormat {
 	LocalSymbol_Amount,
@@ -222,10 +230,10 @@ function currencyFormattingSchema(
 /**
  * Localize a monetary amount using the given schema slug.
  *
- * @param {number} amountSign
- *   1, 0, or -1, to distinguish positive and negative amounts
- * @param {number} absoluteAmount
- *   Nonnegative integer number of minor currency units
+ * @param {Sign} sign
+ *   For distinguishing positive, negative, and zero amounts
+ * @param {CheckedNumber< NonNegativeInteger >} amount
+ *   Whole number of minor currency units, cannot be negative
  * @param {LocaleCode<Normalized>} localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
@@ -233,55 +241,46 @@ function currencyFormattingSchema(
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
  * @param {CurrencyFormat} schema
  *   A slug representing a currency format
- * @returns {string}
+ * @returns {LocalizedMonetaryAmount}
  *   Localized monetary amount
  */
 function localizeCurrencyWithSchema(
-	amountSign: number,
-	absoluteAmount: number,
+	sign: Sign,
+	amount: CheckedNumber< NonNegativeInteger >,
 	localeCode: LocaleCode< Normalized >,
 	currencyCode: CurrencyCode,
 	schema: CurrencyFormat
 ): LocalizedMonetaryAmount {
-	const symbol = localSymbolForCurrency( localeCode, currencyCode );
-	const sign = amountSign >= 0 ? '' : '-';
+	const currencySymbol = localSymbolForCurrency( localeCode, currencyCode );
+	const signSymbol = sign === Sign.IsNegative ? '-' : '';
 
 	switch ( schema ) {
 		// $1,000.50
 		case CurrencyFormat.LocalSymbol_Amount:
-			if ( 0 === amountSign ) {
-				return symbol.concat( '0' );
+			if ( Sign.IsZero === sign ) {
+				return currencySymbol.concat( '0' );
 			}
 
-			return sign.concat(
-				symbol.concat(
-					renderAmountWithSeparatorsForCurrencyAndLocale( absoluteAmount, localeCode, currencyCode )
-				)
-			);
+			return signSymbol
+				.concat( currencySymbol )
+				.concat( renderAmountWithSeparators( amount, localeCode, currencyCode ) );
 
 		// $1,000.50 USD
 		case CurrencyFormat.LocalSymbol_Amount_Code:
-			if ( 0 === amountSign ) {
-				return symbol
+			if ( Sign.IsZero === sign ) {
+				return currencySymbol
 					.concat( '0' )
 					.concat( '\u00A0' )
 					.concat( currencyCode );
 			}
 
-			return sign
-				.concat(
-					symbol.concat(
-						renderAmountWithSeparatorsForCurrencyAndLocale(
-							absoluteAmount,
-							localeCode,
-							currencyCode
-						)
-					)
-				)
+			return signSymbol
+				.concat( currencySymbol )
+				.concat( renderAmountWithSeparators( amount, localeCode, currencyCode ) )
 				.concat( '\u00A0'.concat( currencyCode ) );
 
 		default:
-			throw `Unrecognized currency format ${ schema }`;
+			throw new Error( `Unrecognized currency format ${ schema }` );
 	}
 }
 
@@ -289,8 +288,8 @@ function localizeCurrencyWithSchema(
  * Localize a nonnegative number of minimal currency units. Does not
  * include any currency symbols.
  *
- * @param {number} absoluteAmount
- *   Nonnegative integer amount in minimal currency units
+ * @param {CheckedNumber< NonNegativeInteger >} amount
+ *   Whole number amount in minimal currency units; cannot be negative
  * @param {LocaleCode<Normalized>} localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
@@ -298,15 +297,15 @@ function localizeCurrencyWithSchema(
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
  * @returns {string} Localized amount string
  */
-function renderAmountWithSeparatorsForCurrencyAndLocale(
-	absoluteAmount: number,
+function renderAmountWithSeparators(
+	amount: CheckedNumber< NonNegativeInteger >,
 	localeCode: LocaleCode< Normalized >,
 	currencyCode: CurrencyCode
 ): string {
 	const { integerPart, fractionalPart } = digitGroupsOfAmountForCurrency(
 		localeCode,
 		currencyCode,
-		absoluteAmount
+		amount
 	);
 	const { groupSeparator } = separatorsForLocale( localeCode );
 	const base = minorUnitsPerMajorUnit( currencyCode );
@@ -320,29 +319,35 @@ function renderAmountWithSeparatorsForCurrencyAndLocale(
 }
 
 /**
- * Separate an amount into its fractional part and grouped digits of the integer part.
+ * Represents the digit groups of a formatted number. The
+ * integer part is sorted from most to least significant.
+ */
+interface DigitGrouping {
+	integerPart: string[];
+	fractionalPart: string;
+}
+
+/**
+ * Separate an amount into its fractional part and grouped digits
+ * of the integer part.
  *
  * @param {LocaleCode<Normalized>} localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
  * @param {CurrencyCode} currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @param {number} absoluteAmount
- *   Positive integer amount in minimal currency units
- * @returns {{integerPart: string[], fractionalPart: string}}
+ * @param {CheckedNumber< NonNegativeInteger >} amount
+ *   Whole number amount in minimal currency units; cannot be negative
+ * @returns {DigitGrouping}
  *   Digit groups; the integer part is sorted from most to least significant
  */
 function digitGroupsOfAmountForCurrency(
 	localeCode: LocaleCode< Normalized >,
 	currencyCode: CurrencyCode,
-	absoluteAmount: number
-): { integerPart: string[]; fractionalPart: string } {
-	if ( ! ( Number.isInteger( absoluteAmount ) && absoluteAmount >= 0 ) ) {
-		throw 'absoluteAmount parameter must be a nonnegative integer.';
-	}
-
+	amount: CheckedNumber< NonNegativeInteger >
+): DigitGrouping {
 	// Zero money is a special case.
-	if ( 0 === absoluteAmount ) {
+	if ( 0 === amount ) {
 		return {
 			integerPart: [ '0' ],
 			fractionalPart: minorUnitsAsDecimalForCurrency( localeCode, currencyCode, 0 ),
@@ -354,17 +359,13 @@ function digitGroupsOfAmountForCurrency(
 	// Currencies with no minor unit are a special case.
 	if ( 1 === base ) {
 		return {
-			integerPart: groupDigits( localeCode, absoluteAmount ),
+			integerPart: groupDigits( localeCode, amount ),
 			fractionalPart: '',
 		};
 	}
 
-	const fractionalPart = minorUnitsAsDecimalForCurrency(
-		localeCode,
-		currencyCode,
-		absoluteAmount % base
-	);
-	const majorUnitAmount = Math.floor( absoluteAmount / base );
+	const fractionalPart = minorUnitsAsDecimalForCurrency( localeCode, currencyCode, amount % base );
+	const majorUnitAmount = Math.floor( amount / base );
 
 	return {
 		integerPart: groupDigits( localeCode, majorUnitAmount ),
@@ -384,12 +385,15 @@ function digitGroupsOfAmountForCurrency(
  * @param {LocaleCode<Normalized>} localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'. Must be lower case.
- * @param {number} absoluteAmount
+ * @param {CheckedNumber< NonNegativeInteger >} amount
  *   Number to decompose; must be nonnegative
  * @returns {string[]}
  *   Digit groups as strings, from most to least significant
  */
-function groupDigits( localeCode: LocaleCode< Normalized >, absoluteAmount: number ): string[] {
+function groupDigits(
+	localeCode: LocaleCode< Normalized >,
+	amount: CheckedNumber< NonNegativeInteger >
+): string[] {
 	// Accumulating recursive function that splits digits into
 	// groups of a fixed size. Interior groups are zero-padded.
 	function groupDigitsAccum(
@@ -426,19 +430,19 @@ function groupDigits( localeCode: LocaleCode< Normalized >, absoluteAmount: numb
 		case 'si': // Sinhala
 		case 'ta': // Tamil
 		case 'ur': // Urdu
-			if ( absoluteAmount < 1000 ) {
-				return [ absoluteAmount.toString() ];
+			if ( amount < 1000 ) {
+				return [ amount.toString() ];
 			}
 
 			return groupDigitsAccum(
-				Math.floor( absoluteAmount / 1000 ),
-				[ ( absoluteAmount % 1000 ).toString().padStart( 3, '0' ) ],
+				Math.floor( amount / 1000 ),
+				[ ( amount % 1000 ).toString().padStart( 3, '0' ) ],
 				2
 			);
 
 		// Locales with "3*" style digit groups
 		default:
-			return groupDigitsAccum( absoluteAmount, [], 3 );
+			return groupDigitsAccum( amount, [], 3 );
 	}
 }
 
@@ -450,7 +454,7 @@ function groupDigits( localeCode: LocaleCode< Normalized >, absoluteAmount: numb
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
  * @param {CurrencyCode} currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @param {number} absoluteAmount
+ * @param {Number< NonNegativeInteger >} amount
  *   Number of minor currency units. Must be positive, and must be in
  *   the range [0 .. minorUnitsPerMajorUnit - 1]
  * @returns {string}
@@ -459,7 +463,7 @@ function groupDigits( localeCode: LocaleCode< Normalized >, absoluteAmount: numb
 function minorUnitsAsDecimalForCurrency(
 	localeCode: LocaleCode< Normalized >,
 	currencyCode: CurrencyCode,
-	absoluteAmount: number
+	amount: CheckedNumber< NonNegativeInteger >
 ): string {
 	const radixSymbol = separatorsForLocale( localeCode ).decimalSeparator;
 
@@ -469,13 +473,15 @@ function minorUnitsAsDecimalForCurrency(
 		case 'BRL': // Brazilian real
 		case 'CAD': // Canadian dollar
 		case 'USD': // US dollar
-			if ( absoluteAmount < 0 || 100 <= absoluteAmount ) {
-				throw 'Minor units should be between 0 and 99 inclusive';
+			if ( amount < 0 || 100 <= amount ) {
+				throw new Error(
+					`Minor units should be between 0 and 99 inclusive; ${ amount } is invalid`
+				);
 			}
-			if ( absoluteAmount === 0 ) {
+			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( absoluteAmount.toString().padStart( 2, '0' ) );
+			return radixSymbol.concat( amount.toString().padStart( 2, '0' ) );
 
 		// Currencies with no minor unit
 		case 'BIF': // Burundian franc
@@ -495,18 +501,20 @@ function minorUnitsAsDecimalForCurrency(
 		case 'XAF': // CFA Franc BEAC
 		case 'XOF': // CFA Franc BCEAO
 		case 'XPF': // CFP Franc
-			throw 'Currency does not have a minor unit: '.concat( currencyCode );
+			throw new Error( `Currency does not have a minor unit: ${ currencyCode }` );
 
 		// 10000 minor units per major unit
 		case 'CLF': // Unidad de Fomento
 		case 'UYW': // Unidad Previsional
-			if ( absoluteAmount < 0 || 10000 <= absoluteAmount ) {
-				throw 'Minor units should be between 0 and 9999 inclusive';
+			if ( amount < 0 || 10000 <= amount ) {
+				throw new Error(
+					`Minor units should be between 0 and 9999 inclusive; ${ amount } is invalid`
+				);
 			}
-			if ( absoluteAmount === 0 ) {
+			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( absoluteAmount.toString().padStart( 4, '0' ) );
+			return radixSymbol.concat( amount.toString().padStart( 4, '0' ) );
 
 		// 1000 minor units per major unit
 		case 'BHD': // Bahraini dinar
@@ -516,34 +524,40 @@ function minorUnitsAsDecimalForCurrency(
 		case 'LYD': // Libyan dinar
 		case 'OMR': // Rial Omani
 		case 'TND': // Tunisian dinar
-			if ( absoluteAmount < 0 || 1000 <= absoluteAmount ) {
-				throw 'Minor units should be between 0 and 999 inclusive';
+			if ( amount < 0 || 1000 <= amount ) {
+				throw new Error(
+					`Minor units should be between 0 and 999 inclusive; ${ amount } is invalid`
+				);
 			}
-			if ( absoluteAmount === 0 ) {
+			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( absoluteAmount.toString().padStart( 3, '0' ) );
+			return radixSymbol.concat( amount.toString().padStart( 3, '0' ) );
 
 		// 5 minor units per major unit (!!!)
 		case 'MGA': // Malagasy ariary
 		case 'MRU': // Mauritanian ouguiya
-			if ( absoluteAmount < 0 || 5 <= absoluteAmount ) {
-				throw 'Minor units should be between 0 and 4 inclusive';
+			if ( amount < 0 || 5 <= amount ) {
+				throw new Error(
+					`Minor units should be between 0 and 4 inclusive; ${ amount } is invalid`
+				);
 			}
-			if ( absoluteAmount === 0 ) {
+			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( ( absoluteAmount * 20 ).toString() );
+			return radixSymbol.concat( ( amount * 20 ).toString() );
 
 		// Otherwise assume 100 minor units per major unit
 		default:
-			if ( absoluteAmount < 0 || 100 <= absoluteAmount ) {
-				throw 'Minor units should be between 0 and 99 inclusive';
+			if ( amount < 0 || 100 <= amount ) {
+				throw new Error(
+					`Minor units should be between 0 and 99 inclusive; ${ amount } is invalid`
+				);
 			}
-			if ( absoluteAmount === 0 ) {
+			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( absoluteAmount.toString().padStart( 2, '0' ) );
+			return radixSymbol.concat( amount.toString().padStart( 2, '0' ) );
 	}
 }
 
@@ -867,7 +881,7 @@ function localSymbolForCurrency(
 			return 'ZK';
 
 		default:
-			throw `Symbol for currency code not defined: ${ currencyCode }`;
+			throw new Error( `Symbol for currency code not defined: ${ currencyCode }` );
 	}
 }
 
@@ -888,7 +902,7 @@ interface DigitSeparators {
  * Customary radix point and group separators in a given locale. Note
  * that we're using non-breaking spaces.
  *
- * @param {string} localeCode
+ * @param {LocaleCode< Normalized >} localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
  * @returns {DigitSeparators}
