@@ -149,7 +149,6 @@ class SuggestionSearch extends Component {
 					suggest={ this.handleSuggestionMouseDown }
 					railcar={ this.props.railcar }
 					onSuggestionItemRender={ this.onSuggestionItemRender }
-					onSuggestionItemMouseDown={ this.onSuggestionItemMouseDown }
 				/>
 			</div>
 		);

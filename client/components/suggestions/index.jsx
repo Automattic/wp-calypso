@@ -31,7 +31,6 @@ class Suggestions extends Component {
 	static defaultProps = {
 		query: '',
 		onSuggestionItemRender: () => {},
-		onSuggestionItemMouseDown: () => {},
 	};
 
 	state = {
@@ -115,7 +114,6 @@ class Suggestions extends Component {
 
 	handleMouseDown = originalIndex => {
 		this.suggest( originalIndex );
-		this.onSuggestionItemMouseDown( originalIndex );
 	};
 
 	handleMouseOver = suggestionPosition => this.setState( { suggestionPosition } );
