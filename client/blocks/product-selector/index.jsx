@@ -506,6 +506,7 @@ ProductSelector.propTypes = {
 	fetchingSitePurchases: PropTypes.bool,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
 	purchases: PropTypes.array,
+	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteId: PropTypes.number,
 	selectedSiteSlug: PropTypes.string,
 	sitePlans: PropTypes.object,
