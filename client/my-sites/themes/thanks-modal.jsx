@@ -27,7 +27,7 @@ import {
 	shouldEditThemeWithGutenberg as isThemeGutenbergFirst,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 
@@ -76,7 +76,7 @@ class ThanksModal extends Component {
 
 	visitSite = () => {
 		this.trackClick( 'visit site' );
-		page( this.props.visitSiteUrl );
+		window.open( this.props.siteUrl, '_blank' );
 	};
 
 	goBack = () => {
@@ -196,13 +196,22 @@ class ThanksModal extends Component {
 		);
 	};
 
+	getViewSiteLabel = () => {
+		return (
+			<span className="thanks-modal__button-customize">
+				<Gridicon icon="external" />
+				{ translate( 'View Site' ) }
+			</span>
+		);
+	};
+
 	getButtons = () => {
 		const { shouldEditThemeWithGutenberg, hasActivated } = this.props;
 
 		const firstButton = shouldEditThemeWithGutenberg
 			? {
 					action: 'view',
-					label: translate( 'View Site' ),
+					label: this.getViewSiteLabel(),
 					onClick: this.visitSite,
 			  }
 			: {
@@ -244,12 +253,14 @@ class ThanksModal extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const siteUrl = getSelectedSite( state ).URL;
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 		const shouldEditThemeWithGutenberg = isThemeGutenbergFirst( state, currentThemeId );
 
 		return {
 			siteId,
+			siteUrl,
 			currentTheme,
 			shouldEditThemeWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
