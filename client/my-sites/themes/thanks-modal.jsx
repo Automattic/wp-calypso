@@ -187,7 +187,9 @@ class ThanksModal extends Component {
 		return hasActivated ? (
 			<span className="thanks-modal__button-customize">
 				<Gridicon icon="external" />
-				{ shouldEditThemeWithGutenberg ? translate( 'Edit Site' ) : translate( 'Customize site' ) }
+				{ shouldEditThemeWithGutenberg
+					? translate( 'Edit Homepage' )
+					: translate( 'Customize site' ) }
 			</span>
 		) : (
 			translate( 'Activating theme…' )
