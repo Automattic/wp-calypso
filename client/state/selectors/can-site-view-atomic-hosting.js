@@ -12,6 +12,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { isBusinessPlan } from 'lib/plans';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 /**
  * TODO: this selector should be backed by an API response instead
@@ -26,19 +27,24 @@ export default function canSiteViewAtomicHosting( state ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
+
 	// This is also enforced on the server, please remove client checks later.
 	// ID of site added 31 Oct 2019, so only sites newer currently eligible
-	if ( siteId > 168768859 ) {
-		const isAtomicSite = !! isSiteAutomatedTransfer( state, siteId );
-
-		if ( isAtomicSite ) {
-			return true;
-		}
-
-		if ( isEnabled( 'hosting/non-atomic-support' ) ) {
-			return isBusinessPlan( get( getSelectedSite( state ), [ 'plan', 'product_slug' ] ) );
-		}
+	const isEligibleSite = siteId > 168768859;
+	if ( ! isEligibleSite ) {
+		return false;
 	}
 
-	return false;
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	if ( ! canManageOptions ) {
+		return false;
+	}
+
+	const isAtomicSite = !! isSiteAutomatedTransfer( state, siteId );
+	if ( isAtomicSite ) {
+		return true;
+	}
+
+	const planSlug = get( getSelectedSite( state ), [ 'plan', 'product_slug' ] );
+	return isBusinessPlan( planSlug ) && isEnabled( 'hosting/non-atomic-support' );
 }
