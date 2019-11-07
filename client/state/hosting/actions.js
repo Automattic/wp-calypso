@@ -4,6 +4,7 @@
 import {
 	HOSTING_REQUEST_SFTP_USER,
 	HOSTING_RECEIVE_SFTP_USER,
+	HOSTING_RECEIVE_SFTP_USER_ERROR,
 	HOSTING_RESTORE_DATABASE_PASSWORD,
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/hosting/restore-database-password';
@@ -16,6 +17,12 @@ export const restoreDatabasePassword = siteId => ( {
 
 export const requestSFTPUser = ( siteId, userId ) => ( {
 	type: HOSTING_REQUEST_SFTP_USER,
+	siteId,
+	userId,
+} );
+
+export const receiveSFTPUserError = ( siteId, userId ) => ( {
+	type: HOSTING_RECEIVE_SFTP_USER_ERROR,
 	siteId,
 	userId,
 } );
