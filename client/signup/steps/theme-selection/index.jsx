@@ -96,11 +96,15 @@ class ThemeSelectionStep extends Component {
 	}
 
 	render() {
+		const { translate, useHeadstart, flowName } = this.props;
 		const storeSignup = this.isStoreSignup();
-		const defaultDependencies = this.props.useHeadstart
-			? { themeSlugWithRepo: 'pub/twentysixteen' }
-			: undefined;
-		const { translate } = this.props;
+
+		// If a user skips the step in `design-first` let segment and vertical determine content.
+		const defaultDependencies =
+			'design-first' === flowName
+				? { themeSlugWithRepo: 'pub/maywood', useThemeHeadstart: false }
+				: { themeSlugWithRepo: 'pub/twentysixteen', useThemeHeadstart: useHeadstart };
+
 		const headerText = storeSignup
 			? translate( 'Choose a store theme.' )
 			: translate( 'Choose a theme.' );
