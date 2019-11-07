@@ -72,7 +72,7 @@ Field.propTypes = {
 	className: PropTypes.string,
 	isError: PropTypes.bool,
 	onChange: PropTypes.func,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	value: PropTypes.string,
 	icon: PropTypes.node,
 	iconAction: PropTypes.func,

@@ -13,6 +13,7 @@ import { useLocalize } from '../lib/localize';
 import CheckoutStep from './checkout-step';
 import CheckoutPaymentMethods from './checkout-payment-methods';
 import { usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
+import CheckoutOrderSummary from './checkout-order-summary';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
@@ -141,22 +142,12 @@ function OrderSummaryStep( { CheckoutHeader } ) {
 			isComplete={ true }
 			stepNumber={ 0 }
 			title={ localize( 'You are all set to check out' ) }
-			stepSummary={ <OrderSummaryContent CheckoutHeader={ CheckoutHeader } /> }
+			stepSummary={ <CheckoutOrderSummary CheckoutHeader={ CheckoutHeader } /> }
 		/>
 	);
 }
 
 OrderSummaryStep.propTypes = {
-	CheckoutHeader: PropTypes.elementType,
-};
-
-function OrderSummaryContent( { CheckoutHeader } ) {
-	const localize = useLocalize();
-
-	return CheckoutHeader ? <CheckoutHeader /> : localize( 'Order Summary' );
-}
-
-OrderSummaryContent.propTypes = {
 	CheckoutHeader: PropTypes.elementType,
 };
 

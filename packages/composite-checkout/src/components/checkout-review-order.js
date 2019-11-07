@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 /**
  * Internal dependencies
@@ -14,9 +15,11 @@ import {
 	OrderReviewTotal,
 	OrderReviewSection,
 } from './order-review-line-items';
+import Coupon from './coupon';
 
 export default function CheckoutReviewOrder( { summary, className } ) {
 	const [ items, total ] = useLineItems();
+
 	if ( summary ) {
 		return (
 			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
@@ -29,11 +32,16 @@ export default function CheckoutReviewOrder( { summary, className } ) {
 			</div>
 		);
 	}
+
+	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<OrderReviewSection>
 				<OrderReviewLineItems items={ items } />
 			</OrderReviewSection>
+
+			<CouponField id="order-review-coupon" isCouponFieldVisible={ true } />
+
 			<OrderReviewSection>
 				<OrderReviewTotal total={ total } />
 			</OrderReviewSection>
@@ -46,6 +54,12 @@ CheckoutReviewOrder.propTypes = {
 	summary: PropTypes.bool,
 	className: PropTypes.string,
 };
+
+const CouponField = styled( Coupon )`
+	margin: 24px 0;
+	padding-bottom: 24px;
+	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
+`;
 
 function LineItem( { item, className } ) {
 	return (
