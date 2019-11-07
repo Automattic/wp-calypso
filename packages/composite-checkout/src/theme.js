@@ -27,6 +27,7 @@ const theme = {
 		applePayButtonRollOverColor: swatches.gray80,
 		paypalGold: '#F0C443',
 		paypalGoldHover: '#FFB900',
+		modalBackground: 'rgba( 0,0,0,0.4 )',
 	},
 	breakpoints: {
 		tabletUp: 'min-width: 700px',
