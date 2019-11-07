@@ -66,7 +66,7 @@ export function generateSteps( {
 				quantity: 18,
 			},
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 		},
 
 		// `themes` does not update the theme for an existing site as we normally

@@ -170,6 +170,12 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
 
+	if ( get( getSignupDependencyStore( state ), 'useThemeHeadstart' ) ) {
+		// Tell headstart to use the theme annotation, even though
+		// segment/vertical options are provided.
+		newSiteParams.options.use_theme_annotation = true;
+	}
+
 	if ( shouldSkipDomainStep || shouldHideFreePlan ) {
 		newSiteParams.blog_name =
 			get( user.get(), 'username' ) ||

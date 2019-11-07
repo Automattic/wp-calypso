@@ -42,12 +42,13 @@ class ThemeSelectionStep extends Component {
 	};
 
 	pickTheme = themeId => {
+		const { useHeadstart } = this.props;
 		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
 			theme: repoSlug,
-			headstart: true,
+			headstart: useHeadstart,
 		} );
 
 		this.props.submitSignupStep(
@@ -57,6 +58,7 @@ class ThemeSelectionStep extends Component {
 			},
 			{
 				themeSlugWithRepo: repoSlug,
+				useThemeHeadstart: useHeadstart,
 			}
 		);
 
