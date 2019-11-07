@@ -196,14 +196,12 @@ class ThanksModal extends Component {
 		);
 	};
 
-	getViewSiteLabel = () => {
-		return (
-			<span className="thanks-modal__button-customize">
-				<Gridicon icon="external" />
-				{ translate( 'View Site' ) }
-			</span>
-		);
-	};
+	getViewSiteLabel = () => (
+		<span className="thanks-modal__button-customize">
+			<Gridicon icon="external" />
+			{ translate( 'View Site' ) }
+		</span>
+	);
 
 	getButtons = () => {
 		const { shouldEditThemeWithGutenberg, hasActivated } = this.props;
