@@ -59,22 +59,31 @@ class ContactsPrivacyCard extends React.Component {
 		const { privateDomain, privacyAvailable } = this.props;
 		const { translate, isUpdatingPrivacy } = this.props;
 
+		let privacyProtectionNote;
 		if ( ! privacyAvailable ) {
-			return false;
+			privacyProtectionNote = (
+				<div className="contacts-privacy__settings warning">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>{ translate( 'Privacy settings can not be changed for this domain' ) }</p>
+				</div>
+			);
 		}
 
 		return (
-			<div className="contacts-privacy__settings">
-				<FormToggle
-					wrapperClassName="edit__privacy-protection-toggle"
-					checked={ privateDomain }
-					toggling={ isUpdatingPrivacy }
-					disabled={ isUpdatingPrivacy }
-					onChange={ this.togglePrivacy }
-				>
-					{ translate( 'Privacy Protection' ) }
-				</FormToggle>
-			</div>
+			<React.Fragment>
+				<div className="contacts-privacy__settings">
+					<FormToggle
+						wrapperClassName="edit__privacy-protection-toggle"
+						checked={ privateDomain }
+						toggling={ isUpdatingPrivacy }
+						disabled={ isUpdatingPrivacy || ! privacyAvailable }
+						onChange={ this.togglePrivacy }
+					>
+						{ translate( 'Privacy Protection' ) }
+					</FormToggle>
+				</div>
+				{ privacyProtectionNote }
+			</React.Fragment>
 		);
 	}
 
@@ -94,7 +103,7 @@ class ContactsPrivacyCard extends React.Component {
 		}
 
 		const contactVerificationNotice = isPendingIcannVerification ? (
-			<div class="edit__disclose-contact-information-warning contacts-privacy__settings">
+			<div class="contacts-privacy__settings warning">
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>
 					{ translate(
