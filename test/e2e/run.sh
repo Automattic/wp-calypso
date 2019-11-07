@@ -31,6 +31,7 @@ function joinStr { local IFS="$1"; shift; echo "$*"; }
 I18N_CONFIG="\"browser\":\"chrome\",\"proxy\":\"system\",\"saveAllScreenshots\":true"
 IE11_CONFIG="\"sauce\":\"true\",\"sauceConfig\":\"win-ie11\""
 SAFARI_CONFIG="\"sauce\":\"true\",\"sauceConfig\":\"osx-safari\""
+CHROME_CONFIG="\"sauce\":\"true\",\"sauceConfig\":\"osx-chrome\""
 
 declare -a MAGELLAN_CONFIGS
 
