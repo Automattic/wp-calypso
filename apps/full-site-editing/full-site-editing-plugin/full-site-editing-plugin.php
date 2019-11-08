@@ -23,7 +23,14 @@ namespace A8C\FSE;
 define( 'PLUGIN_VERSION', '0.14' );
 
 // Themes which are supported by Full Site Editing (not the same as the SPT themes).
-const SUPPORTED_THEMES = [ 'maywood' ];
+const SUPPORTED_THEMES = [
+	'maywood',
+	'exford',
+	'shawburn',
+	'morden',
+	'barnsbury',
+	'mayland',
+];
 
 /**
  * Load Full Site Editing.
