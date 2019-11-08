@@ -10,8 +10,9 @@ export { ActionType };
 
 export enum SiteType {
 	BLOG = 'blog',
+	BUSINESS = 'business',
+	PORTFOLIO = 'portfolio',
 	STORE = 'store',
-	STORY = 'story',
 }
 
 export interface SiteVertical {

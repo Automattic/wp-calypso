@@ -16,9 +16,10 @@ import VerticalSelect from './vertical-select';
 import './style.scss';
 
 const siteTypeOptions: Record< SiteType, string > = {
-	[ SiteType.BLOG ]: NO__( 'with a blog.' ),
-	[ SiteType.STORE ]: NO__( 'for a store.' ),
-	[ SiteType.STORY ]: NO__( 'to write a story.' ),
+	[ SiteType.BLOG ]: NO__( 'with a blog' ),
+	[ SiteType.BUSINESS ]: NO__( 'for a business' ),
+	[ SiteType.PORTFOLIO ]: NO__( 'to share a portfolio' ),
+	[ SiteType.STORE ]: NO__( 'for a store' ),
 };
 
 export default function OnboardingEdit() {
@@ -91,7 +92,7 @@ export default function OnboardingEdit() {
 					{ isSelected( 'siteType' ) ? (
 						<ul className="onboarding-block__multi-question">
 							{ map( siteTypeOptions, ( label, value ) => (
-								<li key={ value } className={ value === siteType ? 'selected' : null }>
+								<li key={ value } className={ value === siteType ? 'selected' : '' }>
 									<label>
 										<input
 											name="onboarding_site_type"
@@ -109,6 +110,7 @@ export default function OnboardingEdit() {
 							<button className="onboarding-block__question-answered" onClick={ openSiteType }>
 								{ siteTypeOptions[ siteType ] }
 							</button>
+							<span>.</span>
 						</div>
 					) }
 				</div>
