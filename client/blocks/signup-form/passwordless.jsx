@@ -77,7 +77,7 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		recordGoogleRecaptchaAction( this.props.recaptchaClientId, 'calypso/submitForm' ).then(
+		recordGoogleRecaptchaAction( this.props.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
 			recaptchaToken => {
 				wpcom
 					.undocumented()

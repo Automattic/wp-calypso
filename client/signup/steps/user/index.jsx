@@ -76,7 +76,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		initGoogleRecaptcha( 'g-recaptcha', 'calypso/pageload' ).then( this.saveRecaptchaToken );
+		initGoogleRecaptcha( 'g-recaptcha', 'calypso/signup/pageLoad' ).then( this.saveRecaptchaToken );
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
@@ -201,7 +201,7 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/submitForm' ).then(
+		recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/signup/formSubmit' ).then(
 			token => {
 				this.submit( {
 					userData,
