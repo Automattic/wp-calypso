@@ -88,6 +88,7 @@ const ApplyButton = styled( Button )`
 	right: 4px;
 	padding: 7px;
 	animation: ${animateIn} 0.2s ease-out;
+	margin: 0;
 `;
 
 function handleFieldInput( input, setCouponFieldValue, setIsApplyButtonActive, setHasCouponError ) {
