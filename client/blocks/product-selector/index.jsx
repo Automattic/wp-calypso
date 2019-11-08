@@ -110,7 +110,7 @@ export class ProductSelector extends Component {
 
 		// Description, obtained from a product that's included in a purchased plan
 		const planProductSlug = this.getProductSlugByCurrentPlan();
-		if ( planProductSlug && optionDescriptions[ planProductSlug ] ) {
+		if ( planProductSlug && optionDescriptions && optionDescriptions[ planProductSlug ] ) {
 			return optionDescriptions[ planProductSlug ];
 		}
 
@@ -144,7 +144,7 @@ export class ProductSelector extends Component {
 
 		// Product display name, obtained from a product that's included in a purchased plan
 		const planProductSlug = this.getProductSlugByCurrentPlan();
-		if ( planProductSlug && optionDisplayNames[ planProductSlug ] ) {
+		if ( planProductSlug && optionDisplayNames && optionDisplayNames[ planProductSlug ] ) {
 			return optionDisplayNames[ planProductSlug ];
 		}
 
@@ -252,11 +252,7 @@ export class ProductSelector extends Component {
 	getRelatedMonthlyProductSlug( yearlyProductSlug ) {
 		const { productPriceMatrix } = this.props;
 
-		if ( ! productPriceMatrix ) {
-			return null;
-		}
-
-		if ( ! productPriceMatrix[ yearlyProductSlug ] ) {
+		if ( ! productPriceMatrix || ! productPriceMatrix[ yearlyProductSlug ] ) {
 			return null;
 		}
 
@@ -427,8 +423,9 @@ ProductSelector.propTypes = {
 	// Connected props
 	availableProducts: PropTypes.object,
 	currencyCode: PropTypes.string,
-	currentPlan: PropTypes.object,
 	currentPlanSlug: PropTypes.string,
+	fetchingPlans: PropTypes.bool,
+	fetchingSitePlans: PropTypes.bool,
 	fetchingSitePurchases: PropTypes.bool,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
 	purchases: PropTypes.array,
