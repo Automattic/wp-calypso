@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-export { default as Gridicon } from 'components/gridicon';
+export { Suggestions } from '@automattic/components';
 
 /**
  * Docs examples
@@ -67,6 +67,7 @@ export { default as FormToggle } from 'components/forms/form-toggle';
 export { default as Gauge } from 'components/gauge';
 export { default as GlobalNotices } from 'components/global-notices';
 export { default as Gravatar } from 'components/gravatar';
+export { default as Gridicon } from 'components/gridicon';
 export { default as HeaderCake } from 'components/header-cake';
 export { default as HeaderButton } from 'components/header-button';
 export { default as ImagePreloader } from 'components/image-preloader';
@@ -106,7 +107,6 @@ export { default as Spinner } from 'components/spinner';
 export { default as SpinnerButton } from 'components/spinner-button';
 export { default as SpinnerLine } from 'components/spinner-line';
 export { default as SplitButton } from 'components/split-button';
-export { default as Suggestions } from 'components/suggestions';
 export { default as TextareaAutosize } from 'components/textarea-autosize';
 export { default as TextDiff } from 'components/text-diff';
 export { default as TileGrid } from 'components/tile-grid';

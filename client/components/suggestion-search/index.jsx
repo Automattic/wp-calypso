@@ -10,8 +10,8 @@ import { escapeRegExp, noop } from 'lodash';
  */
 import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
-import Suggestions from 'components/suggestions';
 import Spinner from 'components/spinner';
+import { Suggestions } from '@automattic/components';
 import { tracks } from 'lib/analytics';
 
 /**

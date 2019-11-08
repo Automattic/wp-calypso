@@ -109,7 +109,7 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
-import Suggestions from 'components/suggestions/docs/example';
+import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
 import TextareaAutosize from 'components/textarea-autosize/docs/example';
