@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Button, IconButton } from '@wordpress/components';
+import { Button, Icon, IconButton } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
 import React from 'react';
@@ -21,7 +21,6 @@ interface Props {
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
 	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -31,8 +30,9 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 			tabIndex={ -1 }
 		>
 			<div className="gutenboarding__header-site">
+				<Icon icon="wordpress-alt" color="#066188" />
 				<span className="gutenboarding__header-site-heading">
-					{ siteTitle ? siteTitle : NO__( 'Create a website' ) }
+					{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
 				</span>
 			</div>
 			<div
@@ -43,7 +43,7 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 			></div>
 			<div className="gutenboarding__header-actions">
 				<Button isPrimary isLarge>
-					{ NO__( 'Continue' ) }
+					{ NO__( 'Next' ) }
 				</Button>
 				<IconButton
 					icon="admin-generic"
