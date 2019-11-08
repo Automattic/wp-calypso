@@ -211,6 +211,15 @@ export function isJetpackProduct( product ) {
 	return includes( jetpackProducts, product.product_slug );
 }
 
+export function isJetpackBackup( product ) {
+	const jetpackProducts = [ ...JETPACK_BACKUP_PRODUCTS ];
+
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return includes( jetpackProducts, product.product_slug );
+}
+
 export function isMonthly( rawProduct ) {
 	const product = formatProduct( rawProduct );
 	assertValidProduct( product );

@@ -30,6 +30,7 @@ import {
 	isGoogleApps,
 	isPlan,
 	isTheme,
+	isJetpackBackup,
 	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
@@ -172,6 +173,8 @@ class PurchaseItem extends Component {
 			icon = 'themes';
 		} else if ( isGoogleApps( purchase ) ) {
 			icon = 'mail';
+		} else if( isJetpackBackup( purchase ) ) {
+			icon = 'cloud-upload';
 		}
 
 		if ( ! icon ) {
