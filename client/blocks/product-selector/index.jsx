@@ -21,10 +21,11 @@ import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlan, planHasFeature } from 'lib/plans';
+import { isRequestingPlans } from 'state/plans/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
@@ -65,8 +66,35 @@ export class ProductSelector extends Component {
 
 		return find(
 			purchases,
-			purchase => purchase.active && includes( productSlugs, purchase.productSlug )
+			purchase =>
+				purchase.active &&
+				( includes( productSlugs, purchase.productSlug ) ||
+					includes( productSlugs, this.getRelatedYearlyProductSlug( purchase.productSlug ) ) ||
+					includes( productSlugs, this.getRelatedMonthlyProductSlug( purchase.productSlug ) ) )
 		);
+	}
+
+	getPurchaseByCurrentPlan() {
+		const { currentPlanSlug, purchases } = this.props;
+
+		if ( ! currentPlanSlug ) {
+			return null;
+		}
+
+		return find(
+			purchases,
+			purchase => purchase.active && purchase.productSlug === currentPlanSlug
+		);
+	}
+
+	getProductSlugByCurrentPlan() {
+		const { currentPlanSlug, productSlugs } = this.props;
+
+		if ( ! currentPlanSlug ) {
+			return null;
+		}
+
+		return find( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
 	}
 
 	getSubtitleByProduct( product ) {
@@ -88,11 +116,19 @@ export class ProductSelector extends Component {
 		const { description, optionDescriptions } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
-		if ( ! purchase || ! optionDescriptions || ! optionDescriptions[ purchase.productSlug ] ) {
-			return description;
+		// Description, obtained from a purchased product
+		if ( purchase && optionDescriptions && optionDescriptions[ purchase.productSlug ] ) {
+			return optionDescriptions[ purchase.productSlug ];
 		}
 
-		return optionDescriptions[ purchase.productSlug ];
+		// Description, obtained from a product that's included in a purchased plan
+		const planProductSlug = this.getProductSlugByCurrentPlan();
+		if ( planProductSlug && optionDescriptions && optionDescriptions[ planProductSlug ] ) {
+			return optionDescriptions[ planProductSlug ];
+		}
+
+		// Default product description
+		return description;
 	}
 
 	getProductName( product, productSlug ) {
@@ -114,15 +150,19 @@ export class ProductSelector extends Component {
 		const { title, optionDisplayNames } = product;
 		const purchase = this.getPurchaseByProduct( product );
 
-		if ( ! purchase ) {
-			return title;
+		// Product display name, obtained from a purchased product
+		if ( purchase && optionDisplayNames && optionDisplayNames[ purchase.productSlug ] ) {
+			return optionDisplayNames[ purchase.productSlug ];
 		}
 
-		if ( ! optionDisplayNames || ! optionDisplayNames[ purchase.productSlug ] ) {
-			return title;
+		// Product display name, obtained from a product that's included in a purchased plan
+		const planProductSlug = this.getProductSlugByCurrentPlan();
+		if ( planProductSlug && optionDisplayNames && optionDisplayNames[ planProductSlug ] ) {
+			return optionDisplayNames[ planProductSlug ];
 		}
 
-		return optionDisplayNames[ purchase.productSlug ];
+		// Default product display name
+		return title;
 	}
 
 	getProductOptions( product ) {
@@ -222,6 +262,16 @@ export class ProductSelector extends Component {
 		);
 	}
 
+	getRelatedMonthlyProductSlug( yearlyProductSlug ) {
+		const { productPriceMatrix } = this.props;
+
+		if ( ! productPriceMatrix || ! productPriceMatrix[ yearlyProductSlug ] ) {
+			return null;
+		}
+
+		return productPriceMatrix[ yearlyProductSlug ].relatedProduct;
+	}
+
 	getProductOptionFullPrice( productSlug ) {
 		const { productPriceMatrix, storeProducts } = this.props;
 
@@ -260,6 +310,8 @@ export class ProductSelector extends Component {
 		const {
 			currencyCode,
 			currentPlanSlug,
+			fetchingPlans,
+			fetchingSitePlans,
 			fetchingSitePurchases,
 			intervalType,
 			products,
@@ -268,7 +320,7 @@ export class ProductSelector extends Component {
 			translate,
 		} = this.props;
 
-		if ( isEmpty( storeProducts ) || fetchingSitePurchases ) {
+		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
 			return map( products, product => {
 				return (
 					<ProductCard
@@ -282,12 +334,16 @@ export class ProductSelector extends Component {
 		}
 
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
-			const purchase = this.getPurchaseByProduct( product );
-			const currentPlanIncludesProduct = planHasFeature( currentPlanSlug, selectedProductSlug );
+			let purchase = this.getPurchaseByProduct( product );
+
+			if ( currentPlanIncludesProduct ) {
+				purchase = this.getPurchaseByCurrentPlan();
+			}
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
 			if ( currentPlanIncludesProduct ) {
@@ -382,9 +438,11 @@ ProductSelector.propTypes = {
 	siteId: PropTypes.number,
 
 	// Connected props
+	availableProducts: PropTypes.object,
 	currencyCode: PropTypes.string,
-	currentPlan: PropTypes.object,
 	currentPlanSlug: PropTypes.string,
+	fetchingPlans: PropTypes.bool,
+	fetchingSitePlans: PropTypes.bool,
 	fetchingSitePurchases: PropTypes.bool,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
 	purchases: PropTypes.array,
@@ -409,8 +467,11 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 	const availableProducts = getAvailableProductsList( state );
 
 	return {
+		availableProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
+		fetchingPlans: isRequestingPlans( state ),
+		fetchingSitePlans: isRequestingSitePlans( state ),
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
 		productSlugs,
 		purchases: getSitePurchases( state, selectedSiteId ),
