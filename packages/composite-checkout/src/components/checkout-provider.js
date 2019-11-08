@@ -24,6 +24,7 @@ export const CheckoutProvider = ( {
 	failureRedirectUrl,
 	theme,
 	paymentMethods: allPaymentMethods,
+	registry,
 	children,
 } ) => {
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
@@ -32,6 +33,7 @@ export const CheckoutProvider = ( {
 	const paymentMethod =
 		allPaymentMethods && allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
 	validateArg( locale, 'CheckoutProvider missing required prop: locale' );
+	validateArg( registry, 'CheckoutProvider missing required prop: registry' );
 	validateArg( total, 'CheckoutProvider missing required prop: total' );
 	validateArg( items, 'CheckoutProvider missing required prop: items' );
 	validateArg( allPaymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
@@ -52,7 +54,7 @@ export const CheckoutProvider = ( {
 	const { CheckoutWrapper = React.Fragment } = paymentMethod || {};
 	return (
 		<ThemeProvider theme={ theme || defaultTheme }>
-			<RegistryProvider>
+			<RegistryProvider value={ registry }>
 				<LocalizeProvider locale={ locale }>
 					<LineItemsProvider items={ items } total={ total }>
 						<CheckoutContext.Provider value={ value }>
@@ -67,6 +69,7 @@ export const CheckoutProvider = ( {
 
 CheckoutProvider.propTypes = {
 	theme: PropTypes.object,
+	registry: PropTypes.object.isRequired,
 	locale: PropTypes.string.isRequired,
 	total: PropTypes.object.isRequired,
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,

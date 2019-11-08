@@ -16,41 +16,41 @@ import { usePaymentMethod, usePaymentMethodId } from '../lib/payment-methods';
 import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutReviewOrder from './checkout-review-order';
 import CheckoutSubmitButton from './checkout-submit-button';
-import { useSelect, useDispatch, registerStore } from '../lib/registry';
+import { useSelect, useDispatch } from '../lib/registry';
 
-// Register a primary store
-registerStore( 'checkout', {
-	reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
-		switch ( action.type ) {
-			case 'STEP_NUMBER_SET':
-				return { ...state, stepNumber: action.payload };
-			case 'PAYMENT_DATA_UPDATE':
-				return {
-					...state,
-					paymentData: { ...state.paymentData, [ action.payload.key ]: action.payload.value },
-				};
-		}
-		return state;
-	},
-	actions: {
-		changeStep( payload ) {
-			return { type: 'STEP_NUMBER_SET', payload };
+export default function createCheckout( { registerStore } ) {
+	registerStore( 'checkout', {
+		reducer( state = { stepNumber: 1, paymentData: {} }, action ) {
+			switch ( action.type ) {
+				case 'STEP_NUMBER_SET':
+					return { ...state, stepNumber: action.payload };
+				case 'PAYMENT_DATA_UPDATE':
+					return {
+						...state,
+						paymentData: { ...state.paymentData, [ action.payload.key ]: action.payload.value },
+					};
+			}
+			return state;
 		},
-		updatePaymentData( key, value ) {
-			return { type: 'PAYMENT_DATA_UPDATE', payload: { key, value } };
+		actions: {
+			changeStep( payload ) {
+				return { type: 'STEP_NUMBER_SET', payload };
+			},
+			updatePaymentData( key, value ) {
+				return { type: 'PAYMENT_DATA_UPDATE', payload: { key, value } };
+			},
 		},
-	},
-	selectors: {
-		getStepNumber( state ) {
-			return state.stepNumber;
+		selectors: {
+			getStepNumber( state ) {
+				return state.stepNumber;
+			},
+			getPaymentData( state ) {
+				return state.paymentData;
+			},
 		},
-		getPaymentData( state ) {
-			return state.paymentData;
-		},
-	},
-} );
+	} );
 
-export default function Checkout( {
+function Checkout( {
 	availablePaymentMethods,
 	ReviewContent,
 	UpSell,
@@ -99,6 +99,9 @@ Checkout.propTypes = {
 	UpSell: PropTypes.elementType,
 	OrderSummary: PropTypes.elementType,
 };
+
+	return Checkout;
+}
 
 const Container = styled.div`
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {

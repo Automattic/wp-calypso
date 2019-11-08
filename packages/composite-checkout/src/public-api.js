@@ -13,7 +13,7 @@ import {
 	OrderReviewTotal,
 	OrderReviewSection,
 } from './components/order-review-line-items';
-import Checkout from './components/checkout';
+import createCheckout from './components/checkout';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import { useLineItems, useTotal } from './lib/line-items';
@@ -32,8 +32,8 @@ import WPCheckoutOrderReview from './components/wp-checkout-order-review';
 
 // Re-export the public API
 export {
+	createCheckout,
 	createRegistry,
-	Checkout,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,

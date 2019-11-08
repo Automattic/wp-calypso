@@ -6,7 +6,13 @@ require( '@babel/polyfill' );
  */
 import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { Checkout, CheckoutProvider, registerStore, subscribe, select } from '../src/public-api';
+import {
+	createCheckout,
+	CheckoutProvider,
+	createRegistry,
+	subscribe,
+	select,
+} from '../src/public-api';
 import { createStripeMethod } from '../src/components/stripe-credit-card-fields';
 import { createApplePayMethod } from '../src/lib/payment-methods/apple-pay';
 import { createPayPalMethod } from '../src/lib/payment-methods/paypal';
@@ -58,6 +64,11 @@ async function makePayPalExpressRequest() {
 	// return this.wpcom.req.post( '/me/paypal-express-url', data );
 	return window.location.href;
 }
+
+const registry = createRegistry();
+const { registerStore } = registry;
+
+const Checkout = createCheckout( registry );
 
 const stripeMethod = createStripeMethod( {
 	registerStore,
@@ -111,6 +122,7 @@ function MyCheckout() {
 			successRedirectUrl={ successRedirectUrl }
 			failureRedirectUrl={ failureRedirectUrl }
 			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ] }
+			registry={ registry }
 		>
 			<Checkout OrderSummary={ WPCheckoutOrderSummary } ReviewContent={ WPCheckoutOrderReview } />
 		</CheckoutProvider>
