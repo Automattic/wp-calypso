@@ -106,16 +106,6 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	checkoutPaymentTypes: {
-		datestamp: '20191028',
-		variations: {
-			tabs: 50,
-			radios: 50,
-		},
-		defaultVariation: 'tabs',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	showPlanUpsellConcierge: {
 		datestamp: '20191106',
 		variations: {

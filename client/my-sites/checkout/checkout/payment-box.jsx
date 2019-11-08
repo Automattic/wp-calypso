@@ -26,7 +26,6 @@ import {
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
 } from 'lib/web-payment';
-import { abtest } from 'lib/abtest';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -140,18 +139,7 @@ export class PaymentBox extends PureComponent {
 		} );
 	}
 
-	renderPaymentMethod = ( paymentMethods, isPaymentMethodTest, titleText ) => {
-		if ( isPaymentMethodTest ) {
-			return (
-				<div className="payment-box__pm-test-wrapper">
-					<h2 className="payment-box__pm-title">
-						{ this.props.translate( 'Choose a payment method' ) }
-					</h2>
-					<ul className="payment-box__pm-wrapper">{ paymentMethods }</ul>
-				</div>
-			);
-		}
-
+	renderPaymentMethod = ( paymentMethods, titleText ) => {
 		if ( paymentMethods ) {
 			return (
 				<SectionNav selectedText={ titleText }>
@@ -173,12 +161,7 @@ export class PaymentBox extends PureComponent {
 
 	render() {
 		const paymentMethods = this.getPaymentMethods();
-		const isPaymentMethodTest = paymentMethods && abtest( 'checkoutPaymentTypes' ) === 'radios';
-		const cardClass = classNames(
-				'payment-box',
-				this.props.classSet,
-				isPaymentMethodTest && 'payment-box--payment-methods-test'
-			),
+		const cardClass = classNames( 'payment-box', this.props.classSet ),
 			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 
 		const titleText = this.props.currentPaymentMethod
@@ -193,16 +176,10 @@ export class PaymentBox extends PureComponent {
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
 
-				{ this.renderPaymentMethod( paymentMethods, isPaymentMethodTest, titleText ) }
+				{ this.renderPaymentMethod( paymentMethods, titleText ) }
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
-						{ isPaymentMethodTest && (
-							<h2 className="checkout__payment-information-title">
-								{ this.props.translate( 'Enter your payment information' ) }
-							</h2>
-						) }
-
 						<div className={ contentClass }>{ this.props.children }</div>
 					</div>
 				</Card>
