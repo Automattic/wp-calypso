@@ -133,16 +133,15 @@ import {
  *     https://www.thefinancials.com/Default.aspx?SubSectionID=curformat
  *     https://www.loc.gov/standards/iso639-2/php/English_list.php
  *
- * @param {LocaleCode<Raw>} rawLocaleCode
+ * @param rawLocaleCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @param {Number< Raw >} amount
+ * @param amount
  *   Integer amount in minor currency units. Examples: $1.00 USD and ¥100 JPY
  *   are both passed as 100.
- * @returns {LocalizedMonetaryAmount}
- *   Localized monetary amount
+ * @returns Localized monetary amount
  */
 export function localizeMonetaryAmount(
 	rawLocaleCode: LocaleCode< Raw >,
@@ -165,12 +164,12 @@ export function localizeMonetaryAmount(
 /**
  * Type alias for localized currency strings
  */
-export type LocalizedMonetaryAmount = string;
+type LocalizedMonetaryAmount = string;
 
 /**
  * Representation of the possible currency schemas
  */
-enum CurrencyFormat {
+const enum CurrencyFormat {
 	LocalSymbol_Amount,
 	LocalSymbol_Amount_Code,
 }
@@ -180,13 +179,12 @@ enum CurrencyFormat {
  * This style is represented by a slug called a /schema/, and consumed by
  * localizeCurrencyWithSchema() to construct the formatted string.
  *
- * @param {LocaleCode<Normalized>} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @returns {CurrencyFormat}
- *   Currency formatting schema slug
+ * @returns Currency formatting schema slug
  */
 function currencyFormattingSchema(
 	localeCode: LocaleCode< Normalized >,
@@ -230,19 +228,18 @@ function currencyFormattingSchema(
 /**
  * Localize a monetary amount using the given schema slug.
  *
- * @param {Sign} sign
+ * @param sign
  *   For distinguishing positive, negative, and zero amounts
- * @param {CheckedNumber< NonNegativeInteger >} amount
+ * @param amount
  *   Whole number of minor currency units, cannot be negative
- * @param {LocaleCode<Normalized>} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @param {CurrencyFormat} schema
+ * @param schema
  *   A slug representing a currency format
- * @returns {LocalizedMonetaryAmount}
- *   Localized monetary amount
+ * @returns Localized monetary amount
  */
 function localizeCurrencyWithSchema(
 	sign: Sign,
@@ -258,26 +255,26 @@ function localizeCurrencyWithSchema(
 		// $1,000.50
 		case CurrencyFormat.LocalSymbol_Amount:
 			if ( Sign.IsZero === sign ) {
-				return currencySymbol.concat( '0' );
+				return currencySymbol + '0';
 			}
 
-			return signSymbol
-				.concat( currencySymbol )
-				.concat( renderAmountWithSeparators( amount, localeCode, currencyCode ) );
+			return (
+				signSymbol + currencySymbol + renderAmountWithSeparators( amount, localeCode, currencyCode )
+			);
 
 		// $1,000.50 USD
 		case CurrencyFormat.LocalSymbol_Amount_Code:
 			if ( Sign.IsZero === sign ) {
-				return currencySymbol
-					.concat( '0' )
-					.concat( '\u00A0' )
-					.concat( currencyCode );
+				return currencySymbol + '0' + '\u00A0' + currencyCode;
 			}
 
-			return signSymbol
-				.concat( currencySymbol )
-				.concat( renderAmountWithSeparators( amount, localeCode, currencyCode ) )
-				.concat( '\u00A0'.concat( currencyCode ) );
+			return (
+				signSymbol +
+				currencySymbol +
+				renderAmountWithSeparators( amount, localeCode, currencyCode ) +
+				'\u00A0' +
+				currencyCode
+			);
 
 		default:
 			throw new Error( `Unrecognized currency format ${ schema }` );
@@ -288,14 +285,14 @@ function localizeCurrencyWithSchema(
  * Localize a nonnegative number of minimal currency units. Does not
  * include any currency symbols.
  *
- * @param {CheckedNumber< NonNegativeInteger >} amount
+ * @param amount
  *   Whole number amount in minimal currency units; cannot be negative
- * @param {LocaleCode<Normalized>} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @returns {string} Localized amount string
+ * @returns Localized amount string
  */
 function renderAmountWithSeparators(
 	amount: CheckedNumber< NonNegativeInteger >,
@@ -315,7 +312,7 @@ function renderAmountWithSeparators(
 		return integerPart.join( groupSeparator );
 	}
 
-	return integerPart.join( groupSeparator ).concat( fractionalPart );
+	return integerPart.join( groupSeparator ) + fractionalPart;
 }
 
 /**
@@ -331,14 +328,14 @@ interface DigitGrouping {
  * Separate an amount into its fractional part and grouped digits
  * of the integer part.
  *
- * @param {LocaleCode<Normalized>} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @param {CheckedNumber< NonNegativeInteger >} amount
+ * @param amount
  *   Whole number amount in minimal currency units; cannot be negative
- * @returns {DigitGrouping}
+ * @returns
  *   Digit groups; the integer part is sorted from most to least significant
  */
 function digitGroupsOfAmountForCurrency(
@@ -382,12 +379,12 @@ function digitGroupsOfAmountForCurrency(
  *   - US:    100,000,000
  *   - India: 10,00,00,000
  *
- * @param {LocaleCode<Normalized>} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'. Must be lower case.
- * @param {CheckedNumber< NonNegativeInteger >} amount
+ * @param amount
  *   Number to decompose; must be nonnegative
- * @returns {string[]}
+ * @returns
  *   Digit groups as strings, from most to least significant
  */
 function groupDigits(
@@ -449,15 +446,15 @@ function groupDigits(
 /**
  * Formats fractional currency units with the radix symbol.
  *
- * @param {LocaleCode<Normalized>} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @param {Number< NonNegativeInteger >} amount
+ * @param amount
  *   Number of minor currency units. Must be positive, and must be in
  *   the range [0 .. minorUnitsPerMajorUnit - 1]
- * @returns {string}
+ * @returns
  *   Fractional currency string with radix symbol
  */
 function minorUnitsAsDecimalForCurrency(
@@ -481,7 +478,7 @@ function minorUnitsAsDecimalForCurrency(
 			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( amount.toString().padStart( 2, '0' ) );
+			return radixSymbol + amount.toString().padStart( 2, '0' );
 
 		// Currencies with no minor unit
 		case 'BIF': // Burundian franc
@@ -514,7 +511,7 @@ function minorUnitsAsDecimalForCurrency(
 			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( amount.toString().padStart( 4, '0' ) );
+			return radixSymbol + amount.toString().padStart( 4, '0' );
 
 		// 1000 minor units per major unit
 		case 'BHD': // Bahraini dinar
@@ -532,7 +529,7 @@ function minorUnitsAsDecimalForCurrency(
 			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( amount.toString().padStart( 3, '0' ) );
+			return radixSymbol + amount.toString().padStart( 3, '0' );
 
 		// 5 minor units per major unit (!!!)
 		case 'MGA': // Malagasy ariary
@@ -545,7 +542,7 @@ function minorUnitsAsDecimalForCurrency(
 			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( ( amount * 20 ).toString() );
+			return radixSymbol + ( amount * 20 ).toString();
 
 		// Otherwise assume 100 minor units per major unit
 		default:
@@ -557,7 +554,7 @@ function minorUnitsAsDecimalForCurrency(
 			if ( amount === 0 ) {
 				return '';
 			}
-			return radixSymbol.concat( amount.toString().padStart( 2, '0' ) );
+			return radixSymbol + amount.toString().padStart( 2, '0' );
 	}
 }
 
@@ -565,12 +562,12 @@ function minorUnitsAsDecimalForCurrency(
  * Local currency symbol as used in its issuing jurisdiction. May not be unique.
  * Note that some symbols vary by language.
  *
- * @param {LocaleCode<Normalized>} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'. Must be lower case.
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @returns {string} Local currency symbol. May not be unique.
+ * @returns Local currency symbol. May not be unique.
  */
 function localSymbolForCurrency(
 	localeCode: LocaleCode< Normalized >,
@@ -902,11 +899,10 @@ interface DigitSeparators {
  * Customary radix point and group separators in a given locale. Note
  * that we're using non-breaking spaces.
  *
- * @param {LocaleCode< Normalized >} localeCode
+ * @param localeCode
  *   ISO 631-1 language code with an optional ISO 3166-1 alpha-2 region code,
  *   separated by a hyphen. Examples: 'en', 'en-gb', 'fr-be'.
- * @returns {DigitSeparators}
- *   Decimal and group separators
+ * @returns Decimal and group separators
  */
 function separatorsForLocale( localeCode: LocaleCode< Normalized > ): DigitSeparators {
 	switch ( localeCode ) {
@@ -984,9 +980,9 @@ type Normalized = void;
 /**
  * Normalize a raw locale code. Do not export this.
  *
- * @param {LocaleCode<Raw>} rawLocaleCode
+ * @param rawLocaleCode
  *     Locale code string as returned by the browser.
- * @returns {LocaleCode<Normalized>}
+ * @returns
  *     Normalized locale code (all lower case).
  */
 function normalizeLocaleCode( rawLocaleCode: LocaleCode< Raw > ): LocaleCode< Normalized > {

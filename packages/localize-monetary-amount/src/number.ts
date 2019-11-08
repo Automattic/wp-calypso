@@ -26,7 +26,7 @@ export function absoluteValue(
 	return Math.abs( num );
 }
 
-export enum Sign {
+export const enum Sign {
 	IsPositive,
 	IsZero,
 	IsNegative,

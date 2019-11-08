@@ -9,9 +9,9 @@ import { CurrencyCode } from './currency-code';
  *
  * @throws on unrecognized codes
  *
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @returns {string}
+ * @returns
  *   Human readable currency name in English
  */
 export function englishCurrencyName( currencyCode: CurrencyCode ): string {
@@ -342,6 +342,6 @@ export function englishCurrencyName( currencyCode: CurrencyCode ): string {
 			return 'Zambian Kwacha';
 
 		default:
-			throw 'Currency not supported: ' + currencyCode;
+			throw new Error( `Currency not supported: ${ currencyCode }` );
 	}
 }

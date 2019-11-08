@@ -183,11 +183,11 @@ export type CurrencyCode =
  *
  * @see https://www.iso.org/iso-4217-currency-codes.html
  *
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @returns {number} Number of minor currency units per major unit
+ * @returns Number of minor currency units per major unit
  */
-export function minorUnitsPerMajorUnit( currencyCode: CurrencyCode ) {
+export function minorUnitsPerMajorUnit( currencyCode: CurrencyCode ): 1 | 5 | 100 | 1000 | 10000 {
 	switch ( currencyCode ) {
 		// Let's catch the common cases first
 		case 'AUD': // Australian dollar
@@ -215,9 +215,9 @@ export function minorUnitsPerMajorUnit( currencyCode: CurrencyCode ) {
 		case 'XPF': // CFP Franc
 			return 1;
 
-		case 'CLF': // Unidad de Fomento
-		case 'UYW': // Unidad Previsional
-			return 10000;
+		case 'MGA': // Malagasy ariary
+		case 'MRU': // Mauritanian ouguiya
+			return 5;
 
 		case 'BHD': // Bahraini dinar
 		case 'IQD': // Iraqi dinar
@@ -228,9 +228,9 @@ export function minorUnitsPerMajorUnit( currencyCode: CurrencyCode ) {
 		case 'TND': // Tunisian dinar
 			return 1000;
 
-		case 'MGA': // Malagasy ariary
-		case 'MRU': // Mauritanian ouguiya
-			return 5;
+		case 'CLF': // Unidad de Fomento
+		case 'UYW': // Unidad Previsional
+			return 10000;
 
 		default:
 			return 100;
@@ -241,13 +241,13 @@ export function minorUnitsPerMajorUnit( currencyCode: CurrencyCode ) {
  * Detects currencies with globally unique symbols. These are
  * nice because they do not require disambiguation.
  *
- * @param {CurrencyCode} currencyCode
+ * @param currencyCode
  *   ISO 4217 currency code. Examples: 'USD', 'JPY', 'BRL'.
- * @returns {boolean}
+ * @returns
  *   True if the currency's symbol is unique
  */
 export function hasUniqueLocalSymbol( currencyCode: CurrencyCode ): boolean {
-	const currenciesWithUniqueSymbols = [
+	const currenciesWithUniqueSymbols: CurrencyCode[] = [
 		'AED',
 		'AFN',
 		'ALL',
