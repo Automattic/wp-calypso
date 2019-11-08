@@ -22,7 +22,7 @@
 			"browserName": "chrome",
 			"platform": "OS X 10.14",
 			"screenResolution": "2048x1536",
-			"version": "77.0"
+			"version": "latest-1"
 		},
 		"osx-firefox": {
 			"browserName": "firefox",
