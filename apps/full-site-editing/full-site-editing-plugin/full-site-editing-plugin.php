@@ -22,9 +22,6 @@ namespace A8C\FSE;
  */
 define( 'PLUGIN_VERSION', '0.15.1' );
 
-// Themes which are supported by Full Site Editing (not the same as the SPT themes).
-const SUPPORTED_THEMES = [ 'maywood' ];
-
 /**
  * Load Full Site Editing.
  */
@@ -38,7 +35,8 @@ function load_full_site_editing() {
 	dangerously_load_full_site_editing_files();
 	Full_Site_Editing::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
+// Full Site Editing should load after theme setup finishes.
+add_action( 'after_setup_theme', __NAMESPACE__ . '\load_full_site_editing', 99 );
 
 /**
  * NOTE: In most cases, you should NOT use this function. Please use
@@ -150,7 +148,22 @@ function is_site_eligible_for_full_site_editing() {
  * @return bool True if current theme supports FSE, false otherwise.
  */
 function is_theme_supported() {
-	return in_array( get_theme_slug(), SUPPORTED_THEMES, true );
+	// This only works when the action `after_setup_theme` finishes.
+	// Shortcut to avoid loading the full theme if not neccessary.
+	if ( current_theme_supports( 'full-site-editing' ) ) {
+		return true;
+	}
+	/**
+	 * Used to check if the theme supports FSE.
+	 *
+	 * Needed to get theme support in the WordPress.com API context since the
+	 * theme in that context can be different. Additionally, in the API, theme
+	 * PHP files are not loaded, so we have to use a different method to check
+	 * theme support.
+	 *
+	 * @param bool true if the theme supports FSE locally.
+	 */
+	return apply_filters( 'a8c_fse_check_theme_support', false );
 }
 
 /**
