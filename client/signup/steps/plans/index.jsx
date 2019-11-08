@@ -174,7 +174,7 @@ export class PlansStep extends Component {
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText =
-			this.props.subHeaderText || translate( 'Choose a plan. Upgrade it as you grow.' );
+			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl, backLabelText;
