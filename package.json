@@ -334,7 +334,7 @@
 		"check-node-version": "3.3.0",
 		"concurrently": "5.0.0",
 		"enzyme": "3.10.0",
-		"enzyme-adapter-react-16": "1.15.0",
+		"enzyme-adapter-react-16": "1.15.1",
 		"enzyme-to-json": "3.4.2",
 		"eslint": "5.16.0",
 		"eslint-config-prettier": "4.2.0",
