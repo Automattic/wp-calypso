@@ -216,7 +216,12 @@ class PasswordlessSignupForm extends Component {
 					type="submit"
 					primary
 					busy={ isSubmitting }
-					disabled={ isSubmitting || ! isEmailAddressValid || !! this.props.disabled }
+					disabled={
+						isSubmitting ||
+						! isEmailAddressValid ||
+						!! this.props.disabled ||
+						!! this.props.disableSubmitButton
+					}
 				>
 					{ submitButtonText }
 				</Button>

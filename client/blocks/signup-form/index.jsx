@@ -951,6 +951,7 @@ class SignupForm extends Component {
 						renderTerms={ this.termsOfServiceLink }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
+						disableSubmitButton={ this.props.disableSubmitButton }
 						recaptchaClientId={ this.props.recaptchaClientId }
 					/>
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
