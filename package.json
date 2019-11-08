@@ -140,7 +140,7 @@
 		"jquery": "1.12.3",
 		"json-stable-stringify": "1.0.1",
 		"keymaster": "1.6.2",
-		"lerna": "3.18.1",
+		"lerna": "3.18.4",
 		"loader-utils": "1.2.3",
 		"lodash": "4.17.15",
 		"lodash-es": "4.17.15",
