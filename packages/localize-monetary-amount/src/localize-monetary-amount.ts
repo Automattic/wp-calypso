@@ -175,6 +175,14 @@ const enum CurrencyFormat {
 }
 
 /**
+ * A monetary amount string should be displayed as a unit with
+ * no line breaks. We use non-breaking spaces to ensure this.
+ *
+ * @type {string}
+ */
+const NBSP = '\u00A0';
+
+/**
  * Selects a reified formatting style for the given locale and currency.
  * This style is represented by a slug called a /schema/, and consumed by
  * localizeCurrencyWithSchema() to construct the formatted string.
@@ -265,14 +273,14 @@ function localizeCurrencyWithSchema(
 		// $1,000.50 USD
 		case CurrencyFormat.LocalSymbol_Amount_Code:
 			if ( Sign.IsZero === sign ) {
-				return currencySymbol + '0' + '\u00A0' + currencyCode;
+				return currencySymbol + '0' + NBSP + currencyCode;
 			}
 
 			return (
 				signSymbol +
 				currencySymbol +
 				renderAmountWithSeparators( amount, localeCode, currencyCode ) +
-				'\u00A0' +
+				NBSP +
 				currencyCode
 			);
 
@@ -922,7 +930,7 @@ function separatorsForLocale( localeCode: LocaleCode< Normalized > ): DigitSepar
 		// 10 000.00
 		case 'en-au': // English - Australia
 		case 'en-ca': // Canada
-			return { decimalSeparator: '.', groupSeparator: '\u00A0' };
+			return { decimalSeparator: '.', groupSeparator: NBSP };
 
 		// 10 000,00
 		case 'af': // Afrikaans
@@ -939,7 +947,7 @@ function separatorsForLocale( localeCode: LocaleCode< Normalized > ): DigitSepar
 		case 'no': // Norwegian
 		case 'nb': // Norwegian (Bokmål)
 		case 'nn': // Norwegian (Nynorsk)
-			return { decimalSeparator: ',', groupSeparator: '\u00A0' };
+			return { decimalSeparator: ',', groupSeparator: NBSP };
 
 		// 10.000,00
 		case 'es-ar': // Spanish - Argentina

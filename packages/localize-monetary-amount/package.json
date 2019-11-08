@@ -4,14 +4,17 @@
 	"description": "Batteries included localized currency formatting",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"types": "types/index.d.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean"
+		"clean": "npx rimraf dist types",
+		"prepublish": "npm run clean",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json"
 	},
 	"files": [
 		"dist",
-		"src"
+		"src",
+		"types"
 	],
 	"keywords": [
 		"localization",
