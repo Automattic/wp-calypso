@@ -115,9 +115,7 @@ class ThanksModal extends Component {
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
 
-		shouldEditHomepageWithGutenberg
-			? page( customizeUrl )
-			: window.open( this.props.customizeUrl, '_blank' );
+		shouldEditHomepageWithGutenberg ? page( customizeUrl ) : window.open( customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
