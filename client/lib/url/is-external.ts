@@ -11,7 +11,7 @@ import { isLegacyRoute } from 'lib/route/legacy-routes';
 
 // Base URL used for URL parsing. The WHATWG URL API doesn't support relative
 // URLs, so we always need to provide a base of some sort.
-const BASE_HOSTNAME = '__domain__.invalid';
+const BASE_HOSTNAME = 'base.invalid';
 const BASE_URL = `http://${ BASE_HOSTNAME }`;
 
 export default function isExternal( url: URLString ): boolean {
