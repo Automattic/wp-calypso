@@ -70,6 +70,6 @@
 		"webpack": "4.41.2",
 		"webpack-cli": "3.3.9",
 		"webpack-filter-warnings-plugin": "1.2.1",
-		"webpack-rtl-plugin": "1.8.2"
+		"webpack-rtl-plugin": "2.0.0"
 	}
 }
