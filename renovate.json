@@ -16,11 +16,12 @@
 			"packagePatterns": [
 				"^@babel",
 				"^babel-",
+				"^lodash$",
+				"^react-redux$",
 				"^react$",
 				"^redux$",
-				"^webpack",
-				"lodash",
-				"typescript"
+				"^typescript$",
+				"^webpack"
 			],
 			"prPriority": 1
 		}
