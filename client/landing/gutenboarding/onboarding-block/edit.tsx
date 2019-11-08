@@ -2,16 +2,17 @@
  * External dependencies
  */
 import { __ as NO__ } from '@wordpress/i18n';
-import { Button, FormTokenField } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { isEmpty, map } from 'lodash';
 import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 /**
  * Internal dependencies
  */
 import { SiteType, isFilledFormValue } from '../store/types';
 import { STORE_KEY } from '../store';
+import VerticalSelect from './vertical-select';
 import './style.scss';
 
 const siteTypeOptions: Record< SiteType, string > = {
@@ -21,39 +22,9 @@ const siteTypeOptions: Record< SiteType, string > = {
 };
 
 export default function OnboardingEdit() {
-	const [ verticalId, setVerticalId ] = useState< string >();
-
-	const { siteTitle, siteType } = useSelect( select => select( STORE_KEY ).getState() );
-
-	// This is a difficult section for working with FormToken field. Not ideal for our use case.
-	const [ verticalLabels, verticalLabelToId ] = useSelect( select => {
-		const vs = select( STORE_KEY ).getVerticals();
-		if ( ! vs ) {
-			return [ [], {} ];
-		}
-		return vs.reduce< [ string[], Record< string, string > ] >(
-			( [ labels, labelToId ], v ) => [
-				labels.concat( v.vertical_name ),
-				Object.assign( labelToId, { [ v.vertical_name ]: v.vertical_id } ),
-			],
-			[ [], {} ]
-		);
-	} );
-	const verticalLabel = useSelect(
-		select => {
-			if ( ! verticalId ) {
-				return [];
-			}
-			const v = select( STORE_KEY ).getVerticalItem( verticalId );
-			return v ? [ v.vertical_name ] : [];
-		},
-		[ verticalId ]
+	const { siteTitle, siteType, siteVertical } = useSelect( select =>
+		select( STORE_KEY ).getState()
 	);
-	const updateVerticalId = useCallback(
-		( [ nextLabel ] ) => setVerticalId( verticalLabelToId[ nextLabel ] ),
-		[ setVerticalId, verticalLabels, verticalLabelToId ]
-	);
-	// END: FormTokenField difficult section
 
 	const { resetSiteType, setSiteType, setSiteTitle } = useDispatch( STORE_KEY );
 
@@ -98,17 +69,17 @@ export default function OnboardingEdit() {
 					</div>
 				) }
 			</div>
-			{ /* FormTokenField sufficient for first round, but not ideal. Simpler component for single autocomplete is needed */ }
-			{ ( isFilledFormValue( siteType ) || ! isEmpty( verticalLabel ) ) && (
-				<FormTokenField
-					label={ NO__( 'My site is about' ) }
-					maxLength={ 1 }
-					onChange={ updateVerticalId }
-					suggestions={ verticalLabels }
-					value={ verticalLabel }
-				/>
+
+			{ ( isFilledFormValue( siteType ) || ! isEmpty( siteVertical ) ) && (
+				<div className="onboarding-block__question">
+					<span>{ NO__( 'My site is about' ) }</span>
+					<div className="onboarding-block__multi-question">
+						<VerticalSelect inputClass="onboarding-block__question-input" />
+					</div>
+				</div>
 			) }
-			{ ( ! isEmpty( verticalLabel ) || siteTitle ) && (
+
+			{ ( ! isEmpty( siteVertical ) || siteTitle ) && (
 				<>
 					<label className="onboarding-block__question">
 						<span>{ NO__( "It's called" ) }</span>

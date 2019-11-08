@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ActionType, FormValue, SiteType, EMPTY_FORM_VALUE, Vertical } from './types';
+import { ActionType, FormValue, SiteType, EMPTY_FORM_VALUE, Vertical, SiteVertical } from './types';
 import * as Actions from './actions';
 
 const siteType: Reducer<
@@ -43,7 +43,17 @@ const verticals: Reducer< Vertical[], ReturnType< typeof Actions[ 'receiveVertic
 	return state;
 };
 
-const reducer = combineReducers( { siteType, siteTitle, verticals } );
+const siteVertical: Reducer<
+	FormValue< SiteVertical >,
+	ReturnType< typeof Actions[ 'setSiteVertical' ] >
+> = ( state = EMPTY_FORM_VALUE, action ) => {
+	if ( action.type === ActionType.SET_SITE_VERTICAL ) {
+		return action.siteVertical;
+	}
+	return state;
+};
+
+const reducer = combineReducers( { siteType, siteTitle, verticals, siteVertical } );
 
 export type State = ReturnType< typeof reducer >;
 

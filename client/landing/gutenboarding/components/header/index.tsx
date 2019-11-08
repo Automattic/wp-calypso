@@ -7,6 +7,7 @@ import { useSelect } from '@wordpress/data';
 
 import React from 'react';
 import shortcuts from '@wordpress/edit-post/build-module/keyboard-shortcuts';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +21,8 @@ interface Props {
 }
 
 export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
-	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -42,7 +44,7 @@ export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }:
 				role="toolbar"
 			></div>
 			<div className="gutenboarding__header-actions">
-				<Button isPrimary isLarge>
+				<Button isPrimary isLarge disabled={ isEmpty( siteVertical ) }>
 					{ NO__( 'Next' ) }
 				</Button>
 				<IconButton
