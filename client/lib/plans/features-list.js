@@ -33,6 +33,7 @@ export const FEATURES_LIST = {
 					),
 				},
 			} ),
+		getTrackingLabel: () => 'All Free features',
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the free version of Jetpack.' ),
 	},
@@ -57,6 +58,7 @@ export const FEATURES_LIST = {
 					),
 				},
 			} ),
+		getTrackingLabel: () => 'All Personal features',
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
 	},
@@ -84,6 +86,7 @@ export const FEATURES_LIST = {
 					),
 				},
 			} ),
+		getTrackingLabel: () => 'All Premium features',
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
 	},

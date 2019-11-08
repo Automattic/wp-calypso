@@ -679,6 +679,14 @@ export class PlanFeatures extends Component {
 		const description = feature.getDescription
 			? feature.getDescription( abtest, this.props.domainName )
 			: null;
+
+		const recordEvent = feature.getTrackingLabel
+			? () =>
+					this.props.recordTracksEvent( 'calypso_plan_link_click', {
+						label: feature.getTrackingLabel(),
+					} )
+			: null;
+
 		return (
 			<PlanFeaturesItem
 				key={ index }
@@ -687,7 +695,9 @@ export class PlanFeatures extends Component {
 				hideGridicon={ this.props.withScroll }
 			>
 				<span className="plan-features__item-info">
-					<span className="plan-features__item-title">{ feature.getTitle() }</span>
+					<span className="plan-features__item-title" onClick={ recordEvent } role="presentation">
+						{ feature.getTitle() }
+					</span>
 				</span>
 			</PlanFeaturesItem>
 		);
