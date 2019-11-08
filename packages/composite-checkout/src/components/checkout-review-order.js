@@ -15,21 +15,9 @@ import {
 	OrderReviewSection,
 } from './order-review-line-items';
 
-export default function CheckoutReviewOrder( { summary, className } ) {
+export default function CheckoutReviewOrder( { className } ) {
 	const [ items, total ] = useLineItems();
 
-	if ( summary ) {
-		return (
-			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-				<OrderReviewSection>
-					<OrderReviewLineItems isSummaryVisible={ summary } items={ items } />
-				</OrderReviewSection>
-				<OrderReviewSection>
-					<OrderReviewTotal total={ total } />
-				</OrderReviewSection>
-			</div>
-		);
-	}
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
 			<OrderReviewSection>

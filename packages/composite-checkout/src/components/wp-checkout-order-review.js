@@ -17,21 +17,8 @@ import {
 } from './order-review-line-items';
 import Coupon from './coupon';
 
-export default function WPCheckoutOrderReview( { summary, className } ) {
+export default function WPCheckoutOrderReview( { className } ) {
 	const [ items, total ] = useLineItems();
-
-	if ( summary ) {
-		return (
-			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-				<OrderReviewSection>
-					<OrderReviewLineItems isSummaryVisible={ summary } items={ items } />
-				</OrderReviewSection>
-				<OrderReviewSection>
-					<OrderReviewTotal total={ total } />
-				</OrderReviewSection>
-			</div>
-		);
-	}
 
 	//TODO: tie the coupon field visibility based on whether there is a coupon in the cart
 	return (
