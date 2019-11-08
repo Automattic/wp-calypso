@@ -12,6 +12,11 @@ import { useLocalize } from '../lib/localize';
 import { useLineItems, useSelect, useDispatch } from '../public-api';
 import GridRow from './grid-row';
 import Field from './field';
+import {
+	SummaryLine,
+	SummaryDetails,
+	SummarySpacerLine,
+} from '../lib/styled-components/summary-details';
 
 export default function BillingFields( { summary, isActive, isComplete } ) {
 	const [ items ] = useLineItems();
@@ -437,73 +442,54 @@ function BillingFormSummary() {
 	return (
 		<GridRow gap="4%" columnWidths="48% 48%">
 			<div>
-				<BillingSummaryDetails>
-					<BillingSummaryLine>
+				<SummaryDetails>
+					<SummaryLine>
 						{ billing.firstName || '' } { billing.lastName || '' }
-					</BillingSummaryLine>
-					<BillingSummarySpacerLine>{ billing.email || '' }</BillingSummarySpacerLine>
-					<BillingSummaryLine>{ billing.address || '' } </BillingSummaryLine>
-					<BillingSummaryLine>
+					</SummaryLine>
+					<SummarySpacerLine>{ billing.email || '' }</SummarySpacerLine>
+					<SummaryLine>{ billing.address || '' } </SummaryLine>
+					<SummaryLine>
 						{ billing.city && billing.city + ', ' } { billing.state || billing.province || '' }
-					</BillingSummaryLine>
-					<BillingSummaryLine>
+					</SummaryLine>
+					<SummaryLine>
 						{ postalCode && postalCode + ', ' }
 						{ billing.country }
-					</BillingSummaryLine>
-				</BillingSummaryDetails>
+					</SummaryLine>
+				</SummaryDetails>
 				{ ( billing.phoneNumber || ( isElligibleForVat() && billing.vatId ) ) && (
-					<BillingSummaryDetails>
-						<BillingSummaryLine>{ billing.phoneNumber }</BillingSummaryLine>
+					<SummaryDetails>
+						<SummaryLine>{ billing.phoneNumber }</SummaryLine>
 						{ isElligibleForVat() && (
-							<BillingSummaryLine>
+							<SummaryLine>
 								{ localize( 'VAT indentification number:' ) }
 								{ billing.vatId }
-							</BillingSummaryLine>
+							</SummaryLine>
 						) }
-					</BillingSummaryDetails>
+					</SummaryDetails>
 				) }
 			</div>
 			{ domains && ! isDomainContactSame && (
 				<div>
-					<BillingSummaryDetails>
-						<BillingSummaryLine>{ domains.firstName + ' ' + domains.lastName }</BillingSummaryLine>
-						<BillingSummarySpacerLine>{ domains.email }</BillingSummarySpacerLine>
-						<BillingSummaryLine>{ domains.address }</BillingSummaryLine>
-						<BillingSummaryLine>
+					<SummaryDetails>
+						<SummaryLine>{ domains.firstName + ' ' + domains.lastName }</SummaryLine>
+						<SummarySpacerLine>{ domains.email }</SummarySpacerLine>
+						<SummaryLine>{ domains.address }</SummaryLine>
+						<SummaryLine>
 							{ domains.city && domains.city + ', ' } { domains.state || domains.province }
-						</BillingSummaryLine>
-						<BillingSummaryLine>
+						</SummaryLine>
+						<SummaryLine>
 							{ domainPostalCode && domainPostalCode + ', ' } { domains.country }
-						</BillingSummaryLine>
-					</BillingSummaryDetails>
+						</SummaryLine>
+					</SummaryDetails>
 
-					<BillingSummaryDetails>
-						<BillingSummaryLine>{ domains.phoneNumber }</BillingSummaryLine>
-					</BillingSummaryDetails>
+					<SummaryDetails>
+						<SummaryLine>{ domains.phoneNumber }</SummaryLine>
+					</SummaryDetails>
 				</div>
 			) }
 		</GridRow>
 	);
 }
-
-const BillingSummaryDetails = styled.ul`
-	margin: 8px 0 0 0;
-	padding: 0;
-
-	:first-child {
-		margin-top: 0;
-	}
-`;
-
-const BillingSummaryLine = styled.li`
-	margin: 0;
-	padding: 0;
-	list-style: none;
-`;
-
-const BillingSummarySpacerLine = styled( BillingSummaryLine )`
-	margin-bottom: 8px;
-`;
 
 export function getDomainDetailsFromPaymentData( paymentData ) {
 	const { billing = {}, domains = {}, isDomainContactSame = true } = paymentData;

@@ -393,6 +393,7 @@ A payment method, in the context of this package, consists of the following piec
 - A component form that displays the required billing contact information. It will receive the props of the `CheckoutStep`.
 - A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. The button can access the success and failure handlers by calling the `useCheckoutHandlers()` custom Hook or it can find the redirect urls by calling the `useCheckoutRedirects()` custom Hook.
 - (Optional) A component that wraps the whole of the checkout form. This can be used for custom data providers (eg: `StripeProvider`).
+- A component that renders a summary of the selected payment method when the step is inactive.
 - A function to return the name of the Payment Method. It will receive the localize function as an argument.
 
 Payment methods are modular, but are built into the package and should not be added or changed by the host page. They can be disabled by using the `availablePaymentMethods` prop on the `Checkout` component.
@@ -407,6 +408,7 @@ Each payment method has the following schema:
 	BillingContactComponent: component,
 	SubmitButtonComponent: component,
 	CheckoutWrapper: ?component,
+	SummaryComponent: component,
 	getAriaLabel: function,
 }
 ```

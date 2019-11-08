@@ -29,6 +29,7 @@ import {
 import { VisaLogo, AmexLogo, MastercardLogo } from './payment-logos';
 import { CreditCardLabel } from '../lib/payment-methods/credit-card';
 import BillingFields, { getDomainDetailsFromPaymentData } from '../components/billing-fields';
+import { SummaryLine, SummaryDetails } from '../lib/styled-components/summary-details';
 
 export function createStripeMethod( {
 	registerStore,
@@ -36,6 +37,9 @@ export function createStripeMethod( {
 	sendStripeTransaction,
 } ) {
 	const actions = {
+		changeBrand( payload ) {
+			return { type: 'BRAND_SET', payload };
+		},
 		changeCardholderName( payload ) {
 			return { type: 'CARDHOLDER_NAME_SET', payload };
 		},
@@ -101,6 +105,8 @@ export function createStripeMethod( {
 					return { ...state, stripeConfiguration: action.payload };
 				case 'CARDHOLDER_NAME_SET':
 					return { ...state, cardholderName: action.payload };
+				case 'BRAND_SET':
+					return { ...state, brand: action.payload };
 			}
 			return state;
 		},
@@ -108,6 +114,9 @@ export function createStripeMethod( {
 		selectors: {
 			getStripeConfiguration( state ) {
 				return state.stripeConfiguration;
+			},
+			getBrand( state ) {
+				return state.brand || '';
 			},
 			getCardholderName( state ) {
 				return state.cardholderName || '';
@@ -139,6 +148,7 @@ export function createStripeMethod( {
 		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: StripePayButton,
 		CheckoutWrapper: StripeHookProvider,
+		SummaryComponent: StripeSummary,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 	};
 }
@@ -151,13 +161,14 @@ function StripeCreditCardFields( { isActive, summary } ) {
 	const [ cardNumberElementData, setCardNumberElementData ] = useState();
 	const [ cardExpiryElementData, setCardExpiryElementData ] = useState();
 	const [ cardCvcElementData, setCardCvcElementData ] = useState();
-	const [ cardBrand, setCardBrand ] = useState( 'unknown' );
 	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const brand = useSelect( select => select( 'stripe' ).getBrand() );
 	const { changeCardholderName } = useDispatch( 'stripe' );
+	const { changeBrand } = useDispatch( 'stripe' );
 
 	const handleStripeFieldChange = ( input, setCardElementData ) => {
 		if ( input.elementType === 'cardNumber' ) {
-			setCardBrand( input.brand );
+			changeBrand( input.brand );
 		}
 
 		if ( input.error && input.error.message ) {
@@ -205,7 +216,7 @@ function StripeCreditCardFields( { isActive, summary } ) {
 							handleStripeFieldChange( input, setCardNumberElementData );
 						} }
 					/>
-					<CardFieldIcon brand={ cardBrand } />
+					<CardFieldIcon brand={ brand } />
 
 					{ cardNumberElementData && (
 						<StripeErrorMessage>{ cardNumberElementData }</StripeErrorMessage>
@@ -348,43 +359,44 @@ const LockIconGraphic = styled( LockIcon )`
 	height: 20px;
 `;
 
-function CardFieldIcon( { brand } ) {
+function CardFieldIcon( { brand, isSummary } ) {
 	let cardFieldIcon = null;
 
 	switch ( brand ) {
 		case 'visa':
 			cardFieldIcon = (
-				<BrandLogo>
+				<BrandLogo isSummary={ isSummary }>
 					<VisaLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'mastercard':
 			cardFieldIcon = (
-				<BrandLogo>
+				<BrandLogo isSummary={ isSummary }>
 					<MastercardLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'amex':
 			cardFieldIcon = (
-				<BrandLogo>
+				<BrandLogo isSummary={ isSummary }>
 					<AmexLogo />
 				</BrandLogo>
 			);
 			break;
 		default:
-			cardFieldIcon = <LockIconGraphic />;
+			cardFieldIcon = brand === 'unknown' && isSummary ? null : <LockIconGraphic />;
 	}
 
 	return cardFieldIcon;
 }
 
 const BrandLogo = styled.span`
-	display: block;
-	position: absolute;
-	top: 15px;
-	right: 10px;
+	display: ${props => ( props.isSummary ? 'inline-block' : 'block' )};
+	position: ${props => ( props.isSummary ? 'relative' : 'absolute' )};
+	top: ${props => ( props.isSummary ? '0' : '15px' )};
+	right: ${props => ( props.isSummary ? '0' : '10px' )};
+	transform: translateY( ${props => ( props.isSummary ? '4px' : '0' )} );
 `;
 
 function CVV( { className } ) {
@@ -505,6 +517,20 @@ function StripePayButton() {
 		>
 			{ buttonString }
 		</Button>
+	);
+}
+
+function StripeSummary() {
+	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
+	const brand = useSelect( select => select( 'stripe' ).getBrand() );
+
+	return (
+		<SummaryDetails>
+			<SummaryLine>{ cardholderName }</SummaryLine>
+			<SummaryLine>
+				{ brand !== 'unknown' && '****' } <CardFieldIcon brand={ brand } isSummary={ true } />
+			</SummaryLine>
+		</SummaryDetails>
 	);
 }
 

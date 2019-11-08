@@ -155,6 +155,8 @@ function getTextColor( { buttonState, theme } ) {
 			return colors.surface;
 		case 'secondary':
 			return colors.surface;
+		case 'text-button':
+			return colors.highlight;
 		case 'disabled':
 			return colors.disabledButtons;
 		case 'text-button':
