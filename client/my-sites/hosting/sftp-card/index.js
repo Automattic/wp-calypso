@@ -53,6 +53,16 @@ const SFTPCard = ( {
 		}
 	};
 
+	const resetPassword = () => {
+		setIsLoading( true );
+		resetSFTPPassword( siteId, currentUserId );
+	};
+
+	const createUser = () => {
+		setIsLoading( true );
+		createSFTPUser( siteId, currentUserId );
+	};
+
 	useEffect( () => {
 		if ( ! loaded ) {
 			setIsLoading( true );
@@ -96,14 +106,7 @@ const SFTPCard = ( {
 		return (
 			<>
 				<p>{ translate( 'You must reset your password to view it.' ) }</p>
-				<Button
-					onClick={ () => {
-						setIsLoading( true );
-						return resetSFTPPassword( siteId, currentUserId );
-					} }
-					disabled={ isLoading }
-					compact
-				>
+				<Button onClick={ resetPassword } disabled={ isLoading } compact>
 					{ translate( 'Reset Password' ) }
 				</Button>
 			</>
@@ -128,7 +131,7 @@ const SFTPCard = ( {
 								"Enable SFTP access to generate a username and password so you can access your website's files."
 							) }
 						</p>
-						<Button onClick={ () => createSFTPUser( siteId, currentUserId ) } primary>
+						<Button onClick={ createUser } primary>
 							{ translate( 'Enable SFTP' ) }
 						</Button>
 					</>
