@@ -13,7 +13,15 @@
 			"prPriority": 2
 		},
 		{
-			"packagePatterns": [ "react", "lodash", "^webpack", "typescript" ],
+			"packagePatterns": [
+				"^@babel",
+				"^babel-",
+				"^react",
+				"^redux",
+				"^webpack",
+				"lodash",
+				"typescript"
+			],
 			"prPriority": 1
 		}
 	],
