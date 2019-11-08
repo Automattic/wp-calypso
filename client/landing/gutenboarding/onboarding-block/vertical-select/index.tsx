@@ -4,11 +4,11 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { __ as NO__ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { Suggestions } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import Suggestions from 'components/suggestions';
 import { STORE_KEY } from '../../store';
 import { SiteVertical, isFilledFormValue } from '../../store/types';
 
