@@ -114,6 +114,15 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	checklistUpdateHomepage: {
+		datestamp: '20191108',
+		variations: {
+			templateSelector: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	domainStepCopyUpdates: {
 		datestamp: '20291111',
 		variations: {

@@ -10,6 +10,7 @@ import { getPostsForQuery } from 'state/posts/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getSiteOption } from 'state/sites/selectors';
 import createSelector from 'lib/create-selector';
+import { abtest } from 'lib/abtest';
 
 export const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
@@ -45,12 +46,17 @@ export default createSelector(
 			siteId,
 			getSiteOption( state, siteId, 'page_on_front' )
 		);
+		const updateHomepageUrl =
+			// TODO: Add a query param that instructs the editor to "promote" the new page to the front page on publish
+			abtest( 'checklistUpdateHomepage' ) === 'templateSelector'
+				? getEditorUrl( state, siteId, null, 'page' )
+				: frontPageUrl;
 
 		return {
 			post_published: getPageEditorUrl( state, siteId, firstPostID ),
 			contact_page_updated: contactPageUrl,
 			about_text_updated: frontPageUrl,
-			front_page_updated: frontPageUrl,
+			front_page_updated: updateHomepageUrl,
 			homepage_photo_updated: frontPageUrl,
 			business_hours_added: frontPageUrl,
 			service_list_added: frontPageUrl,
