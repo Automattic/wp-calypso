@@ -7,6 +7,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { find, findKey, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Internal dependencies
@@ -183,14 +184,6 @@ export class ProductSelector extends Component {
 		} );
 	}
 
-	handleCheckoutForProduct = productObject => {
-		const { selectedSiteSlug } = this.props;
-
-		return () => {
-			page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
-		};
-	};
-
 	handleProductOptionSelect( stateKey, productSlug ) {
 		this.setState( {
 			[ stateKey ]: productSlug,
@@ -198,13 +191,26 @@ export class ProductSelector extends Component {
 	}
 
 	renderCheckoutButton( product ) {
-		const { intervalType, storeProducts, translate } = this.props;
+		const {
+			currentPlanSlug,
+			intervalType,
+			selectedSiteSlug,
+			storeProducts,
+			translate,
+		} = this.props;
 		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 		const productObject = storeProducts[ selectedProductSlug ];
 
 		return (
 			<ProductCardAction
-				onClick={ this.handleCheckoutForProduct( productObject ) }
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+						current_plan: currentPlanSlug,
+						product_name: productObject.product_slug,
+						billing_cycle: intervalType,
+					} );
+					page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
+				} }
 				intro={ this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
@@ -446,6 +452,7 @@ ProductSelector.propTypes = {
 	fetchingSitePurchases: PropTypes.bool,
 	productSlugs: PropTypes.arrayOf( PropTypes.string ),
 	purchases: PropTypes.array,
+	recordTracksEvent: PropTypes.func.isRequired,
 	selectedSiteId: PropTypes.number,
 	selectedSiteSlug: PropTypes.string,
 	storeProducts: PropTypes.object,
@@ -461,25 +468,30 @@ ProductSelector.defaultProps = {
 	productPriceMatrix: {},
 };
 
-const connectComponent = connect( ( state, { products, siteId } ) => {
-	const selectedSiteId = siteId || getSelectedSiteId( state );
-	const productSlugs = extractProductSlugs( products );
-	const availableProducts = getAvailableProductsList( state );
+const connectComponent = connect(
+	( state, { products, siteId } ) => {
+		const selectedSiteId = siteId || getSelectedSiteId( state );
+		const productSlugs = extractProductSlugs( products );
+		const availableProducts = getAvailableProductsList( state );
 
-	return {
-		availableProducts,
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
-		fetchingPlans: isRequestingPlans( state ),
-		fetchingSitePlans: isRequestingSitePlans( state ),
-		fetchingSitePurchases: isFetchingSitePurchases( state ),
-		productSlugs,
-		purchases: getSitePurchases( state, selectedSiteId ),
-		selectedSiteId,
-		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
-	};
-} );
+		return {
+			availableProducts,
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
+			fetchingPlans: isRequestingPlans( state ),
+			fetchingSitePlans: isRequestingSitePlans( state ),
+			fetchingSitePurchases: isFetchingSitePurchases( state ),
+			productSlugs,
+			purchases: getSitePurchases( state, selectedSiteId ),
+			selectedSiteId,
+			selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
+			storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
+		};
+	},
+	{
+		recordTracksEvent,
+	}
+);
 
 export default compose(
 	connectComponent,
