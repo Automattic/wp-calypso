@@ -17,7 +17,7 @@ const BASE_URL = `http://${ BASE_HOSTNAME }`;
 export default function isExternal( url: URLString ): boolean {
 	// While TypeScript should ensure that `url` really is a string, this method
 	// is still used in a lot of JavaScript contexts, without type checks.
-	if ( ! url ) {
+	if ( ! url && url !== '' ) {
 		return true;
 	}
 
