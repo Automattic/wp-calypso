@@ -434,21 +434,18 @@ export class CheckoutThankYou extends React.Component {
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
-		} else if ( wasDotcomPlanPurchased && ( delayedTransferPurchase || this.isNewUser() ) ) {
-			let planProps = {};
-			if ( delayedTransferPurchase ) {
-				planProps = {
-					action: (
-						// eslint-disable-next-line
-						<a className="thank-you-card__button" onClick={ this.startTransfer }>
-							{ translate( 'Start Domain Transfer' ) }
-						</a>
-					),
-					description: translate( "Now let's get your domain transferred." ),
-				};
-			}
+		} else if ( wasDotcomPlanPurchased && delayedTransferPurchase && this.isNewUser() ) {
+			const planProps = {
+				action: (
+					// eslint-disable-next-line
+					<a className="thank-you-card__button" onClick={ this.startTransfer }>
+						{ translate( 'Start Domain Transfer' ) }
+					</a>
+				),
+				description: translate( "Now let's get your domain transferred." ),
+			};
 
-			// streamlined paid NUX thanks page
+			// domain transfer page
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
