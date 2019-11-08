@@ -25,6 +25,7 @@ import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/select
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlan, planHasFeature } from 'lib/plans';
+import { isRequestingPlans } from 'state/plans/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 
 export class ProductSelector extends Component {
@@ -300,6 +301,7 @@ export class ProductSelector extends Component {
 		const {
 			currencyCode,
 			currentPlanSlug,
+			fetchingPlans,
 			fetchingSitePlans,
 			fetchingSitePurchases,
 			intervalType,
@@ -309,7 +311,7 @@ export class ProductSelector extends Component {
 			translate,
 		} = this.props;
 
-		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans ) {
+		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
 			return map( products, product => {
 				return (
 					<ProductCard
@@ -454,6 +456,7 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 		availableProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
+		fetchingPlans: isRequestingPlans( state ),
 		fetchingSitePlans: isRequestingSitePlans( state ),
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
 		productSlugs,
