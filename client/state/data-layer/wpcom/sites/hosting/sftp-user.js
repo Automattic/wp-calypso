@@ -13,6 +13,16 @@ import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import { updateAtomicSFTPUser } from 'state/hosting/actions.js';
 
+const fromApi = response => {
+	if ( ! response || ! response.username ) {
+		throw new Error( 'Retrieving or updating the sftp user was unsuccessful', response );
+	}
+
+	return response.password
+		? { username: response.username, password: response.password }
+		: { username: response.username };
+};
+
 const requestAtomicSFTPUser = action => {
 	return http(
 		{
@@ -71,6 +81,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
 			fetch: requestAtomicSFTPUser,
 			onSuccess: receiveAtomicSFTPUserSuccess,
 			onError: sFTPUserError,
+			fromApi,
 		} ),
 	],
 	[ HOSTING_SFTP_USER_CREATE ]: [
@@ -78,6 +89,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
 			fetch: createAtomicSFTPUser,
 			onSuccess: receiveAtomicSFTPUserSuccess,
 			onError: sFTPUserError,
+			fromApi,
 		} ),
 	],
 	[ HOSTING_SFTP_PASSWORD_RESET ]: [
@@ -85,6 +97,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
 			fetch: resetAtomicSFTPPassword,
 			onSuccess: receiveAtomicSFTPUserSuccess,
 			onError: sFTPUserError,
+			fromApi,
 		} ),
 	],
 } );
