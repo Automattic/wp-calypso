@@ -24,16 +24,15 @@ import {
 	requestAtomicSFTPUser,
 	createAtomicSFTPUser,
 	resetAtomicSFTPPassword,
-	receiveAtomicSFTPUser,
+	updateAtomicSFTPUser,
 } from 'state/hosting/actions';
-import { getUserSFTPDetails, isSFTPUserLoading } from 'state/hosting/selectors';
+import { getAtomicHostingSFTPUser } from 'state/selectors/get-atomic-hosting-sftp-user';
 
 const SFTPCard = ( {
 	translate,
 	username,
 	password,
 	siteId,
-	isLoading,
 	loaded,
 	disabled,
 	currentUserId,
@@ -44,6 +43,7 @@ const SFTPCard = ( {
 } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isCopied, setIsCopied ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const usernameIsCopied = isCopied === 'username';
 	const passwordIsCopied = isCopied === 'password';
 
@@ -55,10 +55,17 @@ const SFTPCard = ( {
 
 	useEffect( () => {
 		if ( ! loaded ) {
+			setIsLoading( true );
 			requestSFTPUser( siteId, currentUserId );
 		}
 		return onDestroy();
 	}, [ loaded ] );
+
+	useEffect( () => {
+		if ( username || password ) {
+			setIsLoading( false );
+		}
+	}, [ username, password ] );
 
 	const sftpData = {
 		[ translate( 'URL' ) ]: 'sftp.wp.com',
@@ -90,7 +97,10 @@ const SFTPCard = ( {
 			<>
 				<p>{ translate( 'You must reset your password to view it.' ) }</p>
 				<Button
-					onClick={ () => resetSFTPPassword( siteId, currentUserId ) }
+					onClick={ () => {
+						setIsLoading( true );
+						return resetSFTPPassword( siteId, currentUserId );
+					} }
 					disabled={ isLoading }
 					compact
 				>
@@ -177,11 +187,9 @@ export default connect(
 		let username = null;
 		let password = null;
 		let loaded = null;
-		let isLoading = false;
 
 		if ( ! disabled ) {
-			const sftpDetails = getUserSFTPDetails( state, siteId, currentUserId );
-			isLoading = isSFTPUserLoading( state, siteId, currentUserId );
+			const sftpDetails = getAtomicHostingSFTPUser( state, siteId, currentUserId );
 			username = get( sftpDetails, 'username' );
 			password = get( sftpDetails, 'password' );
 			loaded = sftpDetails !== null;
@@ -193,13 +201,12 @@ export default connect(
 			username,
 			password,
 			loaded,
-			isLoading,
 		};
 	},
 	{
 		requestSFTPUser: requestAtomicSFTPUser,
 		createSFTPUser: createAtomicSFTPUser,
 		resetSFTPPassword: resetAtomicSFTPPassword,
-		removePasswordFromState: receiveAtomicSFTPUser,
+		removePasswordFromState: updateAtomicSFTPUser,
 	}
 )( localize( SFTPCard ) );

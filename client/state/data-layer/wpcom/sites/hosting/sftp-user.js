@@ -5,13 +5,13 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import {
-	HOSTING_REQUEST_SFTP_USER,
-	HOSTING_CREATE_SFTP_USER,
-	HOSTING_RESET_SFTP_PASSWORD,
+	HOSTING_SFTP_USER_REQUEST,
+	HOSTING_SFTP_USER_CREATE,
+	HOSTING_SFTP_PASSWORD_RESET,
 } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
-import { receiveAtomicSFTPUser, receiveAtomicSFTPUserError } from 'state/hosting/actions.js';
+import { updateAtomicSFTPUser } from 'state/hosting/actions.js';
 
 const requestAtomicSFTPUser = action => {
 	return http(
@@ -49,10 +49,10 @@ const resetAtomicSFTPPassword = action => {
 };
 
 const receiveAtomicSFTPUserSuccess = ( action, response ) =>
-	receiveAtomicSFTPUser( action.siteId, action.userId, response );
+	updateAtomicSFTPUser( action.siteId, action.userId, response );
 
 const sFTPUserError = ( { siteId, userId } ) => dispatch => {
-	dispatch( receiveAtomicSFTPUserError( siteId, userId ) );
+	dispatch( updateAtomicSFTPUser( siteId, userId, null ) );
 	dispatch(
 		errorNotice(
 			translate(
@@ -66,21 +66,21 @@ const sFTPUserError = ( { siteId, userId } ) => dispatch => {
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
-	[ HOSTING_REQUEST_SFTP_USER ]: [
+	[ HOSTING_SFTP_USER_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestAtomicSFTPUser,
 			onSuccess: receiveAtomicSFTPUserSuccess,
 			onError: sFTPUserError,
 		} ),
 	],
-	[ HOSTING_CREATE_SFTP_USER ]: [
+	[ HOSTING_SFTP_USER_CREATE ]: [
 		dispatchRequest( {
 			fetch: createAtomicSFTPUser,
 			onSuccess: receiveAtomicSFTPUserSuccess,
 			onError: sFTPUserError,
 		} ),
 	],
-	[ HOSTING_RESET_SFTP_PASSWORD ]: [
+	[ HOSTING_SFTP_PASSWORD_RESET ]: [
 		dispatchRequest( {
 			fetch: resetAtomicSFTPPassword,
 			onSuccess: receiveAtomicSFTPUserSuccess,

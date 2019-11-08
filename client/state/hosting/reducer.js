@@ -5,13 +5,7 @@
  */
 
 import { combineReducers } from 'state/utils';
-import {
-	HOSTING_CREATE_SFTP_USER,
-	HOSTING_RECEIVE_SFTP_USER,
-	HOSTING_RECEIVE_SFTP_USER_ERROR,
-	HOSTING_REQUEST_SFTP_USER,
-	HOSTING_RESET_SFTP_PASSWORD,
-} from 'state/action-types';
+import { HOSTING_SFTP_USER_UPDATE } from 'state/action-types';
 
 /**
  * Responsible for the stfp user details for Atomic sites. Currently this handles
@@ -37,21 +31,7 @@ const sites = ( state = {}, action ) => {
 	const site = state[ siteId ] ? state[ siteId ] : {};
 
 	switch ( action.type ) {
-		case HOSTING_RESET_SFTP_PASSWORD:
-		case HOSTING_CREATE_SFTP_USER:
-		case HOSTING_REQUEST_SFTP_USER: {
-			const sftpUsers = { ...site.sftpUsers, [ userId ]: { isLoading: true } };
-			const updatedSite = { ...site, sftpUsers };
-
-			return { ...state, [ siteId ]: updatedSite };
-		}
-		case HOSTING_RECEIVE_SFTP_USER_ERROR: {
-			const sftpUsers = { ...site.sftpUsers, [ userId ]: null };
-			const updatedSite = { ...site, sftpUsers };
-
-			return { ...state, [ siteId ]: updatedSite };
-		}
-		case HOSTING_RECEIVE_SFTP_USER: {
+		case HOSTING_SFTP_USER_UPDATE: {
 			const { sftpUser } = action;
 			const sftpUsers = { ...site.sftpUsers, [ userId ]: sftpUser };
 			const updatedSite = { ...site, sftpUsers };
