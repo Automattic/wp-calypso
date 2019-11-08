@@ -14,6 +14,7 @@ import {
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
+	SITE_KEYRINGS_DELETE_SUCCESS,
 } from 'state/action-types';
 import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { itemSchema } from './schema';
@@ -41,6 +42,9 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 			return {
 				...keyBy( connections, 'ID' ),
 			};
+		}
+		case SITE_KEYRINGS_DELETE_SUCCESS: {
+			return omit( state, action.keyringId );
 		}
 		case KEYRING_CONNECTION_DELETE: {
 			const { connection } = action;

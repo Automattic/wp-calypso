@@ -6,23 +6,23 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { last, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
+import { deleteSiteKeyring } from 'state/site-keyrings/actions';
 
 export class GoogleDrive extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
-		deleteStoredKeyringConnection: PropTypes.func,
+		deleteSiteKeyring: PropTypes.func,
 	};
 
 	static defaultProps = {
 		...SharingService.defaultProps,
-		deleteStoredKeyringConnection: () => {},
+		deleteSiteKeyring: () => {},
 	};
 
 	createOrUpdateConnection = () => {};
@@ -35,7 +35,8 @@ export class GoogleDrive extends SharingService {
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
+		const keyringId = this.props.siteUserConnections[ 0 ].ID;
+		this.props.deleteSiteKeyring( this.props.siteId, keyringId );
 	};
 
 	componentWillReceiveProps( { availableExternalAccounts } ) {
@@ -72,10 +73,10 @@ export class GoogleDrive extends SharingService {
 	 * When SocialLogos supports colour logos then we can remove this and use the default renderLogo() in SharingService
 	 */
 	renderLogo() {
-		// Render a custom logo here because Google My Business is not part of SocialLogos
+		// Render a custom logo here because Google Drive is not part of SocialLogos
 		return (
 			<img
-				className="sharing-service__logo"
+				className="services__logo"
 				src="/calypso/images/sharing/google-drive-logo.svg"
 				width="36"
 				height="36"
@@ -100,6 +101,6 @@ export default connectFor(
 		};
 	},
 	{
-		deleteStoredKeyringConnection,
+		deleteSiteKeyring,
 	}
 );
