@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,6 +12,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import Suggestions from 'components/suggestions';
 import Spinner from 'components/spinner';
+import { tracks } from 'lib/analytics';
 
 /**
  * Style dependencies
@@ -81,10 +80,18 @@ class SuggestionSearch extends Component {
 		this.suggestionsRef.handleKeyEvent( event );
 	};
 
-	handleSuggestionMouseDown = position => {
-		this.updateInputValue( position.label );
+	handleSuggestionMouseDown = ( suggestion, suggestionIndex ) => {
+		this.updateInputValue( suggestion.label );
 		this.hideSuggestions();
-		this.props.onChange( position.label, true );
+		this.props.onChange( suggestion.label, true );
+		const { railcar } = this.props;
+		if ( railcar ) {
+			const { action, id } = railcar;
+			tracks.recordEvent( 'calypso_traintracks_interact', {
+				action,
+				railcar: `${ id }-${ suggestionIndex }`,
+			} );
+		}
 	};
 
 	getSuggestions() {
@@ -103,6 +110,20 @@ class SuggestionSearch extends Component {
 		this.updateInputValue( newValue );
 		this.props.onChange( newValue, true );
 	}
+
+	onSuggestionItemMount = ( { index, suggestionIndex } ) => {
+		const { railcar } = this.props;
+		if ( railcar ) {
+			const { fetch_algo, id, ui_algo } = railcar;
+			tracks.recordEvent( 'calypso_traintracks_render', {
+				fetch_algo,
+				ui_algo,
+				railcar: `${ id }-${ suggestionIndex }`,
+				fetch_position: suggestionIndex,
+				ui_position: index,
+			} );
+		}
+	};
 
 	render() {
 		const { id, placeholder, autoFocus, isSearching } = this.props;
@@ -127,6 +148,7 @@ class SuggestionSearch extends Component {
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
 					railcar={ this.props.railcar }
+					onSuggestionItemMount={ this.onSuggestionItemMount }
 				/>
 			</div>
 		);
