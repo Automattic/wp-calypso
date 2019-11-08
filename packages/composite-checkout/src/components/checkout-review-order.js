@@ -15,8 +15,7 @@ import {
 	OrderReviewSection,
 } from './order-review-line-items';
 
-
-export default function CheckoutReviewOrder( { summary, className, TermsAndConditions } ) {
+export default function CheckoutReviewOrder( { className } ) {
 	const [ items, total ] = useLineItems();
 
 	return (
@@ -27,15 +26,12 @@ export default function CheckoutReviewOrder( { summary, className, TermsAndCondi
 			<OrderReviewSection>
 				<OrderReviewTotal total={ total } />
 			</OrderReviewSection>
-
-			{ TermsAndConditions && <TermsAndConditions /> }
 		</div>
 	);
 }
 
 CheckoutReviewOrder.propTypes = {
 	isActive: PropTypes.bool.isRequired,
-	summary: PropTypes.bool,
 	className: PropTypes.string,
 };
 
