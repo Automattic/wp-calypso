@@ -395,13 +395,13 @@ export class Checkout extends React.Component {
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
 			const isJetpackProduct = product && includes( JETPACK_BACKUP_PRODUCTS, product );
 
-			// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
-			if ( isJetpackNotAtomic && ! isJetpackProduct ) {
-				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
-			}
-			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic ) {
-				return `/plans/my-plan/${ selectedSiteSlug }`;
+				if ( isJetpackProduct ) {
+					return `/plans/my-plan/${ selectedSiteSlug }`;
+				}
+
+				// If we just purchased a Jetpack plan redirect to the Jetpack onboarding plugin install flow.
+				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 			}
 
 			return selectedFeature && isValidFeatureKey( selectedFeature )
