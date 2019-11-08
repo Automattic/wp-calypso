@@ -21,7 +21,7 @@ import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlansBySiteId, getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlan, planHasFeature } from 'lib/plans';
@@ -256,107 +256,6 @@ export class ProductSelector extends Component {
 		return null;
 	}
 
-	getProductUpsell( product ) {
-		const { currentPlanSlug, intervalType } = this.props;
-		const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
-
-		return find(
-			product.productUpsells,
-			( upsellSlug, currentProductSlug ) =>
-				selectedProductSlug === currentProductSlug &&
-				planHasFeature( currentPlanSlug, currentProductSlug )
-		);
-	}
-
-	getProductUpsellPlan( product ) {
-		const { availableProducts, sitePlans } = this.props;
-
-		const currentProductUpsell = this.getProductUpsell( product );
-		if ( ! currentProductUpsell ) {
-			return null;
-		}
-
-		const planUpsell = find( sitePlans.data, plan =>
-			planHasFeature( plan.productSlug, currentProductUpsell )
-		);
-		if ( ! planUpsell ) {
-			return null;
-		}
-
-		const planUpsellProduct = find(
-			availableProducts,
-			prod => planUpsell.productSlug === prod.product_slug
-		);
-		if ( ! planUpsellProduct ) {
-			return null;
-		}
-
-		return planUpsellProduct;
-	}
-
-	renderUpsellSection( product ) {
-		const { storeProducts, translate } = this.props;
-		let upsellProductSlug;
-
-		const productPurchase = this.getPurchaseByProduct( product );
-		// Upsell a higher-tier product when we have purchased the lower tier.
-		if (
-			productPurchase &&
-			product.productUpsells &&
-			product.productUpsells[ productPurchase.productSlug ]
-		) {
-			upsellProductSlug = product.productUpsells[ productPurchase.productSlug ];
-
-			const productObject = storeProducts[ upsellProductSlug ];
-			const productName = this.getProductName( product, productObject.product_slug );
-
-			return (
-				<ProductCardAction
-					onClick={ this.handleCheckoutForProduct( productObject ) }
-					label={ translate( 'Upgrade to %(productName)s', {
-						args: {
-							productName,
-						},
-					} ) }
-					intro={ translate( 'Get %(productName)s %(price)s', {
-						args: {
-							productName,
-							price: productObject.cost_display + ' ' + this.getBillingTimeFrameLabel(),
-						},
-					} ) }
-				/>
-			);
-		}
-
-		// Upsell a higher-tier plan when we have purchased a lower-tier plan that supports the product as a feature.
-		const planUpsellProduct = this.getProductUpsellPlan( product );
-		if ( ! planUpsellProduct ) {
-			return null;
-		}
-
-		const planName = getPlan( planUpsellProduct.product_slug ).getTitle();
-		const productUpsellSlug = this.getProductUpsell( product );
-		const productUpsellObject = storeProducts[ productUpsellSlug ];
-		const productUpsellName = this.getProductName( product, productUpsellObject.product_slug );
-
-		return (
-			<ProductCardAction
-				onClick={ this.handleCheckoutForProduct( planUpsellProduct ) }
-				label={ translate( 'Upgrade to %(planName)s %(price)s', {
-					args: {
-						planName,
-						price: planUpsellProduct.cost_display + ' ' + this.getBillingTimeFrameLabel(),
-					},
-				} ) }
-				intro={ translate( 'Get %(productName)s', {
-					args: {
-						productName: productUpsellName,
-					},
-				} ) }
-			/>
-		);
-	}
-
 	renderProducts() {
 		const {
 			currencyCode,
@@ -388,7 +287,6 @@ export class ProductSelector extends Component {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const purchase = this.getPurchaseByProduct( product );
-			const productUpsellPlan = this.getProductUpsellPlan( product );
 			const currentPlanIncludesProduct = planHasFeature( currentPlanSlug, selectedProductSlug );
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
@@ -423,7 +321,7 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ subtitle }
 				>
-					{ ! purchase && ! productUpsellPlan && ! currentPlanIncludesProduct && (
+					{ ! purchase && ! currentPlanIncludesProduct && (
 						<Fragment>
 							<ProductCardOptions
 								optionsLabel={ product.optionsLabel }
@@ -437,8 +335,6 @@ export class ProductSelector extends Component {
 							{ this.renderCheckoutButton( product ) }
 						</Fragment>
 					) }
-
-					{ this.renderUpsellSection( product ) }
 				</ProductCard>
 			);
 		} );
@@ -477,7 +373,6 @@ ProductSelector.propTypes = {
 				PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
 			),
 			optionsLabel: PropTypes.string,
-			productUpsells: PropTypes.objectOf( PropTypes.string ),
 		} )
 	).isRequired,
 	productPriceMatrix: PropTypes.shape( {
@@ -487,7 +382,6 @@ ProductSelector.propTypes = {
 	siteId: PropTypes.number,
 
 	// Connected props
-	availableProducts: PropTypes.object,
 	currencyCode: PropTypes.string,
 	currentPlan: PropTypes.object,
 	currentPlanSlug: PropTypes.string,
@@ -496,7 +390,6 @@ ProductSelector.propTypes = {
 	purchases: PropTypes.array,
 	selectedSiteId: PropTypes.number,
 	selectedSiteSlug: PropTypes.string,
-	sitePlans: PropTypes.object,
 	storeProducts: PropTypes.object,
 
 	// From localize() HoC
@@ -516,7 +409,6 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 	const availableProducts = getAvailableProductsList( state );
 
 	return {
-		availableProducts,
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 		fetchingSitePurchases: isFetchingSitePurchases( state ),
@@ -524,7 +416,6 @@ const connectComponent = connect( ( state, { products, siteId } ) => {
 		purchases: getSitePurchases( state, selectedSiteId ),
 		selectedSiteId,
 		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-		sitePlans: getPlansBySiteId( state, selectedSiteId ),
 		storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
 	};
 } );
