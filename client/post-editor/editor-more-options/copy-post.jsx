@@ -20,7 +20,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import AccordionSection from 'components/accordion/section';
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import PostSelector from 'my-sites/post-selector';

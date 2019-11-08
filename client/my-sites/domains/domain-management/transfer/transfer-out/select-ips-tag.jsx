@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import SearchCard from 'components/search-card';
 import SectionHeader from 'components/section-header';
 import Suggestions from 'components/suggestions';

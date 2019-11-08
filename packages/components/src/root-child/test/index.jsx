@@ -13,7 +13,7 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import RootChild from '../';
+import RootChild from '..';
 
 /**
  * Module variables

@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
 import {

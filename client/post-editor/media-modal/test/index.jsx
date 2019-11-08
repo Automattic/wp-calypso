@@ -21,8 +21,6 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'component-closest', () => {} );
-jest.mock( 'components/dialog', () => require( 'components/empty-component' ) );
-jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'post-editor/media-modal/detail', () => ( {
 	default: require( 'components/empty-component' ),

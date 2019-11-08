@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
 /**
  * Internal Dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';

@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FilePicker from 'components/file-picker';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Gravatar from 'components/gravatar';

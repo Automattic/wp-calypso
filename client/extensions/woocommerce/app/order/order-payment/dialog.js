@@ -18,7 +18,7 @@ import {
 	getPaymentMethod,
 } from 'woocommerce/state/sites/payment-methods/selectors';
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';

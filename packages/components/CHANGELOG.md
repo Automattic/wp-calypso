@@ -4,6 +4,8 @@
 - Add Button
 - Add Card
 - Add Ribbon
+- Add Dialog
+- Add RootChild
 
 # 1.0.0
 

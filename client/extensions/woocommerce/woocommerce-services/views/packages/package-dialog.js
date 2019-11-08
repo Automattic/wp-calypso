@@ -16,7 +16,7 @@ import Gridicon from 'components/gridicon';
  */
 import EditPackage from './edit-package';
 import checkInputs from './modal-errors';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormButton from 'components/forms/form-button';
 import inputFilters from './input-filters';

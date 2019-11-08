@@ -13,7 +13,7 @@ import { find, uniqBy, uniqueId } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import { getAllProductsWithVariations } from 'woocommerce/state/sites/products/selectors';
