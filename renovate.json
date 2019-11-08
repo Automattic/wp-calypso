@@ -9,7 +9,12 @@
 		{
 			"packagePatterns": [ "^@wordpress" ],
 			"groupName": "wordpress-monorepo",
-			"separateMajorMinor": false
+			"separateMajorMinor": false,
+			"prPriority": 2
+		},
+		{
+			"packagePatterns": [ "react", "lodash", "^webpack", "typescript" ],
+			"prPriority": 1
 		}
 	],
 	"statusCheckVerify": true,
@@ -19,7 +24,7 @@
 		"enabled": true,
 		"schedule": "every weekday"
 	},
-	"prConcurrentLimit": 0,
+	"prConcurrentLimit": 10,
 	"prHourlyLimit": 6,
 	"semanticCommits": true,
 	"semanticCommitType": "chore",
