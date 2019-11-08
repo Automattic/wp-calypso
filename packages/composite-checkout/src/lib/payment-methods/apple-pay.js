@@ -57,16 +57,6 @@ export function ApplePaySummary() {
 	return <React.Fragment>{ localize( 'Apple Pay' ) }</React.Fragment>;
 }
 
-function ApplePayBillingFormSummary( { paymentData } ) {
-	const localize = useLocalize();
-	const { billingName = '' } = paymentData || {};
-	return (
-		<span>
-			<em>{ localize( 'Name' ) }</em> { billingName }
-		</span>
-	);
-}
-
 function ApplePayIcon( { fill, className } ) {
 	return (
 		<svg
