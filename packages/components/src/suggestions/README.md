@@ -1,12 +1,11 @@
-# Suggestions (JSX)
+# Suggestions
 
-Suggestions is a component which works with `SearchCard` to display suggested search terms.
+Suggestions is a component which displays suggested search terms.
 
 ## Usage
 
-`Suggestions` is passed an array of `suggestions` which will display in a list. The way this is usually implemented is to supply a list of possible values in the parent class, and filter these using the query in `SearchCard`, passing the remaining suggestions to the `<Suggestions />` component.
-
-For example:
+`Suggestions` is passed an array of `suggestions` which will display in a list.
+A suggestion whose `label` property matches the `query` prop will be highlighted.
 
 ```jsx
 import React, { useCallback, useMemo, useState } from 'react';
