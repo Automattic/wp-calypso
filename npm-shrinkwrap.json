@@ -20,14 +20,14 @@
 			"version": "file:packages/calypso-build",
 			"dev": true,
 			"requires": {
-				"@babel/core": "7.7.0",
+				"@babel/core": "7.7.2",
 				"@babel/plugin-proposal-class-properties": "7.7.0",
 				"@babel/plugin-syntax-dynamic-import": "7.2.0",
 				"@babel/plugin-transform-react-jsx": "7.7.0",
 				"@babel/plugin-transform-runtime": "7.6.2",
 				"@babel/preset-env": "7.7.1",
 				"@babel/preset-react": "7.7.0",
-				"@babel/preset-typescript": "7.7.0",
+				"@babel/preset-typescript": "7.7.2",
 				"@wordpress/babel-plugin-import-jsx-pragma": "2.3.0",
 				"@wordpress/browserslist-config": "2.6.0",
 				"@wordpress/dependency-extraction-webpack-plugin": "2.0.0",
@@ -60,19 +60,19 @@
 			},
 			"dependencies": {
 				"@babel/core": {
-					"version": "7.7.0",
-					"resolved": "https://registry.npmjs.org/@babel/core/-/core-7.7.0.tgz",
-					"integrity": "sha512-Bb1NjZCaiwTQC/ARL+MwDpgocdnwWDCaugvkGt6cxfBzQa8Whv1JybBoUEiBDKl8Ni3H3c7Fykwk7QChUsHRlg==",
+					"version": "7.7.2",
+					"resolved": "https://registry.npmjs.org/@babel/core/-/core-7.7.2.tgz",
+					"integrity": "sha512-eeD7VEZKfhK1KUXGiyPFettgF3m513f8FoBSWiQ1xTvl1RAopLs42Wp9+Ze911I6H0N9lNqJMDgoZT7gHsipeQ==",
 					"dev": true,
 					"requires": {
 						"@babel/code-frame": "^7.5.5",
-						"@babel/generator": "^7.7.0",
+						"@babel/generator": "^7.7.2",
 						"@babel/helpers": "^7.7.0",
-						"@babel/parser": "^7.7.0",
+						"@babel/parser": "^7.7.2",
 						"@babel/template": "^7.7.0",
-						"@babel/traverse": "^7.7.0",
-						"@babel/types": "^7.7.0",
-						"convert-source-map": "^1.1.0",
+						"@babel/traverse": "^7.7.2",
+						"@babel/types": "^7.7.2",
+						"convert-source-map": "^1.7.0",
 						"debug": "^4.1.0",
 						"json5": "^2.1.0",
 						"lodash": "^4.17.13",
@@ -139,6 +139,16 @@
 					"integrity": "sha512-DDaR5e0g4ZTb9aP7cpSZLkACEBdoLGwJDWgHtBhrGX7Q1RjhdoMOfexICj5cqTAtpowjGQWfcvfnQG7G2kAB5w==",
 					"dev": true
 				},
+				"@babel/preset-typescript": {
+					"version": "7.7.2",
+					"resolved": "https://registry.npmjs.org/@babel/preset-typescript/-/preset-typescript-7.7.2.tgz",
+					"integrity": "sha512-1B4HthAelaLGfNRyrWqJtBEjXX1ulThCrLQ5B2VOtEAznWFIFXFJahgXImqppy66lx/Oh+cOSCQdJzZqh2Jh5g==",
+					"dev": true,
+					"requires": {
+						"@babel/helper-plugin-utils": "^7.0.0",
+						"@babel/plugin-transform-typescript": "^7.7.2"
+					}
+				},
 				"@babel/template": {
 					"version": "7.7.0",
 					"resolved": "https://registry.npmjs.org/@babel/template/-/template-7.7.0.tgz",
@@ -204,6 +214,15 @@
 						"unique-filename": "^1.1.1"
 					}
 				},
+				"convert-source-map": {
+					"version": "1.7.0",
+					"resolved": "https://registry.npmjs.org/convert-source-map/-/convert-source-map-1.7.0.tgz",
+					"integrity": "sha512-4FJkXzKXEDB1snCFZlLP4gpC3JILicCpGbzG9f9G7tGqGCzETQ2hWPrcinA9oU4wtf2biUaEH5065UnMeR33oA==",
+					"dev": true,
+					"requires": {
+						"safe-buffer": "~5.1.1"
+					}
+				},
 				"debug": {
 					"version": "4.1.1",
 					"resolved": "https://registry.npmjs.org/debug/-/debug-4.1.1.tgz",
@@ -211,32 +230,6 @@
 					"dev": true,
 					"requires": {
 						"ms": "^2.1.1"
-					}
-				},
-				"enzyme-adapter-react-16": {
-					"version": "1.15.1",
-					"resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.15.1.tgz",
-					"integrity": "sha512-yMPxrP3vjJP+4wL/qqfkT6JAIctcwKF+zXO6utlGPgUJT2l4tzrdjMDWGd/Pp1BjHBcljhN24OzNEGRteibJhA==",
-					"dev": true,
-					"requires": {
-						"enzyme-adapter-utils": "^1.12.1",
-						"enzyme-shallow-equal": "^1.0.0",
-						"has": "^1.0.3",
-						"object.assign": "^4.1.0",
-						"object.values": "^1.1.0",
-						"prop-types": "^15.7.2",
-						"react-is": "^16.10.2",
-						"react-test-renderer": "^16.0.0-0",
-						"semver": "^5.7.0"
-					}
-				},
-				"enzyme-to-json": {
-					"version": "3.4.3",
-					"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.4.3.tgz",
-					"integrity": "sha512-jqNEZlHqLdz7OTpXSzzghArSS3vigj67IU/fWkPyl1c0TCj9P5s6Ze0kRkYZWNEoCqCR79xlQbigYlMx5erh8A==",
-					"dev": true,
-					"requires": {
-						"lodash": "^4.17.15"
 					}
 				},
 				"find-cache-dir": {
@@ -412,6 +405,12 @@
 					"requires": {
 						"glob": "^7.1.3"
 					}
+				},
+				"safe-buffer": {
+					"version": "5.1.2",
+					"resolved": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz",
+					"integrity": "sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==",
+					"dev": true
 				},
 				"schema-utils": {
 					"version": "2.5.0",
@@ -2489,20 +2488,10 @@
 				"@babel/plugin-transform-react-jsx-source": "^7.0.0"
 			}
 		},
-		"@babel/preset-typescript": {
-			"version": "7.7.0",
-			"resolved": "https://registry.npmjs.org/@babel/preset-typescript/-/preset-typescript-7.7.0.tgz",
-			"integrity": "sha512-WZ3qvtAJy8w/i6wqq5PuDnkCUXaLUTHIlJujfGHmHxsT5veAbEdEjl3cC/3nXfyD0bzlWsIiMdUhZgrXjd9QWg==",
-			"dev": true,
-			"requires": {
-				"@babel/helper-plugin-utils": "^7.0.0",
-				"@babel/plugin-transform-typescript": "^7.7.0"
-			}
-		},
 		"@babel/runtime": {
-			"version": "7.7.1",
-			"resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.7.1.tgz",
-			"integrity": "sha512-SQ0sS7KUJDvgCI2cpZG0nJygO6002oTbhgSuw4WcocsnbxLwL5Q8I3fqbJdyBAc3uFrWZiR2JomseuxSuci3SQ==",
+			"version": "7.7.2",
+			"resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.7.2.tgz",
+			"integrity": "sha512-JONRbXbTXc9WQE2mAZd1p0Z3DZ/6vaQIkgYMSTP3KjRCyd7rCZCcfhCyX+YjwcKxcZ82UrxbRD358bpExNgrjw==",
 			"requires": {
 				"regenerator-runtime": "^0.13.2"
 			}
@@ -10298,20 +10287,6 @@
 						"semver": "^5.7.0"
 					}
 				}
-			}
-		},
-		"enzyme-adapter-utils": {
-			"version": "1.12.1",
-			"resolved": "https://registry.npmjs.org/enzyme-adapter-utils/-/enzyme-adapter-utils-1.12.1.tgz",
-			"integrity": "sha512-KWiHzSjZaLEoDCOxY8Z1RAbUResbqKN5bZvenPbfKtWorJFVETUw754ebkuCQ3JKm0adx1kF8JaiR+PHPiP47g==",
-			"dev": true,
-			"requires": {
-				"airbnb-prop-types": "^2.15.0",
-				"function.prototype.name": "^1.1.1",
-				"object.assign": "^4.1.0",
-				"object.fromentries": "^2.0.1",
-				"prop-types": "^15.7.2",
-				"semver": "^5.7.0"
 			}
 		},
 		"enzyme-matchers": {

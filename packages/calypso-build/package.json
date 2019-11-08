@@ -34,14 +34,14 @@
 		"extends @wordpress/browserslist-config"
 	],
 	"dependencies": {
-		"@babel/core": "7.7.0",
+		"@babel/core": "7.7.2",
 		"@babel/plugin-proposal-class-properties": "7.7.0",
 		"@babel/plugin-syntax-dynamic-import": "7.2.0",
 		"@babel/plugin-transform-react-jsx": "7.7.0",
 		"@babel/plugin-transform-runtime": "7.6.2",
 		"@babel/preset-env": "7.7.1",
 		"@babel/preset-react": "7.7.0",
-		"@babel/preset-typescript": "7.7.0",
+		"@babel/preset-typescript": "7.7.2",
 		"@wordpress/babel-plugin-import-jsx-pragma": "2.3.0",
 		"@wordpress/browserslist-config": "2.6.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "2.0.0",
