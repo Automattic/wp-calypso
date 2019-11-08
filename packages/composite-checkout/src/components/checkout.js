@@ -54,7 +54,7 @@ export default function Checkout( {
 	availablePaymentMethods,
 	ReviewContent,
 	UpSell,
-	CheckoutHeader,
+	OrderSummary,
 	className,
 } ) {
 	const stepNumber = useSelect( select => select( 'checkout' ).getStepNumber() );
@@ -63,7 +63,7 @@ export default function Checkout( {
 	return (
 		<Container className={ joinClasses( [ className, 'checkout' ] ) }>
 			<MainContent className={ joinClasses( [ className, 'checkout__content' ] ) }>
-				<OrderSummaryStep CheckoutHeader={ CheckoutHeader } />
+				{ OrderSummary && <OrderSummaryStep OrderSummary={ OrderSummary } /> }
 
 				<PaymentMethodsStep
 					availablePaymentMethods={ availablePaymentMethods }
@@ -97,7 +97,7 @@ Checkout.propTypes = {
 	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
 	ReviewContent: PropTypes.elementType,
 	UpSell: PropTypes.elementType,
-	CheckoutHeader: PropTypes.elementType,
+	OrderSummary: PropTypes.elementType,
 };
 
 const Container = styled.div`
@@ -132,7 +132,7 @@ const CheckoutWrapper = styled.div`
 	padding: 24px;
 `;
 
-function OrderSummaryStep( { CheckoutHeader } ) {
+function OrderSummaryStep( { OrderSummary } ) {
 	const localize = useLocalize();
 
 	return (
@@ -141,23 +141,13 @@ function OrderSummaryStep( { CheckoutHeader } ) {
 			isComplete={ true }
 			stepNumber={ 0 }
 			title={ localize( 'You are all set to check out' ) }
-			stepSummary={ <OrderSummaryContent CheckoutHeader={ CheckoutHeader } /> }
+			stepSummary={ <OrderSummary /> }
 		/>
 	);
 }
 
 OrderSummaryStep.propTypes = {
-	CheckoutHeader: PropTypes.elementType,
-};
-
-function OrderSummaryContent( { CheckoutHeader } ) {
-	const localize = useLocalize();
-
-	return CheckoutHeader ? <CheckoutHeader /> : localize( 'Order Summary' );
-}
-
-OrderSummaryContent.propTypes = {
-	CheckoutHeader: PropTypes.elementType,
+	OrderSummary: PropTypes.elementType,
 };
 
 function PaymentMethodsStep( { setStepNumber, isActive, isComplete, availablePaymentMethods } ) {

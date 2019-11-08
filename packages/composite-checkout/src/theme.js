@@ -25,6 +25,9 @@ const theme = {
 		outline: swatches.blue30,
 		applePayButtonColor: swatches.black,
 		applePayButtonRollOverColor: swatches.gray80,
+		noticeBackground: swatches.gray80,
+		defaultNoticeIconBackground: swatches.gray30,
+		textColorOnDarkBackground: swatches.white,
 		paypalGold: '#F0C443',
 		paypalGoldHover: '#FFB900',
 		modalBackground: 'rgba( 0,0,0,0.4 )',
@@ -39,6 +42,9 @@ const theme = {
 	fonts: {
 		body:
 			'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+	},
+	fontSize: {
+		small: '14px',
 	},
 };
 

@@ -12,6 +12,8 @@ import { createApplePayMethod } from '../src/lib/payment-methods/apple-pay';
 import { createPayPalMethod } from '../src/lib/payment-methods/paypal';
 import { createCreditCardMethod } from '../src/lib/payment-methods/credit-card';
 import { stripeKey } from './private';
+import WPCheckoutOrderSummary from '../src/components/wp-checkout-order-summary';
+import WPCheckoutOrderReview from '../src/components/wp-checkout-order-review';
 
 const initialItems = [
 	{
@@ -110,7 +112,7 @@ function MyCheckout() {
 			failureRedirectUrl={ failureRedirectUrl }
 			paymentMethods={ [ applePayMethod, creditCardMethod, stripeMethod, paypalMethod ] }
 		>
-			<Checkout />
+			<Checkout OrderSummary={ WPCheckoutOrderSummary } ReviewContent={ WPCheckoutOrderReview } />
 		</CheckoutProvider>
 	);
 }

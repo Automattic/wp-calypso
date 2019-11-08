@@ -27,6 +27,8 @@ import {
 	dispatch,
 	select,
 } from './lib/registry';
+import WPCheckoutOrderSummary from './components/wp-checkout-order-summary';
+import WPCheckoutOrderReview from './components/wp-checkout-order-review';
 
 // Re-export the public API
 export {
@@ -53,4 +55,6 @@ export {
 	select,
 	useLocalize,
 	useTotal,
+	WPCheckoutOrderSummary,
+	WPCheckoutOrderReview,
 };

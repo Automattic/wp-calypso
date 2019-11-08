@@ -41,7 +41,8 @@ export default function Field( {
 
 	return (
 		<div className={ className }>
-			<Label htmlFor={ id }>{ label }</Label>
+			{ label && <Label htmlFor={ id }>{ label }</Label> }
+
 			<InputWrapper>
 				<Input
 					id={ id }
@@ -72,7 +73,7 @@ Field.propTypes = {
 	className: PropTypes.string,
 	isError: PropTypes.bool,
 	onChange: PropTypes.func,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	value: PropTypes.string,
 	icon: PropTypes.node,
 	iconAction: PropTypes.func,
