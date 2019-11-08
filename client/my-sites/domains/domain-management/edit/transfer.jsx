@@ -61,6 +61,22 @@ class Transfer extends React.PureComponent {
 				);
 			}
 		} else {
+			transferNotice = (
+				<Notice status={ 'is-error' } showDismiss={ false }>
+					{ translate( 'The transfer has failed. {{a}}Learn more{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href="https://en.support.wordpress.com/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</Notice>
+			);
+
 			cancelNavItem = (
 				<VerticalNav>
 					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
