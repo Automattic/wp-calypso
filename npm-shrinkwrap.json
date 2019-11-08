@@ -10105,12 +10105,12 @@
 			}
 		},
 		"enzyme-to-json": {
-			"version": "3.4.2",
-			"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.4.2.tgz",
-			"integrity": "sha512-tlzvJPPONTaTR2eKrWTt/pxknTjXgcNbxcYkxNfB0CwC8Pfc5xmSycaTwaQ1HXpN1zv6A7lAhnMV58HOIXTkFg==",
+			"version": "3.4.3",
+			"resolved": "https://registry.npmjs.org/enzyme-to-json/-/enzyme-to-json-3.4.3.tgz",
+			"integrity": "sha512-jqNEZlHqLdz7OTpXSzzghArSS3vigj67IU/fWkPyl1c0TCj9P5s6Ze0kRkYZWNEoCqCR79xlQbigYlMx5erh8A==",
 			"dev": true,
 			"requires": {
-				"lodash": "^4.17.12"
+				"lodash": "^4.17.15"
 			}
 		},
 		"equivalent-key-map": {

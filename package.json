@@ -335,7 +335,7 @@
 		"concurrently": "5.0.0",
 		"enzyme": "3.10.0",
 		"enzyme-adapter-react-16": "1.15.1",
-		"enzyme-to-json": "3.4.2",
+		"enzyme-to-json": "3.4.3",
 		"eslint": "5.16.0",
 		"eslint-config-prettier": "4.2.0",
 		"eslint-config-wpcalypso": "file:./packages/eslint-config-wpcalypso",
