@@ -16,8 +16,8 @@
 			"packagePatterns": [
 				"^@babel",
 				"^babel-",
-				"^react",
-				"^redux",
+				"^react$",
+				"^redux$",
 				"^webpack",
 				"lodash",
 				"typescript"
