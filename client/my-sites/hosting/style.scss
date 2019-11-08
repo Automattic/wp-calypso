@@ -12,17 +12,25 @@
 	.card {
 		display: flex;
 		flex-direction: row;
-		width: calc( 100% - 10px );
+		width: 100%;
+		margin-left: 0;
+		margin-right: 0;
 
 		.card-heading {
 			margin-top: 0;
 		}
 
 		@include breakpoint( '>1280px' ) {
-			width: calc( 40% - 10px );
-
 			&:first-child {
-				width: calc( 60% - 10px );
+				width: calc( 60% - 5px );
+				margin-left: 0;
+				margin-right: 5px;
+			}
+
+			&:last-child {
+				width: calc( 40% - 5px );
+				margin-left: 5px;
+				margin-right: 0;
 			}
 		}
 
