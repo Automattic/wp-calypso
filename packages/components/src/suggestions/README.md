@@ -9,58 +9,44 @@ Suggestions is a component which works with `SearchCard` to display suggested se
 For example:
 
 ```jsx
-import SearchCard from 'components/search-card';
-import Suggestions from 'components/suggestions';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Suggestions } from '@automattic/components';
 
-class SuggestionsExample extends Component {
+export default function SuggestionsExample() {
+	const [ query, setQuery ] = useState( '' );
+	const updateInput = useCallback( e => setQuery( e.target.value ), [ setQuery ] );
 
-	static hints = [ 'Foo', 'Bar', 'Baz' ];
+	const suggestions = useMemo( () => {
+		if ( ! query ) {
+			return [];
+		}
+		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( s => ( { label: s, value: s } ) );
+		const r = new RegExp( query, 'i' );
+		return allSuggestions.filter( ( { label } ) => r.test( label ) );
+	}, [ query ] );
 
-	state = {
-		query: '',
-	};
-
-	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
-
-	hideSuggestions = () => this.setState( { query: '' } );
-
-	handleSearch = query => this.setState( { query: query } );
-
-	handleKeyDown = event => this.suggestionsRef.handleKeyEvent( event );
-
-	getSuggestions() {
-		return SuggestionsExample.hints
-			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
-			.map( hint => ( { label: hint } ) );
-	}
-
-	suggestions = {
-		return [
-			{ label: 'Foo' },
-			{ label: 'Bar' },
-			{ label: 'Baz' },
-		]
-	};
-
-	render() {
-		return (
-			<div className="docs__suggestions-container">
-				<SearchCard
-					disableAutocorrect
-					onSearch={ this.handleSearch }
-					onBlur={ this.hideSuggestions }
-					onKeyDown={ this.handleKeyDown }
-					placeholder="Type something..."
-				/>
-				<Suggestions
-					ref={ this.setSuggestionsRef }
-					query={ this.state.query }
-					suggestions={ this.suggestions }
-					suggest={ noop }
-				/>
-			</div>
-		);
-	}
+	return (
+		<div className="docs__suggestions-container">
+			<input
+				type="text"
+				value={ query }
+				onChange={ updateInput }
+				autoComplete="off"
+				autoCorrect="off"
+				autoCapitalize="off"
+				spellCheck={ false }
+				placeholder="Type Foo, Bar or Baz…"
+			/>
+			<Suggestions
+				query={ query }
+				suggestions={ suggestions }
+				suggest={ ( ...args ) => {
+					// eslint-disable-next-line no-console
+					console.log( 'Suggest callback invoked with args: %o', args );
+				} }
+			/>
+		</div>
+	);
 }
 ```
 
@@ -89,5 +75,5 @@ const FoodSuggestions = React.forwardRef( ( props, ref ) => (
 The following props are available:
 
 - `query`: (string) The search query that the suggestions are based on. Will be highlighted in the suggestions.
-- `suggestions`: (arry) An array of possible suggestions that match the query, made of objects of the shape `{ label: 'Label', category: 'This is optional' }
+- `suggestions`: ({label: string, category?: string, ...otherProps}[]) An array of possible suggestions that match the query, made of objects of the shape `{ label: 'Label', category: 'This is optional' }
 - `suggest`: A function that is called when the suggestion is selected.
