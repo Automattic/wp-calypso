@@ -72,7 +72,7 @@ const SFTPCard = ( {
 	}, [ loaded ] );
 
 	useEffect( () => {
-		if ( username || password ) {
+		if ( username === null || username || password ) {
 			setIsLoading( false );
 		}
 	}, [ username, password ] );
