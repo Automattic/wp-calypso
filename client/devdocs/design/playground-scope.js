@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-export { default as Gridicon } from 'components/gridicon';
+export { Suggestions } from '@automattic/components';
 
 /**
  * Docs examples
