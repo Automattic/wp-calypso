@@ -74,6 +74,19 @@ export class ProductSelector extends Component {
 		);
 	}
 
+	getPurchaseByCurrentPlan() {
+		const { currentPlanSlug, purchases } = this.props;
+
+		if ( ! currentPlanSlug ) {
+			return null;
+		}
+
+		return find(
+			purchases,
+			purchase => purchase.active && purchase.productSlug === currentPlanSlug
+		);
+	}
+
 	getProductSlugByCurrentPlan() {
 		const { currentPlanSlug, productSlugs } = this.props;
 
@@ -326,7 +339,11 @@ export class ProductSelector extends Component {
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
-			const purchase = this.getPurchaseByProduct( product );
+			let purchase = this.getPurchaseByProduct( product );
+
+			if ( currentPlanIncludesProduct ) {
+				purchase = this.getPurchaseByCurrentPlan();
+			}
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
 			if ( currentPlanIncludesProduct ) {
