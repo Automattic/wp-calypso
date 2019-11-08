@@ -170,10 +170,9 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const [ additional_homepage_templates, default_templates ] = partition(
-			templates,
-			'is_additional_homepage_template'
-		);
+		const [ homepage_templates, default_templates ] = partition( templates, {
+			category: 'home',
+		} );
 
 		return (
 			<Modal
@@ -227,11 +226,11 @@ class PageTemplateModal extends Component {
 								</fieldset>
 								<fieldset className="page-template-modal__list">
 									<legend className="page-template-modal__form-title">
-										{ __( 'Or choose a homepage layout from another theme…', 'full-site-editing' ) }
+										{ __( 'Homepage Layouts', 'full-site-editing' ) }
 									</legend>
 									<TemplateSelectorControl
 										label={ __( 'Layout', 'full-site-editing' ) }
-										templates={ additional_homepage_templates }
+										templates={ homepage_templates }
 										blocksByTemplates={ blocksByTemplateSlug }
 										onTemplateSelect={ this.previewTemplate }
 										useDynamicPreview={ false }
