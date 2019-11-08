@@ -2,7 +2,7 @@
  * External dependencies
  */
 import config from 'config';
-import { URL as TypedURL } from 'types';
+import { URL as URLString } from 'types';
 
 /**
  * Internal dependencies
@@ -14,7 +14,13 @@ import { isLegacyRoute } from 'lib/route/legacy-routes';
 const BASE_HOSTNAME = 'base.invalid';
 const BASE_URL = `http://${ BASE_HOSTNAME }`;
 
-export default function isExternal( url: TypedURL ): boolean {
+export default function isExternal( url: URLString ): boolean {
+	// While TypeScript should ensure that `url` really is a string, this method
+	// is still used in a lot of JavaScript contexts, without type checks.
+	if ( ! url && url !== '' ) {
+		return true;
+	}
+
 	// The url passed in might be of form `en.support.wordpress.com`,
 	// so for this function we'll append double-slashes to fake it.
 	// If it is a relative URL the hostname will be the base hostname.
@@ -28,7 +34,13 @@ export default function isExternal( url: TypedURL ): boolean {
 		url = '//' + url;
 	}
 
-	const { hostname, pathname } = new URL( url, BASE_URL );
+	let parsedUrl;
+	try {
+		parsedUrl = new URL( url, BASE_URL );
+	} catch {
+		return false;
+	}
+	const { hostname, pathname } = parsedUrl;
 
 	// Did we parse a relative URL?
 	if ( hostname === BASE_HOSTNAME ) {
