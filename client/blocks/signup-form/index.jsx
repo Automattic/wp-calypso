@@ -82,6 +82,7 @@ class SignupForm extends Component {
 		className: PropTypes.string,
 		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
+		disableSubmitButton: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
@@ -818,7 +819,9 @@ class SignupForm extends Component {
 				{ this.termsOfServiceLink() }
 				<FormButton
 					className="signup-form__submit"
-					disabled={ this.state.submitting || this.props.disabled }
+					disabled={
+						this.state.submitting || this.props.disabled || this.props.disableSubmitButton
+					}
 				>
 					{ this.props.submitButtonText }
 				</FormButton>

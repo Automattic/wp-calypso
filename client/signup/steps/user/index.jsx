@@ -49,6 +49,7 @@ export class UserStep extends Component {
 		submitting: false,
 		subHeaderText: '',
 		recaptchaClientId: null,
+		isLoadingRecaptcha: true,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -119,13 +120,7 @@ export class UserStep extends Component {
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
-							a: (
-								<a
-									href="https://wordpress.com/tos/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
+							a: <a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
 							br: <br />,
 						},
 					}
@@ -155,7 +150,11 @@ export class UserStep extends Component {
 	}
 
 	saveRecaptchaToken = ( { token, clientId } ) => {
-		this.setState( { recaptchaClientId: clientId } );
+		this.setState( {
+			isLoadingRecaptcha: false,
+			recaptchaClientId: clientId,
+		} );
+
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			recaptchaToken: typeof token === 'string' ? token : undefined,
@@ -353,6 +352,7 @@ export class UserStep extends Component {
 					{ ...omit( this.props, [ 'translate' ] ) }
 					redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 					disabled={ this.userCreationStarted() }
+					disableSubmitButton={ this.state.isLoadingRecaptcha }
 					submitting={ this.userCreationStarted() }
 					save={ this.save }
 					submitForm={ this.submitForm }
