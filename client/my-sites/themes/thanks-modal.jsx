@@ -110,9 +110,14 @@ class ThanksModal extends Component {
 	};
 
 	goToCustomizer = () => {
+		const { customizeUrl, shouldEditHomepageWithGutenberg } = this.props;
+
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
-		window.open( this.props.customizeUrl, '_blank' );
+
+		shouldEditHomepageWithGutenberg
+			? page( customizeUrl )
+			: window.open( this.props.customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
@@ -185,15 +190,22 @@ class ThanksModal extends Component {
 
 	getEditSiteLabel = () => {
 		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
-		return hasActivated ? (
-			<span className="thanks-modal__button-customize">
+		if ( ! hasActivated ) {
+			return translate( 'Activating theme…' );
+		}
+
+		const gutenbergContent = translate( 'Edit Homepage' );
+		const customizerContent = (
+			<>
 				<Gridicon icon="external" />
-				{ shouldEditHomepageWithGutenberg
-					? translate( 'Edit Homepage' )
-					: translate( 'Customize site' ) }
+				{ translate( 'Customize site' ) }
+			</>
+		);
+
+		return (
+			<span className="thanks-modal__button-customize">
+				{ shouldEditHomepageWithGutenberg ? gutenbergContent : customizerContent }
 			</span>
-		) : (
-			translate( 'Activating theme…' )
 		);
 	};
 
