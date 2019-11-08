@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import {
-	getName,
+	getFancyName,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -173,7 +173,7 @@ class PurchaseItem extends Component {
 			icon = 'themes';
 		} else if ( isGoogleApps( purchase ) ) {
 			icon = 'mail';
-		} else if( isJetpackBackup( purchase ) ) {
+		} else if ( isJetpackBackup( purchase ) ) {
 			icon = 'cloud-upload';
 		}
 
@@ -223,7 +223,7 @@ class PurchaseItem extends Component {
 				<span className="purchase-item__wrapper">
 					{ this.renderIcon() }
 					<div className="purchase-item__details">
-						<div className="purchase-item__title">{ getName( purchase ) }</div>
+						<div className="purchase-item__title">{ getFancyName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
 						{ label && <div className="purchase-item__term-label">{ label }</div> }
 						{ ! isPartnerPurchase( purchase ) && (

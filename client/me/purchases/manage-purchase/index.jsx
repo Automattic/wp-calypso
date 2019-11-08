@@ -23,7 +23,7 @@ import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
-	getName,
+	getFancyName,
 	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
@@ -56,6 +56,7 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
+	isJetpackBackup,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
@@ -310,6 +311,14 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		if ( isJetpackBackup( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<Gridicon icon="cloud-upload" size={ 48 } />
+				</div>
+			);
+		}
+
 		return null;
 	}
 
@@ -405,7 +414,7 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
-						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ getFancyName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (

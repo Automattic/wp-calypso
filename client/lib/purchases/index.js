@@ -20,9 +20,11 @@ import {
 	isJetpackPlan,
 	isPlan,
 	isTheme,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { addItems } from 'lib/cart/actions';
+import { JETPACK_PRODUCT_DISPLAY_NAMES } from 'lib/products-values/constants';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -69,6 +71,15 @@ function getName( purchase ) {
 	}
 
 	return purchase.productName;
+}
+
+function getFancyName( purchase ) {
+	if ( isJetpackProduct( purchase ) ) {
+		return JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ]
+			? JETPACK_PRODUCT_DISPLAY_NAMES[ purchase.productSlug ]
+			: getName( purchase );
+	}
+	return getName( purchase );
 }
 
 function getPartnerName( purchase ) {
@@ -438,6 +449,7 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getFancyName,
 	getPartnerName,
 	getPurchasesBySite,
 	getRenewalPrice,
