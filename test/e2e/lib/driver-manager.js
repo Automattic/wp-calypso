@@ -109,7 +109,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		if ( process.env.CIRCLE_BUILD_NUM ) {
 			caps.name += ' - CircleCI Build #' + process.env.CIRCLE_BUILD_NUM;
 		}
-		if ( browser.toLowerCase() === 'chrome' ) {
+		if ( caps.browserName === 'chrome' ) {
 			options = new chrome.Options();
 			options.addArguments( '--app=https://www.wordpress.com' );
 			builder.setChromeOptions( options );
