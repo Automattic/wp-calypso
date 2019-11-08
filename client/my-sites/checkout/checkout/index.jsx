@@ -399,6 +399,11 @@ export class Checkout extends React.Component {
 			if ( isJetpackNotAtomic && ! isJetpackProduct ) {
 				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&install=all`;
 			}
+			// If we just purchased a Jetpack product, redirect to the my plans page.
+			if ( isJetpackNotAtomic ) {
+				return `/plans/my-plan/${ selectedSiteSlug }`;
+			}
+
 			return selectedFeature && isValidFeatureKey( selectedFeature )
 				? `/checkout/thank-you/features/${ selectedFeature }/${ selectedSiteSlug }/${ pendingOrReceiptId }`
 				: `/checkout/thank-you/${ selectedSiteSlug }/${ pendingOrReceiptId }`;
