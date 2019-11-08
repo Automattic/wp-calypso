@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
  */
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -76,20 +77,21 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		wpcom
-			.undocumented()
-			.createUserAccountFromEmailAddress(
-				{
-					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-					'g-recaptcha-response':
-						this.props.step && this.props.step.recaptchaToken
-							? this.props.step.recaptchaToken
-							: undefined,
-				},
-				null
-			)
-			.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
-			.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+		recordGoogleRecaptchaAction( this.props.recaptchaClientId, 'calypso/submitForm' ).then(
+			recaptchaToken => {
+				wpcom
+					.undocumented()
+					.createUserAccountFromEmailAddress(
+						{
+							email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+							'g-recaptcha-response': recaptchaToken,
+						},
+						null
+					)
+					.then( response => this.createUserAccountFromEmailAddressCallback( null, response ) )
+					.catch( err => this.createUserAccountFromEmailAddressCallback( err ) );
+			}
+		);
 	};
 
 	createUserAccountFromEmailAddressCallback = ( error, response ) => {

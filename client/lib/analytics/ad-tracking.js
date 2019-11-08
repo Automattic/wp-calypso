@@ -1827,11 +1827,11 @@ function initFacebook() {
 }
 
 /**
- * Initializes Google reCAPTCHA
+ * Loads Google reCAPTCHA
  *
  * @returns {Boolean} false if the script failed to load
  */
-async function initGoogleRecaptcha() {
+async function loadGoogleRecaptchaScript() {
 	if ( window.grecaptcha ) {
 		// reCAPTCHA already loaded
 		return true;
@@ -1842,9 +1842,9 @@ async function initGoogleRecaptcha() {
 	try {
 		const src = GOOGLE_RECAPTCHA_SCRIPT_URL + 'explicit';
 		await loadScript( src );
-		debug( 'initGoogleRecaptcha: [Loaded]', src );
+		debug( 'loadGoogleRecaptchaScript: [Loaded]', src );
 	} catch ( error ) {
-		debug( 'initGoogleRecaptcha: [Load Error] the script failed to load: ', error );
+		debug( 'loadGoogleRecaptchaScript: [Load Error] the script failed to load: ', error );
 		return false;
 	}
 
@@ -1852,40 +1852,81 @@ async function initGoogleRecaptcha() {
 }
 
 /**
+ * Renders reCAPTCHA badge to an explicit DOM id that should already be on the page
+ *
+ * @param {string} elementId - render client to this existing DOM node
+ * @returns {number} reCAPTCHA clientId
+ */
+async function renderRecaptchaClient( elementId ) {
+	try {
+		const clientId = await window.grecaptcha.render( elementId, {
+			sitekey: TRACKING_IDS.wpcomGoogleRecaptchaSiteKey,
+			size: 'invisible',
+		} );
+		debug( 'renderRecaptchaClient: [Success]', elementId );
+		return clientId;
+	} catch ( error ) {
+		debug( 'renderRecaptchaClient: [Error]', error );
+		return null;
+	}
+}
+
+/**
+ * Records an arbitrary action to Google reCAPTCHA
+ *
+ * @param {number} clientId - a clientId of the reCAPTCHA instance
+ * @param {string} action  - name of action to record in reCAPTCHA
+ */
+export async function recordGoogleRecaptchaAction( clientId, action ) {
+	if ( ! window.grecaptcha ) {
+		return null;
+	}
+	try {
+		const token = await window.grecaptcha.execute( clientId, {
+			action,
+		} );
+		debug( 'recordGoogleRecaptchaAction: [Success]', action, token, clientId );
+		return token;
+	} catch ( error ) {
+		debug( 'recordGoogleRecaptchaAction: [Error]', action, error );
+		return null;
+	}
+}
+
+/**
+ * @typedef RecaptchaActionResult
+ * @prop {string} token
+ * @prop {number} clientId
+ */
+
+/**
  * Records reCAPTCHA action, loading Google script if necessary.
  *
- * @param {String} action - name of action to record in reCAPTCHA
+ * @param {string} elementId - a DOM id in which to render the reCAPTCHA client
+ * @param {string} action - name of action to record in reCAPTCHA
  *
- * @returns {String|null} a reCAPTCHA token or null if the function fails
+ * @returns {RecaptchaActionResult|null} either the reCAPTCHA token and clientId, or null if the function fails
  */
-export async function recordGoogleRecaptchaAction( action ) {
+export async function initGoogleRecaptcha( elementId, action ) {
 	if ( ! isGoogleRecaptchaEnabled || ! TRACKING_IDS.wpcomGoogleRecaptchaSiteKey ) {
 		return null;
 	}
 
-	if ( ! ( await initGoogleRecaptcha() ) ) {
+	if ( ! ( await loadGoogleRecaptchaScript() ) ) {
 		return null;
 	}
 
 	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
 
 	try {
-		// Render to an explicit DOM id 'g-recaptcha' that should already be on the page.
-		const clientId = await window.grecaptcha.render( 'g-recaptcha', {
-			sitekey: TRACKING_IDS.wpcomGoogleRecaptchaSiteKey,
-			size: 'invisible',
-		} );
-
-		const token = await window.grecaptcha.execute( clientId, {
-			action,
-		} );
-
-		debug( 'recordGoogleRecaptchaAction: [Success]', action, token );
-		return token;
+		const clientId = await renderRecaptchaClient( elementId );
+		const token = await recordGoogleRecaptchaAction( clientId, action );
+		debug( 'initGoogleRecaptcha: [Success]', action, token, clientId );
+		return { token, clientId };
 	} catch ( error ) {
 		// We don't want errors interrupting our flow, so convert any exceptions
 		// into return values.
-		debug( 'recordGoogleRecaptchaAction: [Error]', action, error );
+		debug( 'initGoogleRecaptcha: [Error]', action, error );
 		return null;
 	}
 }

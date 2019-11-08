@@ -23,7 +23,7 @@ import { getSuggestedUsername } from 'state/signup/optional-dependencies/selecto
 import { recordTracksEvent } from 'state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { WPCC } from 'lib/url/support';
-import { recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
+import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'lib/analytics/ad-tracking';
 import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
@@ -48,6 +48,7 @@ export class UserStep extends Component {
 	state = {
 		submitting: false,
 		subHeaderText: '',
+		recaptchaClientId: null,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -75,7 +76,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		recordGoogleRecaptchaAction( 'calypso' ).then( this.saveRecaptchaToken );
+		initGoogleRecaptcha( 'g-recaptcha', 'calypso/pageload' ).then( this.saveRecaptchaToken );
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
@@ -153,7 +154,8 @@ export class UserStep extends Component {
 		this.setState( { subHeaderText } );
 	}
 
-	saveRecaptchaToken = token => {
+	saveRecaptchaToken = ( { token, clientId } ) => {
+		this.setState( { recaptchaClientId: clientId } );
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			recaptchaToken: typeof token === 'string' ? token : undefined,
@@ -199,15 +201,16 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		this.submit( {
-			userData,
-			form: formWithoutPassword,
-			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
-			recaptchaToken:
-				this.props.step && this.props.step.recaptchaToken
-					? this.props.step.recaptchaToken
-					: undefined,
-		} );
+		recordGoogleRecaptchaAction( this.state.recaptchaClientId, 'calypso/submitForm' ).then(
+			token => {
+				this.submit( {
+					userData,
+					form: formWithoutPassword,
+					queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+					recaptchaToken: token,
+				} );
+			}
+		);
 	};
 
 	/**
@@ -359,6 +362,7 @@ export class UserStep extends Component {
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
+					recaptchaClientId={ this.state.recaptchaClientId }
 				/>
 				<div id="g-recaptcha"></div>
 			</>

@@ -95,6 +95,7 @@ class SignupForm extends Component {
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
+		recaptchaClientId: PropTypes.number,
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
@@ -947,6 +948,7 @@ class SignupForm extends Component {
 						renderTerms={ this.termsOfServiceLink }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
+						recaptchaClientId={ this.props.recaptchaClientId }
 					/>
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm
