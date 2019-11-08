@@ -58,8 +58,8 @@ const resetAtomicSFTPPassword = action => {
 	);
 };
 
-const receiveAtomicSFTPUserSuccess = ( action, response ) =>
-	updateAtomicSFTPUser( action.siteId, action.userId, response );
+const receiveAtomicSFTPUserSuccess = ( action, sftpUser ) =>
+	updateAtomicSFTPUser( action.siteId, action.userId, sftpUser );
 
 const sFTPUserError = ( { siteId, userId } ) => dispatch => {
 	dispatch( updateAtomicSFTPUser( siteId, userId, null ) );
