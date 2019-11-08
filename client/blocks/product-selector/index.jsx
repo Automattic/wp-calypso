@@ -323,12 +323,12 @@ export class ProductSelector extends Component {
 		}
 
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
 		return map( products, product => {
 			const selectedProductSlug = this.state[ this.getStateKey( product.id, intervalType ) ];
 			const stateKey = this.getStateKey( product.id, intervalType );
 			const purchase = this.getPurchaseByProduct( product );
-			const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
 			let billingTimeFrame, fullPrice, discountedPrice, subtitle;
 			if ( currentPlanIncludesProduct ) {
