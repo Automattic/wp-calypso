@@ -78,8 +78,17 @@ class WP_Template_Inserter {
 
 	/**
 	 * Retrieves template parts content from WP.com API.
+	 *
+	 * @param boolean $should_fetch_from_api True if the template part data should be fetched from the API.
 	 */
-	public function fetch_template_parts() {
+	public function fetch_template_parts( $should_fetch_from_api = true ) {
+		// Use default data if we don't want to fetch from the API.
+		if ( ! $should_fetch_from_api ) {
+			$this->header_content = $this->get_default_header();
+			$this->footer_content = $this->get_default_footer();
+			return;
+		}
+
 		$request_url = 'https://public-api.wordpress.com/wpcom/v2/full-site-editing/templates';
 
 		$request_args = [
@@ -178,8 +187,10 @@ class WP_Template_Inserter {
 
 	/**
 	 * This function will be called on plugin activation hook.
+	 *
+	 * @param boolean $should_fetch_from_api True if the template part data should be fetched from the API.
 	 */
-	public function insert_default_template_data() {
+	public function insert_default_template_data( $should_fetch_from_api = true ) {
 		do_action(
 			'a8c_fse_log',
 			'before_template_population',
@@ -207,7 +218,7 @@ class WP_Template_Inserter {
 		}
 
 		// Set header and footer content based on data fetched from the WP.com API.
-		$this->fetch_template_parts();
+		$this->fetch_template_parts( $should_fetch_from_api );
 
 		// Avoid creating template parts if data hasn't been fetched properly.
 		if ( empty( $this->header_content ) || empty( $this->footer_content ) ) {

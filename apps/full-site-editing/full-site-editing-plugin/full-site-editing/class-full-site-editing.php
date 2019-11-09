@@ -83,34 +83,24 @@ class Full_Site_Editing {
 	}
 
 	/**
-	 * Determines whether provided theme supports FSE.
-	 *
-	 * @deprecated being replaced soon by an is_active static method - don't add new usages
-	 * @param string $theme_slug Theme slug to check support for.
-	 *
-	 * @return bool True if passed theme supports FSE, false otherwise.
-	 */
-	// phpcs:disable
-	public function is_supported_theme( $theme_slug = null ) {
-		// phpcs:enable
-		// now in reality is_current_theme_supported.
-		return current_theme_supports( 'full-site-editing' );
-	}
-
-	/**
 	 * Inserts template data for the theme we are currently switching to.
 	 *
 	 * This insertion will only happen if theme supports FSE.
 	 * It is hooked into after_switch_theme action.
+	 *
+	 * @param boolean $should_fetch_from_api True if the template part data should be fetched from the API.
+	 * @param boolean $should_add_pages      True if the pages should also be inserted.
 	 */
-	public function insert_default_data() {
+	public function insert_default_data( $should_fetch_from_api = true, $should_add_pages = true ) {
 		// Bail if current theme doesn't support FSE.
-		if ( ! $this->is_supported_theme() ) {
+		if ( ! is_theme_supported() ) {
 			return;
 		}
 
-		$this->wp_template_inserter->insert_default_template_data();
-		$this->wp_template_inserter->insert_default_pages();
+		$this->wp_template_inserter->insert_default_template_data( $should_fetch_from_api );
+		if ( $should_add_pages ) {
+			$this->wp_template_inserter->insert_default_pages();
+		}
 	}
 
 	/**
