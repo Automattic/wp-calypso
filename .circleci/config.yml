@@ -637,8 +637,6 @@ workflows:
     jobs:
       - setup
       - prime-calypso-live:
-          requires:
-            - setup
           filters:
             branches:
               ignore: master
