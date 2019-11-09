@@ -6,13 +6,7 @@ require( '@babel/polyfill' );
  */
 import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import {
-	createCheckout,
-	CheckoutProvider,
-	createRegistry,
-	subscribe,
-	select,
-} from '../src/public-api';
+import { createCheckout, CheckoutProvider, createRegistry } from '../src/public-api';
 import { createStripeMethod } from '../src/components/stripe-credit-card-fields';
 import { createApplePayMethod } from '../src/lib/payment-methods/apple-pay';
 import { createPayPalMethod } from '../src/lib/payment-methods/paypal';
@@ -66,7 +60,7 @@ async function makePayPalExpressRequest() {
 }
 
 const registry = createRegistry();
-const { registerStore } = registry;
+const { registerStore, select, subscribe } = registry;
 
 const Checkout = createCheckout( registry );
 

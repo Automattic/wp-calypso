@@ -2,10 +2,6 @@
  * External dependencies
  */
 import {
-	registerStore,
-	subscribe,
-	select,
-	dispatch,
 	createRegistry,
 	RegistryProvider,
 	useRegistry,
@@ -13,14 +9,4 @@ import {
 	useSelect,
 } from '@wordpress/data';
 
-export {
-	registerStore,
-	subscribe,
-	select,
-	dispatch,
-	createRegistry,
-	RegistryProvider,
-	useRegistry,
-	useDispatch,
-	useSelect,
-};
+export { createRegistry, RegistryProvider, useRegistry, useDispatch, useSelect };

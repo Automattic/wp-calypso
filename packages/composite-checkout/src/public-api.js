@@ -18,15 +18,7 @@ import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import { useLineItems, useTotal } from './lib/line-items';
 import { useLocalize } from './lib/localize';
-import {
-	createRegistry,
-	useSelect,
-	useDispatch,
-	registerStore,
-	subscribe,
-	dispatch,
-	select,
-} from './lib/registry';
+import { createRegistry, useSelect, useDispatch } from './lib/registry';
 import WPCheckoutOrderSummary from './components/wp-checkout-order-summary';
 import WPCheckoutOrderReview from './components/wp-checkout-order-review';
 
@@ -49,10 +41,6 @@ export {
 	usePaymentMethodId,
 	useSelect,
 	useDispatch,
-	registerStore,
-	subscribe,
-	dispatch,
-	select,
 	useLocalize,
 	useTotal,
 	WPCheckoutOrderSummary,
