@@ -16,14 +16,15 @@ import {
 	CheckoutProvider,
 	useSelect,
 	useDispatch,
-	registerStore,
+	createRegistry,
 } from '../../src/public-api';
 
 const noop = () => {};
 
 describe( 'Checkout', () => {
 	it( 'renders the line items and the total', () => {
-		const mockMethod = createMockMethod();
+		const registry = createRegistry();
+		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
 			<CheckoutProvider
@@ -35,6 +36,7 @@ describe( 'Checkout', () => {
 				successRedirectUrl="#"
 				failureRedirectUrl="#"
 				paymentMethods={ [ mockMethod ] }
+				registry={ registry }
 			>
 				<Checkout />
 			</CheckoutProvider>
@@ -56,7 +58,8 @@ describe( 'Checkout', () => {
 	} );
 
 	it( 'renders the payment method LabelComponent', () => {
-		const mockMethod = createMockMethod();
+		const registry = createRegistry();
+		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
 			<CheckoutProvider
@@ -68,6 +71,7 @@ describe( 'Checkout', () => {
 				successRedirectUrl="#"
 				failureRedirectUrl="#"
 				paymentMethods={ [ mockMethod ] }
+				registry={ registry }
 			>
 				<Checkout />
 			</CheckoutProvider>
@@ -77,7 +81,8 @@ describe( 'Checkout', () => {
 	} );
 
 	it( 'renders the payment method PaymentMethodComponent', () => {
-		const mockMethod = createMockMethod();
+		const registry = createRegistry();
+		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
 			<CheckoutProvider
@@ -89,6 +94,7 @@ describe( 'Checkout', () => {
 				successRedirectUrl="#"
 				failureRedirectUrl="#"
 				paymentMethods={ [ mockMethod ] }
+				registry={ registry }
 			>
 				<Checkout />
 			</CheckoutProvider>
@@ -100,7 +106,8 @@ describe( 'Checkout', () => {
 	} );
 
 	it( 'renders the payment method BillingContactComponent', () => {
-		const mockMethod = createMockMethod();
+		const registry = createRegistry();
+		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
 			<CheckoutProvider
@@ -112,6 +119,7 @@ describe( 'Checkout', () => {
 				successRedirectUrl="#"
 				failureRedirectUrl="#"
 				paymentMethods={ [ mockMethod ] }
+				registry={ registry }
 			>
 				<Checkout />
 			</CheckoutProvider>
@@ -121,7 +129,8 @@ describe( 'Checkout', () => {
 	} );
 
 	it( 'renders the review step', () => {
-		const mockMethod = createMockMethod();
+		const registry = createRegistry();
+		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
 			<CheckoutProvider
@@ -133,6 +142,7 @@ describe( 'Checkout', () => {
 				successRedirectUrl="#"
 				failureRedirectUrl="#"
 				paymentMethods={ [ mockMethod ] }
+				registry={ registry }
 			>
 				<Checkout />
 			</CheckoutProvider>
@@ -145,7 +155,8 @@ describe( 'Checkout', () => {
 	} );
 
 	it( 'renders the payment method SubmitButtonComponent', () => {
-		const mockMethod = createMockMethod();
+		const registry = createRegistry();
+		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
 			<CheckoutProvider
@@ -157,6 +168,7 @@ describe( 'Checkout', () => {
 				successRedirectUrl="#"
 				failureRedirectUrl="#"
 				paymentMethods={ [ mockMethod ] }
+				registry={ registry }
 			>
 				<Checkout />
 			</CheckoutProvider>
@@ -169,7 +181,8 @@ describe( 'Checkout', () => {
 		let container;
 
 		beforeEach( () => {
-			const mockMethod = createMockMethod();
+			const registry = createRegistry();
+			const mockMethod = createMockMethod( registry );
 			const { items, total } = createMockItems();
 			const MyCheckout = () => (
 				<CheckoutProvider
@@ -181,6 +194,7 @@ describe( 'Checkout', () => {
 					successRedirectUrl="#"
 					failureRedirectUrl="#"
 					paymentMethods={ [ mockMethod ] }
+					registry={ registry }
 				>
 					<Checkout />
 				</CheckoutProvider>
@@ -220,7 +234,8 @@ describe( 'Checkout', () => {
 		let container;
 
 		beforeEach( () => {
-			const mockMethod = createMockMethod();
+			const registry = createRegistry();
+			const mockMethod = createMockMethod( registry );
 			const { items, total } = createMockItems();
 			const MyCheckout = () => (
 				<CheckoutProvider
@@ -232,6 +247,7 @@ describe( 'Checkout', () => {
 					successRedirectUrl="#"
 					failureRedirectUrl="#"
 					paymentMethods={ [ mockMethod ] }
+					registry={ registry }
 				>
 					<Checkout />
 				</CheckoutProvider>
@@ -272,7 +288,8 @@ describe( 'Checkout', () => {
 		let container;
 
 		beforeEach( () => {
-			const mockMethod = createMockMethod();
+			const registry = createRegistry();
+			const mockMethod = createMockMethod( registry );
 			const { items, total } = createMockItems();
 			const MyCheckout = () => (
 				<CheckoutProvider
@@ -284,6 +301,7 @@ describe( 'Checkout', () => {
 					successRedirectUrl="#"
 					failureRedirectUrl="#"
 					paymentMethods={ [ mockMethod ] }
+					registry={ registry }
 				>
 					<Checkout />
 				</CheckoutProvider>
@@ -323,7 +341,7 @@ describe( 'Checkout', () => {
 	} );
 } );
 
-function createMockMethod() {
+function createMockMethod( { registerStore } ) {
 	const actions = {
 		changeCardholderName( payload ) {
 			return { type: 'CARDHOLDER_NAME_SET', payload };
