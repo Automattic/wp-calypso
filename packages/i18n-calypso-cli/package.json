@@ -20,7 +20,7 @@
 	"dependencies": {
 		"commander": "^4.0.0",
 		"debug": "^4.0.0",
-		"globby": "^9.0.0",
+		"globby": "^10.0.0",
 		"xgettext-js": "^3.0.0"
 	}
 }
