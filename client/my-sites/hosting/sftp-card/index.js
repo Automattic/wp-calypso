@@ -21,12 +21,12 @@ import Spinner from 'components/spinner';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
-	requestAtomicSFTPUser,
-	createAtomicSFTPUser,
+	requestAtomicSftpUser,
+	createAtomicSftpUser,
 	resetAtomicSFTPPassword,
-	updateAtomicSFTPUser,
+	updateAtomicSftpUser,
 } from 'state/hosting/actions';
-import { getAtomicHostingSFTPUser } from 'state/selectors/get-atomic-hosting-sftp-user';
+import { getAtomicHostingSftpUser } from 'state/selectors/get-atomic-hosting-sftp-user';
 
 const SFTPCard = ( {
 	translate,
@@ -36,8 +36,8 @@ const SFTPCard = ( {
 	loaded,
 	disabled,
 	currentUserId,
-	requestSFTPUser,
-	createSFTPUser,
+	requestSftpUser,
+	createSftpUser,
 	resetSFTPPassword,
 	removePasswordFromState,
 } ) => {
@@ -60,13 +60,13 @@ const SFTPCard = ( {
 
 	const createUser = () => {
 		setIsLoading( true );
-		createSFTPUser( siteId, currentUserId );
+		createSftpUser( siteId, currentUserId );
 	};
 
 	useEffect( () => {
 		if ( ! loaded ) {
 			setIsLoading( true );
-			requestSFTPUser( siteId, currentUserId );
+			requestSftpUser( siteId, currentUserId );
 		}
 		return onDestroy();
 	}, [ loaded ] );
@@ -192,7 +192,7 @@ export default connect(
 		let loaded = null;
 
 		if ( ! disabled ) {
-			const sftpDetails = getAtomicHostingSFTPUser( state, siteId, currentUserId );
+			const sftpDetails = getAtomicHostingSftpUser( state, siteId, currentUserId );
 			username = get( sftpDetails, 'username' );
 			password = get( sftpDetails, 'password' );
 			loaded = sftpDetails !== null;
@@ -207,9 +207,9 @@ export default connect(
 		};
 	},
 	{
-		requestSFTPUser: requestAtomicSFTPUser,
-		createSFTPUser: createAtomicSFTPUser,
+		requestSftpUser: requestAtomicSftpUser,
+		createSftpUser: createAtomicSftpUser,
 		resetSFTPPassword: resetAtomicSFTPPassword,
-		removePasswordFromState: updateAtomicSFTPUser,
+		removePasswordFromState: updateAtomicSftpUser,
 	}
 )( localize( SFTPCard ) );
