@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import url from 'url';
+import { parse as parseUrl, format as formatUrl } from 'url';
 import crc32 from 'crc32';
 import seed from 'seed-random';
 import debugFactory from 'debug';
@@ -33,7 +33,7 @@ const mappings = {
  */
 export default function photon( imageUrl, opts ) {
 	// parse the URL, assuming //host.com/path style URLs are ok and parse the querystring
-	const parsedUrl = url.parse( imageUrl, true, true );
+	const parsedUrl = parseUrl( imageUrl, true, true );
 	const wasSecure = parsedUrl.protocol === 'https:';
 
 	delete parsedUrl.protocol;
@@ -56,7 +56,7 @@ export default function photon( imageUrl, opts ) {
 		if ( parsedUrl.search ) {
 			return null;
 		}
-		const formattedUrl = url.format( parsedUrl );
+		const formattedUrl = formatUrl( parsedUrl );
 		params.pathname =
 			0 === formattedUrl.indexOf( '//' ) ? formattedUrl.substring( 1 ) : formattedUrl;
 		params.hostname = serverFromPathname( params.pathname );
@@ -84,8 +84,7 @@ export default function photon( imageUrl, opts ) {
 	}
 
 	// do this after so a passed opt can't override it
-
-	const photonUrl = url.format( params );
+	const photonUrl = formatUrl( params );
 	debug( 'generated Photon URL: %s', photonUrl );
 	return photonUrl;
 }
