@@ -301,7 +301,7 @@
 		"@automattic/webpack-config-flag-plugin": "file:packages/webpack-config-flag-plugin",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "file:./packages/webpack-extensive-lodash-replacement-plugin",
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
-		"@testing-library/jest-dom": "4.2.0",
+		"@testing-library/jest-dom": "4.2.3",
 		"@testing-library/react": "9.3.0",
 		"@types/classnames": "2.2.9",
 		"@types/debug": "4.1.4",

@@ -134,9 +134,9 @@
 					}
 				},
 				"@babel/parser": {
-					"version": "7.7.2",
-					"resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.7.2.tgz",
-					"integrity": "sha512-DDaR5e0g4ZTb9aP7cpSZLkACEBdoLGwJDWgHtBhrGX7Q1RjhdoMOfexICj5cqTAtpowjGQWfcvfnQG7G2kAB5w==",
+					"version": "7.7.3",
+					"resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.7.3.tgz",
+					"integrity": "sha512-bqv+iCo9i+uLVbI0ILzKkvMorqxouI+GbV13ivcARXn9NNEabi2IEz912IgNpT/60BNXac5dgcfjb94NjsF33A==",
 					"dev": true
 				},
 				"@babel/template": {
@@ -214,9 +214,9 @@
 					}
 				},
 				"find-cache-dir": {
-					"version": "3.0.0",
-					"resolved": "https://registry.npmjs.org/find-cache-dir/-/find-cache-dir-3.0.0.tgz",
-					"integrity": "sha512-t7ulV1fmbxh5G9l/492O1p5+EBbr3uwpt6odhFTMc+nWyhmbloe+ja9BZ8pIBtqFWhOmCWVjx+pTW4zDkFoclw==",
+					"version": "3.1.0",
+					"resolved": "https://registry.npmjs.org/find-cache-dir/-/find-cache-dir-3.1.0.tgz",
+					"integrity": "sha512-zw+EFiNBNPgI2NTrKkDd1xd7q0cs6wr/iWnr/oUkI0yF9K9GqQ+riIt4aiyFaaqpaWbxPrJXHI+QvmNUQbX+0Q==",
 					"dev": true,
 					"requires": {
 						"commondir": "^1.0.1",
@@ -4321,9 +4321,9 @@
 			}
 		},
 		"@testing-library/jest-dom": {
-			"version": "4.2.0",
-			"resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-4.2.0.tgz",
-			"integrity": "sha512-H61OmRhGPWLrj9emyISx0qjp8jvC9RWyRniuLAq75Ny5XfPiOvWfnY3Wm2Tf0HXusX+PG40I94Gw792IAtSKKg==",
+			"version": "4.2.3",
+			"resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-4.2.3.tgz",
+			"integrity": "sha512-lrsm8OMaOLjh8AJhTNZW85Vur+a2U00ej1r/dNzABN4vfJ2kllsP/eLgkOdfCHuspdXn3/Q6rLt/41dSueVCyg==",
 			"dev": true,
 			"requires": {
 				"@babel/runtime": "^7.5.1",
