@@ -12,7 +12,7 @@ import '@testing-library/jest-dom/extend-expect';
  * Internal dependencies
  */
 import {
-	createCheckout,
+	Checkout,
 	CheckoutProvider,
 	useSelect,
 	useDispatch,
@@ -24,7 +24,6 @@ const noop = () => {};
 describe( 'Checkout', () => {
 	it( 'renders the line items and the total', () => {
 		const registry = createRegistry();
-		const Checkout = createCheckout( registry );
 		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
@@ -60,7 +59,6 @@ describe( 'Checkout', () => {
 
 	it( 'renders the payment method LabelComponent', () => {
 		const registry = createRegistry();
-		const Checkout = createCheckout( registry );
 		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
@@ -84,7 +82,6 @@ describe( 'Checkout', () => {
 
 	it( 'renders the payment method PaymentMethodComponent', () => {
 		const registry = createRegistry();
-		const Checkout = createCheckout( registry );
 		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
@@ -110,7 +107,6 @@ describe( 'Checkout', () => {
 
 	it( 'renders the payment method BillingContactComponent', () => {
 		const registry = createRegistry();
-		const Checkout = createCheckout( registry );
 		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
@@ -134,7 +130,6 @@ describe( 'Checkout', () => {
 
 	it( 'renders the review step', () => {
 		const registry = createRegistry();
-		const Checkout = createCheckout( registry );
 		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
@@ -161,7 +156,6 @@ describe( 'Checkout', () => {
 
 	it( 'renders the payment method SubmitButtonComponent', () => {
 		const registry = createRegistry();
-		const Checkout = createCheckout( registry );
 		const mockMethod = createMockMethod( registry );
 		const { items, total } = createMockItems();
 		const MyCheckout = () => (
@@ -188,7 +182,6 @@ describe( 'Checkout', () => {
 
 		beforeEach( () => {
 			const registry = createRegistry();
-			const Checkout = createCheckout( registry );
 			const mockMethod = createMockMethod( registry );
 			const { items, total } = createMockItems();
 			const MyCheckout = () => (
@@ -242,7 +235,6 @@ describe( 'Checkout', () => {
 
 		beforeEach( () => {
 			const registry = createRegistry();
-			const Checkout = createCheckout( registry );
 			const mockMethod = createMockMethod( registry );
 			const { items, total } = createMockItems();
 			const MyCheckout = () => (
@@ -297,7 +289,6 @@ describe( 'Checkout', () => {
 
 		beforeEach( () => {
 			const registry = createRegistry();
-			const Checkout = createCheckout( registry );
 			const mockMethod = createMockMethod( registry );
 			const { items, total } = createMockItems();
 			const MyCheckout = () => (
