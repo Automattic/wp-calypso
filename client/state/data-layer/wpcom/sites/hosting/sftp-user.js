@@ -1,4 +1,10 @@
 /**
+ * External dependencies
+ */
+
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -10,20 +16,9 @@ import {
 	HOSTING_SFTP_PASSWORD_RESET,
 } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
-import { updateAtomicSFTPUser } from 'state/hosting/actions.js';
+import { updateAtomicSftpUser } from 'state/hosting/actions';
 
-const fromApi = response => {
-	if ( ! response || ! response.username ) {
-		throw new Error( 'Retrieving or updating the sftp user was unsuccessful', response );
-	}
-
-	return response.password
-		? { username: response.username, password: response.password }
-		: { username: response.username };
-};
-
-const requestAtomicSFTPUser = action => {
+const requestAtomicSftpUser = action => {
 	return http(
 		{
 			method: 'GET',
@@ -34,7 +29,7 @@ const requestAtomicSFTPUser = action => {
 	);
 };
 
-const createAtomicSFTPUser = action => {
+const createAtomicSftpUser = action => {
 	return http(
 		{
 			method: 'POST',
@@ -58,46 +53,41 @@ const resetAtomicSFTPPassword = action => {
 	);
 };
 
-const receiveAtomicSFTPUserSuccess = ( action, sftpUser ) =>
-	updateAtomicSFTPUser( action.siteId, action.userId, sftpUser );
+const receiveAtomicSftpUserSuccess = ( action, { username, password } ) =>
+	updateAtomicSftpUser( action.siteId, action.userId, { username, password } );
 
-const sFTPUserError = ( { siteId, userId } ) => dispatch => {
-	dispatch( updateAtomicSFTPUser( siteId, userId, null ) );
-	dispatch(
-		errorNotice(
-			translate(
-				'Sorry, we had a problem retrieving your sftp user details. Please refresh the page and try again.'
-			),
-			{
-				duration: 5000,
-			}
-		)
-	);
-};
+const sFTPUserError = ( { siteId, userId } ) => [
+	updateAtomicSftpUser( siteId, userId, null ),
+	errorNotice(
+		translate(
+			'Sorry, we had a problem retrieving your sftp user details. Please refresh the page and try again.'
+		),
+		{
+			duration: 5000,
+		}
+	),
+];
 
 registerHandlers( 'state/data-layer/wpcom/sites/hosting/sftp-user.js', {
 	[ HOSTING_SFTP_USER_REQUEST ]: [
 		dispatchRequest( {
-			fetch: requestAtomicSFTPUser,
-			onSuccess: receiveAtomicSFTPUserSuccess,
+			fetch: requestAtomicSftpUser,
+			onSuccess: receiveAtomicSftpUserSuccess,
 			onError: sFTPUserError,
-			fromApi,
 		} ),
 	],
 	[ HOSTING_SFTP_USER_CREATE ]: [
 		dispatchRequest( {
-			fetch: createAtomicSFTPUser,
-			onSuccess: receiveAtomicSFTPUserSuccess,
+			fetch: createAtomicSftpUser,
+			onSuccess: receiveAtomicSftpUserSuccess,
 			onError: sFTPUserError,
-			fromApi,
 		} ),
 	],
 	[ HOSTING_SFTP_PASSWORD_RESET ]: [
 		dispatchRequest( {
 			fetch: resetAtomicSFTPPassword,
-			onSuccess: receiveAtomicSFTPUserSuccess,
+			onSuccess: receiveAtomicSftpUserSuccess,
 			onError: sFTPUserError,
-			fromApi,
 		} ),
 	],
 } );

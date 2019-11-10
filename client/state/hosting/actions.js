@@ -16,20 +16,20 @@ export const restoreDatabasePassword = siteId => ( {
 	siteId,
 } );
 
-export const requestAtomicSFTPUser = ( siteId, userId ) => ( {
+export const requestAtomicSftpUser = ( siteId, userId ) => ( {
 	type: HOSTING_SFTP_USER_REQUEST,
 	siteId,
 	userId,
 } );
 
-export const updateAtomicSFTPUser = ( siteId, userId, sftpUser ) => ( {
+export const updateAtomicSftpUser = ( siteId, userId, sftpUser ) => ( {
 	type: HOSTING_SFTP_USER_UPDATE,
 	siteId,
 	userId,
 	sftpUser,
 } );
 
-export const createAtomicSFTPUser = ( siteId, userId ) => ( {
+export const createAtomicSftpUser = ( siteId, userId ) => ( {
 	type: HOSTING_SFTP_USER_CREATE,
 	siteId,
 	userId,

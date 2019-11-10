@@ -14,6 +14,6 @@ import { get } from 'lodash';
  * @param  {Number}  userId  The ID of the user we're querying
  * @return {Object} SFTP user details for selected user
  */
-export function getAtomicHostingSFTPUser( state, siteId, userId ) {
-	return get( state, [ 'atomicHosting', 'sites', siteId, 'sftpUsers', userId ], null );
+export function getAtomicHostingSftpUser( state, siteId, userId ) {
+	return get( state, [ 'atomicHosting', siteId, 'sftpUsers', userId ], null );
 }
