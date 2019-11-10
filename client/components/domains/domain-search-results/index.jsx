@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
-import Card from 'components/card';
+import NoticeAction from 'components/notice/notice-action';
 import ScreenReaderText from 'components/screen-reader-text';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
@@ -27,11 +25,6 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import { hideSitePreview } from 'state/signup/preview/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
@@ -144,12 +137,20 @@ class DomainSearchResults extends React.Component {
 				offer = null;
 			}
 
+			const noticeMessage = translate(
+				'If you already own this domain, you can use it for your WordPress.com site.'
+			);
+
 			let domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
-				? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
-						args: { tld: getTld( domain ) },
-						components: { strong: <strong /> },
-				  } )
-				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
+				? translate(
+						'{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com. ' +
+							noticeMessage,
+						{
+							args: { tld: getTld( domain ) },
+							components: { strong: <strong /> },
+						}
+				  )
+				: translate( '{{strong}}%(domain)s{{/strong}} is taken. ' + noticeMessage, {
 						args: { domain },
 						components: { strong: <strong /> },
 				  } );
@@ -157,7 +158,8 @@ class DomainSearchResults extends React.Component {
 			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
 				domainUnavailableMessage = translate(
 					'{{strong}}.%(tld)s{{/strong}} domains are temporarily not offered on WordPress.com. ' +
-						'Please try again later or choose a different extension.',
+						'Please try again later or choose a different extension. ' +
+						noticeMessage,
 					{
 						args: { tld: getTld( domain ) },
 						components: { strong: <strong /> },
@@ -168,30 +170,19 @@ class DomainSearchResults extends React.Component {
 			if ( this.props.offerUnavailableOption ) {
 				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
 					availabilityElement = (
-						<Card className="domain-search-results__transfer-card" highlight="info">
-							<div className="domain-search-results__transfer-card-copy">
-								<div>{ domainUnavailableMessage }</div>
-								<p>
-									{ translate(
-										'If you already own this domain you can use it for your WordPress.com site.'
-									) }
-								</p>
-							</div>
-							<div className="domain-search-results__transfer-card-link">
-								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
-									components: {
-										a: (
-											// eslint-disable-next-line jsx-a11y/anchor-is-valid
-											<a
-												href="#"
-												onClick={ this.props.onClickUseYourDomain }
-												data-tracks-button-click-source={ this.props.tracksButtonClickSource }
-											/>
-										),
-									},
-								} ) }
-							</div>
-						</Card>
+						<Notice
+							status="is-warning"
+							className="domain-search-results__unavailable-notice register-domain-step__notice"
+							showDismiss={ false }
+							text={ domainUnavailableMessage }
+						>
+							<NoticeAction
+								onClick={ this.props.onClickUseYourDomain }
+								data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+							>
+								{ translate( 'Yes, I own this domain' ) }
+							</NoticeAction>
+						</Notice>
 					);
 				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (
